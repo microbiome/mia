@@ -1,5 +1,5 @@
 ---
-title: "Mia: microbiome analysis tools"
+title: "mia: Microbiome analysis tools"
 date: "`r Sys.Date()`"
 package: mia
 output:
@@ -10,7 +10,7 @@ output:
         toc_depth: 2
         number_sections: true
 vignette: >
-    %\VignetteIndexEntry{Mia}
+    %\VignetteIndexEntry{mia}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 bibliography: references.bib
@@ -23,7 +23,7 @@ knitr::opts_chunk$set(cache=FALSE,
                       warning=FALSE)
 ```
 
-# Load *Mia*
+# Load *mia*
 
 ```{r load-packages, message=FALSE, warning=FALSE}
 library("mia")
