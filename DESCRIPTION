@@ -1,4 +1,4 @@
-Package: Mia
+Package: mia
 Type: Package
 Version: 0.0.0.9000
 Date: 2020-10-18
@@ -8,7 +8,7 @@ Authors@R:
              comment = c(ORCID = "0000-0001-5064-0928")))
 Title: Microbiome analysis
 Description: 
-    Mia implements tools for microbiome analysis.
+    mia implements tools for microbiome analysis.
 biocViews: Microbiome, Software
 License: Artistic-2.0
 Encoding: UTF-8
@@ -33,6 +33,12 @@ Suggests:
 Remotes: 
     github::FelixErnst/MicrobiomeExperiment,
     github::FelixErnst/SEtup
+Collate:
+    'mia.R'
+    'calculateJSD.R'
+    'calculateUniFrac.R'
+    'runMDS2.R'
+    'utils.R'
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
