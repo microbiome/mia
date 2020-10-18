@@ -37,6 +37,13 @@ Remotes:
     github::adw96/breakaway,
     github::FelixErnst/MicrobiomeExperiment,
     github::FelixErnst/SEtup
+Collate:
+    'mia.R'
+    'breakaway.R'
+    'calculateJSD.R'
+    'calculateUniFrac.R'
+    'runMDS2.R'
+    'utils.R'
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
