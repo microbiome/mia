@@ -21,6 +21,8 @@ Depends:
     MicrobiomeExperiment
 Imports:
     methods,
+    S4Vectors,
+    IRanges,
     BiocParallel,
     DelayedArray,
     scater,
@@ -29,12 +31,15 @@ Imports:
 Suggests:
     testthat,
     knitr,
-    BiocStyle
-Remotes: 
+    BiocStyle,
+    breakaway
+Remotes:
+    github::adw96/breakaway,
     github::FelixErnst/MicrobiomeExperiment,
     github::FelixErnst/SEtup
 Collate:
     'mia.R'
+    'breakaway.R'
     'calculateJSD.R'
     'calculateUniFrac.R'
     'runMDS2.R'
