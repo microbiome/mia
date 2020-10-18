@@ -1,0 +1,30 @@
+---
+title: "Mia: microbiome analysis tools"
+date: "`r Sys.Date()`"
+package: Mia
+output:
+    BiocStyle::html_document:
+        fig_height: 7
+        fig_width: 10
+        toc: yes
+        toc_depth: 2
+        number_sections: true
+vignette: >
+    %\VignetteIndexEntry{Mia}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+bibliography: references.bib
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(cache=FALSE,
+                      fig.width=9,
+                      message=FALSE,
+                      warning=FALSE)
+```
+
+# Load *Mia*
+
+```{r load-packages, message=FALSE, warning=FALSE}
+library("Mia")
+```

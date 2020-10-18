@@ -1,0 +1,38 @@
+Package: Mia
+Type: Package
+Version: 0.0.0.9000
+Date: 2020-10-18
+Authors@R:
+    c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
+             email = "felix.gm.ernst@outlook.com",
+             comment = c(ORCID = "0000-0001-5064-0928")))
+Title: Microbiome analysis
+Description: 
+    Mia implements tools for microbiome analysis.
+biocViews: Microbiome, Software
+License: Artistic-2.0
+Encoding: UTF-8
+LazyData: false
+Depends:
+    R (>= 4.0),
+    SummarizedExperiment,
+    SingleCellExperiment,
+    TreeSummarizedExperiment,
+    MicrobiomeExperiment
+Imports:
+    methods,
+    BiocParallel,
+    DelayedArray,
+    scater,
+    SEtup,
+    ape
+Suggests:
+    testthat,
+    knitr,
+    BiocStyle
+Remotes: 
+    github::FelixErnst/MicrobiomeExperiment
+    github::FelixErnst/SEtup
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
