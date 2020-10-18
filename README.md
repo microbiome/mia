@@ -1,6 +1,6 @@
-# Mia
+# mia - Microbiome analysis
 
-This project is aimed to provide functions and workflows guidelines for analyses
+This project is aimed to provide functions and workflows examples for analyses
 of microbiome data.
 
 Currently this includes:
@@ -27,5 +27,5 @@ against the `master` branch and then merged to `release` for release.
 
 # Code of conduct
 
-Please note that the Mia project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+Please note that the mia project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.
