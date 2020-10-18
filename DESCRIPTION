@@ -31,7 +31,7 @@ Suggests:
     knitr,
     BiocStyle
 Remotes: 
-    github::FelixErnst/MicrobiomeExperiment
+    github::FelixErnst/MicrobiomeExperiment,
     github::FelixErnst/SEtup
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
