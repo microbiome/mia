@@ -21,6 +21,8 @@ Depends:
     MicrobiomeExperiment
 Imports:
     methods,
+    S4Vectors,
+    IRanges,
     BiocParallel,
     DelayedArray,
     scater,
@@ -29,8 +31,10 @@ Imports:
 Suggests:
     testthat,
     knitr,
-    BiocStyle
-Remotes: 
+    BiocStyle,
+    breakaway
+Remotes:
+    github::adw96/breakaway,
     github::FelixErnst/MicrobiomeExperiment,
     github::FelixErnst/SEtup
 Roxygen: list(markdown = TRUE)
