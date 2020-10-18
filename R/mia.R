@@ -1,8 +1,8 @@
-#' Mia Package.
+#' mia Package.
 #'
-#' Mia implements tools for microbiome analysis
+#' \code{mia} implements tools for microbiome analysis
 #'
-#' @name Mia-package
+#' @name mia-package
 #' @docType package
 #' @seealso \link[=MicrobiomeExperiment-class]{MicrobiomeExperiment} class
 NULL

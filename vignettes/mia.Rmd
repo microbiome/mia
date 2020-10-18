@@ -26,5 +26,5 @@ knitr::opts_chunk$set(cache=FALSE,
 # Load *Mia*
 
 ```{r load-packages, message=FALSE, warning=FALSE}
-library("Mia")
+library("mia")
 ```
