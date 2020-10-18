@@ -1,7 +1,7 @@
 ---
 title: "Mia: microbiome analysis tools"
 date: "`r Sys.Date()`"
-package: Mia
+package: mia
 output:
     BiocStyle::html_document:
         fig_height: 7
