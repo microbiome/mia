@@ -74,9 +74,11 @@ calculateUniFrac(esophagus, weighted = FALSE)
 calculateUniFrac(esophagus, weighted = TRUE)
 calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)
 # for using calculateUniFrac in conjunction with runMDS2 the tree argument
-# has to be given separately
+# has to be given separately. In addition, subsetting using ntop must
+# be disabled
 esophagus <- runMDS2(esophagus, FUN = calculateUniFrac, name = "UniFrac",
-        tree = rowTree(esophagus))
+        tree = rowTree(esophagus),
+        ntop = nrow(esophagus))
 reducedDim(esophagus)
 }
 \references{

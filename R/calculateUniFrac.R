@@ -2,6 +2,9 @@
 #'
 #' This function calculates the (Fast) UniFrac distance for all sample-pairs
 #' in a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
+#' 
+#' Please not that if \code{calculateUniFrac} is used as a \code{FUN} for 
+#' \code{runMDS2}, the argument \code{ntop} has to be set to \code{nrow(x)}.
 #'
 #' @param x a numeric matrix or a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -81,9 +84,11 @@
 #' calculateUniFrac(esophagus, weighted = TRUE)
 #' calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)
 #' # for using calculateUniFrac in conjunction with runMDS2 the tree argument
-#' # has to be given separately
-#' runMDS2(esophagus, FUN = calculateUniFrac, name = "UniFrac",
-#'         tree = rowTree(esophagus))
+#' # has to be given separately. In addition, subsetting using ntop must
+#' # be disabled
+#' esophagus <- runMDS2(esophagus, FUN = calculateUniFrac, name = "UniFrac",
+#'         tree = rowTree(esophagus),
+#'         ntop = nrow(esophagus))
 #' reducedDim(esophagus)
 NULL
 
