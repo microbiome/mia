@@ -28,7 +28,11 @@ runUniFrac(
 \arguments{
 \item{x}{a numeric matrix or a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object containing a tree.}
+object containing a tree.
+
+Please  note that \code{runUniFrac} expects a matrix with samples per row
+and not per column. This was done, to be compatible with other distance
+calculations such as \code{\link[stats:dist]{dist}}.}
 
 \item{tree}{if \code{x} is a matrix. a
 \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
@@ -70,9 +74,12 @@ calculateUniFrac(esophagus, weighted = FALSE)
 calculateUniFrac(esophagus, weighted = TRUE)
 calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)
 # for using calculateUniFrac in conjunction with runMDS2 the tree argument
-# has to be given separately
-runMDS2(esophagus, FUN = calculateUniFrac, name = "UniFrac",
-        tree = rowTree(esophagus))
+# has to be given separately. In addition, subsetting using ntop must
+# be disabled
+esophagus <- runMDS2(esophagus, FUN = calculateUniFrac, name = "UniFrac",
+        tree = rowTree(esophagus),
+        ntop = nrow(esophagus))
+reducedDim(esophagus)
 }
 \references{
 \url{http://bmf.colorado.edu/unifrac/}

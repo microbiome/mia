@@ -39,6 +39,8 @@ This function calculates the ensen-Shannon Divergence (JSD) in a
 \examples{
 data(enterotype, package="MicrobiomeExperiment")
 calculateJSD(enterotype)
+enterotype <- runMDS2(enterotype, FUN = calculateJSD, name = "JSD")
+reducedDim(enterotype)
 }
 \references{
 Jensen-Shannon Divergence and Hilbert space embedding.

@@ -43,6 +43,8 @@
 #' @examples
 #' data(enterotype, package="MicrobiomeExperiment")
 #' calculateJSD(enterotype)
+#' enterotype <- runMDS2(enterotype, FUN = calculateJSD, name = "JSD")
+#' reducedDim(enterotype)
 NULL
 
 setGeneric("calculateJSD", signature = c("x"),
