@@ -6,6 +6,10 @@
 #' @param x a numeric matrix or a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object containing a tree.
+#'   
+#'   Please  note that \code{runUniFrac} expects a matrix with samples per row
+#'   and not per column. This was done, to be compatible with other distance
+#'   calculations such as \code{\link[stats:dist]{dist}}.
 #'
 #' @param tree if \code{x} is a matrix. a
 #'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
@@ -80,6 +84,7 @@
 #' # has to be given separately
 #' runMDS2(esophagus, FUN = calculateUniFrac, name = "UniFrac",
 #'         tree = rowTree(esophagus))
+#' reducedDim(esophagus)
 NULL
 
 setGeneric("calculateUniFrac", signature = c("x", "tree"),
@@ -91,9 +96,9 @@ setGeneric("calculateUniFrac", signature = c("x", "tree"),
 setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
              BPPARAM = SerialParam()){
-          calculateDistance(x, FUN = runUniFrac, tree = tree,
-                            weighted = weighted, normalized = normalized,
-                            BPPARAM = BPPARAM)
+        calculateDistance(x, FUN = runUniFrac, tree = tree,
+                          weighted = weighted, normalized = normalized,
+                          BPPARAM = BPPARAM)
     }
 )
 
@@ -127,8 +132,7 @@ setMethod("calculateUniFrac",
 
 ################################################################################
 # Fast UniFrac for R.
-# Adapted from The ISME Journal (2010) 4, 17-27; doi:10.1038/ismej.2009.97;
-# http://www.nature.com/ismej/journal/v4/n1/full/ismej200997a.html
+# Adapted from The ISME Journal (2010) 4, 17-27; doi:10.1038/ismej.2009.97
 #
 # adopted from original implementation in phyloseq implemented by
 # Paul J. McMurdie (https://github.com/joey711/phyloseq)
@@ -149,23 +153,26 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     x <- t(x)
     # input check
     if(!.is_a_bool(weighted)){
-      stop("'weighted' must be TRU or FALSE.", call. = FALSE)
+        stop("'weighted' must be TRU or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(normalized)){
-      stop("'normalized' must be TRU or FALSE.", call. = FALSE)
+        stop("'normalized' must be TRU or FALSE.", call. = FALSE)
     }
-    #
+    # check that matrix and tree are compatible
+    if(length(tree$tip.label) != nrow(x) && length(tree$tip.label) > 0L) {
+        stop("Incompatible tree and abundance table!")
+    }
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     if(is.null(colnames(x)) || is.null(rownames(x))){
-      stop("colnames and rownames must not be NULL", call. = FALSE)
+        stop("colnames and rownames must not be NULL", call. = FALSE)
     }
     #
     old <- getAutoBPPARAM()
     setAutoBPPARAM(BPPARAM)
     on.exit(setAutoBPPARAM(old))
     if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
-      bpstart(BPPARAM)
-      on.exit(bpstop(BPPARAM), add = TRUE)
+        bpstart(BPPARAM)
+        on.exit(bpstop(BPPARAM), add = TRUE)
     }
     #
     # create N x 2 matrix of all pairwise combinations of samples.
@@ -182,14 +189,16 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     #
     # Create a list of descendants, starting from the first internal node (root)
     ntip <- length(tree$tip.label)
-    if(ntip != nrow(x) && ntip > 0L) {
-        stop("Incompatible tree and abundance table!")
-    }
     # Create a matrix that maps each internal node to its 2 descendants
     # This matrix doesn't include the tips, so must use node#-ntip to index into
     # it
-    node.desc <- matrix(tree$edge[order(tree$edge[,1]),][,2], byrow = TRUE,
-                        ncol = 2)
+    ## to suppress the warning if the number of node edges is uneven, we add the
+    ## first not again
+    node.desc <- tree$edge[order(tree$edge[,1]),][,2]
+    if(length(node.desc) %% 2 == 1){
+      node.desc <- c(node.desc,node.desc[1])
+    }
+    node.desc <- matrix(node.desc, byrow = TRUE, ncol = 2)
     # Define the edge_array object
     # Right now this is a node_array object, each row is a node (including tips)
     # It will be subset and ordered to match tree$edge later
@@ -202,8 +211,8 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # Loop over internal nodes, summing their descendants to get that nodes
     # count
     for(i in ord.node){
-      edge_array[i,] <- colSums(edge_array[node.desc[i-ntip,], , drop=FALSE],
-                                na.rm = TRUE)
+        edge_array[i,] <- colSums(edge_array[node.desc[i-ntip,], , drop=FALSE],
+                                  na.rm = TRUE)
     }
     # Keep only those with a parental edge (drops root) and order to match
     # tree$edge
@@ -319,17 +328,17 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
 
 #' @importFrom ape is.rooted root
 .norm_tree_to_be_rooted <- function(tree, names){
-  if( !is.rooted(tree) ){
-    randoroot = sample(names, 1)
-    warning("Randomly assigning root as -- ", randoroot, " -- in the",
-            " phylogenetic tree in the data you provided.")
-    x@rowTree$phylo <- root(phy = tree, outgroup = randoroot,
-                            resolve.root = TRUE, interactive = FALSE)
     if( !is.rooted(tree) ){
-      stop("Problem automatically rooting tree. Make sure your tree ",
-           "is rooted before attempting UniFrac calculation. See ",
-           "?ape::root")
+        randoroot <- sample(names, 1)
+        warning("Randomly assigning root as -- ", randoroot, " -- in the",
+                " phylogenetic tree in the data you provided.")
+        tree <- root(phy = tree, outgroup = randoroot,
+                     resolve.root = TRUE, interactive = FALSE)
+        if( !is.rooted(tree) ){
+            stop("Problem automatically rooting tree. Make sure your tree ",
+                 "is rooted before attempting UniFrac calculation. See ",
+                 "?ape::root")
+        }
     }
-  }
-  tree
+    tree
 }
