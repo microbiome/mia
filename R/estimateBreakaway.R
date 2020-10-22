@@ -1,7 +1,10 @@
-#' Run estimate functions from breakaway package on sample data
+#' Functions for diversity estimation from \code{breakaway} package
 #'
-#' Wrapper for several functions implemented by the \code{breakaway} package
-#' are available.
+#' Several functions for calculation of diversity indices implemented by the 
+#' \code{breakaway} package are available via wrapper functions.
+#' 
+#' Other diversity measures implemented by breakaway are also available,
+#' such as \sQuote{Shannon}.
 #'
 #' @param x a \code{\link{TreeSummarizedExperiment}} object
 #'
@@ -19,9 +22,12 @@
 #'   \code{breakaway} package
 #'
 #' @return \code{x} with additional \code{\link{colData}} named
-#'   \code{*function*_*abund_values*}
+#'   \code{*name*} containing the main diversity score and 
+#'   \code{*name*_summary} containing a summary \code{DataFrame}
 #'
 #' @seealso
+#' \code{\link[=estimateDiversity]{estimateDiversity}}
+#' 
 #' \itemize{
 #'   \item{\code{\link[breakaway:breakaway]{breakaway}}}
 #'   \item{\code{\link[breakaway:kemp]{kemp}}}
@@ -38,9 +44,11 @@
 #' data(esophagus, package = "MicrobiomeExperiment")
 #' esophagus <- estimateBreakaway(esophagus)
 #' colData(esophagus)$breakaway
+#' colData(esophagus)$breakaway_summary
 #'
 #' esophagus <- estimateWLRMuntransformed(esophagus)
 #' colData(esophagus)$WLRMun
+#' colData(esophagus)$WLRMun_summary
 NULL
 
 #' @rdname estimateBreakway
@@ -216,10 +224,10 @@ setMethod("estimateChao1", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment colData colData<-
-.add_brkwy_values_to_colData <- function(x, brkwy_values, name,
-                                         abund_values){
+.add_brkwy_values_to_colData <- function(x, brkwy_values, name, abund_values){
     colData <- colData(x)
-    colData[[name]] <- brkwy_values
+    colData[[name]] <- brkwy_values$estimate
+    colData[[paste0(name,"_summary")]] <- brkwy_values
     colData(x) <- colData
     x
 }
