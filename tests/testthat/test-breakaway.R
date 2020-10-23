@@ -1,6 +1,7 @@
 
 context("estimates")
 test_that("estimates", {
+    skip_if_not(requireNamespace("breakaway1", quietly = TRUE))
     data("esophagus", package = "MicrobiomeExperiment")
     FUN_list <- list(breakaway = estimateBreakaway,
                      chao1 = estimateChao1,
