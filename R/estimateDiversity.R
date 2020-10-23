@@ -1,7 +1,3 @@
-# estimateShannon
-# estimateSimpson
-# estimateInvSimpson
-
 #' Estimate alpha diversity
 #'
 #' Several functions for calculation of alpha diversity indices available via 
@@ -9,7 +5,7 @@
 #' 
 #' This includes the \sQuote{Shannon},  \sQuote{Simpson}, 
 #'
-#' @param x a \code{\link{TreeSummarizedExperiment}} object
+#' @param x a \code{\link{MicrobiomeExperiment}} object
 #'
 #' @param abund_values the name of the assay used for calculation of the
 #'   sample-wise estimates
@@ -28,9 +24,8 @@
 #'   \code{*name*}
 #'
 #' @seealso 
-#' \code{\link[=estimateBreakway]{estimateBreakway}}
-#' 
 #' \itemize{
+#'   \item{\code{\link[=estimateBreakway]{estimateBreakway}}}
 #'   \item{\code{\link[breakaway:sample_inverse_simpson]{sample_inverse_simpson}}}
 #'   \item{\code{\link[breakaway:sample_simpson]{sample_simpson}}}
 #'   \item{\code{\link[breakaway:sample_richness]{sample_richness}}}
@@ -81,7 +76,7 @@ setGeneric("estimateShannonE",signature = c("x"),
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateShannon", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("estimateShannon", signature = c(x = "MicrobiomeExperiment"),
     function(x, abund_values = "counts", name = "Shannon",
              BPPARAM = SerialParam(), ...){
         .run_brkwy_dvrsty(x = x, abund_values = abund_values, name = name,
@@ -91,7 +86,7 @@ setMethod("estimateShannon", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateSimpson", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("estimateSimpson", signature = c(x = "MicrobiomeExperiment"),
     function(x, abund_values = "counts", name = "Simpson",
              BPPARAM = SerialParam(), ...){
         .run_brkwy_dvrsty(x = x, abund_values = abund_values, name = name,
@@ -101,7 +96,7 @@ setMethod("estimateSimpson", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateInvSimpson", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("estimateInvSimpson", signature = c(x = "MicrobiomeExperiment"),
           function(x, abund_values = "counts", name = "InvSimpson",
                    BPPARAM = SerialParam(), ...){
               .run_brkwy_dvrsty(x = x, abund_values = abund_values, name = name,
@@ -112,7 +107,7 @@ setMethod("estimateInvSimpson", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateRichness", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("estimateRichness", signature = c(x = "MicrobiomeExperiment"),
           function(x, abund_values = "counts", name = "Richness",
                    BPPARAM = SerialParam(), ...){
               .run_brkwy_dvrsty(x = x, abund_values = abund_values, name = name,
@@ -123,7 +118,7 @@ setMethod("estimateRichness", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateShannonE", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("estimateShannonE", signature = c(x = "MicrobiomeExperiment"),
           function(x, abund_values = "counts", name = "ShannonE",
                    BPPARAM = SerialParam(), ...){
               .run_brkwy_dvrsty(x = x, abund_values = abund_values, name = name,

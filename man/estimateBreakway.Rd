@@ -9,13 +9,13 @@
 \alias{estimatePoissonModel}
 \alias{estimateChaoBunge}
 \alias{estimateChao1}
-\alias{estimateBreakaway,TreeSummarizedExperiment-method}
-\alias{estimateKemp,TreeSummarizedExperiment-method}
-\alias{estimateWLRMuntransformed,TreeSummarizedExperiment-method}
-\alias{estimateWLRMtransformed,TreeSummarizedExperiment-method}
-\alias{estimatePoissonModel,TreeSummarizedExperiment-method}
-\alias{estimateChaoBunge,TreeSummarizedExperiment-method}
-\alias{estimateChao1,TreeSummarizedExperiment-method}
+\alias{estimateBreakaway,MicrobiomeExperiment-method}
+\alias{estimateKemp,MicrobiomeExperiment-method}
+\alias{estimateWLRMuntransformed,MicrobiomeExperiment-method}
+\alias{estimateWLRMtransformed,MicrobiomeExperiment-method}
+\alias{estimatePoissonModel,MicrobiomeExperiment-method}
+\alias{estimateChaoBunge,MicrobiomeExperiment-method}
+\alias{estimateChao1,MicrobiomeExperiment-method}
 \title{Functions for diversity estimation from \code{breakaway} package}
 \usage{
 estimateBreakaway(x, abund_values = "counts", name = "breakaway", ...)
@@ -32,7 +32,7 @@ estimateChaoBunge(x, abund_values = "counts", name = "chao_bunge", ...)
 
 estimateChao1(x, abund_values = "counts", name = "chao1", ...)
 
-\S4method{estimateBreakaway}{TreeSummarizedExperiment}(
+\S4method{estimateBreakaway}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "breakaway",
@@ -40,7 +40,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateKemp}{TreeSummarizedExperiment}(
+\S4method{estimateKemp}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "kemp",
@@ -48,7 +48,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateWLRMuntransformed}{TreeSummarizedExperiment}(
+\S4method{estimateWLRMuntransformed}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "WLRMun",
@@ -56,7 +56,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateWLRMtransformed}{TreeSummarizedExperiment}(
+\S4method{estimateWLRMtransformed}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "WLRM",
@@ -64,7 +64,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimatePoissonModel}{TreeSummarizedExperiment}(
+\S4method{estimatePoissonModel}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "poisson",
@@ -72,7 +72,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateChaoBunge}{TreeSummarizedExperiment}(
+\S4method{estimateChaoBunge}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "chao_bunge",
@@ -80,7 +80,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateChao1}{TreeSummarizedExperiment}(
+\S4method{estimateChao1}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "chao1",
@@ -89,13 +89,14 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
 )
 }
 \arguments{
-\item{x}{a \code{\link{TreeSummarizedExperiment}} object}
+\item{x}{a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+object}
 
 \item{abund_values}{the name of the assay used for calculation of the
 sample-wise estimates}
 
-\item{name}{a name for the column of the colData the results should be stored
-in.}
+\item{name}{a name for the column of the \code{colData} the results should be
+stored in.}
 
 \item{...}{additional parameters passed to the function implemented by the
 \code{breakaway} package}
@@ -115,7 +116,7 @@ Several functions for calculation of diversity indices implemented by the
 }
 \details{
 Other diversity measures implemented by breakaway are also available,
-such as \sQuote{Shannon}.
+such as \code{\link[=estimateDiversity]{Shannon}}.
 }
 \examples{
 data(esophagus, package = "MicrobiomeExperiment")
@@ -128,9 +129,8 @@ colData(esophagus)$WLRMun
 colData(esophagus)$WLRMun_summary
 }
 \seealso{
-\code{\link[=estimateDiversity]{estimateDiversity}}
-
 \itemize{
+\item{\code{\link[=estimateDiversity]{estimateDiversity}}}
 \item{\code{\link[breakaway:breakaway]{breakaway}}}
 \item{\code{\link[breakaway:kemp]{kemp}}}
 \item{\code{\link[breakaway:wlrm_transformed]{wlrm_transformed}}}

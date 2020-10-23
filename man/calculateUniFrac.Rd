@@ -68,6 +68,10 @@ a sample-by-sample distance matrix, suitable for NMDS, etc.
 This function calculates the (Fast) UniFrac distance for all sample-pairs
 in a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
 }
+\details{
+Please not that if \code{calculateUniFrac} is used as a \code{FUN} for
+\code{runMDS2}, the argument \code{ntop} has to be set to \code{nrow(x)}.
+}
 \examples{
 data(esophagus, package="MicrobiomeExperiment")
 calculateUniFrac(esophagus, weighted = FALSE)

@@ -7,11 +7,11 @@
 \alias{estimateInvSimpson}
 \alias{estimateRichness}
 \alias{estimateShannonE}
-\alias{estimateShannon,TreeSummarizedExperiment-method}
-\alias{estimateSimpson,TreeSummarizedExperiment-method}
-\alias{estimateInvSimpson,TreeSummarizedExperiment-method}
-\alias{estimateRichness,TreeSummarizedExperiment-method}
-\alias{estimateShannonE,TreeSummarizedExperiment-method}
+\alias{estimateShannon,MicrobiomeExperiment-method}
+\alias{estimateSimpson,MicrobiomeExperiment-method}
+\alias{estimateInvSimpson,MicrobiomeExperiment-method}
+\alias{estimateRichness,MicrobiomeExperiment-method}
+\alias{estimateShannonE,MicrobiomeExperiment-method}
 \title{Estimate alpha diversity}
 \usage{
 estimateShannon(x, abund_values = "counts", name = "Shannon", ...)
@@ -24,7 +24,7 @@ estimateRichness(x, abund_values = "counts", name = "Richness", ...)
 
 estimateShannonE(x, abund_values = "counts", name = "ShannonE", ...)
 
-\S4method{estimateShannon}{TreeSummarizedExperiment}(
+\S4method{estimateShannon}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "Shannon",
@@ -32,7 +32,7 @@ estimateShannonE(x, abund_values = "counts", name = "ShannonE", ...)
   ...
 )
 
-\S4method{estimateSimpson}{TreeSummarizedExperiment}(
+\S4method{estimateSimpson}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "Simpson",
@@ -40,7 +40,7 @@ estimateShannonE(x, abund_values = "counts", name = "ShannonE", ...)
   ...
 )
 
-\S4method{estimateInvSimpson}{TreeSummarizedExperiment}(
+\S4method{estimateInvSimpson}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "InvSimpson",
@@ -48,7 +48,7 @@ estimateShannonE(x, abund_values = "counts", name = "ShannonE", ...)
   ...
 )
 
-\S4method{estimateRichness}{TreeSummarizedExperiment}(
+\S4method{estimateRichness}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "Richness",
@@ -56,7 +56,7 @@ estimateShannonE(x, abund_values = "counts", name = "ShannonE", ...)
   ...
 )
 
-\S4method{estimateShannonE}{TreeSummarizedExperiment}(
+\S4method{estimateShannonE}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
   name = "ShannonE",
@@ -65,7 +65,7 @@ estimateShannonE(x, abund_values = "counts", name = "ShannonE", ...)
 )
 }
 \arguments{
-\item{x}{a \code{\link{TreeSummarizedExperiment}} object}
+\item{x}{a \code{\link{MicrobiomeExperiment}} object}
 
 \item{abund_values}{the name of the assay used for calculation of the
 sample-wise estimates}
@@ -100,9 +100,8 @@ esophagus <- estimateSimpson(esophagus)
 colData(esophagus)$Simpson
 }
 \seealso{
-\code{\link[=estimateBreakway]{estimateBreakway}}
-
 \itemize{
+\item{\code{\link[=estimateBreakway]{estimateBreakway}}}
 \item{\code{\link[breakaway:sample_inverse_simpson]{sample_inverse_simpson}}}
 \item{\code{\link[breakaway:sample_simpson]{sample_simpson}}}
 \item{\code{\link[breakaway:sample_richness]{sample_richness}}}
