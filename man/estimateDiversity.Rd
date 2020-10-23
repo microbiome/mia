@@ -93,6 +93,7 @@ This includes the \sQuote{Shannon},  \sQuote{Simpson},
 }
 \examples{
 data(esophagus, package = "MicrobiomeExperiment")
+esophagus <- as(esophagus, "MicrobiomeExperiment")
 esophagus <- estimateShannon(esophagus)
 colData(esophagus)$Shannon
 

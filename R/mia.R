@@ -8,4 +8,5 @@
 NULL
 
 #' @import methods
+#' @import MicrobiomeExperiment
 NULL
