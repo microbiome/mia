@@ -1,3 +1,10 @@
+
+################################################################################
+# internal methods loaded from other packages
+
+.get_mat_from_sce <- scater:::.get_mat_from_sce
+.get_mat_for_reddim <- scater:::.get_mat_for_reddim
+
 ################################################################################
 # integration with other packages
 

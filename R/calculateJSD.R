@@ -1,11 +1,10 @@
 #' Calculate the Jensen-Shannon Divergence
 #'
-#' This function calculates the ensen-Shannon Divergence (JSD) in a
+#' This function calculates the Jensen-Shannon Divergence (JSD) in a
 #' \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
 #'
 #' @param x a numeric matrix or a
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   object containing a tree.
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #'
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.

@@ -52,8 +52,6 @@
 #' reducedDim(esophagus)
 NULL
 
-.get_mat_from_sce <- scater:::.get_mat_from_sce
-
 #' @rdname runMDS2
 #' @export
 setMethod("calculateMDS2", "SingleCellExperiment",
