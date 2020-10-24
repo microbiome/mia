@@ -2,34 +2,41 @@
 % Please edit documentation in R/meltAssay.R
 \name{meltAssay}
 \alias{meltAssay}
-\alias{meltAssay,MicrobiomeExperiment-method}
-\title{meltAssay
-
-Converts a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object into a
-long data.frame which can be used for \code{\link[tidyverse]{tidyverse}}-tools.}
+\alias{meltAssay,TreeSummarizedExperiment-method}
+\title{meltAssay}
 \usage{
-meltAssay(x, colData_choice = "all", abund_values = "counts", ...)
+meltAssay(x, add_col_data = "none", abund_values = "counts", ...)
 
-\S4method{meltAssay}{MicrobiomeExperiment}(x, colData_choice = "all", abund_values = "counts")
+\S4method{meltAssay}{TreeSummarizedExperiment}(x, add_col_data = "none", abund_values = "counts")
 }
 \arguments{
-\item{x}{a numeric matrix or a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+\item{x}{a numeric matrix or a \code{\link[=TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object containing a tree.}
 
-\item{colData_choice}{Choice of colData columns to add. By default it will consider \code{"all"}
-columns. Specific columns can be provided as \code{c("col1", "col2", ...)}. If \code{colData_choice=NA}
-only the specified \code{assayName} will be converted to long data.frame}
+\item{add_col_data}{Choice of colData columns to add. Default="none".}
 
-\item{abund_values}{Default is counts, must be one of "counts", "relabundance", "both".}
+\item{abund_values}{Must be one of the values returned by assayNames.}
 
 \item{...}{optional arguments not used.}
 }
 \value{
-A data.frame.
+A data.frame tbl_df.
 }
 \description{
-meltAssay
-
-Converts a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object into a
+Converts a \code{\link[=TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object into a
 long data.frame which can be used for \code{\link[tidyverse]{tidyverse}}-tools.
 }
+\examples{
+\dontrun{
+data(GlobalPatterns)
+data(GlobalPatterns, package = "MicrobiomeExperiment")
+se <- GlobalPatterns
+se.rel <- relAbundanceCounts(se)
+molten_se <- meltAssay(se.rel,
+  add_col_data = colnames(colData(se.rel)),
+  abund_values = "counts"
+)
+head(molten_se)
+}
+}
+\keyword{Utilities}
