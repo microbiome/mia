@@ -1,123 +1,121 @@
 #' Canonical Correspondance Analysis
-#' 
+#'
 #' These functions perform Canonical Correspondance Analysis on data stored
 #' in a \code{SummarizedExperiment}.
-#' 
-#' @param x a numeric matrix or a
+#'
+#' @param x For \code{calculateCCA} a numeric matrix with columns as samples or
+#'   a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
-#' 
+#'
+#'   For \code{runCCA} a
+#'   \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
+#'   or a derived object.
+#'
+#' @param formula If \code{x} is a
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   a formula can be supplied. Based on the right-hand side of the given formula
+#'   \code{colData} is subset to \code{variables}.
+#'
 #' @param variables a \code{data.frame} or an object coercible to one containing
 #'   the variables to use. Can be missing, which turns the CCA analysis into
-#'   a CA analysis. All variables are used. Please subset, if you want to 
+#'   a CA analysis. All variables are used. Please subset, if you want to
 #'   consider only some of them.
-#'
-#' @param ntop Numeric scalar specifying the number of features with the highest
-#'   variances to use for dimensionality reduction.
-#'
-#' @param subset_row Vector specifying the subset of features to use for
-#'   dimensionality reduction. This can be a character vector of row names, an
-#'   integer vector of row indices or a logical vector.
 #'
 #' @param scale Logical scalar, should the expression values be standardized?
 #'
-#' @param transposed Logical scalar, is x transposed with cells in rows?
-#' 
-#' @param dimred String or integer scalar specifying the existing dimensionality
-#'   reduction results to use.
-#'
-#' @param n_dimred Integer scalar or vector specifying the dimensions to use if
-#'   dimred is specified.
+#' @param exprs_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
 #'
 #' @param name String specifying the name to be used to store the result in the
 #'   reducedDims of the output.
-#' 
-#' @param formula If \code{x} is a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   a formula can be supplied. Based on the right-hand side of the given formula
-#'   \code{colData} is subset to \code{variables}.
 #'
-#' @return 
+#' @param ... additional arguments not used.
+#'
+#' @return
+#' For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
+#' columns
+#'
+#' For \code{runCCA} a modified \code{x} with the results stored in
+#' \code{reducedDim} as the given \code{name}
 #'
 #' @name runCCA
 #' @seealso
 #' For more details on the actual implementation see \code{\link[vegan:cca]{cca}}
 #' and \code{\link[vegan:cca]{rda}}
-#' 
-#' 
+#'
 #' @examples
+#' library(scater)
 #' data("GlobalPatterns",package="MicrobiomeExperiment")
 #' GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
-#' 
+#'
 #' GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 NULL
 
+#' @rdname runCCA
 setGeneric("calculateCCA", signature = c("x"),
            function(x, ...)
                standardGeneric("calculateCCA"))
 
+#' @rdname runCCA
 setGeneric("runCCA", signature = c("x"),
            function(x, ...)
                standardGeneric("runCCA"))
 
+#' @rdname runCCA
 setGeneric("calculateRDA", signature = c("x"),
            function(x, ...)
                standardGeneric("calculateRDA"))
 
+#' @rdname runCCA
 setGeneric("runRDA", signature = c("x"),
            function(x, ...)
                standardGeneric("runRDA"))
 
-.check_dependend_var_name <- function(names, dep_var_name = "data"){
-    if(dep_var_name %in% cn){
-        stop("'",dep_var_name,"' cannot be the name of a independent variable.",
-             " Please rename the variable.", call. = FALSE)
-    }
+.remove_special_functions_from_terms <- function(terms){
+    names(terms) <- terms
+    m <- regexec("^Condition\\(([[:alnum:]]*)\\)$|^([[:alnum:]]*)$", terms)
+    m <- regmatches(terms, m)
+    terms <- vapply(m,
+                    function(n){
+                        n <- n[seq.int(2L,length(n))]
+                        n[n != ""]
+                    },
+                    character(1))
+    terms
 }
 
-#' @importFrom stats terms
-#' @importFrom SummarizedExperiment colData
-.get_variables_from_data_and_formula <- function(x, formula){
-    if(missing(formula)){
-        return(NULL)
-    }
-    cn <- rownames(attr(terms(formula),"factors"))
-    cn <- cn[cn != as.character(formula)[2L]]
-    if(!all(cn %in% colnames(colData(x)))){
-        stop("All variables on the right hand side of 'formula' must be ",
-             "present in colData(x).", call. = FALSE)
-    }
-    .check_dependend_var_name(cn, "data")
-    colData(x)[,cn,drop=FALSE]
+.get_dependent_var_name <- function(formula){
+    rownames(attr(terms(formula), "factors"))[1]
 }
 
 #' @importFrom stats as.formula
-#' @importFrom vegan cca
-.calculate_cca <- function(x, variables, ntop = nrow(x),
-                           subset_row = NULL, scale = TRUE, transposed = FALSE)
-{
+.calculate_cca <- function(x, formula, variables, scale = TRUE){
+    .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    if(!transposed) {
-        x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
-                                 scale = scale)
-    }
-    data <- as.matrix(x)
+    x <- as.matrix(t(x))
     variables <- as.data.frame(variables)
-    .check_dependend_var_name(colnames(variables), "data")
-    if(ncol(variables) > 0L){
-        form <- as.formula(paste0("data ~ ",
-                                  paste(colnames(variables), collapse = " + ")))
-        cca <- vegan::cca(form, data = variables, X = x, scale = scale)
+    if(ncol(variables) > 0L && !missing(formula)){
+        dep_var_name <- .get_dependent_var_name(formula)
+        assign(dep_var_name, x)
+        # recast formula in current environment
+        form <- as.formula(paste(as.character(formula)[c(2,1,3)],
+                                 collapse = " "))
+        cca <- vegan::cca(form, data = variables, scale = scale)
+        X <- cca$CCA
+    } else if(ncol(variables) > 0L) {
+        cca <- vegan::cca(X = x, Y = variables, scale = scale)
         X <- cca$CCA
     } else {
-        cca <- vegan::cca(X = data, scale = scale)
+        cca <- vegan::cca(X = x, scale = scale)
         X <- cca$CA
     }
     ans <- X$u
@@ -128,8 +126,24 @@ setGeneric("runRDA", signature = c("x"),
 }
 
 #' @export
-#' @rdname runDPCoA
+#' @rdname runCCA
 setMethod("calculateCCA", "ANY", .calculate_cca)
+
+#' @importFrom stats terms
+#' @importFrom SummarizedExperiment colData
+.get_variables_from_data_and_formula <- function(x, formula){
+    if(missing(formula)){
+        return(NULL)
+    }
+    terms <- rownames(attr(terms(formula),"factors"))
+    terms <- terms[terms != as.character(formula)[2L]]
+    terms <- .remove_special_functions_from_terms(terms)
+    if(!all(terms %in% colnames(colData(x)))){
+        stop("All variables on the right hand side of 'formula' must be ",
+             "present in colData(x).", call. = FALSE)
+    }
+    colData(x)[,terms,drop=FALSE]
+}
 
 #' @export
 #' @rdname runCCA
@@ -138,20 +152,7 @@ setMethod("calculateCCA", "SummarizedExperiment",
     {
         mat <- assay(x,exprs_values)
         variables <- .get_variables_from_data_and_formula(x, formula)
-        .calculate_cca(mat, variables, transposed = !is.null(dimred), ...)
-    }
-)
-
-#' @export
-#' @rdname runCCA
-setMethod("calculateCCA", "SingleCellExperiment",
-    function(x, formula, ..., exprs_values = "counts", dimred = NULL,
-             n_dimred = NULL)
-    {
-        mat <- .get_mat_from_sce(x, exprs_values = exprs_values,
-                               dimred = dimred, n_dimred = n_dimred)
-        variables <- .get_variables_from_data_and_formula(x, formula)
-        .calculate_cca(mat, variables, transposed = !is.null(dimred), ...)
+        .calculate_cca(mat, formula, variables, ...)
     }
 )
 
@@ -159,7 +160,7 @@ setMethod("calculateCCA", "SingleCellExperiment",
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runCCA", "SingleCellExperiment",
-    function(x, ..., altexp=NULL, name="CCA")
+    function(x, ..., altexp = NULL, name = "CCA")
     {
         if (!is.null(altexp)) {
           y <- altExp(x, altexp)
@@ -171,29 +172,29 @@ setMethod("runCCA", "SingleCellExperiment",
     }
 )
 
-#' @importFrom vegan rda
-.calculate_rda <- function(x, variables, ntop = 500,
-                           subset_row = NULL, scale = TRUE, transposed = FALSE){
+.calculate_rda <- function(x, formula, variables, scale = TRUE){
+    .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    if(!transposed) {
-        x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
-                                 scale = scale)
-    }
-    data <- as.matrix(x)
+    x <- as.matrix(t(x))
     variables <- as.data.frame(variables)
-    .check_dependend_var_name(colnames(variables), "data")
-    if(ncol(variables) > 0L){
-        form <- as.formula(paste0("data ~ ",
-                                  paste(colnames(variables), collapse = " + ")))
-        rda <- vegan::rda(form, data = variables, X = x, scale = scale)
+    if(ncol(variables) > 0L && !missing(formula)){
+        dep_var_name <- .get_dependent_var_name(formula)
+        assign(dep_var_name, x)
+        # recast formula in current environment
+        form <- as.formula(paste(as.character(formula)[c(2,1,3)],
+                                 collapse = " "))
+        rda <- vegan::rda(form, data = variables, scale = scale)
+        X <- rda$CCA
+    } else if(ncol(variables) > 0L) {
+        rda <- vegan::rda(X = x, Y = variables, scale = scale)
         X <- rda$CCA
     } else {
-        rda <- vegan::rda(X = data, scale = scale)
-        X <- rda$CA
+        rda <- vegan::rda(X = x, scale = scale)
+        X <- rda $CA
     }
     ans <- X$u
     attr(ans, "rotation") <- X$v
@@ -203,10 +204,8 @@ setMethod("runCCA", "SingleCellExperiment",
 }
 
 #' @export
-#' @rdname runDPCoA
+#' @rdname runCCA
 setMethod("calculateRDA", "ANY", .calculate_rda)
-
-
 
 #' @export
 #' @rdname runCCA
@@ -215,20 +214,7 @@ setMethod("calculateRDA", "SummarizedExperiment",
     {
         mat <- assay(x, exprs_values)
         variables <- .get_variables_from_data_and_formula(x, formula)
-        .calculate_rda(mat, variables, transposed = !is.null(dimred), ...)
-    }
-)
-
-#' @export
-#' @rdname runCCA
-setMethod("calculateRDA", "SingleCellExperiment",
-    function(x, formula, ..., exprs_values = "counts", dimred = NULL,
-             n_dimred = NULL)
-    {
-        mat <- .get_mat_from_sce(x, exprs_values = exprs_values,
-                               dimred = dimred, n_dimred = n_dimred)
-        variables <- .get_variables_from_data_and_formula(x, formula)
-        .calculate_rda(mat, variables, transposed = !is.null(dimred), ...)
+        .calculate_rda(mat, formula, variables, ...)
     }
 )
 
@@ -236,7 +222,7 @@ setMethod("calculateRDA", "SingleCellExperiment",
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runRDA", "SingleCellExperiment",
-    function(x, ..., altexp=NULL, name="RDA")
+    function(x, ..., altexp = NULL, name = "RDA")
     {
         if (!is.null(altexp)) {
           y <- altExp(x, altexp)

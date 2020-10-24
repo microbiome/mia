@@ -2,84 +2,82 @@
 % Please edit documentation in R/runCCA.R
 \name{runCCA}
 \alias{runCCA}
+\alias{calculateCCA}
+\alias{calculateRDA}
+\alias{runRDA}
+\alias{calculateCCA,ANY-method}
 \alias{calculateCCA,SummarizedExperiment-method}
-\alias{calculateCCA,SingleCellExperiment-method}
 \alias{runCCA,SingleCellExperiment-method}
+\alias{calculateRDA,ANY-method}
 \alias{calculateRDA,SummarizedExperiment-method}
-\alias{calculateRDA,SingleCellExperiment-method}
 \alias{runRDA,SingleCellExperiment-method}
 \title{Canonical Correspondance Analysis}
 \usage{
-\S4method{calculateCCA}{SummarizedExperiment}(x, formula, ..., exprs_values = "counts")
+calculateCCA(x, ...)
 
-\S4method{calculateCCA}{SingleCellExperiment}(
-  x,
-  formula,
-  ...,
-  exprs_values = "counts",
-  dimred = NULL,
-  n_dimred = NULL
-)
+runCCA(x, ...)
+
+calculateRDA(x, ...)
+
+runRDA(x, ...)
+
+\S4method{calculateCCA}{ANY}(x, formula, variables, scale = TRUE)
+
+\S4method{calculateCCA}{SummarizedExperiment}(x, formula, ..., exprs_values = "counts")
 
 \S4method{runCCA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "CCA")
 
-\S4method{calculateRDA}{SummarizedExperiment}(x, formula, ..., exprs_values = "counts")
+\S4method{calculateRDA}{ANY}(x, formula, variables, scale = TRUE)
 
-\S4method{calculateRDA}{SingleCellExperiment}(
-  x,
-  formula,
-  ...,
-  exprs_values = "counts",
-  dimred = NULL,
-  n_dimred = NULL
-)
+\S4method{calculateRDA}{SummarizedExperiment}(x, formula, ..., exprs_values = "counts")
 
 \S4method{runRDA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "RDA")
 }
 \arguments{
-\item{x}{a numeric matrix or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
+\item{x}{For \code{calculateCCA} a numeric matrix with columns as samples or
+a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 
-\item{formula}{If \code{x} is a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+For \code{runCCA} a
+\code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
+or a derived object.}
+
+\item{...}{additional arguments not used.}
+
+\item{formula}{If \code{x} is a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 a formula can be supplied. Based on the right-hand side of the given formula
 \code{colData} is subset to \code{variables}.}
-
-\item{dimred}{String or integer scalar specifying the existing dimensionality
-reduction results to use.}
-
-\item{n_dimred}{Integer scalar or vector specifying the dimensions to use if
-dimred is specified.}
-
-\item{altexp}{String or integer scalar specifying an alternative experiment
-containing the input data.}
-
-\item{name}{String specifying the name to be used to store the result in the
-reducedDims of the output.}
 
 \item{variables}{a \code{data.frame} or an object coercible to one containing
 the variables to use. Can be missing, which turns the CCA analysis into
 a CA analysis. All variables are used. Please subset, if you want to
 consider only some of them.}
 
-\item{ntop}{Numeric scalar specifying the number of features with the highest
-variances to use for dimensionality reduction.}
-
-\item{subset_row}{Vector specifying the subset of features to use for
-dimensionality reduction. This can be a character vector of row names, an
-integer vector of row indices or a logical vector.}
-
 \item{scale}{Logical scalar, should the expression values be standardized?}
 
-\item{transposed}{Logical scalar, is x transposed with cells in rows?}
+\item{exprs_values}{a single \code{character} value for specifying which
+assay to use for calculation.}
+
+\item{altexp}{String or integer scalar specifying an alternative experiment
+containing the input data.}
+
+\item{name}{String specifying the name to be used to store the result in the
+reducedDims of the output.}
 }
 \value{
+For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
+columns
 
+For \code{runCCA} a modified \code{x} with the results stored in
+\code{reducedDim} as the given \code{name}
 }
 \description{
 These functions perform Canonical Correspondance Analysis on data stored
 in a \code{SummarizedExperiment}.
 }
 \examples{
+library(scater)
 data("GlobalPatterns",package="MicrobiomeExperiment")
 GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
