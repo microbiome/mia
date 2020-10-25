@@ -1,3 +1,9 @@
+
+################################################################################
+# internal methods loaded from other packages
+
+.get_mat_from_sce <- scater:::.get_mat_from_sce
+
 ################################################################################
 # integration with other packages
 

@@ -32,7 +32,8 @@ Suggests:
     testthat,
     knitr,
     BiocStyle,
-    breakaway
+    breakaway,
+    vegan
 Remotes:
     github::adw96/breakaway,
     github::FelixErnst/MicrobiomeExperiment,
