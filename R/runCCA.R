@@ -78,7 +78,7 @@ setGeneric("runRDA", signature = c("x"),
 
 .remove_special_functions_from_terms <- function(terms){
     names(terms) <- terms
-    m <- regexec("^Condition\\(([[:alnum:]]*)\\)$|^([[:alnum:]]*)$", terms)
+    m <- regexec("^Condition\\(([^\\(\\)]*)\\)$|^([^\\(\\)]*)$", terms)
     m <- regmatches(terms, m)
     terms <- vapply(m,
                     function(n){
