@@ -11,15 +11,11 @@
 
 \S4method{calculateJSD}{SummarizedExperiment}(x, exprs_values = "counts", transposed = FALSE, ...)
 
-runJSD(x, BPPARAM = SerialParam())
+runJSD(x)
 }
 \arguments{
 \item{x}{a numeric matrix or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
-
-\item{BPPARAM}{A
-\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether the UniFrac calculation should be parallelized.}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -53,5 +49,5 @@ Department of Mathematics
 \author{
 Susan Holmes \email{susan@stat.stanford.edu}.
 Adapted for phyloseq2 by Paul J. McMurdie.
-Adapted for MicrobiomeExperiment by Felix G.M. Ernst
+Adapted for mia by Felix G.M. Ernst
 }
