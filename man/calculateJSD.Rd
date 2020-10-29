@@ -15,8 +15,7 @@ runJSD(x, BPPARAM = SerialParam())
 }
 \arguments{
 \item{x}{a numeric matrix or a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object containing a tree.}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -33,7 +32,7 @@ assay to use for calculation.}
 a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
-This function calculates the ensen-Shannon Divergence (JSD) in a
+This function calculates the Jensen-Shannon Divergence (JSD) in a
 \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
 }
 \examples{

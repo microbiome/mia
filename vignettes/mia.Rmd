@@ -27,39 +27,4 @@ knitr::opts_chunk$set(cache=FALSE,
 
 ```{r load-packages, message=FALSE, warning=FALSE}
 library("mia")
-library(MicrobiomeExperiment)
-library(tidyr)
-library(dplyr)
-library(tibble)
 ```
-
-
-```{r load-data, message=FALSE, warning=FALSE}
-data(GlobalPatterns, package="MicrobiomeExperiment")
-
-se <- GlobalPatterns
-```
-
-```{r melt-assay, message=FALSE, warning=FALSE}
-se.rel <- relAbundanceCounts(se)
-molten_assay <- meltAssay(se.rel, 
-                          add_col_data = colnames(colData(se.rel)), 
-                          abund_values = "counts")
-# head(molten_assay) 
-molten_assay[1:5,1:12]
-colnames(molten_assay)[11]
-```
-
-```{r}
-se.rel <- relAbundanceCounts(se)
-molten_assay <- meltAssay(se.rel, 
-                          add_col_data = colnames(colData(se.rel)), 
-                          abund_values = "counts")
-```
-
-
-
-
-
-
-

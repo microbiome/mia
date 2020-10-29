@@ -2,41 +2,53 @@
 % Please edit documentation in R/meltAssay.R
 \name{meltAssay}
 \alias{meltAssay}
-\alias{meltAssay,TreeSummarizedExperiment-method}
-\title{meltAssay}
+\alias{meltAssay,SummarizedExperiment-method}
+\title{Converts a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
+object into a long data.frame}
 \usage{
-meltAssay(x, add_col_data = "none", abund_values = "counts", ...)
-
-\S4method{meltAssay}{TreeSummarizedExperiment}(x, add_col_data = "none", abund_values = "counts")
+\S4method{meltAssay}{SummarizedExperiment}(
+  x,
+  add_row_data = NULL,
+  add_col_data = NULL,
+  abund_values = "counts",
+  ...
+)
 }
 \arguments{
-\item{x}{a numeric matrix or a \code{\link[=TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+\item{x}{A numeric matrix or \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
 object containing a tree.}
 
-\item{add_col_data}{Choice of colData columns to add. Default="none".}
+\item{add_row_data}{Choice of rowData i.e. taxonomic levels to add, can be a single
+column name in colData or multiple c("col1", "col2",...). Default=NULL.}
+
+\item{add_col_data}{Choice of colData columns to add, can be a single
+column name in colData or multiple c("col1", "col2",...). Default=NULL.}
 
 \item{abund_values}{Must be one of the values returned by assayNames.}
 
 \item{...}{optional arguments not used.}
 }
 \value{
-A data.frame tbl_df.
+A data.frame
 }
 \description{
-Converts a \code{\link[=TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object into a
-long data.frame which can be used for \code{\link[tidyverse]{tidyverse}}-tools.
+Converts a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
+object into a long data.frame which can be used for
+\code{\link[tidyverse]{tidyverse}}-tools.
 }
 \examples{
-\dontrun{
 data(GlobalPatterns)
 data(GlobalPatterns, package = "MicrobiomeExperiment")
 se <- GlobalPatterns
 se.rel <- relAbundanceCounts(se)
 molten_se <- meltAssay(se.rel,
+  add_row_data= TRUE,
   add_col_data = colnames(colData(se.rel)),
   abund_values = "counts"
 )
 head(molten_se)
+
 }
+\author{
+Sudarshan A. Shetty
 }
-\keyword{Utilities}
