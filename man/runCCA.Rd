@@ -78,7 +78,7 @@ in a \code{SummarizedExperiment}.
 }
 \examples{
 library(scater)
-data("GlobalPatterns",package="MicrobiomeExperiment")
+data("GlobalPatterns")
 GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 

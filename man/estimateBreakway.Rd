@@ -113,7 +113,7 @@ Wrapper for several functions implemented by the \code{breakaway} package
 are available.
 }
 \examples{
-data(esophagus, package = "MicrobiomeExperiment")
+data(esophagus)
 esophagus <- estimateBreakaway(esophagus)
 colData(esophagus)$breakaway
 

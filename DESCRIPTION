@@ -5,7 +5,13 @@ Date: 2020-10-18
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
-             comment = c(ORCID = "0000-0001-5064-0928")))
+             comment = c(ORCID = "0000-0001-5064-0928")),
+      person(given = "Nathan D.", family = "Olson", role = c("aut"),
+             email = "nolson@@umiacs.umd.edu"),
+      person(given = "Levi", family = "Waldron", role = c("aut")),
+      person(given = "Marcel", family = "Ramos", role = c("aut")),
+      person(given = "Héctor", family = "Corrada Bravo", role = c("aut")),
+      person(given = "Jayaram", family = "Kancherla", role=c("aut")))
 Title: Microbiome analysis
 Description: 
     mia implements tools for microbiome analysis.
@@ -17,27 +23,29 @@ Depends:
     R (>= 4.0),
     SummarizedExperiment,
     SingleCellExperiment,
-    TreeSummarizedExperiment,
-    MicrobiomeExperiment
+    TreeSummarizedExperiment
 Imports:
     methods,
     S4Vectors,
     IRanges,
+    Biostrings,
     BiocParallel,
     DelayedArray,
+    stringr,
+    scuttle,
     scater,
-    SEtup,
     ape
 Suggests:
     testthat,
     knitr,
     BiocStyle,
     breakaway,
-    vegan
+    vegan,
+    phyloseq,
+    dada2,
+    biomformat
 Remotes:
-    github::adw96/breakaway,
-    github::FelixErnst/MicrobiomeExperiment,
-    github::FelixErnst/SEtup
+    github::adw96/breakaway
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

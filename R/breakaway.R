@@ -35,7 +35,7 @@
 #' @name estimateBreakway
 #'
 #' @examples
-#' data(esophagus, package = "MicrobiomeExperiment")
+#' data(esophagus)
 #' esophagus <- estimateBreakaway(esophagus)
 #' colData(esophagus)$breakaway
 #'

@@ -3,6 +3,7 @@
 # internal methods loaded from other packages
 
 .get_mat_from_sce <- scater:::.get_mat_from_sce
+.get_mat_for_reddim <- scater:::.get_mat_for_reddim
 
 ################################################################################
 # integration with other packages
@@ -58,4 +59,19 @@
 
 .safe_deparse <- function (expr, ...) {
   paste0(deparse(expr, width.cutoff = 500L, ...), collapse = "")
+}
+
+################################################################################
+# checks
+
+#' @importFrom SummarizedExperiment assays
+.check_abund_values <- function(abund_values, x,
+                                name = .get_name_in_parent(abund_values)){
+    if(!.is_non_empty_string(abund_values)){
+        stop("'",name,"' must be a single non-empty character value.",
+             call. = FALSE)
+    }
+    if(!(abund_values %in% names(assays(x)))){
+        stop("'",name,"' must be a valid name of assays(x)", call. = FALSE)
+    }
 }

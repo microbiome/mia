@@ -1,15 +1,15 @@
 #' Calculate weighted or unweighted (Fast) UniFrac distance for all sample pairs
 #'
 #' This function calculates the (Fast) UniFrac distance for all sample-pairs
-#' in a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
-#' 
-#' Please not that if \code{calculateUniFrac} is used as a \code{FUN} for 
+#' in a \code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
+#'
+#' Please not that if \code{calculateUniFrac} is used as a \code{FUN} for
 #' \code{runMDS2}, the argument \code{ntop} has to be set to \code{nrow(x)}.
 #'
 #' @param x a numeric matrix or a
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   \code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 #'   object containing a tree.
-#'   
+#'
 #'   Please  note that \code{runUniFrac} expects a matrix with samples per row
 #'   and not per column. This was done, to be compatible with other distance
 #'   calculations such as \code{\link[stats:dist]{dist}}.
@@ -72,14 +72,12 @@
 #'
 #' @export
 #'
-#' @importFrom SEtup calculateDistance
-#'
 #' @author
 #' Paul J. McMurdie.
 #' Adapted for MicrobiomeExperiment by Felix G.M. Ernst
 #'
 #' @examples
-#' data(esophagus, package="MicrobiomeExperiment")
+#' data(esophagus)
 #' calculateUniFrac(esophagus, weighted = FALSE)
 #' calculateUniFrac(esophagus, weighted = TRUE)
 #' calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)
@@ -110,7 +108,6 @@ setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
 #' @rdname calculateUniFrac
 #'
 #' @importFrom SummarizedExperiment assay
-#' @importFrom TreeSummarizedExperiment rowTree colTree
 #'
 #' @export
 setMethod("calculateUniFrac",

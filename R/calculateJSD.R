@@ -1,7 +1,8 @@
 #' Calculate the Jensen-Shannon Divergence
 #'
 #' This function calculates the Jensen-Shannon Divergence (JSD) in a
-#' \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' object.
 #'
 #' @param x a numeric matrix or a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
@@ -37,10 +38,8 @@
 #'
 #' @export
 #'
-#' @importFrom SEtup calculateDistance
-#'
 #' @examples
-#' data(enterotype, package="MicrobiomeExperiment")
+#' data(enterotype)
 #' calculateJSD(enterotype)
 #' enterotype <- runMDS2(enterotype, FUN = calculateJSD, name = "JSD")
 #' reducedDim(enterotype)
