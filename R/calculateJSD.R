@@ -34,7 +34,7 @@
 #' @author
 #' Susan Holmes \email{susan@@stat.stanford.edu}.
 #' Adapted for phyloseq2 by Paul J. McMurdie.
-#' Adapted for MicrobiomeExperiment by Felix G.M. Ernst
+#' Adapted for mia by Felix G.M. Ernst
 #'
 #' @export
 #'
