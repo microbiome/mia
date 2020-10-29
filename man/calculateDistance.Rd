@@ -51,7 +51,3 @@ se <- SummarizedExperiment(assays = list(counts = mat),
 #
 calculateDistance(se)
 }
-\seealso{
-\itemize{
-}
-}

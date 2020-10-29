@@ -72,7 +72,7 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-.JSDpair <- function(x, y){
+.JSD <- function(x, y){
     # Function to compute Shannon-Jensen Divergence
     # x and y are the frequencies for the same p categories
     # Assumes relative abundance transformation already happened (for efficiency)
@@ -86,7 +86,7 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
     P1[!is.finite(P1)] <- 0
     P2[!is.finite(P2)] <- 0
     d <- (P1+P2)/2
-    return(sum(d, na.rm = TRUE))
+    return(rowSums(d, na.rm = TRUE))
 }
 
 #' @rdname calculateJSD
@@ -112,19 +112,15 @@ runJSD <- function(x, BPPARAM = SerialParam()){
     # create N x 2 matrix of all pairwise combinations of samples.
     spn <- utils::combn(rownames(x), 2, simplify = FALSE)
     #
-    FUN <- function(A, B, x){
-      .JSDpair(x[A,], x[B,])
-    }
     A <- vapply(spn,"[",character(1),1L)
     B <- vapply(spn,"[",character(1),2L)
-    distlist <- BiocParallel::bpmapply(FUN, A, B, MoreArgs = list(x = x),
-                                       BPPARAM = BPPARAM)
+    distlist <- .JSD(x[A,], x[B,])
     # reformat
     # initialize distmat with NAs
     distmat <- matrix(NA_real_, nrow(x), nrow(x))
     rownames(distmat) <- colnames(distmat) <- rownames(x)
     matIndices <- matrix(c(B, A), ncol = 2)
-    distmat[matIndices] <- unlist(distlist)
+    distmat[matIndices] <- distlist
     #
     stats::as.dist(distmat)
 }
