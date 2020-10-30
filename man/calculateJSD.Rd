@@ -7,7 +7,7 @@
 \alias{runJSD}
 \title{Calculate the Jensen-Shannon Divergence}
 \usage{
-\S4method{calculateJSD}{ANY}(x, BPPARAM = SerialParam())
+\S4method{calculateJSD}{ANY}(x)
 
 \S4method{calculateJSD}{SummarizedExperiment}(x, exprs_values = "counts", transposed = FALSE, ...)
 
