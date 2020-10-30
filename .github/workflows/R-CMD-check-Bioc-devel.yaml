@@ -18,9 +18,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: '4.1'}
-          - {os: macOS-latest, r: '4.1'}
-          - {os: ubuntu-18.04, r: '4.1', rspm: "https://demo.rstudiopm.com/all/__linux__/bionic/latest"}
+          - {os: windows-latest, r: '4.0'}
+          - {os: macOS-latest, r: '4.0'}
+          - {os: ubuntu-18.04, r: '4.0', rspm: "https://demo.rstudiopm.com/all/__linux__/bionic/latest"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -40,7 +40,7 @@ jobs:
         run: |
           install.packages(c('remotes', 'BiocManager'))
           remotes::install_github('r-hub/sysreqs')
-          BiocManager::install(version = "devel", ask = FALSE)
+          BiocManager::install(version = "3.12", ask = FALSE)
         shell: Rscript {0}
 
       - name: Query dependencies
