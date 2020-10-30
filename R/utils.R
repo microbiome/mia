@@ -5,6 +5,7 @@
 .get_mat_from_sce <- scater:::.get_mat_from_sce
 .check_abund_values <- MicrobiomeExperiment:::.check_abund_values
 
+
 ################################################################################
 # integration with other packages
 
