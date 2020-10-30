@@ -8,4 +8,6 @@
 NULL
 
 #' @import methods
+#' @importFrom dplyr %>%
+#' @importFrom rlang sym :=
 NULL
