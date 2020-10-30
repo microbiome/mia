@@ -90,20 +90,9 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
 #'
 #' @importFrom utils combn
 #' @importFrom stats as.dist
-#' @importFrom BiocParallel register bplapply bpstart bpstop
-#' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
 runJSD <- function(x){
-    #
-    old <- getAutoBPPARAM()
-    setAutoBPPARAM(BPPARAM)
-    on.exit(setAutoBPPARAM(old))
-    if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
-        bpstart(BPPARAM)
-        on.exit(bpstop(BPPARAM), add = TRUE)
-    }
-    #
     # Coerce to relative abundance by sample (row)
     x <- sweep(x, 1L, rowSums(x), "/")
     # create N x 2 matrix of all pairwise combinations of samples.
