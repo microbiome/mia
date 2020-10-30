@@ -49,7 +49,7 @@ setGeneric("calculateJSD", signature = c("x"),
 #' @rdname calculateJSD
 #' @export
 setMethod("calculateJSD", signature = c(x = "ANY"),
-    function(x, BPPARAM = SerialParam()){
+    function(x){
         calculateDistance(x, FUN = runJSD)
     }
 )
