@@ -8,5 +8,6 @@
 NULL
 
 #' @import methods
-#' @import MicrobiomeExperiment
+#' @importFrom dplyr %>%
+#' @importFrom rlang sym :=
 NULL
