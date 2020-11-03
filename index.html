@@ -71,20 +71,16 @@
 <!-- badges: start -->
 
 <!-- badges: end -->
-<p>This project is aimed to provide functions and workflows examples for analyses of microbiome data.</p>
-<p>Currently this includes:</p>
+<p>This project is aimed to provide functions and workflows examples for analyses of microbiome data. The main class for working with microbiome data in this package are <code>TreeSummarizedExperiment</code> and <code>MicrobiomeExperiment</code>.</p>
+<p>Currently following things are implemented:</p>
 <ul>
+<li>data wrangling functions (<code>agglomerate*</code>, <code>merge*</code>, <code>meltAssay</code>)</li>
 <li>JSD and UniFrac distance calculation ported from <code>phyloseq</code> to work with <code>MicrobiomeExperiment</code> objects</li>
-</ul>
-</div>
-<div id="todo" class="section level1">
-<h1 class="hasAnchor">
-<a href="#todo" class="anchor"></a>ToDo</h1>
-<p>In this package</p>
-<ul>
-<li>alpha and beta diversity measure</li>
-<li>plotting functions</li>
-<li>…</li>
+<li>CCA analysis via <code>vegan</code> package</li>
+<li>Bray-Curtis dissimilarity via <code>vegan</code> package</li>
+<li>MDS via the <code>scater</code> package</li>
+<li>alpha diversity calculation via the <code>breakaway</code> package</li>
+<li>import functions for <code>biom</code> data, <code>DADA2</code> objects and <code>phyloseq</code> objects</li>
 </ul>
 </div>
 <div id="contribution" class="section level1">
@@ -124,8 +120,8 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/lcolladotor/biocthis/actions"><img src="https://github.com/lcolladotor/biocthis/workflows/R-CMD-check-bioc/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/gh/lcolladotor/biocthis?branch=master"><img src="https://codecov.io/gh/lcolladotor/biocthis/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://github.com/FelixErnst/mia/actions"><img src="https://github.com/FelixErnst/mia/workflows/R-CMD-check-Bioc-devel/badge.svg" alt="R-CMD-check-Bioc-devel"></a></li>
+<li><a href="https://codecov.io/gh/FelixErnst/mia?branch=master"><img src="https://codecov.io/gh/FelixErnst/mia/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 </div>
