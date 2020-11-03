@@ -52,7 +52,7 @@ Suggests:
     dada2,
     biomformat
 Remotes:
-    github::adw96/breakaway
+    github::adw96/breakaway,
     github::FelixErnst/MicrobiomeExperiment
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
