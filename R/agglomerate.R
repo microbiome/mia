@@ -26,6 +26,16 @@
 #'   \code{rowTree()} also be agglomerated? (Default:
 #'   \code{agglomerateTree = FALSE})
 #'
+#' @param ... arguments passed to \code{agglomerateByRank} function for
+#'   \code{SummarizedExperiment} objects.
+#'
+#' @param altexp String or integer scalar specifying an alternative experiment
+#'   containing the input data.
+#'
+#' @param strip_altexp \code{TRUE} or \code{FALSE}: Should alternative
+#'   experiments be removed prior to agglomeration? This prohibits to many
+#'   nested alternative experiments by default (default:
+#'   \code{strip_altexp = TRUE})
 #'
 #' @return A taxonomically-agglomerated, optionally-pruned object of the same
 #'   class \code{x}.
@@ -63,9 +73,7 @@ NULL
 
 setGeneric("agglomerateByRank",
            signature = "x",
-           function(x, rank = taxonomyRanks(x)[1L], onRankOnly = FALSE,
-                    na.rm = FALSE, empty.fields = c(NA, "", " ", "\t", "-"),
-                    agglomerateTree = FALSE)
+           function(x, ...)
                standardGeneric("agglomerateByRank"))
 
 
@@ -129,5 +137,25 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         # adjust rownames
         rownames(x) <- .get_taxonomic_label(x, empty.fields)
         x
+    }
+)
+
+#' @rdname agglomerate-methods
+#' @importFrom SingleCellExperiment altExp altExp<-
+#' @export
+setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
+    function(x, ..., altexp = NULL, strip_altexp = TRUE){
+        # input check
+        if(!.is_a_bool(strip_altexp)){
+          stop("'strip_altexp' mus be TRUE or FALSE.", call. = FALSE)
+        }
+        #
+        if (!is.null(altexp)) {
+          x <- altExp(x, altexp)
+        }
+        if(strip_altexp && is(x, "SingleCellExperiment")){
+          altExps(x) <- NULL
+        }
+        callNextMethod(x, ...)
     }
 )

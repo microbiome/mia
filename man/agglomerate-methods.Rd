@@ -4,6 +4,7 @@
 \alias{agglomerate-methods}
 \alias{agglomerateByRank,SummarizedExperiment-method}
 \alias{agglomerateByRank}
+\alias{agglomerateByRank,SingleCellExperiment-method}
 \title{Agglomerate taxa of the same type.}
 \usage{
 \S4method{agglomerateByRank}{SummarizedExperiment}(
@@ -14,6 +15,8 @@
   empty.fields = c(NA, "", " ", "\\t", "-"),
   agglomerateTree = FALSE
 )
+
+\S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 }
 \arguments{
 \item{x}{\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
@@ -37,6 +40,17 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \item{agglomerateTree}{\code{TRUE} or \code{FALSE}: should to
 \code{rowTree()} also be agglomerated? (Default:
 \code{agglomerateTree = FALSE})}
+
+\item{...}{arguments passed to \code{agglomerateByRank} function for
+\code{SummarizedExperiment} objects.}
+
+\item{altexp}{String or integer scalar specifying an alternative experiment
+containing the input data.}
+
+\item{strip_altexp}{\code{TRUE} or \code{FALSE}: Should alternative
+experiments be removed prior to agglomeration? This prohibits to many
+nested alternative experiments by default (default:
+\code{strip_altexp = TRUE})}
 }
 \value{
 A taxonomically-agglomerated, optionally-pruned object of the same
