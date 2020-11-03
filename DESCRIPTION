@@ -1,15 +1,22 @@
 Package: mia
 Type: Package
-Version: 0.0.0.9000
-Date: 2020-10-29
+Version: 0.0.0.9001
+Date: 2020-11-03
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
              comment = c(ORCID = "0000-0001-5064-0928")),
-      person("Sudarshan", "Shetty", role = "aut"))
+      person(given = "Sudarshan", family = "Shetty", role = c("aut")),
+      person(given = "Nathan D.", family = "Olson", role = c("ctb"),
+             email = "nolson@@umiacs.umd.edu"),
+      person(given = "Levi", family = "Waldron", role = c("ctb")),
+      person(given = "Marcel", family = "Ramos", role = c("ctb")),
+      person(given = "Héctor", family = "Corrada Bravo", role = c("ctb")),
+      person(given = "Jayaram", family = "Kancherla", role=c("ctb")))
 Title: Microbiome analysis
 Description: 
-    mia implements tools for microbiome analysis.
+    mia implements tools for microbiome analysis. Data wrangling and analysis
+    are the main scope of this package.
 biocViews: Microbiome, Software
 License: Artistic-2.0
 Encoding: UTF-8
@@ -24,10 +31,12 @@ Imports:
     methods,
     S4Vectors,
     IRanges,
+    Biostrings,
     BiocParallel,
     DelayedArray,
+    stringr,
+    scuttle,
     scater,
-    SEtup,
     ape,
     rlang,
     dplyr,
@@ -38,11 +47,13 @@ Suggests:
     knitr,
     BiocStyle,
     breakaway,
-    vegan
+    vegan,
+    phyloseq,
+    dada2,
+    biomformat
 Remotes:
     github::adw96/breakaway,
-    github::FelixErnst/MicrobiomeExperiment,
-    github::FelixErnst/SEtup
+    github::FelixErnst/MicrobiomeExperiment
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

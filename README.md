@@ -1,5 +1,15 @@
 # mia - Microbiome analysis
 
+<!-- badges: start -->
+
+[![R build
+status](https://github.com/lcolladotor/biocthis/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/lcolladotor/biocthis/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/lcolladotor/biocthis/branch/master/graph/badge.svg)](https://codecov.io/gh/lcolladotor/biocthis?branch=master)
+
+<!-- badges: end -->
+
+
 This project is aimed to provide functions and workflows examples for analyses
 of microbiome data.
 

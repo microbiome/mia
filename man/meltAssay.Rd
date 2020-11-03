@@ -56,7 +56,7 @@ a column \dQuote{SampleID} with the colnames, if set
 \description{
 Converts a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
 object into a long data.frame which can be used for
-\code{\link[tidyverse]{tidyverse}}-tools.
+\code{\link[tidyverse:tidyverse-package]{tidyverse}}-tools.
 }
 \details{
 If the \code{colData} contains a column \dQuote{SampleID} or the

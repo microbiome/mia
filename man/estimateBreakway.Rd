@@ -119,7 +119,7 @@ Other diversity measures implemented by breakaway are also available,
 such as \code{\link[=estimateDiversity]{Shannon}}.
 }
 \examples{
-data(esophagus, package = "MicrobiomeExperiment")
+data(esophagus)
 esophagus <- as(esophagus, "MicrobiomeExperiment")
 esophagus <- estimateBreakaway(esophagus)
 colData(esophagus)$breakaway

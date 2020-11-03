@@ -1,8 +1,16 @@
-context("distance")
-test_that("distance", {
-    library(SEtup)
-    data("enterotype", package = "MicrobiomeExperiment")
-    data("esophagus", package = "MicrobiomeExperiment")
+context("calculateDistance")
+test_that("calculateDistance", {
+    mat <- matrix(1:60, nrow = 6)
+    df <- DataFrame(n = c(1:6))
+    se <- SummarizedExperiment(assays = list(counts = mat),
+                               rowData = df)
+    # default
+    actual <- calculateDistance(se)
+    actual2 <- dist(t(assay(se,"counts")))
+    expect_true(all(actual == actual2))
+    #
+    data("enterotype")
+    data("esophagus")
     # default
     actual <- calculateDistance(enterotype)
     expect_equal(actual[1], 0.22382452, tolerance = .0000001)
