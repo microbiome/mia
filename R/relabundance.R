@@ -2,11 +2,11 @@
 #'
 #' \code{relabundance} is a getter/setter for relative abundance stored in the
 #' assay slot \sQuote{relabundance} of a
-#' \code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+#' \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 #' object
 #'
 #' @param x a
-#'   \code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+#'   \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 #'   object
 #'
 #' @param abund_values A single character value for selecting the

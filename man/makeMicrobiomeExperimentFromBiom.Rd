@@ -16,12 +16,12 @@ makeMicrobiomeExperimentFromBiom(obj)
 }
 \value{
 An object of class
-\code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+\code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 }
 \description{
 For convenciance a few functions are available to convert data from a
 \sQuote{biom} file or object into a
-\code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+\code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 }
 \examples{
 if(requireNamespace("biomformat")) {

@@ -4,11 +4,14 @@
 #'
 #' @name mia-package
 #' @docType package
-#' @seealso \link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment} class
+#' @seealso \link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment} class
 NULL
 
 #' @import methods
+#' @import MicrobiomeExperiment
 #' @import TreeSummarizedExperiment
+#' @importFrom dplyr %>%
+#' @importFrom rlang sym :=
 NULL
 
 #' @title MicrobiomeExperiment datasets

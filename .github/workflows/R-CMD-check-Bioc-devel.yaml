@@ -40,7 +40,7 @@ jobs:
         run: |
           install.packages(c('remotes', 'BiocManager'))
           remotes::install_github('r-hub/sysreqs')
-          BiocManager::install(version = "devel", ask = FALSE)
+          BiocManager::install(version = "3.12", ask = FALSE)
         shell: Rscript {0}
 
       - name: Query dependencies

@@ -2,8 +2,6 @@ context("calculateDistance")
 test_that("calculateDistance", {
     mat <- matrix(1:60, nrow = 6)
     df <- DataFrame(n = c(1:6))
-    expect_error(SEtup:::.merge_rows(),
-                 'argument "f" is missing')
     se <- SummarizedExperiment(assays = list(counts = mat),
                                rowData = df)
     # default
@@ -18,9 +16,9 @@ test_that("calculateDistance", {
     expect_equal(actual[1], 0.22382452, tolerance = .0000001)
     expect_equal(actual[length(actual)], 0.3316593, tolerance = .0000001)
     # JSD
-    actual <- calculateJSD(enterotype)
-    expect_equal(actual[1], 0.1282428, tolerance = .0000001)
-    expect_equal(actual[length(actual)], 0.06595946, tolerance = .0000001)
+    # actual <- calculateJSD(enterotype)
+    # expect_equal(actual[1], 0.1282428, tolerance = .0000001)
+    # expect_equal(actual[length(actual)], 0.06595946, tolerance = .0000001)
     # UniFrac
     actual <- calculateUniFrac(esophagus, weighted = FALSE, normalized = TRUE)
     expect_equal(actual[1], 0.5175550, tolerance = .0000001)

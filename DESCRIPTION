@@ -1,20 +1,22 @@
 Package: mia
 Type: Package
-Version: 0.0.0.9000
-Date: 2020-10-18
+Version: 0.0.0.9001
+Date: 2020-11-03
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
              comment = c(ORCID = "0000-0001-5064-0928")),
-      person(given = "Nathan D.", family = "Olson", role = c("aut"),
+      person(given = "Sudarshan", family = "Shetty", role = c("aut")),
+      person(given = "Nathan D.", family = "Olson", role = c("ctb"),
              email = "nolson@@umiacs.umd.edu"),
-      person(given = "Levi", family = "Waldron", role = c("aut")),
-      person(given = "Marcel", family = "Ramos", role = c("aut")),
-      person(given = "Héctor", family = "Corrada Bravo", role = c("aut")),
-      person(given = "Jayaram", family = "Kancherla", role=c("aut")))
+      person(given = "Levi", family = "Waldron", role = c("ctb")),
+      person(given = "Marcel", family = "Ramos", role = c("ctb")),
+      person(given = "Héctor", family = "Corrada Bravo", role = c("ctb")),
+      person(given = "Jayaram", family = "Kancherla", role=c("ctb")))
 Title: Microbiome analysis
 Description: 
-    mia implements tools for microbiome analysis.
+    mia implements tools for microbiome analysis. Data wrangling and analysis
+    are the main scope of this package.
 biocViews: Microbiome, Software
 License: Artistic-2.0
 Encoding: UTF-8
@@ -23,7 +25,8 @@ Depends:
     R (>= 4.0),
     SummarizedExperiment,
     SingleCellExperiment,
-    TreeSummarizedExperiment
+    TreeSummarizedExperiment,
+    MicrobiomeExperiment
 Imports:
     methods,
     S4Vectors,
@@ -34,7 +37,11 @@ Imports:
     stringr,
     scuttle,
     scater,
-    ape
+    ape,
+    rlang,
+    dplyr,
+    tibble,
+    tidyr
 Suggests:
     testthat,
     knitr,
@@ -46,6 +53,7 @@ Suggests:
     biomformat
 Remotes:
     github::adw96/breakaway
+    github::FelixErnst/MicrobiomeExperiment
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

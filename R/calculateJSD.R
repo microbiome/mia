@@ -10,10 +10,6 @@
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the UniFrac calculation should be parallelized.
-#'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
 #' @param ... optional arguments not used.
@@ -52,8 +48,8 @@ setGeneric("calculateJSD", signature = c("x"),
 #' @rdname calculateJSD
 #' @export
 setMethod("calculateJSD", signature = c(x = "ANY"),
-    function(x, BPPARAM = SerialParam()){
-        calculateDistance(x, FUN = runJSD, BPPARAM = BPPARAM)
+    function(x){
+        calculateDistance(x, FUN = runJSD)
     }
 )
 
@@ -93,20 +89,9 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
 #'
 #' @importFrom utils combn
 #' @importFrom stats as.dist
-#' @importFrom BiocParallel register bplapply bpstart bpstop
-#' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runJSD <- function(x, BPPARAM = SerialParam()){
-    #
-    old <- getAutoBPPARAM()
-    setAutoBPPARAM(BPPARAM)
-    on.exit(setAutoBPPARAM(old))
-    if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
-      bpstart(BPPARAM)
-      on.exit(bpstop(BPPARAM), add = TRUE)
-    }
-    #
+runJSD <- function(x){
     # Coerce to relative abundance by sample (row)
     x <- sweep(x, 1L, rowSums(x), "/")
     # create N x 2 matrix of all pairwise combinations of samples.

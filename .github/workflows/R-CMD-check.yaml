@@ -69,7 +69,6 @@ jobs:
       - name: Install R dependencies
         run: |
           remotes::install_github("adw96/breakaway", repos = BiocManager::repositories())
-          remotes::install_github("FelixErnst/SEtup", repos = BiocManager::repositories())
           remotes::install_github("FelixErnst/MicrobiomeExperiment", repos = BiocManager::repositories())
           BiocManager::install(remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())$package)
           remotes::install_cran(c("rcmdcheck","covr","magick"))

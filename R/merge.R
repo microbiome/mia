@@ -7,7 +7,7 @@
 #'
 #' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}},
 #'   a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   or a \code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+#'   or a \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 #'
 #' @param f A factor for merging. Must be the same length as
 #'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be

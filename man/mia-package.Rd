@@ -8,5 +8,5 @@
 \code{mia} implements tools for microbiome analysis
 }
 \seealso{
-\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment} class
+\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment} class
 }

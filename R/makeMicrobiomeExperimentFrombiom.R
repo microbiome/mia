@@ -2,12 +2,12 @@
 #'
 #' For convenciance a few functions are available to convert data from a
 #' \sQuote{biom} file or object into a
-#' \code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+#' \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 #'
 #' @param file biom file location
 #'
 #' @return An object of class
-#'   \code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+#'   \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 #'
 #' @name makeMicrobiomeExperimentFromBiom
 #'

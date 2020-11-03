@@ -23,7 +23,7 @@ relAbundanceCounts(x, abund_values = "counts", name = "relabundance")
 }
 \arguments{
 \item{x}{a
-\code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+\code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 object}
 
 \item{...}{optional arguments not used currently.}
@@ -41,7 +41,7 @@ to stor the calculated relative abundance.}
 \description{
 \code{relabundance} is a getter/setter for relative abundance stored in the
 assay slot \sQuote{relabundance} of a
-\code{\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+\code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 object
 }
 \examples{

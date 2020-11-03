@@ -13,13 +13,13 @@ test_that("agglomerate", {
                           n = 7:17)
     rowData(xtse) <- tax_data
     # mergeRows for agglomerateByRank
-    tax_factors <- MicrobiomeExperiment:::.get_tax_groups(xtse, col = 2)
+    tax_factors <- mia:::.get_tax_groups(xtse, col = 2)
     actual_family <- actual <- mergeRows(xtse, f = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(8,10))
     expect_equal(assays(actual)$mat[8,1],c(8))
     expect_equal(assays(actual)$mat[7,1],c(16))
-    tax_factors <- MicrobiomeExperiment:::.get_tax_groups(xtse, col = 1)
+    tax_factors <- mia:::.get_tax_groups(xtse, col = 1)
     actual_phylum <- actual <- mergeRows(xtse, f = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(3,10))
