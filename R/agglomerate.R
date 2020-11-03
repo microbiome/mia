@@ -26,6 +26,9 @@
 #'   \code{rowTree()} also be agglomerated? (Default:
 #'   \code{agglomerateTree = FALSE})
 #'
+#' @param ... arguments passed to \code{agglomerateByRank} function for
+#'   \code{SummarizedExperiment} objects.
+#'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
 #'
@@ -33,7 +36,6 @@
 #'   experiments be removed prior to agglomeration? This prohibits to many
 #'   nested alternative experiments by default (default:
 #'   \code{strip_altexp = TRUE})
-#'
 #'
 #' @return A taxonomically-agglomerated, optionally-pruned object of the same
 #'   class \code{x}.
@@ -139,6 +141,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname agglomerate-methods
+#' @importFrom SingleCellExperiment altExp altExp<-
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
     function(x, ..., altexp = NULL, strip_altexp = TRUE){

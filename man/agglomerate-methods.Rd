@@ -41,6 +41,9 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \code{rowTree()} also be agglomerated? (Default:
 \code{agglomerateTree = FALSE})}
 
+\item{...}{arguments passed to \code{agglomerateByRank} function for
+\code{SummarizedExperiment} objects.}
+
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
