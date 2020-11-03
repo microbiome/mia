@@ -56,8 +56,8 @@ jobs:
       matrix:
         config:
           - { os: ubuntu-latest, r: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: macOS-latest, r: 'devel'}
-          - { os: windows-latest, r: 'devel'}
+          - { os: macOS-latest, r: 'devel', bioc: 'devel'}
+          - { os: windows-latest, r: 'devel', bioc: 'devel'}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
@@ -144,12 +144,14 @@ jobs:
         shell: Rscript {0}
 
       - name: Install BiocManager
+        if: matrix.config.cont == null
         run: |
           message(paste('****', Sys.time(), 'installing BiocManager ****'))
           remotes::install_cran("BiocManager")
         shell: Rscript {0}
 
       - name: Set BiocVersion
+        if: matrix.config.cont == null
         run: |
           BiocManager::install(version = "devel", ask = FALSE)
         shell: Rscript {0}
