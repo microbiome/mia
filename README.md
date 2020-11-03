@@ -2,28 +2,25 @@
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/lcolladotor/biocthis/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/lcolladotor/biocthis/actions)
+[![R-CMD-check-Bioc-devel](https://github.com/FelixErnst/mia/workflows/R-CMD-check-Bioc-devel/badge.svg)](https://github.com/FelixErnst/mia/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/lcolladotor/biocthis/branch/master/graph/badge.svg)](https://codecov.io/gh/lcolladotor/biocthis?branch=master)
+coverage](https://codecov.io/gh/FelixErnst/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/FelixErnst/mia?branch=master)
 
 <!-- badges: end -->
 
-
 This project is aimed to provide functions and workflows examples for analyses
-of microbiome data.
+of microbiome data. The main class for working with microbiome data in this
+package are `TreeSummarizedExperiment` and `MicrobiomeExperiment`.
 
-Currently this includes:
+Currently following things are implemented:
 
+- data wrangling functions (`agglomerate*`, `merge*`, `meltAssay`)
 - JSD and UniFrac distance calculation ported from `phyloseq` to work with `MicrobiomeExperiment` objects
-
-# ToDo
-
-In this package
-
-- alpha and beta diversity measure
-- plotting functions
-- ...
+- CCA analysis via `vegan` package
+- Bray-Curtis dissimilarity via `vegan` package
+- MDS via the `scater` package
+- alpha diversity calculation via the `breakaway` package
+- import functions for `biom` data, `DADA2` objects and `phyloseq` objects
 
 # Contribution
 
