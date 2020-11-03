@@ -141,18 +141,18 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
-          function(x, ..., altexp = NULL, strip_altexp = TRUE){
-              # input check
-              if(!.is_a_bool(strip_altexp)){
-                  stop("'strip_altexp' mus be TRUE or FALSE.", call. = FALSE)
-              }
-              #
-              if (!is.null(altexp)) {
-                  x <- altExp(x, altexp)
-              }
-              if(strip_altexp && is(x, "SingleCellExperiment")){
-                  altExps(x) <- NULL
-              }
-              callNextMethod(x, ...)
-          }
+    function(x, ..., altexp = NULL, strip_altexp = TRUE){
+        # input check
+        if(!.is_a_bool(strip_altexp)){
+          stop("'strip_altexp' mus be TRUE or FALSE.", call. = FALSE)
+        }
+        #
+        if (!is.null(altexp)) {
+          x <- altExp(x, altexp)
+        }
+        if(strip_altexp && is(x, "SingleCellExperiment")){
+          altExps(x) <- NULL
+        }
+        callNextMethod(x, ...)
+    }
 )
