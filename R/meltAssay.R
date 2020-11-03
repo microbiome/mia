@@ -3,7 +3,7 @@
 #'
 #' Converts a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
 #' object into a long data.frame which can be used for
-#' \code{\link[tidyverse]{tidyverse}}-tools.
+#' \code{\link[tidyverse:tidyverse-package]{tidyverse}}-tools.
 #'
 #' @details
 #' If the \code{colData} contains a column \dQuote{SampleID} or the
@@ -163,7 +163,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
              add_col_data = NULL,
              abund_values = "counts", ...) {
         # input check abund_values
-        MicrobiomeExperiment:::.check_abund_values(abund_values, x)
+        .check_abund_values(abund_values, x)
         # check selected colnames
         add_row_data <- .norm_add_row_data(add_row_data, x)
         add_col_data <- .norm_add_col_data(add_col_data, x)

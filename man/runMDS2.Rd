@@ -2,9 +2,27 @@
 % Please edit documentation in R/runMDS2.R
 \name{runMDS2}
 \alias{runMDS2}
+\alias{calculateMDS2}
+\alias{calculateMDS2,ANY-method}
+\alias{calculateMDS2,SummarizedExperiment-method}
 \alias{calculateMDS2,SingleCellExperiment-method}
 \title{Perform MDS on sample-level data}
 \usage{
+calculateMDS2(x, ...)
+
+\S4method{calculateMDS2}{ANY}(
+  x,
+  FUN = calculateDistance,
+  ncomponents = 2,
+  ntop = 500,
+  subset_row = NULL,
+  scale = FALSE,
+  transposed = FALSE,
+  ...
+)
+
+\S4method{calculateMDS2}{SummarizedExperiment}(x, ..., exprs_values = "counts", FUN = calculateDistance)
+
 \S4method{calculateMDS2}{SingleCellExperiment}(
   x,
   ...,
@@ -20,8 +38,24 @@ runMDS2(x, ..., altexp = NULL, name = "MDS2")
 \item{x}{a \linkS4class{SingleCellExperiment} containing a numeric matrix of
 log-expression values where rows are features and columns are cells.}
 
-\item{...}{additional arguments to pass to
-\code{\link[SEtup:calculateMDS2]{calculateMDS2}} and \code{FUN}.}
+\item{...}{additional arguments to pass to \code{FUN}.}
+
+\item{FUN}{a \code{function} or \code{character} value with a function name
+returning a \code{\link[stats:dist]{dist}} object}
+
+\item{ncomponents}{Numeric scalar indicating the number of MDS?g dimensions
+to obtain.}
+
+\item{ntop}{Numeric scalar specifying the number of features with the highest
+variances to use for dimensionality reduction.}
+
+\item{subset_row}{Vector specifying the subset of features to use for
+dimensionality reduction. This can be a character vector of row names, an
+integer vector of row indices or a logical vector.}
+
+\item{scale}{Logical scalar, should the expression values be standardized?}
+
+\item{transposed}{Logical scalar, is x transposed with cells in rows?}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -31,9 +65,6 @@ reduction results to use.}
 
 \item{n_dimred}{Integer scalar or vector specifying the dimensions to use if
 dimred is specified.}
-
-\item{FUN}{a \code{function} or \code{character} value with a function name
-returning a \code{\link[stats:dist]{dist}} object}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -54,7 +85,16 @@ The function \code{\link{cmdscale}} is used internally to compute
 the MDS components.
 }
 \examples{
-data(esophagus, package="MicrobiomeExperiment")
+# generate some example data
+mat <- matrix(1:60, nrow = 6)
+df <- DataFrame(n = c(1:6))
+se <- SummarizedExperiment(assays = list(counts = mat),
+                           rowData = df)
+#
+calculateMDS2(se)
+
+#
+data(esophagus)
 esophagus <- runMDS2(esophagus, FUN = calculateUniFrac, name = "UniFrac",
                      tree = rowTree(esophagus))
 reducedDim(esophagus)

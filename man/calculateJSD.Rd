@@ -29,10 +29,11 @@ a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
 This function calculates the Jensen-Shannon Divergence (JSD) in a
-\code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.
 }
 \examples{
-data(enterotype, package="MicrobiomeExperiment")
+data(enterotype)
 calculateJSD(enterotype)
 enterotype <- runMDS2(enterotype, FUN = calculateJSD, name = "JSD")
 reducedDim(enterotype)
