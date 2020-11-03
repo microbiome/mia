@@ -1,8 +1,8 @@
 #' Functions for diversity estimation from \code{breakaway} package
 #'
-#' Several functions for calculation of diversity indices implemented by the
+#' Several functions for calculation of diversity indices implemented by the 
 #' \code{breakaway} package are available via wrapper functions.
-#'
+#' 
 #' Other diversity measures implemented by breakaway are also available,
 #' such as \code{\link[=estimateDiversity]{Shannon}}.
 #'
@@ -23,7 +23,7 @@
 #'   \code{breakaway} package
 #'
 #' @return \code{x} with additional \code{\link{colData}} named
-#'   \code{*name*} containing the main diversity score and
+#'   \code{*name*} containing the main diversity score and 
 #'   \code{*name*_summary} containing a summary \code{DataFrame}
 #'
 #' @seealso
