@@ -34,6 +34,7 @@ Imports:
     Biostrings,
     BiocParallel,
     DelayedArray,
+    DelayedMatrixStats,
     stringr,
     scuttle,
     scater,
@@ -41,7 +42,7 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr
+    tidyr,
 Suggests:
     testthat,
     knitr,
