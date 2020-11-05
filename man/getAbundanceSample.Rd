@@ -32,7 +32,7 @@ for a user specified \dQuote{SampleID} from assay in a
 }
 \details{
 This function is aimed at simplifying basic/repetitive tasks and is a convenience
-wrapper around assay(x,name)\link{,col}
+wrapper around subsetting columns from assay(x,name).
 }
 \examples{
 data(GlobalPatterns, package = "MicrobiomeExperiment")

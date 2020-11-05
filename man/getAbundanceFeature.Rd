@@ -33,7 +33,7 @@ from assay in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} 
 }
 \details{
 This function is aimed at simplifying basic/repetitive tasks and is a convenience
-wrapper around assay(x,name)\link{row,}
+wrapper around subsetting rows from assay(x,name).
 }
 \examples{
 data(GlobalPatterns, package = "MicrobiomeExperiment")

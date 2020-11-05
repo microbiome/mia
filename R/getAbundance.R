@@ -5,7 +5,7 @@
 #' \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
 #' This function is aimed at simplifying basic/repetitive tasks and is a convenience
-#' wrapper around assay(x,name)[,col]
+#' wrapper around subsetting columns from assay(x,name).
 #'
 #' @param x A
 #'  \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
@@ -83,7 +83,7 @@ setMethod("getAbundanceSample", signature = c(x = "SummarizedExperiment"),
 #' from assay in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
 #' This function is aimed at simplifying basic/repetitive tasks and is a convenience
-#' wrapper around assay(x,name)[row,]
+#' wrapper around subsetting rows from assay(x,name).
 #'
 #' @param x A
 #'  \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
