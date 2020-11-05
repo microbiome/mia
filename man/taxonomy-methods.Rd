@@ -46,8 +46,8 @@ getTaxonomyLabels(x, ...)
 \S4method{getTaxonomyLabels}{SummarizedExperiment}(
   x,
   empty.fields = c(NA, "", " ", "\\t", "-"),
-  withType = FALSE,
-  makeUnique = TRUE
+  with_type = FALSE,
+  make_unique = TRUE
 )
 }
 \arguments{
@@ -64,12 +64,12 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 
 \item{...}{optional arguments not used currently.}
 
-\item{withType}{\code{TRUE} or \code{FALSE}: Should the level be add as a
+\item{with_type}{\code{TRUE} or \code{FALSE}: Should the level be add as a
 suffix? For example: "Phylum:Crenarchaeota" (default:
-\code{withType = FALSE})}
+\code{with_type = FALSE})}
 
-\item{makeUnique}{\code{TRUE} or \code{FALSE}: Should the labels be made
-unique, if there are any duplicates? (default: \code{makeUnique = TRUE})}
+\item{make_unique}{\code{TRUE} or \code{FALSE}: Should the labels be made
+unique, if there are any duplicates? (default: \code{make_unique = TRUE})}
 }
 \value{
 \itemize{

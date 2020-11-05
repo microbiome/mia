@@ -99,7 +99,7 @@ taxa <- rowData(altExp(me,"species"))[,taxonomyRanks(me)]
 taxa_res <- resolveLoop(as.data.frame(taxa))
 taxa_tree <- toTree(data = taxa_res)
 taxa_tree$tip.label <- getTaxonomyLabels(altExp(me,"species"))
-rowNodeLab <- getTaxonomyLabels(altExp(me,"species"), makeUnique = FALSE)
+rowNodeLab <- getTaxonomyLabels(altExp(me,"species"), make_unique = FALSE)
 altExp(me,"species") <- changeTree(altExp(me,"species"),
                                    rowTree = taxa_tree,
                                    rowNodeLab = rowNodeLab)

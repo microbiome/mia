@@ -49,7 +49,7 @@ test_that("taxonomy", {
     actual <- mia:::.get_taxonomic_label(xtse, empty.fields = c(NA))
     expect_type(actual,"character")
     expect_length(actual,nrow(xtse))
-    expect_equal(actual[1:3],c("Family::c","Phylum::a","Family::d"))
+    expect_equal(actual[1:3],c("Family:c","Phylum::a","Family:d"))
     actual <- mia:::.get_taxonomic_label(xtse[-c(2,8),], empty.fields = c(NA))
     expect_type(actual,"character")
     expect_length(actual,nrow(xtse)-2)
@@ -59,6 +59,6 @@ test_that("taxonomy", {
                  rep(FALSE,9))
     expect_true(checkTaxonomy(xtse))
     expect_equal(getTaxonomyLabels(xtse),
-                 c("Family::c","Phylum::a","Family::d","Family::e","Family::f",
-                   "Family::g","Family::h","Phylum::c","Family::h_1"))
+                 c("Family:c","Phylum::a","Family:d","Family:e","Family:f",
+                   "Family:g","Family:h","Phylum::c","Family:h_1"))
 })

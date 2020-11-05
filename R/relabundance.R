@@ -59,6 +59,10 @@ setReplaceMethod("relabundance", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+.calc_rel_abund <- function(mat){
+    sweep(mat, 2, colSums(mat), "/")
+}
+
 #' @rdname relabundance
 #' @importFrom SummarizedExperiment assay assay<-
 #' @export
@@ -72,9 +76,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
         }
         .check_abund_values(abund_values, x)
         #
-        assay(x, name) <- sweep(assay(x, abund_values), 2,
-                                colSums(assay(x, abund_values)),
-                                "/")
+        assay(x, name) <- .calc_rel_abund(assay(x, abund_values))
         x
     }
 )

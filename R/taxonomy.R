@@ -30,12 +30,12 @@
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 #'   removed if \code{na.rm = TRUE} before agglomeration.
 #'
-#' @param withType \code{TRUE} or \code{FALSE}: Should the level be add as a
+#' @param with_type \code{TRUE} or \code{FALSE}: Should the level be add as a
 #'   suffix? For example: "Phylum:Crenarchaeota" (default:
-#'   \code{withType = FALSE})
+#'   \code{with_type = FALSE})
 #'
-#' @param makeUnique \code{TRUE} or \code{FALSE}: Should the labels be made
-#'   unique, if there are any duplicates? (default: \code{makeUnique = TRUE})
+#' @param make_unique \code{TRUE} or \code{FALSE}: Should the labels be made
+#'   unique, if there are any duplicates? (default: \code{make_unique = TRUE})
 #'
 #' @param ... optional arguments not used currently.
 #'
@@ -188,7 +188,7 @@ setGeneric("getTaxonomyLabels",
 #' @export
 setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     function(x, empty.fields = c(NA, "", " ", "\t", "-"),
-             withType = FALSE, makeUnique = TRUE){
+             with_type = FALSE, make_unique = TRUE){
         # input check
         if(ncol(rowData(x)) == 0L){
             stop("rowData needs to be populated.", call. = FALSE)
@@ -198,12 +198,15 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
             stop("'empty.fields' must be a character vector with one or ",
                  "more values.", call. = FALSE)
         }
-        if(!.is_a_bool(withType)){
-            stop("'withType' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(with_type)){
+            stop("'with_type' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if(!.is_a_bool(make_unique)){
+            stop("'make_unique' must be TRUE or FALSE.", call. = FALSE)
         }
         #
         .get_taxonomic_label(x, empty.fields = empty.fields,
-                           with_type = withType, make_unique = makeUnique)
+                           with_type = with_type, make_unique = make_unique)
     }
 )
 
@@ -239,13 +242,13 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
                   as.data.frame(t(as.data.frame(rd))),
                   tax_cols_selected,
                   SIMPLIFY = FALSE)
+    ans <- unlist(ans, use.names = FALSE)
     if(with_type || !all_same_rank){
-        TR <- toupper(colnames(rd)[tax_cols])
-        ans <- paste0(colnames(rd)[unlist(tax_cols_selected)],
-                      "::",
-                      unlist(ans, use.names = FALSE))
-    } else {
-        ans <- unlist(ans, use.names = FALSE)
+        sep <- rep(":", length(ans))
+        tax_cols_selected <- unlist(tax_cols_selected)
+        sep[tax_cols_selected != max(tax_cols_selected)] <- "::"
+        types <- colnames(rd)[tax_cols_selected]
+        ans <- paste0(types, sep, ans)
     }
     # last resort - this happens, if annotation data contains ambiguous data
     # sometimes labeled as "circles"
