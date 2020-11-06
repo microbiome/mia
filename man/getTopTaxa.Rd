@@ -45,6 +45,7 @@ top_taxa <- getTopTaxa(GlobalPatterns,
                        method="mean",
                        top=5,
                        abund_values="counts")
+top_taxa
 
 }
 \author{

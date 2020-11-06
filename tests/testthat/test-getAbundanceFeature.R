@@ -13,6 +13,6 @@ test_that("getAbundanceFeature", {
         mia:::.check_feature_ids_assays(GlobalPatterns,
                                         feature_id="x522457",
                                         abund_values="counts"),
-        "Please provide a valid 'feature_id'")
+        "'feature_id' must be in rownames(assay(x))", fixed=TRUE)
 
 })
