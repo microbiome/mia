@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 0.0.0.9003
+Version: 0.0.0.9002
 Date: 2020-11-08
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
@@ -35,6 +35,7 @@ Imports:
     Biostrings,
     BiocParallel,
     DelayedArray,
+    DelayedMatrixStats,
     stringr,
     scuttle,
     scater,
