@@ -46,13 +46,12 @@
 #' Sudarshan A. Shetty
 #'
 #' @examples
-#' data(GlobalPatterns, package = "MicrobiomeExperiment")
+#' data(GlobalPatterns)
 #' molten_se <- meltAssay(GlobalPatterns,
-#'   add_row_data = TRUE,
-#'   add_col_data = TRUE,
-#'   abund_values = "counts"
-#' )
-#' head(molten_se)
+#'                        add_row_data = TRUE,
+#'                        add_col_data = TRUE,
+#'                        abund_values = "counts")
+#' molten_se
 NULL
 
 #' @rdname meltAssay

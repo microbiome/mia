@@ -1,4 +1,4 @@
-#' @title Get abundance values by \dQuote{SampleID} or \dQuote{FeatureID}
+#' Get abundance values by \dQuote{SampleID} or \dQuote{FeatureID}
 #'
 #' @description
 #' These are basic functions for extracting abundances present in \code{assay(x)}.
@@ -14,14 +14,21 @@
 #' @param x A
 #'  \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
-#' @param sample_id A \dQuote{SampleID} from which user wants to extract
-#'  the abundances of \dQuote{FeatureID}. This is essentially a colname in assay(x).
+#' @param sample_id A \dQuote{SampleID} from which user wants to extract the
+#'   abundances of \dQuote{FeatureID}. This is essentially a colname in
+#'   assay(x).
+#'
+#' @param feature_id A \dQuote{FeatureID} for which user wants to extract the
+#'   abundances from all of \dQuote{SampleID} in
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}.
+#'   This is essentially a rowname in assay(x).
 #'
 #' @param abund_values a \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 #'
-#' @return \code{getAbundanceSample} An integer vector of the abundance values
-#'         for all \dQuote{FeatureIDs} in user-specified \dQuote{SampleID}
+#' @return \code{getAbundanceSample} and \code{getAbundanceFeature} return a
+#'   numeric matrix of the abundance values for all
+#'   \dQuote{SampleIDs}/\dQuote{FeatureIDs}
 #'
 #' @name getAbundance
 #'
@@ -29,99 +36,63 @@
 #' Sudarshan A. Shetty
 #'
 #' @examples
-#'
 #' # getAbundanceSample
-#' data(GlobalPatterns, package = 'MicrobiomeExperiment')
+#' data(GlobalPatterns)
 #' getAbundanceSample(GlobalPatterns,
 #'                    sample_id = 'CC1',
 #'                    abund_values = 'counts')
-NULL
-
-#' @rdname getAbundance
-#'
-#' @export
-
-setGeneric("getAbundanceSample", signature = "x", function(x, sample_id,
-                                                           abund_values) standardGeneric("getAbundanceSample"))
-
-
-#' @rdname getAbundance
-#'
-#' @aliases getAbundanceSample
-#'
-#' @export
-#'
-setMethod("getAbundanceSample", signature = c(x = "SummarizedExperiment"),
-          function(x, sample_id = NULL, abund_values = "counts") {
-              # check assay
-              .check_abund_values(abund_values, x)
-              # check if sampleid exists or matches
-              .check_sample_ids_assays(x, sample_id, abund_values)
-              assay(x, abund_values)[, sample_id]
-          })
-
-
-#' @importFrom SummarizedExperiment assay
-#'
-
-.check_sample_ids_assays <- function(x, sample_id, abund_values) {
-    if (is.null(sample_id)) {
-        stop("'sample_id' must be a single non-empty character value",
-             call. = FALSE)
-    } else if (isFALSE(any(sample_id %in% colnames(assay(x, abund_values))))) {
-        stop("Please provide a valid 'sample_id'", call. = FALSE)
-    }
-}
-
-#' @param feature_id A \dQuote{FeatureID} for which user wants to extract
-#'  the abundances from all of \dQuote{SampleID} in
-#'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}.
-#'  This is essentially a rowname in assay(x).
-#'
-#' @return \code{getAbundanceFeature} An integer vector of the abundance values
-#'         for \dQuote{FeatureID} in all \dQuote{SampleIDs}.
-#'
-#' @name getAbundance
-#'
-#' @examples
-#'
 #' # getAbundanceFeature
-#' data(GlobalPatterns, package = 'MicrobiomeExperiment')
 #' getAbundanceFeature(GlobalPatterns,
 #'                     feature_id = '522457',
 #'                     abund_values = 'counts')
 NULL
 
 #' @rdname getAbundance
-#'
 #' @export
-
-setGeneric("getAbundanceFeature", signature = "x", function(x, feature_id,
-                                                            abund_values) standardGeneric("getAbundanceFeature"))
+setGeneric("getAbundanceSample", signature = "x",
+           function(x, sample_id, abund_values = "counts")
+               standardGeneric("getAbundanceSample"))
 
 
 #' @rdname getAbundance
-#'
-#' @aliases getAbundanceFeature
-#'
 #' @export
-#'
-setMethod("getAbundanceFeature", signature = c(x = "SummarizedExperiment"),
-          function(x, feature_id = NULL, abund_values = "counts") {
-              # check assay
-              .check_abund_values(abund_values, x)
-              # check if feature_id exists or matches
-              .check_feature_ids_assays(x, feature_id, abund_values)
-              assay(x, abund_values)[feature_id, ]
-          })
+setMethod("getAbundanceSample", signature = c(x = "SummarizedExperiment"),
+    function(x, sample_id = NULL, abund_values = "counts") {
+        # check assay
+        .check_abund_values(abund_values, x)
+        # check if sampleid exists or matches
+        .check_feature_sample_ids(sample_id, colnames(x))
+        assay(x, abund_values)[, sample_id,drop=TRUE]
+    }
+)
+
 
 #' @importFrom SummarizedExperiment assay
-#'
-.check_feature_ids_assays <- function(x, feature_id, abund_values) {
-    if (is.null(feature_id)) {
-        stop("'feature_id' must be a single non-empty character value",
+.check_feature_sample_ids <- function(id, names,
+                                      id_name = .get_name_in_parent(id)) {
+    if (is.null(id) || !is.character(id) || length(id) > 1L) {
+        stop("'",id_name,"' must be a single non-empty character value",
              call. = FALSE)
-    } else if (isFALSE(any(feature_id %in% rownames(assay(x, abund_values))))) {
-        stop("'feature_id' must be in rownames(assay(x))", call. = FALSE)
+    } else if (!(id %in% names)) {
+        stop("Please provide a valid '",id_name,"'", call. = FALSE)
     }
 }
+
+#' @rdname getAbundance
+#' @export
+setGeneric("getAbundanceFeature", signature = "x",
+           function(x, feature_id, abund_values)
+               standardGeneric("getAbundanceFeature"))
+
+
+#' @rdname getAbundance
+#' @export
+setMethod("getAbundanceFeature", signature = c(x = "SummarizedExperiment"),
+    function(x, feature_id = NULL, abund_values = "counts") {
+        # check assay
+        .check_abund_values(abund_values, x)
+        # check if feature_id exists or matches
+        .check_feature_sample_ids(feature_id, rownames(x))
+        assay(x, abund_values)[feature_id, ,drop=TRUE]
+    }
+)

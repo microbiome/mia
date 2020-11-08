@@ -8,7 +8,7 @@
 \alias{getAbundanceFeature,SummarizedExperiment-method}
 \title{Get abundance values by \dQuote{SampleID} or \dQuote{FeatureID}}
 \usage{
-getAbundanceSample(x, sample_id, abund_values)
+getAbundanceSample(x, sample_id, abund_values = "counts")
 
 \S4method{getAbundanceSample}{SummarizedExperiment}(x, sample_id = NULL, abund_values = "counts")
 
@@ -20,23 +20,22 @@ getAbundanceFeature(x, feature_id, abund_values)
 \item{x}{A
 \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.}
 
-\item{sample_id}{A \dQuote{SampleID} from which user wants to extract
-the abundances of \dQuote{FeatureID}. This is essentially a colname in assay(x).}
+\item{sample_id}{A \dQuote{SampleID} from which user wants to extract the
+abundances of \dQuote{FeatureID}. This is essentially a colname in
+assay(x).}
 
 \item{abund_values}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
 
-\item{feature_id}{A \dQuote{FeatureID} for which user wants to extract
-the abundances from all of \dQuote{SampleID} in
+\item{feature_id}{A \dQuote{FeatureID} for which user wants to extract the
+abundances from all of \dQuote{SampleID} in
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}.
 This is essentially a rowname in assay(x).}
 }
 \value{
-\code{getAbundanceSample} An integer vector of the abundance values
-for all \dQuote{FeatureIDs} in user-specified \dQuote{SampleID}
-
-\code{getAbundanceFeature} An integer vector of the abundance values
-for \dQuote{FeatureID} in all \dQuote{SampleIDs}.
+\code{getAbundanceSample} and \code{getAbundanceFeature} return a
+numeric matrix of the abundance values for all
+\dQuote{SampleIDs}/\dQuote{FeatureIDs}
 }
 \description{
 These are basic functions for extracting abundances present in \code{assay(x)}.
@@ -50,15 +49,12 @@ user specified \dQuote{SampleID}.
 user specified \dQuote{FeatureID}.
 }
 \examples{
-
 # getAbundanceSample
-data(GlobalPatterns, package = 'MicrobiomeExperiment')
+data(GlobalPatterns)
 getAbundanceSample(GlobalPatterns,
                    sample_id = 'CC1',
                    abund_values = 'counts')
-
 # getAbundanceFeature
-data(GlobalPatterns, package = 'MicrobiomeExperiment')
 getAbundanceFeature(GlobalPatterns,
                     feature_id = '522457',
                     abund_values = 'counts')

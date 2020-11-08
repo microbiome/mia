@@ -3,7 +3,7 @@
 \name{getTopTaxa}
 \alias{getTopTaxa}
 \alias{getTopTaxa,SummarizedExperiment-method}
-\title{Returns top N \dQuote{FeatureID}}
+\title{Accessing most relevant features}
 \usage{
 getTopTaxa(
   x,
@@ -23,30 +23,34 @@ getTopTaxa(
 \item{x}{A
 \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.}
 
-\item{top}{Numeric value, how many top taxa to return. Default return top five taxa.}
+\item{top}{Numeric value, how many top taxa to return. Default return top
+five taxa.}
 
-\item{method}{Specify the method to determine top taxa. Either sum, mean or median.
-Default is 'mean'}
+\item{method}{Specify the method to determine top taxa. Either sum, mean or
+median. Default is 'mean'}
 
 \item{abund_values}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
 }
 \value{
-A vector of the top N \dQuote{FeatureID}
+For \code{getTopTaxa}: A vector of the most \code{top} abundant
+\dQuote{FeatureID}s
 }
 \description{
-This function is will extract top user specified number of \dQuote{FeatureID}
+To query a \code{SummarizedExperiment} for interesting features, several
+functions are available.
+}
+\details{
+\code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
 in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 }
 \examples{
-data(GlobalPatterns, package = "MicrobiomeExperiment")
-
+data(GlobalPatterns)
 top_taxa <- getTopTaxa(GlobalPatterns,
                        method="mean",
                        top=5,
                        abund_values="counts")
 top_taxa
-
 }
 \author{
 Sudarshan A. Shetty

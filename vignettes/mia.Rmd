@@ -105,3 +105,44 @@ altExp(me,"species") <- changeTree(altExp(me,"species"),
                                    rowNodeLab = rowNodeLab)
 ```
 
+# Utility functions
+
+To make migration and adoption as easy as possible several utility functions
+are available.
+
+## General wrappers
+
+`getAbundanceFeature` and `getAbundanceSample` are wrappers on row-wise or 
+column-wise assay data subsetting.
+
+```{r}
+abund <- getAbundanceSample(me, "CC1", abund_values = "counts")
+all(abund == assay(me, "counts")[,"CC1"])
+abund <- getAbundanceFeature(me, "522457", abund_values = "counts")
+all(abund == assay(me, "counts")["522457",])
+```
+
+## Selecting most interesing features 
+
+`getTopTaxa` returns a vector of the most `top` abundant feature IDs.
+
+```{r}
+top_taxa <- getTopTaxa(me,
+                       method="mean",
+                       top=5,
+                       abund_values="counts")
+top_taxa
+```
+
+## Generating tidy data
+
+To generate tidy data as used and required in most of the tidyverse, `meltAssay`
+
+```{r}
+molten_data <- meltAssay(me,
+                         add_row_data = TRUE,
+                         add_col_data = TRUE,
+                         abund_values = "counts")
+molten_data
+```
+
