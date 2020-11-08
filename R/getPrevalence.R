@@ -51,9 +51,9 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
         }
 
         # Always return prevalence as a relative frequency.
-	# This helps to avoid confusion with detection limit, which
-	# is applied on either relative abundances or absolute counts
-	# with as_relative argument
+        # This helps to avoid confusion with detection limit, which
+        # is applied on either relative abundances or absolute counts
+        # with as_relative argument
         prev <- prev/ncol(x)
     
         if (sort) {
@@ -76,7 +76,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
             # Add relative abundances if not yet available
             x <- relAbundanceCounts(x)
 
-            # Convert to matrix	
+            # Convert to matrix    
             x <- relabundance(x)
 
         } else {
@@ -86,7 +86,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         }
 
         getPrevalence(x, detection, include_lowest, sort, as_relative, ...)
-	
+    
     }
 )
 

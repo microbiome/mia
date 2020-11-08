@@ -46,20 +46,20 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     include_lowest=FALSE, sort=FALSE, as_relative=TRUE, ...){
 
         pr <- getPrevalence(x, detection=detection, sort=sort,
-	        as_relative=as_relative, include_lowest=include_lowest)
+            as_relative=as_relative, include_lowest=include_lowest)
 
         if (include_lowest) {
-	
+    
             taxa <- names(which(pr >= prevalence))
-	    
+        
         } else {
-	
+    
             taxa <- names(which(pr > prevalence))
-	    
+        
         }
     
         return(taxa)
-	
+    
     }
 )
 
