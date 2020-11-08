@@ -42,7 +42,7 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr,
+    tidyr
 Suggests:
     testthat,
     knitr,
