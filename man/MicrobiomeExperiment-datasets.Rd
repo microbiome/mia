@@ -7,7 +7,6 @@
 \alias{enterotype}
 \alias{esophagus}
 \alias{soilrep}
-\alias{MovingPictures}
 \title{MicrobiomeExperiment datasets}
 \format{
 An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
@@ -17,8 +16,6 @@ An object of class \code{TreeSummarizedExperiment} with 553 rows and 280 columns
 An object of class \code{TreeSummarizedExperiment} with 58 rows and 3 columns.
 
 An object of class \code{TreeSummarizedExperiment} with 16825 rows and 56 columns.
-
-An object of class \code{MicrobiomeExperiment} with 22765 rows and 1967 columns.
 }
 \usage{
 data(GlobalPatterns)
@@ -28,15 +25,10 @@ data(enterotype)
 data(esophagus)
 
 data(soilrep)
-
-data(MovingPictures)
 }
 \description{
 These datasets are conversions of the phyloseq datasets \code{GlobalPatterns}
-\code{enterotype}, \code{esophagus}, \code{soilrep} and \code{MovingPictures}.
-
-The phyloseq version for MovingPictures data set was obtained from
-\url{github.com/twbattaglia/MicrobeDS} before conversion.
+\code{enterotype}, \code{esophagus} and \code{soilrep}.
 
 \code{taxa} contains example taxonomic data derived from the
 \code{metagenomeFeatures} package.

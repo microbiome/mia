@@ -18,11 +18,8 @@ NULL
 #'
 #' @description
 #' These datasets are conversions of the phyloseq datasets \code{GlobalPatterns}
-#' \code{enterotype}, \code{esophagus}, \code{soilrep} and \code{MovingPictures}.
+#' \code{enterotype}, \code{esophagus} and \code{soilrep}.
 #'
-#' The phyloseq version for MovingPictures data set was obtained from
-#' \url{github.com/twbattaglia/MicrobeDS} before conversion.
-#' 
 #' \code{taxa} contains example taxonomic data derived from the
 #'   \code{metagenomeFeatures} package.
 #'
@@ -40,6 +37,3 @@ NULL
 #' @name MicrobiomeExperiment-datasets
 #' @usage data(soilrep)
 "soilrep"
-#' @name MicrobiomeExperiment-datasets
-#' @usage data(MovingPictures)
-"MovingPictures"
