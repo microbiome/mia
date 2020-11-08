@@ -25,9 +25,9 @@ if (requireNamespace("phyloseq")) {
     makeMicrobiomeExperimentFromphyloseq(esophagus)
 
     # MovingPictures data requires minimal manual fix
-    data(MovingPictures, package = "MicrobeDS")
-    MovingPictures@phy_tree$node.label[[50]] <- ""
-    makeMicrobiomeExperimentFromphyloseq(MovingPictures)
+    # data(MovingPictures, package = "MicrobeDS")
+    # MovingPictures@phy_tree$node.label[[50]] <- ""
+    # makeMicrobiomeExperimentFromphyloseq(MovingPictures)
 
 }
 }
