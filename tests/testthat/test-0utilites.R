@@ -46,15 +46,15 @@ test_that("meltAssay", {
     expect_equal(is.numeric(only_assay$counts), TRUE)
 
     assay_taxa <- mia:::.add_row_data_to_molten_assay(only_assay,
-                                                se,
-                                                add_row_data = taxonomyRanks(se))
+                                                      se,
+                                                      add_row_data = taxonomyRanks(se))
 
     expect_equal(colnames(assay_taxa)[1:4], c("FeatureID","SampleID","counts","Kingdom"))
     expect_equal(is.numeric(assay_taxa$counts), TRUE)
 
     assay_taxa_coldata <- mia:::.add_col_data_to_molten_assay(assay_taxa,
-                                                        se,
-                                                        add_col_data=c("X.SampleID", "Primer"))
+                                                              se,
+                                                              add_col_data=c("X.SampleID", "Primer"))
 
     expect_equal(colnames(molten_assay)[c(1:4,11)], c("FeatureID","SampleID","counts","Kingdom","X.SampleID"))
     expect_equal(is.numeric(assay_taxa_coldata$counts), TRUE)
@@ -71,4 +71,62 @@ test_that("meltAssay", {
     actual3 <- meltAssay(x3, TRUE, TRUE)
     expect_false("FeatureID_row" %in% colnames(actual))
     expect_false("SampleID_col" %in% colnames(actual))
+})
+
+context("getAbundanceFeature/getAbundanceSample")
+test_that("getAbundanceFeature/getAbundanceSample", {
+    # .check_ids_assays
+    expect_error(mia:::.check_feature_sample_ids(),
+                 'argument "id" is missing')
+    expect_error(mia:::.check_feature_sample_ids("test"),
+                 'argument "names" is missing')
+    expect_null(mia:::.check_feature_sample_ids("test","test"))
+    #
+    data(GlobalPatterns)
+    expect_error(getAbundanceFeature(GlobalPatterns,
+                                     feature_id="x522457",
+                                     abund_values="counts"),
+        "Please provide a valid 'feature_id'", fixed=TRUE)
+    feature_ab <- getAbundanceFeature(GlobalPatterns,
+                                      feature_id = "522457",
+                                      abund_values = "counts")
+    expect_equal(names(feature_ab)[1], "CL3")
+    #
+    expect_error(getAbundanceSample(GlobalPatterns,
+                                    sample_id= "bogus",
+                                    abund_values="counts"),
+                 "Please provide a valid 'sample_id'")
+    sam_ab <- getAbundanceSample(GlobalPatterns,
+                                 sample_id = "CC1",
+                                 abund_values = "counts")
+    expect_equal(names(sam_ab)[1], "549322")
+})
+
+
+context("getTopTaxa")
+test_that("getTopTaxa", {
+    #
+    expect_error(mia:::.check_max_taxa(),
+                 'argument "top" is missing')
+    expect_error(mia:::.check_max_taxa(GlobalPatterns),
+                 'argument "top" is missing')
+    expect_error(mia:::.check_max_taxa(GlobalPatterns, 5L),
+                 'argument "abund_values" is missing')
+    expect_null(mia:::.check_max_taxa(GlobalPatterns, 5L, "counts"))
+    expect_error(mia:::.check_max_taxa(GlobalPatterns, 100000000, "counts"),
+                 "'top' must be <= nrow(x)",fixed=TRUE)
+    #
+    data(GlobalPatterns)
+    mean.taxa <- c("549656", "331820", "279599", "360229", "317182")
+    sum.taxa <- c("549656", "331820", "279599", "360229", "317182")
+    median.taxa <- c("549656", "331820", "317182", "94166",  "279599")
+    top_mean <- getTopTaxa(GlobalPatterns, method="mean", top=5,
+                           abund_values="counts")
+    top_sum <- getTopTaxa(GlobalPatterns, method="sum", top=5,
+                          abund_values="counts")
+    top_median <- getTopTaxa(GlobalPatterns, method="median", top=5,
+                             abund_values="counts")
+    expect_equal(top_mean, mean.taxa)
+    expect_equal(top_sum, sum.taxa)
+    expect_equal(top_median, median.taxa)
 })
