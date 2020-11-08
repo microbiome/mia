@@ -25,9 +25,9 @@
 #' @export
 #' @examples
 #' data(enterotype)     
-#' pr <- prevalence(enterotype, detection=0, sort=TRUE, count=TRUE)
-#' pr <- prevalence(enterotype, detection=0, sort=TRUE, count=FALSE)
-prevalence <- function(x, detection=0, sort=FALSE, count=FALSE,
+#' pr <- getPrevalence(enterotype, detection=0, sort=TRUE, count=TRUE)
+#' pr <- getPrevalence(enterotype, detection=0, sort=TRUE, count=FALSE)
+getPrevalence <- function(x, detection=0, sort=FALSE, count=FALSE,
     include.lowest=FALSE) {
     
     if (is.null(detection)) {
