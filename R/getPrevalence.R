@@ -2,17 +2,17 @@
 #' @description Simple prevalence measure.
 #' @param x A vector, data matrix or \code{\link{MicrobiomeExperiment}} object
 #' @param sort Sort the groups by prevalence
-#' @param count Logical. Indicate prevalence as fraction of samples
+#' @param as_relative Logical. Indicate prevalence as fraction of samples
 #' (in percentage between 0 to 1 default); or in absolute counts indicating
 #' the number of samples where the OTU is detected (strictly) above the given
 #' abundance threshold.
 #' @inheritParams prevalentMembers
-#' @details For vectors, calculates the fraction (count=FALSE) or
-#' number (count=TRUE) of samples that exceed the
+#' @details For vectors, calculates the fraction (as_relative=FALSE) or
+#' number (as_relative=TRUE) of samples that exceed the
 #' detection. For matrices, calculates this for each matrix
 #' column. For MicrobiomeExperiment objects, calculates this for each OTU. The
-#' relative prevalence (count=FALSE) is simply the absolute
-#' prevalence (count=TRUE) divided by the number of samples.
+#' relative prevalence (as_relative=FALSE) is simply the absolute
+#' prevalence (as_relative=TRUE) divided by the number of samples.
 #' @return For each OTU, the fraction of samples where a given OTU is
 #' detected. The output is readily given as a percentage.
 #' @references 
@@ -25,9 +25,9 @@
 #' @export
 #' @examples
 #' data(enterotype)     
-#' pr <- getPrevalence(enterotype, detection=0, sort=TRUE, count=TRUE)
-#' pr <- getPrevalence(enterotype, detection=0, sort=TRUE, count=FALSE)
-getPrevalence <- function(x, detection=0, sort=FALSE, count=FALSE,
+#' pr <- getPrevalence(enterotype, detection=0, sort=TRUE, as_relative=TRUE)
+#' pr <- getPrevalence(enterotype, detection=0, sort=TRUE, as_relative=FALSE)
+getPrevalence <- function(x, detection=0, sort=FALSE, as_relative=FALSE,
     include.lowest=FALSE) {
     
     if (is.null(detection)) {
@@ -64,7 +64,7 @@ getPrevalence <- function(x, detection=0, sort=FALSE, count=FALSE,
         }
     }
     
-    if (!count) {
+    if (!as_relative) {
         prev <- prev/prevalence_nsamples(x)
     }
     
