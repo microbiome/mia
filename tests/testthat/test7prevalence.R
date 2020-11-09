@@ -1,18 +1,60 @@
 context("prevalence")
-test_that("prevalence", {
+
+test_that("getPrevalence", {
 
     data(GlobalPatterns)
     
-    # Output is always frequencies between 0 to 1	
-    pr <- getPrevalence(GlobalPatterns, detection=0.1/100, sort=TRUE, as_relative=TRUE)
+    # Output should be always a frequency between 0 to 1	
+    pr <- getPrevalence(GlobalPatterns, detection=0.1/100, as_relative=TRUE)
     expect_true(min(pr) >= 0 && max(pr) <= 1)
-
-    pr <- getPrevalence(GlobalPatterns, detection=0.1/100, sort=TRUE, as_relative=FALSE)
+    pr <- getPrevalence(GlobalPatterns, detection=0.1/100, as_relative=FALSE)
     expect_true(min(pr) >= 0 && max(pr) <= 1)    
 
-    # If we look at 
-    pr1 <- getPrevalence(GlobalPatterns, detection=1, include_lowest=TRUE, sort=TRUE, as_relative=FALSE)
-    pr2 <- getPrevalence(GlobalPatterns, detection=0/100, include_lowest=FALSE, sort=TRUE, as_relative=TRUE)        
+    # Same prevalences should be returned for as_relative T/F in certain cases.
+    pr1 <- getPrevalence(GlobalPatterns, detection=1, include_lowest=TRUE, as_relative=FALSE)
+    pr2 <- getPrevalence(GlobalPatterns, detection=0/100, include_lowest=FALSE, as_relative=TRUE)        
     expect_true(all(pr1 == pr2))
 
+    # Same prevalences should be returned for as_relative T/F in certain cases.
+    pr1 <- getPrevalence(GlobalPatterns, detection=1, include_lowest=TRUE, as_relative=FALSE)
+    pr2 <- getPrevalence(GlobalPatterns, detection=0, include_lowest=FALSE, as_relative=FALSE)        
+    expect_true(all(pr1 == pr2))
+
+    # Different ways to use relative abundance should yield the same output
+    pr2 <- getPrevalence(GlobalPatterns, as_relative=TRUE, abund_values = "counts")            
+    GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
+    pr1 <- getPrevalence(GlobalPatterns, as_relative=FALSE, abund_values = "relabundance")
+    expect_true(all(pr1 == pr2))
+
+    # Sorting should put the top values first
+    pr <- getPrevalence(GlobalPatterns, sort=TRUE, detection = 0.1/100)
+    expect_equal(as.vector(which.max(pr)), 1)
+
+})
+
+
+test_that("getPrevalentTaxa", {
+
+    data(GlobalPatterns)
+    
+    # Results compatible with getPrevalence
+    pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE)
+    pr2 <- names(getPrevalence(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE))
+    expect_true(all(pr1 == pr2))
+
+    # Same sorting for toptaxa obtained in different ways
+    pr1 <- sort(getPrevalentTaxa(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=FALSE))
+    pr2 <- names(getPrevalence(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE))
+    expect_true(all(pr1 == pr2))
+
+    # Retrieved taxa are the same for counts and relative abundances
+    pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0.1/100, as_relative=TRUE)
+    pr2 <- getPrevalentTaxa(GlobalPatterns, detection=0.1/100, as_relative=FALSE)    
+    expect_true(all(pr1 == pr2))
+
+    # Prevalence and detection threshold at 0 has the same impact on counts and relative abundances
+    pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=TRUE)
+    pr2 <- getPrevalentTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=FALSE)
+    expect_true(all(pr1 == pr2))
+    
 })

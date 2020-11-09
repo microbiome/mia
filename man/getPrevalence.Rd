@@ -15,12 +15,13 @@ getPrevalence(x, ...)
   detection = 0,
   include_lowest = FALSE,
   sort = FALSE,
-  as_relative = FALSE,
+  as_relative = TRUE,
+  abund_values = "counts",
   ...
 )
 }
 \arguments{
-\item{x}{A vector, data matrix or \code{\link{MicrobiomeExperiment}} object}
+\item{x}{\code{\link{SummarizedExperiment-class}} object}
 
 \item{...}{Arguments to pass.}
 
@@ -33,6 +34,10 @@ prevalence cutoffs. FALSE by default.}
 \item{sort}{Sort the groups by prevalence (default: FALSE)}
 
 \item{as_relative}{Logical. Apply detection threshold on compositional (relative) abundances.}
+
+\item{abund_values}{A single character value for selecting the
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
+to use for calculating the relative abundance.}
 }
 \value{
 For each taxa, the frequency of samples where a given taxa is
@@ -40,18 +45,25 @@ detected at a given detection threshold. The output is provided as a
 frequency (between 0 and 1).
 }
 \description{
-Simple prevalence measure.
+This function estimates population prevalence for microbial taxa in a \code{\link{SummarizedExperiment-class}} object.
 }
 \details{
 Calculates the frequency (between 0 and 1) of samples that exceed the
-detection threshold. For MicrobiomeExperiment objects, calculates this for each
+detection threshold. For SummarizedExperiment objects, calculates this for each
 taxa. The absolute population prevalence can be obtained by multiplying the
 prevalence by the number of samples.
 }
 \examples{
+
+# Get prevalence estimates for microbial taxa (population frequencies)
 data(GlobalPatterns)     
-pr <- getPrevalence(GlobalPatterns, detection=0, sort=TRUE, as_relative=TRUE)
-pr <- getPrevalence(GlobalPatterns, detection=0, sort=TRUE, as_relative=FALSE)
+prevalence.frequency <- getPrevalence(GlobalPatterns, detection=0, sort=TRUE, as_relative=TRUE)
+print(head(prevalence.frequency))
+
+# Get prevalence estimates for microbial taxa (population counts)
+# - the getPrevalence function itself always returns population frequencies
+# - to obtain population counts, multiply frequencies with the sample size:
+prevalence.count <- prevalence.frequency * ncol(GlobalPatterns)
 }
 \references{
 A Salonen et al. The adult intestinal core microbiota is determined by

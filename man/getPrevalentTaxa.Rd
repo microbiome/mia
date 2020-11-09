@@ -18,7 +18,7 @@ getPrevalentTaxa(x, ...)
 )
 }
 \arguments{
-\item{x}{\code{\link{MicrobiomeExperiment-class}} object}
+\item{x}{\code{\link{SummarizedExperiment-class}} object}
 
 \item{...}{Arguments to pass.}
 
@@ -40,8 +40,7 @@ prevalence cutoffs. FALSE by default.}
 Vector of prevalent taxa
 }
 \description{
-Determine prevalent taxa at a given abundance
-and prevalence thresholds.
+This function retrieves prevalent taxa from a \code{\link{SummarizedExperiment-class}} object.
 }
 \details{
 Lists taxa that are more prevalent with the
@@ -54,7 +53,9 @@ data(GlobalPatterns)
 # Note that the data (GlobalPatterns) is here in absolute counts
 # (and not compositional, relative abundances)
 # Prevalence threshold 50 percent (strictly greater by default)
-a <- getPrevalentTaxa(GlobalPatterns, detection=1/100, prevalence=50/100, as_relative=TRUE)
+taxa <- getPrevalentTaxa(GlobalPatterns, detection=1/100, prevalence=50/100, as_relative=TRUE)
+print(head(taxa))
+
 }
 \references{
 A Salonen et al. The adult intestinal core microbiota is determined by
