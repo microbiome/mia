@@ -4,66 +4,113 @@
 \alias{getPrevalence}
 \alias{getPrevalence,ANY-method}
 \alias{getPrevalence,SummarizedExperiment-method}
-\title{Taxa Prevalence}
+\alias{getPrevalentTaxa}
+\alias{getPrevalentTaxa,SummarizedExperiment-method}
+\title{Prevalence calculation}
 \usage{
 getPrevalence(x, ...)
 
-\S4method{getPrevalence}{ANY}(x, detection, include_lowest, sort, as_relative, ...)
+\S4method{getPrevalence}{ANY}(x, detection = 0, include_lowest = FALSE, sort = FALSE, ...)
 
-\S4method{getPrevalence}{SummarizedExperiment}(
+\S4method{getPrevalence}{SummarizedExperiment}(x, abund_values = "counts", as_relative = TRUE, rank = NULL, ...)
+
+getPrevalentTaxa(x, ...)
+
+\S4method{getPrevalentTaxa}{SummarizedExperiment}(
   x,
-  detection = 0,
+  prevalence = 50/100,
+  rank = taxonomyRanks(x)[1L],
   include_lowest = FALSE,
-  sort = FALSE,
-  as_relative = TRUE,
-  abund_values = "counts",
   ...
 )
 }
 \arguments{
-\item{x}{\code{\link{SummarizedExperiment-class}} object}
+\item{x}{a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object}
 
-\item{...}{Arguments to pass.}
+\item{detection}{Detection threshold for absence/presence. Either an
+absolutes value compared directly to the values of \code{x} or a relative
+value between 0 and 1, if \code{as_relative = TRUE}.}
 
-\item{detection}{Detection threshold for absence/presence
-(strictly greater by default; in 0 to 1).}
+\item{include_lowest}{logical scalar: Should the lower boundary of the
+detection and prevalence cutoffs be included? (default: \code{FALSE})}
 
-\item{include_lowest}{Include the lower boundary of the detection and
-prevalence cutoffs. FALSE by default.}
-
-\item{sort}{Sort the groups by prevalence (default: FALSE)}
-
-\item{as_relative}{Logical. Apply detection threshold on compositional (relative) abundances.}
+\item{sort}{logical scalar: Should the result be sorted by prevalence?
+(default: \code{FALSE})}
 
 \item{abund_values}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to use for calculating the relative abundance.}
+to use for prevalence calculation.}
+
+\item{as_relative}{logical scalar: Should the detection threshold be applied
+on compositional (relative) abundances? (default: \code{TRUE})}
+
+\item{rank, ...}{additional arguments
+\itemize{
+\item{If \code{!is.null(rank)} arguments are passed on to
+\code{\link[=agglomerate-methods]{agglomerateByRank}}. See
+\code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
+}
+}}
+
+\item{prevalence}{Prevalence threshold (in 0 to 1). The
+required prevalence is strictly greater by default. To include the
+limit, set include_lowest to TRUE.}
 }
 \value{
-For each taxa, the frequency of samples where a given taxa is
-detected at a given detection threshold. The output is provided as a
-frequency (between 0 and 1).
+a named \code{numeric} vector. The names are either the row names of \code{x}
+or the names after agglomeration. For \code{getPrevalentTaxa} only the names
+exceeding the threshold set by \code{prevalence} are returned.
 }
 \description{
-This function estimates population prevalence for microbial taxa in a \code{\link{SummarizedExperiment-class}} object.
+These functions calculate the population prevalence for taxonomic ranks in a
+\code{\link{SummarizedExperiment-class}} object.
 }
 \details{
-Calculates the frequency (between 0 and 1) of samples that exceed the
-detection threshold. For SummarizedExperiment objects, calculates this for each
-taxa. The absolute population prevalence can be obtained by multiplying the
-prevalence by the number of samples.
+\code{getPrevalence} calculates the relative frequency of samples that exceed
+the detection threshold. For \code{SummarizedExperiment} objects, the
+prevalence is calculated for the selected taxonomic rank, otherwise for the
+rows. The absolute population prevalence can be obtained by multiplying the
+prevalence by the number of samples (\code{ncol(x)}). If \code{as_relative =
+TRUE} the relative frequency (between 0 and 1) is used to check against the
+\code{detection} threshold.
+
+\code{getPrevalentTaxa} returns taxa that are more prevalent with the
+given detection threshold for the selected taxonomic rank.
 }
 \examples{
+data(GlobalPatterns)
+# Get prevalence estimates for individual ASV/OTU
+prevalence.frequency <- getPrevalence(GlobalPatterns,
+                                      detection = 0,
+                                      sort = TRUE,
+                                      as_relative = TRUE)
+head(prevalence.frequency)
 
-# Get prevalence estimates for microbial taxa (population frequencies)
-data(GlobalPatterns)     
-prevalence.frequency <- getPrevalence(GlobalPatterns, detection=0, sort=TRUE, as_relative=TRUE)
-print(head(prevalence.frequency))
-
-# Get prevalence estimates for microbial taxa (population counts)
+# Get prevalence estimates for phylums
 # - the getPrevalence function itself always returns population frequencies
-# - to obtain population counts, multiply frequencies with the sample size:
+# - to obtain population counts, multiply frequencies with the sample size,
+#   which answers the question "In how many samples is this phylum detectable"
+prevalence.frequency <- getPrevalence(GlobalPatterns,
+                                      rank = "Phylum",
+                                      detection = 0,
+                                      sort = TRUE,
+                                      as_relative = TRUE)
+head(prevalence.frequency)
 prevalence.count <- prevalence.frequency * ncol(GlobalPatterns)
+head(prevalence.count)
+
+# Detection threshold 1 (strictly greater by default);
+# Note that the data (GlobalPatterns) is here in absolute counts
+# (and not compositional, relative abundances)
+# Prevalence threshold 50 percent (strictly greater by default)
+taxa <- getPrevalentTaxa(GlobalPatterns,
+                         rank = "Phylum",
+                         detection = 1/100,
+                         prevalence = 50/100,
+                         as_relative = TRUE)
+head(taxa)
 }
 \references{
 A Salonen et al. The adult intestinal core microbiota is determined by
@@ -71,7 +118,9 @@ analysis depth and health status. Clinical Microbiology and Infection
 18(S4):16 20, 2012.
 To cite the R package, see citation('mia')
 }
+\seealso{
+\code{\link[=agglomerate-methods]{agglomerateByRank}}
+}
 \author{
 Leo Lahti
 }
-\keyword{utilities}
