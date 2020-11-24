@@ -119,7 +119,8 @@ analysis depth and health status. Clinical Microbiology and Infection
 To cite the R package, see citation('mia')
 }
 \seealso{
-\code{\link[=agglomerate-methods]{agglomerateByRank}}
+\code{\link[=agglomerate-methods]{agglomerateByRank}},
+\code{\link[=getTopTaxa]{getTopTaxa}}
 }
 \author{
 Leo Lahti

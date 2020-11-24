@@ -38,6 +38,12 @@ test_that("getPrevalence", {
     # Sorting should put the top values first
     pr <- getPrevalence(GlobalPatterns, sort=TRUE, detection = 0.1/100)
     expect_equal(as.vector(which.max(pr)), 1)
+    pr <- names(head(getPrevalence(GlobalPatterns, sort=TRUE,  include_lowest = TRUE), 5L))
+    actual <- getTopTaxa(GlobalPatterns,
+                         method="prevalence",
+                         top=5,
+                         abund_values="counts")
+    expect_equal(pr, actual)
 
 })
 

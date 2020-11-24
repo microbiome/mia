@@ -9,8 +9,8 @@
 #' @param top Numeric value, how many top taxa to return. Default return top
 #'   five taxa.
 #'
-#' @param method Specify the method to determine top taxa. Either sum, mean or
-#'   median. Default is 'mean'
+#' @param method Specify the method to determine top taxa. Either sum, mean,
+#'   median or prevalence. Default is 'mean'.
 #'
 #' @param abund_values a \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
@@ -22,6 +22,9 @@
 #' @return
 #' For \code{getTopTaxa}: A vector of the most \code{top} abundant
 #' \dQuote{FeatureID}s
+#'
+#' @seealso
+#' \code{\link[=getPrevalence]{getPrevalentTaxa}}
 #'
 #' @name getTopTaxa
 #'
@@ -60,21 +63,26 @@ setGeneric("getTopTaxa", signature = "x",
 #'
 #' @export
 setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, top = 5L, method = c("mean","sum","median"),
+    function(x, top = 5L, method = c("mean","sum","median","prevalence"),
              abund_values = "counts"){
-        method <- match.arg(method, c("mean","sum","median"))
+        method <- match.arg(method, c("mean","sum","median","prevalence"))
         # check max taxa
         .check_max_taxa(x, top, abund_values)
         # check assay
         .check_abund_values(abund_values, x)
-        #assay(x, abund_values)[,sample_id]
-        taxs <- switch(method,
-                       mean = rowMeans2(assay(x, abund_values)),
-                       sum = rowSums2(assay(x, abund_values)),
-                       median = rowMedians(assay(x, abund_values)))
-        names(taxs) <- rownames(assay(x))
-        taxs <- sort(taxs,decreasing = TRUE)[1:top]
-        return(names(taxs))
+        #
+        if(method == "prevalence"){
+            taxs <- getPrevalence(assay(x, abund_values), sort = TRUE,
+                                  include_lowest = TRUE)
+        } else {
+            taxs <- switch(method,
+                           mean = rowMeans2(assay(x, abund_values)),
+                           sum = rowSums2(assay(x, abund_values)),
+                           median = rowMedians(assay(x, abund_values)))
+            names(taxs) <- rownames(assay(x))
+            taxs <- sort(taxs,decreasing = TRUE)
+        }
+        head(names(taxs), n = top)
     }
 )
 

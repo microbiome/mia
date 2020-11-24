@@ -15,7 +15,7 @@ getTopTaxa(
 \S4method{getTopTaxa}{SummarizedExperiment}(
   x,
   top = 5L,
-  method = c("mean", "sum", "median"),
+  method = c("mean", "sum", "median", "prevalence"),
   abund_values = "counts"
 )
 }
@@ -26,8 +26,8 @@ getTopTaxa(
 \item{top}{Numeric value, how many top taxa to return. Default return top
 five taxa.}
 
-\item{method}{Specify the method to determine top taxa. Either sum, mean or
-median. Default is 'mean'}
+\item{method}{Specify the method to determine top taxa. Either sum, mean,
+median or prevalence. Default is 'mean'.}
 
 \item{abund_values}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
@@ -51,6 +51,9 @@ top_taxa <- getTopTaxa(GlobalPatterns,
                        top=5,
                        abund_values="counts")
 top_taxa
+}
+\seealso{
+\code{\link[=getPrevalence]{getPrevalentTaxa}}
 }
 \author{
 Sudarshan A. Shetty

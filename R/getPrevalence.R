@@ -47,7 +47,8 @@
 #' exceeding the threshold set by \code{prevalence} are returned.
 #'
 #' @seealso
-#' \code{\link[=agglomerate-methods]{agglomerateByRank}}
+#' \code{\link[=agglomerate-methods]{agglomerateByRank}},
+#' \code{\link[=getTopTaxa]{getTopTaxa}}
 #'
 #'
 #' @name getPrevalence
