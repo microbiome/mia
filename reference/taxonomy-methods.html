@@ -82,7 +82,7 @@ is to be mixed, the taxonomic level is prepended by default." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9002</span>
       </span>
     </div>
 
@@ -166,8 +166,8 @@ is to be mixed, the taxonomic level is prepended by default.</p>
 <span class='fu'>getTaxonomyLabels</span><span class='op'>(</span>
   <span class='va'>x</span>,
   empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span><span class='op'>)</span>,
-  withType <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  makeUnique <span class='op'>=</span> <span class='cn'>TRUE</span>
+  with_type <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  make_unique <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -195,15 +195,15 @@ removed if <code>na.rm = TRUE</code> before agglomeration.</p></td>
       <td><p>optional arguments not used currently.</p></td>
     </tr>
     <tr>
-      <th>withType</th>
+      <th>with_type</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should the level be add as a
 suffix? For example: "Phylum:Crenarchaeota" (default:
-<code>withType = FALSE</code>)</p></td>
+<code>with_type = FALSE</code>)</p></td>
     </tr>
     <tr>
-      <th>makeUnique</th>
+      <th>make_unique</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should the labels be made
-unique, if there are any duplicates? (default: <code>makeUnique = TRUE</code>)</p></td>
+unique, if there are any duplicates? (default: <code>make_unique = TRUE</code>)</p></td>
     </tr>
     </table>
 

@@ -74,7 +74,7 @@ taxonomicRanks can be used." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9002</span>
       </span>
     </div>
 
@@ -127,7 +127,10 @@ to certain taxonomic ranks given as <code>rowData</code>. Only available
   na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
   empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span><span class='op'>)</span>,
   agglomerateTree <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span>
+
+<span class='co'># S4 method for SingleCellExperiment</span>
+<span class='fu'>agglomerateByRank</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, altexp <span class='op'>=</span> <span class='cn'>NULL</span>, strip_altexp <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,6 +168,23 @@ removed if <code>na.rm = TRUE</code> before agglomeration.</p></td>
       <td><p><code>TRUE</code> or <code>FALSE</code>: should to
 <code>rowTree()</code> also be agglomerated? (Default:
 <code>agglomerateTree = FALSE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>arguments passed to <code>agglomerateByRank</code> function for
+<code>SummarizedExperiment</code> objects.</p></td>
+    </tr>
+    <tr>
+      <th>altexp</th>
+      <td><p>String or integer scalar specifying an alternative experiment
+containing the input data.</p></td>
+    </tr>
+    <tr>
+      <th>strip_altexp</th>
+      <td><p><code>TRUE</code> or <code>FALSE</code>: Should alternative
+experiments be removed prior to agglomeration? This prohibits to many
+nested alternative experiments by default (default:
+<code>strip_altexp = TRUE</code>)</p></td>
     </tr>
     </table>
 
