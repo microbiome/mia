@@ -25,7 +25,8 @@ Depends:
     R (>= 4.0),
     SummarizedExperiment,
     SingleCellExperiment,
-    TreeSummarizedExperiment
+    TreeSummarizedExperiment,
+    MicrobiomeExperiment
 Imports:
     methods,
     S4Vectors,
