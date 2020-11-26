@@ -60,6 +60,7 @@ setGeneric("getTopTaxa", signature = "x",
 #' @rdname getTopTaxa
 #'
 #' @importFrom DelayedMatrixStats rowSums2 rowMeans2 rowMedians
+#' @importFrom utils head
 #'
 #' @export
 setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),

@@ -7,74 +7,64 @@
 \alias{estimateInvSimpson}
 \alias{estimateRichness}
 \alias{estimateShannonE}
-\alias{estimateShannon,MicrobiomeExperiment-method}
-\alias{estimateSimpson,MicrobiomeExperiment-method}
-\alias{estimateInvSimpson,MicrobiomeExperiment-method}
-\alias{estimateRichness,MicrobiomeExperiment-method}
-\alias{estimateShannonE,MicrobiomeExperiment-method}
+\alias{estimateDiversity,SummarizedExperiment-method}
+\alias{estimateShannon,SummarizedExperiment-method}
+\alias{estimateSimpson,SummarizedExperiment-method}
+\alias{estimateInvSimpson,SummarizedExperiment-method}
+\alias{estimateRichness,SummarizedExperiment-method}
+\alias{estimateShannonE,SummarizedExperiment-method}
 \title{Estimate alpha diversity}
 \usage{
-estimateShannon(x, abund_values = "counts", name = "Shannon", ...)
-
-estimateSimpson(x, abund_values = "counts", name = "Simpson", ...)
-
-estimateInvSimpson(x, abund_values = "counts", name = "InvSimpson", ...)
-
-estimateRichness(x, abund_values = "counts", name = "Richness", ...)
-
-estimateShannonE(x, abund_values = "counts", name = "ShannonE", ...)
-
-\S4method{estimateShannon}{MicrobiomeExperiment}(
+estimateDiversity(
   x,
   abund_values = "counts",
-  name = "Shannon",
+  index = c("shannon", "shannon_e", "simpson", "inv_simpson", "richness"),
+  name = index,
+  ...
+)
+
+estimateShannon(x, ...)
+
+estimateSimpson(x, ...)
+
+estimateInvSimpson(x, ...)
+
+estimateRichness(x, ...)
+
+estimateShannonE(x, ...)
+
+\S4method{estimateDiversity}{SummarizedExperiment}(
+  x,
+  abund_values = "counts",
+  index = c("shannon", "shannon_e", "simpson", "inv_simpson", "richness"),
+  name = index,
   BPPARAM = SerialParam(),
   ...
 )
 
-\S4method{estimateSimpson}{MicrobiomeExperiment}(
-  x,
-  abund_values = "counts",
-  name = "Simpson",
-  BPPARAM = SerialParam(),
-  ...
-)
+\S4method{estimateShannon}{SummarizedExperiment}(x, ...)
 
-\S4method{estimateInvSimpson}{MicrobiomeExperiment}(
-  x,
-  abund_values = "counts",
-  name = "InvSimpson",
-  BPPARAM = SerialParam(),
-  ...
-)
+\S4method{estimateSimpson}{SummarizedExperiment}(x, ...)
 
-\S4method{estimateRichness}{MicrobiomeExperiment}(
-  x,
-  abund_values = "counts",
-  name = "Richness",
-  BPPARAM = SerialParam(),
-  ...
-)
+\S4method{estimateInvSimpson}{SummarizedExperiment}(x, ...)
 
-\S4method{estimateShannonE}{MicrobiomeExperiment}(
-  x,
-  abund_values = "counts",
-  name = "ShannonE",
-  BPPARAM = SerialParam(),
-  ...
-)
+\S4method{estimateRichness}{SummarizedExperiment}(x, ...)
+
+\S4method{estimateShannonE}{SummarizedExperiment}(x, ...)
 }
 \arguments{
-\item{x}{a \code{\link{MicrobiomeExperiment}} object}
+\item{x}{a \code{\link{SummarizedExperiment}} object}
 
 \item{abund_values}{the name of the assay used for calculation of the
 sample-wise estimates}
 
+\item{index}{a diversity measurement}
+
 \item{name}{a name for the column of the colData the results should be stored
 in.}
 
-\item{...}{additional parameters passed to the function implemented by the
-\code{breakaway} package}
+\item{...}{additional parameters passed to \code{estimateDiversity} or the
+corresponding function implemented by the \code{breakaway} package.}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -89,16 +79,16 @@ Several functions for calculation of alpha diversity indices available via
 wrapper functions. They are implemented via the \code{breakaway} package.
 }
 \details{
-This includes the \sQuote{Shannon},  \sQuote{Simpson},
+This includes the \sQuote{Shannon}, \sQuote{Shannon-E}, \sQuote{Simpson},
+\sQuote{inverse Simpson} and \sQuote{Richness} diversity measures.
 }
 \examples{
-data(esophagus, package = "MicrobiomeExperiment")
-esophagus <- as(esophagus, "MicrobiomeExperiment")
+data(esophagus)
 esophagus <- estimateShannon(esophagus)
-colData(esophagus)$Shannon
+colData(esophagus)$shannon
 
 esophagus <- estimateSimpson(esophagus)
-colData(esophagus)$Simpson
+colData(esophagus)$simpson
 }
 \seealso{
 \itemize{
