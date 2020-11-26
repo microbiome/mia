@@ -73,7 +73,7 @@ wrapper functions. They are implemented via the breakaway package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9004</span>
       </span>
     </div>
 
@@ -117,72 +117,64 @@ wrapper functions. They are implemented via the breakaway package." />
 wrapper functions. They are implemented via the <code>breakaway</code> package.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>estimateShannon</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span>, name <span class='op'>=</span> <span class='st'>"Shannon"</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>estimateSimpson</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span>, name <span class='op'>=</span> <span class='st'>"Simpson"</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>estimateInvSimpson</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span>, name <span class='op'>=</span> <span class='st'>"InvSimpson"</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>estimateRichness</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span>, name <span class='op'>=</span> <span class='st'>"Richness"</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>estimateShannonE</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span>, name <span class='op'>=</span> <span class='st'>"ShannonE"</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S4 method for MicrobiomeExperiment</span>
-<span class='fu'>estimateShannon</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>estimateDiversity</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  name <span class='op'>=</span> <span class='st'>"Shannon"</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"shannon_e"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span><span class='op'>)</span>,
+  name <span class='op'>=</span> <span class='va'>index</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
+
+<span class='fu'>estimateShannon</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>estimateSimpson</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>estimateInvSimpson</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>estimateRichness</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>estimateShannonE</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>estimateDiversity</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"shannon_e"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span><span class='op'>)</span>,
+  name <span class='op'>=</span> <span class='va'>index</span>,
   BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
-<span class='co'># S4 method for MicrobiomeExperiment</span>
-<span class='fu'>estimateSimpson</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  name <span class='op'>=</span> <span class='st'>"Simpson"</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span>
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>estimateShannon</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='co'># S4 method for MicrobiomeExperiment</span>
-<span class='fu'>estimateInvSimpson</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  name <span class='op'>=</span> <span class='st'>"InvSimpson"</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span>
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>estimateSimpson</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='co'># S4 method for MicrobiomeExperiment</span>
-<span class='fu'>estimateRichness</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  name <span class='op'>=</span> <span class='st'>"Richness"</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span>
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>estimateInvSimpson</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='co'># S4 method for MicrobiomeExperiment</span>
-<span class='fu'>estimateShannonE</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  name <span class='op'>=</span> <span class='st'>"ShannonE"</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>estimateRichness</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>estimateShannonE</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a <code>MicrobiomeExperiment</code> object</p></td>
+      <td><p>a <code>SummarizedExperiment</code> object</p></td>
     </tr>
     <tr>
       <th>abund_values</th>
       <td><p>the name of the assay used for calculation of the
 sample-wise estimates</p></td>
+    </tr>
+    <tr>
+      <th>index</th>
+      <td><p>a diversity measurement</p></td>
     </tr>
     <tr>
       <th>name</th>
@@ -191,8 +183,8 @@ in.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional parameters passed to the function implemented by the
-<code>breakaway</code> package</p></td>
+      <td><p>additional parameters passed to <code>estimateDiversity</code> or the
+corresponding function implemented by the <code>breakaway</code> package.</p></td>
     </tr>
     <tr>
       <th>BPPARAM</th>
@@ -208,7 +200,8 @@ object specifying whether calculation of estimates should be parallelized.</p></
 <code>*name*</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This includes the &#8216;Shannon&#8217;,  &#8216;Simpson&#8217;,</p>
+    <p>This includes the &#8216;Shannon&#8217;, &#8216;Shannon-E&#8217;, &#8216;Simpson&#8217;,
+&#8216;inverse Simpson&#8217; and &#8216;Richness&#8217; diversity measures.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'>
@@ -223,14 +216,13 @@ object specifying whether calculation of estimates should be parallelized.</p></
 </div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span>, package <span class='op'>=</span> <span class='st'>"MicrobiomeExperiment"</span><span class='op'>)</span>
-<span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>esophagus</span>, <span class='st'>"MicrobiomeExperiment"</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateShannon</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-<span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Shannon</span>
+<span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>shannon</span>
 </div><div class='output co'>#&gt;        B        C        D 
 #&gt; 2.249367 2.762389 2.032493 </div><div class='input'>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateSimpson</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-<span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Simpson</span>
+<span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>simpson</span>
 </div><div class='output co'>#&gt;          B          C          D 
 #&gt; 0.16862821 0.09665513 0.33425075 </div></pre>
   </div>
