@@ -85,34 +85,37 @@ setGeneric("estimateShannonE",signature = c("x"),
            function(x, ...)
                standardGeneric("estimateShannonE"))
 
+
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
-          function(x, abund_values = "counts",
-                   index = c("shannon","shannon_e","simpson","inv_simpson","richness"),
-                   name = index, BPPARAM = SerialParam(), ...){
-              # input check
-              if(!.is_non_empty_string(index)){
-                  stop("'index' must be a non-empty single character value",
-                       call. = FALSE)
-              }
-              if(!.is_non_empty_string(name)){
-                  stop("'name' must be a non-empty single character value",
-                       call. = FALSE)
-              }
-              #
-              index<- match.arg(index,
-                                c("shannon","shannon_e","simpson","inv_simpson",
-                                  "richness"))
-              FUN <- switch(index,
-                            shannon = breakaway::sample_shannon,
-                            shannon_e = breakaway::sample_shannon_e,
-                            simpson = breakaway::sample_simpson,
-                            inv_simpson = breakaway::sample_inverse_simpson,
-                            richness = breakaway::sample_richness)
-              .run_brkwy_dvrsty(x = x, abund_values = abund_values, name = name,
-                                FUN = FUN, BPPARAM = BPPARAM, ...)
-          }
+    function(x, abund_values = "counts",
+             index = c("shannon","shannon_e","simpson","inv_simpson","richness"),
+             name = index, BPPARAM = SerialParam(), ...){
+        # input check
+        index<- match.arg(index,
+                          c("shannon","shannon_e","simpson","inv_simpson",
+                            "richness"),
+                          several.ok = TRUE)
+        if(!.is_non_empty_character(name) || length(name) != length(index)){
+            stop("'name' must be a non-empty character value and have the ",
+                 "same length then 'index'.",
+                 call. = FALSE)
+        }
+        #
+        FUN <- function(i){
+            dvrsty_FUN <- switch(i,
+                                 shannon = breakaway::sample_shannon,
+                                 shannon_e = breakaway::sample_shannon_e,
+                                 simpson = breakaway::sample_simpson,
+                                 inv_simpson = breakaway::sample_inverse_simpson,
+                                 richness = breakaway::sample_richness)
+            .run_brkwy_dvrsty(x = x, abund_values = abund_values,
+                              FUN = dvrsty_FUN, BPPARAM = BPPARAM, ...)
+        }
+        dvrsts <- lapply(index, FUN)
+        .add_brkwy_dvrsty_values_to_colData(x, dvrsts, name)
+    }
 )
 
 #' @rdname estimateDiversity
@@ -157,8 +160,8 @@ setMethod("estimateShannonE", signature = c(x = "SummarizedExperiment"),
 
 
 #' @importFrom SummarizedExperiment assay assays
-.run_brkwy_dvrsty <- function(x, abund_values = "counts", name, FUN,
-                               BPPARAM = SerialParam(), ...){
+.run_brkwy_dvrsty <- function(x, abund_values = "counts", FUN,
+                              BPPARAM = SerialParam(), ...){
     # input check
     .require_package("breakaway")
     # input checks
@@ -169,14 +172,9 @@ setMethod("estimateShannonE", signature = c(x = "SummarizedExperiment"),
     if(!(abund_values %in% names(assays(x)))){
         stop("'abund_values' must reference a name of an assay in 'x'")
     }
-    if(!.is_non_empty_string(name)){
-        stop("'name' must be a single non-empty character value.",
-             call. = FALSE)
-    }
-
-    brkwy_values <- .run_brkwy_dvrsty_on_assay(assay(x, abund_values), FUN,
-                                               BPPARAM = BPPARAM, ...)
-    .add_brkwy_dvrsty_values_to_colData(x, brkwy_values, name, abund_values)
+    dvrsty <- .run_brkwy_dvrsty_on_assay(assay(x, abund_values), FUN,
+                                         BPPARAM = BPPARAM, ...)
+    dvrsty
 }
 
 #' @importFrom S4Vectors DataFrame
@@ -199,10 +197,10 @@ setMethod("estimateShannonE", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment colData colData<-
-.add_brkwy_dvrsty_values_to_colData <- function(x, brkwy_values, name,
-                                                abund_values){
+#' @importFrom S4Vectors DataFrame
+.add_brkwy_dvrsty_values_to_colData <- function(x, dvrsts, name){
     colData <- colData(x)
-    colData[[name]] <- brkwy_values
+    colData[,name] <- DataFrame(dvrsts)
     colData(x) <- colData
     x
 }
