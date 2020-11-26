@@ -73,7 +73,7 @@ breakaway package are available via wrapper functions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9005</span>
       </span>
     </div>
 
@@ -254,13 +254,13 @@ such as <code><a href='estimateDiversity.html'>Shannon</a></code>.</p>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateBreakaway</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>breakaway</span>
 </div><div class='output co'>#&gt;         B         C         D 
-#&gt;  38.25203  46.59595 184.56297 </div><div class='input'><span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>breakaway_summary</span>
+#&gt;  38.25203  46.59595 184.56298 </div><div class='input'><span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>breakaway_summary</span>
 </div><div class='output co'>#&gt; DataFrame with 3 rows and 6 columns
 #&gt;    estimate     error            interval             model reasonable warnings
 #&gt;   &lt;numeric&gt; &lt;numeric&gt;       &lt;NumericList&gt;       &lt;character&gt;  &lt;logical&gt;   &lt;list&gt;
 #&gt; B   38.2520   9.29581    28.5442,221.1372 Negative Binomial       TRUE         
 #&gt; C   46.5959  17.87013    33.4084,485.5646 Negative Binomial      FALSE         
-#&gt; D  184.5630 160.37946    39.698,12688.584              Kemp       TRUE         </div><div class='input'>
+#&gt; D  184.5630 160.37952    39.698,12688.589              Kemp       TRUE         </div><div class='input'>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateWLRMuntransformed</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>WLRMun</span>
 </div><div class='output co'>#&gt;        B        C        D 
