@@ -100,6 +100,7 @@ library(scater)
 plotColData(se, "shannon")
 # ... by sample type
 plotColData(se, "shannon", "SampleType")
+\dontrun{
 # combining different plots
 plots <- lapply(c("shannon","simpson","richness"),
                 plotColData,
@@ -108,6 +109,7 @@ plots <- lapply(c("shannon","simpson","richness"),
                 colour_by = "SampleType")
 plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))
 ggpubr::ggarrange(plotlist = plots, nrow = 1, common.legend = TRUE, legend = "right")
+}
 }
 \seealso{
 \code{\link[scater:plotColData]{plotColData}}
