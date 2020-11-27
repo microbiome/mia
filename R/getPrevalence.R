@@ -146,6 +146,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
+
         # check assay
         .check_abund_values(abund_values, x)
         if(!is.null(rank)){
@@ -180,23 +181,27 @@ setGeneric("getPrevalentTaxa", signature = "x",
 setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, prevalence = 50/100, rank = taxonomyRanks(x)[1L],
              include_lowest = FALSE, ...){
+
         # input check
         if (!.is_numeric_string(prevalence)) {
             stop("'prevalence' must be a single numeric value or coercibel to ",
                  "one.",
                  call. = FALSE)
         }
+
         prevalence <- as.numeric(prevalence)
         if(!.is_a_bool(include_lowest)){
             stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
         }
-        #
+
         pr <- getPrevalence(x, rank = rank, ...)
+
         if (include_lowest) {
           taxa <- pr >= prevalence
         } else {
           taxa <- pr > prevalence
         }
+
         taxa <- names(which(taxa))
         taxa
     }
