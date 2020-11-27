@@ -13,7 +13,8 @@
   onRankOnly = FALSE,
   na.rm = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-"),
-  agglomerateTree = FALSE
+  agglomerateTree = FALSE,
+  ...
 )
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)

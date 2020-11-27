@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check-Bioc-devel](https://github.com/FelixErnst/mia/workflows/R-CMD-check-Bioc-devel/badge.svg)](https://github.com/FelixErnst/mia/actions)
+[![R-CMD-check-bioc-devel](https://github.com/FelixErnst/mia/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/FelixErnst/mia/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/FelixErnst/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/FelixErnst/mia?branch=master)
 

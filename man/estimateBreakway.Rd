@@ -9,13 +9,13 @@
 \alias{estimatePoissonModel}
 \alias{estimateChaoBunge}
 \alias{estimateChao1}
-\alias{estimateBreakaway,MicrobiomeExperiment-method}
-\alias{estimateKemp,MicrobiomeExperiment-method}
-\alias{estimateWLRMuntransformed,MicrobiomeExperiment-method}
-\alias{estimateWLRMtransformed,MicrobiomeExperiment-method}
-\alias{estimatePoissonModel,MicrobiomeExperiment-method}
-\alias{estimateChaoBunge,MicrobiomeExperiment-method}
-\alias{estimateChao1,MicrobiomeExperiment-method}
+\alias{estimateBreakaway,SummarizedExperiment-method}
+\alias{estimateKemp,SummarizedExperiment-method}
+\alias{estimateWLRMuntransformed,SummarizedExperiment-method}
+\alias{estimateWLRMtransformed,SummarizedExperiment-method}
+\alias{estimatePoissonModel,SummarizedExperiment-method}
+\alias{estimateChaoBunge,SummarizedExperiment-method}
+\alias{estimateChao1,SummarizedExperiment-method}
 \title{Functions for diversity estimation from \code{breakaway} package}
 \usage{
 estimateBreakaway(x, abund_values = "counts", name = "breakaway", ...)
@@ -32,7 +32,7 @@ estimateChaoBunge(x, abund_values = "counts", name = "chao_bunge", ...)
 
 estimateChao1(x, abund_values = "counts", name = "chao1", ...)
 
-\S4method{estimateBreakaway}{MicrobiomeExperiment}(
+\S4method{estimateBreakaway}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "breakaway",
@@ -40,7 +40,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateKemp}{MicrobiomeExperiment}(
+\S4method{estimateKemp}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "kemp",
@@ -48,7 +48,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateWLRMuntransformed}{MicrobiomeExperiment}(
+\S4method{estimateWLRMuntransformed}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "WLRMun",
@@ -56,7 +56,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateWLRMtransformed}{MicrobiomeExperiment}(
+\S4method{estimateWLRMtransformed}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "WLRM",
@@ -64,7 +64,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimatePoissonModel}{MicrobiomeExperiment}(
+\S4method{estimatePoissonModel}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "poisson",
@@ -72,7 +72,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateChaoBunge}{MicrobiomeExperiment}(
+\S4method{estimateChaoBunge}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "chao_bunge",
@@ -80,7 +80,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
   ...
 )
 
-\S4method{estimateChao1}{MicrobiomeExperiment}(
+\S4method{estimateChao1}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "chao1",
@@ -89,7 +89,7 @@ estimateChao1(x, abund_values = "counts", name = "chao1", ...)
 )
 }
 \arguments{
-\item{x}{a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+\item{x}{a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
 object}
 
 \item{abund_values}{the name of the assay used for calculation of the
@@ -119,15 +119,22 @@ Other diversity measures implemented by breakaway are also available,
 such as \code{\link[=estimateDiversity]{Shannon}}.
 }
 \examples{
-data(esophagus)
-esophagus <- as(esophagus, "MicrobiomeExperiment")
-esophagus <- estimateBreakaway(esophagus)
-colData(esophagus)$breakaway
-colData(esophagus)$breakaway_summary
+data(GlobalPatterns)
+se <- GlobalPatterns
 
-esophagus <- estimateWLRMuntransformed(esophagus)
-colData(esophagus)$WLRMun
-colData(esophagus)$WLRMun_summary
+se <- estimateBreakaway(se)
+colData(se)$breakaway
+colData(se)$breakaway_summary
+
+se <- estimateWLRMuntransformed(se)
+colData(se)$WLRMun
+colData(se)$WLRMun_summary
+
+# plotting the diversities
+library(scater)
+plotColData(se, "breakaway")
+# ... by sample type
+plotColData(se, "breakaway", "SampleType")
 }
 \seealso{
 \itemize{

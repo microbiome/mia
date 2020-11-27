@@ -1,12 +1,12 @@
 #' Functions for diversity estimation from \code{breakaway} package
 #'
-#' Several functions for calculation of diversity indices implemented by the 
+#' Several functions for calculation of diversity indices implemented by the
 #' \code{breakaway} package are available via wrapper functions.
-#' 
+#'
 #' Other diversity measures implemented by breakaway are also available,
 #' such as \code{\link[=estimateDiversity]{Shannon}}.
 #'
-#' @param x a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+#' @param x a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
 #'
 #' @param abund_values the name of the assay used for calculation of the
@@ -23,7 +23,7 @@
 #'   \code{breakaway} package
 #'
 #' @return \code{x} with additional \code{\link{colData}} named
-#'   \code{*name*} containing the main diversity score and 
+#'   \code{*name*} containing the main diversity score and
 #'   \code{*name*_summary} containing a summary \code{DataFrame}
 #'
 #' @seealso
@@ -41,15 +41,22 @@
 #' @name estimateBreakway
 #'
 #' @examples
-#' data(esophagus)
-#' esophagus <- as(esophagus, "MicrobiomeExperiment")
-#' esophagus <- estimateBreakaway(esophagus)
-#' colData(esophagus)$breakaway
-#' colData(esophagus)$breakaway_summary
+#' data(GlobalPatterns)
+#' se <- GlobalPatterns
 #'
-#' esophagus <- estimateWLRMuntransformed(esophagus)
-#' colData(esophagus)$WLRMun
-#' colData(esophagus)$WLRMun_summary
+#' se <- estimateBreakaway(se)
+#' colData(se)$breakaway
+#' colData(se)$breakaway_summary
+#'
+#' se <- estimateWLRMuntransformed(se)
+#' colData(se)$WLRMun
+#' colData(se)$WLRMun_summary
+#'
+#' # plotting the diversities
+#' library(scater)
+#' plotColData(se, "breakaway")
+#' # ... by sample type
+#' plotColData(se, "breakaway", "SampleType")
 NULL
 
 #' @rdname estimateBreakway
@@ -96,7 +103,7 @@ setGeneric("estimateChao1",signature = c("x"),
 
 #' @rdname estimateBreakway
 #' @export
-setMethod("estimateBreakaway", signature = c(x = "MicrobiomeExperiment"),
+setMethod("estimateBreakaway", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", name = "breakaway",
              BPPARAM = SerialParam(), ...){
         .run_breakaway_fun(x = x, abund_values = abund_values, name = name,
@@ -106,7 +113,7 @@ setMethod("estimateBreakaway", signature = c(x = "MicrobiomeExperiment"),
 
 #' @rdname estimateBreakway
 #' @export
-setMethod("estimateKemp", signature = c(x = "MicrobiomeExperiment"),
+setMethod("estimateKemp", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", name = "kemp",
              BPPARAM = SerialParam(), ...){
         .run_breakaway_fun(x = x, abund_values = abund_values, name = name,
@@ -117,7 +124,7 @@ setMethod("estimateKemp", signature = c(x = "MicrobiomeExperiment"),
 #' @rdname estimateBreakway
 #' @export
 setMethod("estimateWLRMuntransformed",
-    signature = c(x = "MicrobiomeExperiment"),
+    signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", name = "WLRMun",
              BPPARAM = SerialParam(), ...){
         .run_breakaway_fun(x = x, abund_values = abund_values, name = name,
@@ -129,7 +136,7 @@ setMethod("estimateWLRMuntransformed",
 #' @rdname estimateBreakway
 #' @export
 setMethod("estimateWLRMtransformed",
-    signature = c(x = "MicrobiomeExperiment"),
+    signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", name = "WLRM",
              BPPARAM = SerialParam(), ...){
         .run_breakaway_fun(x = x, abund_values = abund_values, name = name,
@@ -140,7 +147,7 @@ setMethod("estimateWLRMtransformed",
 
 #' @rdname estimateBreakway
 #' @export
-setMethod("estimatePoissonModel", signature = c(x = "MicrobiomeExperiment"),
+setMethod("estimatePoissonModel", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", name = "poisson",
              BPPARAM = SerialParam(), ...){
         .run_breakaway_fun(x = x, abund_values = abund_values, name = name,
@@ -151,7 +158,7 @@ setMethod("estimatePoissonModel", signature = c(x = "MicrobiomeExperiment"),
 
 #' @rdname estimateBreakway
 #' @export
-setMethod("estimateChaoBunge", signature = c(x = "MicrobiomeExperiment"),
+setMethod("estimateChaoBunge", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", name = "chao_bunge",
              BPPARAM = SerialParam(), ...){
         .run_breakaway_fun(x = x, abund_values = abund_values, name = name,
@@ -161,7 +168,7 @@ setMethod("estimateChaoBunge", signature = c(x = "MicrobiomeExperiment"),
 
 #' @rdname estimateBreakway
 #' @export
-setMethod("estimateChao1", signature = c(x = "MicrobiomeExperiment"),
+setMethod("estimateChao1", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", name = "chao1",
              BPPARAM = SerialParam(), ...){
         .run_breakaway_fun(x = x, abund_values = abund_values, name = name,
