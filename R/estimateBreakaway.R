@@ -41,14 +41,22 @@
 #' @name estimateBreakway
 #'
 #' @examples
-#' data(esophagus)
-#' esophagus <- estimateBreakaway(esophagus)
-#' colData(esophagus)$breakaway
-#' colData(esophagus)$breakaway_summary
+#' data(GlobalPatterns)
+#' se <- GlobalPatterns
 #'
-#' esophagus <- estimateWLRMuntransformed(esophagus)
-#' colData(esophagus)$WLRMun
-#' colData(esophagus)$WLRMun_summary
+#' se <- estimateBreakaway(se)
+#' colData(se)$breakaway
+#' colData(se)$breakaway_summary
+#'
+#' se <- estimateWLRMuntransformed(se)
+#' colData(se)$WLRMun
+#' colData(se)$WLRMun_summary
+#'
+#' # plotting the diversities
+#' library(scater)
+#' plotColData(se, "breakaway")
+#' # ... by sample type
+#' plotColData(se, "breakaway", "SampleType")
 NULL
 
 #' @rdname estimateBreakway

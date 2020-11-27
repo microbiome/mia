@@ -83,14 +83,34 @@ This includes the \sQuote{Shannon}, \sQuote{Shannon-E}, \sQuote{Simpson},
 \sQuote{inverse Simpson} and \sQuote{Richness} diversity measures.
 }
 \examples{
-data(esophagus)
-esophagus <- estimateShannon(esophagus)
-colData(esophagus)$shannon
+data(GlobalPatterns)
+se <- GlobalPatterns
 
-esophagus <- estimateSimpson(esophagus)
-colData(esophagus)$simpson
+se <- estimateShannon(se)
+colData(se)$shannon
+
+esophagus <- estimateSimpson(se)
+colData(se)$simpson
+
+# calculating all the diversites
+se <- estimateDiversity(se)
+
+# plotting the diversities
+library(scater)
+plotColData(se, "shannon")
+# ... by sample type
+plotColData(se, "shannon", "SampleType")
+# combining different plots
+plots <- lapply(c("shannon","simpson","richness"),
+                plotColData,
+                object = se,
+                x = "SampleType",
+                colour_by = "SampleType")
+plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))
+ggpubr::ggarrange(plotlist = plots, nrow = 1, common.legend = TRUE, legend = "right")
 }
 \seealso{
+\code{\link[scater:plotColData]{plotColData}}
 \itemize{
 \item{\code{\link[=estimateBreakway]{estimateBreakway}}}
 \item{\code{\link[breakaway:sample_inverse_simpson]{sample_inverse_simpson}}}
