@@ -52,8 +52,7 @@ Suggests:
     vegan,
     phyloseq,
     dada2,
-    biomformat,
-    ggpubr
+    biomformat
 Remotes:
     github::adw96/breakaway,
     github::FelixErnst/MicrobiomeExperiment
