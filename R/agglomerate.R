@@ -101,10 +101,11 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             stop("taxonomyData needs to be populated.", call. = FALSE)
         }
         .check_taxonomic_rank(rank, x)
-        # If x is aggregated on the only rank that is available,
+        # If rank is the only rank that is available and this data is unique,
         # then the data is already 'aggregated' and no further operations
         # are needed.
-        if (length(taxonomyRanks(x)) == 1L) {
+        if (length(taxonomyRanks(x)) == 1L &&
+            !anyDuplicated(rowData(x)[,taxonomyRanks(x)])) {
             return(x)
         }
         if(!.is_a_bool(agglomerateTree)){

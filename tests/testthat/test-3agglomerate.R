@@ -52,12 +52,11 @@ test_that("agglomerate", {
     actual <- agglomerateByRank(xtse,"Phylum")
     expect_equivalent(rowData(actual),rowData(actual_phylum))
 
-    # Only one rank available in the object - 
+    # Only one rank available in the object -
     # the same dimensionality is retained
     data(enterotype)
-    x <- enterotype
-    expect_true(identical(dim(x), dim(agglomerateByRank(x,"Genus"))))    
-
+    expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
+                 nrow(agglomerateByRank(enterotype,"Genus")))
 })
 
 
