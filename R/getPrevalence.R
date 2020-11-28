@@ -188,7 +188,7 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
 
         # input check
         if (!.is_numeric_string(prevalence)) {
-            stop("'prevalence' must be a single numeric value or coercibel to ",
+            stop("'prevalence' must be a single numeric value or coercible to ",
                  "one.",
                  call. = FALSE)
         }
