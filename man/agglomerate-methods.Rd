@@ -43,7 +43,9 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \code{agglomerateTree = FALSE})}
 
 \item{...}{arguments passed to \code{agglomerateByRank} function for
-\code{SummarizedExperiment} objects.}
+\code{SummarizedExperiment} objects,
+\code{\link[=merge-methods]{mergeRows}} and
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -88,5 +90,6 @@ data(enterotype)
 taxonomyRanks(enterotype)
 }
 \seealso{
-\code{\link[=merge-methods]{mergeRows}}
+\code{\link[=merge-methods]{mergeRows}},
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 }

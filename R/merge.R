@@ -33,6 +33,9 @@
 #' @return an object with the same class \code{x} with the specified entries
 #'   merged into one entry in all relevant components.
 #'
+#' @seealso
+#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
+#'
 #' @examples
 #' data(esophagus)
 #' esophagus

@@ -27,7 +27,9 @@
 #'   \code{agglomerateTree = FALSE})
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
-#'   \code{SummarizedExperiment} objects.
+#'   \code{SummarizedExperiment} objects,
+#'   \code{\link[=merge-methods]{mergeRows}} and
+#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -41,7 +43,8 @@
 #'   class \code{x}.
 #'
 #' @seealso
-#'   \code{\link[=merge-methods]{mergeRows}}
+#' \code{\link[=merge-methods]{mergeRows}},
+#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 #'
 #' @name agglomerate-methods
 #'
@@ -130,7 +133,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
 
         # merge taxa
-        x <- mergeRows(x, f = tax_factors, mergeTree = agglomerateTree)
+        x <- mergeRows(x, f = tax_factors, mergeTree = agglomerateTree, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
