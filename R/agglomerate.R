@@ -88,9 +88,9 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
        empty.fields = c(NA, "", " ", "\t", "-"), agglomerateTree = FALSE, ...){
 
         # If x is aggregated on the only rank that is available,
-        # then the data is already 'aggregated'. This will be checked
-        # first in order to avoid unnecessary operations.
-        if (rank == taxonomyRanks(x) && length(taxonomyRanks(x)) == 1) {
+        # then the data is already 'aggregated' and no further operations
+        # are needed.
+        if (length(taxonomyRanks(x)) == 1 && rank %in% taxonomyRanks(x)) {
             return(x)
         }
 
