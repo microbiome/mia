@@ -108,12 +108,14 @@ setGeneric("getPrevalence", signature = "x",
 #' @export
 setMethod("getPrevalence", signature = c(x = "ANY"),
     function(x, detection = 0, include_lowest = FALSE, sort = FALSE, ...){
+    
         # input check
         if (!.is_numeric_string(detection)) {
-            stop("'detection' must be ainslge numeric value or coercibel to ",
+            stop("'detection' must be a single numeric value or coercible to ",
                  "one.",
                  call. = FALSE)
         }
+
         detection <- as.numeric(detection)
         if(!.is_a_bool(include_lowest)){
             stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
@@ -122,6 +124,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
             stop("'sort' must be TRUE or FALSE.", call. = FALSE)
         }
         #
+
         if (include_lowest) {
             prev <- x >= detection
         } else {
@@ -143,9 +146,11 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", as_relative = TRUE,
              rank = NULL, ...){
+
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
+
         # check assay
         .check_abund_values(abund_values, x)
         if(!is.null(rank)){
@@ -180,23 +185,27 @@ setGeneric("getPrevalentTaxa", signature = "x",
 setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, prevalence = 50/100, rank = taxonomyRanks(x)[1L],
              include_lowest = FALSE, ...){
+
         # input check
         if (!.is_numeric_string(prevalence)) {
-            stop("'prevalence' must be a single numeric value or coercibel to ",
+            stop("'prevalence' must be a single numeric value or coercible to ",
                  "one.",
                  call. = FALSE)
         }
+
         prevalence <- as.numeric(prevalence)
         if(!.is_a_bool(include_lowest)){
             stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
         }
-        #
+
         pr <- getPrevalence(x, rank = rank, ...)
+
         if (include_lowest) {
           taxa <- pr >= prevalence
         } else {
           taxa <- pr > prevalence
         }
+
         taxa <- names(which(taxa))
         taxa
     }
