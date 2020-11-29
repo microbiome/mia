@@ -57,6 +57,7 @@ test_that("agglomerate", {
     data(enterotype)
     expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
                  nrow(agglomerateByRank(enterotype,"Genus")))
+
 })
 
 
