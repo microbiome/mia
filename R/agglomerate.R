@@ -87,13 +87,6 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
        empty.fields = c(NA, "", " ", "\t", "-"), agglomerateTree = FALSE, ...){
 
-        # If x is aggregated on the only rank that is available,
-        # then the data is already 'aggregated' and no further operations
-        # are needed.
-        if (length(taxonomyRanks(x)) == 1 && rank %in% taxonomyRanks(x)) {
-            return(x)
-        }
-
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
