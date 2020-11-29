@@ -4,7 +4,7 @@ test_that("getPrevalence", {
 
     data(GlobalPatterns)
     expect_error(getPrevalence(GlobalPatterns, detection="test"),
-                 "'detection' must be ainslge numeric value or coercibel to one")
+                 "'detection' must be a single numeric value or coercible to one")
     expect_error(getPrevalence(GlobalPatterns, include_lowest="test"),
                  "'include_lowest' must be TRUE or FALSE")
     expect_error(getPrevalence(GlobalPatterns, sort="test"),
@@ -52,7 +52,7 @@ test_that("getPrevalentTaxa", {
 
     data(GlobalPatterns)
     expect_error(getPrevalentTaxa(GlobalPatterns, prevalence="test"),
-                 "'prevalence' must be a single numeric value or coercibel to one")
+                 "'prevalence' must be a single numeric value or coercible to one")
     # Results compatible with getPrevalence
     pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE)
     pr2 <- names(getPrevalence(GlobalPatterns, rank = "Kingdom", detection=0.1/100, as_relative=TRUE, sort=TRUE))

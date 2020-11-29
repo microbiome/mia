@@ -14,7 +14,7 @@
 #'   (default: \code{onRankOnly = FALSE})
 #'
 #' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-#'   removed? Use it with caution, since result with NA on the selected rank
+#'   removed? Use it with caution, since results with NA on the selected rank
 #'   will be dropped. This setting can be tweaked by defining
 #'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
 #'
@@ -27,7 +27,9 @@
 #'   \code{agglomerateTree = FALSE})
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
-#'   \code{SummarizedExperiment} objects.
+#'   \code{SummarizedExperiment} objects,
+#'   \code{\link[=merge-methods]{mergeRows}} and
+#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -41,7 +43,8 @@
 #'   class \code{x}.
 #'
 #' @seealso
-#'   \code{\link[=merge-methods]{mergeRows}}
+#' \code{\link[=merge-methods]{mergeRows}},
+#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 #'
 #' @name agglomerate-methods
 #'
@@ -63,6 +66,13 @@
 #' nrow(x2) # same number of rows, but
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
+#'
+#' # removing empty labels by setting na.rm = TRUE
+#' sum(is.na(rowData(GlobalPatterns)$Family))
+# x3 <- agglomerateByRank(GlobalPatterns, rank="Family",
+#                         agglomerateTree = TRUE,
+#                         na.rm = TRUE)
+# nrow(x3) # different from x2
 #'
 #' ## Look at enterotype dataset...
 #' data(enterotype)
@@ -119,12 +129,19 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             f <- !(tax %in% empty.fields)
             x <- x[f, , drop=FALSE]
         }
+        # If rank is the only rank that is available and this data is unique,
+        # then the data is already 'aggregated' and no further operations
+        # are needed.
+        if (length(taxonomyRanks(x)) == 1L &&
+            !anyDuplicated(rowData(x)[,taxonomyRanks(x)])) {
+            return(x)
+        }
 
         # get groups of taxonomy entries
         tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
 
         # merge taxa
-        x <- mergeRows(x, f = tax_factors, mergeTree = agglomerateTree)
+        x <- mergeRows(x, f = tax_factors, mergeTree = agglomerateTree, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){

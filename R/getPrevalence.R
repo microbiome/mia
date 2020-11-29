@@ -108,7 +108,7 @@ setGeneric("getPrevalence", signature = "x",
 #' @export
 setMethod("getPrevalence", signature = c(x = "ANY"),
     function(x, detection = 0, include_lowest = FALSE, sort = FALSE, ...){
-    
+
         # input check
         if (!.is_numeric_string(detection)) {
             stop("'detection' must be a single numeric value or coercible to ",
@@ -154,7 +154,9 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         # check assay
         .check_abund_values(abund_values, x)
         if(!is.null(rank)){
-            x <- agglomerateByRank(x, rank = rank, ...)
+            args <- c(list(x = x, rank = rank), list(...))
+            args <- args[!(names(args) %in% c("detection","include_lowest","sort"))]
+            x <- do.call(agglomerateByRank, args)
         }
         mat <- assay(x, abund_values)
         if (as_relative) {
@@ -188,7 +190,7 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
 
         # input check
         if (!.is_numeric_string(prevalence)) {
-            stop("'prevalence' must be a single numeric value or coercibel to ",
+            stop("'prevalence' must be a single numeric value or coercible to ",
                  "one.",
                  call. = FALSE)
         }

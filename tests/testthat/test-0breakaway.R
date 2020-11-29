@@ -1,8 +1,8 @@
 
-context("estimates")
-test_that("estimates", {
-    skip_if_not(requireNamespace("breakaway1", quietly = TRUE))
-    data("esophagus", package = "MicrobiomeExperiment")
+context("breakaway estimates")
+test_that("breakaway estimates", {
+    skip_if_not(requireNamespace("breakaway", quietly = TRUE))
+    data("esophagus")
     FUN_list <- list(breakaway = estimateBreakaway,
                      chao1 = estimateChao1,
                      chao_bunge = estimateChaoBunge,
@@ -19,7 +19,6 @@ test_that("estimates", {
         suppressWarnings(esophagus <- do.call(FUN,list(esophagus)))
     }
     cd <- colData(esophagus)
-    expect_true(all(names(FUN_list) %in% colnames(cd)))
     expect_equal(unname(round(cd$breakaway, 4)), c(38.2520, 46.5959, 184.5630))
     expect_equal(unname(round(cd$chao1, 4)), c(42.0833, 38.7857, 78.3333))
     expect_equal(unname(round(cd$chao_bunge, 3)), c(38.252, 43.387, 634.750))
