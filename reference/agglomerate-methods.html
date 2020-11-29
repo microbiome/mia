@@ -74,7 +74,7 @@ taxonomicRanks can be used." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9009</span>
       </span>
     </div>
 
@@ -154,7 +154,7 @@ the specified rank used or from ranks equal and above?.
     <tr>
       <th>na.rm</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should taxa with an empty rank be
-removed? Use it with caution, since result with NA on the selected rank
+removed? Use it with caution, since results with NA on the selected rank
 will be dropped. This setting can be tweaked by defining
 <code>empty.fields</code> to your needs. (default: <code>na.rm = TRUE</code>)</p></td>
     </tr>
@@ -235,6 +235,9 @@ class <code>x</code>.</p>
 #&gt;   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 0.943.7, ...
 #&gt; 
 #&gt; Rooted; includes branch lengths.</div><div class='input'>
+<span class='co'># removing empty labels by setting na.rm = TRUE</span>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='fu'>rowData</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Family</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 5603</div><div class='input'>
 <span class='co'>## Look at enterotype dataset...</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>enterotype</span><span class='op'>)</span>
 <span class='co'>## print the available taxonomic ranks. Shows only 1 rank available</span>
