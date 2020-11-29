@@ -214,18 +214,27 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' @importFrom IRanges CharacterList LogicalList
 .get_taxonomic_label <- function(x, empty.fields = c(NA, "", " ", "\t", "-"),
                                  with_type = FALSE, make_unique = TRUE){
+
     rd <- rowData(x)
+
     tax_cols <- .get_tax_cols_from_se(x)
-    tax_ranks_non_empty <- !is.na(CharacterList(t(rd[,tax_cols]))) &
-        !LogicalList(lapply(CharacterList(t(rd[,tax_cols])),"%in%",empty.fields))
+
+    # We need DataFrame here to handle cases with a single entry in tax_cols
+    charlist <- CharacterList(t(DataFrame(rd[,tax_cols])))
+
+    tax_ranks_non_empty <- !is.na(charlist) &
+        !LogicalList(lapply(charlist,"%in%",empty.fields))
+
     tax_ranks_non_empty <- t(as(tax_ranks_non_empty,"matrix"))
     tax_ranks_selected <- apply(tax_ranks_non_empty,1L,which)
+
     if(any(lengths(tax_ranks_selected) == 0L)){
         stop("Only empty taxonomic information detected. Some rows contain ",
              "only entries selected by 'empty.fields'. Cannot generated ",
              "labels.",
              call. = FALSE)
     }
+
     if(is.matrix(tax_ranks_selected)){
         tax_ranks_selected <- apply(tax_ranks_selected,2L,max)
     } else if(is.list(tax_ranks_selected)) {

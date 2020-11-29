@@ -87,13 +87,6 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
        empty.fields = c(NA, "", " ", "\t", "-"), agglomerateTree = FALSE, ...){
 
-        # If x is aggregated on the only rank that is available,
-        # then the data is already 'aggregated' and no further operations
-        # are needed.
-        if (length(taxonomyRanks(x)) == 1 && rank %in% taxonomyRanks(x)) {
-            return(x)
-        }
-
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
@@ -112,8 +105,9 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         if(!.is_a_bool(agglomerateTree)){
             stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
         }
+
+
         .check_for_taxonomic_data_order(x)
-        
 
         # Make a vector from the taxonomic data.
         col <- which( taxonomyRanks(x) %in% rank )
@@ -132,7 +126,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 
         # merge taxa
         x <- mergeRows(x, f = tax_factors, mergeTree = agglomerateTree)
-
+	
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
             badcolumns <- tax_cols[seq_along(tax_cols) > col]
@@ -142,9 +136,12 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
                 rowData(x) <- row_data
             }
         }
+		     	
         # adjust rownames
         rownames(x) <- .get_taxonomic_label(x, empty.fields)
+
         x
+	
     }
 )
 
