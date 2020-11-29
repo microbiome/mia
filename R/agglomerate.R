@@ -14,7 +14,7 @@
 #'   (default: \code{onRankOnly = FALSE})
 #'
 #' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-#'   removed? Use it with caution, since result with NA on the selected rank
+#'   removed? Use it with caution, since results with NA on the selected rank
 #'   will be dropped. This setting can be tweaked by defining
 #'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
 #'
@@ -66,6 +66,13 @@
 #' nrow(x2) # same number of rows, but
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
+#'
+#' # removing empty labels by setting na.rm = TRUE
+#' sum(is.na(rowData(GlobalPatterns)$Family))
+# x3 <- agglomerateByRank(GlobalPatterns, rank="Family",
+#                         agglomerateTree = TRUE,
+#                         na.rm = TRUE)
+# nrow(x3) # different from x2
 #'
 #' ## Look at enterotype dataset...
 #' data(enterotype)

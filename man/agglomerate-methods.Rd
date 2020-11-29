@@ -30,7 +30,7 @@ the specified rank used or from ranks equal and above?.
 (default: \code{onRankOnly = FALSE})}
 
 \item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-removed? Use it with caution, since result with NA on the selected rank
+removed? Use it with caution, since results with NA on the selected rank
 will be dropped. This setting can be tweaked by defining
 \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})}
 
@@ -82,6 +82,9 @@ x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
+
+# removing empty labels by setting na.rm = TRUE
+sum(is.na(rowData(GlobalPatterns)$Family))
 
 ## Look at enterotype dataset...
 data(enterotype)
