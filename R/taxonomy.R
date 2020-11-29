@@ -218,7 +218,8 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     tax_cols <- .get_tax_cols_from_se(x)
 
     # We need DataFrame here to handle cases with a single entry in tax_cols
-    charlist <- CharacterList(t(DataFrame(rd[,tax_cols])))
+
+    charlist <- CharacterList(t(rd[,tax_cols, drop=FALSE]))
 
     tax_ranks_non_empty <- !is.na(charlist) &
         !LogicalList(lapply(charlist,"%in%",empty.fields))
