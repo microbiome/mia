@@ -30,6 +30,7 @@ Depends:
     MicrobiomeExperiment
 Imports:
     methods,
+    BiocGenerics,
     S4Vectors,
     IRanges,
     Biostrings,

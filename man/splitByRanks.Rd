@@ -2,10 +2,13 @@
 % Please edit documentation in R/splitByRanks.R
 \name{splitByRanks}
 \alias{splitByRanks}
-\alias{splitByRanks,SingleCellExperiment-method}
+\alias{splitByRanks,TreeSummarizedExperiment-method}
+\alias{unsplitByRanks,TreeSummarizedExperiment-method}
 \title{Split a \code{SingleCellExperiment} be taxonomic ranks}
 \usage{
-\S4method{splitByRanks}{SingleCellExperiment}(x, ranks = taxonomyRanks(x), ...)
+\S4method{splitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
+
+\S4method{unsplitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...)
 }
 \arguments{
 \item{x}{\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
@@ -14,8 +17,8 @@
 of \code{taxonomicRanks()} function.}
 
 \item{...}{arguments passed to \code{agglomerateByRank} function for
-\code{SummarizedExperiment} objects, except for \code{altexp} and
-\code{strip_altexp}.}
+\code{SummarizedExperiment} objects and other functions.
+See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 }
 \value{
 \code{x}, with objects of \code{x} agglomerated for selected ranks
@@ -30,6 +33,9 @@ data(GlobalPatterns)
 taxonomyRanks(GlobalPatterns)
 
 altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+altExps(GlobalPatterns)
+altExp(GlobalPatterns,"Kingdom")
+altExp(GlobalPatterns,"Species")
 }
 \seealso{
 \code{\link[=merge-methods]{mergeRows}},
