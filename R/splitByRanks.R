@@ -1,8 +1,13 @@
-#' Split a \code{SingleCellExperiment} be taxonomic ranks
+#' Split/Unsplit a \code{SingleCellExperiment} be taxonomic ranks
 #'
-#' \code{splitByRanks}
+#' \code{splitByRanks} and \code{unsplitByRanks} are functions for splitting
+#' a \code{SummarizedExperiment} along the taxonomic levels and storing the
+#' as alternative experiments. \code{unsplitByRanks} takes these alternative
+#' experiments and flattens them again into a single experiment.
 #'
-#' @param x \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' @param x a
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   object
 #'
 #' @param ranks a character vector defining taxonomic ranks. Must all be values
 #'   of \code{taxonomicRanks()} function.
@@ -11,8 +16,28 @@
 #'   \code{SummarizedExperiment} objects and other functions.
 #'   See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
 #'
-#' @return \code{x}, with objects of \code{x} agglomerated for selected ranks
-#'   as \code{altExps}.
+#' @return
+#' For \code{splitByRanks}: \code{x}, with objects of \code{x} agglomerated for
+#' selected ranks as \code{altExps}.
+#'
+#' For \code{unsplitByRanks}: \code{x}, with \code{rowData} and \code{assay}
+#' data replaced by the unsplit data. \code{colData} of x is kept as well
+#' and any existing \code{rowTree} is dropped as well, since existing
+#' \code{rowLinks} are not valid anymore.
+#'
+#' @details
+#' \code{splitByRanks} will use by default all available taxonomic levels, but
+#' this can be controlled by setting \code{ranks} manually. \code{NA} values
+#' are removed by default, since they would not make sense, if the result
+#' should by sued for \code{unsplitByRanks} at some point.
+#'
+#' \code{unsplitByRanks} will remove any \code{NA} value on each taxonomic rank
+#' so that no ambiguous data is created. In additional an additional column
+#' \code{taxonomicLevel} is created or overwritten in the \code{rowData} to
+#' specify from which alternative experiment this originates from. This can
+#' also by used for
+#' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}} to split the
+#' result again along the same factor.
 #'
 #' @seealso
 #' \code{\link[=merge-methods]{mergeRows}},
@@ -27,10 +52,15 @@
 #' # print the available taxonomic ranks
 #' taxonomyRanks(GlobalPatterns)
 #'
+#' # splitByRanks
 #' altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
 #' altExps(GlobalPatterns)
 #' altExp(GlobalPatterns,"Kingdom")
 #' altExp(GlobalPatterns,"Species")
+#'
+#' # unsplitByRanks
+#' x <- unsplitByranks(GlobalPatterns)
+#' x
 NULL
 
 setGeneric("splitByRanks",
@@ -86,10 +116,14 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
             stop("No altExp matching 'ranks' in name.", call. = FALSE)
         }
         ses <- altExps(x)[ae_names]
-
+        # remove any empty information on the given ranke
+        for(i in seq_along(ses)){
+            ses[[i]] <-
+                .remove_with_empty_taxonomic_info(ses[[i]], names(ses)[i], NA)
+        }
+        #
         args <- list(assays = .unsplit_assays(ses),
-                     colData = colData(x),
-                     rowTree = rowTree(x))
+                     colData = colData(x))
         if(keep_reducedDims){
             args$reducedDims <- reducedDims(x)
         }
@@ -147,5 +181,15 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
     rr <- lapply(ses, rowData)
     rd <- do.call(rbind,unname(rr))
     rownames(rd) <- NULL
+    cn <- colnames(rd)
+    # add column
+    if("taxonomicLevel" %in% cn){
+        warning("'taxonomicLevel' column in rowData overwritten.",
+                call. = FALSE)
+    }
+    tl <- mapply(rep,
+                 names(ses),
+                 vapply(ses,nrow,integer(1)))
+    rd$taxonomicLevel <- factor(unlist(unname(tl)))
     rd
 }
