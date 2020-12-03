@@ -12,6 +12,16 @@
 #' @param ranks a character vector defining taxonomic ranks. Must all be values
 #'   of \code{taxonomicRanks()} function.
 #'
+#' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
+#'   removed? Use it with caution, since results with NA on the selected rank
+#'   will be dropped. This setting can be tweaked by defining
+#'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
+#'
+#' @param keep_reducedDims \code{TRUE} or \code{FALSE}: Should the
+#'   \code{reducedDims(x)} be transfered to the result? Please not, that this
+#'   breaks the link between the data used to calculated the reduced dims.
+#'   (default: \code{keep_reducedDims = FALSE})
+#'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects and other functions.
 #'   See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
@@ -43,7 +53,8 @@
 #' \code{\link[=merge-methods]{mergeRows}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
-#' \code{\link[SingleCellExperiment:altExps]{altExps}}
+#' \code{\link[SingleCellExperiment:altExps]{altExps}},
+#' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
 #'
 #' @name splitByRanks
 #'
@@ -59,15 +70,19 @@
 #' altExp(GlobalPatterns,"Species")
 #'
 #' # unsplitByRanks
-#' x <- unsplitByranks(GlobalPatterns)
+#' x <- unsplitByRanks(GlobalPatterns)
 #' x
 NULL
 
+#' @rdname splitByRanks
+#' @export
 setGeneric("splitByRanks",
            signature = "x",
            function(x, ...)
                standardGeneric("splitByRanks"))
 
+#' @rdname splitByRanks
+#' @export
 setGeneric("unsplitByRanks",
            signature = "x",
            function(x, ...)
@@ -101,6 +116,7 @@ setMethod("splitByRanks", signature = c(x = "TreeSummarizedExperiment"),
 )
 
 #' @rdname splitByRanks
+#' @importFrom SingleCellExperiment altExpNames altExp altExps reducedDims
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
     function(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...){
@@ -190,6 +206,7 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
     tl <- mapply(rep,
                  names(ses),
                  vapply(ses,nrow,integer(1)))
-    rd$taxonomicLevel <- factor(unlist(unname(tl)))
+    tl <- unlist(unname(tl))
+    rd$taxonomicLevel <- factor(tl, unique(tl))
     rd
 }

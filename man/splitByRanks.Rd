@@ -2,10 +2,15 @@
 % Please edit documentation in R/splitByRanks.R
 \name{splitByRanks}
 \alias{splitByRanks}
+\alias{unsplitByRanks}
 \alias{splitByRanks,TreeSummarizedExperiment-method}
 \alias{unsplitByRanks,TreeSummarizedExperiment-method}
 \title{Split/Unsplit a \code{SingleCellExperiment} be taxonomic ranks}
 \usage{
+splitByRanks(x, ...)
+
+unsplitByRanks(x, ...)
+
 \S4method{splitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
 
 \S4method{unsplitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...)
@@ -15,12 +20,22 @@
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object}
 
-\item{ranks}{a character vector defining taxonomic ranks. Must all be values
-of \code{taxonomicRanks()} function.}
-
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects and other functions.
 See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
+
+\item{ranks}{a character vector defining taxonomic ranks. Must all be values
+of \code{taxonomicRanks()} function.}
+
+\item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
+removed? Use it with caution, since results with NA on the selected rank
+will be dropped. This setting can be tweaked by defining
+\code{empty.fields} to your needs. (default: \code{na.rm = TRUE})}
+
+\item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
+\code{reducedDims(x)} be transfered to the result? Please not, that this
+breaks the link between the data used to calculated the reduced dims.
+(default: \code{keep_reducedDims = FALSE})}
 }
 \value{
 For \code{splitByRanks}: \code{x}, with objects of \code{x} agglomerated for
@@ -63,12 +78,13 @@ altExp(GlobalPatterns,"Kingdom")
 altExp(GlobalPatterns,"Species")
 
 # unsplitByRanks
-x <- unsplitByranks(GlobalPatterns)
+x <- unsplitByRanks(GlobalPatterns)
 x
 }
 \seealso{
 \code{\link[=merge-methods]{mergeRows}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
-\code{\link[SingleCellExperiment:altExps]{altExps}}
+\code{\link[SingleCellExperiment:altExps]{altExps}},
+\code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
 }
