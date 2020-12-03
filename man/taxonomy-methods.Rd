@@ -13,6 +13,10 @@
 \alias{checkTaxonomy,SummarizedExperiment-method}
 \alias{getTaxonomyLabels}
 \alias{getTaxonomyLabels,SummarizedExperiment-method}
+\alias{taxonomicTree}
+\alias{taxonomicTree,SummarizedExperiment-method}
+\alias{addTaxonomicTree}
+\alias{addTaxonomicTree,SummarizedExperiment-method}
 \title{Taxonomy related functions}
 \format{
 a \code{character} vector of length 8 containing the taxonomy ranks
@@ -49,6 +53,14 @@ getTaxonomyLabels(x, ...)
   with_type = FALSE,
   make_unique = TRUE
 )
+
+taxonomicTree(x, ...)
+
+\S4method{taxonomicTree}{SummarizedExperiment}(x)
+
+addTaxonomicTree(x, ...)
+
+\S4method{addTaxonomicTree}{SummarizedExperiment}(x)
 }
 \arguments{
 \item{x}{a

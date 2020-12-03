@@ -79,6 +79,16 @@ setGeneric("agglomerateByRank",
            function(x, ...)
                standardGeneric("agglomerateByRank"))
 
+.remove_with_empty_taxonomic_info <-
+    function(x, column, empty.fields = c(NA,""," ","\t","-"))
+{
+    tax <- as.character(rowData(x)[,column])
+    f <- !(tax %in% empty.fields)
+    if(any(!f)){
+        x <- x[f, , drop=FALSE]
+    }
+    x
+}
 
 #' @rdname agglomerate-methods
 #' @aliases agglomerateByRank
@@ -124,9 +134,8 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         # if na.rm is TRUE, remove the empty, white-space, NA values from
         # tree will be pruned later, if agglomerateTree = TRUE
         if( na.rm ){
-            tax <- as.character(rowData(x)[,tax_cols[col]])
-            f <- !(tax %in% empty.fields)
-            x <- x[f, , drop=FALSE]
+            x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
+                                                   empty.fields)
         }
 
         # get groups of taxonomy entries

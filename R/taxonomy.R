@@ -249,7 +249,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     if(with_type || !all_same_rank){
         sep <- rep(":", length(ans))
         tax_cols_selected <- unlist(tax_cols_selected)
-        sep[tax_cols_selected != max(tax_cols_selected)] <- "::"
+        # sep[tax_cols_selected != max(tax_cols_selected)] <- "::"
         types <- colnames(rd)[tax_cols_selected]
         ans <- paste0(types, sep, ans)
     }
@@ -261,6 +261,58 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     }
     ans
 }
+
+#' @rdname taxonomy-methods
+setGeneric("taxonomicTree",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("taxonomicTree"))
+
+#' @rdname taxonomy-methods
+#' @aliases taxonomicTree
+#' @export
+setMethod("taxonomicTree", signature = c(x = "SummarizedExperiment"),
+    function(x){
+        td <- rowData(x)[,taxonomyRanks(x)]
+        # Remove empty taxonomic levels
+        td <- td[,!vapply(td,function(tl){all(is.na(tl))},logical(1))]
+        # Make information unique
+        td_NA <- DataFrame(lapply(td,is.na))
+        td[,ncol(td)] <- make.unique(td[,ncol(td)], sep = "_")
+        td <- as(suppressWarnings(resolveLoop(as.data.frame(td))),"DataFrame")
+        # Build tree
+        tree <- toTree(td)
+        tree$tip.label <- paste0(colnames(td)[ncol(td)],":",tree$tip.label)
+        # remove empty nodes
+        for(i in rev(seq_len(ncol(td)))){
+            to_drop <- paste0(colnames(td)[i],":",td[,i][td_NA[,i]])
+            tree <- ape::drop.tip(tree,
+                                  to_drop,
+                                  trim.internal = FALSE,
+                                  collapse.singles = FALSE)
+        }
+        tree
+    }
+)
+
+#' @rdname taxonomy-methods
+setGeneric("addTaxonomicTree",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("addTaxonomicTree"))
+
+#' @rdname taxonomy-methods
+#' @aliases addTaxonomicTree
+#' @export
+setMethod("addTaxonomicTree", signature = c(x = "SummarizedExperiment"),
+    function(x){
+        tree <- taxonomicTree(x)
+        x <- as(x,"TreeSummarizedExperiment")
+        x <- changeTree(x, tree, getTaxonomyLabels(x))
+        x
+    }
+)
+
 
 ################################################################################
 # helper functions
