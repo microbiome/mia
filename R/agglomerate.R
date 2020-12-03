@@ -14,7 +14,7 @@
 #'   (default: \code{onRankOnly = FALSE})
 #'
 #' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-#'   removed? Use it with caution, since result with NA on the selected rank
+#'   removed? Use it with caution, since results with NA on the selected rank
 #'   will be dropped. This setting can be tweaked by defining
 #'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
 #'
@@ -67,6 +67,13 @@
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
 #'
+#' # removing empty labels by setting na.rm = TRUE
+#' sum(is.na(rowData(GlobalPatterns)$Family))
+# x3 <- agglomerateByRank(GlobalPatterns, rank="Family",
+#                         agglomerateTree = TRUE,
+#                         na.rm = TRUE)
+# nrow(x3) # different from x2
+#'
 #' ## Look at enterotype dataset...
 #' data(enterotype)
 #' ## print the available taxonomic ranks. Shows only 1 rank available
@@ -99,6 +106,7 @@ setGeneric("agglomerateByRank",
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
        empty.fields = c(NA, "", " ", "\t", "-"), agglomerateTree = FALSE, ...){
+
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
@@ -114,18 +122,11 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             stop("taxonomyData needs to be populated.", call. = FALSE)
         }
         .check_taxonomic_rank(rank, x)
-        # If rank is the only rank that is available and this data is unique,
-        # then the data is already 'aggregated' and no further operations
-        # are needed.
-        if (length(taxonomyRanks(x)) == 1L &&
-            !anyDuplicated(rowData(x)[,taxonomyRanks(x)])) {
-            return(x)
-        }
         if(!.is_a_bool(agglomerateTree)){
             stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
         }
         .check_for_taxonomic_data_order(x)
-        #
+        
 
         # Make a vector from the taxonomic data.
         col <- which( taxonomyRanks(x) %in% rank )
@@ -136,6 +137,13 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         if( na.rm ){
             x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
                                                    empty.fields)
+        }
+        # If rank is the only rank that is available and this data is unique,
+        # then the data is already 'aggregated' and no further operations
+        # are needed.
+        if (length(taxonomyRanks(x)) == 1L &&
+            !anyDuplicated(rowData(x)[,taxonomyRanks(x)])) {
+            return(x)
         }
 
         # get groups of taxonomy entries

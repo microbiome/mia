@@ -216,8 +216,14 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
                                  with_type = FALSE, make_unique = TRUE){
     rd <- rowData(x)
     tax_cols <- .get_tax_cols_from_se(x)
-    tax_ranks_non_empty <- !is.na(CharacterList(t(rd[,tax_cols,drop=FALSE]))) &
-        !LogicalList(lapply(CharacterList(t(rd[,tax_cols,drop=FALSE])),"%in%",empty.fields))
+
+    # We need DataFrame here to handle cases with a single entry in tax_cols
+
+    charlist <- CharacterList(t(rd[,tax_cols, drop=FALSE]))
+
+    tax_ranks_non_empty <- !is.na(charlist) &
+        !LogicalList(lapply(charlist,"%in%",empty.fields))
+
     tax_ranks_non_empty <- t(as(tax_ranks_non_empty,"matrix"))
     tax_ranks_selected <- apply(tax_ranks_non_empty,1L,which)
     if(any(lengths(tax_ranks_selected) == 0L)){
@@ -226,7 +232,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         }
         stop("Only empty taxonomic information detected. Some rows contain ",
              "only entries selected by 'empty.fields'. Cannot generated ",
-             "labels and rownames(x) are not unique.",
+             "labels. Try option na.rm = TRUE in the function call.",
              call. = FALSE)
     }
     if(is.matrix(tax_ranks_selected)){
