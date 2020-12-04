@@ -126,7 +126,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
         }
         .check_for_taxonomic_data_order(x)
-        
+
 
         # Make a vector from the taxonomic data.
         col <- which( taxonomyRanks(x) %in% rank )
