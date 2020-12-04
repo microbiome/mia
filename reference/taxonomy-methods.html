@@ -48,9 +48,14 @@ checkTaxonomy checks, if taxonomy information is valid and whether
 it contains any problems. This is a soft test, which reports some
 diagnostic and might mature into a data validator used upon object
 creation.
-getTaxonomyLabels generate a character vector per row consisting of
+getTaxonomyLabels generates a character vector per row consisting of
 the lowest taxonomic information possible. If data from different levels,
-is to be mixed, the taxonomic level is prepended by default." />
+is to be mixed, the taxonomic level is prepended by default.
+taxonomyTree generates a phylo tree object from the available
+taxonomic information. Internally it uses
+toTree and
+resolveLoop to sanitize
+data if needed." />
 
 
 
@@ -82,7 +87,7 @@ is to be mixed, the taxonomic level is prepended by default." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9009</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9010</span>
       </span>
     </div>
 
@@ -130,9 +135,14 @@ as columns containing taxonomic information.</p>
 it contains any problems. This is a soft test, which reports some
 diagnostic and might mature into a data validator used upon object
 creation.</p>
-<p><code>getTaxonomyLabels</code> generate a character vector per row consisting of
+<p><code>getTaxonomyLabels</code> generates a character vector per row consisting of
 the lowest taxonomic information possible. If data from different levels,
 is to be mixed, the taxonomic level is prepended by default.</p>
+<p><code>taxonomyTree</code> generates a <code>phylo</code> tree object from the available
+taxonomic information. Internally it uses
+<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/toTree.html'>toTree</a></code> and
+<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/resolveLoop.html'>resolveLoop</a></code> to sanitize
+data if needed.</p>
     </div>
 
     <pre class="usage"><span class='va'>TAXONOMY_RANKS</span>
@@ -167,8 +177,19 @@ is to be mixed, the taxonomic level is prepended by default.</p>
   <span class='va'>x</span>,
   empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span><span class='op'>)</span>,
   with_type <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  make_unique <span class='op'>=</span> <span class='cn'>TRUE</span>
-<span class='op'>)</span></pre>
+  make_unique <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  resolve_loops <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span>
+
+<span class='fu'>taxonomyTree</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>taxonomyTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+
+<span class='fu'>addTaxonomyTree</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>addTaxonomyTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -205,6 +226,12 @@ suffix? For example: "Phylum:Crenarchaeota" (default:
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should the labels be made
 unique, if there are any duplicates? (default: <code>make_unique = TRUE</code>)</p></td>
     </tr>
+    <tr>
+      <th>resolve_loops</th>
+      <td><p><code>TRUE</code> or <code>FALSE</code>: Should <code>resolveLooops</code>
+be applied to the taxonomic data? Please note that has only an effect,
+if the data is unique. (default: <code>resolve_loops = TRUE</code>)</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -222,32 +249,12 @@ taxonomic ranks found in <code><a href='https://rdrr.io/r/base/colnames.html'>co
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='agglomerate-methods.html'>agglomerateByRank</a></code></p></div>
+    <div class='dont-index'><p><code><a href='agglomerate-methods.html'>agglomerateByRank</a></code>,
+<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/toTree.html'>toTree</a></code>,
+<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/resolveLoop.html'>resolveLoop</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-<span class='va'>esophagus</span>
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 58 3 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(58): 59_8_22 59_5_13 ... 65_9_9 59_2_6
-#&gt; rowData names(0):
-#&gt; colnames(3): B C D
-#&gt; colData names(0):
-#&gt; reducedDimNames(0):
-#&gt; altExpNames(0):
-#&gt; rowLinks: a LinkDataFrame (58 rows)
-#&gt; rowTree: a phylo (58 leaves)
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'>rowTree</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='input'><span class='co'># get a factor for merging</span>
-<span class='va'>f</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/regmatches.html'>regmatches</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>,
-                       <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>regexpr</a></span><span class='op'>(</span><span class='st'>"^[0-9]*_[0-9]*"</span>,<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>merged</span> <span class='op'>&lt;-</span> <span class='fu'><a href='merge-methods.html'>mergeRows</a></span><span class='op'>(</span><span class='va'>esophagus</span>,<span class='va'>f</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'>rowTree</span><span class='op'>(</span><span class='va'>merged</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='img'><img src='taxonomy-methods-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'>#</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
 <span class='va'>GlobalPatterns</span>
 </div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
 #&gt; dim: 19216 26 
@@ -262,9 +269,48 @@ taxonomic ranks found in <code><a href='https://rdrr.io/r/base/colnames.html'>co
 #&gt; rowLinks: a LinkDataFrame (19216 rows)
 #&gt; rowTree: a phylo (19216 leaves)
 #&gt; colLinks: NULL
-#&gt; colTree: NULL</div><div class='input'><span class='va'>merged</span> <span class='op'>&lt;-</span> <span class='fu'><a href='merge-methods.html'>mergeCols</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='fu'>colData</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span><span class='op'>$</span><span class='va'>SampleType</span><span class='op'>)</span>
-<span class='va'>merged</span>
-</div><div class='output co'>#&gt; NULL</div></pre>
+#&gt; colTree: NULL</div><div class='input'><span class='fu'>taxonomyRanks</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</div><div class='input'>
+<span class='fu'>checkTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'>taxonomyRankEmpty</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Kingdom"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
+#&gt; FALSE 
+#&gt; 19216 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'>taxonomyRankEmpty</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Species"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
+#&gt; FALSE  TRUE 
+#&gt;  1413 17803 </div><div class='input'>
+<span class='fu'>getTaxonomyLabels</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>20</span>,<span class='op'>]</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1] "Class:Thermoprotei"               "Class:Thermoprotei_1"            
+#&gt;  [3] "Species:Sulfolobusacidocaldarius" "Class:Sd-NA"                     
+#&gt;  [5] "Class:Sd-NA_1"                    "Class:Sd-NA_2"                   
+#&gt;  [7] "Order:NRP-J"                      "Order:NRP-J_1"                   
+#&gt;  [9] "Order:NRP-J_2"                    "Order:NRP-J_3"                   
+#&gt; [11] "Order:NRP-J_4"                    "Family:SAGMA-X"                  
+#&gt; [13] "Family:SAGMA-X_1"                 "Family:SAGMA-X_2"                
+#&gt; [15] "Family:Cenarchaeaceae"            "Family:Cenarchaeaceae_1"         
+#&gt; [17] "Family:Cenarchaeaceae_2"          "Family:Cenarchaeaceae_3"         
+#&gt; [19] "Family:Cenarchaeaceae_4"          "Family:Cenarchaeaceae_5"         </div><div class='input'>
+<span class='co'># adding a rowTree() based on the available taxonomic information. Please</span>
+<span class='co'># note that any tree already stored in rowTree() will be overwritten.</span>
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>addTaxonomyTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: 16909 duplicated rows are removed</span></div><div class='output co'>#&gt; <span class='warning'>Warning: The root is added with label 'ALL'</span></div><div class='input'><span class='va'>x</span>
+</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
+#&gt; dim: 19216 26 
+#&gt; metadata(0):
+#&gt; assays(1): counts
+#&gt; rownames(19216): Class:Thermoprotei Class:Thermoprotei ... Phylum:SR1
+#&gt;   Phylum:SR1
+#&gt; rowData names(7): Kingdom Phylum ... Genus Species
+#&gt; colnames(26): CL3 CC1 ... Even2 Even3
+#&gt; colData names(7): X.SampleID Primer ... SampleType Description
+#&gt; reducedDimNames(0):
+#&gt; altExpNames(0):
+#&gt; rowLinks: a LinkDataFrame (19216 rows)
+#&gt; rowTree: a phylo (1645 leaves)
+#&gt; colLinks: NULL
+#&gt; colTree: NULL</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
