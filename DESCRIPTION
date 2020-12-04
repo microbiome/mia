@@ -40,6 +40,8 @@ Imports:
     stringr,
     scuttle,
     scater,
+    stats,
+    utils,
     ape,
     rlang,
     dplyr,
