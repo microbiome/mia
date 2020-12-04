@@ -1,7 +1,7 @@
 Package: mia
 Type: Package
 Version: 0.0.0.9010
-Date: 2020-12-03
+Date: 2020-12-04
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -18,7 +18,7 @@ Title: Microbiome analysis
 Description: 
     mia implements tools for microbiome analysis. Data wrangling and analysis
     are the main scope of this package.
-biocViews: Microbiome, Software
+biocViews: Microbiome, Software, Sequencing
 License: Artistic-2.0
 Encoding: UTF-8
 LazyData: false
