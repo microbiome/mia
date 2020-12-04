@@ -85,13 +85,15 @@
 #' colData(esophagus) <- NULL
 #'
 #' #Names of columns can be chosen, but the length of arguments must match.
-#' esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"),
-#' name = c("index1", "index2"))
+#' esophagus <- estimateDominance(esophagus,
+#'     index=c("dbp", "core_abundance"),
+#'     name = c("index1", "index2"))
 #' #Shows all indices
 #' colData(esophagus)
 #' #If they do not match, gets an error.
-#' esophagus <- estimateDominance(esophagus, index="simpson",
-#' name = c("index3", "index4"))
+#' esophagus <- estimateDominance(esophagus,
+#'     index="simpson",
+#'     name = c("index3", "index4"))
 #' #Shows all indices
 #' colData(esophagus)
 #' #Deletes all indices
@@ -140,6 +142,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
                   tab <- as.data.frame(tab)
 
                   #Adds index data to original MicrobiomeExperiment object
+		  if (name == "all") { name <- colnames(tab) }
                   x <- add_indices_to_coldata(x, tab, name)
               }
 
