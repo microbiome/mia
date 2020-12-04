@@ -1,7 +1,7 @@
 Package: mia
 Type: Package
-Version: 0.0.0.9009
-Date: 2020-11-29
+Version: 0.0.0.9010
+Date: 2020-12-03
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -30,6 +30,7 @@ Depends:
     MicrobiomeExperiment
 Imports:
     methods,
+    BiocGenerics,
     S4Vectors,
     IRanges,
     Biostrings,
