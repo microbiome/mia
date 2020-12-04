@@ -14,7 +14,7 @@
 #'   (default: \code{onRankOnly = FALSE})
 #'
 #' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-#'   removed? Use it with caution, since result with NA on the selected rank
+#'   removed? Use it with caution, since results with NA on the selected rank
 #'   will be dropped. This setting can be tweaked by defining
 #'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
 #'
@@ -27,7 +27,9 @@
 #'   \code{agglomerateTree = FALSE})
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
-#'   \code{SummarizedExperiment} objects.
+#'   \code{SummarizedExperiment} objects,
+#'   \code{\link[=merge-methods]{mergeRows}} and
+#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -41,7 +43,8 @@
 #'   class \code{x}.
 #'
 #' @seealso
-#'   \code{\link[=merge-methods]{mergeRows}}
+#' \code{\link[=merge-methods]{mergeRows}},
+#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 #'
 #' @name agglomerate-methods
 #'
@@ -64,6 +67,13 @@
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
 #'
+#' # removing empty labels by setting na.rm = TRUE
+#' sum(is.na(rowData(GlobalPatterns)$Family))
+# x3 <- agglomerateByRank(GlobalPatterns, rank="Family",
+#                         agglomerateTree = TRUE,
+#                         na.rm = TRUE)
+# nrow(x3) # different from x2
+#'
 #' ## Look at enterotype dataset...
 #' data(enterotype)
 #' ## print the available taxonomic ranks. Shows only 1 rank available
@@ -76,6 +86,16 @@ setGeneric("agglomerateByRank",
            function(x, ...)
                standardGeneric("agglomerateByRank"))
 
+.remove_with_empty_taxonomic_info <-
+    function(x, column, empty.fields = c(NA,""," ","\t","-"))
+{
+    tax <- as.character(rowData(x)[,column])
+    f <- !(tax %in% empty.fields)
+    if(any(!f)){
+        x <- x[f, , drop=FALSE]
+    }
+    x
+}
 
 #' @rdname agglomerate-methods
 #' @aliases agglomerateByRank
@@ -86,6 +106,7 @@ setGeneric("agglomerateByRank",
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
        empty.fields = c(NA, "", " ", "\t", "-"), agglomerateTree = FALSE, ...){
+
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
@@ -105,7 +126,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
         }
         .check_for_taxonomic_data_order(x)
-        #
+
 
         # Make a vector from the taxonomic data.
         col <- which( taxonomyRanks(x) %in% rank )
@@ -114,16 +135,22 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         # if na.rm is TRUE, remove the empty, white-space, NA values from
         # tree will be pruned later, if agglomerateTree = TRUE
         if( na.rm ){
-            tax <- as.character(rowData(x)[,tax_cols[col]])
-            f <- !(tax %in% empty.fields)
-            x <- x[f, , drop=FALSE]
+            x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
+                                                   empty.fields)
+        }
+        # If rank is the only rank that is available and this data is unique,
+        # then the data is already 'aggregated' and no further operations
+        # are needed.
+        if (length(taxonomyRanks(x)) == 1L &&
+            !anyDuplicated(rowData(x)[,taxonomyRanks(x)])) {
+            return(x)
         }
 
         # get groups of taxonomy entries
         tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
 
         # merge taxa
-        x <- mergeRows(x, f = tax_factors, mergeTree = agglomerateTree)
+        x <- mergeRows(x, f = tax_factors, mergeTree = agglomerateTree, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){

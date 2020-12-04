@@ -70,3 +70,6 @@ GlobalPatterns
 merged <- mergeCols(GlobalPatterns,colData(GlobalPatterns)$SampleType)
 merged
 }
+\seealso{
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
+}
