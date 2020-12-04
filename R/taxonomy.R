@@ -15,9 +15,16 @@
 #'   diagnostic and might mature into a data validator used upon object
 #'   creation.
 #'
-#' \code{getTaxonomyLabels} generate a character vector per row consisting of
+#' \code{getTaxonomyLabels} generates a character vector per row consisting of
 #'   the lowest taxonomic information possible. If data from different levels,
 #'   is to be mixed, the taxonomic level is prepended by default.
+#'
+#'
+#' \code{taxonomyTree} generates a \code{phylo} tree object from the available
+#'   taxonomic information. Internally it uses
+#'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
+#'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
+#'   data if needed.
 #'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -50,22 +57,27 @@
 #'   \item{\code{taxonomyRankEmpty}:} {a \code{logical} value}
 #' }
 #'
-#' @seealso \code{\link[=agglomerate-methods]{agglomerateByRank}}
+#' @seealso \code{\link[=agglomerate-methods]{agglomerateByRank}},
+#' \code{\link[TreeSummarizedExperiment:toTree]{toTree}},
+#' \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}}
 #'
 #' @examples
-#' data(esophagus)
-#' esophagus
-#' plot(rowTree(esophagus))
-#' # get a factor for merging
-#' f <- factor(regmatches(rownames(esophagus),
-#'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-#' merged <- mergeRows(esophagus,f)
-#' plot(rowTree(merged))
-#' #
 #' data(GlobalPatterns)
 #' GlobalPatterns
-#' merged <- mergeCols(GlobalPatterns,colData(GlobalPatterns)$SampleType)
-#' merged
+#' taxonomyRanks(GlobalPatterns)
+#'
+#' checkTaxonomy(GlobalPatterns)
+#'
+#' table(taxonomyRankEmpty(GlobalPatterns,"Kingdom"))
+#' table(taxonomyRankEmpty(GlobalPatterns,"Species"))
+#'
+#' getTaxonomyLabels(GlobalPatterns[1:20,])
+#'
+#' # adding a rowTree() based on the available taxonomic information. Please
+#' # note that any tree already stored in rowTree() will be overwritten.
+#' x <- GlobalPatterns
+#' x <- addTaxonomyTree(x)
+#' x
 NULL
 
 #' @rdname taxonomy-methods
@@ -212,9 +224,27 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
             stop("'resolve_loops' must be TRUE or FALSE.", call. = FALSE)
         }
         #
-        .get_taxonomic_label(x, empty.fields = empty.fields,
-                             with_type = with_type, make_unique = make_unique,
-                             resolve_loops = resolve_loops)
+        dup <- duplicated(rowData(x)[,taxonomyRanks(x)])
+        if(any(dup)){
+            td <- apply(rowData(x)[,taxonomyRanks(x)],1L,paste,collapse = "___")
+            td_non_dup <- td[!dup]
+            m <- match(td, td_non_dup)
+        }
+        ans <- .get_taxonomic_label(x[!dup,],
+                                    empty.fields = empty.fields,
+                                    with_type = with_type,
+                                    make_unique = make_unique,
+                                    resolve_loops = resolve_loops)
+        if(any(dup)){
+            ans <- ans[m]
+        }
+        # last resort - this happens, if annotation data contains ambiguous data
+        # sometimes labeled as "circles"
+        if(make_unique && anyDuplicated(ans)){
+            dup <- which(ans %in% ans[which(duplicated(ans))])
+            ans[dup] <- make.unique(ans[dup], sep = "_")
+        }
+        ans
     }
 )
 
@@ -255,6 +285,9 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     }
     tax_cols_selected <- tax_cols[tax_ranks_selected]
     u_tax_cols_selected <- sort(unique(tax_cols_selected))
+    u_tax_cols_selected <- seq.int(which(tax_cols == min(u_tax_cols_selected)),
+                                   which(tax_cols == max(u_tax_cols_selected)))
+    u_tax_cols_selected <- tax_cols[u_tax_cols_selected]
     # resolve loops
     if(length(u_tax_cols_selected) > 1L &&
        !anyDuplicated(rd[,u_tax_cols_selected]) &&
@@ -276,12 +309,6 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         # sep[tax_cols_selected != max(tax_cols_selected)] <- "::"
         types <- colnames(rd)[tax_cols_selected]
         ans <- paste0(types, sep, ans)
-    }
-    # last resort - this happens, if annotation data contains ambiguous data
-    # sometimes labeled as "circles"
-    if(make_unique && anyDuplicated(ans)){
-        dup <- which(ans %in% ans[which(duplicated(ans))])
-        ans[dup] <- make.unique(ans[dup], sep = "_")
     }
     ans
 }
@@ -329,10 +356,10 @@ setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
         tree <- taxonomyTree(x)
         x <- as(x,"TreeSummarizedExperiment")
-        labels <- getTaxonomyLabels(x, with_type = TRUE,
-                                    resolve_loops = TRUE)
-        rownames(x) <- labels
-        x <- changeTree(x, tree, labels)
+        rownames(x) <- getTaxonomyLabels(x, with_type = TRUE,
+                                         resolve_loops = TRUE,
+                                         make_unique = FALSE)
+        x <- changeTree(x, tree, rownames(x))
         x
     }
 )

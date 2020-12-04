@@ -108,26 +108,37 @@ it contains any problems. This is a soft test, which reports some
 diagnostic and might mature into a data validator used upon object
 creation.
 
-\code{getTaxonomyLabels} generate a character vector per row consisting of
+\code{getTaxonomyLabels} generates a character vector per row consisting of
 the lowest taxonomic information possible. If data from different levels,
 is to be mixed, the taxonomic level is prepended by default.
+
+\code{taxonomyTree} generates a \code{phylo} tree object from the available
+taxonomic information. Internally it uses
+\code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
+\code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
+data if needed.
 }
 \examples{
-data(esophagus)
-esophagus
-plot(rowTree(esophagus))
-# get a factor for merging
-f <- factor(regmatches(rownames(esophagus),
-                       regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-merged <- mergeRows(esophagus,f)
-plot(rowTree(merged))
-#
 data(GlobalPatterns)
 GlobalPatterns
-merged <- mergeCols(GlobalPatterns,colData(GlobalPatterns)$SampleType)
-merged
+taxonomyRanks(GlobalPatterns)
+
+checkTaxonomy(GlobalPatterns)
+
+table(taxonomyRankEmpty(GlobalPatterns,"Kingdom"))
+table(taxonomyRankEmpty(GlobalPatterns,"Species"))
+
+getTaxonomyLabels(GlobalPatterns[1:20,])
+
+# adding a rowTree() based on the available taxonomic information. Please
+# note that any tree already stored in rowTree() will be overwritten.
+x <- GlobalPatterns
+x <- addTaxonomyTree(x)
+x
 }
 \seealso{
-\code{\link[=agglomerate-methods]{agglomerateByRank}}
+\code{\link[=agglomerate-methods]{agglomerateByRank}},
+\code{\link[TreeSummarizedExperiment:toTree]{toTree}},
+\code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}}
 }
 \keyword{datasets}
