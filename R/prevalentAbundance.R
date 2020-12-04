@@ -50,7 +50,7 @@ setMethod("prevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
 
               # Core members
               cm <- getPrevalentTaxa(x, detection=detection, prevalence=prevalence, include_lowest=include_lowest,
-                                     as_relative=as_relative)
+                                     as_relative=as_relative, rank=NULL)
 
               if (length(cm) == 0) {
                   warning("With the given abundance and prevalence
