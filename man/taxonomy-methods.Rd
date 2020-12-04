@@ -13,6 +13,10 @@
 \alias{checkTaxonomy,SummarizedExperiment-method}
 \alias{getTaxonomyLabels}
 \alias{getTaxonomyLabels,SummarizedExperiment-method}
+\alias{taxonomyTree}
+\alias{taxonomyTree,SummarizedExperiment-method}
+\alias{addTaxonomyTree}
+\alias{addTaxonomyTree,SummarizedExperiment-method}
 \title{Taxonomy related functions}
 \format{
 a \code{character} vector of length 8 containing the taxonomy ranks
@@ -47,8 +51,17 @@ getTaxonomyLabels(x, ...)
   x,
   empty.fields = c(NA, "", " ", "\\t", "-"),
   with_type = FALSE,
-  make_unique = TRUE
+  make_unique = TRUE,
+  resolve_loops = FALSE
 )
+
+taxonomyTree(x, ...)
+
+\S4method{taxonomyTree}{SummarizedExperiment}(x)
+
+addTaxonomyTree(x, ...)
+
+\S4method{addTaxonomyTree}{SummarizedExperiment}(x)
 }
 \arguments{
 \item{x}{a
@@ -70,6 +83,10 @@ suffix? For example: "Phylum:Crenarchaeota" (default:
 
 \item{make_unique}{\code{TRUE} or \code{FALSE}: Should the labels be made
 unique, if there are any duplicates? (default: \code{make_unique = TRUE})}
+
+\item{resolve_loops}{\code{TRUE} or \code{FALSE}: Should \code{resolveLooops}
+be applied to the taxonomic data? Please note that has only an effect,
+if the data is unique. (default: \code{resolve_loops = TRUE})}
 }
 \value{
 \itemize{
@@ -91,26 +108,37 @@ it contains any problems. This is a soft test, which reports some
 diagnostic and might mature into a data validator used upon object
 creation.
 
-\code{getTaxonomyLabels} generate a character vector per row consisting of
+\code{getTaxonomyLabels} generates a character vector per row consisting of
 the lowest taxonomic information possible. If data from different levels,
 is to be mixed, the taxonomic level is prepended by default.
+
+\code{taxonomyTree} generates a \code{phylo} tree object from the available
+taxonomic information. Internally it uses
+\code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
+\code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
+data if needed.
 }
 \examples{
-data(esophagus)
-esophagus
-plot(rowTree(esophagus))
-# get a factor for merging
-f <- factor(regmatches(rownames(esophagus),
-                       regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-merged <- mergeRows(esophagus,f)
-plot(rowTree(merged))
-#
 data(GlobalPatterns)
 GlobalPatterns
-merged <- mergeCols(GlobalPatterns,colData(GlobalPatterns)$SampleType)
-merged
+taxonomyRanks(GlobalPatterns)
+
+checkTaxonomy(GlobalPatterns)
+
+table(taxonomyRankEmpty(GlobalPatterns,"Kingdom"))
+table(taxonomyRankEmpty(GlobalPatterns,"Species"))
+
+getTaxonomyLabels(GlobalPatterns[1:20,])
+
+# adding a rowTree() based on the available taxonomic information. Please
+# note that any tree already stored in rowTree() will be overwritten.
+x <- GlobalPatterns
+x <- addTaxonomyTree(x)
+x
 }
 \seealso{
-\code{\link[=agglomerate-methods]{agglomerateByRank}}
+\code{\link[=agglomerate-methods]{agglomerateByRank}},
+\code{\link[TreeSummarizedExperiment:toTree]{toTree}},
+\code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}}
 }
 \keyword{datasets}
