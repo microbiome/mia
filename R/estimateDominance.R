@@ -132,21 +132,26 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
                   for (idx in index) {
                       #Get the specific index, and save it to table
                       tab <- cbind(tab,
-                                   dominance_help(x, abund_values=abund_values, index=idx, rank=rank,
-                                                  as_relative=as_relative,
-                                                  aggregate=aggregate))
+                          dominance_help(x,
+                              abund_values=abund_values, index=idx, rank=rank,
+                              as_relative=as_relative,
+                              aggregate=aggregate))
                   }
-                  #Add indices names to table's columns' names
+          
+                  # Add indices names to table's columns' names
                   colnames(tab) <- index
-                  #Convert table to data frame
+          
+                  # Convert table to data frame
                   tab <- as.data.frame(tab)
 
-                  #Adds index data to original MicrobiomeExperiment object
-		  if (name == "all") { name <- colnames(tab) }
+                  # Adds index data to original MicrobiomeExperiment object
+                  if (length(name) == 1 && name == "all") {
+                      name <- colnames(tab)
+                  } 
                   x <- add_indices_to_coldata(x, tab, name)
               }
 
-              #Returns ME object
+              # Return ME object
               return(x)
 
 
