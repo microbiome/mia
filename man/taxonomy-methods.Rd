@@ -13,10 +13,10 @@
 \alias{checkTaxonomy,SummarizedExperiment-method}
 \alias{getTaxonomyLabels}
 \alias{getTaxonomyLabels,SummarizedExperiment-method}
-\alias{taxonomicTree}
-\alias{taxonomicTree,SummarizedExperiment-method}
-\alias{addTaxonomicTree}
-\alias{addTaxonomicTree,SummarizedExperiment-method}
+\alias{taxonomyTree}
+\alias{taxonomyTree,SummarizedExperiment-method}
+\alias{addTaxonomyTree}
+\alias{addTaxonomyTree,SummarizedExperiment-method}
 \title{Taxonomy related functions}
 \format{
 a \code{character} vector of length 8 containing the taxonomy ranks
@@ -51,16 +51,17 @@ getTaxonomyLabels(x, ...)
   x,
   empty.fields = c(NA, "", " ", "\\t", "-"),
   with_type = FALSE,
-  make_unique = TRUE
+  make_unique = TRUE,
+  resolve_loops = FALSE
 )
 
-taxonomicTree(x, ...)
+taxonomyTree(x, ...)
 
-\S4method{taxonomicTree}{SummarizedExperiment}(x)
+\S4method{taxonomyTree}{SummarizedExperiment}(x)
 
-addTaxonomicTree(x, ...)
+addTaxonomyTree(x, ...)
 
-\S4method{addTaxonomicTree}{SummarizedExperiment}(x)
+\S4method{addTaxonomyTree}{SummarizedExperiment}(x)
 }
 \arguments{
 \item{x}{a
@@ -82,6 +83,10 @@ suffix? For example: "Phylum:Crenarchaeota" (default:
 
 \item{make_unique}{\code{TRUE} or \code{FALSE}: Should the labels be made
 unique, if there are any duplicates? (default: \code{make_unique = TRUE})}
+
+\item{resolve_loops}{\code{TRUE} or \code{FALSE}: Should \code{resolveLooops}
+be applied to the taxonomic data? Please note that has only an effect,
+if the data is unique. (default: \code{resolve_loops = TRUE})}
 }
 \value{
 \itemize{
