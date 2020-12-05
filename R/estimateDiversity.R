@@ -57,7 +57,7 @@
 #' plotColData(se, "shannon")
 #' # ... by sample type
 #' plotColData(se, "shannon", "SampleType")
-#' \dontrun{
+#' \donttest{
 #' # combining different plots
 #' plots <- lapply(c("shannon","simpson","richness"),
 #'                 plotColData,

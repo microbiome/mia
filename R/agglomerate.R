@@ -106,7 +106,6 @@ setGeneric("agglomerateByRank",
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
        empty.fields = c(NA, "", " ", "\t", "-"), agglomerateTree = FALSE, ...){
-
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
@@ -126,7 +125,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
         }
         .check_for_taxonomic_data_order(x)
-        
+        #
 
         # Make a vector from the taxonomic data.
         col <- which( taxonomyRanks(x) %in% rank )

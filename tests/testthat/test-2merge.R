@@ -73,13 +73,15 @@ test_that("merge", {
     grl <- splitAsList(gr,1:6)
     xtse <- TreeSummarizedExperiment(assays = list(mat = mat),
                                      rowRanges = unname(grl))
-    me <- MicrobiomeExperiment(assays = list(mat = mat),
-                               rowRanges = unname(grl))
+    # me <- MicrobiomeExperiment(assays = list(mat = mat),
+    #                            rowRanges = unname(grl))
     FUN_check_x <- function(x,archetype=1){
       actual <- mergeRows(x, f, archetype)
       expect_s4_class(actual,class(x))
       expect_equal(dim(actual),c(2,10))
     }
-    lapply(list(xtse,me),FUN_check_x)
-    lapply(list(xtse,me),FUN_check_x,archetype=2)
+    lapply(list(xtse),FUN_check_x)
+    lapply(list(xtse),FUN_check_x,archetype=2)
+    # lapply(list(xtse,me),FUN_check_x)
+    # lapply(list(xtse,me),FUN_check_x,archetype=2)
 })

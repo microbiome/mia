@@ -1,7 +1,7 @@
 Package: mia
 Type: Package
-Version: 0.0.0.9010
-Date: 2020-12-03
+Version: 0.98.11
+Date: 2020-12-05
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -16,8 +16,10 @@ Authors@R:
       person(given = "Jayaram", family = "Kancherla", role=c("ctb")))
 Title: Microbiome analysis
 Description: 
-    mia implements tools for microbiome analysis. Data wrangling and analysis
-    are the main scope of this package.
+    mia implements tools for microbiome analysis based on the 
+    SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment 
+    infrastructure. Data wrangling and analysis are the main scope of this 
+    package.
 biocViews: Microbiome, Software
 License: Artistic-2.0
 Encoding: UTF-8
@@ -27,7 +29,7 @@ Depends:
     SummarizedExperiment,
     SingleCellExperiment,
     TreeSummarizedExperiment,
-    MicrobiomeExperiment
+    MicrobiomeExperiment 
 Imports:
     methods,
     BiocGenerics,
@@ -44,18 +46,21 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr
+    tidyr,
+    stats,
+    utils
 Suggests:
     testthat,
     knitr,
     BiocStyle,
-    breakaway,
+    ggpubr,
     vegan,
     phyloseq,
     dada2,
-    biomformat
+    biomformat,
+    breakaway
 Remotes:
-    github::adw96/breakaway,
+    github::adw96/breakaway, 
     github::FelixErnst/MicrobiomeExperiment
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1

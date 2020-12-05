@@ -248,14 +248,8 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-
 #' @importFrom IRanges CharacterList LogicalList
-.get_taxonomic_label <- function(x, empty.fields = c(NA, "", " ", "\t", "-"),
-                                 with_type = FALSE, make_unique = TRUE,
-                                 resolve_loops = FALSE){
-    rd <- rowData(x)
-    tax_cols <- .get_tax_cols_from_se(x)
-
+.get_tax_ranks_selected <- function(x,rd, tax_cols, empty.fields){
     # We need DataFrame here to handle cases with a single entry in tax_cols
     charlist <- CharacterList(t(rd[,tax_cols, drop=FALSE]))
     tax_ranks_non_empty <- !is.na(charlist) &
@@ -265,7 +259,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     tax_ranks_selected <- apply(tax_ranks_non_empty,1L,which)
     if(any(lengths(tax_ranks_selected) == 0L)){
         if(!anyDuplicated(rownames(x))){
-            return(rownames(x))
+            return(NULL)
         }
         stop("Only empty taxonomic information detected. Some rows contain ",
              "only entries selected by 'empty.fields'. Cannot generated ",
@@ -282,6 +276,27 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         tax_ranks_selected <- max(tax_ranks_selected)
     } else {
         stop(".")
+    }
+    tax_ranks_selected
+}
+
+.add_taxonomic_type <- function(rd, ans, tax_cols_selected){
+    sep <- rep(":", length(ans))
+    tax_cols_selected <- unlist(tax_cols_selected)
+    # sep[tax_cols_selected != max(tax_cols_selected)] <- "::"
+    types <- colnames(rd)[tax_cols_selected]
+    ans <- paste0(types, sep, ans)
+    ans
+}
+
+.get_taxonomic_label <- function(x, empty.fields = c(NA, "", " ", "\t", "-"),
+                                 with_type = FALSE, make_unique = TRUE,
+                                 resolve_loops = FALSE){
+    rd <- rowData(x)
+    tax_cols <- .get_tax_cols_from_se(x)
+    tax_ranks_selected <- .get_tax_ranks_selected(x, rd, tax_cols, empty.fields)
+    if(is.null(tax_ranks_selected)){
+        return(rownames(x))
     }
     tax_cols_selected <- tax_cols[tax_ranks_selected]
     u_tax_cols_selected <- sort(unique(tax_cols_selected))
@@ -304,11 +319,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
                   SIMPLIFY = FALSE)
     ans <- unlist(ans, use.names = FALSE)
     if(with_type || !all_same_rank){
-        sep <- rep(":", length(ans))
-        tax_cols_selected <- unlist(tax_cols_selected)
-        # sep[tax_cols_selected != max(tax_cols_selected)] <- "::"
-        types <- colnames(rd)[tax_cols_selected]
-        ans <- paste0(types, sep, ans)
+        ans <- .add_taxonomic_type(rd, ans, tax_cols_selected)
     }
     ans
 }
