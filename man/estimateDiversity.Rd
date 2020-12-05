@@ -2,11 +2,13 @@
 % Please edit documentation in R/estimateDiversity.R
 \name{estimateDiversity}
 \alias{estimateDiversity}
+\alias{estimateAlphaDiversity}
 \alias{estimateShannon}
 \alias{estimateSimpson}
 \alias{estimateInvSimpson}
 \alias{estimateRichness}
 \alias{estimateDiversity,SummarizedExperiment-method}
+\alias{estimateAlphaDiversity,SummarizedExperiment-method}
 \alias{estimateShannon,SummarizedExperiment-method}
 \alias{estimateSimpson,SummarizedExperiment-method}
 \alias{estimateInvSimpson,SummarizedExperiment-method}
@@ -20,6 +22,8 @@ estimateDiversity(
   name = index,
   ...
 )
+
+estimateAlphaDiversity(x, ...)
 
 estimateShannon(x, ...)
 
@@ -37,6 +41,8 @@ estimateRichness(x, ...)
   ...,
   BPPARAM = SerialParam()
 )
+
+\S4method{estimateAlphaDiversity}{SummarizedExperiment}(x, ...)
 
 \S4method{estimateShannon}{SummarizedExperiment}(x, ...)
 

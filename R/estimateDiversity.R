@@ -76,6 +76,12 @@ setGeneric("estimateDiversity",signature = c("x"),
 
 #' @rdname estimateDiversity
 #' @export
+setGeneric("estimateAlphaDiversity",signature = c("x"),
+           function(x, ...)
+               standardGeneric("estimateAlphaDiversity"))
+
+#' @rdname estimateDiversity
+#' @export
 setGeneric("estimateShannon",signature = c("x"),
            function(x, ...)
                standardGeneric("estimateShannon"))
@@ -123,6 +129,14 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
                          BPPARAM = BPPARAM, ...)
         .add_dvrsty_values_to_colData(x, dvrsts, name)
     }
+)
+
+#' @rdname estimateDiversity
+#' @export
+setMethod("estimateAlphaDiversity", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+              estimateDiversity(x, ...)
+          }
 )
 
 #' @rdname estimateDiversity
