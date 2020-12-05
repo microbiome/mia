@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 0.98.11
+Version: 0.98.12
 Date: 2020-12-05
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
@@ -57,10 +57,8 @@ Suggests:
     vegan,
     phyloseq,
     dada2,
-    biomformat,
-    breakaway
+    biomformat
 Remotes:
-    github::adw96/breakaway, 
     github::FelixErnst/MicrobiomeExperiment
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
