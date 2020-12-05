@@ -41,7 +41,7 @@
 
 <meta property="og:title" content="Estimate alpha diversity — estimateDiversity" />
 <meta property="og:description" content="Several functions for calculation of alpha diversity indices available via
-wrapper functions. They are implemented via the breakaway package." />
+wrapper functions. They are implemented via the vegan package." />
 
 
 
@@ -73,7 +73,7 @@ wrapper functions. They are implemented via the breakaway package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.13</span>
       </span>
     </div>
 
@@ -114,16 +114,18 @@ wrapper functions. They are implemented via the breakaway package." />
 
     <div class="ref-description">
     <p>Several functions for calculation of alpha diversity indices available via
-wrapper functions. They are implemented via the <code>breakaway</code> package.</p>
+wrapper functions. They are implemented via the <code>vegan</code> package.</p>
     </div>
 
     <pre class="usage"><span class='fu'>estimateDiversity</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"shannon_e"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span>, <span class='st'>"chao1"</span>, <span class='st'>"ACE"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
+
+<span class='fu'>estimateAlphaDiversity</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>estimateShannon</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
@@ -132,18 +134,19 @@ wrapper functions. They are implemented via the <code>breakaway</code> package.<
 <span class='fu'>estimateInvSimpson</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>estimateRichness</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>estimateShannonE</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>estimateDiversity</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"shannon_e"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span>, <span class='st'>"chao1"</span>, <span class='st'>"ACE"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>,
-  <span class='va'>...</span>
+  <span class='va'>...</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>estimateAlphaDiversity</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>estimateShannon</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -155,10 +158,7 @@ wrapper functions. They are implemented via the <code>breakaway</code> package.<
 <span class='fu'>estimateInvSimpson</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>estimateRichness</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>estimateShannonE</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>estimateRichness</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -183,14 +183,14 @@ in.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional parameters passed to <code>estimateDiversity</code> or the
-corresponding function implemented by the <code>breakaway</code> package.</p></td>
+      <td><p>additional parameters passed to <code>estimateDiversity</code></p></td>
     </tr>
     <tr>
       <th>BPPARAM</th>
       <td><p>A
 <code><a href='https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html'>BiocParallelParam</a></code>
-object specifying whether calculation of estimates should be parallelized.</p></td>
+object specifying whether calculation of estimates should be parallelized.
+(Currently not used)</p></td>
     </tr>
     </table>
 
@@ -200,17 +200,13 @@ object specifying whether calculation of estimates should be parallelized.</p></
 <code>*name*</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This includes the &#8216;Shannon&#8217;, &#8216;Shannon-E&#8217;, &#8216;Simpson&#8217;,
-&#8216;inverse Simpson&#8217; and &#8216;Richness&#8217; diversity measures.</p>
+    <p>This includes the &#8216;Shannon&#8217;, &#8216;Simpson&#8217; and
+&#8216;inverse Simpson&#8217; diversity measures.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></code></p><ul>
-<li><p><code><a href='estimateBreakway.html'>estimateBreakway</a></code></p></li>
-<li><p><code><a href='http://adw96.github.io/breakaway/reference/sample_inverse_simpson.html'>sample_inverse_simpson</a></code></p></li>
-<li><p><code><a href='http://adw96.github.io/breakaway/reference/sample_simpson.html'>sample_simpson</a></code></p></li>
-<li><p><code><a href='http://adw96.github.io/breakaway/reference/sample_richness.html'>sample_richness</a></code></p></li>
-<li><p><code><a href='http://adw96.github.io/breakaway/reference/sample_shannon.html'>sample_shannon</a></code></p></li>
-<li><p><code><a href='http://adw96.github.io/breakaway/reference/sample_shannon_e.html'>sample_shannon_e</a></code></p></li>
+<li><p><code><a href='https://rdrr.io/pkg/vegan/man/diversity.html'>diversity</a></code></p></li>
+<li><p><code><a href='https://rdrr.io/pkg/vegan/man/specpool.html'>estimateR</a></code></p></li>
 </ul>
 </div>
 
@@ -236,12 +232,12 @@ object specifying whether calculation of estimates should be parallelized.</p></
 
 <span class='co'># plotting the diversities</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://bioconductor.org/packages/scater/'>scater</a></span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></span><span class='op'>(</span><span class='va'>se</span>, <span class='st'>"shannon"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: ggplot2</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></span><span class='op'>(</span><span class='va'>se</span>, <span class='st'>"shannon"</span><span class='op'>)</span>
 </div><div class='img'><img src='estimateDiversity-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># ... by sample type</span>
 <span class='fu'><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></span><span class='op'>(</span><span class='va'>se</span>, <span class='st'>"shannon"</span>, <span class='st'>"SampleType"</span><span class='op'>)</span>
 </div><div class='img'><img src='estimateDiversity-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># combining different plots</span>
-<span class='va'>plots</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>,<span class='st'>"simpson"</span>,<span class='st'>"richness"</span><span class='op'>)</span>,
+<span class='va'>plots</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>,<span class='st'>"simpson"</span><span class='op'>)</span>,
                 <span class='va'>plotColData</span>,
                 object <span class='op'>=</span> <span class='va'>se</span>,
                 x <span class='op'>=</span> <span class='st'>"SampleType"</span>,
