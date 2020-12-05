@@ -75,7 +75,7 @@ object" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9010</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.11</span>
       </span>
     </div>
 
@@ -167,12 +167,17 @@ to stor the calculated relative abundance.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>For <code>relabundance</code> the matrix stored with the name
+&#8220;relabundance&#8221;.
+For <code>relAbundanceCounts</code> a modified <code>x</code> containing the relative
+abundances as an assay defined by <code>name</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>me</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"MicrobiomeExperiment"</span><span class='op'>)</span>
-<span class='va'>me</span> <span class='op'>&lt;-</span> <span class='fu'>relAbundanceCounts</span><span class='op'>(</span><span class='va'>me</span><span class='op'>)</span>
-<span class='fu'>relabundance</span><span class='op'>(</span><span class='va'>me</span><span class='op'>)</span>
+<span class='va'>GlobalPatterns</span> <span class='op'>&lt;-</span> <span class='fu'>relAbundanceCounts</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
+<span class='fu'>relabundance</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                 CL3          CC1          SV1      M31Fcsw      M11Fcsw
 #&gt; 549322 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
 #&gt; 522457 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00

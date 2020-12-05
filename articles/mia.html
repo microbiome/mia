@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9010</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.11</span>
       </span>
     </div>
 
@@ -66,7 +66,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 class="date">2020-12-04</h4>
+            <h4 class="date">2020-12-05</h4>
       
       
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -87,9 +87,9 @@
 <a href="#loading-a-microbiomeexperiment-object" class="anchor"></a>Loading a <code>MicrobiomeExperiment</code> object</h1>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span>
-<span class="va">me</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"MicrobiomeExperiment"</span><span class="op">)</span>
-<span class="va">me</span></code></pre></div>
-<pre><code>## class: MicrobiomeExperiment 
+<span class="va">se</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span>
+<span class="va">se</span></code></pre></div>
+<pre><code>## class: TreeSummarizedExperiment 
 ## dim: 19216 26 
 ## metadata(0):
 ## assays(1): counts
@@ -102,8 +102,7 @@
 ## rowLinks: a LinkDataFrame (19216 rows)
 ## rowTree: a phylo (19216 leaves)
 ## colLinks: NULL
-## colTree: NULL
-## referenceSeq: NULL</code></pre>
+## colTree: NULL</code></pre>
 </div>
 <div id="functions-for-working-microbiome-data" class="section level1">
 <h1 class="hasAnchor">
@@ -115,23 +114,23 @@
 <p><code>agglomerateByRank</code> constructs a <code>factor</code> to guide merging from the available taxonomic information. For more information on merging have a look at the man page via <code><a href="../reference/merge-methods.html">?mergeRows</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># print the available taxonomic ranks</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">me</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">me</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># agglomerate at the Family taxonomic rank</span>
-<span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">me</span>, rank <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span>
+<span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span>
 <span class="co">## How many taxa before/after agglomeration?</span>
-<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">me</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 19216</code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 603</code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># with agglomeration of the tree</span>
-<span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">me</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,
+<span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,
                         agglomerateTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># same number of rows, but</span></code></pre></div>
 <pre><code>## [1] 603</code></pre>
@@ -166,27 +165,27 @@
 <pre><code>## [1] "Genus"</code></pre>
 <p>To keep data tidy, the agglomerated data can be stored as an alternative experiment in the object of origin. With this synchronized sample subseting becomes very easy.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">altExp</span><span class="op">(</span><span class="va">me</span>, <span class="st">"family"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">x2</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>, <span class="st">"family"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">x2</span></code></pre></div>
 <p>Keep in mind, that rows with <code>NA</code> or similar value (via the <code>empty.fields</code> argument) will be removed, if you set <code>na.rm = FALSE</code>. Depending on this different number of rows will be returned.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">me</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu">altExp</span><span class="op">(</span><span class="va">me</span>,<span class="st">"species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">me</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 944  26</code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">me</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 2307   26</code></pre>
 </div>
 <div id="constructing-a-tree-from-taxonomic-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#constructing-a-tree-from-taxonomic-data" class="anchor"></a>Constructing a tree from taxonomic data</h2>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">me</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">me</span><span class="op">)</span><span class="op">]</span>
+<code class="sourceCode R"><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">]</span>
 <span class="va">taxa_res</span> <span class="op">&lt;-</span> <span class="fu">resolveLoop</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span><span class="op">)</span>
 <span class="va">taxa_tree</span> <span class="op">&lt;-</span> <span class="fu">toTree</span><span class="op">(</span>data <span class="op">=</span> <span class="va">taxa_res</span><span class="op">)</span>
-<span class="va">taxa_tree</span><span class="op">$</span><span class="va">tip.label</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">me</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">rowNodeLab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">me</span>,<span class="st">"species"</span><span class="op">)</span>, make_unique <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="fu">altExp</span><span class="op">(</span><span class="va">me</span>,<span class="st">"species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">changeTree</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">me</span>,<span class="st">"species"</span><span class="op">)</span>,
+<span class="va">taxa_tree</span><span class="op">$</span><span class="va">tip.label</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">rowNodeLab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span>, make_unique <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">changeTree</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span>,
                                    rowTree <span class="op">=</span> <span class="va">taxa_tree</span>,
                                    rowNodeLab <span class="op">=</span> <span class="va">rowNodeLab</span><span class="op">)</span></code></pre></div>
 </div>
@@ -200,12 +199,12 @@
 <a href="#general-wrappers" class="anchor"></a>General wrappers</h2>
 <p><code>getAbundanceFeature</code> and <code>getAbundanceSample</code> are wrappers on row-wise or column-wise assay data subsetting.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceSample</a></span><span class="op">(</span><span class="va">me</span>, <span class="st">"CC1"</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">==</span> <span class="fu">assay</span><span class="op">(</span><span class="va">me</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">[</span>,<span class="st">"CC1"</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceSample</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"CC1"</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">==</span> <span class="fu">assay</span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">[</span>,<span class="st">"CC1"</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceFeature</a></span><span class="op">(</span><span class="va">me</span>, <span class="st">"522457"</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">==</span> <span class="fu">assay</span><span class="op">(</span><span class="va">me</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">[</span><span class="st">"522457"</span>,<span class="op">]</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceFeature</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"522457"</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">==</span> <span class="fu">assay</span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">[</span><span class="st">"522457"</span>,<span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="selecting-most-interesing-features" class="section level2">
@@ -213,7 +212,7 @@
 <a href="#selecting-most-interesing-features" class="anchor"></a>Selecting most interesing features</h2>
 <p><code>getTopTaxa</code> returns a vector of the most <code>top</code> abundant feature IDs.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTopTaxa.html">getTopTaxa</a></span><span class="op">(</span><span class="va">me</span>,
+<code class="sourceCode R"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTopTaxa.html">getTopTaxa</a></span><span class="op">(</span><span class="va">se</span>,
                        method<span class="op">=</span><span class="st">"mean"</span>,
                        top<span class="op">=</span><span class="fl">5</span>,
                        abund_values<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span>
@@ -225,7 +224,7 @@
 <a href="#generating-tidy-data" class="anchor"></a>Generating tidy data</h2>
 <p>To generate tidy data as used and required in most of the tidyverse, <code>meltAssay</code></p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">molten_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/meltAssay.html">meltAssay</a></span><span class="op">(</span><span class="va">me</span>,
+<code class="sourceCode R"><span class="va">molten_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/meltAssay.html">meltAssay</a></span><span class="op">(</span><span class="va">se</span>,
                          add_row_data <span class="op">=</span> <span class="cn">TRUE</span>,
                          add_col_data <span class="op">=</span> <span class="cn">TRUE</span>,
                          abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
