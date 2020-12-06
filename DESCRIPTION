@@ -1,7 +1,7 @@
 Package: mia
 Type: Package
-Version: 0.98.13
-Date: 2020-12-05
+Version: 0.98.14
+Date: 2020-12-06
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
