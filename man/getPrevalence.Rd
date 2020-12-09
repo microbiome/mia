@@ -25,15 +25,7 @@ getPrevalentTaxa(x, ...)
   ...
 )
 
-\S4method{getPrevalentAbundance}{MicrobiomeExperiment}(
-  x,
-  abund_values = "relabundance",
-  detection = 0.1/100,
-  prevalence = 50/100,
-  include_lowest = FALSE,
-  as_relative = FALSE,
-  ...
-)
+\S4method{getPrevalentAbundance}{MicrobiomeExperiment}(x, abund_values = "relabundance", ...)
 }
 \arguments{
 \item{x}{a

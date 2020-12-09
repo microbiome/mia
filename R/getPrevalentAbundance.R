@@ -39,8 +39,7 @@ setGeneric("getPrevalentAbundance", signature = "x",
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
-          function(x, abund_values = "relabundance", detection = 0.1/100, prevalence = 50/100,
-                   include_lowest = FALSE, as_relative=FALSE, ...){
+          function(x, abund_values = "relabundance", ...){
 
               #Adds relative abundance table to the data
               x <- relAbundanceCounts(x)
@@ -49,8 +48,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
               values <- assays(x)[[abund_values]]
 
               # Core members
-              cm <- getPrevalentTaxa(x, detection=detection, prevalence=prevalence, include_lowest=include_lowest,
-                                     as_relative=as_relative, rank=NULL)
+              cm <- getPrevalentTaxa(x, rank=NULL)
 
               if (length(cm) == 0) {
                   warning("With the given abundance and prevalence
