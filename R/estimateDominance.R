@@ -124,7 +124,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
               #Initialize table that is used to store indices
               tab <- NULL
 
-              #If the indices list is not null
+              #If the indices vector is not null
               if (!is.null(index)) {
                   #loop through index list
                   for (idx in index) {
