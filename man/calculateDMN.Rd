@@ -23,7 +23,13 @@
 \usage{
 calculateDMN(x, ...)
 
-\S4method{calculateDMN}{ANY}(x, k = 1, BPPARAM = SerialParam(), seed = 1, ...)
+\S4method{calculateDMN}{ANY}(
+  x,
+  k = 1,
+  BPPARAM = SerialParam(),
+  seed = runif(1, 0, .Machine$integer.max),
+  ...
+)
 
 \S4method{calculateDMN}{SummarizedExperiment}(x, exprs_values = "counts", transposed = FALSE, ...)
 
@@ -47,7 +53,13 @@ plotDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
 
 calculateDMNgroup(x, ...)
 
-\S4method{calculateDMNgroup}{ANY}(x, variable, k = 1, seed = 1, ...)
+\S4method{calculateDMNgroup}{ANY}(
+  x,
+  variable,
+  k = 1,
+  seed = runif(1, 0, .Machine$integer.max),
+  ...
+)
 
 \S4method{calculateDMNgroup}{SummarizedExperiment}(
   x,
@@ -59,7 +71,13 @@ calculateDMNgroup(x, ...)
 
 performDMNgroupCV(x, ...)
 
-\S4method{performDMNgroupCV}{ANY}(x, variable, k = 1, seed = 1, ...)
+\S4method{performDMNgroupCV}{ANY}(
+  x,
+  variable,
+  k = 1,
+  seed = runif(1, 0, .Machine$integer.max),
+  ...
+)
 
 \S4method{performDMNgroupCV}{SummarizedExperiment}(
   x,
