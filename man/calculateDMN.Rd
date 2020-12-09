@@ -23,7 +23,7 @@
 \usage{
 calculateDMN(x, ...)
 
-\S4method{calculateDMN}{ANY}(x, k = 1, BPPARAM = SerialParam(), ...)
+\S4method{calculateDMN}{ANY}(x, k = 1, BPPARAM = SerialParam(), seed = 1, ...)
 
 \S4method{calculateDMN}{SummarizedExperiment}(x, exprs_values = "counts", transposed = FALSE, ...)
 
@@ -47,7 +47,7 @@ plotDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
 
 calculateDMNgroup(x, ...)
 
-\S4method{calculateDMNgroup}{ANY}(x, variable, k = 1, ...)
+\S4method{calculateDMNgroup}{ANY}(x, variable, k = 1, seed = 1, ...)
 
 \S4method{calculateDMNgroup}{SummarizedExperiment}(
   x,
@@ -59,7 +59,7 @@ calculateDMNgroup(x, ...)
 
 performDMNgroupCV(x, ...)
 
-\S4method{performDMNgroupCV}{ANY}(x, variable, k = 1, ...)
+\S4method{performDMNgroupCV}{ANY}(x, variable, k = 1, seed = 1, ...)
 
 \S4method{performDMNgroupCV}{SummarizedExperiment}(
   x,
@@ -82,6 +82,9 @@ object.}
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether the UniFrac calculation should be parallelized.}
+
+\item{seed}{random number seed. See
+\code{\link[DirichletMultinomial:dmn]{dmn}}}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.}

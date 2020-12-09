@@ -28,6 +28,9 @@
 #' @param variable a variable from \code{colData} to use as grouping variable.
 #'   Must be a character of factor.
 #'
+#' @param seed random number seed. See
+#'   \code{\link[DirichletMultinomial:dmn]{dmn}}
+#'
 #' @param ... optional arguments not used.
 #'
 #' @return
@@ -97,7 +100,8 @@ setGeneric("calculateDMN", signature = c("x"),
                standardGeneric("calculateDMN"))
 
 #' @importFrom DirichletMultinomial dmn
-.calculate_DMN <- function(x, k = 1, BPPARAM = SerialParam(), ...){
+.calculate_DMN <- function(x, k = 1, BPPARAM = SerialParam(),
+                           seed = runif(1, 0, .Machine$integer.max), ...){
     if(!is.numeric(k) ||
        length(k) == 0 ||
        anyNA(k) ||
@@ -115,7 +119,8 @@ setGeneric("calculateDMN", signature = c("x"),
         on.exit(bpstop(BPPARAM), add = TRUE)
     }
 
-    ans <- BiocParallel::bplapply(k, DirichletMultinomial::dmn, count = x, ...,
+    ans <- BiocParallel::bplapply(k, DirichletMultinomial::dmn, count = x,
+                                  seed = seed, ...,
                                   BPPARAM = BPPARAM)
     ans
 }
@@ -268,7 +273,8 @@ setGeneric("calculateDMNgroup", signature = c("x"),
                standardGeneric("calculateDMNgroup"))
 
 #' @importFrom DirichletMultinomial dmngroup
-.calculate_DMNgroup <- function(x, variable, k = 1, ...){
+.calculate_DMNgroup <- function(x, variable, k = 1,
+                                seed = runif(1, 0, .Machine$integer.max), ...){
     # input check
     if(!is.factor(variable) && is.character(variable)){
         variable <- factor(variable, unique(variable))
@@ -277,7 +283,7 @@ setGeneric("calculateDMNgroup", signature = c("x"),
     }
     #
     variable <- droplevels(variable)
-    dmngroup(x, variable, k = k, ...)
+    dmngroup(x, variable, k = k, seed = seed, ...)
 }
 
 #' @rdname calculateDMN
@@ -311,7 +317,8 @@ setGeneric("performDMNgroupCV", signature = c("x"),
                standardGeneric("performDMNgroupCV"))
 
 #' @importFrom DirichletMultinomial cvdmngroup
-.perform_DMNgroup_cv <- function(x, variable, k = 1, ...){
+.perform_DMNgroup_cv <- function(x, variable, k = 1,
+                                 seed = runif(1, 0, .Machine$integer.max), ...){
     # input check
     if(!is.factor(variable) && is.character(variable)){
         variable <- factor(variable, unique(variable))
@@ -324,7 +331,7 @@ setGeneric("performDMNgroupCV", signature = c("x"),
              call. = FALSE)
     }
     #
-    cvdmngroup(nrow(x), x, variable, k = k, ...)
+    cvdmngroup(nrow(x), x, variable, k = k, seed = seed, ...)
 }
 
 #' @rdname calculateDMN
