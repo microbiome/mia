@@ -87,7 +87,7 @@ data if needed." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.16</span>
       </span>
     </div>
 
@@ -176,7 +176,7 @@ data if needed.</p>
 <span class='fu'>getTaxonomyLabels</span><span class='op'>(</span>
   <span class='va'>x</span>,
   empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span><span class='op'>)</span>,
-  with_type <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  with_rank <span class='op'>=</span> <span class='cn'>FALSE</span>,
   make_unique <span class='op'>=</span> <span class='cn'>TRUE</span>,
   resolve_loops <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
@@ -216,10 +216,10 @@ removed if <code>na.rm = TRUE</code> before agglomeration.</p></td>
       <td><p>optional arguments not used currently.</p></td>
     </tr>
     <tr>
-      <th>with_type</th>
+      <th>with_rank</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should the level be add as a
 suffix? For example: "Phylum:Crenarchaeota" (default:
-<code>with_type = FALSE</code>)</p></td>
+<code>with_rank = FALSE</code>)</p></td>
     </tr>
     <tr>
       <th>make_unique</th>
