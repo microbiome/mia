@@ -224,7 +224,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
         #If index is "Gini" calculates the gini index to all the samples
     } else if (index == "gini") {
 
-        gini <- .gini(x)
+        gini <- .get_gini(x)
         return(gini)
     }
 
@@ -288,7 +288,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
 }
 
-.gini <- function(x, abund_values="counts") {
+.get_gini <- function(x, abund_values="counts") {
 
     #Stores the absolute abundances to "otu" variable
     otu <- assays(x)[[abund_values]]
