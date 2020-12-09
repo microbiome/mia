@@ -119,7 +119,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
                    name = index, BPPARAM = SerialParam(), ...){
 
               #Check if index/indices that user wants to calculate are accepted. Those that are, are stored in "index" variable.
-              index <- checkIndices(index)
+              index <- .check_indices(index)
 
               #Initialize table that is used to store indices
               tab <- NULL
@@ -130,7 +130,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
                   for (idx in index) {
                       #Get the specific index, and save it to table
                       tab <- cbind(tab,
-                                   dominance_help(x, abund_values=abund_values, index=idx, rank=rank,
+                                   .dominance_help(x, abund_values=abund_values, index=idx, rank=rank,
                                                   as_relative=as_relative,
                                                   aggregate=aggregate))
                   }
@@ -140,7 +140,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
                   tab <- as.data.frame(tab)
 
                   #Adds index data to original MicrobiomeExperiment object
-                  x <- add_indices_to_coldata(x, tab, name)
+                  x <- .add_indices_to_coldata(x, tab, name)
               }
 
               #Returns ME object
@@ -154,7 +154,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
 
 #---------------------------Help functions----------------------------------------------------------------
-checkIndices <- function(index){
+.check_indices <- function(index){
 
     # Only include accepted indices
     #If index is not null, save them to "index" variable after changing them to lower case
@@ -193,7 +193,7 @@ checkIndices <- function(index){
     return(index)
 }
 
-dominance_help <- function(x, abund_values = "counts", index="all", rank=1, as_relative=TRUE,
+.dominance_help <- function(x, abund_values = "counts", index="all", rank=1, as_relative=TRUE,
                            aggregate=TRUE) {
     #Stores the absolute abundances to "otu" variable
     otu <- assays(x)[[abund_values]]
@@ -219,7 +219,7 @@ dominance_help <- function(x, abund_values = "counts", index="all", rank=1, as_r
         #If index is "Simpson", calculates the Simpson to all the samples
     } else if (index %in% c("simpson")) {
         tmp <- apply(otu, 2, function(x) {
-            simpson_dominance(x)})
+            .simpson_dominance(x)})
         return(tmp)
     } else if (index %in% c("core_abundance")) {
         prevalence <- getPrevalentAbundance(x, detection=0, as_relative=TRUE)
@@ -227,7 +227,7 @@ dominance_help <- function(x, abund_values = "counts", index="all", rank=1, as_r
         #If index is "Gini" calculates the gini index to all the samples
     } else if (index == "gini") {
 
-        gini <- gini(x)
+        gini <- .gini(x)
         return(gini)
     }
 
@@ -270,7 +270,7 @@ dominance_help <- function(x, abund_values = "counts", index="all", rank=1, as_r
 }
 
 # x: Species count vector
-simpson_dominance <- function(x, zeroes=TRUE) {
+.simpson_dominance <- function(x, zeroes=TRUE) {
 
     if (!zeroes) {
         x[x > 0]
@@ -291,14 +291,14 @@ simpson_dominance <- function(x, zeroes=TRUE) {
 
 }
 
-gini <- function(x, abund_values="counts") {
+.gini <- function(x, abund_values="counts") {
 
     #Stores the absolute abundances to "otu" variable
     otu <- assays(x)[[abund_values]]
 
     # Gini index for each sample
     do <- apply(otu, 2, function(x) {
-        gini_help(x)
+        .gini_help(x)
     })
     names(do) <- colnames(x)
 
@@ -308,7 +308,7 @@ gini <- function(x, abund_values="counts") {
 
 
 
-gini_help <- function(x, w=rep(1, length(x))) {
+.gini_help <- function(x, w=rep(1, length(x))) {
     # See also reldist::gini for an independent implementation
     o <- order(x)
     x <- x[o]
@@ -321,7 +321,7 @@ gini_help <- function(x, w=rep(1, length(x))) {
 }
 
 #Gets ME object and index data frame as parameters
-add_indices_to_coldata <- function(x, indicesDF, names){
+.add_indices_to_coldata <- function(x, indicesDF, names){
     #Stores sample names
     sampleNames <- rownames(indicesDF)
 
