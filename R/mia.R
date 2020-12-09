@@ -21,8 +21,9 @@ NULL
 #' These datasets are conversions of the phyloseq datasets \code{GlobalPatterns}
 #' \code{enterotype}, \code{esophagus} and \code{soilrep}.
 #'
-#' \code{taxa} contains example taxonomic data derived from the
-#'   \code{metagenomeFeatures} package.
+#' \code{dmn_se} contains an example \code{SummarizedExperiment} derived
+#' from data in the \code{DirichletMultinomal} package. See \code{?calculateDMN}
+#' for more details.
 #'
 #' @name mia-datasets
 #' @docType data
@@ -38,3 +39,6 @@ NULL
 #' @name mia-datasets
 #' @usage data(soilrep)
 "soilrep"
+#' @name mia-datasets
+#' @usage data(dmn_se)
+"dmn_se"

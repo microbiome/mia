@@ -7,6 +7,7 @@
 \alias{enterotype}
 \alias{esophagus}
 \alias{soilrep}
+\alias{dmn_se}
 \title{mia datasets}
 \format{
 An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
@@ -16,6 +17,8 @@ An object of class \code{TreeSummarizedExperiment} with 553 rows and 280 columns
 An object of class \code{TreeSummarizedExperiment} with 58 rows and 3 columns.
 
 An object of class \code{TreeSummarizedExperiment} with 16825 rows and 56 columns.
+
+An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
 }
 \usage{
 data(GlobalPatterns)
@@ -25,12 +28,15 @@ data(enterotype)
 data(esophagus)
 
 data(soilrep)
+
+data(dmn_se)
 }
 \description{
 These datasets are conversions of the phyloseq datasets \code{GlobalPatterns}
 \code{enterotype}, \code{esophagus} and \code{soilrep}.
 
-\code{taxa} contains example taxonomic data derived from the
-\code{metagenomeFeatures} package.
+\code{dmn_se} contains an example \code{SummarizedExperiment} derived
+from data in the \code{DirichletMultinomal} package. See \code{?calculateDMN}
+for more details.
 }
 \keyword{datasets}
