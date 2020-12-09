@@ -295,7 +295,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
     # Gini index for each sample
     do <- apply(otu, 2, function(x) {
-        .gini_help(x)
+        .calculate_gini(x)
     })
     names(do) <- colnames(x)
 
@@ -305,7 +305,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
 
 
-.gini_help <- function(x, w=rep(1, length(x))) {
+.calculate_gini <- function(x, w=rep(1, length(x))) {
     # See also reldist::gini for an independent implementation
     o <- order(x)
     x <- x[o]
