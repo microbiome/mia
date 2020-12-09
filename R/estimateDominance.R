@@ -41,7 +41,8 @@
 #' @details
 #' \code{estimateDominance} calculates the community dominance indices.
 #'
-#' @return Returns ME object, that includes dominance indices in coldata.
+#' @return \code{x} with additional \code{\link{colData}} named
+#'   \code{*name*}
 #'
 #' @seealso
 #' \itemize{

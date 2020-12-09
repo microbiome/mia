@@ -63,7 +63,8 @@ Dominance indices should be stored in.}
 object specifying whether calculation of estimates should be parallelized.}
 }
 \value{
-Returns ME object, that includes dominance indices in coldata.
+\code{x} with additional \code{\link{colData}} named
+\code{*name*}
 }
 \description{
 This function calculates the community dominance index.

@@ -15,13 +15,7 @@ object}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to use for prevalence calculation.}
 
-\item{...}{additional arguments
-\itemize{
-\item{If \code{!is.null(rank)} arguments are passed on to
-\code{\link[=agglomerate-methods]{agglomerateByRank}}. See
-\code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
-}
-}}
+\item{...}{additional parameters passed to \code{getPrevalentAbundance}}
 }
 \value{
 a named \code{numeric} vector. It includes joint abundance of prevalent taxa,

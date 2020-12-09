@@ -10,6 +10,8 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for prevalence calculation.
 #'
+#' @param ... additional parameters passed to \code{getPrevalentAbundance}
+#'
 #' @inheritParams getPrevalentTaxa
 #'
 #' @details The core abundance index gives the relative proportion of the core
