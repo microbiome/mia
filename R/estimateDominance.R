@@ -34,10 +34,6 @@
 #' @param name A name for the column of the colData where the calculated
 #' Dominance indices should be stored in.
 #'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether calculation of estimates should be parallelized.
-#'
 #' @details
 #' \code{estimateDominance} calculates the community dominance indices.
 #'
@@ -117,7 +113,7 @@ setGeneric("estimateDominance",signature = c("x"),
 #' @export
 setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
           function(x, abund_values = "counts", index="all", rank=1, as_relative=TRUE, aggregate=TRUE,
-                   name = index, BPPARAM = SerialParam(), ...){
+                   name = index, ...){
 
               #Check if index/indices that user wants to calculate are accepted. Those that are, are stored in "index" variable.
               index <- .check_indices(index)

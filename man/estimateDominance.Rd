@@ -24,7 +24,6 @@ estimateDominance(
   as_relative = TRUE,
   aggregate = TRUE,
   name = index,
-  BPPARAM = SerialParam(),
   ...
 )
 }
@@ -57,10 +56,6 @@ the indicated rank.}
 
 \item{name}{A name for the column of the colData where the calculated
 Dominance indices should be stored in.}
-
-\item{BPPARAM}{A
-\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named

@@ -12,8 +12,6 @@
 #'
 #' @param ... additional parameters passed to \code{getPrevalentAbundance}
 #'
-#' @inheritParams getPrevalentTaxa
-#'
 #' @details The core abundance index gives the relative proportion of the core
 #' species (in between 0 and 1). The core taxa are defined as those that exceed the
 #' given population prevalence threshold at the given detection level.
