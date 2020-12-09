@@ -257,9 +257,11 @@ setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
         k <- vapply(dmn, function(d){ncol(mixture(d))}, numeric(1))
         fit <- vapply(dmn, fit_FUN, numeric(1))
         ggplot(data.frame(k = k, fit = fit), aes_string(x = k, y = fit)) +
-          geom_point() +
-          geom_line() +
-          theme_bw()
+            geom_point() +
+            geom_line() +
+            theme_bw() +
+            xlab("Number of Dirichlet Components") +
+            ylab(paste0("Model Fit (",type,")"))
     }
 )
 
