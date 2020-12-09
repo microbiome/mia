@@ -46,7 +46,7 @@
 #'
 #' @seealso
 #' \code{\link[DirichletMultinomial:DMN-class]{DMN-class}},
-#' \code{\link[DirichletMultinomial:DMNgroup-class]{DMNgroup-class}},
+#' \code{\link[DirichletMultinomial:DMNGroup-class]{DMNGroup-class}},
 #' \code{\link[DirichletMultinomial:dmn]{dmn}},
 #' \code{\link[DirichletMultinomial:dmngroup]{dmngroup}},
 #' \code{\link[DirichletMultinomial:cvdmngroup]{cvdmngroup }},
@@ -137,6 +137,7 @@ setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname calculateDMN
+#' @importFrom S4Vectors metadata<-
 #' @export
 runDMN <- function(x, name = "DMN", ...){
     if(!is(x,"SummarizedExperiment")){
@@ -266,6 +267,7 @@ setGeneric("calculateDMNgroup", signature = c("x"),
            function(x, ...)
                standardGeneric("calculateDMNgroup"))
 
+#' @importFrom DirichletMultinomial dmngroup
 .calculate_DMNgroup <- function(x, variable, k = 1, ...){
     # input check
     if(!is.factor(variable) && is.character(variable)){
@@ -308,6 +310,7 @@ setGeneric("performDMNgroupCV", signature = c("x"),
            function(x, ...)
                standardGeneric("performDMNgroupCV"))
 
+#' @importFrom DirichletMultinomial cvdmngroup
 .perform_DMNgroup_cv <- function(x, variable, k = 1, ...){
     # input check
     if(!is.factor(variable) && is.character(variable)){

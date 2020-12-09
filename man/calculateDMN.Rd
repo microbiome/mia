@@ -152,7 +152,7 @@ plotDMNFit(dmn_se, type = "laplace")
 }
 \seealso{
 \code{\link[DirichletMultinomial:DMN-class]{DMN-class}},
-\code{\link[DirichletMultinomial:DMNgroup-class]{DMNgroup-class}},
+\code{\link[DirichletMultinomial:DMNGroup-class]{DMNGroup-class}},
 \code{\link[DirichletMultinomial:dmn]{dmn}},
 \code{\link[DirichletMultinomial:dmngroup]{dmngroup}},
 \code{\link[DirichletMultinomial:cvdmngroup]{cvdmngroup }},
