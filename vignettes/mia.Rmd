@@ -28,3 +28,121 @@ knitr::opts_chunk$set(cache=FALSE,
 ```{r load-packages, message=FALSE, warning=FALSE}
 library("mia")
 ```
+
+# Loading a `MicrobiomeExperiment` object
+
+```{r}
+data(GlobalPatterns)
+se <- GlobalPatterns
+se
+```
+
+# Functions for working microbiome data
+
+## Merging and agglomeration based on taxonomic information.
+
+In addition to the `aggValue` functions provide by `TreeSummarizedExperiment`
+`agglomerateByRank` is available if, tree construction proves difficult.
+
+`agglomerateByRank` constructs a `factor` to guide merging from the available
+taxonomic information. For more information on merging have a look at the man
+page via `?mergeRows`.
+
+```{r}
+# print the available taxonomic ranks
+colnames(rowData(se))
+taxonomyRanks(se)
+
+# agglomerate at the Family taxonomic rank
+x1 <- agglomerateByRank(se, rank = "Family")
+## How many taxa before/after agglomeration?
+nrow(se)
+nrow(x1)
+
+# with agglomeration of the tree
+x2 <- agglomerateByRank(se, rank = "Family",
+                        agglomerateTree = TRUE)
+nrow(x2) # same number of rows, but
+rowTree(x1) # ... different
+rowTree(x2) # ... tree
+
+## Look at enterotype dataset...
+data(enterotype)
+## print the available taxonomic ranks. Shows only 1 rank available
+## not useful for agglomerateByRank
+taxonomyRanks(enterotype)
+```
+
+To keep data tidy, the agglomerated data can be stored as an alternative 
+experiment in the object of origin. With this synchronized sample subseting
+becomes very easy.
+
+```{r}
+altExp(se, "family") <- x2
+```
+
+Keep in mind, that rows with `NA` or similar value (via the 
+`empty.fields` argument) will be removed, if you set `na.rm = FALSE`. Depending
+on this different number of rows will be returned.
+
+```{r}
+x1 <- agglomerateByRank(se, rank = "Species", na.rm = TRUE)
+altExp(se,"species") <- agglomerateByRank(se, rank = "Species", na.rm = FALSE)
+dim(x1)
+dim(altExp(se,"species"))
+```
+
+## Constructing a tree from taxonomic data
+
+```{r}
+taxa <- rowData(altExp(se,"species"))[,taxonomyRanks(se)]
+taxa_res <- resolveLoop(as.data.frame(taxa))
+taxa_tree <- toTree(data = taxa_res)
+taxa_tree$tip.label <- getTaxonomyLabels(altExp(se,"species"))
+rowNodeLab <- getTaxonomyLabels(altExp(se,"species"), make_unique = FALSE)
+altExp(se,"species") <- changeTree(altExp(se,"species"),
+                                   rowTree = taxa_tree,
+                                   rowNodeLab = rowNodeLab)
+```
+
+# Utility functions
+
+To make migration and adoption as easy as possible several utility functions
+are available.
+
+## General wrappers
+
+`getAbundanceFeature` and `getAbundanceSample` are wrappers on row-wise or 
+column-wise assay data subsetting.
+
+```{r}
+abund <- getAbundanceSample(se, "CC1", abund_values = "counts")
+all(abund == assay(se, "counts")[,"CC1"])
+abund <- getAbundanceFeature(se, "522457", abund_values = "counts")
+all(abund == assay(se, "counts")["522457",])
+```
+
+## Selecting most interesing features 
+
+`getTopTaxa` returns a vector of the most `top` abundant feature IDs.
+
+```{r}
+top_taxa <- getTopTaxa(se,
+                       method="mean",
+                       top=5,
+                       abund_values="counts")
+top_taxa
+```
+
+## Generating tidy data
+
+To generate tidy data as used and required in most of the tidyverse, `meltAssay`
+
+```{r}
+molten_data <- meltAssay(se,
+                         add_row_data = TRUE,
+                         add_col_data = TRUE,
+                         abund_values = "counts")
+molten_data
+```
+

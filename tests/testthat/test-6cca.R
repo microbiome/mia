@@ -14,14 +14,14 @@ test_that("CCA", {
     #
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
     data(dune, dune.env, package = "vegan")
-    me <- MicrobiomeExperiment(assays = list(counts = t(dune)),
+    sce <- SingleCellExperiment(assays = list(counts = t(dune)),
                                colData = DataFrame(dune.env))
     # .get_variables_from_data_and_formula
     expect_null(mia:::.get_variables_from_data_and_formula())
     form <- dune ~ Condition(Management) + Manure + A1
     expect_error(mia:::.get_variables_from_data_and_formula(formula = form),
                  'argument "x" is missing, with no default')
-    actual <- mia:::.get_variables_from_data_and_formula(me, form)
+    actual <- mia:::.get_variables_from_data_and_formula(sce, form)
     expect_s4_class(actual, "DataFrame")
     expect_named(actual, c("Management", "Manure", "A1"))
     # .get_dependent_var_name
@@ -32,10 +32,10 @@ test_that("CCA", {
     #
     mcca <- vegan::cca(form, dune.env, scale = TRUE)
     mrda <- vegan::rda(form, dune.env, scale = TRUE)
-    me <- runCCA(me, form)
-    actual <- reducedDim(me,"CCA")
+    sce <- runCCA(sce, form)
+    actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
-    me <- runRDA(me, form)
-    actual <- reducedDim(me,"RDA")
+    sce <- runRDA(sce, form)
+    actual <- reducedDim(sce,"RDA")
     expect_equal(as.vector(actual), as.vector(mrda$CCA$u))
 })

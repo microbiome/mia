@@ -27,7 +27,7 @@ runUniFrac(
 }
 \arguments{
 \item{x}{a numeric matrix or a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+\code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
 object containing a tree.
 
 Please  note that \code{runUniFrac} expects a matrix with samples per row
@@ -66,14 +66,14 @@ a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
 This function calculates the (Fast) UniFrac distance for all sample-pairs
-in a \code{\link[=MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
+in a \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
 }
 \details{
 Please not that if \code{calculateUniFrac} is used as a \code{FUN} for
 \code{runMDS2}, the argument \code{ntop} has to be set to \code{nrow(x)}.
 }
 \examples{
-data(esophagus, package="MicrobiomeExperiment")
+data(esophagus)
 calculateUniFrac(esophagus, weighted = FALSE)
 calculateUniFrac(esophagus, weighted = TRUE)
 calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)
@@ -112,5 +112,5 @@ microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
 }
 \author{
 Paul J. McMurdie.
-Adapted for MicrobiomeExperiment by Felix G.M. Ernst
+Adapted for mia by Felix G.M. Ernst
 }
