@@ -246,7 +246,7 @@ setGeneric("plotDMNFit", signature = "x",
 
 #' @rdname calculateDMN
 #' @importFrom DirichletMultinomial laplace AIC BIC mixture
-#' @importFrom ggplot2 ggplot aes_string geom_point geom_line theme_bw
+#' @importFrom ggplot2 ggplot aes_string geom_point geom_line theme_bw xlab ylab
 #' @export
 setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
     function(x, name = "DMN", type = c("laplace","AIC","BIC")){
@@ -261,7 +261,7 @@ setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
             geom_line() +
             theme_bw() +
             xlab("Number of Dirichlet Components") +
-            ylab(paste0("Model Fit (",type,")"))
+            xlab(paste0("Model Fit (",type,")"))
     }
 )
 
