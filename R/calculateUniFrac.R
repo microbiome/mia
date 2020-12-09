@@ -74,7 +74,7 @@
 #'
 #' @author
 #' Paul J. McMurdie.
-#' Adapted for MicrobiomeExperiment by Felix G.M. Ernst
+#' Adapted for mia by Felix G.M. Ernst
 #'
 #' @examples
 #' data(esophagus)
@@ -207,7 +207,7 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     edge_array <- matrix(0, nrow = ntip+tree$Nnode, ncol = ncol(x),
                          dimnames = list(NULL, sample_names = colnames(x)))
     # Load the tip counts in directly
-    edge_array[1:ntip,] <- x
+    edge_array[seq_len(ntip),] <- x
     # Get a list of internal nodes ordered by increasing depth
     ord.node <- order(node.depth(tree))[(ntip+1):(ntip+tree$Nnode)]
     # Loop over internal nodes, summing their descendants to get that nodes
@@ -226,57 +226,10 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     ############################################################################
     # calculate the distances
     ############################################################################
-    FUN_unweighted <- function(i, tree, samplesums, edge_occ){
-        A  <- i[1]
-        B  <- i[2]
-        AT <- samplesums[A]
-        BT <- samplesums[B]
-        # Unweighted UniFrac
-        # Subset matrix to just columns A and B
-        edge_occ_AB <- edge_occ[, c(A, B)]
-        edge_occ_AB_rS <- rowSums(edge_occ_AB, na.rm = TRUE)
-        # Keep only the unique branches. Sum the lengths
-        edge_uni_AB_sum <- sum((tree$edge.length * edge_occ_AB)[edge_occ_AB_rS < 2,],
-                               na.rm=TRUE)
-        # Normalize this sum to the total branches among these two samples, A and
-        # B
-        uwUFpairdist <- edge_uni_AB_sum /
-          sum(tree$edge.length[edge_occ_AB_rS > 0])
-        uwUFpairdist
-    }
-    # if not-normalized weighted UniFrac, just return "numerator";
-    # the u-value in the w-UniFrac description
-    FUN_weighted_not_norm <- function(i, tree, samplesums, edge_array){
-        A  <- i[1]
-        B  <- i[2]
-        AT <- samplesums[A]
-        BT <- samplesums[B]
-        # weighted UniFrac
-        wUF_branchweight <- abs(edge_array[, A]/AT - edge_array[, B]/BT)
-        # calculate the w-UF numerator
-        numerator <- sum((tree$edge.length * wUF_branchweight), na.rm = TRUE)
-        # if not-normalized weighted UniFrac, just return "numerator";
-        # the u-value in the w-UniFrac description
-        numerator
-    }
-    FUN_weighted_norm <- function(i, mat, tree, samplesums, edge_array,
-                                  tipAges){
-        A  <- i[1]
-        B  <- i[2]
-        AT <- samplesums[A]
-        BT <- samplesums[B]
-        # weighted UniFrac
-        wUF_branchweight <- abs(edge_array[, A]/AT - edge_array[, B]/BT)
-        # calculate the w-UF numerator
-        numerator <- sum((tree$edge.length * wUF_branchweight), na.rm = TRUE)
-        # denominator (assumes tree-indices and matrix indices are same order)
-        denominator <- sum((tipAges * (mat[, A]/AT + mat[, B]/BT)), na.rm = TRUE)
-        # return the normalized weighted UniFrac values
-        numerator / denominator
-    }
     if(weighted){
         if(!normalized){
-            distlist <- BiocParallel::bplapply(spn, FUN_weighted_not_norm,
+            distlist <- BiocParallel::bplapply(spn,
+                                               uniFrac_weighted_not_norm,
                                                tree = tree,
                                                samplesums = samplesums,
                                                edge_array = edge_array,
@@ -298,8 +251,11 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
             names(tipAges) <- z$tip.label
             # Explicitly re-order tipAges to match x
             tipAges <- tipAges[rownames(x)]
-            distlist <- BiocParallel::bplapply(spn, FUN_weighted_norm, mat = x,
-                                               tree = tree, samplesums = samplesums,
+            distlist <- BiocParallel::bplapply(spn,
+                                               uniFrac_weighted_norm,
+                                               mat = x,
+                                               tree = tree,
+                                               samplesums = samplesums,
                                                edge_array = edge_array,
                                                tipAges = tipAges,
                                                BPPARAM = BPPARAM)
@@ -308,7 +264,9 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
         # For unweighted UniFrac, convert the edge_array to an occurrence
         # (presence/absence binary) array
         edge_occ <- (edge_array > 0) - 0
-        distlist <- BiocParallel::bplapply(spn, FUN_unweighted, tree = tree,
+        distlist <- BiocParallel::bplapply(spn,
+                                           uniFrac_unweighted,
+                                           tree = tree,
                                            samplesums = samplesums,
                                            edge_occ = edge_occ,
                                            BPPARAM = BPPARAM)
@@ -324,6 +282,55 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     UniFracMat[matIndices] <- unlist(distlist)
     #
     stats::as.dist(UniFracMat)
+}
+
+uniFrac_unweighted <- function(i, tree, samplesums, edge_occ){
+    A  <- i[1]
+    B  <- i[2]
+    AT <- samplesums[A]
+    BT <- samplesums[B]
+    # Unweighted UniFrac
+    # Subset matrix to just columns A and B
+    edge_occ_AB <- edge_occ[, c(A, B)]
+    edge_occ_AB_rS <- rowSums(edge_occ_AB, na.rm = TRUE)
+    # Keep only the unique branches. Sum the lengths
+    edge_uni_AB_sum <- sum((tree$edge.length * edge_occ_AB)[edge_occ_AB_rS < 2,],
+                           na.rm=TRUE)
+    # Normalize this sum to the total branches among these two samples, A and
+    # B
+    uwUFpairdist <- edge_uni_AB_sum /
+        sum(tree$edge.length[edge_occ_AB_rS > 0])
+    uwUFpairdist
+}
+# if not-normalized weighted UniFrac, just return "numerator";
+# the u-value in the w-UniFrac description
+uniFrac_weighted_not_norm <- function(i, tree, samplesums, edge_array){
+    A  <- i[1]
+    B  <- i[2]
+    AT <- samplesums[A]
+    BT <- samplesums[B]
+    # weighted UniFrac
+    wUF_branchweight <- abs(edge_array[, A]/AT - edge_array[, B]/BT)
+    # calculate the w-UF numerator
+    numerator <- sum((tree$edge.length * wUF_branchweight), na.rm = TRUE)
+    # if not-normalized weighted UniFrac, just return "numerator";
+    # the u-value in the w-UniFrac description
+    numerator
+}
+uniFrac_weighted_norm <- function(i, mat, tree, samplesums, edge_array,
+                                  tipAges){
+    A  <- i[1]
+    B  <- i[2]
+    AT <- samplesums[A]
+    BT <- samplesums[B]
+    # weighted UniFrac
+    wUF_branchweight <- abs(edge_array[, A]/AT - edge_array[, B]/BT)
+    # calculate the w-UF numerator
+    numerator <- sum((tree$edge.length * wUF_branchweight), na.rm = TRUE)
+    # denominator (assumes tree-indices and matrix indices are same order)
+    denominator <- sum((tipAges * (mat[, A]/AT + mat[, B]/BT)), na.rm = TRUE)
+    # return the normalized weighted UniFrac values
+    numerator / denominator
 }
 
 ################################################################################

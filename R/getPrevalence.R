@@ -155,6 +155,9 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         .check_abund_values(abund_values, x)
         if(!is.null(rank)){
             args <- c(list(x = x, rank = rank), list(...))
+            if(is.null(args[["na.rm"]])){
+                args[["na.rm"]] <- TRUE
+            }
             args <- args[!(names(args) %in% c("detection","include_lowest","sort"))]
             x <- do.call(agglomerateByRank, args)
         }
