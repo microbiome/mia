@@ -222,7 +222,7 @@ dominance_help <- function(x, abund_values = "counts", index="all", rank=1, as_r
             simpson_dominance(x)})
         return(tmp)
     } else if (index %in% c("core_abundance")) {
-        prevalence <- prevalentAbundance(x, detection=0, as_relative=TRUE)
+        prevalence <- getPrevalentAbundance(x, detection=0, as_relative=TRUE)
         return(prevalence)
         #If index is "Gini" calculates the gini index to all the samples
     } else if (index == "gini") {

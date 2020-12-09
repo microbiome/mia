@@ -23,22 +23,22 @@
 #' @examples
 #' data(esophagus, package = "MicrobiomeExperiment")
 #' esophagus <- as(esophagus, "MicrobiomeExperiment")
-#' prevalentAbundance(esophagus)
+#' getPrevalentAbundance(esophagus)
 #'
-#' @name prevalentAbundance
+#' @name getPrevalentAbundance
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @export
 #'
-setGeneric("prevalentAbundance", signature = "x",
+setGeneric("getPrevalentAbundance", signature = "x",
            function(x, abund_values = "relabundance", ...)
-               standardGeneric("prevalentAbundance"))
+               standardGeneric("getPrevalentAbundance"))
 
 #' @rdname getPrevalence
 #' @export
-setMethod("prevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
+setMethod("getPrevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
           function(x, abund_values = "relabundance", detection = 0.1/100, prevalence = 50/100,
                    include_lowest = FALSE, as_relative=FALSE, ...){
 
@@ -54,7 +54,7 @@ setMethod("prevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
 
               if (length(cm) == 0) {
                   warning("With the given abundance and prevalence
-            thresholds, no taxa were found. Returning NA for prevalentAbundance. Try to
+            thresholds, no taxa were found. Returning NA for getPrevalentAbundance. Try to
             change detection and prevalence parameters.");
                   ret <- NA
               }
