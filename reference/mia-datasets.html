@@ -42,8 +42,9 @@
 <meta property="og:title" content="mia datasets — mia-datasets" />
 <meta property="og:description" content="These datasets are conversions of the phyloseq datasets GlobalPatterns
 enterotype, esophagus and soilrep.
-taxa contains example taxonomic data derived from the
-metagenomeFeatures package." />
+dmn_se contains an example SummarizedExperiment derived
+from data in the DirichletMultinomal package. See ?calculateDMN
+for more details." />
 
 
 
@@ -75,7 +76,7 @@ metagenomeFeatures package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.16</span>
       </span>
     </div>
 
@@ -117,8 +118,9 @@ metagenomeFeatures package." />
     <div class="ref-description">
     <p>These datasets are conversions of the phyloseq datasets <code>GlobalPatterns</code>
 <code>enterotype</code>, <code>esophagus</code> and <code>soilrep</code>.</p>
-<p><code>taxa</code> contains example taxonomic data derived from the
-<code>metagenomeFeatures</code> package.</p>
+<p><code>dmn_se</code> contains an example <code>SummarizedExperiment</code> derived
+from data in the <code>DirichletMultinomal</code> package. See <code><a href='calculateDMN.html'>?calculateDMN</a></code>
+for more details.</p>
     </div>
 
     <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
@@ -127,7 +129,9 @@ metagenomeFeatures package." />
 
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>soilrep</span><span class='op'>)</span></pre>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>soilrep</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -136,6 +140,7 @@ metagenomeFeatures package." />
 <p>An object of class <code>TreeSummarizedExperiment</code> with 553 rows and 280 columns.</p>
 <p>An object of class <code>TreeSummarizedExperiment</code> with 58 rows and 3 columns.</p>
 <p>An object of class <code>TreeSummarizedExperiment</code> with 16825 rows and 56 columns.</p>
+<p>An object of class <code>SummarizedExperiment</code> with 130 rows and 278 columns.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
