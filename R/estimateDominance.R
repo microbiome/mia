@@ -329,10 +329,9 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
     #Stores sample names
     sampleNames <- rownames(indicesDF)
 
-    #Checks if the length of names and indices match. If not, returns ME object without new indices.
+    #Checks if the length of names and indices match. If not, gives an error.
     if(length(names) != length(colnames(indicesDF))){
-        warning("Number of names and indices do not match.")
-        return(x)
+        stop("Number of names and indices do not match.")
 
     }
 
