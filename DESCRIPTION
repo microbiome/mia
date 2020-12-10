@@ -1,7 +1,7 @@
 Package: mia
 Type: Package
-Version: 0.98.16
-Date: 2020-12-09
+Version: 0.0.0.9010
+Date: 2020-12-04
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -16,11 +16,9 @@ Authors@R:
       person(given = "Jayaram", family = "Kancherla", role=c("ctb")))
 Title: Microbiome analysis
 Description: 
-    mia implements tools for microbiome analysis based on the 
-    SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment 
-    infrastructure. Data wrangling and analysis are the main scope of this 
-    package.
-biocViews: Microbiome, Software
+    mia implements tools for microbiome analysis. Data wrangling and analysis
+    are the main scope of this package.
+biocViews: Microbiome, Software, Sequencing
 License: Artistic-2.0
 Encoding: UTF-8
 LazyData: false
@@ -42,6 +40,8 @@ Imports:
     stringr,
     scuttle,
     scater,
+    stats,
+    utils,
     ape,
     rlang,
     dplyr,
