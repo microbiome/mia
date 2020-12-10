@@ -175,10 +175,9 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
         index <- accepted
     }
 
-    #If there is indices, but none of them are accepted, gives warning and returns null
+    #If there is indices, but none of them are accepted, gives an error
     if (!is.null(index) && !any(index %in% accepted)) {
-        warning(paste("None of the dominance indices are not recognized:", paste(index, sep = ",")))
-        return(NULL)
+        stop(paste("None of the dominance indices are not recognized:", paste(index, sep = ",")))
     }
 
     #If there are indices, take only those indices that are accepted, and save them to variable "index"
