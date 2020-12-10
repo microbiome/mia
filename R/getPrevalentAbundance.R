@@ -48,7 +48,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
               values <- assays(x)[[abund_values]]
 
               # Core members
-              cm <- getPrevalentTaxa(x, rank=NULL)
+              cm <- getPrevalentTaxa(x, rank=NULL, ...)
 
               if (length(cm) == 0) {
                   warning("With the given abundance and prevalence
@@ -58,15 +58,8 @@ setMethod("getPrevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
               }
 
               # Pick the core and calculate abundance
-              if (is.vector(values)) {
-                  ret <- values # 1 OTU x N samples
-              } else if (length(cm) == 1) {
-                  ret <- values[cm,]
-              } else if (ncol(values) > 1 && length(cm) > 1) {
-                  ret <- colSums(values[cm, ])
-              } else if (ncol(values) == 1) {
-                  ret <- sum(values[cm, ])
-              }
+              ret <- colSums(values[cm, ])
+
               return(ret)
 
 
