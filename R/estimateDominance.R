@@ -145,6 +145,8 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
                   if (length(name) == 1 && name == "all") {
                       name <- colnames(tab)
                   }
+
+                  #colData(x) <- cbind(colData(x), tab)
                   x <- .add_indices_to_coldata(x, tab, name)
               }
 

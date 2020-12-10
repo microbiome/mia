@@ -58,7 +58,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
               }
 
               # Pick the core and calculate abundance
-              ret <- colSums(values[cm, ])
+              ret <- colSums(values[cm, ,drop=FALSE])
 
               return(ret)
 
