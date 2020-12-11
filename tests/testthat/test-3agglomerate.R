@@ -68,7 +68,7 @@ test_that("agglomerate", {
     actual <- agglomerateByRank(se, rank = "Family", mergeTree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
-                 876)
+                 603)
     actual <- expect_warning(agglomerateByRank(se, rank = "Family",
                                                agglomerateTree = TRUE))
     expect_equal(dim(actual),c(603,26))

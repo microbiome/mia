@@ -182,13 +182,9 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
     tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
     drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
     oldTree <- tree
-    newTree <- ape::drop.tip(oldTree, tip = drop_tip,
-                             collapse.singles = FALSE,
-                             trim.internal = FALSE)
+    newTree <- ape::drop.tip(oldTree, tip = drop_tip)
     track <- trackNode(oldTree)
-    track <- ape::drop.tip(track, tip = drop_tip,
-                           collapse.singles = FALSE,
-                           trim.internal = FALSE)
+    track <- ape::drop.tip(track, tip = drop_tip)
     #
     oldAlias <- links$nodeLab_alias
     newNode <- convertNode(tree = track, node = oldAlias)
