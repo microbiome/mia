@@ -53,7 +53,6 @@ setGeneric("getAbundanceSample", signature = "x",
            function(x, sample_id, abund_values = "counts")
                standardGeneric("getAbundanceSample"))
 
-
 #' @rdname getAbundance
 #' @export
 setMethod("getAbundanceSample", signature = c(x = "SummarizedExperiment"),
@@ -62,10 +61,10 @@ setMethod("getAbundanceSample", signature = c(x = "SummarizedExperiment"),
         .check_abund_values(abund_values, x)
         # check if sampleid exists or matches
         .check_feature_sample_ids(sample_id, colnames(x))
-        assay(x, abund_values)[, sample_id,drop=TRUE]
+        assay <- assay(x, abund_values)
+        rowSums(assay[,colnames(assay) %in% sample_id,drop=FALSE])
     }
 )
-
 
 #' @importFrom SummarizedExperiment assay
 .check_feature_sample_ids <- function(id, names,
@@ -84,7 +83,6 @@ setGeneric("getAbundanceFeature", signature = "x",
            function(x, feature_id, abund_values)
                standardGeneric("getAbundanceFeature"))
 
-
 #' @rdname getAbundance
 #' @export
 setMethod("getAbundanceFeature", signature = c(x = "SummarizedExperiment"),
@@ -93,6 +91,7 @@ setMethod("getAbundanceFeature", signature = c(x = "SummarizedExperiment"),
         .check_abund_values(abund_values, x)
         # check if feature_id exists or matches
         .check_feature_sample_ids(feature_id, rownames(x))
-        assay(x, abund_values)[feature_id, ,drop=TRUE]
+        assay <- assay(x, abund_values)
+        colSums(assay[rownames(assay) %in% feature_id,,drop=FALSE])
     }
 )
