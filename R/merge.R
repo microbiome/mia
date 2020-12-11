@@ -178,6 +178,25 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+.merge_tree <- function(tree, links){
+    tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
+    drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
+    oldTree <- tree
+    newTree <- ape::drop.tip(oldTree, tip = drop_tip,
+                             collapse.singles = FALSE,
+                             trim.internal = FALSE)
+    track <- trackNode(oldTree)
+    track <- ape::drop.tip(track, tip = drop_tip,
+                           collapse.singles = FALSE,
+                           trim.internal = FALSE)
+    #
+    oldAlias <- links$nodeLab_alias
+    newNode <- convertNode(tree = track, node = oldAlias)
+    newAlias <- convertNode(tree = newTree, node = newNode)
+    #
+    list(newTree = newTree, newAlias = newAlias)
+}
+
 #' @rdname merge-methods
 #' @importFrom ape keep.tip
 #' @export
@@ -192,23 +211,11 @@ setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
         # optionally merge rowTree
         tree <- rowTree(x)
         if(!is.null(tree) && mergeTree){
-            links <- rowLinks(x)
-            tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
-            drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
-            oldTree <- tree
-            newTree <- ape::drop.tip(oldTree, tip = drop_tip,
-                                     collapse.singles = FALSE,
-                                     trim.internal = FALSE)
-            track <- trackNode(oldTree)
-            track <- ape::drop.tip(track, tip = drop_tip,
-                                   collapse.singles = FALSE,
-                                   trim.internal = FALSE)
+            tmp <- .merge_tree(tree, rowLinks(x))
             #
-            oldAlias <- links$nodeLab_alias
-            newNode <- convertNode(tree = track, node = oldAlias)
-            newAlias <- convertNode(tree = newTree, node = newNode)
-            #
-            x <- changeTree(x = x, rowTree = newTree, rowNodeLab = newAlias)
+            x <- changeTree(x = x,
+                            rowTree = tmp$newTree,
+                            rowNodeLab = tmp$newAlias)
         }
         x
     }
@@ -228,23 +235,11 @@ setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
         # optionally merge colTree
         tree <- colTree(x)
         if(!is.null(tree) && mergeTree){
-            links <- colLinks(x)
-            tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
-            drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
-            oldTree <- tree
-            newTree <- ape::drop.tip(oldTree, tip = drop_tip,
-                                     collapse.singles = FALSE,
-                                     trim.internal = FALSE)
-            track <- trackNode(oldTree)
-            track <- ape::drop.tip(track, tip = drop_tip,
-                                   collapse.singles = FALSE,
-                                   trim.internal = FALSE)
+            tmp <- .merge_tree(tree, colLinks(x))
             #
-            oldAlias <- links$nodeLab_alias
-            newNode <- convertNode(tree = track, node = oldAlias)
-            newAlias <- convertNode(tree = newTree, node = newNode)
-            #
-            x <- changeTree(x = x, colTree = newTree, colNodeLab = newAlias)
+            x <- changeTree(x = x,
+                            colTree = tmp$newTree,
+                            colNodeLab = tmp$newAlias)
         }
         x
     }

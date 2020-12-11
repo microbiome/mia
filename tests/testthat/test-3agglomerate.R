@@ -58,6 +58,22 @@ test_that("agglomerate", {
     expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
                  nrow(agglomerateByRank(enterotype,"Genus")))
 
+    # agglomeration in all its forms
+    data("GlobalPatterns")
+    se <- GlobalPatterns
+    actual <- agglomerateByRank(se, rank = "Family")
+    expect_equal(dim(actual),c(603,26))
+    expect_equal(length(rowTree(actual)$tip.label),
+                 length(rowTree(se)$tip.label))
+    actual <- agglomerateByRank(se, rank = "Family", mergeTree = TRUE)
+    expect_equal(dim(actual),c(603,26))
+    expect_equal(length(rowTree(actual)$tip.label),
+                 876)
+    actual <- expect_warning(agglomerateByRank(se, rank = "Family",
+                                               agglomerateTree = TRUE))
+    expect_equal(dim(actual),c(603,26))
+    expect_equal(length(rowTree(actual)$tip.label),
+                 496)
 })
 
 
