@@ -103,8 +103,10 @@
 #' #Shows all indices
 #' colData(esophagus)
 #'
+NULL
+
+#' @rdname estimateDominance
 #' @export
-#'
 setGeneric("estimateDominance",signature = c("x"),
            function(x, abund_values = "counts", index="all", rank=1, as_relative=TRUE, aggregate=TRUE,
                     name = index, ...)
