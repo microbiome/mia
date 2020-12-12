@@ -205,7 +205,7 @@ runNMDS <- function(x, ..., altexp = NULL, name = "NMDS") {
 
 #' @rdname runNMDS
 #' @export
-plotNMDS <- function(object, ..., ncomponents = 2){
-    plotReducedDim(object, ncomponents = ncomponents, dimred = "NMDS",
+plotNMDS <- function(x, ..., ncomponents = 2){
+    plotReducedDim(x, ncomponents = ncomponents, dimred = "NMDS",
                    ...)
 }
