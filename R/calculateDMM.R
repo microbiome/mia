@@ -100,6 +100,7 @@ setGeneric("calculateDMN", signature = c("x"),
                standardGeneric("calculateDMN"))
 
 #' @importFrom DirichletMultinomial dmn
+#' @importFrom stats runif
 .calculate_DMN <- function(x, k = 1, BPPARAM = SerialParam(),
                            seed = runif(1, 0, .Machine$integer.max), ...){
     if(!is.numeric(k) ||
@@ -275,6 +276,7 @@ setGeneric("calculateDMNgroup", signature = c("x"),
                standardGeneric("calculateDMNgroup"))
 
 #' @importFrom DirichletMultinomial dmngroup
+#' @importFrom stats runif
 .calculate_DMNgroup <- function(x, variable, k = 1,
                                 seed = runif(1, 0, .Machine$integer.max), ...){
     # input check
@@ -319,6 +321,7 @@ setGeneric("performDMNgroupCV", signature = c("x"),
                standardGeneric("performDMNgroupCV"))
 
 #' @importFrom DirichletMultinomial cvdmngroup
+#' @importFrom stats runif
 .perform_DMNgroup_cv <- function(x, variable, k = 1,
                                  seed = runif(1, 0, .Machine$integer.max), ...){
     # input check
