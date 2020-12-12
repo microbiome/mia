@@ -299,16 +299,11 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         return(rownames(x))
     }
     tax_cols_selected <- tax_cols[tax_ranks_selected]
-    u_tax_cols_selected <- sort(unique(tax_cols_selected))
-    u_tax_cols_selected <- seq.int(which(tax_cols == min(u_tax_cols_selected)),
-                                   which(tax_cols == max(u_tax_cols_selected)))
-    u_tax_cols_selected <- tax_cols[u_tax_cols_selected]
     # resolve loops
-    if(length(u_tax_cols_selected) > 1L &&
-       !anyDuplicated(rd[,u_tax_cols_selected]) &&
-       resolve_loops){
-        td <- suppressWarnings(resolveLoop(as.data.frame(rd[,u_tax_cols_selected])))
-        rd[,u_tax_cols_selected] <- as(td,"DataFrame")
+    if(resolve_loops){
+        td <- as.data.frame(rd[,tax_cols])
+        td <- suppressWarnings(resolveLoop(td))
+        rd[,tax_cols] <- as(td,"DataFrame")
         rm(td)
     }
     #
@@ -339,17 +334,20 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
         td <- td[,!vapply(td,function(tl){all(is.na(tl))},logical(1))]
         # Make information unique
         td_NA <- DataFrame(lapply(td,is.na))
-        td <- as(suppressWarnings(resolveLoop(as.data.frame(td))),"DataFrame")
+        td <- as.data.frame(td)
+        td <- as(suppressWarnings(resolveLoop(td)),"DataFrame")
         # Build tree
         tree <- toTree(td)
         tree$tip.label <- paste0(colnames(td)[ncol(td)],":",tree$tip.label)
         # remove empty nodes
         for(i in rev(seq_len(ncol(td)))){
-            to_drop <- paste0(colnames(td)[i],":",td[,i][td_NA[,i]])
-            tree <- ape::drop.tip(tree,
-                                  to_drop,
-                                  trim.internal = FALSE,
-                                  collapse.singles = FALSE)
+            if(any(td_NA[,i])){
+                to_drop <- paste0(colnames(td)[i],":",td[,i][td_NA[,i]])
+                tree <- ape::drop.tip(tree,
+                                      to_drop,
+                                      trim.internal = FALSE,
+                                      collapse.singles = FALSE)
+            }
         }
         tree
     }
@@ -365,6 +363,7 @@ setGeneric("addTaxonomyTree",
 #' @export
 setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
+        #
         tree <- taxonomyTree(x)
         x <- as(x,"TreeSummarizedExperiment")
         rownames(x) <- getTaxonomyLabels(x, with_rank = TRUE,
