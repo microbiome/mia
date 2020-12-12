@@ -204,7 +204,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 .dominance_help <- function(x, abund_values = "counts", index="all", rank=1, as_relative=TRUE,
                            aggregate=TRUE) {
     #Stores the absolute abundances to "otu" variable
-    otu <- assays(x)[[abund_values]]
+    otu <- assay(x,abund_values)
 
     #if index does not have any values
     if (is.null(index)) {
@@ -302,7 +302,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 .get_gini <- function(x, abund_values="counts") {
 
     #Stores the absolute abundances to "otu" variable
-    otu <- assays(x)[[abund_values]]
+    otu <- assay(x,abund_values)
 
     # Gini index for each sample
     do <- apply(otu, 2, function(x) {

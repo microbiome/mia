@@ -45,7 +45,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
               x <- relAbundanceCounts(x)
 
               #Saves the relative abundances (or counts, if wanted) to the variable "values"
-              values <- assays(x)[[abund_values]]
+              values <- assay(x,abund_values)
 
               # Core members
               cm <- getPrevalentTaxa(x, rank=NULL, ...)
