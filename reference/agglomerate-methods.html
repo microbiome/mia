@@ -74,7 +74,7 @@ taxonomicRanks can be used." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.16</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.18</span>
       </span>
     </div>
 
@@ -126,12 +126,14 @@ to certain taxonomic ranks given as <code>rowData</code>. Only available
   onRankOnly <span class='op'>=</span> <span class='cn'>FALSE</span>,
   na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
   empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span><span class='op'>)</span>,
-  agglomerateTree <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for SingleCellExperiment</span>
-<span class='fu'>agglomerateByRank</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, altexp <span class='op'>=</span> <span class='cn'>NULL</span>, strip_altexp <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+<span class='fu'>agglomerateByRank</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, altexp <span class='op'>=</span> <span class='cn'>NULL</span>, strip_altexp <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='co'># S4 method for TreeSummarizedExperiment</span>
+<span class='fu'>agglomerateByRank</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, agglomerateTree <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,12 +167,6 @@ regarded as empty. (Default: <code><a href='https://rdrr.io/r/base/c.html'>c(NA,
 removed if <code>na.rm = TRUE</code> before agglomeration.</p></td>
     </tr>
     <tr>
-      <th>agglomerateTree</th>
-      <td><p><code>TRUE</code> or <code>FALSE</code>: should to
-<code>rowTree()</code> also be agglomerated? (Default:
-<code>agglomerateTree = FALSE</code>)</p></td>
-    </tr>
-    <tr>
       <th>...</th>
       <td><p>arguments passed to <code>agglomerateByRank</code> function for
 <code>SummarizedExperiment</code> objects,
@@ -188,6 +184,12 @@ containing the input data.</p></td>
 experiments be removed prior to agglomeration? This prohibits to many
 nested alternative experiments by default (default:
 <code>strip_altexp = TRUE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>agglomerateTree</th>
+      <td><p><code>TRUE</code> or <code>FALSE</code>: should to
+<code>rowTree()</code> also be agglomerated? (Default:
+<code>agglomerateTree = FALSE</code>)</p></td>
     </tr>
     </table>
 
@@ -215,7 +217,7 @@ class <code>x</code>.</p>
 <span class='co'># with agglomeration of the tree</span>
 <span class='va'>x2</span> <span class='op'>&lt;-</span> <span class='fu'>agglomerateByRank</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank<span class='op'>=</span><span class='st'>"Family"</span>,
                         agglomerateTree <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>x2</span><span class='op'>)</span> <span class='co'># same number of rows, but</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: The root is added with label 'ALL'</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>x2</span><span class='op'>)</span> <span class='co'># same number of rows, but</span>
 </div><div class='output co'>#&gt; [1] 603</div><div class='input'><span class='fu'>rowTree</span><span class='op'>(</span><span class='va'>x1</span><span class='op'>)</span> <span class='co'># ... different</span>
 </div><div class='output co'>#&gt; 
 #&gt; Phylogenetic tree with 19216 tips and 19215 internal nodes.
@@ -227,12 +229,12 @@ class <code>x</code>.</p>
 #&gt; 
 #&gt; Rooted; includes branch lengths.</div><div class='input'><span class='fu'>rowTree</span><span class='op'>(</span><span class='va'>x2</span><span class='op'>)</span> <span class='co'># ... tree</span>
 </div><div class='output co'>#&gt; 
-#&gt; Phylogenetic tree with 6325 tips and 13493 internal nodes.
+#&gt; Phylogenetic tree with 496 tips and 260 internal nodes.
 #&gt; 
 #&gt; Tip labels:
-#&gt;   549322, 951, 244423, 143239, 215972, 138353, ...
+#&gt;   Family:Cenarchaeaceae, Family:SAGMA-X, Family:Nitrososphaeraceae, Family:Sulfolobaceae, Family:Halobacteriaceae, Family:Methanobacteriaceae, ...
 #&gt; Node labels:
-#&gt;   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 1.000.2, ...
+#&gt;   root:ALL, Kingdom:Archaea, Phylum:Crenarchaeota, Class:C2, Class:Sd-NA, Class:Thaumarchaeota, ...
 #&gt; 
 #&gt; Rooted; includes branch lengths.</div><div class='input'>
 <span class='co'># removing empty labels by setting na.rm = TRUE</span>
