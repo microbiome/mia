@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Perform MDS on sample-level data — runMDS2 • mia</title>
+<title>Perform non-metric MDS on sample-level data — runNMDS • mia</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,9 @@
 
 
 
-<meta property="og:title" content="Perform MDS on sample-level data — runMDS2" />
-<meta property="og:description" content="Perform multi-dimensional scaling (MDS) on samples, based on the data in a
-SingleCellExperiment object." />
+<meta property="og:title" content="Perform non-metric MDS on sample-level data — runNMDS" />
+<meta property="og:description" content="Perform non-metric multi-dimensional scaling (nMDS) on samples, based on the
+data in a SingleCellExperiment object." />
 
 
 
@@ -107,44 +107,48 @@ SingleCellExperiment object." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Perform MDS on sample-level data</h1>
+    <h1>Perform non-metric MDS on sample-level data</h1>
     
-    <div class="hidden name"><code>runMDS2.Rd</code></div>
+    <div class="hidden name"><code>runNMDS.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Perform multi-dimensional scaling (MDS) on samples, based on the data in a
-SingleCellExperiment object.</p>
+    <p>Perform non-metric multi-dimensional scaling (nMDS) on samples, based on the
+data in a <code>SingleCellExperiment</code> object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>calculateMDS2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>calculateNMDS</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for ANY</span>
-<span class='fu'>calculateMDS2</span><span class='op'>(</span>
+<span class='fu'>calculateNMDS</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  FUN <span class='op'>=</span> <span class='va'>calculateDistance</span>,
+  distFUN <span class='op'>=</span> <span class='va'>vegdist</span>,
+  nmdsFUN <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"isoMDS"</span>, <span class='st'>"monoMDS"</span><span class='op'>)</span>,
   ncomponents <span class='op'>=</span> <span class='fl'>2</span>,
   ntop <span class='op'>=</span> <span class='fl'>500</span>,
   subset_row <span class='op'>=</span> <span class='cn'>NULL</span>,
   scale <span class='op'>=</span> <span class='cn'>FALSE</span>,
   transposed <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  keep_dist <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>calculateMDS2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>, FUN <span class='op'>=</span> <span class='va'>calculateDistance</span><span class='op'>)</span>
+<span class='fu'>calculateNMDS</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>, distFUN <span class='op'>=</span> <span class='va'>vegdist</span><span class='op'>)</span>
 
 <span class='co'># S4 method for SingleCellExperiment</span>
-<span class='fu'>calculateMDS2</span><span class='op'>(</span>
+<span class='fu'>calculateNMDS</span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>...</span>,
   exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   dimred <span class='op'>=</span> <span class='cn'>NULL</span>,
   n_dimred <span class='op'>=</span> <span class='cn'>NULL</span>,
-  FUN <span class='op'>=</span> <span class='va'>calculateDistance</span>
+  distFUN <span class='op'>=</span> <span class='va'>vegdist</span>
 <span class='op'>)</span>
 
-<span class='fu'>runMDS2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, altexp <span class='op'>=</span> <span class='cn'>NULL</span>, name <span class='op'>=</span> <span class='st'>"MDS2"</span><span class='op'>)</span></pre>
+<span class='fu'>runNMDS</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, altexp <span class='op'>=</span> <span class='cn'>NULL</span>, name <span class='op'>=</span> <span class='st'>"NMDS"</span><span class='op'>)</span>
+
+<span class='fu'>plotNMDS</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, ncomponents <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -156,12 +160,20 @@ log-expression values where rows are features and columns are cells.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments to pass to <code>FUN</code>.</p></td>
+      <td><p>additional arguments to pass to <code>distFUN</code> and
+<code>nmdsFUN</code>.</p></td>
     </tr>
     <tr>
-      <th>FUN</th>
-      <td><p>a <code>function</code> or <code>character</code> value with a function name
-returning a <code><a href='https://rdrr.io/r/stats/dist.html'>dist</a></code> object</p></td>
+      <th>distFUN</th>
+      <td><p>a <code>function</code> or <code>character</code> value with a function
+name returning a <code><a href='https://rdrr.io/r/stats/dist.html'>dist</a></code> object</p></td>
+    </tr>
+    <tr>
+      <th>nmdsFUN</th>
+      <td><p>a <code>character</code> value to choose the scaling
+implementation, either &#8220;isoMDS&#8221; for
+<code><a href='https://rdrr.io/pkg/MASS/man/isoMDS.html'>MASS::isoMDS</a></code> or &#8220;monoMDS&#8221; for
+<code><a href='https://rdrr.io/pkg/vegan/man/monoMDS.html'>vegan::monoMDS</a></code></p></td>
     </tr>
     <tr>
       <th>ncomponents</th>
@@ -186,6 +198,12 @@ integer vector of row indices or a logical vector.</p></td>
     <tr>
       <th>transposed</th>
       <td><p>Logical scalar, is x transposed with cells in rows?</p></td>
+    </tr>
+    <tr>
+      <th>keep_dist</th>
+      <td><p>Logical scalar indicating whether the <code>dist</code> object
+calculated by <code>distFUN</code> should be stored as &#8216;dist&#8217; attribute of
+the matrix returned/stored by <code>calculateNMDS</code>/ <code>runNMDS</code>.</p></td>
     </tr>
     <tr>
       <th>exprs_values</th>
@@ -216,21 +234,24 @@ reducedDims of the output.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>For <code>calculateMDS</code>, a matrix is returned containing the MDS
-coordinates for each cell (row) and dimension (column).</p>
+    <p>For <code>calculateNMDS</code>, a matrix is returned containing the MDS
+coordinates for each sample (row) and dimension (column).</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The function <code><a href='https://rdrr.io/r/stats/cmdscale.html'>cmdscale</a></code> is used internally to compute
-the MDS components.</p>
+    <p>Either <code><a href='https://rdrr.io/pkg/MASS/man/isoMDS.html'>MASS::isoMDS</a></code> or
+<code><a href='https://rdrr.io/pkg/vegan/man/monoMDS.html'>vegan::monoMDS</a></code> are used internally to compute
+the NMDS components. If you supply a custom <code>distFUN</code>, make sure that
+the arguments if <code>distFUN</code> and <code>nmdsFUN</code> do not collide.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/r/stats/cmdscale.html'>cmdscale</a></code>, to perform the underlying calculations.</p>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/MASS/man/isoMDS.html'>MASS::isoMDS</a></code>,
+<code><a href='https://rdrr.io/pkg/vegan/man/monoMDS.html'>vegan::monoMDS</a></code>
+for NMDS component calculation.</p>
 <p><code><a href='https://rdrr.io/pkg/scater/man/plotReducedDim.html'>plotMDS</a></code>, to quickly visualize the
 results.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p>Aaron Lun, based on code by Davis McCarthy, modified for flexible
-distance function input by Felix G.M. Ernst</p>
+    <p>Felix Ernst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># generate some example data</span>
@@ -239,27 +260,36 @@ distance function input by Felix G.M. Ernst</p>
 <span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>SummarizedExperiment</span><span class='op'>(</span>assays <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>counts <span class='op'>=</span> <span class='va'>mat</span><span class='op'>)</span>,
                            rowData <span class='op'>=</span> <span class='va'>df</span><span class='op'>)</span>
 <span class='co'>#</span>
-<span class='fu'>calculateMDS2</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             [,1]          [,2]
-#&gt;  [1,] -66.136223  2.343084e-06
-#&gt;  [2,] -51.439285 -5.928284e-07
-#&gt;  [3,] -36.742346 -4.234488e-07
-#&gt;  [4,] -22.045408 -2.540693e-07
-#&gt;  [5,]  -7.348469 -8.468977e-08
-#&gt;  [6,]   7.348469  8.468977e-08
-#&gt;  [7,]  22.045408  2.540693e-07
-#&gt;  [8,]  36.742346  4.234488e-07
-#&gt;  [9,]  51.439285  5.928284e-07
-#&gt; [10,]  66.136223  7.622079e-07</div><div class='input'>
+<span class='fu'>calculateNMDS</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; initial  value 0.383462 
+#&gt; iter   5 value 0.161655
+#&gt; iter  10 value 0.113278
+#&gt; final  value 0.003270 
+#&gt; converged</div><div class='output co'>#&gt;              [,1]         [,2]
+#&gt;  [1,] -0.60647893  0.282119175
+#&gt;  [2,] -0.38097446 -0.130374816
+#&gt;  [3,] -0.17579928 -0.184259003
+#&gt;  [4,] -0.02959516 -0.158516980
+#&gt;  [5,]  0.09082607 -0.111879947
+#&gt;  [6,]  0.14427170 -0.047910688
+#&gt;  [7,]  0.20118089 -0.001837781
+#&gt;  [8,]  0.22817639  0.061022767
+#&gt;  [9,]  0.25717122  0.116809029
+#&gt; [10,]  0.27122156  0.174828245
+#&gt; attr(,"Stress")
+#&gt; [1] 0.003269857</div><div class='input'>
 <span class='co'>#</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-<span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>runMDS2</span><span class='op'>(</span><span class='va'>esophagus</span>, FUN <span class='op'>=</span> <span class='va'>calculateUniFrac</span>, name <span class='op'>=</span> <span class='st'>"UniFrac"</span>,
-                     tree <span class='op'>=</span> <span class='fu'>rowTree</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'>reducedDim</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;         [,1]         [,2]
-#&gt; B  0.1699641  0.260500471
-#&gt; C -0.3291116  0.005770947
-#&gt; D  0.1591475 -0.266271417</div></pre>
+<span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>runNMDS</span><span class='op'>(</span><span class='va'>esophagus</span>, distFUN <span class='op'>=</span> <span class='fu'>vegan</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/vegan/man/vegdist.html'>vegdist</a></span>, name <span class='op'>=</span> <span class='st'>"BC"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; initial  value 0.000000 
+#&gt; final  value 0.000000 
+#&gt; converged</div><div class='input'><span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>runNMDS</span><span class='op'>(</span><span class='va'>esophagus</span>, distFUN <span class='op'>=</span> <span class='fu'>vegan</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/vegan/man/vegdist.html'>vegdist</a></span>, name <span class='op'>=</span> <span class='st'>"euclidean"</span>,
+                     method <span class='op'>=</span> <span class='st'>"euclidean"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; initial  value 0.000000 
+#&gt; final  value 0.000000 
+#&gt; converged</div><div class='input'><span class='fu'>reducedDims</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; List of length 2
+#&gt; names(2): BC euclidean</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
