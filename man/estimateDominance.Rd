@@ -8,7 +8,7 @@
 estimateDominance(
   x,
   abund_values = "counts",
-  index = "all",
+  index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
   rank = 1,
   as_relative = TRUE,
   aggregate = TRUE,
@@ -19,7 +19,7 @@ estimateDominance(
 \S4method{estimateDominance}{MicrobiomeExperiment}(
   x,
   abund_values = "counts",
-  index = "all",
+  index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
   rank = 1,
   as_relative = TRUE,
   aggregate = TRUE,
@@ -83,19 +83,21 @@ colData(esophagus)
 esophagus <- estimateDominance(esophagus, index="does_not_exist")
 #Tries to calculate index that is not accepted
 # and index that is accepted. Gets an error.
-esophagus <- estimateDominance(esophagus, index=c("dmn", "does_not_exist"))
+esophagus <- estimateDominance(esophagus, index=c("DMN", "does_not_exist"))
 #Shows all indices
 colData(esophagus)
 
+#Indices must be written correctly (e.g. DBP, not dbp), unless gets an error.
+esophagus <- estimateDominance(esophagus, index="dbp")
 #Calculates DBP and Core Abundance indices
-esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
+esophagus <- estimateDominance(esophagus, index=c("DBP", "core_abundance"))
 #Shows all indices
 colData(esophagus)
 #Shows DBP index
-colData(esophagus)$dbp
+colData(esophagus)$DBP
 
 #Deletes DBP index
-colData(esophagus)$dbp <- NULL
+colData(esophagus)$DBP <- NULL
 #Shows all indices, DBP is deleted
 colData(esophagus)
 #Deletes all indices
@@ -103,7 +105,7 @@ colData(esophagus) <- NULL
 
 #Names of columns can be chosen, but the length of arguments must match.
 esophagus <- estimateDominance(esophagus,
-    index=c("dbp", "core_abundance"),
+    index=c("DBP", "core_abundance"),
     name = c("index1", "index2"))
 #Shows all indices
 colData(esophagus)
@@ -118,8 +120,6 @@ colData(esophagus) <- NULL
 
 #Calculates all indices
 esophagus <- estimateDominance(esophagus)
-#Or you can calculate all indices by specify "all"
-esophagus <- estimateDominance(esophagus, index="all")
 #Shows all indices
 colData(esophagus)
 

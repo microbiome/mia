@@ -63,19 +63,21 @@
 #' esophagus <- estimateDominance(esophagus, index="does_not_exist")
 #' #Tries to calculate index that is not accepted
 #' # and index that is accepted. Gets an error.
-#' esophagus <- estimateDominance(esophagus, index=c("dmn", "does_not_exist"))
+#' esophagus <- estimateDominance(esophagus, index=c("DMN", "does_not_exist"))
 #' #Shows all indices
 #' colData(esophagus)
 #'
+#' #Indices must be written correctly (e.g. DBP, not dbp), unless gets an error.
+#' esophagus <- estimateDominance(esophagus, index="dbp")
 #' #Calculates DBP and Core Abundance indices
-#' esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
+#' esophagus <- estimateDominance(esophagus, index=c("DBP", "core_abundance"))
 #' #Shows all indices
 #' colData(esophagus)
 #' #Shows DBP index
-#' colData(esophagus)$dbp
+#' colData(esophagus)$DBP
 #'
 #' #Deletes DBP index
-#' colData(esophagus)$dbp <- NULL
+#' colData(esophagus)$DBP <- NULL
 #' #Shows all indices, DBP is deleted
 #' colData(esophagus)
 #' #Deletes all indices
@@ -83,7 +85,7 @@
 #'
 #' #Names of columns can be chosen, but the length of arguments must match.
 #' esophagus <- estimateDominance(esophagus,
-#'     index=c("dbp", "core_abundance"),
+#'     index=c("DBP", "core_abundance"),
 #'     name = c("index1", "index2"))
 #' #Shows all indices
 #' colData(esophagus)
@@ -98,8 +100,6 @@
 #'
 #' #Calculates all indices
 #' esophagus <- estimateDominance(esophagus)
-#' #Or you can calculate all indices by specify "all"
-#' esophagus <- estimateDominance(esophagus, index="all")
 #' #Shows all indices
 #' colData(esophagus)
 #'
@@ -108,7 +108,7 @@ NULL
 #' @rdname estimateDominance
 #' @export
 setGeneric("estimateDominance",signature = c("x"),
-           function(x, abund_values = "counts", index="all", rank=1, as_relative=TRUE, aggregate=TRUE,
+           function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"), rank=1, as_relative=TRUE, aggregate=TRUE,
                     name = index, ...)
                standardGeneric("estimateDominance"))
 
@@ -116,11 +116,17 @@ setGeneric("estimateDominance",signature = c("x"),
 #' @rdname estimateDominance
 #' @export
 setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
-          function(x, abund_values = "counts", index="all", rank=1, as_relative=TRUE, aggregate=TRUE,
+          function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"), rank=1, as_relative=TRUE, aggregate=TRUE,
                    name = index, ...){
 
-              #Check if index/indices that user wants to calculate are accepted. Those that are, are stored in "index" variable.
-              index <- .check_indices(index)
+              # input check
+              index <- match.arg(index, several.ok = TRUE)
+
+              if(!.is_non_empty_character(name) || length(name) != length(index)){
+                  stop("'name' must be a non-empty character value and have the ",
+                       "same length than 'index'.",
+                       call. = FALSE)
+              }
 
               #Initialize table that is used to store indices
               tab <- NULL
@@ -163,43 +169,6 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
 
 #---------------------------Help functions----------------------------------------------------------------
-.check_indices <- function(index){
-
-    # Only include accepted indices
-    #If index is not null, save them to "index" variable after changing them to lower case
-    if (!is.null(index)) {index <- tolower(index)}
-
-    #Saves the list of accepted indices to "accepted" variable
-    accepted <- tolower(c("DBP", "DMN", "absolute", "relative",
-                          "simpson", "core_abundance", "gini"))
-
-    # Return all indices
-    #If the user has written in the "index" argument "all"
-    if (length(index) == 1 && index == "all") {
-        index <- accepted
-    }
-
-    #If there is indices, but none of them are accepted, gives an error
-    if (!is.null(index) && !any(index %in% accepted)) {
-        stop(paste("None of the dominance indices are not recognized:", paste(index, sep = ",")))
-    }
-
-    #If there are indices, take only those indices that are accepted, and save them to variable "index"
-    if (!is.null(index)) {
-
-        #Stores indices that are not accepted
-        discarded <- setdiff(index, accepted)
-
-        #If there are indcices that are not accepted, gives a warning.
-        if(!rlang::is_empty(discarded)){
-            warning(paste("The following dominance indices are not recognized:", paste(discarded, sep = ",")))
-        }
-        #Stores indices that are accepted
-        index <- intersect(index, accepted)
-    }
-
-    return(index)
-}
 
 .dominance_help <- function(x, abund_values = "counts", index="all", rank=1, as_relative=TRUE,
                            aggregate=TRUE) {
