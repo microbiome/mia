@@ -37,7 +37,7 @@ calculateNMDS(x, ...)
 
 runNMDS(x, ..., altexp = NULL, name = "NMDS")
 
-plotNMDS(object, ..., ncomponents = 2)
+plotNMDS(x, ..., ncomponents = 2)
 }
 \arguments{
 \item{x}{a \linkS4class{SingleCellExperiment} containing a numeric matrix of
