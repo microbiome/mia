@@ -32,6 +32,11 @@ Depends:
     MicrobiomeExperiment 
 Imports:
     methods,
+    stats,
+    utils,
+    vegan,
+    MASS,
+    ape,
     BiocGenerics,
     S4Vectors,
     IRanges,
@@ -39,24 +44,20 @@ Imports:
     BiocParallel,
     DelayedArray,
     DelayedMatrixStats,
-    stringr,
     scuttle,
     scater,
     DirichletMultinomial,
+    stringr,
     ggplot2,
-    ape,
     rlang,
     dplyr,
     tibble,
-    tidyr,
-    stats,
-    utils
+    tidyr
 Suggests:
     testthat,
     knitr,
     BiocStyle,
     ggpubr,
-    vegan,
     phyloseq,
     dada2,
     biomformat
