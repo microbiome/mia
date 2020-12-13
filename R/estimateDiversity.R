@@ -122,11 +122,11 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
         .check_abund_values(abund_values, x)
         .require_package("vegan")
         #
-        dvrsts <- lapply(index,
-                         .run_dvrsty,
-                         x = x,
-                         mat = assay(x, abund_values),
-                         BPPARAM = BPPARAM, ...)
+        dvrsts <- BiocParallel::bplapply(index,
+                                         .run_dvrsty,
+                                         x = x,
+                                         mat = assay(x, abund_values),
+                                         BPPARAM = BPPARAM, ...)
         .add_dvrsty_values_to_colData(x, dvrsts, name)
     }
 )
@@ -200,7 +200,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment assay assays
-.run_dvrsty <- function(x, i, mat, BPPARAM = SerialParam(), ...){
+.run_dvrsty <- function(x, i, mat, ...){
     dvrsty_FUN <- switch(i,
                          shannon = .get_shannon,
                          simpson = .get_simpson,
@@ -208,7 +208,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                          richness = .get_observed,
                          chao1 = .get_chao1,
                          ACE = .get_ACE)
-    dvrsty <- dvrsty_FUN(mat, BPPARAM = BPPARAM, ...)
+    dvrsty <- dvrsty_FUN(mat, ...)
     dvrsty
 }
 
