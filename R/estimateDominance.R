@@ -128,40 +128,13 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
                        call. = FALSE)
               }
 
-              #Initialize table that is used to store indices
-              tab <- NULL
+              dominances <- BiocParallel::bplapply(index,
+                            FUN = .dominance_help, x=x,
+                            abund_values=abund_values, rank=rank,
+                            as_relative=as_relative,
+                            aggregate=aggregate)
 
-              #If the indices vector is not null
-              if (!is.null(index)) {
-                  #loop through index list
-                  for (idx in index) {
-                      #Get the specific index, and save it to table
-                      tab <- cbind(tab,
-                          .dominance_help(x,
-                              abund_values=abund_values, index=idx, rank=rank,
-                              as_relative=as_relative,
-                              aggregate=aggregate))
-                  }
-
-                  # Add indices names to table's columns' names
-                  colnames(tab) <- index
-
-                  # Convert table to data frame
-                  tab <- as.data.frame(tab)
-
-                  # Adds index data to original object
-                  if (length(name) == 1 && name == "all") {
-                      name <- colnames(tab)
-                  }
-
-                  #colData(x) <- cbind(colData(x), tab)
-                  x <- .add_indices_to_coldata(x, tab, name)
-              }
-
-              # Return object
-              return(x)
-
-
+              .add_dominances_values_to_colData(x, dominances, name)
           }
 )
 
@@ -327,4 +300,24 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
     return(x)
 
+}
+
+
+#' @importFrom SummarizedExperiment colData colData<-
+#' @importFrom S4Vectors DataFrame
+.add_dominances_values_to_colData <- function(x, dominances, name){
+    dominances <- mapply(
+        function(dominance, n){
+            dominance <- DataFrame(dominance)
+            colnames(dominance)[1L] <- n
+            if(ncol(dominance) > 1L){
+                i <- seq.int(2,ncol(dominance))
+                colnames(dominance)[i] <- paste0(n,"_",colnames(dominance)[i])
+            }
+            dominance
+        },
+        dominances,
+        name)
+    colData(x) <- cbind(colData(x),DataFrame(dominances))
+    x
 }
