@@ -116,7 +116,7 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
         index<- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                 "same length then 'index'.",
+                 "same length than 'index'.",
                  call. = FALSE)
         }
         .check_abund_values(abund_values, x)

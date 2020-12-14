@@ -204,8 +204,10 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
         #If index is "Gini" calculates the gini index to all the samples
     } else if (index == "gini") {
 
-        gini <- .get_gini(x)
-        return(gini)
+        tmp <- apply(otu, 2, function(x) {
+            .get_gini(x)})
+
+        return(tmp)
     }
 
     if (rank == 1 && as_relative) {
@@ -242,7 +244,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
     }
 
     #Returns a matrix that has one column. Rows are otus, column includes values of index.
-    do
+    return(do)
 
 }
 
@@ -268,18 +270,12 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
 }
 
-.get_gini <- function(x, abund_values="counts") {
-
-    #Stores the absolute abundances to "otu" variable
-    otu <- assay(x,abund_values)
+.get_gini <- function(x) {
 
     # Gini index for each sample
-    do <- apply(otu, 2, function(x) {
-        .calculate_gini(x)
-    })
-    names(do) <- colnames(x)
+    gini_for_sample <- .calculate_gini(x)
 
-    do
+    return(gini_for_sample)
 
 }
 
