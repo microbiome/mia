@@ -121,19 +121,22 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
               # input check
               index <- match.arg(index, several.ok = TRUE)
-
               if(!.is_non_empty_character(name) || length(name) != length(index)){
                   stop("'name' must be a non-empty character value and have the ",
                        "same length than 'index'.",
                        call. = FALSE)
               }
 
+              .check_abund_values(abund_values, x)
+
+              #Calculates dominance indices
               dominances <- BiocParallel::bplapply(index,
                             FUN = .dominance_help, x=x,
                             abund_values=abund_values, rank=rank,
                             as_relative=as_relative,
                             aggregate=aggregate)
 
+              #Add dominance indices to colData
               .add_dominances_values_to_colData(x, dominances, name)
           }
 )
