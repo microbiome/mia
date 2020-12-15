@@ -37,7 +37,7 @@ se <- GlobalPatterns
 se
 ```
 
-# Functions for working microbiome data
+# Functions for working with microbiome data
 
 ## Merging and agglomeration based on taxonomic information.
 
