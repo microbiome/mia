@@ -294,43 +294,6 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
     sum(nu[-1] * p[-n]) - sum(nu[-n] * p[-1])
 }
 
-#Gets ME object and index data frame as parameters
-.add_indices_to_coldata <- function(x, indicesDF, names){
-    #Stores sample names
-    sampleNames <- rownames(indicesDF)
-
-    #Checks if the length of names and indices match. If not, gives an error.
-    if(length(names) != length(colnames(indicesDF))){
-        stop("Number of names and indices do not match.")
-
-    }
-
-    #Loops through columns of data frame. One by one adds index data
-    #to the ME object.
-    order_of_name = 1
-    for(indexName in colnames(indicesDF)){
-        #Stores coldata to colData variable
-        colData <- colData(x)
-
-        #Transpose and converts index data to numeric values
-        indexData <- as.numeric(t(indicesDF[[indexName]]))
-
-        #Adds sample names to index values
-        names(indexData) <- sampleNames
-
-        #Add index data to the colData variable. The name is from "names" variable
-        colData[[names[order_of_name]]] <- indexData
-        order_of_name = order_of_name + 1
-
-        #Adds the new colData to the ME object
-        colData(x) <- colData
-    }
-
-    return(x)
-
-}
-
-
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors DataFrame
 .add_dominances_values_to_colData <- function(x, dominances, name){
