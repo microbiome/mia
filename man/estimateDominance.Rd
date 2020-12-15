@@ -9,7 +9,7 @@ estimateDominance(
   x,
   abund_values = "counts",
   index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
-  rank = 1,
+  rank = taxonomyRanks(x)[1L],
   as_relative = TRUE,
   aggregate = TRUE,
   name = index,
@@ -20,11 +20,12 @@ estimateDominance(
   x,
   abund_values = "counts",
   index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
-  rank = 1,
+  rank = taxonomyRanks(x)[1L],
   as_relative = TRUE,
   aggregate = TRUE,
   name = index,
-  ...
+  ...,
+  BPPARAM = SerialParam()
 )
 }
 \arguments{
@@ -56,6 +57,11 @@ the indicated rank.}
 
 \item{name}{A name for the column of the colData where the calculated
 Dominance indices should be stored in.}
+
+\item{BPPARAM}{A
+\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+object specifying whether calculation of estimates should be parallelized.
+(Currently not used)}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named

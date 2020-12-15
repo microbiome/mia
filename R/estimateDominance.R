@@ -34,6 +34,11 @@
 #' @param name A name for the column of the colData where the calculated
 #' Dominance indices should be stored in.
 #'
+#' @param BPPARAM A
+#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+#'   object specifying whether calculation of estimates should be parallelized.
+#'   (Currently not used)
+#'
 #' @details
 #' \code{estimateDominance} calculates the community dominance indices.
 #'
@@ -108,18 +113,23 @@ NULL
 #' @rdname estimateDominance
 #' @export
 setGeneric("estimateDominance",signature = c("x"),
-           function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"), rank=1, as_relative=TRUE, aggregate=TRUE,
-                    name = index, ...)
+           function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
+                    rank=taxonomyRanks(x)[1L], as_relative=TRUE, aggregate=TRUE, name = index, ...)
                standardGeneric("estimateDominance"))
 
 
 #' @rdname estimateDominance
 #' @export
 setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
-          function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"), rank=1, as_relative=TRUE, aggregate=TRUE,
-                   name = index, ...){
+          function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
+                   rank=taxonomyRanks(x)[1L], as_relative=TRUE, aggregate=TRUE, name = index, ..., BPPARAM = SerialParam()){
 
-              # input check
+              #Input check
+
+              #Check abund_values
+              .check_abund_values(abund_values, x)
+
+              #Check indices
               index <- match.arg(index, several.ok = TRUE)
               if(!.is_non_empty_character(name) || length(name) != length(index)){
                   stop("'name' must be a non-empty character value and have the ",
@@ -127,14 +137,29 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
                        call. = FALSE)
               }
 
-              .check_abund_values(abund_values, x)
+              #Check rank
+              if(!.is_non_empty_string(rank)){
+                  stop("'rank' must be an non empty single character value.",
+                       call. = FALSE)
+              }
+
+              #Check as_relative
+              if(!.is_a_bool(as_relative)){
+                  stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
+              }
+
+              #Check aggregate
+              if(!.is_a_bool(aggregate)){
+                  stop("'aggregate' must be TRUE or FALSE.", call. = FALSE)
+              }
 
               #Calculates dominance indices
-              dominances <- BiocParallel::bplapply(index,
+              dominances <- BiocParallel::bplapply(X=index,
                             FUN = .dominance_help, x=x,
                             abund_values=abund_values, rank=rank,
                             as_relative=as_relative,
-                            aggregate=aggregate)
+                            aggregate=aggregate,
+                            BPPARAM = BPPARAM)
 
               #Add dominance indices to colData
               .add_dominances_values_to_colData(x, dominances, name)
