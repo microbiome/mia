@@ -166,7 +166,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
 #---------------------------Help functions----------------------------------------------------------------
 
-.dominance_help <- function(x, abund_values = "counts", index="all", ntaxa=1, as_relative=TRUE,
+.dominance_help <- function(x, abund_values = "counts", index=NULL, ntaxa=1, as_relative=TRUE,
                            aggregate=TRUE) {
     #Stores the absolute abundances to "otu" variable
     otu <- assay(x,abund_values)
@@ -177,24 +177,24 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
     } else if (index == "absolute") {
         #ntaxa=1 by default but can be tuned
         as_relative <- FALSE
-    } else if (index %in% c("relative")) {
+    } else if (index == "relative") {
         #ntaxa=1 by default but can be tuned
         as_relative <- TRUE
-    } else if (index %in% c("dbp")) {
+    } else if (index == "DBP") {
         #Berger-Parker
         ntaxa <- 1
         as_relative <- TRUE
-    } else if (index %in% c("dmn")) {
+    } else if (index == "DMN") {
         #McNaughton's dominance
         ntaxa <- 2
         as_relative <- TRUE
         aggregate <- TRUE
         #If index is "Simpson", calculates the Simpson to all the samples
-    } else if (index %in% c("simpson")) {
+    } else if (index == "simpson") {
         tmp <- apply(otu, 2, function(x) {
             .simpson_dominance(x)})
         return(tmp)
-    } else if (index %in% c("core_abundance")) {
+    } else if (index == "core_abundance") {
         prevalence <- getPrevalentAbundance(x, detection=0, as_relative=TRUE)
         return(prevalence)
         #If index is "Gini" calculates the gini index to all the samples
@@ -207,9 +207,9 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
     }
 
     if (ntaxa == 1 && as_relative) {
-        index <- "dbp"
+        index <- "DBP"
     } else if (ntaxa == 2 && as_relative && aggregate) {
-        index <- "dmn"
+        index <- "DMN"
     }
 
     if (as_relative) {
