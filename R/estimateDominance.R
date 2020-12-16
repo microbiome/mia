@@ -15,7 +15,7 @@
 #'
 #' @param index Specifies the indices which are calculated.
 #'
-#' @param rank Optional. The rank of the dominant taxa to consider.
+#' @param ntaxa Optional. The rank of the dominant taxa to consider.
 #'
 #' @param as_relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? (default: \code{TRUE})
@@ -110,7 +110,7 @@ NULL
 #' @export
 setGeneric("estimateDominance",signature = c("x"),
            function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
-                    rank=1, as_relative=TRUE, aggregate=TRUE, name = index, ...)
+                    ntaxa=1, as_relative=TRUE, aggregate=TRUE, name = index, ...)
                standardGeneric("estimateDominance"))
 
 
@@ -118,7 +118,7 @@ setGeneric("estimateDominance",signature = c("x"),
 #' @export
 setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
           function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
-                   rank=1, as_relative=TRUE, aggregate=TRUE, name = index, ..., BPPARAM = SerialParam()){
+                   ntaxa=1, as_relative=TRUE, aggregate=TRUE, name = index, ..., BPPARAM = SerialParam()){
 
               #Input check
 
@@ -133,9 +133,9 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
                        call. = FALSE)
               }
 
-              #Check rank
-              if(!(rank>0 && rank<3)){
-                  stop("'rank' must be a numerical value 1 or 2.", call. = FALSE)
+              #Check ntaxa
+              if(!(ntaxa>0 && ntaxa<3)){
+                  stop("'ntaxa' must be a numerical value 1 or 2.", call. = FALSE)
               }
 
               #Check as_relative
@@ -151,7 +151,7 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
               #Calculates dominance indices
               dominances <- BiocParallel::bplapply(X=index,
                             FUN = .dominance_help, x=x,
-                            abund_values=abund_values, rank=rank,
+                            abund_values=abund_values, ntaxa=ntaxa,
                             as_relative=as_relative,
                             aggregate=aggregate,
                             BPPARAM = BPPARAM)
@@ -166,27 +166,27 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
 
 #---------------------------Help functions----------------------------------------------------------------
 
-.dominance_help <- function(x, abund_values = "counts", index="all", rank=1, as_relative=TRUE,
+.dominance_help <- function(x, abund_values = "counts", index="all", ntaxa=1, as_relative=TRUE,
                            aggregate=TRUE) {
     #Stores the absolute abundances to "otu" variable
     otu <- assay(x,abund_values)
 
     #if index does not have any values
     if (is.null(index)) {
-        rank <- rank
+        ntaxa <- ntaxa
     } else if (index == "absolute") {
-        #Rank=1 by default but can be tuned
+        #ntaxa=1 by default but can be tuned
         as_relative <- FALSE
     } else if (index %in% c("relative")) {
-        #Rank=1 by default but can be tuned
+        #ntaxa=1 by default but can be tuned
         as_relative <- TRUE
     } else if (index %in% c("dbp")) {
         #Berger-Parker
-        rank <- 1
+        ntaxa <- 1
         as_relative <- TRUE
     } else if (index %in% c("dmn")) {
         #McNaughton's dominance
-        rank <- 2
+        ntaxa <- 2
         as_relative <- TRUE
         aggregate <- TRUE
         #If index is "Simpson", calculates the Simpson to all the samples
@@ -206,9 +206,9 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
         return(tmp)
     }
 
-    if (rank == 1 && as_relative) {
+    if (ntaxa == 1 && as_relative) {
         index <- "dbp"
-    } else if (rank == 2 && as_relative && aggregate) {
+    } else if (ntaxa == 2 && as_relative && aggregate) {
         index <- "dmn"
     }
 
@@ -222,11 +222,11 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
     #Aggregate or not
     if (!aggregate) {
         do <- apply(otu, 2, function(x) {
-            sort(x, decreasing = TRUE)[[rank]]
+            sort(x, decreasing = TRUE)[[ntaxa]]
         })
     } else {
         do <- apply(otu, 2, function(x) {
-            sum(sort(x, decreasing = TRUE)[seq_len(rank)])
+            sum(sort(x, decreasing = TRUE)[seq_len(ntaxa)])
         })
     }
 

@@ -9,7 +9,7 @@ estimateDominance(
   x,
   abund_values = "counts",
   index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
-  rank = 1,
+  ntaxa = 1,
   as_relative = TRUE,
   aggregate = TRUE,
   name = index,
@@ -20,7 +20,7 @@ estimateDominance(
   x,
   abund_values = "counts",
   index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
-  rank = 1,
+  ntaxa = 1,
   as_relative = TRUE,
   aggregate = TRUE,
   name = index,
@@ -39,7 +39,7 @@ to use for prevalence calculation.}
 
 \item{index}{Specifies the indices which are calculated.}
 
-\item{rank}{Optional. The rank of the dominant taxa to consider.}
+\item{ntaxa}{Optional. The rank of the dominant taxa to consider.}
 
 \item{as_relative}{logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? (default: \code{TRUE})}
