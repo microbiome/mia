@@ -15,13 +15,7 @@
 #'
 #' @param index Specifies the indices which are calculated.
 #'
-#' @param rank,... additional arguments
-#' \itemize{
-#'   \item{If \code{!is.null(rank)} arguments are passed on to
-#'   \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
-#'   \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
-#'   }
-#' }
+#' @param rank Optional. The rank of the dominant taxa to consider.
 #'
 #' @param as_relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? (default: \code{TRUE})
@@ -33,6 +27,8 @@
 #'
 #' @param name A name for the column of the colData where the calculated
 #' Dominance indices should be stored in.
+#'
+#' @param ... additional arguments
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -114,7 +110,7 @@ NULL
 #' @export
 setGeneric("estimateDominance",signature = c("x"),
            function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
-                    rank=taxonomyRanks(x)[1L], as_relative=TRUE, aggregate=TRUE, name = index, ...)
+                    rank=1, as_relative=TRUE, aggregate=TRUE, name = index, ...)
                standardGeneric("estimateDominance"))
 
 
@@ -122,7 +118,7 @@ setGeneric("estimateDominance",signature = c("x"),
 #' @export
 setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
           function(x, abund_values = "counts", index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
-                   rank=taxonomyRanks(x)[1L], as_relative=TRUE, aggregate=TRUE, name = index, ..., BPPARAM = SerialParam()){
+                   rank=1, as_relative=TRUE, aggregate=TRUE, name = index, ..., BPPARAM = SerialParam()){
 
               #Input check
 
@@ -138,9 +134,8 @@ setMethod("estimateDominance", signature = c(x = "MicrobiomeExperiment"),
               }
 
               #Check rank
-              if(!.is_non_empty_string(rank)){
-                  stop("'rank' must be an non empty single character value.",
-                       call. = FALSE)
+              if(!(rank>0 && rank<3)){
+                  stop("'rank' must be a numerical value 1 or 2.", call. = FALSE)
               }
 
               #Check as_relative
