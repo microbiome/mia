@@ -51,10 +51,10 @@ setMethod("getPrevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
               cm <- getPrevalentTaxa(x, rank=NULL, ...)
 
               if (length(cm) == 0) {
-                  warning("With the given abundance and prevalence
+                  stop("With the given abundance and prevalence
             thresholds, no taxa were found. Returning NA for getPrevalentAbundance. Try to
-            change detection and prevalence parameters.");
-                  ret <- NA
+            change detection and prevalence parameters.",
+                       call. = FALSE)
               }
 
               # Pick the core and calculate abundance
