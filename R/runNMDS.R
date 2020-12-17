@@ -19,7 +19,7 @@
 #' @param scale Logical scalar, should the expression values be standardized?
 #'
 #' @param keep_dist Logical scalar indicating whether the \code{dist} object
-#'   calculated by \code{distFUN} should be stored as \sQuote{dist} attribute of
+#'   calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
 #'   the matrix returned/stored by \code{calculateNMDS}/ \code{runNMDS}.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
@@ -27,7 +27,7 @@
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
-#' @param distFUN a \code{function} or \code{character} value with a function
+#' @param FUN a \code{function} or \code{character} value with a function
 #'   name returning a \code{\link[stats:dist]{dist}} object
 #'
 #' @param nmdsFUN a \code{character} value to choose the scaling
@@ -35,7 +35,7 @@
 #'   \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 #'   \code{\link[vegan:monoMDS]{vegan::monoMDS}}
 #'
-#' @param ... additional arguments to pass to \code{distFUN} and
+#' @param ... additional arguments to pass to \code{FUN} and
 #'   \code{nmdsFUN}.
 #'
 #' @param dimred String or integer scalar specifying the existing dimensionality
@@ -56,8 +56,8 @@
 #' @details
 #' Either \code{\link[MASS:isoMDS]{MASS::isoMDS}} or
 #' \code{\link[vegan:monoMDS]{vegan::monoMDS}} are used internally to compute
-#' the NMDS components. If you supply a custom \code{distFUN}, make sure that
-#' the arguments if \code{distFUN} and \code{nmdsFUN} do not collide.
+#' the NMDS components. If you supply a custom \code{FUN}, make sure that
+#' the arguments if \code{FUN} and \code{nmdsFUN} do not collide.
 #'
 #' @name runNMDS
 #'
@@ -83,8 +83,8 @@
 #'
 #' #
 #' data(esophagus)
-#' esophagus <- runNMDS(esophagus, distFUN = vegan::vegdist, name = "BC")
-#' esophagus <- runNMDS(esophagus, distFUN = vegan::vegdist, name = "euclidean",
+#' esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
+#' esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
 #'                      method = "euclidean")
 #' reducedDims(esophagus)
 NULL
@@ -138,7 +138,7 @@ setGeneric("calculateNMDS", function(x, ...) standardGeneric("calculateNMDS"))
 #' @importFrom MASS isoMDS
 #' @importFrom stats cmdscale
 #' @importFrom vegan vegdist monoMDS
-.calculate_nmds <- function(x, distFUN = vegdist,
+.calculate_nmds <- function(x, FUN = vegdist,
                             nmdsFUN = c("isoMDS","monoMDS"),
                             ncomponents = 2, ntop = 500, subset_row = NULL,
                             scale = FALSE, transposed = FALSE,
@@ -151,7 +151,7 @@ setGeneric("calculateNMDS", function(x, ...) standardGeneric("calculateNMDS"))
     }
     x <- as.matrix(x)
     sample_names <- rownames(x)
-    sample_dist <- do.call(distFUN,
+    sample_dist <- do.call(FUN,
                            c(list(x),
                              list(...)))
     attributes(sample_dist) <- attributes(sample_dist)[c("class","Size")]
@@ -174,8 +174,8 @@ setMethod("calculateNMDS", "ANY", .calculate_nmds)
 #' @importFrom SummarizedExperiment assay
 #' @export
 setMethod("calculateNMDS", "SummarizedExperiment",
-    function(x, ..., exprs_values = "counts", distFUN = vegdist) {
-        .calculate_nmds(assay(x, exprs_values), distFUN = distFUN, ...)
+    function(x, ..., exprs_values = "counts", FUN = vegdist) {
+        .calculate_nmds(assay(x, exprs_values), FUN = FUN, ...)
     }
 )
 
@@ -183,10 +183,10 @@ setMethod("calculateNMDS", "SummarizedExperiment",
 #' @export
 setMethod("calculateNMDS", "SingleCellExperiment",
     function(x, ..., exprs_values = "counts", dimred = NULL, n_dimred = NULL,
-             distFUN = vegdist){
+             FUN = vegdist){
         mat <- .get_mat_from_sce(x, exprs_values = exprs_values,
                                  dimred = dimred, n_dimred = n_dimred)
-        calculateNMDS(mat, transposed = !is.null(dimred), distFUN = distFUN,...)
+        calculateNMDS(mat, transposed = !is.null(dimred), FUN = FUN,...)
     }
 )
 
