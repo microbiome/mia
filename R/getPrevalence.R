@@ -165,7 +165,6 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         if (as_relative) {
             mat <- .calc_rel_abund(mat)
         }
-        # retrieve abundance matrix
         getPrevalence(mat, ...)
     }
 )
@@ -185,33 +184,51 @@ setGeneric("getPrevalentTaxa", signature = "x",
            function(x, ...)
                standardGeneric("getPrevalentTaxa"))
 
+.get_prevalent_taxa <- function(x, rank, prevalence = 50/100,
+                                include_lowest = FALSE, ...){
+    # input check
+    if (!.is_numeric_string(prevalence)) {
+        stop("'prevalence' must be a single numeric value or coercible to ",
+             "one.",
+             call. = FALSE)
+    }
+
+    prevalence <- as.numeric(prevalence)
+    if(!.is_a_bool(include_lowest)){
+        stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
+    }
+
+    if(is(x,"SummarizedExperiment")){
+        pr <- getPrevalence(x, ...)
+    } else {
+        pr <- getPrevalence(x, rank = rank, ...)
+    }
+
+    if (include_lowest) {
+        taxa <- pr >= prevalence
+    } else {
+        taxa <- pr > prevalence
+    }
+
+    taxa <- names(which(taxa))
+    taxa
+}
+
+#' @rdname getPrevalence
+#' @export
+setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
+    function(x, prevalence = 50/100, include_lowest = FALSE, ...){
+        .get_prevalent_taxa(x, rank = NULL, prevalence = prevalence,
+                            include_lowest = include_lowest, ...)
+    }
+)
+
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, prevalence = 50/100, rank = taxonomyRanks(x)[1L],
              include_lowest = FALSE, ...){
-
-        # input check
-        if (!.is_numeric_string(prevalence)) {
-            stop("'prevalence' must be a single numeric value or coercible to ",
-                 "one.",
-                 call. = FALSE)
-        }
-
-        prevalence <- as.numeric(prevalence)
-        if(!.is_a_bool(include_lowest)){
-            stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
-        }
-
-        pr <- getPrevalence(x, rank = rank, ...)
-
-        if (include_lowest) {
-          taxa <- pr >= prevalence
-        } else {
-          taxa <- pr > prevalence
-        }
-
-        taxa <- names(which(taxa))
-        taxa
+        .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
+                            include_lowest = include_lowest, ...)
     }
 )

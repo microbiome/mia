@@ -20,48 +20,43 @@
 #' a named \code{numeric} vector. It includes joint abundance of prevalent taxa,
 #' that is calculated for individual samples.
 #'
-#' @examples
-#' data(esophagus, package = "MicrobiomeExperiment")
-#' esophagus <- as(esophagus, "MicrobiomeExperiment")
-#' getPrevalentAbundance(esophagus)
-#'
 #' @name getPrevalentAbundance
-#' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
+#' @examples
+#' data(esophagus)
+#' getPrevalentAbundance(esophagus, abund_values = "counts")
+NULL
+
+#' @rdname getPrevalentAbundance
 #' @export
-#'
 setGeneric("getPrevalentAbundance", signature = "x",
            function(x, abund_values = "relabundance", ...)
                standardGeneric("getPrevalentAbundance"))
 
+#' @rdname getPrevalentAbundance
+#' @export
+setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
+    function(x, ...){
+        x <- .calc_rel_abund(x)
+        cm <- getPrevalentTaxa(x, ...)
+        if (length(cm) == 0) {
+          stop("With the given abundance and prevalence thresholds, no taxa ",
+               "were found. Try to change detection and prevalence parameters.",
+               call. = FALSE)
+        }
+        colSums(x[cm, ,drop=FALSE])
+    }
+)
+
 #' @rdname getPrevalence
 #' @export
-setMethod("getPrevalentAbundance", signature = c(x = "MicrobiomeExperiment"),
-          function(x, abund_values = "relabundance", ...){
-
-              #Adds relative abundance table to the data
-              x <- relAbundanceCounts(x)
-
-              #Saves the relative abundances (or counts, if wanted) to the variable "values"
-              values <- assay(x,abund_values)
-
-              # Core members
-              cm <- getPrevalentTaxa(x, rank=NULL, ...)
-
-              if (length(cm) == 0) {
-                  stop("With the given abundance and prevalence
-            thresholds, no taxa were found. Returning NA for getPrevalentAbundance. Try to
-            change detection and prevalence parameters.",
-                       call. = FALSE)
-              }
-
-              # Pick the core and calculate abundance
-              ret <- colSums(values[cm, ,drop=FALSE])
-
-              return(ret)
-
-
-          }
+setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
+    function(x, abund_values = "counts", ...){
+        # check assay
+        .check_abund_values(abund_values, x)
+        #
+        getPrevalentAbundance(assay(x,abund_values))
+    }
 )

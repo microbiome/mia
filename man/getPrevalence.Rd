@@ -5,8 +5,9 @@
 \alias{getPrevalence,ANY-method}
 \alias{getPrevalence,SummarizedExperiment-method}
 \alias{getPrevalentTaxa}
+\alias{getPrevalentTaxa,ANY-method}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
-\alias{getPrevalentAbundance,MicrobiomeExperiment-method}
+\alias{getPrevalentAbundance,SummarizedExperiment-method}
 \title{Prevalence calculation}
 \usage{
 getPrevalence(x, ...)
@@ -17,6 +18,8 @@ getPrevalence(x, ...)
 
 getPrevalentTaxa(x, ...)
 
+\S4method{getPrevalentTaxa}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
+
 \S4method{getPrevalentTaxa}{SummarizedExperiment}(
   x,
   prevalence = 50/100,
@@ -25,7 +28,7 @@ getPrevalentTaxa(x, ...)
   ...
 )
 
-\S4method{getPrevalentAbundance}{MicrobiomeExperiment}(x, abund_values = "relabundance", ...)
+\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, abund_values = "counts", ...)
 }
 \arguments{
 \item{x}{a

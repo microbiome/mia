@@ -2,9 +2,12 @@
 % Please edit documentation in R/getPrevalentAbundance.R
 \name{getPrevalentAbundance}
 \alias{getPrevalentAbundance}
+\alias{getPrevalentAbundance,ANY-method}
 \title{Prevalent abundance}
 \usage{
 getPrevalentAbundance(x, abund_values = "relabundance", ...)
+
+\S4method{getPrevalentAbundance}{ANY}(x, abund_values = "relabundance", ...)
 }
 \arguments{
 \item{x}{a
@@ -30,10 +33,8 @@ species (in between 0 and 1). The core taxa are defined as those that exceed the
 given population prevalence threshold at the given detection level.
 }
 \examples{
-data(esophagus, package = "MicrobiomeExperiment")
-esophagus <- as(esophagus, "MicrobiomeExperiment")
-getPrevalentAbundance(esophagus)
-
+data(esophagus)
+getPrevalentAbundance(esophagus, abund_values = "counts")
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
