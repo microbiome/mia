@@ -13,7 +13,7 @@ calculateNMDS(x, ...)
 
 \S4method{calculateNMDS}{ANY}(
   x,
-  distFUN = vegdist,
+  FUN = vegdist,
   nmdsFUN = c("isoMDS", "monoMDS"),
   ncomponents = 2,
   ntop = 500,
@@ -24,7 +24,7 @@ calculateNMDS(x, ...)
   ...
 )
 
-\S4method{calculateNMDS}{SummarizedExperiment}(x, ..., exprs_values = "counts", distFUN = vegdist)
+\S4method{calculateNMDS}{SummarizedExperiment}(x, ..., exprs_values = "counts", FUN = vegdist)
 
 \S4method{calculateNMDS}{SingleCellExperiment}(
   x,
@@ -32,7 +32,7 @@ calculateNMDS(x, ...)
   exprs_values = "counts",
   dimred = NULL,
   n_dimred = NULL,
-  distFUN = vegdist
+  FUN = vegdist
 )
 
 runNMDS(x, ..., altexp = NULL, name = "NMDS")
@@ -43,10 +43,10 @@ plotNMDS(x, ..., ncomponents = 2)
 \item{x}{a \linkS4class{SingleCellExperiment} containing a numeric matrix of
 log-expression values where rows are features and columns are cells.}
 
-\item{...}{additional arguments to pass to \code{distFUN} and
+\item{...}{additional arguments to pass to \code{FUN} and
 \code{nmdsFUN}.}
 
-\item{distFUN}{a \code{function} or \code{character} value with a function
+\item{FUN}{a \code{function} or \code{character} value with a function
 name returning a \code{\link[stats:dist]{dist}} object}
 
 \item{nmdsFUN}{a \code{character} value to choose the scaling
@@ -69,7 +69,7 @@ integer vector of row indices or a logical vector.}
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 
 \item{keep_dist}{Logical scalar indicating whether the \code{dist} object
-calculated by \code{distFUN} should be stored as \sQuote{dist} attribute of
+calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
 the matrix returned/stored by \code{calculateNMDS}/ \code{runNMDS}.}
 
 \item{exprs_values}{a single \code{character} value for specifying which
@@ -98,8 +98,8 @@ data in a \code{SingleCellExperiment} object.
 \details{
 Either \code{\link[MASS:isoMDS]{MASS::isoMDS}} or
 \code{\link[vegan:monoMDS]{vegan::monoMDS}} are used internally to compute
-the NMDS components. If you supply a custom \code{distFUN}, make sure that
-the arguments if \code{distFUN} and \code{nmdsFUN} do not collide.
+the NMDS components. If you supply a custom \code{FUN}, make sure that
+the arguments if \code{FUN} and \code{nmdsFUN} do not collide.
 }
 \examples{
 # generate some example data
@@ -112,8 +112,8 @@ calculateNMDS(se)
 
 #
 data(esophagus)
-esophagus <- runNMDS(esophagus, distFUN = vegan::vegdist, name = "BC")
-esophagus <- runNMDS(esophagus, distFUN = vegan::vegdist, name = "euclidean",
+esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
+esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
                      method = "euclidean")
 reducedDims(esophagus)
 }
