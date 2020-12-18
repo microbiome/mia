@@ -8,7 +8,7 @@ test_that("estimateDominance", {
     expect_error((estimateDominance(esophagus, index = "shannon")))
 
     #Calculates DBP in two different ways, should get the same result.
-    expect_true(all(estimateDominance(esophagus)$DBP == estimateDominance(esophagus, index = "DBP")@colData$DBP))
+    expect_true(all(estimateDominance(esophagus)@colData$DBP == estimateDominance(esophagus, index = "DBP")@colData$DBP))
 
     #Calculates absolute in two different ways, should get the same result.
     expect_true(all(estimateDominance(esophagus, index = NULL, relative = FALSE, rank = 1)@colData$absolute ==
