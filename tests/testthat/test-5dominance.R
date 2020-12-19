@@ -2,28 +2,72 @@ context("estimateDominance")
 
 test_that("estimateDominance", {
 
-    data(esophagus)
+    # .simpson_dominance
+    #Tests function with input value 1, output should be 0.
+    x <- 1
+    expect_equal(mia:::.simpson_dominance(x), vegan::diversity(x, index = "simpson"))
+    #Tests function with input value 1/1000, output should be 0.9986673.
+    x <- 1:1000
+    expect_equal(mia:::.simpson_dominance(x), vegan::diversity(x, index = "simpson"))
 
-    #Calculates index that is not accepted, should get an error.
-    expect_error((estimateDominance(esophagus, index = "shannon")))
+    #.gini_dominance
+    #Tests function with vector that has value 1 1000 times, output should be 0.
+    x <- c(rep(1,1000))
+    expect_equal(mia:::.gini_dominance(x), reldist:::gini(x))
+    #Tests function with vector that has value 9 one time and value 0 999 times, output should be 0.999.
+    x <- c(9,rep(0,999))
+    expect_equal(mia:::.gini_dominance(x), reldist:::gini(x))
+    #Tests function with vector that has value 1 500 times and value 0 500 times, output should be 0.5.
+    x <- c(rep(0,500),rep(1,500))
+    expect_equal(mia:::.gini_dominance(x), reldist:::gini(x))
+    #Tests function with vector that has values 1,2,3,4,5,6,7,8,9, output should be 0.2962963.
+    x <- c(1:9)
+    expect_equal(mia:::.gini_dominance(x), reldist:::gini(x))
+    #Tests function with vector that has values 1,0,6,1000,2,4739,26,16,10,35,5,28, output should be 0.8738355.
+    x <- c(1,0,6,1000,2,4739,26,16,10,35,5,28)
+    expect_equal(mia:::.gini_dominance(x), reldist:::gini(x))
 
-    #Calculates DBP in two different ways, should get the same result.
-    expect_true(all(estimateDominance(esophagus)@colData$DBP == estimateDominance(esophagus, index = "DBP")@colData$DBP))
+    #.get_core_dominance
+    #Tests function with microbiome package's core_abundance function
+    data("esophagus")
+    tse <- esophagus
+    data("esophagus", package = "phyloseq")
+    phy <- esophagus
+    expect_equal(mia:::.get_core_dominance(tse), microbiome:::core_abundance(phy))
 
-    #Calculates absolute in two different ways, should get the same result.
-    expect_true(all(estimateDominance(esophagus, index = NULL, relative = FALSE, rank = 1)@colData$absolute ==
-                        estimateDominance(esophagus, index = "absolute")@colData$absolute))
+    #.get_dominance
+    #Tests function with microbiome's dominance_help function. Test all 4 indices with
+    #vector of 1000 random decimal numbers.
+    x <- runif(1000)
+    expect_equal(mia:::.get_dominance(x, index="absolute"), microbiome:::dominance_help(x, index="absolute"))
+    x <- runif(1000)
+    expect_equal(mia:::.get_dominance(x, index="relative"), microbiome:::dominance_help(x, index="relative"))
+    x <- runif(1000)
+    expect_equal(mia:::.get_dominance(x, index="DBP"), microbiome:::dominance_help(x, index="dbp"))
+    x <- runif(1000)
+    expect_equal(mia:::.get_dominance(x, index="DMN"), microbiome:::dominance_help(x, index="dmn"))
 
-    #Calculates relative in two different ways, should get the same result.
-    expect_true(all(estimateDominance(esophagus, index = NULL, relative = TRUE, rank = 1)@colData$relative ==
-                        estimateDominance(esophagus, index = "relative")@colData$relative))
-
-    #Calculates DBP in two different ways, should get the same result.
-    expect_true(all(estimateDominance(esophagus, index = NULL, relative = TRUE, rank = 1)@colData$DBP ==
-                        estimateDominance(esophagus, index = "DBP")@colData$DBP))
-
-    #Calculates DMN in two different ways, should get the same result.
-    expect_true(all(estimateDominance(esophagus, index = NULL, relative = TRUE, rank = 2)@colData$DMN ==
-                        estimateDominance(esophagus, index = "DMN")@colData$DMN))
+    #estimateDominance
+    #Calculates all indices.
+    tse_idx <- mia:::estimateDominance(tse)
+    #Checks that the type of output is the same as the type of input.
+    expect_true(typeof(tse_idx) == typeof(tse))
+    #Checks that every index is calculated by checking the column names from colData.
+    expect_true(all(
+        #1
+        "relative" %in% colnames(colData(tse_idx)),
+        #2
+        "DMN" %in% colnames(colData(tse_idx)),
+        #3
+        "absolute" %in% colnames(colData(tse_idx)),
+        #4
+        "DBP" %in% colnames(colData(tse_idx)),
+        #5
+        "gini" %in% colnames(colData(tse_idx)),
+        #6
+        "simpson" %in% colnames(colData(tse_idx)),
+        #7
+        "core_abundance" %in% colnames(colData(tse_idx))
+    ))
 
 })
