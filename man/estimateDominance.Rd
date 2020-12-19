@@ -2,30 +2,29 @@
 % Please edit documentation in R/estimateDominance.R
 \name{estimateDominance}
 \alias{estimateDominance}
-\alias{estimateDominance,MicrobiomeExperiment-method}
+\alias{estimateDominance,SummarizedExperiment-method}
 \title{Estimate Dominance}
 \usage{
 estimateDominance(
   x,
   abund_values = "counts",
-  index = "all",
-  rank = 1,
-  as_relative = TRUE,
+  index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
+  ntaxa = 1,
   aggregate = TRUE,
   name = index,
-  ...
+  ...,
+  BPPARAM = SerialParam()
 )
 
-\S4method{estimateDominance}{MicrobiomeExperiment}(
+\S4method{estimateDominance}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = "all",
-  rank = 1,
-  as_relative = TRUE,
+  index = c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"),
+  ntaxa = 1,
   aggregate = TRUE,
   name = index,
-  BPPARAM = SerialParam(),
-  ...
+  ...,
+  BPPARAM = SerialParam()
 )
 }
 \arguments{
@@ -39,31 +38,30 @@ to use for prevalence calculation.}
 
 \item{index}{Specifies the indices which are calculated.}
 
-\item{rank, ...}{additional arguments
-\itemize{
-\item{If \code{!is.null(rank)} arguments are passed on to
-\code{\link[=agglomerate-methods]{agglomerateByRank}}. See
-\code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
-}
-}}
-
-\item{as_relative}{logical scalar: Should the detection threshold be applied
-on compositional (relative) abundances? (default: \code{TRUE})}
+\item{ntaxa}{Optional. The rank of the dominant taxa to consider. Disregarded
+for the \code{index} \dQuote{gini}, \dQuote{simpson},
+\dQuote{core_abundance}, \dQuote{DBP} and \dQuote{DMN}.}
 
 \item{aggregate}{(Optional, default = TRUE) Aggregate the top members or not.
 If aggregate=TRUE, then the sum of relative abundances is returned.
 Otherwise the relative abundance is returned for the single taxa with
-the indicated rank.}
+the indicated rank. Disregarded
+for the \code{index} \dQuote{gini}, \dQuote{simpson},
+\dQuote{core_abundance}, \dQuote{DMN}.}
 
 \item{name}{A name for the column of the colData where the calculated
 Dominance indices should be stored in.}
 
+\item{...}{additional arguments}
+
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.}
+object specifying whether calculation of estimates should be parallelized.
+(Currently not used)}
 }
 \value{
-Returns ME object, that includes dominance indices in coldata.
+\code{x} with additional \code{\link{colData}} named
+\code{*name*}
 }
 \description{
 This function calculates the community dominance index.
@@ -75,44 +73,42 @@ This includes the \sQuote{DBP}, \sQuote{DMN}, \sQuote{Absolute},
 \code{estimateDominance} calculates the community dominance indices.
 }
 \examples{
-data(esophagus, package = "MicrobiomeExperiment")
-esophagus <- as(esophagus, "MicrobiomeExperiment")
+data(esophagus)
 
 #Calculates simpson dominance index
 esophagus <- estimateDominance(esophagus, index="simpson")
 #Shows all indices
 colData(esophagus)
 
-#Tries to calculate index that is not accepted. Gets an error.
-esophagus <- estimateDominance(esophagus, index="does_not_exist")
-#Tries to calculate index that is not accepted
-# and index that is accepted. Gets an error.
-esophagus <- estimateDominance(esophagus, index=c("dmn", "does_not_exist"))
-#Shows all indices
-colData(esophagus)
-
+#Indices must be written correctly (e.g. DBP, not dbp), otherwise an error
+# gets thrown
+\dontrun{esophagus <- estimateDominance(esophagus, index="dbp")}
 #Calculates DBP and Core Abundance indices
-esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
+esophagus <- estimateDominance(esophagus, index=c("DBP", "core_abundance"))
 #Shows all indices
 colData(esophagus)
 #Shows DBP index
-colData(esophagus)$dbp
+colData(esophagus)$DBP
 
 #Deletes DBP index
-colData(esophagus)$dbp <- NULL
+colData(esophagus)$DBP <- NULL
 #Shows all indices, DBP is deleted
 colData(esophagus)
 #Deletes all indices
 colData(esophagus) <- NULL
 
 #Names of columns can be chosen, but the length of arguments must match.
-esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"),
-name = c("index1", "index2"))
+esophagus <- estimateDominance(esophagus,
+                               index = c("DBP", "core_abundance"),
+                               name = c("index1", "index2"))
 #Shows all indices
 colData(esophagus)
 #If they do not match, gets an error.
-esophagus <- estimateDominance(esophagus, index="simpson",
-name = c("index3", "index4"))
+\dontrun{
+esophagus <- estimateDominance(esophagus,
+                               index="simpson",
+                               name = c("index3", "index4"))
+}
 #Shows all indices
 colData(esophagus)
 #Deletes all indices
@@ -120,11 +116,8 @@ colData(esophagus) <- NULL
 
 #Calculates all indices
 esophagus <- estimateDominance(esophagus)
-#Or you can calculate all indices by specify "all"
-esophagus <- estimateDominance(esophagus, index="all")
 #Shows all indices
 colData(esophagus)
-
 }
 \seealso{
 \itemize{
