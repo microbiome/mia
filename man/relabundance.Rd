@@ -38,6 +38,12 @@ to use for calculating the relative abundance.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to stor the calculated relative abundance.}
 }
+\value{
+For \code{relabundance} the matrix stored with the name
+\dQuote{relabundance}.
+For \code{relAbundanceCounts} a modified \code{x} containing the relative
+abundances as an assay defined by \code{name}.
+}
 \description{
 \code{relabundance} is a getter/setter for relative abundance stored in the
 assay slot \sQuote{relabundance} of a
@@ -46,7 +52,6 @@ object
 }
 \examples{
 data(GlobalPatterns)
-me <- as(GlobalPatterns,"MicrobiomeExperiment")
-me <- relAbundanceCounts(me)
-relabundance(me)
+GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
+relabundance(GlobalPatterns)
 }

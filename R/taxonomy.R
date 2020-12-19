@@ -37,9 +37,9 @@
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 #'   removed if \code{na.rm = TRUE} before agglomeration.
 #'
-#' @param with_type \code{TRUE} or \code{FALSE}: Should the level be add as a
+#' @param with_rank \code{TRUE} or \code{FALSE}: Should the level be add as a
 #'   suffix? For example: "Phylum:Crenarchaeota" (default:
-#'   \code{with_type = FALSE})
+#'   \code{with_rank = FALSE})
 #'
 #' @param make_unique \code{TRUE} or \code{FALSE}: Should the labels be made
 #'   unique, if there are any duplicates? (default: \code{make_unique = TRUE})
@@ -204,7 +204,7 @@ setGeneric("getTaxonomyLabels",
 #' @export
 setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     function(x, empty.fields = c(NA, "", " ", "\t", "-"),
-             with_type = FALSE, make_unique = TRUE, resolve_loops = FALSE){
+             with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE){
         # input check
         if(ncol(rowData(x)) == 0L){
             stop("rowData needs to be populated.", call. = FALSE)
@@ -214,8 +214,8 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
             stop("'empty.fields' must be a character vector with one or ",
                  "more values.", call. = FALSE)
         }
-        if(!.is_a_bool(with_type)){
-            stop("'with_type' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(with_rank)){
+            stop("'with_rank' must be TRUE or FALSE.", call. = FALSE)
         }
         if(!.is_a_bool(make_unique)){
             stop("'make_unique' must be TRUE or FALSE.", call. = FALSE)
@@ -232,7 +232,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         }
         ans <- .get_taxonomic_label(x[!dup,],
                                     empty.fields = empty.fields,
-                                    with_type = with_type,
+                                    with_rank = with_rank,
                                     make_unique = make_unique,
                                     resolve_loops = resolve_loops)
         if(any(dup)){
@@ -248,14 +248,8 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-
 #' @importFrom IRanges CharacterList LogicalList
-.get_taxonomic_label <- function(x, empty.fields = c(NA, "", " ", "\t", "-"),
-                                 with_type = FALSE, make_unique = TRUE,
-                                 resolve_loops = FALSE){
-    rd <- rowData(x)
-    tax_cols <- .get_tax_cols_from_se(x)
-
+.get_tax_ranks_selected <- function(x,rd, tax_cols, empty.fields){
     # We need DataFrame here to handle cases with a single entry in tax_cols
     charlist <- CharacterList(t(rd[,tax_cols, drop=FALSE]))
     tax_ranks_non_empty <- !is.na(charlist) &
@@ -265,7 +259,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     tax_ranks_selected <- apply(tax_ranks_non_empty,1L,which)
     if(any(lengths(tax_ranks_selected) == 0L)){
         if(!anyDuplicated(rownames(x))){
-            return(rownames(x))
+            return(NULL)
         }
         stop("Only empty taxonomic information detected. Some rows contain ",
              "only entries selected by 'empty.fields'. Cannot generated ",
@@ -283,17 +277,33 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     } else {
         stop(".")
     }
+    tax_ranks_selected
+}
+
+.add_taxonomic_type <- function(rd, ans, tax_cols_selected){
+    sep <- rep(":", length(ans))
+    tax_cols_selected <- unlist(tax_cols_selected)
+    # sep[tax_cols_selected != max(tax_cols_selected)] <- "::"
+    types <- colnames(rd)[tax_cols_selected]
+    ans <- paste0(types, sep, ans)
+    ans
+}
+
+.get_taxonomic_label <- function(x, empty.fields = c(NA, "", " ", "\t", "-"),
+                                 with_rank = FALSE, make_unique = TRUE,
+                                 resolve_loops = FALSE){
+    rd <- rowData(x)
+    tax_cols <- .get_tax_cols_from_se(x)
+    tax_ranks_selected <- .get_tax_ranks_selected(x, rd, tax_cols, empty.fields)
+    if(is.null(tax_ranks_selected)){
+        return(rownames(x))
+    }
     tax_cols_selected <- tax_cols[tax_ranks_selected]
-    u_tax_cols_selected <- sort(unique(tax_cols_selected))
-    u_tax_cols_selected <- seq.int(which(tax_cols == min(u_tax_cols_selected)),
-                                   which(tax_cols == max(u_tax_cols_selected)))
-    u_tax_cols_selected <- tax_cols[u_tax_cols_selected]
     # resolve loops
-    if(length(u_tax_cols_selected) > 1L &&
-       !anyDuplicated(rd[,u_tax_cols_selected]) &&
-       resolve_loops){
-        td <- suppressWarnings(resolveLoop(as.data.frame(rd[,u_tax_cols_selected])))
-        rd[,u_tax_cols_selected] <- as(td,"DataFrame")
+    if(resolve_loops){
+        td <- as.data.frame(rd[,tax_cols])
+        td <- suppressWarnings(resolveLoop(td))
+        rd[,tax_cols] <- as(td,"DataFrame")
         rm(td)
     }
     #
@@ -303,12 +313,8 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
                   tax_cols_selected,
                   SIMPLIFY = FALSE)
     ans <- unlist(ans, use.names = FALSE)
-    if(with_type || !all_same_rank){
-        sep <- rep(":", length(ans))
-        tax_cols_selected <- unlist(tax_cols_selected)
-        # sep[tax_cols_selected != max(tax_cols_selected)] <- "::"
-        types <- colnames(rd)[tax_cols_selected]
-        ans <- paste0(types, sep, ans)
+    if(with_rank || !all_same_rank){
+        ans <- .add_taxonomic_type(rd, ans, tax_cols_selected)
     }
     ans
 }
@@ -328,17 +334,20 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
         td <- td[,!vapply(td,function(tl){all(is.na(tl))},logical(1))]
         # Make information unique
         td_NA <- DataFrame(lapply(td,is.na))
-        td <- as(suppressWarnings(resolveLoop(as.data.frame(td))),"DataFrame")
+        td <- as.data.frame(td)
+        td <- as(suppressWarnings(resolveLoop(td)),"DataFrame")
         # Build tree
         tree <- toTree(td)
         tree$tip.label <- paste0(colnames(td)[ncol(td)],":",tree$tip.label)
         # remove empty nodes
         for(i in rev(seq_len(ncol(td)))){
-            to_drop <- paste0(colnames(td)[i],":",td[,i][td_NA[,i]])
-            tree <- ape::drop.tip(tree,
-                                  to_drop,
-                                  trim.internal = FALSE,
-                                  collapse.singles = FALSE)
+            if(any(td_NA[,i])){
+                to_drop <- paste0(colnames(td)[i],":",td[,i][td_NA[,i]])
+                tree <- ape::drop.tip(tree,
+                                      to_drop,
+                                      trim.internal = FALSE,
+                                      collapse.singles = FALSE)
+            }
         }
         tree
     }
@@ -354,9 +363,10 @@ setGeneric("addTaxonomyTree",
 #' @export
 setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
+        #
         tree <- taxonomyTree(x)
         x <- as(x,"TreeSummarizedExperiment")
-        rownames(x) <- getTaxonomyLabels(x, with_type = TRUE,
+        rownames(x) <- getTaxonomyLabels(x, with_rank = TRUE,
                                          resolve_loops = TRUE,
                                          make_unique = FALSE)
         x <- changeTree(x, tree, rownames(x))

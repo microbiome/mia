@@ -105,8 +105,7 @@ setGeneric("agglomerateByRank",
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
-       empty.fields = c(NA, "", " ", "\t", "-"), agglomerateTree = FALSE, ...){
-
+       empty.fields = c(NA, "", " ", "\t", "-"), ...){
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
@@ -122,11 +121,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             stop("taxonomyData needs to be populated.", call. = FALSE)
         }
         .check_taxonomic_rank(rank, x)
-        if(!.is_a_bool(agglomerateTree)){
-            stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
-        }
         .check_for_taxonomic_data_order(x)
-
 
         # Make a vector from the taxonomic data.
         col <- which( taxonomyRanks(x) %in% rank )
@@ -150,7 +145,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
 
         # merge taxa
-        x <- mergeRows(x, f = tax_factors, mergeTree = agglomerateTree, ...)
+        x <- mergeRows(x, f = tax_factors, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
@@ -184,5 +179,23 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
             altExps(x) <- NULL
         }
         callNextMethod(x, ...)
+    }
+)
+
+
+#' @rdname agglomerate-methods
+#' @export
+setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
+    function(x, ..., agglomerateTree = FALSE){
+        # input check
+        if(!.is_a_bool(agglomerateTree)){
+            stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
+        }
+        #
+        x <- callNextMethod(x, ...)
+        if(agglomerateTree){
+            x <- addTaxonomyTree(x)
+        }
+        x
     }
 )

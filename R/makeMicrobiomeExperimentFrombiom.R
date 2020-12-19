@@ -51,6 +51,7 @@ makeMicrobiomeExperimentFromBiom <- function(obj){
     sample_data <- biomformat::sample_metadata(obj)
     feature_data <- biomformat::observation_metadata(obj)
 
-    MicrobiomeExperiment(assays = list(counts = counts), colData = sample_data,
+    MicrobiomeExperiment(assays = list(counts = counts),
+                         colData = sample_data,
                          rowData = feature_data)
 }

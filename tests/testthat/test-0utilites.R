@@ -9,7 +9,7 @@ test_that("meltAssay", {
                  'argument "add_col_data" is missing')
     expect_error(mia:::.norm_add_col_data(TRUE),
                  'argument "x" is missing')
-    data(GlobalPatterns, package = "MicrobiomeExperiment")
+    data(GlobalPatterns)
     x <- GlobalPatterns
     actual <- mia:::.norm_add_row_data(TRUE, x)
     expect_equal(actual, colnames(rowData(x)))

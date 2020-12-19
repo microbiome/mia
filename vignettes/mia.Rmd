@@ -33,11 +33,11 @@ library("mia")
 
 ```{r}
 data(GlobalPatterns)
-me <- as(GlobalPatterns,"MicrobiomeExperiment")
-me
+se <- GlobalPatterns
+se
 ```
 
-# Functions for working microbiome data
+# Functions for working with microbiome data
 
 ## Merging and agglomeration based on taxonomic information.
 
@@ -50,17 +50,17 @@ page via `?mergeRows`.
 
 ```{r}
 # print the available taxonomic ranks
-colnames(rowData(me))
-taxonomyRanks(me)
+colnames(rowData(se))
+taxonomyRanks(se)
 
 # agglomerate at the Family taxonomic rank
-x1 <- agglomerateByRank(me, rank = "Family")
+x1 <- agglomerateByRank(se, rank = "Family")
 ## How many taxa before/after agglomeration?
-nrow(me)
+nrow(se)
 nrow(x1)
 
 # with agglomeration of the tree
-x2 <- agglomerateByRank(me, rank = "Family",
+x2 <- agglomerateByRank(se, rank = "Family",
                         agglomerateTree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
@@ -78,7 +78,7 @@ experiment in the object of origin. With this synchronized sample subseting
 becomes very easy.
 
 ```{r}
-altExp(me, "family") <- x2
+altExp(se, "family") <- x2
 ```
 
 Keep in mind, that rows with `NA` or similar value (via the 
@@ -86,21 +86,21 @@ Keep in mind, that rows with `NA` or similar value (via the
 on this different number of rows will be returned.
 
 ```{r}
-x1 <- agglomerateByRank(me, rank = "Species", na.rm = TRUE)
-altExp(me,"species") <- agglomerateByRank(me, rank = "Species", na.rm = FALSE)
+x1 <- agglomerateByRank(se, rank = "Species", na.rm = TRUE)
+altExp(se,"species") <- agglomerateByRank(se, rank = "Species", na.rm = FALSE)
 dim(x1)
-dim(altExp(me,"species"))
+dim(altExp(se,"species"))
 ```
 
 ## Constructing a tree from taxonomic data
 
 ```{r}
-taxa <- rowData(altExp(me,"species"))[,taxonomyRanks(me)]
+taxa <- rowData(altExp(se,"species"))[,taxonomyRanks(se)]
 taxa_res <- resolveLoop(as.data.frame(taxa))
 taxa_tree <- toTree(data = taxa_res)
-taxa_tree$tip.label <- getTaxonomyLabels(altExp(me,"species"))
-rowNodeLab <- getTaxonomyLabels(altExp(me,"species"), make_unique = FALSE)
-altExp(me,"species") <- changeTree(altExp(me,"species"),
+taxa_tree$tip.label <- getTaxonomyLabels(altExp(se,"species"))
+rowNodeLab <- getTaxonomyLabels(altExp(se,"species"), make_unique = FALSE)
+altExp(se,"species") <- changeTree(altExp(se,"species"),
                                    rowTree = taxa_tree,
                                    rowNodeLab = rowNodeLab)
 ```
@@ -116,10 +116,10 @@ are available.
 column-wise assay data subsetting.
 
 ```{r}
-abund <- getAbundanceSample(me, "CC1", abund_values = "counts")
-all(abund == assay(me, "counts")[,"CC1"])
-abund <- getAbundanceFeature(me, "522457", abund_values = "counts")
-all(abund == assay(me, "counts")["522457",])
+abund <- getAbundanceSample(se, "CC1", abund_values = "counts")
+all(abund == assay(se, "counts")[,"CC1"])
+abund <- getAbundanceFeature(se, "522457", abund_values = "counts")
+all(abund == assay(se, "counts")["522457",])
 ```
 
 ## Selecting most interesing features 
@@ -127,7 +127,7 @@ all(abund == assay(me, "counts")["522457",])
 `getTopTaxa` returns a vector of the most `top` abundant feature IDs.
 
 ```{r}
-top_taxa <- getTopTaxa(me,
+top_taxa <- getTopTaxa(se,
                        method="mean",
                        top=5,
                        abund_values="counts")
@@ -139,7 +139,7 @@ top_taxa
 To generate tidy data as used and required in most of the tidyverse, `meltAssay`
 
 ```{r}
-molten_data <- meltAssay(me,
+molten_data <- meltAssay(se,
                          add_row_data = TRUE,
                          add_col_data = TRUE,
                          abund_values = "counts")

@@ -18,17 +18,21 @@
 #' @param value a \code{matrix} to store as the the \sQuote{relabundance} assay
 #' @param ... optional arguments not used currently.
 #'
-#' @name relabundance
+#' @return
+#' For \code{relabundance} the matrix stored with the name
+#' \dQuote{relabundance}.
+#' For \code{relAbundanceCounts} a modified \code{x} containing the relative
+#' abundances as an assay defined by \code{name}.
 #'
-#' @importFrom SummarizedExperiment assays assays<-
+#'
+#' @name relabundance
 #'
 #' @export
 #'
 #' @examples
 #' data(GlobalPatterns)
-#' me <- as(GlobalPatterns,"MicrobiomeExperiment")
-#' me <- relAbundanceCounts(me)
-#' relabundance(me)
+#' GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
+#' relabundance(GlobalPatterns)
 NULL
 
 #' @rdname relabundance
@@ -43,6 +47,7 @@ setGeneric("relAbundanceCounts", signature = c("x"),
                standardGeneric("relAbundanceCounts"))
 
 #' @rdname relabundance
+#' @importFrom SummarizedExperiment assays
 #' @export
 setMethod("relabundance",signature = c(x = "SummarizedExperiment"),
     function(x){
@@ -51,6 +56,7 @@ setMethod("relabundance",signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname relabundance
+#' @importFrom SummarizedExperiment assays<-
 #' @export
 setReplaceMethod("relabundance", signature = c(x = "SummarizedExperiment"),
     function(x, value){

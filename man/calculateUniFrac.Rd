@@ -112,5 +112,5 @@ microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
 }
 \author{
 Paul J. McMurdie.
-Adapted for MicrobiomeExperiment by Felix G.M. Ernst
+Adapted for mia by Felix G.M. Ernst
 }

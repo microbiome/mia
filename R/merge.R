@@ -178,6 +178,21 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+.merge_tree <- function(tree, links){
+    tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
+    drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
+    oldTree <- tree
+    newTree <- ape::drop.tip(oldTree, tip = drop_tip)
+    track <- trackNode(oldTree)
+    track <- ape::drop.tip(track, tip = drop_tip)
+    #
+    oldAlias <- links$nodeLab_alias
+    newNode <- convertNode(tree = track, node = oldAlias)
+    newAlias <- convertNode(tree = newTree, node = newNode)
+    #
+    list(newTree = newTree, newAlias = newAlias)
+}
+
 #' @rdname merge-methods
 #' @importFrom ape keep.tip
 #' @export
@@ -190,11 +205,13 @@ setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
         #
         x <- callNextMethod(x, f, archetype = 1L, ...)
         # optionally merge rowTree
-        row_tree <- rowTree(x)
-        if(!is.null(row_tree) && mergeTree){
-            row_leaf <- convertNode(tree = row_tree, node = rowLinks(x)$nodeNum)
-            row_tree <- ape::keep.tip(phy = row_tree, tip = row_leaf)
-            x <- changeTree(x, rowTree = row_tree)
+        tree <- rowTree(x)
+        if(!is.null(tree) && mergeTree){
+            tmp <- .merge_tree(tree, rowLinks(x))
+            #
+            x <- changeTree(x = x,
+                            rowTree = tmp$newTree,
+                            rowNodeLab = tmp$newAlias)
         }
         x
     }
@@ -212,11 +229,14 @@ setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
         #
         x <- callNextMethod(x, f, archetype = 1L, ...)
         # optionally merge colTree
-        col_tree <- colTree(x)
-        if(!is.null(col_tree) && mergeTree){
-            col_leaf <- convertNode(tree = col_tree, node = colLinks(x)$nodeNum)
-            col_tree <- ape::keep.tip(phy = col_tree, tip = col_leaf)
-            x <- changeTree(x, colTree = col_tree)
+        tree <- colTree(x)
+        if(!is.null(tree) && mergeTree){
+            tmp <- .merge_tree(tree, colLinks(x))
+            #
+            x <- changeTree(x = x,
+                            colTree = tmp$newTree,
+                            colNodeLab = tmp$newAlias)
         }
+        x
     }
 )

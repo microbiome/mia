@@ -19,8 +19,11 @@ Currently following things are implemented:
 - CCA analysis via `vegan` package
 - Bray-Curtis dissimilarity via `vegan` package
 - MDS via the `scater` package
-- alpha diversity calculation via the `breakaway` package
 - import functions for `biom` data, `DADA2` objects and `phyloseq` objects
+
+## ToDo
+
+- if `breakaway` ends up on CRAN or Bioconductor, alpha diversity calculation via the `breakaway` package
 
 # Contribution
 

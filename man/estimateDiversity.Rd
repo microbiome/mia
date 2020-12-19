@@ -2,26 +2,28 @@
 % Please edit documentation in R/estimateDiversity.R
 \name{estimateDiversity}
 \alias{estimateDiversity}
+\alias{estimateAlphaDiversity}
 \alias{estimateShannon}
 \alias{estimateSimpson}
 \alias{estimateInvSimpson}
 \alias{estimateRichness}
-\alias{estimateShannonE}
 \alias{estimateDiversity,SummarizedExperiment-method}
+\alias{estimateAlphaDiversity,SummarizedExperiment-method}
 \alias{estimateShannon,SummarizedExperiment-method}
 \alias{estimateSimpson,SummarizedExperiment-method}
 \alias{estimateInvSimpson,SummarizedExperiment-method}
 \alias{estimateRichness,SummarizedExperiment-method}
-\alias{estimateShannonE,SummarizedExperiment-method}
 \title{Estimate alpha diversity}
 \usage{
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "shannon_e", "simpson", "inv_simpson", "richness"),
+  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE"),
   name = index,
   ...
 )
+
+estimateAlphaDiversity(x, ...)
 
 estimateShannon(x, ...)
 
@@ -31,16 +33,16 @@ estimateInvSimpson(x, ...)
 
 estimateRichness(x, ...)
 
-estimateShannonE(x, ...)
-
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "shannon_e", "simpson", "inv_simpson", "richness"),
+  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE"),
   name = index,
-  BPPARAM = SerialParam(),
-  ...
+  ...,
+  BPPARAM = SerialParam()
 )
+
+\S4method{estimateAlphaDiversity}{SummarizedExperiment}(x, ...)
 
 \S4method{estimateShannon}{SummarizedExperiment}(x, ...)
 
@@ -49,8 +51,6 @@ estimateShannonE(x, ...)
 \S4method{estimateInvSimpson}{SummarizedExperiment}(x, ...)
 
 \S4method{estimateRichness}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateShannonE}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -63,12 +63,12 @@ sample-wise estimates}
 \item{name}{a name for the column of the colData the results should be stored
 in.}
 
-\item{...}{additional parameters passed to \code{estimateDiversity} or the
-corresponding function implemented by the \code{breakaway} package.}
+\item{...}{additional parameters passed to \code{estimateDiversity}}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.}
+object specifying whether calculation of estimates should be parallelized.
+(Currently not used)}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named
@@ -76,11 +76,11 @@ object specifying whether calculation of estimates should be parallelized.}
 }
 \description{
 Several functions for calculation of alpha diversity indices available via
-wrapper functions. They are implemented via the \code{breakaway} package.
+wrapper functions. They are implemented via the \code{vegan} package.
 }
 \details{
-This includes the \sQuote{Shannon}, \sQuote{Shannon-E}, \sQuote{Simpson},
-\sQuote{inverse Simpson} and \sQuote{Richness} diversity measures.
+This includes the \sQuote{Shannon}, \sQuote{Simpson} and
+\sQuote{inverse Simpson} diversity measures.
 }
 \examples{
 data(GlobalPatterns)
@@ -100,9 +100,9 @@ library(scater)
 plotColData(se, "shannon")
 # ... by sample type
 plotColData(se, "shannon", "SampleType")
-\dontrun{
+\donttest{
 # combining different plots
-plots <- lapply(c("shannon","simpson","richness"),
+plots <- lapply(c("shannon","simpson"),
                 plotColData,
                 object = se,
                 x = "SampleType",
@@ -114,11 +114,7 @@ ggpubr::ggarrange(plotlist = plots, nrow = 1, common.legend = TRUE, legend = "ri
 \seealso{
 \code{\link[scater:plotColData]{plotColData}}
 \itemize{
-\item{\code{\link[=estimateBreakway]{estimateBreakway}}}
-\item{\code{\link[breakaway:sample_inverse_simpson]{sample_inverse_simpson}}}
-\item{\code{\link[breakaway:sample_simpson]{sample_simpson}}}
-\item{\code{\link[breakaway:sample_richness]{sample_richness}}}
-\item{\code{\link[breakaway:sample_shannon]{sample_shannon}}}
-\item{\code{\link[breakaway:sample_shannon_e]{sample_shannon_e}}}
+\item{\code{\link[vegan:diversity]{diversity}}}
+\item{\code{\link[vegan:specpool]{estimateR}}}
 }
 }

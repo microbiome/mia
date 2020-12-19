@@ -5,6 +5,7 @@
 \alias{agglomerateByRank,SummarizedExperiment-method}
 \alias{agglomerateByRank}
 \alias{agglomerateByRank,SingleCellExperiment-method}
+\alias{agglomerateByRank,TreeSummarizedExperiment-method}
 \title{Agglomerate taxa of the same type.}
 \usage{
 \S4method{agglomerateByRank}{SummarizedExperiment}(
@@ -13,11 +14,12 @@
   onRankOnly = FALSE,
   na.rm = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-"),
-  agglomerateTree = FALSE,
   ...
 )
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
+
+\S4method{agglomerateByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
 }
 \arguments{
 \item{x}{\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
@@ -38,10 +40,6 @@ will be dropped. This setting can be tweaked by defining
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration.}
 
-\item{agglomerateTree}{\code{TRUE} or \code{FALSE}: should to
-\code{rowTree()} also be agglomerated? (Default:
-\code{agglomerateTree = FALSE})}
-
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects,
 \code{\link[=merge-methods]{mergeRows}} and
@@ -54,6 +52,10 @@ containing the input data.}
 experiments be removed prior to agglomeration? This prohibits to many
 nested alternative experiments by default (default:
 \code{strip_altexp = TRUE})}
+
+\item{agglomerateTree}{\code{TRUE} or \code{FALSE}: should to
+\code{rowTree()} also be agglomerated? (Default:
+\code{agglomerateTree = FALSE})}
 }
 \value{
 A taxonomically-agglomerated, optionally-pruned object of the same
