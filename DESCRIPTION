@@ -1,13 +1,14 @@
 Package: mia
 Type: Package
-Version: 0.98.20
+Version: 0.98.21
 Date: 2020-12-17
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
              comment = c(ORCID = "0000-0001-5064-0928")),
       person(given = "Sudarshan", family = "Shetty", role = c("aut")),
-      person(given = "Leo", family = "Lahti", role = c("aut")),      
+      person(given = "Leo", family = "Lahti", role = c("aut")),      ,
+      person(given = "Tuomas", family = "Borman", role = c("ctb")),      
       person(given = "Nathan D.", family = "Olson", role = c("ctb"),
              email = "nolson@@umiacs.umd.edu"),
       person(given = "Levi", family = "Waldron", role = c("ctb")),
@@ -15,7 +16,7 @@ Authors@R:
       person(given = "Héctor", family = "Corrada Bravo", role = c("ctb")),
       person(given = "Jayaram", family = "Kancherla", role=c("ctb")))
 Title: Microbiome analysis
-Description: 
+Description:
     mia implements tools for microbiome analysis based on the 
     SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment 
     infrastructure. Data wrangling and analysis are the main scope of this 
@@ -46,6 +47,9 @@ Imports:
     DelayedMatrixStats,
     scuttle,
     scater,
+    stats,
+    utils,
+    ape,
     DirichletMultinomial,
     stringr,
     ggplot2,
@@ -60,7 +64,8 @@ Suggests:
     ggpubr,
     phyloseq,
     dada2,
-    biomformat
+    biomformat,
+    reldist
 Remotes:
     github::FelixErnst/MicrobiomeExperiment
 Roxygen: list(markdown = TRUE)
