@@ -53,21 +53,7 @@ test_that("estimateDominance", {
     #Checks that the type of output is the same as the type of input.
     expect_true(typeof(tse_idx) == typeof(tse))
     #Checks that every index is calculated by checking the column names from colData.
-    expect_true(all(
-        #1
-        "relative" %in% colnames(colData(tse_idx)),
-        #2
-        "DMN" %in% colnames(colData(tse_idx)),
-        #3
-        "absolute" %in% colnames(colData(tse_idx)),
-        #4
-        "DBP" %in% colnames(colData(tse_idx)),
-        #5
-        "gini" %in% colnames(colData(tse_idx)),
-        #6
-        "simpson" %in% colnames(colData(tse_idx)),
-        #7
-        "core_abundance" %in% colnames(colData(tse_idx))
-    ))
+    #Checks also, that the order of indices is right / the same as the order in the input vector.
+    expect_named(colData(tse_idx), c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"))
 
 })
