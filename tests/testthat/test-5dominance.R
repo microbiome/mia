@@ -3,12 +3,12 @@ context("estimateDominance")
 test_that("estimateDominance", {
 
     # .simpson_dominance
-    #Tests function with input value 1, output should be 0.
+    #Tests function with input value 1, output should be 1.
     x <- 1
-    expect_equal(mia:::.simpson_dominance(x), vegan::diversity(x, index = "simpson"))
-    #Tests function with input value 1/1000, output should be 0.9986673.
-    x <- 1:1000
-    expect_equal(mia:::.simpson_dominance(x), vegan::diversity(x, index = "simpson"))
+    expect_equal(mia:::.simpson_dominance(x), 1)
+    #Tests function with input vector, output should be 0.2048374906.
+    x <- c(1,5,2,3,0,10,3,20,3,16)
+    expect_equal(mia:::.simpson_dominance(x), 0.2048374906)
 
     #.gini_dominance
     #Tests function with vector that has value 1 1000 times, output should be 0.
