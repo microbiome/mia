@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate distances for all sample pairs — calculateDistance • mia</title>
+<title>Prevalent abundance — getPrevalentAbundance • mia</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,8 @@
 
 
 
-<meta property="og:title" content="Calculate distances for all sample pairs — calculateDistance" />
-<meta property="og:description" content="calculateDistance calculates a distance matrix between samples. The
-type of distance calculate can be modifier by setting FUN, which
-expects a function with a matrix input as its first argument." />
+<meta property="og:title" content="Prevalent abundance — getPrevalentAbundance" />
+<meta property="og:description" content="This function calculates the joint abundance of the prevalent taxa." />
 
 
 
@@ -108,30 +106,19 @@ expects a function with a matrix input as its first argument." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate distances for all sample pairs</h1>
+    <h1>Prevalent abundance</h1>
     
-    <div class="hidden name"><code>calculateDistance.Rd</code></div>
+    <div class="hidden name"><code>getPrevalentAbundance.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>calculateDistance</code> calculates a distance matrix between samples. The
-type of distance calculate can be modifier by setting <code>FUN</code>, which
-expects a function with a matrix input as its first argument.</p>
+    <p>This function calculates the joint abundance of the prevalent taxa.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>calculateDistance</span><span class='op'>(</span><span class='va'>x</span>, FUN <span class='op'>=</span> <span class='fu'>stats</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/stats/dist.html'>dist</a></span>, <span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for ANY</span>
-<span class='fu'>calculateDistance</span><span class='op'>(</span><span class='va'>x</span>, FUN <span class='op'>=</span> <span class='fu'>stats</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/stats/dist.html'>dist</a></span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>calculateDistance</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  FUN <span class='op'>=</span> <span class='fu'>stats</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/stats/dist.html'>dist</a></span>,
-  exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  transposed <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,61 +127,38 @@ expects a function with a matrix input as its first argument.</p>
       <th>x</th>
       <td><p>a
 <code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code>
-object containing a tree.</p></td>
+object</p></td>
     </tr>
     <tr>
-      <th>FUN</th>
-      <td><p>a <code>function</code> for distance calculation. The function must
-expect the input matrix as its first argument. Samples have to be rows and
-feature columns.</p></td>
+      <th>abund_values</th>
+      <td><p>A single character value for selecting the
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assay</a></code>
+to use for prevalence calculation.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>other arguments passed onto <code>FUN</code></p></td>
-    </tr>
-    <tr>
-      <th>exprs_values</th>
-      <td><p>a single <code>character</code> value for specifying which assay to
-use for calculation.</p></td>
-    </tr>
-    <tr>
-      <th>transposed</th>
-      <td><p>Logical scalar, is x transposed with cells in rows?</p></td>
+      <td><p>additional parameters passed to <code>getPrevalentAbundance</code></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a sample-by-sample distance matrix, suitable for NMDS, etc.</p>
+    <p>a named <code>numeric</code> vector. It includes joint abundance of prevalent taxa,
+that is calculated for individual samples.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The core abundance index gives the relative proportion of the core
+species (in between 0 and 1). The core taxa are defined as those that exceed the
+given population prevalence threshold at the given detection level.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Leo Lahti and Tuomas Borman. Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># generate some example data</span>
-<span class='va'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>60</span>, nrow <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span>
-<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'>DataFrame</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>SummarizedExperiment</span><span class='op'>(</span>assays <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>counts <span class='op'>=</span> <span class='va'>mat</span><span class='op'>)</span>,
-                           rowData <span class='op'>=</span> <span class='va'>df</span><span class='op'>)</span>
-<span class='co'>#</span>
-<span class='fu'>calculateDistance</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;            1         2         3         4         5         6         7
-#&gt; 2   14.69694                                                            
-#&gt; 3   29.39388  14.69694                                                  
-#&gt; 4   44.09082  29.39388  14.69694                                        
-#&gt; 5   58.78775  44.09082  29.39388  14.69694                              
-#&gt; 6   73.48469  58.78775  44.09082  29.39388  14.69694                    
-#&gt; 7   88.18163  73.48469  58.78775  44.09082  29.39388  14.69694          
-#&gt; 8  102.87857  88.18163  73.48469  58.78775  44.09082  29.39388  14.69694
-#&gt; 9  117.57551 102.87857  88.18163  73.48469  58.78775  44.09082  29.39388
-#&gt; 10 132.27245 117.57551 102.87857  88.18163  73.48469  58.78775  44.09082
-#&gt;            8         9
-#&gt; 2                     
-#&gt; 3                     
-#&gt; 4                     
-#&gt; 5                     
-#&gt; 6                     
-#&gt; 7                     
-#&gt; 8                     
-#&gt; 9   14.69694          
-#&gt; 10  29.39388  14.69694</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
+<span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>esophagus</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;         B         C         D 
+#&gt; 0.9605911 0.8980392 0.9086758 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
