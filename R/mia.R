@@ -4,11 +4,10 @@
 #'
 #' @name mia-package
 #' @docType package
-#' @seealso \link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment} class
+#' @seealso \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment} class
 NULL
 
 #' @import methods
-#' @import MicrobiomeExperiment
 #' @import TreeSummarizedExperiment
 #' @import scater
 #' @importFrom dplyr %>%

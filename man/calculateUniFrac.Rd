@@ -27,7 +27,7 @@ runUniFrac(
 }
 \arguments{
 \item{x}{a numeric matrix or a
-\code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object containing a tree.
 
 Please  note that \code{runUniFrac} expects a matrix with samples per row
@@ -66,7 +66,7 @@ a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
 This function calculates the (Fast) UniFrac distance for all sample-pairs
-in a \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}} object.
+in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 }
 \details{
 Please not that if \code{calculateUniFrac} is used as a \code{FUN} for

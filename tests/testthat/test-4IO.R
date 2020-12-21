@@ -181,45 +181,45 @@
 # treefilename = system.file("extdata", "biom-tree.phy",  package="MicrobiomeExperiment")
 # refseqfilename = system.file("extdata", "biom-refseq.fasta",  package="MicrobiomeExperiment")
 
-test_that("Importing biom files yield MicrobiomeExperiment objects", {
+test_that("Importing biom files yield TreeSummarizedExperiment objects", {
     skip_if_not_installed("biomformat")
     rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
                                    package = "biomformat")
     me <- loadFromBiom(rich_dense_file)
-    expect_s4_class(me, "MicrobiomeExperiment")
+    expect_s4_class(me, "TreeSummarizedExperiment")
     # load from object
     x1 <- biomformat::read_biom(rich_dense_file)
-    me2 <- makeMicrobiomeExperimentFromBiom(x1)
-    expect_s4_class(me2, "MicrobiomeExperiment")
+    me2 <- makeTreeSummarizedExperimentFromBiom(x1)
+    expect_s4_class(me2, "TreeSummarizedExperiment")
     expect_equal(dim(me), dim(me2))
     expect_equal(rowData(me), rowData(me2))
 })
 
-test_that("Importing phyloseq objects yield MicrobiomeExperiment objects", {
+test_that("Importing phyloseq objects yield TreeSummarizedExperiment objects", {
     skip_if_not_installed("phyloseq")
     data(GlobalPatterns, package="phyloseq")
-    me <- makeMicrobiomeExperimentFromphyloseq(GlobalPatterns)
-    expect_s4_class(me, "MicrobiomeExperiment")
+    me <- makeTreeSummarizedExperimentFromphyloseq(GlobalPatterns)
+    expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(19216,26))
     data(enterotype, package="phyloseq")
-    me <- makeMicrobiomeExperimentFromphyloseq(enterotype)
-    expect_s4_class(me, "MicrobiomeExperiment")
+    me <- makeTreeSummarizedExperimentFromphyloseq(enterotype)
+    expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(553,280))
     data(esophagus, package="phyloseq")
-    me <- makeMicrobiomeExperimentFromphyloseq(esophagus)
-    expect_s4_class(me, "MicrobiomeExperiment")
+    me <- makeTreeSummarizedExperimentFromphyloseq(esophagus)
+    expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(58,3))
 })
 
-test_that("Importing dada2 objects yield MicrobiomeExperiment objects", {
+test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
     skip_if_not_installed("dada2")
     fnF <- system.file("extdata", "sam1F.fastq.gz", package="dada2")
     fnR = system.file("extdata", "sam1R.fastq.gz", package="dada2")
     dadaF <- dada2::dada(fnF, selfConsist=TRUE)
     dadaR <- dada2::dada(fnR, selfConsist=TRUE)
 
-    me <- makeMicrobiomeExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
-    expect_s4_class(me, "MicrobiomeExperiment")
+    me <- makeTreeSummarizedExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
+    expect_s4_class(me, "TreeSummarizedExperiment")
 })
 
 
