@@ -63,7 +63,8 @@ Suggests:
     ggpubr,
     phyloseq,
     dada2,
-    biomformat
+    biomformat,
+    reldist
 Remotes:
     github::FelixErnst/MicrobiomeExperiment
 Roxygen: list(markdown = TRUE)
