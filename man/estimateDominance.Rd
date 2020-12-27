@@ -71,6 +71,35 @@ This includes the \sQuote{DBP}, \sQuote{DMN}, \sQuote{Absolute},
 \sQuote{Relative}, \sQuote{Core Abundance}, \sQuote{Gini}
 
 \code{estimateDominance} calculates the community dominance indices.
+\itemize{
+\item{'DBP' }{Berger-Parker index is calculated similarly than relative index.
+DBP is the relative abundance of the most abundant species of the sample.}
+\item{'DMN' }{McNaughton’s index is the sum of relative abundances of the two most
+abundant species of the sample.}
+\item{'absolute' }{Absolute index equals to the absolute abundance of the most
+dominant species of the sample.}
+\item{'relative' }{Relative index equals to the relative abundance of the most
+dominant species of the sample.}
+\item{'simpson' }{Simpson's index, or Simpson's dominance index, is calculated
+by raising all relative abundances of species to the power of 2, and then summing them together.
+(($sum(p^2)$), where p is relative abundances). In different relations,
+Simpson index can be mean variations of Simpson index. For example,
+sometimes the name ‘Simpson’ is used misleadingly when using ‘inverse Simpson’ or
+‘Gini-Simpson’ indices. (Thukral et al. 2019.)}
+\item{'core_abundance' }{Core abundance index is related to core species.
+Core species are species that are most abundant in all samples, i.e., in whole dataset.
+Core species are defined as those species that have prevalence over 50\\%.
+It means that in order to belong to core species, species must be prevalent in 50 \% of samples.
+Core species are used to calculate the core abundance index.
+Core abundance index is sum of relative abundances of core species in the sample.}
+\item{'gini' }{Gini index is probably best-known from economical relations.
+In economics, it is used to measure, for example, how unevenly wealth
+is distributed among population. Here, Gini index is used similarly, but wealth
+is replaced with abundance. If there are small group of species that represent
+large portion of total abundance of microbes in the sample, the inequality is large and
+Gini index closer to 1. If all species has equally large abundances, the equality
+is perfect and Gini index equals 0. (Sitthiyot & Holasut 2020.)}
+}
 }
 \examples{
 data(esophagus)
@@ -118,6 +147,15 @@ colData(esophagus) <- NULL
 esophagus <- estimateDominance(esophagus)
 #Shows all indices
 colData(esophagus)
+}
+\references{
+Thukral AK, Bhardwaj R, Kumar V & Sharma A (2019)
+New indices regarding the dominance and diversity of communities,
+derived from sample variance and standard deviation.
+Heliyon 5(10). doi: 10.1016/j.heliyon.2019.e02606.
+
+Sitthiyot T & Holasut K (2020) A simple method for measuring inequality.
+Palgrave Commun 6(112) doi: 10.1057/s41599-020-0484-6
 }
 \seealso{
 \itemize{
