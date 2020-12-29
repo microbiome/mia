@@ -41,23 +41,23 @@
 #' \itemize{
 #' \item{'DBP' }{Berger-Parker index is calculated similarly than relative index.
 #' DBP is the relative abundance of the most abundant species of the sample.
-#' (\frac{N_1}{N_{tot}}, where $N_1$ is the absolute abundance of the most dominant species and
+#' ($\frac{N_1}{N_{tot}}$, where $N_1$ is the absolute abundance of the most dominant species and
 #' $N_{tot}$ is the sum of absolute abundances of all species.) Index gives values in interval [0,1],
 #' where bigger value represent greater dominance. (Maiti 2012 p. 29.)}
 #' \item{'DMN' }{McNaughton’s index is the sum of relative abundances of the two most
-#' abundant species of the sample. (\frac{N_1 + N_2}{N_{tot}}, where $N_1$ and $N_2$ are the absolute
-#' abundances of the two most dominant species and $N_tot$ is the sum of absolute
+#' abundant species of the sample. ($\frac{N_1 + N_2}{N_{tot}}$, where $N_1$ and $N_2$ are the absolute
+#' abundances of the two most dominant species and $N_{tot}$ is the sum of absolute
 #' abundances of all species.) Index gives values in interval [0,1],
 #' where bigger value represent greater dominance.}
 #' \item{'absolute' }{Absolute index equals to the absolute abundance of the most
 #' dominant species of the sample. Index gives positive integer values.}
 #' \item{'relative' }{Relative index equals to the relative abundance of the most
-#' dominant species of the sample. (\frac{N_1}{N_{tot}}, where $N_1$ is the absolute abundance of
+#' dominant species of the sample. ($\frac{N_1}{N_{tot}}$, where $N_1$ is the absolute abundance of
 #' the most dominant species and $N_{tot}$ is the sum of absolute abundances of all species.)
 #' Index gives values in interval [0,1], where bigger value represent greater dominance.}
 #' \item{'simpson' }{Simpson's index, or Simpson's dominance index, is calculated
 #' by raising all relative abundances of species to the power of 2, and then summing them together.
-#' (\sum(p^2), where $p$ is relative abundances.) Index gives values in interval [0,1].
+#' ($\sum(p^2)$, where $p$ is relative abundances.) Index gives values in interval [0,1].
 #' Value equals the probability that two randomly chosen individuals belongs to the same species.
 #' The higher the probability, the greater the dominance is. (Thukral et al. 2019.)}
 #' \item{'core_abundance' }{Core abundance index is related to core species.
@@ -66,10 +66,10 @@
 #' It means that in order to belong to core species, species must be prevalent in 50\% of samples.
 #' Core species are used to calculate the core abundance index.
 #' Core abundance index is sum of relative abundances of core species in the sample.
-#' (\frac{N_{core}}{N_{tot}}, where $N_{core}$ is the sum of absolute abundance of the core species and
+#' ($\frac{N_{core}}{N_{tot}}$, where $N_{core}$ is the sum of absolute abundance of the core species and
 #' $N_{tot}$ is the sum of absolute abundances of all species.) Index gives values in interval [0,1],
 #' where bigger value represent greater dominance.}
-#' \item{'gini' }{Gini index is probably best-known from economical relations.
+#' \item{'gini' }{Gini index is probably best-known from socio-economic contexts.
 #' In economics, it is used to measure, for example, how unevenly wealth
 #' is distributed among population. Here, Gini index is used similarly, but wealth
 #' is replaced with abundance. If there is small group of species that represent
