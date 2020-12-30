@@ -5,9 +5,9 @@
 \alias{getDominantTaxa,SummarizedExperiment-method}
 \title{Get Dominant Taxa}
 \usage{
-getDominantTaxa(x, rank = NULL)
+getDominantTaxa(x, rank = taxonomyRanks(x)[1], name = "Dominant Taxa")
 
-\S4method{getDominantTaxa}{SummarizedExperiment}(x, rank = NULL)
+\S4method{getDominantTaxa}{SummarizedExperiment}(x, rank = taxonomyRanks(x)[1], name = "Dominant Taxa")
 }
 \arguments{
 \item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -17,8 +17,8 @@ object}
 \code{taxonomicRanks()} function.}
 }
 \value{
-For \code{getDominantTaxa}: A vector of the most  abundant
-\dQuote{FeatureID}s
+\code{x} with additional \code{\link{colData}} named
+\code{*name*}
 }
 \description{
 This function return the most dominant taxa.

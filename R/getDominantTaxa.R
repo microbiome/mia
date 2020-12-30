@@ -13,9 +13,8 @@
 #' \code{getDominantTaxa} extracts the most abundant \dQuote{FeatureID}s
 #' in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
-#' @return
-#' For \code{getDominantTaxa}: A vector of the most  abundant
-#' \dQuote{FeatureID}s
+#' @return \code{x} with additional \code{\link{colData}} named
+#'   \code{*name*}
 #'
 #' @name getDominantTaxa
 #' @export
@@ -33,17 +32,20 @@
 #' getDominantTaxa(GlobalPatterns, rank="Family")
 NULL
 
+TAXONOMY_RANKS <- c("domain","kingdom","phylum","class","order","family",
+                    "genus","species")
+
 #' @rdname getDominantTaxa
 #' @export
 setGeneric("getDominantTaxa",signature = c("x"),
-           function(x, rank=NULL)
+           function(x, rank = taxonomyRanks(x)[1], name = "Dominant Taxa")
                standardGeneric("getDominantTaxa"))
 
 
 #' @rdname getDominantTaxa
 #' @export
 setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
-          function(x, rank=NULL){
+          function(x, rank = taxonomyRanks(x)[1], name = "Dominant Taxa"){
 
               #Input check
               if(!.is_non_empty_string(rank)){
@@ -61,6 +63,19 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
               #apply() function finds the indices of taxa's that has the highest
               #amount of counts.
               #names() returns the names of taxa that are the most abundant.
-              names(x)[apply(assays(x)$counts, 2, which.max)]
+              taxas <- names(x)[apply(assays(x)$counts, 2, which.max)]
+
+              .add_dominant_taxas_to_colData(x, taxas, name)
           }
+
 )
+
+#--------------------------Help functions-----------------------------------------
+#' @importFrom SummarizedExperiment colData colData<-
+#' @importFrom S4Vectors DataFrame
+.add_dominant_taxas_to_colData <- function(x, dominances, name){
+    dominances <- DataFrame(dominances)
+    colnames(dominances) <- name
+    colData(x)[,name] <- dominances
+    x
+}
