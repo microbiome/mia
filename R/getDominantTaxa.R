@@ -23,33 +23,49 @@
 #'
 #' @examples
 #' data(GlobalPatterns)
+#' x <- GlobalPatterns
 #'
-#' #Finds the dominant taxa. Taxa are returned as a vector.
-#' getDominantTaxa(GlobalPatterns)
+#' #Finds the dominant taxa.
+#' x <- getDominantTaxa(GlobalPatterns)
+#' #Information is stored to colData
+#' colData(x)
 #'
 #' #If taxonomic information is available, it is possible to find the most dominant
-#' #group from specific taxonomic level, here family level.
-#' getDominantTaxa(GlobalPatterns, rank="Family")
+#' #group from specific taxonomic level, here family level. The name of column can be specified.
+#' x <- getDominantTaxa(GlobalPatterns, rank="Family", name="Dominant Family")
+#' colData(x)
+#'
 NULL
-
-TAXONOMY_RANKS <- c("domain","kingdom","phylum","class","order","family",
-                    "genus","species")
 
 #' @rdname getDominantTaxa
 #' @export
 setGeneric("getDominantTaxa",signature = c("x"),
-           function(x, rank = taxonomyRanks(x)[1], name = "Dominant Taxa")
+           function(x, rank = NULL, name = "Dominant Taxa")
                standardGeneric("getDominantTaxa"))
 
 
 #' @rdname getDominantTaxa
 #' @export
 setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
-          function(x, rank = taxonomyRanks(x)[1], name = "Dominant Taxa"){
+          function(x, rank = NULL, name = "Dominant Taxa"){
 
               #Input check
-              if(!.is_non_empty_string(rank)){
-                  stop("'rank' must be an non empty single character value.",
+              if(!is.null(rank)){
+                  if(!.is_a_string(rank)){
+                      stop("'rank' must be an single character value.",
+                           call. = FALSE)
+                  }
+                  TAXONOMY_RANKS <- c("domain","kingdom","phylum","class","order","family",
+                                      "genus","species")
+                  if(!rank %in% TAXONOMY_RANKS){
+                      stop("'rank' must be a taxonomy rank.",
+                           call. = FALSE)
+                  }
+
+              }
+
+              if(!.is_non_empty_string(name)){
+                  stop("'name' must be a non-empty single character value.",
                        call. = FALSE)
               }
 

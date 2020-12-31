@@ -5,9 +5,9 @@
 \alias{getDominantTaxa,SummarizedExperiment-method}
 \title{Get Dominant Taxa}
 \usage{
-getDominantTaxa(x, rank = taxonomyRanks(x)[1], name = "Dominant Taxa")
+getDominantTaxa(x, rank = NULL, name = "Dominant Taxa")
 
-\S4method{getDominantTaxa}{SummarizedExperiment}(x, rank = taxonomyRanks(x)[1], name = "Dominant Taxa")
+\S4method{getDominantTaxa}{SummarizedExperiment}(x, rank = NULL, name = "Dominant Taxa")
 }
 \arguments{
 \item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -29,13 +29,18 @@ in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 }
 \examples{
 data(GlobalPatterns)
+x <- GlobalPatterns
 
-#Finds the dominant taxa. Taxa are returned as a vector.
-getDominantTaxa(GlobalPatterns)
+#Finds the dominant taxa.
+x <- getDominantTaxa(GlobalPatterns)
+#Information is stored to colData
+colData(x)
 
 #If taxonomic information is available, it is possible to find the most dominant
-#group from specific taxonomic level, here family level.
-getDominantTaxa(GlobalPatterns, rank="Family")
+#group from specific taxonomic level, here family level. The name of column can be specified.
+x <- getDominantTaxa(GlobalPatterns, rank="Family", name="Dominant Family")
+colData(x)
+
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
