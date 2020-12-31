@@ -32,13 +32,13 @@ data(GlobalPatterns)
 x <- GlobalPatterns
 
 #Finds the dominant taxa.
-x <- getDominantTaxa(GlobalPatterns)
+x <- getDominantTaxa(x)
 #Information is stored to colData
 colData(x)
 
 #If taxonomic information is available, it is possible to find the most dominant
 #group from specific taxonomic level, here family level. The name of column can be specified.
-x <- getDominantTaxa(GlobalPatterns, rank="Family", name="Dominant Family")
+x <- getDominantTaxa(x, rank="Family", name="Dominant Family")
 colData(x)
 
 }

@@ -26,13 +26,13 @@
 #' x <- GlobalPatterns
 #'
 #' #Finds the dominant taxa.
-#' x <- getDominantTaxa(GlobalPatterns)
+#' x <- getDominantTaxa(x)
 #' #Information is stored to colData
 #' colData(x)
 #'
 #' #If taxonomic information is available, it is possible to find the most dominant
 #' #group from specific taxonomic level, here family level. The name of column can be specified.
-#' x <- getDominantTaxa(GlobalPatterns, rank="Family", name="Dominant Family")
+#' x <- getDominantTaxa(x, rank="Family", name="Dominant Family")
 #' colData(x)
 #'
 NULL
@@ -55,13 +55,7 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
                       stop("'rank' must be an single character value.",
                            call. = FALSE)
                   }
-                  TAXONOMY_RANKS <- c("domain","kingdom","phylum","class","order","family",
-                                      "genus","species")
-                  if(!rank %in% TAXONOMY_RANKS){
-                      stop("'rank' must be a taxonomy rank.",
-                           call. = FALSE)
-                  }
-
+                  .check_taxonomic_rank(rank, x)
               }
 
               if(!.is_non_empty_string(name)){
@@ -81,7 +75,10 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
               #names() returns the names of taxa that are the most abundant.
               taxas <- names(x)[apply(assays(x)$counts, 2, which.max)]
 
-              .add_dominant_taxas_to_colData(x, taxas, name)
+              #Add taxas to colData
+              x <- .add_dominant_taxas_to_colData(x, taxas, name)
+
+              return(x)
           }
 
 )
