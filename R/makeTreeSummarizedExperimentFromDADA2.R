@@ -21,8 +21,8 @@
 #'   dadaF <- dada2::dada(fnF, selfConsist=TRUE)
 #'   dadaR <- dada2::dada(fnR, selfConsist=TRUE)
 #'
-#'   me <- makeTreeSummarizedExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
-#'   me
+#'   tse <- makeTreeSummarizedExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
+#'   tse
 #' }
 makeTreeSummarizedExperimentFromDADA2 <- function(...) {
     # input checks

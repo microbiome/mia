@@ -17,12 +17,12 @@
 #'   # load from file
 #'   rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
 #'                                  package = "biomformat")
-#'   me <- loadFromBiom(rich_dense_file)
+#'   tse <- loadFromBiom(rich_dense_file)
 #'
 #'   # load from object
 #'   x1 <- biomformat::read_biom(rich_dense_file)
-#'   me <- makeTreeSummarizedExperimentFromBiom(x1)
-#'   me
+#'   tse <- makeTreeSummarizedExperimentFromBiom(x1)
+#'   tse
 #' }
 NULL
 
