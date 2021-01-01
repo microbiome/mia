@@ -51,7 +51,7 @@ test_that("estimateDominance", {
 
     #estimateDominance
     #Calculates all indices.
-    tse_idx <- mia:::estimateDominance(tse)
+    tse_idx <- estimateDominance(tse)
     #Checks that the type of output is the same as the type of input.
     expect_true(typeof(tse_idx) == typeof(tse))
     #Checks that every index is calculated by checking the column names from colData.

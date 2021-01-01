@@ -2,14 +2,14 @@
 #'
 #' For convenciance a few functions are available to convert data from a
 #' \sQuote{biom} file or object into a
-#' \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @param file biom file location
 #'
 #' @return An object of class
-#'   \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
-#' @name makeMicrobiomeExperimentFromBiom
+#' @name makeTreeSummarizedExperimentFromBiom
 #'
 #' @examples
 #' if(requireNamespace("biomformat")) {
@@ -17,30 +17,30 @@
 #'   # load from file
 #'   rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
 #'                                  package = "biomformat")
-#'   me <- loadFromBiom(rich_dense_file)
+#'   tse <- loadFromBiom(rich_dense_file)
 #'
 #'   # load from object
 #'   x1 <- biomformat::read_biom(rich_dense_file)
-#'   me <- makeMicrobiomeExperimentFromBiom(x1)
-#'   me
+#'   tse <- makeTreeSummarizedExperimentFromBiom(x1)
+#'   tse
 #' }
 NULL
 
-#' @rdname makeMicrobiomeExperimentFromBiom
+#' @rdname makeTreeSummarizedExperimentFromBiom
 #'
 #' @export
 loadFromBiom <- function(file) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    makeMicrobiomeExperimentFromBiom(biom)
+    makeTreeSummarizedExperimentFromBiom(biom)
 }
 
-#' @rdname makeMicrobiomeExperimentFromBiom
+#' @rdname makeTreeSummarizedExperimentFromBiom
 #'
 #' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
 #'
 #' @export
-makeMicrobiomeExperimentFromBiom <- function(obj){
+makeTreeSummarizedExperimentFromBiom <- function(obj){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){
@@ -51,7 +51,7 @@ makeMicrobiomeExperimentFromBiom <- function(obj){
     sample_data <- biomformat::sample_metadata(obj)
     feature_data <- biomformat::observation_metadata(obj)
 
-    MicrobiomeExperiment(assays = list(counts = counts),
-                         colData = sample_data,
-                         rowData = feature_data)
+    TreeSummarizedExperiment(assays = list(counts = counts),
+                             colData = sample_data,
+                             rowData = feature_data)
 }

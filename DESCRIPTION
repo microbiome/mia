@@ -1,7 +1,7 @@
 Package: mia
 Type: Package
-Version: 0.98.21
-Date: 2020-12-17
+Version: 0.98.22
+Date: 2021-01-01
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -29,8 +29,7 @@ Depends:
     R (>= 4.0),
     SummarizedExperiment,
     SingleCellExperiment,
-    TreeSummarizedExperiment,
-    MicrobiomeExperiment 
+    TreeSummarizedExperiment
 Imports:
     methods,
     stats,
@@ -66,8 +65,6 @@ Suggests:
     dada2,
     biomformat,
     reldist
-Remotes:
-    github::FelixErnst/MicrobiomeExperiment
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

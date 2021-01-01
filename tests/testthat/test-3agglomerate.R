@@ -5,8 +5,8 @@ test_that("agglomerate", {
     mcols(gr) <- df
     grl <- splitAsList(gr,1:11)
     mat <- matrix(1:110, nrow = 11)
-    xtse <- MicrobiomeExperiment(assays = list(mat = mat),
-                                 rowRanges = unname(grl))
+    xtse <- TreeSummarizedExperiment(assays = list(mat = mat),
+                                     rowRanges = unname(grl))
     tax_data <- DataFrame(Phylum = c(rep("a",3),rep("b",3),rep("c",3),rep("b",2)),
                           score = 1:11,
                           Family = c("c",NA,"d","e","f","g","h",NA,"h","e","f"),

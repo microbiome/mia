@@ -2,7 +2,7 @@
 #'
 #' @param obj a \code{phyloseq} object
 #'
-#' @return An object of class MicrobiomeExperiment
+#' @return An object of class \code{TreeSummarizedExperiment}
 #'
 #' @importFrom S4Vectors SimpleList DataFrame
 #' @importFrom SummarizedExperiment colData colData<-
@@ -12,13 +12,13 @@
 #' @examples
 #' if (requireNamespace("phyloseq")) {
 #'     data(GlobalPatterns, package="phyloseq")
-#'     makeMicrobiomeExperimentFromphyloseq(GlobalPatterns)
+#'     makeTreeSummarizedExperimentFromphyloseq(GlobalPatterns)
 #'     data(enterotype, package="phyloseq")
-#'     makeMicrobiomeExperimentFromphyloseq(enterotype)
+#'     makeTreeSummarizedExperimentFromphyloseq(enterotype)
 #'     data(esophagus, package="phyloseq")
-#'     makeMicrobiomeExperimentFromphyloseq(esophagus)
+#'     makeTreeSummarizedExperimentFromphyloseq(esophagus)
 #' }
-makeMicrobiomeExperimentFromphyloseq <- function(obj) {
+makeTreeSummarizedExperimentFromphyloseq <- function(obj) {
     # input check
     .require_package("phyloseq")
     if(!is(obj,"phyloseq")){
@@ -44,9 +44,9 @@ makeMicrobiomeExperimentFromphyloseq <- function(obj) {
     } else {
         referenceSeq <- NULL
     }
-    MicrobiomeExperiment(assays = assays,
-                         rowData = obj@tax_table@.Data,
-                         colData = colData,
-                         rowTree = rowTree,
-                         referenceSeq = referenceSeq)
+    TreeSummarizedExperiment(assays = assays,
+                             rowData = obj@tax_table@.Data,
+                             colData = colData,
+                             rowTree = rowTree,
+                             referenceSeq = referenceSeq)
 }
