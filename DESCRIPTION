@@ -29,7 +29,7 @@ Depends:
     R (>= 4.0),
     SummarizedExperiment,
     SingleCellExperiment,
-    TreeSummarizedExperiment
+    TreeSummarizedExperiment (>= 1.7.2)
 Imports:
     methods,
     stats,
