@@ -5,9 +5,9 @@
 \alias{getDominantTaxa,SummarizedExperiment-method}
 \title{Get Dominant Taxa}
 \usage{
-getDominantTaxa(x, rank = NULL, name = "Dominant Taxa")
+getDominantTaxa(x, rank = NULL, group = NULL, name = "dominant_taxa")
 
-\S4method{getDominantTaxa}{SummarizedExperiment}(x, rank = NULL, name = "Dominant Taxa")
+\S4method{getDominantTaxa}{SummarizedExperiment}(x, rank = NULL, group = NULL, name = "dominant_taxa")
 }
 \arguments{
 \item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -15,6 +15,11 @@ object}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 \code{taxonomicRanks()} function.}
+
+\item{group}{With group, it is possible group observations in overview.}
+
+\item{name}{A name for the column of the colData where the dominant taxa
+will be stored in.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named
@@ -40,6 +45,10 @@ colData(x)
 #group from specific taxonomic level, here family level. The name of column can be specified.
 x <- getDominantTaxa(x, rank="Family", name="Dominant Family")
 colData(x)
+
+x <- microbiomeDataSets::dietswap()
+#With group, it is possbile to group observations based on specific group
+x <- getDominantTaxa(x, group = "nationality")
 
 }
 \author{

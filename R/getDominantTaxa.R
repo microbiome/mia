@@ -9,6 +9,11 @@
 #' @param rank A single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomicRanks()} function.
 #'
+#' @param group With group, it is possible group observations in overview.
+#'
+#' @param name A name for the column of the colData where the dominant taxa
+#' will be stored in.
+#'
 #' @details
 #' \code{getDominantTaxa} extracts the most abundant \dQuote{FeatureID}s
 #' in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
@@ -35,21 +40,26 @@
 #' x <- getDominantTaxa(x, rank="Family", name="Dominant Family")
 #' colData(x)
 #'
+#' x <- microbiomeDataSets::dietswap()
+#' #With group, it is possbile to group observations based on specific group
+#' x <- getDominantTaxa(x, group = "nationality")
+#'
 NULL
 
 #' @rdname getDominantTaxa
 #' @export
 setGeneric("getDominantTaxa",signature = c("x"),
-           function(x, rank = NULL, name = "Dominant Taxa")
+           function(x, rank = NULL, group = NULL, name = "dominant_taxa")
                standardGeneric("getDominantTaxa"))
 
 
 #' @rdname getDominantTaxa
 #' @export
 setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
-          function(x, rank = NULL, name = "Dominant Taxa"){
+          function(x, rank = NULL, group = NULL, name = "dominant_taxa"){
 
               #Input check
+              #rank check
               if(!is.null(rank)){
                   if(!.is_a_string(rank)){
                       stop("'rank' must be an single character value.",
@@ -58,6 +68,14 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
                   .check_taxonomic_rank(rank, x)
               }
 
+              #group check
+              if(!is.null(group)){
+                  if(isFALSE(any(group %in% colnames(colData(x))))){
+                      stop("'group' variable must be in colnames(colData(x))")
+                  }
+              }
+
+              #name check
               if(!.is_non_empty_string(name)){
                   stop("'name' must be a non-empty single character value.",
                        call. = FALSE)
@@ -78,12 +96,40 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
               #Add taxas to colData
               x <- .add_dominant_taxas_to_colData(x, taxas, name)
 
+              #Creates a tibble df that contains dominant taxa and number of times that they present in samples
+              #and relative portion of samples where they present.
+              if (is.null(group)) {
+                  overview <- S4Vectors::as.data.frame(colData(y)) %>%
+                      dplyr::group_by(dominant_taxa) %>%
+                      dplyr::tally() %>%
+                      mutate(
+                          rel.freq = round(100 * n / sum(n), 1),
+                          rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
+                      ) %>%
+                      dplyr::arrange(desc(n))
+              } else {
+                  group <- sym(group)
+                  # dominant_taxa <-"dominant_taxa"
+                  overview <- S4Vectors::as.data.frame(colData(y)) %>%
+                      dplyr::group_by(!!group, dominant_taxa) %>%
+                      dplyr::tally() %>%
+                      mutate(
+                          rel.freq = round(100 * n / sum(n), 1),
+                          rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
+                      ) %>%
+                      dplyr::arrange(desc(n))
+              }
+
+              #Prints overview
+              print(overview)
+
               return(x)
+
           }
 
 )
 
-#--------------------------Help functions-----------------------------------------
+################################HELP FUNCTIONS#####################################
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors DataFrame
 .add_dominant_taxas_to_colData <- function(x, dominances, name){
