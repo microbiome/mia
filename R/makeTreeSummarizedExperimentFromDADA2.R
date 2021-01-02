@@ -1,12 +1,12 @@
-#' Coerce DADA2 results to \code{MicrobiomeExperiment}
+#' Coerce DADA2 results to \code{TreeSummarizedExperiment}
 #'
-#' \code{makeMicrobiomeExperimentFromDADA2} is a wrapper for the
+#' \code{makeTreeSummarizedExperimentFromDADA2} is a wrapper for the
 #' \code{mergePairs} function from the \code{dada2 package}.
 #'
 #' @param ... See \code{mergePairs} function for
 #'   more details.
 #'
-#' @return An object of class \code{MicrobiomeExperiment}
+#' @return An object of class \code{TreeSummarizedExperiment}
 #'
 #' @importFrom S4Vectors SimpleList
 #' @importFrom Biostrings DNAStringSet
@@ -21,10 +21,10 @@
 #'   dadaF <- dada2::dada(fnF, selfConsist=TRUE)
 #'   dadaR <- dada2::dada(fnR, selfConsist=TRUE)
 #'
-#'   me <- makeMicrobiomeExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
-#'   me
+#'   tse <- makeTreeSummarizedExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
+#'   tse
 #' }
-makeMicrobiomeExperimentFromDADA2 <- function(...) {
+makeTreeSummarizedExperimentFromDADA2 <- function(...) {
     # input checks
     .require_package("dada2")
     #
@@ -41,8 +41,8 @@ makeMicrobiomeExperimentFromDADA2 <- function(...) {
     assays <- S4Vectors::SimpleList(counts = unname(seqtab))
     refseq <- Biostrings::DNAStringSet(rownames(seqtab))
     # construct ME an name rows and cols
-    output <- MicrobiomeExperiment(assays = assays,
-                                   referenceSeq = refseq)
+    output <- TreeSummarizedExperiment(assays = assays,
+                                       referenceSeq = refseq)
     colnames(output) <- cName
     rownames(output) <- rName
     output

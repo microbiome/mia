@@ -10,12 +10,12 @@ coverage](https://codecov.io/gh/FelixErnst/mia/branch/master/graph/badge.svg)](h
 
 This project is aimed to provide functions and workflows examples for analyses
 of microbiome data. The main class for working with microbiome data in this
-package are `TreeSummarizedExperiment` and `MicrobiomeExperiment`.
+package is `TreeSummarizedExperiment`.
 
 Currently following things are implemented:
 
 - data wrangling functions (`agglomerate*`, `merge*`, `meltAssay`)
-- JSD and UniFrac distance calculation ported from `phyloseq` to work with `MicrobiomeExperiment` objects
+- JSD and UniFrac distance calculation ported from `phyloseq` to work with `TreeSummarizedExperiment` objects
 - CCA analysis via `vegan` package
 - Bray-Curtis dissimilarity via `vegan` package
 - MDS via the `scater` package

@@ -166,8 +166,7 @@ jobs:
 
           # rspm is out of date
           install.packages("matrixStats", repos = "https://cran.rstudio.com/")
-          BiocManager::install("adw96/breakaway")
-          BiocManager::install("FelixErnst/MicrobiomeExperiment")
+          # BiocManager::install("adw96/breakaway")
 
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
