@@ -99,8 +99,10 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
               #Creates a tibble df that contains dominant taxa and number of times that they present in samples
               #and relative portion of samples where they present.
               if (is.null(group)) {
-                  overview <- S4Vectors::as.data.frame(colData(y)) %>%
-                      dplyr::group_by(dominant_taxa) %>%
+                  name <- sym(name)
+
+                  overview <- S4Vectors::as.data.frame(colData(x)) %>%
+                      dplyr::group_by(!!name) %>%
                       dplyr::tally() %>%
                       mutate(
                           rel.freq = round(100 * n / sum(n), 1),
@@ -109,9 +111,10 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
                       dplyr::arrange(desc(n))
               } else {
                   group <- sym(group)
-                  # dominant_taxa <-"dominant_taxa"
-                  overview <- S4Vectors::as.data.frame(colData(y)) %>%
-                      dplyr::group_by(!!group, dominant_taxa) %>%
+                  name <- sym(name)
+
+                  overview <- S4Vectors::as.data.frame(colData(x)) %>%
+                      dplyr::group_by(!!group, !!name) %>%
                       dplyr::tally() %>%
                       mutate(
                           rel.freq = round(100 * n / sum(n), 1),
