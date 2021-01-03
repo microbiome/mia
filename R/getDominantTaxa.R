@@ -15,7 +15,7 @@
 #' will be stored in.
 #'
 #' @details
-#' \code{getDominantTaxa} extracts the most abundant \dQuote{FeatureID}s
+#' \code{getDominantTaxa} extracts the most abundant taxa
 #' in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
 #' @return \code{x} with additional \code{\link{colData}} named
@@ -41,7 +41,7 @@
 #' colData(x)
 #'
 #' x <- microbiomeDataSets::dietswap()
-#' #With group, it is possbile to group observations based on specific group
+#' #With group, it is possible to group observations based on group specified by user
 #' x <- getDominantTaxa(x, group = "nationality")
 #'
 NULL
@@ -93,37 +93,13 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
               #names() returns the names of taxa that are the most abundant.
               taxas <- names(x)[apply(assays(x)$counts, 2, which.max)]
 
-              #Add taxas to colData
+              #Adds taxas to colData
               x <- .add_dominant_taxas_to_colData(x, taxas, name)
 
-              #Creates a tibble df that contains dominant taxa and number of times that they present in samples
-              #and relative portion of samples where they present.
-              if (is.null(group)) {
-                  name <- sym(name)
+              #Gets an overview
+              overview <- .get_overview(x, group, name)
 
-                  overview <- S4Vectors::as.data.frame(colData(x)) %>%
-                      dplyr::group_by(!!name) %>%
-                      dplyr::tally() %>%
-                      mutate(
-                          rel.freq = round(100 * n / sum(n), 1),
-                          rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
-                      ) %>%
-                      dplyr::arrange(desc(n))
-              } else {
-                  group <- sym(group)
-                  name <- sym(name)
-
-                  overview <- S4Vectors::as.data.frame(colData(x)) %>%
-                      dplyr::group_by(!!group, !!name) %>%
-                      dplyr::tally() %>%
-                      mutate(
-                          rel.freq = round(100 * n / sum(n), 1),
-                          rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
-                      ) %>%
-                      dplyr::arrange(desc(n))
-              }
-
-              #Prints overview
+              #Prints the overview
               print(overview)
 
               return(x)
@@ -141,3 +117,36 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
     colData(x)[,name] <- dominances
     x
 }
+
+.get_overview <- function(x, group, name){
+
+    #Creates a tibble df that contains dominant taxa and number of times that they present in samples
+    #and relative portion of samples where they present.
+    if (is.null(group)) {
+        name <- sym(name)
+
+        overview <- S4Vectors::as.data.frame(colData(x)) %>%
+            dplyr::group_by(!!name) %>%
+            dplyr::tally() %>%
+            mutate(
+                rel.freq = round(100 * n / sum(n), 1),
+                rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
+            ) %>%
+            dplyr::arrange(desc(n))
+    } else {
+        group <- sym(group)
+        name <- sym(name)
+
+        overview <- S4Vectors::as.data.frame(colData(x)) %>%
+            dplyr::group_by(!!group, !!name) %>%
+            dplyr::tally() %>%
+            mutate(
+                rel.freq = round(100 * n / sum(n), 1),
+                rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
+            ) %>%
+            dplyr::arrange(desc(n))
+    }
+
+    return(overview)
+}
+

@@ -29,7 +29,7 @@ will be stored in.}
 This function return the most dominant taxa.
 }
 \details{
-\code{getDominantTaxa} extracts the most abundant \dQuote{FeatureID}s
+\code{getDominantTaxa} extracts the most abundant taxa
 in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 }
 \examples{
@@ -47,7 +47,7 @@ x <- getDominantTaxa(x, rank="Family", name="Dominant Family")
 colData(x)
 
 x <- microbiomeDataSets::dietswap()
-#With group, it is possbile to group observations based on specific group
+#With group, it is possible to group observations based on group specified by user
 x <- getDominantTaxa(x, group = "nationality")
 
 }
