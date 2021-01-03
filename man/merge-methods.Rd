@@ -23,9 +23,8 @@ mergeCols(x, f, archetype = 1L, ...)
 \S4method{mergeCols}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, ...)
 }
 \arguments{
-\item{x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}},
-a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-or a \code{\link[MicrobiomeExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment}}}
+\item{x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
+a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 
 \item{f}{A factor for merging. Must be the same length as
 \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
