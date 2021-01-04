@@ -120,13 +120,11 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
               # Adds taxa to colData
               mat <- .add_dominant_taxas_to_colData(mat, taxas, name)
 
-              print(colData(mat))
-
               # Gets an overview
               overview <- .get_overview(mat, group, name)
 
               # Prints the overview
-              print(overview)
+              message(overview)
 
               return(mat)
 
