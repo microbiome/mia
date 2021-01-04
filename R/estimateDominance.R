@@ -43,7 +43,7 @@
 #'     DBP is the relative abundance of the most abundant species of the sample.
 #'     ($\frac{N_1}{N_{tot}}$, where $N_1$ is the absolute abundance of the most dominant species and
 #'     $N_{tot}$ is the sum of absolute abundances of all species.) Index gives values in interval [0,1],
-#'     where bigger value represent greater dominance. (Maiti 2012 p. 29.)}
+#'     where bigger value represent greater dominance. (Berger & Parker 1970.)}
 #'
 #'     \item{'DMN' }{McNaughton’s index is the sum of relative abundances of the two most
 #'     abundant species of the sample. ($\frac{N_1 + N_2}{N_{tot}}$, where $N_1$ and $N_2$ are the absolute
@@ -63,7 +63,7 @@
 #'     by raising all relative abundances of species to the power of 2, and then summing them together.
 #'     ($\sum(p^2)$, where $p$ is relative abundances.) Index gives values in interval [0,1].
 #'     Value equals the probability that two randomly chosen individuals belongs to the same species.
-#'     The higher the probability, the greater the dominance is. (Thukral et al. 2019.)}
+#'     The higher the probability, the greater the dominance is. (Simpson 1949.)}
 #'
 #'     \item{'core_abundance' }{Core abundance index is related to core species.
 #'     Core species are species that are most abundant in all samples, i.e., in whole data set.
@@ -76,25 +76,23 @@
 #'     where bigger value represent greater dominance.}
 #'
 #'     \item{'gini' }{Gini index is probably best-known from socio-economic contexts.
-#'     In economics, it is used to measure, for example, how unevenly wealth
-#'     is distributed among population. Here, Gini index is used similarly, but wealth
+#'     In economics, it is used to measure, for example, how unevenly income
+#'     is distributed among population. Here, Gini index is used similarly, but income
 #'     is replaced with abundance. If there is small group of species that represent
 #'     large portion of total abundance of microbes, the inequality is large and
 #'     Gini index closer to 1. If all species has equally large abundances, the equality
-#'     is perfect and Gini index equals 0. (Sitthiyot & Holasut 2020.)}
+#'     is perfect and Gini index equals 0. (Gini 1921.)}
 #' }
 #'
 #' @references
-#' Maiti SK (2012) Ecorestoration of the coalmine degraded lands.
+#' Berger WH & Parker FL (1970) Diversity of Planktonic Foraminifera in Deep-Sea Sediments.
+#' Science 168(3937): 1345-1347. doi: 10.1126/science.168.3937.1345
 #'
-#' Sitthiyot T & Holasut K (2020) A simple method for measuring inequality.
-#' Palgrave Commun 6(112) doi: 10.1057/s41599-020-0484-6.
+#' Gini C (1921) Measurement of Inequality of Incomes.
+#' The Economic Journal 31(121): 124-126. doi: 10.2307/2223319
 #'
-#' Thukral AK, Bhardwaj R, Kumar V & Sharma A (2019)
-#' New indices regarding the dominance and diversity of communities,
-#' derived from sample variance and standard deviation.
-#' Heliyon 5(10). doi: 10.1016/j.heliyon.2019.e02606.
-#'
+#' Simpson EH (1949) Measurement of Diversity.
+#' Nature 163(688). doi: 10.1038/163688a0
 #'
 #' @return \code{x} with additional \code{\link{colData}} named
 #'   \code{*name*}
