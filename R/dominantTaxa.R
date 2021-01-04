@@ -1,4 +1,4 @@
-#' Get Dominant Taxa
+#' Dominant Taxa
 #'
 #' This function returns the most dominant taxa.
 #'
@@ -20,13 +20,13 @@
 #' will be stored in. Must be a string.
 #'
 #' @details
-#' \code{getDominantTaxa} extracts the most abundant taxa
+#' \code{dominantTaxa} extracts the most abundant taxa
 #' in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
 #' @return \code{x} with additional \code{\link{colData}} named
 #'   \code{*name*}
 #'
-#' @name getDominantTaxa
+#' @name dominantTaxa
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -36,35 +36,44 @@
 #' x <- GlobalPatterns
 #'
 #' # Finds the dominant taxa.
-#' x <- getDominantTaxa(x)
+#' x <- dominantTaxa(x)
 #' # Information is stored to colData
 #' colData(x)
+#' #Gets the overview of dominant taxa
+#' overview <- getDominantTaxa(x)
+#' overview
 #'
 #' # If taxonomic information is available, it is possible to find the most dominant
 #' #group from specific taxonomic level, here family level. The name of column can be specified.
-#' x <- getDominantTaxa(x, rank="Family", name="dominant_family")
+#' x <- dominantTaxa(x, rank="Family", name="dominant_family")
 #' colData(x)
+#' #Gets the overview of dominant taxa
+#' overview <- getDominantTaxa(x)
+#' overview
 #'
 #' x <- microbiomeDataSets::dietswap()
 #' # With group, it is possible to group observations based on group specified by user
-#' x <- getDominantTaxa(x, group = "nationality")
+#' x <- dominantTaxa(x, group = "nationality")
+#' #Gets the overview of dominant taxa
+#' overview <- getDominantTaxa(x)
+#' overview
 #'
 NULL
 
-#' @rdname getDominantTaxa
+#' @rdname dominantTaxa
 #' @export
-setGeneric("getDominantTaxa",signature = c("x"),
+setGeneric("dominantTaxa",signature = c("x"),
            function(x,
                     abund_values = "counts",
                     rank = NULL,
                     group = NULL,
                     name = "dominant_taxa")
-               standardGeneric("getDominantTaxa"))
+               standardGeneric("dominantTaxa"))
 
 
-#' @rdname getDominantTaxa
+#' @rdname dominantTaxa
 #' @export
-setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
+setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
                    rank = NULL,
@@ -120,16 +129,41 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
               # Adds taxa to colData
               mat <- .add_dominant_taxas_to_colData(mat, taxas, name)
 
-              # Gets an overview
-              overview <- .get_overview(mat, group, name)
-
-              # Prints the overview
-              message(overview)
-
               return(mat)
 
           }
 
+)
+
+#' @rdname dominantTaxa
+#' @export
+setGeneric("getDominantTaxa",signature = c("x"),
+           function(x,
+                    abund_values = "counts",
+                    rank = NULL,
+                    group = NULL,
+                    name = "dominant_taxa")
+               standardGeneric("getDominantTaxa"))
+
+
+#' @rdname dominantTaxa
+#' @export
+setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
+          function(x,
+                   abund_values = "counts",
+                   rank = NULL,
+                   group = NULL,
+                   name = "dominant_taxa"){
+
+              # Adds dominant taxas to colData
+              mat <- dominantTaxa(x, abund_values, rank, group, name)
+
+              # Gets an overview
+              overview <- .get_overview(mat, group, name)
+
+              return(overview)
+
+          }
 )
 
 ################################HELP FUNCTIONS#####################################
