@@ -5,28 +5,45 @@
 \alias{getDominantTaxa,SummarizedExperiment-method}
 \title{Get Dominant Taxa}
 \usage{
-getDominantTaxa(x, rank = NULL, group = NULL, name = "dominant_taxa")
+getDominantTaxa(
+  x,
+  abund_values = "counts",
+  rank = NULL,
+  group = NULL,
+  name = "dominant_taxa"
+)
 
-\S4method{getDominantTaxa}{SummarizedExperiment}(x, rank = NULL, group = NULL, name = "dominant_taxa")
+\S4method{getDominantTaxa}{SummarizedExperiment}(
+  x,
+  abund_values = "counts",
+  rank = NULL,
+  group = NULL,
+  name = "dominant_taxa"
+)
 }
 \arguments{
 \item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object}
 
-\item{rank}{A single character defining a taxonomic rank. Must be a value of
-\code{taxonomicRanks()} function.}
+\item{abund_values}{A single character value for selecting the
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
+to use for prevalence calculation.}
 
-\item{group}{With group, it is possible group observations in overview.}
+\item{rank}{A single character defining a taxonomic rank. Must be a value
+of the output of \code{taxonomicRanks()}.}
+
+\item{group}{With group, it is possible to group the observations. Must
+be a one of the column names of colData.}
 
 \item{name}{A name for the column of the colData where the dominant taxa
-will be stored in.}
+will be stored in. Must be a string.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named
 \code{*name*}
 }
 \description{
-This function return the most dominant taxa.
+This function returns the most dominant taxa.
 }
 \details{
 \code{getDominantTaxa} extracts the most abundant taxa
@@ -36,18 +53,18 @@ in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 data(GlobalPatterns)
 x <- GlobalPatterns
 
-#Finds the dominant taxa.
+# Finds the dominant taxa.
 x <- getDominantTaxa(x)
-#Information is stored to colData
+# Information is stored to colData
 colData(x)
 
-#If taxonomic information is available, it is possible to find the most dominant
+# If taxonomic information is available, it is possible to find the most dominant
 #group from specific taxonomic level, here family level. The name of column can be specified.
 x <- getDominantTaxa(x, rank="Family", name="Dominant Family")
 colData(x)
 
 x <- microbiomeDataSets::dietswap()
-#With group, it is possible to group observations based on group specified by user
+# With group, it is possible to group observations based on group specified by user
 x <- getDominantTaxa(x, group = "nationality")
 
 }

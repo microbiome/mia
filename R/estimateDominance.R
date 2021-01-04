@@ -39,43 +39,49 @@
 #' @details
 #' \code{estimateDominance} calculates the community dominance indices.
 #' \itemize{
-#' \item{'DBP' }{Berger-Parker index is calculated similarly than relative index.
-#' DBP is the relative abundance of the most abundant species of the sample.
-#' ($\frac{N_1}{N_{tot}}$, where $N_1$ is the absolute abundance of the most dominant species and
-#' $N_{tot}$ is the sum of absolute abundances of all species.) Index gives values in interval [0,1],
-#' where bigger value represent greater dominance. (Maiti 2012 p. 29.)}
-#' \item{'DMN' }{McNaughton’s index is the sum of relative abundances of the two most
-#' abundant species of the sample. ($\frac{N_1 + N_2}{N_{tot}}$, where $N_1$ and $N_2$ are the absolute
-#' abundances of the two most dominant species and $N_{tot}$ is the sum of absolute
-#' abundances of all species.) Index gives values in interval [0,1],
-#' where bigger value represent greater dominance.}
-#' \item{'absolute' }{Absolute index equals to the absolute abundance of the most
-#' dominant species of the sample. Index gives positive integer values.}
-#' \item{'relative' }{Relative index equals to the relative abundance of the most
-#' dominant species of the sample. ($\frac{N_1}{N_{tot}}$, where $N_1$ is the absolute abundance of
-#' the most dominant species and $N_{tot}$ is the sum of absolute abundances of all species.)
-#' Index gives values in interval [0,1], where bigger value represent greater dominance.}
-#' \item{'simpson' }{Simpson's index, or Simpson's dominance index, is calculated
-#' by raising all relative abundances of species to the power of 2, and then summing them together.
-#' ($\sum(p^2)$, where $p$ is relative abundances.) Index gives values in interval [0,1].
-#' Value equals the probability that two randomly chosen individuals belongs to the same species.
-#' The higher the probability, the greater the dominance is. (Thukral et al. 2019.)}
-#' \item{'core_abundance' }{Core abundance index is related to core species.
-#' Core species are species that are most abundant in all samples, i.e., in whole data set.
-#' Core species are defined as those species that have prevalence over 50\%.
-#' It means that in order to belong to core species, species must be prevalent in 50\% of samples.
-#' Core species are used to calculate the core abundance index.
-#' Core abundance index is sum of relative abundances of core species in the sample.
-#' ($\frac{N_{core}}{N_{tot}}$, where $N_{core}$ is the sum of absolute abundance of the core species and
-#' $N_{tot}$ is the sum of absolute abundances of all species.) Index gives values in interval [0,1],
-#' where bigger value represent greater dominance.}
-#' \item{'gini' }{Gini index is probably best-known from socio-economic contexts.
-#' In economics, it is used to measure, for example, how unevenly wealth
-#' is distributed among population. Here, Gini index is used similarly, but wealth
-#' is replaced with abundance. If there is small group of species that represent
-#' large portion of total abundance of microbes, the inequality is large and
-#' Gini index closer to 1. If all species has equally large abundances, the equality
-#' is perfect and Gini index equals 0. (Sitthiyot & Holasut 2020.)}
+#'     \item{'DBP' }{Berger-Parker index is calculated similarly than relative index.
+#'     DBP is the relative abundance of the most abundant species of the sample.
+#'     ($\frac{N_1}{N_{tot}}$, where $N_1$ is the absolute abundance of the most dominant species and
+#'     $N_{tot}$ is the sum of absolute abundances of all species.) Index gives values in interval [0,1],
+#'     where bigger value represent greater dominance. (Maiti 2012 p. 29.)}
+#'
+#'     \item{'DMN' }{McNaughton’s index is the sum of relative abundances of the two most
+#'     abundant species of the sample. ($\frac{N_1 + N_2}{N_{tot}}$, where $N_1$ and $N_2$ are the absolute
+#'     abundances of the two most dominant species and $N_{tot}$ is the sum of absolute
+#'     abundances of all species.) Index gives values in interval [0,1],
+#'     where bigger value represent greater dominance.}
+#'
+#'     \item{'absolute' }{Absolute index equals to the absolute abundance of the most
+#'     dominant species of the sample. Index gives positive integer values.}
+#'
+#'     \item{'relative' }{Relative index equals to the relative abundance of the most
+#'     dominant species of the sample. ($\frac{N_1}{N_{tot}}$, where $N_1$ is the absolute abundance of
+#'     the most dominant species and $N_{tot}$ is the sum of absolute abundances of all species.)
+#'     Index gives values in interval [0,1], where bigger value represent greater dominance.}
+#'
+#'     \item{'simpson' }{Simpson's index, or Simpson's dominance index, is calculated
+#'     by raising all relative abundances of species to the power of 2, and then summing them together.
+#'     ($\sum(p^2)$, where $p$ is relative abundances.) Index gives values in interval [0,1].
+#'     Value equals the probability that two randomly chosen individuals belongs to the same species.
+#'     The higher the probability, the greater the dominance is. (Thukral et al. 2019.)}
+#'
+#'     \item{'core_abundance' }{Core abundance index is related to core species.
+#'     Core species are species that are most abundant in all samples, i.e., in whole data set.
+#'     Core species are defined as those species that have prevalence over 50\%.
+#'     It means that in order to belong to core species, species must be prevalent in 50\% of samples.
+#'     Core species are used to calculate the core abundance index.
+#'     Core abundance index is sum of relative abundances of core species in the sample.
+#'     ($\frac{N_{core}}{N_{tot}}$, where $N_{core}$ is the sum of absolute abundance of the core species and
+#'     $N_{tot}$ is the sum of absolute abundances of all species.) Index gives values in interval [0,1],
+#'     where bigger value represent greater dominance.}
+#'
+#'     \item{'gini' }{Gini index is probably best-known from socio-economic contexts.
+#'     In economics, it is used to measure, for example, how unevenly wealth
+#'     is distributed among population. Here, Gini index is used similarly, but wealth
+#'     is replaced with abundance. If there is small group of species that represent
+#'     large portion of total abundance of microbes, the inequality is large and
+#'     Gini index closer to 1. If all species has equally large abundances, the equality
+#'     is perfect and Gini index equals 0. (Sitthiyot & Holasut 2020.)}
 #' }
 #'
 #' @references
@@ -106,48 +112,48 @@
 #' @examples
 #' data(esophagus)
 #'
-#' #Calculates simpson dominance index
+#' # Calculates simpson dominance index
 #' esophagus <- estimateDominance(esophagus, index="simpson")
-#' #Shows all indices
+#' # Shows all indices
 #' colData(esophagus)
 #'
-#' #Indices must be written correctly (e.g. DBP, not dbp), otherwise an error
+#' # Indices must be written correctly (e.g. DBP, not dbp), otherwise an error
 #' # gets thrown
 #' \dontrun{esophagus <- estimateDominance(esophagus, index="dbp")}
-#' #Calculates DBP and Core Abundance indices
+#' # Calculates DBP and Core Abundance indices
 #' esophagus <- estimateDominance(esophagus, index=c("DBP", "core_abundance"))
-#' #Shows all indices
+#' # Shows all indices
 #' colData(esophagus)
-#' #Shows DBP index
+#' # Shows DBP index
 #' colData(esophagus)$DBP
 #'
-#' #Deletes DBP index
+#' # Deletes DBP index
 #' colData(esophagus)$DBP <- NULL
-#' #Shows all indices, DBP is deleted
+#' # Shows all indices, DBP is deleted
 #' colData(esophagus)
-#' #Deletes all indices
+#' # Deletes all indices
 #' colData(esophagus) <- NULL
 #'
-#' #Names of columns can be chosen, but the length of arguments must match.
+#' # Names of columns can be chosen, but the length of arguments must match.
 #' esophagus <- estimateDominance(esophagus,
 #'                                index = c("DBP", "core_abundance"),
 #'                                name = c("index1", "index2"))
-#' #Shows all indices
+#' # Shows all indices
 #' colData(esophagus)
-#' #If they do not match, gets an error.
+#' # If they do not match, gets an error.
 #' \dontrun{
 #' esophagus <- estimateDominance(esophagus,
 #'                                index="simpson",
 #'                                name = c("index3", "index4"))
 #' }
-#' #Shows all indices
+#' # Shows all indices
 #' colData(esophagus)
-#' #Deletes all indices
+#' # Deletes all indices
 #' colData(esophagus) <- NULL
 #'
-#' #Calculates all indices
+#' # Calculates all indices
 #' esophagus <- estimateDominance(esophagus)
-#' #Shows all indices
+#' # Shows all indices
 #' colData(esophagus)
 NULL
 
@@ -176,33 +182,33 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
              name = index,
              ...,
              BPPARAM = SerialParam()){
-        #Input check
-        #Check abund_values
+        # Input check
+        # Check abund_values
         .check_abund_values(abund_values, x)
-        #Check indices
+        # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                  "same length than 'index'.",
                  call. = FALSE)
         }
-        #Check ntaxa
+        # Check ntaxa
         if(!(ntaxa>0 && ntaxa<3)){
             stop("'ntaxa' must be a numerical value 1 or 2.", call. = FALSE)
         }
-        #Check aggregate
+        # Check aggregate
         if(!.is_a_bool(aggregate)){
             stop("'aggregate' must be TRUE or FALSE.", call. = FALSE)
         }
-        #
-        #Calculates dominance indices
+
+        # Calculates dominance indices
         dominances <- BiocParallel::bplapply(index,
                                              FUN = .get_dominances_values,
                                              assay = assay(x,abund_values),
                                              ntaxa = ntaxa,
                                              aggregate = aggregate,
                                              BPPARAM = BPPARAM)
-        #Add dominance indices to colData
+        # Add dominance indices to colData
         .add_dominances_values_to_colData(x, dominances, name)
     }
 )
@@ -260,31 +266,31 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 
 .get_dominance <- function(x, ntaxa, aggregate, index){
     if (index == "absolute") {
-        #ntaxa=1 by default but can be tuned
+        # ntaxa=1 by default but can be tuned
         as_relative <- FALSE
     } else if (index == "relative") {
-        #ntaxa=1 by default but can be tuned
+        # ntaxa=1 by default but can be tuned
         as_relative <- TRUE
     } else if (index == "DBP") {
-        #Berger-Parker: if selected fix the following values
+        # Berger-Parker: if selected fix the following values
         ntaxa <- 1
         as_relative <- TRUE
     } else if (index == "DMN") {
-        #McNaughton's dominance: if selected fix the following values
+        # McNaughton's dominance: if selected fix the following values
         ntaxa <- 2
         aggregate <- TRUE
         as_relative <- TRUE
     }
 
     if (as_relative) {
-        #Calculates the relative abundance per sample
+        # Calculates the relative abundance per sample
         x <- apply(x, 2L,
                    function(x) {
                        x/sum(x, na.rm=TRUE)
                    })
     }
 
-    #Aggregate or not
+    # Aggregate or not
     if (!aggregate) {
         ans <- apply(x, 2L,
                      function(x) {
@@ -297,7 +303,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
                      })
     }
 
-    #add sample names to the table
+    # Adds sample names to the table
     names(ans) <- colnames(x)
     ans
 }
