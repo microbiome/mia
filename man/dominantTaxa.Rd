@@ -81,7 +81,7 @@ overview
 
 # If taxonomic information is available, it is possible to find the most dominant
 #group from specific taxonomic level, here family level. The name of column can be specified.
-x <- dominantTaxa(x, rank="Family", name="dominant_family")
+x <- dominantTaxa(x, rank="Family", name="dominant_taxa_ranked_with_family")
 colData(x)
 #Gets the overview of dominant taxa
 overview <- getDominantTaxa(x)
@@ -90,6 +90,7 @@ overview
 x <- microbiomeDataSets::dietswap()
 # With group, it is possible to group observations based on group specified by user
 x <- dominantTaxa(x, group = "nationality")
+colData(x)
 #Gets the overview of dominant taxa
 overview <- getDominantTaxa(x)
 overview

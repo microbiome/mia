@@ -45,7 +45,7 @@
 #'
 #' # If taxonomic information is available, it is possible to find the most dominant
 #' #group from specific taxonomic level, here family level. The name of column can be specified.
-#' x <- dominantTaxa(x, rank="Family", name="dominant_family")
+#' x <- dominantTaxa(x, rank="Family", name="dominant_taxa_ranked_with_family")
 #' colData(x)
 #' #Gets the overview of dominant taxa
 #' overview <- getDominantTaxa(x)
@@ -54,6 +54,7 @@
 #' x <- microbiomeDataSets::dietswap()
 #' # With group, it is possible to group observations based on group specified by user
 #' x <- dominantTaxa(x, group = "nationality")
+#' colData(x)
 #' #Gets the overview of dominant taxa
 #' overview <- getDominantTaxa(x)
 #' overview
@@ -117,19 +118,24 @@ setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
                   tax_factors <- .get_tax_groups(x, col = col, onRankOnly = FALSE)
 
                   # Merges abundances within the groups
-                  mat <- mergeRows(x, f = tax_factors)
+                  tmp <- mergeRows(x, f = tax_factors)
+
+                   # Stores abundances
+                  mat <- assay(tmp, abund_values)
+              } # Otherwise, if "rank" is NULL, abundances are stored without ranking
+              else {
+                  mat <- assay(x, abund_values)
               }
 
-              # assays()$abund_values returns abundance of the taxa in the samples
               # apply() function finds the indices of taxa's that has the highest
               # abundance.
-              # names() returns the names of taxa that are the most abundant.
-              taxas <- names(mat)[apply(assay(mat, abund_values), 2, which.max)]
+              # rownames() returns the names of taxa that are the most abundant.
+              taxas <- rownames(mat)[apply(mat, 2, which.max)]
 
               # Adds taxa to colData
-              mat <- .add_dominant_taxas_to_colData(mat, taxas, name)
+              x <- .add_dominant_taxas_to_colData(x, taxas, name)
 
-              return(mat)
+              return(x)
 
           }
 
@@ -156,10 +162,10 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
                    name = "dominant_taxa"){
 
               # Adds dominant taxas to colData
-              mat <- dominantTaxa(x, abund_values, rank, group, name)
+              tmp <- dominantTaxa(x, abund_values, rank, group, name)
 
               # Gets an overview
-              overview <- .get_overview(mat, group, name)
+              overview <- .get_overview(tmp, group, name)
 
               return(overview)
 
