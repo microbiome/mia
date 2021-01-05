@@ -41,7 +41,7 @@ getDominantTaxa(
 }
 \arguments{
 \item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object}
+object.}
 
 \item{abund_values}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -50,7 +50,7 @@ to use for prevalence calculation.}
 \item{rank}{A single character defining a taxonomic rank. Must be a value
 of the output of \code{taxonomicRanks()}.}
 
-\item{group}{With group, it is possible to group the observations. Must
+\item{group}{With group, it is possible to group the observations in an overview. Must
 be a one of the column names of colData.}
 
 \item{name}{A name for the column of the colData where the dominant taxa
@@ -58,16 +58,29 @@ will be stored in. Must be a string.}
 }
 \value{
 \code{dominantTaxa} returns \code{x} with additional \code{\link{colData}} named
-\code{*name*}. \code{getDominantTaxa} returns a tibble containing dominant taxa in
-a column named \code{*name*} and its abundance in the data set.
+\code{*name*}. \code{getDominantTaxa} returns an overview in a tibble. It contains
+dominant taxa in a column named \code{*name*} and its abundance in the data set.
 }
 \description{
 These functions return information about the most dominant taxa in a
-\code{\link{SummarizedExperiment-class}} object.
+\code{\link{SummarizedExperiment-class}} object. Additionally, the information
+can be directly stored in the \code{colData}.
 }
 \details{
 \code{dominantTaxa} extracts the most abundant taxa
-in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
+in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object, and
+stores the information in the \code{colData}. \code{GetDominantTaxa} returns information
+about most dominant taxa in a tibble. Information includes their absolute and
+relative abundances in whole data set.
+
+With 'rank' parameter, it is possible to agglomerate taxa based on taxonomic ranks.
+E.g. if 'family' rank is used, all abundances of same family is added together,
+and those families are returned.
+
+With 'group' parameter, it is possible to group observations of returned overview based on
+samples' features.  E.g., if samples contain information about patients' health status,
+it is possible to group observations, e.g. to 'healthy' and 'sick', and get the most dominant
+taxa of different health status.
 }
 \examples{
 data(GlobalPatterns)

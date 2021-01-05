@@ -1,11 +1,12 @@
 #' Dominant Taxa
 #'
 #' These functions return information about the most dominant taxa in a
-#' \code{\link{SummarizedExperiment-class}} object.
+#' \code{\link{SummarizedExperiment-class}} object. Additionally, the information
+#' can be directly stored in the \code{colData}.
 #'
 #' @param x
 #' A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object
+#' object.
 #'
 #' @param abund_values A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -14,7 +15,7 @@
 #' @param rank A single character defining a taxonomic rank. Must be a value
 #' of the output of \code{taxonomicRanks()}.
 #'
-#' @param group With group, it is possible to group the observations. Must
+#' @param group With group, it is possible to group the observations in an overview. Must
 #' be a one of the column names of colData.
 #'
 #' @param name A name for the column of the colData where the dominant taxa
@@ -22,11 +23,24 @@
 #'
 #' @details
 #' \code{dominantTaxa} extracts the most abundant taxa
-#' in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
+#' in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object, and
+#' stores the information in the \code{colData}. \code{GetDominantTaxa} returns information
+#' about most dominant taxa in a tibble. Information includes their absolute and
+#' relative abundances in whole data set.
+#'
+#' With 'rank' parameter, it is possible to agglomerate taxa based on taxonomic ranks.
+#' E.g. if 'family' rank is used, all abundances of same family is added together,
+#' and those families are returned.
+#'
+#' With 'group' parameter, it is possible to group observations of returned overview based on
+#' samples' features.  E.g., if samples contain information about patients' health status,
+#' it is possible to group observations, e.g. to 'healthy' and 'sick', and get the most dominant
+#' taxa of different health status.
+#'
 #'
 #' @return \code{dominantTaxa} returns \code{x} with additional \code{\link{colData}} named
-#'   \code{*name*}. \code{getDominantTaxa} returns a tibble containing dominant taxa in
-#'   a column named \code{*name*} and its abundance in the data set.
+#'   \code{*name*}. \code{getDominantTaxa} returns an overview in a tibble. It contains
+#'   dominant taxa in a column named \code{*name*} and its abundance in the data set.
 #'
 #' @name dominantTaxa
 #' @export
@@ -124,6 +138,19 @@ setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
 
                    # Stores abundances
                   mat <- assay(tmp, abund_values)
+
+                  # Changes the name of species to the name of corresponding rank
+                  # If name contains upper rank, it is cut off
+                  # Tax_factors[rownames(mat)] finds corresponding name
+                  rownames(mat) <- tax_factors[rownames(mat)]
+
+                  # (strsplit(x, "_"))[[1]] splits string from underscores and
+                  # and gives a list of individual ranks
+                  # tail(x, n=1) gives the last rank from list
+                  # --> upper ranks are removed from the name
+                  rownames(mat) <- lapply(rownames(mat), function(x) tail(strsplit(x, "_")[[1]], n=1))
+
+
               } # Otherwise, if "rank" is NULL, abundances are stored without ranking
               else {
                   mat <- assay(x, abund_values)
