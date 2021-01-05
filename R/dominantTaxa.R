@@ -1,6 +1,7 @@
 #' Dominant Taxa
 #'
-#' This function returns the most dominant taxa.
+#' These functions return information about the most dominant taxa in a
+#' \code{\link{SummarizedExperiment-class}} object.
 #'
 #' @param x
 #' A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -23,8 +24,9 @@
 #' \code{dominantTaxa} extracts the most abundant taxa
 #' in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
-#' @return \code{x} with additional \code{\link{colData}} named
-#'   \code{*name*}
+#' @return \code{dominantTaxa} returns \code{x} with additional \code{\link{colData}} named
+#'   \code{*name*}. \code{getDominantTaxa} returns a tibble containing dominant taxa in
+#'   a column named \code{*name*} and its abundance in the data set.
 #'
 #' @name dominantTaxa
 #' @export
