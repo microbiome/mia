@@ -81,14 +81,23 @@ setGeneric("calculateMDS2", function(x, ...) standardGeneric("calculateMDS2"))
 #' @importFrom stats cmdscale dist
 .calculate_mds2 <- function(x, FUN = calculateDistance,
                             ncomponents = 2, ntop = 500, subset_row = NULL,
-                            scale = FALSE, transposed = FALSE, ...){
+                            scale = FALSE, transposed = FALSE,
+                            keep_dist = FALSE, ...){
     if(!transposed) {
         x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
                                  scale = scale)
     }
+
     x <- as.matrix(x)
     cell_dist <- do.call(FUN, c(list(x),list(...)))
-    cmdscale(cell_dist, k = ncomponents)
+    mds <- cmdscale(cell_dist, k = ncomponents, eig = TRUE)
+    ans <- mds$points
+    attr(ans,"eig") <- mds$eig
+    attr(ans,"GOF") <- mds$GOF
+    if (keep_dist) {
+        attr(ans,"dist") <- cell_dist
+    }
+    ans
 }
 
 #' @rdname runMDS2

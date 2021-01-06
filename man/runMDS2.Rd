@@ -18,6 +18,7 @@ calculateMDS2(x, ...)
   subset_row = NULL,
   scale = FALSE,
   transposed = FALSE,
+  keep_dist = FALSE,
   ...
 )
 
