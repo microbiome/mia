@@ -9,6 +9,7 @@ NULL
 
 #' @import methods
 #' @import TreeSummarizedExperiment
+#' @import DelayedArray
 #' @import scater
 #' @importFrom dplyr %>%
 #' @importFrom rlang sym :=
