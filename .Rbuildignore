@@ -3,3 +3,4 @@
 .github
 ^\.github$
 pkgdown
+.RData

@@ -18,6 +18,7 @@ calculateMDS2(x, ...)
   subset_row = NULL,
   scale = FALSE,
   transposed = FALSE,
+  keep_dist = FALSE,
   ...
 )
 
@@ -56,6 +57,9 @@ integer vector of row indices or a logical vector.}
 \item{scale}{Logical scalar, should the expression values be standardized?}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
+
+\item{keep_dist}{\code{TRUE} or \code{FALSE}: Should the dist object be
+returned as attribute of the MDS result? (default: code{keep_dist = FALSE})}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
