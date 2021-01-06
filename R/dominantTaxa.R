@@ -68,11 +68,11 @@
 #' overview
 #'
 #' x <- microbiomeDataSets::dietswap()
-#' # With group, it is possible to group observations based on group specified by user
-#' x <- dominantTaxa(x, group = "nationality")
+#' x <- dominantTaxa(x)
 #' colData(x)
+#' # With group, it is possible to group observations based on group specified by user
 #' #Gets the overview of dominant taxa
-#' overview <- getDominantTaxa(x)
+#' overview <- getDominantTaxa(x, group = "nationality")
 #' overview
 #'
 NULL
