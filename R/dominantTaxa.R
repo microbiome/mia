@@ -83,7 +83,6 @@ setGeneric("dominantTaxa",signature = c("x"),
            function(x,
                     abund_values = "counts",
                     rank = NULL,
-                    group = NULL,
                     name = "dominant_taxa")
                standardGeneric("dominantTaxa"))
 
@@ -94,7 +93,6 @@ setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
                    rank = NULL,
-                   group = NULL,
                    name = "dominant_taxa"){
 
               # Input check
@@ -108,13 +106,6 @@ setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
                            call. = FALSE)
                   }
                   .check_taxonomic_rank(rank, x)
-              }
-
-              # group check
-              if(!is.null(group)){
-                  if(isFALSE(any(group %in% colnames(colData(x))))){
-                      stop("'group' variable must be in colnames(colData(x))")
-                  }
               }
 
               # name check
@@ -190,8 +181,16 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
                    group = NULL,
                    name = "dominant_taxa"){
 
+              # Input Check
+              # group check
+              if(!is.null(group)){
+                  if(isFALSE(any(group %in% colnames(colData(x))))){
+                      stop("'group' variable must be in colnames(colData(x))")
+                  }
+              }
+
               # Adds dominant taxas to colData
-              tmp <- dominantTaxa(x, abund_values, rank, group, name)
+              tmp <- dominantTaxa(x, abund_values, rank, name)
 
               # Gets an overview
               overview <- .get_overview(tmp, group, name)

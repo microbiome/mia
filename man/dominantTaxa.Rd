@@ -7,21 +7,9 @@
 \alias{getDominantTaxa,SummarizedExperiment-method}
 \title{Dominant Taxa}
 \usage{
-dominantTaxa(
-  x,
-  abund_values = "counts",
-  rank = NULL,
-  group = NULL,
-  name = "dominant_taxa"
-)
+dominantTaxa(x, abund_values = "counts", rank = NULL, name = "dominant_taxa")
 
-\S4method{dominantTaxa}{SummarizedExperiment}(
-  x,
-  abund_values = "counts",
-  rank = NULL,
-  group = NULL,
-  name = "dominant_taxa"
-)
+\S4method{dominantTaxa}{SummarizedExperiment}(x, abund_values = "counts", rank = NULL, name = "dominant_taxa")
 
 getDominantTaxa(
   x,
@@ -50,11 +38,11 @@ to use for prevalence calculation.}
 \item{rank}{A single character defining a taxonomic rank. Must be a value
 of the output of \code{taxonomicRanks()}.}
 
-\item{group}{With group, it is possible to group the observations in an overview. Must
-be a one of the column names of colData.}
-
 \item{name}{A name for the column of the colData where the dominant taxa
 will be stored in. Must be a string.}
+
+\item{group}{With group, it is possible to group the observations in an overview. Must
+be a one of the column names of colData.}
 }
 \value{
 \code{dominantTaxa} returns \code{x} with additional \code{\link{colData}} named
