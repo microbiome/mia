@@ -73,7 +73,7 @@ SingleCellExperiment object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.24</span>
       </span>
     </div>
 
@@ -128,6 +128,7 @@ SingleCellExperiment object.</p>
   subset_row <span class='op'>=</span> <span class='cn'>NULL</span>,
   scale <span class='op'>=</span> <span class='cn'>FALSE</span>,
   transposed <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  keep_dist <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -186,6 +187,11 @@ integer vector of row indices or a logical vector.</p></td>
     <tr>
       <th>transposed</th>
       <td><p>Logical scalar, is x transposed with cells in rows?</p></td>
+    </tr>
+    <tr>
+      <th>keep_dist</th>
+      <td><p><code>TRUE</code> or <code>FALSE</code>: Should the dist object be
+returned as attribute of the MDS result? (default: codekeep_dist = FALSE)</p></td>
     </tr>
     <tr>
       <th>exprs_values</th>
@@ -250,7 +256,12 @@ distance function input by Felix G.M. Ernst</p>
 #&gt;  [7,]  22.045408  2.540693e-07
 #&gt;  [8,]  36.742346  4.234488e-07
 #&gt;  [9,]  51.439285  5.928284e-07
-#&gt; [10,]  66.136223  7.622079e-07</div><div class='input'>
+#&gt; [10,]  66.136223  7.622079e-07
+#&gt; attr(,"eig")
+#&gt;  [1]  1.782000e+04  7.275958e-12  1.003572e-12  2.424841e-13  1.851147e-13
+#&gt;  [6]  7.938219e-14  2.111310e-14 -1.327568e-14 -1.090305e-13 -2.440702e-13
+#&gt; attr(,"GOF")
+#&gt; [1] 1 1</div><div class='input'>
 <span class='co'>#</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>runMDS2</span><span class='op'>(</span><span class='va'>esophagus</span>, FUN <span class='op'>=</span> <span class='va'>calculateUniFrac</span>, name <span class='op'>=</span> <span class='st'>"UniFrac"</span>,
@@ -259,7 +270,11 @@ distance function input by Felix G.M. Ernst</p>
 </div><div class='output co'>#&gt;         [,1]         [,2]
 #&gt; B  0.1699641  0.260500471
 #&gt; C -0.3291116  0.005770947
-#&gt; D  0.1591475 -0.266271417</div></pre>
+#&gt; D  0.1591475 -0.266271417
+#&gt; attr(,"eig")
+#&gt; [1] 0.1625302 0.1387943 0.0000000
+#&gt; attr(,"GOF")
+#&gt; [1] 1 1</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
