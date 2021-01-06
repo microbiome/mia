@@ -135,11 +135,9 @@ setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
                   # Tax_factors[rownames(mat)] finds corresponding name
                   rownames(mat) <- tax_factors[rownames(mat)]
 
-                  # (strsplit(x, "_"))[[1]] splits string from underscores and
-                  # and gives a list of individual ranks
-                  # tail(x, n=1) gives the last rank from list
-                  # --> upper ranks are removed from the name
-                  rownames(mat) <- lapply(rownames(mat), function(x) tail(strsplit(x, "_")[[1]], n=1))
+                  # Splits the rownames from "_" and takes the last single string
+                  # --> upper ranks are removed
+                  rownames(mat) <- vapply(strsplit(rownames(mat), "_"),tail,character(1),n = 1)
 
 
               } # Otherwise, if "rank" is NULL, abundances are stored without ranking
@@ -181,7 +179,7 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
                    group = NULL,
                    name = "dominant_taxa"){
 
-              # Input Check
+              # Input check
               # group check
               if(!is.null(group)){
                   if(isFALSE(any(group %in% colnames(colData(x))))){
