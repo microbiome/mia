@@ -71,12 +71,13 @@ This includes the \sQuote{DBP}, \sQuote{DMN}, \sQuote{Absolute},
 \sQuote{Relative}, \sQuote{Core Abundance}, \sQuote{Gini}
 
 \code{estimateDominance} calculates the community dominance indices.
-\itemize{
-\item{'DBP' }{Berger-Parker index is calculated similarly than relative index.
+\itemize{\preformatted{\\item\{'DBP' \}\{Berger-Parker index is calculated similarly than relative index.
 DBP is the relative abundance of the most abundant species of the sample.
-($\frac{N_1}{N_{tot}}$, where $N_1$ is the absolute abundance of the most dominant species and
-$N_{tot}$ is the sum of absolute abundances of all species.) Index gives values in interval \link{0,1},
-where bigger value represent greater dominance. (Berger & Parker 1970.)}\preformatted{\\item\{'DMN' \}\{McNaughton’s index is the sum of relative abundances of the two most
+($\\frac\{N_1\}\{N_\{tot\}\}$, where $N_1$ is the absolute abundance of the most dominant species and
+$N_\{tot\}$ is the sum of absolute abundances of all species.) Index gives values in interval [0,1],
+where bigger value represent greater dominance. (Berger & Parker 1970.)\}
+
+\\item\{'DMN' \}\{McNaughton’s index is the sum of relative abundances of the two most
 abundant species of the sample. ($\\frac\{N_1 + N_2\}\{N_\{tot\}\}$, where $N_1$ and $N_2$ are the absolute
 abundances of the two most dominant species and $N_\{tot\}$ is the sum of absolute
 abundances of all species.) Index gives values in interval [0,1],
@@ -176,7 +177,7 @@ Nature 163(688). doi: 10.1038/163688a0
 }
 \seealso{
 \itemize{
-\item{\code{\link[=estimateDiversity]{estimateDiversity}}}
+\item{\code{\link[mia:estimateDiversity]{estimateDiversity}}}
 }
 }
 \author{

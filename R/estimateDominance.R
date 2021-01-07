@@ -39,6 +39,7 @@
 #' @details
 #' \code{estimateDominance} calculates the community dominance indices.
 #' \itemize{
+#'
 #'     \item{'DBP' }{Berger-Parker index is calculated similarly than relative index.
 #'     DBP is the relative abundance of the most abundant species of the sample.
 #'     ($\frac{N_1}{N_{tot}}$, where $N_1$ is the absolute abundance of the most dominant species and
@@ -99,7 +100,7 @@
 #'
 #' @seealso
 #' \itemize{
-#'   \item{\code{\link[=estimateDiversity]{estimateDiversity}}}
+#'   \item{\code{\link[mia:estimateDiversity]{estimateDiversity}}}
 #' }
 #'
 #' @name estimateDominance
