@@ -52,7 +52,8 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr
+    tidyr,
+    microbiomeDataSets
 Suggests:
     testthat,
     knitr,
@@ -62,6 +63,8 @@ Suggests:
     dada2,
     biomformat,
     reldist
+Remotes:
+    github::microbiome/microbiomeDataSets
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
