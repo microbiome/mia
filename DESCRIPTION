@@ -52,7 +52,8 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr
+    tidyr,
+    yaml
 Suggests:
     testthat,
     knitr,
