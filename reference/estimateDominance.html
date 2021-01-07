@@ -198,7 +198,18 @@ object specifying whether calculation of estimates should be parallelized.
 
     <p>This includes the &#8216;DBP&#8217;, &#8216;DMN&#8217;, &#8216;Absolute&#8217;,
 &#8216;Relative&#8217;, &#8216;Core Abundance&#8217;, &#8216;Gini&#8217;</p>
-<p><code>estimateDominance</code> calculates the community dominance indices.</p>
+<p><code>estimateDominance</code> calculates the community dominance indices.</p><ul>
+<li></li>
+</ul>
+
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Berger WH &amp; Parker FL (1970) Diversity of Planktonic Foraminifera in Deep-Sea Sediments.
+Science 168(3937): 1345-1347. doi: 10.1126/science.168.3937.1345</p>
+<p>Gini C (1921) Measurement of Inequality of Incomes.
+The Economic Journal 31(121): 124-126. doi: 10.2307/2223319</p>
+<p>Simpson EH (1949) Measurement of Diversity.
+Nature 163(688). doi: 10.1038/163688a0</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'>
@@ -213,9 +224,9 @@ object specifying whether calculation of estimates should be parallelized.
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 
-<span class='co'>#Calculates simpson dominance index</span>
+<span class='co'># Calculates simpson dominance index</span>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDominance</span><span class='op'>(</span><span class='va'>esophagus</span>, index<span class='op'>=</span><span class='st'>"simpson"</span><span class='op'>)</span>
-<span class='co'>#Shows all indices</span>
+<span class='co'># Shows all indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; DataFrame with 3 rows and 1 column
 #&gt;     simpson
@@ -223,64 +234,64 @@ object specifying whether calculation of estimates should be parallelized.
 #&gt; B 0.1686282
 #&gt; C 0.0966551
 #&gt; D 0.3342507</div><div class='input'>
-<span class='co'>#Indices must be written correctly (e.g. DBP, not dbp), otherwise an error</span>
+<span class='co'># Indices must be written correctly (e.g. DBP, not dbp), otherwise an error</span>
 <span class='co'># gets thrown</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDominance</span><span class='op'>(</span><span class='va'>esophagus</span>, index<span class='op'>=</span><span class='st'>"dbp"</span><span class='op'>)</span>
-<span class='co'>#Calculates DBP and Core Abundance indices</span>
+<span class='co'># Calculates DBP and Core Abundance indices</span>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDominance</span><span class='op'>(</span><span class='va'>esophagus</span>, index<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"DBP"</span>, <span class='st'>"core_abundance"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='co'>#Shows all indices</span>
+<span class='co'># Shows all indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; DataFrame with 3 rows and 3 columns
 #&gt;     simpson       DBP core_abundance
 #&gt;   &lt;numeric&gt; &lt;numeric&gt;      &lt;numeric&gt;
 #&gt; B 0.1686282  0.256158       0.960591
 #&gt; C 0.0966551  0.164706       0.898039
-#&gt; D 0.3342507  0.566210       0.908676</div><div class='input'><span class='co'>#Shows DBP index</span>
+#&gt; D 0.3342507  0.566210       0.908676</div><div class='input'><span class='co'># Shows DBP index</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>DBP</span>
 </div><div class='output co'>#&gt;         B         C         D 
 #&gt; 0.2561576 0.1647059 0.5662100 </div><div class='input'>
-<span class='co'>#Deletes DBP index</span>
+<span class='co'># Deletes DBP index</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>DBP</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
-<span class='co'>#Shows all indices, DBP is deleted</span>
+<span class='co'># Shows all indices, DBP is deleted</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; DataFrame with 3 rows and 2 columns
 #&gt;     simpson core_abundance
 #&gt;   &lt;numeric&gt;      &lt;numeric&gt;
 #&gt; B 0.1686282       0.960591
 #&gt; C 0.0966551       0.898039
-#&gt; D 0.3342507       0.908676</div><div class='input'><span class='co'>#Deletes all indices</span>
+#&gt; D 0.3342507       0.908676</div><div class='input'><span class='co'># Deletes all indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
 
-<span class='co'>#Names of columns can be chosen, but the length of arguments must match.</span>
+<span class='co'># Names of columns can be chosen, but the length of arguments must match.</span>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDominance</span><span class='op'>(</span><span class='va'>esophagus</span>,
                                index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"DBP"</span>, <span class='st'>"core_abundance"</span><span class='op'>)</span>,
                                name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"index1"</span>, <span class='st'>"index2"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='co'>#Shows all indices</span>
+<span class='co'># Shows all indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; DataFrame with 3 rows and 2 columns
 #&gt;      index1    index2
 #&gt;   &lt;numeric&gt; &lt;numeric&gt;
 #&gt; B  0.256158  0.960591
 #&gt; C  0.164706  0.898039
-#&gt; D  0.566210  0.908676</div><div class='input'><span class='co'>#If they do not match, gets an error.</span>
+#&gt; D  0.566210  0.908676</div><div class='input'><span class='co'># If they do not match, gets an error.</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDominance</span><span class='op'>(</span><span class='va'>esophagus</span>,
                                index<span class='op'>=</span><span class='st'>"simpson"</span>,
                                name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"index3"</span>, <span class='st'>"index4"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>
-<span class='co'>#Shows all indices</span>
+<span class='co'># Shows all indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; DataFrame with 3 rows and 2 columns
 #&gt;      index1    index2
 #&gt;   &lt;numeric&gt; &lt;numeric&gt;
 #&gt; B  0.256158  0.960591
 #&gt; C  0.164706  0.898039
-#&gt; D  0.566210  0.908676</div><div class='input'><span class='co'>#Deletes all indices</span>
+#&gt; D  0.566210  0.908676</div><div class='input'><span class='co'># Deletes all indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
 
-<span class='co'>#Calculates all indices</span>
+<span class='co'># Calculates all indices</span>
 <span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDominance</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-<span class='co'>#Shows all indices</span>
+<span class='co'># Shows all indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; DataFrame with 3 rows and 7 columns
 #&gt;         DBP       DMN  absolute  relative   simpson core_abundance      gini
