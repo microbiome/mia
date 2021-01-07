@@ -88,6 +88,7 @@ setGeneric("dominantTaxa",signature = c("x"),
 
 
 #' @rdname dominantTaxa
+#' @importFrom utils tail
 #' @export
 setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
           function(x,
@@ -208,6 +209,8 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
     x
 }
 
+#' @importFrom S4Vectors as.data.frame
+#' @importFrom dplyr n desc
 .get_overview <- function(x, group, name){
 
     # Creates a tibble df that contains dominant taxa and number of times that they present in samples
