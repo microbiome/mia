@@ -1,93 +1,99 @@
-# This function are modified from `microbiomeMarker::import_qiime2`
-# https://github.com/yiluheihei/microbiomeMarker/blob/master/R/import_qiime2.R
-
-#' Import qiime2 results to `TreeSummairzedExperiment`
+#' Import qiime2 results to `TreeSummarizedExperiment`
 #'
-#' Import [qiime2](https://qiime2.org) results to `TreeSummairzedExperiment`
+#' Import qiime2 sample metadata, feature table, taxonomy table, phylogenetic
+#' tree, and representative sequence for each feature to
+#' `TreeSummarizedExperiment` object.
 #'
-#' @param otu_qza character, file path of the feature table from qiime2.
-#' @param taxa_qza character, file path of the taxonomic table from qiime2,
+#' @param featureTableFile character, file path of the feature table.
+#' @param taxonomyTableFile character, file path of the taxonomy table.
 #'   default `NULL`.
-#' @param sam_tab character, file path of the sample metadata in tsv format,
-#'   default `NULL`.
-#' @param refseq_qza character, file path of the representative sequences from
-#'   qiime2, default `NULL`.
-#' @param tree_qza character, file path of the phylogenetic tree from
-#'   qiime2, default `NULL`.
+#' @param sampleMetaFile character, file path of the sample metadata in tsv
+#'  format, default `NULL`.
+#' @param featureNamesAsRepseq logical, only worked while argument `repSeqFile`
+#'   is `NULL`. The default is `TRUE`, which means if the name of feature is a
+#'   DNA sequence, use it as representative sequence of the feature.
+#' @param repSeqFile character, file path of the representative sequence for
+#'   each feature, default `NULL`.
+#' @param phyTreeFile character, file path of the phylogenetic tree, default
+#'   `NULL`.
 #' @return  An object of class
 #'   [`TreeSummarizedExperiment::TreeSummarizedExperiment-class`]
+#' @importFrom Biostrings DNAStringSet
 #' @export
+#' @author Yang Cao
+#' @references \url{https://qiime2.org}
 #' @examples
-#' otuqza_file <- system.file("extdata", "table.qza", package = "mia")
-#' taxaqza_file <- system.file("extdata", "taxonomy.qza", package = "mia")
-#' sample_file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
-#' treeqza_file <- system.file("extdata", "tree.qza", package = "mia")
-#' refseqqza_file <- system.file("extdata", "refseq.qza", package = "mia")
+#' featureTableFile <- system.file("extdata", "table.qza", package = "mia")
+#' taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
+#' sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+#' phyTreeFile <- system.file("extdata", "tree.qza", package = "mia")
+#' repSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 #' tse <- makeTreeSummarizedExperimentFromqiime2(
-#'   otu_qza = otuqza_file, taxa_qza = taxaqza_file,
-#'   sam_tab = sample_file, refseq_qza = refseqqza_file,
-#'   tree_qza = treeqza_file
+#'   featureTableFile = featureTableFile,
+#'   taxonomyTableFile = taxonomyTableFile,
+#'   sampleMetaFile = sampleMetaFile,
+#'   repSeqFile = repSeqFile,
+#'   phyTreeFile = phyTreeFile
 #' )
 #'
 #' tse
-makeTreeSummarizedExperimentFromqiime2 <- function(otu_qza,
-                                                   taxa_qza = NULL,
-                                                   sam_tab = NULL,
-                                                   refseq_qza = NULL,
-                                                   tree_qza = NULL) {
-    feature_tab <- read_qza(otu_qza)
+makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
+                                                   taxonomyTableFile = NULL,
+                                                   sampleMetaFile = NULL,
+                                                   featureNamesAsRepseq = TRUE,
+                                                   repSeqFile = NULL,
+                                                   phyTreeFile = NULL) {
+    feature_tab <- .read_qza(featureTableFile)
 
-    if (!is.null(taxa_qza)) {
-        taxa_tab <- read_qza(taxa_qza)
-        taxa_tab <- subset_taxa_in_feature(taxa_tab, feature_tab)
-        taxa_tab <- parse_q2taxonomy(taxa_tab)
+    if (!is.null(taxonomyTableFile)) {
+        taxa_tab <- .read_qza(taxonomyTableFile)
+        taxa_tab <- .subset_taxa_in_feature(taxa_tab, feature_tab)
+        taxa_tab <- .parse_q2taxonomy(taxa_tab)
     } else {
-        taxa_tab <- NULL
+        taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
     }
 
-    if (!is.null(sam_tab)) {
-        sam_tab <- read_q2sample_meta(sam_tab)
+    if (!is.null(sampleMetaFile)) {
+        sample_meta <- .read_q2sample_meta(sampleMetaFile)
     } else {
-        sam_tab <- NULL
+        sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
     }
 
-    if (!is.null(tree_qza)) {
-        tree <- read_qza(tree_qza)
+    if (!is.null(phyTreeFile)) {
+        tree <- .read_qza(phyTreeFile)
     } else {
         tree <- NULL
     }
 
     # check the row.names of feature table: DNA sequence or not
     # if is DNA, row.names(feature_tab) is set as refseq
-    if  (is_dna_seq(row.names(feature_tab))) {
+    if  (.is_dna_seq(row.names(feature_tab))) {
         refseq <- row.names(feature_tab)
         refseq_nm <- paste0("OTU", seq_along(refseq))
         names(refseq) <- refseq_nm
-
-        # set the rownames of feature and taxa tab as OTU1, OTU2,...
-        if (!is.null(taxa_tab)) {
-            rownames(taxa_tab) <- refseq_nm
-        }
-        rownames(feature_tab) <- refseq_nm
     } else {
         refseq <- NULL
     }
 
-    if (!is.null(refseq_qza)){
-        refseq <- read_qza(refseq_qza)
+    if (!is.null(repSeqFile)){
+        if (!is.null(refseq)) {
+            warning(
+                "use sequences from `repSeqFile` as representative sequences",
+                "argument `featureNamesAsRepseq` does not work"
+            )
+        }
+        refseq <- .read_qza(repSeqFile)
     }
 
 
     if(!is.null(refseq)) {
-        refseq <- Biostrings::DNAStringSet(refseq)
-    } else {
-        refseq <- NULL
+        refseq <- DNAStringSet(refseq)
     }
 
     TreeSummarizedExperiment(
         assays = S4Vectors::SimpleList(counts = feature_tab),
         rowData = taxa_tab,
-        colData = sam_tab,
+        colData = sample_meta,
         rowTree = tree,
         referenceSeq = refseq
     )
@@ -110,37 +116,51 @@ makeTreeSummarizedExperimentFromqiime2 <- function(otu_qza,
 #'   [`ape::phylo`] object for phylogenetic tree,
 #'   [`Biostrings::DNAStringSet-class`] for representative sequences of taxa.
 #' @noRd
+#' @importFrom yaml read_yaml
+#' @importFrom utils unzip
+#' @importFrom ape read.tree
+#' @importFrom Biostrings readDNAStringSet
 #' @keywords internal
-read_qza <- function(file, temp = tempdir()) {
-    unzipped_file <- utils::unzip(file, exdir = temp)
+.read_qza <- function(file, temp = tempdir()) {
+    if (!file.exists(file)) {
+        stop(file, " does not exist", call. = FALSE)
+    }
+    if (.get_ext(file) != "qza") {
+        stop("The input `file` must be in `qza` format (qiime2 Artifact)")
+    }
+
+    unzipped_file <- unzip(file, exdir = temp)
     meta_file <- grep("metadata.yaml", unzipped_file, value = TRUE)
-    metadata <- yaml::read_yaml(meta_file[1])
+    metadata <- read_yaml(meta_file[1])
     format <- metadata$format
     uuid <- metadata$uuid
 
-    if (grepl("BIOMV", metadata$format)) {
-        biom_file <- file.path(temp, uuid,"data/feature-table.biom")
-        res <- read_q2biom(biom_file)
-    } else if (format == "TSVTaxonomyDirectoryFormat") {
-        taxa_file <- file.path(temp, uuid, "data/taxonomy.tsv")
-        res <- read_q2taxa(taxa_file)
-    } else if (format == "NewickDirectoryFormat") {
-        tree_file <- file.path(temp, uuid, "data/tree.nwk")
-        res <- ape::read.tree(tree_file)
-    } else if (format == "DNASequencesDirectoryFormat") {
-        refseq_file <- file.path(temp, uuid, "data/dna-sequences.fasta")
-        res <- Biostrings::readDNAStringSet(refseq_file)
-    } else {
+    format_files <- c(
+        "feature-table.biom", "taxonomy.tsv",
+        "tree.nwk", "dna-sequences.fasta"
+    )
+    formats <- c(
+        "BIOMV210DirFmt", "TSVTaxonomyDirectoryFormat",
+        "NewickDirectoryFormat", "DNASequencesDirectoryFormat"
+    )
+    file <- file.path(temp, uuid, "data", format_files[match(format, formats)])
+
+    res <- switch (
+        format,
+        BIOMV210DirFmt = .read_q2biom(file),
+        TSVTaxonomyDirectoryFormat = .read_q2taxa(file),
+        NewickDirectoryFormat = read.tree(file),
+        DNASequencesDirectoryFormat = readDNAStringSet(file),
         stop(
             "Only files in format of 'BIOMV210DirFmt', ",
             "'TSVTaxonomyDirectoryFormat', NewickDirectoryFormat' and ",
             "'DNASequencesDirectoryFormat' are supported."
         )
-    }
-
+    )
     res
 }
 
+#' Read qiime2
 
 #' Read qiime2 feature table
 #'
@@ -149,8 +169,8 @@ read_qza <- function(file, temp = tempdir()) {
 #' @param file character, file name of the biom file.
 #' @return [`phyloseq::otu_table-class`] object.
 #' @noRd
-#' @keywords internal
-read_q2biom <- function(file) {
+.read_q2biom <- function(file) {
+    .require_package("biomformat")
     biomobj <- suppressWarnings(biomformat::read_biom(file))
     feature_tab <- as(biomformat::biom_data(biomobj),"matrix")
 
@@ -159,21 +179,19 @@ read_q2biom <- function(file) {
 
 #' Read qiime2 taxa file
 #' @keywords internal
+#' @importFrom utils read.table
 #' @noRd
-read_q2taxa <- function(file) {
+.read_q2taxa <- function(file) {
     taxa <- utils::read.table(file, sep = '\t', header = TRUE)
-    if ("Confidence" %in% names(taxa)) {
-        taxa$Confidence <- NULL
-    }
-
     as.matrix(taxa)
 }
 
 #' Read qiime2 sample meta data file
 #' @keywords internal
+#' @importFrom utils read.table
 #' @noRd
-read_q2sample_meta <- function(file) {
-    sam <- utils::read.table(file = file, header = TRUE, sep = "\t", comment.char = "")
+.read_q2sample_meta <- function(file) {
+    sam <- read.table(file = file, header = TRUE, sep = "\t", comment.char = "")
     rownames(sam) <- as.character(sam[, 1])
 
     # remove row: #q2:types
@@ -187,7 +205,7 @@ read_q2sample_meta <- function(file) {
 #' Subset taxa according to the taxa in feature table
 #' @keywords internal
 #' @noRd
-subset_taxa_in_feature <- function(taxa_tab, feature_tab) {
+.subset_taxa_in_feature <- function(taxa_tab, feature_tab) {
     idx <- match(row.names(feature_tab), taxa_tab[, "Feature.ID"])
     taxa_tab <- taxa_tab[idx, , drop = FALSE]
     row.names(taxa_tab) <- taxa_tab[, "Feature.ID"]
@@ -201,12 +219,14 @@ subset_taxa_in_feature <- function(taxa_tab, feature_tab) {
 #'  between different taxonomic levels, defaults to on compatible with both
 #'  GreenGenes and SILVA `; |;"`.
 #' @param trim_rank_prefix logical whether remove leading characters from
-#'   taxonomic levels, e.g. k__ or D_0__, default `TRUE`.
+#'   taxonomic levels, e.g. k__ or D_0__, default `FALSE`.
 #' @return [`phyloseq::taxonomyTable-class`] object.
 #' @keywords internal
 #' @importFrom rlang .data
+#' @importFrom tidyr separate
 #' @noRd
-parse_q2taxonomy <- function(taxa, sep = "; |;", trim_rank_prefix = TRUE) {
+.parse_q2taxonomy <- function(taxa, sep = "; |;", trim_rank_prefix = FALSE) {
+    stopifnot(is.logical(trim_rank_prefix))
     taxa <- data.frame(taxa)
     if(trim_rank_prefix){
         # remove leading characters from GG
@@ -215,10 +235,20 @@ parse_q2taxonomy <- function(taxa, sep = "; |;", trim_rank_prefix = TRUE) {
         taxa$Taxon <- gsub("D_\\d__", "", taxa$Taxon)
     }
 
+    #  work with any combination of taxonomic ranks available
+    all_ranks <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+    all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__")
+    present_ranks <- strsplit(taxa[, "Taxon"], sep)
+    # at certain rank (e.g. genus): some taxa can not be determined which genus
+    # it assigned to
+    idx <- which.max(lengths(present_ranks))
+    present_ranks <- present_ranks[[idx]]
+    present_prefixes <- substr(present_ranks, 1, 3)
+
     taxa <- suppressWarnings(
-        tidyr::separate(
+        separate(
             taxa, .data$Taxon,
-            c("Kingdom","Phylum","Class","Order","Family","Genus","Species"),
+            all_ranks[match(present_prefixes, all_prefixes)],
             sep = sep
         )
     )
@@ -230,16 +260,17 @@ parse_q2taxonomy <- function(taxa, sep = "; |;", trim_rank_prefix = TRUE) {
 }
 
 #' check the row.names of feature table is DNA sequence or not
-#' This function is from https://github.com/YuLab-SMU/MicrobiotaProcess/blob/master/R/import_qiime2.R#L169-L177
 #' @keywords internal
+#' @importFrom Biostrings DNAStringSet
 #' @noRd
-is_dna_seq <- function(names){
-    x <- unlist(strsplit(toupper(names[1]), split = ""))
-    freq <- mean(x %in% c("A", "G","T","C", "N", "X", "-"))
+.is_dna_seq <- function(seq){
+    seq <- try({DNAStringSet(seq)}, silent = TRUE)
+    !inherits(seq, "try-error")
+}
 
-    if (length(x) > 30 & freq > 0.9) {
-        return(TRUE)
-    } else {
-        return(FALSE)
-    }
+#' extract file extension
+#' @noRd
+.get_ext <- function(file) {
+    ex <- strsplit(basename(file), split = ".", fixed = TRUE)[[1]]
+    ex[length(ex)]
 }

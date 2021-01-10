@@ -2,49 +2,64 @@
 % Please edit documentation in R/makeTreeSummarizedExperimentFromqiime2.R
 \name{makeTreeSummarizedExperimentFromqiime2}
 \alias{makeTreeSummarizedExperimentFromqiime2}
-\title{Import qiime2 results to \code{TreeSummairzedExperiment}}
+\title{Import qiime2 results to \code{TreeSummarizedExperiment}}
 \usage{
 makeTreeSummarizedExperimentFromqiime2(
-  otu_qza,
-  taxa_qza = NULL,
-  sam_tab = NULL,
-  refseq_qza = NULL,
-  tree_qza = NULL
+  featureTableFile,
+  taxonomyTableFile = NULL,
+  sampleMetaFile = NULL,
+  featureNamesAsRepseq = TRUE,
+  repSeqFile = NULL,
+  phyTreeFile = NULL
 )
 }
 \arguments{
-\item{otu_qza}{character, file path of the feature table from qiime2.}
+\item{featureTableFile}{character, file path of the feature table.}
 
-\item{taxa_qza}{character, file path of the taxonomic table from qiime2,
+\item{taxonomyTableFile}{character, file path of the taxonomy table.
 default \code{NULL}.}
 
-\item{sam_tab}{character, file path of the sample metadata in tsv format,
-default \code{NULL}.}
+\item{sampleMetaFile}{character, file path of the sample metadata in tsv
+format, default \code{NULL}.}
 
-\item{refseq_qza}{character, file path of the representative sequences from
-qiime2, default \code{NULL}.}
+\item{featureNamesAsRepseq}{logical, only worked while argument \code{repSeqFile}
+is \code{NULL}. The default is \code{TRUE}, which means if the name of feature is a
+DNA sequence, use it as representative sequence of the feature.}
 
-\item{tree_qza}{character, file path of the phylogenetic tree from
-qiime2, default \code{NULL}.}
+\item{repSeqFile}{character, file path of the representative sequence for
+each feature, default \code{NULL}.}
+
+\item{phyTreeFile}{character, file path of the phylogenetic tree, default
+\code{NULL}.}
 }
 \value{
 An object of class
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment::TreeSummarizedExperiment}}
 }
 \description{
-Import \href{https://qiime2.org}{qiime2} results to \code{TreeSummairzedExperiment}
+Import qiime2 sample metadata, feature table, taxonomy table, phylogenetic
+tree, and representative sequence for each feature to
+\code{TreeSummarizedExperiment} object.
 }
 \examples{
-otuqza_file <- system.file("extdata", "table.qza", package = "mia")
-taxaqza_file <- system.file("extdata", "taxonomy.qza", package = "mia")
-sample_file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
-treeqza_file <- system.file("extdata", "tree.qza", package = "mia")
-refseqqza_file <- system.file("extdata", "refseq.qza", package = "mia")
+featureTableFile <- system.file("extdata", "table.qza", package = "mia")
+taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
+sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+phyTreeFile <- system.file("extdata", "tree.qza", package = "mia")
+repSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 tse <- makeTreeSummarizedExperimentFromqiime2(
-  otu_qza = otuqza_file, taxa_qza = taxaqza_file,
-  sam_tab = sample_file, refseq_qza = refseqqza_file,
-  tree_qza = treeqza_file
+  featureTableFile = featureTableFile,
+  taxonomyTableFile = taxonomyTableFile,
+  sampleMetaFile = sampleMetaFile,
+  repSeqFile = repSeqFile,
+  phyTreeFile = phyTreeFile
 )
 
 tse
+}
+\references{
+\url{https://qiime2.org}
+}
+\author{
+Yang Cao
 }
