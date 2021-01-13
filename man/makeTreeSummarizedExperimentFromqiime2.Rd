@@ -8,8 +8,8 @@ makeTreeSummarizedExperimentFromqiime2(
   featureTableFile,
   taxonomyTableFile = NULL,
   sampleMetaFile = NULL,
-  featureNamesAsRepseq = TRUE,
-  repSeqFile = NULL,
+  featureNamesAsRefseq = TRUE,
+  refSeqFile = NULL,
   phyTreeFile = NULL
 )
 }
@@ -22,11 +22,11 @@ default \code{NULL}.}
 \item{sampleMetaFile}{character, file path of the sample metadata in tsv
 format, default \code{NULL}.}
 
-\item{featureNamesAsRepseq}{logical, only worked while argument \code{repSeqFile}
-is \code{NULL}. The default is \code{TRUE}, which means if the name of feature is a
-DNA sequence, use it as representative sequence of the feature.}
+\item{featureNamesAsRefseq}{logical, only worked while argument \code{refSeqFile}
+is \code{NULL}. The default is \code{TRUE}, which means if the elments of \code{row.names}
+of feature table is DNA sequences, use it as reference sequences.}
 
-\item{repSeqFile}{character, file path of the representative sequence for
+\item{refSeqFile}{character, file path of the representative sequence for
 each feature, default \code{NULL}.}
 
 \item{phyTreeFile}{character, file path of the phylogenetic tree, default
@@ -37,21 +37,31 @@ An object of class
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment::TreeSummarizedExperiment}}
 }
 \description{
-Import qiime2 sample metadata, feature table, taxonomy table, phylogenetic
-tree, and representative sequence for each feature to
-\code{TreeSummarizedExperiment} object.
+Results exported from Qiime2 can be imported as a \code{TreeSummarizedExperiment}
+using \code{makeTreeSummarizedExperimentFromqiime2}. Except for the
+\code{featureTableFile}, the other data types, \code{taxonomyTableFile}, \code{refSeqFile}
+and \code{phyTreeFile}, are optional, but are highly encouraged to be provided.
+}
+\details{
+Both arguments \code{featureNamesAsRefseq} and \code{refSeqFile} were used to define
+reference sequences of features. Firstly, \code{featureNamesAsRefseq} only worked
+while \code{refSeqFile} is \code{NULL} (if elements of \code{row.names} of feature table are
+DNA sequences,  set these sequences as reference sequences, or reference
+sequences is \code{NULL}). Otherwise, the reference sequences were created from
+\code{refSeqFile} if it is not \code{NULL}. Finally, no reference sequences is created
+if \code{featureNameAsRefSeq} is \code{FALSE} and  \code{refSeqFile} is \code{NULL}.
 }
 \examples{
 featureTableFile <- system.file("extdata", "table.qza", package = "mia")
 taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
 sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 phyTreeFile <- system.file("extdata", "tree.qza", package = "mia")
-repSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
+refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 tse <- makeTreeSummarizedExperimentFromqiime2(
   featureTableFile = featureTableFile,
   taxonomyTableFile = taxonomyTableFile,
   sampleMetaFile = sampleMetaFile,
-  repSeqFile = repSeqFile,
+  refSeqFile = refSeqFile,
   phyTreeFile = phyTreeFile
 )
 

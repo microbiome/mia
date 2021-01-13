@@ -1,21 +1,31 @@
 #' Import qiime2 results to `TreeSummarizedExperiment`
 #'
-#' Import qiime2 sample metadata, feature table, taxonomy table, phylogenetic
-#' tree, and representative sequence for each feature to
-#' `TreeSummarizedExperiment` object.
+#' Results exported from Qiime2 can be imported as a `TreeSummarizedExperiment`
+#' using `makeTreeSummarizedExperimentFromqiime2`. Except for the
+#' `featureTableFile`, the other data types, `taxonomyTableFile`, `refSeqFile`
+#' and `phyTreeFile`, are optional, but are highly encouraged to be provided.
 #'
 #' @param featureTableFile character, file path of the feature table.
 #' @param taxonomyTableFile character, file path of the taxonomy table.
 #'   default `NULL`.
 #' @param sampleMetaFile character, file path of the sample metadata in tsv
-#'  format, default `NULL`.
-#' @param featureNamesAsRepseq logical, only worked while argument `repSeqFile`
-#'   is `NULL`. The default is `TRUE`, which means if the name of feature is a
-#'   DNA sequence, use it as representative sequence of the feature.
-#' @param repSeqFile character, file path of the representative sequence for
+#'   format, default `NULL`.
+#' @param featureNamesAsRefseq logical, only worked while argument `refSeqFile`
+#'   is `NULL`. The default is `TRUE`, which means if the elments of `row.names`
+#'   of feature table is DNA sequences, use it as reference sequences.
+#' @param refSeqFile character, file path of the representative sequence for
 #'   each feature, default `NULL`.
 #' @param phyTreeFile character, file path of the phylogenetic tree, default
 #'   `NULL`.
+#' @details
+#' Both arguments `featureNamesAsRefseq` and `refSeqFile` were used to define
+#' reference sequences of features. Firstly, `featureNamesAsRefseq` only worked
+#' while `refSeqFile` is `NULL` (if elements of `row.names` of feature table are
+#' DNA sequences,  set these sequences as reference sequences, or reference
+#' sequences is `NULL`). Otherwise, the reference sequences were created from
+#' `refSeqFile` if it is not `NULL`. Finally, no reference sequences is created
+#' if `featureNameAsRefSeq` is `FALSE` and  `refSeqFile` is `NULL`.
+#'
 #' @return  An object of class
 #'   [`TreeSummarizedExperiment::TreeSummarizedExperiment-class`]
 #' @importFrom Biostrings DNAStringSet
@@ -27,12 +37,12 @@
 #' taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
 #' sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 #' phyTreeFile <- system.file("extdata", "tree.qza", package = "mia")
-#' repSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
+#' refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 #' tse <- makeTreeSummarizedExperimentFromqiime2(
 #'   featureTableFile = featureTableFile,
 #'   taxonomyTableFile = taxonomyTableFile,
 #'   sampleMetaFile = sampleMetaFile,
-#'   repSeqFile = repSeqFile,
+#'   refSeqFile = refSeqFile,
 #'   phyTreeFile = phyTreeFile
 #' )
 #'
@@ -40,8 +50,8 @@
 makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
                                                    taxonomyTableFile = NULL,
                                                    sampleMetaFile = NULL,
-                                                   featureNamesAsRepseq = TRUE,
-                                                   repSeqFile = NULL,
+                                                   featureNamesAsRefseq = TRUE,
+                                                   refSeqFile = NULL,
                                                    phyTreeFile = NULL) {
     feature_tab <- .read_qza(featureTableFile)
 
@@ -65,29 +75,13 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
         tree <- NULL
     }
 
-    # check the row.names of feature table: DNA sequence or not
-    # if is DNA, row.names(feature_tab) is set as refseq
-    if  (.is_dna_seq(row.names(feature_tab))) {
-        refseq <- row.names(feature_tab)
-        refseq_nm <- paste0("OTU", seq_along(refseq))
-        names(refseq) <- refseq_nm
+    # if row.names(feature_tab) is a DNA sequence,  set it as refseq
+    if (!is.null(refSeqFile)){
+        refseq <- .read_qza(refSeqFile)
+    } else if (featureNamesAsRefseq) {
+        refseq <- .rownames_as_dna_seq(rownames(feature_tab))
     } else {
         refseq <- NULL
-    }
-
-    if (!is.null(repSeqFile)){
-        if (!is.null(refseq)) {
-            warning(
-                "use sequences from `repSeqFile` as representative sequences",
-                "argument `featureNamesAsRepseq` does not work"
-            )
-        }
-        refseq <- .read_qza(repSeqFile)
-    }
-
-
-    if(!is.null(refseq)) {
-        refseq <- DNAStringSet(refseq)
     }
 
     TreeSummarizedExperiment(
@@ -111,8 +105,7 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
 #'    right now.
 #' @param temp character, a temporary directory in which the qza file will be
 #'   decompressed to, default `tempdir()`.
-#' @return [`phyloseq::otu_table-class`] object for feature table,
-#'   [`phyloseq::taxonomyTable-class`] object for taxonomic table,
+#' @return `matirx` object for feature table, `data.frame` for taxonomic table,
 #'   [`ape::phylo`] object for phylogenetic tree,
 #'   [`Biostrings::DNAStringSet-class`] for representative sequences of taxa.
 #' @noRd
@@ -126,35 +119,41 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
         stop(file, " does not exist", call. = FALSE)
     }
     if (.get_ext(file) != "qza") {
-        stop("The input `file` must be in `qza` format (qiime2 Artifact)")
+        stop("The input '", file, "' must be in `qza` format (qiime2 Artifact)", call. = FALSE)
     }
 
     unzipped_file <- unzip(file, exdir = temp)
     meta_file <- grep("metadata.yaml", unzipped_file, value = TRUE)
     metadata <- read_yaml(meta_file[1])
-    format <- metadata$format
     uuid <- metadata$uuid
+
+    format <- metadata$format
+    # support for multiple BIOM formats:  V100, V210
+    if (grepl("BIOMV", format)) {
+        format <- "BIOMV"
+    }
 
     format_files <- c(
         "feature-table.biom", "taxonomy.tsv",
         "tree.nwk", "dna-sequences.fasta"
     )
     formats <- c(
-        "BIOMV210DirFmt", "TSVTaxonomyDirectoryFormat",
+        "BIOMV", "TSVTaxonomyDirectoryFormat",
         "NewickDirectoryFormat", "DNASequencesDirectoryFormat"
     )
     file <- file.path(temp, uuid, "data", format_files[match(format, formats)])
 
     res <- switch (
         format,
-        BIOMV210DirFmt = .read_q2biom(file),
+        BIOMV = .read_q2biom(file),
         TSVTaxonomyDirectoryFormat = .read_q2taxa(file),
         NewickDirectoryFormat = read.tree(file),
         DNASequencesDirectoryFormat = readDNAStringSet(file),
         stop(
             "Only files in format of 'BIOMV210DirFmt', ",
             "'TSVTaxonomyDirectoryFormat', NewickDirectoryFormat' and ",
-            "'DNASequencesDirectoryFormat' are supported."
+            "'DNASequencesDirectoryFormat' are supported.",
+            call. = FALSE
         )
     )
     res
@@ -183,7 +182,8 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
 #' @noRd
 .read_q2taxa <- function(file) {
     taxa <- utils::read.table(file, sep = '\t', header = TRUE)
-    as.matrix(taxa)
+
+    taxa
 }
 
 #' Read qiime2 sample meta data file
@@ -218,22 +218,13 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
 #' @param sep character string containing a regular expression, separator
 #'  between different taxonomic levels, defaults to on compatible with both
 #'  GreenGenes and SILVA `; |;"`.
-#' @param trim_rank_prefix logical whether remove leading characters from
-#'   taxonomic levels, e.g. k__ or D_0__, default `FALSE`.
-#' @return [`phyloseq::taxonomyTable-class`] object.
+#' @return  a `data.frame`.
 #' @keywords internal
 #' @importFrom rlang .data
 #' @importFrom tidyr separate
 #' @noRd
-.parse_q2taxonomy <- function(taxa, sep = "; |;", trim_rank_prefix = FALSE) {
-    stopifnot(is.logical(trim_rank_prefix))
+.parse_q2taxonomy <- function(taxa, sep = "; |;") {
     taxa <- data.frame(taxa)
-    if(trim_rank_prefix){
-        # remove leading characters from GG
-        taxa$Taxon <- gsub("[kpcofgs]__", "", taxa$Taxon)
-        #remove leading characters from SILVA
-        taxa$Taxon <- gsub("D_\\d__", "", taxa$Taxon)
-    }
 
     #  work with any combination of taxonomic ranks available
     all_ranks <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
@@ -253,8 +244,15 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
         )
     )
     taxa <- sapply(taxa, function(x) ifelse(x == "", NA_character_, x))
-    rownames(taxa) <- taxa[, "Feature.ID"]
-    taxa <- taxa[, setdiff(colnames(taxa), "Feature.ID")]
+    taxa <- data.frame(taxa)
+    # make sure confidence in numeric
+    if ("Confidence" %in% colnames(taxa)) {
+        taxa[["Confidence"]] <- as.numeric(taxa[["Confidence"]])
+    }
+    if("Feature.ID" %in% names(taxa)) {
+        rownames(taxa) <- taxa[["Feature.ID"]]
+        taxa["Feature.ID"] <- NULL
+    }
 
     taxa
 }
@@ -263,9 +261,14 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
 #' @keywords internal
 #' @importFrom Biostrings DNAStringSet
 #' @noRd
-.is_dna_seq <- function(seq){
+.rownames_as_dna_seq <- function(seq){
+    names(seq) <- paste0("seq_", seq_along(seq))
     seq <- try({DNAStringSet(seq)}, silent = TRUE)
-    !inherits(seq, "try-error")
+    if (inherits(seq, "try-error")) {
+        return(NULL)
+    }
+
+    seq
 }
 
 #' extract file extension
