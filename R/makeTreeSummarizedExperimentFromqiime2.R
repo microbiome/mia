@@ -283,19 +283,19 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
     all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__")
 
     # split the taxa strings
-    taxa_split <- IRanges::CharacterList(strsplit(taxa_tab[,"Taxon"],sep))
+    taxa_split <- CharacterList(strsplit(taxa_tab[,"Taxon"],sep))
     # extract present prefixes
     taxa_prefixes <- lapply(taxa_split, substr, 1L, 3L)
     # match them to the order given by present_prefixes
     taxa_prefixes_match <- lapply(taxa_prefixes, match, x = all_prefixes)
-    taxa_prefixes_match <- IRanges::IntegerList(taxa_prefixes_match)
+    taxa_prefixes_match <- IntegerList(taxa_prefixes_match)
     # get the taxa values
     if(removeTaxaPrefixes){
         taxa_split <- lapply(taxa_split,
                              gsub,
                              pattern = "([kpcofgs]+)__",
                              replacement = "")
-        taxa_split <- IRanges::CharacterList(taxa_split)
+        taxa_split <- CharacterList(taxa_split)
     }
     # extract by order matches
     taxa_split <- taxa_split[taxa_prefixes_match]

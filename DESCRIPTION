@@ -54,7 +54,7 @@ Imports:
     dplyr,
     tibble,
     tidyr,
-    yaml
+    yaml,
     microbiomeDataSets
 Suggests:
     testthat,
