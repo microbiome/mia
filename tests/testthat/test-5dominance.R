@@ -12,7 +12,7 @@ test_that("estimateDominance", {
 
     #.gini_dominance
     #reldist package needed. If it is not installed, skips tests tat require it.
-    skip_if_not_installed(requireNamespace("reldist", quietly = TRUE))
+    skip_if_not_installed("reldist")
     #Tests function with vector that has value 1 1000 times, output should be 0.
     x <- c(rep(1,1000))
     expect_equal(mia:::.gini_dominance(x), reldist:::gini(x))

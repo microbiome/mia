@@ -10,27 +10,40 @@ makeTreeSummarizedExperimentFromqiime2(
   sampleMetaFile = NULL,
   featureNamesAsRefseq = TRUE,
   refSeqFile = NULL,
-  phyTreeFile = NULL
+  phyTreeFile = NULL,
+  ...
 )
 }
 \arguments{
-\item{featureTableFile}{character, file path of the feature table.}
+\item{featureTableFile}{a single \code{character} value defining the file
+path of the feature table to be imported.}
 
-\item{taxonomyTableFile}{character, file path of the taxonomy table.
-default \code{NULL}.}
+\item{taxonomyTableFile}{a single \code{character} value defining the file
+path of the taxonomy table to be imported. (default: \code{NULL}).}
 
-\item{sampleMetaFile}{character, file path of the sample metadata in tsv
-format, default \code{NULL}.}
+\item{sampleMetaFile}{a single \code{character} value defining the file
+path of the sample metadata to be imported. The file has to be in tsv
+format. (default: \code{NULL}).}
 
-\item{featureNamesAsRefseq}{logical, only worked while argument \code{refSeqFile}
-is \code{NULL}. The default is \code{TRUE}, which means if the elments of \code{row.names}
-of feature table is DNA sequences, use it as reference sequences.}
+\item{featureNamesAsRefseq}{\code{TRUE} or \code{FALSE}: Should the feature
+names of the feature table be regarded as reference sequences? This setting
+will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
+feature names do not contain valid DNA characters only, the reference
+sequences will not be set.}
 
-\item{refSeqFile}{character, file path of the representative sequence for
-each feature, default \code{NULL}.}
+\item{refSeqFile}{a single \code{character} value defining the file
+path of the reference sequences for each feature. (default: \code{NULL}).}
 
-\item{phyTreeFile}{character, file path of the phylogenetic tree, default
-\code{NULL}.}
+\item{phyTreeFile}{a single \code{character} value defining the file
+path of the phylogenetic tree. (default: \code{NULL}).}
+
+\item{...}{additional arguments:
+\itemize{
+\item{\code{temp}:} {the temporary directory used for decompressing the
+data. (default: \code{tempdir()})}
+\item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
+taxonomic prefixes be removed? (default: \code{FALSE}).)}
+}}
 }
 \value{
 An object of class
@@ -43,13 +56,10 @@ using \code{makeTreeSummarizedExperimentFromqiime2}. Except for the
 and \code{phyTreeFile}, are optional, but are highly encouraged to be provided.
 }
 \details{
-Both arguments \code{featureNamesAsRefseq} and \code{refSeqFile} were used to define
-reference sequences of features. Firstly, \code{featureNamesAsRefseq} only worked
-while \code{refSeqFile} is \code{NULL} (if elements of \code{row.names} of feature table are
-DNA sequences,  set these sequences as reference sequences, or reference
-sequences is \code{NULL}). Otherwise, the reference sequences were created from
-\code{refSeqFile} if it is not \code{NULL}. Finally, no reference sequences is created
-if \code{featureNameAsRefSeq} is \code{FALSE} and  \code{refSeqFile} is \code{NULL}.
+Both arguments \code{featureNamesAsRefseq} and \code{refSeqFile} can be used to define
+reference sequences of features. \code{featureNamesAsRefseq} is only taken into
+account, if \code{refSeqFile} is \code{NULL}. No reference sequences are tried to be
+created, if \code{featureNameAsRefSeq} is \code{FALSE} and  \code{refSeqFile} is \code{NULL}.
 }
 \examples{
 featureTableFile <- system.file("extdata", "table.qza", package = "mia")
@@ -68,6 +78,10 @@ tse <- makeTreeSummarizedExperimentFromqiime2(
 tse
 }
 \references{
+Bolyen E et al. 2019: Reproducible, interactive, scalable and extensible
+microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
+\url{https://doi.org/10.1038/s41587-019-0209-9}
+
 \url{https://qiime2.org}
 }
 \author{
