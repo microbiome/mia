@@ -1,7 +1,7 @@
 Package: mia
 Type: Package
-Version: 0.98.24
-Date: 2021-01-06
+Version: 0.98.25
+Date: 2021-01-14
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -9,6 +9,7 @@ Authors@R:
       person(given = "Sudarshan", family = "Shetty", role = c("aut")),
       person(given = "Leo", family = "Lahti", role = c("aut")),
       person(given = "Tuomas", family = "Borman", role = c("ctb")),      
+      person(given = "Yang", family = "Cao", role = c("ctb")),
       person(given = "Nathan D.", family = "Olson", role = c("ctb"),
              email = "nolson@@umiacs.umd.edu"),
       person(given = "Levi", family = "Waldron", role = c("ctb")),
@@ -53,6 +54,7 @@ Imports:
     dplyr,
     tibble,
     tidyr,
+    yaml
     microbiomeDataSets
 Suggests:
     testthat,

@@ -1,185 +1,3 @@
-#
-# ################################################################################
-# # import_mothur tests
-# mothlist  <- system.file("extdata", "esophagus.fn.list.gz", package="MicrobiomeExperiment")
-# mothgroup <- system.file("extdata", "esophagus.good.groups.gz", package="MicrobiomeExperiment")
-# mothtree  <- system.file("extdata", "esophagus.tree.gz", package="MicrobiomeExperiment")
-# cutoff    <- "0.10"
-# esophman  <- import_mothur(mothlist, mothgroup, mothtree, cutoff)
-# # mothur "Shared" file, create with mothur from these example data files
-# mothshared = system.file("extdata", "esophagus.fn.shared.gz", package="MicrobiomeExperiment")
-# constaxonomy = system.file("extdata", "mothur_example.cons.taxonomy.gz", package="MicrobiomeExperiment")
-#
-# test_that("import_mothur: import of esophagus dataset from mothur files in extdata/ produces a MicrobiomeExperiment object", {
-# 	expect_that(esophman, is_a("MicrobiomeExperiment"))
-# })
-#
-# test_that("import_mothur: The two MicrobiomeExperiment objects, example and just-imported, are identical", {
-# 	data("esophagus")
-# 	expect_that(esophagus, is_equivalent_to(esophman))
-# })
-#
-# test_that("import_mothur: Test mothur file import on the (esophagus data).", {
-# 	smlc <- show_mothur_cutoffs(mothlist)
-# 	expect_that(smlc, is_equivalent_to(c("unique", "0.00", "0.01", "0.02", "0.03", "0.04", "0.05", "0.06", "0.07", "0.08", "0.09", "0.10")))
-# })
-#
-# test_that("import_mothur: abundances can be manipulated mathematically", {
-# 	x1 <- as(otu_table(esophman), "matrix")
-# 	expect_that(2*x1-x1, is_equivalent_to(x1) )
-# })
-#
-# test_that("import_mothur: empty stuff is NULL", {
-# 	expect_that(tax_table(esophman, FALSE), is_a("NULL"))
-# 	expect_that(sample_data(esophman, FALSE), is_a("NULL"))
-# })
-#
-# test_that("import_mothur: Expected classes of non-empty components", {
-# 	expect_that(otu_table(esophman), is_a("otu_table"))
-# 	expect_that(phy_tree(esophman), is_a("phylo"))
-# })
-#
-# test_that("import_mothur: imported files become S4 object", {
-# 	expect_that(isS4(esophman), is_true())
-# })
-#
-# test_that("import_mothur: show method output tests", {
-#   expect_output(print(esophman), "MicrobiomeExperiment-class experiment-level object")
-# })
-#
-# test_that("Test newer supported mothur output files, constaxonomy and shared files", {
-#   # Shared file
-#   sharedOTU = import_mothur(mothur_shared_file=mothshared, cutoff=cutoff)
-#   expect_is(sharedOTU, "otu_table")
-#   expect_equivalent(as(sharedOTU[1:5, ], "matrix")[, "B"], c(50, 37, 14, 52, 2))
-#   expect_equivalent(as(sharedOTU[1, ], "matrix")[1, ], c(50, 19, 5))
-#   # Constaxonomy file
-#   tax = import_mothur(mothur_constaxonomy_file=constaxonomy)
-#   expect_is(tax, "taxonomyTable")
-# })
-#
-# ################################################################################
-# # import_RDP tests
-# test_that("the import_RDP_otu function can properly read gzipped-example", {
-#   # Setup data
-# 	otufile <- system.file("extdata",
-# 	                       "rformat_dist_0.03.txt.gz",
-# 	                       package="MicrobiomeExperiment")
-# 	ex_otu  <- import_RDP_otu(otufile)
-# 	# test expectations
-# 	expect_output(print(head(t(ex_otu))), "OTU Table:")
-# 	expect_is(ex_otu, "otu_table")
-# 	expect_equal(ntaxa(ex_otu), 5276)
-# 	expect_equal(nsamples(ex_otu), 14)
-# 	expect_is(sample_sums(ex_otu), "numeric")
-# })
-#
-#
-# ################################################################################
-# # import_qiime tests
-# ################################################################################
-# otufile <- system.file("extdata", "GP_otu_table_rand_short.txt.gz", package="MicrobiomeExperiment")
-# mapfile <- system.file("extdata", "master_map.txt", package="MicrobiomeExperiment")
-# trefile <- system.file("extdata", "GP_tree_rand_short.newick.gz", package="MicrobiomeExperiment")
-# rs_file <- system.file("extdata", "qiime500-refseq.fasta", package="MicrobiomeExperiment")
-#
-# t0 <- import_qiime(otufile, mapfile, trefile, rs_file, verbose=FALSE)
-# test_that("Class of import result is MicrobiomeExperiment-class", {
-# 	expect_that(t0, is_a("MicrobiomeExperiment"))
-# })
-#
-# test_that("Classes of components are as expected", {
-# 	expect_that(otu_table(t0), is_a("otu_table"))
-# 	expect_that(tax_table(t0), is_a("taxonomyTable"))
-# 	expect_that(sample_data(t0), is_a("sample_data"))
-# 	expect_that(phy_tree(t0), is_a("phylo"))
-# 	expect_that(refseq(t0), is_a("DNAStringSet"))
-# })
-#
-# test_that("Features of the abundance data are consistent, match known values", {
-# 	expect_that(sum(taxa_sums(t0)), equals(1269671L))
-# 	expect_that(sum(taxa_sums(t0)==0), equals(5L))
-# 	expect_that(sum(taxa_sums(t0)>=100), equals(183L))
-# 	expect_that(sum(taxa_sums(t0)), equals(sum(sample_sums(t0))))
-# 	expect_that(sum(sample_sums(t0) > 10000L), equals(20L))
-# 	expect_that(nsamples(t0), equals(26L))
-# 	expect_that(ntaxa(t0), equals(500L))
-# 	expect_that(length(rank_names(t0)), equals(7L))
-# })
-#
-# test_that("Features of the taxonomy table match expected values", {
-# 	expect_that(length(rank_names(t0)), equals(7L))
-# 	expect_equal(rank_names(t0),
-#                c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"))
-# 	tax53 = as(tax_table(t0), "matrix")[53, ]
-# 	expect_that(tax53, is_equivalent_to(c("Bacteria", "Proteobacteria", "Deltaproteobacteria",
-# 		"Desulfovibrionales", "Desulfomicrobiaceae",
-#     "Desulfomicrobium", "Desulfomicrobiumorale")))
-# })
-# ################################################################################
-# # parse function tests - note, these are also used by import_biom
-#
-# test_that("Taxonomy vector parsing functions behave as expected", {
-#
-# 	chvec1 = c("Bacteria", "Proteobacteria", "Gammaproteobacteria",
-# 		"Enterobacteriales", "Enterobacteriaceae", "Escherichia")
-#
-# 	chvec2 = c("k__Bacteria", "p__Proteobacteria", "c__Gammaproteobacteria",
-# 		"o__Enterobacteriales", "f__Enterobacteriaceae", "g__Escherichia", "s__")
-#
-# 	chvec3 = c("Root", "k__Bacteria", "p__Firmicutes", "c__Bacilli",
-# 		"o__Bacillales", "f__Staphylococcaceae")
-#
-# 	# Example where only some entries have greengenes prefix.
-# 	chvec4 = c("Root", "k__Bacteria", "Firmicutes", "c__Bacilli",
-# 		"o__Bacillales", "Staphylococcaceae", "z__mistake")
-#
-# 	# Even more terrible example, where leading or trailing space characters included
-# 	# (the exact weirdnes of chvec4, compounded by leading and/or trailing space characters)
-# 	chvec5 = c("  Root \n ", " k__Bacteria", "  Firmicutes", " c__Bacilli   ",
-# 		"o__Bacillales  ", "Staphylococcaceae ", "\t z__mistake \t\n")
-#
-# 	# This should give a warning because there were no greengenes prefixes
-# 	expect_warning(t1 <- parse_taxonomy_greengenes(chvec1))
-# 	# And output from previous call, t1, should be identical to default
-# 	expect_that(parse_taxonomy_default(chvec1), is_equivalent_to(t1))
-#
-# 	# All the greengenes entries get trimmed by parse_taxonomy_greengenes
-# 	expect_that(all(sapply(chvec2, nchar) > sapply(parse_taxonomy_greengenes(chvec2), nchar)), is_true())
-# 	# None of the greengenes entries are trimmed by parse_taxonomy_default
-# 	expect_that(any(sapply(chvec2, nchar) > sapply(parse_taxonomy_default(chvec2), nchar)), is_false())
-#
-# 	# Check that the "Root" element is not removed by parse_taxonomy_greengenes and parse_taxonomy_default.
-# 	expect_that("Root" %in% chvec3, is_true())
-# 	expect_that("Root" %in% parse_taxonomy_default(chvec3), is_true())
-# 	expect_that(length(parse_taxonomy_default(chvec3)) == length(chvec3), is_true())
-#
-# 	# Check that non-greengenes prefixes, and those w/o prefixes, are given dummy rank(s)
-# 	chvec4ranks = names(parse_taxonomy_greengenes(chvec4))
-# 	expect_that(grep("Rank", chvec4ranks, fixed=TRUE), is_equivalent_to(c(1, 3, 6, 7)))
-# 	# Check that everything given dummy rank in default parse.
-# 	chvec4ranks = names(parse_taxonomy_default(chvec4))
-# 	expect_that(grep("Rank", chvec4ranks, fixed=TRUE), is_equivalent_to(1:7))
-#
-# 	# chvec4 and chvec5 result in identical vectors.
-# 	expect_that(parse_taxonomy_default(chvec4), is_equivalent_to(parse_taxonomy_default(chvec5)))
-# 	expect_that(parse_taxonomy_greengenes(chvec4), is_equivalent_to(parse_taxonomy_greengenes(chvec5)))
-#
-# 	# The names of chvec5, greengenes parsed, should be...
-# 	correct5names = c("Rank1", "Kingdom", "Rank3", "Class", "Order", "Rank6", "Rank7")
-# 	expect_that(names(parse_taxonomy_greengenes(chvec5)), is_equivalent_to(correct5names))
-# })
-
-################################################################################
-# import_biom tests
-
-# rich_dense_biom  <- system.file("extdata", "rich_dense_otu_table.biom",  package="MicrobiomeExperiment")
-# rich_sparse_biom <- system.file("extdata", "rich_sparse_otu_table.biom", package="MicrobiomeExperiment")
-# min_dense_biom   <- system.file("extdata", "min_dense_otu_table.biom",   package="MicrobiomeExperiment")
-# min_sparse_biom  <- system.file("extdata", "min_sparse_otu_table.biom",  package="MicrobiomeExperiment")
-# # the tree and refseq file paths that are suitable for all biom format style examples
-# treefilename = system.file("extdata", "biom-tree.phy",  package="MicrobiomeExperiment")
-# refseqfilename = system.file("extdata", "biom-refseq.fasta",  package="MicrobiomeExperiment")
 
 test_that("Importing biom files yield TreeSummarizedExperiment objects", {
     skip_if_not_installed("biomformat")
@@ -222,168 +40,156 @@ test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
     expect_s4_class(me, "TreeSummarizedExperiment")
 })
 
+featureTableFile <- system.file("extdata", "table.qza", package = "mia")
+taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
+refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 
-#
-# test_that("The different types of biom files yield MicrobiomeExperiment objects",{
-# 	rich_dense = import_biom(rich_dense_biom, treefilename, refseqfilename, parseFunction=parse_taxonomy_greengenes)
-# 	rich_sparse = import_biom(rich_sparse_biom, treefilename, refseqfilename, parseFunction=parse_taxonomy_greengenes)
-# 	min_dense = import_biom(min_dense_biom, treefilename, refseqfilename, parseFunction=parse_taxonomy_greengenes)
-# 	min_sparse = import_biom(min_sparse_biom, treefilename, refseqfilename, parseFunction=parse_taxonomy_greengenes)
-#
-# 	expect_that(rich_dense,  is_a("MicrobiomeExperiment"))
-# 	expect_that(rich_sparse, is_a("MicrobiomeExperiment"))
-# 	expect_that(min_dense,   is_a("MicrobiomeExperiment"))
-# 	expect_that(min_sparse,  is_a("MicrobiomeExperiment"))
-#
-# 	expect_that(ntaxa(rich_dense), equals(5L))
-# 	expect_that(ntaxa(rich_sparse), equals(5L))
-# 	expect_that(ntaxa(min_dense), equals(5L))
-# 	expect_that(ntaxa(min_sparse), equals(5L))
-#
-# 	# # Component classes
-# 	# sample_data
-# 	expect_that(access(rich_dense,  "sam_data"), is_a("sample_data"))
-# 	expect_that(access(rich_sparse, "sam_data"), is_a("sample_data"))
-# 	expect_that(access(min_dense,   "sam_data"), is_a("NULL"))
-# 	expect_that(access(min_sparse,  "sam_data"), is_a("NULL"))
-#
-# 	# taxonomyTable
-# 	expect_that(access(rich_dense,  "tax_table"), is_a("taxonomyTable"))
-# 	expect_that(access(rich_sparse, "tax_table"), is_a("taxonomyTable"))
-# 	expect_that(access(min_dense,   "tax_table"), is_a("NULL"))
-# 	expect_that(access(min_sparse,  "tax_table"), is_a("NULL"))
-#
-# 	# phylo tree
-# 	expect_that(access(rich_dense,  "phy_tree"), is_a("phylo"))
-# 	expect_that(access(rich_sparse, "phy_tree"), is_a("phylo"))
-# 	expect_that(access(min_dense,   "phy_tree"), is_a("phylo"))
-# 	expect_that(access(min_sparse,  "phy_tree"), is_a("phylo"))
-#
-# 	# reference sequences
-# 	expect_that(inherits(access(rich_dense,  "refseq"), "XStringSet"), is_true())
-# 	expect_that(inherits(access(rich_sparse,  "refseq"), "XStringSet"), is_true())
-# 	expect_that(inherits(access(min_dense,  "refseq"), "XStringSet"), is_true())
-# 	expect_that(inherits(access(min_sparse,  "refseq"), "XStringSet"), is_true())
-# 	expect_that(access(rich_dense,  "refseq"), is_a("DNAStringSet"))
-# 	expect_that(access(rich_sparse, "refseq"), is_a("DNAStringSet"))
-# 	expect_that(access(min_dense,   "refseq"), is_a("DNAStringSet"))
-# 	expect_that(access(min_sparse,  "refseq"), is_a("DNAStringSet"))
-#
-# 	# otu_table
-# 	expect_that(access(rich_dense,  "otu_table"), is_a("otu_table"))
-# 	expect_that(access(rich_sparse, "otu_table"), is_a("otu_table"))
-# 	expect_that(access(min_dense,   "otu_table"), is_a("otu_table"))
-# 	expect_that(access(min_sparse,  "otu_table"), is_a("otu_table"))
-#
-# 	# Compare values in the otu_table. For some reason the otu_tables are not identical
-# 	# one position is plus-two, another is minus-two
-# 	combrich <- c(access(rich_dense, "otu_table"), access(rich_sparse, "otu_table"))
-# 	expect_that(sum(diff(combrich, length(access(rich_dense, "otu_table")))), is_equivalent_to(0))
-# 	expect_that(max(diff(combrich, length(access(rich_dense, "otu_table")))), is_equivalent_to(2))
-# 	expect_that(min(diff(combrich, length(access(rich_dense, "otu_table")))), is_equivalent_to(-2))
-# 	combmin <- c(access(min_dense, "otu_table"), access(min_sparse, "otu_table"))
-# 	expect_that(sum(diff(combmin, length(access(min_dense, "otu_table")))), is_equivalent_to(0))
-# 	expect_that(max(diff(combmin, length(access(min_dense, "otu_table")))), is_equivalent_to(2))
-# 	expect_that(min(diff(combmin, length(access(min_dense, "otu_table")))), is_equivalent_to(-2))
-#
-# 	expect_that(access(min_dense, "otu_table"),  is_equivalent_to(access(rich_dense, "otu_table")))
-# 	expect_that(access(min_sparse, "otu_table"), is_equivalent_to(access(rich_sparse, "otu_table")))
-#
-# 	# Compare values in the sample_data
-# 	expect_that(access(rich_dense, "sam_data"), is_equivalent_to(access(rich_sparse, "sam_data")))
-#
-# 	# Compare values in the taxonomyTable
-# 	expect_that(access(rich_dense, "tax_table"), is_equivalent_to(access(rich_sparse, "tax_table")))
-#
-# })
-#
-# test_that("the import_biom and import(\"biom\", ) syntax give same result", {
-# 	x1 <- import_biom(rich_dense_biom, parseFunction=parse_taxonomy_greengenes)
-# 	x2 <- import("biom", BIOMfilename=rich_dense_biom, parseFunction=parse_taxonomy_greengenes)
-# 	expect_that(x1, is_equivalent_to(x2))
-# })
-# ################################################################################
-# # read_tree tests
-# test_that("The read_tree function works as expected:", {
-# 	GPNewick <- read_tree(system.file("extdata", "GP_tree_rand_short.newick.gz", package="MicrobiomeExperiment"))
-# 	expect_that(GPNewick, is_a("phylo"))
-# 	expect_that(ntaxa(GPNewick), equals(length(GPNewick$tip.label)))
-# 	expect_that(ntaxa(GPNewick), equals(500))
-# 	expect_that(GPNewick$Nnode, equals(499))
-# 	expect_that(taxa_names(GPNewick), is_equivalent_to(GPNewick$tip.label))
-# 	# Now read a nexus tree...
-# 	# Some error-handling expectations
-# 	expect_that(read_tree("alskflsakjsfskfhas.akshfaksj"), gives_warning()) # file not exist
-# 	not_tree <- system.file("extdata", "esophagus.good.groups.gz", package="MicrobiomeExperiment")
-# 	expect_that(read_tree(not_tree), is_a("NULL")) # file not a tree, gives NULL
-# 	expect_that(read_tree(not_tree, TRUE), throws_error()) # file not a tree, check turned on/TRUE
-# })
-# # read_tree_greengenes
-# test_that("The specialized read_tree_greengenes function works:", {
-#   # The included, gzipped version of the the 13_5 73% similarity greengenes tree.
-#   # It causes ape::read.tree to fail with an error, but read_tree_greengenes should be fine.
-#   treefile = system.file("extdata", "gg13-5-73.tree.gz", package="MicrobiomeExperiment")
-#   x = read_tree_greengenes(treefile)
-#   expect_is(x, "phylo")
-#   # Happen to know that all OTU names should be numbers.
-#   expect_match(x$tip.label, "[[:digit:]]+")
-#   # All tip/OTU names should be unique
-#   expect_false(any(duplicated(taxa_names(x))))
-#   # The more general read_tree function should fail to read and return NULL
-#   expect_is(read_tree(treefile), "NULL")
-# })
-# ################################################################################
-# # microbio_me_qiime tests
-# # This tests different features and expected behavior for
-# # the functioning of an interface function to the
-# # microbio.me/qiime data repository.
-# #
-# zipfile = "study_816_split_library_seqs_and_mapping.zip"
-# zipfile = system.file("extdata", zipfile, package="MicrobiomeExperiment")
-# tarfile = "study_816_split_library_seqs_and_mapping.tar.gz"
-# tarfile = system.file("extdata", tarfile, package="MicrobiomeExperiment")
-# tarps = suppressWarnings(microbio_me_qiime(tarfile))
-# zipps = suppressWarnings(microbio_me_qiime(zipfile))
-# # This function is intended to interface with an external server,
-# # as described in the documentation.
-# # However, I don't want successful testing of this package to
-# # rely on the presence or form of particular files on an
-# # external server, so these tests will be done exclusively on
-# # compressed file(s) representing what is exposed by the data server
-# # It is up to the user to provide valid a URL in practice,
-# # and the function attempts to provide informative status
-# # and error messages if things go awry.
-# test_that("The microbio_me_qiime imports as expected: .tar.gz", {
-#   expect_is(tarps, "MicrobiomeExperiment")
-#   expect_is(sample_data(tarps, errorIfNULL=FALSE), "sample_data")
-#   expect_is(otu_table(tarps, errorIfNULL=FALSE), "otu_table")
-#   expect_identical(nrow(otu_table(tarps)), 50L)
-#   expect_identical(nrow(sample_data(tarps)), 15L)
-# })
-# test_that("The microbio_me_qiime imports as expected: .zip", {
-#   expect_is(zipps, "MicrobiomeExperiment")
-#   expect_is(sample_data(zipps, errorIfNULL=FALSE), "sample_data")
-#   expect_is(otu_table(zipps, errorIfNULL=FALSE), "otu_table")
-#   expect_identical(nrow(otu_table(zipps)), 50L)
-#   expect_identical(nrow(sample_data(zipps)), 15L)
-# })
-# test_that("Results of .tar.gz and .zip should be identical", {
-#   expect_identical(tarps, zipps)
-#   expect_identical(sample_data(tarps), sample_data(zipps))
-#   expect_identical(otu_table(tarps), otu_table(zipps))
-# })
-# ################################################################################
-# # import_usearch_uc
-# ################################################################################
-# usearchfile = system.file("extdata", "usearch.uc", package="MicrobiomeExperiment")
-# OTU1 = import_usearch_uc(usearchfile)
-# test_that("import_usearch_uc: Properly omit entries from failed search", {
-#   ucLines = readLines(usearchfile)
-#   expect_identical( sum(OTU1), (length(ucLines) - length(grep("*", ucLines, fixed=TRUE))) )
-#   expect_identical( nrow(OTU1), 37L)
-#   expect_identical( nrow(OTU1), nsamples(OTU1))
-#   expect_identical( ncol(OTU1), ntaxa(OTU1))
-#   expect_identical( ncol(OTU1), 33L)
-#   expect_equivalent(colSums(OTU1)[1:6], c(6, 1, 2, 1, 1, 1))
-# })
-# ################################################################################
+test_that("make TSE worked properly while no sample or taxa data", {
+    ## no sample data or taxa data
+    expect_silent(tse <- makeTreeSummarizedExperimentFromqiime2(featureTableFile))
+    expect_s4_class(tse, "TreeSummarizedExperiment")
+    expect_equal(dim(tse), c(770,34))
+})
+
+test_that("reference sequences of TSE", {
+    # 1. fasta file of refseq
+    tse <- makeTreeSummarizedExperimentFromqiime2(
+        featureTableFile,
+        refSeqFile = refSeqFile
+    )
+    tse2 <-  makeTreeSummarizedExperimentFromqiime2(
+        featureTableFile,
+        refSeqFile = refSeqFile,
+        featureNamesAsRefseq = FALSE
+    )
+    expect_identical(tse@referenceSeq, .read_qza(refSeqFile))
+    expect_identical(tse2@referenceSeq, .read_qza(refSeqFile))
+
+    # 2. row.names of feature table as refseq
+    # 2.1 element of row.names of feature table is not DNA sequence
+    tse <- makeTreeSummarizedExperimentFromqiime2(
+        featureTableFile,
+        featureNamesAsRefseq = TRUE
+    )
+    expect_null(tse@referenceSeq)
+
+    # 2.2 element of row.names of feature table is a DNA sequence
+    #
+    # codes used for create sample data (donot run)
+    if (FALSE) {
+        .require_package("biomformat")
+        feature_tab <- .read_qza(featureTableFile)
+        n_feature <- nrow(feature_tab)
+        random_seq <- sapply(
+            rep(20, n_feature),
+            function(size) {
+                paste(
+                    sample(Biostrings::DNA_BASES, size, replace = TRUE),
+                    collapse=""
+                )
+            }
+        )
+        row.names(feature_tab) <- random_seq
+        obj <- biomformat::make_biom(feature_tab)
+        biomformat::write_biom(obj, "data/table-rownamesInSeq.biom")
+        # create qza file using qiime2
+        # qiime tools import \
+        #     --input-path data/table-rownamesInSeq.biom
+        #     --type 'FeatureTable[Frequency]'
+        #     --input-format BIOMV100Format
+        #     --output-path inst/extdata/table-rownamesInSeq.qza
+        unlink("data/table-rownamesInSeq.biom")
+    }
+    featureTableFile2 <- system.file(
+        "extdata",
+        "table-rownamesInSeq.qza",
+        package = "mia"
+    )
+
+    # featureNamesAsRefseq is TRUE, refSeqFile is NULL, set row.names of
+    # feature table as reference sequences
+    tse <- makeTreeSummarizedExperimentFromqiime2(
+        featureTableFile2,
+        featureNamesAsRefseq = TRUE
+    )
+    feature_tab <- .read_qza(featureTableFile2)
+    names_seq <- Biostrings::DNAStringSet(row.names(feature_tab))
+    names(names_seq) <- paste0("seq_", seq_along(names_seq))
+    expect_identical(tse@referenceSeq, names_seq)
+
+    # refSeqFile is not NULL, featureNamesAsRefseq is TRUE,
+    # set the sequences from refSeqFile as reference sequences
+    tse <- makeTreeSummarizedExperimentFromqiime2(
+        featureTableFile2,
+        featureNamesAsRefseq = TRUE,
+        refSeqFile = refSeqFile
+    )
+    expect_identical(tse@referenceSeq, .read_qza(refSeqFile))
+
+    # 3. refSeqFile = NULL, featureNamesAsRefseq = FALSE
+    tse <- makeTreeSummarizedExperimentFromqiime2(
+        featureTableFile,
+        refSeqFile = NULL,
+        featureNamesAsRefseq = FALSE
+    )
+    expect_null(tse@referenceSeq)
+})
+
+
+test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
+    test_taxa <- matrix(
+        c("a", "k__Bacteria; c__Bacteroidia; s__", 0.88,
+          "b", "k__Bacteria; c__Clostridia; s__", 0.9),
+        ncol = 3,
+        byrow = TRUE,
+        dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
+    )
+    expect_silent(mia:::.parse_q2taxonomy(test_taxa))
+
+    # at certain rank (e.g. species): some taxa can not be determined which
+    # species it assigned to (NA)
+    test_taxa <- matrix(
+        c("a", "k__Bacteria; c__Bacteroidia; s__", 0.88,
+          "b", "k__Bacteria; c__Clostridia;", 0.9),
+        ncol = 3,
+        byrow = TRUE,
+        dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
+    )
+    expect_true(is.na(mia:::.parse_q2taxonomy(test_taxa)[2,"Species"]))
+
+    # if the expexted order is not present it will return a correct result
+    test_taxa <- matrix(
+        c("a", "k__Bacteria; s__test; c__Bacteroidia", 0.88,
+          "b", "k__Bacteria; c__Clostridia;", 0.9),
+        ncol = 3,
+        byrow = TRUE,
+        dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
+    )
+    expect_equal(mia:::.parse_q2taxonomy(test_taxa)[,"Species"],c("s__test",NA))
+    expect_equal(mia:::.parse_q2taxonomy(test_taxa, removeTaxaPrefixes = TRUE)[,"Species"],
+                 c("test",NA))
+})
+
+test_that("`.read_q2sample_meta` remove  the row contained `#q2:types`", {
+    sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+    expect_false(any(as(.read_q2sample_meta(sampleMetaFile), "matrix") == "#q2:types"))
+})
+
+test_that('get file extension', {
+    expect_identical(.get_ext("a.b.c"), "c")
+    expect_identical(.get_ext("abc/a.b.c"), "c")
+})
+
+test_that('read qza file', {
+    sample_file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+    expect_error(.read_qza("abc"), "does not exist")
+    expect_error(.read_qza(sample_file), "must be in `qza` format")
+})
+
+test_that("Confidence of taxa is numberic", {
+    tse <- makeTreeSummarizedExperimentFromqiime2(
+        featureTableFile,
+        taxonomyTableFile = taxonomyTableFile
+    )
+    expect_true(is.numeric(S4Vectors::mcols(tse)$Confidence))
+})

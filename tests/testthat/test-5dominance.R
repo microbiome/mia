@@ -39,8 +39,8 @@ test_that("estimateDominance", {
     expect_named(colData(tse_idx), c("DBP", "DMN", "absolute", "relative", "simpson", "core_abundance", "gini"))
 
     #.gini_dominance
-    #reldist package needed. If it is not installed, skips tests that require it.
-    skip_if_not_installed(requireNamespace("reldist", quietly = TRUE))
+    #reldist package needed. If it is not installed, skips tests tat require it.
+    skip_if_not_installed("reldist")
     #Tests function with vector that has value 1 1000 times, output should be 0.
     x <- c(rep(1,1000))
     expect_equal(mia:::.gini_dominance(x), reldist:::gini(x))
