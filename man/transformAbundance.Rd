@@ -12,7 +12,8 @@ transformAbundance(
   abund_values = "counts",
   transform = "identity",
   name = transform,
-  pseudocount = FALSE
+  pseudocount = FALSE,
+  scale = 1
 )
 
 \S4method{transformAbundance}{SummarizedExperiment}(
@@ -20,7 +21,8 @@ transformAbundance(
   abund_values = "counts",
   transform = "identity",
   name = transform,
-  pseudocount = FALSE
+  pseudocount = FALSE,
+  scale = 1
 )
 
 getTransformAbundance(
@@ -28,7 +30,8 @@ getTransformAbundance(
   abund_values = "counts",
   transform = "identity",
   name = transform,
-  pseudocount = FALSE
+  pseudocount = FALSE,
+  scale = 1
 )
 
 \S4method{getTransformAbundance}{SummarizedExperiment}(
@@ -36,7 +39,8 @@ getTransformAbundance(
   abund_values = "counts",
   transform = "identity",
   name = transform,
-  pseudocount = FALSE
+  pseudocount = FALSE,
+  scale = 1
 )
 }
 \arguments{
@@ -54,6 +58,8 @@ to be transformed.}
 \item{pseudocount}{Boolean or numeric value deciding whether pseudocount is added. Numerical
 value specifies the value of pseudocount. When selecting pseudocount==TRUE,
 pseudocount is 1.}
+
+\item{scale}{A numeric value for scaling. Values are multiplied with specified value.}
 }
 \value{
 \code{transformAbundance} returns \code{x} with additional, transformed

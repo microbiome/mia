@@ -23,6 +23,9 @@
 #' value specifies the value of pseudocount. When selecting pseudocount==TRUE,
 #' pseudocount is 1.
 #'
+#' @param scale
+#' A numeric value for scaling. Values are multiplied with specified value.
+#'
 #' @details
 #' \code{transformAbundance} applies transformation to abundance table.
 #' Transformation methods include
@@ -107,7 +110,8 @@ setGeneric("transformAbundance", signature = c("x"),
                     abund_values = "counts",
                     transform = "identity",
                     name = transform,
-                    pseudocount = FALSE)
+                    pseudocount = FALSE,
+                    scale = 1)
                standardGeneric("transformAbundance"))
 
 
@@ -118,7 +122,8 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
                    abund_values = "counts",
                    transform = "identity",
                    name = transform,
-                   pseudocount = FALSE){
+                   pseudocount = FALSE,
+                   scale = 1){
 
               # Input check
               # Check abund_values
@@ -142,10 +147,16 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
                   stop("'pseudocount' must be boolean or positive numeric value.")
               }
 
+              # Check scale
+              if(!is.numeric(check)){
+                  stop("'scale' must be a numeric value.")
+              }
+
               # Get transformed table
               transformed_table <- .get_transformed_table(assay = assay(x, abund_values),
                                                           transform = transform,
-                                                          pseudocount = pseudocount)
+                                                          pseudocount = pseudocount,
+                                                          scale = scale)
 
               # Assign transformed table to assays
               assay(x, name) <- transformed_table
@@ -162,7 +173,8 @@ setGeneric("getTransformAbundance", signature = c("x"),
                     abund_values = "counts",
                     transform = "identity",
                     name = transform,
-                    pseudocount = FALSE)
+                    pseudocount = FALSE,
+                    scale = 1)
                standardGeneric("getTransformAbundance"))
 
 
@@ -173,10 +185,11 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
                    abund_values = "counts",
                    transform = "identity",
                    name = transform,
-                   pseudocount = FALSE){
+                   pseudocount = FALSE,
+                   scale = 1){
 
               # Get object with transformed table
-              x <- transformAbundance(x, abund_values, transform, name, pseudocount)
+              x <- transformAbundance(x, abund_values, transform, name, pseudocount, scale)
 
               # Get the table
               mat <- assay(x, name)
@@ -189,7 +202,7 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
 
 
 # Chooses which transformation function is applied
-.get_transformed_table <- function(assay, transform, pseudocount){
+.get_transformed_table <- function(assay, transform, pseudocount, scale){
 
     # Function is selected based on the "transform" variable
     FUN <- switch(transform,
@@ -204,10 +217,17 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
             list(assay = assay,
-                 pseudocount = pseudocount))
+                 pseudocount = pseudocount,
+                 scale = scale))
 }
 
-.get_relabundance_table <- function(assay, pseudocount){
+.get_relabundance_table <- function(assay, pseudocount, scale){
+
+    # Gets scaled table, by default scale == 1, so no changes are done.
+    assay <- .get_scaled_table(assay, scale)
+    # After scaling, scale is changed to 1, so scaling is not done multiple times
+    # if other transformations is called.
+    scale <- 1
 
     # If "pseudocount" is true or over 0, add pseudo count
     if(!pseudocount==FALSE){
@@ -228,7 +248,13 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_z_table <- function(assay, pseudocount){
+.get_z_table <- function(assay, pseudocount, scale){
+
+    # Gets scaled table, by default scale == 1, so no changes are done.
+    assay <- .get_scaled_table(assay, scale)
+    # After scaling, scale is changed to 1, so scaling is not done multiple times
+    # if other transformations is called.
+    scale <- 1
 
     # If "pseudocount" is true or over 0, add pseudo count
     if(!pseudocount==FALSE){
@@ -252,7 +278,7 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     }
 
     # Gets the log transformed table
-    mat <- .get_log10_table(assay, pseudocount = pseudocount)
+    mat <- .get_log10_table(assay, pseudocount = pseudocount, scale=scale)
 
     # Performs z transformation SAMPLES AS A TARGET, should there be also option for OTUs
     # like in the microbiome package?
@@ -263,7 +289,13 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_log10_table <- function(assay, pseudocount){
+.get_log10_table <- function(assay, pseudocount, scale){
+
+    # Gets scaled table, by default scale == 1, so no changes are done.
+    assay <- .get_scaled_table(assay, scale)
+    # After scaling, scale is changed to 1, so scaling is not done multiple times
+    # if other transformations is called.
+    scale <- 1
 
     # If "pseudocount" is true or over 0, add pseudo count
     if(!pseudocount==FALSE){
@@ -291,7 +323,13 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_log10p_table <- function(assay, pseudocount){
+.get_log10p_table <- function(assay, pseudocount, scale){
+
+    # Gets scaled table, by default scale == 1, so no changes are done.
+    assay <- .get_scaled_table(assay, scale)
+    # After scaling, scale is changed to 1, so scaling is not done multiple times
+    # if other transformations is called.
+    scale <- 1
 
     # If "pseudocount" is true or over 0, add pseudo count
     if(is.numeric(pseudocount)){
@@ -309,9 +347,17 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     # Because a pseudo count was added, there is no zeroes in the abundance table.
     # Calculates log "directly".
     mat <- log10(assay)
+
+    return(mat)
 }
 
-.get_hellinger_table <- function(assay, pseudocount){
+.get_hellinger_table <- function(assay, pseudocount, scale){
+
+    # Gets scaled table, by default scale == 1, so no changes are done.
+    assay <- .get_scaled_table(assay, scale)
+    # After scaling, scale is changed to 1, so scaling is not done multiple times
+    # if other transformations is called.
+    scale <- 1
 
     # If "pseudocount" is true or over 0, add pseudo count
     if(!pseudocount==FALSE){
@@ -328,7 +374,7 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     }
 
     # Gets the relative abundance
-    mat <- .get_relabundance_table(assay, pseudocount = pseudocount)
+    mat <- .get_relabundance_table(assay, pseudocount = pseudocount, scale = scale)
 
     # Takes square root
     mat <- sqrt(mat)
@@ -336,7 +382,13 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_identity_table <- function(assay, pseudocount){
+.get_identity_table <- function(assay, pseudocount, scale){
+
+    # Gets scaled table, by default scale == 1, so no changes are done.
+    assay <- .get_scaled_table(assay, scale)
+    # After scaling, scale is changed to 1, so scaling is not done multiple times
+    # if other transformations is called.
+    scale <- 1
 
     # If "pseudocount" is true or over 0, add pseudo count
     if(!pseudocount==FALSE){
@@ -358,7 +410,13 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_clr_table <- function(assay, pseudocount){
+.get_clr_table <- function(assay, pseudocount, scale){
+
+    # Gets scaled table, by default scale == 1, so no changes are done.
+    assay <- .get_scaled_table(assay, scale)
+    # After scaling, scale is changed to 1, so scaling is not done multiple times
+    # if other transformations is called.
+    scale <- 1
 
     # If "pseudocount" is true or over 0, add pseudo count
     if(!pseudocount==FALSE){
@@ -387,7 +445,7 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
                 pseudocount=TRUE or log10p transformation.")
     }
 
-    mat <- .get_relabundance_table(assay, pseudocount = pseudocount)
+    mat <- .get_relabundance_table(assay, pseudocount = pseudocount, scale = scale)
 
     # Stores row and col names
     row_names <- rownames(mat)
@@ -407,5 +465,12 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
+.get_scaled_table <- function(assay, scale){
+
+    # Multiply values with scale, by default scale is 1
+    mat <- assay * scale
+
+    return(mat)
+}
 
 
