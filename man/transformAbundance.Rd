@@ -13,7 +13,8 @@ transformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1
+  scale = 1,
+  target = "samples"
 )
 
 \S4method{transformAbundance}{SummarizedExperiment}(
@@ -22,7 +23,8 @@ transformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1
+  scale = 1,
+  target = "samples"
 )
 
 getTransformAbundance(
@@ -31,7 +33,8 @@ getTransformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1
+  scale = 1,
+  target = "samples"
 )
 
 \S4method{getTransformAbundance}{SummarizedExperiment}(
@@ -40,7 +43,8 @@ getTransformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1
+  scale = 1,
+  target = "samples"
 )
 }
 \arguments{
@@ -60,6 +64,9 @@ value specifies the value of pseudocount. When selecting pseudocount==TRUE,
 pseudocount is 1.}
 
 \item{scale}{A numeric value for scaling. Values are multiplied with specified value.}
+
+\item{target}{A single character value specifying, if z transformation is applied
+for samples or features.}
 }
 \value{
 \code{transformAbundance} returns \code{x} with additional, transformed
