@@ -85,7 +85,9 @@ Transformation methods include
 ($\\frac\{x\}\{x_\{tot\}\}$, where $x$ is a single value and $x_\{tot\}$ is the sum of
 all values.)\}
 
-\\item\{"Z" \}\{Z transform or Z standardization can be used for normalizing the data.
+\\item\{"Z" \}\{Z-transform or Z-standardization can be used for normalizing the data.
+It can be done for samples or features by specifying 'target'. However, Z-transform
+done for features can give misleading results. By default, it is done for samples.
 ($\\frac\{x + µ\}\{σ\}$, where $x$ is a single value, $µ$ is the mean of the sample, and
 $σ$ is the standard deviation of the sample.)\}
 

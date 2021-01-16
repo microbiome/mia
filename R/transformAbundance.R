@@ -40,7 +40,9 @@
 #'     ($\frac{x}{x_{tot}}$, where $x$ is a single value and $x_{tot}$ is the sum of
 #'     all values.)}
 #'
-#'     \item{"Z" }{Z transform or Z standardization can be used for normalizing the data.
+#'     \item{"Z" }{Z-transform or Z-standardization can be used for normalizing the data.
+#'     It can be done for samples or features by specifying 'target'. However, Z-transform
+#'     done for features can give misleading results. By default, it is done for samples.
 #'     ($\frac{x + µ}{σ}$, where $x$ is a single value, $µ$ is the mean of the sample, and
 #'     $σ$ is the standard deviation of the sample.)}
 #'
@@ -281,7 +283,8 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     mat <- .get_log10_table(assay, target)
 
     if(target=="features"){
-        # Z transform features
+        # Z transform for features. Centers the feature data. After that, divides with
+        # the standard deviation of feature.
         trans <- t(scale(t(mat)))
         # Saves all features that are undetectable in every sample i.e. are NA
         undetectables <- which(rowMeans(is.na(trans)) == 1)
@@ -306,8 +309,7 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
         }
 
     }else if(target=="samples"){
-        # Performs z transformation SAMPLES AS A TARGET, should there be also option for OTUs
-        # like in the microbiome package?
+        # Performs z transformation for samples
         mat <- apply(mat, 2, function(x) {
             (x - mean(x))/sd(x)
         })
