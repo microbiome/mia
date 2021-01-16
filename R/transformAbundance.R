@@ -101,6 +101,9 @@
 #' assays(x)$test
 #' x <- transformAbundance(x, transform="Z", abund_values="test")
 #' assays(x)$Z
+#' # Z-transform can also be done for features
+#' x <- transformAbundance(x, transform="Z", pseudocount=TRUE, target="features")
+#' assays(x)$Z
 #'
 #' # With getTransformAbundance, it is possible to get only the transformed abundance
 #' # table without being stored in assays.
