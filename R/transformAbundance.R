@@ -262,8 +262,8 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
 .get_relabundance_table <- function(assay){
 
-    # Calculates the relative abundances
-    mat <- sweep(assay, 2, colSums(assay), "/")
+    # Calculates the relative abundances. Uses internal function from relabundance.R.
+    mat <- .calc_rel_abund(assay)
     return(mat)
 }
 
