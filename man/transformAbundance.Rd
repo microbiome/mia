@@ -91,9 +91,8 @@ to be transformed.}
 
 \item{name}{A single character value specifying the name of transformed abundance table.}
 
-\item{pseudocount}{Boolean or numeric value deciding whether pseudocount is added. Numerical
-value specifies the value of pseudocount. When selecting pseudocount==TRUE,
-pseudocount is 1.}
+\item{pseudocount}{FALSE or numeric value deciding whether pseudocount is added. Numerical
+value specifies the value of pseudocount.}
 
 \item{scalingfactor}{A numeric value for scaling. Values are multiplied with specified value.}
 }
@@ -125,7 +124,8 @@ $σ$ is the standard deviation of the sample.)\}
 ($log_\{10\}x$, where $x$ is a single value of data.)\}
 
 \\item\{"log10p \}\{log10 transform can be used for reducing the skewness of the data.
-With log10p, pseudo count is added before log10 transformation.
+With log10p, pseudo count is added before log10 transformation. By default, pseudocount is
+1, but it can be specified with "pseudocount".
 ($log_\{10\}x$, where $x$ is a single value of data.)\}
 
 \\item\{"hellinger" \}\{Hellinger transform can be used for reducing the impact of

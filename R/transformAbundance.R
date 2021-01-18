@@ -19,9 +19,8 @@
 #' A single character value specifying the name of transformed abundance table.
 #'
 #' @param pseudocount
-#' Boolean or numeric value deciding whether pseudocount is added. Numerical
-#' value specifies the value of pseudocount. When selecting pseudocount==TRUE,
-#' pseudocount is 1.
+#' FALSE or numeric value deciding whether pseudocount is added. Numerical
+#' value specifies the value of pseudocount.
 #'
 #' @param scalingfactor
 #' A numeric value for scaling. Values are multiplied with specified value.
@@ -47,7 +46,8 @@
 #'     ($log_{10}x$, where $x$ is a single value of data.)}
 #'
 #'     \item{"log10p }{log10 transform can be used for reducing the skewness of the data.
-#'     With log10p, pseudo count is added before log10 transformation.
+#'     With log10p, pseudo count is added before log10 transformation. By default, pseudocount is
+#'     1, but it can be specified with "pseudocount".
 #'     ($log_{10}x$, where $x$ is a single value of data.)}
 #'
 #'     \item{"hellinger" }{Hellinger transform can be used for reducing the impact of
@@ -152,8 +152,8 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
               }
 
               # Check pseudocount
-              if(!(pseudocount==TRUE || pseudocount==FALSE || pseudocount>0)){
-                  stop("'pseudocount' must be boolean or positive numeric value.",
+              if(!(pseudocount==FALSE || is.numeric(pseudocount))){
+                  stop("'pseudocount' must be FALSE or numeric value.",
                        call. = FALSE)
               }
 
@@ -242,8 +242,8 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
               }
 
               # Check pseudocount
-              if(!(pseudocount==TRUE || pseudocount==FALSE || pseudocount>0)){
-                  stop("'pseudocount' must be boolean or positive numeric value.",
+              if(!(pseudocount==FALSE || is.numeric(pseudocount))){
+                  stop("'pseudocount' must be FALSE or numeric value.",
                        call. = FALSE)
               }
 
@@ -304,7 +304,8 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
 
     # If "pseudocount" is TRUE or over 0 or transform is log10p, add pseudocount
     if(!pseudocount==FALSE || transform=="log10p"){
-        if(is.logical(pseudocount)){
+        # In case of log10p, pseudocount can be still FALSE. Then 1 is added.
+        if(pseudocount == FALSE){
             # Add 1 as a pseudo count
             assay <- assay + 1
             warning("Transform was calculated with pseudocount value 1")
@@ -438,16 +439,9 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
 
 .get_ztransformed_table <- function(assay, transform, pseudocount, scalingFactor){
 
-    # If "pseudocount" is TRUE or over 0 or transform is log10p, add pseudocount
-    if(!pseudocount==FALSE || transform=="log10p"){
-        if(is.logical(pseudocount)){
-            # Add 1 as a pseudo count
-            assay <- assay + 1
-            warning("Transform was calculated with pseudocount value 1")
-        } else{
-            # When user have specified pseudocount, add pseudocount as a pseudocount
-            assay <- assay + pseudocount
-        }
+    # If "pseudocount" is not FALSE, add pseudocount
+    if(!pseudocount==FALSE){
+        assay <- assay + pseudocount
     }
 
     # Multiply values with scalingFactor. By default, scalingFactor is 1, so no changes are made
