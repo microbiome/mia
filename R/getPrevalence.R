@@ -24,6 +24,9 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for prevalence calculation.
 #'
+#' @param other_label A single \code{character} valued used as the label for the
+#'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
+#'
 #' @param rank,... additional arguments
 #' \itemize{
 #'   \item{If \code{!is.null(rank)} arguments are passed on to
@@ -96,6 +99,13 @@
 #'                          prevalence = 50/100,
 #'                          as_relative = TRUE)
 #' head(taxa)
+#'
+#' # data can be aggregated based on prevalent taxonomic results
+#' agglomerateByPrevalence(GlobalPatterns,
+#'                          rank = "Phylum",
+#'                          detection = 1/100,
+#'                          prevalence = 50/100,
+#'                          as_relative = TRUE)
 NULL
 
 #' @rdname getPrevalence
@@ -141,6 +151,21 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
     }
 )
 
+.agg_for_prevalence <- function(x, rank, ...){
+    if(!is.null(rank)){
+        .check_taxonomic_rank(rank, x)
+        args <- c(list(x = x, rank = rank), list(...))
+        if(is.null(args[["na.rm"]])){
+            args[["na.rm"]] <- FALSE
+        }
+        argNames <- c("x","rank","onRankOnly","na.rm","empty.fields",
+                      "archetype","mergeTree","average","BPPARAM")
+        args <- args[names(args) %in% argNames]
+        x <- do.call(agglomerateByRank, args)
+    }
+    x
+}
+
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
@@ -153,14 +178,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
 
         # check assay
         .check_abund_values(abund_values, x)
-        if(!is.null(rank)){
-            args <- c(list(x = x, rank = rank), list(...))
-            if(is.null(args[["na.rm"]])){
-                args[["na.rm"]] <- TRUE
-            }
-            args <- args[!(names(args) %in% c("detection","include_lowest","sort"))]
-            x <- do.call(agglomerateByRank, args)
-        }
+        x <- .agg_for_prevalence(x, rank = rank, ...)
         mat <- assay(x, abund_values)
         if (as_relative) {
             mat <- .calc_rel_abund(mat)
@@ -172,8 +190,8 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @rdname getPrevalence
 #'
 #' @param prevalence Prevalence threshold (in 0 to 1). The
-#' required prevalence is strictly greater by default. To include the
-#' limit, set include_lowest to TRUE.
+#'   required prevalence is strictly greater by default. To include the
+#'   limit, set \code{include_lowest} to \code{TRUE}.
 #'
 #' @details
 #' \code{getPrevalentTaxa} returns taxa that are more prevalent with the
@@ -198,7 +216,7 @@ setGeneric("getPrevalentTaxa", signature = "x",
         stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
     }
 
-    if(is(x,"SummarizedExperiment")){
+    if(!is(x,"SummarizedExperiment")){
         pr <- getPrevalence(x, ...)
     } else {
         pr <- getPrevalence(x, rank = rank, ...)
@@ -232,3 +250,54 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
                             include_lowest = include_lowest, ...)
     }
 )
+
+################################################################################
+# agglomerateByPrevalence
+
+#' @rdname getPrevalence
+#' @export
+setGeneric("agglomerateByPrevalence", signature = "x",
+           function(x, ...)
+               standardGeneric("agglomerateByPrevalence"))
+
+
+#' @rdname getPrevalence
+#' @export
+setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
+    function(x, rank = taxonomyRanks(x)[1L], other_label = "Other", ...){
+        # input check
+        if(!.is_a_string(other_label)){
+            stop("'other_label' must be a single character value.",
+                 call. = FALSE)
+        }
+        #
+        x <- .agg_for_prevalence(x, rank, ...)
+        pr <- getPrevalentTaxa(x, rank = NULL, ...)
+        f <- rownames(x) %in% pr
+        if(any(!f)){
+            other_x <- mergeRows(x[!f,], factor(rep(1L,sum(!f))))
+            rowData(other_x)[,colnames(rowData(other_x))] <- NA
+            # set the other label
+            rownames(other_x) <- other_label
+            if(!is.null(rank)){
+                rowData(other_x)[,rank] <- other_label
+            }
+            # temporary fix until TSE supports rbind
+            class <- c("SingleCellExperiment","RangedSummarizedExperiment",
+                       "SummarizedExperiment")
+            class_x <- class(x)
+            if(!(class_x %in% class)){
+                class <- "SingleCellExperiment"
+            } else {
+                class <- class[class_x == class]
+            }
+            x <- rbind(as(x[f,],class),
+                       as(other_x,class))
+            x <- as(x,class_x)
+            #
+            # x <- rbind(x[f,],other_x)
+        }
+        x
+    }
+)
+
