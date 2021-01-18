@@ -102,8 +102,11 @@ abundance table named \code{*name*} in the \code{\link{assay}}.
 \code{getTransformAbundance} and \code{getZTransform} return transformed abundance table.
 }
 \description{
-This function applies transformation to abundance table, which is returned.
-Additionally, the information can be directly stored in the \code{assay}.
+These functions applies transformation to abundance table. By using
+\code{transformAbundance}, transformed table is in \code{assay}. By using
+\code{getTransformAbundance} the transformed table is returned. These functions
+also include \code{ZTransform} and \code{getZTransform} which work in similar
+manner as functions described before.
 }
 \details{
 \code{transformAbundance} applies transformation to abundance table.

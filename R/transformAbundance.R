@@ -1,7 +1,10 @@
 #' Transform Abundance
 #'
-#' This function applies transformation to abundance table, which is returned.
-#' Additionally, the information can be directly stored in the \code{assay}.
+#' These functions applies transformation to abundance table. By using
+#' \code{transformAbundance}, transformed table is in \code{assay}. By using
+#' \code{getTransformAbundance} the transformed table is returned. These functions
+#' also include \code{ZTransform} and \code{getZTransform} which work in similar
+#' manner as functions described before.
 #'
 #' @param x
 #' A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -88,7 +91,7 @@
 #' x <- transformAbundance(x)
 #' assays(x)$identity
 #'
-#' # By specifying, it is possible to apoly different transformations, e.g. clr transform
+#' # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 #' # Pseudocount can be added by giving the value TRUE. Then pseudocount is 1.
 #' x <- transformAbundance(x, transform="clr", pseudocount=TRUE)
 #' assays(x)$clr
