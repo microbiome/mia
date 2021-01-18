@@ -155,8 +155,8 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
         if(is.null(args[["na.rm"]])){
             args[["na.rm"]] <- FALSE
         }
-        argNames <- c("rank","onRankOnly","na.rm","empty.fields",
-                      "as_relative","archetype","mergeTree","average","BPPARAM")
+        argNames <- c("x","rank","onRankOnly","na.rm","empty.fields",
+                      "archetype","mergeTree","average","BPPARAM")
         args <- args[names(args) %in% argNames]
         x <- do.call(agglomerateByRank, args)
     }
