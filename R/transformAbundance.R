@@ -26,10 +26,6 @@
 #' @param scale
 #' A numeric value for scaling. Values are multiplied with specified value.
 #'
-#' @param target
-#' A single character value specifying, if z transformation is applied
-#' for samples or features.
-#'
 #' @details
 #' \code{transformAbundance} applies transformation to abundance table.
 #' Transformation methods include
@@ -41,8 +37,9 @@
 #'     all values.)}
 #'
 #'     \item{"Z" }{Z-transform or Z-standardization can be used for normalizing the data.
-#'     It can be done for samples or features by specifying 'target'. However, Z-transform
-#'     done for features can give misleading results. By default, it is done for samples.
+#'     In function \code{transformAbundance} it is done per-sample. It can also be done
+#'     per-features by using function \code{ZTransform}. However, Z-transform
+#'     done for features can give misleading results.
 #'     ($\frac{x + µ}{σ}$, where $x$ is a single value, $µ$ is the mean of the sample, and
 #'     $σ$ is the standard deviation of the sample.)}
 #'
@@ -66,12 +63,14 @@
 #'
 #' }
 #'
+#' With \code{ZTransform}, z-transform can be applied for features instead of samples.
+#'
 #' @references
 #' If there is references Add information here......................................
 #'
-#' @return \code{transformAbundance} returns \code{x} with additional, transformed
+#' @return \code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
 #' abundance table named \code{*name*} in the \code{\link{assay}}.
-#' \code{getTransformAbundance} returns transformed abundance table.
+#' \code{getTransformAbundance} and \code{getZTransform} return transformed abundance table.
 #'
 #' @seealso
 #' If there is something Add information here......................................
@@ -102,8 +101,8 @@
 #' x <- transformAbundance(x, transform="Z", abund_values="test")
 #' assays(x)$Z
 #' # Z-transform can also be done for features
-#' x <- transformAbundance(x, transform="Z", pseudocount=TRUE, target="features")
-#' assays(x)$Z
+#' x <- ZTransform(x, pseudocount=TRUE)
+#' assays(x)$ZTransform
 #'
 #' # With getTransformAbundance, it is possible to get only the transformed abundance
 #' # table without being stored in assays.
@@ -120,8 +119,7 @@ setGeneric("transformAbundance", signature = c("x"),
                     transform = "identity",
                     name = transform,
                     pseudocount = FALSE,
-                    scale = 1,
-                    target = "samples")
+                    scale = 1)
                standardGeneric("transformAbundance"))
 
 
@@ -133,8 +131,7 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
                    transform = "identity",
                    name = transform,
                    pseudocount = FALSE,
-                   scale = 1,
-                   target = "samples"){
+                   scale = 1){
 
               # Input check
               # Check abund_values
@@ -166,26 +163,11 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
                        call. = FALSE)
               }
 
-              # Check target
-              if(!target=="samples"){
-                  if(!transform=="Z"){
-                      stop("'target' must have value 'samples' in all but Z transform,
-                           where 'target' also can get value 'features'.",
-                           call. = FALSE)
-                  } else{
-                      if(!target=="features"){
-                          stop("'target' must be 'samples' or 'features'",
-                               call. = FALSE)
-                      }
-                  }
-              }
-
               # Get transformed table
               transformed_table <- .get_transformed_table(assay = assay(x, abund_values),
                                                           transform = transform,
                                                           pseudocount = pseudocount,
-                                                          scale = scale,
-                                                          target = target)
+                                                          scale = scale)
 
               # Assign transformed table to assays
               assay(x, name) <- transformed_table
@@ -203,8 +185,7 @@ setGeneric("getTransformAbundance", signature = c("x"),
                     transform = "identity",
                     name = transform,
                     pseudocount = FALSE,
-                    scale = 1,
-                    target = "samples")
+                    scale = 1)
                standardGeneric("getTransformAbundance"))
 
 
@@ -216,11 +197,10 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
                    transform = "identity",
                    name = transform,
                    pseudocount = FALSE,
-                   scale = 1,
-                   target = "samples"){
+                   scale = 1){
 
               # Get object with transformed table
-              x <- transformAbundance(x, abund_values, transform, name, pseudocount, scale, target)
+              x <- transformAbundance(x, abund_values, transform, name, pseudocount, scale)
 
               # Get the table
               mat <- assay(x, name)
@@ -277,8 +257,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
               transformed_table <- .get_ztransformed_table(assay = assay(x, abund_values),
                                                           transform = transform,
                                                           pseudocount = pseudocount,
-                                                          scale = scale,
-                                                          target = target)
+                                                          scale = scale)
 
               # Assign transformed table to assays
               assay(x, name) <- transformed_table
@@ -321,7 +300,7 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
 
 
 # Chooses which transformation function is applied
-.get_transformed_table <- function(assay, transform, pseudocount, scale, target){
+.get_transformed_table <- function(assay, transform, pseudocount, scale){
 
     # If "pseudocount" is TRUE or over 0 or transform is log10p, add pseudocount
     if(!pseudocount==FALSE || transform=="log10p"){
@@ -350,18 +329,17 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
 
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
-            list(assay = assay,
-                 target = target))
+            list(assay = assay))
 }
 
-.get_relabundance_table <- function(assay, target){
+.get_relabundance_table <- function(assay){
 
     # Calculates the relative abundances
     mat <- sweep(assay, 2, colSums(assay), "/")
     return(mat)
 }
 
-.get_z_table <- function(assay, target){
+.get_z_table <- function(assay){
 
     # Log10 can not be calculated if there is zero
     if (any(assay == 0)) {
@@ -371,7 +349,7 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
     }
 
     # Gets the log transformed table
-    mat <- .get_log10_table(assay, target)
+    mat <- .get_log10_table(assay)
 
     # Performs z transformation for samples
     mat <- apply(mat, 2, function(x) {
@@ -381,7 +359,7 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_log10_table <- function(assay, target){
+.get_log10_table <- function(assay){
 
     # If abundance table contains zeros, gives an error, because it is not possible
     # to calculate log from zeros. If there is no zeros, calculates log.
@@ -395,7 +373,7 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_log10p_table <- function(assay, target){
+.get_log10p_table <- function(assay){
 
     # Because a pseudo count was added, there is no zeroes in the abundance table.
     # Calculates log "directly".
@@ -404,10 +382,10 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_hellinger_table <- function(assay, target){
+.get_hellinger_table <- function(assay){
 
     # Gets the relative abundance
-    mat <- .get_relabundance_table(assay, target)
+    mat <- .get_relabundance_table(assay)
 
     # Takes square root
     mat <- sqrt(mat)
@@ -415,7 +393,7 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_identity_table <- function(assay, target){
+.get_identity_table <- function(assay){
 
     # Identity table is abundance table itself
     mat <- assay
@@ -423,7 +401,7 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_clr_table <- function(assay, target){
+.get_clr_table <- function(assay){
 
     # If there is negative values, gives an error.
     if (any(assay < 0)) {
@@ -438,7 +416,7 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
                 pseudocount=TRUE or log10p transformation.")
     }
 
-    mat <- .get_relabundance_table(assay, target)
+    mat <- .get_relabundance_table(assay)
 
     # Stores row and col names
     row_names <- rownames(mat)
@@ -458,7 +436,7 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_ztransformed_table <- function(assay, transform, pseudocount, scale, target){
+.get_ztransformed_table <- function(assay, transform, pseudocount, scale){
 
     # If "pseudocount" is TRUE or over 0 or transform is log10p, add pseudocount
     if(!pseudocount==FALSE || transform=="log10p"){
@@ -484,7 +462,7 @@ setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
     }
 
     # Gets the log transformed table
-    mat <- .get_log10_table(assay, target)
+    mat <- .get_log10_table(assay)
 
     # Z transform for features. Centers the feature data. After that, divides with
     # the standard deviation of feature.

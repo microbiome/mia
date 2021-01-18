@@ -17,8 +17,7 @@ transformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1,
-  target = "samples"
+  scale = 1
 )
 
 \S4method{transformAbundance}{SummarizedExperiment}(
@@ -27,8 +26,7 @@ transformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1,
-  target = "samples"
+  scale = 1
 )
 
 getTransformAbundance(
@@ -37,8 +35,7 @@ getTransformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1,
-  target = "samples"
+  scale = 1
 )
 
 \S4method{getTransformAbundance}{SummarizedExperiment}(
@@ -47,8 +44,7 @@ getTransformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1,
-  target = "samples"
+  scale = 1
 )
 
 ZTransform(
@@ -100,14 +96,11 @@ value specifies the value of pseudocount. When selecting pseudocount==TRUE,
 pseudocount is 1.}
 
 \item{scale}{A numeric value for scaling. Values are multiplied with specified value.}
-
-\item{target}{A single character value specifying, if z transformation is applied
-for samples or features.}
 }
 \value{
-\code{transformAbundance} returns \code{x} with additional, transformed
+\code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
 abundance table named \code{*name*} in the \code{\link{assay}}.
-\code{getTransformAbundance} returns transformed abundance table.
+\code{getTransformAbundance} and \code{getZTransform} return transformed abundance table.
 }
 \description{
 This function applies transformation to abundance table, which is returned.
@@ -122,8 +115,9 @@ Transformation methods include
 all values.)\}
 
 \\item\{"Z" \}\{Z-transform or Z-standardization can be used for normalizing the data.
-It can be done for samples or features by specifying 'target'. However, Z-transform
-done for features can give misleading results. By default, it is done for samples.
+In function \code{transformAbundance} it is done per-sample. It can also be done
+per-features by using function \code{ZTransform}. However, Z-transform
+done for features can give misleading results.
 ($\\frac\{x + µ\}\{σ\}$, where $x$ is a single value, $µ$ is the mean of the sample, and
 $σ$ is the standard deviation of the sample.)\}
 
@@ -147,6 +141,8 @@ the mean of relative values of whole sample.\}
 }
 
 }
+
+With \code{ZTransform}, z-transform can be applied for features instead of samples.
 }
 \examples{
 data(esophagus)
@@ -169,8 +165,8 @@ assays(x)$test
 x <- transformAbundance(x, transform="Z", abund_values="test")
 assays(x)$Z
 # Z-transform can also be done for features
-x <- transformAbundance(x, transform="Z", pseudocount=TRUE, target="features")
-assays(x)$Z
+x <- ZTransform(x, pseudocount=TRUE)
+assays(x)$ZTransform
 
 # With getTransformAbundance, it is possible to get only the transformed abundance
 # table without being stored in assays.
