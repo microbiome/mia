@@ -2,9 +2,7 @@
 #'
 #' These functions applies transformation to abundance table. By using
 #' \code{transformAbundance}, transformed table is in \code{assay}. By using
-#' \code{getTransformAbundance} the transformed table is returned. These functions
-#' also include \code{ZTransform} and \code{getZTransform} which work in similar
-#' manner as functions described before.
+#' specific \code{ZTransform} function, Z-transformation can be applied for features.
 #'
 #' @param x
 #' A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -73,7 +71,6 @@
 #'
 #' @return \code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
 #' abundance table named \code{*name*} in the \code{\link{assay}}.
-#' \code{getTransformAbundance} and \code{getZTransform} return transformed abundance table.
 #'
 #' @seealso
 #' If there is something Add information here......................................
@@ -106,11 +103,6 @@
 #' # Z-transform can also be done for features
 #' x <- ZTransform(x, pseudocount=TRUE)
 #' assays(x)$ZTransform
-#'
-#' # With getTransformAbundance, it is possible to get only the transformed abundance
-#' # table without being stored in assays.
-#' getTransformAbundance(x, transform="log10", pseudocount=1)
-#'
 #'
 NULL
 
@@ -180,38 +172,6 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
           }
 )
 
-#' @rdname transformAbundance
-#' @export
-setGeneric("getTransformAbundance", signature = c("x"),
-           function(x,
-                    abund_values = "counts",
-                    transform = "identity",
-                    name = transform,
-                    pseudocount = FALSE,
-                    scalingFactor = 1)
-               standardGeneric("getTransformAbundance"))
-
-
-#' @rdname transformAbundance
-#' @export
-setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   abund_values = "counts",
-                   transform = "identity",
-                   name = transform,
-                   pseudocount = FALSE,
-                   scalingFactor = 1){
-
-              # Get object with transformed table
-              x <- transformAbundance(x, abund_values, transform, name, pseudocount, scalingFactor)
-
-              # Get the table
-              mat <- assay(x, name)
-
-              return(mat)
-          }
-)
-
 ##################################Z-TRANSFORM###################################
 
 #' @rdname transformAbundance
@@ -266,36 +226,6 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
               assay(x, name) <- transformed_table
 
               return(x)
-          }
-)
-
-#' @rdname transformAbundance
-#' @export
-setGeneric("getZTransform", signature = c("x"),
-           function(x,
-                    abund_values = "counts",
-                    name = "ZTransform",
-                    pseudocount = FALSE,
-                    scalingFactor = 1)
-               standardGeneric("getZTransform"))
-
-
-#' @rdname transformAbundance
-#' @export
-setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   abund_values = "counts",
-                   name = "ZTransform",
-                   pseudocount = FALSE,
-                   scalingFactor = 1){
-
-              # Get object with transformed table
-              x <- ZTransform(x, abund_values, name, pseudocount, scalingFactor)
-
-              # Get the table
-              mat <- assay(x, name)
-
-              return(mat)
           }
 )
 

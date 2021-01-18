@@ -3,12 +3,8 @@
 \name{transformAbundance}
 \alias{transformAbundance}
 \alias{transformAbundance,SummarizedExperiment-method}
-\alias{getTransformAbundance}
-\alias{getTransformAbundance,SummarizedExperiment-method}
 \alias{ZTransform}
 \alias{ZTransform,SummarizedExperiment-method}
-\alias{getZTransform}
-\alias{getZTransform,SummarizedExperiment-method}
 \title{Transform Abundance}
 \usage{
 transformAbundance(
@@ -29,24 +25,6 @@ transformAbundance(
   scalingFactor = 1
 )
 
-getTransformAbundance(
-  x,
-  abund_values = "counts",
-  transform = "identity",
-  name = transform,
-  pseudocount = FALSE,
-  scalingFactor = 1
-)
-
-\S4method{getTransformAbundance}{SummarizedExperiment}(
-  x,
-  abund_values = "counts",
-  transform = "identity",
-  name = transform,
-  pseudocount = FALSE,
-  scalingFactor = 1
-)
-
 ZTransform(
   x,
   abund_values = "counts",
@@ -56,22 +34,6 @@ ZTransform(
 )
 
 \S4method{ZTransform}{SummarizedExperiment}(
-  x,
-  abund_values = "counts",
-  name = "ZTransform",
-  pseudocount = FALSE,
-  scalingFactor = 1
-)
-
-getZTransform(
-  x,
-  abund_values = "counts",
-  name = "ZTransform",
-  pseudocount = FALSE,
-  scalingFactor = 1
-)
-
-\S4method{getZTransform}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "ZTransform",
@@ -99,14 +61,11 @@ value specifies the value of pseudocount.}
 \value{
 \code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
 abundance table named \code{*name*} in the \code{\link{assay}}.
-\code{getTransformAbundance} and \code{getZTransform} return transformed abundance table.
 }
 \description{
 These functions applies transformation to abundance table. By using
 \code{transformAbundance}, transformed table is in \code{assay}. By using
-\code{getTransformAbundance} the transformed table is returned. These functions
-also include \code{ZTransform} and \code{getZTransform} which work in similar
-manner as functions described before.
+specific \code{ZTransform} function, Z-transformation can be applied for features.
 }
 \details{
 \code{transformAbundance} applies transformation to abundance table.
@@ -155,7 +114,7 @@ x <- esophagus
 x <- transformAbundance(x)
 assays(x)$identity
 
-# By specifying, it is possible to apoly different transformations, e.g. clr transform
+# By specifying, it is possible to apply different transformations, e.g. clr transformation.
 # Pseudocount can be added by giving the value TRUE. Then pseudocount is 1.
 x <- transformAbundance(x, transform="clr", pseudocount=TRUE)
 assays(x)$clr
@@ -170,11 +129,6 @@ assays(x)$Z
 # Z-transform can also be done for features
 x <- ZTransform(x, pseudocount=TRUE)
 assays(x)$ZTransform
-
-# With getTransformAbundance, it is possible to get only the transformed abundance
-# table without being stored in assays.
-getTransformAbundance(x, transform="log10", pseudocount=1)
-
 
 }
 \references{
