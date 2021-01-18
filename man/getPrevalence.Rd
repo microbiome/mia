@@ -74,6 +74,9 @@ on compositional (relative) abundances? (default: \code{TRUE})}
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set \code{include_lowest} to \code{TRUE}.}
+
+\item{other_label}{A single \code{character} valued used as the label for the
+summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 }
 \value{
 a named \code{numeric} vector. The names are either the row names of \code{x}
