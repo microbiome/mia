@@ -229,6 +229,94 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
           }
 )
 
+##################################Z-TRANSFORM###################################
+
+#' @rdname transformAbundance
+#' @export
+setGeneric("ZTransform", signature = c("x"),
+           function(x,
+                    abund_values = "counts",
+                    name = "ZTransform",
+                    pseudocount = FALSE,
+                    scale = 1)
+               standardGeneric("ZTransform"))
+
+
+#' @rdname transformAbundance
+#' @export
+setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
+          function(x,
+                   abund_values = "counts",
+                   name = "ZTransform",
+                   pseudocount = FALSE,
+                   scale = 1){
+
+              # Input check
+              # Check abund_values
+              .check_abund_values(abund_values, x)
+
+              # Check name
+              if(!.is_non_empty_string(name)){
+                  stop("'name' must be a non-empty single character value.",
+                       call. = FALSE)
+              }
+
+              # Check pseudocount
+              if(!(pseudocount==TRUE || pseudocount==FALSE || pseudocount>0)){
+                  stop("'pseudocount' must be boolean or positive numeric value.",
+                       call. = FALSE)
+              }
+
+              # Check scale
+              if(!is.numeric(scale)){
+                  stop("'scale' must be a numeric value.",
+                       call. = FALSE)
+              }
+
+              # Get transformed table
+              transformed_table <- .get_ztransformed_table(assay = assay(x, abund_values),
+                                                          transform = transform,
+                                                          pseudocount = pseudocount,
+                                                          scale = scale,
+                                                          target = target)
+
+              # Assign transformed table to assays
+              assay(x, name) <- transformed_table
+
+              return(x)
+          }
+)
+
+#' @rdname transformAbundance
+#' @export
+setGeneric("getZTransform", signature = c("x"),
+           function(x,
+                    abund_values = "counts",
+                    name = "ZTransform",
+                    pseudocount = FALSE,
+                    scale = 1)
+               standardGeneric("getZTransform"))
+
+
+#' @rdname transformAbundance
+#' @export
+setMethod("getZTransform", signature = c(x = "SummarizedExperiment"),
+          function(x,
+                   abund_values = "counts",
+                   name = "ZTransform",
+                   pseudocount = FALSE,
+                   scale = 1){
+
+              # Get object with transformed table
+              x <- ZTransform(x, abund_values, name, pseudocount, scale)
+
+              # Get the table
+              mat <- assay(x, name)
+
+              return(mat)
+          }
+)
+
 ###########################HELP FUNCTIONS####################################
 
 
@@ -285,38 +373,10 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     # Gets the log transformed table
     mat <- .get_log10_table(assay, target)
 
-    if(target=="features"){
-        # Z transform for features. Centers the feature data. After that, divides with
-        # the standard deviation of feature.
-        trans <- t(scale(t(mat)))
-        # Saves all features that are undetectable in every sample i.e. are NA
-        undetectables <- which(rowMeans(is.na(trans)) == 1)
-
-        # If there are some deatures that are undetectable
-        # i.e. "undetectable" has length over 0, and table have zeros
-        if (length(undetectables) > 0 & min(mat) == 0) {
-
-            warning("Some features were not detectable. In all samples, signal was
-                    under detectable limit.")
-
-            # Some features are undetectable in all samples, they are NA when scaled.
-            # 0 is assigned to those features.
-
-            trans[names(undetectables), ] <- 0
-
-            mat <- trans
-
-            # Deletes extra information
-            attr(mat,"scaled:scale") <- NULL
-            attr(mat,"scaled:center") <- NULL
-        }
-
-    }else if(target=="samples"){
-        # Performs z transformation for samples
-        mat <- apply(mat, 2, function(x) {
-            (x - mean(x))/sd(x)
-        })
-    }
+    # Performs z transformation for samples
+    mat <- apply(mat, 2, function(x) {
+        (x - mean(x))/sd(x)
+    })
 
     return(mat)
 }
@@ -398,3 +458,59 @@ setMethod("getTransformAbundance", signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
+.get_ztransformed_table <- function(assay, transform, pseudocount, scale, target){
+
+    # If "pseudocount" is TRUE or over 0 or transform is log10p, add pseudocount
+    if(!pseudocount==FALSE || transform=="log10p"){
+        if(is.logical(pseudocount)){
+            # Add 1 as a pseudo count
+            assay <- assay + 1
+            warning("Transform was calculated with pseudocount value 1")
+        } else{
+            # When user have specified pseudocount, add pseudocount as a pseudocount
+            assay <- assay + pseudocount
+        }
+    }
+
+    # Multiply values with scale. By default, scale is 1, so no changes are made
+    assay <- assay * scale
+
+
+    # Log10 can not be calculated if there is zero
+    if (any(assay == 0)) {
+        stop("Abundance table contains zero and Z transformation
+            is being applied without pseudocount. Try ZTransform with
+            pseudocount=TRUE.")
+    }
+
+    # Gets the log transformed table
+    mat <- .get_log10_table(assay, target)
+
+    # Z transform for features. Centers the feature data. After that, divides with
+    # the standard deviation of feature.
+    trans <- t(scale(t(mat)))
+    # Saves all features that are undetectable in every sample i.e. are NA
+    undetectables <- which(rowMeans(is.na(trans)) == 1)
+
+    # If there are some deatures that are undetectable
+    # i.e. "undetectable" has length over 0, and table have zeros
+    if (length(undetectables) > 0 & min(mat) == 0) {
+
+        warning("Some features were not detectable. In all samples, signal was
+            under detectable limit.")
+
+        # Some features are undetectable in all samples, they are NA when scaled.
+        # 0 is assigned to those features.
+
+        trans[names(undetectables), ] <- 0
+
+        mat <- trans
+
+        # Deletes extra information
+        attr(mat,"scaled:scale") <- NULL
+        attr(mat,"scaled:center") <- NULL
+    }
+
+    return(mat)
+
+}

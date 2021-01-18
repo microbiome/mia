@@ -5,6 +5,10 @@
 \alias{transformAbundance,SummarizedExperiment-method}
 \alias{getTransformAbundance}
 \alias{getTransformAbundance,SummarizedExperiment-method}
+\alias{ZTransform}
+\alias{ZTransform,SummarizedExperiment-method}
+\alias{getZTransform}
+\alias{getZTransform,SummarizedExperiment-method}
 \title{Transform Abundance}
 \usage{
 transformAbundance(
@@ -45,6 +49,38 @@ getTransformAbundance(
   pseudocount = FALSE,
   scale = 1,
   target = "samples"
+)
+
+ZTransform(
+  x,
+  abund_values = "counts",
+  name = "ZTransform",
+  pseudocount = FALSE,
+  scale = 1
+)
+
+\S4method{ZTransform}{SummarizedExperiment}(
+  x,
+  abund_values = "counts",
+  name = "ZTransform",
+  pseudocount = FALSE,
+  scale = 1
+)
+
+getZTransform(
+  x,
+  abund_values = "counts",
+  name = "ZTransform",
+  pseudocount = FALSE,
+  scale = 1
+)
+
+\S4method{getZTransform}{SummarizedExperiment}(
+  x,
+  abund_values = "counts",
+  name = "ZTransform",
+  pseudocount = FALSE,
+  scale = 1
 )
 }
 \arguments{
