@@ -17,7 +17,7 @@ transformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1
+  scalingFactor = 1
 )
 
 \S4method{transformAbundance}{SummarizedExperiment}(
@@ -26,7 +26,7 @@ transformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1
+  scalingFactor = 1
 )
 
 getTransformAbundance(
@@ -35,7 +35,7 @@ getTransformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1
+  scalingFactor = 1
 )
 
 \S4method{getTransformAbundance}{SummarizedExperiment}(
@@ -44,7 +44,7 @@ getTransformAbundance(
   transform = "identity",
   name = transform,
   pseudocount = FALSE,
-  scale = 1
+  scalingFactor = 1
 )
 
 ZTransform(
@@ -52,7 +52,7 @@ ZTransform(
   abund_values = "counts",
   name = "ZTransform",
   pseudocount = FALSE,
-  scale = 1
+  scalingFactor = 1
 )
 
 \S4method{ZTransform}{SummarizedExperiment}(
@@ -60,7 +60,7 @@ ZTransform(
   abund_values = "counts",
   name = "ZTransform",
   pseudocount = FALSE,
-  scale = 1
+  scalingFactor = 1
 )
 
 getZTransform(
@@ -68,7 +68,7 @@ getZTransform(
   abund_values = "counts",
   name = "ZTransform",
   pseudocount = FALSE,
-  scale = 1
+  scalingFactor = 1
 )
 
 \S4method{getZTransform}{SummarizedExperiment}(
@@ -76,7 +76,7 @@ getZTransform(
   abund_values = "counts",
   name = "ZTransform",
   pseudocount = FALSE,
-  scale = 1
+  scalingFactor = 1
 )
 }
 \arguments{
@@ -95,7 +95,7 @@ to be transformed.}
 value specifies the value of pseudocount. When selecting pseudocount==TRUE,
 pseudocount is 1.}
 
-\item{scale}{A numeric value for scaling. Values are multiplied with specified value.}
+\item{scalingfactor}{A numeric value for scaling. Values are multiplied with specified value.}
 }
 \value{
 \code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
@@ -157,8 +157,8 @@ assays(x)$identity
 x <- transformAbundance(x, transform="clr", pseudocount=TRUE)
 assays(x)$clr
 
-# Name of the stored table, can be specified. Also, the target of transform
-# can be specified with "abund_values". I addition to pseudocount=TRUE, it is
+# Name of the stored table can be specified. Also, the target of transform
+# can be specified with "abund_values". In addition to pseudocount=TRUE, it is
 # also possible to specify it by giving numeric value.
 x <- transformAbundance(x, transform="hellinger", name="test", pseudocount=5)
 assays(x)$test
