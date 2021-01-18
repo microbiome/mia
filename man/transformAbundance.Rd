@@ -10,7 +10,7 @@
 transformAbundance(
   x,
   abund_values = "counts",
-  transform = "identity",
+  transform = c("identity", "relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
   name = transform,
   pseudocount = FALSE,
   scalingFactor = 1
@@ -19,7 +19,7 @@ transformAbundance(
 \S4method{transformAbundance}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  transform = "identity",
+  transform = c("identity", "relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
   name = transform,
   pseudocount = FALSE,
   scalingFactor = 1
@@ -71,16 +71,11 @@ specific \code{ZTransform} function, Z-transformation can be applied for feature
 \code{transformAbundance} applies transformation to abundance table.
 Transformation methods include
 
-\itemize{\preformatted{\\item\{"relabundance" \}\{Transforms abundances to relative.
+\itemize{\preformatted{\\item\{"identity" \}\{Identity is the data itself without transform.\}
+
+\\item\{"relabundance" \}\{Transforms abundances to relative.
 ($\\frac\{x\}\{x_\{tot\}\}$, where $x$ is a single value and $x_\{tot\}$ is the sum of
 all values.)\}
-
-\\item\{"Z" \}\{Z-transform or Z-standardization can be used for normalizing the data.
-In function \code{transformAbundance} it is done per-sample. It can also be done
-per-features by using function \code{ZTransform}. However, Z-transform
-done for features can give misleading results.
-($\\frac\{x + µ\}\{σ\}$, where $x$ is a single value, $µ$ is the mean of the sample, and
-$σ$ is the standard deviation of the sample.)\}
 
 \\item\{"log10" \}\{log10 transform can be used for reducing the skewness of the data.
 ($log_\{10\}x$, where $x$ is a single value of data.)\}
@@ -90,11 +85,16 @@ With log10p, pseudo count is added before log10 transformation. By default, pseu
 1, but it can be specified with "pseudocount".
 ($log_\{10\}x$, where $x$ is a single value of data.)\}
 
+\\item\{"Z" \}\{Z-transform or Z-standardization can be used for normalizing the data.
+In function \code{transformAbundance} it is done per-sample. It can also be done
+per-features by using function \code{ZTransform}. However, Z-transform
+done for features can give misleading results.
+($\\frac\{x + µ\}\{σ\}$, where $x$ is a single value, $µ$ is the mean of the sample, and
+$σ$ is the standard deviation of the sample.)\}
+
 \\item\{"hellinger" \}\{Hellinger transform can be used for reducing the impact of
 extreme data points. ($\\sqrt\{\\frac\{x\}\{x_\{tot\}\}\}$, where $x$ is a single value and $x_\{tot\}$ is the sum of
 all values.)\}
-
-\\item\{"identity" \}\{Identity is the data itself without transform.\}
 
 \\item\{"clr" \}\{Centered log ratio (clr) transform can be used for reducing the
 skewness of data and for centering it.
