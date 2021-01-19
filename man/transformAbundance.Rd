@@ -71,38 +71,39 @@ specific \code{ZTransform} function, Z-transformation can be applied for feature
 \code{transformAbundance} applies transformation to abundance table.
 Transformation methods include
 
-\itemize{\preformatted{\\item\{"relabundance" \}\{Transforms abundances to relative.
+\itemize{\preformatted{\\item\{"relabundance" \}\{Transforms abundances to relative. Generally, all microbiome
+data are compositional. That is, e.g., because all measuring instruments have their capacity limits.
+To make results comparable with other results, values must be relative.
 ($\\frac\{x\}\{x_\{tot\}\}$, where $x$ is a single value and $x_\{tot\}$ is the sum of
-all values.)\}
+all values.) (Gloor et al. 2017.)\}
 
-\\item\{"log10" \}\{log10 transform can be used for reducing the skewness of the data.
+\\item\{"log10" \}\{log10 transformation can be used for reducing the skewness of the data.
 ($log_\{10\}x$, where $x$ is a single value of data.)\}
 
-\\item\{"log10p \}\{log10 transform can be used for reducing the skewness of the data.
+\\item\{"log10p \}\{log10 transformation can be used for reducing the skewness of the data.
 With log10p, pseudo count is added before log10 transformation. By default, pseudocount is
 1, but it can be specified with "pseudocount".
 ($log_\{10\}x$, where $x$ is a single value of data.)\}
 
-\\item\{"Z" \}\{Z-transform or Z-standardization can be used for normalizing the data.
+\\item\{"Z" \}\{Z-transformation or Z-standardization can be used for normalizing the data.
 In function \code{transformAbundance} it is done per-sample. It can also be done
-per-features by using function \code{ZTransform}. However, Z-transform
+per-features by using function \code{ZTransform}. However, Z-transformation
 done for features can give misleading results.
 ($\\frac\{x + µ\}\{σ\}$, where $x$ is a single value, $µ$ is the mean of the sample, and
 $σ$ is the standard deviation of the sample.)\}
 
-\\item\{"hellinger" \}\{Hellinger transform can be used for reducing the impact of
-extreme data points. ($\\sqrt\{\\frac\{x\}\{x_\{tot\}\}\}$, where $x$ is a single value and $x_\{tot\}$ is the sum of
-all values.)\}
+\\item\{"hellinger" \}\{Hellinger transformation can be used for reducing the impact of
+extreme data points. It can be utilize for clustering or ordination analysis.
+($\\sqrt\{\\frac\{x\}\{x_\{tot\}\}\}$, where $x$ is a single value and $x_\{tot\}$ is the sum of
+all values.) (Legendre & Gallagher 2001.)\}
 
-\\item\{"clr" \}\{Centered log ratio (clr) transform can be used for reducing the
+\\item\{"clr" \}\{Centered log ratio (clr) transformation can be used for reducing the
 skewness of data and for centering it.
 ($log_\{10\}x_\{r\}) - log_\{10\}µ_\{r\}$, where $x_\{r\}$ is a single relative value, $µ_\{r\}$ is
-the mean of relative values of whole sample.\}
+the mean of relative values of whole sample.) (Gloor et al. 2017.)\}
 }
 
 }
-
-With \code{ZTransform}, z-transform can be applied for features instead of samples.
 }
 \examples{
 data(esophagus)
@@ -126,7 +127,13 @@ assays(x)$ZTransform
 
 }
 \references{
-If there is references Add information here......................................
+Gloor GB, Macklaim JM, Pawlowsky-Glahn V & Egozcue JJ (2017)
+Microbiome Datasets Are Compositional: And This Is Not Optional.
+Frontiers in Microbiology 8: 2224. doi: 10.3389/fmicb.2017.02224
+
+Legendre P & Gallagher ED (2001)
+Ecologically meaningful transformations for ordination of species data.
+Oecologia 129: 271-280.
 }
 \seealso{
 If there is something Add information here......................................
