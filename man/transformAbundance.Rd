@@ -10,7 +10,7 @@
 transformAbundance(
   x,
   abund_values = "counts",
-  transform = c("identity", "relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
+  transform = c("relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
   name = transform,
   pseudocount = FALSE,
   scalingFactor = 1
@@ -19,7 +19,7 @@ transformAbundance(
 \S4method{transformAbundance}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  transform = c("identity", "relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
+  transform = c("relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
   name = transform,
   pseudocount = FALSE,
   scalingFactor = 1
@@ -71,9 +71,7 @@ specific \code{ZTransform} function, Z-transformation can be applied for feature
 \code{transformAbundance} applies transformation to abundance table.
 Transformation methods include
 
-\itemize{\preformatted{\\item\{"identity" \}\{Identity is the data itself without transform.\}
-
-\\item\{"relabundance" \}\{Transforms abundances to relative.
+\itemize{\preformatted{\\item\{"relabundance" \}\{Transforms abundances to relative.
 ($\\frac\{x\}\{x_\{tot\}\}$, where $x$ is a single value and $x_\{tot\}$ is the sum of
 all values.)\}
 
@@ -109,10 +107,6 @@ With \code{ZTransform}, z-transform can be applied for features instead of sampl
 \examples{
 data(esophagus)
 x <- esophagus
-
-# By default, returns object with identity table
-x <- transformAbundance(x)
-assays(x)$identity
 
 # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 # Pseudocount can be added by giving the value TRUE. Then pseudocount is 1.

@@ -32,8 +32,6 @@
 #'
 #' \itemize{
 #'
-#'     \item{"identity" }{Identity is the data itself without transform.}
-#'
 #'     \item{"relabundance" }{Transforms abundances to relative.
 #'     ($\frac{x}{x_{tot}}$, where $x$ is a single value and $x_{tot}$ is the sum of
 #'     all values.)}
@@ -84,10 +82,6 @@
 #' data(esophagus)
 #' x <- esophagus
 #'
-#' # By default, returns object with identity table
-#' x <- transformAbundance(x)
-#' assays(x)$identity
-#'
 #' # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 #' # Pseudocount can be added by giving the value TRUE. Then pseudocount is 1.
 #' x <- transformAbundance(x, transform="clr", pseudocount=TRUE)
@@ -111,7 +105,7 @@ NULL
 setGeneric("transformAbundance", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    transform = c("identity", "relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
+                    transform = c("relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
                     name = transform,
                     pseudocount = FALSE,
                     scalingFactor = 1)
@@ -123,7 +117,7 @@ setGeneric("transformAbundance", signature = c("x"),
 setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
-                   transform = c("identity", "relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
+                   transform = c("relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
                    name = transform,
                    pseudocount = FALSE,
                    scalingFactor = 1){
@@ -133,6 +127,14 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
               .check_abund_values(abund_values, x)
 
               # Check transform
+              # If transform is not single string, user has not probably specified transform method,
+              # or has given a vector
+              if(!.is_non_empty_string(name)){
+                  stop("'transform' must be a non-empty single character value.
+                       Give one method from the following list:
+                       'relabundance', 'log10', 'log10p', 'Z', 'hellinger', 'clr'",
+                       call. = FALSE)
+              }
               transform <- match.arg(transform)
 
               # Check name
@@ -252,7 +254,6 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
                   log10 = .get_log10_table,
                   log10p = .get_log10p_table,
                   hellinger = .get_hellinger_table,
-                  identity = .get_identity_table,
                   clr = .get_clr_table)
 
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
@@ -317,14 +318,6 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
     # Takes square root
     mat <- sqrt(mat)
-
-    return(mat)
-}
-
-.get_identity_table <- function(assay){
-
-    # Identity table is abundance table itself
-    mat <- assay
 
     return(mat)
 }
