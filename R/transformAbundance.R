@@ -231,6 +231,13 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 # Chooses which transformation function is applied
 .get_transformed_table <- function(assay, transform, pseudocount, scalingFactor){
 
+    # If assay contains missing values
+    if(any(is.na(assay))){
+        # Missing values are replaced with value 0
+        assay[which(is.na(assay))] <- 0
+        warning("Table contains missing values. Missing values are replaced with value 0.")
+    }
+
     # If "pseudocount" is TRUE or over 0 or transform is log10p, add pseudocount
     if(!pseudocount==FALSE || transform=="log10p"){
         # In case of log10p, pseudocount can be still FALSE. Then 1 is added.
@@ -359,6 +366,13 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
 .get_ztransformed_table <- function(assay, pseudocount, scalingFactor){
 
+    # If assay contains missing values
+    if(any(is.na(assay))){
+        # Missing values are replaced with value 0
+        assay[which(is.na(assay))] <- 0
+        warning("Table contains missing values. Missing values are replaced with value 0.")
+    }
+
     # If "pseudocount" is not FALSE, add pseudocount
     if(!pseudocount==FALSE){
         assay <- assay + pseudocount
@@ -384,7 +398,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     # Saves all features that are undetectable in every sample i.e. are NA
     undetectables <- which(rowMeans(is.na(trans)) == 1)
 
-    # If there are some deatures that are undetectable
+    # If there are some features that are undetectable
     # i.e. "undetectable" has length over 0, and table have zeros
     if (length(undetectables) > 0 & min(mat) == 0) {
 
