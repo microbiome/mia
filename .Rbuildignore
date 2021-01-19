@@ -4,3 +4,4 @@
 ^\.github$
 pkgdown
 .RData
+.pdf

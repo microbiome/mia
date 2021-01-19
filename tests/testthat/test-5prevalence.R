@@ -74,3 +74,33 @@ test_that("getPrevalentTaxa", {
     expect_true(all(pr1 == pr2))
 
 })
+
+test_that("agglomerateByPrevalence", {
+
+    data(GlobalPatterns)
+    expect_error(agglomerateByPrevalence(GlobalPatterns, other_label=TRUE),
+                 "'other_label' must be a single character value")
+    actual <- agglomerateByPrevalence(GlobalPatterns)
+    expect_s4_class(actual,class(GlobalPatterns))
+    expect_equal(dim(actual),c(2,26))
+
+    actual <- agglomerateByPrevalence(GlobalPatterns,
+                                      rank = "Phylum",
+                                      detection = 1/100,
+                                      prevalence = 50/100,
+                                      as_relative = TRUE,
+                                      other_label = "test")
+    expect_s4_class(actual,class(GlobalPatterns))
+    expect_equal(dim(actual),c(6,26))
+    expect_equal(rowData(actual)[6,"Phylum"],"test")
+
+    actual <- agglomerateByPrevalence(GlobalPatterns,
+                                      rank = NULL,
+                                      detection = 0.0001,
+                                      prevalence = 50/100,
+                                      as_relative = TRUE,
+                                      other_label = "test")
+    expect_s4_class(actual,class(GlobalPatterns))
+    expect_equal(dim(actual),c(6,26))
+    expect_true(all(is.na(rowData(actual)[6,])))
+})

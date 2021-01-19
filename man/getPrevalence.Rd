@@ -7,6 +7,8 @@
 \alias{getPrevalentTaxa}
 \alias{getPrevalentTaxa,ANY-method}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{agglomerateByPrevalence}
+\alias{agglomerateByPrevalence,SummarizedExperiment-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
 \title{Prevalence calculation}
 \usage{
@@ -25,6 +27,15 @@ getPrevalentTaxa(x, ...)
   prevalence = 50/100,
   rank = taxonomyRanks(x)[1L],
   include_lowest = FALSE,
+  ...
+)
+
+agglomerateByPrevalence(x, ...)
+
+\S4method{agglomerateByPrevalence}{SummarizedExperiment}(
+  x,
+  rank = taxonomyRanks(x)[1L],
+  other_label = "Other",
   ...
 )
 
@@ -62,7 +73,10 @@ on compositional (relative) abundances? (default: \code{TRUE})}
 
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
-limit, set include_lowest to TRUE.}
+limit, set \code{include_lowest} to \code{TRUE}.}
+
+\item{other_label}{A single \code{character} valued used as the label for the
+summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 }
 \value{
 a named \code{numeric} vector. The names are either the row names of \code{x}
@@ -117,6 +131,13 @@ taxa <- getPrevalentTaxa(GlobalPatterns,
                          prevalence = 50/100,
                          as_relative = TRUE)
 head(taxa)
+
+# data can be aggregated based on prevalent taxonomic results
+agglomerateByPrevalence(GlobalPatterns,
+                         rank = "Phylum",
+                         detection = 1/100,
+                         prevalence = 50/100,
+                         as_relative = TRUE)
 }
 \references{
 A Salonen et al. The adult intestinal core microbiota is determined by
