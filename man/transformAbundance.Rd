@@ -10,7 +10,7 @@
 transformAbundance(
   x,
   abund_values = "counts",
-  transform = c("relabundance", "log10", "Z", "hellinger", "clr"),
+  transform = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
   name = transform,
   pseudocount = FALSE,
   scalingFactor = 1
@@ -19,7 +19,7 @@ transformAbundance(
 \S4method{transformAbundance}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  transform = c("relabundance", "log10", "Z", "hellinger", "clr"),
+  transform = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
   name = transform,
   pseudocount = FALSE,
   scalingFactor = 1
@@ -79,6 +79,9 @@ all values.) (Gloor et al. 2017.)\}
 
 \\item\{"log10" \}\{log10 transformation can be used for reducing the skewness of the data.
 ($log_\{10\}x$, where $x$ is a single value of data.)\}
+
+\\item\{"pa" \}\{Transforms table to presence/absence table. If value is over 0,
+then value is 1. If value is 0, then value is 0.)\}
 
 \\item\{"Z" \}\{Z-transformation or Z-standardization can be used for normalizing the data.
 In function \code{transformAbundance} it is done per-sample. It can also be done

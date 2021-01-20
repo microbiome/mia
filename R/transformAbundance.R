@@ -41,6 +41,9 @@
 #'     \item{"log10" }{log10 transformation can be used for reducing the skewness of the data.
 #'     ($log_{10}x$, where $x$ is a single value of data.)}
 #'
+#'     \item{"pa" }{Transforms table to presence/absence table. If value is over 0,
+#'     then value is 1. If value is 0, then value is 0.)}
+#'
 #'     \item{"Z" }{Z-transformation or Z-standardization can be used for normalizing the data.
 #'     In function \code{transformAbundance} it is done per-sample. It can also be done
 #'     per-features by using function \code{ZTransform}. However, Z-transformation
@@ -111,7 +114,7 @@ NULL
 setGeneric("transformAbundance", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    transform = c("relabundance", "log10", "Z", "hellinger", "clr"),
+                    transform = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
                     name = transform,
                     pseudocount = FALSE,
                     scalingFactor = 1)
@@ -123,7 +126,7 @@ setGeneric("transformAbundance", signature = c("x"),
 setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
-                   transform = c("relabundance", "log10", "Z", "hellinger", "clr"),
+                   transform = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
                    name = transform,
                    pseudocount = FALSE,
                    scalingFactor = 1){
@@ -138,7 +141,7 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
               if(!.is_non_empty_string(name)){
                   stop("'transform' must be a non-empty single character value.
                        Give one method from the following list:
-                       'relabundance', 'log10', 'Z', 'hellinger', 'clr'",
+                       'relabundance', 'log10', 'pa', 'Z', 'hellinger', 'clr'",
                        call. = FALSE)
               }
               transform <- match.arg(transform)
@@ -250,6 +253,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
                   relabundance = .get_relabundance_table,
                   Z = .get_z_table,
                   log10 = .get_log10_table,
+                  pa = .get_pa_table,
                   hellinger = .get_hellinger_table,
                   clr = .get_clr_table)
 
@@ -306,6 +310,14 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     } else {
         mat <- log10(assay)
     }
+    return(mat)
+}
+
+.get_pa_table <- function(assay){
+
+    # If value is over zero, gets value 1. If value is zero, gets value 0.
+    mat <- ifelse(assay > 0, 1, 0)
+
     return(mat)
 }
 
