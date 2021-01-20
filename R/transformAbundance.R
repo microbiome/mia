@@ -246,7 +246,8 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
         if(pseudocount == FALSE){
             # Add 1 as a pseudo count
             assay <- assay + 1
-            warning("Transform was calculated with pseudocount value 1")
+            warning("Transform was calculated with pseudocount value '1'.
+                    Set pseudocount to a numeric value to resolve this warning.")
         } else{
             # When user have specified pseudocount, add pseudocount as a pseudocount
             assay <- assay + pseudocount
