@@ -80,7 +80,9 @@
 #' abundance table named \code{*name*} in the \code{\link{assay}}.
 #'
 #' @seealso
-#' If there is something Add information here......................................
+#' \itemize{
+#'   \item{\code{\link[mia:relAbundanceCounts]{relAbundanceCounts}}}
+#' }
 #'
 #' @name transformAbundance
 #' @export

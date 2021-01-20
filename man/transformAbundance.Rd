@@ -136,7 +136,9 @@ Ecologically meaningful transformations for ordination of species data.
 Oecologia 129: 271-280.
 }
 \seealso{
-If there is something Add information here......................................
+\itemize{
+\item{\code{\link[mia:relAbundanceCounts]{relAbundanceCounts}}}
+}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
