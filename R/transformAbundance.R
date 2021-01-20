@@ -41,11 +41,6 @@
 #'     \item{"log10" }{log10 transformation can be used for reducing the skewness of the data.
 #'     ($log_{10}x$, where $x$ is a single value of data.)}
 #'
-#'     \item{"log10p }{log10 transformation can be used for reducing the skewness of the data.
-#'     With log10p, pseudo count is added before log10 transformation. By default, pseudocount is
-#'     1, but it can be specified with "pseudocount".
-#'     ($log_{10}x$, where $x$ is a single value of data.)}
-#'
 #'     \item{"Z" }{Z-transformation or Z-standardization can be used for normalizing the data.
 #'     In function \code{transformAbundance} it is done per-sample. It can also be done
 #'     per-features by using function \code{ZTransform}. However, Z-transformation
@@ -66,7 +61,6 @@
 #' }
 #'
 #' @references
-#'
 #' Gloor GB, Macklaim JM, Pawlowsky-Glahn V & Egozcue JJ (2017)
 #' Microbiome Datasets Are Compositional: And This Is Not Optional.
 #' Frontiers in Microbiology 8: 2224. doi: 10.3389/fmicb.2017.02224
@@ -76,7 +70,8 @@
 #' Oecologia 129: 271-280.
 #'
 #'
-#' @return \code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
+#' @return
+#' \code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
 #' abundance table named \code{*name*} in the \code{\link{assay}}.
 #'
 #' @seealso
@@ -116,7 +111,7 @@ NULL
 setGeneric("transformAbundance", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    transform = c("relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
+                    transform = c("relabundance", "log10", "Z", "hellinger", "clr"),
                     name = transform,
                     pseudocount = FALSE,
                     scalingFactor = 1)
@@ -128,7 +123,7 @@ setGeneric("transformAbundance", signature = c("x"),
 setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
-                   transform = c("relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
+                   transform = c("relabundance", "log10", "Z", "hellinger", "clr"),
                    name = transform,
                    pseudocount = FALSE,
                    scalingFactor = 1){
@@ -143,7 +138,7 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
               if(!.is_non_empty_string(name)){
                   stop("'transform' must be a non-empty single character value.
                        Give one method from the following list:
-                       'relabundance', 'log10', 'log10p', 'Z', 'hellinger', 'clr'",
+                       'relabundance', 'log10', 'Z', 'hellinger', 'clr'",
                        call. = FALSE)
               }
               transform <- match.arg(transform)
@@ -242,18 +237,9 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 # Chooses which transformation function is applied
 .get_transformed_table <- function(assay, transform, pseudocount, scalingFactor){
 
-    # If "pseudocount" is TRUE or over 0 or transform is log10p, add pseudocount
-    if(!pseudocount==FALSE || transform=="log10p"){
-        # In case of log10p, pseudocount can be still FALSE. Then 1 is added.
-        if(pseudocount == FALSE){
-            # Add 1 as a pseudo count
-            assay <- assay + 1
-            warning("Transform was calculated with pseudocount value '1'.
-                    Set pseudocount to a numeric value to resolve this warning.")
-        } else{
-            # When user have specified pseudocount, add pseudocount as a pseudocount
-            assay <- assay + pseudocount
-        }
+    # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
+    if(!pseudocount==FALSE){
+        assay <- assay + pseudocount
     }
 
     # Multiply values with scalingFactor. By default, scalingFactor is 1, so no changes are made
@@ -264,7 +250,6 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
                   relabundance = .get_relabundance_table,
                   Z = .get_z_table,
                   log10 = .get_log10_table,
-                  log10p = .get_log10p_table,
                   hellinger = .get_hellinger_table,
                   clr = .get_clr_table)
 
@@ -317,19 +302,10 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     if (any(assay == 0, na.rm = TRUE)) {
         stop("Abundance table contains zero and log10 transformation
                 is being applied without pseudocount. Try log10 with
-                pseudocount=TRUE or log10p transformation.")
+                pseudocount = 1 or other numeric value.")
     } else {
         mat <- log10(assay)
     }
-    return(mat)
-}
-
-.get_log10p_table <- function(assay){
-
-    # Because a pseudo count was added, there is no zeroes in the abundance table.
-    # Calculates log "directly".
-    mat <- log10(assay)
-
     return(mat)
 }
 
@@ -356,7 +332,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     if (any(assay == 0, na.rm = TRUE)) {
         stop("Abundance table contains zero and clr transformation
                 is being applied without pseudocount. Try clr with
-                pseudocount=TRUE or log10p transformation.")
+                pseudocount = 1 or other numeric value.")
     }
 
     mat <- .get_relabundance_table(assay)
@@ -381,7 +357,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
 .get_ztransformed_table <- function(assay, pseudocount, scalingFactor){
 
-    # If "pseudocount" is not FALSE, add pseudocount
+    # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
     if(!pseudocount==FALSE){
         assay <- assay + pseudocount
     }
@@ -394,7 +370,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     if (any(assay == 0, na.rm = TRUE)) {
         stop("Abundance table contains zero and Z transformation
             is being applied without pseudocount. Try ZTransform with
-            pseudocount=TRUE.")
+            pseudocount = 1 or other numeric value.")
     }
 
     # Gets the log transformed table

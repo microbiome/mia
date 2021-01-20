@@ -10,7 +10,7 @@
 transformAbundance(
   x,
   abund_values = "counts",
-  transform = c("relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
+  transform = c("relabundance", "log10", "Z", "hellinger", "clr"),
   name = transform,
   pseudocount = FALSE,
   scalingFactor = 1
@@ -19,7 +19,7 @@ transformAbundance(
 \S4method{transformAbundance}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  transform = c("relabundance", "log10", "log10p", "Z", "hellinger", "clr"),
+  transform = c("relabundance", "log10", "Z", "hellinger", "clr"),
   name = transform,
   pseudocount = FALSE,
   scalingFactor = 1
@@ -78,11 +78,6 @@ To make results comparable with other results, values must be relative.
 all values.) (Gloor et al. 2017.)\}
 
 \\item\{"log10" \}\{log10 transformation can be used for reducing the skewness of the data.
-($log_\{10\}x$, where $x$ is a single value of data.)\}
-
-\\item\{"log10p \}\{log10 transformation can be used for reducing the skewness of the data.
-With log10p, pseudo count is added before log10 transformation. By default, pseudocount is
-1, but it can be specified with "pseudocount".
 ($log_\{10\}x$, where $x$ is a single value of data.)\}
 
 \\item\{"Z" \}\{Z-transformation or Z-standardization can be used for normalizing the data.
