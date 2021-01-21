@@ -45,7 +45,8 @@
 #'     then value is 1. If value is 0, then value is 0.)}
 #'
 #'     \item{"Z" }{Z-transformation or Z-standardization can be used for normalizing the data.
-#'     In function \code{transformAbundance} it is done per-sample. It can also be done
+#'     In function \code{transformAbundance}, it is done per-sample like in all other transformations
+#'     that are provided by this function. As a special case, Z-transformation can also be done
 #'     per-features by using function \code{ZTransform}. However, Z-transformation
 #'     done for features can give misleading results.
 #'     ($\frac{x + µ}{σ}$, where $x$ is a single value, $µ$ is the mean of the sample, and
