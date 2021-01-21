@@ -13,7 +13,7 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to be transformed.
 #'
-#' @param transform
+#' @param method
 #' A single character value for selecting the transformation method.
 #'
 #' @param name
@@ -94,15 +94,15 @@
 #'
 #' # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 #' # Pseudocount can be added by giving the value TRUE. Then pseudocount is 1.
-#' x <- transformAbundance(x, transform="clr", pseudocount=TRUE)
+#' x <- transformAbundance(x, method="clr", pseudocount=TRUE)
 #' assays(x)$clr
 #'
 #' # Name of the stored table can be specified. Also, the target of transform
 #' # can be specified with "abund_values". In addition to pseudocount=TRUE, it is
 #' # also possible to specify it by giving numeric value.
-#' x <- transformAbundance(x, transform="hellinger", name="test", pseudocount=5)
+#' x <- transformAbundance(x, method="hellinger", name="test", pseudocount=5)
 #' assays(x)$test
-#' x <- transformAbundance(x, transform="Z", abund_values="test")
+#' x <- transformAbundance(x, method="Z", abund_values="test")
 #' assays(x)$Z
 #' # Z-transform can also be done for features
 #' x <- ZTransform(x, pseudocount=TRUE)
@@ -115,8 +115,8 @@ NULL
 setGeneric("transformAbundance", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    transform = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
-                    name = transform,
+                    method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
+                    name = method,
                     pseudocount = FALSE,
                     scalingFactor = 1)
                standardGeneric("transformAbundance"))
@@ -127,8 +127,8 @@ setGeneric("transformAbundance", signature = c("x"),
 setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
-                   transform = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
-                   name = transform,
+                   method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
+                   name = method,
                    pseudocount = FALSE,
                    scalingFactor = 1){
 
@@ -136,16 +136,16 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
               # Check abund_values
               .check_abund_values(abund_values, x)
 
-              # Check transform
-              # If transform is not single string, user has not probably specified transform method,
-              # or has given a vector
-              if(!.is_non_empty_string(name)){
-                  stop("'transform' must be a non-empty single character value.
+              # Check method
+              # If method is not single string, user has not specified transform method,
+              # or has given e.g. a vector
+              if(!.is_non_empty_string(method)){
+                  stop("'method' must be a non-empty single character value.
                        Give one method from the following list:
                        'relabundance', 'log10', 'pa', 'Z', 'hellinger', 'clr'",
                        call. = FALSE)
               }
-              transform <- match.arg(transform)
+              method <- match.arg(method)
 
               # Check name
               if(!.is_non_empty_string(name)){
@@ -167,7 +167,7 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
 
               # Get transformed table
               transformed_table <- .get_transformed_table(assay = assay(x, abund_values),
-                                                          transform = transform,
+                                                          method = method,
                                                           pseudocount = pseudocount,
                                                           scalingFactor = scalingFactor)
 
@@ -239,7 +239,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
 
 # Chooses which transformation function is applied
-.get_transformed_table <- function(assay, transform, pseudocount, scalingFactor){
+.get_transformed_table <- function(assay, method, pseudocount, scalingFactor){
 
     # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
     if(!pseudocount==FALSE){
@@ -249,8 +249,8 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     # Multiply values with scalingFactor. By default, scalingFactor is 1, so no changes are made
     assay <- assay * scalingFactor
 
-    # Function is selected based on the "transform" variable
-    FUN <- switch(transform,
+    # Function is selected based on the "method" variable
+    FUN <- switch(method,
                   relabundance = .get_relabundance_table,
                   Z = .get_z_table,
                   log10 = .get_log10_table,

@@ -10,8 +10,8 @@
 transformAbundance(
   x,
   abund_values = "counts",
-  transform = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
-  name = transform,
+  method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
+  name = method,
   pseudocount = FALSE,
   scalingFactor = 1
 )
@@ -19,8 +19,8 @@ transformAbundance(
 \S4method{transformAbundance}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  transform = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
-  name = transform,
+  method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
+  name = method,
   pseudocount = FALSE,
   scalingFactor = 1
 )
@@ -49,7 +49,7 @@ object.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to be transformed.}
 
-\item{transform}{A single character value for selecting the transformation method.}
+\item{method}{A single character value for selecting the transformation method.}
 
 \item{name}{A single character value specifying the name of transformed abundance table.}
 
@@ -110,15 +110,15 @@ x <- esophagus
 
 # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 # Pseudocount can be added by giving the value TRUE. Then pseudocount is 1.
-x <- transformAbundance(x, transform="clr", pseudocount=TRUE)
+x <- transformAbundance(x, method="clr", pseudocount=TRUE)
 assays(x)$clr
 
 # Name of the stored table can be specified. Also, the target of transform
 # can be specified with "abund_values". In addition to pseudocount=TRUE, it is
 # also possible to specify it by giving numeric value.
-x <- transformAbundance(x, transform="hellinger", name="test", pseudocount=5)
+x <- transformAbundance(x, method="hellinger", name="test", pseudocount=5)
 assays(x)$test
-x <- transformAbundance(x, transform="Z", abund_values="test")
+x <- transformAbundance(x, method="Z", abund_values="test")
 assays(x)$Z
 # Z-transform can also be done for features
 x <- ZTransform(x, pseudocount=TRUE)
