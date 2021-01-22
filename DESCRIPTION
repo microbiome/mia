@@ -42,6 +42,7 @@ Imports:
     S4Vectors,
     IRanges,
     Biostrings,
+    DECIPHER,
     BiocParallel,
     DelayedArray,
     DelayedMatrixStats,
