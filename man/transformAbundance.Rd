@@ -109,20 +109,20 @@ data(esophagus)
 x <- esophagus
 
 # By specifying, it is possible to apply different transformations, e.g. clr transformation.
-# Pseudocount can be added by giving the value TRUE. Then pseudocount is 1.
-x <- transformAbundance(x, method="clr", pseudocount=TRUE)
-assays(x)$clr
+# Pseudocount can be added by specifying 'pseudocount'.
+x <- transformAbundance(x, method="clr", pseudocount=1)
+# assays(x)$clr
 
-# Name of the stored table can be specified. Also, the target of transform
-# can be specified with "abund_values". In addition to pseudocount=TRUE, it is
-# also possible to specify it by giving numeric value.
+# Name of the stored table can be specified. Also, the target of transformation
+# can be specified with "abund_values". 'scalingFactor' is used for multiplying
+# the table with desired value.
 x <- transformAbundance(x, method="hellinger", name="test", pseudocount=5)
-assays(x)$test
-x <- transformAbundance(x, method="Z", abund_values="test")
-assays(x)$Z
+# assays(x)$test
+x <- transformAbundance(x, method="Z", abund_values="test", scalingFactor = 2)
+# assays(x)$Z
 # Z-transform can also be done for features
-x <- ZTransform(x, pseudocount=TRUE)
-assays(x)$ZTransform
+x <- ZTransform(x, pseudocount=1)
+# assays(x)$ZTransform
 
 }
 \references{

@@ -93,20 +93,20 @@
 #' x <- esophagus
 #'
 #' # By specifying, it is possible to apply different transformations, e.g. clr transformation.
-#' # Pseudocount can be added by giving the value TRUE. Then pseudocount is 1.
-#' x <- transformAbundance(x, method="clr", pseudocount=TRUE)
-#' assays(x)$clr
+#' # Pseudocount can be added by specifying 'pseudocount'.
+#' x <- transformAbundance(x, method="clr", pseudocount=1)
+#' # assays(x)$clr
 #'
-#' # Name of the stored table can be specified. Also, the target of transform
-#' # can be specified with "abund_values". In addition to pseudocount=TRUE, it is
-#' # also possible to specify it by giving numeric value.
+#' # Name of the stored table can be specified. Also, the target of transformation
+#' # can be specified with "abund_values". 'scalingFactor' is used for multiplying
+#' # the table with desired value.
 #' x <- transformAbundance(x, method="hellinger", name="test", pseudocount=5)
-#' assays(x)$test
-#' x <- transformAbundance(x, method="Z", abund_values="test")
-#' assays(x)$Z
+#' # assays(x)$test
+#' x <- transformAbundance(x, method="Z", abund_values="test", scalingFactor = 2)
+#' # assays(x)$Z
 #' # Z-transform can also be done for features
-#' x <- ZTransform(x, pseudocount=TRUE)
-#' assays(x)$ZTransform
+#' x <- ZTransform(x, pseudocount=1)
+#' # assays(x)$ZTransform
 #'
 NULL
 
@@ -286,13 +286,19 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     if (any(assay == 0, na.rm = TRUE)) {
         stop("Abundance table contains zero and Z transformation
                 is being applied without pseudocount. Try Z with
-                pseudocount=TRUE.")
+                pseudocount = 1 or other numeric value.")
+    }
+    # If there is negative values, gives an error.
+    if (any(assay < 0, na.rm = TRUE)) {
+        stop("Abundance table contains negative values and Z-transformation
+                is being applied without pseudocount. Try z with
+                pseudocount = 1 or other numeric value.")
     }
 
     # Gets the log transformed table
     mat <- .get_log10_table(assay)
 
-    # Performs z transformation for samples
+    # Performs z transformation
     mat <- apply(mat, 2, function(x) {
         (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
     })
@@ -308,9 +314,15 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
         stop("Abundance table contains zero and log10 transformation
                 is being applied without pseudocount. Try log10 with
                 pseudocount = 1 or other numeric value.")
-    } else {
-        mat <- log10(assay)
+        }
+    if (any(assay < 0, na.rm = TRUE)) {
+            stop("Abundance table contains negative values and log10 transformation
+                is being applied without pseudocount. Try log10 with
+                pseudocount = 1 or other numeric value.")
     }
+
+    mat <- log10(assay)
+
     return(mat)
 }
 
@@ -323,6 +335,13 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 }
 
 .get_hellinger_table <- function(assay){
+
+    # If there is negative values, gives an error.
+    if (any(assay < 0, na.rm = TRUE)) {
+        stop("Abundance table contains negative values and hellinger transformation
+                is being applied without pseudocount. Try hellinger with
+                pseudocount = 1 or other numeric value.")
+    }
 
     # Gets the relative abundance
     mat <- .get_relabundance_table(assay)
@@ -339,7 +358,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     if (any(assay < 0, na.rm = TRUE)) {
         stop("Abundance table contains negative values and clr transformation
                 is being applied without pseudocount. Try clr with
-                pseudocount=TRUE.")
+                pseudocount = 1 or other numeric value.")
     }
     # If abundance table contains zeros, gives an error
     if (any(assay == 0, na.rm = TRUE)) {
@@ -350,20 +369,11 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
     mat <- .get_relabundance_table(assay)
 
-    # Stores row and col names
-    row_names <- rownames(mat)
-    col_names <- colnames(mat)
-
     # In every sample, calculates the log of individual entries. After that calculates
     # the sample-specific mean value and subtracts every entries' value with that.
     mat <- apply(mat, 2, function(x) {
         log(x) - mean(log(x), na.rm=TRUE)
     })
-
-    # Adds sample names to calculated table
-    rownames(mat) <- row_names
-    # Adds entry names to calculated table
-    colnames(mat) <- col_names
 
     return(mat)
 }
@@ -381,17 +391,33 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
     # Log10 can not be calculated if there is zero
     if (any(assay == 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero and Z transformation
+        stop("Abundance table contains zero and Z-transformation
             is being applied without pseudocount. Try ZTransform with
             pseudocount = 1 or other numeric value.")
+    }
+    # If there is negative values, gives an error.
+    if (any(assay < 0, na.rm = TRUE)) {
+        stop("Abundance table contains negative values and Z-transformation
+                is being applied without pseudocount. Try ZTransform with
+                pseudocount = 1 or other numeric value.")
     }
 
     # Gets the log transformed table
     mat <- .get_log10_table(assay)
 
+    # Transpoese the table
+    trans <- t(mat)
+
     # Z transform for features. Centers the feature data. After that, divides with
     # the standard deviation of feature.
-    trans <- t(scale(t(mat)))
+    # Performs z transformation
+    trans <- apply(trans, 2, function(x) {
+        (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
+    })
+
+    # Transposes the table back to its original form
+    trans <- t(trans)
+
     # Saves all features that are undetectable in every sample i.e. are NA
     undetectables <- which(rowMeans(is.na(trans)) == 1)
 
@@ -409,9 +435,6 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
         mat <- trans
 
-        # Deletes extra information
-        attr(mat,"scaled:scale") <- NULL
-        attr(mat,"scaled:center") <- NULL
     }
 
     return(mat)
