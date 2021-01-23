@@ -18,7 +18,7 @@ mergeCols(x, f, archetype = 1L, ...)
 
 \S4method{mergeCols}{SummarizedExperiment}(x, f, archetype = 1L, ...)
 
-\S4method{mergeRows}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, ...)
+\S4method{mergeRows}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...)
 
 \S4method{mergeCols}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, ...)
 }
@@ -37,12 +37,19 @@ This can be single interger value or an integer vector of the same length
 as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
 element encountered per factor level will be kept)}
 
-\item{...}{optional arguments passed onto
-\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
-except \code{subset_row}, \code{subset_col}}
+\item{...}{optional arguments:
+\itemize{
+\item{passed onto \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}, except \code{subset_row}, \code{subset_col}}
+}}
 
 \item{mergeTree}{\code{TRUE} or \code{FALSE}: should to
 \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})}
+
+\item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: should a consensus sequence
+calculate? If set to \code{FALSE}, the result from \code{archetype} is
+returned; If set to \code{TRUE} the result from
+\code{\link[DECIPHER:ConsensueSequence]{DECIPHER::ConsensueSequence}} is
+returned. (Default: \code{mergeRefSeq = FALSE})}
 }
 \value{
 an object with the same class \code{x} with the specified entries

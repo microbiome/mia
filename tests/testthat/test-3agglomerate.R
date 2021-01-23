@@ -74,6 +74,23 @@ test_that("agglomerate", {
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
                  496)
+
+    # checking reference consensus sequence generation
+    se <- microbiomeDataSets::SilvermanAGutData()
+    actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
+    expect_equal(as.character(referenceSeq(actual)[[1]]),
+                 paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
+                        "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
+                        "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
+                        "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
+                        "TTGAGGCACGAAAGCGTGGGG"))
+    actual <- agglomerateByRank(se,"Genus", mergeRefSeq = TRUE)
+    expect_equal(as.character(referenceSeq(actual)[[1]]),
+                 paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYMM",
+                        "KHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNND",
+                        "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
+                        "RWDWTNDBRVRRAMHHCMRDKKSSRARGSSVSYYHNYBRRVHNDNNHYKRMVV",
+                        "YKVRDNNNSRAARSBDKGGKK"))
 })
 
 

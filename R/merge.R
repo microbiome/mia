@@ -21,9 +21,17 @@
 #' @param mergeTree \code{TRUE} or \code{FALSE}: should to
 #'   \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})
 #'
-#' @param ... optional arguments passed onto
-#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
-#'   except \code{subset_row}, \code{subset_col}
+#' @param mergeRefSeq \code{TRUE} or \code{FALSE}: should a consensus sequence
+#'   calculate? If set to \code{FALSE}, the result from \code{archetype} is
+#'   returned; If set to \code{TRUE} the result from
+#'   \code{\link[DECIPHER:ConsensueSequence]{DECIPHER::ConsensueSequence}} is
+#'   returned. (Default: \code{mergeRefSeq = FALSE})
+#'
+#' @param ... optional arguments:
+#' \itemize{
+#'   \item{passed onto \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}, except \code{subset_row}, \code{subset_col}}
+#' }
+#'
 #'
 #' @name merge-methods
 #' @aliases mergeRows mergeCols
@@ -191,14 +199,47 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
     list(newTree = newTree, newAlias = newAlias)
 }
 
+#' @importFrom Biostrings DNAStringSetList
+.merge_refseq_list <- function(sequences_list, f, names, ...){
+    threshold <- list(...)[["threshold"]]
+    if(is.null(threshold)){
+        threshold <- 0.05
+    }
+    if(!is(sequences_list,"DNAStringSetList")){
+        return(.merge_refseq(sequences_list, f, names, threshold))
+    }
+    names <- names(sequences_list)
+    seqs <- DNAStringSetList(lapply(sequences_list, .merge_refseq, f, names,
+                                    threshold))
+    names(seqs) <- names
+    seqs
+}
+
+#' @importFrom Biostrings DNAStringSetList
+#' @importFrom DECIPHER ConsensusSequence
+.merge_refseq <- function(sequences, f, names, threshold){
+    sequences <- split(sequences,f)
+    seq <- unlist(DNAStringSetList(lapply(sequences, ConsensusSequence,
+                                          threshold = threshold)))
+    seq
+}
+
 #' @rdname merge-methods
 #' @importFrom ape keep.tip
 #' @export
 setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f, archetype = 1L, mergeTree = FALSE, ...){
+    function(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...){
         # input check
         if(!.is_a_bool(mergeTree)){
             stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if(!.is_a_bool(mergeRefSeq)){
+            stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
+        }
+        # for optionally merging referenceSeq
+        refSeq <- NULL
+        if(mergeRefSeq){
+            refSeq <- referenceSeq(x)
         }
         #
         x <- callNextMethod(x, f, archetype = 1L, ...)
@@ -210,6 +251,10 @@ setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
             x <- changeTree(x = x,
                             rowTree = tmp$newTree,
                             rowNodeLab = tmp$newAlias)
+        }
+        # optionally merge referenceSeq
+        if(!is.null(refSeq)){
+            referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
         }
         x
     }
