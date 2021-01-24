@@ -5,6 +5,8 @@
 \alias{transformAbundance,SummarizedExperiment-method}
 \alias{ZTransform}
 \alias{ZTransform,SummarizedExperiment-method}
+\alias{relAbundanceCounts}
+\alias{relAbundanceCounts,SummarizedExperiment-method}
 \title{Transform Abundance}
 \usage{
 transformAbundance(
@@ -40,6 +42,22 @@ ZTransform(
   pseudocount = FALSE,
   scalingFactor = 1
 )
+
+relAbundanceCounts(
+  x,
+  abund_values = "counts",
+  name = "relabundance",
+  pseudocount = FALSE,
+  scalingFactor = 1
+)
+
+\S4method{relAbundanceCounts}{SummarizedExperiment}(
+  x,
+  abund_values = "counts",
+  name = "relabundance",
+  pseudocount = FALSE,
+  scalingFactor = 1
+)
 }
 \arguments{
 \item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -61,11 +79,14 @@ value specifies the value of pseudocount.}
 \value{
 \code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
 abundance table named \code{*name*} in the \code{\link{assay}}.
+For \code{relAbundanceCounts} a modified \code{x} containing the relative
+abundances as an assay defined by \code{name}.
 }
 \description{
 These functions applies transformation to abundance table. By using
 \code{transformAbundance}, transformed table is in \code{assay}. By using
 specific \code{ZTransform} function, Z-transformation can be applied for features.
+\code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
 }
 \details{
 \code{transformAbundance} applies transformation to abundance table.
@@ -123,6 +144,10 @@ x <- transformAbundance(x, method="Z", abund_values="test", scalingFactor = 2)
 # Z-transform can also be done for features
 x <- ZTransform(x, pseudocount=1)
 # assays(x)$ZTransform
+
+# Relative abundances can be also fetched with function relAbundanceCounts.
+x <- relAbundanceCounts(x)
+#assays(x)$relabundance
 
 }
 \references{

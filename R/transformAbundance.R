@@ -3,6 +3,7 @@
 #' These functions applies transformation to abundance table. By using
 #' \code{transformAbundance}, transformed table is in \code{assay}. By using
 #' specific \code{ZTransform} function, Z-transformation can be applied for features.
+#' \code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
 #'
 #' @param x
 #' A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -77,6 +78,8 @@
 #' @return
 #' \code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
 #' abundance table named \code{*name*} in the \code{\link{assay}}.
+#' For \code{relAbundanceCounts} a modified \code{x} containing the relative
+#' abundances as an assay defined by \code{name}.
 #'
 #' @seealso
 #' \itemize{
@@ -107,6 +110,10 @@
 #' # Z-transform can also be done for features
 #' x <- ZTransform(x, pseudocount=1)
 #' # assays(x)$ZTransform
+#'
+#' # Relative abundances can be also fetched with function relAbundanceCounts.
+#' x <- relAbundanceCounts(x)
+#' #assays(x)$relabundance
 #'
 NULL
 
@@ -165,6 +172,18 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
                        call. = FALSE)
               }
 
+              # If the method is "relabundance", relAbundanceCounts is used
+              if(method == "relabundance"){
+
+                  # Get relative abundances stored in assays
+                  x <- relAbundanceCounts(x,
+                                          abund_values,
+                                          name,
+                                          pseudocount,
+                                          scalingFactor)
+              }
+              # If the method is something else, internal function is used
+              else{
               # Get transformed table
               transformed_table <- .get_transformed_table(assay = assay(x, abund_values),
                                                           method = method,
@@ -173,6 +192,9 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
 
               # Assign transformed table to assays
               assay(x, name) <- transformed_table
+
+              }
+
 
               return(x)
 
@@ -235,6 +257,64 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
           }
 )
 
+###############################relAbundanceCounts###############################
+
+#' @rdname transformAbundance
+setGeneric("relAbundanceCounts", signature = c("x"),
+           function(x,
+                    abund_values = "counts",
+                    name = "relabundance",
+                    pseudocount = FALSE,
+                    scalingFactor = 1)
+               standardGeneric("relAbundanceCounts"))
+
+#' @rdname transformAbundance
+#' @importFrom SummarizedExperiment assay assay<-
+#' @export
+setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
+          function(x,
+                   abund_values = "counts",
+                   name = "relabundance",
+                   pseudocount = FALSE,
+                   scalingFactor = 1){
+
+              # Input check
+              # Check abund_values
+              .check_abund_values(abund_values, x)
+
+              # Check name
+              if(!.is_non_empty_string(name)){
+                  stop("'name' must be a single non-empty character value.",
+                       call. = FALSE)
+              }
+
+              # Check pseudocount
+              if(!(pseudocount==FALSE || is.numeric(pseudocount))){
+                  stop("'pseudocount' must be FALSE or numeric value.",
+                       call. = FALSE)
+              }
+
+              # Check scalingFactor
+              if(!is.numeric(scalingFactor)){
+                  stop("'scalingFactor' must be a numeric value.",
+                       call. = FALSE)
+              }
+
+              # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
+              if(!pseudocount==FALSE){
+                  assay(x, abund_values) <- assay(x, abund_values) + pseudocount
+              }
+
+              # Multiply values with scalingFactor. By default, scalingFactor is 1, so no changes are made
+              assay(x, abund_values) <- assay(x, abund_values) * scalingFactor
+
+              # Get and store relabundance table
+              assay(x, name) <- .calc_rel_abund(assay(x, abund_values))
+
+              return(x)
+          }
+)
+
 ###########################HELP FUNCTIONS####################################
 
 
@@ -251,7 +331,6 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
     # Function is selected based on the "method" variable
     FUN <- switch(method,
-                  relabundance = .get_relabundance_table,
                   Z = .get_z_table,
                   log10 = .get_log10_table,
                   pa = .get_pa_table,
@@ -263,16 +342,17 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
             list(assay = assay))
 }
 
-.get_relabundance_table <- function(assay){
+.calc_rel_abund <- function(assay){
 
     # If assay contains missing values, replace their values so it is possible to calculate
+    # relative abundances. Otherwise, whole column would get NAs.
     # Stores the indices of missing values
     missingValues <- which(is.na(assay))
     # Missing values are replaced with value 0
     assay[missingValues] <- 0
 
     # Calculates the relative abundances. Uses internal function from relabundance.R.
-    mat <- .calc_rel_abund(assay)
+    mat <- sweep(assay, 2, colSums(assay), "/")
 
     # If there were missing values, add them back to data
     mat[missingValues] <- NA
@@ -344,7 +424,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     }
 
     # Gets the relative abundance
-    mat <- .get_relabundance_table(assay)
+    mat <- .calc_rel_abund(assay)
 
     # Takes square root
     mat <- sqrt(mat)
@@ -367,7 +447,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
                 pseudocount = 1 or other numeric value.")
     }
 
-    mat <- .get_relabundance_table(assay)
+    mat <- .calc_rel_abund(assay)
 
     # In every sample, calculates the log of individual entries. After that calculates
     # the sample-specific mean value and subtracts every entries' value with that.
@@ -440,3 +520,4 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     return(mat)
 
 }
+
