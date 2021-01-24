@@ -1,45 +1,50 @@
-context("transformAbundance")
+context("transformCounts")
 
-test_that("transformAbundance", {
+test_that("transformCounts", {
 
     # TSE object
     data(GlobalPatterns)
     tse <- GlobalPatterns
 
     # No method specified. Should be an error.
-    testthat::expect_error(mia::transformAbundance(tse))
+    testthat::expect_error(mia::transformCounts(tse))
 
     # Method is not provided. Should be an error.
-    testthat::expect_error(mia::transformAbundance(tse, method="test"))
+    testthat::expect_error(mia::transformCounts(tse, method="test"))
 
     # Name is a vector of 2. Should be an error.
-    testthat::expect_error(mia::transformAbundance(tse, method="relabundance", name = c("123", "456")))
+    testthat::expect_error(mia::transformCounts(tse, method="relabundance", name = c("123", "456")))
 
     # Pseudocount is a string. Should be an error.
-    testthat::expect_error(mia::transformAbundance(tse, method="relabundance", pseudocount = "pseudocount"))
+    testthat::expect_error(mia::transformCounts(tse, method="relabundance", pseudocount = "pseudocount"))
 
     # ScalingFactor is a string. Should be an error.
-    testthat::expect_error(mia::transformAbundance(tse, method="relabundance", scalingFactor = "scalingFactor"))
+    testthat::expect_error(mia::transformCounts(tse, method="relabundance", scalingFactor = "scalingFactor"))
 
     ################################################################
     # Counts table should not be changed
-    testthat::expect_equal(assays(mia::transformAbundance(tse, method = "pa"))$counts, assays(tse)$counts)
+    testthat::expect_equal(assays(mia::transformCounts(tse, method = "pa"))$counts, assays(tse)$counts)
 
     # Calculates relative abundances. Should be equal.
-    testthat::expect_equal(assays(mia::transformAbundance(tse, method = "relabundance"))$relabundance,
+    testthat::expect_equal(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance,
                            apply(assays(tse)$counts, 2, FUN=function(x){
+                               x/sum(x)
+                           }))
+
+    testthat::expect_equal(assays(mia::relAbundanceCounts(tse, pseudocount = 12))$relabundance,
+                           apply((assays(tse)$counts + 12), 2, FUN=function(x){
                                x/sum(x)
                            }))
 
     ##############################################################
     # Calculates log10 transformation with pseudocount = 1. Should be equal.
-    testthat::expect_equal(assays(mia::transformAbundance(tse, method = "log10", pseudocount = 1))$log10,
+    testthat::expect_equal(assays(mia::transformCounts(tse, method = "log10", pseudocount = 1))$log10,
                            apply(assays(tse)$counts, 2, FUN=function(x){
                                log10(x+1)
                            }))
 
     # Calculates pa transformation. Should be equal.
-    testthat::expect_equal(as.vector(assays(mia::transformAbundance(tse, method = "pa"))$pa),
+    testthat::expect_equal(as.vector(assays(mia::transformCounts(tse, method = "pa"))$pa),
                            as.integer(assays(tse)$counts > 0))
 
     #############################################################
@@ -52,7 +57,7 @@ test_that("transformAbundance", {
     attr(ztransformed,"scaled:scale") <- NULL
     attr(ztransformed,"scaled:center") <- NULL
 
-    testthat::expect_equal(assays(mia::transformAbundance(tse, method = "Z", pseudocount = pseudonumber))$Z,
+    testthat::expect_equal(assays(mia::transformCounts(tse, method = "Z", pseudocount = pseudonumber))$Z,
                            ztransformed)
 
     # TSE object
@@ -62,9 +67,9 @@ test_that("transformAbundance", {
     ###############################################################
     # Calculates Hellinger transformation. Should be equal.
     # Calculates relative abundance table
-    relative <- assays(mia::transformAbundance(tse, method = "relabundance", name = "relative"))$relative
+    relative <- assays(mia::transformCounts(tse, method = "relabundance", name = "relative"))$relative
 
-    testthat::expect_equal(assays(mia::transformAbundance(tse, method = "hellinger", name = "test_123"))$test_123,
+    testthat::expect_equal(assays(mia::transformCounts(tse, method = "hellinger", name = "test_123"))$test_123,
                            apply(relative, 2, FUN=function(x){
                                sqrt(x)
                            }))
@@ -77,21 +82,21 @@ test_that("transformAbundance", {
     pseudonumber <- runif(1, 1, 100)
 
     # Calculates relative abundance table
-    relative <- assays(mia::transformAbundance(tse, method = "relabundance", pseudocount = pseudonumber))$relabundance*scalingNumber
+    relative <- assays(mia::transformCounts(tse, method = "relabundance", pseudocount = pseudonumber))$relabundance*scalingNumber
 
     testthat::expect_equal(
-        assays(mia::transformAbundance(tse, method = "clr", scalingFactor = scalingNumber, pseudocount = pseudonumber))$clr,
+        assays(mia::transformCounts(tse, method = "clr", scalingFactor = scalingNumber, pseudocount = pseudonumber))$clr,
                            apply(relative, 2, FUN=function(x){
                                log(x) - mean(log(x))
                            }))
 
     #############################################################
     # Tests that samples have correct names
-    testthat::expect_equal(colnames(assays(mia::transformAbundance(tse, method = "clr", pseudocount = 1))$clr),
+    testthat::expect_equal(colnames(assays(mia::transformCounts(tse, method = "clr", pseudocount = 1))$clr),
                            colnames(assays(tse)$counts))
 
     # Tests that otus have correct names
-    testthat::expect_equal(rownames(assays(mia::transformAbundance(tse, method = "hellinger", pseudocount = 1000))$hellinger),
+    testthat::expect_equal(rownames(assays(mia::transformCounts(tse, method = "hellinger", pseudocount = 1000))$hellinger),
                            rownames(assays(tse)$counts))
 
     #############################################################

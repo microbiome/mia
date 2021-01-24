@@ -1,7 +1,7 @@
-#' Transform Abundance
+#' Transform Counts
 #'
 #' These functions applies transformation to abundance table. By using
-#' \code{transformAbundance}, transformed table is in \code{assay}. By using
+#' \code{transformCounts}, transformed table is in \code{assay}. By using
 #' specific \code{ZTransform} function, Z-transformation can be applied for features.
 #' \code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
 #'
@@ -28,7 +28,7 @@
 #' A numeric value for scaling. Values are multiplied with specified value.
 #'
 #' @details
-#' \code{transformAbundance} applies transformation to abundance table.
+#' \code{transformCounts} applies transformation to abundance table.
 #' Transformation methods include
 #'
 #' \itemize{
@@ -46,7 +46,7 @@
 #'     then value is 1. If value is 0, then value is 0.)}
 #'
 #'     \item{"Z" }{Z-transformation or Z-standardization can be used for normalizing the data.
-#'     In function \code{transformAbundance}, it is done per-sample like in all other transformations
+#'     In function \code{transformCounts}, it is done per-sample like in all other transformations
 #'     that are provided by this function. As a special case, Z-transformation can also be done
 #'     per-features by using function \code{ZTransform}. However, Z-transformation
 #'     done for features can give misleading results.
@@ -76,7 +76,7 @@
 #'
 #'
 #' @return
-#' \code{transformAbundance} and \code{ZTransform} return \code{x} with additional, transformed
+#' \code{transformCounts} and \code{ZTransform} return \code{x} with additional, transformed
 #' abundance table named \code{*name*} in the \code{\link{assay}}.
 #' For \code{relAbundanceCounts} a modified \code{x} containing the relative
 #' abundances as an assay defined by \code{name}.
@@ -86,7 +86,7 @@
 #'   \item{\code{\link[mia:relAbundanceCounts]{relAbundanceCounts}}}
 #' }
 #'
-#' @name transformAbundance
+#' @name transformCounts
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -97,15 +97,15 @@
 #'
 #' # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 #' # Pseudocount can be added by specifying 'pseudocount'.
-#' x <- transformAbundance(x, method="clr", pseudocount=1)
+#' x <- transformCounts(x, method="clr", pseudocount=1)
 #' # assays(x)$clr
 #'
 #' # Name of the stored table can be specified. Also, the target of transformation
 #' # can be specified with "abund_values". 'scalingFactor' is used for multiplying
 #' # the table with desired value.
-#' x <- transformAbundance(x, method="hellinger", name="test", pseudocount=5)
+#' x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
 #' # assays(x)$test
-#' x <- transformAbundance(x, method="Z", abund_values="test", scalingFactor = 2)
+#' x <- transformCounts(x, method="Z", abund_values="test", scalingFactor = 2)
 #' # assays(x)$Z
 #' # Z-transform can also be done for features
 #' x <- ZTransform(x, pseudocount=1)
@@ -117,21 +117,21 @@
 #'
 NULL
 
-#' @rdname transformAbundance
+#' @rdname transformCounts
 #' @export
-setGeneric("transformAbundance", signature = c("x"),
+setGeneric("transformCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
                     method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
                     name = method,
                     pseudocount = FALSE,
                     scalingFactor = 1)
-               standardGeneric("transformAbundance"))
+               standardGeneric("transformCounts"))
 
 
-#' @rdname transformAbundance
+#' @rdname transformCounts
 #' @export
-setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
+setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
                    method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
@@ -203,7 +203,7 @@ setMethod("transformAbundance", signature = c(x = "SummarizedExperiment"),
 
 ##################################Z-TRANSFORM###################################
 
-#' @rdname transformAbundance
+#' @rdname transformCounts
 #' @export
 setGeneric("ZTransform", signature = c("x"),
            function(x,
@@ -214,7 +214,7 @@ setGeneric("ZTransform", signature = c("x"),
                standardGeneric("ZTransform"))
 
 
-#' @rdname transformAbundance
+#' @rdname transformCounts
 #' @export
 setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
           function(x,
@@ -259,7 +259,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
 ###############################relAbundanceCounts###############################
 
-#' @rdname transformAbundance
+#' @rdname transformCounts
 setGeneric("relAbundanceCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
@@ -268,7 +268,7 @@ setGeneric("relAbundanceCounts", signature = c("x"),
                     scalingFactor = 1)
                standardGeneric("relAbundanceCounts"))
 
-#' @rdname transformAbundance
+#' @rdname transformCounts
 #' @importFrom SummarizedExperiment assay assay<-
 #' @export
 setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
