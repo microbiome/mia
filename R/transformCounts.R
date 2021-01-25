@@ -242,10 +242,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 # Chooses which transformation function is applied
 .get_transformed_table <- function(assay, method, pseudocount){
 
-    # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
-    if(!pseudocount==FALSE){
-        assay <- assay + pseudocount
-    }
+    assay <- .apply_pseudocount(assay, pseudocount)
 
     # Function is selected based on the "method" variable
     FUN <- switch(method,
@@ -354,10 +351,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 .get_ztransformed_table <- function(assay, pseudocount){
 
-    # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
-    if(!pseudocount==FALSE){
-        assay <- assay + pseudocount
-    }
+    assay <- .apply_pseudocount(assay, pseudocount)
 
     # Log10 can not be calculated if there is zero
     if (any(assay <= 0, na.rm = TRUE)) {
@@ -405,4 +399,14 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 
 }
+
+.apply_pseudocount <- function(mat, pseudocount){
+    # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
+    if(!pseudocount==FALSE){
+        mat <- mat + pseudocount
+    }
+    mat
+}
+
+
 
