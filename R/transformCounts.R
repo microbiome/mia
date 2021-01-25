@@ -24,9 +24,6 @@
 #' FALSE or numeric value deciding whether pseudocount is added. Numerical
 #' value specifies the value of pseudocount.
 #'
-#' @param scalingFactor
-#' A numeric value for scaling. Values are multiplied with specified value.
-#'
 #' @details
 #' \code{transformCounts} applies transformation to abundance table.
 #' Transformation methods include
@@ -101,11 +98,10 @@
 #' # assays(x)$clr
 #'
 #' # Name of the stored table can be specified. Also, the target of transformation
-#' # can be specified with "abund_values". 'scalingFactor' is used for multiplying
-#' # the table with desired value.
+#' # can be specified with "abund_values".
 #' x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
 #' # assays(x)$test
-#' x <- transformCounts(x, method="Z", abund_values="test", scalingFactor = 2)
+#' x <- transformCounts(x, method="Z", abund_values="test")
 #' # assays(x)$Z
 #' # Z-transform can also be done for features
 #' x <- ZTransform(x, pseudocount=1)
@@ -124,8 +120,7 @@ setGeneric("transformCounts", signature = c("x"),
                     abund_values = "counts",
                     method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
                     name = method,
-                    pseudocount = FALSE,
-                    scalingFactor = 1)
+                    pseudocount = FALSE)
                standardGeneric("transformCounts"))
 
 
@@ -136,8 +131,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                    abund_values = "counts",
                    method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
                    name = method,
-                   pseudocount = FALSE,
-                   scalingFactor = 1){
+                   pseudocount = FALSE){
 
               # Input check
               # Check abund_values
@@ -166,12 +160,6 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                        call. = FALSE)
               }
 
-              # Check scalingFactor
-              if(!is.numeric(scalingFactor)){
-                  stop("'scalingFactor' must be a numeric value.",
-                       call. = FALSE)
-              }
-
               # If the method is "relabundance", relAbundanceCounts is used
               if(method == "relabundance"){
 
@@ -179,16 +167,14 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                   x <- relAbundanceCounts(x,
                                           abund_values,
                                           name,
-                                          pseudocount,
-                                          scalingFactor)
+                                          pseudocount)
               }
               # If the method is something else, internal function is used
               else{
               # Get transformed table
               transformed_table <- .get_transformed_table(assay = assay(x, abund_values),
                                                           method = method,
-                                                          pseudocount = pseudocount,
-                                                          scalingFactor = scalingFactor)
+                                                          pseudocount = pseudocount)
 
               # Assign transformed table to assays
               assay(x, name) <- transformed_table
@@ -209,8 +195,7 @@ setGeneric("ZTransform", signature = c("x"),
            function(x,
                     abund_values = "counts",
                     name = "ZTransform",
-                    pseudocount = FALSE,
-                    scalingFactor = 1)
+                    pseudocount = FALSE)
                standardGeneric("ZTransform"))
 
 
@@ -220,8 +205,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
                    name = "ZTransform",
-                   pseudocount = FALSE,
-                   scalingFactor = 1){
+                   pseudocount = FALSE){
 
               # Input check
               # Check abund_values
@@ -239,16 +223,9 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
                        call. = FALSE)
               }
 
-              # Check scalingFactor
-              if(!is.numeric(scalingFactor)){
-                  stop("'scalingFactor' must be a numeric value.",
-                       call. = FALSE)
-              }
-
               # Get transformed table
               transformed_table <- .get_ztransformed_table(assay = assay(x, abund_values),
-                                                          pseudocount = pseudocount,
-                                                          scalingFactor = scalingFactor)
+                                                          pseudocount = pseudocount)
 
               # Assign transformed table to assays
               assay(x, name) <- transformed_table
@@ -264,8 +241,7 @@ setGeneric("relAbundanceCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
                     name = "relabundance",
-                    pseudocount = FALSE,
-                    scalingFactor = 1)
+                    pseudocount = FALSE)
                standardGeneric("relAbundanceCounts"))
 
 #' @rdname transformCounts
@@ -275,8 +251,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
                    name = "relabundance",
-                   pseudocount = FALSE,
-                   scalingFactor = 1){
+                   pseudocount = FALSE){
 
               # Input check
               # Check abund_values
@@ -294,19 +269,11 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                        call. = FALSE)
               }
 
-              # Check scalingFactor
-              if(!is.numeric(scalingFactor)){
-                  stop("'scalingFactor' must be a numeric value.",
-                       call. = FALSE)
-              }
-
               # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
               if(!pseudocount==FALSE){
                   assay(x, abund_values) <- assay(x, abund_values) + pseudocount
               }
 
-              # Multiply values with scalingFactor. By default, scalingFactor is 1, so no changes are made
-              assay(x, abund_values) <- assay(x, abund_values) * scalingFactor
 
               # Get and store relabundance table
               assay(x, name) <- .calc_rel_abund(assay(x, abund_values))
@@ -319,15 +286,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 
 # Chooses which transformation function is applied
-.get_transformed_table <- function(assay, method, pseudocount, scalingFactor){
+.get_transformed_table <- function(assay, method, pseudocount){
 
     # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
     if(!pseudocount==FALSE){
         assay <- assay + pseudocount
     }
-
-    # Multiply values with scalingFactor. By default, scalingFactor is 1, so no changes are made
-    assay <- assay * scalingFactor
 
     # Function is selected based on the "method" variable
     FUN <- switch(method,
@@ -458,16 +422,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_ztransformed_table <- function(assay, pseudocount, scalingFactor){
+.get_ztransformed_table <- function(assay, pseudocount){
 
     # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
     if(!pseudocount==FALSE){
         assay <- assay + pseudocount
     }
-
-    # Multiply values with scalingFactor. By default, scalingFactor is 1, so no changes are made
-    assay <- assay * scalingFactor
-
 
     # Log10 can not be calculated if there is zero
     if (any(assay == 0, na.rm = TRUE)) {

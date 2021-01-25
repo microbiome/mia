@@ -14,8 +14,7 @@ transformCounts(
   abund_values = "counts",
   method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
   name = method,
-  pseudocount = FALSE,
-  scalingFactor = 1
+  pseudocount = FALSE
 )
 
 \S4method{transformCounts}{SummarizedExperiment}(
@@ -23,40 +22,35 @@ transformCounts(
   abund_values = "counts",
   method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
   name = method,
-  pseudocount = FALSE,
-  scalingFactor = 1
+  pseudocount = FALSE
 )
 
 ZTransform(
   x,
   abund_values = "counts",
   name = "ZTransform",
-  pseudocount = FALSE,
-  scalingFactor = 1
+  pseudocount = FALSE
 )
 
 \S4method{ZTransform}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "ZTransform",
-  pseudocount = FALSE,
-  scalingFactor = 1
+  pseudocount = FALSE
 )
 
 relAbundanceCounts(
   x,
   abund_values = "counts",
   name = "relabundance",
-  pseudocount = FALSE,
-  scalingFactor = 1
+  pseudocount = FALSE
 )
 
 \S4method{relAbundanceCounts}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   name = "relabundance",
-  pseudocount = FALSE,
-  scalingFactor = 1
+  pseudocount = FALSE
 )
 }
 \arguments{
@@ -73,8 +67,6 @@ to be transformed.}
 
 \item{pseudocount}{FALSE or numeric value deciding whether pseudocount is added. Numerical
 value specifies the value of pseudocount.}
-
-\item{scalingfactor}{A numeric value for scaling. Values are multiplied with specified value.}
 }
 \value{
 \code{transformCounts} and \code{ZTransform} return \code{x} with additional, transformed
@@ -135,11 +127,10 @@ x <- transformCounts(x, method="clr", pseudocount=1)
 # assays(x)$clr
 
 # Name of the stored table can be specified. Also, the target of transformation
-# can be specified with "abund_values". 'scalingFactor' is used for multiplying
-# the table with desired value.
+# can be specified with "abund_values".
 x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
 # assays(x)$test
-x <- transformCounts(x, method="Z", abund_values="test", scalingFactor = 2)
+x <- transformCounts(x, method="Z", abund_values="test")
 # assays(x)$Z
 # Z-transform can also be done for features
 x <- ZTransform(x, pseudocount=1)

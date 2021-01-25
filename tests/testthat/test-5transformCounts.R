@@ -18,9 +18,6 @@ test_that("transformCounts", {
     # Pseudocount is a string. Should be an error.
     testthat::expect_error(mia::transformCounts(tse, method="relabundance", pseudocount = "pseudocount"))
 
-    # ScalingFactor is a string. Should be an error.
-    testthat::expect_error(mia::transformCounts(tse, method="relabundance", scalingFactor = "scalingFactor"))
-
     ################################################################
     # Counts table should not be changed
     testthat::expect_equal(assays(mia::transformCounts(tse, method = "pa"))$counts, assays(tse)$counts)
@@ -76,16 +73,15 @@ test_that("transformCounts", {
 
     ##############################################################
     # Calculates clr-transformation. Should be equal.
-    # Random scalingFactor
-    scalingNumber <- runif(1, 1, 100)
+
     # Random pseudocount
     pseudonumber <- runif(1, 1, 100)
 
     # Calculates relative abundance table
-    relative <- assays(mia::transformCounts(tse, method = "relabundance", pseudocount = pseudonumber))$relabundance*scalingNumber
+    relative <- assays(mia::transformCounts(tse, method = "relabundance", pseudocount = pseudonumber))$relabundance
 
     testthat::expect_equal(
-        assays(mia::transformCounts(tse, method = "clr", scalingFactor = scalingNumber, pseudocount = pseudonumber))$clr,
+        assays(mia::transformCounts(tse, method = "clr", pseudocount = pseudonumber))$clr,
                            apply(relative, 2, FUN=function(x){
                                log(x) - mean(log(x))
                            }))
