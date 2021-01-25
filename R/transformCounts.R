@@ -160,17 +160,6 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                        call. = FALSE)
               }
 
-              # If the method is "relabundance", relAbundanceCounts is used
-              if(method == "relabundance"){
-
-                  # Get relative abundances stored in assays
-                  x <- relAbundanceCounts(x,
-                                          abund_values,
-                                          name,
-                                          pseudocount)
-              }
-              # If the method is something else, internal function is used
-              else{
               # Get transformed table
               transformed_table <- .get_transformed_table(assay = assay(x, abund_values),
                                                           method = method,
@@ -178,9 +167,6 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
 
               # Assign transformed table to assays
               assay(x, name, withDimnames=FALSE) <- transformed_table
-
-              }
-
 
               return(x)
 
@@ -238,47 +224,15 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname transformCounts
 setGeneric("relAbundanceCounts", signature = c("x"),
-           function(x,
-                    abund_values = "counts",
-                    name = "relabundance",
-                    pseudocount = FALSE)
+           function(x, ...)
                standardGeneric("relAbundanceCounts"))
 
 #' @rdname transformCounts
 #' @importFrom SummarizedExperiment assay assay<-
 #' @export
 setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   abund_values = "counts",
-                   name = "relabundance",
-                   pseudocount = FALSE){
-
-              # Input check
-              # Check abund_values
-              .check_abund_values(abund_values, x)
-
-              # Check name
-              if(!.is_non_empty_string(name)){
-                  stop("'name' must be a single non-empty character value.",
-                       call. = FALSE)
-              }
-
-              # Check pseudocount
-              if(!(pseudocount==FALSE || is.numeric(pseudocount))){
-                  stop("'pseudocount' must be FALSE or numeric value.",
-                       call. = FALSE)
-              }
-
-              # If "pseudocount" is not FALSE, it is numeric value specified by user. Then add pseudocount.
-              if(!pseudocount==FALSE){
-                  assay(x, abund_values) <- assay(x, abund_values) + pseudocount
-              }
-
-
-              # Get and store relabundance table
-              assay(x, name) <- .calc_rel_abund(assay(x, abund_values))
-
-              return(x)
+          function(x, ...){
+              transformCounts(x, method = "relabundance", ...)
           }
 )
 
@@ -295,6 +249,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
     # Function is selected based on the "method" variable
     FUN <- switch(method,
+                  relabundance = .calc_rel_abund,
                   Z = .get_z_table,
                   log10 = .get_log10_table,
                   pa = .get_pa_table,

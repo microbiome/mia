@@ -39,19 +39,9 @@ ZTransform(
   pseudocount = FALSE
 )
 
-relAbundanceCounts(
-  x,
-  abund_values = "counts",
-  name = "relabundance",
-  pseudocount = FALSE
-)
+relAbundanceCounts(x, ...)
 
-\S4method{relAbundanceCounts}{SummarizedExperiment}(
-  x,
-  abund_values = "counts",
-  name = "relabundance",
-  pseudocount = FALSE
-)
+\S4method{relAbundanceCounts}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
