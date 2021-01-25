@@ -1,7 +1,7 @@
 #' Transform Counts
 #'
-#' These functions applies transformation to abundance table. By using
-#' \code{transformCounts}, transformed table is in \code{assay}. By using
+#' These functions provide a variety of options for transforming abundance data.
+#' By using \code{transformCounts}, transformed table is in \code{assay}. By using
 #' specific \code{ZTransform} function, Z-transformation can be applied for features.
 #' \code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
 #'
