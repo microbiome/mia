@@ -305,7 +305,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .get_pa_table <- function(assay){
 
     # If value is over zero, gets value 1. If value is zero, gets value 0.
-    mat <- ifelse(assay > 0, 1, 0)
+    mat <- matrix(as.integer(mat > 0),nrow(mat))
 
     return(mat)
 }
