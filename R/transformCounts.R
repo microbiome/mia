@@ -177,7 +177,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                                                           pseudocount = pseudocount)
 
               # Assign transformed table to assays
-              assay(x, name) <- transformed_table
+              assay(x, name, withDimnames=FALSE) <- transformed_table
 
               }
 
