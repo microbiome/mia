@@ -24,7 +24,7 @@
 #' FALSE or numeric value deciding whether pseudocount is added. Numerical
 #' value specifies the value of pseudocount.
 #'
-#' @param scalingfactor
+#' @param scalingFactor
 #' A numeric value for scaling. Values are multiplied with specified value.
 #'
 #' @details
