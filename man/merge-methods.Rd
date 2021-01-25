@@ -48,7 +48,7 @@ element encountered per factor level will be kept)}
 \item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: should a consensus sequence
 calculate? If set to \code{FALSE}, the result from \code{archetype} is
 returned; If set to \code{TRUE} the result from
-\code{\link[DECIPHER:ConsensueSequence]{DECIPHER::ConsensueSequence}} is
+\code{\link[DECIPHER=ConsensueSequence]{DECIPHER::ConsensueSequence}} is
 returned. (Default: \code{mergeRefSeq = FALSE})}
 }
 \value{
