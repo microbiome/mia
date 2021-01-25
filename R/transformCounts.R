@@ -270,17 +270,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 .get_z_table <- function(assay){
 
-    # Log10 can not be calculated if there is zero
-    if (any(assay == 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero and Z transformation
-                is being applied without pseudocount. Try Z with
-                pseudocount = 1 or other numeric value.")
-    }
-    # If there is negative values, gives an error.
-    if (any(assay < 0, na.rm = TRUE)) {
-        stop("Abundance table contains negative values and Z-transformation
-                is being applied without pseudocount. Try z with
-                pseudocount = 1 or other numeric value.")
+    # Log10 can not be calculated if there is zero or negative values
+    if (any(assay <= 0, na.rm = TRUE)) {
+        stop("Abundance table contains zero or negative values and ",
+             "Z-transformation is being applied without pseudocount. ",
+             "Try z with pseudocount = 1 or other numeric value.",
+             call. = FALSE)
     }
 
     # Gets the log transformed table
@@ -298,15 +293,11 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
     # If abundance table contains zeros, gives an error, because it is not possible
     # to calculate log from zeros. If there is no zeros, calculates log.
-    if (any(assay == 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero and log10 transformation
-                is being applied without pseudocount. Try log10 with
-                pseudocount = 1 or other numeric value.")
-        }
-    if (any(assay < 0, na.rm = TRUE)) {
-            stop("Abundance table contains negative values and log10 transformation
-                is being applied without pseudocount. Try log10 with
-                pseudocount = 1 or other numeric value.")
+    if (any(assay <= 0, na.rm = TRUE)) {
+        stop("Abundance table contains zero or negative values and ",
+             "log10 transformation is being applied without pseudocount. ",
+             "Try log10 with pseudocount = 1 or other numeric value.",
+             call. = FALSE)
     }
 
     mat <- log10(assay)
@@ -343,16 +334,11 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .get_clr_table <- function(assay){
 
     # If there is negative values, gives an error.
-    if (any(assay < 0, na.rm = TRUE)) {
-        stop("Abundance table contains negative values and clr transformation
-                is being applied without pseudocount. Try clr with
-                pseudocount = 1 or other numeric value.")
-    }
-    # If abundance table contains zeros, gives an error
-    if (any(assay == 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero and clr transformation
-                is being applied without pseudocount. Try clr with
-                pseudocount = 1 or other numeric value.")
+    if (any(assay <= 0, na.rm = TRUE)) {
+        stop("Abundance table contains zero or negative values and ",
+             "clr-transformation is being applied without pseudocount. ",
+             "Try clr with pseudocount = 1 or other numeric value.",
+             call. = FALSE)
     }
 
     mat <- .calc_rel_abund(assay)
@@ -374,16 +360,11 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     }
 
     # Log10 can not be calculated if there is zero
-    if (any(assay == 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero and Z-transformation
-            is being applied without pseudocount. Try ZTransform with
-            pseudocount = 1 or other numeric value.")
-    }
-    # If there is negative values, gives an error.
-    if (any(assay < 0, na.rm = TRUE)) {
-        stop("Abundance table contains negative values and Z-transformation
-                is being applied without pseudocount. Try ZTransform with
-                pseudocount = 1 or other numeric value.")
+    if (any(assay <= 0, na.rm = TRUE)) {
+        stop("Abundance table contains zero or negative values and ",
+             "Z-transformation is being applied without pseudocount. ",
+             "Try ZTransform with pseudocount = 1 or other numeric value.",
+             call. = FALSE)
     }
 
     # Gets the log transformed table
