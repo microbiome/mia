@@ -308,18 +308,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 .calc_rel_abund <- function(assay){
 
-    # If assay contains missing values, replace their values so it is possible to calculate
-    # relative abundances. Otherwise, whole column would get NAs.
-    # Stores the indices of missing values
-    missingValues <- which(is.na(assay))
-    # Missing values are replaced with value 0
-    assay[missingValues] <- 0
-
-    # Calculates the relative abundances. Uses internal function from relabundance.R.
-    mat <- sweep(assay, 2, colSums(assay), "/")
-
-    # If there were missing values, add them back to data
-    mat[missingValues] <- NA
+    mat <- sweep(assay, 2, colSums(assay, na.rm = TRUE), "/")
 
     return(mat)
 }
