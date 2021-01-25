@@ -75,7 +75,7 @@ retained as defined by archetype." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.27</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.28</span>
       </span>
     </div>
 
@@ -132,7 +132,7 @@ retained as defined by <code>archetype</code>.</p>
 <span class='fu'>mergeCols</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>f</span>, archetype <span class='op'>=</span> <span class='fl'>1L</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for TreeSummarizedExperiment</span>
-<span class='fu'>mergeRows</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>f</span>, archetype <span class='op'>=</span> <span class='fl'>1L</span>, mergeTree <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>mergeRows</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>f</span>, archetype <span class='op'>=</span> <span class='fl'>1L</span>, mergeTree <span class='op'>=</span> <span class='cn'>FALSE</span>, mergeRefSeq <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for TreeSummarizedExperiment</span>
 <span class='fu'>mergeCols</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>f</span>, archetype <span class='op'>=</span> <span class='fl'>1L</span>, mergeTree <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
@@ -162,14 +162,22 @@ element encountered per factor level will be kept)</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>optional arguments passed onto
-<code><a href='https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html'>sumCountsAcrossFeatures</a></code>,
-except <code>subset_row</code>, <code>subset_col</code></p></td>
+      <td><p>optional arguments:</p><ul>
+<li><p>passed onto <code><a href='https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html'>sumCountsAcrossFeatures</a></code>, except <code>subset_row</code>, <code>subset_col</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>mergeTree</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: should to
 <code>rowTree()</code> also be merged? (Default: <code>mergeTree = FALSE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>mergeRefSeq</th>
+      <td><p><code>TRUE</code> or <code>FALSE</code>: should a consensus sequence
+calculate? If set to <code>FALSE</code>, the result from <code>archetype</code> is
+returned; If set to <code>TRUE</code> the result from
+<code><a href='https://rdrr.io/pkg/DECIPHER/man/ConsensusSequence.html'>DECIPHER::ConsensusSequence</a></code> is
+returned. (Default: <code>mergeRefSeq = FALSE</code>)</p></td>
     </tr>
     </table>
 
@@ -193,6 +201,7 @@ merged into one entry in all relevant components.</p>
 #&gt; colnames(3): B C D
 #&gt; colData names(0):
 #&gt; reducedDimNames(0):
+#&gt; mainExpName: NULL
 #&gt; altExpNames(0):
 #&gt; rowLinks: a LinkDataFrame (58 rows)
 #&gt; rowTree: 1 phylo tree(s) (58 leaves)
@@ -215,6 +224,7 @@ merged into one entry in all relevant components.</p>
 #&gt; colnames(26): CL3 CC1 ... Even2 Even3
 #&gt; colData names(7): X.SampleID Primer ... SampleType Description
 #&gt; reducedDimNames(0):
+#&gt; mainExpName: NULL
 #&gt; altExpNames(0):
 #&gt; rowLinks: a LinkDataFrame (19216 rows)
 #&gt; rowTree: 1 phylo tree(s) (19216 leaves)
@@ -230,6 +240,7 @@ merged into one entry in all relevant components.</p>
 #&gt; colnames(9): M31Fcsw LMEpi24M ... CL3 M31Tong
 #&gt; colData names(7): X.SampleID Primer ... SampleType Description
 #&gt; reducedDimNames(0):
+#&gt; mainExpName: NULL
 #&gt; altExpNames(0):
 #&gt; rowLinks: a LinkDataFrame (19216 rows)
 #&gt; rowTree: 1 phylo tree(s) (19216 leaves)
