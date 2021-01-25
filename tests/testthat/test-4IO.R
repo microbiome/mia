@@ -46,18 +46,18 @@ refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 
 test_that("make TSE worked properly while no sample or taxa data", {
     ## no sample data or taxa data
-    expect_silent(tse <- makeTreeSummarizedExperimentFromqiime2(featureTableFile))
+    expect_silent(tse <- makeTreeSummarizedExperimentFromQIIME2(featureTableFile))
     expect_s4_class(tse, "TreeSummarizedExperiment")
     expect_equal(dim(tse), c(770,34))
 })
 
 test_that("reference sequences of TSE", {
     # 1. fasta file of refseq
-    tse <- makeTreeSummarizedExperimentFromqiime2(
+    tse <- makeTreeSummarizedExperimentFromQIIME2(
         featureTableFile,
         refSeqFile = refSeqFile
     )
-    tse2 <-  makeTreeSummarizedExperimentFromqiime2(
+    tse2 <-  makeTreeSummarizedExperimentFromQIIME2(
         featureTableFile,
         refSeqFile = refSeqFile,
         featureNamesAsRefseq = FALSE
@@ -67,7 +67,7 @@ test_that("reference sequences of TSE", {
 
     # 2. row.names of feature table as refseq
     # 2.1 element of row.names of feature table is not DNA sequence
-    tse <- makeTreeSummarizedExperimentFromqiime2(
+    tse <- makeTreeSummarizedExperimentFromQIIME2(
         featureTableFile,
         featureNamesAsRefseq = TRUE
     )
@@ -92,7 +92,7 @@ test_that("reference sequences of TSE", {
         row.names(feature_tab) <- random_seq
         obj <- biomformat::make_biom(feature_tab)
         biomformat::write_biom(obj, "data/table-rownamesInSeq.biom")
-        # create qza file using qiime2
+        # create qza file using QIIME2
         # qiime tools import \
         #     --input-path data/table-rownamesInSeq.biom
         #     --type 'FeatureTable[Frequency]'
@@ -108,7 +108,7 @@ test_that("reference sequences of TSE", {
 
     # featureNamesAsRefseq is TRUE, refSeqFile is NULL, set row.names of
     # feature table as reference sequences
-    tse <- makeTreeSummarizedExperimentFromqiime2(
+    tse <- makeTreeSummarizedExperimentFromQIIME2(
         featureTableFile2,
         featureNamesAsRefseq = TRUE
     )
@@ -119,7 +119,7 @@ test_that("reference sequences of TSE", {
 
     # refSeqFile is not NULL, featureNamesAsRefseq is TRUE,
     # set the sequences from refSeqFile as reference sequences
-    tse <- makeTreeSummarizedExperimentFromqiime2(
+    tse <- makeTreeSummarizedExperimentFromQIIME2(
         featureTableFile2,
         featureNamesAsRefseq = TRUE,
         refSeqFile = refSeqFile
@@ -127,7 +127,7 @@ test_that("reference sequences of TSE", {
     expect_identical(tse@referenceSeq, .read_qza(refSeqFile))
 
     # 3. refSeqFile = NULL, featureNamesAsRefseq = FALSE
-    tse <- makeTreeSummarizedExperimentFromqiime2(
+    tse <- makeTreeSummarizedExperimentFromQIIME2(
         featureTableFile,
         refSeqFile = NULL,
         featureNamesAsRefseq = FALSE
@@ -187,7 +187,7 @@ test_that('read qza file', {
 })
 
 test_that("Confidence of taxa is numberic", {
-    tse <- makeTreeSummarizedExperimentFromqiime2(
+    tse <- makeTreeSummarizedExperimentFromQIIME2(
         featureTableFile,
         taxonomyTableFile = taxonomyTableFile
     )
