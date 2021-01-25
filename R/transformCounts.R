@@ -415,9 +415,9 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
     # In every sample, calculates the log of individual entries. After that calculates
     # the sample-specific mean value and subtracts every entries' value with that.
-    mat <- apply(mat, 2, function(x) {
-        log(x) - mean(log(x), na.rm=TRUE)
-    })
+    clog <- log(mat)
+    clogm <- colMeans(clog)
+    mat <- t(t(clog) - clogm)
 
     return(mat)
 }
