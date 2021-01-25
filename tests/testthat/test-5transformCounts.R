@@ -44,19 +44,6 @@ test_that("transformCounts", {
     testthat::expect_equal(as.vector(assays(mia::transformCounts(tse, method = "pa"))$pa),
                            as.integer(assays(tse)$counts > 0))
 
-    #############################################################
-    # Calculates Z-transformation. Should be equal.
-    # Random pseudocount
-    pseudonumber <- runif(1, 1, 100)
-
-    ztransformed <- scale(log10((assays(tse)$counts)+pseudonumber))
-    # Deletes extra information
-    attr(ztransformed,"scaled:scale") <- NULL
-    attr(ztransformed,"scaled:center") <- NULL
-
-    testthat::expect_equal(assays(mia::transformCounts(tse, method = "Z", pseudocount = pseudonumber))$Z,
-                           ztransformed)
-
     # TSE object
     data(esophagus)
     tse <- esophagus

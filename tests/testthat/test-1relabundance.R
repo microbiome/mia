@@ -8,7 +8,7 @@ test_that("relabundance", {
     se <- SummarizedExperiment(assays = list(counts = mat),
                                rowData = df)
     expect_error(relAbundanceCounts(se, name = FALSE),
-                 "'name' must be a single non-empty character value")
+                 "'name' must be a non-empty single character value")
     actual <- relAbundanceCounts(se)
     expect_named(assays(actual), c("counts", "relabundance"))
     expect_equal(assay(actual,"relabundance")[,1],
