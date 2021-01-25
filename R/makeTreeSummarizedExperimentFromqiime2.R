@@ -1,7 +1,7 @@
-#' Import qiime2 results to `TreeSummarizedExperiment`
+#' Import QIIME2 results to `TreeSummarizedExperiment`
 #'
-#' Results exported from Qiime2 can be imported as a `TreeSummarizedExperiment`
-#' using `makeTreeSummarizedExperimentFromqiime2`. Except for the
+#' Results exported from QIMME2 can be imported as a `TreeSummarizedExperiment`
+#' using `makeTreeSummarizedExperimentFromQIIME2`. Except for the
 #' `featureTableFile`, the other data types, `taxonomyTableFile`, `refSeqFile`
 #' and `phyTreeFile`, are optional, but are highly encouraged to be provided.
 #'
@@ -53,7 +53,7 @@
 #' sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 #' phyTreeFile <- system.file("extdata", "tree.qza", package = "mia")
 #' refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
-#' tse <- makeTreeSummarizedExperimentFromqiime2(
+#' tse <- makeTreeSummarizedExperimentFromQIIME2(
 #'   featureTableFile = featureTableFile,
 #'   taxonomyTableFile = taxonomyTableFile,
 #'   sampleMetaFile = sampleMetaFile,
@@ -62,7 +62,7 @@
 #' )
 #'
 #' tse
-makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
+makeTreeSummarizedExperimentFromQIIME2 <- function(featureTableFile,
                                                    taxonomyTableFile = NULL,
                                                    sampleMetaFile = NULL,
                                                    featureNamesAsRefseq = TRUE,
@@ -136,9 +136,9 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
 }
 
 
-#' Read the qza file output from qiime2
+#' Read the qza file output from QIIME2
 #'
-#' Import the qiime2 artifacts to R.
+#' Import the QIIME2 artifacts to R.
 #'
 #' @param file character, path of the input qza file. Only files in format of
 #'   `BIOMV210DirFmt` (feature table), `TSVTaxonomyDirectoryFormat` (taxonomic
@@ -161,7 +161,7 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
         stop(file, " does not exist", call. = FALSE)
     }
     if (.get_ext(file) != "qza") {
-        stop("The input '", file, "' must be in `qza` format (qiime2 Artifact)",
+        stop("The input '", file, "' must be in `qza` format (QIIME2 Artifact)",
              call. = FALSE)
     }
 
@@ -204,7 +204,7 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
     res
 }
 
-#' Read qiime2 feature table
+#' Read QIIME2 feature table
 #' @param file character, file name of the biom file.
 #' @noRd
 .read_q2biom <- function(file) {
@@ -215,7 +215,7 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
     feature_tab
 }
 
-#' Read qiime2 taxa file
+#' Read QIIME2 taxa file
 #' @keywords internal
 #' @importFrom utils read.table
 #' @noRd
@@ -225,7 +225,7 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
     taxa_tab
 }
 
-#' Read qiime2 sample meta data file
+#' Read QIIME2 sample meta data file
 #' @keywords internal
 #' @importFrom utils read.table
 #' @noRd
@@ -252,7 +252,7 @@ makeTreeSummarizedExperimentFromqiime2 <- function(featureTableFile,
     taxa_tab
 }
 
-#' Parse qiime2 taxa in different taxonomic levels
+#' Parse QIIME2 taxa in different taxonomic levels
 #' @param taxa_tab `data.frame` object.
 #' @param sep character string containing a regular expression, separator
 #'  between different taxonomic levels, defaults to one compatible with both
