@@ -43,12 +43,10 @@
 #'     then value is 1. If value is 0, then value is 0.)}
 #'
 #'     \item{"Z" }{Z-transformation or Z-standardization can be used for normalizing the data.
-#'     In function \code{transformCounts}, it is done per-sample like in all other transformations
-#'     that are provided by this function. As a special case, Z-transformation can also be done
-#'     per-features by using function \code{ZTransform}. However, Z-transformation
-#'     done for features can give misleading results.
-#'     ($\frac{x + µ}{σ}$, where $x$ is a single value, $µ$ is the mean of the sample, and
-#'     $σ$ is the standard deviation of the sample.)}
+#'     Z-transformation can be done with function \code{ZTransform}. It is done per rows.
+#'     In other words, single value is standardized with respect of feature's values.
+#'     ($\frac{x + µ}{σ}$, where $x$ is a single value, $µ$ is the mean of the feature, and
+#'     $σ$ is the standard deviation of the feature.)}
 #'
 #'     \item{"hellinger" }{Hellinger transformation can be used for reducing the impact of
 #'     extreme data points. It can be utilize for clustering or ordination analysis.
@@ -73,10 +71,9 @@
 #'
 #'
 #' @return
-#' \code{transformCounts} and \code{ZTransform} return \code{x} with additional, transformed
-#' abundance table named \code{*name*} in the \code{\link{assay}}.
-#' For \code{relAbundanceCounts} a modified \code{x} containing the relative
-#' abundances as an assay defined by \code{name}.
+#' \code{transformCounts}, \code{relAbundanceCounts}, and \code{ZTransform} return
+#' \code{x} with additional, transformed abundance table named \code{*name*} in
+#' the \code{\link{assay}}.
 #'
 #' @seealso
 #' \itemize{
@@ -101,9 +98,10 @@
 #' # can be specified with "abund_values".
 #' x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
 #' # assays(x)$test
-#' x <- transformCounts(x, method="Z", abund_values="test")
-#' # assays(x)$Z
-#' # Z-transform can also be done for features
+#' x <- transformCounts(x, method="relabundance", abund_values="test")
+#' # assays(x)$relabundance
+#'
+#' # Z-transform can be done for features
 #' x <- ZTransform(x, pseudocount=1)
 #' # assays(x)$ZTransform
 #'
@@ -118,7 +116,7 @@ NULL
 setGeneric("transformCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
+                    method = c("relabundance", "log10", "pa", "hellinger", "clr"),
                     name = method,
                     pseudocount = FALSE)
                standardGeneric("transformCounts"))
@@ -129,7 +127,7 @@ setGeneric("transformCounts", signature = c("x"),
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
           function(x,
                    abund_values = "counts",
-                   method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
+                   method = c("relabundance", "log10", "pa", "hellinger", "clr"),
                    name = method,
                    pseudocount = FALSE){
 
@@ -143,7 +141,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
               if(!.is_non_empty_string(method)){
                   stop("'method' must be a non-empty single character value.
                        Give one method from the following list:
-                       'relabundance', 'log10', 'pa', 'Z', 'hellinger', 'clr'",
+                       'relabundance', 'log10', 'pa', 'hellinger', 'clr'",
                        call. = FALSE)
               }
               method <- match.arg(method)
@@ -210,7 +208,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
               }
 
               # Get transformed table
-              transformed_table <- .get_ztransformed_table(assay = assay(x, abund_values),
+              transformed_table <- .get_z_table(assay = assay(x, abund_values),
                                                           pseudocount = pseudocount)
 
               # Assign transformed table to assays
@@ -247,7 +245,6 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Function is selected based on the "method" variable
     FUN <- switch(method,
                   relabundance = .calc_rel_abund,
-                  Z = .get_z_table,
                   log10 = .get_log10_table,
                   pa = .get_pa_table,
                   hellinger = .get_hellinger_table,
@@ -261,27 +258,6 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .calc_rel_abund <- function(assay){
 
     mat <- sweep(assay, 2, colSums(assay, na.rm = TRUE), "/")
-
-    return(mat)
-}
-
-.get_z_table <- function(assay){
-
-    # Log10 can not be calculated if there is zero or negative values
-    if (any(assay <= 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero or negative values and ",
-             "Z-transformation is being applied without pseudocount. ",
-             "Try z with pseudocount = 1 or other numeric value.",
-             call. = FALSE)
-    }
-
-    # Gets the log transformed table
-    mat <- .get_log10_table(assay)
-
-    # Performs z transformation
-    mat <- apply(mat, 2, function(x) {
-        (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
-    })
 
     return(mat)
 }
@@ -305,7 +281,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .get_pa_table <- function(assay){
 
     # If value is over zero, gets value 1. If value is zero, gets value 0.
-    mat <- matrix(as.integer(mat > 0),nrow(mat))
+    mat <- matrix(as.integer(assay > 0),nrow(assay))
 
     return(mat)
 }
@@ -349,7 +325,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_ztransformed_table <- function(assay, pseudocount){
+.get_z_table <- function(assay, pseudocount){
 
     assay <- .apply_pseudocount(assay, pseudocount)
 
@@ -364,37 +340,13 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Gets the log transformed table
     mat <- .get_log10_table(assay)
 
-    # Transpoese the table
-    trans <- t(mat)
-
-    # Z transform for features. Centers the feature data. After that, divides with
+    # Z transform for features
+    # Centers the feature data. After that, divides with
     # the standard deviation of feature.
-    # Performs z transformation
-    trans <- apply(trans, 2, function(x) {
-        (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
-    })
+    rm <- rowMeans(mat, na.rm = TRUE)
+    rsd <- rowSds(mat, na.rm = TRUE)
 
-    # Transposes the table back to its original form
-    trans <- t(trans)
-
-    # Saves all features that are undetectable in every sample i.e. are NA
-    undetectables <- which(rowMeans(is.na(trans)) == 1)
-
-    # If there are some features that are undetectable
-    # i.e. "undetectable" has length over 0, and table have zeros
-    if (length(undetectables) > 0 & min(mat, na.rm=TRUE) == 0) {
-
-        warning("Some features were not detectable. In all samples, signal was
-            under detectable limit.")
-
-        # Some features are undetectable in all samples, they are NA when scaled.
-        # 0 is assigned to those features.
-
-        trans[names(undetectables), ] <- 0
-
-        mat <- trans
-
-    }
+    mat <- (mat - rm)/rsd
 
     return(mat)
 

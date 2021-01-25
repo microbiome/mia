@@ -12,7 +12,7 @@
 transformCounts(
   x,
   abund_values = "counts",
-  method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
+  method = c("relabundance", "log10", "pa", "hellinger", "clr"),
   name = method,
   pseudocount = FALSE
 )
@@ -20,7 +20,7 @@ transformCounts(
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("relabundance", "log10", "pa", "Z", "hellinger", "clr"),
+  method = c("relabundance", "log10", "pa", "hellinger", "clr"),
   name = method,
   pseudocount = FALSE
 )
@@ -59,10 +59,9 @@ to be transformed.}
 value specifies the value of pseudocount.}
 }
 \value{
-\code{transformCounts} and \code{ZTransform} return \code{x} with additional, transformed
-abundance table named \code{*name*} in the \code{\link{assay}}.
-For \code{relAbundanceCounts} a modified \code{x} containing the relative
-abundances as an assay defined by \code{name}.
+\code{transformCounts}, \code{relAbundanceCounts}, and \code{ZTransform} return
+\code{x} with additional, transformed abundance table named \code{*name*} in
+the \code{\link{assay}}.
 }
 \description{
 These functions provide a variety of options for transforming abundance data.
@@ -87,12 +86,10 @@ all values.) (Gloor et al. 2017.)\}
 then value is 1. If value is 0, then value is 0.)\}
 
 \\item\{"Z" \}\{Z-transformation or Z-standardization can be used for normalizing the data.
-In function \code{transformCounts}, it is done per-sample like in all other transformations
-that are provided by this function. As a special case, Z-transformation can also be done
-per-features by using function \code{ZTransform}. However, Z-transformation
-done for features can give misleading results.
-($\\frac\{x + µ\}\{σ\}$, where $x$ is a single value, $µ$ is the mean of the sample, and
-$σ$ is the standard deviation of the sample.)\}
+Z-transformation can be done with function \code{ZTransform}. It is done per rows.
+In other words, single value is standardized with respect of feature's values.
+($\\frac\{x + µ\}\{σ\}$, where $x$ is a single value, $µ$ is the mean of the feature, and
+$σ$ is the standard deviation of the feature.)\}
 
 \\item\{"hellinger" \}\{Hellinger transformation can be used for reducing the impact of
 extreme data points. It can be utilize for clustering or ordination analysis.
@@ -120,9 +117,10 @@ x <- transformCounts(x, method="clr", pseudocount=1)
 # can be specified with "abund_values".
 x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
 # assays(x)$test
-x <- transformCounts(x, method="Z", abund_values="test")
-# assays(x)$Z
-# Z-transform can also be done for features
+x <- transformCounts(x, method="relabundance", abund_values="test")
+# assays(x)$relabundance
+
+# Z-transform can be done for features
 x <- ZTransform(x, pseudocount=1)
 # assays(x)$ZTransform
 
