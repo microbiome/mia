@@ -151,7 +151,8 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
     }
 )
 
-.agg_for_prevalence <- function(x, rank, ...){
+.agg_for_prevalence <- function(x, rank, relabel = FALSE, make_unique = TRUE,
+                                ...){
     if(!is.null(rank)){
         .check_taxonomic_rank(rank, x)
         args <- c(list(x = x, rank = rank), list(...))
@@ -162,6 +163,9 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
                       "archetype","mergeTree","average","BPPARAM")
         args <- args[names(args) %in% argNames]
         x <- do.call(agglomerateByRank, args)
+        if(relabel){
+            rownames(x) <- getTaxonomyLabels(x, make_unique = make_unique)
+        }
     }
     x
 }
