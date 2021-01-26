@@ -3,23 +3,17 @@
 \name{relabundance}
 \alias{relabundance}
 \alias{relabundance<-}
-\alias{relAbundanceCounts}
 \alias{relabundance,SummarizedExperiment-method}
 \alias{relabundance<-,SummarizedExperiment-method}
-\alias{relAbundanceCounts,SummarizedExperiment-method}
 \title{Getter / setter for relative abundance data}
 \usage{
 relabundance(x, ...)
 
 relabundance(x) <- value
 
-relAbundanceCounts(x, abund_values = "counts", name = "relabundance")
-
 \S4method{relabundance}{SummarizedExperiment}(x)
 
 \S4method{relabundance}{SummarizedExperiment}(x) <- value
-
-\S4method{relAbundanceCounts}{SummarizedExperiment}(x, abund_values = "counts", name = "relabundance")
 }
 \arguments{
 \item{x}{a
@@ -29,20 +23,10 @@ object}
 \item{...}{optional arguments not used currently.}
 
 \item{value}{a \code{matrix} to store as the the \sQuote{relabundance} assay}
-
-\item{abund_values}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to use for calculating the relative abundance.}
-
-\item{name}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to stor the calculated relative abundance.}
 }
 \value{
 For \code{relabundance} the matrix stored with the name
 \dQuote{relabundance}.
-For \code{relAbundanceCounts} a modified \code{x} containing the relative
-abundances as an assay defined by \code{name}.
 }
 \description{
 \code{relabundance} is a getter/setter for relative abundance stored in the
@@ -52,6 +36,8 @@ object
 }
 \examples{
 data(GlobalPatterns)
+# Calculates relative abundances
 GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
+# Fetches calculated relative abundances
 relabundance(GlobalPatterns)
 }
