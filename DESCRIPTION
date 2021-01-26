@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 0.98.29
+Version: 0.98.30
 Date: 2021-01-26
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
@@ -8,7 +8,7 @@ Authors@R:
              comment = c(ORCID = "0000-0001-5064-0928")),
       person(given = "Sudarshan", family = "Shetty", role = c("aut")),
       person(given = "Leo", family = "Lahti", role = c("aut")),
-      person(given = "Tuomas", family = "Borman", role = c("ctb")),      
+      person(given = "Tuomas", family = "Borman", role = c("aut")),      
       person(given = "Yang", family = "Cao", role = c("ctb")),
       person(given = "Nathan D.", family = "Olson", role = c("ctb"),
              email = "nolson@@umiacs.umd.edu"),

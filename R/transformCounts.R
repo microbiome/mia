@@ -210,8 +210,8 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
               }
 
               # Get transformed table
-              transformed_table <- .get_z_table(assay = assay(x, abund_values),
-                                                          pseudocount = pseudocount)
+              transformed_table <- .calc_ztransform(mat = assay(x, abund_values),
+                                                    pseudocount = pseudocount)
 
               # Assign transformed table to assays
               assay(x, name) <- transformed_table
@@ -247,58 +247,58 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Function is selected based on the "method" variable
     FUN <- switch(method,
                   relabundance = .calc_rel_abund,
-                  log10 = .get_log10_table,
-                  pa = .get_pa_table,
-                  hellinger = .get_hellinger_table,
-                  clr = .get_clr_table)
+                  log10 = .calc_log10,
+                  pa = .calc_pa,
+                  hellinger = .calc_hellinger,
+                  clr = .calc_clr)
 
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
-            list(assay = assay))
+            list(mat = assay))
 }
 
-.calc_rel_abund <- function(assay){
+.calc_rel_abund <- function(mat){
 
-    mat <- sweep(assay, 2, colSums(assay, na.rm = TRUE), "/")
+    mat <- sweep(mat, 2, colSums(mat, na.rm = TRUE), "/")
 
     return(mat)
 }
 
-.get_log10_table <- function(assay){
+.calc_log10 <- function(mat){
 
     # If abundance table contains zeros, gives an error, because it is not possible
     # to calculate log from zeros. If there is no zeros, calculates log.
-    if (any(assay <= 0, na.rm = TRUE)) {
+    if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
              "log10 transformation is being applied without pseudocount. ",
              "Try log10 with pseudocount = 1 or other numeric value.",
              call. = FALSE)
     }
 
-    mat <- log10(assay)
+    mat <- log10(mat)
 
     return(mat)
 }
 
-.get_pa_table <- function(assay){
+.calc_pa <- function(mat){
 
     # If value is over zero, gets value 1. If value is zero, gets value 0.
-    mat <- matrix(as.integer(assay > 0),nrow(assay))
+    mat <- matrix(as.integer(mat > 0),nrow(mat))
 
     return(mat)
 }
 
-.get_hellinger_table <- function(assay){
+.calc_hellinger <- function(mat){
 
     # If there is negative values, gives an error.
-    if (any(assay < 0, na.rm = TRUE)) {
+    if (any(mat < 0, na.rm = TRUE)) {
         stop("Abundance table contains negative values and hellinger transformation
                 is being applied without pseudocount. Try hellinger with
                 pseudocount = 1 or other numeric value.")
     }
 
     # Gets the relative abundance
-    mat <- .calc_rel_abund(assay)
+    mat <- .calc_rel_abund(mat)
 
     # Takes square root
     mat <- sqrt(mat)
@@ -306,17 +306,17 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_clr_table <- function(assay){
+.calc_clr <- function(mat){
 
     # If there is negative values, gives an error.
-    if (any(assay <= 0, na.rm = TRUE)) {
+    if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
              "clr-transformation is being applied without pseudocount. ",
              "Try clr with pseudocount = 1 or other numeric value.",
              call. = FALSE)
     }
 
-    mat <- .calc_rel_abund(assay)
+    mat <- .calc_rel_abund(mat)
 
     # In every sample, calculates the log of individual entries. After that calculates
     # the sample-specific mean value and subtracts every entries' value with that.
@@ -327,12 +327,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.get_z_table <- function(assay, pseudocount){
+.calc_ztransform <- function(mat, pseudocount){
 
-    assay <- .apply_pseudocount(assay, pseudocount)
+    mat <- .apply_pseudocount(mat, pseudocount)
 
     # Log10 can not be calculated if there is zero
-    if (any(assay <= 0, na.rm = TRUE)) {
+    if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
              "Z-transformation is being applied without pseudocount. ",
              "Try ZTransform with pseudocount = 1 or other numeric value.",
@@ -340,7 +340,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     }
 
     # Gets the log transformed table
-    mat <- .get_log10_table(assay)
+    mat <- .calc_log10(mat)
 
     # Z transform for features
     # Centers the feature data. After that, divides with
@@ -351,7 +351,6 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     mat <- (mat - rm)/rsd
 
     return(mat)
-
 }
 
 .apply_pseudocount <- function(mat, pseudocount){
