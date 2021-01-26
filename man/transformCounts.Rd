@@ -57,6 +57,8 @@ to be transformed.}
 
 \item{pseudocount}{FALSE or numeric value deciding whether pseudocount is added. Numerical
 value specifies the value of pseudocount.}
+
+\item{...}{additional arguments}
 }
 \value{
 \code{transformCounts}, \code{relAbundanceCounts}, and \code{ZTransform} return

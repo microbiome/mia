@@ -24,6 +24,8 @@
 #' FALSE or numeric value deciding whether pseudocount is added. Numerical
 #' value specifies the value of pseudocount.
 #'
+#' @param ... additional arguments
+#'
 #' @details
 #' \code{transformCounts} applies transformation to abundance table.
 #' Transformation methods include

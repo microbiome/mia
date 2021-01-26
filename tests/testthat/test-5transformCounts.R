@@ -18,9 +18,10 @@ test_that("transformCounts", {
     # Pseudocount is a string. Should be an error.
     testthat::expect_error(mia::transformCounts(tse, method="relabundance", pseudocount = "pseudocount"))
 
-    ################################################################
     # Counts table should not be changed
     testthat::expect_equal(assays(mia::transformCounts(tse, method = "pa"))$counts, assays(tse)$counts)
+
+    ################################################################
 
     # Calculates relative abundances. Should be equal.
     testthat::expect_equal(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance,
@@ -32,6 +33,25 @@ test_that("transformCounts", {
                            apply((assays(tse)$counts + 12), 2, FUN=function(x){
                                x/sum(x)
                            }))
+
+    mat <- matrix(1:60, nrow = 6)
+    df <- DataFrame(n = c(1:6))
+    expect_error(relAbundanceCounts(SummarizedExperiment(assays = list(mat = mat),
+                                                         rowData = df)),
+                 "'abund_values' must be a valid name of assays")
+
+    se <- SummarizedExperiment(assays = list(counts = mat),
+                               rowData = df)
+    expect_error(relAbundanceCounts(se, name = FALSE),
+                 "'name' must be a non-empty single character value")
+
+    actual <- relAbundanceCounts(se)
+    expect_named(assays(actual), c("counts", "relabundance"))
+
+    expect_equal(assay(actual,"relabundance")[,1],
+                 seq.int(1,6)/21)
+
+
 
     ##############################################################
     # Calculates log10 transformation with pseudocount = 1. Should be equal.
