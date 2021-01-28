@@ -38,7 +38,7 @@
 #' @return  An object of class
 #'   [`TreeSummarizedExperiment::TreeSummarizedExperiment-class`]
 #'
-#' @name makeTreeSummarizedExperimentFromQIIME2
+#' @name loadFromQIIME2
 #' @seealso
 #' \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
 #' \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
@@ -69,12 +69,12 @@
 #'
 #' tse
 loadFromQIIME2 <- function(featureTableFile,
-                                                   taxonomyTableFile = NULL,
-                                                   sampleMetaFile = NULL,
-                                                   featureNamesAsRefseq = TRUE,
-                                                   refSeqFile = NULL,
-                                                   phyTreeFile = NULL,
-                                                   ...) {
+                           taxonomyTableFile = NULL,
+                           sampleMetaFile = NULL,
+                           featureNamesAsRefseq = TRUE,
+                           refSeqFile = NULL,
+                           phyTreeFile = NULL,
+                           ...) {
     # input check
     if(!.is_non_empty_string(featureTableFile)){
         stop("'featureTableFile' must be a single character value.",
@@ -140,7 +140,6 @@ loadFromQIIME2 <- function(featureTableFile,
         referenceSeq = refseq
     )
 }
-
 
 #' Read the qza file output from QIIME2
 #'
