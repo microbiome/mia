@@ -84,6 +84,11 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
 
 \url{https://qiime2.org}
 }
+\seealso{
+\code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
+\code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
+\code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+}
 \author{
 Yang Cao
 }

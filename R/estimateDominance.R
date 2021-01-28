@@ -219,6 +219,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 
 # x: Species count vector
 .simpson_dominance <- function(x, zeroes=TRUE) {
+    x <- as.vector(x)
 
     if (!zeroes) {
         x[x > 0]
@@ -239,12 +240,13 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 
 }
 
-.get_simpson_dominance <- function(x, ...){
-    apply(x, 2L, .simpson_dominance)
+.calc_simpson_dominance <- function(mat, ...){
+    apply(mat, 2L, .simpson_dominance)
 }
 
 .gini_dominance <- function(x, w=rep(1, length(x))) {
     # See also reldist::gini for an independent implementation
+    x <- as.vector(x)
     o <- order(x)
     x <- x[o]
     w <- w[o]/sum(w)
@@ -255,15 +257,15 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     sum(nu[-1] * p[-n]) - sum(nu[-n] * p[-1])
 }
 
-.get_gini_dominance <- function(x, ...){
-    apply(x, 2L, .gini_dominance)
+.calc_gini_dominance <- function(mat, ...){
+    apply(mat, 2L, .gini_dominance)
 }
 
-.get_core_dominance <- function(x, ...){
-    getPrevalentAbundance(x, detection = 0, as_relative = TRUE)
+.calc_core_dominance <- function(mat, ...){
+    getPrevalentAbundance(mat, detection = 0, as_relative = TRUE)
 }
 
-.get_dominance <- function(x, ntaxa, aggregate, index){
+.calc_dominance <- function(mat, ntaxa, aggregate, index){
     if (index == "absolute") {
         # ntaxa=1 by default but can be tuned
         as_relative <- FALSE
@@ -283,38 +285,45 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 
     if (as_relative) {
         # Calculates the relative abundance per sample
-        x <- apply(x, 2L,
-                   function(x) {
-                       x/sum(x, na.rm=TRUE)
-                   })
+        mat <- .calc_rel_abund(mat)
     }
 
     # Aggregate or not
     if (!aggregate) {
-        ans <- apply(x, 2L,
-                     function(x) {
-                         sort(x, decreasing = TRUE)[[ntaxa]]
+        idx <- apply(mat, 2L,
+                     function(mc) {
+                         order(as.vector(mc), decreasing = TRUE)[[ntaxa]]
                      })
     } else {
-        ans <- apply(x, 2L,
-                     function(x) {
-                         sum(sort(x, decreasing = TRUE)[seq_len(ntaxa)])
+        idx <- apply(mat, 2L,
+                     function(mc) {
+                         order(as.vector(mc), decreasing = TRUE)[seq_len(ntaxa)]
                      })
+        idx <- split(as.vector(idx),
+                     unlist(lapply(seq_len(length(idx) / ntaxa),rep.int,ntaxa)))
     }
 
+    ans <- lapply(mapply(function(i,j,x){x[i,j]},
+                         i = idx,
+                         j = seq_len(ncol(mat)),
+                         MoreArgs = list(x = mat),
+                         SIMPLIFY = FALSE),
+                  sum)
+    ans <- unlist(ans)
+
     # Adds sample names to the table
-    names(ans) <- colnames(x)
+    names(ans) <- colnames(mat)
     ans
 }
 
 .get_dominances_values <- function(index, assay, ntaxa = 1, aggregate = TRUE) {
     FUN <- switch(index,
-                  simpson = .get_simpson_dominance,
-                  core_abundance = .get_core_dominance,
-                  gini = .get_gini_dominance,
-                  .get_dominance)
+                  simpson = .calc_simpson_dominance,
+                  core_abundance = .calc_core_dominance,
+                  gini = .calc_gini_dominance,
+                  .calc_dominance)
     do.call(FUN,
-            list(x = assay,
+            list(mat = assay,
                  ntaxa = ntaxa,
                  aggregate = aggregate,
                  index = index))
