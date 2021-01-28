@@ -1,7 +1,7 @@
 #' Import QIIME2 results to `TreeSummarizedExperiment`
 #'
 #' Results exported from QIMME2 can be imported as a `TreeSummarizedExperiment`
-#' using `makeTreeSummarizedExperimentFromQIIME2`. Except for the
+#' using `loadFromQIIME2`. Except for the
 #' `featureTableFile`, the other data types, `taxonomyTableFile`, `refSeqFile`
 #' and `phyTreeFile`, are optional, but are highly encouraged to be provided.
 #'
@@ -59,7 +59,7 @@
 #' sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 #' phyTreeFile <- system.file("extdata", "tree.qza", package = "mia")
 #' refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
-#' tse <- makeTreeSummarizedExperimentFromQIIME2(
+#' tse <- loadFromQIIME2(
 #'   featureTableFile = featureTableFile,
 #'   taxonomyTableFile = taxonomyTableFile,
 #'   sampleMetaFile = sampleMetaFile,
@@ -68,7 +68,7 @@
 #' )
 #'
 #' tse
-makeTreeSummarizedExperimentFromQIIME2 <- function(featureTableFile,
+loadFromQIIME2 <- function(featureTableFile,
                                                    taxonomyTableFile = NULL,
                                                    sampleMetaFile = NULL,
                                                    featureNamesAsRefseq = TRUE,
@@ -239,9 +239,13 @@ makeTreeSummarizedExperimentFromQIIME2 <- function(featureTableFile,
     sam <- read.table(file = file, header = TRUE, sep = "\t", comment.char = "")
     rownames(sam) <- as.character(sam[, 1])
 
-    # remove row: #q2:types
+    # Find if there is #q2:types row, and store its index
     idx <- which(sam == "#q2:types", arr.ind = TRUE)
-    sam <- sam[-idx[, "row"], ]
+
+    # If the length is over zero, "#q2:types" row was found. Then it is removed.
+    if(!(length(idx)==0)){
+        sam <- sam[-idx[, "row"], ]
+    }
 
     S4Vectors::DataFrame(sam)
 }
