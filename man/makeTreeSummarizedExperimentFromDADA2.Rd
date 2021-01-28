@@ -39,5 +39,5 @@ if(requireNamespace("dada2")) {
 \seealso{
 \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
 \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
-\code{\link[=makeTreeSummarizedExperimentFromQIIME2]{makeTreeSummarizedExperimentFromQIIME2}}
+\code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 }

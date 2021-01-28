@@ -18,7 +18,7 @@
 #' @seealso
 #' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
 #' \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
-#' \code{\link[=makeTreeSummarizedExperimentFromQIIME2]{makeTreeSummarizedExperimentFromQIIME2}}
+#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #'
 #' @examples
 #' if (requireNamespace("phyloseq")) {
