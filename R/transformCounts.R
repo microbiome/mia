@@ -77,11 +77,6 @@
 #' \code{x} with additional, transformed abundance table named \code{*name*} in
 #' the \code{\link{assay}}.
 #'
-#' @seealso
-#' \itemize{
-#'   \item{\code{\link[mia:relAbundanceCounts]{relAbundanceCounts}}}
-#' }
-#'
 #' @name transformCounts
 #' @export
 #'
@@ -257,9 +252,10 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
             list(mat = assay))
 }
 
+#' @importFrom DelayedMatrixStats colSums2
 .calc_rel_abund <- function(mat){
 
-    mat <- sweep(mat, 2, colSums(mat, na.rm = TRUE), "/")
+    mat <- sweep(mat, 2, colSums2(mat, na.rm = TRUE), "/")
 
     return(mat)
 }
@@ -281,10 +277,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 .calc_pa <- function(mat){
-
     # If value is over zero, gets value 1. If value is zero, gets value 0.
-    mat <- matrix(as.integer(mat > 0),nrow(mat))
-
+    mat <- (mat > 0) - 0L
     return(mat)
 }
 
@@ -292,9 +286,10 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
     # If there is negative values, gives an error.
     if (any(mat < 0, na.rm = TRUE)) {
-        stop("Abundance table contains negative values and hellinger transformation
-                is being applied without pseudocount. Try hellinger with
-                pseudocount = 1 or other numeric value.")
+        stop("Abundance table contains negative values and hellinger ",
+             "transformation is being applied without pseudocount. Try ",
+             "hellinger with pseudocount = 1 or other numeric value.",
+             call. = FALSE)
     }
 
     # Gets the relative abundance
@@ -306,6 +301,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
+#' @importFrom DelayedMatrixStats colMeans2
 .calc_clr <- function(mat){
 
     # If there is negative values, gives an error.
@@ -321,12 +317,13 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # In every sample, calculates the log of individual entries. After that calculates
     # the sample-specific mean value and subtracts every entries' value with that.
     clog <- log(mat)
-    clogm <- colMeans(clog)
+    clogm <- colMeans2(clog)
     mat <- t(t(clog) - clogm)
 
     return(mat)
 }
 
+#' @importFrom DelayedMatrixStats rowMeans2 rowSds
 .calc_ztransform <- function(mat, pseudocount){
 
     mat <- .apply_pseudocount(mat, pseudocount)
@@ -345,7 +342,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Z transform for features
     # Centers the feature data. After that, divides with
     # the standard deviation of feature.
-    rm <- rowMeans(mat, na.rm = TRUE)
+    rm <- rowMeans2(mat, na.rm = TRUE)
     rsd <- rowSds(mat, na.rm = TRUE)
 
     mat <- (mat - rm)/rsd
