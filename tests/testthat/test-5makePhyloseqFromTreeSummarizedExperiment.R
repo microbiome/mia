@@ -18,7 +18,7 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
 
     # Test that colData is in sample_table
     testthat::expect_equal(phyloseq::sample_data(phy),
-                           sample_data(data.frame(colData(tse))))
+                           phyloseq::sample_data(data.frame(colData(tse))))
 
     # Test that rowTree is in phy_tree
     testthat::expect_equal(phyloseq::phy_tree(phy), rowTree(tse))

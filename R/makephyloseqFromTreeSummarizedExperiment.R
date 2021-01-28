@@ -60,50 +60,50 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "Summari
             # Get the assay from x
             otu_table <- assay(x, abund_values)
             # Convert to otu_table
-            otu_table <- otu_table(otu_table, taxa_are_rows = TRUE)
+            otu_table <- phyloseq::otu_table(otu_table, taxa_are_rows = TRUE)
 
             # If rowData has information, stores it to tax_table and converts is to phyloseq's tax_table.
             # Otherwise, tax_table is NULL, and it is converted to phyloseq's tax_table.
             if(nrow(rowData(x))>0 && ncol(rowData(x))>0){
                 tax_table <- as.matrix(rowData(x))
-                tax_table <- tax_table(tax_table)
+                tax_table <- phyloseq::tax_table(tax_table)
             } else {
                 tax_table <- NULL
-                tax_table <- tax_table(tax_table, errorIfNULL = FALSE)
+                tax_table <- phyloseq::tax_table(tax_table, errorIfNULL = FALSE)
             }
 
             # If colData has information, stores it to sample_data and converts is to phyloseq's sample_data.
             # Otherwise, sample_data is NULL, and it is converted to phyloseq's sample_data.
             if(nrow(colData(x))>0 && ncol(colData(x))>0){
                 sample_data <- data.frame(colData(x))
-                sample_data <- sample_data(sample_data)
+                sample_data <- phyloseq::sample_data(sample_data)
             } else {
                 sample_data <- NULL
-                sample_data <- sample_data(sample_data, errorIfNULL = FALSE)
+                sample_data <- phyloseq::sample_data(sample_data, errorIfNULL = FALSE)
             }
 
             # If rowTree has information, stores it to phy_tree and converts is to phyloseq's phy_tree.
             # Otherwise, phy_tree is NULL, and it is converted to phyloseq's phy_tree.
             if(!is.null(rowTree(x))){
                 phy_tree <- rowTree(x)
-                phy_tree <- phy_tree(phy_tree)
+                phy_tree <- phyloseq::phy_tree(phy_tree)
             } else {
                 phy_tree <- NULL
-                phy_tree <- phy_tree(phy_tree, errorIfNULL = FALSE)
+                phy_tree <- phyloseq::phy_tree(phy_tree, errorIfNULL = FALSE)
             }
 
             # If referenceSeq has information, stores it to refseq and converts is to phyloseq's refseq.
             # Otherwise, refseq is NULL, and it is converted to phyloseq's refseq.
             if(!is.null(referenceSeq(x))){
                 refseq <- referenceSeq(x)
-                refseq <- refseq(refseq)
+                refseq <- phyloseq::refseq(refseq)
             } else {
                 refseq <- NULL
-                refseq <- refseq(refseq, errorIfNULL = FALSE)
+                refseq <- phyloseq::refseq(refseq, errorIfNULL = FALSE)
             }
 
             # Creates a phyloseq object
-            phyloseq <- phyloseq(otu_table,
+            phyloseq <- phyloseq::phyloseq(otu_table,
                                  tax_table,
                                  sample_data,
                                  phy_tree,
