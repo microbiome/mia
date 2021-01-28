@@ -38,6 +38,12 @@
 #' @return  An object of class
 #'   [`TreeSummarizedExperiment::TreeSummarizedExperiment-class`]
 #'
+#' @name makeTreeSummarizedExperimentFromQIIME2
+#' @seealso
+#' \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
+#' \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
+#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+#'
 #' @export
 #' @author Yang Cao
 #' @references
