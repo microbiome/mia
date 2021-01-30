@@ -1,4 +1,9 @@
-#' Coerce phyloseq object
+#' Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}
+#'
+#' \code{makeTreeSummarizedExperimentFromphyloseq} converts \code{phyloseq}
+#' objects into \code{TreeSummarizedExperiment} objects.
+#'
+#' All data stored in a \code{phyloseq} object is transfered.
 #'
 #' @param obj a \code{phyloseq} object
 #'
@@ -8,6 +13,12 @@
 #' @importFrom SummarizedExperiment colData colData<-
 #'
 #' @export
+#'
+#' @name makeTreeSummarizedExperimentFromphyloseq
+#' @seealso
+#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+#' \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
+#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #'
 #' @examples
 #' if (requireNamespace("phyloseq")) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeTreeSummarizedExperimentFromphyloseq.R
 \name{makeTreeSummarizedExperimentFromphyloseq}
 \alias{makeTreeSummarizedExperimentFromphyloseq}
-\title{Coerce phyloseq object}
+\title{Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}}
 \usage{
 makeTreeSummarizedExperimentFromphyloseq(obj)
 }
@@ -13,7 +13,11 @@ makeTreeSummarizedExperimentFromphyloseq(obj)
 An object of class \code{TreeSummarizedExperiment}
 }
 \description{
-Coerce phyloseq object
+\code{makeTreeSummarizedExperimentFromphyloseq} converts \code{phyloseq}
+objects into \code{TreeSummarizedExperiment} objects.
+}
+\details{
+All data stored in a \code{phyloseq} object is transfered.
 }
 \examples{
 if (requireNamespace("phyloseq")) {
@@ -24,4 +28,9 @@ if (requireNamespace("phyloseq")) {
     data(esophagus, package="phyloseq")
     makeTreeSummarizedExperimentFromphyloseq(esophagus)
 }
+}
+\seealso{
+\code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+\code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
+\code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 }

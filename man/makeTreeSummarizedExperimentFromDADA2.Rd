@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeTreeSummarizedExperimentFromDADA2.R
 \name{makeTreeSummarizedExperimentFromDADA2}
 \alias{makeTreeSummarizedExperimentFromDADA2}
-\title{Coerce DADA2 results to \code{TreeSummarizedExperiment}}
+\title{Coerce \sQuote{DADA2} results to \code{TreeSummarizedExperiment}}
 \usage{
 makeTreeSummarizedExperimentFromDADA2(...)
 }
@@ -15,7 +15,15 @@ An object of class \code{TreeSummarizedExperiment}
 }
 \description{
 \code{makeTreeSummarizedExperimentFromDADA2} is a wrapper for the
-\code{mergePairs} function from the \code{dada2 package}.
+\code{mergePairs} function from the \code{dada2} package.
+}
+\details{
+A count matrix is contructed via \code{makeSequenceTable(mergePairs(...))}
+and rownames are dynamically created as \code{ASV(N)} with \code{N} from
+1 to \code{nrow} of the count tables. The colnames and rownames from the
+output of \code{makeSequenceTable} are stored as \code{colnames} and in the
+\code{referenceSeq} slot of the \code{TreeSummarizedExperiment},
+respectively.
 }
 \examples{
 if(requireNamespace("dada2")) {
@@ -27,4 +35,9 @@ if(requireNamespace("dada2")) {
   tse <- makeTreeSummarizedExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
   tse
 }
+}
+\seealso{
+\code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
+\code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
+\code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 }

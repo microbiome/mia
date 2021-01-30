@@ -89,6 +89,7 @@ setGeneric("dominantTaxa",signature = c("x"),
 
 #' @rdname dominantTaxa
 #' @importFrom utils tail
+#' @importFrom IRanges IntegerList relist
 #' @export
 setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
           function(x,
@@ -149,7 +150,13 @@ setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
               # apply() function finds the indices of taxa's that has the highest
               # abundance.
               # rownames() returns the names of taxa that are the most abundant.
-              taxas <- rownames(mat)[apply(mat, 2, which.max)]
+              idx <- IntegerList(as.list(apply(t(mat) == colMaxs(mat),1L,which)))
+              taxas <- rownames(mat)[unlist(idx)]
+              # relist, if ties exists and more than one row is equal to the
+              # maximum
+              if(length(unique(lengths(idx))) != 1L){
+                  taxas <- relist(taxas,idx)
+              }
 
               # Adds taxa to colData
               x <- .add_dominant_taxas_to_colData(x, taxas, name)
@@ -199,7 +206,7 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
           }
 )
 
-################################HELP FUNCTIONS#####################################
+################################HELP FUNCTIONS##################################
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors DataFrame
 .add_dominant_taxas_to_colData <- function(x, dominances, name){

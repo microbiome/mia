@@ -10,6 +10,10 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @name makeTreeSummarizedExperimentFromBiom
+#' @seealso
+#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+#' \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
+#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #'
 #' @examples
 #' if(requireNamespace("biomformat")) {

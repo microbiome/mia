@@ -37,3 +37,8 @@ if(requireNamespace("biomformat")) {
   tse
 }
 }
+\seealso{
+\code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+\code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
+\code{\link[=loadFromQIIME2]{loadFromQIIME2}}
+}
