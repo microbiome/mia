@@ -217,9 +217,9 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     # Test that rowTree is in phy_tree
     expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
 
-    # Test that referenceSeq is in refseq. There is no referenceseq in TSE, so
-    # referenceseq slot is not made in the phyloseq object
-    #expect_equal(phyloseq::refseq(phy), referenceSeq(tse))
+    # Test that referenceSeq is in refseq. Expect error, because there should not be
+    # reference sequences.
+    expect_error(phyloseq::refseq(phy))
 
     # TSE object
     data("esophagus")
