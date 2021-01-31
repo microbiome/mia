@@ -3,18 +3,22 @@
 \name{makePhyloseqFromTreeSummarizedExperiment}
 \alias{makePhyloseqFromTreeSummarizedExperiment}
 \alias{makePhyloseqFromTreeSummarizedExperiment,SummarizedExperiment-method}
+\alias{makePhyloseqFromTreeSummarizedExperiment,TreeSummarizedExperiment-method}
 \title{Create a phyloseq object from a TreeSummarizedExperiment object}
 \usage{
-makePhyloseqFromTreeSummarizedExperiment(x, abund_values = "counts")
+makePhyloseqFromTreeSummarizedExperiment(x, ...)
 
 \S4method{makePhyloseqFromTreeSummarizedExperiment}{SummarizedExperiment}(x, abund_values = "counts")
+
+\S4method{makePhyloseqFromTreeSummarizedExperiment}{TreeSummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{TreeSummarizedExperiment} object}
 
 \item{abund_values}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to be included in the phyloseq object that is created.
+to be included in the phyloseq object that is created. By default, it is
+counts table.
 
 @details
 \code{makePhyloseqFromTreeSummarizedExperiment} is used for creating a phyloseq
@@ -24,22 +28,26 @@ object from TreeSummarizedExperiment object.}
 An object of class \code{Phyloseq} object.
 }
 \description{
-Create a phyloseq object from a TreeSummarizedExperiment object
+This function creates a phyloseq object from a TreeSummarizedExperiment object.
+By using \code{abund_values}, it is possible to specify which table from
+\code{assay} is added to the phyloseq object.
 }
 \examples{
-# Get TSE object
+# Get tse object
 data("GlobalPatterns")
-TSE <- GlobalPatterns
+tse <- GlobalPatterns
 
 # Create a phyloseq object from it
-phy <- makePhyloseqFromTreeSummarizedExperiment(TSE)
+phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
+phy
 
 # By default the chosen table is counts, but if there is other tables,
 # they can be chosen with abund_values.
 
 # Counts relative abundances table
-TSE <- transformCounts(TSE, method = "relabundance")
-phy2 <- makePhyloseqFromTreeSummarizedExperiment(TSE, abund_values = "relabundance")
+tse <- transformCounts(tse, method = "relabundance")
+phy2 <- makePhyloseqFromTreeSummarizedExperiment(tse, abund_values = "relabundance")
+phy2
 
 }
 \author{
