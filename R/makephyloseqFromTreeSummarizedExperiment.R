@@ -12,6 +12,8 @@
 #'   to be included in the phyloseq object that is created. By default, it is
 #'   counts table.
 #'
+#' @param ... additional arguments
+#'
 #'  @details
 #' \code{makePhyloseqFromTreeSummarizedExperiment} is used for creating a phyloseq
 #' object from TreeSummarizedExperiment object.

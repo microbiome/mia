@@ -15,14 +15,16 @@ makePhyloseqFromTreeSummarizedExperiment(x, ...)
 \arguments{
 \item{x}{a \code{TreeSummarizedExperiment} object}
 
-\item{abund_values}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to be included in the phyloseq object that is created. By default, it is
-counts table.
+\item{...}{additional arguments
 
 @details
 \code{makePhyloseqFromTreeSummarizedExperiment} is used for creating a phyloseq
 object from TreeSummarizedExperiment object.}
+
+\item{abund_values}{A single character value for selecting the
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
+to be included in the phyloseq object that is created. By default, it is
+counts table.}
 }
 \value{
 An object of class \code{Phyloseq} object.
