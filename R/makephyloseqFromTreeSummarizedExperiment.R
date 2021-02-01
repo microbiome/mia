@@ -58,6 +58,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "Summari
           function(x, abund_values = "counts"){
 
             # Input check
+            .require_package("phyloseq")
             # Check that tse do not have zero rows
             if(!all(dim(x) > 0)){
                 stop("'x' contains zero rows. 'x' can not be converted
