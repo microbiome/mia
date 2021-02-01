@@ -15,11 +15,7 @@ makePhyloseqFromTreeSummarizedExperiment(x, ...)
 \arguments{
 \item{x}{a \code{TreeSummarizedExperiment} object}
 
-\item{...}{additional arguments
-
-@details
-\code{makePhyloseqFromTreeSummarizedExperiment} is used for creating a phyloseq
-object from TreeSummarizedExperiment object.}
+\item{...}{additional arguments}
 
 \item{abund_values}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -33,6 +29,10 @@ An object of class \code{Phyloseq} object.
 This function creates a phyloseq object from a TreeSummarizedExperiment object.
 By using \code{abund_values}, it is possible to specify which table from
 \code{assay} is added to the phyloseq object.
+}
+\details{
+\code{makePhyloseqFromTreeSummarizedExperiment} is used for creating a phyloseq
+object from TreeSummarizedExperiment object.
 }
 \examples{
 # Get tse object

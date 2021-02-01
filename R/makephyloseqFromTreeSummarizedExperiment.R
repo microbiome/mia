@@ -14,7 +14,7 @@
 #'
 #' @param ... additional arguments
 #'
-#'  @details
+#' @details
 #' \code{makePhyloseqFromTreeSummarizedExperiment} is used for creating a phyloseq
 #' object from TreeSummarizedExperiment object.
 #'
