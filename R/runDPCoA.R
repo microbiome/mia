@@ -1,84 +1,79 @@
 #' Calculation of Double Principal Correspondance analysis
-#' 
+#'
 #' ToDo
 #'
 #' @name runDPCoA
 #' @seealso
-#' 
+#'
 #' @examples
 NULL
 
-setGeneric("calculateDPCoA", signature = c("x"),
-           function(x, ...)
+setGeneric("calculateDPCoA", signature = c("x", "y"),
+           function(x, y, ...)
                standardGeneric("calculateDPCoA"))
 
-setGeneric("runDPCoA", signature = c("x"),
-           function(x, ...)
-               standardGeneric("runDPCoA"))
-
-
-.calculate_dpcoa <- function(x, tree, ncomponents = 50, ntop = 500,
-                             subset_row = NULL, scale = FALSE, transposed=FALSE,
-                             BPPARAM = SerialParam())
+.calculate_dpcoa <- function(x, y, ncomponents = 2, ntop = 500,
+                             subset_row = NULL, scale = FALSE,
+                             transposed = FALSE, ...)
 {
-    old <- getAutoBPPARAM()
-    setAutoBPPARAM(BPPARAM)
-    on.exit(setAutoBPPARAM(old))
-    if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
-        bpstart(BPPARAM)
-        on.exit(bpstop(BPPARAM), add = TRUE)
+    .require_package("ade4")
+    # input check
+    y <- as.matrix(y)
+    if(length(unique(dim(y))) != 1L){
+        stop("'y' must be symmetric.", call. = FALSE)
     }
-    
-    if (!transposed) {
-        out <- .get_mat_for_reddim(x, subset_row=subset_row, ntop=ntop, scale=scale, get.var=TRUE) 
-        x <- out$x
-        cv <- out$v
-    } else {
-        cv <- colVars(DelayedArray(x))
+    #
+    if(!transposed) {
+        x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
+                                 scale = scale)
     }
-    
-    pca <- runPCA(x, rank=ncomponents, BSPARAM=BSPARAM, BPPARAM=BPPARAM)
-    varExplained <- pca$sdev^2
-    percentVar <- varExplained / sum(cv) * 100
-    
-    # Saving the results
-    pcs <- pca$x
-    rownames(pcs) <- rownames(x)
-    attr(pcs, "varExplained") <- varExplained
-    attr(pcs, "percentVar") <- percentVar
-    rownames(pca$rotation) <- colnames(x)
-    attr(pcs, "rotation") <- pca$rotation
-    pcs
+    if(nrow(y) != ncol(x)){
+        stop("x and y must have corresponding dimensions.", call. = FALSE)
+    }
+    y <- y[colnames(x),colnames(x)]
+    y <- sqrt(y)
+    y <- as.dist(y)
+    #
+    dpcoa <- ade4::dpcoa(data.frame(x), y, scannf = FALSE, nf = ncomponents)
+    ans <- as.matrix(dpcoa$li)
+    rownames(ans) <- rownames(x)
+    colnames(ans) <- NULL
+    attr(ans,"eig") <- dpcoa$eig
+    tmp <- as.matrix(dpcoa$dls)
+    rownames(tmp) <- colnames(x)
+    colnames(tmp) <- NULL
+    attr(ans,"sample_red") <- tmp
+    attr(ans,"sample_weights") <- unname(dpcoa$dw)
+    attr(ans,"feature_weights") <- unname(dpcoa$lw)
+    ans
 }
 
 #' @export
 #' @rdname runDPCoA
-setMethod("calculateDPCoA", "ANY", .calculate_dpcoa)
-
+setMethod("calculateDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 
 #' @export
+#' @importFrom ape cophenetic.phylo
 #' @rdname runDPCoA
-setMethod("calculateDPCoA", "MicrobiomeExperiment",
+setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
     function(x, ..., exprs_values = "logcounts", dimred = NULL, n_dimred = NULL)
     {
-        mat <- .get_mat_from_sce(x, exprs_values = exprs_values,
-                                 dimred = dimred, n_dimred = n_dimred)
-        .calculate_dpcoa(mat, transposed = !is.null(dimred), ...)
+        .require_package("ade4")
+        mat <- assay(x, exprs_values)
+        dist <- cophenetic.phylo(rowTree(x))
+        calculateDPCoA(mat, dist, ...)
     }
 )
 
 #' @export
 #' @rdname runDPCoA
 #' @importFrom SingleCellExperiment reducedDim<-
-setMethod("runDPCoA", "MicrobiomeExperiment",
-    function(x, ..., altexp=NULL, name="PCA")
-    {
-        if (!is.null(altexp)) {
-            y <- altExp(x, altexp)
-        } else {
-            y <- x
-        }
-        reducedDim(x, name) <- calculateDPCoA(y, ...)
-        x
+runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
+    if (!is.null(altexp)) {
+        y <- altExp(x, altexp)
+    } else {
+        y <- x
     }
-)
+    reducedDim(x, name) <- calculateDPCoA(y, ...)
+    x
+}

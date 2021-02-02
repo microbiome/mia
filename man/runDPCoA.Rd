@@ -2,23 +2,22 @@
 % Please edit documentation in R/runDPCoA.R
 \name{runDPCoA}
 \alias{runDPCoA}
-\alias{calculateDPCoA,ANY-method}
-\alias{calculateDPCoA,MicrobiomeExperiment-method}
-\alias{runDPCoA,MicrobiomeExperiment-method}
+\alias{calculateDPCoA,ANY,ANY-method}
+\alias{calculateDPCoA,TreeSummarizedExperiment,missing-method}
 \title{Calculation of Double Principal Correspondance analysis}
 \usage{
-\S4method{calculateDPCoA}{ANY}(
+\S4method{calculateDPCoA}{ANY,ANY}(
   x,
-  tree,
-  ncomponents = 50,
+  y,
+  ncomponents = 2,
   ntop = 500,
   subset_row = NULL,
   scale = FALSE,
   transposed = FALSE,
-  BPPARAM = SerialParam()
+  ...
 )
 
-\S4method{calculateDPCoA}{MicrobiomeExperiment}(
+\S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(
   x,
   ...,
   exprs_values = "logcounts",
@@ -26,7 +25,7 @@
   n_dimred = NULL
 )
 
-\S4method{runDPCoA}{MicrobiomeExperiment}(x, ..., altexp = NULL, name = "PCA")
+runDPCoA(x, ..., altexp = NULL, name = "DPCoA")
 }
 \description{
 ToDo

@@ -64,7 +64,8 @@ Suggests:
     phyloseq,
     dada2,
     biomformat,
-    reldist
+    reldist,
+    ade4
 Remotes:
     github::microbiome/microbiomeDataSets
 Roxygen: list(markdown = TRUE)
