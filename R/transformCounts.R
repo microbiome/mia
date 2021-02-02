@@ -28,38 +28,36 @@
 #'
 #' @details
 #' \code{transformCounts} applies transformation to abundance table.
-#' Transformation methods include
+#' Provided transformation methods include:
 #'
 #' \itemize{
+#' \item{"relabundance" }{Transforms abundances to relative. Generally, all microbiome
+#' data are compositional. That is, e.g., because all measuring instruments have their capacity limits.
+#' To make results comparable with other results, values must be relative.
+#' ($\frac{x}{x_{tot}}$, where $x$ is a single value and $x_{tot}$ is the sum of
+#' all values.) (Gloor et al. 2017.)}
 #'
-#'     \item{"relabundance" }{Transforms abundances to relative. Generally, all microbiome
-#'     data are compositional. That is, e.g., because all measuring instruments have their capacity limits.
-#'     To make results comparable with other results, values must be relative.
-#'     ($\frac{x}{x_{tot}}$, where $x$ is a single value and $x_{tot}$ is the sum of
-#'     all values.) (Gloor et al. 2017.)}
+#' \item{"log10" }{log10 transformation can be used for reducing the skewness of the data.
+#' ($log_{10}x$, where $x$ is a single value of data.)}
 #'
-#'     \item{"log10" }{log10 transformation can be used for reducing the skewness of the data.
-#'     ($log_{10}x$, where $x$ is a single value of data.)}
+#' \item{"pa" }{Transforms table to presence/absence table. If value is over 0,
+#' then value is 1. If value is 0, then value is 0.)}
 #'
-#'     \item{"pa" }{Transforms table to presence/absence table. If value is over 0,
-#'     then value is 1. If value is 0, then value is 0.)}
+#' \item{"Z" }{Z-transformation or Z-standardization can be used for normalizing the data.
+#' Z-transformation can be done with function \code{ZTransform}. It is done per rows.
+#' In other words, single value is standardized with respect of feature's values.
+#' ($\frac{x + µ}{σ}$, where $x$ is a single value, $µ$ is the mean of the feature, and
+#' $σ$ is the standard deviation of the feature.)}
 #'
-#'     \item{"Z" }{Z-transformation or Z-standardization can be used for normalizing the data.
-#'     Z-transformation can be done with function \code{ZTransform}. It is done per rows.
-#'     In other words, single value is standardized with respect of feature's values.
-#'     ($\frac{x + µ}{σ}$, where $x$ is a single value, $µ$ is the mean of the feature, and
-#'     $σ$ is the standard deviation of the feature.)}
-#'
-#'     \item{"hellinger" }{Hellinger transformation can be used for reducing the impact of
-#'     extreme data points. It can be utilize for clustering or ordination analysis.
-#'     ($\sqrt{\frac{x}{x_{tot}}}$, where $x$ is a single value and $x_{tot}$ is the sum of
+#' \item{"hellinger" }{Hellinger transformation can be used for reducing the impact of
+#' extreme data points. It can be utilize for clustering or ordination analysis.
+#' ($\sqrt{\frac{x}{x_{tot}}}$, where $x$ is a single value and $x_{tot}$ is the sum of
 #'     all values.) (Legendre & Gallagher 2001.)}
 #'
-#'     \item{"clr" }{Centered log ratio (clr) transformation can be used for reducing the
-#'     skewness of data and for centering it.
-#'     ($log_{10}x_{r}) - log_{10}µ_{r}$, where $x_{r}$ is a single relative value, $µ_{r}$ is
-#'     the mean of relative values of whole sample.) (Gloor et al. 2017.)}
-#'
+#' \item{"clr" }{Centered log ratio (clr) transformation can be used for reducing the
+#' skewness of data and for centering it.
+#' ($log_{10}x_{r}) - log_{10}µ_{r}$, where $x_{r}$ is a single relative value, $µ_{r}$ is
+#' the mean of relative values of whole sample.) (Gloor et al. 2017.)}
 #' }
 #'
 #' @references
