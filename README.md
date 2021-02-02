@@ -1,19 +1,29 @@
 # mia - Microbiome analysis
 
+<!-- badges: start -->
+
+[![R-CMD-check-bioc-devel](https://github.com/FelixErnst/mia/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/FelixErnst/mia/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/FelixErnst/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/FelixErnst/mia?branch=master)
+
+<!-- badges: end -->
+
 This project is aimed to provide functions and workflows examples for analyses
-of microbiome data.
+of microbiome data. The main class for working with microbiome data in this
+package is `TreeSummarizedExperiment`.
 
-Currently this includes:
+Currently following things are implemented:
 
-- JSD and UniFrac distance calculation ported from `phyloseq` to work with `MicrobiomeExperiment` objects
+- data wrangling functions (`agglomerate*`, `merge*`, `meltAssay`)
+- JSD and UniFrac distance calculation ported from `phyloseq` to work with `TreeSummarizedExperiment` objects
+- CCA analysis via `vegan` package
+- Bray-Curtis dissimilarity via `vegan` package
+- MDS via the `scater` package
+- import functions for `biom` data, `DADA2` objects and `phyloseq` objects
 
-# ToDo
+## ToDo
 
-In this package
-
-- alpha and beta diversity measure
-- plotting functions
-- ...
+- if `breakaway` ends up on CRAN or Bioconductor, alpha diversity calculation via the `breakaway` package
 
 # Contribution
 

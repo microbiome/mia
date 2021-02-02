@@ -1,3 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .github
+^\.github$
+pkgdown
+.RData
+.pdf
