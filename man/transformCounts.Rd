@@ -14,7 +14,8 @@ transformCounts(
   abund_values = "counts",
   method = c("relabundance", "log10", "pa", "hellinger", "clr"),
   name = method,
-  pseudocount = FALSE
+  pseudocount = FALSE,
+  threshold = 0
 )
 
 \S4method{transformCounts}{SummarizedExperiment}(
@@ -22,7 +23,8 @@ transformCounts(
   abund_values = "counts",
   method = c("relabundance", "log10", "pa", "hellinger", "clr"),
   name = method,
-  pseudocount = FALSE
+  pseudocount = FALSE,
+  threshold = 0
 )
 
 ZTransform(
@@ -58,6 +60,8 @@ to be transformed.}
 \item{pseudocount}{FALSE or numeric value deciding whether pseudocount is added. Numerical
 value specifies the value of pseudocount.}
 
+\item{threshold}{A numeric value for setting threshold for pa transformation. By default it is 0.}
+
 \item{...}{additional arguments}
 }
 \value{
@@ -76,33 +80,51 @@ specific \code{ZTransform} function, Z-transformation can be applied for feature
 Provided transformation methods include:
 
 \itemize{
-\item{"relabundance" }{Transforms abundances to relative. Generally, all microbiome
+\item {'relabundance'}{ Transforms abundances to relative. Generally, all microbiome
 data are compositional. That is, e.g., because all measuring instruments have their capacity limits.
-To make results comparable with other results, values must be relative.
-($\frac{x}{x_{tot}}$, where $x$ is a single value and $x_{tot}$ is the sum of
-all values.) (Gloor et al. 2017.)}
+To make results comparable with other results, values must be relative. (See e.g. Gloor et al. 2017.)
 
-\item{"log10" }{log10 transformation can be used for reducing the skewness of the data.
-($log_{10}x$, where $x$ is a single value of data.)}
+\deqn{relabundance = \frac{x}{x_{tot}}}{%
+relabundance = x/x_tot}
+where $x$ is a single value and $x_{tot}$ is the sum of
+all values.}
 
-\item{"pa" }{Transforms table to presence/absence table. If value is over 0,
-then value is 1. If value is 0, then value is 0.)}
+\item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
 
-\item{"Z" }{Z-transformation or Z-standardization can be used for normalizing the data.
+\deqn{log10 = \log_10 x}{%
+log10 = log10(x)}
+where $x$ is a single value of data.}
+
+\item{'pa'}{ Transforms table to presence/absence table. All abundances higher
+than ε are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.}
+
+\item{'Z'}{ Z-transformation, Z score transformation, or Z-standardization normalizes
+the data by shifting (to mean µ) and scaling (to standard deviation σ).
 Z-transformation can be done with function \code{ZTransform}. It is done per rows.
 In other words, single value is standardized with respect of feature's values.
-($\frac{x + µ}{σ}$, where $x$ is a single value, $µ$ is the mean of the feature, and
-$σ$ is the standard deviation of the feature.)}
 
-\item{"hellinger" }{Hellinger transformation can be used for reducing the impact of
+\deqn{Z = \frac{x + \mu}{\sigma}}{%
+Z = (x + µ)/σ}
+where $x$ is a single value, $µ$ is the mean of the feature, and
+$σ$ is the standard deviation of the feature.}
+
+\item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 extreme data points. It can be utilize for clustering or ordination analysis.
-($\sqrt{\frac{x}{x_{tot}}}$, where $x$ is a single value and $x_{tot}$ is the sum of
-all values.) (Legendre & Gallagher 2001.)}
+(See e.g. Legendre & Gallagher 2001.)
 
-\item{"clr" }{Centered log ratio (clr) transformation can be used for reducing the
-skewness of data and for centering it.
-($log_{10}x_{r}) - log_{10}µ_{r}$, where $x_{r}$ is a single relative value, $µ_{r}$ is
-the mean of relative values of whole sample.) (Gloor et al. 2017.)}
+\deqn{hellinger = \sqrt{\frac{x}{x_{tot}}}}{%
+hellinger = sqrt(x/x_tot)}
+where $x$ is a single value and $x_{tot}$ is the sum of
+all values}
+
+\item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
+skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
+
+\deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
+clr = log10 x_r - log10 µ_r}
+where $x_{r}$ is a single relative value, $µ_{r}$ is
+mean relative value".}
+
 }
 }
 \examples{
@@ -120,6 +142,11 @@ x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
 # assays(x)$test
 x <- transformCounts(x, method="relabundance", abund_values="test")
 # assays(x)$relabundance
+
+# pa returns presence absence table. With 'threshold', it is possible to set the
+# threshold to desired level. By default, it is 0.
+x <- transformCounts(x, method="pa", threshold=35)
+# assays(x)$pa
 
 # Z-transform can be done for features
 x <- ZTransform(x, pseudocount=1)
