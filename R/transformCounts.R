@@ -40,27 +40,27 @@
 #'
 #' \deqn{relabundance = \frac{x}{x_{tot}}}{%
 #' relabundance = x/x_tot}
-#' where $x$ is a single value and $x_{tot}$ is the sum of
+#' where \eqn{x} is a single value and \eqn{x_{tot}} is the sum of
 #' all values.}
 #'
 #' \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
 #'
 #' \deqn{log10 = \log_10 x}{%
 #' log10 = log10(x)}
-#' where $x$ is a single value of data.}
+#' where \eqn{x} is a single value of data.}
 #'
 #' \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
-#' than ε are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.}
+#' than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.}
 #'
 #' \item{'Z'}{ Z-transformation, Z score transformation, or Z-standardization normalizes
-#' the data by shifting (to mean µ) and scaling (to standard deviation σ).
+#' the data by shifting (to mean \eqn{\mu}) and scaling (to standard deviation \eqn{\sigma}).
 #' Z-transformation can be done with function \code{ZTransform}. It is done per rows.
 #' In other words, single value is standardized with respect of feature's values.
 #'
 #' \deqn{Z = \frac{x + \mu}{\sigma}}{%
 #' Z = (x + µ)/σ}
-#' where $x$ is a single value, $µ$ is the mean of the feature, and
-#' $σ$ is the standard deviation of the feature.}
+#' where \eqn{x} is a single value, \eqn{\mu} is the mean of the feature, and
+#' \eqn{\sigma} is the standard deviation of the feature.}
 #'
 #' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 #' extreme data points. It can be utilize for clustering or ordination analysis.
@@ -68,7 +68,7 @@
 #'
 #' \deqn{hellinger = \sqrt{\frac{x}{x_{tot}}}}{%
 #' hellinger = sqrt(x/x_tot)}
-#' where $x$ is a single value and $x_{tot}$ is the sum of
+#' where \eqn{x} is a single value and \eqn{x_{tot}} is the sum of
 #' all values}
 #'
 #' \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
@@ -76,7 +76,7 @@
 #'
 #' \deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
 #' clr = log10 x_r - log10 µ_r}
-#' where $x_{r}$ is a single relative value, $µ_{r}$ is
+#' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
 #' mean relative value".}
 #'
 #' }
