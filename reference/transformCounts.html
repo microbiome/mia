@@ -126,7 +126,8 @@ specific <code>ZTransform</code> function, Z-transformation can be applied for f
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"relabundance"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"clr"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>method</span>,
-  pseudocount <span class='op'>=</span> <span class='cn'>FALSE</span>
+  pseudocount <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  threshold <span class='op'>=</span> <span class='fl'>0</span>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
@@ -135,7 +136,8 @@ specific <code>ZTransform</code> function, Z-transformation can be applied for f
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"relabundance"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"clr"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>method</span>,
-  pseudocount <span class='op'>=</span> <span class='cn'>FALSE</span>
+  pseudocount <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  threshold <span class='op'>=</span> <span class='fl'>0</span>
 <span class='op'>)</span>
 
 <span class='fu'>ZTransform</span><span class='op'>(</span>
@@ -186,6 +188,10 @@ to be transformed.</p></td>
 value specifies the value of pseudocount.</p></td>
     </tr>
     <tr>
+      <th>threshold</th>
+      <td><p>A numeric value for setting threshold for pa transformation. By default it is 0.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>additional arguments</p></td>
     </tr>
@@ -199,9 +205,32 @@ the <code>assay</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>transformCounts</code> applies transformation to abundance table.
-Transformation methods include</p>
+Provided transformation methods include:</p>
 <ul>
-<li></li>
+<li><p>'relabundance' Transforms abundances to relative. Generally, all microbiome
+data are compositional. That is, e.g., because all measuring instruments have their capacity limits.
+To make results comparable with other results, values must be relative. (See e.g. Gloor et al. 2017.)$$relabundance = \frac{x}{x_{tot}}$$
+where \(x\) is a single value and \(x_{tot}\) is the sum of
+all values.</p></li>
+<li><p>'log10' log10 transformation can be used for reducing the skewness of the data.$$log10 = \log_10 x$$
+where \(x\) is a single value of data.</p></li>
+<li><p>'pa' Transforms table to presence/absence table. All abundances higher
+than \(\epsilon\) are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.</p></li>
+<li><p>'Z' Z-transformation, Z score transformation, or Z-standardization normalizes
+the data by shifting (to mean \(\mu\)) and scaling (to standard deviation \(\sigma\)).
+Z-transformation can be done with function <code>ZTransform</code>. It is done per rows.
+In other words, single value is standardized with respect of feature's values.$$Z = \frac{x + \mu}{\sigma}$$
+where \(x\) is a single value, \(\mu\) is the mean of the feature, and
+\(\sigma\) is the standard deviation of the feature.</p></li>
+<li><p>'hellinger' Hellinger transformation can be used to reduce the impact of
+extreme data points. It can be utilize for clustering or ordination analysis.
+(See e.g. Legendre &amp; Gallagher 2001.)$$hellinger = \sqrt{\frac{x}{x_{tot}}}$$
+where \(x\) is a single value and \(x_{tot}\) is the sum of
+all values</p></li>
+<li><p>'clr' Centered log ratio (clr) transformation can be used for reducing the
+skewness of data and for centering it. (See e.g. Gloor et al. 2017.)$$clr = log_{10}x_{r} - log_{10}µ_{r}$$
+where \(x_{r}\) is a single relative value, \(\mu_{r}\) is
+mean relative value".</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -231,6 +260,11 @@ Oecologia 129: 271-280.</p>
 <span class='co'># assays(x)$test</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>transformCounts</span><span class='op'>(</span><span class='va'>x</span>, method<span class='op'>=</span><span class='st'>"relabundance"</span>, abund_values<span class='op'>=</span><span class='st'>"test"</span><span class='op'>)</span>
 <span class='co'># assays(x)$relabundance</span>
+
+<span class='co'># pa returns presence absence table. With 'threshold', it is possible to set the</span>
+<span class='co'># threshold to desired level. By default, it is 0.</span>
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>transformCounts</span><span class='op'>(</span><span class='va'>x</span>, method<span class='op'>=</span><span class='st'>"pa"</span>, threshold<span class='op'>=</span><span class='fl'>35</span><span class='op'>)</span>
+<span class='co'># assays(x)$pa</span>
 
 <span class='co'># Z-transform can be done for features</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>ZTransform</span><span class='op'>(</span><span class='va'>x</span>, pseudocount<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>

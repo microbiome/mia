@@ -40,7 +40,9 @@
 
 
 <meta property="og:title" content="Estimate Dominance — estimateDominance" />
-<meta property="og:description" content="This function calculates the community dominance index." />
+<meta property="og:description" content="This function calculates the community dominance index.
+This includes the &amp;#8216;DBP&amp;#8217;, &amp;#8216;DMN&amp;#8217;, &amp;#8216;Absolute&amp;#8217;,
+&amp;#8216;Relative&amp;#8217;, &amp;#8216;Core Abundance&amp;#8217;, &amp;#8216;Gini&amp;#8217;" />
 
 
 
@@ -112,7 +114,9 @@
     </div>
 
     <div class="ref-description">
-    <p>This function calculates the community dominance index.</p>
+    <p>This function calculates the community dominance index.
+This includes the &#8216;DBP&#8217;, &#8216;DMN&#8217;, &#8216;Absolute&#8217;,
+&#8216;Relative&#8217;, &#8216;Core Abundance&#8217;, &#8216;Gini&#8217;</p>
     </div>
 
     <pre class="usage"><span class='fu'>estimateDominance</span><span class='op'>(</span>
@@ -196,10 +200,47 @@ object specifying whether calculation of estimates should be parallelized.
 <code>*name*</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This includes the &#8216;DBP&#8217;, &#8216;DMN&#8217;, &#8216;Absolute&#8217;,
-&#8216;Relative&#8217;, &#8216;Core Abundance&#8217;, &#8216;Gini&#8217;</p>
-<p><code>estimateDominance</code> calculates the community dominance indices.</p><ul>
-<li></li>
+    <p><code>estimateDominance</code> calculates the following community dominance indices.</p>
+<ul>
+<li><p>'DBP' Berger-Parker index is calculated similarly than relative index.
+DBP is the relative abundance of the most abundant species of the sample.
+Index gives values in interval 0 to 1, where bigger value represent greater dominance.
+(See e.g. Berger &amp; Parker 1970.)$$DBP = \frac{N_1}{N_{tot}}$$
+where \(N_1\) is the absolute abundance of the most dominant species and
+\(N_{tot}\) is the sum of absolute abundances of all species.</p></li>
+<li><p>'DMN' McNaughton’s index is the sum of relative abundances of the two most
+abundant species of the sample. Index gives values in interval 0 to 1,
+where bigger value represent greater dominance.$$DMN = \frac{N_1 + N_2}{N_{tot}}$$
+where \(N_1\) and \(N_2\) are the absolute
+abundances of the two most dominant species and \(N_{tot}\) is the sum of absolute
+abundances of all species.</p></li>
+<li><p>'absolute' Absolute index equals to the absolute abundance of the most
+dominant species of the sample. Index gives positive integer values.</p></li>
+<li><p>'relative' Relative index equals to the relative abundance of the most
+dominant species of the sample. Index gives values in interval 0 to 1, where bigger
+value represent greater dominance.$$relative = \frac{N_1}{N_{tot}}$$
+where \(N_1\) is the absolute abundance of
+the most dominant species and \(N_{tot}\) is the sum of absolute abundances of all species.</p></li>
+<li><p>'simpson' Simpson's index, or Simpson's dominance index, is calculated
+by raising all relative abundances of species to the power of 2, and then summing them together.
+Index gives values in interval 0 to 1. Value equals the probability that two randomly
+chosen individuals belongs to the same species. The higher the probability, the greater
+the dominance is. (See e.g. Simpson 1949.)$$simpson = \sum(p^2)$$
+where \(p\) is relative abundances.</p></li>
+<li><p>'core_abundance' Core abundance index is related to core species.
+Core species are species that are most abundant in all samples, i.e., in whole data set.
+Core species are used to calculate the core abundance index.
+Core abundance index is sum of relative abundances of core species in the sample.
+Index gives values in interval 0 to 1, where bigger value represent greater dominance.$$core_abundance = \frac{N_{core}}{N_{tot}}$$
+where \(N_{core}\) is the sum of absolute abundance of the core species and
+\(N_{tot}\) is the sum of absolute abundances of all species.</p></li>
+<li><p>'gini' Gini index is probably best-known from socio-economic contexts.
+In economics, it is used to measure, for example, how unevenly income
+is distributed among population. Here, Gini index is used similarly, but income
+is replaced with abundance. If there is small group of species that represent
+large portion of total abundance of microbes, the inequality is large and
+Gini index closer to 1. If all species has equally large abundances, the equality
+is perfect and Gini index equals 0. (See e.g. Gini 1921.)</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
