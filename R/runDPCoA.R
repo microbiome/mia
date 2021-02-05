@@ -43,8 +43,8 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
     rownames(tmp) <- colnames(x)
     colnames(tmp) <- NULL
     attr(ans,"sample_red") <- tmp
-    attr(ans,"sample_weights") <- unname(dpcoa$dw)
-    attr(ans,"feature_weights") <- unname(dpcoa$lw)
+    attr(ans,"feature_weights") <- unname(dpcoa$dw)
+    attr(ans,"sample_weights") <- unname(dpcoa$lw)
     ans
 }
 
