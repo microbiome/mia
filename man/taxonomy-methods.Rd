@@ -32,13 +32,13 @@ taxonomyRanks(x)
 taxonomyRankEmpty(
   x,
   rank = taxonomyRanks(x)[1L],
-  empty.fields = c(NA, "", " ", "\\t", "-")
+  empty.fields = c(NA, "", " ", "\\t", "-", "_")
 )
 
 \S4method{taxonomyRankEmpty}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  empty.fields = c(NA, "", " ", "\\t", "-")
+  empty.fields = c(NA, "", " ", "\\t", "-", "_")
 )
 
 checkTaxonomy(x, ...)
@@ -49,7 +49,7 @@ getTaxonomyLabels(x, ...)
 
 \S4method{getTaxonomyLabels}{SummarizedExperiment}(
   x,
-  empty.fields = c(NA, "", " ", "\\t", "-"),
+  empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   with_rank = FALSE,
   make_unique = TRUE,
   resolve_loops = FALSE

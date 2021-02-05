@@ -87,7 +87,7 @@ setGeneric("agglomerateByRank",
                standardGeneric("agglomerateByRank"))
 
 .remove_with_empty_taxonomic_info <-
-    function(x, column, empty.fields = c(NA,""," ","\t","-"))
+    function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
 {
     tax <- as.character(rowData(x)[,column])
     f <- !(tax %in% empty.fields)
@@ -105,7 +105,7 @@ setGeneric("agglomerateByRank",
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
-       empty.fields = c(NA, "", " ", "\t", "-"), ...){
+       empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",

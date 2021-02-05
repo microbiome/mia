@@ -13,7 +13,7 @@
   rank = taxonomyRanks(x)[1],
   onRankOnly = FALSE,
   na.rm = FALSE,
-  empty.fields = c(NA, "", " ", "\\t", "-"),
+  empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
 )
 

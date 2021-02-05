@@ -109,7 +109,7 @@ setMethod("taxonomyRanks", signature = c(x = "SummarizedExperiment"),
 setGeneric("taxonomyRankEmpty",
            signature = "x",
            function(x, rank = taxonomyRanks(x)[1L],
-                    empty.fields = c(NA, "", " ", "\t", "-"))
+                    empty.fields = c(NA, "", " ", "\t", "-", "_"))
              standardGeneric("taxonomyRankEmpty"))
 
 #' @rdname taxonomy-methods
@@ -120,7 +120,7 @@ setGeneric("taxonomyRankEmpty",
 #' @export
 setMethod("taxonomyRankEmpty", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1],
-           empty.fields = c(NA, "", " ", "\t", "-")){
+           empty.fields = c(NA, "", " ", "\t", "-", "_")){
     # input check
     if(ncol(rowData(x)) == 0L){
         stop("rowData needs to be populated.", call. = FALSE)
@@ -203,7 +203,7 @@ setGeneric("getTaxonomyLabels",
 #' @aliases checkTaxonomy
 #' @export
 setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
-    function(x, empty.fields = c(NA, "", " ", "\t", "-"),
+    function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"),
              with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE){
         # input check
         if(ncol(rowData(x)) == 0L){
@@ -289,7 +289,8 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-.get_taxonomic_label <- function(x, empty.fields = c(NA, "", " ", "\t", "-"),
+.get_taxonomic_label <- function(x,
+                                 empty.fields = c(NA, "", " ", "\t", "-", "_"),
                                  with_rank = FALSE, make_unique = TRUE,
                                  resolve_loops = FALSE){
     rd <- rowData(x)
