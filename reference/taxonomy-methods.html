@@ -87,7 +87,7 @@ data if needed." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.33</span>
       </span>
     </div>
 
@@ -155,14 +155,14 @@ data if needed.</p>
 <span class='fu'>taxonomyRankEmpty</span><span class='op'>(</span>
   <span class='va'>x</span>,
   rank <span class='op'>=</span> <span class='fu'>taxonomyRanks</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span>,
-  empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span><span class='op'>)</span>
+  empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span>, <span class='st'>"_"</span><span class='op'>)</span>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>taxonomyRankEmpty</span><span class='op'>(</span>
   <span class='va'>x</span>,
   rank <span class='op'>=</span> <span class='fu'>taxonomyRanks</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
-  empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span><span class='op'>)</span>
+  empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span>, <span class='st'>"_"</span><span class='op'>)</span>
 <span class='op'>)</span>
 
 <span class='fu'>checkTaxonomy</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -175,7 +175,7 @@ data if needed.</p>
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>getTaxonomyLabels</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span><span class='op'>)</span>,
+  empty.fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='st'>""</span>, <span class='st'>" "</span>, <span class='st'>"\t"</span>, <span class='st'>"-"</span>, <span class='st'>"_"</span><span class='op'>)</span>,
   with_rank <span class='op'>=</span> <span class='cn'>FALSE</span>,
   make_unique <span class='op'>=</span> <span class='cn'>TRUE</span>,
   resolve_loops <span class='op'>=</span> <span class='cn'>FALSE</span>
@@ -296,7 +296,7 @@ taxonomic ranks found in <code><a href='https://rdrr.io/r/base/colnames.html'>co
 <span class='co'># note that any tree already stored in rowTree() will be overwritten.</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>addTaxonomyTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: 16909 duplicated rows are removed</span></div><div class='output co'>#&gt; <span class='warning'>Warning: The root is added with label 'ALL'</span></div><div class='input'><span class='va'>x</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: 16909 duplicated rows are removed</span></div><div class='output co'>#&gt; <span class='warning'>Warning: The root is added with label 'ALL'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Multiple nodes are found to have the same label.</span></div><div class='input'><span class='va'>x</span>
 </div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
 #&gt; dim: 19216 26 
 #&gt; metadata(0):
