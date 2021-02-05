@@ -76,11 +76,21 @@ test_that("transformCounts", {
                          log10(x+1)
                      }))
 
+        ###############################################################
+
         # Calculates pa transformation. Should be equal.
         actual <- assay(mia::transformCounts(tse, method = "pa"),"pa")
         expect_equal(as.vector(actual),
                      as.integer(as.matrix(assay(tse, "counts")) > 0))
         expect_equal(type(actual),"integer")
+
+        # Calculates pa transformation. Should be equal.
+        actual <- assay(mia::transformCounts(tse, method = "pa", threshold = 12.5),"pa")
+        expect_equal(as.vector(actual),
+                     as.integer(as.matrix(assay(tse, "counts")) > 12.5))
+        expect_equal(type(actual),"integer")
+
+        ###################################################################
 
         # TSE object
         data(esophagus)
