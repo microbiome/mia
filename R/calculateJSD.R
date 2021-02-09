@@ -92,6 +92,10 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
 #'
 #' @export
 runJSD <- function(x){
+    # input check
+    if(is.null(rownames(x))){
+        rownames(x) <- seq_len(nrow(x))
+    }
     # Coerce to relative abundance by sample (row)
     x <- sweep(x, 1L, rowSums(x), "/")
     # create N x 2 matrix of all pairwise combinations of samples.
