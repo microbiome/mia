@@ -34,9 +34,13 @@ object.
 }
 \examples{
 data(enterotype)
-calculateJSD(enterotype)
+jsd <- calculateJSD(enterotype)
+class(jsd)
+head(jsd)
 enterotype <- runMDS2(enterotype, FUN = calculateJSD, name = "JSD")
-reducedDim(enterotype)
+head(reducedDim(enterotype))
+head(attr(reducedDim(enterotype),"eig"))
+attr(reducedDim(enterotype),"GOF")
 }
 \references{
 Jensen-Shannon Divergence and Hilbert space embedding.
