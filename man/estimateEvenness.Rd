@@ -37,8 +37,10 @@ in.}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.
-(Currently not used)}
+object specifying whether calculation of estimates should be parallelized.}
+
+\item{threshold}{a numeric threshold. assay values below or equal to this
+threshold will be set to zero.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named

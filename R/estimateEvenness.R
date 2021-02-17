@@ -15,10 +15,12 @@
 #' @param name a name for the column of the colData the results should be stored
 #'   in.
 #'
+#' @param threshold a numeric threshold. assay values below or equal to this
+#'   threshold will be set to zero.
+#'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether calculation of estimates should be parallelized.
-#'   (Currently not used)
 #'
 #' @param ... additional parameters passed to \code{estimateEvenness}
 #'
@@ -63,29 +65,21 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
         #
         vnss <- BiocParallel::bplapply(index,
                                        .run_evenness,
-                                       x = x,
                                        mat = assay(x, abund_values),
                                        BPPARAM = BPPARAM, ...)
         .add_values_to_colData(x, vnss, name)
     }
 )
 
-.calc_bulla_evenness <- function(x, zeroes = TRUE) {
-    if(!.is_a_bool(zeroes)){
-        stop("'zeroes' must be TRUE or FALSE.", call. = FALSE)
-    }
-
-    if (!zeroes) {
-        x[x > 0]
-    }
-
+.calc_bulla_evenness <- function(mat) {
     # Species richness (number of species)
-    S <- sum(x > 0, na.rm = TRUE)
+    S <- colSums2(mat > 0, na.rm = TRUE)
 
     # Relative abundances
-    p <- x/sum(x)
+    p <- t(mat)/colSums2(mat, na.rm = TRUE)
 
-    O <- sum(pmin(p, 1/S))
+    i <- seq_len(nrow(p))
+    O <- vapply(i,function(i){sum(pmin(p[i,], 1/S[i]))},numeric(1))
 
     # Bulla's Evenness
     (O - 1/S)/(1 - 1/S)
@@ -95,101 +89,89 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
 # by code from Pepijn de Vries and Zhou Xiang at
 # researchgate.net/post/How_can_we_calculate_the_Camargo_evenness_index_in_R
 # but rewritten here
-.calc_camargo_evenness <- function(x, zeroes = TRUE) {
-    if(!.is_a_bool(zeroes)){
-        stop("'zeroes' must be TRUE or FALSE.", call. = FALSE)
-    }
+.calc_camargo_evenness <- function(mat) {
+    N <- colSums2(mat > 0, na.rm = TRUE)
 
-    if (!zeroes) {
-        x[x > 0]
-    }
+    seq <- IntegerList(lapply(N - 1,seq_len))
 
-    N <- sum(x > 0, na.rm = TRUE)
-
-    xx <- 0
-    for (i in seq_len(N - 1)) {
-        xx <- xx + sum(abs(x[(i + 1):N] - x[i]))
-    }
-
+    x <- mapply(
+        function(i, n, s){
+            xx <- 0
+            for (j in s) {
+                xx <- xx + sum(abs(mat[(j + 1):n,i] - mat[j,i]))
+            }
+            xx
+        },
+        seq_along(N),
+        N,
+        seq)
     # Return
-    1 - xx/(sum(x) * N)
+    1 - x/(colSums2(mat, na.rm = TRUE) * N)
 }
 
 # x: Species count vector
-.calc_simpson_evenness <- function(x) {
-
+.calc_simpson_evenness <- function(mat) {
     # Species richness (number of species)
-    S <- sum(x > 0, na.rm = TRUE)
+    S <- colSums2(mat > 0, na.rm = TRUE)
 
     # Simpson index
-    lambda <- .get_simpson(x)
+    lambda <-  1 - .get_simpson(mat)
 
     # Simpson evenness (Simpson diversity per richness)
     (1/lambda)/S
 }
 
 # x: Species count vector
-.calc_pielou_evenness <- function(x) {
-
+.calc_pielou_evenness <- function(mat) {
     # Remove zeroes
-    x <- x[x > 0]
+    mat[mat == 0] <- NA
 
     # Species richness (number of detected species)
-    S <- sum(x > 0, na.rm = TRUE)
+    S <- colSums2(mat > 0, na.rm = TRUE)
 
     # Relative abundances
-    p <- x/sum(x)
+    p <- t(mat)/colSums2(mat, na.rm = TRUE)
 
     # Shannon index
-    H <- (-sum(p * log(p)))
+    H <- (-rowSums2(p * log(p), na.rm = TRUE))
 
     # Simpson evenness
     H/log(S)
 }
 
 # Smith and Wilson’s Evar index
-.calc_evar_evenness <- function(x, zeroes = TRUE) {
-    if(!.is_a_bool(zeroes)){
-        stop("'zeroes' must be TRUE or FALSE.", call. = FALSE)
-    }
-
-    if (!zeroes) {
-        x[x > 0]
-    }
-
-    n <- sum(x, na.rm = TRUE)
-    d <- rep(NA, n)
+.calc_evar_evenness <- function(mat) {
+    N <- colSums2(mat, na.rm = TRUE)
 
     # Log abundance
-    a <- log(x)
+    a <- log(mat)
     a[is.na(a) | is.infinite(a)] <- 0
 
     # Richness
-    S <- sum(x > 0)
+    S <- colSums2(mat > 0, na.rm = TRUE)
 
-    b <- a/S
-    c <- sum(b)
-    d <- (a - c)^2/S
-    d[x != 0] <- 0
+    b <- t(a)/S
+    c <- rowSums2(b, na.rm = TRUE)
+    d <- t((t(a) - c)^2/S)
+    d[mat == 0] <- 0
 
-    f <- sum(d)
+    f <- colSums2(d, na.rm = TRUE)
 
     (1 - 2/pi * atan(f))
 }
 
-.run_evenness <- function(x, i, mat, detection = 0, ...){
-    if(!is.numeric(detection) || length(detection) == 1L){
-        stop("'detection' must be a single numeric value.", call. = FALSE)
+.run_evenness <- function(index, mat, threshold = 0, ...){
+    if(!is.numeric(threshold) || length(threshold) != 1L){
+        stop("'threshold' must be a single numeric value.", call. = FALSE)
     }
-    if(detection > 0){
-        x[x <= detection] <- 0
+    if(threshold > 0){
+        mat[mat <= threshold] <- 0
     }
-    vnss_FUN <- switch(i,
+    vnss_FUN <- switch(index,
                        camargo = .calc_camargo_evenness,
                        pielou = .calc_pielou_evenness,
                        simpson = .calc_simpson_evenness,
                        evar = .calc_evar_evenness,
                        bulla = .calc_bulla_evenness)
-    vnss <- vnss_FUN(mat, ...)
-    vnss
+    vnss_FUN(mat)
 }
