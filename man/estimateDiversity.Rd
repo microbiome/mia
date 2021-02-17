@@ -79,7 +79,7 @@ Several functions for calculation of alpha diversity indices available via
 wrapper functions. They are implemented via the \code{vegan} package.
 }
 \details{
-This includes the \sQuote{Shannon}, \sQuote{Simpson} and
+These include the \sQuote{Shannon}, \sQuote{Simpson} and
 \sQuote{inverse Simpson} diversity measures.
 }
 \examples{
