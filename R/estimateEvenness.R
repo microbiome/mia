@@ -2,7 +2,7 @@
 #'
 #' Several functions for calculation of evenness estimates are available.
 #'
-#' These includes the \sQuote{Camargo}, \sQuote{Pielou}, \sQuote{Simpson},
+#' These include the \sQuote{Camargo}, \sQuote{Pielou}, \sQuote{Simpson},
 #' \sQuote{Evar} and \sQuote{Bulla} evenness measures.
 #'
 #' @param x a \code{\link{SummarizedExperiment}} object

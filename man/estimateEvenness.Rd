@@ -47,7 +47,7 @@ object specifying whether calculation of estimates should be parallelized.}
 Several functions for calculation of evenness estimates are available.
 }
 \details{
-These includes the \sQuote{Camargo}, \sQuote{Pielou}, \sQuote{Simpson},
+These include the \sQuote{Camargo}, \sQuote{Pielou}, \sQuote{Simpson},
 \sQuote{Evar} and \sQuote{Bulla} evenness measures.
 }
 \examples{
