@@ -147,7 +147,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "TreeSum
 
                   # If the object is a phyloseq object, adds refseq to it
                   if(is(obj,"phyloseq")){
-                      phyloseq::phy_tree(obj) <- refseq
+                      obj <- phyloseq::merge_phyloseq(obj, refseq)
                   } else{
                       # Adds to the list
                       args[["refseq"]] <- refseq
