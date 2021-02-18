@@ -153,8 +153,7 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
     # Richness
     S <- colSums2(mat > 0, na.rm = TRUE)
 
-    b <- t(a)/S
-    c <- rowSums2(b, na.rm = TRUE)
+    c <- colSums2(a, na.rm = TRUE)/S
     d <- t((t(a) - c)^2/S)
     d[mat == 0] <- 0
 
