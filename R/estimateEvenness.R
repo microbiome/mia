@@ -15,8 +15,11 @@
 #' @param name a name for the column of the colData the results should be stored
 #'   in.
 #'
-#' @param threshold a numeric threshold. assay values below or equal to this
-#'   threshold will be set to zero.
+#' @param ... optional arguments:
+#' \itemize{
+#'   \item{\code{threshold:}} {a numeric threshold. assay values below or equal
+#'     to this threshold will be set to zero.}
+#' }
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
