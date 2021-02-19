@@ -37,6 +37,7 @@ Imports:
     vegan,
     MASS,
     ape,
+    decontam,
     BiocGenerics,
     S4Vectors,
     IRanges,

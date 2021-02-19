@@ -34,7 +34,7 @@ object}
 
 \item{abund_values}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to use for prevalence calculation.}
+to use for dominance calculation.}
 
 \item{index}{Specifies the indices which are calculated.}
 
