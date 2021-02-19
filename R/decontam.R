@@ -112,7 +112,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
         if(!is.null(batch)){
             batch <- retrieveCellInfo(seqtab, by = batch,
                                       search = "colData")$value
-            batch <- as.factor(batch, sort(unique(batch)))
+            batch <- factor(batch, sort(unique(batch)))
         }
         mat <- assay(seqtab,abund_values)
         contaminant <- isContaminant(t(mat),
