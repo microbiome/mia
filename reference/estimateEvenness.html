@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Accessing most relevant features — getTopTaxa • mia</title>
+<title>Estimate Evenness — estimateEvenness • mia</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Accessing most relevant features — getTopTaxa" />
-<meta property="og:description" content="To query a SummarizedExperiment for interesting features, several
-functions are available." />
+<meta property="og:title" content="Estimate Evenness — estimateEvenness" />
+<meta property="og:description" content="Several functions for calculation of evenness estimates are available." />
 
 
 
@@ -107,29 +106,31 @@ functions are available." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Accessing most relevant features</h1>
+    <h1>Estimate Evenness</h1>
     
-    <div class="hidden name"><code>getTopTaxa.Rd</code></div>
+    <div class="hidden name"><code>estimateEvenness.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>To query a <code>SummarizedExperiment</code> for interesting features, several
-functions are available.</p>
+    <p>Several functions for calculation of evenness estimates are available.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getTopTaxa</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>estimateEvenness</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  top <span class='op'>=</span> <span class='fl'>5L</span>,
-  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mean"</span>, <span class='st'>"sum"</span>, <span class='st'>"median"</span><span class='op'>)</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"camargo"</span>, <span class='st'>"pielou"</span>, <span class='st'>"simpson"</span>, <span class='st'>"evar"</span>, <span class='st'>"bulla"</span><span class='op'>)</span>,
+  name <span class='op'>=</span> <span class='va'>index</span>,
+  <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>getTopTaxa</span><span class='op'>(</span>
+<span class='fu'>estimateEvenness</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  top <span class='op'>=</span> <span class='fl'>5L</span>,
-  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mean"</span>, <span class='st'>"sum"</span>, <span class='st'>"median"</span>, <span class='st'>"prevalence"</span><span class='op'>)</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"camargo"</span>, <span class='st'>"pielou"</span>, <span class='st'>"simpson"</span>, <span class='st'>"evar"</span>, <span class='st'>"bulla"</span><span class='op'>)</span>,
+  name <span class='op'>=</span> <span class='va'>index</span>,
+  <span class='va'>...</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -137,49 +138,85 @@ functions are available.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A
-<code>SummarizedExperiment</code> object.</p></td>
-    </tr>
-    <tr>
-      <th>top</th>
-      <td><p>Numeric value, how many top taxa to return. Default return top
-five taxa.</p></td>
-    </tr>
-    <tr>
-      <th>method</th>
-      <td><p>Specify the method to determine top taxa. Either sum, mean,
-median or prevalence. Default is 'mean'.</p></td>
+      <td><p>a <code>SummarizedExperiment</code> object</p></td>
     </tr>
     <tr>
       <th>abund_values</th>
-      <td><p>a <code>character</code> value to select an
-<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assayNames</a></code></p></td>
+      <td><p>the name of the assay used for calculation of the
+sample-wise estimates</p></td>
+    </tr>
+    <tr>
+      <th>index</th>
+      <td><p>a evenness measurement</p></td>
+    </tr>
+    <tr>
+      <th>name</th>
+      <td><p>a name for the column of the colData the results should be stored
+in.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>additional parameters passed to <code>estimateEvenness</code></p></td>
+    </tr>
+    <tr>
+      <th>BPPARAM</th>
+      <td><p>A
+<code><a href='https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html'>BiocParallelParam</a></code>
+object specifying whether calculation of estimates should be parallelized.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>For <code>getTopTaxa</code>: A vector of the most <code>top</code> abundant
-&#8220;FeatureID&#8221;s</p>
+    <p><code>x</code> with additional <code>colData</code> named
+<code>*name*</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>getTopTaxa</code> extracts the most <code>top</code> abundant &#8220;FeatureID&#8221;s
-in a <code>SummarizedExperiment</code> object.</p>
+    <p>These include the &#8216;Camargo&#8217;, &#8216;Pielou&#8217;, &#8216;Simpson&#8217;,
+&#8216;Evar&#8217; and &#8216;Bulla&#8217; evenness measures.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='getPrevalence.html'>getPrevalentTaxa</a></code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p>Sudarshan A. Shetty</p>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>top_taxa</span> <span class='op'>&lt;-</span> <span class='fu'>getTopTaxa</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,
-                       method<span class='op'>=</span><span class='st'>"mean"</span>,
-                       top<span class='op'>=</span><span class='fl'>5</span>,
-                       abund_values<span class='op'>=</span><span class='st'>"counts"</span><span class='op'>)</span>
-<span class='va'>top_taxa</span>
-</div><div class='output co'>#&gt; [1] "549656" "331820" "279599" "360229" "317182"</div></pre>
+<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
+
+<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>estimateEvenness</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; DataFrame with 6 rows and 12 columns
+#&gt;         X.SampleID   Primer Final_Barcode Barcode_truncated_plus_T
+#&gt;           &lt;factor&gt; &lt;factor&gt;      &lt;factor&gt;                 &lt;factor&gt;
+#&gt; CL3        CL3      ILBC_01        AACGCA                   TGCGTT
+#&gt; CC1        CC1      ILBC_02        AACTCG                   CGAGTT
+#&gt; SV1        SV1      ILBC_03        AACTGT                   ACAGTT
+#&gt; M31Fcsw    M31Fcsw  ILBC_04        AAGAGA                   TCTCTT
+#&gt; M11Fcsw    M11Fcsw  ILBC_05        AAGCTG                   CAGCTT
+#&gt; M31Plmr    M31Plmr  ILBC_07        AATCGT                   ACGATT
+#&gt;         Barcode_full_length SampleType
+#&gt;                    &lt;factor&gt;   &lt;factor&gt;
+#&gt; CL3             CTAGCGTGCGT      Soil 
+#&gt; CC1             CATCGACGAGT      Soil 
+#&gt; SV1             GTACGCACAGT      Soil 
+#&gt; M31Fcsw         TCGACATCTCT      Feces
+#&gt; M11Fcsw         CGACTGCAGCT      Feces
+#&gt; M31Plmr         CGAGTCACGAT      Skin 
+#&gt;                                        Description   camargo    pielou
+#&gt;                                           &lt;factor&gt; &lt;numeric&gt; &lt;numeric&gt;
+#&gt; CL3     Calhoun South Carolina Pine soil, pH 4.9    0.715970  0.743235
+#&gt; CC1     Cedar Creek Minnesota, grassland, pH 6.1    0.692802  0.757480
+#&gt; SV1     Sevilleta new Mexico, desert scrub, pH 8.3  0.752672  0.750985
+#&gt; M31Fcsw M3, Day 1, fecal swab, whole body study     0.982806  0.485297
+#&gt; M11Fcsw M1, Day 1, fecal swab, whole body study     0.869144  0.418639
+#&gt; M31Plmr M3, Day 1, right palm, whole body study     0.697712  0.531161
+#&gt;            simpson      evar     bulla
+#&gt;          &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
+#&gt; CL3     0.02687102  0.152666 0.2578353
+#&gt; CC1     0.02719672  0.140227 0.2762060
+#&gt; SV1     0.04704907  0.143689 0.2443118
+#&gt; M31Fcsw 0.00517883  0.128413 0.0920738
+#&gt; M11Fcsw 0.00430415  0.139155 0.0678475
+#&gt; M31Plmr 0.00501120  0.161522 0.1228909</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
