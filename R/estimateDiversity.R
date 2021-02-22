@@ -3,7 +3,7 @@
 #' Several functions for calculation of alpha diversity indices available via
 #' wrapper functions. They are implemented via the \code{vegan} package.
 #'
-#' This includes the \sQuote{Shannon}, \sQuote{Simpson} and
+#' These include the \sQuote{Shannon}, \sQuote{Simpson} and
 #' \sQuote{inverse Simpson} diversity measures.
 #'
 #' @param x a \code{\link{SummarizedExperiment}} object
@@ -127,7 +127,7 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
                                          x = x,
                                          mat = assay(x, abund_values),
                                          BPPARAM = BPPARAM, ...)
-        .add_dvrsty_values_to_colData(x, dvrsts, name)
+        .add_values_to_colData(x, dvrsts, name)
     }
 )
 
@@ -210,23 +210,4 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                          ACE = .get_ACE)
     dvrsty <- dvrsty_FUN(mat, ...)
     dvrsty
-}
-
-#' @importFrom SummarizedExperiment colData colData<-
-#' @importFrom S4Vectors DataFrame
-.add_dvrsty_values_to_colData <- function(x, dvrsts, name){
-    dvrsts <- mapply(
-        function(dvrsty, n){
-            dvrsty <- DataFrame(dvrsty)
-            colnames(dvrsty)[1L] <- n
-            if(ncol(dvrsty) > 1L){
-                i <- seq.int(2,ncol(dvrsty))
-                colnames(dvrsty)[i] <- paste0(n,"_",colnames(dvrsty)[i])
-            }
-            dvrsty
-        },
-        dvrsts,
-        name)
-    colData(x) <- cbind(colData(x),DataFrame(dvrsts))
-    x
 }
