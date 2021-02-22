@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.35</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.36</span>
       </span>
     </div>
 
@@ -119,7 +119,109 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <h2 id="section-data-handling" class="hasAnchor"><a href="#section-data-handling" class="anchor"></a>Data handling</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-agglomeration" class="hasAnchor"><a href="#section-agglomeration" class="anchor"></a>Agglomeration</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="agglomerate-methods.html">agglomerateByRank(<i>&lt;SummarizedExperiment&gt;</i>)</a></code> <code><a href="agglomerate-methods.html">agglomerateByRank(<i>&lt;SingleCellExperiment&gt;</i>)</a></code> <code><a href="agglomerate-methods.html">agglomerateByRank(<i>&lt;TreeSummarizedExperiment&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Agglomerate data using taxonomic information</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="merge-methods.html">mergeRows()</a></code> <code><a href="merge-methods.html">mergeCols()</a></code> </p>
+        </td>
+        <td><p>Merge a subset of the rows or columns</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="splitByRanks.html">splitByRanks()</a></code> <code><a href="splitByRanks.html">unsplitByRanks()</a></code> </p>
+        </td>
+        <td><p>Split/Unsplit a <code>SingleCellExperiment</code> be taxonomic ranks</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-transformation" class="hasAnchor"><a href="#section-transformation" class="anchor"></a>Transformation</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="transformCounts.html">transformCounts()</a></code> <code><a href="transformCounts.html">ZTransform()</a></code> <code><a href="transformCounts.html">relAbundanceCounts()</a></code> </p>
+        </td>
+        <td><p>Transform Counts</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-data-loading" class="hasAnchor"><a href="#section-data-loading" class="anchor"></a>Data loading</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="makeTreeSummarizedExperimentFromphyloseq.html">makeTreeSummarizedExperimentFromphyloseq()</a></code> </p>
+        </td>
+        <td><p>Coerce a <code>phyloseq</code> object to a <code>TreeSummarizedExperiment</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="makeTreeSummarizedExperimentFromDADA2.html">makeTreeSummarizedExperimentFromDADA2()</a></code> </p>
+        </td>
+        <td><p>Coerce &#8216;DADA2&#8217; results to <code>TreeSummarizedExperiment</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="makeTreeSummarizedExperimentFromBiom.html">loadFromBiom()</a></code> <code><a href="makeTreeSummarizedExperimentFromBiom.html">makeTreeSummarizedExperimentFromBiom()</a></code> </p>
+        </td>
+        <td><p>Loading a biom file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="loadFromQIIME2.html">loadFromQIIME2()</a></code> </p>
+        </td>
+        <td><p>Import QIIME2 results to <code>TreeSummarizedExperiment</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="makePhyloseqFromTreeSummarizedExperiment.html">makePhyloseqFromTreeSummarizedExperiment()</a></code> </p>
+        </td>
+        <td><p>Create a phyloseq object from a TreeSummarizedExperiment object</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-taxonomic-data" class="hasAnchor"><a href="#section-taxonomic-data" class="anchor"></a>Taxonomic data</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -131,21 +233,56 @@
       <tr>
         
         <td>
-          <p><code><a href="agglomerate-methods.html">agglomerateByRank(<i>&lt;SummarizedExperiment&gt;</i>)</a></code> <code><a href="agglomerate-methods.html">agglomerateByRank(<i>&lt;SingleCellExperiment&gt;</i>)</a></code> <code><a href="agglomerate-methods.html">agglomerateByRank(<i>&lt;TreeSummarizedExperiment&gt;</i>)</a></code> </p>
+          <p><code><a href="taxonomy-methods.html">TAXONOMY_RANKS</a></code> <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> <code><a href="taxonomy-methods.html">taxonomyRankEmpty()</a></code> <code><a href="taxonomy-methods.html">checkTaxonomy()</a></code> <code><a href="taxonomy-methods.html">getTaxonomyLabels()</a></code> <code><a href="taxonomy-methods.html">taxonomyTree()</a></code> <code><a href="taxonomy-methods.html">addTaxonomyTree()</a></code> </p>
         </td>
-        <td><p>Agglomerate taxa of the same type.</p></td>
-      </tr><tr>
+        <td><p>Taxonomy related functions</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-diversity-indeces" class="hasAnchor"><a href="#section-diversity-indeces" class="anchor"></a>Diversity indeces</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-alpha-diversity" class="hasAnchor"><a href="#section-alpha-diversity" class="anchor"></a>Alpha Diversity</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
-          <p><code><a href="calculateDMN.html">calculateDMN()</a></code> <code><a href="calculateDMN.html">runDMN()</a></code> <code><a href="calculateDMN.html">getDMN()</a></code> <code><a href="calculateDMN.html">bestDMNFit()</a></code> <code><a href="calculateDMN.html">getBestDMNFit()</a></code> <code><a href="calculateDMN.html">plotDMNFit()</a></code> <code><a href="calculateDMN.html">calculateDMNgroup()</a></code> <code><a href="calculateDMN.html">performDMNgroupCV()</a></code> </p>
+          <p><code><a href="estimateDiversity.html">estimateDiversity()</a></code> <code><a href="estimateDiversity.html">estimateAlphaDiversity()</a></code> <code><a href="estimateDiversity.html">estimateShannon()</a></code> <code><a href="estimateDiversity.html">estimateSimpson()</a></code> <code><a href="estimateDiversity.html">estimateInvSimpson()</a></code> <code><a href="estimateDiversity.html">estimateRichness()</a></code> </p>
         </td>
-        <td><p>Dirichlet-Multinomial Mixture Model Machine Learning for Microbiome Data</p></td>
-      </tr><tr>
+        <td><p>Estimate alpha diversity</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-beta-diversity" class="hasAnchor"><a href="#section-beta-diversity" class="anchor"></a>Beta Diversity</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
-          <p><code><a href="calculateDistance.html">calculateDistance()</a></code> </p>
+          <p><code><a href="calculateUniFrac.html">calculateUniFrac(<i>&lt;ANY&gt;</i>,<i>&lt;phylo&gt;</i>)</a></code> <code><a href="calculateUniFrac.html">calculateUniFrac(<i>&lt;TreeSummarizedExperiment&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="calculateUniFrac.html">runUniFrac()</a></code> </p>
         </td>
-        <td><p>Calculate distances for all sample pairs</p></td>
+        <td><p>Calculate weighted or unweighted (Fast) UniFrac distance</p></td>
       </tr><tr>
         
         <td>
@@ -155,40 +292,50 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="calculateUniFrac.html">calculateUniFrac(<i>&lt;ANY&gt;</i>,<i>&lt;phylo&gt;</i>)</a></code> <code><a href="calculateUniFrac.html">calculateUniFrac(<i>&lt;TreeSummarizedExperiment&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> <code><a href="calculateUniFrac.html">runUniFrac()</a></code> </p>
+          <p><code><a href="calculateDistance.html">calculateDistance()</a></code> </p>
         </td>
-        <td><p>Calculate weighted or unweighted (Fast) UniFrac distance for all sample pairs</p></td>
+        <td><p>Calculate distances with <code>vegan</code></p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="dominantTaxa.html">dominantTaxa()</a></code> <code><a href="dominantTaxa.html">getDominantTaxa()</a></code> </p>
+          <p><code><a href="runNMDS.html">calculateNMDS()</a></code> <code><a href="runNMDS.html">runNMDS()</a></code> <code><a href="runNMDS.html">plotNMDS()</a></code> </p>
         </td>
-        <td><p>Dominant Taxa</p></td>
+        <td><p>Perform non-metric MDS on sample-level data</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="estimateDiversity.html">estimateDiversity()</a></code> <code><a href="estimateDiversity.html">estimateAlphaDiversity()</a></code> <code><a href="estimateDiversity.html">estimateShannon()</a></code> <code><a href="estimateDiversity.html">estimateSimpson()</a></code> <code><a href="estimateDiversity.html">estimateInvSimpson()</a></code> <code><a href="estimateDiversity.html">estimateRichness()</a></code> </p>
+          <p><code><a href="runMDS2.html">calculateMDS2()</a></code> <code><a href="runMDS2.html">runMDS2()</a></code> </p>
         </td>
-        <td><p>Estimate alpha diversity</p></td>
+        <td><p>Perform MDS on sample-level data</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="estimateDominance.html">estimateDominance()</a></code> </p>
+          <p><code><a href="runCCA.html">calculateCCA()</a></code> <code><a href="runCCA.html">runCCA()</a></code> <code><a href="runCCA.html">calculateRDA()</a></code> <code><a href="runCCA.html">runRDA()</a></code> </p>
         </td>
-        <td><p>Estimate Dominance</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="estimateEvenness.html">estimateEvenness()</a></code> </p>
-        </td>
-        <td><p>Estimate Evenness</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getAbundance.html">getAbundanceSample()</a></code> <code><a href="getAbundance.html">getAbundanceFeature()</a></code> </p>
-        </td>
-        <td><p>Get abundance values by &#8220;SampleID&#8221; or &#8220;FeatureID&#8221;</p></td>
-      </tr><tr>
+        <td><p>Canonical Correspondance Analysis</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-other-functions" class="hasAnchor"><a href="#section-other-functions" class="anchor"></a>Other functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-dataset-description" class="hasAnchor"><a href="#section-dataset-description" class="anchor"></a>Dataset description</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="getPrevalence.html">getPrevalence()</a></code> <code><a href="getPrevalence.html">getPrevalentTaxa()</a></code> <code><a href="getPrevalence.html">agglomerateByPrevalence()</a></code> <code><a href="getPrevalence.html">getPrevalentAbundance(<i>&lt;SummarizedExperiment&gt;</i>)</a></code> </p>
@@ -209,34 +356,86 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="loadFromQIIME2.html">loadFromQIIME2()</a></code> </p>
+          <p><code><a href="getAbundance.html">getAbundanceSample()</a></code> <code><a href="getAbundance.html">getAbundanceFeature()</a></code> </p>
         </td>
-        <td><p>Import QIIME2 results to <code>TreeSummarizedExperiment</code></p></td>
+        <td><p>Get abundance values by &#8220;SampleID&#8221; or &#8220;FeatureID&#8221;</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-dominance" class="hasAnchor"><a href="#section-dominance" class="anchor"></a>Dominance</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="dominantTaxa.html">dominantTaxa()</a></code> <code><a href="dominantTaxa.html">getDominantTaxa()</a></code> </p>
+        </td>
+        <td><p>Get dominant taxa</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="makePhyloseqFromTreeSummarizedExperiment.html">makePhyloseqFromTreeSummarizedExperiment()</a></code> </p>
+          <p><code><a href="estimateDominance.html">estimateDominance()</a></code> </p>
         </td>
-        <td><p>Create a phyloseq object from a TreeSummarizedExperiment object</p></td>
-      </tr><tr>
+        <td><p>Estimate Dominance</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-evenness-indeces" class="hasAnchor"><a href="#section-evenness-indeces" class="anchor"></a>Evenness indeces</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
-          <p><code><a href="makeTreeSummarizedExperimentFromBiom.html">loadFromBiom()</a></code> <code><a href="makeTreeSummarizedExperimentFromBiom.html">makeTreeSummarizedExperimentFromBiom()</a></code> </p>
+          <p><code><a href="estimateEvenness.html">estimateEvenness()</a></code> </p>
         </td>
-        <td><p>Loading a biom file</p></td>
-      </tr><tr>
+        <td><p>Estimate Evenness</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-dirichlet-multinomial-mixture-model" class="hasAnchor"><a href="#section-dirichlet-multinomial-mixture-model" class="anchor"></a>Dirichlet-Multinomial Mixture Model</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
-          <p><code><a href="makeTreeSummarizedExperimentFromDADA2.html">makeTreeSummarizedExperimentFromDADA2()</a></code> </p>
+          <p><code><a href="calculateDMN.html">calculateDMN()</a></code> <code><a href="calculateDMN.html">runDMN()</a></code> <code><a href="calculateDMN.html">getDMN()</a></code> <code><a href="calculateDMN.html">bestDMNFit()</a></code> <code><a href="calculateDMN.html">getBestDMNFit()</a></code> <code><a href="calculateDMN.html">plotDMNFit()</a></code> <code><a href="calculateDMN.html">calculateDMNgroup()</a></code> <code><a href="calculateDMN.html">performDMNgroupCV()</a></code> </p>
         </td>
-        <td><p>Coerce &#8216;DADA2&#8217; results to <code>TreeSummarizedExperiment</code></p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="makeTreeSummarizedExperimentFromphyloseq.html">makeTreeSummarizedExperimentFromphyloseq()</a></code> </p>
-        </td>
-        <td><p>Coerce a <code>phyloseq</code> object to a <code>TreeSummarizedExperiment</code></p></td>
-      </tr><tr>
+        <td><p>Dirichlet-Multinomial Mixture Model: Machine Learning for Microbiome Data</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-helper" class="hasAnchor"><a href="#section-helper" class="anchor"></a>Helper</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="meltAssay.html">meltAssay()</a></code> </p>
@@ -246,63 +445,47 @@ object into a long data.frame</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="merge-methods.html">mergeRows()</a></code> <code><a href="merge-methods.html">mergeCols()</a></code> </p>
+          <p><code><a href="relabundance.html">relabundance()</a></code> <code><a href="relabundance.html">`relabundance&lt;-`()</a></code> </p>
         </td>
-        <td><p>Merge a subset of the rows or columns</p></td>
-      </tr><tr>
+        <td><p>Getter / setter for relative abundance data</p></td>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-datasets" class="hasAnchor"><a href="#section-datasets" class="anchor"></a>Datasets</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="mia-datasets.html">GlobalPatterns</a></code> <code><a href="mia-datasets.html">enterotype</a></code> <code><a href="mia-datasets.html">esophagus</a></code> <code><a href="mia-datasets.html">soilrep</a></code> <code><a href="mia-datasets.html">dmn_se</a></code> </p>
         </td>
         <td><p>mia datasets</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      
+      <tr>
+        <th colspan="2">
+          <h3 id="section-package" class="hasAnchor"><a href="#section-package" class="anchor"></a>Package</h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="mia-package.html">mia-package</a></code> </p>
         </td>
         <td><p>mia Package.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="relabundance.html">relabundance()</a></code> <code><a href="relabundance.html">`relabundance&lt;-`()</a></code> </p>
-        </td>
-        <td><p>Getter / setter for relative abundance data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="runCCA.html">calculateCCA()</a></code> <code><a href="runCCA.html">runCCA()</a></code> <code><a href="runCCA.html">calculateRDA()</a></code> <code><a href="runCCA.html">runRDA()</a></code> </p>
-        </td>
-        <td><p>Canonical Correspondance Analysis</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="runMDS2.html">calculateMDS2()</a></code> <code><a href="runMDS2.html">runMDS2()</a></code> </p>
-        </td>
-        <td><p>Perform MDS on sample-level data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="runNMDS.html">calculateNMDS()</a></code> <code><a href="runNMDS.html">runNMDS()</a></code> <code><a href="runNMDS.html">plotNMDS()</a></code> </p>
-        </td>
-        <td><p>Perform non-metric MDS on sample-level data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="splitByRanks.html">splitByRanks()</a></code> <code><a href="splitByRanks.html">unsplitByRanks()</a></code> </p>
-        </td>
-        <td><p>Split/Unsplit a <code>SingleCellExperiment</code> be taxonomic ranks</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="taxonomy-methods.html">TAXONOMY_RANKS</a></code> <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> <code><a href="taxonomy-methods.html">taxonomyRankEmpty()</a></code> <code><a href="taxonomy-methods.html">checkTaxonomy()</a></code> <code><a href="taxonomy-methods.html">getTaxonomyLabels()</a></code> <code><a href="taxonomy-methods.html">taxonomyTree()</a></code> <code><a href="taxonomy-methods.html">addTaxonomyTree()</a></code> </p>
-        </td>
-        <td><p>Taxonomy related functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="transformCounts.html">transformCounts()</a></code> <code><a href="transformCounts.html">ZTransform()</a></code> <code><a href="transformCounts.html">relAbundanceCounts()</a></code> </p>
-        </td>
-        <td><p>Transform Counts</p></td>
       </tr>
     </tbody>
     </table>

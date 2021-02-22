@@ -75,7 +75,7 @@ relAbundanceCounts is a shortcut for fetching relative abundance table." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.35</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.36</span>
       </span>
     </div>
 
@@ -252,29 +252,66 @@ Oecologia 129: 271-280.</p>
 <span class='co'># By specifying, it is possible to apply different transformations, e.g. clr transformation.</span>
 <span class='co'># Pseudocount can be added by specifying 'pseudocount'.</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>transformCounts</span><span class='op'>(</span><span class='va'>x</span>, method<span class='op'>=</span><span class='st'>"clr"</span>, pseudocount<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
-<span class='co'># assays(x)$clr</span>
-
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>assay</span><span class='op'>(</span><span class='va'>x</span>, <span class='st'>"clr"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                  B          C          D
+#&gt; 59_8_22  3.2670356  2.0677373  1.0362399
+#&gt; 59_5_13 -0.6647901  0.1706173 -0.7555196
+#&gt; 59_8_12  0.4338222  1.7110624 -0.7555196
+#&gt; 65_3_22 -0.6647901  0.1706173 -0.0623724
+#&gt; 65_5_1  -0.6647901 -0.9279950 -0.0623724
+#&gt; 65_1_10 -0.6647901 -0.9279950 -0.0623724</div><div class='input'>
 <span class='co'># Name of the stored table can be specified. Also, the target of transformation</span>
 <span class='co'># can be specified with "abund_values".</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>transformCounts</span><span class='op'>(</span><span class='va'>x</span>, method<span class='op'>=</span><span class='st'>"hellinger"</span>, name<span class='op'>=</span><span class='st'>"test"</span>, pseudocount<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span>
-<span class='co'># assays(x)$test</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>assay</span><span class='op'>(</span><span class='va'>x</span>, <span class='st'>"test"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                 B          C          D
+#&gt; 59_8_22 0.3340088 0.20984923 0.14016549
+#&gt; 59_5_13 0.1007074 0.11333153 0.09911197
+#&gt; 59_8_12 0.1191586 0.18173476 0.09911197
+#&gt; 65_3_22 0.1007074 0.11333153 0.10857172
+#&gt; 65_5_1  0.1007074 0.09578263 0.10857172
+#&gt; 65_1_10 0.1007074 0.09578263 0.10857172</div><div class='input'>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>transformCounts</span><span class='op'>(</span><span class='va'>x</span>, method<span class='op'>=</span><span class='st'>"relabundance"</span>, abund_values<span class='op'>=</span><span class='st'>"test"</span><span class='op'>)</span>
-<span class='co'># assays(x)$relabundance</span>
-
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>assay</span><span class='op'>(</span><span class='va'>x</span>, <span class='st'>"relabundance"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                  B          C          D
+#&gt; 59_8_22 0.04743426 0.02949375 0.02024284
+#&gt; 59_5_13 0.01430197 0.01592845 0.01431385
+#&gt; 59_8_12 0.01692231 0.02554234 0.01431385
+#&gt; 65_3_22 0.01430197 0.01592845 0.01568003
+#&gt; 65_5_1  0.01430197 0.01346200 0.01568003
+#&gt; 65_1_10 0.01430197 0.01346200 0.01568003</div><div class='input'>
 <span class='co'># pa returns presence absence table. With 'threshold', it is possible to set the</span>
 <span class='co'># threshold to desired level. By default, it is 0.</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>transformCounts</span><span class='op'>(</span><span class='va'>x</span>, method<span class='op'>=</span><span class='st'>"pa"</span>, threshold<span class='op'>=</span><span class='fl'>35</span><span class='op'>)</span>
-<span class='co'># assays(x)$pa</span>
-
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>assay</span><span class='op'>(</span><span class='va'>x</span>, <span class='st'>"pa"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;         B C D
+#&gt; 59_8_22 1 0 0
+#&gt; 59_5_13 0 0 0
+#&gt; 59_8_12 0 0 0
+#&gt; 65_3_22 0 0 0
+#&gt; 65_5_1  0 0 0
+#&gt; 65_1_10 0 0 0</div><div class='input'>
 <span class='co'># Z-transform can be done for features</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>ZTransform</span><span class='op'>(</span><span class='va'>x</span>, pseudocount<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
-<span class='co'># assays(x)$ZTransform</span>
-
-<span class='co'># Relative abundances can be also fetched with function relAbundanceCounts.</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>assay</span><span class='op'>(</span><span class='va'>x</span>, <span class='st'>"ZTransform"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                  B           C          D
+#&gt; 59_8_22  0.9557828  0.08323189 -1.0390147
+#&gt; 59_5_13 -0.5773503  1.15470054 -0.5773503
+#&gt; 59_8_12 -0.1110960  1.05090886 -0.9398129
+#&gt; 65_3_22 -1.0750696  0.90245812  0.1726115
+#&gt; 65_5_1  -0.5773503 -0.57735027  1.1547005
+#&gt; 65_1_10 -0.5773503 -0.57735027  1.1547005</div><div class='input'>
+<span class='co'># Relative abundances can be also calculate with the dedicated</span>
+<span class='co'># relAbundanceCounts function.</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>relAbundanceCounts</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-<span class='co'>#assays(x)$relabundance</span>
-
-</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>assay</span><span class='op'>(</span><span class='va'>x</span>, <span class='st'>"relabundance"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                   B           C          D
+#&gt; 59_8_22 0.246305419 0.074509804 0.02283105
+#&gt; 59_5_13 0.000000000 0.007843137 0.00000000
+#&gt; 59_8_12 0.009852217 0.050980392 0.00000000
+#&gt; 65_3_22 0.000000000 0.007843137 0.00456621
+#&gt; 65_5_1  0.000000000 0.000000000 0.00456621
+#&gt; 65_1_10 0.000000000 0.000000000 0.00456621</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
