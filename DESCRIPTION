@@ -65,8 +65,8 @@ Suggests:
     dada2,
     biomformat,
     reldist
-Remotes:
-    github::microbiome/microbiomeDataSets
+URL: https://github.com/FelixErnst/mia
+BugReports: https://github.com/FelixErnst/mia/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
