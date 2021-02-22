@@ -6,7 +6,7 @@
 \alias{agglomerateByRank}
 \alias{agglomerateByRank,SingleCellExperiment-method}
 \alias{agglomerateByRank,TreeSummarizedExperiment-method}
-\title{Agglomerate taxa of the same type.}
+\title{Agglomerate data using taxonomic information}
 \usage{
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,

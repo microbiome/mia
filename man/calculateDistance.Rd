@@ -4,7 +4,7 @@
 \alias{calculateDistance}
 \alias{calculateDistance,ANY-method}
 \alias{calculateDistance,SummarizedExperiment-method}
-\title{Calculate distances for all sample pairs}
+\title{Calculate distances with \code{vegan}}
 \usage{
 calculateDistance(x, FUN = stats::dist, ...)
 

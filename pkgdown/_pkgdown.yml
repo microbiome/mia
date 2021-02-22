@@ -1,1 +1,60 @@
 destination: docs
+reference:
+- title: Data handling
+- subtitle: Agglomeration
+- contents:
+  - agglomerateByRank
+  - mergeRows
+  - splitByRanks
+- subtitle: Transformation
+- contents:
+  - transformCounts
+- subtitle: Data loading
+- contents:
+  - makeTreeSummarizedExperimentFromphyloseq
+  - makeTreeSummarizedExperimentFromDADA2
+  - loadFromBiom
+  - loadFromQIIME2
+  - makePhyloseqFromTreeSummarizedExperiment
+- title: Taxonomic data
+  contents:
+  - taxonomyRanks
+- title: Diversity indeces
+- subtitle: Alpha Diversity
+- contents:
+  - estimateDiversity
+- subtitle: Beta Diversity
+- contents:
+  - calculateUniFrac
+  - calculateJSD
+  - calculateDistance
+  - calculateNMDS
+  - calculateMDS2
+  - calculateCCA
+- title: Other functions
+- subtitle: Dataset description
+- contents:
+  - getPrevalence
+  - getPrevalentAbundance
+  - getTopTaxa
+  - getAbundanceSample
+- subtitle: Dominance
+- contents:
+  - getDominantTaxa
+  - estimateDominance
+- subtitle: Evenness indeces
+- contents:
+  - estimateEvenness
+- subtitle: Dirichlet-Multinomial Mixture Model
+- contents:
+  - calculateDMN
+- subtitle: Helper
+- contents:
+  - meltAssay
+  - relabundance
+- subtitle: Datasets
+- contents:
+  - GlobalPatterns
+- subtitle: Package
+- contents:
+  - mia-package

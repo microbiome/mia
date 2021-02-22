@@ -1,4 +1,4 @@
-#' Dominant Taxa
+#' Get dominant taxa
 #'
 #' These functions return information about the most dominant taxa in a
 #' \code{\link{SummarizedExperiment-class}} object. Additionally, the information

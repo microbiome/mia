@@ -1,4 +1,4 @@
-#' Agglomerate taxa of the same type.
+#' Agglomerate data using taxonomic information
 #'
 #' \code{agglomerateByRank} can be used to sum up data based on the association
 #' to certain taxonomic ranks given as \code{rowData}. Only available

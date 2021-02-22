@@ -1,4 +1,4 @@
-#' Calculate weighted or unweighted (Fast) UniFrac distance for all sample pairs
+#' Calculate weighted or unweighted (Fast) UniFrac distance
 #'
 #' This function calculates the (Fast) UniFrac distance for all sample-pairs
 #' in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
