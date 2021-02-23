@@ -74,7 +74,7 @@ object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.36</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.37</span>
       </span>
     </div>
 
@@ -125,12 +125,12 @@ object.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for ANY</span>
-<span class='fu'>calculateJSD</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+<span class='fu'>calculateJSD</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>calculateJSD</span><span class='op'>(</span><span class='va'>x</span>, exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>, transposed <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>runJSD</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+<span class='fu'>runJSD</span><span class='op'>(</span><span class='va'>x</span>, BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>, chunkSize <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,6 +139,10 @@ object.</p>
       <th>x</th>
       <td><p>a numeric matrix or a
 <code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>optional arguments not used.</p></td>
     </tr>
     <tr>
       <th>exprs_values</th>
@@ -150,8 +154,16 @@ assay to use for calculation.</p></td>
       <td><p>Logical scalar, is x transposed with cells in rows?</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>optional arguments not used.</p></td>
+      <th>BPPARAM</th>
+      <td><p>A
+<code><a href='https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html'>BiocParallelParam</a></code>
+object specifying whether the JSD calculation should be parallelized.</p></td>
+    </tr>
+    <tr>
+      <th>chunkSize</th>
+      <td><p>a integer scalar, defining the size of data send
+to the individual worker. Only has an effect, if <code>BPPARAM</code> defines
+more than one worker. (default: <code>chunkSize = nrow(x)</code>)</p></td>
     </tr>
     </table>
 
