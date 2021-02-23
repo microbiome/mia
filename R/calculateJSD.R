@@ -52,8 +52,8 @@ setGeneric("calculateJSD", signature = c("x"),
 #' @rdname calculateJSD
 #' @export
 setMethod("calculateJSD", signature = c(x = "ANY"),
-    function(x){
-        calculateDistance(x, FUN = runJSD)
+    function(x, ...){
+        calculateDistance(x, FUN = runJSD, ...)
     }
 )
 
@@ -93,26 +93,51 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
 #'
 #' @importFrom utils combn
 #' @importFrom stats as.dist
+#' @importFrom BiocParallel SerialParam register bplapply bpisup bpstart bpstop
+#' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runJSD <- function(x){
+runJSD <- function(x, chunkSize = nrow(x), BPPARAM = SerialParam()){
     # input check
     if(is.null(rownames(x))){
         rownames(x) <- seq_len(nrow(x))
     }
+    if(missing(chunkSize) || is.na(chunkSize) || is.null(chunkSize) ||
+       !is.numeric(chunkSize)){
+        chunkSize <- nrow(x)
+    } else if(length(chunkSize) != 1L) {
+        chunkSize <- chunkSize[1L]
+    }
+    #
+    old <- getAutoBPPARAM()
+    setAutoBPPARAM(BPPARAM)
+    on.exit(setAutoBPPARAM(old))
+    if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
+        bpstart(BPPARAM)
+        on.exit(bpstop(BPPARAM), add = TRUE)
+    }
     # Coerce to relative abundance by sample (row)
     x <- sweep(x, 1L, rowSums(x), "/")
     # create N x 2 matrix of all pairwise combinations of samples.
-    spn <- utils::combn(rownames(x), 2, simplify = FALSE)
+    spn <- utils::combn(rownames(x), 2, simplify = TRUE)
     #
-    A <- vapply(spn,"[",character(1),1L)
-    B <- vapply(spn,"[",character(1),2L)
-    distlist <- .JSD(x[A,], x[B,])
+    N <- ncol(spn)
+    f <- ceiling(seq_len(N)/chunkSize)
+    A <- split(spn[1L,], f)
+    B <- split(spn[2L,], f)
+    FUN <- function(X, a, b){
+        .JSD(X[a,,drop=FALSE], X[b,,drop=FALSE])
+    }
+    distlist <- BiocParallel::bpmapply(FUN, A, B,
+                                       MoreArgs = list(X = x),
+                                       BPPARAM = BPPARAM,
+                                       SIMPLIFY = FALSE)
+    distlist <- do.call(c, unname(distlist))
     # reformat
     # initialize distmat with NAs
     distmat <- matrix(NA_real_, nrow(x), nrow(x))
     rownames(distmat) <- colnames(distmat) <- rownames(x)
-    matIndices <- matrix(c(B, A), ncol = 2)
+    matIndices <- matrix(c(unlist(B), unlist(A)), ncol = 2)
     distmat[matIndices] <- distlist
     #
     stats::as.dist(distmat)

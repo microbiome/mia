@@ -7,22 +7,22 @@
 \alias{runJSD}
 \title{Calculate the Jensen-Shannon Divergence}
 \usage{
-\S4method{calculateJSD}{ANY}(x)
+\S4method{calculateJSD}{ANY}(x, ...)
 
 \S4method{calculateJSD}{SummarizedExperiment}(x, exprs_values = "counts", transposed = FALSE, ...)
 
-runJSD(x)
+runJSD(x, chunkSize = nrow(x), BPPARAM = SerialParam())
 }
 \arguments{
 \item{x}{a numeric matrix or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
 
+\item{...}{optional arguments not used.}
+
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
-
-\item{...}{optional arguments not used.}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.
