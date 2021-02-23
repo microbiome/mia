@@ -12,6 +12,14 @@
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
+#' @param BPPARAM A
+#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+#'   object specifying whether the JSD calculation should be parallelized.
+#'
+#' @param chunkSize a integer scalar, defining the size of data send
+#'   to the individual worker. Only has an effect, if \code{BPPARAM} defines
+#'   more than one worker. (default: \code{chunkSize = nrow(x)})
+#'
 #' @param ... optional arguments not used.
 #'
 #' @return a sample-by-sample distance matrix, suitable for NMDS, etc.
@@ -97,13 +105,13 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runJSD <- function(x, chunkSize = nrow(x), BPPARAM = SerialParam()){
+runJSD <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x)){
     # input check
     if(is.null(rownames(x))){
         rownames(x) <- seq_len(nrow(x))
     }
     if(missing(chunkSize) || is.na(chunkSize) || is.null(chunkSize) ||
-       !is.numeric(chunkSize)){
+       !is.integer(chunkSize)){
         chunkSize <- nrow(x)
     } else if(length(chunkSize) != 1L) {
         chunkSize <- chunkSize[1L]
