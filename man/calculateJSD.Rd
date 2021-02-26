@@ -7,22 +7,30 @@
 \alias{runJSD}
 \title{Calculate the Jensen-Shannon Divergence}
 \usage{
-\S4method{calculateJSD}{ANY}(x)
+\S4method{calculateJSD}{ANY}(x, ...)
 
 \S4method{calculateJSD}{SummarizedExperiment}(x, exprs_values = "counts", transposed = FALSE, ...)
 
-runJSD(x)
+runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x))
 }
 \arguments{
 \item{x}{a numeric matrix or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
+
+\item{...}{optional arguments not used.}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 
-\item{...}{optional arguments not used.}
+\item{BPPARAM}{A
+\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+object specifying whether the JSD calculation should be parallelized.}
+
+\item{chunkSize}{a integer scalar, defining the size of data send
+to the individual worker. Only has an effect, if \code{BPPARAM} defines
+more than one worker. (default: \code{chunkSize = nrow(x)})}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.
@@ -34,9 +42,13 @@ object.
 }
 \examples{
 data(enterotype)
-calculateJSD(enterotype)
+jsd <- calculateJSD(enterotype)
+class(jsd)
+head(jsd)
 enterotype <- runMDS2(enterotype, FUN = calculateJSD, name = "JSD")
-reducedDim(enterotype)
+head(reducedDim(enterotype))
+head(attr(reducedDim(enterotype),"eig"))
+attr(reducedDim(enterotype),"GOF")
 }
 \references{
 Jensen-Shannon Divergence and Hilbert space embedding.

@@ -6,14 +6,14 @@
 \alias{agglomerateByRank}
 \alias{agglomerateByRank,SingleCellExperiment-method}
 \alias{agglomerateByRank,TreeSummarizedExperiment-method}
-\title{Agglomerate taxa of the same type.}
+\title{Agglomerate data using taxonomic information}
 \usage{
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
   onRankOnly = FALSE,
   na.rm = FALSE,
-  empty.fields = c(NA, "", " ", "\\t", "-"),
+  empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
 )
 

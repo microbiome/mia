@@ -1,4 +1,4 @@
-#' Calculate distances for all sample pairs
+#' Calculate distances with \code{vegan}
 #'
 #' \code{calculateDistance} calculates a distance matrix between samples. The
 #' type of distance calculate can be modifier by setting \code{FUN}, which

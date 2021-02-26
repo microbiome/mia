@@ -75,3 +75,25 @@
         stop("'",name,"' must be a valid name of assays(x)", call. = FALSE)
     }
 }
+
+################################################################################
+# internal wrappers for getter/setter
+
+#' @importFrom SummarizedExperiment colData colData<-
+#' @importFrom S4Vectors DataFrame
+.add_values_to_colData <- function(x, values, name){
+    values <- mapply(
+        function(value, n){
+            value <- DataFrame(value)
+            colnames(value)[1L] <- n
+            if(ncol(value) > 1L){
+                i <- seq.int(2,ncol(value))
+                colnames(value)[i] <- paste0(n,"_",colnames(value)[i])
+            }
+            value
+        },
+        values,
+        name)
+    colData(x) <- cbind(colData(x),DataFrame(values))
+    x
+}

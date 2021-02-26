@@ -134,28 +134,29 @@ x <- esophagus
 # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 # Pseudocount can be added by specifying 'pseudocount'.
 x <- transformCounts(x, method="clr", pseudocount=1)
-# assays(x)$clr
+head(assay(x, "clr"))
 
 # Name of the stored table can be specified. Also, the target of transformation
 # can be specified with "abund_values".
 x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
-# assays(x)$test
+head(assay(x, "test"))
+
 x <- transformCounts(x, method="relabundance", abund_values="test")
-# assays(x)$relabundance
+head(assay(x, "relabundance"))
 
 # pa returns presence absence table. With 'threshold', it is possible to set the
 # threshold to desired level. By default, it is 0.
 x <- transformCounts(x, method="pa", threshold=35)
-# assays(x)$pa
+head(assay(x, "pa"))
 
 # Z-transform can be done for features
 x <- ZTransform(x, pseudocount=1)
-# assays(x)$ZTransform
+head(assay(x, "ZTransform"))
 
-# Relative abundances can be also fetched with function relAbundanceCounts.
+# Relative abundances can be also calculate with the dedicated
+# relAbundanceCounts function.
 x <- relAbundanceCounts(x)
-#assays(x)$relabundance
-
+head(assay(x, "relabundance"))
 }
 \references{
 Gloor GB, Macklaim JM, Pawlowsky-Glahn V & Egozcue JJ (2017)

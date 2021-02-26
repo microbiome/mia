@@ -19,7 +19,7 @@
 \alias{performDMNgroupCV}
 \alias{performDMNgroupCV,ANY-method}
 \alias{performDMNgroupCV,SummarizedExperiment-method}
-\title{Dirichlet-Multinomial Mixture Model Machine Learning for Microbiome Data}
+\title{Dirichlet-Multinomial Mixture Model: Machine Learning for Microbiome Data}
 \usage{
 calculateDMN(x, ...)
 

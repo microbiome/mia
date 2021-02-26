@@ -1,4 +1,4 @@
-#' Dirichlet-Multinomial Mixture Model Machine Learning for Microbiome Data
+#' Dirichlet-Multinomial Mixture Model: Machine Learning for Microbiome Data
 #'
 #' These function are accessors for functions implemented in the
 #' \code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}} package

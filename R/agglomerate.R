@@ -1,4 +1,4 @@
-#' Agglomerate taxa of the same type.
+#' Agglomerate data using taxonomic information
 #'
 #' \code{agglomerateByRank} can be used to sum up data based on the association
 #' to certain taxonomic ranks given as \code{rowData}. Only available
@@ -87,7 +87,7 @@ setGeneric("agglomerateByRank",
                standardGeneric("agglomerateByRank"))
 
 .remove_with_empty_taxonomic_info <-
-    function(x, column, empty.fields = c(NA,""," ","\t","-"))
+    function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
 {
     tax <- as.character(rowData(x)[,column])
     f <- !(tax %in% empty.fields)
@@ -105,7 +105,7 @@ setGeneric("agglomerateByRank",
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
-       empty.fields = c(NA, "", " ", "\t", "-"), ...){
+       empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
@@ -116,6 +116,9 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         }
         if(!.is_a_bool(na.rm)){
             stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if(nrow(x) == 0L){
+            stop("'x' has nrow(x) == 0L.",call. = FALSE)
         }
         if(ncol(rowData(x)) == 0L){
             stop("taxonomyData needs to be populated.", call. = FALSE)

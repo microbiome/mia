@@ -30,6 +30,9 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
 #'
+#' @param from a \code{Taxa} object as returned by
+#'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}
+#'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomicRanks()} function.
 #'
@@ -49,6 +52,14 @@
 #'   if the data is unique. (default: \code{resolve_loops = TRUE})
 #'
 #' @param ... optional arguments not used currently.
+#'
+#' @details
+#' Taxonomic information from the \code{IdTaxa} function of \code{DECIPHER}
+#' package are returned as a special class. With \code{as(taxa,"DataFrame")}
+#' the information can be easily converted to a \code{DataFrame} compatible
+#' with storing the taxonomic information a \code{rowData}. Please not that the
+#' assigned confidence information are returned as \code{metatdata} and can
+#' be accessed using \code{metadata(df)$confidence}.
 #'
 #' @return
 #' \itemize{
@@ -109,7 +120,7 @@ setMethod("taxonomyRanks", signature = c(x = "SummarizedExperiment"),
 setGeneric("taxonomyRankEmpty",
            signature = "x",
            function(x, rank = taxonomyRanks(x)[1L],
-                    empty.fields = c(NA, "", " ", "\t", "-"))
+                    empty.fields = c(NA, "", " ", "\t", "-", "_"))
              standardGeneric("taxonomyRankEmpty"))
 
 #' @rdname taxonomy-methods
@@ -120,7 +131,7 @@ setGeneric("taxonomyRankEmpty",
 #' @export
 setMethod("taxonomyRankEmpty", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1],
-           empty.fields = c(NA, "", " ", "\t", "-")){
+           empty.fields = c(NA, "", " ", "\t", "-", "_")){
     # input check
     if(ncol(rowData(x)) == 0L){
         stop("rowData needs to be populated.", call. = FALSE)
@@ -203,7 +214,7 @@ setGeneric("getTaxonomyLabels",
 #' @aliases checkTaxonomy
 #' @export
 setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
-    function(x, empty.fields = c(NA, "", " ", "\t", "-"),
+    function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"),
              with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE){
         # input check
         if(ncol(rowData(x)) == 0L){
@@ -289,7 +300,8 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-.get_taxonomic_label <- function(x, empty.fields = c(NA, "", " ", "\t", "-"),
+.get_taxonomic_label <- function(x,
+                                 empty.fields = c(NA, "", " ", "\t", "-", "_"),
                                  with_rank = FALSE, make_unique = TRUE,
                                  resolve_loops = FALSE){
     rd <- rowData(x)
@@ -406,3 +418,39 @@ setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
     }
     factor(groups, unique(groups))
 }
+
+################################################################################
+# IDTAXA to DataFrame conversion
+
+.idtaxa_to_DataFrame <- function(from){
+    ranks <- CharacterList(lapply(from,"[[","rank"))
+    conf <- NumericList(lapply(from,"[[","confidence"))
+    taxa <- CharacterList(lapply(from,"[[","taxon"))
+    # even out the lengths
+    l <- lengths(ranks)
+    ml <- max(l)
+    diff <- ml - l
+    add <- CharacterList(lapply(diff,rep,x=NA))
+    ranks <- pc(ranks,add)
+    conf <- pc(conf,as(add,"NumericList"))
+    taxa <- pc(taxa,add)
+    # convert to DataFrame
+    names <- unique(unlist(ranks))
+    names <- names[!is.na(names)]
+    taxa <- DataFrame(as.matrix(taxa))
+    colnames(taxa) <- names
+    conf <- DataFrame(as.matrix(conf))
+    colnames(conf) <- names
+    # subset to valid taxonomic information
+    f <- tolower(names) %in% TAXONOMY_RANKS
+    taxa <- taxa[,f]
+    conf <- conf[,f]
+    # combine with confidence data
+    metadata(taxa)$confidence <- conf
+    #
+    taxa
+}
+
+#' @rdname taxonomy-methods
+#' @export
+IdTaxaToDataFrame <- .idtaxa_to_DataFrame

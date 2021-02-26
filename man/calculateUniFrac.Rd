@@ -5,7 +5,7 @@
 \alias{calculateUniFrac,ANY,phylo-method}
 \alias{calculateUniFrac,TreeSummarizedExperiment,missing-method}
 \alias{runUniFrac}
-\title{Calculate weighted or unweighted (Fast) UniFrac distance for all sample pairs}
+\title{Calculate weighted or unweighted (Fast) UniFrac distance}
 \usage{
 \S4method{calculateUniFrac}{ANY,phylo}(
   x,
