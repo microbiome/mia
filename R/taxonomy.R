@@ -422,6 +422,8 @@ setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
 ################################################################################
 # IDTAXA to DataFrame conversion
 
+#' @importFrom IRanges CharacterList NumericList
+#' @importFrom S4Vectors pc DataFrame
 .idtaxa_to_DataFrame <- function(from){
     ranks <- CharacterList(lapply(from,"[[","rank"))
     conf <- NumericList(lapply(from,"[[","confidence"))

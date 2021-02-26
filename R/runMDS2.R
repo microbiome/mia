@@ -4,9 +4,9 @@
 #' SingleCellExperiment object.
 #'
 #' @param x a \linkS4class{SingleCellExperiment} containing a numeric matrix of
-#'   log-expression values where rows are features and columns are cells.
+#'   expression values where rows are features and columns are cells.
 #'
-#' @param ncomponents Numeric scalar indicating the number of MDS?g dimensions
+#' @param ncomponents Numeric scalar indicating the number of MDS dimensions
 #'   to obtain.
 #'
 #' @param ntop Numeric scalar specifying the number of features with the highest

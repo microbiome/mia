@@ -2,34 +2,94 @@
 % Please edit documentation in R/runDPCoA.R
 \name{runDPCoA}
 \alias{runDPCoA}
+\alias{calculateDPCoA}
 \alias{calculateDPCoA,ANY,ANY-method}
 \alias{calculateDPCoA,TreeSummarizedExperiment,missing-method}
 \title{Calculation of Double Principal Correspondance analysis}
 \usage{
+calculateDPCoA(x, y, ...)
+
 \S4method{calculateDPCoA}{ANY,ANY}(
   x,
   y,
   ncomponents = 2,
-  ntop = 500,
+  ntop = NULL,
   subset_row = NULL,
   scale = FALSE,
-  transposed = FALSE,
-  ...
+  transposed = FALSE
 )
 
-\S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(
-  x,
-  ...,
-  exprs_values = "logcounts",
-  dimred = NULL,
-  n_dimred = NULL
-)
+\S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(x, ..., exprs_values = "counts", dimred = NULL, n_dimred = NULL)
 
 runDPCoA(x, ..., altexp = NULL, name = "DPCoA")
 }
+\arguments{
+\item{x}{For \code{calculateDPCoA}, a numeric matrix of expression values
+where rows are features and columns are cells.
+Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
+
+For \code{runDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
+expression values as well as a \code{rowTree} to calculate \code{y} using
+\code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.}
+
+\item{y}{a \code{dist} or a symmetric \code{matrix} comaptible with
+\code{ade4:dpcoa}}
+
+\item{...}{Currently not used.}
+
+\item{ncomponents}{Numeric scalar indicating the number of DPCoA dimensions
+to obtain.}
+
+\item{ntop}{Numeric scalar specifying the number of features with the highest
+variances to use for dimensionality reduction. Alternatively \code{NULL},
+if all feature should be used. (default: \code{ntop = NULL})}
+
+\item{subset_row}{Vector specifying the subset of features to use for
+dimensionality reduction. This can be a character vector of row names, an
+integer vector of row indices or a logical vector.}
+
+\item{scale}{Logical scalar, should the expression values be standardized?}
+
+\item{transposed}{Logical scalar, is x transposed with cells in rows?}
+
+\item{exprs_values}{a single \code{character} value for specifying which
+assay to use for calculation.}
+
+\item{dimred}{String or integer scalar specifying the existing dimensionality
+reduction results to use.}
+
+\item{n_dimred}{Integer scalar or vector specifying the dimensions to use if
+dimred is specified.}
+
+\item{altexp}{String or integer scalar specifying an alternative experiment
+containing the input data.}
+
+\item{name}{String specifying the name to be used to store the result in the
+reducedDims of the output.}
+}
 \description{
-ToDo
+Double Principal Correspondance analysis is made available via the
+\code{ade4} package in typical fashion. Results are stored in the
+\code{reducedDims} and are available for all the expected functions.
+}
+\details{
+In addition to the recuced dimension on the features, the reduced dimension
+for samples are returned as well as \code{sample_red} attribute.
+\code{eig}, \code{feature_weights} and \code{sample_weights} are
+returned as attributes as well.
+}
+\examples{
+data(esophagus)
+dpcoa <- calculateDPCoA(esophagus)
+head(dpcoa)
+
+esophagus <- runDPCoA(esophagus)
+reducedDims(esophagus)
+
+library(scater)
+plotReducedDim(esophagus, "DPCoA")
 }
 \seealso{
-
+\code{\link[scater:plotReducedDim]{plotReducedDim}}
+\code{\link[SingleCellExperiment:reducedDims]{reducedDims}}
 }
