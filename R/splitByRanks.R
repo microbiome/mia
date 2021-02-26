@@ -97,6 +97,9 @@ setMethod("splitByRanks", signature = c(x = "TreeSummarizedExperiment"),
             stop("'ranks' must be character vector.",
                  call. = FALSE)
         }
+        if(nrow(x) == 0L){
+            stop("'x' has nrow(x) == 0L.",call. = FALSE)
+        }
         .check_taxonomic_ranks(ranks,x)
         #
         args <- list(...)

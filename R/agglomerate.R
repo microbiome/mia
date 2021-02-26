@@ -117,6 +117,9 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         if(!.is_a_bool(na.rm)){
             stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
         }
+        if(nrow(x) == 0L){
+            stop("'x' has nrow(x) == 0L.",call. = FALSE)
+        }
         if(ncol(rowData(x)) == 0L){
             stop("taxonomyData needs to be populated.", call. = FALSE)
         }
