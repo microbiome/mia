@@ -37,14 +37,14 @@ runMDS2(x, ..., altexp = NULL, name = "MDS2")
 }
 \arguments{
 \item{x}{a \linkS4class{SingleCellExperiment} containing a numeric matrix of
-log-expression values where rows are features and columns are cells.}
+expression values where rows are features and columns are cells.}
 
 \item{...}{additional arguments to pass to \code{FUN}.}
 
 \item{FUN}{a \code{function} or \code{character} value with a function name
 returning a \code{\link[stats:dist]{dist}} object}
 
-\item{ncomponents}{Numeric scalar indicating the number of MDS?g dimensions
+\item{ncomponents}{Numeric scalar indicating the number of MDS dimensions
 to obtain.}
 
 \item{ntop}{Numeric scalar specifying the number of features with the highest

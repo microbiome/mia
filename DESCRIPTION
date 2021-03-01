@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 0.98.39
+Version: 0.98.40
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -64,7 +64,8 @@ Suggests:
     phyloseq,
     dada2,
     biomformat,
-    reldist
+    reldist,
+    ade4
 URL: https://github.com/FelixErnst/mia
 BugReports: https://github.com/FelixErnst/mia/issues
 Roxygen: list(markdown = TRUE)
