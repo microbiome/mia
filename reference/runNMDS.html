@@ -73,7 +73,7 @@ data in a SingleCellExperiment object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.39</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
       </span>
     </div>
 
@@ -160,8 +160,10 @@ data in a <code>SingleCellExperiment</code> object.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a SingleCellExperiment containing a numeric matrix of
-log-expression values where rows are features and columns are cells.</p></td>
+      <td><p>For <code>calculateNMDS</code>, a numeric matrix of expression values
+where rows are features and columns are cells.
+Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.</p>
+<p>For <code>runNMDS</code> a SingleCellExperiment</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -182,7 +184,7 @@ implementation, either &#8220;isoMDS&#8221; for
     </tr>
     <tr>
       <th>ncomponents</th>
-      <td><p>Numeric scalar indicating the number of MDS?g dimensions
+      <td><p>Numeric scalar indicating the number of NMDS dimensions
 to obtain.</p></td>
     </tr>
     <tr>
