@@ -171,11 +171,17 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
 )
 
 .check_taxonomic_rank <- function(rank, x){
+    if(length(rank) != 1L){
+        stop("'rank' must be a single character value.",call. = FALSE)
+    }
     if( !(rank %in% taxonomyRanks(x) ) ){
-        stop("'rank' must be a value from 'taxonomyRanks()'")
+        stop("'rank' must be a value from 'taxonomyRanks()'",call. = FALSE)
     }
 }
 .check_taxonomic_ranks <- function(ranks, x){
+    if(length(ranks) == 0L){
+        stop("'ranks' must contain at least one value.",call. = FALSE)
+    }
     if( !all(ranks %in% taxonomyRanks(x) ) ){
         stop("'ranks' must contain values from 'taxonomyRanks()'")
     }

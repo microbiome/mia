@@ -86,4 +86,3 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
         head(names(taxs), n = top)
     }
 )
-

@@ -50,7 +50,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
     }
 )
 
-#' @rdname getPrevalence
+#' @rdname getPrevalentAbundance
 #' @export
 setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", ...){

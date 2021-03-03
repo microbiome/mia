@@ -3,11 +3,14 @@
 \name{getPrevalentAbundance}
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
+\alias{getPrevalentAbundance,SummarizedExperiment-method}
 \title{Prevalent abundance}
 \usage{
 getPrevalentAbundance(x, abund_values = "relabundance", ...)
 
 \S4method{getPrevalentAbundance}{ANY}(x, abund_values = "relabundance", ...)
+
+\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, abund_values = "counts", ...)
 }
 \arguments{
 \item{x}{a

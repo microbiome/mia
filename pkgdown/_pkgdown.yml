@@ -28,9 +28,12 @@ reference:
   - calculateUniFrac
   - calculateJSD
   - calculateDistance
-  - calculateNMDS
-  - calculateMDS2
-  - calculateCCA
+  - runNMDS
+  - runMDS2
+  - runCCA
+- subtitle: Other diversity measurements
+- contents:
+  - runDPCoA
 - title: Other functions
 - subtitle: Dataset description
 - contents:
