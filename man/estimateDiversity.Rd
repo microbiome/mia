@@ -7,19 +7,23 @@
 \alias{estimateSimpson}
 \alias{estimateInvSimpson}
 \alias{estimateRichness}
+\alias{estimateCoverage}
 \alias{estimateDiversity,SummarizedExperiment-method}
 \alias{estimateAlphaDiversity,SummarizedExperiment-method}
 \alias{estimateShannon,SummarizedExperiment-method}
 \alias{estimateSimpson,SummarizedExperiment-method}
 \alias{estimateInvSimpson,SummarizedExperiment-method}
 \alias{estimateRichness,SummarizedExperiment-method}
+\alias{estimateCoverage,SummarizedExperiment-method}
 \title{Estimate alpha diversity}
 \usage{
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE"),
+  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
+    "coverage"),
   name = index,
+  threshold = NULL,
   ...
 )
 
@@ -33,11 +37,15 @@ estimateInvSimpson(x, ...)
 
 estimateRichness(x, ...)
 
+estimateCoverage(x, ...)
+
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE"),
+  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
+    "coverage"),
   name = index,
+  threshold = NULL,
   ...,
   BPPARAM = SerialParam()
 )
@@ -51,6 +59,8 @@ estimateRichness(x, ...)
 \S4method{estimateInvSimpson}{SummarizedExperiment}(x, ...)
 
 \S4method{estimateRichness}{SummarizedExperiment}(x, ...)
+
+\S4method{estimateCoverage}{SummarizedExperiment}(x, threshold = NULL, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -89,11 +99,14 @@ se <- GlobalPatterns
 se <- estimateShannon(se)
 colData(se)$shannon
 
-esophagus <- estimateSimpson(se)
+se <- estimateSimpson(se)
 colData(se)$simpson
 
-# calculating all the diversites
-se <- estimateDiversity(se)
+# Calculating all the diversites. Threshold must be specified, because 'coverage'
+# index needs that information.
+se <- estimateDiversity(se, threshold = 0.5)
+indices <- c("shannon","simpson","inv_simpson", "richness", "chao1", "ACE", "coverage")
+colData(se)[,indices]
 
 # plotting the diversities
 library(scater)

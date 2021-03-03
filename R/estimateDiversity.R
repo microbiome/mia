@@ -42,11 +42,14 @@
 #' se <- estimateShannon(se)
 #' colData(se)$shannon
 #'
-#' esophagus <- estimateSimpson(se)
+#' se <- estimateSimpson(se)
 #' colData(se)$simpson
 #'
-#' # calculating all the diversites
-#' se <- estimateDiversity(se)
+#' # Calculating all the diversites. Threshold must be specified, because 'coverage'
+#' # index needs that information.
+#' se <- estimateDiversity(se, threshold = 0.5)
+#' indices <- c("shannon","simpson","inv_simpson", "richness", "chao1", "ACE", "coverage")
+#' colData(se)[,indices]
 #'
 #' # plotting the diversities
 #' library(scater)
@@ -70,8 +73,8 @@ NULL
 setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
                     index = c("shannon","simpson","inv_simpson", "richness",
-                              "chao1", "ACE"),
-                    name = index, ...)
+                              "chao1", "ACE", "coverage"),
+                    name = index, threshold = NULL, ...)
                standardGeneric("estimateDiversity"))
 
 #' @rdname estimateDiversity
@@ -104,31 +107,44 @@ setGeneric("estimateRichness",signature = c("x"),
            function(x, ...)
                standardGeneric("estimateRichness"))
 
+#' @rdname estimateDiversity
+#' @export
+setGeneric("estimateCoverage",signature = c("x"),
+           function(x, ...)
+               standardGeneric("estimateCoverage"))
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts",
-             index = c("shannon","simpson","inv_simpson", "richness", "chao1",
-                       "ACE"),
-             name = index, ..., BPPARAM = SerialParam()){
-        # input check
-        index<- match.arg(index, several.ok = TRUE)
-        if(!.is_non_empty_character(name) || length(name) != length(index)){
-            stop("'name' must be a non-empty character value and have the ",
-                 "same length than 'index'.",
-                 call. = FALSE)
-        }
-        .check_abund_values(abund_values, x)
-        .require_package("vegan")
-        #
-        dvrsts <- BiocParallel::bplapply(index,
-                                         .run_dvrsty,
-                                         x = x,
-                                         mat = assay(x, abund_values),
-                                         BPPARAM = BPPARAM, ...)
-        .add_values_to_colData(x, dvrsts, name)
-    }
+          function(x, abund_values = "counts",
+                   index = c("shannon","simpson","inv_simpson", "richness", "chao1",
+                             "ACE", "coverage"),
+                   name = index, threshold = NULL, ..., BPPARAM = SerialParam()){
+              # input check
+              index<- match.arg(index, several.ok = TRUE)
+              if(!.is_non_empty_character(name) || length(name) != length(index)){
+                  stop("'name' must be a non-empty character value and have the ",
+                       "same length than 'index'.",
+                       call. = FALSE)
+              }
+              .check_abund_values(abund_values, x)
+              .require_package("vegan")
+
+              # If the index is coverage, and threshold is not specified, or it is under 0 or over 1
+              if( ("coverage" %in% index) && (is.null(threshold) || threshold < 0 || threshold > 1) ){
+                  stop("'threshold' must be specified when calculating 'coverage' index.
+                 'threshold' must be a numeric value between 0-1.",
+                       call. = FALSE)
+              }
+              #
+              dvrsts <- BiocParallel::bplapply(index,
+                                               .run_dvrsty,
+                                               x = x,
+                                               mat = assay(x, abund_values),
+                                               threshold = threshold,
+                                               BPPARAM = BPPARAM, ...)
+              .add_values_to_colData(x, dvrsts, name)
+          }
 )
 
 #' @rdname estimateDiversity
@@ -142,33 +158,41 @@ setMethod("estimateAlphaDiversity", signature = c(x = "SummarizedExperiment"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateShannon", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "shannon", ...)
-    }
+          function(x, ...){
+              estimateDiversity(x, index = "shannon", ...)
+          }
 )
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateSimpson", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "simpson", ...)
-    }
+          function(x, ...){
+              estimateDiversity(x, index = "simpson", ...)
+          }
 )
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateInvSimpson", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "inv_simpson",  ...)
-    }
+          function(x, ...){
+              estimateDiversity(x, index = "inv_simpson",  ...)
+          }
 )
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "richness",  ...)
-    }
+          function(x, ...){
+              estimateDiversity(x, index = "richness",  ...)
+          }
+)
+
+#' @rdname estimateDiversity
+#' @export
+setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
+          function(x, threshold = NULL, ...){
+              estimateDiversity(x, index = "coverage",  threshold = threshold, ...)
+          }
 )
 
 .get_shannon <- function(x, ...){
@@ -199,15 +223,31 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
+.get_coverage <- function(x, threshold, ...){
+
+    # Convert table to relative values
+    otu <- .calc_rel_abund(x)
+
+    # Number of groups needed to have threshold (e.g. 50 %) of the ecosystem occupied
+    do <- apply(otu, 2, function(x) {
+        min(which(cumsum(rev(sort(x/sum(x)))) >= threshold))
+    })
+    names(do) <- colnames(otu)
+
+    do
+
+}
+
 #' @importFrom SummarizedExperiment assay assays
-.run_dvrsty <- function(x, i, mat, ...){
+.run_dvrsty <- function(x, i, mat, threshold, ...){
     dvrsty_FUN <- switch(i,
                          shannon = .get_shannon,
                          simpson = .get_simpson,
                          inv_simpson = .get_inverse_simpson,
                          richness = .get_observed,
                          chao1 = .get_chao1,
-                         ACE = .get_ACE)
-    dvrsty <- dvrsty_FUN(mat, ...)
+                         ACE = .get_ACE,
+                         coverage = .get_coverage)
+    dvrsty <- dvrsty_FUN(mat, threshold = threshold, ...)
     dvrsty
 }
