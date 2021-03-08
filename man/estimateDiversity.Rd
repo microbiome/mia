@@ -23,7 +23,7 @@ estimateDiversity(
   index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
     "coverage"),
   name = index,
-  threshold = NULL,
+  threshold = 0.9,
   ...
 )
 
@@ -45,7 +45,7 @@ estimateCoverage(x, ...)
   index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
     "coverage"),
   name = index,
-  threshold = NULL,
+  threshold = 0.9,
   ...,
   BPPARAM = SerialParam()
 )
@@ -60,7 +60,7 @@ estimateCoverage(x, ...)
 
 \S4method{estimateRichness}{SummarizedExperiment}(x, ...)
 
-\S4method{estimateCoverage}{SummarizedExperiment}(x, threshold = NULL, ...)
+\S4method{estimateCoverage}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -72,6 +72,10 @@ sample-wise estimates}
 
 \item{name}{a name for the column of the colData the results should be stored
 in.}
+
+\item{threshold}{a numeric value for selecting threshold for coverage index.
+By default, the threshold is 0.9, i.e., how many taxa is needed to occupy
+90 \% of the ecosystem.}
 
 \item{...}{additional parameters passed to \code{estimateDiversity}}
 
@@ -102,9 +106,9 @@ colData(se)$shannon
 se <- estimateSimpson(se)
 colData(se)$simpson
 
-# Calculating all the diversites. Threshold must be specified, because 'coverage'
-# index needs that information.
-se <- estimateDiversity(se, threshold = 0.5)
+# Calculates all the diversity indices
+se <- estimateDiversity(se)
+# All the indices' names
 indices <- c("shannon","simpson","inv_simpson", "richness", "chao1", "ACE", "coverage")
 colData(se)[,indices]
 
