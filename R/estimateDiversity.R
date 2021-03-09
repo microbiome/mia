@@ -20,7 +20,7 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether calculation of estimates should be parallelized.
 #'
-#' @param threshold,... additional parameters passed to \code{estimateDiversity}
+#' @param ... additional parameters passed to \code{estimateDiversity}
 #' \itemize{
 #'   \item{\code{threshold} is a numeric value for selecting threshold for \code{coverage} index.
 #'   By default, the threshold is 0.9.
@@ -114,7 +114,7 @@ setGeneric("estimateRichness",signature = c("x"),
 #' @rdname estimateDiversity
 #' @export
 setGeneric("estimateCoverage",signature = c("x"),
-           function(x, threshold = 0.9, ...)
+           function(x, ...)
                standardGeneric("estimateCoverage"))
 
 #' @rdname estimateDiversity
@@ -188,8 +188,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
-    function(x, threshold = 0.9, ...){
-        estimateDiversity(x, index = "coverage", threshold = threshold, ...)
+    function(x, ...){
+        estimateDiversity(x, index = "coverage", ...)
     }
 )
 

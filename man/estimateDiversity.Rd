@@ -36,7 +36,7 @@ estimateInvSimpson(x, ...)
 
 estimateRichness(x, ...)
 
-estimateCoverage(x, threshold = 0.9, ...)
+estimateCoverage(x, ...)
 
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
@@ -58,7 +58,7 @@ estimateCoverage(x, threshold = 0.9, ...)
 
 \S4method{estimateRichness}{SummarizedExperiment}(x, ...)
 
-\S4method{estimateCoverage}{SummarizedExperiment}(x, threshold = 0.9, ...)
+\S4method{estimateCoverage}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -71,7 +71,7 @@ sample-wise estimates}
 \item{name}{a name for the column of the colData the results should be stored
 in.}
 
-\item{threshold, ...}{additional parameters passed to \code{estimateDiversity}
+\item{...}{additional parameters passed to \code{estimateDiversity}
 \itemize{
 \item{\code{threshold} is a numeric value for selecting threshold for \code{coverage} index.
 By default, the threshold is 0.9.
