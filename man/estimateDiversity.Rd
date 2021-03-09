@@ -23,7 +23,6 @@ estimateDiversity(
   index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
     "coverage"),
   name = index,
-  threshold = 0.9,
   ...
 )
 
@@ -45,7 +44,6 @@ estimateCoverage(x, ...)
   index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
     "coverage"),
   name = index,
-  threshold = 0.9,
   ...,
   BPPARAM = SerialParam()
 )
@@ -73,16 +71,15 @@ sample-wise estimates}
 \item{name}{a name for the column of the colData the results should be stored
 in.}
 
-\item{threshold}{a numeric value for selecting threshold for coverage index.
-By default, the threshold is 0.9, i.e., how many taxa is needed to occupy
-90 \% of the ecosystem.}
-
 \item{...}{additional parameters passed to \code{estimateDiversity}}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether calculation of estimates should be parallelized.
 (Currently not used)}
+
+\item{threshold}{a numeric value for selecting threshold for coverage index.
+By default, the threshold is 0.9.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named

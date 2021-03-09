@@ -17,8 +17,7 @@
 #'   in.
 #'
 #' @param threshold a numeric value for selecting threshold for coverage index.
-#'   By default, the threshold is 0.9, i.e., how many taxa is needed to occupy
-#'   90 % of the ecosystem.
+#'   By default, the threshold is 0.9.
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -78,7 +77,7 @@ setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
                     index = c("shannon","simpson","inv_simpson", "richness",
                               "chao1", "ACE", "coverage"),
-                    name = index, threshold = 0.9, ...)
+                    name = index, ...)
                standardGeneric("estimateDiversity"))
 
 #' @rdname estimateDiversity
@@ -123,7 +122,8 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","simpson","inv_simpson", "richness", "chao1",
                        "ACE", "coverage"),
-             name = index, threshold = 0.9, ..., BPPARAM = SerialParam()){
+             name = index, ..., BPPARAM = SerialParam()){
+
         # input check
         index<- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -134,19 +134,12 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
         .check_abund_values(abund_values, x)
         .require_package("vegan")
 
-        # If threshold is not numeric and between 0-1
-        if( !( is.numeric(threshold) && (threshold >= 0 || threshold <= 1) ) ){
-            stop("'threshold' must be a numeric value between 0-1.",
-                 call. = FALSE)
-        }
-
-        #
         dvrsts <- BiocParallel::bplapply(index,
                                          .run_dvrsty,
                                          x = x,
                                          mat = assay(x, abund_values),
-                                         threshold = threshold,
-                                         BPPARAM = BPPARAM, ...)
+                                         BPPARAM = BPPARAM,
+                                         ...)
         .add_values_to_colData(x, dvrsts, name)
     }
 )
@@ -195,7 +188,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
-        estimateDiversity(x, index = "coverage",  threshold = threshold, ...)
+        estimateDiversity(x, index = "coverage", ...)
     }
 )
 
@@ -227,8 +220,21 @@ setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-.get_coverage <- function(x, threshold, ...){
-    print(threshold)
+.get_coverage <- function(x, threshold = 0.9, ...){
+
+    # Threshold must be a numeric value between 0-1
+    if( !( is.numeric(threshold) && (threshold >= 0 || threshold <= 1) ) ){
+        stop("'threshold' must be a numeric value between 0-1.",
+             call. = FALSE)
+    }
+
+    # If the value is 0.9, user has not probably specified it, so the used threshold
+    # is informed to user.
+    if( threshold == 0.9 ){
+        message("'Threshold' value of 0.9 was used to calculate 'coverage' index. ",
+                "It is the default value.")
+    }
+
     # Convert table to relative values
     otu <- .calc_rel_abund(x)
 
@@ -243,7 +249,7 @@ setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment assay assays
-.run_dvrsty <- function(x, i, mat, threshold, ...){
+.run_dvrsty <- function(x, i, mat, ...){
     dvrsty_FUN <- switch(i,
                          shannon = .get_shannon,
                          simpson = .get_simpson,
@@ -252,6 +258,6 @@ setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
                          chao1 = .get_chao1,
                          ACE = .get_ACE,
                          coverage = .get_coverage)
-    dvrsty <- dvrsty_FUN(mat, threshold = threshold, ...)
+    dvrsty <- dvrsty_FUN(mat, ...)
     dvrsty
 }
