@@ -19,9 +19,13 @@
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether calculation of estimates should be parallelized.
-#'   (Currently not used)
 #'
 #' @param ... additional parameters passed to \code{estimateDiversity}
+#' \itemize{
+#'   \item{\code{threshold} is a numeric value for selecting threshold for \code{coverage} index.
+#'   By default, the threshold is 0.9.
+#'   }
+#' }
 #'
 #' @return \code{x} with additional \code{\link{colData}} named
 #'   \code{*name*}
@@ -42,11 +46,14 @@
 #' se <- estimateShannon(se)
 #' colData(se)$shannon
 #'
-#' esophagus <- estimateSimpson(se)
+#' se <- estimateSimpson(se)
 #' colData(se)$simpson
 #'
-#' # calculating all the diversites
+#' # Calculates all the diversity indices
 #' se <- estimateDiversity(se)
+#' # All the indices' names
+#' indices <- c("shannon","simpson","inv_simpson", "richness", "chao1", "ACE", "coverage")
+#' colData(se)[,indices]
 #'
 #' # plotting the diversities
 #' library(scater)
@@ -70,7 +77,7 @@ NULL
 setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
                     index = c("shannon","simpson","inv_simpson", "richness",
-                              "chao1", "ACE"),
+                              "chao1", "ACE", "coverage"),
                     name = index, ...)
                standardGeneric("estimateDiversity"))
 
@@ -104,14 +111,20 @@ setGeneric("estimateRichness",signature = c("x"),
            function(x, ...)
                standardGeneric("estimateRichness"))
 
+#' @rdname estimateDiversity
+#' @export
+setGeneric("estimateCoverage",signature = c("x"),
+           function(x, ...)
+               standardGeneric("estimateCoverage"))
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","simpson","inv_simpson", "richness", "chao1",
-                       "ACE"),
+                       "ACE", "coverage"),
              name = index, ..., BPPARAM = SerialParam()){
+
         # input check
         index<- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -121,12 +134,13 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
         }
         .check_abund_values(abund_values, x)
         .require_package("vegan")
-        #
+
         dvrsts <- BiocParallel::bplapply(index,
                                          .run_dvrsty,
                                          x = x,
                                          mat = assay(x, abund_values),
-                                         BPPARAM = BPPARAM, ...)
+                                         BPPARAM = BPPARAM,
+                                         ...)
         .add_values_to_colData(x, dvrsts, name)
     }
 )
@@ -171,6 +185,14 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @rdname estimateDiversity
+#' @export
+setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        estimateDiversity(x, index = "coverage", ...)
+    }
+)
+
 .get_shannon <- function(x, ...){
     vegan::diversity(t(x), index="shannon")
 }
@@ -199,6 +221,34 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
+.get_coverage <- function(x, threshold = 0.9, ...){
+
+    # Threshold must be a numeric value between 0-1
+    if( !( is.numeric(threshold) && (threshold >= 0 || threshold <= 1) ) ){
+        stop("'threshold' must be a numeric value between 0-1.",
+             call. = FALSE)
+    }
+
+    # If the value is 0.9, user has not probably specified it, so the used threshold
+    # is informed to user.
+    if( threshold == 0.9 ){
+        message("'Threshold' value of 0.9 was used to calculate 'coverage' index. ",
+                "It is the default value.")
+    }
+
+    # Convert table to relative values
+    otu <- .calc_rel_abund(x)
+
+    # Number of groups needed to have threshold (e.g. 50 %) of the ecosystem occupied
+    do <- apply(otu, 2, function(x) {
+        min(which(cumsum(rev(sort(x/sum(x)))) >= threshold))
+    })
+    names(do) <- colnames(otu)
+
+    do
+
+}
+
 #' @importFrom SummarizedExperiment assay assays
 .run_dvrsty <- function(x, i, mat, ...){
     dvrsty_FUN <- switch(i,
@@ -207,7 +257,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                          inv_simpson = .get_inverse_simpson,
                          richness = .get_observed,
                          chao1 = .get_chao1,
-                         ACE = .get_ACE)
+                         ACE = .get_ACE,
+                         coverage = .get_coverage)
     dvrsty <- dvrsty_FUN(mat, ...)
     dvrsty
 }

@@ -7,18 +7,21 @@
 \alias{estimateSimpson}
 \alias{estimateInvSimpson}
 \alias{estimateRichness}
+\alias{estimateCoverage}
 \alias{estimateDiversity,SummarizedExperiment-method}
 \alias{estimateAlphaDiversity,SummarizedExperiment-method}
 \alias{estimateShannon,SummarizedExperiment-method}
 \alias{estimateSimpson,SummarizedExperiment-method}
 \alias{estimateInvSimpson,SummarizedExperiment-method}
 \alias{estimateRichness,SummarizedExperiment-method}
+\alias{estimateCoverage,SummarizedExperiment-method}
 \title{Estimate alpha diversity}
 \usage{
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE"),
+  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
+    "coverage"),
   name = index,
   ...
 )
@@ -33,10 +36,13 @@ estimateInvSimpson(x, ...)
 
 estimateRichness(x, ...)
 
+estimateCoverage(x, ...)
+
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE"),
+  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
+    "coverage"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -51,6 +57,8 @@ estimateRichness(x, ...)
 \S4method{estimateInvSimpson}{SummarizedExperiment}(x, ...)
 
 \S4method{estimateRichness}{SummarizedExperiment}(x, ...)
+
+\S4method{estimateCoverage}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -63,12 +71,16 @@ sample-wise estimates}
 \item{name}{a name for the column of the colData the results should be stored
 in.}
 
-\item{...}{additional parameters passed to \code{estimateDiversity}}
+\item{...}{additional parameters passed to \code{estimateDiversity}
+\itemize{
+\item{\code{threshold} is a numeric value for selecting threshold for \code{coverage} index.
+By default, the threshold is 0.9.
+}
+}}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.
-(Currently not used)}
+object specifying whether calculation of estimates should be parallelized.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named
@@ -89,11 +101,14 @@ se <- GlobalPatterns
 se <- estimateShannon(se)
 colData(se)$shannon
 
-esophagus <- estimateSimpson(se)
+se <- estimateSimpson(se)
 colData(se)$simpson
 
-# calculating all the diversites
+# Calculates all the diversity indices
 se <- estimateDiversity(se)
+# All the indices' names
+indices <- c("shannon","simpson","inv_simpson", "richness", "chao1", "ACE", "coverage")
+colData(se)[,indices]
 
 # plotting the diversities
 library(scater)
