@@ -125,7 +125,8 @@ wrapper functions. They are implemented via the <code>vegan</code> package.</p>
     <pre class="usage"><span class='fu'>estimateDiversity</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span>, <span class='st'>"chao1"</span>, <span class='st'>"ACE"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span>, <span class='st'>"chao1"</span>, <span class='st'>"ACE"</span>,
+    <span class='st'>"coverage"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
@@ -140,11 +141,14 @@ wrapper functions. They are implemented via the <code>vegan</code> package.</p>
 
 <span class='fu'>estimateRichness</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
+<span class='fu'>estimateCoverage</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>estimateDiversity</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span>, <span class='st'>"chao1"</span>, <span class='st'>"ACE"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"simpson"</span>, <span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span>, <span class='st'>"chao1"</span>, <span class='st'>"ACE"</span>,
+    <span class='st'>"coverage"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
   <span class='va'>...</span>,
   BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>
@@ -163,7 +167,10 @@ wrapper functions. They are implemented via the <code>vegan</code> package.</p>
 <span class='fu'>estimateInvSimpson</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>estimateRichness</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>estimateRichness</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>estimateCoverage</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -188,14 +195,16 @@ in.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional parameters passed to <code>estimateDiversity</code></p></td>
+      <td><p>additional parameters passed to <code>estimateDiversity</code></p><ul>
+<li><p><code>threshold</code> is a numeric value for selecting threshold for <code>coverage</code> index.
+By default, the threshold is 0.9.</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>BPPARAM</th>
       <td><p>A
 <code><a href='https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html'>BiocParallelParam</a></code>
-object specifying whether calculation of estimates should be parallelized.
-(Currently not used)</p></td>
+object specifying whether calculation of estimates should be parallelized.</p></td>
     </tr>
     </table>
 
@@ -229,12 +238,35 @@ object specifying whether calculation of estimates should be parallelized.
 #&gt; 4.483806 4.563943 6.157462 4.869817 5.461840 4.126538 3.452772 4.083665 
 #&gt;    Even2    Even3 
 #&gt; 3.956909 4.006375 </div><div class='input'>
-<span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>estimateSimpson</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
+<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>estimateSimpson</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>$</span><span class='va'>simpson</span>
-</div><div class='output co'>#&gt; NULL</div><div class='input'>
-<span class='co'># calculating all the diversites</span>
+</div><div class='output co'>#&gt;       CL3       CC1       SV1   M31Fcsw   M11Fcsw   M31Plmr   M11Plmr   F21Plmr 
+#&gt; 0.9946561 0.9952117 0.9962900 0.9275989 0.9097382 0.9379114 0.9518733 0.9777509 
+#&gt;   M31Tong   M11Tong  LMEpi24M  SLEpi20M    AQC1cm    AQC4cm    AQC7cm       NP2 
+#&gt; 0.8625384 0.9358927 0.8023279 0.9072187 0.7648870 0.7397659 0.8179374 0.9532320 
+#&gt;       NP3       NP5   TRRsed1   TRRsed2   TRRsed3      TS28      TS29     Even1 
+#&gt; 0.9718016 0.9748733 0.9924388 0.9640962 0.9815843 0.9651752 0.9180976 0.9681981 
+#&gt;     Even2     Even3 
+#&gt; 0.9639157 0.9673405 </div><div class='input'>
+<span class='co'># Calculates all the diversity indices</span>
 <span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDiversity</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='message'>'Threshold' value of 0.9 was used to calculate 'coverage' index. It is the default value.</span></div><div class='input'><span class='co'># All the indices' names</span>
+<span class='va'>indices</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>,<span class='st'>"simpson"</span>,<span class='st'>"inv_simpson"</span>, <span class='st'>"richness"</span>, <span class='st'>"chao1"</span>, <span class='st'>"ACE"</span>, <span class='st'>"coverage"</span><span class='op'>)</span>
+<span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>[</span>,<span class='va'>indices</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; DataFrame with 26 rows and 7 columns
+#&gt;           shannon   simpson inv_simpson  richness     chao1       ACE  coverage
+#&gt;         &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;integer&gt;
+#&gt; CL3       6.57652  0.994656    187.1298      6964   8588.07   8307.26      1113
+#&gt; CC1       6.77660  0.995212    208.8436      7679   9236.47   9150.22      1374
+#&gt; SV1       6.49849  0.996290    269.5441      5729   7266.10   7276.83       829
+#&gt; M31Fcsw   3.82837  0.927599     13.8119      2667   4089.81   4212.00        71
+#&gt; M11Fcsw   3.28767  0.909738     11.0789      2574   4178.12   4231.06        37
+#&gt; ...           ...       ...         ...       ...       ...       ...       ...
+#&gt; TS28      4.12654  0.965175     28.7152      2679   4540.94   4458.45        62
+#&gt; TS29      3.45277  0.918098     12.2097      2629   4225.33   4343.57        46
+#&gt; Even1     4.08366  0.968198     31.4447      4213   6643.39   6657.88        51
+#&gt; Even2     3.95691  0.963916     27.7129      3130   5258.56   5494.46        47
+#&gt; Even3     4.00637  0.967340     30.6189      2776   4651.05   4790.45        49</div><div class='input'>
 <span class='co'># plotting the diversities</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://bioconductor.org/packages/scater/'>scater</a></span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Loading required package: ggplot2</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></span><span class='op'>(</span><span class='va'>se</span>, <span class='st'>"shannon"</span><span class='op'>)</span>
