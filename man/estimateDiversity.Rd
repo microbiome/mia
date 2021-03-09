@@ -36,7 +36,7 @@ estimateInvSimpson(x, ...)
 
 estimateRichness(x, ...)
 
-estimateCoverage(x, ...)
+estimateCoverage(x, threshold = 0.9, ...)
 
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
@@ -58,7 +58,7 @@ estimateCoverage(x, ...)
 
 \S4method{estimateRichness}{SummarizedExperiment}(x, ...)
 
-\S4method{estimateCoverage}{SummarizedExperiment}(x, ...)
+\S4method{estimateCoverage}{SummarizedExperiment}(x, threshold = 0.9, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -71,15 +71,16 @@ sample-wise estimates}
 \item{name}{a name for the column of the colData the results should be stored
 in.}
 
-\item{...}{additional parameters passed to \code{estimateDiversity}}
+\item{threshold, ...}{additional parameters passed to \code{estimateDiversity}
+\itemize{
+\item{\code{threshold} is a numeric value for selecting threshold for \code{coverage} index.
+By default, the threshold is 0.9.
+}
+}}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.
-(Currently not used)}
-
-\item{threshold}{a numeric value for selecting threshold for coverage index.
-By default, the threshold is 0.9.}
+object specifying whether calculation of estimates should be parallelized.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named

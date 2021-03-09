@@ -16,15 +16,16 @@
 #' @param name a name for the column of the colData the results should be stored
 #'   in.
 #'
-#' @param threshold a numeric value for selecting threshold for coverage index.
-#'   By default, the threshold is 0.9.
-#'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether calculation of estimates should be parallelized.
-#'   (Currently not used)
 #'
-#' @param ... additional parameters passed to \code{estimateDiversity}
+#' @param threshold,... additional parameters passed to \code{estimateDiversity}
+#' \itemize{
+#'   \item{\code{threshold} is a numeric value for selecting threshold for \code{coverage} index.
+#'   By default, the threshold is 0.9.
+#'   }
+#' }
 #'
 #' @return \code{x} with additional \code{\link{colData}} named
 #'   \code{*name*}
@@ -113,7 +114,7 @@ setGeneric("estimateRichness",signature = c("x"),
 #' @rdname estimateDiversity
 #' @export
 setGeneric("estimateCoverage",signature = c("x"),
-           function(x, ...)
+           function(x, threshold = 0.9, ...)
                standardGeneric("estimateCoverage"))
 
 #' @rdname estimateDiversity
@@ -187,8 +188,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "coverage", ...)
+    function(x, threshold = 0.9, ...){
+        estimateDiversity(x, index = "coverage", threshold = threshold, ...)
     }
 )
 
