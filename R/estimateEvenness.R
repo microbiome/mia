@@ -1,19 +1,20 @@
-#' Estimate Evenness
+#' Estimate Evenness measures
 #'
-#' Several functions for calculation of evenness estimates are available.
-#'
+#' This function calculates community evenness indices.
 #' These include the \sQuote{Camargo}, \sQuote{Pielou}, \sQuote{Simpson},
 #' \sQuote{Evar} and \sQuote{Bulla} evenness measures.
 #'
 #' @param x a \code{\link{SummarizedExperiment}} object
 #'
-#' @param abund_values the name of the assay used for calculation of the
-#'   sample-wise estimates
+#' @param abund_values A single character value for selecting the
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to use
+#'   for calculation of the sample-wise estimates.
 #'
-#' @param index a evenness measurement
+#' @param index a \code{character} vector, specifying the eveness measures to be
+#'   calculated.
 #'
-#' @param name a name for the column of the colData the results should be stored
-#'   in.
+#' @param name a name for the column(s) of the colData the results should be
+#'   stored in.
 #'
 #' @param ... optional arguments:
 #' \itemize{
@@ -47,7 +48,8 @@ NULL
 #' @export
 setGeneric("estimateEvenness",signature = c("x"),
            function(x, abund_values = "counts",
-                    index = c("camargo", "pielou", "simpson", "evar", "bulla"),
+                    index = c("camargo", "pielou", "simpson_evenness", "evar",
+                              "bulla"),
                     name = index, ...)
                standardGeneric("estimateEvenness"))
 
@@ -55,7 +57,7 @@ setGeneric("estimateEvenness",signature = c("x"),
 #' @export
 setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("camargo", "pielou", "simpson", "evar", "bulla"),
+             index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
              name = index, ..., BPPARAM = SerialParam()){
         # input check
         index<- match.arg(index, several.ok = TRUE)
@@ -172,7 +174,7 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
     vnss_FUN <- switch(index,
                        camargo = .calc_camargo_evenness,
                        pielou = .calc_pielou_evenness,
-                       simpson = .calc_simpson_evenness,
+                       simpson_evenness = .calc_simpson_evenness,
                        evar = .calc_evar_evenness,
                        bulla = .calc_bulla_evenness)
     vnss_FUN(mat)

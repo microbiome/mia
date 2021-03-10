@@ -1,6 +1,6 @@
-#' Estimate alpha diversity
+#' Estimate diversity measures
 #'
-#' Several functions for calculation of alpha diversity indices available via
+#' Several functions for calculation of diversity indices available via
 #' wrapper functions. They are implemented via the \code{vegan} package.
 #'
 #' These include the \sQuote{Shannon}, \sQuote{Simpson} and
@@ -11,10 +11,11 @@
 #' @param abund_values the name of the assay used for calculation of the
 #'   sample-wise estimates
 #'
-#' @param index a diversity measurement
+#' @param index a \code{character} vector, specifying the diversity measures
+#'   to be calculated.
 #'
-#' @param name a name for the column of the colData the results should be stored
-#'   in.
+#' @param name a name for the column(s) of the colData the results should be
+#'   stored in.
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -46,13 +47,14 @@
 #' se <- estimateShannon(se)
 #' colData(se)$shannon
 #'
-#' se <- estimateSimpson(se)
-#' colData(se)$simpson
+#' se <- estimateSimpsonDiversity(se)
+#' colData(se)$simpson_diversity
 #'
 #' # Calculates all the diversity indices
 #' se <- estimateDiversity(se)
 #' # All the indices' names
-#' indices <- c("shannon","simpson","inv_simpson", "richness", "chao1", "ACE", "coverage")
+#' indices <- c("shannon","simpson_diversity","inv_simpson", "richness",
+#'              "chao1", "ACE", "coverage")
 #' colData(se)[,indices]
 #'
 #' # plotting the diversities
@@ -62,7 +64,7 @@
 #' plotColData(se, "shannon", "SampleType")
 #' \donttest{
 #' # combining different plots
-#' plots <- lapply(c("shannon","simpson"),
+#' plots <- lapply(c("shannon","simpson_diversity"),
 #'                 plotColData,
 #'                 object = se,
 #'                 x = "SampleType",
@@ -76,16 +78,10 @@ NULL
 #' @export
 setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
-                    index = c("shannon","simpson","inv_simpson", "richness",
-                              "chao1", "ACE", "coverage"),
+                    index = c("shannon","simpson_diversity", "inv_simpson",
+                              "richness", "chao1", "ACE", "coverage"),
                     name = index, ...)
                standardGeneric("estimateDiversity"))
-
-#' @rdname estimateDiversity
-#' @export
-setGeneric("estimateAlphaDiversity",signature = c("x"),
-           function(x, ...)
-               standardGeneric("estimateAlphaDiversity"))
 
 #' @rdname estimateDiversity
 #' @export
@@ -95,9 +91,9 @@ setGeneric("estimateShannon",signature = c("x"),
 
 #' @rdname estimateDiversity
 #' @export
-setGeneric("estimateSimpson",signature = c("x"),
+setGeneric("estimateSimpsonDiversity",signature = c("x"),
            function(x, ...)
-               standardGeneric("estimateSimpson"))
+               standardGeneric("estimateSimpsonDiversity"))
 
 #' @rdname estimateDiversity
 #' @export
@@ -121,7 +117,7 @@ setGeneric("estimateCoverage",signature = c("x"),
 #' @export
 setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("shannon","simpson","inv_simpson", "richness", "chao1",
+             index = c("shannon","simpson_diversity","inv_simpson", "richness", "chao1",
                        "ACE", "coverage"),
              name = index, ..., BPPARAM = SerialParam()){
 
@@ -147,14 +143,6 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateAlphaDiversity", signature = c(x = "SummarizedExperiment"),
-          function(x, ...){
-              estimateDiversity(x, ...)
-          }
-)
-
-#' @rdname estimateDiversity
-#' @export
 setMethod("estimateShannon", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
         estimateDiversity(x, index = "shannon", ...)
@@ -163,9 +151,9 @@ setMethod("estimateShannon", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateSimpson", signature = c(x = "SummarizedExperiment"),
+setMethod("estimateSimpsonDiversity", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
-        estimateDiversity(x, index = "simpson", ...)
+        estimateDiversity(x, index = "simpson_diversity", ...)
     }
 )
 
@@ -253,7 +241,7 @@ setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
 .run_dvrsty <- function(x, i, mat, ...){
     dvrsty_FUN <- switch(i,
                          shannon = .get_shannon,
-                         simpson = .get_simpson,
+                         simpson_diversity = .get_simpson,
                          inv_simpson = .get_inverse_simpson,
                          richness = .get_observed,
                          chao1 = .get_chao1,

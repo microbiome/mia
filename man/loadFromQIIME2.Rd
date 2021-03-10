@@ -19,11 +19,12 @@ loadFromQIIME2(
 path of the feature table to be imported.}
 
 \item{taxonomyTableFile}{a single \code{character} value defining the file
-path of the taxonomy table to be imported. (default: \code{NULL}).}
+path of the taxonomy table to be imported. (default:
+\code{taxonomyTableFile = NULL}).}
 
-\item{sampleMetaFile}{a single \code{character} value defining the file
-path of the sample metadata to be imported. The file has to be in tsv
-format. (default: \code{NULL}).}
+\item{sampleMetaFile}{a single \code{character} value defining the file path
+of the sample metadata to be imported. The file has to be in tsv format.
+(default: \code{sampleMetaFile = NULL}).}
 
 \item{featureNamesAsRefseq}{\code{TRUE} or \code{FALSE}: Should the feature
 names of the feature table be regarded as reference sequences? This setting
@@ -31,35 +32,36 @@ will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
 feature names do not contain valid DNA characters only, the reference
 sequences will not be set.}
 
-\item{refSeqFile}{a single \code{character} value defining the file
-path of the reference sequences for each feature. (default: \code{NULL}).}
+\item{refSeqFile}{a single \code{character} value defining the file path of
+the reference sequences for each feature. (default: \code{refSeqFile =
+  NULL}).}
 
-\item{phyTreeFile}{a single \code{character} value defining the file
-path of the phylogenetic tree. (default: \code{NULL}).}
+\item{phyTreeFile}{a single \code{character} value defining the file path of
+the phylogenetic tree. (default: \code{phyTreeFile = NULL}).}
 
 \item{...}{additional arguments:
 \itemize{
 \item{\code{temp}:} {the temporary directory used for decompressing the
 data. (default: \code{tempdir()})}
 \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
-taxonomic prefixes be removed? (default: \code{FALSE}).)}
+taxonomic prefixes be removed? (default:
+\code{removeTaxaPrefixes = FALSE})}
 }}
 }
 \value{
-An object of class
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment::TreeSummarizedExperiment}}
+A
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object
 }
 \description{
-Results exported from QIMME2 can be imported as a \code{TreeSummarizedExperiment}
-using \code{loadFromQIIME2}. Except for the
-\code{featureTableFile}, the other data types, \code{taxonomyTableFile}, \code{refSeqFile}
-and \code{phyTreeFile}, are optional, but are highly encouraged to be provided.
+Results exported from QIMME2 can be imported as a
+\code{TreeSummarizedExperiment} using \code{loadFromQIIME2}. Except for the
+\code{featureTableFile}, the other data types, \code{taxonomyTableFile},
+\code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
+encouraged to be provided.
 }
 \details{
-Both arguments \code{featureNamesAsRefseq} and \code{refSeqFile} can be used to define
-reference sequences of features. \code{featureNamesAsRefseq} is only taken into
-account, if \code{refSeqFile} is \code{NULL}. No reference sequences are tried to be
-created, if \code{featureNameAsRefSeq} is \code{FALSE} and  \code{refSeqFile} is \code{NULL}.
+
 }
 \examples{
 featureTableFile <- system.file("extdata", "table.qza", package = "mia")

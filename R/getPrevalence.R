@@ -1,4 +1,4 @@
-#' Prevalence calculation
+#' Calculation prevalence information for features across samples
 #'
 #' These functions calculate the population prevalence for taxonomic ranks in a
 #' \code{\link{SummarizedExperiment-class}} object.
@@ -30,9 +30,11 @@
 #' @param rank,... additional arguments
 #' \itemize{
 #'   \item{If \code{!is.null(rank)} arguments are passed on to
-#'   \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
-#'   \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
+#'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
+#'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
+#'   \item{for \code{getPrevalentAbundance} additional parameters passed to
+#'     \code{getPrevalentTaxa}}
 #' }
 #'
 #' @details
@@ -44,10 +46,20 @@
 #' TRUE} the relative frequency (between 0 and 1) is used to check against the
 #' \code{detection} threshold.
 #'
+#' The core abundance index from \code{getPrevalentAbundance} gives the relative
+#' proportion of the core species (in between 0 and 1). The core taxa are
+#' defined as those that exceed the given population prevalence threshold at the
+#' given detection level as set for \code{getPrevalentTaxa}.
+#'
 #' @return
-#' a named \code{numeric} vector. The names are either the row names of \code{x}
-#' or the names after agglomeration. For \code{getPrevalentTaxa} only the names
-#' exceeding the threshold set by \code{prevalence} are returned.
+#' a named \code{numeric} vector. For \code{getPrevalence} the names are either
+#' the row names of \code{x} or the names after agglomeration.
+#'
+#' For \code{getPrevalentAbundance} the names correspond to the column name
+#' names of \code{x} and include the joint abundance of prevalent taxa.
+#'
+#' For \code{getPrevalentTaxa} only the names exceeding the threshold set by
+#' \code{prevalence} are returned.
 #'
 #' @seealso
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
@@ -63,7 +75,10 @@
 #' 18(S4):16 20, 2012.
 #' To cite the R package, see citation('mia')
 #'
-#' @author Leo Lahti
+#' @author
+#' Leo Lahti
+#' For \code{getPrevalentAbundance}: Leo Lahti and Tuomas Borman.
+#' Contact: \url{microbiome.github.io}
 #'
 #' @export
 #'
@@ -99,6 +114,10 @@
 #'                          prevalence = 50/100,
 #'                          as_relative = TRUE)
 #' head(taxa)
+#'
+#'
+#' data(esophagus)
+#' getPrevalentAbundance(esophagus, abund_values = "counts")
 #'
 #' # data can be aggregated based on prevalent taxonomic results
 #' agglomerateByPrevalence(GlobalPatterns,
@@ -256,6 +275,43 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
 )
 
 ################################################################################
+# getPrevalentAbundance
+
+#' @rdname getPrevalentAbundance
+#' @export
+setGeneric("getPrevalentAbundance", signature = "x",
+           function(x, abund_values = "relabundance", ...)
+               standardGeneric("getPrevalentAbundance"))
+
+#' @rdname getPrevalentAbundance
+#' @export
+setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
+    function(x, ...){
+        x <- .calc_rel_abund(x)
+        cm <- getPrevalentTaxa(x, ...)
+        if (length(cm) == 0) {
+            stop("With the given abundance and prevalence thresholds, no taxa ",
+                 "were found. Try to change detection and prevalence ",
+                 "parameters.",
+                 call. = FALSE)
+        }
+        colSums(x[cm, ,drop=FALSE])
+    }
+)
+
+#' @rdname getPrevalentAbundance
+#' @export
+setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
+    function(x, abund_values = "counts", ...){
+        # check assay
+        .check_abund_values(abund_values, x)
+        #
+        getPrevalentAbundance(assay(x,abund_values))
+    }
+)
+
+
+################################################################################
 # agglomerateByPrevalence
 
 #' @rdname getPrevalence
@@ -298,8 +354,6 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
             x <- rbind(as(x[f,],class),
                        as(other_x,class))
             x <- as(x,class_x)
-            #
-            # x <- rbind(x[f,],other_x)
         }
         x
     }

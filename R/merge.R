@@ -1,4 +1,4 @@
-#' Merge a subset of the rows or columns
+#' Merge a subset of the rows or columns of a \code{SummarizedExperiment}
 #'
 #' \code{mergeRows}/\code{mergeCols} merge data on rows or columns of a
 #' \code{SummarizedExperiment} as defined by a \code{factor} alongside the
@@ -7,6 +7,7 @@
 #'
 #' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
 #'   a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'
 #' @param f A factor for merging. Must be the same length as
 #'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
 #'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
@@ -32,6 +33,14 @@
 #'   \item{passed onto \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}, except \code{subset_row}, \code{subset_col}}
 #' }
 #'
+#' @details
+#' These functions are similar to
+#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+#' However, additional support for \code{TreeSummarizedExperiment} was added and
+#' science field agnostic names were used. In addition the \code{archetype}
+#' argument lets the user select how to preserve row or columns data.
+#'
+#' For merge data of assays the function from \code{scuttle} are used.
 #'
 #' @name merge-methods
 #' @aliases mergeRows mergeCols
@@ -155,12 +164,16 @@ setGeneric("mergeCols",
     }
     archetype <- .norm_archetype(f, archetype)
     # merge col data
-    col_data <- colData(x)[.get_element_pos(f, archetype = archetype),,drop=FALSE]
+    element_pos <- .get_element_pos(f, archetype = archetype)
+    col_data <- colData(x)[element_pos,,drop=FALSE]
     # merge assays
     assays <- assays(x)
-    assays <- S4Vectors::SimpleList(lapply(assays, scuttle::sumCountsAcrossCells,
-                                           ids = f, subset_row = NULL,
-                                           subset_col = NULL, ...))
+    assays <- S4Vectors::SimpleList(lapply(assays,
+                                           scuttle::sumCountsAcrossCells,
+                                           ids = f,
+                                           subset_row = NULL,
+                                           subset_col = NULL,
+                                           ...))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[,.get_element_pos(f, archetype = archetype)]

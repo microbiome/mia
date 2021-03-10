@@ -8,7 +8,7 @@
 \alias{mergeCols,SummarizedExperiment-method}
 \alias{mergeRows,TreeSummarizedExperiment-method}
 \alias{mergeCols,TreeSummarizedExperiment-method}
-\title{Merge a subset of the rows or columns}
+\title{Merge a subset of the rows or columns of a \code{SummarizedExperiment}}
 \usage{
 mergeRows(x, f, archetype = 1L, ...)
 
@@ -60,6 +60,15 @@ merged into one entry in all relevant components.
 \code{SummarizedExperiment} as defined by a \code{factor} alongside the
 chosen dimension. Metadata from the \code{rowData} or \code{colData} are
 retained as defined by \code{archetype}.
+}
+\details{
+These functions are similar to
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+However, additional support for \code{TreeSummarizedExperiment} was added and
+science field agnostic names were used. In addition the \code{archetype}
+argument lets the user select how to preserve row or columns data.
+
+For merge data of assays the function from \code{scuttle} are used.
 }
 \examples{
 data(esophagus)

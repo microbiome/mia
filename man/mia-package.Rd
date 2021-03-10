@@ -3,9 +3,12 @@
 \docType{package}
 \name{mia-package}
 \alias{mia-package}
-\title{mia Package.}
+\title{\code{mia} Package.}
 \description{
-\code{mia} implements tools for microbiome analysis
+\code{mia} implements tools for microbiome analysis based on the
+SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment
+infrastructure. Data wrangling and analysis are the main scope of this
+package.
 }
 \seealso{
 \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment} class

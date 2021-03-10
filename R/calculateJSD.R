@@ -37,7 +37,7 @@
 #'
 #' @author
 #' Susan Holmes \email{susan@@stat.stanford.edu}.
-#' Adapted for phyloseq2 by Paul J. McMurdie.
+#' Adapted for phyloseq by Paul J. McMurdie.
 #' Adapted for mia by Felix G.M. Ernst
 #'
 #' @export
@@ -80,6 +80,10 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+# written by Susan Holmes \email{susan@@stat.stanford.edu}.
+# Adapted for phyloseq by Paul J. McMurdie.
+# Adapted for mia by Felix G.M. Ernst
+#' @importFrom DelayedArray rowSums
 .JSD <- function(x, y){
     # Function to compute Shannon-Jensen Divergence
     # x and y are the frequencies for the same p categories

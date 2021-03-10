@@ -3,12 +3,12 @@
 \name{estimateEvenness}
 \alias{estimateEvenness}
 \alias{estimateEvenness,SummarizedExperiment-method}
-\title{Estimate Evenness}
+\title{Estimate Evenness measures}
 \usage{
 estimateEvenness(
   x,
   abund_values = "counts",
-  index = c("camargo", "pielou", "simpson", "evar", "bulla"),
+  index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
   name = index,
   ...
 )
@@ -16,7 +16,7 @@ estimateEvenness(
 \S4method{estimateEvenness}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("camargo", "pielou", "simpson", "evar", "bulla"),
+  index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -25,13 +25,15 @@ estimateEvenness(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
 
-\item{abund_values}{the name of the assay used for calculation of the
-sample-wise estimates}
+\item{abund_values}{A single character value for selecting the
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to use
+for calculation of the sample-wise estimates.}
 
-\item{index}{a evenness measurement}
+\item{index}{a \code{character} vector, specifying the eveness measures to be
+calculated.}
 
-\item{name}{a name for the column of the colData the results should be stored
-in.}
+\item{name}{a name for the column(s) of the colData the results should be
+stored in.}
 
 \item{...}{additional parameters passed to \code{estimateEvenness}}
 
@@ -44,9 +46,7 @@ object specifying whether calculation of estimates should be parallelized.}
 \code{*name*}
 }
 \description{
-Several functions for calculation of evenness estimates are available.
-}
-\details{
+This function calculates community evenness indices.
 These include the \sQuote{Camargo}, \sQuote{Pielou}, \sQuote{Simpson},
 \sQuote{Evar} and \sQuote{Bulla} evenness measures.
 }

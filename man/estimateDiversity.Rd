@@ -2,35 +2,31 @@
 % Please edit documentation in R/estimateDiversity.R
 \name{estimateDiversity}
 \alias{estimateDiversity}
-\alias{estimateAlphaDiversity}
 \alias{estimateShannon}
-\alias{estimateSimpson}
+\alias{estimateSimpsonDiversity}
 \alias{estimateInvSimpson}
 \alias{estimateRichness}
 \alias{estimateCoverage}
 \alias{estimateDiversity,SummarizedExperiment-method}
-\alias{estimateAlphaDiversity,SummarizedExperiment-method}
 \alias{estimateShannon,SummarizedExperiment-method}
-\alias{estimateSimpson,SummarizedExperiment-method}
+\alias{estimateSimpsonDiversity,SummarizedExperiment-method}
 \alias{estimateInvSimpson,SummarizedExperiment-method}
 \alias{estimateRichness,SummarizedExperiment-method}
 \alias{estimateCoverage,SummarizedExperiment-method}
-\title{Estimate alpha diversity}
+\title{Estimate diversity measures}
 \usage{
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
+  index = c("shannon", "simpson_diversity", "inv_simpson", "richness", "chao1", "ACE",
     "coverage"),
   name = index,
   ...
 )
 
-estimateAlphaDiversity(x, ...)
-
 estimateShannon(x, ...)
 
-estimateSimpson(x, ...)
+estimateSimpsonDiversity(x, ...)
 
 estimateInvSimpson(x, ...)
 
@@ -41,18 +37,16 @@ estimateCoverage(x, ...)
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson", "inv_simpson", "richness", "chao1", "ACE",
+  index = c("shannon", "simpson_diversity", "inv_simpson", "richness", "chao1", "ACE",
     "coverage"),
   name = index,
   ...,
   BPPARAM = SerialParam()
 )
 
-\S4method{estimateAlphaDiversity}{SummarizedExperiment}(x, ...)
-
 \S4method{estimateShannon}{SummarizedExperiment}(x, ...)
 
-\S4method{estimateSimpson}{SummarizedExperiment}(x, ...)
+\S4method{estimateSimpsonDiversity}{SummarizedExperiment}(x, ...)
 
 \S4method{estimateInvSimpson}{SummarizedExperiment}(x, ...)
 
@@ -66,10 +60,11 @@ estimateCoverage(x, ...)
 \item{abund_values}{the name of the assay used for calculation of the
 sample-wise estimates}
 
-\item{index}{a diversity measurement}
+\item{index}{a \code{character} vector, specifying the diversity measures
+to be calculated.}
 
-\item{name}{a name for the column of the colData the results should be stored
-in.}
+\item{name}{a name for the column(s) of the colData the results should be
+stored in.}
 
 \item{...}{additional parameters passed to \code{estimateDiversity}
 \itemize{
@@ -87,7 +82,7 @@ object specifying whether calculation of estimates should be parallelized.}
 \code{*name*}
 }
 \description{
-Several functions for calculation of alpha diversity indices available via
+Several functions for calculation of diversity indices available via
 wrapper functions. They are implemented via the \code{vegan} package.
 }
 \details{
@@ -101,13 +96,14 @@ se <- GlobalPatterns
 se <- estimateShannon(se)
 colData(se)$shannon
 
-se <- estimateSimpson(se)
-colData(se)$simpson
+se <- estimateSimpsonDiversity(se)
+colData(se)$simpson_diversity
 
 # Calculates all the diversity indices
 se <- estimateDiversity(se)
 # All the indices' names
-indices <- c("shannon","simpson","inv_simpson", "richness", "chao1", "ACE", "coverage")
+indices <- c("shannon","simpson_diversity","inv_simpson", "richness",
+             "chao1", "ACE", "coverage")
 colData(se)[,indices]
 
 # plotting the diversities
@@ -117,7 +113,7 @@ plotColData(se, "shannon")
 plotColData(se, "shannon", "SampleType")
 \donttest{
 # combining different plots
-plots <- lapply(c("shannon","simpson"),
+plots <- lapply(c("shannon","simpson_diversity"),
                 plotColData,
                 object = se,
                 x = "SampleType",

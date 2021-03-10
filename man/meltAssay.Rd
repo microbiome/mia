@@ -3,7 +3,7 @@
 \name{meltAssay}
 \alias{meltAssay}
 \alias{meltAssay,SummarizedExperiment-method}
-\title{Converts a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
+\title{Converting a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
 object into a long data.frame}
 \usage{
 meltAssay(
@@ -48,15 +48,15 @@ to given column names in \code{colData}. (default:
 \item{...}{optional arguments currently not used.}
 }
 \value{
-A \code{tibble} with the molten data. The assy values are given in a
+A \code{tibble} with the molten data. The assay values are given in a
 column named like the selected assay \code{abund_values}. In addition, a
 column \dQuote{FeatureID} will contain the rownames, if set, and analogously
 a column \dQuote{SampleID} with the colnames, if set
 }
 \description{
-Converts a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
-object into a long data.frame which can be used for
-\code{\link[tidyverse:tidyverse-package]{tidyverse}}-tools.
+\code{metlAssaay} Converts a
+\code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object into a
+long data.frame which can be used for \code{tidyverse}-tools.
 }
 \details{
 If the \code{colData} contains a column \dQuote{SampleID} or the

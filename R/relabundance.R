@@ -3,7 +3,7 @@
 #' \code{relabundance} is a getter/setter for relative abundance stored in the
 #' assay slot \sQuote{relabundance} of a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' object
+#' object. This is a short cut function for \code{assay(x,"relabundance")}.
 #'
 #' @param x a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}

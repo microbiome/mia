@@ -18,7 +18,7 @@
 \alias{addTaxonomyTree}
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{IdTaxaToDataFrame}
-\title{Taxonomy related functions}
+\title{Functions for accessing taxonomic data stored in \code{rowData}.}
 \format{
 a \code{character} vector of length 8 containing the taxonomy ranks
 recognized. In functions this is used case insensitive.
@@ -102,8 +102,11 @@ taxonomic ranks found in \code{colnames(rowData(x))}}
 }
 }
 \description{
-These function work on optional data present in \code{rowData}.
-
+These function work on data present in \code{rowData} and define a way to
+represent taxonomic data alongside the features of a
+\code{SummarizedExperiment}.
+}
+\details{
 \code{taxonomyRanks} returns, which columns of \code{rowData(x)} are regarded
 as columns containing taxonomic information.
 
@@ -123,12 +126,14 @@ taxonomic information. Internally it uses
 \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
 \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
 data if needed.
-}
-\details{
+
+\code{IdTaxaToDataFrame} extracts taxonomic results from results of
+\code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
+
 Taxonomic information from the \code{IdTaxa} function of \code{DECIPHER}
 package are returned as a special class. With \code{as(taxa,"DataFrame")}
 the information can be easily converted to a \code{DataFrame} compatible
-with storing the taxonomic information a \code{rowData}. Please not that the
+with storing the taxonomic information a \code{rowData}. Please note that the
 assigned confidence information are returned as \code{metatdata} and can
 be accessed using \code{metadata(df)$confidence}.
 }

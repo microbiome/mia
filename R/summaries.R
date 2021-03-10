@@ -1,4 +1,4 @@
-#' Accessing most relevant features
+#' Summarizing microbiome data
 #'
 #' To query a \code{SummarizedExperiment} for interesting features, several
 #' functions are available.
@@ -34,9 +34,9 @@
 #' @examples
 #' data(GlobalPatterns)
 #' top_taxa <- getTopTaxa(GlobalPatterns,
-#'                        method="mean",
-#'                        top=5,
-#'                        abund_values="counts")
+#'                        method = "mean",
+#'                        top = 5,
+#'                        abund_values = "counts")
 #' top_taxa
 NULL
 

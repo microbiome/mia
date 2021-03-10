@@ -1,9 +1,10 @@
 #' Split/Unsplit a \code{SingleCellExperiment} be taxonomic ranks
 #'
-#' \code{splitByRanks} and \code{unsplitByRanks} are functions for splitting
-#' a \code{SummarizedExperiment} along the taxonomic levels and storing the
+#' \code{splitByRanks} and \code{unsplitByRanks} are functions for splitting a
+#' \code{SummarizedExperiment} along the taxonomic levels and storing the chunks
 #' as alternative experiments. \code{unsplitByRanks} takes these alternative
-#' experiments and flattens them again into a single experiment.
+#' experiments and flattens them again into a single
+#' \code{SummarizedExperiment}.
 #'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -18,7 +19,7 @@
 #'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
 #'
 #' @param keep_reducedDims \code{TRUE} or \code{FALSE}: Should the
-#'   \code{reducedDims(x)} be transfered to the result? Please not, that this
+#'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculated the reduced dims.
 #'   (default: \code{keep_reducedDims = FALSE})
 #'
@@ -39,15 +40,14 @@
 #' \code{splitByRanks} will use by default all available taxonomic levels, but
 #' this can be controlled by setting \code{ranks} manually. \code{NA} values
 #' are removed by default, since they would not make sense, if the result
-#' should by sued for \code{unsplitByRanks} at some point.
+#' should by used for \code{unsplitByRanks} at some point.
 #'
 #' \code{unsplitByRanks} will remove any \code{NA} value on each taxonomic rank
-#' so that no ambiguous data is created. In additional an additional column
+#' so that no ambiguous data is created. In additional, a column
 #' \code{taxonomicLevel} is created or overwritten in the \code{rowData} to
-#' specify from which alternative experiment this originates from. This can
-#' also by used for
-#' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}} to split the
-#' result again along the same factor.
+#' specify from which alternative experiment this originates from. This can also
+#' by used for \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}} to
+#' split the result again along the same factor again.
 #'
 #' @seealso
 #' \code{\link[=merge-methods]{mergeRows}},

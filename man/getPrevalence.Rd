@@ -9,7 +9,7 @@
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
 \alias{agglomerateByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
-\title{Prevalence calculation}
+\title{Calculation prevalence information for features across samples}
 \usage{
 getPrevalence(x, ...)
 
@@ -66,6 +66,8 @@ on compositional (relative) abundances? (default: \code{TRUE})}
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 }
+\item{for \code{getPrevalentAbundance} additional parameters passed to
+\code{getPrevalentTaxa}}
 }}
 
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
@@ -76,9 +78,14 @@ limit, set \code{include_lowest} to \code{TRUE}.}
 summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 }
 \value{
-a named \code{numeric} vector. The names are either the row names of \code{x}
-or the names after agglomeration. For \code{getPrevalentTaxa} only the names
-exceeding the threshold set by \code{prevalence} are returned.
+a named \code{numeric} vector. For \code{getPrevalence} the names are either
+the row names of \code{x} or the names after agglomeration.
+
+For \code{getPrevalentAbundance} the names correspond to the column name
+names of \code{x} and include the joint abundance of prevalent taxa.
+
+For \code{getPrevalentTaxa} only the names exceeding the threshold set by
+\code{prevalence} are returned.
 }
 \description{
 These functions calculate the population prevalence for taxonomic ranks in a
@@ -92,6 +99,11 @@ rows. The absolute population prevalence can be obtained by multiplying the
 prevalence by the number of samples (\code{ncol(x)}). If \code{as_relative =
 TRUE} the relative frequency (between 0 and 1) is used to check against the
 \code{detection} threshold.
+
+The core abundance index from \code{getPrevalentAbundance} gives the relative
+proportion of the core species (in between 0 and 1). The core taxa are
+defined as those that exceed the given population prevalence threshold at the
+given detection level as set for \code{getPrevalentTaxa}.
 
 \code{getPrevalentTaxa} returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.
@@ -129,6 +141,10 @@ taxa <- getPrevalentTaxa(GlobalPatterns,
                          as_relative = TRUE)
 head(taxa)
 
+
+data(esophagus)
+getPrevalentAbundance(esophagus, abund_values = "counts")
+
 # data can be aggregated based on prevalent taxonomic results
 agglomerateByPrevalence(GlobalPatterns,
                          rank = "Phylum",
@@ -148,4 +164,6 @@ To cite the R package, see citation('mia')
 }
 \author{
 Leo Lahti
+For \code{getPrevalentAbundance}: Leo Lahti and Tuomas Borman.
+Contact: \url{microbiome.github.io}
 }

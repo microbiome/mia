@@ -1,42 +1,54 @@
-#' Import QIIME2 results to `TreeSummarizedExperiment`
+#' Import QIIME2 results to \code{TreeSummarizedExperiment}
 #'
-#' Results exported from QIMME2 can be imported as a `TreeSummarizedExperiment`
-#' using `loadFromQIIME2`. Except for the
-#' `featureTableFile`, the other data types, `taxonomyTableFile`, `refSeqFile`
-#' and `phyTreeFile`, are optional, but are highly encouraged to be provided.
+#' Results exported from QIMME2 can be imported as a
+#' \code{TreeSummarizedExperiment} using \code{loadFromQIIME2}. Except for the
+#' \code{featureTableFile}, the other data types, \code{taxonomyTableFile},
+#' \code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
+#' encouraged to be provided.
 #'
 #' @param featureTableFile a single \code{character} value defining the file
 #'   path of the feature table to be imported.
+#'
 #' @param taxonomyTableFile a single \code{character} value defining the file
-#'   path of the taxonomy table to be imported. (default: `NULL`).
-#' @param sampleMetaFile a single \code{character} value defining the file
-#'   path of the sample metadata to be imported. The file has to be in tsv
-#'   format. (default: `NULL`).
+#'   path of the taxonomy table to be imported. (default:
+#'   \code{taxonomyTableFile = NULL}).
+#'
+#' @param sampleMetaFile a single \code{character} value defining the file path
+#'   of the sample metadata to be imported. The file has to be in tsv format.
+#'   (default: \code{sampleMetaFile = NULL}).
+#'
 #' @param featureNamesAsRefseq \code{TRUE} or \code{FALSE}: Should the feature
 #'   names of the feature table be regarded as reference sequences? This setting
 #'   will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
 #'   feature names do not contain valid DNA characters only, the reference
 #'   sequences will not be set.
-#' @param refSeqFile a single \code{character} value defining the file
-#'   path of the reference sequences for each feature. (default: `NULL`).
-#' @param phyTreeFile a single \code{character} value defining the file
-#'   path of the phylogenetic tree. (default: `NULL`).
+#'
+#' @param refSeqFile a single \code{character} value defining the file path of
+#'   the reference sequences for each feature. (default: \code{refSeqFile =
+#'   NULL}).
+#'
+#' @param phyTreeFile a single \code{character} value defining the file path of
+#'   the phylogenetic tree. (default: \code{phyTreeFile = NULL}).
+#'
 #' @param ... additional arguments:
 #' \itemize{
 #'   \item{\code{temp}:} {the temporary directory used for decompressing the
 #'     data. (default: \code{tempdir()})}
 #'   \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
-#'     taxonomic prefixes be removed? (default: \code{FALSE}).)}
+#'     taxonomic prefixes be removed? (default:
+#'     \code{removeTaxaPrefixes = FALSE})}
 #' }
 #'
 #' @details
-#' Both arguments `featureNamesAsRefseq` and `refSeqFile` can be used to define
-#' reference sequences of features. `featureNamesAsRefseq` is only taken into
-#' account, if `refSeqFile` is `NULL`. No reference sequences are tried to be
-#' created, if `featureNameAsRefSeq` is `FALSE` and  `refSeqFile` is `NULL`.
+#' Both arguments \code{featureNamesAsRefseq} and \code{refSeqFile} can be used
+#' to define reference sequences of features. \code{featureNamesAsRefseq} is
+#' only taken into account, if \code{refSeqFile} is \code{NULL}. No reference
+#' sequences are tried to be created, if \code{featureNameAsRefSeq` is
+#' \code{FALSE} and \code{refSeqFile} is \code{NULL}.
 #'
-#' @return  An object of class
-#'   [`TreeSummarizedExperiment::TreeSummarizedExperiment-class`]
+#' @return  A
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object
 #'
 #' @name loadFromQIIME2
 #' @seealso
@@ -46,6 +58,7 @@
 #'
 #' @export
 #' @author Yang Cao
+#'
 #' @references
 #' Bolyen E et al. 2019: Reproducible, interactive, scalable and extensible
 #' microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
