@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Merge a subset of the rows or columns — merge-methods • mia</title>
+<title>Merge a subset of the rows or columns of a SummarizedExperiment — merge-methods • mia</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Merge a subset of the rows or columns — merge-methods" />
+<meta property="og:title" content="Merge a subset of the rows or columns of a SummarizedExperiment — merge-methods" />
 <meta property="og:description" content="mergeRows/mergeCols merge data on rows or columns of a
 SummarizedExperiment as defined by a factor alongside the
 chosen dimension. Metadata from the rowData or colData are
@@ -75,7 +75,7 @@ retained as defined by archetype." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.41</span>
       </span>
     </div>
 
@@ -114,7 +114,7 @@ retained as defined by archetype." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Merge a subset of the rows or columns</h1>
+    <h1>Merge a subset of the rows or columns of a <code>SummarizedExperiment</code></h1>
     <small class="dont-index">Source: <a href='https://github.com/FelixErnst/mia/blob/master/R/merge.R'><code>R/merge.R</code></a></small>
     <div class="hidden name"><code>merge-methods.Rd</code></div>
     </div>
@@ -190,6 +190,14 @@ returned. (Default: <code>mergeRefSeq = FALSE</code>)</p></td>
 
     <p>an object with the same class <code>x</code> with the specified entries
 merged into one entry in all relevant components.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>These functions are similar to
+<code><a href='https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html'>sumCountsAcrossFeatures</a></code>.
+However, additional support for <code>TreeSummarizedExperiment</code> was added and
+science field agnostic names were used. In addition the <code>archetype</code>
+argument lets the user select how to preserve row or columns data.</p>
+<p>For merge data of assays the function from <code>scuttle</code> are used.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html'>sumCountsAcrossFeatures</a></code></p></div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Prevalence calculation — getPrevalence • mia</title>
+<title>Calculation prevalence information for features across samples — getPrevalence • mia</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Prevalence calculation — getPrevalence" />
+<meta property="og:title" content="Calculation prevalence information for features across samples — getPrevalence" />
 <meta property="og:description" content="These functions calculate the population prevalence for taxonomic ranks in a
 SummarizedExperiment-class object." />
 
@@ -73,7 +73,7 @@ SummarizedExperiment-class object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.41</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@ SummarizedExperiment-class object." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Prevalence calculation</h1>
+    <h1>Calculation prevalence information for features across samples</h1>
     <small class="dont-index">Source: <a href='https://github.com/FelixErnst/mia/blob/master/R/getPrevalence.R'><code>R/getPrevalence.R</code></a></small>
     <div class="hidden name"><code>getPrevalence.Rd</code></div>
     </div>
@@ -143,6 +143,14 @@ SummarizedExperiment-class object." />
   include_lowest <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
+
+<span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for ANY</span>
+<span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>agglomerateByPrevalence</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
@@ -196,6 +204,8 @@ on compositional (relative) abundances? (default: <code>TRUE</code>)</p></td>
 <li><p>If <code>!is.null(rank)</code> arguments are passed on to
 <code><a href='agglomerate-methods.html'>agglomerateByRank</a></code>. See
 <code><a href='agglomerate-methods.html'>?agglomerateByRank</a></code> for more details.</p></li>
+<li><p>for <code>getPrevalentAbundance</code> additional parameters passed to
+<code>getPrevalentTaxa</code></p></li>
 </ul></td>
     </tr>
     <tr>
@@ -213,9 +223,12 @@ summary of non-prevalent taxa. (default: <code>other_label = "Other"</code>)</p>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a named <code>numeric</code> vector. The names are either the row names of <code>x</code>
-or the names after agglomeration. For <code>getPrevalentTaxa</code> only the names
-exceeding the threshold set by <code>prevalence</code> are returned.</p>
+    <p>a named <code>numeric</code> vector. For <code>getPrevalence</code> the names are either
+the row names of <code>x</code> or the names after agglomeration.</p>
+<p>For <code>getPrevalentAbundance</code> the names correspond to the column name
+names of <code>x</code> and include the joint abundance of prevalent taxa.</p>
+<p>For <code>getPrevalentTaxa</code> only the names exceeding the threshold set by
+<code>prevalence</code> are returned.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>getPrevalence</code> calculates the relative frequency of samples that exceed
@@ -225,6 +238,10 @@ rows. The absolute population prevalence can be obtained by multiplying the
 prevalence by the number of samples (<code><a href='https://rdrr.io/r/base/nrow.html'>ncol(x)</a></code>). If <code>as_relative =
 TRUE</code> the relative frequency (between 0 and 1) is used to check against the
 <code>detection</code> threshold.</p>
+<p>The core abundance index from <code>getPrevalentAbundance</code> gives the relative
+proportion of the core species (in between 0 and 1). The core taxa are
+defined as those that exceed the given population prevalence threshold at the
+given detection level as set for <code>getPrevalentTaxa</code>.</p>
 <p><code>getPrevalentTaxa</code> returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -239,7 +256,9 @@ To cite the R package, see citation('mia')</p>
 <code><a href='getTopTaxa.html'>getTopTaxa</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p>Leo Lahti</p>
+    <p>Leo Lahti
+For <code>getPrevalentAbundance</code>: Leo Lahti and Tuomas Borman.
+Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
@@ -282,6 +301,11 @@ To cite the R package, see citation('mia')</p>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>taxa</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "Phylum:Actinobacteria" "Phylum:Proteobacteria" "Phylum:Cyanobacteria" 
 #&gt; [4] "Phylum:Bacteroidetes"  "Phylum:Firmicutes"    </div><div class='input'>
+
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
+<span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>esophagus</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;         B         C         D 
+#&gt; 0.9605911 0.8980392 0.9086758 </div><div class='input'>
 <span class='co'># data can be aggregated based on prevalent taxonomic results</span>
 <span class='fu'>agglomerateByPrevalence</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,
                          rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,

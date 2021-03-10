@@ -40,10 +40,11 @@
 
 
 <meta property="og:title" content="Import QIIME2 results to TreeSummarizedExperiment — loadFromQIIME2" />
-<meta property="og:description" content="Results exported from QIMME2 can be imported as a TreeSummarizedExperiment
-using loadFromQIIME2. Except for the
-featureTableFile, the other data types, taxonomyTableFile, refSeqFile
-and phyTreeFile, are optional, but are highly encouraged to be provided." />
+<meta property="og:description" content="Results exported from QIMME2 can be imported as a
+TreeSummarizedExperiment using loadFromQIIME2. Except for the
+featureTableFile, the other data types, taxonomyTableFile,
+refSeqFile and phyTreeFile, are optional, but are highly
+encouraged to be provided." />
 
 
 
@@ -75,7 +76,7 @@ and phyTreeFile, are optional, but are highly encouraged to be provided." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.41</span>
       </span>
     </div>
 
@@ -120,17 +121,18 @@ and phyTreeFile, are optional, but are highly encouraged to be provided." />
     </div>
 
     <div class="ref-description">
-    <p>Results exported from QIMME2 can be imported as a <code>TreeSummarizedExperiment</code>
-using <code>loadFromQIIME2</code>. Except for the
-<code>featureTableFile</code>, the other data types, <code>taxonomyTableFile</code>, <code>refSeqFile</code>
-and <code>phyTreeFile</code>, are optional, but are highly encouraged to be provided.</p>
+    <p>Results exported from QIMME2 can be imported as a
+<code>TreeSummarizedExperiment</code> using <code>loadFromQIIME2</code>. Except for the
+<code>featureTableFile</code>, the other data types, <code>taxonomyTableFile</code>,
+<code>refSeqFile</code> and <code>phyTreeFile</code>, are optional, but are highly
+encouraged to be provided.</p>
     </div>
 
     <pre class="usage"><span class='fu'>loadFromQIIME2</span><span class='op'>(</span>
   <span class='va'>featureTableFile</span>,
   taxonomyTableFile <span class='op'>=</span> <span class='cn'>NULL</span>,
   sampleMetaFile <span class='op'>=</span> <span class='cn'>NULL</span>,
-  featureNamesAsRefseq <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  featureNamesAsRefSeq <span class='op'>=</span> <span class='cn'>TRUE</span>,
   refSeqFile <span class='op'>=</span> <span class='cn'>NULL</span>,
   phyTreeFile <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
@@ -147,16 +149,17 @@ path of the feature table to be imported.</p></td>
     <tr>
       <th>taxonomyTableFile</th>
       <td><p>a single <code>character</code> value defining the file
-path of the taxonomy table to be imported. (default: <code>NULL</code>).</p></td>
+path of the taxonomy table to be imported. (default:
+<code>taxonomyTableFile = NULL</code>).</p></td>
     </tr>
     <tr>
       <th>sampleMetaFile</th>
-      <td><p>a single <code>character</code> value defining the file
-path of the sample metadata to be imported. The file has to be in tsv
-format. (default: <code>NULL</code>).</p></td>
+      <td><p>a single <code>character</code> value defining the file path
+of the sample metadata to be imported. The file has to be in tsv format.
+(default: <code>sampleMetaFile = NULL</code>).</p></td>
     </tr>
     <tr>
-      <th>featureNamesAsRefseq</th>
+      <th>featureNamesAsRefSeq</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should the feature
 names of the feature table be regarded as reference sequences? This setting
 will be disregarded, if <code>refSeqFile</code> is not <code>NULL</code>. If the
@@ -165,13 +168,14 @@ sequences will not be set.</p></td>
     </tr>
     <tr>
       <th>refSeqFile</th>
-      <td><p>a single <code>character</code> value defining the file
-path of the reference sequences for each feature. (default: <code>NULL</code>).</p></td>
+      <td><p>a single <code>character</code> value defining the file path of
+the reference sequences for each feature. (default: <code>refSeqFile =
+  NULL</code>).</p></td>
     </tr>
     <tr>
       <th>phyTreeFile</th>
-      <td><p>a single <code>character</code> value defining the file
-path of the phylogenetic tree. (default: <code>NULL</code>).</p></td>
+      <td><p>a single <code>character</code> value defining the file path of
+the phylogenetic tree. (default: <code>phyTreeFile = NULL</code>).</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -179,21 +183,24 @@ path of the phylogenetic tree. (default: <code>NULL</code>).</p></td>
 <li><p><code>temp</code>: the temporary directory used for decompressing the
 data. (default: <code><a href='https://rdrr.io/r/base/tempfile.html'>tempdir()</a></code>)</p></li>
 <li><p><code>removeTaxaPrefixes</code>: <code>TRUE</code> or <code>FALSE</code>: Should
-taxonomic prefixes be removed? (default: <code>FALSE</code>).)</p></li>
+taxonomic prefixes be removed? (default:
+<code>removeTaxaPrefixes = FALSE</code>)</p></li>
 </ul></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class
-<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html'>TreeSummarizedExperiment::TreeSummarizedExperiment</a></code></p>
+    <p>A
+<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html'>TreeSummarizedExperiment</a></code>
+object</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Both arguments <code>featureNamesAsRefseq</code> and <code>refSeqFile</code> can be used to define
-reference sequences of features. <code>featureNamesAsRefseq</code> is only taken into
-account, if <code>refSeqFile</code> is <code>NULL</code>. No reference sequences are tried to be
-created, if <code>featureNameAsRefSeq</code> is <code>FALSE</code> and  <code>refSeqFile</code> is <code>NULL</code>.</p>
+    <p>Both arguments <code>featureNamesAsRefSeq</code> and <code>refSeqFile</code> can be used
+to define reference sequences of features. <code>featureNamesAsRefSeq</code> is
+only taken into account, if <code>refSeqFile</code> is <code>NULL</code>. No reference
+sequences are tried to be created, if <code>featureNameAsRefSeq</code> is
+<code>FALSE</code> and <code>refSeqFile</code> is <code>NULL</code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Bolyen E et al. 2019: Reproducible, interactive, scalable and extensible

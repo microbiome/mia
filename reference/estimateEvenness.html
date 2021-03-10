@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Estimate Evenness — estimateEvenness • mia</title>
+<title>Estimate Evenness measures — estimateEvenness • mia</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Estimate Evenness — estimateEvenness" />
-<meta property="og:description" content="Several functions for calculation of evenness estimates are available." />
+<meta property="og:title" content="Estimate Evenness measures — estimateEvenness" />
+<meta property="og:description" content="This function calculates community evenness indices.
+These include the &amp;#8216;Camargo&amp;#8217;, &amp;#8216;Pielou&amp;#8217;, &amp;#8216;Simpson&amp;#8217;,
+&amp;#8216;Evar&amp;#8217; and &amp;#8216;Bulla&amp;#8217; evenness measures." />
 
 
 
@@ -72,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.41</span>
       </span>
     </div>
 
@@ -111,19 +113,21 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Estimate Evenness</h1>
+    <h1>Estimate Evenness measures</h1>
     <small class="dont-index">Source: <a href='https://github.com/FelixErnst/mia/blob/master/R/estimateEvenness.R'><code>R/estimateEvenness.R</code></a></small>
     <div class="hidden name"><code>estimateEvenness.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Several functions for calculation of evenness estimates are available.</p>
+    <p>This function calculates community evenness indices.
+These include the &#8216;Camargo&#8217;, &#8216;Pielou&#8217;, &#8216;Simpson&#8217;,
+&#8216;Evar&#8217; and &#8216;Bulla&#8217; evenness measures.</p>
     </div>
 
     <pre class="usage"><span class='fu'>estimateEvenness</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"camargo"</span>, <span class='st'>"pielou"</span>, <span class='st'>"simpson"</span>, <span class='st'>"evar"</span>, <span class='st'>"bulla"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"camargo"</span>, <span class='st'>"pielou"</span>, <span class='st'>"simpson_evenness"</span>, <span class='st'>"evar"</span>, <span class='st'>"bulla"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
@@ -132,7 +136,7 @@
 <span class='fu'>estimateEvenness</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"camargo"</span>, <span class='st'>"pielou"</span>, <span class='st'>"simpson"</span>, <span class='st'>"evar"</span>, <span class='st'>"bulla"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"camargo"</span>, <span class='st'>"pielou"</span>, <span class='st'>"simpson_evenness"</span>, <span class='st'>"evar"</span>, <span class='st'>"bulla"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
   <span class='va'>...</span>,
   BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>
@@ -147,17 +151,19 @@
     </tr>
     <tr>
       <th>abund_values</th>
-      <td><p>the name of the assay used for calculation of the
-sample-wise estimates</p></td>
+      <td><p>A single character value for selecting the
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assay</a></code> to use
+for calculation of the sample-wise estimates.</p></td>
     </tr>
     <tr>
       <th>index</th>
-      <td><p>a evenness measurement</p></td>
+      <td><p>a <code>character</code> vector, specifying the eveness measures to be
+calculated.</p></td>
     </tr>
     <tr>
       <th>name</th>
-      <td><p>a name for the column of the colData the results should be stored
-in.</p></td>
+      <td><p>a name for the column(s) of the colData the results should be
+stored in.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -175,10 +181,6 @@ object specifying whether calculation of estimates should be parallelized.</p></
 
     <p><code>x</code> with additional <code>colData</code> named
 <code>*name*</code></p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>These include the &#8216;Camargo&#8217;, &#8216;Pielou&#8217;, &#8216;Simpson&#8217;,
-&#8216;Evar&#8217; and &#8216;Bulla&#8217; evenness measures.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></code></p></div>
@@ -214,14 +216,14 @@ object specifying whether calculation of estimates should be parallelized.</p></
 #&gt; M31Fcsw M3, Day 1, fecal swab, whole body study     0.982806  0.485297
 #&gt; M11Fcsw M1, Day 1, fecal swab, whole body study     0.869144  0.418639
 #&gt; M31Plmr M3, Day 1, right palm, whole body study     0.697712  0.531161
-#&gt;            simpson      evar     bulla
-#&gt;          &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-#&gt; CL3     0.02687102  0.152666 0.2578353
-#&gt; CC1     0.02719672  0.140227 0.2762060
-#&gt; SV1     0.04704907  0.143689 0.2443118
-#&gt; M31Fcsw 0.00517883  0.128413 0.0920738
-#&gt; M11Fcsw 0.00430415  0.139155 0.0678475
-#&gt; M31Plmr 0.00501120  0.161522 0.1228909</div></pre>
+#&gt;         simpson_evenness      evar     bulla
+#&gt;                &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
+#&gt; CL3           0.02687102  0.152666 0.2578353
+#&gt; CC1           0.02719672  0.140227 0.2762060
+#&gt; SV1           0.04704907  0.143689 0.2443118
+#&gt; M31Fcsw       0.00517883  0.128413 0.0920738
+#&gt; M11Fcsw       0.00430415  0.139155 0.0678475
+#&gt; M31Plmr       0.00501120  0.161522 0.1228909</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Taxonomy related functions — taxonomy-methods • mia</title>
+<title>Functions for accessing taxonomic data stored in rowData. — taxonomy-methods • mia</title>
 
 
 <!-- jquery -->
@@ -39,23 +39,10 @@
 
 
 
-<meta property="og:title" content="Taxonomy related functions — taxonomy-methods" />
-<meta property="og:description" content="These function work on optional data present in rowData.
-taxonomyRanks returns, which columns of rowData(x) are regarded
-as columns containing taxonomic information.
-taxonomyRankEmpty checks, if a selected rank is empty of information.
-checkTaxonomy checks, if taxonomy information is valid and whether
-it contains any problems. This is a soft test, which reports some
-diagnostic and might mature into a data validator used upon object
-creation.
-getTaxonomyLabels generates a character vector per row consisting of
-the lowest taxonomic information possible. If data from different levels,
-is to be mixed, the taxonomic level is prepended by default.
-taxonomyTree generates a phylo tree object from the available
-taxonomic information. Internally it uses
-toTree and
-resolveLoop to sanitize
-data if needed." />
+<meta property="og:title" content="Functions for accessing taxonomic data stored in rowData. — taxonomy-methods" />
+<meta property="og:description" content="These function work on data present in rowData and define a way to
+represent taxonomic data alongside the features of a
+SummarizedExperiment." />
 
 
 
@@ -87,7 +74,7 @@ data if needed." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.41</span>
       </span>
     </div>
 
@@ -126,28 +113,15 @@ data if needed." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Taxonomy related functions</h1>
+    <h1>Functions for accessing taxonomic data stored in <code>rowData</code>.</h1>
     <small class="dont-index">Source: <a href='https://github.com/FelixErnst/mia/blob/master/R/taxonomy.R'><code>R/taxonomy.R</code></a></small>
     <div class="hidden name"><code>taxonomy-methods.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>These function work on optional data present in <code>rowData</code>.</p>
-<p><code>taxonomyRanks</code> returns, which columns of <code>rowData(x)</code> are regarded
-as columns containing taxonomic information.</p>
-<p><code>taxonomyRankEmpty</code> checks, if a selected rank is empty of information.</p>
-<p><code>checkTaxonomy</code> checks, if taxonomy information is valid and whether
-it contains any problems. This is a soft test, which reports some
-diagnostic and might mature into a data validator used upon object
-creation.</p>
-<p><code>getTaxonomyLabels</code> generates a character vector per row consisting of
-the lowest taxonomic information possible. If data from different levels,
-is to be mixed, the taxonomic level is prepended by default.</p>
-<p><code>taxonomyTree</code> generates a <code>phylo</code> tree object from the available
-taxonomic information. Internally it uses
-<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/toTree.html'>toTree</a></code> and
-<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/resolveLoop.html'>resolveLoop</a></code> to sanitize
-data if needed.</p>
+    <p>These function work on data present in <code>rowData</code> and define a way to
+represent taxonomic data alongside the features of a
+<code>SummarizedExperiment</code>.</p>
     </div>
 
     <pre class="usage"><span class='va'>TAXONOMY_RANKS</span>
@@ -261,10 +235,27 @@ taxonomic ranks found in <code><a href='https://rdrr.io/r/base/colnames.html'>co
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Taxonomic information from the <code>IdTaxa</code> function of <code>DECIPHER</code>
+    <p><code>taxonomyRanks</code> returns, which columns of <code>rowData(x)</code> are regarded
+as columns containing taxonomic information.</p>
+<p><code>taxonomyRankEmpty</code> checks, if a selected rank is empty of information.</p>
+<p><code>checkTaxonomy</code> checks, if taxonomy information is valid and whether
+it contains any problems. This is a soft test, which reports some
+diagnostic and might mature into a data validator used upon object
+creation.</p>
+<p><code>getTaxonomyLabels</code> generates a character vector per row consisting of
+the lowest taxonomic information possible. If data from different levels,
+is to be mixed, the taxonomic level is prepended by default.</p>
+<p><code>taxonomyTree</code> generates a <code>phylo</code> tree object from the available
+taxonomic information. Internally it uses
+<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/toTree.html'>toTree</a></code> and
+<code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/resolveLoop.html'>resolveLoop</a></code> to sanitize
+data if needed.</p>
+<p><code>IdTaxaToDataFrame</code> extracts taxonomic results from results of
+<code><a href='https://rdrr.io/pkg/DECIPHER/man/IdTaxa.html'>IdTaxa</a></code>.</p>
+<p>Taxonomic information from the <code>IdTaxa</code> function of <code>DECIPHER</code>
 package are returned as a special class. With <code>as(taxa,"DataFrame")</code>
 the information can be easily converted to a <code>DataFrame</code> compatible
-with storing the taxonomic information a <code>rowData</code>. Please not that the
+with storing the taxonomic information a <code>rowData</code>. Please note that the
 assigned confidence information are returned as <code>metatdata</code> and can
 be accessed using <code>metadata(df)$confidence</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

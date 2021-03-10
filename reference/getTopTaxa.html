@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Accessing most relevant features — getTopTaxa • mia</title>
+<title>Summarizing microbiome data — getTopTaxa • mia</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Accessing most relevant features — getTopTaxa" />
+<meta property="og:title" content="Summarizing microbiome data — getTopTaxa" />
 <meta property="og:description" content="To query a SummarizedExperiment for interesting features, several
 functions are available." />
 
@@ -73,7 +73,7 @@ functions are available." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.41</span>
       </span>
     </div>
 
@@ -112,8 +112,8 @@ functions are available." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Accessing most relevant features</h1>
-    <small class="dont-index">Source: <a href='https://github.com/FelixErnst/mia/blob/master/R/getTopTaxa.R'><code>R/getTopTaxa.R</code></a></small>
+    <h1>Summarizing microbiome data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/FelixErnst/mia/blob/master/R/summaries.R'><code>R/summaries.R</code></a></small>
     <div class="hidden name"><code>getTopTaxa.Rd</code></div>
     </div>
 
@@ -180,9 +180,9 @@ in a <code>SummarizedExperiment</code> object.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
 <span class='va'>top_taxa</span> <span class='op'>&lt;-</span> <span class='fu'>getTopTaxa</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,
-                       method<span class='op'>=</span><span class='st'>"mean"</span>,
-                       top<span class='op'>=</span><span class='fl'>5</span>,
-                       abund_values<span class='op'>=</span><span class='st'>"counts"</span><span class='op'>)</span>
+                       method <span class='op'>=</span> <span class='st'>"mean"</span>,
+                       top <span class='op'>=</span> <span class='fl'>5</span>,
+                       abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
 <span class='va'>top_taxa</span>
 </div><div class='output co'>#&gt; [1] "549656" "331820" "279599" "360229" "317182"</div></pre>
   </div>

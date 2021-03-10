@@ -40,13 +40,9 @@
 
 
 <meta property="og:title" content="Get abundance values by &#8220;SampleID&#8221; or &#8220;FeatureID&#8221; — getAbundance" />
-<meta property="og:description" content="These are basic functions for extracting abundances present in assay(x).
-These functions are convenience wrapper around subsetting columns or rows from
-assay(x,name).
-getAbundanceSample returns abundance values for all &amp;#8220;FeatureIDs&amp;#8221; in a
-user specified &amp;#8220;SampleID&amp;#8221;.
-getAbundanceFeature returns abundance values in all &amp;#8220;SampleIDs&amp;#8221; for
-user specified &amp;#8220;FeatureID&amp;#8221;." />
+<meta property="og:description" content="These are functions for extracting abundances present in assay(x).
+These functions are convenience wrapper around subsetting columns or rows
+from assay(x,name)." />
 
 
 
@@ -78,7 +74,7 @@ user specified &amp;#8220;FeatureID&amp;#8221;." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.41</span>
       </span>
     </div>
 
@@ -123,13 +119,9 @@ user specified &amp;#8220;FeatureID&amp;#8221;." />
     </div>
 
     <div class="ref-description">
-    <p>These are basic functions for extracting abundances present in <code>assay(x)</code>.
-These functions are convenience wrapper around subsetting columns or rows from
-assay(x,name).</p>
-<p><code>getAbundanceSample</code> returns abundance values for all &#8220;FeatureIDs&#8221; in a
-user specified &#8220;SampleID&#8221;.</p>
-<p><code>getAbundanceFeature</code> returns abundance values in all &#8220;SampleIDs&#8221; for
-user specified &#8220;FeatureID&#8221;.</p>
+    <p>These are functions for extracting abundances present in <code>assay(x)</code>.
+These functions are convenience wrapper around subsetting columns or rows
+from <code>assay(x,name)</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>getAbundanceSample</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>sample_id</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
@@ -153,8 +145,8 @@ user specified &#8220;FeatureID&#8221;.</p>
     <tr>
       <th>sample_id</th>
       <td><p>A &#8220;SampleID&#8221; from which user wants to extract the
-abundances of &#8220;FeatureID&#8221;. This is essentially a colname in
-assay(x).</p></td>
+abundances of &#8220;FeatureID&#8221;. This is essentially a column name in
+<code>assay(x)</code>.</p></td>
     </tr>
     <tr>
       <th>abund_values</th>
@@ -166,7 +158,7 @@ assay(x).</p></td>
       <td><p>A &#8220;FeatureID&#8221; for which user wants to extract the
 abundances from all of &#8220;SampleID&#8221; in
 <code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assayNames</a></code>.
-This is essentially a rowname in assay(x).</p></td>
+This is essentially a rowname in <code>assay(x)</code>.</p></td>
     </tr>
     </table>
 
@@ -175,6 +167,12 @@ This is essentially a rowname in assay(x).</p></td>
     <p><code>getAbundanceSample</code> and <code>getAbundanceFeature</code> return a
 numeric matrix of the abundance values for all
 &#8220;SampleIDs&#8221;/&#8220;FeatureIDs&#8221;</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p><code>getAbundanceSample</code> returns abundance values for all
+&#8220;FeatureIDs&#8221; in a user specified &#8220;SampleID&#8221;.</p>
+<p><code>getAbundanceFeature</code> returns abundance values in all &#8220;SampleIDs&#8221;
+for user specified &#8220;FeatureID&#8221;.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Sudarshan A. Shetty</p>

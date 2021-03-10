@@ -74,7 +74,7 @@ taxonomicRanks can be used." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.41</span>
       </span>
     </div>
 
@@ -155,13 +155,13 @@ to certain taxonomic ranks given as <code>rowData</code>. Only available
     <tr>
       <th>onRankOnly</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should information only from
-the specified rank used or from ranks equal and above?.
+the specified rank used or from ranks equal and above? See details.
 (default: <code>onRankOnly = FALSE</code>)</p></td>
     </tr>
     <tr>
       <th>na.rm</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should taxa with an empty rank be
-removed? Use it with caution, since results with NA on the selected rank
+removed? Use it with caution, since empty entries on the selected rank
 will be dropped. This setting can be tweaked by defining
 <code>empty.fields</code> to your needs. (default: <code>na.rm = TRUE</code>)</p></td>
     </tr>
@@ -176,7 +176,7 @@ removed if <code>na.rm = TRUE</code> before agglomeration.</p></td>
       <td><p>arguments passed to <code>agglomerateByRank</code> function for
 <code>SummarizedExperiment</code> objects,
 <code><a href='merge-methods.html'>mergeRows</a></code> and
-<code><a href='https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html'>sumCountsAcrossFeatures</a></code></p></td>
+<code><a href='https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html'>sumCountsAcrossFeatures</a></code>.</p></td>
     </tr>
     <tr>
       <th>altexp</th>
@@ -186,7 +186,7 @@ containing the input data.</p></td>
     <tr>
       <th>strip_altexp</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should alternative
-experiments be removed prior to agglomeration? This prohibits to many
+experiments be removed prior to agglomeration? This prevents to many
 nested alternative experiments by default (default:
 <code>strip_altexp = TRUE</code>)</p></td>
     </tr>
@@ -202,6 +202,13 @@ nested alternative experiments by default (default:
 
     <p>A taxonomically-agglomerated, optionally-pruned object of the same
 class <code>x</code>.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Based on the available taxonomic data and its structure setting
+<code>onRankOnly = TRUE</code> has certain implications on the interpretability of
+your results. If no loops exist (loops meaning two higher ranks containing
+the same lower rank), the results should be comparable. you can check for
+loops using <code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/detectLoop.html'>detectLoop</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='merge-methods.html'>mergeRows</a></code>,

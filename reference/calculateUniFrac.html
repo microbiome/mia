@@ -41,7 +41,8 @@
 
 <meta property="og:title" content="Calculate weighted or unweighted (Fast) UniFrac distance — calculateUniFrac" />
 <meta property="og:description" content="This function calculates the (Fast) UniFrac distance for all sample-pairs
-in a TreeSummarizedExperiment object." />
+in a TreeSummarizedExperiment
+object." />
 
 
 
@@ -73,7 +74,7 @@ in a TreeSummarizedExperiment object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.41</span>
       </span>
     </div>
 
@@ -119,7 +120,8 @@ in a TreeSummarizedExperiment object." />
 
     <div class="ref-description">
     <p>This function calculates the (Fast) UniFrac distance for all sample-pairs
-in a <code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html'>TreeSummarizedExperiment</a></code> object.</p>
+in a <code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html'>TreeSummarizedExperiment</a></code>
+object.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for ANY,phylo</span>
@@ -151,14 +153,16 @@ in a <code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummari
 <code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html'>TreeSummarizedExperiment</a></code>
 object containing a tree.</p>
 <p>Please  note that <code>runUniFrac</code> expects a matrix with samples per row
-and not per column. This was done, to be compatible with other distance
-calculations such as <code><a href='https://rdrr.io/r/stats/dist.html'>dist</a></code>.</p></td>
+and not per column. This is implemented to be compatible with other
+distance calculations such as <code><a href='https://rdrr.io/r/stats/dist.html'>dist</a></code> as much as
+possible.</p></td>
     </tr>
     <tr>
       <th>tree</th>
-      <td><p>if <code>x</code> is a matrix. a
+      <td><p>if <code>x</code> is a matrix, a
 <code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/phylo.html'>phylo</a></code> object matching the
-amtrix, especially the number of columns.</p></td>
+matrix. This means that the phylo object and the columns should related
+to the same type of features (aka. microorganisms).</p></td>
     </tr>
     <tr>
       <th>weighted</th>
@@ -202,8 +206,8 @@ assay to use for calculation.</p></td>
     <p>a sample-by-sample distance matrix, suitable for NMDS, etc.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Please not that if <code>calculateUniFrac</code> is used as a <code>FUN</code> for
-<code>runMDS2</code>, the argument <code>ntop</code> has to be set to <code><a href='https://rdrr.io/r/base/nrow.html'>nrow(x)</a></code>.</p>
+    <p>Please note that if <code>calculateUniFrac</code> is used as a <code>FUN</code> for
+<code>runMDS</code>, the argument <code>ntop</code> has to be set to <code><a href='https://rdrr.io/r/base/nrow.html'>nrow(x)</a></code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p><a href='http://bmf.colorado.edu/unifrac/'>http://bmf.colorado.edu/unifrac/</a></p>
