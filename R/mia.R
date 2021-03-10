@@ -1,6 +1,9 @@
-#' mia Package.
+#' \code{mia} Package.
 #'
-#' \code{mia} implements tools for microbiome analysis
+#' \code{mia} implements tools for microbiome analysis based on the
+#' SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment
+#' infrastructure. Data wrangling and analysis are the main scope of this
+#' package.
 #'
 #' @name mia-package
 #' @docType package

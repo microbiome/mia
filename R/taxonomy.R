@@ -1,9 +1,8 @@
-#' @name taxonomy-methods
+#' Functions for accessing taxonomic data stored in \code{rowData}.
 #'
-#' @title Taxonomy related functions
-#'
-#' @description
-#' These function work on optional data present in \code{rowData}.
+#' These function work on data present in \code{rowData} and define a way to
+#' represent taxonomic data alongside the features of a
+#' \code{SummarizedExperiment}.
 #'
 #' \code{taxonomyRanks} returns, which columns of \code{rowData(x)} are regarded
 #' as columns containing taxonomic information.
@@ -19,12 +18,14 @@
 #'   the lowest taxonomic information possible. If data from different levels,
 #'   is to be mixed, the taxonomic level is prepended by default.
 #'
-#'
 #' \code{taxonomyTree} generates a \code{phylo} tree object from the available
 #'   taxonomic information. Internally it uses
 #'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
 #'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
 #'   data if needed.
+#'
+#' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
+#'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
 #'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -57,7 +58,7 @@
 #' Taxonomic information from the \code{IdTaxa} function of \code{DECIPHER}
 #' package are returned as a special class. With \code{as(taxa,"DataFrame")}
 #' the information can be easily converted to a \code{DataFrame} compatible
-#' with storing the taxonomic information a \code{rowData}. Please not that the
+#' with storing the taxonomic information a \code{rowData}. Please note that the
 #' assigned confidence information are returned as \code{metatdata} and can
 #' be accessed using \code{metadata(df)$confidence}.
 #'
@@ -67,6 +68,8 @@
 #'     taxonomic ranks found in \code{colnames(rowData(x))}}
 #'   \item{\code{taxonomyRankEmpty}:} {a \code{logical} value}
 #' }
+#'
+#' @name taxonomy-methods
 #'
 #' @seealso \code{\link[=agglomerate-methods]{agglomerateByRank}},
 #' \code{\link[TreeSummarizedExperiment:toTree]{toTree}},

@@ -4,7 +4,7 @@
 \alias{calculateDistance}
 \alias{calculateDistance,ANY-method}
 \alias{calculateDistance,SummarizedExperiment-method}
-\title{Calculate distances with \code{vegan}}
+\title{Calculate sample distances with \code{vegan}}
 \usage{
 calculateDistance(x, FUN = stats::dist, ...)
 
@@ -29,8 +29,8 @@ feature columns.}
 
 \item{...}{other arguments passed onto \code{FUN}}
 
-\item{exprs_values}{a single \code{character} value for specifying which assay to
-use for calculation.}
+\item{exprs_values}{a single \code{character} value for specifying which
+assay to use for calculation.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 }

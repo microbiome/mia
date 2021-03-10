@@ -33,7 +33,7 @@ will be dropped. This setting can be tweaked by defining
 \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})}
 
 \item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
-\code{reducedDims(x)} be transfered to the result? Please not, that this
+\code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculated the reduced dims.
 (default: \code{keep_reducedDims = FALSE})}
 }
@@ -47,24 +47,24 @@ and any existing \code{rowTree} is dropped as well, since existing
 \code{rowLinks} are not valid anymore.
 }
 \description{
-\code{splitByRanks} and \code{unsplitByRanks} are functions for splitting
-a \code{SummarizedExperiment} along the taxonomic levels and storing the
+\code{splitByRanks} and \code{unsplitByRanks} are functions for splitting a
+\code{SummarizedExperiment} along the taxonomic levels and storing the chunks
 as alternative experiments. \code{unsplitByRanks} takes these alternative
-experiments and flattens them again into a single experiment.
+experiments and flattens them again into a single
+\code{SummarizedExperiment}.
 }
 \details{
 \code{splitByRanks} will use by default all available taxonomic levels, but
 this can be controlled by setting \code{ranks} manually. \code{NA} values
 are removed by default, since they would not make sense, if the result
-should by sued for \code{unsplitByRanks} at some point.
+should by used for \code{unsplitByRanks} at some point.
 
 \code{unsplitByRanks} will remove any \code{NA} value on each taxonomic rank
-so that no ambiguous data is created. In additional an additional column
+so that no ambiguous data is created. In additional, a column
 \code{taxonomicLevel} is created or overwritten in the \code{rowData} to
-specify from which alternative experiment this originates from. This can
-also by used for
-\code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}} to split the
-result again along the same factor.
+specify from which alternative experiment this originates from. This can also
+by used for \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}} to
+split the result again along the same factor again.
 }
 \examples{
 data(GlobalPatterns)

@@ -9,7 +9,7 @@ test_that("estimateEvenness", {
         expect_equal(round(as.vector(mia:::.run_evenness(mat, index="pielou")),7),
                      round(c(0.6750387, 0.7900423, 0.5587478),7))
 
-        expect_equal(round(as.vector(mia:::.run_evenness(mat, index="simpson")), 7),
+        expect_equal(round(as.vector(mia:::.run_evenness(mat, index="simpson_evenness")), 7),
                      round(c(0.21179306, 0.31351703, 0.07873068), 7))
 
         expect_equal(round(as.vector(mia:::.run_evenness(mat, index="evar")), 7),

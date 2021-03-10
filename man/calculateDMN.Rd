@@ -134,7 +134,8 @@ returns a single \code{DMN} object.
 }
 \description{
 These function are accessors for functions implemented in the
-\code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}} package
+\code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}}
+package
 }
 \examples{
 fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")

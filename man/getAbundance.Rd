@@ -21,8 +21,8 @@ getAbundanceFeature(x, feature_id, abund_values)
 \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.}
 
 \item{sample_id}{A \dQuote{SampleID} from which user wants to extract the
-abundances of \dQuote{FeatureID}. This is essentially a colname in
-assay(x).}
+abundances of \dQuote{FeatureID}. This is essentially a column name in
+\code{assay(x)}.}
 
 \item{abund_values}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
@@ -30,7 +30,7 @@ assay(x).}
 \item{feature_id}{A \dQuote{FeatureID} for which user wants to extract the
 abundances from all of \dQuote{SampleID} in
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}.
-This is essentially a rowname in assay(x).}
+This is essentially a rowname in \code{assay(x)}.}
 }
 \value{
 \code{getAbundanceSample} and \code{getAbundanceFeature} return a
@@ -38,15 +38,16 @@ numeric matrix of the abundance values for all
 \dQuote{SampleIDs}/\dQuote{FeatureIDs}
 }
 \description{
-These are basic functions for extracting abundances present in \code{assay(x)}.
-These functions are convenience wrapper around subsetting columns or rows from
-assay(x,name).
+These are functions for extracting abundances present in \code{assay(x)}.
+These functions are convenience wrapper around subsetting columns or rows
+from \code{assay(x,name)}.
+}
+\details{
+\code{getAbundanceSample} returns abundance values for all
+\dQuote{FeatureIDs} in a user specified \dQuote{SampleID}.
 
-\code{getAbundanceSample} returns abundance values for all \dQuote{FeatureIDs} in a
-user specified \dQuote{SampleID}.
-
-\code{getAbundanceFeature} returns abundance values in all \dQuote{SampleIDs} for
-user specified \dQuote{FeatureID}.
+\code{getAbundanceFeature} returns abundance values in all \dQuote{SampleIDs}
+for user specified \dQuote{FeatureID}.
 }
 \examples{
 # getAbundanceSample

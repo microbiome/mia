@@ -1,7 +1,8 @@
 #' Dirichlet-Multinomial Mixture Model: Machine Learning for Microbiome Data
 #'
 #' These function are accessors for functions implemented in the
-#' \code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}} package
+#' \code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}}
+#' package
 #'
 #' @param x a numeric matrix with samples as rows or a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}

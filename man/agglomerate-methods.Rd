@@ -28,11 +28,11 @@
 \code{taxonomicRanks()} function.}
 
 \item{onRankOnly}{\code{TRUE} or \code{FALSE}: Should information only from
-the specified rank used or from ranks equal and above?.
+the specified rank used or from ranks equal and above? See details.
 (default: \code{onRankOnly = FALSE})}
 
 \item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-removed? Use it with caution, since results with NA on the selected rank
+removed? Use it with caution, since empty entries on the selected rank
 will be dropped. This setting can be tweaked by defining
 \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})}
 
@@ -43,13 +43,13 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects,
 \code{\link[=merge-methods]{mergeRows}} and
-\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}}
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
 \item{strip_altexp}{\code{TRUE} or \code{FALSE}: Should alternative
-experiments be removed prior to agglomeration? This prohibits to many
+experiments be removed prior to agglomeration? This prevents to many
 nested alternative experiments by default (default:
 \code{strip_altexp = TRUE})}
 
@@ -65,6 +65,13 @@ class \code{x}.
 \code{agglomerateByRank} can be used to sum up data based on the association
 to certain taxonomic ranks given as \code{rowData}. Only available
 \code{\link{taxonomicRanks}} can be used.
+}
+\details{
+Based on the available taxonomic data and its structure setting
+\code{onRankOnly = TRUE} has certain implications on the interpretability of
+your results. If no loops exist (loops meaning two higher ranks containing
+the same lower rank), the results should be comparable. you can check for
+loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
 }
 \examples{
 data(GlobalPatterns)

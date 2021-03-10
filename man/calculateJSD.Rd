@@ -61,6 +61,6 @@ Department of Mathematics
 }
 \author{
 Susan Holmes \email{susan@stat.stanford.edu}.
-Adapted for phyloseq2 by Paul J. McMurdie.
+Adapted for phyloseq by Paul J. McMurdie.
 Adapted for mia by Felix G.M. Ernst
 }
