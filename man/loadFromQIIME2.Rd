@@ -8,7 +8,7 @@ loadFromQIIME2(
   featureTableFile,
   taxonomyTableFile = NULL,
   sampleMetaFile = NULL,
-  featureNamesAsRefseq = TRUE,
+  featureNamesAsRefSeq = TRUE,
   refSeqFile = NULL,
   phyTreeFile = NULL,
   ...
@@ -26,7 +26,7 @@ path of the taxonomy table to be imported. (default:
 of the sample metadata to be imported. The file has to be in tsv format.
 (default: \code{sampleMetaFile = NULL}).}
 
-\item{featureNamesAsRefseq}{\code{TRUE} or \code{FALSE}: Should the feature
+\item{featureNamesAsRefSeq}{\code{TRUE} or \code{FALSE}: Should the feature
 names of the feature table be regarded as reference sequences? This setting
 will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
 feature names do not contain valid DNA characters only, the reference
@@ -61,7 +61,11 @@ Results exported from QIMME2 can be imported as a
 encouraged to be provided.
 }
 \details{
-
+Both arguments \code{featureNamesAsRefSeq} and \code{refSeqFile} can be used
+to define reference sequences of features. \code{featureNamesAsRefSeq} is
+only taken into account, if \code{refSeqFile} is \code{NULL}. No reference
+sequences are tried to be created, if \code{featureNameAsRefSeq} is
+\code{FALSE} and \code{refSeqFile} is \code{NULL}.
 }
 \examples{
 featureTableFile <- system.file("extdata", "table.qza", package = "mia")

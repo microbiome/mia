@@ -277,13 +277,13 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
 ################################################################################
 # getPrevalentAbundance
 
-#' @rdname getPrevalentAbundance
+#' @rdname getPrevalence
 #' @export
 setGeneric("getPrevalentAbundance", signature = "x",
            function(x, abund_values = "relabundance", ...)
                standardGeneric("getPrevalentAbundance"))
 
-#' @rdname getPrevalentAbundance
+#' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
     function(x, ...){
@@ -299,7 +299,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
     }
 )
 
-#' @rdname getPrevalentAbundance
+#' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", ...){

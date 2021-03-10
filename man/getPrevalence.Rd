@@ -7,6 +7,9 @@
 \alias{getPrevalentTaxa}
 \alias{getPrevalentTaxa,ANY-method}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{getPrevalentAbundance}
+\alias{getPrevalentAbundance,ANY-method}
+\alias{getPrevalentAbundance,SummarizedExperiment-method}
 \alias{agglomerateByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
 \title{Calculation prevalence information for features across samples}
@@ -28,6 +31,12 @@ getPrevalentTaxa(x, ...)
   include_lowest = FALSE,
   ...
 )
+
+getPrevalentAbundance(x, abund_values = "relabundance", ...)
+
+\S4method{getPrevalentAbundance}{ANY}(x, abund_values = "relabundance", ...)
+
+\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, abund_values = "counts", ...)
 
 agglomerateByPrevalence(x, ...)
 

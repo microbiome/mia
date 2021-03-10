@@ -17,7 +17,7 @@
 #'   of the sample metadata to be imported. The file has to be in tsv format.
 #'   (default: \code{sampleMetaFile = NULL}).
 #'
-#' @param featureNamesAsRefseq \code{TRUE} or \code{FALSE}: Should the feature
+#' @param featureNamesAsRefSeq \code{TRUE} or \code{FALSE}: Should the feature
 #'   names of the feature table be regarded as reference sequences? This setting
 #'   will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
 #'   feature names do not contain valid DNA characters only, the reference
@@ -40,10 +40,10 @@
 #' }
 #'
 #' @details
-#' Both arguments \code{featureNamesAsRefseq} and \code{refSeqFile} can be used
-#' to define reference sequences of features. \code{featureNamesAsRefseq} is
+#' Both arguments \code{featureNamesAsRefSeq} and \code{refSeqFile} can be used
+#' to define reference sequences of features. \code{featureNamesAsRefSeq} is
 #' only taken into account, if \code{refSeqFile} is \code{NULL}. No reference
-#' sequences are tried to be created, if \code{featureNameAsRefSeq` is
+#' sequences are tried to be created, if \code{featureNameAsRefSeq} is
 #' \code{FALSE} and \code{refSeqFile} is \code{NULL}.
 #'
 #' @return  A
@@ -84,7 +84,7 @@
 loadFromQIIME2 <- function(featureTableFile,
                            taxonomyTableFile = NULL,
                            sampleMetaFile = NULL,
-                           featureNamesAsRefseq = TRUE,
+                           featureNamesAsRefSeq = TRUE,
                            refSeqFile = NULL,
                            phyTreeFile = NULL,
                            ...) {
@@ -101,8 +101,8 @@ loadFromQIIME2 <- function(featureTableFile,
         stop("'sampleMetaFile' must be a single character value or NULL.",
              call. = FALSE)
     }
-    if(!.is_a_bool(featureNamesAsRefseq)){
-        stop("'featureNamesAsRefseq' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(featureNamesAsRefSeq)){
+        stop("'featureNamesAsRefSeq' must be TRUE or FALSE.", call. = FALSE)
     }
     if(!is.null(refSeqFile) && !.is_non_empty_string(refSeqFile)){
         stop("'refSeqFile' must be a single character value or NULL.",
@@ -139,7 +139,7 @@ loadFromQIIME2 <- function(featureTableFile,
     # if row.names(feature_tab) is a DNA sequence,  set it as refseq
     if (!is.null(refSeqFile)){
         refseq <- .read_qza(refSeqFile, ...)
-    } else if (featureNamesAsRefseq) {
+    } else if (featureNamesAsRefSeq) {
         refseq <- .rownames_as_dna_seq(rownames(feature_tab))
     } else {
         refseq <- NULL

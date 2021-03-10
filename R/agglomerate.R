@@ -39,21 +39,20 @@
 #'   nested alternative experiments by default (default:
 #'   \code{strip_altexp = TRUE})
 #'
-#' @return A taxonomically-agglomerated, optionally-pruned object of the same
-#'   class \code{x}.
-#'
-#' @param
+#' @details
 #' Based on the available taxonomic data and its structure setting
 #' \code{onRankOnly = TRUE} has certain implications on the interpretability of
 #' your results. If no loops exist (loops meaning two higher ranks containing
 #' the same lower rank), the results should be comparable. you can check for
 #' loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
 #'
+#' @return A taxonomically-agglomerated, optionally-pruned object of the same
+#'   class \code{x}.
+#'
+#' @name agglomerate-methods
 #' @seealso
 #' \code{\link[=merge-methods]{mergeRows}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
-#'
-#' @name agglomerate-methods
 #'
 #' @examples
 #' data(GlobalPatterns)

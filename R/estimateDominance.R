@@ -40,25 +40,27 @@
 #'   (Currently not used)
 #'
 #' @details
-#' \code{estimateDominance} calculates the following community dominance indices.
-#'
+#' \code{estimateDominance} calculates the following community dominance
+#' indices:
 #' \itemize{
 #' \item{'DBP'}{ Berger-Parker index is calculated similarly than relative
 #' index. DBP is the relative abundance of the most abundant species of the
 #' sample. Index gives values in interval 0 to 1, where bigger value represent
 #' greater dominance. (See e.g. Berger & Parker 1970.)
 #'
-#' \deqn{DBP = \frac{N_1}{N_{tot}}}{% DBP = N_1/N_tot} where \eqn{N_1} is the
-#' absolute abundance of the most dominant species and \eqn{N_{tot}} is the sum
-#' of absolute abundances of all species.}
+#' \deqn{DBP = \frac{N_1}{N_{tot}}}{%
+#' DBP = N_1/N_tot} where \eqn{N_1} is the absolute abundance of the most
+#' dominant species and \eqn{N_{tot}} is the sum of absolute abundances of all
+#' species.}
 #'
 #' \item{'DMN'}{ McNaughton’s index is the sum of relative abundances of the two
 #' most abundant species of the sample. Index gives values in interval 0 to 1,
 #' where bigger value represent greater dominance.
 #'
-#' \deqn{DMN = \frac{N_1 + N_2}{N_{tot}}}{% DMN = (N_1 + N_2)/N_tot} where
-#' \eqn{N_1} and \eqn{N_2} are the absolute abundances of the two most dominant
-#' species and \eqn{N_{tot}} is the sum of absolute abundances of all species.}
+#' \deqn{DMN = \frac{N_1 + N_2}{N_{tot}}}{%
+#' DMN = (N_1 + N_2)/N_tot} where \eqn{N_1} and \eqn{N_2} are the absolute
+#' abundances of the two most dominant species and \eqn{N_{tot}} is the sum of
+#' absolute abundances of all species.}
 #'
 #' \item{'absolute'}{ Absolute index equals to the absolute abundance of the
 #' most dominant species of the sample. Index gives positive integer values.}
@@ -67,9 +69,10 @@
 #' most dominant species of the sample. Index gives values in interval 0 to 1,
 #' where bigger value represent greater dominance.
 #'
-#' \deqn{relative = \frac{N_1}{N_{tot}}}{% relative = N_1/N_tot} where \eqn{N_1}
-#' is the absolute abundance of the most dominant species and \eqn{N_{tot}} is
-#' the sum of absolute abundances of all species.}
+#' \deqn{relative = \frac{N_1}{N_{tot}}}{%
+#' relative = N_1/N_tot} where \eqn{N_1} is the absolute abundance of the most
+#' dominant species and \eqn{N_{tot}} is the sum of absolute abundances of all
+#' species.}
 #'
 #' \item{'simpson_dominance'}{ Simpson's index, or Simpson's dominance index, is
 #' calculated by raising all relative abundances of species to the power of 2,
@@ -78,8 +81,8 @@
 #' same species. The higher the probability, the greater the dominance is. (See
 #' e.g. Simpson 1949.)
 #'
-#' \deqn{simpson = \sum(p^2)}{% simpson = \sum(p^2)} where \eqn{p} is relative
-#' abundances.}
+#' \deqn{simpson = \sum(p^2)}{%
+#' simpson = \sum(p^2)} where \eqn{p} is relative abundances.}
 #'
 #' \item{'core_abundance'}{ Core abundance index is related to core species.
 #' Core species are species that are most abundant in all samples, i.e., in
@@ -90,10 +93,10 @@
 #' abundances of core species in the sample. Index gives values in interval 0 to
 #' 1, where bigger value represent greater dominance.
 #'
-#' \deqn{core_abundance = \frac{N_{core}}{N_{tot}}}{% core_abundance =
-#' N_core/N_tot} where \eqn{N_{core}} is the sum of absolute abundance of the
-#' core species and \eqn{N_{tot}} is the sum of absolute abundances of all
-#' species.}
+#' \deqn{core_abundance = \frac{N_{core}}{N_{tot}}}{%
+#' core_abundance = N_core/N_tot} where \eqn{N_{core}} is the sum of absolute
+#' abundance of the core species and \eqn{N_{tot}} is the sum of absolute
+#' abundances of all species.}
 #'
 #' \item{'gini'}{ Gini index is probably best-known from socio-economic
 #' contexts. In economics, it is used to measure, for example, how unevenly
@@ -102,7 +105,8 @@
 #' that represent large portion of total abundance of microbes, the inequality
 #' is large and Gini index closer to 1. If all species has equally large
 #' abundances, the equality is perfect and Gini index equals 0. (See e.g. Gini
-#' 1921.)}}
+#' 1921.)}
+#' }
 #'
 #' @references
 #' Berger WH & Parker FL (1970) Diversity of Planktonic Foraminifera in Deep-Sea

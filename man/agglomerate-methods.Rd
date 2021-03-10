@@ -56,12 +56,6 @@ nested alternative experiments by default (default:
 \item{agglomerateTree}{\code{TRUE} or \code{FALSE}: should to
 \code{rowTree()} also be agglomerated? (Default:
 \code{agglomerateTree = FALSE})}
-
-\item{Based}{on the available taxonomic data and its structure setting
-\code{onRankOnly = TRUE} has certain implications on the interpretability of
-your results. If no loops exist (loops meaning two higher ranks containing
-the same lower rank), the results should be comparable. you can check for
-loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.}
 }
 \value{
 A taxonomically-agglomerated, optionally-pruned object of the same
@@ -71,6 +65,13 @@ class \code{x}.
 \code{agglomerateByRank} can be used to sum up data based on the association
 to certain taxonomic ranks given as \code{rowData}. Only available
 \code{\link{taxonomicRanks}} can be used.
+}
+\details{
+Based on the available taxonomic data and its structure setting
+\code{onRankOnly = TRUE} has certain implications on the interpretability of
+your results. If no loops exist (loops meaning two higher ranks containing
+the same lower rank), the results should be comparable. you can check for
+loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
 }
 \examples{
 data(GlobalPatterns)
