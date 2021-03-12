@@ -138,9 +138,6 @@ setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
               # taxa. To include limit to the rarest taxa, 'include_lowest' must be the opposite.
               include_lowest <- !include_highest
 
-              # Agglomerates object by rank
-              x <- agglomerateByRank(x, rank = rank)
-
               # Fetches those taxa that have abundance over detection limit
               all_taxa_names <- getPrevalentTaxa(x,
                                                  rank = rank,
