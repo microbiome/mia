@@ -117,7 +117,7 @@
 <h1 class="hasAnchor">
 <a href="#functions-for-working-with-microbiome-data" class="anchor"></a>Functions for working with microbiome data</h1>
 <p>One of the main topics for analysing microbiome data is the application of taxonomic data to describe features measured. The interest lies in the connection between individual bacterial species and their relation to each other.</p>
-<p><code>mia</code> does not rely on a specific object type to hold taxonomic data, but uses specific columns in the <code>rowData</code> of a <code>SummarizedExperiment</code> object. <code>taxonomyRanks</code> can be used to construct a <code>character</code> vector of available taxonomic levels. This can be used for subsetting for example.</p>
+<p><code>mia</code> does not rely on a specific object type to hold taxonomic data, but uses specific columns in the <code>rowData</code> of a <code>SummarizedExperiment</code> object. <code>taxonomyRanks</code> can be used to construct a <code>character</code> vector of available taxonomic levels. This can be used, for example, for subsetting.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># print the available taxonomic ranks</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -235,7 +235,7 @@
 <p>To keep data tidy, the agglomerated data can be stored as an alternative experiment in the object of origin. With this synchronized sample subsetting becomes very easy.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>, <span class="st">"family"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">x2</span></code></pre></div>
-<p>Keep in mind, that rows with <code>NA</code> or similar value (via the <code>empty.fields</code> argument) will be removed, if you set <code>na.rm = TRUE</code>. Depending on this different number of rows will be returned.</p>
+<p>Keep in mind, that if you set <code>na.rm = TRUE</code>, rows with <code>NA</code> or similar value (defined via the <code>empty.fields</code> argument) will be removed. Depending on these settings different number of rows will be returned.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
@@ -284,7 +284,7 @@
 <div id="transformation-of-assay-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#transformation-of-assay-data" class="anchor"></a>Transformation of assay data</h2>
-<p>Transformation of count data stored in <code>assays</code> is also a main task when work with microbiome data. <code>transformCounts</code> can be used for this and offers a few choices of available transformations. A modified object is returned and the transformed counts are stored in a new <code>assay</code></p>
+<p>Transformation of count data stored in <code>assays</code> is also a main task when work with microbiome data. <code>transformCounts</code> can be used for this and offers a few choices of available transformations. A modified object is returned and the transformed counts are stored in a new <code>assay</code>.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">assayNames</span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "counts"</code></pre>
@@ -371,9 +371,9 @@
 <span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">==</span> <span class="fu">assay</span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">[</span><span class="st">"522457"</span>,<span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 </div>
-<div id="selecting-most-interesing-features" class="section level2">
+<div id="selecting-most-interesting-features" class="section level2">
 <h2 class="hasAnchor">
-<a href="#selecting-most-interesing-features" class="anchor"></a>Selecting most interesing features</h2>
+<a href="#selecting-most-interesting-features" class="anchor"></a>Selecting most interesting features</h2>
 <p><code>getTopTaxa</code> returns a vector of the most <code>top</code> abundant feature IDs.</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTopTaxa.html">getTopTaxa</a></span><span class="op">(</span><span class="va">se</span>,
@@ -386,7 +386,7 @@
 <div id="generating-tidy-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generating-tidy-data" class="anchor"></a>Generating tidy data</h2>
-<p>To generate tidy data as used and required in most of the tidyverse, <code>meltAssay</code></p>
+<p>To generate tidy data as used and required in most of the tidyverse, <code>meltAssay</code> can be used. A <code>data.frame</code> in the long format will be returned.</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">molten_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/meltAssay.html">meltAssay</a></span><span class="op">(</span><span class="va">se</span>,
                          add_row_data <span class="op">=</span> <span class="cn">TRUE</span>,
