@@ -17,10 +17,10 @@ bibliography: references.bib
 ---
 
 ```{r, echo=FALSE}
-knitr::opts_chunk$set(cache=FALSE,
-                      fig.width=9,
-                      message=FALSE,
-                      warning=FALSE)
+knitr::opts_chunk$set(cache = FALSE,
+                      fig.width = 9,
+                      message = FALSE,
+                      warning = FALSE)
 ```
 
 `mia` implements tools for microbiome analysis based on the
@@ -55,7 +55,7 @@ other.
 `mia` does not rely on a specific object type to hold taxonomic data, but
 uses specific columns in the `rowData` of a `SummarizedExperiment` object.
 `taxonomyRanks` can be used to construct a `character` vector of available 
-taxonomic levels. This can be used for subsetting for example.
+taxonomic levels. This can be used, for example, for subsetting.
 
 ```{r}
 # print the available taxonomic ranks
@@ -125,9 +125,9 @@ becomes very easy.
 altExp(se, "family") <- x2
 ```
 
-Keep in mind, that rows with `NA` or similar value (via the `empty.fields`
-argument) will be removed, if you set `na.rm = TRUE`. Depending on this
-different number of rows will be returned.
+Keep in mind, that if you set `na.rm = TRUE`, rows with `NA` or similar value
+(defined via the `empty.fields` argument) will be removed. Depending on these
+settings different number of rows will be returned.
 
 ```{r}
 x1 <- agglomerateByRank(se, rank = "Species", na.rm = TRUE)
@@ -168,7 +168,7 @@ altExp(se,"Species") <- changeTree(altExp(se,"Species"),
 Transformation of count data stored in `assays` is also a main task when work
 with microbiome data. `transformCounts` can be used for this and offers a few
 choices of available transformations. A modified object is returned and the
-transformed counts are stored in a new `assay`
+transformed counts are stored in a new `assay`.
 
 ```{r}
 assayNames(enterotype)
@@ -237,7 +237,7 @@ Functions to load data from `biom` files, `QIIME2` output, `DADA2` objects
 [@dada2] or `phyloseq` objects are available. 
  
 ```{r, message=FALSE, warning=FALSE}
-data(esophagus, package="phyloseq")
+data(esophagus, package = "phyloseq")
 ```
 ```{r}
 esophagus
@@ -260,21 +260,22 @@ abund <- getAbundanceFeature(se, "522457", abund_values = "counts")
 all(abund == assay(se, "counts")["522457",])
 ```
 
-## Selecting most interesing features 
+## Selecting most interesting features 
 
 `getTopTaxa` returns a vector of the most `top` abundant feature IDs.
 
 ```{r}
 top_taxa <- getTopTaxa(se,
-                       method="mean",
-                       top=5,
-                       abund_values="counts")
+                       method = "mean",
+                       top = 5,
+                       abund_values = "counts")
 top_taxa
 ```
 
 ## Generating tidy data
 
-To generate tidy data as used and required in most of the tidyverse, `meltAssay`
+To generate tidy data as used and required in most of the tidyverse, 
+`meltAssay` can be used. A `data.frame` in the long format will be returned.
 
 ```{r}
 molten_data <- meltAssay(se,
