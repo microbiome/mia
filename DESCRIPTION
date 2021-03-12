@@ -22,7 +22,7 @@ Description:
     infrastructure. Data wrangling and analysis are the main scope of this 
     package.
 biocViews: Microbiome, Software
-License: Artistic-2.0
+License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
 LazyData: false
 Depends:
