@@ -83,20 +83,13 @@
 <p>This project is aimed to provide functions and workflows examples for analyses of microbiome data. The main class for working with microbiome data in this package is <code>TreeSummarizedExperiment</code>.</p>
 <p>Currently following things are implemented:</p>
 <ul>
-<li>data wrangling functions (<code>agglomerate*</code>, <code>merge*</code>, <code>meltAssay</code>)</li>
-<li>JSD and UniFrac distance calculation ported from <code>phyloseq</code> to work with <code>TreeSummarizedExperiment</code> objects</li>
+<li>data wrangling functions (<code>agglomerate*</code>, <code>merge*</code>, and more)</li>
 <li>CCA analysis via <code>vegan</code> package</li>
 <li>Bray-Curtis dissimilarity via <code>vegan</code> package</li>
-<li>MDS via the <code>scater</code> package</li>
-<li>import functions for <code>biom</code> data, <code>DADA2</code> objects and <code>phyloseq</code> objects</li>
+<li>JSD and UniFrac distance calculation ported from <code>phyloseq</code> to work with <code>TreeSummarizedExperiment</code> objects</li>
+<li>MDS via the <code>scater</code> package for any other distance objects</li>
+<li>import functions for <code>biom</code> data, <code>DADA2</code> objects, <code>phyloseq</code> objects and more</li>
 </ul>
-<div id="todo" class="section level2">
-<h2 class="hasAnchor">
-<a href="#todo" class="anchor"></a>ToDo</h2>
-<ul>
-<li>if <code>breakaway</code> ends up on CRAN or Bioconductor, alpha diversity calculation via the <code>breakaway</code> package</li>
-</ul>
-</div>
 </div>
 <div id="contribution" class="section level1">
 <h1 class="hasAnchor">
@@ -106,6 +99,24 @@
 <h2 class="hasAnchor">
 <a href="#technical-aspects" class="anchor"></a>Technical aspects</h2>
 <p>Let’s use a git flow kind of approach. Development version should be done against the <code>master</code> branch and then merged to <code>release</code> for release. (<a href="https://guides.github.com/introduction/flow/" class="uri">https://guides.github.com/introduction/flow/</a>)</p>
+</div>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<p>Currently this is aimed to work with the Bioconductor devel branch.</p>
+<div id="bioc-devel" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bioc-devel" class="anchor"></a>Bioc-devel</h3>
+<pre><code><a href="https://rdrr.io/pkg/BiocManager/man/install.html">BiocManager::install("FelixErnst/mia")</a></code></pre>
+</div>
+<div id="bioc-release" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bioc-release" class="anchor"></a>Bioc-release</h3>
+<p>However, with some additional manual steps <code>mia</code> can be installed on Bioc-release as well. Use at your own risk!</p>
+<pre><code><a href="https://rdrr.io/pkg/BiocManager/man/install.html">BiocManager::install("microbiome/microbiomeDataSets@release")
+BiocManager::install("fionarhuang/TreeSummarizedExperiment")
+BiocManager::install("FelixErnst/mia")</a></code></pre>
+</div>
 </div>
 </div>
 <div id="code-of-conduct" class="section level1">
@@ -129,7 +140,9 @@
 <div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.r-project.org/Licenses/Artistic-2.0">Artistic-2.0</a></li>
+<li>
+<a href="https://www.r-project.org/Licenses/Artistic-2.0">Artistic-2.0</a> | file <a href="LICENSE-text.html">LICENSE</a>
+</li>
 </ul>
 </div>
 <div class="developers">
