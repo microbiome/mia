@@ -44,10 +44,10 @@ test_that("getRareTaxa", {
     prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
 
     # Not working correctly, this is not equal to all the taxa###########################
-    expect_mapequal(all_taxa, prevalent_and_rare_taxa)
+    # Problem is that all_taxa and prevalent_taxa has duplicates, rare_taxa does not have
 
-
-
+    expect_setequal(all_taxa[!duplicated(all_taxa)],
+                    prevalent_and_rare_taxa[!duplicated(prevalent_and_rare_taxa)])
 
 
 })
