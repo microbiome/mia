@@ -217,13 +217,6 @@ setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
              call. = FALSE)
     }
 
-    # If the value is 0.9, user has not probably specified it, so the used threshold
-    # is informed to user.
-    if( threshold == 0.9 ){
-        message("'Threshold' value of 0.9 was used to calculate 'coverage' index. ",
-                "It is the default value.")
-    }
-
     # Convert table to relative values
     otu <- .calc_rel_abund(x)
 

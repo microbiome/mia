@@ -171,8 +171,10 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
         method <- match.arg(method)
 
         # Check name
-        if(!.is_non_empty_string(name)){
-            stop("'name' must be a non-empty single character value.",
+        if(!.is_non_empty_string(name) ||
+           name == abund_values){
+            stop("'name' must be a non-empty single character value and be ",
+                 "different from `abund_values`.",
                  call. = FALSE)
         }
 
@@ -227,8 +229,10 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
         .check_abund_values(abund_values, x)
 
         # Check name
-        if(!.is_non_empty_string(name)){
-            stop("'name' must be a non-empty single character value.",
+        if(!.is_non_empty_string(name) ||
+           name == abund_values){
+            stop("'name' must be a non-empty single character value and be ",
+                 "different from `abund_values`.",
                  call. = FALSE)
         }
 
