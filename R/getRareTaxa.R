@@ -141,10 +141,15 @@ setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
               # Agglomerates object by rank
               x <- agglomerateByRank(x, rank = rank)
 
-              # Stores rownames
-              all_taxa_names <- rownames(x)
+              # Fetches those taxa that have abundance over detection limit
+              all_taxa_names <- getPrevalentTaxa(x,
+                                                 rank = rank,
+                                                 detection = detection,
+                                                 prevalence = 0,
+                                                 as_relative = as_relative,
+                                                 include_lowest = TRUE)
 
-              # Fetches names of core taxa
+              # Fetches those taxa that have prevalence over the prevalence limit
               prevalent_taxa_names <- getPrevalentTaxa(x,
                                                        rank = rank,
                                                        detection = detection,
@@ -152,7 +157,7 @@ setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
                                                        as_relative = as_relative,
                                                        include_lowest = include_lowest)
 
-              # Takes complement by removing core taxa from all the taxa
+              # Takes complement by removing prevalent taxa from all the taxa
               rare_taxa_names <- setdiff(all_taxa_names, prevalent_taxa_names)
 
               return(rare_taxa_names)

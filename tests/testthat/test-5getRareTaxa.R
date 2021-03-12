@@ -30,13 +30,13 @@ test_that("getRareTaxa", {
 
     # Gets prevalent taxa
     prevalent_taxa <- getPrevalentTaxa(GlobalPatterns, rank = "Species",
-                                       detection = 0.125,
+                                       detection = 0,
                                        prevalence = 90/100,
                                        as_relative = TRUE,
                                        include_lowest = FALSE)
     # Gets rare taxa
     rare_taxa <- getRareTaxa(GlobalPatterns, rank = "Species",
-                                       detection = 0.125,
+                                       detection = 0,
                                        prevalence = 90/100,
                                        as_relative = TRUE,
                                        include_lowest = TRUE)
