@@ -81,6 +81,7 @@
 
     
     
+<p><code>mia</code> implements tools for microbiome analysis based on the <code>SummarizedExperiment</code> <span class="citation">(Morgan et al. 2020)</span>, <code>SingleCellExperiment</code> <span class="citation">(Amezquita et al. 2020)</span> and <code>TreeSummarizedExperiment</code> <span class="citation">(Huang 2021)</span> infrastructure. Data wrangling and analysis are the main scope of this package.</p>
 <div id="load-mia" class="section level1">
 <h1 class="hasAnchor">
 <a href="#load-mia" class="anchor"></a>Load <em>mia</em>
@@ -91,6 +92,7 @@
 <div id="loading-a-treesummarizedexperiment-object" class="section level1">
 <h1 class="hasAnchor">
 <a href="#loading-a-treesummarizedexperiment-object" class="anchor"></a>Loading a <code>TreeSummarizedExperiment</code> object</h1>
+<p>A few example datasets are available via <code>mia</code>. For this vignette the <code>GlobalPatterns</code> dataset is loaded first.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span>
 <span class="va">se</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span>
@@ -114,11 +116,8 @@
 <div id="functions-for-working-with-microbiome-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#functions-for-working-with-microbiome-data" class="anchor"></a>Functions for working with microbiome data</h1>
-<div id="merging-and-agglomeration-based-on-taxonomic-information-" class="section level2">
-<h2 class="hasAnchor">
-<a href="#merging-and-agglomeration-based-on-taxonomic-information-" class="anchor"></a>Merging and agglomeration based on taxonomic information.</h2>
-<p>In addition to the <code>aggValue</code> functions provide by <code>TreeSummarizedExperiment</code> <code>agglomerateByRank</code> is available if, tree construction proves difficult.</p>
-<p><code>agglomerateByRank</code> constructs a <code>factor</code> to guide merging from the available taxonomic information. For more information on merging have a look at the man page via <code><a href="../reference/merge-methods.html">?mergeRows</a></code>.</p>
+<p>One of the main topics for analysing microbiome data is the application of taxonomic data to describe features measured. The interest lies in the connection between individual bacterial species and their relation to each other.</p>
+<p><code>mia</code> does not rely on a specific object type to hold taxonomic data, but uses specific columns in the <code>rowData</code> of a <code>SummarizedExperiment</code> object. <code>taxonomyRanks</code> can be used to construct a <code>character</code> vector of available taxonomic levels. This can be used for subsetting for example.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># print the available taxonomic ranks</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -127,21 +126,69 @@
 <code class="sourceCode R"><span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># subset to taxonomic data only</span>
+<span class="fu">rowData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+<pre><code>## DataFrame with 19216 rows and 7 columns
+##            Kingdom        Phylum        Class        Order        Family
+##        &lt;character&gt;   &lt;character&gt;  &lt;character&gt;  &lt;character&gt;   &lt;character&gt;
+## 549322     Archaea Crenarchaeota Thermoprotei           NA            NA
+## 522457     Archaea Crenarchaeota Thermoprotei           NA            NA
+## 951        Archaea Crenarchaeota Thermoprotei Sulfolobales Sulfolobaceae
+## 244423     Archaea Crenarchaeota        Sd-NA           NA            NA
+## 586076     Archaea Crenarchaeota        Sd-NA           NA            NA
+## ...            ...           ...          ...          ...           ...
+## 278222    Bacteria           SR1           NA           NA            NA
+## 463590    Bacteria           SR1           NA           NA            NA
+## 535321    Bacteria           SR1           NA           NA            NA
+## 200359    Bacteria           SR1           NA           NA            NA
+## 271582    Bacteria           SR1           NA           NA            NA
+##              Genus                Species
+##        &lt;character&gt;            &lt;character&gt;
+## 549322          NA                     NA
+## 522457          NA                     NA
+## 951     Sulfolobus Sulfolobusacidocalda..
+## 244423          NA                     NA
+## 586076          NA                     NA
+## ...            ...                    ...
+## 278222          NA                     NA
+## 463590          NA                     NA
+## 535321          NA                     NA
+## 200359          NA                     NA
+## 271582          NA                     NA</code></pre>
+<p>The columns are recognized case insensitive. Additional functions are available to check for validity of taxonomic information or generate labels based on the taxonomic information.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRankEmpty</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"Species"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## 
+## FALSE  TRUE 
+##  1413 17803</code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] "Class:Thermoprotei"               "Class:Thermoprotei_1"            
+## [3] "Species:Sulfolobusacidocaldarius" "Class:Sd-NA"                     
+## [5] "Class:Sd-NA_1"                    "Class:Sd-NA_2"</code></pre>
+<p>For more details see the man page <code><a href="../reference/taxonomy-methods.html">?taxonomyRanks</a></code>.</p>
+<div id="merging-and-agglomeration-based-on-taxonomic-information-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#merging-and-agglomeration-based-on-taxonomic-information-" class="anchor"></a>Merging and agglomeration based on taxonomic information.</h2>
+<p>Agglomeration of data based on these taxonomic descriptors can be performed using functions implemented in <code>mia</code>. In addition to the <code>aggValue</code> functions provide by <code>TreeSummarizedExperiment</code> <code>agglomerateByRank</code> is available. <code>agglomerateByRank</code> does not require tree data to be present.</p>
+<p><code>agglomerateByRank</code> constructs a <code>factor</code> to guide merging from the available taxonomic information. For more information on merging have a look at the man page via <code><a href="../reference/merge-methods.html">?mergeRows</a></code>.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># agglomerate at the Family taxonomic rank</span>
 <span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span>
 <span class="co">## How many taxa before/after agglomeration?</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 19216</code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 603</code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>Tree data can also be shrunk alongside agglomeration, but this is turned of by default.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># with agglomeration of the tree</span>
 <span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,
                         agglomerateTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># same number of rows, but</span></code></pre></div>
 <pre><code>## [1] 603</code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">rowTree</span><span class="op">(</span><span class="va">x1</span><span class="op">)</span> <span class="co"># ... different</span></code></pre></div>
 <pre><code>## 
 ## Phylogenetic tree with 19216 tips and 19215 internal nodes.
@@ -152,7 +199,7 @@
 ##   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 1.000.2, ...
 ## 
 ## Rooted; includes branch lengths.</code></pre>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">rowTree</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># ... tree</span></code></pre></div>
 <pre><code>## 
 ## Phylogenetic tree with 496 tips and 260 internal nodes.
@@ -163,53 +210,163 @@
 ##   root:ALL, Kingdom:Archaea, Phylum:Crenarchaeota, Class:C2, Class:Sd-NA, Class:Thaumarchaeota, ...
 ## 
 ## Rooted; includes branch lengths.</code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## Look at enterotype dataset...</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span>
-<span class="co">## print the available taxonomic ranks. Shows only 1 rank available</span>
-<span class="co">## not useful for agglomerateByRank</span>
+<p>For <code>agglomerateByRank</code> to work, taxonomic data must be present. Even though only one rank is available for the <code>enterotype</code> dataset, agglomeration can be performed effectively de-duplicating entries for the genus level.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span>
 <span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "Genus"</code></pre>
-<p>To keep data tidy, the agglomerated data can be stored as an alternative experiment in the object of origin. With this synchronized sample subseting becomes very easy.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></code></pre></div>
+<pre><code>## class: TreeSummarizedExperiment 
+## dim: 552 280 
+## metadata(0):
+## assays(1): counts
+## rownames(552): -1 Prosthecochloris ... Syntrophococcus Mogibacterium
+## rowData names(1): Genus
+## colnames(280): AM.AD.1 AM.AD.2 ... TS98_V2 TS99.2_V2
+## colData names(9): Enterotype Sample_ID ... Age ClinicalStatus
+## reducedDimNames(0):
+## mainExpName: NULL
+## altExpNames(0):
+## rowLinks: NULL
+## rowTree: NULL
+## colLinks: NULL
+## colTree: NULL</code></pre>
+<p>To keep data tidy, the agglomerated data can be stored as an alternative experiment in the object of origin. With this synchronized sample subsetting becomes very easy.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>, <span class="st">"family"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">x2</span></code></pre></div>
-<p>Keep in mind, that rows with <code>NA</code> or similar value (via the <code>empty.fields</code> argument) will be removed, if you set <code>na.rm = FALSE</code>. Depending on this different number of rows will be returned.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<p>Keep in mind, that rows with <code>NA</code> or similar value (via the <code>empty.fields</code> argument) will be removed, if you set <code>na.rm = TRUE</code>. Depending on this different number of rows will be returned.</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 944  26</code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 2307   26</code></pre>
+<p>For convenience the function <code>splitByRanks</code> is available, which agglomerates data on all <code>ranks</code> selected. By default all available ranks will be used. The output is compatible to be stored as alternative experiments.</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">altExps</span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/splitByRanks.html">splitByRanks</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>
+<span class="va">se</span></code></pre></div>
+<pre><code>## class: TreeSummarizedExperiment 
+## dim: 19216 26 
+## metadata(0):
+## assays(1): counts
+## rownames(19216): 549322 522457 ... 200359 271582
+## rowData names(7): Kingdom Phylum ... Genus Species
+## colnames(26): CL3 CC1 ... Even2 Even3
+## colData names(7): X.SampleID Primer ... SampleType Description
+## reducedDimNames(0):
+## mainExpName: NULL
+## altExpNames(7): Kingdom Phylum ... Genus Species
+## rowLinks: a LinkDataFrame (19216 rows)
+## rowTree: 1 phylo tree(s) (19216 leaves)
+## colLinks: NULL
+## colTree: NULL</code></pre>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">altExpNames</span><span class="op">(</span><span class="va">se</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</code></pre>
 </div>
 <div id="constructing-a-tree-from-taxonomic-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#constructing-a-tree-from-taxonomic-data" class="anchor"></a>Constructing a tree from taxonomic data</h2>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">]</span>
+<p>Constructing a taxonomic tree from taxonomic data stored in <code>rowData</code> is quite straightforward and uses mostly functions implemented in <code>TreeSummarizedExperiment</code>.</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"Species"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">]</span>
 <span class="va">taxa_res</span> <span class="op">&lt;-</span> <span class="fu">resolveLoop</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span><span class="op">)</span>
 <span class="va">taxa_tree</span> <span class="op">&lt;-</span> <span class="fu">toTree</span><span class="op">(</span>data <span class="op">=</span> <span class="va">taxa_res</span><span class="op">)</span>
-<span class="va">taxa_tree</span><span class="op">$</span><span class="va">tip.label</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">rowNodeLab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span>, make_unique <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">changeTree</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"species"</span><span class="op">)</span>,
+<span class="va">taxa_tree</span><span class="op">$</span><span class="va">tip.label</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"Species"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">rowNodeLab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"Species"</span><span class="op">)</span>, make_unique <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"Species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">changeTree</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"Species"</span><span class="op">)</span>,
                                    rowTree <span class="op">=</span> <span class="va">taxa_tree</span>,
                                    rowNodeLab <span class="op">=</span> <span class="va">rowNodeLab</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="transformation-of-assay-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#transformation-of-assay-data" class="anchor"></a>Transformation of assay data</h2>
+<p>Transformation of count data stored in <code>assays</code> is also a main task when work with microbiome data. <code>transformCounts</code> can be used for this and offers a few choices of available transformations. A modified object is returned and the transformed counts are stored in a new <code>assay</code></p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">assayNames</span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] "counts"</code></pre>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">anterotype</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transformCounts.html">transformCounts</a></span><span class="op">(</span><span class="va">enterotype</span>, method <span class="op">=</span> <span class="st">"log10"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
+<span class="fu">assayNames</span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] "counts"</code></pre>
+<p>For more details have a look at the man page <code><a href="../reference/transformCounts.html">?transformCounts</a></code>.</p>
+</div>
+<div id="community-indices-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#community-indices-" class="anchor"></a>Community indices.</h2>
+<p>In the field of microbiome ecology several indices to describe samples and community of samples are available. In this vignette we just want to give a very brief introduction.</p>
+<p>Functions for calculating alpha and beta diversity indices are available. Using <code>estimateDiversity</code> multiple diversity indices are calculated by default and results are stored automatically in <code>colData</code>. Selected indices can be calculated individually by setting <code>index = "shannon"</code> for example.</p>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimateDiversity.html">estimateDiversity</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">8</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+<pre><code>## [1] "shannon"           "simpson_diversity" "inv_simpson"      
+## [4] "richness"          "chao1"             "chao1_se"         
+## [7] "ACE"               "ACE_se"            "coverage"</code></pre>
+<p>Beta diversity indices are used to describe inter-sample connections. Technically they are calculated as <code>dist</code> object and reduced dimensions can be extracted using <code>cmdscale</code>. This is wrapped up in the <code>runMDS</code> function of the <code>scater</code> package, but can be easily used to calculated beta diversity indices using the established functions from the <code>vegan</code> package or any other package using comparable inputs.</p>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/runMDS2.html">runMDS2</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"Genus"</span><span class="op">)</span>, 
+                              FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html">vegdist</a></span>,
+                              method <span class="op">=</span> <span class="st">"bray"</span>,
+                              name <span class="op">=</span> <span class="st">"BrayCurtis"</span>, 
+                              ncomponents <span class="op">=</span> <span class="fl">5</span>, 
+                              exprs_values <span class="op">=</span> <span class="st">"counts"</span>, 
+                              keep_dist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<p>JSD and UniFrac are implemented in <code>mia</code> as well. <code>calculateJSD</code> can be used as a drop-in replacement in the example above (omit the <code>method</code> argument as well) to calculate the JSD. For calculating the UniFrac distance via <code>calculateUniFrac</code> either a <code>TreeSummarizedExperiment</code> must be used or a tree supplied via the <code>tree</code> argument. For more details see <code><a href="../reference/calculateJSD.html">?calculateJSD</a></code>, <code><a href="../reference/calculateUniFrac.html">?calculateUniFrac</a></code> or <code><a href="../reference/runDPCoA.html">?calculateDPCoA</a></code>.</p>
+<p><code>runMDS</code> performs the decomposition. Alternatively <code>runNMDS</code> can also be used.</p>
+</div>
+<div id="other-indices" class="section level2">
+<h2 class="hasAnchor">
+<a href="#other-indices" class="anchor"></a>Other indices</h2>
+<p><code>estimateDominance</code> and <code>estimateEvenness</code> implement other sample-wise indices. The function behave equivalently to <code>estimateDiversity</code>. For more information see the corresponding man pages.</p>
 </div>
 </div>
 <div id="utility-functions" class="section level1">
 <h1 class="hasAnchor">
 <a href="#utility-functions" class="anchor"></a>Utility functions</h1>
 <p>To make migration and adoption as easy as possible several utility functions are available.</p>
-<div id="general-wrappers" class="section level2">
+<div id="data-loading-functions" class="section level2">
 <h2 class="hasAnchor">
-<a href="#general-wrappers" class="anchor"></a>General wrappers</h2>
+<a href="#data-loading-functions" class="anchor"></a>Data loading functions</h2>
+<p>Functions to load data from <code>biom</code> files, <code>QIIME2</code> output, <code>DADA2</code> objects <span class="citation">(Callahan et al. 2016)</span> or <code>phyloseq</code> objects are available.</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">esophagus</span>, package<span class="op">=</span><span class="st">"phyloseq"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">esophagus</span></code></pre></div>
+<pre><code>## phyloseq-class experiment-level object
+## otu_table()   OTU Table:         [ 58 taxa and 3 samples ]
+## phy_tree()    Phylogenetic Tree: [ 58 tips and 57 internal nodes ]</code></pre>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeTreeSummarizedExperimentFromphyloseq.html">makeTreeSummarizedExperimentFromphyloseq</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span>
+<span class="va">esophagus</span></code></pre></div>
+<pre><code>## class: TreeSummarizedExperiment 
+## dim: 58 3 
+## metadata(0):
+## assays(1): counts
+## rownames(58): 59_8_22 59_5_13 ... 65_9_9 59_2_6
+## rowData names(0):
+## colnames(3): B C D
+## colData names(0):
+## reducedDimNames(0):
+## mainExpName: NULL
+## altExpNames(0):
+## rowLinks: a LinkDataFrame (58 rows)
+## rowTree: 1 phylo tree(s) (58 leaves)
+## colLinks: NULL
+## colTree: NULL</code></pre>
+<p>For more details have a look at the man page, for examples <code><a href="../reference/makeTreeSummarizedExperimentFromphyloseq.html">?makeTreeSummarizedExperimentFromphyloseq</a></code>.</p>
+</div>
+<div id="general-wrapper-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#general-wrapper-functions" class="anchor"></a>General wrapper functions</h2>
 <p><code>getAbundanceFeature</code> and <code>getAbundanceSample</code> are wrappers on row-wise or column-wise assay data subsetting.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceSample</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"CC1"</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">==</span> <span class="fu">assay</span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">[</span>,<span class="st">"CC1"</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceFeature</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"522457"</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">==</span> <span class="fu">assay</span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">[</span><span class="st">"522457"</span>,<span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
@@ -218,7 +375,7 @@
 <h2 class="hasAnchor">
 <a href="#selecting-most-interesing-features" class="anchor"></a>Selecting most interesing features</h2>
 <p><code>getTopTaxa</code> returns a vector of the most <code>top</code> abundant feature IDs.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTopTaxa.html">getTopTaxa</a></span><span class="op">(</span><span class="va">se</span>,
                        method<span class="op">=</span><span class="st">"mean"</span>,
                        top<span class="op">=</span><span class="fl">5</span>,
@@ -230,13 +387,13 @@
 <h2 class="hasAnchor">
 <a href="#generating-tidy-data" class="anchor"></a>Generating tidy data</h2>
 <p>To generate tidy data as used and required in most of the tidyverse, <code>meltAssay</code></p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">molten_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/meltAssay.html">meltAssay</a></span><span class="op">(</span><span class="va">se</span>,
                          add_row_data <span class="op">=</span> <span class="cn">TRUE</span>,
                          add_col_data <span class="op">=</span> <span class="cn">TRUE</span>,
                          abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
 <span class="va">molten_data</span></code></pre></div>
-<pre><code>## # A tibble: 499,616 x 17
+<pre><code>## # A tibble: 499,616 x 26
 ##    FeatureID SampleID counts Kingdom Phylum   Class   Order Family Genus Species
 ##    &lt;fct&gt;     &lt;fct&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  
 ##  1 549322    CL3           0 Archaea Crenarc… Thermo… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;   
@@ -249,9 +406,122 @@
 ##  8 549322    F21Plmr       0 Archaea Crenarc… Thermo… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;   
 ##  9 549322    M31Tong       0 Archaea Crenarc… Thermo… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;   
 ## 10 549322    M11Tong       0 Archaea Crenarc… Thermo… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;   
-## # … with 499,606 more rows, and 7 more variables: X.SampleID &lt;fct&gt;,
+## # … with 499,606 more rows, and 16 more variables: X.SampleID &lt;fct&gt;,
 ## #   Primer &lt;fct&gt;, Final_Barcode &lt;fct&gt;, Barcode_truncated_plus_T &lt;fct&gt;,
-## #   Barcode_full_length &lt;fct&gt;, SampleType &lt;fct&gt;, Description &lt;fct&gt;</code></pre>
+## #   Barcode_full_length &lt;fct&gt;, SampleType &lt;fct&gt;, Description &lt;fct&gt;,
+## #   shannon &lt;dbl&gt;, simpson_diversity &lt;dbl&gt;, inv_simpson &lt;dbl&gt;, richness &lt;dbl&gt;,
+## #   chao1 &lt;dbl&gt;, chao1_se &lt;dbl&gt;, ACE &lt;dbl&gt;, ACE_se &lt;dbl&gt;, coverage &lt;int&gt;</code></pre>
+</div>
+</div>
+<div id="session-info" class="section level1">
+<h1 class="hasAnchor">
+<a href="#session-info" class="anchor"></a>Session info</h1>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<pre><code>## R Under development (unstable) (2021-03-04 r80066)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 20.04.2 LTS
+## 
+## Matrix products: default
+## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
+## 
+## locale:
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] parallel  stats4    stats     graphics  grDevices utils     datasets 
+## [8] methods   base     
+## 
+## other attached packages:
+##  [1] phyloseq_1.35.0                  mia_0.98.41                     
+##  [3] TreeSummarizedExperiment_1.99.11 Biostrings_2.59.2               
+##  [5] XVector_0.31.1                   SingleCellExperiment_1.13.12    
+##  [7] SummarizedExperiment_1.21.1      Biobase_2.51.0                  
+##  [9] GenomicRanges_1.43.3             GenomeInfoDb_1.27.6             
+## [11] IRanges_2.25.6                   S4Vectors_0.29.7                
+## [13] BiocGenerics_0.37.1              MatrixGenerics_1.3.1            
+## [15] matrixStats_0.58.0               BiocStyle_2.19.1                
+## 
+## loaded via a namespace (and not attached):
+##   [1] ggbeeswarm_0.6.0            colorspace_2.0-0           
+##   [3] ellipsis_0.3.1              rprojroot_2.0.2            
+##   [5] scuttle_1.1.18              BiocNeighbors_1.9.4        
+##   [7] fs_1.5.0                    rstudioapi_0.13            
+##   [9] bit64_4.0.5                 fansi_0.4.2                
+##  [11] codetools_0.2-18            splines_4.1.0              
+##  [13] sparseMatrixStats_1.3.6     cachem_1.0.4               
+##  [15] knitr_1.31                  scater_1.19.11             
+##  [17] ade4_1.7-16                 jsonlite_1.7.2             
+##  [19] cluster_2.1.1               BiocManager_1.30.10        
+##  [21] compiler_4.1.0              assertthat_0.2.1           
+##  [23] Matrix_1.3-2                fastmap_1.1.0              
+##  [25] cli_2.3.1                   BiocSingular_1.7.2         
+##  [27] prettyunits_1.1.1           htmltools_0.5.1.1          
+##  [29] tools_4.1.0                 igraph_1.2.6               
+##  [31] rsvd_1.0.3                  gtable_0.3.0               
+##  [33] glue_1.4.2                  GenomeInfoDbData_1.2.4     
+##  [35] reshape2_1.4.4              dplyr_1.0.5                
+##  [37] Rcpp_1.0.6                  jquerylib_0.1.3            
+##  [39] pkgdown_1.6.1               rhdf5filters_1.3.4         
+##  [41] vctrs_0.3.6                 multtest_2.47.0            
+##  [43] debugme_1.1.0               ape_5.4-1                  
+##  [45] nlme_3.1-152                DECIPHER_2.19.2            
+##  [47] iterators_1.0.13            DelayedMatrixStats_1.13.5  
+##  [49] xfun_0.22                   stringr_1.4.0              
+##  [51] ps_1.6.0                    beachmat_2.7.7             
+##  [53] lifecycle_1.0.0             irlba_2.3.3                
+##  [55] zlibbioc_1.37.0             MASS_7.3-53.1              
+##  [57] scales_1.1.1                hms_1.0.0                  
+##  [59] ragg_0.4.0                  biomformat_1.19.0          
+##  [61] rhdf5_2.35.2                yaml_2.2.1                 
+##  [63] memoise_2.0.0               gridExtra_2.3              
+##  [65] ggplot2_3.3.3               sass_0.3.1                 
+##  [67] stringi_1.5.3               RSQLite_2.2.4              
+##  [69] desc_1.3.0                  foreach_1.5.1              
+##  [71] ScaledMatrix_0.99.2         permute_0.9-5              
+##  [73] BiocParallel_1.25.5         rlang_0.4.10               
+##  [75] pkgconfig_2.0.3             systemfonts_0.3.2          
+##  [77] bitops_1.0-6                evaluate_0.14              
+##  [79] lattice_0.20-41             Rhdf5lib_1.13.4            
+##  [81] purrr_0.3.4                 bit_4.0.4                  
+##  [83] tidyselect_1.1.0            plyr_1.8.6                 
+##  [85] magrittr_2.0.1              bookdown_0.21              
+##  [87] R6_2.5.0                    generics_0.1.0             
+##  [89] DelayedArray_0.17.9         DBI_1.1.1                  
+##  [91] pillar_1.5.1                mgcv_1.8-34                
+##  [93] survival_3.2-7              RCurl_1.98-1.2             
+##  [95] tibble_3.1.0                crayon_1.4.1               
+##  [97] utf8_1.1.4                  rmarkdown_2.7              
+##  [99] viridis_0.5.1               progress_1.2.2             
+## [101] grid_4.1.0                  data.table_1.14.0          
+## [103] blob_1.2.1                  vegan_2.6-0                
+## [105] digest_0.6.27               tidyr_1.1.3                
+## [107] textshaping_0.2.1           munsell_0.5.0              
+## [109] DirichletMultinomial_1.33.2 beeswarm_0.3.1             
+## [111] viridisLite_0.3.0           vipor_0.4.5                
+## [113] bslib_0.2.4</code></pre>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-SCE" class="csl-entry">
+Amezquita, Robert, Aaron Lun, Etienne Becht, Vince Carey, Lindsay Carpp, Ludwig Geistlinger, Federico Marini, et al. 2020. <span>“Orchestrating Single-Cell Analysis with Bioconductor.”</span> <em>Nature Methods</em> 17: 137–45. <a href="https://www.nature.com/articles/s41592-019-0654-x">https://www.nature.com/articles/s41592-019-0654-x</a>.
+</div>
+<div id="ref-dada2" class="csl-entry">
+Callahan, Benjamin J, Paul J McMurdie, Michael J Rosen, Andrew W Han, Amy Jo A Johnson, and Susan P Holmes. 2016. <span>“Dada2: High-Resolution Sample Inference from Illumina Amplicon Data.”</span> <em>Nature Methods</em> 13: 581–83. <a href="https://doi.org/10.1038/nmeth.3869">https://doi.org/10.1038/nmeth.3869</a>.
+</div>
+<div id="ref-TSE" class="csl-entry">
+Huang, Ruizhu. 2021. <em>TreeSummarizedExperiment: TreeSummarizedExperiment: A S4 Class for Data with Tree Structures</em>.
+</div>
+<div id="ref-SE" class="csl-entry">
+Morgan, Martin, Valerie Obenchain, Jim Hester, and Hervé Pagès. 2020. <em>SummarizedExperiment: SummarizedExperiment Container</em>. <a href="https://bioconductor.org/packages/SummarizedExperiment">https://bioconductor.org/packages/SummarizedExperiment</a>.
+</div>
 </div>
 </div>
   </div>
