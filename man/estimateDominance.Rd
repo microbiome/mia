@@ -75,6 +75,13 @@ This includes the \sQuote{DBP}, \sQuote{DMN}, \sQuote{Absolute},
 \sQuote{Relative}, \sQuote{Core Abundance} and \sQuote{Gini} index.
 }
 \details{
+A dominance index quantifies the dominance of one or few species in a
+community.
+
+Dominance indices are in general negatively correlated with alpha diversity
+indices (species richness, evenness, diversity, rarity). More dominant
+communities are less diverse.
+
 \code{estimateDominance} calculates the following community dominance
 indices:
 \itemize{
@@ -202,6 +209,8 @@ Simpson EH (1949) Measurement of Diversity. Nature 163(688). doi:
 }
 \seealso{
 \itemize{
+\item{\code{\link[mia:estimateRichness]{estimateRichness}}}
+\item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 \item{\code{\link[mia:estimateDiversity]{estimateDiversity}}}
 }
 }

@@ -34,6 +34,9 @@
 #' @seealso
 #' \code{\link[scater:plotColData]{plotColData}}
 #' \itemize{
+#'   \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
+#'   \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
+#'   \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
 #'   \item{\code{\link[vegan:diversity]{diversity}}}
 #'   \item{\code{\link[vegan:specpool]{estimateR}}}
 #' }
@@ -53,8 +56,7 @@
 #' # Calculates all the diversity indices
 #' se <- estimateDiversity(se)
 #' # All the indices' names
-#' indices <- c("shannon","simpson_diversity","inv_simpson", "richness",
-#'              "chao1", "ACE", "coverage")
+#' indices <- c("shannon","simpson_diversity","inv_simpson", "coverage")
 #' colData(se)[,indices]
 #'
 #' # plotting the diversities
@@ -79,7 +81,7 @@ NULL
 setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
                     index = c("shannon","simpson_diversity", "inv_simpson",
-                              "richness", "chao1", "ACE", "coverage"),
+                              "coverage"),
                     name = index, ...)
                standardGeneric("estimateDiversity"))
 
@@ -103,12 +105,6 @@ setGeneric("estimateInvSimpson",signature = c("x"),
 
 #' @rdname estimateDiversity
 #' @export
-setGeneric("estimateRichness",signature = c("x"),
-           function(x, ...)
-               standardGeneric("estimateRichness"))
-
-#' @rdname estimateDiversity
-#' @export
 setGeneric("estimateCoverage",signature = c("x"),
            function(x, ...)
                standardGeneric("estimateCoverage"))
@@ -117,8 +113,8 @@ setGeneric("estimateCoverage",signature = c("x"),
 #' @export
 setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("shannon","simpson_diversity","inv_simpson", "richness", "chao1",
-                       "ACE", "coverage"),
+             index = c("shannon","simpson_diversity","inv_simpson", 
+                       "coverage"),
              name = index, ..., BPPARAM = SerialParam()){
 
         # input check
@@ -165,13 +161,6 @@ setMethod("estimateInvSimpson", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "richness",  ...)
-    }
-)
 
 #' @rdname estimateDiversity
 #' @export
@@ -191,22 +180,6 @@ setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
 
 .get_inverse_simpson <- function(x, ...){
     vegan::diversity(t(x), index="invsimpson")
-}
-
-.get_observed <- function(x, ...){
-    vegan::estimateR(t(x))["S.obs",]
-}
-
-.get_chao1 <- function(x, ...){
-    ans <- t(vegan::estimateR(t(x))[c("S.chao1","se.chao1"),])
-    colnames(ans) <- c("","se")
-    ans
-}
-
-.get_ACE <- function(x, ...){
-    ans <- t(vegan::estimateR(t(x))[c("S.ACE","se.ACE"),])
-    colnames(ans) <- c("","se")
-    ans
 }
 
 .get_coverage <- function(x, threshold = 0.9, ...){
@@ -236,9 +209,6 @@ setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
                          shannon = .get_shannon,
                          simpson_diversity = .get_simpson,
                          inv_simpson = .get_inverse_simpson,
-                         richness = .get_observed,
-                         chao1 = .get_chao1,
-                         ACE = .get_ACE,
                          coverage = .get_coverage)
     dvrsty <- dvrsty_FUN(mat, ...)
     dvrsty

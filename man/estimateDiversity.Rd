@@ -5,21 +5,18 @@
 \alias{estimateShannon}
 \alias{estimateSimpsonDiversity}
 \alias{estimateInvSimpson}
-\alias{estimateRichness}
 \alias{estimateCoverage}
 \alias{estimateDiversity,SummarizedExperiment-method}
 \alias{estimateShannon,SummarizedExperiment-method}
 \alias{estimateSimpsonDiversity,SummarizedExperiment-method}
 \alias{estimateInvSimpson,SummarizedExperiment-method}
-\alias{estimateRichness,SummarizedExperiment-method}
 \alias{estimateCoverage,SummarizedExperiment-method}
 \title{Estimate diversity measures}
 \usage{
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson_diversity", "inv_simpson", "richness", "chao1", "ACE",
-    "coverage"),
+  index = c("shannon", "simpson_diversity", "inv_simpson", "coverage"),
   name = index,
   ...
 )
@@ -30,15 +27,12 @@ estimateSimpsonDiversity(x, ...)
 
 estimateInvSimpson(x, ...)
 
-estimateRichness(x, ...)
-
 estimateCoverage(x, ...)
 
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson_diversity", "inv_simpson", "richness", "chao1", "ACE",
-    "coverage"),
+  index = c("shannon", "simpson_diversity", "inv_simpson", "coverage"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -49,8 +43,6 @@ estimateCoverage(x, ...)
 \S4method{estimateSimpsonDiversity}{SummarizedExperiment}(x, ...)
 
 \S4method{estimateInvSimpson}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateRichness}{SummarizedExperiment}(x, ...)
 
 \S4method{estimateCoverage}{SummarizedExperiment}(x, ...)
 }
@@ -102,8 +94,7 @@ colData(se)$simpson_diversity
 # Calculates all the diversity indices
 se <- estimateDiversity(se)
 # All the indices' names
-indices <- c("shannon","simpson_diversity","inv_simpson", "richness",
-             "chao1", "ACE", "coverage")
+indices <- c("shannon","simpson_diversity","inv_simpson", "coverage")
 colData(se)[,indices]
 
 # plotting the diversities
@@ -125,6 +116,9 @@ ggpubr::ggarrange(plotlist = plots, nrow = 1, common.legend = TRUE, legend = "ri
 \seealso{
 \code{\link[scater:plotColData]{plotColData}}
 \itemize{
+\item{\code{\link[mia:estimateRichness]{estimateRichness}}}
+\item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
+\item{\code{\link[mia:estimateDominance]{estimateDominance}}}
 \item{\code{\link[vegan:diversity]{diversity}}}
 \item{\code{\link[vegan:specpool]{estimateR}}}
 }

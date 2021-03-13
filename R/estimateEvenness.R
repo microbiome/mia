@@ -33,6 +33,11 @@
 #'
 #' @seealso
 #' \code{\link[scater:plotColData]{plotColData}}
+#' \itemize{
+#'   \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
+#'   \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
+#'   \item{\code{\link[mia:estimateDiversity]{estimateDiversity}}}
+#' }
 #'
 #' @name estimateEvenness
 #'

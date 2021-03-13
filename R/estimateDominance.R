@@ -40,6 +40,14 @@
 #'   (Currently not used)
 #'
 #' @details
+#'
+#' A dominance index quantifies the dominance of one or few species in a
+#' community.
+#' 
+#' Dominance indices are in general negatively correlated with alpha diversity
+#' indices (species richness, evenness, diversity, rarity). More dominant
+#' communities are less diverse.
+#' 
 #' \code{estimateDominance} calculates the following community dominance
 #' indices:
 #' \itemize{
@@ -123,6 +131,8 @@
 #'
 #' @seealso
 #' \itemize{
+#'   \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
+#'   \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 #'   \item{\code{\link[mia:estimateDiversity]{estimateDiversity}}}
 #' }
 #'
@@ -343,6 +353,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 }
 
 .get_dominances_values <- function(index, assay, ntaxa = 1, aggregate = TRUE) {
+
     FUN <- switch(index,
                   simpson_dominance = .calc_simpson_dominance,
                   core_abundance = .calc_core_dominance,
