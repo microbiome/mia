@@ -94,6 +94,21 @@
         },
         values,
         name)
-    colData(x) <- cbind(colData(x),DataFrame(values))
+
+    
+    newdf <- DataFrame(values)
+
+    # Check if the new column data contains variables with
+    # identical names compared to the original column data
+    if any(colnames(newdf) %in% colData(x)) {
+        shared <- intersect(colnames(newdf), colData(x))
+        warning(paste0("The original and newly added colData(...) contains the following 
+            identical field names: ", paste(shared, collapse = ", "), ". The new colData(...) 
+            will thus contain duplicated field names. Consider using the 'name' argument in 
+            the function call to specify alternative names."))
+    }
+
+    colData(x) <- cbind(colData(x),newdf)
+    
     x
 }
