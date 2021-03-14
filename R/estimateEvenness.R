@@ -170,6 +170,7 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
 }
 
 .run_evenness <- function(index, mat, threshold = 0, ...){
+
     if(!is.numeric(threshold) || length(threshold) != 1L){
         stop("'threshold' must be a single numeric value.", call. = FALSE)
     }

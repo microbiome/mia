@@ -191,6 +191,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
             detection = 0,
             ...,
             BPPARAM = SerialParam()){
+
         # Input check
         # Check abund_values
         .check_abund_values(abund_values, x)
@@ -205,96 +206,74 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
         # Calculates richness indices
         richness <- BiocParallel::bplapply(index,
                                             FUN = .get_richness_values,
-                                            assay = assay(x,abund_values),
+                                            assay = assay(x, abund_values),
                                             detection = detection,
                                             BPPARAM = BPPARAM)
+
+
         # Add richness indices to colData
-        .add_richness_values_to_colData(x, richness, name)
+        .add_values_to_colData(x, richness, name)
+	
     }
 )
 
 
-.get_observed <- function(x, detection = 0, ...){
-    # vegan::estimateR(t(x))["S.obs",]
-    colSums(x > detection)
+.get_observed <- function(mat, detection, ...){
+
+    # vegan::estimateR(t(mat))["S.obs",]
+    colSums(mat > detection)
+
 }
 
-.get_chao1 <- function(x, ...){
-    ans <- t(vegan::estimateR(t(x))[c("S.chao1","se.chao1"),])
-    colnames(ans) <- c("",".se")
+.get_chao1 <- function(mat, ...){
+
+    # Required to work with DelayedMatrix
+    if (length(class(mat) == 1) && class(mat) == "DelayedMatrix") {
+      mat <- matrix(mat, nrow = nrow(mat))    
+    }
+
+    ans <- t(vegan::estimateR(t(mat))[c("S.chao1","se.chao1"),])
+    colnames(ans) <- c("","se")
     ans
 }
 
-.get_ACE <- function(x, ...){
-    ans <- t(vegan::estimateR(t(x))[c("S.ACE","se.ACE"),])
-    colnames(ans) <- c("",".se")
+.get_ACE <- function(mat, ...){
+
+    # Required to work with DelayedMatrix
+    if (length(class(mat) == 1) && class(mat) == "DelayedMatrix") {
+      mat <- matrix(mat, nrow = nrow(mat))    
+    }
+    
+    ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
+    colnames(ans) <- c("","se")
     ans
 }
 
-.get_hill <- function(x, ...){
+.get_hill <- function(mat, ...){
 
     # Exponent of Shannon diversity
-    exp(vegan::diversity(t(x), index="shannon"))
+    exp(vegan::diversity(t(mat), index="shannon"))
 
 }
 
-.calc_richness <- function(mat, detection, index){
 
-    ans <- lapply(mapply(function(i,j,x){x[i,j]},
-                        i = idx,
-                        j = seq_len(ncol(mat)),
-                        MoreArgs = list(x = mat),
-                        SIMPLIFY = FALSE),
-                        sum)
-    ans <- unlist(ans)
 
-    # Adds sample names to the table
-    names(ans) <- colnames(mat)
-    ans
-}
 
-.get_richness_values <- function(index, assay, detection = 0) {
+.get_richness_values <- function(index, assay, detection) {
 
     FUN <- switch(index,
                 observed = .get_observed,
                 Chao1 = .get_chao1,
                 ACE = .get_ACE,
-                Hill = .get_hill,
-                .calc_richness)
+                Hill = .get_hill
+		)
 
     do.call(FUN,
-            list(x = assay,
+            list(mat = assay,
             detection = detection,
             index = index
         ))
-}
-
-
-#' @importFrom SummarizedExperiment colData colData<-
-#' @importFrom S4Vectors DataFrame
-.add_richness_values_to_colData <- function(x, richness, name){
-
-    # Some indices include additional columns with necessary extra
-    # stats (ie. ACE.se, Chao1.se) and
-    # these must be added to the names
-    names <- c()
-    for (i in seq_along(richness)) {
-
-        if (is.matrix(richness[[i]]) && ncol(richness[[i]]) > 1) {
-        nams <- paste0(name[[i]], colnames(richness[[i]]))
-        names <- c(names, nams)
-    } else {
-        names <- c(names, name[[i]])
-    }
-    
-    }
-
-    richness <- DataFrame(richness)
-
-    colnames(richness) <- names
-
-    colData(x)[,names] <- richness
-
-    x
 
 }
+
+
