@@ -1,10 +1,14 @@
 
 context("diversity estimates")
 test_that("diversity estimates", {
+
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
     data("esophagus")
-    esophagus <- estimateDiversity(esophagus, threshold = 0.473)
-    cd <- colData(esophagus)
+
+    tse <- esophagus
+    
+    tse <- estimateDiversity(tse, threshold = 0.473)
+    cd <- colData(tse)
     expect_equal(unname(round(cd$shannon, 5)), c(2.24937, 2.76239, 2.03249))
     expect_equal(unname(round(cd$simpson_diversity, 6)),
                  c(0.831372, 0.903345, 0.665749))
