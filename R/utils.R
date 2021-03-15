@@ -82,6 +82,7 @@
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(x, values, name){
+    # converts each value:name pair into a DataFrame
     values <- mapply(
         function(value, n){
             value <- DataFrame(value)
@@ -94,21 +95,18 @@
         },
         values,
         name)
-
-    
-    newdf <- DataFrame(values)
-
-    # Check if the new column data contains variables with
-    # identical names compared to the original column data
-    if (any(colnames(newdf) %in% colnames(colData(x)))) {
-        shared <- intersect(colnames(newdf), colnames(colData(x)))
-        warning(paste0("The original and newly added colData(...) contains the following 
-            identical field names: ", paste(shared, collapse = ", "), ". The new colData(...) 
-            will thus contain duplicated field names. Consider using the 'name' argument in 
-            the function call to specify alternative names."))
+    values <- do.call(cbind, values)
+    # check for duplicated values
+    f <- colnames(colData(x)) %in% colnames(values)
+    if(any(f)) {
+        warning("The following values are already present in `colData` and ",
+                "will be overwritten: '",
+                paste(colnames(colData(x))[f], collapse = "', '"),
+                "'. Consider using the 'name' argument to specify alternative ",
+                "names.",
+                call. = FALSE)
     }
-
-    colData(x) <- cbind(colData(x),newdf)
-    
+    # keep only unique values
+    colData(x) <- cbind(colData(x)[!f], values)
     x
 }

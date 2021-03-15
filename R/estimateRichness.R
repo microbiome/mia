@@ -69,13 +69,13 @@
 #'   \item{'ace' }{Abundance-based coverage estimator (ACE) is another nonparametric richness
 #'   index that uses sample coverage, defined based on the sum of the probabilities
 #'   of the observed species. This method divides the species into abundant (more than 10
-#'   reads or observations) and rare groups 
+#'   reads or observations) and rare groups
 #'   in a sample and tends to underestimate the real number of species. The ACE index
 #'   ignores the abundance information for the abundant species,
 #'   based on the assumption that the abundant species are observed regardless of their
 #'   exact abundance. We use here the bias-corrected version
 #'   (O'Hara 2005, Chiu et al. 2014) implemented in
-#'   \code{\link[vegan:specpool]{estimateR}}. 
+#'   \code{\link[vegan:specpool]{estimateR}}.
 #'   For an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
@@ -89,7 +89,7 @@
 #'
 #'
 #' @references
-#' 
+#'
 #' Chao A. (1984)
 #' Non-parametric estimation of the number of classes in a population.
 #' _Scand J Stat._ 11:265–270.
@@ -177,19 +177,16 @@
 #'
 NULL
 
-
 #' @rdname estimateRichness
 #' @export
 setGeneric("estimateRichness",signature = c("x"),
         function(x, abund_values = "counts",
-                    index = c("observed", "chao1", "ace", "hill"),
-                    name = index,
-                    detection = 0,
-                    ...,
-                    BPPARAM = SerialParam())
-                    standardGeneric("estimateRichness"))
-
-
+                  index = c("observed", "chao1", "ace", "hill"),
+                  name = index,
+                  detection = 0,
+                  ...,
+                  BPPARAM = SerialParam())
+                  standardGeneric("estimateRichness"))
 
 #' @rdname estimateRichness
 #' @export
@@ -212,34 +209,27 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                 "same length than 'index'.",
                 call. = FALSE)
         }
-
         # Calculates richness indices
         richness <- BiocParallel::bplapply(index,
                                             FUN = .get_richness_values,
                                             assay = assay(x, abund_values),
                                             detection = detection,
                                             BPPARAM = BPPARAM)
-
-
         # Add richness indices to colData
         .add_values_to_colData(x, richness, name)
-    
     }
 )
 
 
 .calc_observed <- function(mat, detection, ...){
-
     # vegan::estimateR(t(mat))["S.obs",]
     colSums(mat > detection)
-
 }
 
 .calc_chao1 <- function(mat, ...){
-
-    # Required to work with DelayedMatrix
-    if (length(is(mat) == 1) && is(mat) == "DelayedMatrix") {
-      mat <- matrix(mat, nrow = nrow(mat))    
+    # Required to work with DelayedArray
+    if(is(mat, "DelayedArray")) {
+      mat <- matrix(mat, nrow = nrow(mat))
     }
 
     ans <- t(vegan::estimateR(t(mat))[c("S.chao1","se.chao1"),])
@@ -248,10 +238,9 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 }
 
 .calc_ace <- function(mat, ...){
-
-    # Required to work with DelayedMatrix
-    if (length(is(mat) == 1) && is(mat) == "DelayedMatrix") {
-      mat <- matrix(mat, nrow = nrow(mat))    
+    # Required to work with DelayedArray
+    if(is(mat, "DelayedArray")) {
+      mat <- matrix(mat, nrow = nrow(mat))
     }
 
     ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
@@ -260,14 +249,9 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 }
 
 .calc_hill <- function(mat, ...){
-
     # Exponent of Shannon diversity
     exp(vegan::diversity(t(mat), index="shannon"))
-
 }
-
-
-
 
 .get_richness_values <- function(index, assay, detection) {
 
@@ -277,13 +261,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                 ace = .calc_ace,
                 hill = .calc_hill
         )
-
     do.call(FUN,
             list(mat = assay,
-            detection = detection,
-            index = index
+            detection = detection
         ))
-
 }
-
-

@@ -34,8 +34,8 @@
 #'
 #' Diversity is a joint quantity that combines elements or community richness and evenness.
 #' Diversity increases, in general, when species richness or evenness increase.
-#' 
-#' By default, this function returns all indices:
+#'
+#' By default, this function returns all indices.
 #'
 #' \itemize{
 #' \item{'inverse_simpson' }{Inverse Simpson diversity:
@@ -60,14 +60,14 @@
 #' \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\% by default).
 #' Tune this with the threshold argument.}
 #' }
-#'   
+#'
 #' @references
 #'
 #' Beisel J-N. et al. (2003)
 #' A Comparative Analysis of Diversity Index Sensitivity.
 #' _Internal Rev. Hydrobiol._ 88(1):3-15.
 #' \url{https://portais.ufg.br/up/202/o/2003-comparative_evennes_index.pdf}
-#' 
+#'
 #' Bulla L. (1994)
 #' An  index of diversity and its associated diversity measure.
 #' _Oikos_ 70:167--171
@@ -154,7 +154,7 @@ setGeneric("estimateDiversity",signature = c("x"),
 #' @export
 setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("shannon","gini_simpson","inverse_simpson", 
+             index = c("shannon","gini_simpson","inverse_simpson",
                        "coverage", "fisher"),
              name = index, ..., BPPARAM = SerialParam()){
 
@@ -200,7 +200,6 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
 
     # Squared sum of relative abundances
     colSums2(rel^2)
-    
 }
 
 .calc_gini_simpson <- function(mat, ...){
@@ -208,7 +207,7 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
 }
 
 .calc_inverse_simpson <- function(mat, ...){
-    1 / .simpson_lambda(mat, ...)    
+    1 / .simpson_lambda(mat, ...)
 }
 
 .calc_coverage <- function(mat, threshold = 0.9, ...){
@@ -220,16 +219,14 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     }
 
     # Convert table to relative values
-    otu <- .calc_rel_abund(mat)
+    rel <- .calc_rel_abund(mat)
 
     # Number of groups needed to have threshold (e.g. 50 %) of the ecosystem occupied
-    do <- apply(otu, 2, function(x) {
+    coverage <- apply(rel, 2, function(x) {
         min(which(cumsum(rev(sort(x/sum(x)))) >= threshold))
     })
-    names(do) <- colnames(otu)
-
-    do
-
+    names(coverage) <- colnames(rel)
+    coverage
 }
 
 .calc_fisher <- function(mat, ...){
