@@ -77,7 +77,7 @@ and \sQuote{Gini} indices.
 }
 \details{
 A dominance index quantifies the dominance of one or few species in a
-community. Greater values indicate higher dominance.
+community. Greater values indicate higher dominance with all indices.
 
 Dominance indices are in general negatively correlated with alpha diversity
 indices (species richness, evenness, diversity, rarity). More dominant
@@ -98,11 +98,12 @@ dominant species and \eqn{N_{tot}} is the sum of absolute abundances of all
 species.}
 
 \item{'dmn' }{McNaughton’s index is the sum of relative abundances of the two
-most abundant species of the sample. Index gives values in interval 0 to 1,
-where bigger value represent greater dominance.
+most abundant species of the sample (McNaughton & Wolf, 1970). Index gives values in
+the unit interval:
 
-\deqn{dmn = \frac{N_1 + N_2}{N_{tot}}}{%
-dmn = (N_1 + N_2)/N_tot} where \eqn{N_1} and \eqn{N_2} are the absolute
+\deqn{dmn = (N_1 + N_2)/N_tot}
+
+where \eqn{N_1} and \eqn{N_2} are the absolute
 abundances of the two most dominant species and \eqn{N_{tot}} is the sum of
 absolute abundances of all species.}
 
@@ -114,8 +115,9 @@ Index gives positive integer values.}
 most dominant n species of the sample (specify the number with the argument \code{ntaxa}).
 This index gives values in interval 0 to 1.
 
-\deqn{relative = \frac{N_1}{N_{tot}}}{%
-relative = N_1/N_tot} where \eqn{N_1} is the absolute abundance of the most
+\deqn{relative = N_1/N_tot}
+
+where \eqn{N_1} is the absolute abundance of the most
 dominant species and \eqn{N_{tot}} is the sum of absolute abundances of all
 species.}
 
@@ -203,14 +205,21 @@ colData(esophagus)
 
 }
 \references{
-Berger WH & Parker FL (1970) Diversity of Planktonic Foraminifera in Deep-Sea
-Sediments. Science 168(3937): 1345-1347. doi: 10.1126/science.168.3937.1345
+Berger WH & Parker FL (1970)
+Diversity of Planktonic Foraminifera in Deep-Sea Sediments.
+\emph{Science} 168(3937):1345-1347. doi: 10.1126/science.168.3937.1345
 
-Gini C (1921) Measurement of Inequality of Incomes. The Economic Journal
-31(121): 124-126. doi: 10.2307/2223319
+Gini C (1921)
+Measurement of Inequality of Incomes.
+\emph{The Economic Journal} 31(121): 124-126. doi: 10.2307/2223319
 
-Simpson EH (1949) Measurement of Diversity. Nature 163(688). doi:
-10.1038/163688a0
+McNaughton, SJ and Wolf LL. (1970).
+Dominance and the niche in ecological systems.
+\emph{Science} 167:13, 1--139
+
+Simpson EH (1949)
+Measurement of Diversity.
+\emph{Nature} 163(688). doi: 10.1038/163688a0
 }
 \seealso{
 \itemize{
