@@ -267,7 +267,7 @@ setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, prevalence = 50/100, rank = taxonomyRanks(x)[1L],
+    function(x, prevalence = 50/100, rank = NULL,
              include_lowest = FALSE, ...){
         .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
                             include_lowest = include_lowest, ...)

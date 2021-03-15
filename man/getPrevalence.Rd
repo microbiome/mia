@@ -27,7 +27,7 @@ getPrevalentTaxa(x, ...)
 \S4method{getPrevalentTaxa}{SummarizedExperiment}(
   x,
   prevalence = 50/100,
-  rank = taxonomyRanks(x)[1L],
+  rank = NULL,
   include_lowest = FALSE,
   ...
 )
