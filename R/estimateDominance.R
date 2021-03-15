@@ -44,11 +44,11 @@
 #'
 #' A dominance index quantifies the dominance of one or few species in a
 #' community. Greater values indicate higher dominance.
-#' 
+#'
 #' Dominance indices are in general negatively correlated with alpha diversity
 #' indices (species richness, evenness, diversity, rarity). More dominant
 #' communities are less diverse.
-#' 
+#'
 #' \code{estimateDominance} calculates the following community dominance
 #' indices:
 #'
@@ -56,7 +56,7 @@
 #' \item{'DBP'}{ Berger-Parker index (See Berger & Parker 1970) calculation
 #' is a special case of the 'relative' index. DBP is the relative abundance of the most
 #' abundant species of the sample. Index gives values in interval 0 to 1,
-#' where bigger value represent greater dominance. 
+#' where bigger value represent greater dominance.
 #'
 #' \deqn{DBP = \frac{N_1}{N_{tot}}}{%
 #' DBP = N_1/N_tot} where \eqn{N_1} is the absolute abundance of the most
@@ -255,13 +255,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-
-
-
-#---------------------------Help functions----------------------------------------------------------------
-
-
-
+#---------------------------Help functions--------------------------------------
 
 .gini_dominance <- function(x, w=rep(1, length(x))) {
     # See also reldist::gini for an independent implementation

@@ -41,7 +41,7 @@
 #' Richness index differs from the concept of species diversity or evenness in
 #' that it ignores species abundance, and focuses on the binary presence/absence
 #' values that indicate simply whether the species was detected.
-#' 
+#'
 #' The following richness indices are provided (not case-sensitive):
 #'
 #' \itemize{
@@ -49,7 +49,7 @@
 #'   is detected above a given \code{detection} threshold in the observed sample
 #'   (default 0). This is conceptually the simplest richness index. The corresponding
 #'   index in the \pkg{vegan} package is "richness".}
-#' 
+#'
 #'   \item{Chao1}{ This is a nonparametric estimator of species richness. It
 #'   assumes that rare species carry information about the (unknown) number
 #'   of unobserved species. We use here the bias-corrected version
@@ -62,21 +62,21 @@
 #'   hence it gives more weight to the low abundance species.
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
-#' 
+#'
 #'   \item{ACE}{ Abundance-based coverage estimator (ACE) is another nonparametric richness
 #'   index that uses sample coverage, defined based on the sum of the probabilities
 #'   of the observed species. This method divides the species into abundant (more than 10
-#'   reads or observations) and rare groups 
+#'   reads or observations) and rare groups
 #'   in a sample and tends to underestimate the real number of species. The ACE index
 #'   ignores the abundance information for the abundant species,
 #'   based on the assumption that the abundant species are observed regardless of their
 #'   exact abundance. We use here the bias-corrected version
 #'   (O'Hara 2005, Chiu et al. 2014) implemented in
-#'   \code{\link[vegan:specpool]{estimateR}}. 
+#'   \code{\link[vegan:specpool]{estimateR}}.
 #'   For an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
-#' 
+#'
 #'   \item{Hill}{ Effective species richness aka Hill index (see e.g. Chao et al. 2016).
 #'   Currently only the case ${}^1D$ is implemented. This corresponds to the exponent
 #'   of Shannon diversity. Intuitively, the effective richness indicates the number of
@@ -86,7 +86,7 @@
 #'
 #'
 #' @references
-#' 
+#'
 #' Chao A. (1984)
 #' Non-parametric estimation of the number of classes in a population.
 #' _Scand J Stat._ 11:265–270.
@@ -131,7 +131,7 @@
 #' # Indices must be written correctly (e.g. ACE, not ace), otherwise an error
 #' # gets thrown
 #' \dontrun{esophagus <- estimateRichness(esophagus, index="ace")}
-#' 
+#'
 #' # Calculates Chao1 and ACE indices
 #' esophagus <- estimateRichness(esophagus, index=c("Chao1", "ACE"))
 #' # Shows all indices
@@ -162,19 +162,16 @@
 #' colData(esophagus)
 NULL
 
-
 #' @rdname estimateRichness
 #' @export
 setGeneric("estimateRichness",signature = c("x"),
         function(x, abund_values = "counts",
-                    index = c("observed", "Chao1", "ACE", "Hill"),
-                    name = index,
-                    detection = 0,
-                    ...,
-                    BPPARAM = SerialParam())
-                    standardGeneric("estimateRichness"))
-
-
+                 index = c("observed", "Chao1", "ACE", "Hill"),
+                 name = index,
+                 detection = 0,
+                 ...,
+                 BPPARAM = SerialParam())
+            standardGeneric("estimateRichness"))
 
 #' @rdname estimateRichness
 #' @export
@@ -197,34 +194,27 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                 "same length than 'index'.",
                 call. = FALSE)
         }
-
         # Calculates richness indices
         richness <- BiocParallel::bplapply(index,
                                             FUN = .get_richness_values,
                                             assay = assay(x, abund_values),
                                             detection = detection,
                                             BPPARAM = BPPARAM)
-
-
         # Add richness indices to colData
         .add_values_to_colData(x, richness, name)
-    
     }
 )
 
 
 .calc_observed <- function(mat, detection, ...){
-
     # vegan::estimateR(t(mat))["S.obs",]
     colSums(mat > detection)
-
 }
 
 .calc_chao1 <- function(mat, ...){
-
-    # Required to work with DelayedMatrix
-    if (length(is(mat) == 1) && is(mat) == "DelayedMatrix") {
-      mat <- matrix(mat, nrow = nrow(mat))    
+    # Required to work with DelayedArray
+    if(is(mat, "DelayedArray")) {
+      mat <- matrix(mat, nrow = nrow(mat))
     }
 
     ans <- t(vegan::estimateR(t(mat))[c("S.chao1","se.chao1"),])
@@ -233,26 +223,20 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 }
 
 .calc_ACE <- function(mat, ...){
-
-    # Required to work with DelayedMatrix
-    if (length(is(mat) == 1) && is(mat) == "DelayedMatrix") {
-      mat <- matrix(mat, nrow = nrow(mat))    
+    # Required to work with DelayedArray
+    if(is(mat, "DelayedArray")) {
+      mat <- matrix(mat, nrow = nrow(mat))
     }
-    
+
     ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
     colnames(ans) <- c("","se")
     ans
 }
 
 .calc_hill <- function(mat, ...){
-
     # Exponent of Shannon diversity
     exp(vegan::diversity(t(mat), index="shannon"))
-
 }
-
-
-
 
 .get_richness_values <- function(index, assay, detection) {
 
@@ -262,13 +246,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                 ACE = .calc_ACE,
                 Hill = .calc_hill
         )
-
     do.call(FUN,
             list(mat = assay,
-            detection = detection,
-            index = index
+            detection = detection
         ))
-
 }
-
-
