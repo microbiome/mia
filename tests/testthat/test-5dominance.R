@@ -20,8 +20,8 @@ test_that("estimateDominance", {
         #colData.
         #Checks also, that the order of indices is right / the same as the order
         #in the input vector.
-        expect_named(colData(tse_idx), c("DBP", "DMN", "absolute", "relative",
-                                         "simpson_dominance", "core_abundance",
+        expect_named(colData(tse_idx), c("dbp", "dmn", "absolute", "relative",
+                                         "simpson_lambda", "core_abundance",
                                          "gini"))
 
         #.calc_core_dominance
@@ -46,13 +46,13 @@ test_that("estimateDominance", {
                      round(c(0.2561576, 0.1647059, 0.5662100), 7))
 
         expect_equal(round(as.vector(mia:::.calc_dominance(assays(tse_idx)$counts,
-                                                           index="DBP",
+                                                           index="dbp",
                                                            ntaxa = 1,
                                                            aggregate = TRUE)), 7),
                      round(c(0.2561576, 0.1647059, 0.5662100)), 7)
 
         expect_equal(round(as.vector(mia:::.calc_dominance(assays(tse_idx)$counts,
-                                                           index="DMN",
+                                                           index="dmn",
                                                            ntaxa = 1,
                                                            aggregate = TRUE)), 7),
                      round(c(0.5024631, 0.3254902, 0.6484018)), 7)

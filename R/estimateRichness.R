@@ -41,16 +41,19 @@
 #' Richness index differs from the concept of species diversity or evenness in
 #' that it ignores species abundance, and focuses on the binary presence/absence
 #' values that indicate simply whether the species was detected.
+#'
+#' The function takes all index names in full lowercase. The user can provide the
+#' desired spelling through the argument \code{\link{name}} (see examples).
 #' 
-#' The following richness indices are provided (not case-sensitive):
+#' The following richness indices are provided.
 #'
 #' \itemize{
-#'   \item{Observed}{ The _observed richness_ gives the number of species that
+#'   \item{observed: }{The _observed richness_ gives the number of species that
 #'   is detected above a given \code{detection} threshold in the observed sample
 #'   (default 0). This is conceptually the simplest richness index. The corresponding
 #'   index in the \pkg{vegan} package is "richness".}
 #' 
-#'   \item{Chao1}{ This is a nonparametric estimator of species richness. It
+#'   \item{chao1: }{This is a nonparametric estimator of species richness. It
 #'   assumes that rare species carry information about the (unknown) number
 #'   of unobserved species. We use here the bias-corrected version
 #'   (O'Hara 2005, Chiu et al. 2014) implemented in
@@ -63,7 +66,7 @@
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
 #' 
-#'   \item{ACE}{ Abundance-based coverage estimator (ACE) is another nonparametric richness
+#'   \item{ace: }{Abundance-based coverage estimator (ACE) is another nonparametric richness
 #'   index that uses sample coverage, defined based on the sum of the probabilities
 #'   of the observed species. This method divides the species into abundant (more than 10
 #'   reads or observations) and rare groups 
@@ -77,8 +80,8 @@
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
 #' 
-#'   \item{Hill}{ Effective species richness aka Hill index (see e.g. Chao et al. 2016).
-#'   Currently only the case ${}^1D$ is implemented. This corresponds to the exponent
+#'   \item{hill: }{Effective species richness aka Hill index (see e.g. Chao et al. 2016).
+#'   Currently only the case 1D is implemented. This corresponds to the exponent
 #'   of Shannon diversity. Intuitively, the effective richness indicates the number of
 #'   species whose even distribution would lead to tha same diversity than the observed
 #'   community, where the species abundances are unevenly distributed.}
@@ -120,46 +123,49 @@
 #' @examples
 #' data(esophagus)
 #'
-#' # Calculates observed richness index
-#' esophagus <- estimateRichness(esophagus, index="observed")
+#' # Calculates all richness indices by default
+#' esophagus <- estimateRichness(esophagus)
+#'
 #' # Shows all indices
 #' colData(esophagus)
 #'
-#' # Calculate richness excluding singletons (detection limit 1)
+#' # Shows Hill index
+#' colData(esophagus)$hill
+#'
+#' # Deletes hill index
+#' colData(esophagus)$hill <- NULL
+#'
+#' # Shows all indices, hill is deleted
+#' colData(esophagus)
+#'
+#' # Delete the remaining indices
+#' colData(esophagus)[, c("observed", "chao1", "ace")] <- NULL
+#'
+#' # Calculates observed richness index and saves them with specific names
+#' esophagus <- estimateRichness(esophagus,
+#'     index = c("observed", "chao1", "ace", "hill"),
+#'      name = c("Observed", "Chao1", "ACE", "Hill"))
+#'
+#' # Show the new indices
+#' colData(esophagus)
+#'
+#' # Calculate observed richness excluding singletons (detection limit 1)
 #' esophagus <- estimateRichness(esophagus, index="observed", detection = 1)
 #'
-#' # Indices must be written correctly (e.g. ACE, not ace), otherwise an error
+#' # Indices must be written correctly (all lowercase), otherwise an error
 #' # gets thrown
-#' \dontrun{esophagus <- estimateRichness(esophagus, index="ace")}
+#' \dontrun{esophagus <- estimateRichness(esophagus, index="ACE")}
 #' 
-#' # Calculates Chao1 and ACE indices
-#' esophagus <- estimateRichness(esophagus, index=c("Chao1", "ACE"))
-#' # Shows all indices
-#' colData(esophagus)
-#' # Shows ACE index
-#' colData(esophagus)$ACE
+#' # Calculates Chao1 and ACE indices only
+#' esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"), name=c("Chao1", "ACE"))
 #'
-#' # Deletes ACE index
-#' colData(esophagus)$ACE <- NULL
-#' # Shows all indices, ACE is deleted
-#' colData(esophagus)
-#' # Deletes all indices
-#' colData(esophagus) <- NULL
-#'
-#' # Names of columns can be chosen, but the length of arguments must match.
+#' # Names of columns can be chosen arbitrarily, but the length of arguments must match.
 #' esophagus <- estimateRichness(esophagus,
-#'                                index = c("ACE", "Chao1"),
+#'                                index = c("ace", "chao1"),
 #'                                name = c("index1", "index2"))
 #' # Shows all indices
 #' colData(esophagus)
 #'
-#' # Deletes all indices
-#' colData(esophagus) <- NULL
-#'
-#' # Calculates all indices
-#' esophagus <- estimateRichness(esophagus)
-#' # Shows all indices
-#' colData(esophagus)
 NULL
 
 
@@ -167,7 +173,7 @@ NULL
 #' @export
 setGeneric("estimateRichness",signature = c("x"),
         function(x, abund_values = "counts",
-                    index = c("observed", "Chao1", "ACE", "Hill"),
+                    index = c("observed", "chao1", "ace", "hill"),
                     name = index,
                     detection = 0,
                     ...,
@@ -181,7 +187,7 @@ setGeneric("estimateRichness",signature = c("x"),
 setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
     function(x,
             abund_values = "counts",
-            index = c("observed", "Chao1", "ACE", "Hill"),
+            index = c("observed", "chao1", "ace", "hill"),
             name = index,
             detection = 0,
             ...,
@@ -232,13 +238,13 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-.calc_ACE <- function(mat, ...){
+.calc_ace <- function(mat, ...){
 
     # Required to work with DelayedMatrix
     if (length(is(mat) == 1) && is(mat) == "DelayedMatrix") {
       mat <- matrix(mat, nrow = nrow(mat))    
     }
-    
+
     ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
     colnames(ans) <- c("","se")
     ans
@@ -258,9 +264,9 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 
     FUN <- switch(index,
                 observed = .calc_observed,
-                Chao1 = .calc_chao1,
-                ACE = .calc_ACE,
-                Hill = .calc_hill
+                chao1 = .calc_chao1,
+                ace = .calc_ace,
+                hill = .calc_hill
         )
 
     do.call(FUN,

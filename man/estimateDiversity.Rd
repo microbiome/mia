@@ -66,8 +66,8 @@ stored in.}
 
 \item{...}{additional parameters passed to \code{estimateDiversity}
 \itemize{
-\item{\code{threshold} is a numeric value for selecting threshold for \code{coverage} index.
-By default, the threshold is 0.9.
+\item{\code{threshold} is a numeric value in the unit interval, determining the threshold
+for \code{coverage} index. By default, the threshold is 0.9 (i.e. 90\\%).
 }
 }}
 
@@ -81,66 +81,77 @@ object specifying whether calculation of estimates should be parallelized.}
 }
 \description{
 Several functions for calculation of diversity indices available via
-wrapper functions. They are implemented via the \code{vegan} package.
+wrapper functions. Some of them are implemented via the \code{vegan} package.
 }
 \details{
-These include the \sQuote{Shannon}, \sQuote{Gini-Simpson} and
-\sQuote{inverse Simpson}, \sQuote{coverage}, and \sQuote{Fisher's alpha}
-diversity measures.
+The available indices include the \sQuote{Shannon}, \sQuote{Gini-Simpson},
+\sQuote{Inverse Simpson}, \sQuote{Coverage}, and \sQuote{Fisher's alpha}
+diversity indices. See details for more information and references.
 
 Diversity is a joint quantity that combines elements or community richness and evenness.
 Diversity increases, in general, when species richness or evenness increase.
 
-By default, this function returns all indices.
+By default, this function returns all indices:
 
-The available diversity indices include the following:
 \itemize{
-\item{inverse_simpson }{Inverse Simpson diversity:
-$1/lambda$ where $lambda=sum(p^2)$ and $p$ are relative abundances.
+\item{inverse_simpson: }{Inverse Simpson diversity:
+\eqn{1/lambda} where \eqn{\lambda=\Sum(p^2)} and p refers to relative abundances.
 This corresponds to the diversity index
-'invsimpson' in the vegan::diversity. This should not be confused with the
+'invsimpson' in vegan::diversity. Don't confuse this with the
 closely related Gini-Simpson index}
 
-\item{gini_simpson }{Gini-Simpson diversity i.e. $1 - lambda$, where lambda is the
+\item{gini_simpson: }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
 Simpson index, calculated as the sum of squared relative abundances.
 This corresponds to the diversity index
-'simpson' in the vegan::diversity.
+'simpson' in \code{\link[vegan:diversity]{vegan::diversity}}.
 This is also called Gibbs–Martin, or Blau index in sociology,
 psychology and management studies. The Gini-Simpson index (1-lambda) should not be
 confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).}
 
-\item{shannon }{Shannon diversity ie entropy}
+\item{shannon: }{Shannon diversity (entropy).}
 
-\item{fisher }{Fisher's alpha; as implemented in the \pkg{vegan} package (Fisher et al. (1943)).}
+\item{fisher: }{Fisher's alpha; as implemented in
+\code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. (1943)).}
 
-\item{coverage }{Number of species needed to cover 50\\% of the ecosystem.
-For other quantiles, apply the function coverage directly.}
+\item{coverage: }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
+Tune this with the \link{\code{threshold}} argument.}
 }
 }
 \examples{
 data(GlobalPatterns)
 se <- GlobalPatterns
 
-se <- estimateShannon(se)
-colData(se)$shannon
+# All index names as known by the function
+index_code <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher")
 
-se <- estimateSimpsonDiversity(se)
-colData(se)$gini_simpson
+# Calculate diversities
+se <- estimateDiversity(se, index = index_code)
 
-# Calculates all the diversity indices
-se <- estimateDiversity(se)
-# All the indices' names
-indices <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher")
-colData(se)[,indices]
+# The colData contains the indices with their code names by default
+colData(se)[, index_code]
 
-# plotting the diversities
+# Removing indices
+colData(se)[, index_code] <- NULL
+
+# It is recommended to specify also the final names used in the output.
+se <- estimateDiversity(se,
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
+   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher"))
+
+# Corresponding polished names
+index_name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher")
+
+# The colData contains the indices by their new names provided by the user
+colData(se)[, index_name]
+
+# Plotting the diversities - use the selected names
 library(scater)
-plotColData(se, "shannon")
+plotColData(se, "Shannon")
 # ... by sample type
-plotColData(se, "shannon", "SampleType")
+plotColData(se, "Shannon", "SampleType")
 \donttest{
 # combining different plots
-plots <- lapply(c("shannon","gini_simpson"),
+plots <- lapply(c("Shannon","GiniSimpson"),
                 plotColData,
                 object = se,
                 x = "SampleType",

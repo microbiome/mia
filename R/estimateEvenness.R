@@ -35,15 +35,15 @@
 #'
 #' By default, this function returns all indices.
 #'
-#' The available evenness indices include the following:
+#' The available evenness indices include the following (all in lowercase):
 #' \itemize{
-#'   \item{camargo}{Camargo's evenness (Camargo 1992)}
-#'   \item{simpson_evenness}{Simpson’s evenness is calculated as inverse Simpson diversity (1/lambda) divided by
+#'   \item{camargo: }{Camargo's evenness (Camargo 1992)}
+#'   \item{simpson_evenness: }{Simpson’s evenness is calculated as inverse Simpson diversity (1/lambda) divided by
 #'   observed species richness S: (1/lambda)/S.}
-#'   \item{pielou}{Pielou's evenness (Pielou, 1966), also known as Shannon or Shannon-Weaver/Wiener/Weiner
+#'   \item{pielou: }{Pielou's evenness (Pielou, 1966), also known as Shannon or Shannon-Weaver/Wiener/Weiner
 #'     evenness; H/ln(S). The Shannon-Weaver is the preferred term; see Spellerberg and Fedor (2003).}
-#'   \item{evar}{Smith and Wilson’s Evar index (Smith & Wilson 1996)}
-#'   \item{bulla}{Bulla’s index (O) (Bulla 1994)}
+#'   \item{evar: }{Smith and Wilson’s Evar index (Smith & Wilson 1996)}
+#'   \item{bulla: }{Bulla’s index (O) (Bulla 1994)}
 #' }
 #'   
 #' Desirable statistical evenness metrics avoid strong bias towards very
@@ -100,11 +100,19 @@
 #' @name estimateEvenness
 #'
 #' @examples
-#' data(GlobalPatterns)
-#' se <- GlobalPatterns
+#' data(esophagus)
+#' se <- esophagus
 #'
-#' se <- estimateEvenness(se)
+#' # Specify indices and their output names
+#' indices       <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla"),
+#' indices_names <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
+#'
+#' # Estimate evenness and give polished names to be used in the output
+#' se <- estimateEvenness(se, index = indices, name = indices_names)
+#'
+#' # Check the output
 #' head(colData(se))
+#'
 NULL
 
 #' @rdname estimateEvenness
