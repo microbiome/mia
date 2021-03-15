@@ -4,7 +4,7 @@
 #' wrapper functions. Some of them are implemented via the \code{vegan} package.
 #'
 #' The available indices include the \sQuote{Shannon}, \sQuote{Gini-Simpson},
-#' \sQuote{Inverse Simpson}, \sQuote{Coverage}, and \sQuote{Fisher's alpha}
+#' \sQuote{Inverse Simpson}, \sQuote{Coverage}, and \sQuote{Fisher alpha}
 #' diversity indices. See details for more information and references.
 #'
 #' @param x a \code{\link{SummarizedExperiment}} object
@@ -22,15 +22,13 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether calculation of estimates should be parallelized.
 #'
-#' @param ... additional parameters passed to \code{estimateDiversity}
+#' @param ... optional arguments:
 #' \itemize{
-#'   \item{\code{threshold} is a numeric value in the unit interval, determining the threshold
-#'   for \code{coverage} index. By default, the threshold is 0.9 (i.e. 90\%).
-#'   }
+#'   \item{threshold}{ a numeric value in the unit interval,
+#'   determining the threshold for coverage index. By default, the threshold is 0.9.}
 #' }
 #'
-#' @return \code{x} with additional \code{\link{colData}} named
-#'   \code{*name*}
+#' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
 #'
 #' @details
 #'
@@ -41,7 +39,7 @@
 #'
 #' \itemize{
 #' \item{'inverse_simpson' }{Inverse Simpson diversity:
-#' \eqn{1/lambda} where \eqn{\lambda=\Sum(p^2)} and p refers to relative abundances.
+#' \eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative abundances.
 #' This corresponds to the diversity index
 #' 'invsimpson' in vegan::diversity. Don't confuse this with the
 #' closely related Gini-Simpson index}
@@ -60,7 +58,7 @@
 #' \code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. (1943)).}
 #'
 #' \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\% by default).
-#' Tune this with the \link{\code{threshold}} argument.}
+#' Tune this with the threshold argument.}
 #' }
 #'   
 #' @references

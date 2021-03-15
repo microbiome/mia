@@ -37,7 +37,7 @@ stored in.}
 
 \item{...}{optional arguments:
 \itemize{
-\item{\code{threshold:}}{ a numeric threshold. assay values below or equal
+\item{threshold}{ a numeric threshold. assay values below or equal
 to this threshold will be set to zero.}
 }}
 
@@ -83,7 +83,7 @@ data(esophagus)
 se <- esophagus
 
 # Specify indices and their output names
-indices       <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla"),
+indices       <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla")
 indices_names <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 
 # Estimate evenness and give polished names to be used in the output

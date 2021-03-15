@@ -149,15 +149,24 @@
 #' # Show the new indices
 #' colData(esophagus)
 #'
+#' # Deletes all colData (including the indices)
+#' colData(esophagus) <- NULL
+#'
 #' # Calculate observed richness excluding singletons (detection limit 1)
 #' esophagus <- estimateRichness(esophagus, index="observed", detection = 1)
 #'
+#' # Deletes all colData (including the indices)
+#' colData(esophagus) <- NULL
+#'
 #' # Indices must be written correctly (all lowercase), otherwise an error
 #' # gets thrown
-#' \dontrun{esophagus <- estimateRichness(esophagus, index="ACE")}
+#' \donttest{esophagus <- estimateRichness(esophagus, index="ACE")}
 #' 
 #' # Calculates Chao1 and ACE indices only
 #' esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"), name=c("Chao1", "ACE"))
+#'
+#' # Deletes all colData (including the indices)
+#' colData(esophagus) <- NULL
 #'
 #' # Names of columns can be chosen arbitrarily, but the length of arguments must match.
 #' esophagus <- estimateRichness(esophagus,
