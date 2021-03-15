@@ -278,54 +278,35 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname getPrevalence
 #'
-#' @param include_highest logical scalar: Should the upper boundary of the
-#'   detection and prevalence cutoffs be included? (default: \code{FALSE})
-#'
 #' @export
 setGeneric("getRareTaxa", signature = "x",
-           function(x, rank = NULL, prevalence = 0.5, include_highest = FALSE, ...)
+           function(x, rank = NULL, ...)
                standardGeneric("getRareTaxa"))
 
 #' @rdname getPrevalence
 #' @export
 setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, prevalence = 0.5, include_highest = FALSE, ...){
-
-        # include_highest must be a boolean value
-        if( !.is_a_bool(include_highest) ){
-            stop("'include_highest' must be TRUE or FALSE.", call. = FALSE)
-        }
-
-        # include_lowest is an opposite to include_highest
-        include_lowest <- !include_highest
+    function(x, rank = NULL, ...){
 
         # Gets the prevalent taxa
-        prev_taxa <- getPrevalentTaxa(x, rank = rank, prevalence = prevalence,
-                                      include_lowest = include_lowest, ...)
+        prev_taxa <- getPrevalentTaxa(x, rank = rank, ...)
 
+        # Gets all the rownames
+        if( !is.null(rank) ){
+            # Gets names from specified taxonomic level
+            taxa <- rowData(x)[[rank]]
 
+        } else{
+            # Gets rownames if agglomeration is not done
+            taxa <- rownames(x)
 
-        # # This is not working? This does not take detection threshold into account?
-        # # Gets all the rownames
-        # if( !is.null(rank) ){
-        #     # Gets names from specified taxonomic level
-        #     taxa <- rowData(x)[[rank]]
-        #
-        # } else{
-        #     # Gets rownames if agglomeration is not done
-        #     taxa <- rownames(x)
-        #
-        # }
-
-        # Gets all the taxa that are over the detection limit
-        # prevalence is in the parameters, because otherwise it would be here 2 times,
-        # because it would be also passed as additional argument
-        # prevalence just over zero, otherwise those taxa that has abundance under detection limit would be also added
-        taxa <- getPrevalentTaxa(x, rank = rank,  prevalence = 0.000000000000000000001,
-                                 include_lowest = TRUE, ...)
+        }
 
         # Gets those taxa that are not prevalent
         taxa[!(taxa %in% prev_taxa)]
+
+        # Contains NAs, so they are dropped
+        taxa[!is.na(taxa)]
 
     }
 )

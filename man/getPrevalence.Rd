@@ -34,9 +34,9 @@ getPrevalentTaxa(x, ...)
   ...
 )
 
-getRareTaxa(x, ...)
+getRareTaxa(x, rank = NULL, ...)
 
-\S4method{getRareTaxa}{SummarizedExperiment}(x, ...)
+\S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
 getPrevalentAbundance(x, abund_values = "relabundance", ...)
 
