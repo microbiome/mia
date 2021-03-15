@@ -7,6 +7,8 @@
 \alias{getPrevalentTaxa}
 \alias{getPrevalentTaxa,ANY-method}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{getRareTaxa}
+\alias{getRareTaxa,SummarizedExperiment-method}
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
@@ -31,6 +33,10 @@ getPrevalentTaxa(x, ...)
   include_lowest = FALSE,
   ...
 )
+
+getRareTaxa(x, ...)
+
+\S4method{getRareTaxa}{SummarizedExperiment}(x, ...)
 
 getPrevalentAbundance(x, abund_values = "relabundance", ...)
 

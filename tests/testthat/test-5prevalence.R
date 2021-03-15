@@ -75,6 +75,70 @@ test_that("getPrevalentTaxa", {
 
 })
 
+test_that("getRareTaxa", {
+
+    data(GlobalPatterns)
+    expect_error(getRareTaxa(GlobalPatterns, prevalence="test"),
+                 "'prevalence' must be a single numeric value or coercible to one")
+
+    ############# Test that output type is correct #############
+    expect_type(taxa <- getRareTaxa(GlobalPatterns,
+                                    detection = 130,
+                                    prevalence = 90/100), "character")
+
+    ##### Test that getPrevalentTaxa and getRareTaxa has all the taxa ####
+
+    # Gets rownames for all the taxa
+    all_taxa <- rownames(GlobalPatterns)
+
+    # Gets prevalent taxa
+    prevalent_taxa <- getPrevalentTaxa(GlobalPatterns,
+                                       detection = -1, # with detection == 0, some taxa are missing for some reason
+                                       prevalence = 90/100,
+                                       include_lowest = FALSE)
+    # Gets rare taxa
+    rare_taxa <- getRareTaxa(GlobalPatterns,
+                             detection = -1, # with detection == 0, some taxa are missing for some reason
+                             prevalence = 90/100,
+                             include_highest = TRUE)
+
+    # Concatenates prevalent and rare taxa
+    prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
+
+    # If all the elements are in another vector, vector of TRUEs
+    # Opposite --> negative of FALSEs
+    # If every element is FALSE, any is FALSE --> opposite --> TRUE
+    expect_true( !any( !(all_taxa %in% prevalent_and_rare_taxa) ) )
+
+    ##### Test that getPrevalentTaxa and getRareTaxa has all the taxa, ####
+    ##### but now with detection limit #####
+
+    se_over_detection <- GlobalPatterns[apply(assays(transformCounts(GlobalPatterns, method = "relabundance"))$relabundance > 0.1, 1, any)]
+
+    # Gets rownames for all the taxa
+    all_taxa <- rownames(se_over_detection)
+
+    # Gets prevalent taxa
+    prevalent_taxa <- getPrevalentTaxa(GlobalPatterns,
+                                       prevalence = 0.05,
+                                       detection = 0.1,
+                                       include_lowest = TRUE, as_relative = TRUE)
+    # Gets rare taxa
+    rare_taxa <- getRareTaxa(GlobalPatterns,
+                             prevalence = 0.05,
+                             detection = 0.1,
+                             include_highest = FALSE, as_relative = TRUE)
+
+    # Concatenates prevalent and rare taxa
+    prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
+
+    # If all the elements are in another vector, vector of TRUEs
+    # Opposite --> negative of FALSEs
+    # If every element is FALSE, any is FALSE --> opposite --> TRUE
+    expect_true( !any( !(all_taxa %in% prevalent_and_rare_taxa) ) )
+
+})
+
 test_that("agglomerateByPrevalence", {
 
     data(GlobalPatterns)
