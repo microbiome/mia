@@ -6,7 +6,6 @@ test_that("estimateRichness", {
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
     data("esophagus")
 
-
     tse <- estimateRichness(esophagus, detection = 1)
     cd <- colData(tse)    
     expect_equal(unname(round(cd$observed, 0)), c(15, 24, 16))
@@ -31,18 +30,18 @@ test_that("estimateRichness", {
 
         # .get_observed
         mat <- assay(tse, "counts")
-        expect_equal(unname(mia:::.get_observed(mat, detection = 0)), c(28, 33, 38))
-        expect_equal(unname(mia:::.get_observed(mat, detection = 1)), c(15, 24, 16))	
+        expect_equal(unname(mia:::.calc_observed(mat, detection = 0)), c(28, 33, 38))
+        expect_equal(unname(mia:::.calc_observed(mat, detection = 1)), c(15, 24, 16))	
 
-        s <- mia:::.get_chao1(mat)
+        s <- mia:::.calc_chao1(mat)
         expect_equal(ncol(s), 2)
         expect_equal(unname(round(s[,1], 4)), c(39.1429, 37.5000, 71.0000))
 
-        s <- mia:::.get_ACE(mat)
+        s <- mia:::.calc_ACE(mat)
         expect_equal(ncol(s), 2)
         expect_equal(unname(round(s[,1], 4)), c(49.0970, 40.9465, 88.9768))
 
-        s <- mia:::.get_hill(mat)
+        s <- mia:::.calc_hill(mat)
 	expect_false(is.matrix(s))
         expect_equal(unname(round(s, 4)), c(9.4817, 15.8376, 7.6331))
 

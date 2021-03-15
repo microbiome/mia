@@ -6,17 +6,19 @@
 \alias{estimateSimpsonDiversity}
 \alias{estimateInvSimpson}
 \alias{estimateCoverage}
+\alias{estimateFisher}
 \alias{estimateDiversity,SummarizedExperiment-method}
 \alias{estimateShannon,SummarizedExperiment-method}
 \alias{estimateSimpsonDiversity,SummarizedExperiment-method}
 \alias{estimateInvSimpson,SummarizedExperiment-method}
 \alias{estimateCoverage,SummarizedExperiment-method}
+\alias{estimateFisher,SummarizedExperiment-method}
 \title{Estimate diversity measures}
 \usage{
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson_diversity", "inv_simpson", "coverage"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
   name = index,
   ...
 )
@@ -29,10 +31,12 @@ estimateInvSimpson(x, ...)
 
 estimateCoverage(x, ...)
 
+estimateFisher(x, ...)
+
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson_diversity", "inv_simpson", "coverage"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -45,6 +49,8 @@ estimateCoverage(x, ...)
 \S4method{estimateInvSimpson}{SummarizedExperiment}(x, ...)
 
 \S4method{estimateCoverage}{SummarizedExperiment}(x, ...)
+
+\S4method{estimateFisher}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -78,8 +84,38 @@ Several functions for calculation of diversity indices available via
 wrapper functions. They are implemented via the \code{vegan} package.
 }
 \details{
-These include the \sQuote{Shannon}, \sQuote{Simpson} and
-\sQuote{inverse Simpson} diversity measures.
+These include the \sQuote{Shannon}, \sQuote{Gini-Simpson} and
+\sQuote{inverse Simpson}, \sQuote{coverage}, and \sQuote{Fisher's alpha}
+diversity measures.
+
+Diversity is a joint quantity that combines elements or community richness and evenness.
+Diversity increases, in general, when species richness or evenness increase.
+
+By default, this function returns all indices.
+
+The available diversity indices include the following:
+\itemize{
+\item{inverse_simpson }{Inverse Simpson diversity:
+$1/lambda$ where $lambda=sum(p^2)$ and $p$ are relative abundances.
+This corresponds to the diversity index
+'invsimpson' in the vegan::diversity. This should not be confused with the
+closely related Gini-Simpson index}
+
+\item{gini_simpson }{Gini-Simpson diversity i.e. $1 - lambda$, where lambda is the
+Simpson index, calculated as the sum of squared relative abundances.
+This corresponds to the diversity index
+'simpson' in the vegan::diversity.
+This is also called Gibbs–Martin, or Blau index in sociology,
+psychology and management studies. The Gini-Simpson index (1-lambda) should not be
+confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).}
+
+\item{shannon }{Shannon diversity ie entropy}
+
+\item{fisher }{Fisher's alpha; as implemented in the \pkg{vegan} package (Fisher et al. (1943)).}
+
+\item{coverage }{Number of species needed to cover 50\\% of the ecosystem.
+For other quantiles, apply the function coverage directly.}
+}
 }
 \examples{
 data(GlobalPatterns)
@@ -89,12 +125,12 @@ se <- estimateShannon(se)
 colData(se)$shannon
 
 se <- estimateSimpsonDiversity(se)
-colData(se)$simpson_diversity
+colData(se)$gini_simpson
 
 # Calculates all the diversity indices
 se <- estimateDiversity(se)
 # All the indices' names
-indices <- c("shannon","simpson_diversity","inv_simpson", "coverage")
+indices <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher")
 colData(se)[,indices]
 
 # plotting the diversities
@@ -104,7 +140,7 @@ plotColData(se, "shannon")
 plotColData(se, "shannon", "SampleType")
 \donttest{
 # combining different plots
-plots <- lapply(c("shannon","simpson_diversity"),
+plots <- lapply(c("shannon","gini_simpson"),
                 plotColData,
                 object = se,
                 x = "SampleType",
@@ -112,6 +148,29 @@ plots <- lapply(c("shannon","simpson_diversity"),
 plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))
 ggpubr::ggarrange(plotlist = plots, nrow = 1, common.legend = TRUE, legend = "right")
 }
+}
+\references{
+Beisel J-N. et al. (2003)
+A Comparative Analysis of Diversity Index Sensitivity.
+\emph{Internal Rev. Hydrobiol.} 88(1):3-15.
+\url{https://portais.ufg.br/up/202/o/2003-comparative_evennes_index.pdf}
+
+Bulla L. (1994)
+An  index of diversity and its associated diversity measure.
+\emph{Oikos} 70:167--171
+
+Fisher, R.A., Corbet, A.S. & Williams, C.B. (1943).
+The relation between the number of species and the number of individuals in a
+random sample of animal population.
+\emph{Journal of Animal Ecology} \emph{12}, 42-58.
+
+Magurran AE, McGill BJ, eds (2011)
+Biological Diversity: Frontiers in Measurement and Assessment
+(Oxford Univ Press, Oxford), Vol 12.
+
+Smith B and Wilson JB. (1996)
+A Consumer's Guide to Diversity Indices.
+\emph{Oikos} 76(1):70-82.
 }
 \seealso{
 \code{\link[scater:plotColData]{plotColData}}

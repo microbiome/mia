@@ -72,11 +72,12 @@ object specifying whether calculation of estimates should be parallelized.
 \description{
 This function calculates community dominance indices.
 This includes the \sQuote{DBP}, \sQuote{DMN}, \sQuote{Absolute},
-\sQuote{Relative}, \sQuote{Core Abundance} and \sQuote{Gini} index.
+\sQuote{Relative}, \sQuote{Simpson's dominance}, \sQuote{Core Abundance}
+and \sQuote{Gini} index.
 }
 \details{
 A dominance index quantifies the dominance of one or few species in a
-community.
+community. Greater values indicate higher dominance.
 
 Dominance indices are in general negatively correlated with alpha diversity
 indices (species richness, evenness, diversity, rarity). More dominant
@@ -84,11 +85,12 @@ communities are less diverse.
 
 \code{estimateDominance} calculates the following community dominance
 indices:
+
 \itemize{
-\item{'DBP'}{ Berger-Parker index is calculated similarly than relative
-index. DBP is the relative abundance of the most abundant species of the
-sample. Index gives values in interval 0 to 1, where bigger value represent
-greater dominance. (See e.g. Berger & Parker 1970.)
+\item{'DBP'}{ Berger-Parker index (See Berger & Parker 1970) calculation
+is a special case of the 'relative' index. DBP is the relative abundance of the most
+abundant species of the sample. Index gives values in interval 0 to 1,
+where bigger value represent greater dominance.
 
 \deqn{DBP = \frac{N_1}{N_{tot}}}{%
 DBP = N_1/N_tot} where \eqn{N_1} is the absolute abundance of the most
@@ -105,26 +107,34 @@ abundances of the two most dominant species and \eqn{N_{tot}} is the sum of
 absolute abundances of all species.}
 
 \item{'absolute'}{ Absolute index equals to the absolute abundance of the
-most dominant species of the sample. Index gives positive integer values.}
+most dominant n species of the sample (specify the number with the argument \code{ntaxa}).
+Index gives positive integer values.}
 
 \item{'relative'}{ Relative index equals to the relative abundance of the
-most dominant species of the sample. Index gives values in interval 0 to 1,
-where bigger value represent greater dominance.
+most dominant n species of the sample (specify the number with the argument \code{ntaxa}).
+This index gives values in interval 0 to 1.
 
 \deqn{relative = \frac{N_1}{N_{tot}}}{%
 relative = N_1/N_tot} where \eqn{N_1} is the absolute abundance of the most
 dominant species and \eqn{N_{tot}} is the sum of absolute abundances of all
 species.}
 
-\item{'simpson_dominance'}{ Simpson's index, or Simpson's dominance index, is
+\item{'simpson_dominance'}{ Simpson's (dominance) index or Simpson's lambda (\deqn{\lambda}) is
 calculated by raising all relative abundances of species to the power of 2,
-and then summing them together. Index gives values in interval 0 to 1. Value
+and then summing them together. This index gives values in interval 0 to 1. This value
 equals the probability that two randomly chosen individuals belongs to the
-same species. The higher the probability, the greater the dominance is. (See
-e.g. Simpson 1949.)
+same species. The higher the probability, the greater the dominance (See
+e.g. Simpson 1949).
 
-\deqn{simpson = \sum(p^2)}{%
-simpson = \sum(p^2)} where \eqn{p} is relative abundances.}
+\deqn{simpson \lambda = \sum(p^2)}{%
+simpson = \sum(p^2)} where \eqn{p} is relative abundances.
+
+There is also a more advanced Simpson dominance index (Simpson 1949). However,
+this is not provided and the simpler squared sum of relative abundances is used
+instead as the alternative index is not in the interval from 0 to 1 and it is highly
+correlated with the simpler variant implemented here.
+
+}
 
 \item{'core_abundance'}{ Core abundance index is related to core species.
 Core species are species that are most abundant in all samples, i.e., in
@@ -146,8 +156,9 @@ income is distributed among population. Here, Gini index is used similarly,
 but income is replaced with abundance. If there is small group of species
 that represent large portion of total abundance of microbes, the inequality
 is large and Gini index closer to 1. If all species has equally large
-abundances, the equality is perfect and Gini index equals 0. (See e.g. Gini
-1921.)}
+abundances, the equality is perfect and Gini index equals 0. (See Gini
+1921). This index should not be confused with Gini-Simpson index, which is used
+to quantify diversity.}
 }
 }
 \examples{
