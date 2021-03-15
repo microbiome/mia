@@ -40,13 +40,13 @@
 #' By default, this function returns all indices:
 #'
 #' \itemize{
-#' \item{inverse_simpson: }{Inverse Simpson diversity:
+#' \item{'inverse_simpson' }{Inverse Simpson diversity:
 #' \eqn{1/lambda} where \eqn{\lambda=\Sum(p^2)} and p refers to relative abundances.
 #' This corresponds to the diversity index
 #' 'invsimpson' in vegan::diversity. Don't confuse this with the
 #' closely related Gini-Simpson index}
 #'
-#' \item{gini_simpson: }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
+#' \item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
 #' Simpson index, calculated as the sum of squared relative abundances.
 #' This corresponds to the diversity index
 #' 'simpson' in \code{\link[vegan:diversity]{vegan::diversity}}.
@@ -54,12 +54,12 @@
 #' psychology and management studies. The Gini-Simpson index (1-lambda) should not be
 #' confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).}
 #'
-#' \item{shannon: }{Shannon diversity (entropy).}
+#' \item{'shannon' }{Shannon diversity (entropy).}
 #'
-#' \item{fisher: }{Fisher's alpha; as implemented in
+#' \item{'fisher' }{Fisher's alpha; as implemented in
 #' \code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. (1943)).}
 #'
-#' \item{coverage: }{Number of species needed to cover a given fraction of the ecosystem (50\% by default).
+#' \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\% by default).
 #' Tune this with the \link{\code{threshold}} argument.}
 #' }
 #'   
@@ -154,36 +154,6 @@ setGeneric("estimateDiversity",signature = c("x"),
 
 #' @rdname estimateDiversity
 #' @export
-setGeneric("estimateShannon",signature = c("x"),
-           function(x, ...)
-               standardGeneric("estimateShannon"))
-
-#' @rdname estimateDiversity
-#' @export
-setGeneric("estimateSimpsonDiversity",signature = c("x"),
-           function(x, ...)
-               standardGeneric("estimateSimpsonDiversity"))
-
-#' @rdname estimateDiversity
-#' @export
-setGeneric("estimateInvSimpson",signature = c("x"),
-           function(x, ...)
-               standardGeneric("estimateInvSimpson"))
-
-#' @rdname estimateDiversity
-#' @export
-setGeneric("estimateCoverage",signature = c("x"),
-           function(x, ...)
-               standardGeneric("estimateCoverage"))
-
-#' @rdname estimateDiversity
-#' @export
-setGeneric("estimateFisher",signature = c("x"),
-           function(x, ...)
-               standardGeneric("estimateFisher"))
-
-#' @rdname estimateDiversity
-#' @export
 setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","gini_simpson","inverse_simpson", 
@@ -210,47 +180,7 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateShannon", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "shannon", ...)
-    }
-)
 
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateSimpsonDiversity", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "gini_simpson", ...)
-    }
-)
-
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateInvSimpson", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "inverse_simpson",  ...)
-    }
-)
-
-
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateCoverage", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateDiversity(x, index = "coverage", ...)
-    }
-)
-
-
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateFisher", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        estimateFisher(x, index = "fisher", ...)
-    }
-)
 
 .calc_shannon <- function(mat, ...){
     vegan::diversity(t(mat), index="shannon")

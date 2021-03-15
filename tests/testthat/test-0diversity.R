@@ -36,9 +36,6 @@ test_that("diversity estimates", {
     expect_equal(unname(round(cd$inverse_simpson, 5)),
                  c(5.93021, 10.34606, 2.99177))
     expect_equal(unname(round(cd$coverage, 0)), c(2,3,1))
-    expect_equal(unname(round(cd$fisher, 4)), c(8.8037, 10.0989, 13.2783))    
-    expect_equal(estimateDiversity(esophagus,
-                                   index = "coverage",
-                                   threshold = 0.9),
-                 estimateCoverage(esophagus))
+    expect_equal(unname(round(cd$fisher, 4)), c(8.8037, 10.0989, 13.2783))
+
 })

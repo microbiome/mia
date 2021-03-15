@@ -2,17 +2,7 @@
 % Please edit documentation in R/estimateDiversity.R
 \name{estimateDiversity}
 \alias{estimateDiversity}
-\alias{estimateShannon}
-\alias{estimateSimpsonDiversity}
-\alias{estimateInvSimpson}
-\alias{estimateCoverage}
-\alias{estimateFisher}
 \alias{estimateDiversity,SummarizedExperiment-method}
-\alias{estimateShannon,SummarizedExperiment-method}
-\alias{estimateSimpsonDiversity,SummarizedExperiment-method}
-\alias{estimateInvSimpson,SummarizedExperiment-method}
-\alias{estimateCoverage,SummarizedExperiment-method}
-\alias{estimateFisher,SummarizedExperiment-method}
 \title{Estimate diversity measures}
 \usage{
 estimateDiversity(
@@ -23,16 +13,6 @@ estimateDiversity(
   ...
 )
 
-estimateShannon(x, ...)
-
-estimateSimpsonDiversity(x, ...)
-
-estimateInvSimpson(x, ...)
-
-estimateCoverage(x, ...)
-
-estimateFisher(x, ...)
-
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
@@ -41,16 +21,6 @@ estimateFisher(x, ...)
   ...,
   BPPARAM = SerialParam()
 )
-
-\S4method{estimateShannon}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateSimpsonDiversity}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateInvSimpson}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateCoverage}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateFisher}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -94,13 +64,13 @@ Diversity increases, in general, when species richness or evenness increase.
 By default, this function returns all indices:
 
 \itemize{
-\item{inverse_simpson: }{Inverse Simpson diversity:
+\item{'inverse_simpson' }{Inverse Simpson diversity:
 \eqn{1/lambda} where \eqn{\lambda=\Sum(p^2)} and p refers to relative abundances.
 This corresponds to the diversity index
 'invsimpson' in vegan::diversity. Don't confuse this with the
 closely related Gini-Simpson index}
 
-\item{gini_simpson: }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
+\item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
 Simpson index, calculated as the sum of squared relative abundances.
 This corresponds to the diversity index
 'simpson' in \code{\link[vegan:diversity]{vegan::diversity}}.
@@ -108,12 +78,12 @@ This is also called Gibbs–Martin, or Blau index in sociology,
 psychology and management studies. The Gini-Simpson index (1-lambda) should not be
 confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).}
 
-\item{shannon: }{Shannon diversity (entropy).}
+\item{'shannon' }{Shannon diversity (entropy).}
 
-\item{fisher: }{Fisher's alpha; as implemented in
+\item{'fisher' }{Fisher's alpha; as implemented in
 \code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. (1943)).}
 
-\item{coverage: }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
+\item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
 Tune this with the \link{\code{threshold}} argument.}
 }
 }

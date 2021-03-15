@@ -48,12 +48,12 @@
 #' The following richness indices are provided.
 #'
 #' \itemize{
-#'   \item{observed: }{The _observed richness_ gives the number of species that
+#'   \item{'observed' }{The _observed richness_ gives the number of species that
 #'   is detected above a given \code{detection} threshold in the observed sample
 #'   (default 0). This is conceptually the simplest richness index. The corresponding
 #'   index in the \pkg{vegan} package is "richness".}
 #' 
-#'   \item{chao1: }{This is a nonparametric estimator of species richness. It
+#'   \item{'chao1' }{This is a nonparametric estimator of species richness. It
 #'   assumes that rare species carry information about the (unknown) number
 #'   of unobserved species. We use here the bias-corrected version
 #'   (O'Hara 2005, Chiu et al. 2014) implemented in
@@ -66,7 +66,7 @@
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
 #' 
-#'   \item{ace: }{Abundance-based coverage estimator (ACE) is another nonparametric richness
+#'   \item{'ace' }{Abundance-based coverage estimator (ACE) is another nonparametric richness
 #'   index that uses sample coverage, defined based on the sum of the probabilities
 #'   of the observed species. This method divides the species into abundant (more than 10
 #'   reads or observations) and rare groups 
@@ -80,7 +80,7 @@
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
 #' 
-#'   \item{hill: }{Effective species richness aka Hill index (see e.g. Chao et al. 2016).
+#'   \item{'hill' }{Effective species richness aka Hill index (see e.g. Chao et al. 2016).
 #'   Currently only the case 1D is implemented. This corresponds to the exponent
 #'   of Shannon diversity. Intuitively, the effective richness indicates the number of
 #'   species whose even distribution would lead to tha same diversity than the observed
