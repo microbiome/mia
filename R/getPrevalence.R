@@ -176,7 +176,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
         .check_taxonomic_rank(rank, x)
         args <- c(list(x = x, rank = rank), list(...))
         if(is.null(args[["na.rm"]])){
-            args[["na.rm"]] <- FALSE
+            args[["na.rm"]] <- TRUE
         }
         argNames <- c("x","rank","onRankOnly","na.rm","empty.fields",
                       "archetype","mergeTree","average","BPPARAM")
