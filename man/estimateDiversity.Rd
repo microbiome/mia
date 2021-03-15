@@ -59,7 +59,7 @@ diversity indices. See details for more information and references.
 Diversity is a joint quantity that combines elements or community richness and evenness.
 Diversity increases, in general, when species richness or evenness increase.
 
-By default, this function returns all indices:
+By default, this function returns all indices.
 
 \itemize{
 \item{'inverse_simpson' }{Inverse Simpson diversity:

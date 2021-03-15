@@ -77,7 +77,7 @@ and \sQuote{Gini} indices.
 }
 \details{
 A dominance index quantifies the dominance of one or few species in a
-community. Greater values indicate higher dominance with all indices.
+community. Greater values indicate higher dominance.
 
 Dominance indices are in general negatively correlated with alpha diversity
 indices (species richness, evenness, diversity, rarity). More dominant
