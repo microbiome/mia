@@ -176,7 +176,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
         .check_taxonomic_rank(rank, x)
         args <- c(list(x = x, rank = rank), list(...))
         if(is.null(args[["na.rm"]])){
-            args[["na.rm"]] <- FALSE
+            args[["na.rm"]] <- TRUE
         }
         argNames <- c("x","rank","onRankOnly","na.rm","empty.fields",
                       "archetype","mergeTree","average","BPPARAM")
@@ -209,7 +209,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         getPrevalence(mat, ...)
     }
 )
-
+############################# getPrevalentTaxa #################################
 #' @rdname getPrevalence
 #'
 #' @param prevalence Prevalence threshold (in 0 to 1). The
@@ -267,15 +267,52 @@ setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, prevalence = 50/100, rank = taxonomyRanks(x)[1L],
+    function(x, prevalence = 50/100, rank = NULL,
              include_lowest = FALSE, ...){
         .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
                             include_lowest = include_lowest, ...)
     }
 )
 
-################################################################################
-# getPrevalentAbundance
+############################# getRareTaxa ######################################
+
+#' @rdname getPrevalence
+#'
+#' @export
+setGeneric("getRareTaxa", signature = "x",
+           function(x, rank = NULL, ...)
+               standardGeneric("getRareTaxa"))
+
+#' @rdname getPrevalence
+#' @export
+setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, rank = NULL, ...){
+
+        # Gets the prevalent taxa
+        prev_taxa <- getPrevalentTaxa(x, rank = rank, ...)
+
+        # Gets all the rownames
+        if( !is.null(rank) ){
+            # Gets names from specified taxonomic level
+            taxa <- rowData(x)[[rank]]
+
+        } else{
+            # Gets rownames if agglomeration is not done
+            taxa <- rownames(x)
+
+        }
+
+        # Gets those taxa that are not prevalent
+        taxa[!(taxa %in% prev_taxa)]
+
+        # Contains NAs, so they are dropped
+        taxa[!is.na(taxa)]
+
+    }
+)
+
+
+############################# getPrevalentAbundance ############################
 
 #' @rdname getPrevalence
 #' @export
@@ -311,8 +348,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 )
 
 
-################################################################################
-# agglomerateByPrevalence
+############################# agglomerateByPrevalence ##########################
 
 #' @rdname getPrevalence
 #' @export
