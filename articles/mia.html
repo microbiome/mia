@@ -72,7 +72,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 class="date">2021-03-12</h4>
+            <h4 class="date">2021-03-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/FelixErnst/mia/blob/master/vignettes/mia.Rmd"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -302,9 +302,8 @@
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimateDiversity.html">estimateDiversity</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">8</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></code></pre></div>
-<pre><code>## [1] "shannon"           "simpson_diversity" "inv_simpson"      
-## [4] "richness"          "chao1"             "chao1_se"         
-## [7] "ACE"               "ACE_se"            "coverage"</code></pre>
+<pre><code>## [1] "shannon"         "gini_simpson"    "inverse_simpson" "coverage"       
+## [5] "fisher"</code></pre>
 <p>Beta diversity indices are used to describe inter-sample connections. Technically they are calculated as <code>dist</code> object and reduced dimensions can be extracted using <code>cmdscale</code>. This is wrapped up in the <code>runMDS</code> function of the <code>scater</code> package, but can be easily used to calculated beta diversity indices using the established functions from the <code>vegan</code> package or any other package using comparable inputs.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/runMDS2.html">runMDS2</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">se</span>,<span class="st">"Genus"</span><span class="op">)</span>, 
@@ -393,7 +392,7 @@
                          add_col_data <span class="op">=</span> <span class="cn">TRUE</span>,
                          abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
 <span class="va">molten_data</span></code></pre></div>
-<pre><code>## # A tibble: 499,616 x 26
+<pre><code>## # A tibble: 499,616 x 22
 ##    FeatureID SampleID counts Kingdom Phylum   Class   Order Family Genus Species
 ##    &lt;fct&gt;     &lt;fct&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  
 ##  1 549322    CL3           0 Archaea Crenarc… Thermo… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;   
@@ -406,11 +405,11 @@
 ##  8 549322    F21Plmr       0 Archaea Crenarc… Thermo… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;   
 ##  9 549322    M31Tong       0 Archaea Crenarc… Thermo… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;   
 ## 10 549322    M11Tong       0 Archaea Crenarc… Thermo… &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;   
-## # … with 499,606 more rows, and 16 more variables: X.SampleID &lt;fct&gt;,
+## # … with 499,606 more rows, and 12 more variables: X.SampleID &lt;fct&gt;,
 ## #   Primer &lt;fct&gt;, Final_Barcode &lt;fct&gt;, Barcode_truncated_plus_T &lt;fct&gt;,
 ## #   Barcode_full_length &lt;fct&gt;, SampleType &lt;fct&gt;, Description &lt;fct&gt;,
-## #   shannon &lt;dbl&gt;, simpson_diversity &lt;dbl&gt;, inv_simpson &lt;dbl&gt;, richness &lt;dbl&gt;,
-## #   chao1 &lt;dbl&gt;, chao1_se &lt;dbl&gt;, ACE &lt;dbl&gt;, ACE_se &lt;dbl&gt;, coverage &lt;int&gt;</code></pre>
+## #   shannon &lt;dbl&gt;, gini_simpson &lt;dbl&gt;, inverse_simpson &lt;dbl&gt;, coverage &lt;int&gt;,
+## #   fisher &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <div id="session-info" class="section level1">
@@ -418,7 +417,7 @@
 <a href="#session-info" class="anchor"></a>Session info</h1>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R Under development (unstable) (2021-03-04 r80066)
+<pre><code>## R Under development (unstable) (2021-03-14 r80087)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 20.04.2 LTS
 ## 
@@ -442,8 +441,8 @@
 ##  [3] TreeSummarizedExperiment_1.99.11 Biostrings_2.59.2               
 ##  [5] XVector_0.31.1                   SingleCellExperiment_1.13.12    
 ##  [7] SummarizedExperiment_1.21.1      Biobase_2.51.0                  
-##  [9] GenomicRanges_1.43.3             GenomeInfoDb_1.27.6             
-## [11] IRanges_2.25.6                   S4Vectors_0.29.7                
+##  [9] GenomicRanges_1.43.3             GenomeInfoDb_1.27.8             
+## [11] IRanges_2.25.6                   S4Vectors_0.29.9                
 ## [13] BiocGenerics_0.37.1              MatrixGenerics_1.3.1            
 ## [15] matrixStats_0.58.0               BiocStyle_2.19.1                
 ## 
@@ -494,9 +493,9 @@
 ##  [87] R6_2.5.0                    generics_0.1.0             
 ##  [89] DelayedArray_0.17.9         DBI_1.1.1                  
 ##  [91] pillar_1.5.1                mgcv_1.8-34                
-##  [93] survival_3.2-7              RCurl_1.98-1.2             
+##  [93] survival_3.2-9              RCurl_1.98-1.2             
 ##  [95] tibble_3.1.0                crayon_1.4.1               
-##  [97] utf8_1.1.4                  rmarkdown_2.7              
+##  [97] utf8_1.2.1                  rmarkdown_2.7              
 ##  [99] viridis_0.5.1               progress_1.2.2             
 ## [101] grid_4.1.0                  data.table_1.14.0          
 ## [103] blob_1.2.1                  vegan_2.6-0                
@@ -537,7 +536,7 @@ Morgan, Martin, Valerie Obenchain, Jim Hester, and Hervé Pagès. 2020. <em>Summ
 
 
       <footer><div class="copyright">
-  <p>Developed by Felix G.M. Ernst, Sudarshan Shetty, Leo Lahti, Tuomas Borman.</p>
+  <p>Developed by Felix G.M. Ernst, Sudarshan Shetty, Tuomas Borman, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">

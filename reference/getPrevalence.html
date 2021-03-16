@@ -139,10 +139,15 @@ SummarizedExperiment-class object." />
 <span class='fu'>getPrevalentTaxa</span><span class='op'>(</span>
   <span class='va'>x</span>,
   prevalence <span class='op'>=</span> <span class='fl'>50</span><span class='op'>/</span><span class='fl'>100</span>,
-  rank <span class='op'>=</span> <span class='fu'><a href='taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span>,
+  rank <span class='op'>=</span> <span class='cn'>NULL</span>,
   include_lowest <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
+
+<span class='fu'>getRareTaxa</span><span class='op'>(</span><span class='va'>x</span>, rank <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>getRareTaxa</span><span class='op'>(</span><span class='va'>x</span>, rank <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span>, <span class='va'>...</span><span class='op'>)</span>
 
@@ -280,15 +285,15 @@ Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
                                       sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
                                       as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalence.frequency</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;     Phylum:Chloroflexi           Phylum:WPS-2      Phylum:Firmicutes 
-#&gt;                      1                      1                      1 
-#&gt;  Phylum:Planctomycetes Phylum:Verrucomicrobia             Phylum:WS3 
-#&gt;                      1                      1                      1 </div><div class='input'><span class='va'>prevalence.count</span> <span class='op'>&lt;-</span> <span class='va'>prevalence.frequency</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;     Chloroflexi           WPS-2      Firmicutes  Planctomycetes Verrucomicrobia 
+#&gt;               1               1               1               1               1 
+#&gt;             WS3 
+#&gt;               1 </div><div class='input'><span class='va'>prevalence.count</span> <span class='op'>&lt;-</span> <span class='va'>prevalence.frequency</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalence.count</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;     Phylum:Chloroflexi           Phylum:WPS-2      Phylum:Firmicutes 
-#&gt;                     26                     26                     26 
-#&gt;  Phylum:Planctomycetes Phylum:Verrucomicrobia             Phylum:WS3 
-#&gt;                     26                     26                     26 </div><div class='input'>
+</div><div class='output co'>#&gt;     Chloroflexi           WPS-2      Firmicutes  Planctomycetes Verrucomicrobia 
+#&gt;              26              26              26              26              26 
+#&gt;             WS3 
+#&gt;              26 </div><div class='input'>
 <span class='co'># Detection threshold 1 (strictly greater by default);</span>
 <span class='co'># Note that the data (GlobalPatterns) is here in absolute counts</span>
 <span class='co'># (and not compositional, relative abundances)</span>
@@ -299,8 +304,8 @@ Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
                          prevalence <span class='op'>=</span> <span class='fl'>50</span><span class='op'>/</span><span class='fl'>100</span>,
                          as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>taxa</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "Phylum:Actinobacteria" "Phylum:Proteobacteria" "Phylum:Cyanobacteria" 
-#&gt; [4] "Phylum:Bacteroidetes"  "Phylum:Firmicutes"    </div><div class='input'>
+</div><div class='output co'>#&gt; [1] "Actinobacteria" "Proteobacteria" "Cyanobacteria"  "Bacteroidetes" 
+#&gt; [5] "Firmicutes"    </div><div class='input'>
 
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 <span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>esophagus</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
@@ -316,8 +321,7 @@ Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
 #&gt; dim: 6 26 
 #&gt; metadata(0):
 #&gt; assays(1): counts
-#&gt; rownames(6): Phylum:Actinobacteria Phylum:Proteobacteria ...
-#&gt;   Phylum:Firmicutes Other
+#&gt; rownames(6): Actinobacteria Proteobacteria ... Firmicutes Other
 #&gt; rowData names(7): Kingdom Phylum ... Genus Species
 #&gt; colnames(26): CL3 CC1 ... Even2 Even3
 #&gt; colData names(7): X.SampleID Primer ... SampleType Description
@@ -339,7 +343,7 @@ Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Felix G.M. Ernst, Sudarshan Shetty, Leo Lahti, Tuomas Borman.</p>
+  <p>Developed by Felix G.M. Ernst, Sudarshan Shetty, Tuomas Borman, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">
