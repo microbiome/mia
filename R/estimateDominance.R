@@ -203,9 +203,6 @@
 #' # Shows all indices
 #' colData(esophagus)
 #'
-#'
-
-
 NULL
 
 #' @rdname estimateDominance
@@ -235,6 +232,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
              name = index,
              ...,
              BPPARAM = SerialParam()){
+
         # Input check
         # Check abund_values
         .check_abund_values(abund_values, x)
@@ -245,6 +243,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
                  "same length than 'index'.",
                  call. = FALSE)
         }
+
         # Check aggregate
         if(!.is_a_bool(aggregate)){
             stop("'aggregate' must be TRUE or FALSE.", call. = FALSE)
@@ -253,10 +252,11 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
         # Calculates dominance indices
         dominances <- BiocParallel::bplapply(index,
                                              FUN = .get_dominance_values,
-                                             assay = assay(x,abund_values),
+                                             mat = assay(x,abund_values),
                                              ntaxa = ntaxa,
                                              aggregate = aggregate,
                                              BPPARAM = BPPARAM)
+
         # Add dominance indices to colData
         .add_values_to_colData(x, dominances, name)
     }
@@ -342,18 +342,21 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-.get_dominance_values <- function(index, assay, ntaxa = 1, aggregate = TRUE) {
+.get_dominance_values <- function(index, mat, ntaxa = 1, aggregate = TRUE, ...) {
 
     FUN <- switch(index,
                   simpson_lambda = .simpson_lambda,
                   core_abundance = .calc_core_dominance,
                   gini = .calc_gini_dominance,
                   .calc_dominance)
-    do.call(FUN,
-            list(mat = assay,
-                 ntaxa = ntaxa,
-                 aggregate = aggregate,
-                 index = index))
+
+    FUN(index, mat = mat, ntaxa = ntaxa, aggregate = aggregate, ...)
+    
+    #do.call(FUN,
+    #        list(mat = assay,
+    #             ntaxa = ntaxa,
+    #             aggregate = aggregate,
+    #             index = index))
 }
 
 

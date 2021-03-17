@@ -103,12 +103,12 @@
 #' data(esophagus)
 #' se <- esophagus
 #'
-#' # Specify indices and their output names
-#' indices       <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla")
-#' indices_names <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
+#' # Specify index and their output names
+#' index <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla")
+#' name  <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 #'
 #' # Estimate evenness and give polished names to be used in the output
-#' se <- estimateEvenness(se, index = indices, name = indices_names)
+#' se <- estimateEvenness(se, index = index, name = name)
 #'
 #' # Check the output
 #' head(colData(se))
@@ -130,8 +130,9 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
              name = index, ..., BPPARAM = SerialParam()){
+         
         # input check
-        index<- match.arg(index, several.ok = TRUE)
+        index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                  "same length than 'index'.",
@@ -241,11 +242,13 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
     if(threshold > 0){
         mat[mat <= threshold] <- 0
     }
-    vnss_FUN <- switch(index,
+    
+    FUN <- switch(index,
                        camargo = .calc_camargo_evenness,
                        pielou = .calc_pielou_evenness,
                        simpson_evenness = .calc_simpson_evenness,
                        evar = .calc_evar_evenness,
                        bulla = .calc_bulla_evenness)
-    vnss_FUN(mat)
+
+    FUN(mat = mat, ...)
 }

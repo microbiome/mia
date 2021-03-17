@@ -93,14 +93,15 @@
 #'
 #' # Get prevalence estimates for phylums
 #' # - the getPrevalence function itself always returns population frequencies
-#' # - to obtain population counts, multiply frequencies with the sample size,
-#' #   which answers the question "In how many samples is this phylum detectable"
 #' prevalence.frequency <- getPrevalence(GlobalPatterns,
 #'                                       rank = "Phylum",
 #'                                       detection = 0,
 #'                                       sort = TRUE,
 #'                                       as_relative = TRUE)
 #' head(prevalence.frequency)
+#'
+#' # - to obtain population counts, multiply frequencies with the sample size,
+#' # which answers the question "In how many samples is this phylum detectable"
 #' prevalence.count <- prevalence.frequency * ncol(GlobalPatterns)
 #' head(prevalence.count)
 #'
@@ -114,7 +115,6 @@
 #'                          prevalence = 50/100,
 #'                          as_relative = TRUE)
 #' head(taxa)
-#'
 #'
 #' data(esophagus)
 #' getPrevalentAbundance(esophagus, abund_values = "counts")

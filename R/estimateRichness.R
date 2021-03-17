@@ -212,7 +212,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
         # Calculates richness indices
         richness <- BiocParallel::bplapply(index,
                                             FUN = .get_richness_values,
-                                            assay = assay(x, abund_values),
+                                            mat = assay(x, abund_values),
                                             detection = detection,
                                             BPPARAM = BPPARAM)
         # Add richness indices to colData
@@ -253,7 +253,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
     exp(vegan::diversity(t(mat), index="shannon"))
 }
 
-.get_richness_values <- function(index, assay, detection) {
+.get_richness_values <- function(index, mat, detection, ...) {
 
     FUN <- switch(index,
                 observed = .calc_observed,
@@ -261,8 +261,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                 ace = .calc_ace,
                 hill = .calc_hill
         )
-    do.call(FUN,
-            list(mat = assay,
-            detection = detection
-        ))
+
+    FUN(mat = mat, detection = detection, ...)
+    
 }

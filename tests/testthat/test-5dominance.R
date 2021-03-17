@@ -97,4 +97,5 @@ test_that("estimateDominance", {
     tse <- esophagus
     assay(tse,"counts") <- DelayedArray(assay(tse,"counts"))
     test_internal_estimateDominance(tse)
+
 })

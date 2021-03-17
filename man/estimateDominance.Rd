@@ -204,7 +204,6 @@ esophagus <- estimateDominance(esophagus,
 # Shows all indices
 colData(esophagus)
 
-
 }
 \references{
 Berger WH & Parker FL (1970)

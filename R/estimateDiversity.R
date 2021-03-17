@@ -102,27 +102,30 @@
 #' se <- GlobalPatterns
 #'
 #' # All index names as known by the function
-#' index_code <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher")
+#' index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher")
+#'
+#' # Corresponding polished names
+#' name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher")
 #'
 #' # Calculate diversities
-#' se <- estimateDiversity(se, index = index_code)
+#' se <- estimateDiversity(se, index = index)
 #'
 #' # The colData contains the indices with their code names by default
-#' colData(se)[, index_code]
+#' colData(se)[, index]
 #'
 #' # Removing indices
-#' colData(se)[, index_code] <- NULL
+#' colData(se)[, index] <- NULL
 #'
 #' # It is recommended to specify also the final names used in the output.
 #' se <- estimateDiversity(se,
 #'   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
 #'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher"))
 #'
-#' # Corresponding polished names
-#' index_name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher")
-#'
 #' # The colData contains the indices by their new names provided by the user
-#' colData(se)[, index_name]
+#' colData(se)[, name]
+#'
+#' # Compare the indices visually
+#' pairs(colData(se)[, name])
 #'
 #' # Plotting the diversities - use the selected names
 #' library(scater)
@@ -234,8 +237,9 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment assay assays
-.get_diversity_values <- function(x, i, mat, ...){
-    dvrsty_FUN <- switch(i,
+.get_diversity_values <- function(index, x, mat, ...){
+
+    FUN <- switch(index,
                         shannon = .calc_shannon,
                         gini_simpson = .calc_gini_simpson,
                         inverse_simpson = .calc_inverse_simpson,
@@ -243,6 +247,6 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
                         fisher = .calc_fisher
                         )
 
-    dvrsty <- dvrsty_FUN(mat, ...)
-    dvrsty
+    FUN(x = x, mat = mat, ...)
+
 }
