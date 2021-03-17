@@ -82,12 +82,12 @@ and Beisel et al. (2003) for further details.
 data(esophagus)
 se <- esophagus
 
-# Specify indices and their output names
-indices       <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla")
-indices_names <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
+# Specify index and their output names
+index <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla")
+name  <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 
 # Estimate evenness and give polished names to be used in the output
-se <- estimateEvenness(se, index = indices, name = indices_names)
+se <- estimateEvenness(se, index = index, name = name)
 
 # Check the output
 head(colData(se))
