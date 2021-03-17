@@ -159,6 +159,14 @@ taxa <- getPrevalentTaxa(GlobalPatterns,
                          as_relative = TRUE)
 head(taxa)
 
+# getRareTaxa returns the inverse
+rare <- getRareTaxa(GlobalPatterns,
+                    rank = "Phylum",
+                    detection = 1/100,
+                    prevalence = 50/100,
+                    as_relative = TRUE)
+head(rare)
+
 data(esophagus)
 getPrevalentAbundance(esophagus, abund_values = "counts")
 

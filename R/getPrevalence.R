@@ -116,6 +116,14 @@
 #'                          as_relative = TRUE)
 #' head(taxa)
 #'
+#' # getRareTaxa returns the inverse
+#' rare <- getRareTaxa(GlobalPatterns,
+#'                     rank = "Phylum",
+#'                     detection = 1/100,
+#'                     prevalence = 50/100,
+#'                     as_relative = TRUE)
+#' head(rare)
+#'
 #' data(esophagus)
 #' getPrevalentAbundance(esophagus, abund_values = "counts")
 #'
@@ -290,32 +298,16 @@ setGeneric("getRareTaxa", signature = "x",
 #' @export
 setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
-
         # Gets the prevalent taxa
         prev_taxa <- getPrevalentTaxa(x, rank = rank, ...)
-
-        # Gets all the rownames
         if( !is.null(rank) ){
             # Gets names from specified taxonomic level
             taxa <- rowData(x)[[rank]]
-
         } else{
             # Gets rownames if agglomeration is not done
             taxa <- rownames(x)
-
         }
-
-        # Gets those taxa that are not prevalent
-        taxa <- taxa[!(taxa %in% prev_taxa)]
-
-        # Contains NAs, so they are dropped
-        taxa <- taxa[!is.na(taxa)]
-
-        # Contains duplicates, duplicates are dropped
-        taxa <- taxa[!duplicated(taxa)]
-
-        return(taxa)
-
+        unique(taxa[!is.na(taxa) & !(taxa %in% prev_taxa)])
     }
 )
 
