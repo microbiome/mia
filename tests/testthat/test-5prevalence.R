@@ -114,36 +114,50 @@ test_that("getRareTaxa", {
     ##### Test that getPrevalentTaxa and getRareTaxa has all the taxa, ####
     ##### but now with detection limit and with rank #####
 
-    # Agglomerates data by "Species"
-    se <- agglomerateByRank(GlobalPatterns, rank = "Species")
+    # Check that it works with all the ranks
+    ranks <- taxonomyRanks(GlobalPatterns)
 
-    # Gets rownames for all the taxa
-    all_taxa <- rownames(se)
+    for( rank in ranks ){
 
-    # Takes only species and removes "Species:" from the names
-    all_taxa <- stringr::str_remove(all_taxa[grepl("Species:", all_taxa)], "Species:")
+        # Agglomerates data by rank
+        se <- agglomerateByRank(GlobalPatterns, rank = rank)
 
-    # Gets prevalent taxa
-    prevalent_taxa <- getPrevalentTaxa(GlobalPatterns,
-                                       prevalence = 0.05,
-                                       detection = 0.1,
-                                       rank = "Species",
-                                       include_lowest = TRUE, as_relative = TRUE)
-    # Gets rare taxa
-    rare_taxa <- getRareTaxa(GlobalPatterns,
-                             prevalence = 0.05,
-                             detection = 0.1,
-                             rank = "Species",
-                             include_lowest = TRUE, as_relative = TRUE)
+        # Gets rownames for all the taxa
+        all_taxa <- rownames(se)
 
-    # Concatenates prevalent and rare taxa
-    prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
+        # All but "Kingdom" can includes different taxa levels and e.g. "Species"
+        # before their name
+        if( rank != "Kingdom" ){
+            # Takes e.g. only species and removes e.g. "Species:" from the names
+            all_taxa <- stringr::str_remove(all_taxa[grepl(paste0(rank, ":"), all_taxa)], paste0(rank, ":"))
+        }
 
-    # If all the elements are in another vector, vector of TRUEs
-    # Opposite --> negative of FALSEs
-    # If every element is FALSE, any is FALSE --> opposite --> TRUE
-    expect_true( !any( !(all_taxa %in% prevalent_and_rare_taxa) ) &&
-                     !any( !( prevalent_and_rare_taxa %in% all_taxa) ) )
+        # Gets prevalent taxa
+        prevalent_taxa <- getPrevalentTaxa(GlobalPatterns,
+                                           prevalence = 0.05,
+                                           detection = 0.1,
+                                           rank = rank,
+                                           include_lowest = TRUE, as_relative = TRUE)
+        # Gets rare taxa
+        rare_taxa <- getRareTaxa(GlobalPatterns,
+                                 prevalence = 0.05,
+                                 detection = 0.1,
+                                 rank = rank,
+                                 include_lowest = TRUE, as_relative = TRUE)
+
+        # Concatenates prevalent and rare taxa
+        prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
+
+        # If all the elements are in another vector, vector of TRUEs
+        # Opposite --> negative of FALSEs
+        # If every element is FALSE, any is FALSE --> opposite --> TRUE
+        expect_true( !any( !(all_taxa %in% prevalent_and_rare_taxa) ) &&
+                         !any( !( prevalent_and_rare_taxa %in% all_taxa) ) )
+
+        # Expect that there are no duplicates
+        expect_true(!anyDuplicated(rare_taxa))
+
+    }
 
 })
 

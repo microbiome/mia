@@ -122,6 +122,8 @@ given detection level as set for \code{getPrevalentTaxa}.
 
 \code{getPrevalentTaxa} returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.
+
+\code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
 }
 \examples{
 data(GlobalPatterns)
