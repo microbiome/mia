@@ -2,9 +2,9 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check-bioc-devel](https://github.com/FelixErnst/mia/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/FelixErnst/mia/actions)
+[![R-CMD-check-bioc-devel](https://github.com/microbiome/mia/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/mia/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/FelixErnst/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/FelixErnst/mia?branch=master)
+coverage](https://codecov.io/gh/microbiome/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/mia?branch=master)
 
 <!-- badges: end -->
 
@@ -38,7 +38,7 @@ Currently this is aimed to work with the Bioconductor devel branch.
 ### Bioc-devel
 
 ```
-BiocManager::install("FelixErnst/mia")
+BiocManager::install("microbiome/mia")
 ```
 
 ### Bioc-release
@@ -49,7 +49,7 @@ as well. Use at your own risk!
 ```
 BiocManager::install("microbiome/microbiomeDataSets@release")
 BiocManager::install("fionarhuang/TreeSummarizedExperiment")
-BiocManager::install("FelixErnst/mia")
+BiocManager::install("microbiome/mia")
 ```
 
 # Code of conduct
