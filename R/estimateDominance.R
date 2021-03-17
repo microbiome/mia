@@ -345,18 +345,17 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 .get_dominance_values <- function(index, mat, ntaxa = 1, aggregate = TRUE, ...) {
 
     FUN <- switch(index,
-                  simpson_lambda = .simpson_lambda,
-                  core_abundance = .calc_core_dominance,
-                  gini = .calc_gini_dominance,
-                  .calc_dominance)
+                    simpson_lambda = .simpson_lambda,
+                    core_abundance = .calc_core_dominance,
+                    gini = .calc_gini_dominance,
+                    absolute = .calc_dominance,
+                    relative = .calc_dominance,
+                    dbp = .calc_dominance,
+                    dmn = .calc_dominance
+        )
 
     FUN(index, mat = mat, ntaxa = ntaxa, aggregate = aggregate, ...)
     
-    #do.call(FUN,
-    #        list(mat = assay,
-    #             ntaxa = ntaxa,
-    #             aggregate = aggregate,
-    #             index = index))
 }
 
 
