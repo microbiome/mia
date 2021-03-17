@@ -278,6 +278,9 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname getPrevalence
 #'
+#' @details
+#' \code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
+#'
 #' @export
 setGeneric("getRareTaxa", signature = "x",
            function(x, rank = NULL, ...)
@@ -303,10 +306,15 @@ setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
         }
 
         # Gets those taxa that are not prevalent
-        taxa[!(taxa %in% prev_taxa)]
+        taxa <- taxa[!(taxa %in% prev_taxa)]
 
         # Contains NAs, so they are dropped
-        taxa[!is.na(taxa)]
+        taxa <- taxa[!is.na(taxa)]
+
+        # Contains duplicates, duplicates are dropped
+        taxa <- taxa[!duplicated(taxa)]
+
+        return(taxa)
 
     }
 )
