@@ -7,6 +7,8 @@
 \alias{getPrevalentTaxa}
 \alias{getPrevalentTaxa,ANY-method}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{getRareTaxa}
+\alias{getRareTaxa,SummarizedExperiment-method}
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
@@ -27,10 +29,14 @@ getPrevalentTaxa(x, ...)
 \S4method{getPrevalentTaxa}{SummarizedExperiment}(
   x,
   prevalence = 50/100,
-  rank = taxonomyRanks(x)[1L],
+  rank = NULL,
   include_lowest = FALSE,
   ...
 )
+
+getRareTaxa(x, rank = NULL, ...)
+
+\S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
 getPrevalentAbundance(x, abund_values = "relabundance", ...)
 
@@ -116,6 +122,8 @@ given detection level as set for \code{getPrevalentTaxa}.
 
 \code{getPrevalentTaxa} returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.
+
+\code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
 }
 \examples{
 data(GlobalPatterns)
@@ -128,14 +136,15 @@ head(prevalence.frequency)
 
 # Get prevalence estimates for phylums
 # - the getPrevalence function itself always returns population frequencies
-# - to obtain population counts, multiply frequencies with the sample size,
-#   which answers the question "In how many samples is this phylum detectable"
 prevalence.frequency <- getPrevalence(GlobalPatterns,
                                       rank = "Phylum",
                                       detection = 0,
                                       sort = TRUE,
                                       as_relative = TRUE)
 head(prevalence.frequency)
+
+# - to obtain population counts, multiply frequencies with the sample size,
+# which answers the question "In how many samples is this phylum detectable"
 prevalence.count <- prevalence.frequency * ncol(GlobalPatterns)
 head(prevalence.count)
 
@@ -150,6 +159,13 @@ taxa <- getPrevalentTaxa(GlobalPatterns,
                          as_relative = TRUE)
 head(taxa)
 
+# getRareTaxa returns the inverse
+rare <- getRareTaxa(GlobalPatterns,
+                    rank = "Phylum",
+                    detection = 1/100,
+                    prevalence = 50/100,
+                    as_relative = TRUE)
+head(rare)
 
 data(esophagus)
 getPrevalentAbundance(esophagus, abund_values = "counts")

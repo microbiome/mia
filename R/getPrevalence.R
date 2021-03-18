@@ -93,14 +93,15 @@
 #'
 #' # Get prevalence estimates for phylums
 #' # - the getPrevalence function itself always returns population frequencies
-#' # - to obtain population counts, multiply frequencies with the sample size,
-#' #   which answers the question "In how many samples is this phylum detectable"
 #' prevalence.frequency <- getPrevalence(GlobalPatterns,
 #'                                       rank = "Phylum",
 #'                                       detection = 0,
 #'                                       sort = TRUE,
 #'                                       as_relative = TRUE)
 #' head(prevalence.frequency)
+#'
+#' # - to obtain population counts, multiply frequencies with the sample size,
+#' # which answers the question "In how many samples is this phylum detectable"
 #' prevalence.count <- prevalence.frequency * ncol(GlobalPatterns)
 #' head(prevalence.count)
 #'
@@ -115,6 +116,13 @@
 #'                          as_relative = TRUE)
 #' head(taxa)
 #'
+#' # getRareTaxa returns the inverse
+#' rare <- getRareTaxa(GlobalPatterns,
+#'                     rank = "Phylum",
+#'                     detection = 1/100,
+#'                     prevalence = 50/100,
+#'                     as_relative = TRUE)
+#' head(rare)
 #'
 #' data(esophagus)
 #' getPrevalentAbundance(esophagus, abund_values = "counts")
@@ -176,7 +184,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
         .check_taxonomic_rank(rank, x)
         args <- c(list(x = x, rank = rank), list(...))
         if(is.null(args[["na.rm"]])){
-            args[["na.rm"]] <- FALSE
+            args[["na.rm"]] <- TRUE
         }
         argNames <- c("x","rank","onRankOnly","na.rm","empty.fields",
                       "archetype","mergeTree","average","BPPARAM")
@@ -209,7 +217,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         getPrevalence(mat, ...)
     }
 )
-
+############################# getPrevalentTaxa #################################
 #' @rdname getPrevalence
 #'
 #' @param prevalence Prevalence threshold (in 0 to 1). The
@@ -267,15 +275,44 @@ setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, prevalence = 50/100, rank = taxonomyRanks(x)[1L],
+    function(x, prevalence = 50/100, rank = NULL,
              include_lowest = FALSE, ...){
         .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
                             include_lowest = include_lowest, ...)
     }
 )
 
-################################################################################
-# getPrevalentAbundance
+############################# getRareTaxa ######################################
+
+#' @rdname getPrevalence
+#'
+#' @details
+#' \code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
+#'
+#' @export
+setGeneric("getRareTaxa", signature = "x",
+           function(x, rank = NULL, ...)
+               standardGeneric("getRareTaxa"))
+
+#' @rdname getPrevalence
+#' @export
+setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, rank = NULL, ...){
+        # Gets the prevalent taxa
+        prev_taxa <- getPrevalentTaxa(x, rank = rank, ...)
+        if( !is.null(rank) ){
+            # Gets names from specified taxonomic level
+            taxa <- rowData(x)[[rank]]
+        } else{
+            # Gets rownames if agglomeration is not done
+            taxa <- rownames(x)
+        }
+        unique(taxa[!is.na(taxa) & !(taxa %in% prev_taxa)])
+    }
+)
+
+
+############################# getPrevalentAbundance ############################
 
 #' @rdname getPrevalence
 #' @export
@@ -311,8 +348,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 )
 
 
-################################################################################
-# agglomerateByPrevalence
+############################# agglomerateByPrevalence ##########################
 
 #' @rdname getPrevalence
 #' @export

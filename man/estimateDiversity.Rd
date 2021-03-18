@@ -2,57 +2,25 @@
 % Please edit documentation in R/estimateDiversity.R
 \name{estimateDiversity}
 \alias{estimateDiversity}
-\alias{estimateShannon}
-\alias{estimateSimpsonDiversity}
-\alias{estimateInvSimpson}
-\alias{estimateRichness}
-\alias{estimateCoverage}
 \alias{estimateDiversity,SummarizedExperiment-method}
-\alias{estimateShannon,SummarizedExperiment-method}
-\alias{estimateSimpsonDiversity,SummarizedExperiment-method}
-\alias{estimateInvSimpson,SummarizedExperiment-method}
-\alias{estimateRichness,SummarizedExperiment-method}
-\alias{estimateCoverage,SummarizedExperiment-method}
 \title{Estimate diversity measures}
 \usage{
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson_diversity", "inv_simpson", "richness", "chao1", "ACE",
-    "coverage"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
   name = index,
   ...
 )
 
-estimateShannon(x, ...)
-
-estimateSimpsonDiversity(x, ...)
-
-estimateInvSimpson(x, ...)
-
-estimateRichness(x, ...)
-
-estimateCoverage(x, ...)
-
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "simpson_diversity", "inv_simpson", "richness", "chao1", "ACE",
-    "coverage"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
   name = index,
   ...,
   BPPARAM = SerialParam()
 )
-
-\S4method{estimateShannon}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateSimpsonDiversity}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateInvSimpson}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateRichness}{SummarizedExperiment}(x, ...)
-
-\S4method{estimateCoverage}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -66,11 +34,10 @@ to be calculated.}
 \item{name}{a name for the column(s) of the colData the results should be
 stored in.}
 
-\item{...}{additional parameters passed to \code{estimateDiversity}
+\item{...}{optional arguments:
 \itemize{
-\item{\code{threshold} is a numeric value for selecting threshold for \code{coverage} index.
-By default, the threshold is 0.9.
-}
+\item{threshold}{ a numeric value in the unit interval,
+determining the threshold for coverage index. By default, the threshold is 0.9.}
 }}
 
 \item{BPPARAM}{A
@@ -78,42 +45,84 @@ By default, the threshold is 0.9.
 object specifying whether calculation of estimates should be parallelized.}
 }
 \value{
-\code{x} with additional \code{\link{colData}} named
-\code{*name*}
+\code{x} with additional \code{\link{colData}} named \code{*name*}
 }
 \description{
 Several functions for calculation of diversity indices available via
-wrapper functions. They are implemented via the \code{vegan} package.
+wrapper functions. Some of them are implemented via the \code{vegan} package.
 }
 \details{
-These include the \sQuote{Shannon}, \sQuote{Simpson} and
-\sQuote{inverse Simpson} diversity measures.
+The available indices include the \sQuote{Shannon}, \sQuote{Gini-Simpson},
+\sQuote{Inverse Simpson}, \sQuote{Coverage}, and \sQuote{Fisher alpha}
+diversity indices. See details for more information and references.
+
+Diversity is a joint quantity that combines elements or community richness and evenness.
+Diversity increases, in general, when species richness or evenness increase.
+
+By default, this function returns all indices.
+
+\itemize{
+\item{'inverse_simpson' }{Inverse Simpson diversity:
+\eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative abundances.
+This corresponds to the diversity index
+'invsimpson' in vegan::diversity. Don't confuse this with the
+closely related Gini-Simpson index}
+
+\item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
+Simpson index, calculated as the sum of squared relative abundances.
+This corresponds to the diversity index
+'simpson' in \code{\link[vegan:diversity]{vegan::diversity}}.
+This is also called Gibbs–Martin, or Blau index in sociology,
+psychology and management studies. The Gini-Simpson index (1-lambda) should not be
+confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).}
+
+\item{'shannon' }{Shannon diversity (entropy).}
+
+\item{'fisher' }{Fisher's alpha; as implemented in
+\code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. (1943)).}
+
+\item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
+Tune this with the threshold argument.}
+}
 }
 \examples{
 data(GlobalPatterns)
 se <- GlobalPatterns
 
-se <- estimateShannon(se)
-colData(se)$shannon
+# All index names as known by the function
+index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher")
 
-se <- estimateSimpsonDiversity(se)
-colData(se)$simpson_diversity
+# Corresponding polished names
+name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher")
 
-# Calculates all the diversity indices
-se <- estimateDiversity(se)
-# All the indices' names
-indices <- c("shannon","simpson_diversity","inv_simpson", "richness",
-             "chao1", "ACE", "coverage")
-colData(se)[,indices]
+# Calculate diversities
+se <- estimateDiversity(se, index = index)
 
-# plotting the diversities
+# The colData contains the indices with their code names by default
+colData(se)[, index]
+
+# Removing indices
+colData(se)[, index] <- NULL
+
+# It is recommended to specify also the final names used in the output.
+se <- estimateDiversity(se,
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
+   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher"))
+
+# The colData contains the indices by their new names provided by the user
+colData(se)[, name]
+
+# Compare the indices visually
+pairs(colData(se)[, name])
+
+# Plotting the diversities - use the selected names
 library(scater)
-plotColData(se, "shannon")
+plotColData(se, "Shannon")
 # ... by sample type
-plotColData(se, "shannon", "SampleType")
+plotColData(se, "Shannon", "SampleType")
 \donttest{
 # combining different plots
-plots <- lapply(c("shannon","simpson_diversity"),
+plots <- lapply(c("Shannon","GiniSimpson"),
                 plotColData,
                 object = se,
                 x = "SampleType",
@@ -122,9 +131,35 @@ plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))
 ggpubr::ggarrange(plotlist = plots, nrow = 1, common.legend = TRUE, legend = "right")
 }
 }
+\references{
+Beisel J-N. et al. (2003)
+A Comparative Analysis of Diversity Index Sensitivity.
+\emph{Internal Rev. Hydrobiol.} 88(1):3-15.
+\url{https://portais.ufg.br/up/202/o/2003-comparative_evennes_index.pdf}
+
+Bulla L. (1994)
+An  index of diversity and its associated diversity measure.
+\emph{Oikos} 70:167--171
+
+Fisher, R.A., Corbet, A.S. & Williams, C.B. (1943).
+The relation between the number of species and the number of individuals in a
+random sample of animal population.
+\emph{Journal of Animal Ecology} \emph{12}, 42-58.
+
+Magurran AE, McGill BJ, eds (2011)
+Biological Diversity: Frontiers in Measurement and Assessment
+(Oxford Univ Press, Oxford), Vol 12.
+
+Smith B and Wilson JB. (1996)
+A Consumer's Guide to Diversity Indices.
+\emph{Oikos} 76(1):70-82.
+}
 \seealso{
 \code{\link[scater:plotColData]{plotColData}}
 \itemize{
+\item{\code{\link[mia:estimateRichness]{estimateRichness}}}
+\item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
+\item{\code{\link[mia:estimateDominance]{estimateDominance}}}
 \item{\code{\link[vegan:diversity]{diversity}}}
 \item{\code{\link[vegan:specpool]{estimateR}}}
 }
