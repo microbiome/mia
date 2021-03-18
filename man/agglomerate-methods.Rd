@@ -22,7 +22,9 @@
 \S4method{agglomerateByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
 }
 \arguments{
-\item{x}{\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
+\item{x}{a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomicRanks()} function.}
