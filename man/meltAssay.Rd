@@ -3,7 +3,7 @@
 \name{meltAssay}
 \alias{meltAssay}
 \alias{meltAssay,SummarizedExperiment-method}
-\title{Converting a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
+\title{Converting a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object into a long data.frame}
 \usage{
 meltAssay(
@@ -24,7 +24,7 @@ meltAssay(
 }
 \arguments{
 \item{x}{A numeric matrix or a
-\code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
 
 \item{add_row_data}{\code{NULL}, \code{TRUE} or a \code{character} vector to
 select information from the \code{rowData} to add to the molten assay data.
@@ -55,7 +55,7 @@ a column \dQuote{SampleID} with the colnames, if set
 }
 \description{
 \code{metlAssaay} Converts a
-\code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object into a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object into a
 long data.frame which can be used for \code{tidyverse}-tools.
 }
 \details{

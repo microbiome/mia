@@ -11,7 +11,8 @@
 #' for user specified \dQuote{FeatureID}.
 #'
 #' @param x A
-#'  \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
+#'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'  object.
 #'
 #' @param sample_id A \dQuote{SampleID} from which user wants to extract the
 #'   abundances of \dQuote{FeatureID}. This is essentially a column name in

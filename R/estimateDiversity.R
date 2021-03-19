@@ -132,15 +132,18 @@
 #' plotColData(se, "Shannon")
 #' # ... by sample type
 #' plotColData(se, "Shannon", "SampleType")
-#' \donttest{
+#' \dontrun{
 #' # combining different plots
-#' plots <- lapply(c("Shannon","GiniSimpson"),
+#' library(patchwork)
+#' plot_index <- c("Shannon","GiniSimpson")
+#' plots <- lapply(plot_index,
 #'                 plotColData,
 #'                 object = se,
 #'                 x = "SampleType",
 #'                 colour_by = "SampleType")
 #' plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))
-#' ggpubr::ggarrange(plotlist = plots, nrow = 1, common.legend = TRUE, legend = "right")
+#' names(plots) <- plot_index
+#' plots$Shannon + plots$GiniSimpson + plot_layout(guides = "collect")
 #' }
 NULL
 

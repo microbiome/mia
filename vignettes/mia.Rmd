@@ -25,8 +25,9 @@ knitr::opts_chunk$set(cache = FALSE,
 
 `mia` implements tools for microbiome analysis based on the
 `SummarizedExperiment` [@SE], `SingleCellExperiment` [@SCE] and
-`TreeSummarizedExperiment` [@TSE] infrastructure. Data wrangling and analysis
-are the main scope of this package.
+`TreeSummarizedExperiment` [@TSE] infrastructure. Data wrangling and analysis in
+the context of taxonomic data is the main scope. Additional functions for common
+task are implemented such as community indices calculation and summarization.
 
 # Load *mia*
 

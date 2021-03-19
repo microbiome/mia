@@ -21,7 +21,7 @@ getTopTaxa(
 }
 \arguments{
 \item{x}{A
-\code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
 
 \item{top}{Numeric value, how many top taxa to return. Default return top
 five taxa.}
@@ -42,7 +42,8 @@ functions are available.
 }
 \details{
 \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
-in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
+in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.
 }
 \examples{
 data(GlobalPatterns)

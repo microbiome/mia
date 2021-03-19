@@ -18,7 +18,8 @@ getAbundanceFeature(x, feature_id, abund_values)
 }
 \arguments{
 \item{x}{A
-\code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
 \item{sample_id}{A \dQuote{SampleID} from which user wants to extract the
 abundances of \dQuote{FeatureID}. This is essentially a column name in

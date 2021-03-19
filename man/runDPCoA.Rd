@@ -67,6 +67,13 @@ containing the input data.}
 \item{name}{String specifying the name to be used to store the result in the
 reducedDims of the output.}
 }
+\value{
+For \code{calculateDPCoA} a matrix with samples as rows and CCA dimensions as
+columns
+
+For \code{runDPCoA} a modified \code{x} with the results stored in
+\code{reducedDim} as the given \code{name}
+}
 \description{
 Double Principal Correspondance analysis is made available via the
 \code{ade4} package in typical fashion. Results are stored in the

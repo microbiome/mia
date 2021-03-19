@@ -44,7 +44,7 @@
 #'
 #' The function takes all index names in full lowercase. The user can provide the
 #' desired spelling through the argument \code{\link{name}} (see examples).
-#' 
+#'
 #' The following richness indices are provided.
 #'
 #' \itemize{
@@ -52,7 +52,7 @@
 #'   is detected above a given \code{detection} threshold in the observed sample
 #'   (default 0). This is conceptually the simplest richness index. The corresponding
 #'   index in the \pkg{vegan} package is "richness".}
-#' 
+#'
 #'   \item{'chao1' }{This is a nonparametric estimator of species richness. It
 #'   assumes that rare species carry information about the (unknown) number
 #'   of unobserved species. We use here the bias-corrected version
@@ -65,7 +65,7 @@
 #'   hence it gives more weight to the low abundance species.
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
-#' 
+#'
 #'   \item{'ace' }{Abundance-based coverage estimator (ACE) is another nonparametric richness
 #'   index that uses sample coverage, defined based on the sum of the probabilities
 #'   of the observed species. This method divides the species into abundant (more than 10
@@ -79,7 +79,7 @@
 #'   For an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
-#' 
+#'
 #'   \item{'hill' }{Effective species richness aka Hill index (see e.g. Chao et al. 2016).
 #'   Currently only the case 1D is implemented. This corresponds to the exponent
 #'   of Shannon diversity. Intuitively, the effective richness indicates the number of
@@ -160,8 +160,8 @@
 #'
 #' # Indices must be written correctly (all lowercase), otherwise an error
 #' # gets thrown
-#' \donttest{esophagus <- estimateRichness(esophagus, index="ACE")}
-#' 
+#' \dontrun{esophagus <- estimateRichness(esophagus, index="ACE")}
+#'
 #' # Calculates Chao1 and ACE indices only
 #' esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"), name=c("Chao1", "ACE"))
 #'
@@ -263,5 +263,5 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
         )
 
     FUN(mat = mat, detection = detection, ...)
-    
+
 }

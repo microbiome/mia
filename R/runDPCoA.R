@@ -53,6 +53,14 @@
 #' \code{eig}, \code{feature_weights} and \code{sample_weights} are
 #' returned as attributes as well.
 #'
+#' @returns
+#' For \code{calculateDPCoA} a matrix with samples as rows and CCA dimensions as
+#' columns
+#'
+#' For \code{runDPCoA} a modified \code{x} with the results stored in
+#' \code{reducedDim} as the given \code{name}
+#'
+#'
 #' @name runDPCoA
 #' @seealso
 #' \code{\link[scater:plotReducedDim]{plotReducedDim}}

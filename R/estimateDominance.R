@@ -68,7 +68,7 @@
 #' the unit interval:
 #'
 #' \deqn{dmn = (N_1 + N_2)/N_tot}
-#' 
+#'
 #' where \eqn{N_1} and \eqn{N_2} are the absolute
 #' abundances of the two most dominant species and \eqn{N_{tot}} is the sum of
 #' absolute abundances of all species.}
@@ -172,7 +172,7 @@
 #'
 #' # Indices must be written correctly (e.g. dbp, not dbp), otherwise an error
 #' # gets thrown
-#' \donttest{esophagus <- estimateDominance(esophagus, index="DBP")}
+#' \dontrun{esophagus <- estimateDominance(esophagus, index="DBP")}
 #' # Calculates dbp and Core Abundance indices
 #' esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
 #' # Shows all indices
@@ -193,7 +193,7 @@
 #' # Deletes all indices
 #' colData(esophagus) <- NULL
 #'
-#' # Calculates all indices with explicitly specified names 
+#' # Calculates all indices with explicitly specified names
 #' esophagus <- estimateDominance(esophagus,
 #'     index = c("dbp", "dmn", "absolute", "relative",
 #'               "simpson_lambda", "core_abundance", "gini"),
@@ -355,7 +355,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
         )
 
     FUN(index, mat = mat, ntaxa = ntaxa, aggregate = aggregate, ...)
-    
+
 }
 
 

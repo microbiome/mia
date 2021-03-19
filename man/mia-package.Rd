@@ -6,9 +6,11 @@
 \title{\code{mia} Package.}
 \description{
 \code{mia} implements tools for microbiome analysis based on the
-SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment
-infrastructure. Data wrangling and analysis are the main scope of this
-package.
+\code{SummarizedExperiment}, \code{SingleCellExperiment} and
+\code{TreeSummarizedExperiment} infrastructure. Data wrangling and analysis
+in the context of taxonomic data is the main scope. Additional functions for
+common task are implemented such as community indices calculation and
+summarization.
 }
 \seealso{
 \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment} class

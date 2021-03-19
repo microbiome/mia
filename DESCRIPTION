@@ -1,13 +1,17 @@
 Package: mia
 Type: Package
-Version: 0.98.43
+Version: 0.99.0
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
              comment = c(ORCID = "0000-0001-5064-0928")),
-      person(given = "Sudarshan", family = "Shetty", role = c("aut")),
+      person(given = "Sudarshan", family = "Shetty", role = c("aut"),
+             email = "sudarshanshetty9@gmail.com",
+             comment = c(ORCID = "0000-0001-7280-9915")),
       person(given = "Tuomas", family = "Borman", role = c("aut")),
-      person(given = "Leo", family = "Lahti", role = c("aut")),      
+      person(given = "Leo", family = "Lahti", role = c("aut"),
+             email = "leo.lahti@iki.fi",
+             comment = c(ORCID = "0000-0001-5537-637X")),      
       person(given = "Yang", family = "Cao", role = c("ctb")),
       person(given = "Nathan D.", family = "Olson", role = c("ctb"),
              email = "nolson@nist.gov"),
@@ -21,8 +25,9 @@ Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
     SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment 
-    infrastructure. Data wrangling and analysis are the main scope of this 
-    package.
+    infrastructure. Data wrangling and analysis in the context of taxonomic data
+    is the main scope. Additional functions for common task are implemented such
+    as community indices calculation and summarization.
 biocViews: Microbiome, Software
 License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
@@ -36,9 +41,9 @@ Imports:
     methods,
     stats,
     utils,
-    vegan,
     MASS,
     ape,
+    vegan,
     BiocGenerics,
     S4Vectors,
     IRanges,
@@ -56,18 +61,18 @@ Imports:
     dplyr,
     tibble,
     tidyr,
-    yaml,
-    microbiomeDataSets
+    yaml
 Suggests:
     testthat,
     knitr,
+    patchwork,
     BiocStyle,
-    ggpubr,
     phyloseq,
     dada2,
     biomformat,
     reldist,
-    ade4
+    ade4,
+    microbiomeDataSets
 URL: https://github.com/FelixErnst/mia
 BugReports: https://github.com/FelixErnst/mia/issues
 Roxygen: list(markdown = TRUE)

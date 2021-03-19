@@ -1,8 +1,9 @@
 #' Get dominant taxa
 #'
 #' These functions return information about the most dominant taxa in a
-#' \code{\link{SummarizedExperiment-class}} object. Additionally, the
-#' information can be directly stored in the \code{colData}.
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' object. Additionally, the information can be directly stored in the
+#' \code{colData}.
 #'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -23,10 +24,11 @@
 #'
 #' @details
 #' \code{dominantTaxa} extracts the most abundant taxa in a
-#' \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object, and
-#' stores the information in the \code{colData}. \code{GetDominantTaxa} returns
-#' information about most dominant taxa in a tibble. Information includes their
-#' absolute and relative abundances in whole data set.
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' object, and stores the information in the \code{colData}.
+#' \code{GetDominantTaxa} returns information about most dominant taxa in a
+#' tibble. Information includes their absolute and relative abundances in whole
+#' data set.
 #'
 #' With 'rank' parameter, it is possible to agglomerate taxa based on taxonomic
 #' ranks. E.g. if 'family' rank is used, all abundances of same family is added

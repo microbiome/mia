@@ -39,10 +39,10 @@ named differently.
 }
 \details{
 However, the use of these functions is discouraged since subsetting using
-\code{\link[SummarizedExperiment-class ]{`[`}} works on both dimension at the
-same time, is more flexible and is used hroughout R to subset data with two
-or more dimension. Therefore, these functions will be removed in Bioconductor
-release 3.15 (April, 2022).
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{`[`}} works on
+both dimension at the same time, is more flexible and is used hroughout R to
+subset data with two or more dimension. Therefore, these functions will be
+removed in Bioconductor release 3.15 (April, 2022).
 }
 \examples{
 data(GlobalPatterns)

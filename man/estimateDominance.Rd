@@ -173,7 +173,7 @@ colData(esophagus)
 
 # Indices must be written correctly (e.g. dbp, not dbp), otherwise an error
 # gets thrown
-\donttest{esophagus <- estimateDominance(esophagus, index="DBP")}
+\dontrun{esophagus <- estimateDominance(esophagus, index="DBP")}
 # Calculates dbp and Core Abundance indices
 esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
 # Shows all indices
@@ -194,7 +194,7 @@ colData(esophagus)
 # Deletes all indices
 colData(esophagus) <- NULL
 
-# Calculates all indices with explicitly specified names 
+# Calculates all indices with explicitly specified names
 esophagus <- estimateDominance(esophagus,
     index = c("dbp", "dmn", "absolute", "relative",
               "simpson_lambda", "core_abundance", "gini"),

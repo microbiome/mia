@@ -4,7 +4,7 @@
 #' functions are available.
 #'
 #' @param x A
-#'  \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
+#'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
 #' @param top Numeric value, how many top taxa to return. Default return top
 #'   five taxa.
@@ -17,7 +17,8 @@
 #'
 #' @details
 #' \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
-#' in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
+#' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' object.
 #'
 #' @return
 #' For \code{getTopTaxa}: A vector of the most \code{top} abundant

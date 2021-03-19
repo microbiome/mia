@@ -1,8 +1,8 @@
-#' Converting a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
+#' Converting a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object into a long data.frame
 #'
 #' \code{metlAssaay} Converts a
-#' \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object into a
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object into a
 #' long data.frame which can be used for \code{tidyverse}-tools.
 #'
 #' @details
@@ -12,7 +12,7 @@
 #' names are set.
 #'
 #' @param x A numeric matrix or a
-#'   \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}}
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'
 #' @param add_col_data \code{NULL}, \code{TRUE} or a \code{character} vector to
 #'   select information from the \code{colData} to add to the molten assay data.
