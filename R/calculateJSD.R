@@ -51,7 +51,8 @@
 #' class(jsd)
 #' head(jsd)
 #'
-#' enterotype <- runMDS(enterotype, FUN = calculateJSD, name = "JSD")
+#' enterotype <- runMDS(enterotype, FUN = calculateJSD, name = "JSD",
+#'                      exprs_values = "counts")
 #' head(reducedDim(enterotype))
 #' head(attr(reducedDim(enterotype),"eig"))
 #' attr(reducedDim(enterotype),"GOF")

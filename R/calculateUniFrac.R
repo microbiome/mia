@@ -90,6 +90,7 @@
 #' # be disabled
 #' esophagus <- runMDS(esophagus, FUN = calculateUniFrac, name = "UniFrac",
 #'                     tree = rowTree(esophagus),
+#'                     exprs_values = "counts",
 #'                     ntop = nrow(esophagus))
 #' reducedDim(esophagus)
 NULL
