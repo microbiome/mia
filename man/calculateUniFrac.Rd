@@ -77,6 +77,7 @@ Please note that if \code{calculateUniFrac} is used as a \code{FUN} for
 }
 \examples{
 data(esophagus)
+library(scater)
 calculateUniFrac(esophagus, weighted = FALSE)
 calculateUniFrac(esophagus, weighted = TRUE)
 calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)

@@ -203,6 +203,7 @@ indices using the established functions from the `vegan` package or any other
 package using comparable inputs.
 
 ```{r}
+library(scater)
 altExp(se,"Genus") <- runMDS(altExp(se,"Genus"), 
                              FUN = vegan::vegdist,
                              method = "bray",

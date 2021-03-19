@@ -81,6 +81,7 @@
 #'
 #' @examples
 #' data(esophagus)
+#' library(scater)
 #' calculateUniFrac(esophagus, weighted = FALSE)
 #' calculateUniFrac(esophagus, weighted = TRUE)
 #' calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)

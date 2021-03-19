@@ -42,9 +42,13 @@ object.
 }
 \examples{
 data(enterotype)
+library(scater)
+
+
 jsd <- calculateJSD(enterotype)
 class(jsd)
 head(jsd)
+
 enterotype <- runMDS(enterotype, FUN = calculateJSD, name = "JSD")
 head(reducedDim(enterotype))
 head(attr(reducedDim(enterotype),"eig"))
