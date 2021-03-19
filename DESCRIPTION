@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 0.99.0
+Version: 0.99.1
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -30,7 +30,7 @@ Description:
     infrastructure. Data wrangling and analysis in the context of taxonomic data
     is the main scope. Additional functions for common task are implemented such
     as community indices calculation and summarization.
-biocViews: Microbiome, Software
+biocViews: Microbiome, Software, DataImport
 License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
 LazyData: false
