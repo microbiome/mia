@@ -41,8 +41,9 @@
 
 <meta property="og:title" content="Get dominant taxa — dominantTaxa" />
 <meta property="og:description" content="These functions return information about the most dominant taxa in a
-SummarizedExperiment-class object. Additionally, the
-information can be directly stored in the colData." />
+SummarizedExperiment
+object. Additionally, the information can be directly stored in the
+colData." />
 
 
 
@@ -74,7 +75,7 @@ information can be directly stored in the colData." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.43</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
       </span>
     </div>
 
@@ -120,8 +121,9 @@ information can be directly stored in the colData." />
 
     <div class="ref-description">
     <p>These functions return information about the most dominant taxa in a
-<code>SummarizedExperiment-class</code> object. Additionally, the
-information can be directly stored in the <code>colData</code>.</p>
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code>
+object. Additionally, the information can be directly stored in the
+<code>colData</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>dominantTaxa</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span>, rank <span class='op'>=</span> <span class='cn'>NULL</span>, name <span class='op'>=</span> <span class='st'>"dominant_taxa"</span><span class='op'>)</span>
@@ -187,10 +189,11 @@ an overview in a tibble. It contains dominant taxa in a column named
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>dominantTaxa</code> extracts the most abundant taxa in a
-<code>SummarizedExperiment</code> object, and
-stores the information in the <code>colData</code>. <code>GetDominantTaxa</code> returns
-information about most dominant taxa in a tibble. Information includes their
-absolute and relative abundances in whole data set.</p>
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code>
+object, and stores the information in the <code>colData</code>.
+<code>GetDominantTaxa</code> returns information about most dominant taxa in a
+tibble. Information includes their absolute and relative abundances in whole
+data set.</p>
 <p>With 'rank' parameter, it is possible to agglomerate taxa based on taxonomic
 ranks. E.g. if 'family' rank is used, all abundances of same family is added
 together, and those families are returned.</p>
@@ -358,98 +361,56 @@ status.</p>
 #&gt; </span><span style='color: #BCBCBC;'>18</span><span> 87194             1      3.8 4%          
 #&gt; </span><span style='color: #BCBCBC;'>19</span><span> 98605             1      3.8 4%          </div><div class='input'>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>microbiomeDataSets</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/microbiomeDataSets/man/OKeefeDSData.html'>dietswap</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>using temporary cache /tmp/RtmpCpIbT3/BiocFileCache</span></div><div class='output co'>#&gt; <span class='message'>snapshotDate(): 2021-03-10</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>downloading 1 resources</span></div><div class='output co'>#&gt; <span class='message'>retrieving 1 resource</span></div><div class='output co'>#&gt; <span class='warning'>Warning: download failed</span>
-#&gt; <span class='warning'>  web resource path: ‘https://experimenthub.bioconductor.org/fetch/4761’</span>
-#&gt; <span class='warning'>  local file path: ‘/tmp/RtmpCpIbT3/BiocFileCache/76f2267796d_4761’</span>
-#&gt; <span class='warning'>  reason: Internal Server Error (HTTP 500).</span></div><div class='output co'>#&gt; <span class='warning'>Warning: bfcadd() failed; resource removed</span>
-#&gt; <span class='warning'>  rid: BFC3</span>
-#&gt; <span class='warning'>  fpath: ‘https://experimenthub.bioconductor.org/fetch/4761’</span>
-#&gt; <span class='warning'>  reason: download failed</span></div><div class='output co'>#&gt; <span class='warning'>Warning: download failed</span>
-#&gt; <span class='warning'>  hub path: ‘https://experimenthub.bioconductor.org/fetch/4761’</span>
-#&gt; <span class='warning'>  cache resource: ‘EH4718 : 4761’</span>
-#&gt; <span class='warning'>  reason: bfcadd() failed; see warnings()</span></div><div class='output co'>#&gt; <span class='error'>Error: failed to load resource</span>
-#&gt; <span class='error'>  name: EH4718</span>
-#&gt; <span class='error'>  title: O'Keefe diet swap microbiome counts</span>
-#&gt; <span class='error'>  reason: 1 resources failed to download</span></div><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>dominantTaxa</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>using temporary cache /tmp/RtmpkIRC3N/BiocFileCache</span></div><div class='output co'>#&gt; <span class='message'>snapshotDate(): 2021-03-18</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>downloading 1 resources</span></div><div class='output co'>#&gt; <span class='message'>retrieving 1 resource</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>downloading 1 resources</span></div><div class='output co'>#&gt; <span class='message'>retrieving 1 resource</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>downloading 1 resources</span></div><div class='output co'>#&gt; <span class='message'>retrieving 1 resource</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>dominantTaxa</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; DataFrame with 26 rows and 9 columns
-#&gt;         X.SampleID   Primer Final_Barcode Barcode_truncated_plus_T
-#&gt;           &lt;factor&gt; &lt;factor&gt;      &lt;factor&gt;                 &lt;factor&gt;
-#&gt; CL3        CL3      ILBC_01        AACGCA                   TGCGTT
-#&gt; CC1        CC1      ILBC_02        AACTCG                   CGAGTT
-#&gt; SV1        SV1      ILBC_03        AACTGT                   ACAGTT
-#&gt; M31Fcsw    M31Fcsw  ILBC_04        AAGAGA                   TCTCTT
-#&gt; M11Fcsw    M11Fcsw  ILBC_05        AAGCTG                   CAGCTT
-#&gt; ...            ...      ...           ...                      ...
-#&gt; TS28         TS28   ILBC_25        ACCAGA                   TCTGGT
-#&gt; TS29         TS29   ILBC_26        ACCAGC                   GCTGGT
-#&gt; Even1        Even1  ILBC_27        ACCGCA                   TGCGGT
-#&gt; Even2        Even2  ILBC_28        ACCTCG                   CGAGGT
-#&gt; Even3        Even3  ILBC_29        ACCTGT                   ACAGGT
-#&gt;         Barcode_full_length SampleType
-#&gt;                    &lt;factor&gt;   &lt;factor&gt;
-#&gt; CL3             CTAGCGTGCGT      Soil 
-#&gt; CC1             CATCGACGAGT      Soil 
-#&gt; SV1             GTACGCACAGT      Soil 
-#&gt; M31Fcsw         TCGACATCTCT      Feces
-#&gt; M11Fcsw         CGACTGCAGCT      Feces
-#&gt; ...                     ...        ...
-#&gt; TS28            GCATCGTCTGG      Feces
-#&gt; TS29            CTAGTCGCTGG      Feces
-#&gt; Even1           TGACTCTGCGG      Mock 
-#&gt; Even2           TCTGATCGAGG      Mock 
-#&gt; Even3           AGAGAGACAGG      Mock 
-#&gt;                                        Description dominant_taxa
-#&gt;                                           &lt;factor&gt;   &lt;character&gt;
-#&gt; CL3     Calhoun South Carolina Pine soil, pH 4.9           36155
-#&gt; CC1     Cedar Creek Minnesota, grassland, pH 6.1          256977
-#&gt; SV1     Sevilleta new Mexico, desert scrub, pH 8.3         71074
-#&gt; M31Fcsw M3, Day 1, fecal swab, whole body study           331820
-#&gt; M11Fcsw M1, Day 1, fecal swab, whole body study           331820
-#&gt; ...                                            ...           ...
-#&gt; TS28                                       Twin #1        331820
-#&gt; TS29                                       Twin #2        189047
-#&gt; Even1                                      Even1          550960
-#&gt; Even2                                      Even2          550960
-#&gt; Even3                                      Even3          550960
-#&gt;         dominant_taxa_ranked_with_family
-#&gt;                              &lt;character&gt;
-#&gt; CL3                      Solibacteraceae
-#&gt; CC1                   Spartobacteriaceae
-#&gt; SV1                    Sphingomonadaceae
-#&gt; M31Fcsw                   Bacteroidaceae
-#&gt; M11Fcsw                   Bacteroidaceae
-#&gt; ...                                  ...
-#&gt; TS28                     Ruminococcaceae
-#&gt; TS29                     Ruminococcaceae
-#&gt; Even1                    Lachnospiraceae
-#&gt; Even2                 Enterobacteriaceae
-#&gt; Even3                    Lachnospiraceae</div><div class='input'><span class='co'># With group, it is possible to group observations based on groups specified</span>
+</div><div class='output co'>#&gt; DataFrame with 222 rows and 9 columns
+#&gt;             subject      sex nationality    group      sample timepoint
+#&gt;            &lt;factor&gt; &lt;factor&gt;    &lt;factor&gt; &lt;factor&gt; &lt;character&gt; &lt;integer&gt;
+#&gt; Sample-1        byn   male           AAM       DI    Sample-1         4
+#&gt; Sample-2        nms   male           AFR       HE    Sample-2         2
+#&gt; Sample-3        olt   male           AFR       HE    Sample-3         2
+#&gt; Sample-4        pku   female         AFR       HE    Sample-4         2
+#&gt; Sample-5        qjy   female         AFR       HE    Sample-5         2
+#&gt; ...             ...      ...         ...      ...         ...       ...
+#&gt; Sample-218      qjy   female         AFR       ED  Sample-218         6
+#&gt; Sample-219      riv   female         AFR       ED  Sample-219         6
+#&gt; Sample-220      shj   female         AFR       ED  Sample-220         6
+#&gt; Sample-221      tgx   male           AFR       ED  Sample-221         6
+#&gt; Sample-222      ufm   male           AFR       ED  Sample-222         6
+#&gt;            timepoint.within.group  bmi_group          dominant_taxa
+#&gt;                         &lt;integer&gt;   &lt;factor&gt;            &lt;character&gt;
+#&gt; Sample-1                        1 obese      Bacteroides vulgatus..
+#&gt; Sample-2                        1 lean       Prevotella melaninog..
+#&gt; Sample-3                        1 overweight Prevotella melaninog..
+#&gt; Sample-4                        1 obese      Oscillospira guiller..
+#&gt; Sample-5                        1 overweight Prevotella melaninog..
+#&gt; ...                           ...        ...                    ...
+#&gt; Sample-218                      2 overweight Oscillospira guiller..
+#&gt; Sample-219                      2 obese      Prevotella melaninog..
+#&gt; Sample-220                      2 obese      Prevotella melaninog..
+#&gt; Sample-221                      2 overweight Oscillospira guiller..
+#&gt; Sample-222                      2 lean       Prevotella melaninog..</div><div class='input'><span class='co'># With group, it is possible to group observations based on groups specified</span>
 <span class='co'># Gets the overview of dominant taxa</span>
 <span class='va'>overview</span> <span class='op'>&lt;-</span> <span class='fu'>getDominantTaxa</span><span class='op'>(</span><span class='va'>x</span>, group <span class='op'>=</span> <span class='st'>"nationality"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in getDominantTaxa(x, group = "nationality"): 'group' variable must be in colnames(colData(x))</span></div><div class='input'><span class='va'>overview</span>
-</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 19 x 4</span><span>
-#&gt;    dominant_taxa     n rel.freq rel.freq.pct
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 331820            3     11.5 12%         
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 549656            3     11.5 12%         
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 550960            3     11.5 12%         
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 319044            2      7.7 8%          
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 114821            1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 12812             1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 189047            1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 256977            1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 279599            1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 329744            1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>11</span><span> 360229            1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>12</span><span> 36155             1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>13</span><span> 484436            1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>14</span><span> 534609            1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>15</span><span> 557211            1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>16</span><span> 64396             1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>17</span><span> 71074             1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>18</span><span> 87194             1      3.8 4%          
-#&gt; </span><span style='color: #BCBCBC;'>19</span><span> 98605             1      3.8 4%          </div></span></pre>
+<span class='va'>overview</span>
+</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 14 x 5</span><span>
+#&gt; </span><span style='color: #949494;'># Groups:   nationality [2]</span><span>
+#&gt;    nationality dominant_taxa                            n rel.freq rel.freq.pct
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                                </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> AFR         Prevotella melaninogenica et rel.       69     69.7 70%         
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> AAM         Bacteroides vulgatus et rel.            57     46.3 46%         
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> AAM         Prevotella melaninogenica et rel.       35     28.5 28%         
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> AFR         Oscillospira guillermondii et rel.      26     26.3 26%         
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> AAM         Oscillospira guillermondii et rel.      17     13.8 14%         
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> AAM         Clostridium cellulosi et rel.            7      5.7 6%          
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> AAM         Akkermansia                              2      1.6 2%          
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> AAM         Dialister                                2      1.6 2%          
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> AFR         Clostridium cellulosi et rel.            2      2   2%          
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> AAM         Faecalibacterium prausnitzii et rel.     1      0.8 1%          
+#&gt; </span><span style='color: #BCBCBC;'>11</span><span> AAM         Ruminococcus obeum et rel.               1      0.8 1%          
+#&gt; </span><span style='color: #BCBCBC;'>12</span><span> AAM         Uncultured Clostridiales I               1      0.8 1%          
+#&gt; </span><span style='color: #BCBCBC;'>13</span><span> AFR         Faecalibacterium prausnitzii et rel.     1      1   1%          
+#&gt; </span><span style='color: #BCBCBC;'>14</span><span> AFR         Streptococcus bovis et rel.              1      1   1%          </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
