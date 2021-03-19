@@ -33,7 +33,7 @@ License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
 LazyData: false
 Depends:
-    R (>= 4.0),
+    R (>= 4.1),
     SummarizedExperiment,
     SingleCellExperiment,
     TreeSummarizedExperiment (>= 1.99.3)

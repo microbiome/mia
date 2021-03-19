@@ -29,7 +29,6 @@ reference:
   - calculateJSD
   - calculateDistance
   - runNMDS
-  - runMDS2
   - runCCA
 - subtitle: Other diversity measurements
 - contents:

@@ -203,13 +203,13 @@ indices using the established functions from the `vegan` package or any other
 package using comparable inputs.
 
 ```{r}
-altExp(se,"Genus") <- runMDS2(altExp(se,"Genus"), 
-                              FUN = vegan::vegdist,
-                              method = "bray",
-                              name = "BrayCurtis", 
-                              ncomponents = 5, 
-                              exprs_values = "counts", 
-                              keep_dist = TRUE)
+altExp(se,"Genus") <- runMDS(altExp(se,"Genus"), 
+                             FUN = vegan::vegdist,
+                             method = "bray",
+                             name = "BrayCurtis", 
+                             ncomponents = 5, 
+                             exprs_values = "counts", 
+                             keep_dist = TRUE)
 ```
 
 JSD and UniFrac are implemented in `mia` as well. `calculateJSD` can be used
