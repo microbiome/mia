@@ -74,7 +74,7 @@ package" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
       </span>
     </div>
 
@@ -154,11 +154,6 @@ package</p>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>getBestDMNFit</span><span class='op'>(</span><span class='va'>x</span>, name <span class='op'>=</span> <span class='st'>"DMN"</span>, type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"laplace"</span>, <span class='st'>"AIC"</span>, <span class='st'>"BIC"</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='fu'>plotDMNFit</span><span class='op'>(</span><span class='va'>x</span>, name <span class='op'>=</span> <span class='st'>"DMN"</span>, type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"laplace"</span>, <span class='st'>"AIC"</span>, <span class='st'>"BIC"</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>plotDMNFit</span><span class='op'>(</span><span class='va'>x</span>, name <span class='op'>=</span> <span class='st'>"DMN"</span>, type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"laplace"</span>, <span class='st'>"AIC"</span>, <span class='st'>"BIC"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='fu'>calculateDMNgroup</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
@@ -261,7 +256,6 @@ Must be a character of factor.</p></td>
 one element per value for k given.</p>
 <p><code>bestDMNFit</code> returns the index for the best fit and <code>getBestDMNFit</code>
 returns a single <code>DMN</code> object.</p>
-<p><code>plotDMNFit</code> returns a <code>ggplot2</code> plot.</p>
 <p><code>calculateDMNgroup</code> returns a
 <code><a href='https://rdrr.io/pkg/DirichletMultinomial/man/DMNGroup-class.html'>DMNGroup</a></code> object</p>
 <p><code>performDMNgroupCV</code> returns a <code>data.frame</code></p>
@@ -293,7 +287,7 @@ returns a single <code>DMN</code> object.</p>
 </div><div class='output co'>#&gt; class: DMN 
 #&gt; k: 1 
 #&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 39227.38 BIC: 39527.91 AIC: 39292.11 </div><div class='input'>
+#&gt; Laplace: 39227.39 BIC: 39527.91 AIC: 39292.11 </div><div class='input'>
 <span class='co'># since this take a bit of resources to calculate for k &gt; 1, the data is</span>
 <span class='co'># loaded</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
@@ -352,10 +346,7 @@ returns a single <code>DMN</code> object.</p>
 </div><div class='output co'>#&gt; class: DMN 
 #&gt; k: 4 
 #&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 38838.6 BIC: 40425.31 AIC: 39476.69 </div><div class='input'>
-<span class='co'># plot the fit</span>
-<span class='fu'>plotDMNFit</span><span class='op'>(</span><span class='va'>dmn_se</span>, type <span class='op'>=</span> <span class='st'>"laplace"</span><span class='op'>)</span>
-</div><div class='img'><img src='calculateDMN-1.png' alt='' width='700' height='433' /></div></pre>
+#&gt; Laplace: 38838.6 BIC: 40425.31 AIC: 39476.69 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
