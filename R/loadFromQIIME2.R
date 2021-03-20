@@ -88,6 +88,7 @@ loadFromQIIME2 <- function(featureTableFile,
                            refSeqFile = NULL,
                            phyTreeFile = NULL,
                            ...) {
+    .require_package("yaml")
     # input check
     if(!.is_non_empty_string(featureTableFile)){
         stop("'featureTableFile' must be a single character value.",
@@ -169,7 +170,7 @@ loadFromQIIME2 <- function(featureTableFile,
 #'   [`ape::phylo`] object for phylogenetic tree,
 #'   [`Biostrings::DNAStringSet-class`] for representative sequences of taxa.
 #' @noRd
-#' @importFrom yaml read_yaml
+#'
 #' @importFrom utils unzip
 #' @importFrom ape read.tree
 #' @importFrom Biostrings readDNAStringSet
@@ -187,7 +188,7 @@ loadFromQIIME2 <- function(featureTableFile,
     on.exit(unlink(c(unzipped_file,unique(dirname(unzipped_file))),
                    recursive = TRUE))
     meta_file <- grep("metadata.yaml", unzipped_file, value = TRUE)
-    metadata <- read_yaml(meta_file[1])
+    metadata <- yaml::read_yaml(meta_file[1])
     uuid <- metadata$uuid
 
     format <- metadata$format

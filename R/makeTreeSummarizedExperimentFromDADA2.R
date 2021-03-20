@@ -18,7 +18,6 @@
 #'
 #' @importFrom S4Vectors SimpleList
 #' @importFrom Biostrings DNAStringSet
-#' @importFrom stringr str_pad
 #'
 #' @name makeTreeSummarizedExperimentFromDADA2
 #' @seealso
@@ -41,6 +40,7 @@
 makeTreeSummarizedExperimentFromDADA2 <- function(...) {
     # input checks
     .require_package("dada2")
+    .require_package("stringr")
     #
     mergers <- dada2::mergePairs(...)
     seqtab <- dada2::makeSequenceTable(mergers)

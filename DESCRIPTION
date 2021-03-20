@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 0.99.3
+Version: 0.99.4
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -57,20 +57,19 @@ Imports:
     scuttle,
     scater,
     DirichletMultinomial,
-    stringr,
-    ggplot2,
     rlang,
     dplyr,
     tibble,
-    tidyr,
-    yaml
+    tidyr
 Suggests:
     testthat,
     knitr,
     patchwork,
     BiocStyle,
+    yaml,
     phyloseq,
     dada2,
+    stringr,
     biomformat,
     reldist,
     ade4,
