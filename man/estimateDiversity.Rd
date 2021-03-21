@@ -8,7 +8,7 @@
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "pd"),
   name = index,
   ...
 )
@@ -16,7 +16,7 @@ estimateDiversity(
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "pd"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -53,8 +53,9 @@ wrapper functions. Some of them are implemented via the \code{vegan} package.
 }
 \details{
 The available indices include the \sQuote{Shannon}, \sQuote{Gini-Simpson},
-\sQuote{Inverse Simpson}, \sQuote{Coverage}, and \sQuote{Fisher alpha}
-diversity indices. See details for more information and references.
+\sQuote{Inverse Simpson}, \sQuote{Coverage}, \sQuote{Fisher alpha}, and
+\sQuote{Faith's phylogenetic diversity} diversity indices.
+See details for more information and references.
 
 Diversity is a joint quantity that combines elements or community richness and evenness.
 Diversity increases, in general, when species richness or evenness increase.
@@ -79,10 +80,14 @@ confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index
 \item{'shannon' }{Shannon diversity (entropy).}
 
 \item{'fisher' }{Fisher's alpha; as implemented in
-\code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. (1943)).}
+\code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
 
 \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
 Tune this with the threshold argument.}
+
+\item{'pd' }{Faith's phylogenetic alpha diversity index measures how long the
+taxonomic distance is between taxa that are present in the sample. Larger value
+represent higher diversity. (Faith 1992)}
 }
 }
 \examples{
@@ -90,10 +95,10 @@ data(GlobalPatterns)
 se <- GlobalPatterns
 
 # All index names as known by the function
-index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher")
+index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "pd")
 
 # Corresponding polished names
-name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher")
+name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Pd")
 
 # Calculate diversities
 se <- estimateDiversity(se, index = index)
@@ -106,8 +111,8 @@ colData(se)[, index] <- NULL
 
 # It is recommended to specify also the final names used in the output.
 se <- estimateDiversity(se,
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
-   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher"))
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "pd"),
+   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Pd"))
 
 # The colData contains the indices by their new names provided by the user
 colData(se)[, name]
@@ -144,16 +149,20 @@ Bulla L. (1994)
 An  index of diversity and its associated diversity measure.
 \emph{Oikos} 70:167--171
 
+Faith, D.P. (1992)
+Conservation evaluation and phylogenetic diversity.
+\emph{Biological Conservation} 61(1):1-10.
+
 Fisher, R.A., Corbet, A.S. & Williams, C.B. (1943).
 The relation between the number of species and the number of individuals in a
 random sample of animal population.
 \emph{Journal of Animal Ecology} \emph{12}, 42-58.
 
-Magurran AE, McGill BJ, eds (2011)
-Biological Diversity: Frontiers in Measurement and Assessment
+Magurran A.E., McGill BJ, eds (2011)
+Biological Diversity: Frontiers in Measurement and Assessment.
 (Oxford Univ Press, Oxford), Vol 12.
 
-Smith B and Wilson JB. (1996)
+Smith B. & Wilson JB. (1996)
 A Consumer's Guide to Diversity Indices.
 \emph{Oikos} 76(1):70-82.
 }

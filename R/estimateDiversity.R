@@ -4,8 +4,9 @@
 #' wrapper functions. Some of them are implemented via the \code{vegan} package.
 #'
 #' The available indices include the \sQuote{Shannon}, \sQuote{Gini-Simpson},
-#' \sQuote{Inverse Simpson}, \sQuote{Coverage}, and \sQuote{Fisher alpha}
-#' diversity indices. See details for more information and references.
+#' \sQuote{Inverse Simpson}, \sQuote{Coverage}, \sQuote{Fisher alpha}, and
+#' \sQuote{Faith's phylogenetic diversity} diversity indices.
+#' See details for more information and references.
 #'
 #' @param x a \code{\link{SummarizedExperiment}} object
 #'
@@ -55,10 +56,14 @@
 #' \item{'shannon' }{Shannon diversity (entropy).}
 #'
 #' \item{'fisher' }{Fisher's alpha; as implemented in
-#' \code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. (1943)).}
+#' \code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
 #'
 #' \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\% by default).
 #' Tune this with the threshold argument.}
+#'
+#' \item{'pd' }{Faith's phylogenetic alpha diversity index measures how long the
+#' taxonomic distance is between taxa that are present in the sample. Larger value
+#' represent higher diversity. (Faith 1992)}
 #' }
 #'
 #' @references
@@ -72,16 +77,20 @@
 #' An  index of diversity and its associated diversity measure.
 #' _Oikos_ 70:167--171
 #'
+#' Faith, D.P. (1992)
+#' Conservation evaluation and phylogenetic diversity.
+#' _Biological Conservation_ 61(1):1-10.
+#'
 #' Fisher, R.A., Corbet, A.S. & Williams, C.B. (1943).
 #' The relation between the number of species and the number of individuals in a
 #' random sample of animal population.
 #' _Journal of Animal Ecology_ *12*, 42-58.
 #'
-#' Magurran AE, McGill BJ, eds (2011)
-#' Biological Diversity: Frontiers in Measurement and Assessment
+#' Magurran A.E., McGill BJ, eds (2011)
+#' Biological Diversity: Frontiers in Measurement and Assessment.
 #' (Oxford Univ Press, Oxford), Vol 12.
 #'
-#' Smith B and Wilson JB. (1996)
+#' Smith B. & Wilson JB. (1996)
 #' A Consumer's Guide to Diversity Indices.
 #' _Oikos_ 76(1):70-82.
 #'
@@ -102,10 +111,10 @@
 #' se <- GlobalPatterns
 #'
 #' # All index names as known by the function
-#' index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher")
+#' index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "pd")
 #'
 #' # Corresponding polished names
-#' name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher")
+#' name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Pd")
 #'
 #' # Calculate diversities
 #' se <- estimateDiversity(se, index = index)
@@ -118,8 +127,8 @@
 #'
 #' # It is recommended to specify also the final names used in the output.
 #' se <- estimateDiversity(se,
-#'   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
-#'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher"))
+#'   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "pd"),
+#'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Pd"))
 #'
 #' # The colData contains the indices by their new names provided by the user
 #' colData(se)[, name]
@@ -152,7 +161,7 @@ NULL
 setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
                     index = c("shannon","gini_simpson", "inverse_simpson",
-                              "coverage", "fisher"),
+                              "coverage", "fisher", "pd"),
                     name = index, ...)
                standardGeneric("estimateDiversity"))
 
@@ -161,7 +170,7 @@ setGeneric("estimateDiversity",signature = c("x"),
 setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","gini_simpson","inverse_simpson",
-                       "coverage", "fisher"),
+                       "coverage", "fisher", "pd"),
              name = index, ..., BPPARAM = SerialParam()){
 
         # input check
@@ -239,6 +248,68 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     vegan::fisher.alpha(t(mat))
 }
 
+.calc_pd <- function(mat, x, ...){
+
+    # Gets the tree
+    tree <- rowTree(x)
+
+    # IF object does not have a tree
+    if( is.null(tree) || is.null(tree$edge.length) ){
+        stop("Object does not have a tree or the tree does not have any branches.
+             'PD' is not possible to calculate.",
+             call. = FALSE)
+    }
+
+    # Gets name of the taxa
+    taxa <- rownames(mat)
+    # Gets name of the samples
+    samples <- colnames(mat)
+
+    # Loops through every sample
+    PDs <- BiocParallel::bplapply(samples, function(sample){
+
+        # Stores taxa that are present in the sample, i.e., abundance is over 0
+        present <- taxa[ mat[, sample] > 0 ]
+        # Stores taxa that are not present, i.e., those taxa that are not in present taxa
+        absent <- taxa[ which( !(taxa %in% present) ) ]
+
+        # If no taxa are preent, then PD = 0
+        if( length(present) == 0 ){
+            PD <- 0
+        }
+
+        # If only one taxon is present
+        else if( length(present) == 1 ){
+            # Then PD is the age node of the taxon
+            PD <- tree$ages[which(tree$edge[, 2] == which(tree$tip.label == present))]
+            # If tree does not include age information, assing NA
+            if( is.null(PD) ){
+                PD <- NA
+            }
+        }
+
+        # If all taxa are present in the sample
+        else if( length(absent) == 0 ){
+            # Then PD is the sum of lengths of edges
+            PD <- sum(tree$edge.length)
+        }
+
+        # If there are taxa that are not present
+        else{
+            # Absent taxa are dropped from the tree
+            sub_tree <- ape::drop.tip(tree, absent)
+            # PD is now calculated based on the sub tree
+            PD <- sum(sub_tree$edge.length)
+        }
+    })
+
+    # Unlist a list
+    PDs <- unlist(PDs)
+
+    return(PDs)
+
+}
+
 #' @importFrom SummarizedExperiment assay assays
 .get_diversity_values <- function(index, x, mat, ...){
 
@@ -247,7 +318,8 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
                         gini_simpson = .calc_gini_simpson,
                         inverse_simpson = .calc_inverse_simpson,
                         coverage = .calc_coverage,
-                        fisher = .calc_fisher
+                        fisher = .calc_fisher,
+                        pd = .calc_pd
                         )
 
     FUN(x = x, mat = mat, ...)
