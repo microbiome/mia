@@ -74,8 +74,8 @@ Suggests:
     reldist,
     ade4,
     microbiomeDataSets
-URL: https://github.com/FelixErnst/mia
-BugReports: https://github.com/FelixErnst/mia/issues
+URL: https://github.com/microbiome/mia
+BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
