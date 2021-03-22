@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.5</span>
       </span>
     </div>
 
@@ -72,7 +72,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 class="date">2021-03-20</h4>
+            <h4 class="date">2021-03-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/FelixErnst/mia/blob/master/vignettes/mia.Rmd"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -104,7 +104,7 @@
 <a href="#loading-a-treesummarizedexperiment-object" class="anchor"></a>Loading a <code>TreeSummarizedExperiment</code> object</h1>
 <p>A few example datasets are available via <code>mia</code>. For this vignette the <code>GlobalPatterns</code> dataset is loaded first.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span>
 <span class="va">se</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span>
 <span class="va">se</span></code></pre></div>
 <pre><code>## class: TreeSummarizedExperiment 
@@ -222,7 +222,7 @@
 ## Rooted; includes branch lengths.</code></pre>
 <p>For <code>agglomerateByRank</code> to work, taxonomic data must be present. Even though only one rank is available for the <code>enterotype</code> dataset, agglomeration can be performed effectively de-duplicating entries for the genus level.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">enterotype</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "Genus"</code></pre>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
@@ -449,7 +449,7 @@
 ## 
 ## other attached packages:
 ##  [1] phyloseq_1.35.0                  scater_1.19.11                  
-##  [3] ggplot2_3.3.3                    mia_0.99.4                      
+##  [3] ggplot2_3.3.3                    mia_0.99.5                      
 ##  [5] TreeSummarizedExperiment_1.99.11 Biostrings_2.59.2               
 ##  [7] XVector_0.31.1                   SingleCellExperiment_1.13.12    
 ##  [9] SummarizedExperiment_1.21.1      Biobase_2.51.0                  
