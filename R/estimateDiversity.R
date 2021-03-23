@@ -158,20 +158,20 @@ NULL
 
 #' @rdname estimateDiversity
 #' @export
-setGeneric("estimateDiversity",signature = c("x"),
+setGeneric("estimateDiversity",signature = c("x", "tree"),
            function(x, abund_values = "counts",
                     index = c("shannon","gini_simpson", "inverse_simpson",
                               "coverage", "fisher", "pd"),
-                    name = index, ...)
+                    name = index, tree = rowTree(x), ...)
                standardGeneric("estimateDiversity"))
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
+setMethod("estimateDiversity", signature = c(x="SummarizedExperiment", tree="missing"),
     function(x, abund_values = "counts",
              index = c("shannon","gini_simpson","inverse_simpson",
-                       "coverage", "fisher", "pd"),
-             name = index, ..., BPPARAM = SerialParam()){
+                       "coverage", "fisher"),
+             name = index, tree = "missing", ..., BPPARAM = SerialParam()){
 
         # input check
         index<- match.arg(index, several.ok = TRUE)
@@ -187,13 +187,44 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
                                          .get_diversity_values,
                                          x = x,
                                          mat = assay(x, abund_values),
+                                         tree = tree,
                                          BPPARAM = BPPARAM,
                                          ...)
         .add_values_to_colData(x, dvrsts, name)
     }
 )
 
+#' @rdname estimateDiversity
+#' @export
+setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree="missing"),
+    function(x, abund_values = "counts",
+             index = c("shannon","gini_simpson","inverse_simpson",
+                       "coverage", "fisher", "pd"),
+             name = index, tree = rowTree(x), ..., BPPARAM = SerialParam()){
 
+        # input check
+        index<- match.arg(index, several.ok = TRUE)
+        if(!.is_non_empty_character(name) || length(name) != length(index)){
+            stop("'name' must be a non-empty character value and have the ",
+                 "same length than 'index'.",
+                 call. = FALSE)
+        }
+        .check_abund_values(abund_values, x)
+        .require_package("vegan")
+
+        dvrsts <- BiocParallel::bplapply(index,
+                                         .get_diversity_values,
+                                         x = x,
+                                         mat = assay(x, abund_values),
+                                         tree = tree,
+                                         BPPARAM = BPPARAM,
+                                         ...)
+        .add_values_to_colData(x, dvrsts, name)
+
+    }
+)
+
+################################################################################
 
 .calc_shannon <- function(mat, ...){
     vegan::diversity(t(mat), index="shannon")
@@ -248,10 +279,7 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
     vegan::fisher.alpha(t(mat))
 }
 
-.calc_pd <- function(mat, x, ...){
-
-    # Gets the tree
-    tree <- rowTree(x)
+.calc_pd <- function(mat, tree, ...){
 
     # IF object does not have a tree
     if( is.null(tree) || is.null(tree$edge.length) ){
@@ -311,7 +339,7 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment assay assays
-.get_diversity_values <- function(index, x, mat, ...){
+.get_diversity_values <- function(index, x, mat, tree, ...){
 
     FUN <- switch(index,
                         shannon = .calc_shannon,
@@ -322,6 +350,6 @@ setMethod("estimateDiversity", signature = c(x = "SummarizedExperiment"),
                         pd = .calc_pd
                         )
 
-    FUN(x = x, mat = mat, ...)
+    FUN(x = x, mat = mat, tree = tree, ...)
 
 }
