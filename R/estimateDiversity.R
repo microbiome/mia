@@ -161,8 +161,8 @@ NULL
 setGeneric("estimateDiversity",signature = c("x", "tree"),
            function(x, abund_values = "counts",
                     index = c("shannon","gini_simpson", "inverse_simpson",
-                              "coverage", "fisher", "pd"),
-                    name = index, tree = rowTree(x), ...)
+                              "coverage", "fisher"),
+                    name = index, tree = "missing", ...)
                standardGeneric("estimateDiversity"))
 
 #' @rdname estimateDiversity
@@ -174,12 +174,6 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment", tree="mis
              name = index, tree = "missing", ..., BPPARAM = SerialParam()){
 
         # input check
-        # IF object does not have a tree
-        if( "pd" %in% index ){
-            stop("SummarizedExperiment object does not have a tree. 'PD' is not possible to calculate.",
-                 call. = FALSE)
-        }
-
         index<- match.arg(index, several.ok = TRUE)
 
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -210,7 +204,6 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree=
              name = index, tree = rowTree(x), ..., BPPARAM = SerialParam()){
 
         # input check
-
         # IF object does not have a tree
         if( ("pd" %in% index) && (is.null(tree) || is.null(tree$edge.length)) ){
             stop("Object does not have a tree or the tree does not have any branches.
@@ -227,6 +220,19 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree=
         .check_abund_values(abund_values, x)
         .require_package("vegan")
 
+        if( "pd" %in% index){
+            # Get the name of "pd" index
+            pd_name <- name[index %in% "pd"]
+            # And delete it from name
+            name <- name[!index %in% "pd"]
+
+            # Delete "pd" from indices
+            index <- index[!index %in% "pd"]
+
+            # Calculates pd
+            x <- estimatePD(x, name = pd_name, ...)
+        }
+
         dvrsts <- BiocParallel::bplapply(index,
                                          .get_diversity_values,
                                          x = x,
@@ -234,10 +240,55 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree=
                                          tree = tree,
                                          BPPARAM = BPPARAM,
                                          ...)
+
         .add_values_to_colData(x, dvrsts, name)
 
     }
 )
+
+#' @rdname estimateDiversity
+#' @export
+setGeneric("estimatePD",signature = c("x", "tree"),
+           function(x, tree = "missing", abund_values = "counts",
+                    name = "pd", ...)
+               standardGeneric("estimatePD"))
+
+#' @rdname estimateDiversity
+#' @export
+setMethod("estimatePD", signature = c(x="SummarizedExperiment", tree="phylo"),
+    function(x, tree, abund_values = "counts",
+            name = "pd", ...){
+
+        # Input check
+        .check_abund_values(abund_values, x)
+
+        # Calculates Faith index
+        pd <- list(.calc_pd(assay(x, abund_values), tree))
+
+        # Adds calculated Faith's PD index to colData
+        .add_values_to_colData(x, pd, name)
+
+          }
+)
+
+#' @rdname estimateDiversity
+#' @export
+setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missing"),
+    function(x, tree = rowTree(x), abund_values = "counts",
+             name = "pd", ...){
+
+        # IF there is no rowTree gives an error
+        if( is.null(tree) ){
+            stop("Object does not contain a tree. 'PD' is not possible to calculate.",
+                 call. = FALSE)
+        }
+
+        # Calculates the Faith's PD index
+        estimatePD(x, tree, name = name, ...)
+
+          }
+)
+
 
 ################################################################################
 

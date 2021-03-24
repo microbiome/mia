@@ -4,14 +4,17 @@
 \alias{estimateDiversity}
 \alias{estimateDiversity,SummarizedExperiment,missing-method}
 \alias{estimateDiversity,TreeSummarizedExperiment,missing-method}
+\alias{estimatePD}
+\alias{estimatePD,SummarizedExperiment,phylo-method}
+\alias{estimatePD,TreeSummarizedExperiment,missing-method}
 \title{Estimate diversity measures}
 \usage{
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "pd"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
   name = index,
-  tree = rowTree(x),
+  tree = "missing",
   ...
 )
 
@@ -34,6 +37,12 @@ estimateDiversity(
   ...,
   BPPARAM = SerialParam()
 )
+
+estimatePD(x, tree = "missing", abund_values = "counts", name = "pd", ...)
+
+\S4method{estimatePD}{SummarizedExperiment,phylo}(x, tree = "missing", abund_values = "counts", name = "pd", ...)
+
+\S4method{estimatePD}{TreeSummarizedExperiment,missing}(x, tree = rowTree(x), abund_values = "counts", name = "pd", ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
