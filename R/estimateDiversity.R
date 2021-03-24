@@ -174,7 +174,14 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment", tree="mis
              name = index, tree = "missing", ..., BPPARAM = SerialParam()){
 
         # input check
+        # IF object does not have a tree
+        if( "pd" %in% index ){
+            stop("SummarizedExperiment object does not have a tree. 'PD' is not possible to calculate.",
+                 call. = FALSE)
+        }
+
         index<- match.arg(index, several.ok = TRUE)
+
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                  "same length than 'index'.",
@@ -203,6 +210,14 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree=
              name = index, tree = rowTree(x), ..., BPPARAM = SerialParam()){
 
         # input check
+
+        # IF object does not have a tree
+        if( ("pd" %in% index) && (is.null(tree) || is.null(tree$edge.length)) ){
+            stop("Object does not have a tree or the tree does not have any branches.
+             'PD' is not possible to calculate.",
+                 call. = FALSE)
+        }
+
         index<- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
@@ -281,13 +296,6 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree=
 
 .calc_pd <- function(mat, tree, ...){
 
-    # IF object does not have a tree
-    if( is.null(tree) || is.null(tree$edge.length) ){
-        stop("Object does not have a tree or the tree does not have any branches.
-             'PD' is not possible to calculate.",
-             call. = FALSE)
-    }
-
     # Gets name of the taxa
     taxa <- rownames(mat)
     # Gets name of the samples
@@ -310,7 +318,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree=
         else if( length(present) == 1 ){
             # Then PD is the age node of the taxon
             PD <- tree$ages[which(tree$edge[, 2] == which(tree$tip.label == present))]
-            # If tree does not include age information, assing NA
+            # If tree does not include age information, assign NA
             if( is.null(PD) ){
                 PD <- NA
             }
