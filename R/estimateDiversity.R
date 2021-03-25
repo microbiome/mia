@@ -158,20 +158,20 @@ NULL
 
 #' @rdname estimateDiversity
 #' @export
-setGeneric("estimateDiversity",signature = c("x", "tree"),
+setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
                     index = c("shannon","gini_simpson", "inverse_simpson",
                               "coverage", "fisher"),
-                    name = index, tree = "missing", ...)
+                    name = index, ...)
                standardGeneric("estimateDiversity"))
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateDiversity", signature = c(x="SummarizedExperiment", tree="missing"),
+setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","gini_simpson","inverse_simpson",
                        "coverage", "fisher"),
-             name = index, tree = "missing", ..., BPPARAM = SerialParam()){
+             name = index, ..., BPPARAM = SerialParam()){
 
         # input check
         index<- match.arg(index, several.ok = TRUE)
@@ -197,7 +197,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment", tree="mis
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree="missing"),
+setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","gini_simpson","inverse_simpson",
                        "coverage", "fisher", "pd"),
@@ -217,10 +217,8 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree=
                  "same length than 'index'.",
                  call. = FALSE)
         }
-        .check_abund_values(abund_values, x)
-        .require_package("vegan")
 
-        if( "pd" %in% index){
+        if( "pd" %in% index ){
             # Get the name of "pd" index
             pd_name <- name[index %in% "pd"]
             # And delete it from name
@@ -228,20 +226,21 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment", tree=
 
             # Delete "pd" from indices
             index <- index[!index %in% "pd"]
-
-            # Calculates pd
-            x <- estimatePD(x, name = pd_name, ...)
         }
 
-        dvrsts <- BiocParallel::bplapply(index,
-                                         .get_diversity_values,
-                                         x = x,
-                                         mat = assay(x, abund_values),
-                                         tree = tree,
-                                         BPPARAM = BPPARAM,
-                                         ...)
+        # If index list contained other than 'pd' index, the length of the list is over 0
+        if( length(index)>0){
+            # Calculates all indices but not 'pd'
+            x <- callNextMethod()
+        }
 
-        .add_values_to_colData(x, dvrsts, name)
+        # If 'pd_name' exist, then 'pd' index was present in the index list
+        if( exists("pd_name") ){
+            # Calculates pd
+            x <- estimatePD(x, tree = tree, name = pd_name, ...)
+        }
+
+        return(x)
 
     }
 )
@@ -271,23 +270,23 @@ setMethod("estimatePD", signature = c(x="SummarizedExperiment", tree="phylo"),
           }
 )
 
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missing"),
-    function(x, tree = rowTree(x), abund_values = "counts",
-             name = "pd", ...){
-
-        # IF there is no rowTree gives an error
-        if( is.null(tree) ){
-            stop("Object does not contain a tree. 'PD' is not possible to calculate.",
-                 call. = FALSE)
-        }
-
-        # Calculates the Faith's PD index
-        estimatePD(x, tree, name = name, ...)
-
-          }
-)
+#' #' @rdname estimateDiversity
+#' #' @export
+#' setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missing"),
+#'     function(x, tree = rowTree(x), abund_values = "counts",
+#'              name = "pd", ...){
+#'
+#'         # IF there is no rowTree gives an error
+#'         if( is.null(tree) ){
+#'             stop("Object does not contain a tree. 'PD' is not possible to calculate.",
+#'                  call. = FALSE)
+#'         }
+#'
+#'         # Calculates the Faith's PD index
+#'         estimatePD(x, tree, name = name, ...)
+#'
+#'           }
+#' )
 
 
 ################################################################################
@@ -347,7 +346,7 @@ setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missin
 
 .calc_pd <- function(mat, tree, ...){
 
-    # Gets name of the taxa
+    # Gets name of the taxa.
     taxa <- rownames(mat)
     # Gets name of the samples
     samples <- colnames(mat)
