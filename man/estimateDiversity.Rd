@@ -2,8 +2,8 @@
 % Please edit documentation in R/estimateDiversity.R
 \name{estimateDiversity}
 \alias{estimateDiversity}
-\alias{estimateDiversity,SummarizedExperiment,missing-method}
-\alias{estimateDiversity,TreeSummarizedExperiment,missing-method}
+\alias{estimateDiversity,SummarizedExperiment-method}
+\alias{estimateDiversity,TreeSummarizedExperiment-method}
 \alias{estimatePD}
 \alias{estimatePD,SummarizedExperiment,phylo-method}
 \alias{estimatePD,TreeSummarizedExperiment,missing-method}
@@ -14,21 +14,19 @@ estimateDiversity(
   abund_values = "counts",
   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
   name = index,
-  tree = "missing",
   ...
 )
 
-\S4method{estimateDiversity}{SummarizedExperiment,missing}(
+\S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
   name = index,
-  tree = "missing",
   ...,
   BPPARAM = SerialParam()
 )
 
-\S4method{estimateDiversity}{TreeSummarizedExperiment,missing}(
+\S4method{estimateDiversity}{TreeSummarizedExperiment}(
   x,
   abund_values = "counts",
   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "pd"),

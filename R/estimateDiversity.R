@@ -270,23 +270,23 @@ setMethod("estimatePD", signature = c(x="SummarizedExperiment", tree="phylo"),
           }
 )
 
-#' #' @rdname estimateDiversity
-#' #' @export
-#' setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missing"),
-#'     function(x, tree = rowTree(x), abund_values = "counts",
-#'              name = "pd", ...){
-#'
-#'         # IF there is no rowTree gives an error
-#'         if( is.null(tree) ){
-#'             stop("Object does not contain a tree. 'PD' is not possible to calculate.",
-#'                  call. = FALSE)
-#'         }
-#'
-#'         # Calculates the Faith's PD index
-#'         estimatePD(x, tree, name = name, ...)
-#'
-#'           }
-#' )
+#' @rdname estimateDiversity
+#' @export
+setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missing"),
+    function(x, tree = rowTree(x), abund_values = "counts",
+             name = "pd", ...){
+
+        # IF there is no rowTree gives an error
+        if( is.null(tree) ){
+            stop("Object does not contain a tree. 'PD' is not possible to calculate.",
+                 call. = FALSE)
+        }
+
+        # Calculates the Faith's PD index
+        estimatePD(x, tree, name = name, ...)
+
+          }
+)
 
 
 ################################################################################
@@ -344,7 +344,7 @@ setMethod("estimatePD", signature = c(x="SummarizedExperiment", tree="phylo"),
     vegan::fisher.alpha(t(mat))
 }
 
-.calc_pd <- function(mat, tree, ...){
+.calc_pd <- function(mat, tree, BPPARAM = SerialParam(), ...){
 
     # Gets name of the taxa.
     taxa <- rownames(mat)
