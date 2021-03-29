@@ -208,7 +208,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         }
 
         # check assay
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         x <- .agg_for_prevalence(x, rank = rank, ...)
         mat <- assay(x, abund_values)
         if (as_relative) {
@@ -341,7 +341,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
 setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", ...){
         # check assay
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         #
         getPrevalentAbundance(assay(x,abund_values))
     }

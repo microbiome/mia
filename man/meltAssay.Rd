@@ -11,6 +11,8 @@ meltAssay(
   add_row_data = NULL,
   add_col_data = NULL,
   abund_values = "counts",
+  feature_name = "FeatureID",
+  sample_name = "SampleID",
   ...
 )
 
@@ -18,7 +20,9 @@ meltAssay(
   x,
   add_row_data = NULL,
   add_col_data = NULL,
-  abund_values = "counts",
+  assay_name = "counts",
+  feature_name = "FeatureID",
+  sample_name = "SampleID",
   ...
 )
 }
@@ -42,10 +46,16 @@ If \code{add_col_data = NULL} no data will be added, if
 to given column names in \code{colData}. (default:
 \code{add_col_data = NULL})}
 
-\item{abund_values}{a \code{character} value to select an
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
+\item{feature_name}{a \code{character} scalar to use as the output's name
+for the feature identifier. (default: \code{feature_name = "FeatureID"})}
+
+\item{sample_name}{a \code{character} scalar to use as the output's name
+for the sample identifier. (default: \code{sample_name = "SampleID"})}
 
 \item{...}{optional arguments currently not used.}
+
+\item{assay_name}{a \code{character} value to select an
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
 }
 \value{
 A \code{tibble} with the molten data. The assay values are given in a

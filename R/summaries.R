@@ -71,7 +71,7 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
         # check max taxa
         .check_max_taxa(x, top, abund_values)
         # check assay
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         #
         if(method == "prevalence"){
             taxs <- getPrevalence(assay(x, abund_values), sort = TRUE,

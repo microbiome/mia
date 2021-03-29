@@ -11,9 +11,9 @@ test_that("meltAssay", {
                  'argument "x" is missing')
     data(GlobalPatterns)
     x <- GlobalPatterns
-    actual <- mia:::.norm_add_row_data(TRUE, x)
+    actual <- mia:::.norm_add_row_data(TRUE, x, "FeatureID")
     expect_equal(actual, colnames(rowData(x)))
-    actual <- mia:::.norm_add_col_data(TRUE, x)
+    actual <- mia:::.norm_add_col_data(TRUE, x, "SampleID")
     expect_equal(actual, colnames(colData(x)))
     expect_error(mia:::.norm_add_row_data("test", x),
                  "Please provide valid column names")

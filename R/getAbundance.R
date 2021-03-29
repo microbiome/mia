@@ -58,7 +58,7 @@ setGeneric("getAbundanceSample", signature = "x",
 setMethod("getAbundanceSample", signature = c(x = "SummarizedExperiment"),
     function(x, sample_id = NULL, abund_values = "counts") {
         # check assay
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         # check if sampleid exists or matches
         .check_feature_sample_ids(sample_id, colnames(x))
         assay <- assay(x, abund_values)
@@ -88,7 +88,7 @@ setGeneric("getAbundanceFeature", signature = "x",
 setMethod("getAbundanceFeature", signature = c(x = "SummarizedExperiment"),
     function(x, feature_id = NULL, abund_values = "counts") {
         # check assay
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         # check if feature_id exists or matches
         .check_feature_sample_ids(feature_id, rownames(x))
         assay <- assay(x, abund_values)

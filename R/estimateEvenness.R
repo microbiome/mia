@@ -138,7 +138,7 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
                  "same length than 'index'.",
                  call. = FALSE)
         }
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         #
         vnss <- BiocParallel::bplapply(index,
                                        .get_evenness_values,

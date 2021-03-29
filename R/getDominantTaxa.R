@@ -102,7 +102,7 @@ setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
 
         # Input check
         # Check abund_values
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
 
         # rank check
         if(!is.null(rank)){

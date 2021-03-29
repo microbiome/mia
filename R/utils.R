@@ -65,13 +65,13 @@
 # checks
 
 #' @importFrom SummarizedExperiment assays
-.check_abund_values <- function(abund_values, x,
-                                name = .get_name_in_parent(abund_values)){
-    if(!.is_non_empty_string(abund_values)){
+.check_assay_present <- function(assay_name, x,
+                                 name = .get_name_in_parent(assay_name)){
+    if(!.is_non_empty_string(assay_name)){
         stop("'",name,"' must be a single non-empty character value.",
              call. = FALSE)
     }
-    if(!(abund_values %in% names(assays(x)))){
+    if(!(assay_name %in% names(assays(x)))){
         stop("'",name,"' must be a valid name of assays(x)", call. = FALSE)
     }
 }
