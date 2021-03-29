@@ -131,7 +131,7 @@ setGeneric("meltAssay",
                                  feature_name,
                                  sample_name){
     if(is.null(rownames(x)) &&
-       !is.null(molten_assay[,.row_switch_name(feature_name)]) &&
+       .row_switch_name(feature_name) %in% colnames(molten_assay) &&
        !anyNA(molten_assay[,.row_switch_name(feature_name)]) &&
        !anyDuplicated(rowData(x)[,feature_name])){
         molten_assay <- molten_assay %>%
@@ -139,7 +139,7 @@ setGeneric("meltAssay",
             dplyr::rename(!!sym(feature_name) := !!sym(.row_switch_name(feature_name)))
     }
     if(is.null(colnames(x)) &&
-       !is.null(molten_assay[,.col_switch_name(sample_name)]) &&
+       .col_switch_name(sample_name) %in% colnames(molten_assay) &&
        !anyNA(molten_assay[,.col_switch_name(sample_name)]) &&
        !anyDuplicated(colData(x)[,sample_name])){
         molten_assay %>%
