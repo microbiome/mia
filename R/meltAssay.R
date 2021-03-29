@@ -42,7 +42,7 @@
 #' @param ... optional arguments currently not used.
 #'
 #' @return A \code{tibble} with the molten data. The assay values are given in a
-#' column named like the selected assay \code{abund_values}. In addition, a
+#' column named like the selected assay \code{assay_name}. In addition, a
 #' column \dQuote{FeatureID} will contain the rownames, if set, and analogously
 #' a column \dQuote{SampleID} with the colnames, if set
 #'
@@ -56,7 +56,7 @@
 #' molten_se <- meltAssay(GlobalPatterns,
 #'                        add_row_data = TRUE,
 #'                        add_col_data = TRUE,
-#'                        abund_values = "counts")
+#'                        assay_name = "counts")
 #' molten_se
 NULL
 
@@ -67,7 +67,7 @@ setGeneric("meltAssay",
            function(x,
                     add_row_data = NULL,
                     add_col_data = NULL,
-                    abund_values = "counts", 
+                    assay_name = "counts", 
                     feature_name = "FeatureID",
                     sample_name = "SampleID",
                     ...)
@@ -78,11 +78,9 @@ setGeneric("meltAssay",
     if(is.null(add_row_data)){
         return(NULL)
     }
-
     if(anyNA(add_row_data)){
         stop("'add_row_data' contains NA.", call. = FALSE)
     }
-
     cn <- colnames(rowData(x))
     if(is.logical(add_row_data) && length(add_row_data) == 1L && add_row_data){
         add_row_data <- cn
@@ -90,13 +88,11 @@ setGeneric("meltAssay",
         stop("Please provide valid column names with 'add_row_data' matching ",
              "those in 'rowData(x)'", call. = FALSE)
     }
-
     if(!is.null(rownames(x)) && feature_name %in% add_row_data){
         warning("'x' contains a column '",feature_name,"' in its ",
                 "rowData(), which will ",
                 "be renamed to '",feature_name,"_row'", call. = FALSE)
     }
-
     add_row_data
 }
 
@@ -104,11 +100,9 @@ setGeneric("meltAssay",
     if(is.null(add_col_data)){
         return(NULL)
     }
-
     if(anyNA(add_col_data)){
         stop("'add_col_data' contains NA.", call. = FALSE)
     }
-
     cn <- colnames(colData(x))
     if(is.logical(add_col_data) && length(add_col_data) == 1L && add_col_data){
         add_col_data <- cn
@@ -116,13 +110,11 @@ setGeneric("meltAssay",
         stop("Please provide valid column names with 'add_col_data' matching ",
              "those in 'colData(x)'", call. = FALSE)
     }
-
     if(!is.null(colnames(x)) && sample_name %in% add_col_data){
         warning("'x' contains a column '",sample_name,"' in its ",
                 "colData(), which will ",
                 "be renamed to '",sample_name,"_col'", call. = FALSE)
     }
-
     add_col_data
 }
 
@@ -154,7 +146,6 @@ setGeneric("meltAssay",
             select(!sym(sample_name)) %>%
             dplyr::rename(sym(sample_name) := !!sym(.col_switch_name(sample_name)))
     }
-
     molten_assay %>%
         mutate(!!sym(feature_name) := factor(!!sym(feature_name)),
                !!sym(sample_name) := factor(!!sym(sample_name)))
@@ -185,98 +176,70 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
         # check selected colnames
         add_row_data <- .norm_add_row_data(add_row_data, x, feature_name)
         add_col_data <- .norm_add_col_data(add_col_data, x, sample_name)
-
-        molten_assay <- .melt_assay(x, abund_values)
-
+        molten_assay <- .melt_assay(x, assay_name, feature_name, sample_name)
         if(!is.null(add_row_data)){
             molten_assay <-
                 .add_row_data_to_molten_assay(molten_assay, x, add_row_data,
                                               feature_name)
         }
-
         if(!is.null(add_col_data)){
             molten_assay <-
                 .add_col_data_to_molten_assay(molten_assay, x, add_col_data,
                                               sample_name)
         }
-
         .format_molten_assay(molten_assay, x, feature_name, sample_name)
     }
 )
-
 
 # Melts assay in SummarizedExperiment
 #' @importFrom SummarizedExperiment assay
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang sym
-.melt_assay <- function(x, abund_values, feature_name, sample_name) {
-    molten_assay <- assay(x, abund_values) %>%
+.melt_assay <- function(x, assay_name, feature_name, sample_name) {
+    assay(x, assay_name) %>%
         data.frame() %>%
         rownames_to_column(feature_name) %>%
         # SampleID is unique sample id
         pivot_longer(!sym(feature_name),
-                     values_to = abund_values,
+                     values_to = assay_name,
                      names_to = sample_name)
-
-    return(molten_assay)
 }
-
 
 # Combines molten assay with rowData i.e. taxonomy table.
-#' @importFrom dplyr left_join
-.add_row_data_to_molten_assay <- function(molten_assay, x, add_row_data,
-                                          feature_name) {
-    rd <- .get_row_data_frame(x, add_row_data)
-
-    molten_assay <- molten_assay %>%
-        left_join(rd, by = feature_name)
-
-    return(molten_assay)
-}
-
-
-# Converts rowData to data.frame to avoid issues with subsetting and rownames.
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom rlang sym
 #' @importFrom tibble rownames_to_column
-#' @importFrom dplyr rename
-.get_row_data_frame <- function(x, add_row_data, feature_name){
+#' @importFrom dplyr rename left_join
+.add_row_data_to_molten_assay <- function(molten_assay, x, add_row_data,
+                                          feature_name) {
     rd <- SummarizedExperiment::rowData(x)[,add_row_data] %>%
         data.frame()
     if(feature_name %in% add_row_data){
         rd <- rd %>%
             dplyr::rename(!!sym(.row_switch_name(feature_name)) := !!sym(feature_name))
     }
-    rd %>%
+    rd <- rd %>%
         rownames_to_column(feature_name)
+    molten_assay %>%
+        left_join(rd, by = feature_name)
 }
-
 
 # Combines molten assay and rowData i.e. taxonomy table with
-.add_col_data_to_molten_assay <- function(molten_assay, x, add_col_data,
-                                          sample_name) {
-    cd <- .get_col_data_frame(x, add_col_data)
-
-    molten_assay <- molten_assay %>%
-        left_join(cd, by = sample_name)
-
-    return(molten_assay)
-}
-
-
-# Converts colData to data.frame to avoid issues with
 #' @importFrom SummarizedExperiment colData
 #' @importFrom rlang sym
 #' @importFrom tibble rownames_to_column
-#' @importFrom dplyr rename
-.get_col_data_frame <- function(x, add_col_data, sample_name){
+#' @importFrom dplyr rename left_join
+.add_col_data_to_molten_assay <- function(molten_assay, x, add_col_data,
+                                          sample_name) {
     cd <- SummarizedExperiment::colData(x)[,add_col_data] %>%
         data.frame()
     if(sample_name %in% add_col_data){
         cd <- cd %>%
             dplyr::rename(!!sym(.col_switch_name(sample_name)) := !!sym(sample_name))
     }
-    cd %>%
+    cd <- cd %>%
         rownames_to_column(sample_name)
+    molten_assay %>%
+        left_join(cd, by = sample_name)
 }

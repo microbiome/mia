@@ -22,13 +22,13 @@ test_that("meltAssay", {
     x2 <- x
     rowData(x2)$FeatureID <- rownames(x2)
     colData(x2)$SampleID <- colnames(x2)
-    expect_warning(mia:::.norm_add_row_data(TRUE, x2),
+    expect_warning(mia:::.norm_add_row_data(TRUE, x2, "FeatureID"),
                    "'x' contains a column")
-    expect_warning(mia:::.norm_add_col_data(TRUE, x2),
+    expect_warning(mia:::.norm_add_col_data(TRUE, x2, "SampleID"),
                    "'x' contains a column")
-    expect_error(mia:::.norm_add_row_data(NA, x),
+    expect_error(mia:::.norm_add_row_data(NA, x, "FeatureID"),
                  "'add_row_data' contains NA")
-    expect_error(mia:::.norm_add_col_data(NA, x),
+    expect_error(mia:::.norm_add_col_data(NA, x, "SampleID"),
                  "'add_col_data' contains NA")
     #
 
@@ -36,25 +36,27 @@ test_that("meltAssay", {
     molten_assay <- meltAssay(se,
                               add_row_data = TRUE,
                               add_col_data = c("X.SampleID", "Primer"),
-                              abund_values = "counts")
+                              assay_name = "counts")
     expect_s3_class(molten_assay, c("tbl_df","tbl","data.frame"))
     expect_equal(colnames(molten_assay)[c(1:4,11)], c("FeatureID","SampleID","counts","Kingdom","X.SampleID"))
     expect_equal(is.numeric(molten_assay$counts), TRUE)
 
-    only_assay <- meltAssay(se, abund_values = "counts")
+    only_assay <- meltAssay(se, assay_name = "counts")
     expect_equal(colnames(only_assay)[1:3], c("FeatureID","SampleID","counts"))
     expect_equal(is.numeric(only_assay$counts), TRUE)
 
     assay_taxa <- mia:::.add_row_data_to_molten_assay(only_assay,
                                                       se,
-                                                      add_row_data = taxonomyRanks(se))
+                                                      add_row_data = taxonomyRanks(se),
+                                                      "FeatureID")
 
     expect_equal(colnames(assay_taxa)[1:4], c("FeatureID","SampleID","counts","Kingdom"))
     expect_equal(is.numeric(assay_taxa$counts), TRUE)
 
     assay_taxa_coldata <- mia:::.add_col_data_to_molten_assay(assay_taxa,
                                                               se,
-                                                              add_col_data=c("X.SampleID", "Primer"))
+                                                              add_col_data=c("X.SampleID", "Primer"),
+                                                              "SampleID")
 
     expect_equal(colnames(molten_assay)[c(1:4,11)], c("FeatureID","SampleID","counts","Kingdom","X.SampleID"))
     expect_equal(is.numeric(assay_taxa_coldata$counts), TRUE)
