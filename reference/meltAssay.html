@@ -76,7 +76,7 @@ long data.frame which can be used for tidyverse-tools." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.6</span>
       </span>
     </div>
 
@@ -131,7 +131,9 @@ long data.frame which can be used for <code>tidyverse</code>-tools.</p>
   <span class='va'>x</span>,
   add_row_data <span class='op'>=</span> <span class='cn'>NULL</span>,
   add_col_data <span class='op'>=</span> <span class='cn'>NULL</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  assay_name <span class='op'>=</span> <span class='st'>"counts"</span>,
+  feature_name <span class='op'>=</span> <span class='st'>"FeatureID"</span>,
+  sample_name <span class='op'>=</span> <span class='st'>"SampleID"</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -140,7 +142,9 @@ long data.frame which can be used for <code>tidyverse</code>-tools.</p>
   <span class='va'>x</span>,
   add_row_data <span class='op'>=</span> <span class='cn'>NULL</span>,
   add_col_data <span class='op'>=</span> <span class='cn'>NULL</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  assay_name <span class='op'>=</span> <span class='st'>"counts"</span>,
+  feature_name <span class='op'>=</span> <span class='st'>"FeatureID"</span>,
+  sample_name <span class='op'>=</span> <span class='st'>"SampleID"</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -173,9 +177,19 @@ to given column names in <code>colData</code>. (default:
 <code>add_col_data = NULL</code>)</p></td>
     </tr>
     <tr>
-      <th>abund_values</th>
+      <th>assay_name</th>
       <td><p>a <code>character</code> value to select an
 <code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assayNames</a></code></p></td>
+    </tr>
+    <tr>
+      <th>feature_name</th>
+      <td><p>a <code>character</code> scalar to use as the output's name
+for the feature identifier. (default: <code>feature_name = "FeatureID"</code>)</p></td>
+    </tr>
+    <tr>
+      <th>sample_name</th>
+      <td><p>a <code>character</code> scalar to use as the output's name
+for the sample identifier. (default: <code>sample_name = "SampleID"</code>)</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -186,7 +200,7 @@ to given column names in <code>colData</code>. (default:
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code>tibble</code> with the molten data. The assay values are given in a
-column named like the selected assay <code>abund_values</code>. In addition, a
+column named like the selected assay <code>assay_name</code>. In addition, a
 column &#8220;FeatureID&#8221; will contain the rownames, if set, and analogously
 a column &#8220;SampleID&#8221; with the colnames, if set</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -204,7 +218,7 @@ names are set.</p>
 <span class='va'>molten_se</span> <span class='op'>&lt;-</span> <span class='fu'>meltAssay</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,
                        add_row_data <span class='op'>=</span> <span class='cn'>TRUE</span>,
                        add_col_data <span class='op'>=</span> <span class='cn'>TRUE</span>,
-                       abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
+                       assay_name <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
 <span class='va'>molten_se</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 499,616 x 17</span><span>
 #&gt;    FeatureID SampleID counts Kingdom Phylum   Class   Order Family Genus Species
