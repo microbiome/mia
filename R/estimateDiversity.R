@@ -346,53 +346,49 @@ setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missin
 
 .calc_pd <- function(mat, tree, BPPARAM = SerialParam(), ...){
 
-    # Gets name of the taxa.
-    taxa <- rownames(mat)
     # Gets name of the samples
     samples <- colnames(mat)
+    #taxa <- rownames(mat)
 
-    # Loops through every sample
-    PDs <- BiocParallel::bplapply(samples, function(sample){
+    # Repeats taxa as many times there are samples, i.e. get all the taxa that are
+    # analyzed in each sample
+    taxa <- rep(rownames(mat), length(samples))
 
-        # Stores taxa that are present in the sample, i.e., abundance is over 0
-        present <- taxa[ mat[, sample] > 0 ]
-        # Stores taxa that are not present, i.e., those taxa that are not in present taxa
-        absent <- taxa[ which( !(taxa %in% present) ) ]
+    # Gets those taxa that are present/absent in each sample. Gets one big list that combines
+    # taxa from all the samples.
+    present_combined <- taxa[ mat[, samples] > 0 ]
+    absent_combined <- taxa[ mat[, samples] == 0 ]
 
-        # If no taxa are preent, then PD = 0
-        if( length(present) == 0 ){
-            PD <- 0
-        }
+    # colSums(mat > 0) # Gets how many taxa there are in each sample
+    # as.vector(cumsum(colSums(mat > 0)+1)) # Determines indices of samples' first taxa
+    # seq_along(present_combined) %in% as.vector(cumsum(colSums(mat > 0)+1)) # Gets true if splitting point
+    # as.factor(cumsum((seq_along(present_combined)-1) %in% as.vector(cumsum(colSums(mat > 0)))))) # Determines which taxa belongs to which sample
+    # Split() assigns taxa to right samples based on their number that they got from previous step
+    # unname() deletes unnecessary names
+    present <- unname(split(present_combined, as.factor(cumsum((seq_along(present_combined)-1) %in% as.vector(cumsum(colSums(mat > 0)))))))
+    absent <- unname(split(absent_combined, as.factor(cumsum((seq_along(absent_combined)-1) %in% as.vector(cumsum(colSums(mat == 0)))))))
 
-        # If only one taxon is present
-        else if( length(present) == 1 ){
-            # Then PD is the age node of the taxon
-            PD <- tree$ages[which(tree$edge[, 2] == which(tree$tip.label == present))]
-            # If tree does not include age information, assign NA
-            if( is.null(PD) ){
-                PD <- NA
-            }
-        }
+    # Assign NA to all samples
+    PD <- rep(NA,length(samples))
 
-        # If all taxa are present in the sample
-        else if( length(absent) == 0 ){
-            # Then PD is the sum of lengths of edges
-            PD <- sum(tree$edge.length)
-        }
+    # If there is one taxon present, then PD is the age of taxon
+    f <- lengths(present) == 1
+    PD[f] <- tree$ages[which(tree$edge[, 2] == which(tree$tip.label == present[f]))]
 
-        # If there are taxa that are not present
-        else{
-            # Absent taxa are dropped from the tree
-            sub_tree <- ape::drop.tip(tree, absent)
-            # PD is now calculated based on the sub tree
-            PD <- sum(sub_tree$edge.length)
-        }
-    })
+    # If all the taxa are present, then PD is the sum of all edges of taxa
+    PD[lengths(absent) == 0] <- sum(tree$edge.length)
 
-    # Unlist a list
-    PDs <- unlist(PDs)
+    # If there are taxa that are not present,
+    f <- lengths(absent) > 0
+    # absent taxa are dropped
+    trees <- lapply(absent[f], ape::drop.tip, phy = tree)
+    # and PD is calculated based on the subset tree
+    PD[f] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
 
-    return(PDs)
+    # IF there are no taxa present, then PD is 0
+    PD[lengths(present) == 0] <- 0
+
+    return(PD)
 
 }
 
