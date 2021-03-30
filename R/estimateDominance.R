@@ -235,7 +235,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 
         # Input check
         # Check abund_values
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){

@@ -181,7 +181,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
                  "same length than 'index'.",
                  call. = FALSE)
         }
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         .require_package("vegan")
 
         dvrsts <- BiocParallel::bplapply(index,

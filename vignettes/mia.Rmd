@@ -52,7 +52,7 @@ A few example datasets are available via `mia`. For this vignette the
 `GlobalPatterns` dataset is loaded first.
 
 ```{r}
-data(GlobalPatterns)
+data(GlobalPatterns, package = "mia")
 se <- GlobalPatterns
 se
 ```
@@ -124,7 +124,7 @@ only one rank is available for the `enterotype` dataset, agglomeration can be
 performed effectively de-duplicating entries for the genus level.
 
 ```{r}
-data(enterotype)
+data(enterotype, package = "mia")
 taxonomyRanks(enterotype)
 agglomerateByRank(enterotype)
 ```

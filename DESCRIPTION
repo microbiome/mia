@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 0.99.4
+Version: 0.99.7
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -74,8 +74,8 @@ Suggests:
     reldist,
     ade4,
     microbiomeDataSets
-URL: https://github.com/FelixErnst/mia
-BugReports: https://github.com/FelixErnst/mia/issues
+URL: https://github.com/microbiome/mia
+BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

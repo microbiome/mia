@@ -157,7 +157,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
 
         # Input check
         # Check abund_values
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
 
         # Check method
         # If method is not single string, user has not specified transform method,
@@ -226,7 +226,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
         # Input check
         # Check abund_values
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
 
         # Check name
         if(!.is_non_empty_string(name) ||
