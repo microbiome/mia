@@ -16,7 +16,7 @@ test_that("diversity estimates", {
     # colData.
     # Check that the order of indices is right / the same as the order
     # in the input vector.
-    expect_named(colData(tse_idx), c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "pd"))
+    expect_named(colData(tse_idx), c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "faith"))
 
     lambda <- unname(colSums(assays(tse_idx)$relabundance^2))
     ginisimpson <- 1 - lambda
@@ -38,17 +38,18 @@ test_that("diversity estimates", {
     expect_equal(unname(round(cd$coverage, 0)), c(2,3,1))
     expect_equal(unname(round(cd$fisher, 4)), c(8.8037, 10.0989, 13.2783))
 
-
+    # Tests faith index with esophagus data
     for( i in c(1:(length(colnames(tse_idx)))) ){
+        # Gets those taxa that are present/absent in the sample
         present <- rownames(tse)[assays(tse)$counts[,i] > 0]
         absent <- rownames(tse)[assays(tse)$counts[,i] == 0]
 
         # Absent taxa are dropped from the tree
         sub_tree <- ape::drop.tip(rowTree(tse_idx), absent)
-        # PD is now calculated based on the sub tree
-        pd <- sum(sub_tree$edge.length)
+        # Faith is now calculated based on the sub tree
+        faith <- sum(sub_tree$edge.length)
 
-        expect_equal(cd$pd[i], pd)
+        expect_equal(cd$faith[i], faith)
     }
 
 

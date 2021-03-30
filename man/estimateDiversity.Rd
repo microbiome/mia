@@ -4,9 +4,9 @@
 \alias{estimateDiversity}
 \alias{estimateDiversity,SummarizedExperiment-method}
 \alias{estimateDiversity,TreeSummarizedExperiment-method}
-\alias{estimatePD}
-\alias{estimatePD,SummarizedExperiment,phylo-method}
-\alias{estimatePD,TreeSummarizedExperiment,missing-method}
+\alias{estimateFaith}
+\alias{estimateFaith,SummarizedExperiment,phylo-method}
+\alias{estimateFaith,TreeSummarizedExperiment,missing-method}
 \title{Estimate diversity measures}
 \usage{
 estimateDiversity(
@@ -29,18 +29,37 @@ estimateDiversity(
 \S4method{estimateDiversity}{TreeSummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "pd"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher",
+    "faith"),
   name = index,
   tree = rowTree(x),
   ...,
   BPPARAM = SerialParam()
 )
 
-estimatePD(x, tree = "missing", abund_values = "counts", name = "pd", ...)
+estimateFaith(
+  x,
+  tree = "missing",
+  abund_values = "counts",
+  name = "faith",
+  ...
+)
 
-\S4method{estimatePD}{SummarizedExperiment,phylo}(x, tree = "missing", abund_values = "counts", name = "pd", ...)
+\S4method{estimateFaith}{SummarizedExperiment,phylo}(
+  x,
+  tree = "missing",
+  abund_values = "counts",
+  name = "faith",
+  ...
+)
 
-\S4method{estimatePD}{TreeSummarizedExperiment,missing}(x, tree = rowTree(x), abund_values = "counts", name = "pd", ...)
+\S4method{estimateFaith}{TreeSummarizedExperiment,missing}(
+  x,
+  tree = rowTree(x),
+  abund_values = "counts",
+  name = "faith",
+  ...
+)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
@@ -105,7 +124,7 @@ confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index
 \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
 Tune this with the threshold argument.}
 
-\item{'pd' }{Faith's phylogenetic alpha diversity index measures how long the
+\item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
 taxonomic distance is between taxa that are present in the sample. Larger value
 represent higher diversity. (Faith 1992)}
 }
@@ -115,10 +134,10 @@ data(GlobalPatterns)
 se <- GlobalPatterns
 
 # All index names as known by the function
-index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "pd")
+index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "faith")
 
 # Corresponding polished names
-name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Pd")
+name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Faith")
 
 # Calculate diversities
 se <- estimateDiversity(se, index = index)
@@ -131,8 +150,8 @@ colData(se)[, index] <- NULL
 
 # It is recommended to specify also the final names used in the output.
 se <- estimateDiversity(se,
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "pd"),
-   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Pd"))
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "faith"),
+   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Faith"))
 
 # The colData contains the indices by their new names provided by the user
 colData(se)[, name]

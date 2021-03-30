@@ -61,7 +61,7 @@
 #' \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\% by default).
 #' Tune this with the threshold argument.}
 #'
-#' \item{'pd' }{Faith's phylogenetic alpha diversity index measures how long the
+#' \item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
 #' taxonomic distance is between taxa that are present in the sample. Larger value
 #' represent higher diversity. (Faith 1992)}
 #' }
@@ -111,10 +111,10 @@
 #' se <- GlobalPatterns
 #'
 #' # All index names as known by the function
-#' index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "pd")
+#' index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "faith")
 #'
 #' # Corresponding polished names
-#' name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Pd")
+#' name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Faith")
 #'
 #' # Calculate diversities
 #' se <- estimateDiversity(se, index = index)
@@ -127,8 +127,8 @@
 #'
 #' # It is recommended to specify also the final names used in the output.
 #' se <- estimateDiversity(se,
-#'   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "pd"),
-#'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Pd"))
+#'   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "faith"),
+#'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Faith"))
 #'
 #' # The colData contains the indices by their new names provided by the user
 #' colData(se)[, name]
@@ -200,14 +200,14 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
 setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","gini_simpson","inverse_simpson",
-                       "coverage", "fisher", "pd"),
+                       "coverage", "fisher", "faith"),
              name = index, tree = rowTree(x), ..., BPPARAM = SerialParam()){
 
         # input check
         # IF object does not have a tree
-        if( ("pd" %in% index) && (is.null(tree) || is.null(tree$edge.length)) ){
+        if( ("faith" %in% index) && (is.null(tree) || is.null(tree$edge.length)) ){
             stop("Object does not have a tree or the tree does not have any branches.
-             'PD' is not possible to calculate.",
+             'faith' is not possible to calculate.",
                  call. = FALSE)
         }
 
@@ -218,26 +218,26 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
                  call. = FALSE)
         }
 
-        if( "pd" %in% index ){
-            # Get the name of "pd" index
-            pd_name <- name[index %in% "pd"]
+        if( "faith" %in% index ){
+            # Get the name of "faith" index
+            faith_name <- name[index %in% "faith"]
             # And delete it from name
-            name <- name[!index %in% "pd"]
+            name <- name[!index %in% "faith"]
 
-            # Delete "pd" from indices
-            index <- index[!index %in% "pd"]
+            # Delete "faith" from indices
+            index <- index[!index %in% "faith"]
         }
 
-        # If index list contained other than 'pd' index, the length of the list is over 0
+        # If index list contained other than 'faith' index, the length of the list is over 0
         if( length(index)>0){
-            # Calculates all indices but not 'pd'
+            # Calculates all indices but not 'faith'
             x <- callNextMethod()
         }
 
-        # If 'pd_name' exist, then 'pd' index was present in the index list
-        if( exists("pd_name") ){
-            # Calculates pd
-            x <- estimatePD(x, tree = tree, name = pd_name, ...)
+        # If 'faith_name' exist, then 'faith' index was present in the index list
+        if( exists("faith_name") ){
+            # Calculates faith
+            x <- estimateFaith(x, tree = tree, name = faith_name, ...)
         }
 
         return(x)
@@ -247,43 +247,43 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
 
 #' @rdname estimateDiversity
 #' @export
-setGeneric("estimatePD",signature = c("x", "tree"),
+setGeneric("estimateFaith",signature = c("x", "tree"),
            function(x, tree = "missing", abund_values = "counts",
-                    name = "pd", ...)
-               standardGeneric("estimatePD"))
+                    name = "faith", ...)
+               standardGeneric("estimateFaith"))
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimatePD", signature = c(x="SummarizedExperiment", tree="phylo"),
+setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
     function(x, tree, abund_values = "counts",
-            name = "pd", ...){
+            name = "faith", ...){
 
         # Input check
         .check_abund_values(abund_values, x)
 
         # Calculates Faith index
-        pd <- list(.calc_pd(assay(x, abund_values), tree))
+        faith <- list(.calc_faith(assay(x, abund_values), tree))
 
-        # Adds calculated Faith's PD index to colData
-        .add_values_to_colData(x, pd, name)
+        # Adds calculated Faith index to colData
+        .add_values_to_colData(x, faith, name)
 
           }
 )
 
 #' @rdname estimateDiversity
 #' @export
-setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missing"),
+setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
     function(x, tree = rowTree(x), abund_values = "counts",
-             name = "pd", ...){
+             name = "faith", ...){
 
         # IF there is no rowTree gives an error
         if( is.null(tree) ){
-            stop("Object does not contain a tree. 'PD' is not possible to calculate.",
+            stop("Object does not contain a tree. 'faith' is not possible to calculate.",
                  call. = FALSE)
         }
 
-        # Calculates the Faith's PD index
-        estimatePD(x, tree, name = name, ...)
+        # Calculates the Faith index
+        estimateFaith(x, tree, name = name, ...)
 
           }
 )
@@ -344,7 +344,7 @@ setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missin
     vegan::fisher.alpha(t(mat))
 }
 
-.calc_pd <- function(mat, tree, BPPARAM = SerialParam(), ...){
+.calc_faith <- function(mat, tree, BPPARAM = SerialParam(), ...){
 
     # Gets name of the samples
     samples <- colnames(mat)
@@ -369,26 +369,26 @@ setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missin
     absent <- unname(split(absent_combined, as.factor(cumsum((seq_along(absent_combined)-1) %in% as.vector(cumsum(colSums(mat == 0)))))))
 
     # Assign NA to all samples
-    PD <- rep(NA,length(samples))
+    faiths <- rep(NA,length(samples))
 
-    # If there is one taxon present, then PD is the age of taxon
+    # If there is one taxon present, then faith is the age of taxon
     f <- lengths(present) == 1
-    PD[f] <- tree$ages[which(tree$edge[, 2] == which(tree$tip.label == present[f]))]
+    faiths[f] <- tree$ages[which(tree$edge[, 2] == which(tree$tip.label == present[f]))]
 
-    # If all the taxa are present, then PD is the sum of all edges of taxa
-    PD[lengths(absent) == 0] <- sum(tree$edge.length)
+    # If all the taxa are present, then faith is the sum of all edges of taxa
+    faiths[lengths(absent) == 0] <- sum(tree$edge.length)
 
     # If there are taxa that are not present,
     f <- lengths(absent) > 0
     # absent taxa are dropped
     trees <- lapply(absent[f], ape::drop.tip, phy = tree)
-    # and PD is calculated based on the subset tree
-    PD[f] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
+    # and faith is calculated based on the subset tree
+    faiths[f] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
 
-    # IF there are no taxa present, then PD is 0
-    PD[lengths(present) == 0] <- 0
+    # IF there are no taxa present, then faith is 0
+    faiths[lengths(present) == 0] <- 0
 
-    return(PD)
+    return(faiths)
 
 }
 
@@ -401,7 +401,7 @@ setMethod("estimatePD", signature = c(x="TreeSummarizedExperiment", tree="missin
                         inverse_simpson = .calc_inverse_simpson,
                         coverage = .calc_coverage,
                         fisher = .calc_fisher,
-                        pd = .calc_pd
+                        faith = .calc_faith
                         )
 
     FUN(x = x, mat = mat, tree = tree, ...)
