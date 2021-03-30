@@ -344,7 +344,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     vegan::fisher.alpha(t(mat))
 }
 
-.calc_faith <- function(mat, tree, BPPARAM = SerialParam(), ...){
+.calc_faith <- function(mat, tree, ...){
 
     # Gets name of the samples
     samples <- colnames(mat)
