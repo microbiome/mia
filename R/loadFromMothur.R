@@ -1,11 +1,5 @@
 #' Import Mothur results to \code{TreeSummarizedExperiment}
 #'
-#' Results exported from Mothur can be imported as a
-#' \code{TreeSummarizedExperiment} using \code{loadFromMothur}. Except for the
-#' \code{featureTableFile}, the other data types, \code{taxonomyTableFile},
-#' \code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
-#' encouraged to be provided.
-#'
 #' @param featureTableFile a single \code{character} value defining the file
 #'   path of the feature table to be imported.
 #'
@@ -14,8 +8,7 @@
 #'   \code{taxonomyTableFile = NULL}).
 #'
 #' @param sampleMetaFile a single \code{character} value defining the file path
-#'   of the sample metadata to be imported. The file has to be in tsv format.
-#'   (default: \code{sampleMetaFile = NULL}).
+#'   of the sample metadata to be imported. (default: \code{sampleMetaFile = NULL}).
 #'
 #' @param featureNamesAsRefSeq \code{TRUE} or \code{FALSE}: Should the feature
 #'   names of the feature table be regarded as reference sequences? This setting
@@ -33,26 +26,40 @@
 #' @param ... additional arguments:
 #'
 #' @details
-#' # Add detailed information
+#' Results exported from Mothur can be imported as a
+#' \code{TreeSummarizedExperiment} using \code{loadFromMothur}. Except for the
+#' \code{featureTableFile}, the other data types, \code{taxonomyTableFile},
+#' \code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
+#' encouraged to be provided.
 #'
 #' @return  A
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name loadFromQIIME2
+#' @name loadFromMothur
 #' @seealso
 #' \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
 #' \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
 #' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
-#' # Are there more???
+#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{loadFromQIIME2}}
 #'
 #' @export
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @references
-#' References???
+#' \url{https://mothur.org/}
 #' 
 #' @examples
+#' # Abundance table
+#' counts <- "~/Desktop/Baxter_FITs_Microbiome_2016_fit.final.tx.1.subsample.shared"
+#' # Taxa table
+#' taxa <- "~/Desktop/Baxter_FITs_Microbiome_2016_fit.final.tx.1.cons.taxonomy"
+#' # Sample meta data
+#' meta <- "~/Desktop/Baxter_FITs_Microbiome_2016_mapping.csv"
+#' 
+#' # Creates tse object from files
+#' \dontrun{tse <- loadFromMothur(counts, taxa, meta)}
+#' 
 
 loadFromMothur <- function(featureTableFile,
                            taxonomyTableFile = NULL,
@@ -127,8 +134,6 @@ loadFromMothur <- function(featureTableFile,
       rowTree = tree,
       referenceSeq = refseq
     ))
-  
-    #
     
 }
 
@@ -197,5 +202,3 @@ loadFromMothur <- function(featureTableFile,
 
   
 }
-
-
