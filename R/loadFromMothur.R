@@ -181,6 +181,9 @@ loadFromMothur <- function(featureTableFile,
     
     # Adds taxa to rownames
     rownames(rowData) <- rowData$OTU
+    # Deletes addition "OTU" column
+    rowData$OTU <- NULL
+    
     # Creates a matrix from the table
     rowData <- as.matrix(rowData)
     
@@ -199,6 +202,5 @@ loadFromMothur <- function(featureTableFile,
     colData <- colData[colnames(feature_tab), ]
     
     return(colData)
-
   
 }
