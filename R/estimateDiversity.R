@@ -196,6 +196,10 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
 )
 
 #' @rdname estimateDiversity
+#' 
+#' @param tree A phylogenetic tree that is used to calculate 'faith' index.
+#' By default, it is \code{rowTree(x)}.
+#' 
 #' @export
 setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     function(x, abund_values = "counts",
@@ -204,20 +208,21 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
              name = index, tree = rowTree(x), ..., BPPARAM = SerialParam()){
 
         # input check
-        # IF object does not have a tree
+        # If object does not have a tree
         if( ("faith" %in% index) && (is.null(tree) || is.null(tree$edge.length)) ){
             stop("Object does not have a tree or the tree does not have any branches.
              'faith' is not possible to calculate.",
                  call. = FALSE)
         }
-
+        
         index<- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                  "same length than 'index'.",
                  call. = FALSE)
         }
-
+        
+        # If 'faith' is one of the indices
         if( "faith" %in% index ){
             # Get the name of "faith" index
             faith_name <- name[index %in% "faith"]
@@ -226,7 +231,13 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
 
             # Delete "faith" from indices
             index <- index[!index %in% "faith"]
-        }
+            
+            # Faith will be calculated
+            calc_faith <- TRUE
+        } else{
+            # Faith will not be calculated
+            calc_faith <- FALSE
+            }
 
         # If index list contained other than 'faith' index, the length of the list is over 0
         if( length(index)>0){
@@ -234,8 +245,8 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             x <- callNextMethod()
         }
 
-        # If 'faith_name' exist, then 'faith' index was present in the index list
-        if( exists("faith_name") ){
+        # If 'faith' was one of the indices, 'calc_faith' is TRUE
+        if( calc_faith ){
             # Calculates faith
             x <- estimateFaith(x, tree = tree, name = faith_name, ...)
         }
@@ -259,7 +270,8 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
             name = "faith", ...){
 
         # Input check
-        .check_abund_values(abund_values, x)
+        # Check 'abund_values'
+        .check_assay_present(abund_values, x)
 
         # Calculates Faith index
         faith <- list(.calc_faith(assay(x, abund_values), tree))
@@ -351,22 +363,28 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     #taxa <- rownames(mat)
 
     # Repeats taxa as many times there are samples, i.e. get all the taxa that are
-    # analyzed in each sample
+    # analyzed in each sample.
     taxa <- rep(rownames(mat), length(samples))
 
     # Gets those taxa that are present/absent in each sample. Gets one big list that combines
     # taxa from all the samples.
     present_combined <- taxa[ mat[, samples] > 0 ]
     absent_combined <- taxa[ mat[, samples] == 0 ]
-
-    # colSums(mat > 0) # Gets how many taxa there are in each sample
-    # as.vector(cumsum(colSums(mat > 0)+1)) # Determines indices of samples' first taxa
-    # seq_along(present_combined) %in% as.vector(cumsum(colSums(mat > 0)+1)) # Gets true if splitting point
-    # as.factor(cumsum((seq_along(present_combined)-1) %in% as.vector(cumsum(colSums(mat > 0)))))) # Determines which taxa belongs to which sample
-    # Split() assigns taxa to right samples based on their number that they got from previous step
-    # unname() deletes unnecessary names
-    present <- unname(split(present_combined, as.factor(cumsum((seq_along(present_combined)-1) %in% as.vector(cumsum(colSums(mat > 0)))))))
-    absent <- unname(split(absent_combined, as.factor(cumsum((seq_along(absent_combined)-1) %in% as.vector(cumsum(colSums(mat == 0)))))))
+    
+    # Gets how many taxa there are in each sample. 
+    # After that, determines indices of samples' first taxa with cumsum.
+    split_present <- as.vector(cumsum(colSums(mat > 0)))
+    split_absent <- as.vector(cumsum(colSums(mat == 0)))
+    
+    # Determines which taxa belongs to which sample by first determining the splitting points,
+    # and after that giving every taxa number which tells their sample.
+    split_present <- as.factor(cumsum((seq_along(present_combined)-1) %in% split_present))
+    split_absent <- as.factor(cumsum((seq_along(absent_combined)-1) %in% split_absent))
+    
+    # Assigns taxa to right samples based on their number that they got from previous step,
+    # and deletes unnecessary names.
+    present <- unname(split(present_combined, split_present))
+    absent <- unname(split(absent_combined, split_absent))
 
     # Assign NA to all samples
     faiths <- rep(NA,length(samples))
