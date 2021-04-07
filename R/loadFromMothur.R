@@ -71,27 +71,28 @@ loadFromMothur <- function(featureTableFile,
   
     # input check
     if(!.is_non_empty_string(featureTableFile)){
-      stop("'featureTableFile' must be a single character value.",
-           call. = FALSE)
+        stop("'featureTableFile' must be a single character value.", 
+            call. = FALSE)
     }
     if(!is.null(taxonomyTableFile) && !.is_non_empty_string(taxonomyTableFile)){
-      stop("'taxonomyTableFile' must be a single character value or NULL.",
-           call. = FALSE)
+        stop("'taxonomyTableFile' must be a single character value or NULL.", 
+            call. = FALSE)
     }
     if(!is.null(sampleMetaFile) && !.is_non_empty_string(sampleMetaFile)){
-      stop("'sampleMetaFile' must be a single character value or NULL.",
-           call. = FALSE)
+        stop("'sampleMetaFile' must be a single character value or NULL.",
+            call. = FALSE)
     }
     if(!.is_a_bool(featureNamesAsRefSeq)){
-      stop("'featureNamesAsRefSeq' must be TRUE or FALSE.", call. = FALSE)
+        stop("'featureNamesAsRefSeq' must be TRUE or FALSE.", 
+            call. = FALSE)
     }
     if(!is.null(refSeqFile) && !.is_non_empty_string(refSeqFile)){
-      stop("'refSeqFile' must be a single character value or NULL.",
-           call. = FALSE)
+        stop("'refSeqFile' must be a single character value or NULL.", 
+            call. = FALSE)
     }
     if(!is.null(phyTreeFile) && !.is_non_empty_string(phyTreeFile)){
-      stop("'phyTreeFile' must be a single character value or NULL.",
-           call. = FALSE)
+        stop("'phyTreeFile' must be a single character value or NULL.", 
+            call. = FALSE)
     }
     #
     
@@ -100,39 +101,39 @@ loadFromMothur <- function(featureTableFile,
     
     # If rowData information exists, gets that. Otherwise, tax_tab is just data frame without information
     if (!is.null(taxonomyTableFile)) {
-      taxa_tab <- .read_mothur_taxonomy(taxonomyTableFile, feature_tab, ...)
+        taxa_tab <- .read_mothur_taxonomy(taxonomyTableFile, feature_tab, ...)
     } else {
-      taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+        taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
     }
     
     # If colData information exists, gets that. Otherwise, sample_tab is just data frame without information
     if (!is.null(sampleMetaFile)) {
-      sample_meta <- .read_mothur_sample_meta(sampleMetaFile, feature_tab)
+        sample_meta <- .read_mothur_sample_meta(sampleMetaFile, feature_tab)
     } else {
-      sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+        sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
     }
     
     if (!is.null(phyTreeFile)) {
-      tree <- .read_qza(phyTreeFile, ...)
+        tree <- .read_qza(phyTreeFile, ...)
     } else {
-      tree <- NULL
+        tree <- NULL
     }
     
     # if row.names(feature_tab) is a DNA sequence,  set it as refseq
     if (!is.null(refSeqFile)){
-      refseq <- .read_qza(refSeqFile, ...)
+        refseq <- .read_qza(refSeqFile, ...)
     } else if (featureNamesAsRefSeq) {
-      refseq <- .rownames_as_dna_seq(rownames(feature_tab))
+        refseq <- .rownames_as_dna_seq(rownames(feature_tab))
     } else {
-      refseq <- NULL
+        refseq <- NULL
     }
     
     return(TreeSummarizedExperiment(
-      assays = S4Vectors::SimpleList(counts = feature_tab),
-      rowData = taxa_tab,
-      colData = sample_meta,
-      rowTree = tree,
-      referenceSeq = refseq
+        assays = S4Vectors::SimpleList(counts = feature_tab),
+        rowData = taxa_tab,
+        colData = sample_meta,
+        rowTree = tree,
+        referenceSeq = refseq
     ))
     
 }
@@ -141,7 +142,7 @@ loadFromMothur <- function(featureTableFile,
 
     # Reads the file
     assay <- read.table(featureTableFile, check.names=FALSE, header=TRUE,
-                      sep="\t", stringsAsFactors=FALSE)
+                        sep="\t", stringsAsFactors=FALSE)
   
     # File contains additional columns "label", "numOtus", and "Group". They are removed
     assay$label <- NULL
@@ -171,9 +172,12 @@ loadFromMothur <- function(featureTableFile,
     rowData$Taxonomy <- gsub("[\"]", "", rowData$Taxonomy)
     rowData$Taxonomy <- gsub("[(1-100)]", "", rowData$Taxonomy)
     # Separate taxa to own columns
-    rowData <- tidyr::separate(rowData, "Taxonomy", into=c("Kingdom",
-                                                           "Phylum", "Order", "Class", "Family", "Genus"), sep=";",
+    rowData <- tidyr::separate(rowData, 
+                               "Taxonomy", 
+                               into=c("Kingdom", "Phylum", "Order", "Class", 
+                                      "Family", "Genus"), sep=";", 
                                extra="merge")
+    
     # Deletes ";" from the end of Genus names
     rowData$Genus <- gsub(";", "", rowData$Genus)
     # Deletes addition "Size" column
