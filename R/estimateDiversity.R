@@ -9,6 +9,10 @@
 #' See details for more information and references.
 #'
 #' @param x a \code{\link{SummarizedExperiment}} object
+#' 
+#' @param tree A phylogenetic tree that is used to calculate 'faith' index.
+#'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
+#'   used by default.
 #'
 #' @param abund_values the name of the assay used for calculation of the
 #'   sample-wise estimates
@@ -204,7 +208,6 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         
         # Gets the tree 
         tree <- rowTree(x)
-        
         # input check
         # If object does not have a tree
         if( ("faith" %in% index) && (is.null(tree) || is.null(tree$edge.length)) ){
@@ -212,7 +215,6 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
              'faith' is not possible to calculate.",
                  call. = FALSE)
         }
-        
         index<- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
@@ -236,29 +238,22 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             # Faith will not be calculated
             calc_faith <- FALSE
         }
-
+        
         # If index list contained other than 'faith' index, the length of the list is over 0
         if( length(index)>0){
             # Calculates all indices but not 'faith'
             x <- callNextMethod()
         }
-
         # If 'faith' was one of the indices, 'calc_faith' is TRUE
         if( calc_faith ){
             # Calculates faith
             x <- estimateFaith(x, tree = tree, name = faith_name, ...)
         }
-
         return(x)
-
     }
 )
 
 #' @rdname estimateDiversity
-#' 
-#' @param tree A phylogenetic tree that is used to calculate 'faith' index.
-#' By default, it is \code{rowTree(x)}.
-#' 
 #' @export
 setGeneric("estimateFaith",signature = c("x", "tree"),
            function(x, tree = "missing", abund_values = "counts",
@@ -270,32 +265,26 @@ setGeneric("estimateFaith",signature = c("x", "tree"),
 setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
     function(x, tree, abund_values = "counts",
             name = "faith", ...){
-        
         # Input check
         # Check 'tree'
         # IF there is no rowTree gives an error
         if( is.null(tree) || is.null(tree$edge.length) ){
-            stop("'tree' is NULL or it does not have any branches.
-             'faith' is not possible to calculate.",
+            stop("'tree' is NULL or it does not have any branches.",
+                 "'faith' is not possible to calculate.",
                  call. = FALSE)
         }
-        
         # Check 'abund_values'
         .check_assay_present(abund_values, x)
-        
         # Check 'name'
         if(!.is_non_empty_character(name)){
             stop("'name' must be a non-empty character value.",
                  call. = FALSE)
         }
-        
         # Calculates Faith index
         faith <- list(.calc_faith(assay(x, abund_values), tree))
-
         # Adds calculated Faith index to colData
         .add_values_to_colData(x, faith, name)
-
-          }
+    }
 )
 
 #' @rdname estimateDiversity
@@ -303,14 +292,15 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
 setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
     function(x, abund_values = "counts",
              name = "faith", ...){
-        
         # Gets the tree
         tree <- rowTree(x)
-
+        if(is.null(tree)){
+            stop("rowTree(x) is NULL. Faith's diversity cannot be calculated.",
+                 call. = FALSE)
+        }
         # Calculates the Faith index
         estimateFaith(x, tree, name = name, ...)
-
-          }
+    }
 )
 
 
@@ -420,12 +410,10 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     faiths[lengths(present) == 0] <- 0
 
     return(faiths)
-
 }
 
 #' @importFrom SummarizedExperiment assay assays
 .get_diversity_values <- function(index, x, mat, tree, ...){
-
     FUN <- switch(index,
                         shannon = .calc_shannon,
                         gini_simpson = .calc_gini_simpson,
@@ -436,5 +424,4 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                         )
 
     FUN(x = x, mat = mat, tree = tree, ...)
-
 }
