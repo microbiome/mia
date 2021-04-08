@@ -246,7 +246,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         # If 'faith' was one of the indices, 'calc_faith' is TRUE
         if( calc_faith ){
             # Calculates faith
-            x <- estimateFaith(x, name = faith_name, ...)
+            x <- estimateFaith(x, tree = tree, name = faith_name, ...)
         }
 
         return(x)
