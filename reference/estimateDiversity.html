@@ -73,7 +73,7 @@ wrapper functions. Some of them are implemented via the vegan package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.10</span>
       </span>
     </div>
 
@@ -138,6 +138,43 @@ wrapper functions. Some of them are implemented via the <code>vegan</code> packa
   name <span class='op'>=</span> <span class='va'>index</span>,
   <span class='va'>...</span>,
   BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span>
+
+<span class='co'># S4 method for TreeSummarizedExperiment</span>
+<span class='fu'>estimateDiversity</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>,
+    <span class='st'>"faith"</span><span class='op'>)</span>,
+  name <span class='op'>=</span> <span class='va'>index</span>,
+  <span class='va'>...</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span>
+
+<span class='fu'>estimateFaith</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  tree <span class='op'>=</span> <span class='st'>"missing"</span>,
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  name <span class='op'>=</span> <span class='st'>"faith"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment,phylo</span>
+<span class='fu'>estimateFaith</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  tree <span class='op'>=</span> <span class='st'>"missing"</span>,
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  name <span class='op'>=</span> <span class='st'>"faith"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
+
+<span class='co'># S4 method for TreeSummarizedExperiment,missing</span>
+<span class='fu'>estimateFaith</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  tree <span class='op'>=</span> <span class='st'>"missing"</span>,
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  name <span class='op'>=</span> <span class='st'>"faith"</span>,
+  <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -175,6 +212,11 @@ determining the threshold for coverage index. By default, the threshold is 0.9.<
 <code><a href='https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html'>BiocParallelParam</a></code>
 object specifying whether calculation of estimates should be parallelized.</p></td>
     </tr>
+    <tr>
+      <th>tree</th>
+      <td><p>A phylogenetic tree that is used to calculate 'faith' index.
+By default, it is <code>rowTree(x)</code>.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -183,8 +225,9 @@ object specifying whether calculation of estimates should be parallelized.</p></
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The available indices include the &#8216;Shannon&#8217;, &#8216;Gini-Simpson&#8217;,
-&#8216;Inverse Simpson&#8217;, &#8216;Coverage&#8217;, and &#8216;Fisher alpha&#8217;
-diversity indices. See details for more information and references.</p>
+&#8216;Inverse Simpson&#8217;, &#8216;Coverage&#8217;, &#8216;Fisher alpha&#8217;, and
+&#8216;Faith's phylogenetic diversity&#8217; diversity indices.
+See details for more information and references.</p>
 <p>Diversity is a joint quantity that combines elements or community richness and evenness.
 Diversity increases, in general, when species richness or evenness increase.</p>
 <p>By default, this function returns all indices.</p>
@@ -203,9 +246,12 @@ psychology and management studies. The Gini-Simpson index (1-lambda) should not 
 confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).</p></li>
 <li><p>'shannon' Shannon diversity (entropy).</p></li>
 <li><p>'fisher' Fisher's alpha; as implemented in
-<code><a href='https://rdrr.io/pkg/vegan/man/diversity.html'>vegan::fisher.alpha</a></code>. (Fisher et al. (1943)).</p></li>
+<code><a href='https://rdrr.io/pkg/vegan/man/diversity.html'>vegan::fisher.alpha</a></code>. (Fisher et al. 1943)</p></li>
 <li><p>'coverage' Number of species needed to cover a given fraction of the ecosystem (50\<!-- % by default). -->
 Tune this with the threshold argument.</p></li>
+<li><p>'faith' Faith's phylogenetic alpha diversity index measures how long the
+taxonomic distance is between taxa that are present in the sample. Larger value
+represent higher diversity. (Faith 1992)</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -217,14 +263,17 @@ A Comparative Analysis of Diversity Index Sensitivity.
 <p>Bulla L. (1994)
 An  index of diversity and its associated diversity measure.
 <em>Oikos</em> 70:167--171</p>
+<p>Faith, D.P. (1992)
+Conservation evaluation and phylogenetic diversity.
+<em>Biological Conservation</em> 61(1):1-10.</p>
 <p>Fisher, R.A., Corbet, A.S. &amp; Williams, C.B. (1943).
 The relation between the number of species and the number of individuals in a
 random sample of animal population.
 <em>Journal of Animal Ecology</em> <em>12</em>, 42-58.</p>
-<p>Magurran AE, McGill BJ, eds (2011)
-Biological Diversity: Frontiers in Measurement and Assessment
+<p>Magurran A.E., McGill BJ, eds (2011)
+Biological Diversity: Frontiers in Measurement and Assessment.
 (Oxford Univ Press, Oxford), Vol 12.</p>
-<p>Smith B and Wilson JB. (1996)
+<p>Smith B. &amp; Wilson JB. (1996)
 A Consumer's Guide to Diversity Indices.
 <em>Oikos</em> 76(1):70-82.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -243,54 +292,54 @@ A Consumer's Guide to Diversity Indices.
 <span class='va'>se</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
 
 <span class='co'># All index names as known by the function</span>
-<span class='va'>index</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>,<span class='st'>"gini_simpson"</span>,<span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span><span class='op'>)</span>
+<span class='va'>index</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>,<span class='st'>"gini_simpson"</span>,<span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>, <span class='st'>"faith"</span><span class='op'>)</span>
 
 <span class='co'># Corresponding polished names</span>
-<span class='va'>name</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Shannon"</span>,<span class='st'>"GiniSimpson"</span>,<span class='st'>"InverseSimpson"</span>, <span class='st'>"Coverage"</span>, <span class='st'>"Fisher"</span><span class='op'>)</span>
+<span class='va'>name</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Shannon"</span>,<span class='st'>"GiniSimpson"</span>,<span class='st'>"InverseSimpson"</span>, <span class='st'>"Coverage"</span>, <span class='st'>"Fisher"</span>, <span class='st'>"Faith"</span><span class='op'>)</span>
 
 <span class='co'># Calculate diversities</span>
 <span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDiversity</span><span class='op'>(</span><span class='va'>se</span>, index <span class='op'>=</span> <span class='va'>index</span><span class='op'>)</span>
 
 <span class='co'># The colData contains the indices with their code names by default</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>index</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; DataFrame with 26 rows and 5 columns
-#&gt;           shannon gini_simpson inverse_simpson  coverage    fisher
-#&gt;         &lt;numeric&gt;    &lt;numeric&gt;       &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt;
-#&gt; CL3       6.57652     0.994656        187.1298      1113  1035.008
-#&gt; CC1       6.77660     0.995212        208.8436      1374  1107.495
-#&gt; SV1       6.49849     0.996290        269.5441       829   854.279
-#&gt; M31Fcsw   3.82837     0.927599         13.8119        71   313.719
-#&gt; M11Fcsw   3.28767     0.909738         11.0789        37   289.979
-#&gt; ...           ...          ...             ...       ...       ...
-#&gt; TS28      4.12654     0.965175         28.7152        62   337.892
-#&gt; TS29      3.45277     0.918098         12.2097        46   318.969
-#&gt; Even1     4.08366     0.968198         31.4447        51   546.578
-#&gt; Even2     3.95691     0.963916         27.7129        47   401.760
-#&gt; Even3     4.00637     0.967340         30.6189        49   344.939</div><div class='input'>
+</div><div class='output co'>#&gt; DataFrame with 26 rows and 6 columns
+#&gt;           shannon gini_simpson inverse_simpson  coverage    fisher     faith
+#&gt;         &lt;numeric&gt;    &lt;numeric&gt;       &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt; &lt;numeric&gt;
+#&gt; CL3       6.57652     0.994656        187.1298      1113  1035.008   250.535
+#&gt; CC1       6.77660     0.995212        208.8436      1374  1107.495   262.263
+#&gt; SV1       6.49849     0.996290        269.5441       829   854.279   208.458
+#&gt; M31Fcsw   3.82837     0.927599         13.8119        71   313.719   117.876
+#&gt; M11Fcsw   3.28767     0.909738         11.0789        37   289.979   119.825
+#&gt; ...           ...          ...             ...       ...       ...       ...
+#&gt; TS28      4.12654     0.965175         28.7152        62   337.892   124.651
+#&gt; TS29      3.45277     0.918098         12.2097        46   318.969   121.206
+#&gt; Even1     4.08366     0.968198         31.4447        51   546.578   179.938
+#&gt; Even2     3.95691     0.963916         27.7129        47   401.760   140.810
+#&gt; Even3     4.00637     0.967340         30.6189        49   344.939   126.569</div><div class='input'>
 <span class='co'># Removing indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>index</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
 
 <span class='co'># It is recommended to specify also the final names used in the output.</span>
 <span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDiversity</span><span class='op'>(</span><span class='va'>se</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span><span class='op'>)</span>,
-   name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Shannon"</span>, <span class='st'>"GiniSimpson"</span>,  <span class='st'>"InverseSimpson"</span>,  <span class='st'>"Coverage"</span>, <span class='st'>"Fisher"</span><span class='op'>)</span><span class='op'>)</span>
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>, <span class='st'>"faith"</span><span class='op'>)</span>,
+   name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Shannon"</span>, <span class='st'>"GiniSimpson"</span>,  <span class='st'>"InverseSimpson"</span>,  <span class='st'>"Coverage"</span>, <span class='st'>"Fisher"</span>, <span class='st'>"Faith"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># The colData contains the indices by their new names provided by the user</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>name</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; DataFrame with 26 rows and 5 columns
-#&gt;           Shannon GiniSimpson InverseSimpson  Coverage    Fisher
-#&gt;         &lt;numeric&gt;   &lt;numeric&gt;      &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt;
-#&gt; CL3       6.57652    0.994656       187.1298      1113  1035.008
-#&gt; CC1       6.77660    0.995212       208.8436      1374  1107.495
-#&gt; SV1       6.49849    0.996290       269.5441       829   854.279
-#&gt; M31Fcsw   3.82837    0.927599        13.8119        71   313.719
-#&gt; M11Fcsw   3.28767    0.909738        11.0789        37   289.979
-#&gt; ...           ...         ...            ...       ...       ...
-#&gt; TS28      4.12654    0.965175        28.7152        62   337.892
-#&gt; TS29      3.45277    0.918098        12.2097        46   318.969
-#&gt; Even1     4.08366    0.968198        31.4447        51   546.578
-#&gt; Even2     3.95691    0.963916        27.7129        47   401.760
-#&gt; Even3     4.00637    0.967340        30.6189        49   344.939</div><div class='input'>
+</div><div class='output co'>#&gt; DataFrame with 26 rows and 6 columns
+#&gt;           Shannon GiniSimpson InverseSimpson  Coverage    Fisher     Faith
+#&gt;         &lt;numeric&gt;   &lt;numeric&gt;      &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt; &lt;numeric&gt;
+#&gt; CL3       6.57652    0.994656       187.1298      1113  1035.008   250.535
+#&gt; CC1       6.77660    0.995212       208.8436      1374  1107.495   262.263
+#&gt; SV1       6.49849    0.996290       269.5441       829   854.279   208.458
+#&gt; M31Fcsw   3.82837    0.927599        13.8119        71   313.719   117.876
+#&gt; M11Fcsw   3.28767    0.909738        11.0789        37   289.979   119.825
+#&gt; ...           ...         ...            ...       ...       ...       ...
+#&gt; TS28      4.12654    0.965175        28.7152        62   337.892   124.651
+#&gt; TS29      3.45277    0.918098        12.2097        46   318.969   121.206
+#&gt; Even1     4.08366    0.968198        31.4447        51   546.578   179.938
+#&gt; Even2     3.95691    0.963916        27.7129        47   401.760   140.810
+#&gt; Even3     4.00637    0.967340        30.6189        49   344.939   126.569</div><div class='input'>
 <span class='co'># Compare the indices visually</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/pairs.html'>pairs</a></span><span class='op'>(</span><span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>name</span><span class='op'>]</span><span class='op'>)</span>
 </div><div class='img'><img src='estimateDiversity-1.png' alt='' width='700' height='433' /></div><div class='input'>
