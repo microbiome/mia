@@ -4,6 +4,10 @@
 \alias{isContaminant}
 \alias{isContaminant,SummarizedExperiment-method}
 \alias{isNotContaminant,SummarizedExperiment-method}
+\alias{addContaminantQC}
+\alias{addContaminantQC,SummarizedExperiment-method}
+\alias{addNotContaminantQC}
+\alias{addNotContaminantQC,SummarizedExperiment-method}
 \title{decontam functions}
 \usage{
 \S4method{isContaminant}{SummarizedExperiment}(
@@ -29,9 +33,17 @@
   detailed = FALSE,
   ...
 )
+
+addContaminantQC(x, name = "isContaminant", ...)
+
+\S4method{addContaminantQC}{SummarizedExperiment}(x, name = "isContaminant", ...)
+
+addNotContaminantQC(x, name = "isNotContaminant", ...)
+
+\S4method{addNotContaminantQC}{SummarizedExperiment}(x, name = "isNotContaminant", ...)
 }
 \arguments{
-\item{seqtab}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
+\item{seqtab, x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
 
 \item{abund_values}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -60,10 +72,13 @@ as batch information. (default: \code{batch = NULL})}
 \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
 
-\item{...}{arguments passed onto
-\code{\link[decontam:isContaminant]{decontam:isContaminant}} or
-\code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}.
-Currently these are \code{method} and \code{batch.combine}.}
+\item{...}{for \code{addContaminantQC}/\code{addNotContaminantQC}: arguments
+passed on to \code{isContaminant}/ \code{isNotContaminant}}
+}
+\value{
+for \code{isContaminant}/ \code{isNotContaminant} a \code{DataFrame}
+or for \code{addContaminantQC}/\code{addNotContaminantQC} a modified object
+of \code{class(x)}
 }
 \description{
 The \code{decontam} functions \code{isContaminant} and

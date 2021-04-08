@@ -5,7 +5,7 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' objects.
 #'
-#' @param seqtab
+#' @param seqtab,x
 #'   a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'
 #' @param abund_values A single character value for selecting the
@@ -39,6 +39,19 @@
 #' @param normalize,detailed logical scalar. See
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 #'   \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}
+#'
+#' @param ...
+#' \itemize{
+#'   \item{for \code{isContaminant}/ \code{isNotContaminant}}: }{arguments
+#'     passed on to \code{\link[decontam:isContaminant]{decontam:isContaminant}}
+#'     or \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
+#'   \item{for \code{addContaminantQC}/\code{addNotContaminantQC}: }{arguments
+#'     passed on to \code{isContaminant}/ \code{isNotContaminant}}
+#' }
+#'
+#' @return for \code{isContaminant}/ \code{isNotContaminant} a \code{DataFrame}
+#'   or for \code{addContaminantQC}/\code{addNotContaminantQC} a modified object
+#'   of \code{class(x)}
 #'
 #' @name isContaminant
 #'
@@ -126,8 +139,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
         if(is.data.frame(contaminant)){
             contaminant <- DataFrame(contaminant)
         }
-        rowData(seqtab)[,name] <- I(contaminant)
-        seqtab
+        contaminant
     }
 )
 
@@ -176,7 +188,38 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
         if(is.data.frame(not_contaminant)){
             not_contaminant <- DataFrame(not_contaminant)
         }
-        rowData(seqtab)[,name] <- I(not_contaminant)
-        seqtab
+        not_contaminant
+    }
+)
+
+#' @rdname isContaminant
+#' @export
+setGeneric("addContaminantQC", signature = c("x"),
+           function(x, name = "isContaminant", ...)
+               standardGeneric("addContaminantQC"))
+
+#' @rdname isContaminant
+#' @export
+setMethod("addContaminantQC", signature = c("SummarizedExperiment"),
+    function(x, name = "isContaminant", ...){
+        contaminant <- isContaminant(x, ...)
+        rowData(x)[,name] <- I(contaminant)
+        x
+    }
+)
+
+#' @rdname isContaminant
+#' @export
+setGeneric("addNotContaminantQC", signature = c("x"),
+           function(x, name = "isNotContaminant", ...)
+               standardGeneric("addNotContaminantQC"))
+
+#' @rdname isContaminant
+#' @export
+setMethod("addNotContaminantQC", signature = c("SummarizedExperiment"),
+    function(x, name = "isNotContaminant", ...){
+        not_contaminant <- isNotContaminant(x, ...)
+        rowData(x)[,name] <- I(not_contaminant)
+        x
     }
 )
