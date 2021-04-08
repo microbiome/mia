@@ -196,17 +196,16 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
 )
 
 #' @rdname estimateDiversity
-#' 
-#' @param tree A phylogenetic tree that is used to calculate 'faith' index.
-#' By default, it is \code{rowTree(x)}.
-#' 
 #' @export
 setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","gini_simpson","inverse_simpson",
                        "coverage", "fisher", "faith"),
-             name = index, tree = rowTree(x), ..., BPPARAM = SerialParam()){
-
+             name = index, ..., BPPARAM = SerialParam()){
+        
+        # Gets the tree 
+        tree <- rowTree(x)
+        
         # input check
         # If object does not have a tree
         if( ("faith" %in% index) && (is.null(tree) || is.null(tree$edge.length)) ){
@@ -237,7 +236,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         } else{
             # Faith will not be calculated
             calc_faith <- FALSE
-            }
+        }
 
         # If index list contained other than 'faith' index, the length of the list is over 0
         if( length(index)>0){

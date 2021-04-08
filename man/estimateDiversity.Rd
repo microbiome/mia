@@ -32,7 +32,6 @@ estimateDiversity(
   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher",
     "faith"),
   name = index,
-  tree = rowTree(x),
   ...,
   BPPARAM = SerialParam()
 )
@@ -82,9 +81,6 @@ determining the threshold for coverage index. By default, the threshold is 0.9.}
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether calculation of estimates should be parallelized.}
-
-\item{tree}{A phylogenetic tree that is used to calculate 'faith' index.
-By default, it is \code{rowTree(x)}.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}
