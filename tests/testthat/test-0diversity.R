@@ -52,5 +52,38 @@ test_that("diversity estimates", {
         expect_equal(cd$faith[i], faith)
     }
 
-
+    ########## Check that estimateFaith works correctly ##########
+    ########## with different SE object types ##########
+    
+    # Creates SE from TSE by dropping, e.g., rowTree
+    se <- as(tse, "SummarizedExperiment")
+    
+    # Add rownames because they are not included when SE is created from TSE
+    rownames(se) <- rownames(tse)
+    
+    # Calculates "faith" TSE
+    tse_only <- estimateFaith(tse)
+    
+    # tse_only should be TSE object
+    expect_true(class(tse_only)== "TreeSummarizedExperiment")
+    # tse_only should include "faith"
+    expect_equal(colnames(colData(tse_only)), c(colnames(colData(tse)), "faith"))
+    
+    # Calculates "faith" TSE + TREE
+    tse_tree <- estimateFaith(tse, tree = rowTree(tse))
+    
+    # tse_tree should be TSE object
+    expect_true(class(tse_tree)== "TreeSummarizedExperiment")
+    # tse_tree should include "faith"
+    expect_equal(colnames(colData(tse_tree)), c(colnames(colData(tse)), "faith"))
+    
+    
+    # Calculates "faith" SE + TREE
+    se_tree <- estimateFaith(se, tree = rowTree(tse))
+    
+    # se_tree should be SE object
+    expect_true(class(se_tree)== "SummarizedExperiment")
+    # se_tree should include "faith"
+    expect_equal(colnames(colData(se_tree)), c(colnames(colData(se)), "faith"))
+    
 })

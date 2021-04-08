@@ -54,7 +54,7 @@ estimateFaith(
 
 \S4method{estimateFaith}{TreeSummarizedExperiment,missing}(
   x,
-  tree = rowTree(x),
+  tree = "missing",
   abund_values = "counts",
   name = "faith",
   ...

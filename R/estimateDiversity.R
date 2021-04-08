@@ -266,11 +266,25 @@ setGeneric("estimateFaith",signature = c("x", "tree"),
 setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
     function(x, tree, abund_values = "counts",
             name = "faith", ...){
-
+        
         # Input check
+        # Check 'tree'
+        # IF there is no rowTree gives an error
+        if( is.null(tree) || is.null(tree$edge.length) ){
+            stop("'tree' is NULL or it does not have any branches.
+             'faith' is not possible to calculate.",
+                 call. = FALSE)
+        }
+        
         # Check 'abund_values'
         .check_assay_present(abund_values, x)
-
+        
+        # Check 'name'
+        if(!.is_non_empty_character(name)){
+            stop("'name' must be a non-empty character value.",
+                 call. = FALSE)
+        }
+        
         # Calculates Faith index
         faith <- list(.calc_faith(assay(x, abund_values), tree))
 
@@ -283,14 +297,11 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
-    function(x, tree = rowTree(x), abund_values = "counts",
+    function(x, abund_values = "counts",
              name = "faith", ...){
-
-        # IF there is no rowTree gives an error
-        if( is.null(tree) ){
-            stop("Object does not contain a tree. 'faith' is not possible to calculate.",
-                 call. = FALSE)
-        }
+        
+        # Gets the tree
+        tree <- rowTree(x)
 
         # Calculates the Faith index
         estimateFaith(x, tree, name = name, ...)
