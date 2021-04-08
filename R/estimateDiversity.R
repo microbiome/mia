@@ -188,7 +188,6 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
                                          .get_diversity_values,
                                          x = x,
                                          mat = assay(x, abund_values),
-                                         tree = tree,
                                          BPPARAM = BPPARAM,
                                          ...)
         .add_values_to_colData(x, dvrsts, name)
@@ -256,10 +255,6 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
 )
 
 #' @rdname estimateDiversity
-#' 
-#' @param tree A phylogenetic tree that is used to calculate 'faith' index.
-#' By default, it is \code{rowTree(x)}.
-#' 
 #' @export
 setGeneric("estimateFaith",signature = c("x", "tree"),
            function(x, tree = "missing", abund_values = "counts",
