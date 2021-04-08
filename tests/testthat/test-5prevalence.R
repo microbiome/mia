@@ -75,6 +75,92 @@ test_that("getPrevalentTaxa", {
 
 })
 
+test_that("getRareTaxa", {
+
+    data(GlobalPatterns)
+    expect_error(getRareTaxa(GlobalPatterns, prevalence="test"),
+                 "'prevalence' must be a single numeric value or coercible to one")
+
+    ############# Test that output type is correct #############
+    expect_type(taxa <- getRareTaxa(GlobalPatterns,
+                                    detection = 130,
+                                    prevalence = 90/100), "character")
+
+    ##### Test that getPrevalentTaxa and getRareTaxa has all the taxa ####
+
+    # Gets rownames for all the taxa
+    all_taxa <- rownames(GlobalPatterns)
+
+    # Gets prevalent taxa
+    prevalent_taxa <- getPrevalentTaxa(GlobalPatterns,
+                                       detection = 0,
+                                       prevalence = 90/100,
+                                       include_lowest = FALSE)
+    # Gets rare taxa
+    rare_taxa <- getRareTaxa(GlobalPatterns,
+                             detection = 0,
+                             prevalence = 90/100,
+                             include_lowest = FALSE)
+
+    # Concatenates prevalent and rare taxa
+    prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
+
+    # If all the elements are in another vector, vector of TRUEs
+    # Opposite --> negative of FALSEs
+    # If every element is FALSE, any is FALSE --> opposite --> TRUE
+    expect_true( !any( !(all_taxa %in% prevalent_and_rare_taxa) ) &&
+                     !any( !( prevalent_and_rare_taxa %in% all_taxa) ) )
+
+    ##### Test that getPrevalentTaxa and getRareTaxa has all the taxa, ####
+    ##### but now with detection limit and with rank #####
+
+    # Check that it works with all the ranks
+    ranks <- taxonomyRanks(GlobalPatterns)
+
+    for( rank in ranks ){
+
+        # Agglomerates data by rank
+        se <- agglomerateByRank(GlobalPatterns, rank = rank)
+
+        # Gets rownames for all the taxa
+        all_taxa <- rownames(se)
+
+        # All but "Kingdom" can includes different taxa levels and e.g. "Species"
+        # before their name
+        if( rank != "Kingdom" ){
+            # Takes e.g. only species and removes e.g. "Species:" from the names
+            all_taxa <- stringr::str_remove(all_taxa[grepl(paste0(rank, ":"), all_taxa)], paste0(rank, ":"))
+        }
+
+        # Gets prevalent taxa
+        prevalent_taxa <- getPrevalentTaxa(GlobalPatterns,
+                                           prevalence = 0.05,
+                                           detection = 0.1,
+                                           rank = rank,
+                                           include_lowest = TRUE, as_relative = TRUE)
+        # Gets rare taxa
+        rare_taxa <- getRareTaxa(GlobalPatterns,
+                                 prevalence = 0.05,
+                                 detection = 0.1,
+                                 rank = rank,
+                                 include_lowest = TRUE, as_relative = TRUE)
+
+        # Concatenates prevalent and rare taxa
+        prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
+
+        # If all the elements are in another vector, vector of TRUEs
+        # Opposite --> negative of FALSEs
+        # If every element is FALSE, any is FALSE --> opposite --> TRUE
+        expect_true( !any( !(all_taxa %in% prevalent_and_rare_taxa) ) &&
+                         !any( !( prevalent_and_rare_taxa %in% all_taxa) ) )
+
+        # Expect that there are no duplicates
+        expect_true(!anyDuplicated(rare_taxa))
+
+    }
+
+})
+
 test_that("agglomerateByPrevalence", {
 
     data(GlobalPatterns)

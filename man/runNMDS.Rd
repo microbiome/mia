@@ -40,8 +40,11 @@ runNMDS(x, ..., altexp = NULL, name = "NMDS")
 plotNMDS(x, ..., ncomponents = 2)
 }
 \arguments{
-\item{x}{a \linkS4class{SingleCellExperiment} containing a numeric matrix of
-log-expression values where rows are features and columns are cells.}
+\item{x}{For \code{calculateNMDS}, a numeric matrix of expression values
+where rows are features and columns are cells.
+Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
+
+For \code{runNMDS} a \linkS4class{SingleCellExperiment}}
 
 \item{...}{additional arguments to pass to \code{FUN} and
 \code{nmdsFUN}.}
@@ -54,7 +57,7 @@ implementation, either \dQuote{isoMDS} for
 \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 \code{\link[vegan:monoMDS]{vegan::monoMDS}}}
 
-\item{ncomponents}{Numeric scalar indicating the number of MDS?g dimensions
+\item{ncomponents}{Numeric scalar indicating the number of NMDS dimensions
 to obtain.}
 
 \item{ntop}{Numeric scalar specifying the number of features with the highest

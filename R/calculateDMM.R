@@ -1,7 +1,8 @@
-#' Dirichlet-Multinomial Mixture Model Machine Learning for Microbiome Data
+#' Dirichlet-Multinomial Mixture Model: Machine Learning for Microbiome Data
 #'
 #' These function are accessors for functions implemented in the
-#' \code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}} package
+#' \code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}}
+#' package
 #'
 #' @param x a numeric matrix with samples as rows or a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -39,8 +40,6 @@
 #'
 #' \code{bestDMNFit} returns the index for the best fit and \code{getBestDMNFit}
 #' returns a single \code{DMN} object.
-#'
-#' \code{plotDMNFit} returns a \code{ggplot2} plot.
 #'
 #' \code{calculateDMNgroup} returns a
 #'   \code{\link[DirichletMultinomial:DMNGroup-class]{DMNGroup}} object
@@ -88,9 +87,6 @@
 #' bestDMNFit(dmn_se, type = "laplace")
 #' # return the model, which fits best
 #' getBestDMNFit(dmn_se, type = "laplace")
-#'
-#' # plot the fit
-#' plotDMNFit(dmn_se, type = "laplace")
 NULL
 
 #' @rdname calculateDMN
@@ -218,7 +214,6 @@ setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-
 #' @rdname calculateDMN
 #' @export
 setGeneric("getBestDMNFit", signature = "x",
@@ -233,36 +228,6 @@ setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
         dmn <- getDMN(x, name)
         fit_FUN <- .get_dmn_fit_FUN(type)
         dmn[[.get_best_dmn_fit(dmn, fit_FUN)]]
-    }
-)
-
-################################################################################
-# plot functions
-
-#' @rdname calculateDMN
-#' @export
-setGeneric("plotDMNFit", signature = "x",
-           function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
-               standardGeneric("plotDMNFit"))
-
-#' @rdname calculateDMN
-#' @importFrom DirichletMultinomial laplace AIC BIC mixture
-#' @importFrom ggplot2 ggplot aes_string geom_point geom_line theme_bw labs
-#' @export
-setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
-    function(x, name = "DMN", type = c("laplace","AIC","BIC")){
-        #
-        dmn <- getDMN(x, name)
-        fit_FUN <- .get_dmn_fit_FUN(type)
-        #
-        k <- vapply(dmn, function(d){ncol(mixture(d))}, numeric(1))
-        fit <- vapply(dmn, fit_FUN, numeric(1))
-        ggplot(data.frame(k = k, fit = fit), aes_string(x = k, y = fit)) +
-            geom_point() +
-            geom_line() +
-            theme_bw() +
-            labs(x = "Number of Dirichlet Components",
-                 y = paste0("Model Fit (",type,")"))
     }
 )
 

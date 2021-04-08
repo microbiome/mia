@@ -108,28 +108,29 @@
 #' # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 #' # Pseudocount can be added by specifying 'pseudocount'.
 #' x <- transformCounts(x, method="clr", pseudocount=1)
-#' # assays(x)$clr
+#' head(assay(x, "clr"))
 #'
 #' # Name of the stored table can be specified. Also, the target of transformation
 #' # can be specified with "abund_values".
 #' x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
-#' # assays(x)$test
+#' head(assay(x, "test"))
+#'
 #' x <- transformCounts(x, method="relabundance", abund_values="test")
-#' # assays(x)$relabundance
+#' head(assay(x, "relabundance"))
 #'
 #' # pa returns presence absence table. With 'threshold', it is possible to set the
 #' # threshold to desired level. By default, it is 0.
 #' x <- transformCounts(x, method="pa", threshold=35)
-#' # assays(x)$pa
+#' head(assay(x, "pa"))
 #'
 #' # Z-transform can be done for features
 #' x <- ZTransform(x, pseudocount=1)
-#' # assays(x)$ZTransform
+#' head(assay(x, "ZTransform"))
 #'
-#' # Relative abundances can be also fetched with function relAbundanceCounts.
+#' # Relative abundances can be also calculate with the dedicated
+#' # relAbundanceCounts function.
 #' x <- relAbundanceCounts(x)
-#' #assays(x)$relabundance
-#'
+#' head(assay(x, "relabundance"))
 NULL
 
 #' @rdname transformCounts
@@ -147,59 +148,60 @@ setGeneric("transformCounts", signature = c("x"),
 #' @rdname transformCounts
 #' @export
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   abund_values = "counts",
-                   method = c("relabundance", "log10", "pa", "hellinger", "clr"),
-                   name = method,
-                   pseudocount = FALSE,
-                   threshold = 0){
+    function(x,
+             abund_values = "counts",
+             method = c("relabundance", "log10", "pa", "hellinger", "clr"),
+             name = method,
+             pseudocount = FALSE,
+             threshold = 0){
 
-              # Input check
-              # Check abund_values
-              .check_abund_values(abund_values, x)
+        # Input check
+        # Check abund_values
+        .check_assay_present(abund_values, x)
 
-              # Check method
-              # If method is not single string, user has not specified transform method,
-              # or has given e.g. a vector
-              if(!.is_non_empty_string(method)){
-                  stop("'method' must be a non-empty single character value.
-                       Give one method from the following list:
-                       'relabundance', 'log10', 'pa', 'hellinger', 'clr'",
-                       call. = FALSE)
-              }
-              method <- match.arg(method)
+        # Check method
+        # If method is not single string, user has not specified transform method,
+        # or has given e.g. a vector
+        if(!.is_non_empty_string(method)){
+            stop("'method' must be a non-empty single character value. \n",
+                 "Give one method from the following list: \n",
+                 "'relabundance', 'log10', 'pa', 'hellinger', 'clr'",
+                 call. = FALSE)
+        }
+        method <- match.arg(method)
 
-              # Check name
-              if(!.is_non_empty_string(name)){
-                  stop("'name' must be a non-empty single character value.",
-                       call. = FALSE)
-              }
+        # Check name
+        if(!.is_non_empty_string(name) ||
+           name == abund_values){
+            stop("'name' must be a non-empty single character value and be ",
+                 "different from `abund_values`.",
+                 call. = FALSE)
+        }
 
-              # Check pseudocount
-              if(!(pseudocount==FALSE || is.numeric(pseudocount))){
-                  stop("'pseudocount' must be FALSE or numeric value.",
-                       call. = FALSE)
-              }
+        # Check pseudocount
+        if(!(pseudocount==FALSE || is.numeric(pseudocount))){
+            stop("'pseudocount' must be FALSE or numeric value.",
+                 call. = FALSE)
+        }
 
-              # Check threshold
-              if(!is.numeric(threshold)){
-                  stop("'threshold' must be a numeric value, and it can be used
-                       only with transformation method 'pa'.",
-                       call. = FALSE)
-              }
+        # Check threshold
+        if(!is.numeric(threshold)){
+            stop("'threshold' must be a numeric value, and it can be used ",
+                 "only with transformation method 'pa'.",
+                 call. = FALSE)
+        }
 
-              # Get transformed table
-              transformed_table <- .get_transformed_table(assay = assay(x, abund_values),
-                                                          method = method,
-                                                          pseudocount = pseudocount,
-                                                          threshold = threshold)
+        # Get transformed table
+        transformed_table <-
+            .get_transformed_table(assay = assay(x, abund_values),
+                                   method = method,
+                                   pseudocount = pseudocount,
+                                   threshold = threshold)
 
-              # Assign transformed table to assays
-              assay(x, name, withDimnames=FALSE) <- transformed_table
-
-              return(x)
-
-          }
+        # Assign transformed table to assays
+        assay(x, name, withDimnames=FALSE) <- transformed_table
+        x
+    }
 )
 
 ##################################Z-TRANSFORM###################################
@@ -217,36 +219,37 @@ setGeneric("ZTransform", signature = c("x"),
 #' @rdname transformCounts
 #' @export
 setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   abund_values = "counts",
-                   name = "ZTransform",
-                   pseudocount = FALSE){
+    function(x,
+             abund_values = "counts",
+             name = "ZTransform",
+             pseudocount = FALSE){
 
-              # Input check
-              # Check abund_values
-              .check_abund_values(abund_values, x)
+        # Input check
+        # Check abund_values
+        .check_assay_present(abund_values, x)
 
-              # Check name
-              if(!.is_non_empty_string(name)){
-                  stop("'name' must be a non-empty single character value.",
-                       call. = FALSE)
-              }
+        # Check name
+        if(!.is_non_empty_string(name) ||
+           name == abund_values){
+            stop("'name' must be a non-empty single character value and be ",
+                 "different from `abund_values`.",
+                 call. = FALSE)
+        }
 
-              # Check pseudocount
-              if(!(pseudocount==FALSE || is.numeric(pseudocount))){
-                  stop("'pseudocount' must be FALSE or numeric value.",
-                       call. = FALSE)
-              }
+        # Check pseudocount
+        if(!(pseudocount==FALSE || is.numeric(pseudocount))){
+          stop("'pseudocount' must be FALSE or numeric value.",
+               call. = FALSE)
+        }
 
-              # Get transformed table
-              transformed_table <- .calc_ztransform(mat = assay(x, abund_values),
-                                                    pseudocount = pseudocount)
+        # Get transformed table
+        transformed_table <- .calc_ztransform(mat = assay(x, abund_values),
+                                            pseudocount = pseudocount)
 
-              # Assign transformed table to assays
-              assay(x, name) <- transformed_table
-
-              return(x)
-          }
+        # Assign transformed table to assays
+        assay(x, name) <- transformed_table
+        x
+    }
 )
 
 ###############################relAbundanceCounts###############################
@@ -260,9 +263,9 @@ setGeneric("relAbundanceCounts", signature = c("x"),
 #' @importFrom SummarizedExperiment assay assay<-
 #' @export
 setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
-          function(x, ...){
-              transformCounts(x, method = "relabundance", ...)
-          }
+    function(x, ...){
+        transformCounts(x, method = "relabundance", ...)
+    }
 )
 
 ###########################HELP FUNCTIONS####################################
@@ -392,6 +395,3 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     }
     mat
 }
-
-
-

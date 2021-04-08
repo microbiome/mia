@@ -1,9 +1,8 @@
-#' @name taxonomy-methods
+#' Functions for accessing taxonomic data stored in \code{rowData}.
 #'
-#' @title Taxonomy related functions
-#'
-#' @description
-#' These function work on optional data present in \code{rowData}.
+#' These function work on data present in \code{rowData} and define a way to
+#' represent taxonomic data alongside the features of a
+#' \code{SummarizedExperiment}.
 #'
 #' \code{taxonomyRanks} returns, which columns of \code{rowData(x)} are regarded
 #' as columns containing taxonomic information.
@@ -19,16 +18,21 @@
 #'   the lowest taxonomic information possible. If data from different levels,
 #'   is to be mixed, the taxonomic level is prepended by default.
 #'
-#'
 #' \code{taxonomyTree} generates a \code{phylo} tree object from the available
 #'   taxonomic information. Internally it uses
 #'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
 #'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
 #'   data if needed.
 #'
+#' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
+#'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
+#'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
+#'
+#' @param from a \code{Taxa} object as returned by
+#'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}
 #'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomicRanks()} function.
@@ -50,12 +54,22 @@
 #'
 #' @param ... optional arguments not used currently.
 #'
+#' @details
+#' Taxonomic information from the \code{IdTaxa} function of \code{DECIPHER}
+#' package are returned as a special class. With \code{as(taxa,"DataFrame")}
+#' the information can be easily converted to a \code{DataFrame} compatible
+#' with storing the taxonomic information a \code{rowData}. Please note that the
+#' assigned confidence information are returned as \code{metatdata} and can
+#' be accessed using \code{metadata(df)$confidence}.
+#'
 #' @return
 #' \itemize{
 #'   \item{\code{taxonomyRanks}:} {a \code{character} vector with all the
 #'     taxonomic ranks found in \code{colnames(rowData(x))}}
 #'   \item{\code{taxonomyRankEmpty}:} {a \code{logical} value}
 #' }
+#'
+#' @name taxonomy-methods
 #'
 #' @seealso \code{\link[=agglomerate-methods]{agglomerateByRank}},
 #' \code{\link[TreeSummarizedExperiment:toTree]{toTree}},
@@ -160,11 +174,17 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
 )
 
 .check_taxonomic_rank <- function(rank, x){
+    if(length(rank) != 1L){
+        stop("'rank' must be a single character value.",call. = FALSE)
+    }
     if( !(rank %in% taxonomyRanks(x) ) ){
-        stop("'rank' must be a value from 'taxonomyRanks()'")
+        stop("'rank' must be a value from 'taxonomyRanks()'",call. = FALSE)
     }
 }
 .check_taxonomic_ranks <- function(ranks, x){
+    if(length(ranks) == 0L){
+        stop("'ranks' must contain at least one value.",call. = FALSE)
+    }
     if( !all(ranks %in% taxonomyRanks(x) ) ){
         stop("'ranks' must contain values from 'taxonomyRanks()'")
     }
@@ -407,3 +427,41 @@ setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
     }
     factor(groups, unique(groups))
 }
+
+################################################################################
+# IDTAXA to DataFrame conversion
+
+#' @importFrom IRanges CharacterList NumericList
+#' @importFrom S4Vectors pc DataFrame
+.idtaxa_to_DataFrame <- function(from){
+    ranks <- CharacterList(lapply(from,"[[","rank"))
+    conf <- NumericList(lapply(from,"[[","confidence"))
+    taxa <- CharacterList(lapply(from,"[[","taxon"))
+    # even out the lengths
+    l <- lengths(ranks)
+    ml <- max(l)
+    diff <- ml - l
+    add <- CharacterList(lapply(diff,rep,x=NA))
+    ranks <- pc(ranks,add)
+    conf <- pc(conf,as(add,"NumericList"))
+    taxa <- pc(taxa,add)
+    # convert to DataFrame
+    names <- unique(unlist(ranks))
+    names <- names[!is.na(names)]
+    taxa <- DataFrame(as.matrix(taxa))
+    colnames(taxa) <- names
+    conf <- DataFrame(as.matrix(conf))
+    colnames(conf) <- names
+    # subset to valid taxonomic information
+    f <- tolower(names) %in% TAXONOMY_RANKS
+    taxa <- taxa[,f]
+    conf <- conf[,f]
+    # combine with confidence data
+    metadata(taxa)$confidence <- conf
+    #
+    taxa
+}
+
+#' @rdname taxonomy-methods
+#' @export
+IdTaxaToDataFrame <- .idtaxa_to_DataFrame

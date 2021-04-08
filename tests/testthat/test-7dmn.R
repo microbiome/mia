@@ -13,7 +13,4 @@ test_that("DMN", {
     # return the model, which fits best
     actual <- getBestDMNFit(dmn_se, type = "laplace")
     expect_s4_class(actual,"DMN")
-    # plot the fit
-    actual <- plotDMNFit(dmn_se, type = "laplace")
-    expect_s3_class(actual, c("gg","ggplot"))
 })

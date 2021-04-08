@@ -168,6 +168,7 @@ jobs:
           install.packages("matrixStats", repos = "https://cran.rstudio.com/")
           # BiocManager::install("adw96/breakaway")
 
+          BiocManager::install("vegandevs/vegan")
           BiocManager::install("fionarhuang/TreeSummarizedExperiment")
 
           ## Pass #1 at installing dependencies

@@ -1,10 +1,10 @@
-#' Accessing most relevant features
+#' Summarizing microbiome data
 #'
 #' To query a \code{SummarizedExperiment} for interesting features, several
 #' functions are available.
 #'
 #' @param x A
-#'  \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
+#'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
 #' @param top Numeric value, how many top taxa to return. Default return top
 #'   five taxa.
@@ -17,7 +17,8 @@
 #'
 #' @details
 #' \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
-#' in a \code{\link[=SummarizedExperiment-class]{SummarizedExperiment}} object.
+#' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' object.
 #'
 #' @return
 #' For \code{getTopTaxa}: A vector of the most \code{top} abundant
@@ -34,9 +35,9 @@
 #' @examples
 #' data(GlobalPatterns)
 #' top_taxa <- getTopTaxa(GlobalPatterns,
-#'                        method="mean",
-#'                        top=5,
-#'                        abund_values="counts")
+#'                        method = "mean",
+#'                        top = 5,
+#'                        abund_values = "counts")
 #' top_taxa
 NULL
 
@@ -70,7 +71,7 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
         # check max taxa
         .check_max_taxa(x, top, abund_values)
         # check assay
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         #
         if(method == "prevalence"){
             taxs <- getPrevalence(assay(x, abund_values), sort = TRUE,
@@ -86,4 +87,3 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
         head(names(taxs), n = top)
     }
 )
-

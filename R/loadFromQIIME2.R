@@ -1,42 +1,54 @@
-#' Import QIIME2 results to `TreeSummarizedExperiment`
+#' Import QIIME2 results to \code{TreeSummarizedExperiment}
 #'
-#' Results exported from QIMME2 can be imported as a `TreeSummarizedExperiment`
-#' using `loadFromQIIME2`. Except for the
-#' `featureTableFile`, the other data types, `taxonomyTableFile`, `refSeqFile`
-#' and `phyTreeFile`, are optional, but are highly encouraged to be provided.
+#' Results exported from QIMME2 can be imported as a
+#' \code{TreeSummarizedExperiment} using \code{loadFromQIIME2}. Except for the
+#' \code{featureTableFile}, the other data types, \code{taxonomyTableFile},
+#' \code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
+#' encouraged to be provided.
 #'
 #' @param featureTableFile a single \code{character} value defining the file
 #'   path of the feature table to be imported.
+#'
 #' @param taxonomyTableFile a single \code{character} value defining the file
-#'   path of the taxonomy table to be imported. (default: `NULL`).
-#' @param sampleMetaFile a single \code{character} value defining the file
-#'   path of the sample metadata to be imported. The file has to be in tsv
-#'   format. (default: `NULL`).
-#' @param featureNamesAsRefseq \code{TRUE} or \code{FALSE}: Should the feature
+#'   path of the taxonomy table to be imported. (default:
+#'   \code{taxonomyTableFile = NULL}).
+#'
+#' @param sampleMetaFile a single \code{character} value defining the file path
+#'   of the sample metadata to be imported. The file has to be in tsv format.
+#'   (default: \code{sampleMetaFile = NULL}).
+#'
+#' @param featureNamesAsRefSeq \code{TRUE} or \code{FALSE}: Should the feature
 #'   names of the feature table be regarded as reference sequences? This setting
 #'   will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
 #'   feature names do not contain valid DNA characters only, the reference
 #'   sequences will not be set.
-#' @param refSeqFile a single \code{character} value defining the file
-#'   path of the reference sequences for each feature. (default: `NULL`).
-#' @param phyTreeFile a single \code{character} value defining the file
-#'   path of the phylogenetic tree. (default: `NULL`).
+#'
+#' @param refSeqFile a single \code{character} value defining the file path of
+#'   the reference sequences for each feature. (default: \code{refSeqFile =
+#'   NULL}).
+#'
+#' @param phyTreeFile a single \code{character} value defining the file path of
+#'   the phylogenetic tree. (default: \code{phyTreeFile = NULL}).
+#'
 #' @param ... additional arguments:
 #' \itemize{
 #'   \item{\code{temp}:} {the temporary directory used for decompressing the
 #'     data. (default: \code{tempdir()})}
 #'   \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
-#'     taxonomic prefixes be removed? (default: \code{FALSE}).)}
+#'     taxonomic prefixes be removed? (default:
+#'     \code{removeTaxaPrefixes = FALSE})}
 #' }
 #'
 #' @details
-#' Both arguments `featureNamesAsRefseq` and `refSeqFile` can be used to define
-#' reference sequences of features. `featureNamesAsRefseq` is only taken into
-#' account, if `refSeqFile` is `NULL`. No reference sequences are tried to be
-#' created, if `featureNameAsRefSeq` is `FALSE` and  `refSeqFile` is `NULL`.
+#' Both arguments \code{featureNamesAsRefSeq} and \code{refSeqFile} can be used
+#' to define reference sequences of features. \code{featureNamesAsRefSeq} is
+#' only taken into account, if \code{refSeqFile} is \code{NULL}. No reference
+#' sequences are tried to be created, if \code{featureNameAsRefSeq} is
+#' \code{FALSE} and \code{refSeqFile} is \code{NULL}.
 #'
-#' @return  An object of class
-#'   [`TreeSummarizedExperiment::TreeSummarizedExperiment-class`]
+#' @return  A
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object
 #'
 #' @name loadFromQIIME2
 #' @seealso
@@ -46,6 +58,7 @@
 #'
 #' @export
 #' @author Yang Cao
+#'
 #' @references
 #' Bolyen E et al. 2019: Reproducible, interactive, scalable and extensible
 #' microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
@@ -71,10 +84,11 @@
 loadFromQIIME2 <- function(featureTableFile,
                            taxonomyTableFile = NULL,
                            sampleMetaFile = NULL,
-                           featureNamesAsRefseq = TRUE,
+                           featureNamesAsRefSeq = TRUE,
                            refSeqFile = NULL,
                            phyTreeFile = NULL,
                            ...) {
+    .require_package("yaml")
     # input check
     if(!.is_non_empty_string(featureTableFile)){
         stop("'featureTableFile' must be a single character value.",
@@ -88,8 +102,8 @@ loadFromQIIME2 <- function(featureTableFile,
         stop("'sampleMetaFile' must be a single character value or NULL.",
              call. = FALSE)
     }
-    if(!.is_a_bool(featureNamesAsRefseq)){
-        stop("'featureNamesAsRefseq' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(featureNamesAsRefSeq)){
+        stop("'featureNamesAsRefSeq' must be TRUE or FALSE.", call. = FALSE)
     }
     if(!is.null(refSeqFile) && !.is_non_empty_string(refSeqFile)){
         stop("'refSeqFile' must be a single character value or NULL.",
@@ -126,7 +140,7 @@ loadFromQIIME2 <- function(featureTableFile,
     # if row.names(feature_tab) is a DNA sequence,  set it as refseq
     if (!is.null(refSeqFile)){
         refseq <- .read_qza(refSeqFile, ...)
-    } else if (featureNamesAsRefseq) {
+    } else if (featureNamesAsRefSeq) {
         refseq <- .rownames_as_dna_seq(rownames(feature_tab))
     } else {
         refseq <- NULL
@@ -156,7 +170,7 @@ loadFromQIIME2 <- function(featureTableFile,
 #'   [`ape::phylo`] object for phylogenetic tree,
 #'   [`Biostrings::DNAStringSet-class`] for representative sequences of taxa.
 #' @noRd
-#' @importFrom yaml read_yaml
+#'
 #' @importFrom utils unzip
 #' @importFrom ape read.tree
 #' @importFrom Biostrings readDNAStringSet
@@ -174,7 +188,7 @@ loadFromQIIME2 <- function(featureTableFile,
     on.exit(unlink(c(unzipped_file,unique(dirname(unzipped_file))),
                    recursive = TRUE))
     meta_file <- grep("metadata.yaml", unzipped_file, value = TRUE)
-    metadata <- read_yaml(meta_file[1])
+    metadata <- yaml::read_yaml(meta_file[1])
     uuid <- metadata$uuid
 
     format <- metadata$format

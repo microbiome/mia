@@ -5,7 +5,7 @@
 \alias{calculateUniFrac,ANY,phylo-method}
 \alias{calculateUniFrac,TreeSummarizedExperiment,missing-method}
 \alias{runUniFrac}
-\title{Calculate weighted or unweighted (Fast) UniFrac distance for all sample pairs}
+\title{Calculate weighted or unweighted (Fast) UniFrac distance}
 \usage{
 \S4method{calculateUniFrac}{ANY,phylo}(
   x,
@@ -31,12 +31,14 @@ runUniFrac(
 object containing a tree.
 
 Please  note that \code{runUniFrac} expects a matrix with samples per row
-and not per column. This was done, to be compatible with other distance
-calculations such as \code{\link[stats:dist]{dist}}.}
+and not per column. This is implemented to be compatible with other
+distance calculations such as \code{\link[stats:dist]{dist}} as much as
+possible.}
 
-\item{tree}{if \code{x} is a matrix. a
+\item{tree}{if \code{x} is a matrix, a
 \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
-amtrix, especially the number of columns.}
+matrix. This means that the phylo object and the columns should related
+to the same type of features (aka. microorganisms).}
 
 \item{weighted}{\code{TRUE} or \code{FALSE}: Should use weighted-UniFrac
 calculation? Weighted-UniFrac takes into account the relative abundance of
@@ -66,23 +68,26 @@ a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
 This function calculates the (Fast) UniFrac distance for all sample-pairs
-in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
+in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.
 }
 \details{
-Please not that if \code{calculateUniFrac} is used as a \code{FUN} for
-\code{runMDS2}, the argument \code{ntop} has to be set to \code{nrow(x)}.
+Please note that if \code{calculateUniFrac} is used as a \code{FUN} for
+\code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
 }
 \examples{
 data(esophagus)
+library(scater)
 calculateUniFrac(esophagus, weighted = FALSE)
 calculateUniFrac(esophagus, weighted = TRUE)
 calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)
-# for using calculateUniFrac in conjunction with runMDS2 the tree argument
+# for using calculateUniFrac in conjunction with runMDS the tree argument
 # has to be given separately. In addition, subsetting using ntop must
 # be disabled
-esophagus <- runMDS2(esophagus, FUN = calculateUniFrac, name = "UniFrac",
-        tree = rowTree(esophagus),
-        ntop = nrow(esophagus))
+esophagus <- runMDS(esophagus, FUN = calculateUniFrac, name = "UniFrac",
+                    tree = rowTree(esophagus),
+                    exprs_values = "counts",
+                    ntop = nrow(esophagus))
 reducedDim(esophagus)
 }
 \references{

@@ -1,32 +1,41 @@
 Package: mia
 Type: Package
-Version: 0.98.34
+Version: 0.99.9
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
              comment = c(ORCID = "0000-0001-5064-0928")),
-      person(given = "Sudarshan", family = "Shetty", role = c("aut")),
-      person(given = "Leo", family = "Lahti", role = c("aut")),
-      person(given = "Tuomas", family = "Borman", role = c("aut")),      
+      person(given = "Sudarshan", family = "Shetty", role = c("aut"),
+             email = "sudarshanshetty9@gmail.com",
+             comment = c(ORCID = "0000-0001-7280-9915")),
+      person(given = "Tuomas", family = "Borman", role = c("aut"),
+             email = "tuomas.v.borman@utu.fi",
+             comment = c(ORCID = "0000-0002-8563-8884")),
+      person(given = "Leo", family = "Lahti", role = c("aut"),
+             email = "leo.lahti@iki.fi",
+             comment = c(ORCID = "0000-0001-5537-637X")),      
       person(given = "Yang", family = "Cao", role = c("ctb")),
       person(given = "Nathan D.", family = "Olson", role = c("ctb"),
-             email = "nolson@@umiacs.umd.edu"),
+             email = "nolson@nist.gov"),
       person(given = "Levi", family = "Waldron", role = c("ctb")),
       person(given = "Marcel", family = "Ramos", role = c("ctb")),
       person(given = "Héctor", family = "Corrada Bravo", role = c("ctb")),
-      person(given = "Jayaram", family = "Kancherla", role=c("ctb")))
+      person(given = "Jayaram", family = "Kancherla", role=c("ctb")),
+      person(given = "Domenick", family = "Braccia",
+             email = "dbraccia@umd.edu", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
     SummarizedExperiment, SingleCellExperiment and TreeSummarizedExperiment 
-    infrastructure. Data wrangling and analysis are the main scope of this 
-    package.
-biocViews: Microbiome, Software
-License: Artistic-2.0
+    infrastructure. Data wrangling and analysis in the context of taxonomic data
+    is the main scope. Additional functions for common task are implemented such
+    as community indices calculation and summarization.
+biocViews: Microbiome, Software, DataImport
+License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
 LazyData: false
 Depends:
-    R (>= 4.0),
+    R (>= 4.1),
     SummarizedExperiment,
     SingleCellExperiment,
     TreeSummarizedExperiment (>= 1.99.3)
@@ -34,10 +43,10 @@ Imports:
     methods,
     stats,
     utils,
-    vegan,
     MASS,
     ape,
     decontam,
+    vegan,
     BiocGenerics,
     S4Vectors,
     IRanges,
@@ -49,25 +58,25 @@ Imports:
     scuttle,
     scater,
     DirichletMultinomial,
-    stringr,
-    ggplot2,
     rlang,
     dplyr,
     tibble,
-    tidyr,
-    yaml,
-    microbiomeDataSets
+    tidyr
 Suggests:
     testthat,
     knitr,
+    patchwork,
     BiocStyle,
-    ggpubr,
+    yaml,
     phyloseq,
     dada2,
+    stringr,
     biomformat,
-    reldist
-Remotes:
-    github::microbiome/microbiomeDataSets
+    reldist,
+    ade4,
+    microbiomeDataSets
+URL: https://github.com/microbiome/mia
+BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

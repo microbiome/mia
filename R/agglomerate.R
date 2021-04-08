@@ -1,20 +1,22 @@
-#' Agglomerate taxa of the same type.
+#' Agglomerate data using taxonomic information
 #'
 #' \code{agglomerateByRank} can be used to sum up data based on the association
 #' to certain taxonomic ranks given as \code{rowData}. Only available
 #' \code{\link{taxonomicRanks}} can be used.
 #'
-#' @param x \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' @param x a
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   object
 #'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomicRanks()} function.
 #'
 #' @param onRankOnly \code{TRUE} or \code{FALSE}: Should information only from
-#'   the specified rank used or from ranks equal and above?.
+#'   the specified rank used or from ranks equal and above? See details.
 #'   (default: \code{onRankOnly = FALSE})
 #'
 #' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-#'   removed? Use it with caution, since results with NA on the selected rank
+#'   removed? Use it with caution, since empty entries on the selected rank
 #'   will be dropped. This setting can be tweaked by defining
 #'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
 #'
@@ -29,24 +31,30 @@
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
 #'   \code{\link[=merge-methods]{mergeRows}} and
-#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
+#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
 #'
 #' @param strip_altexp \code{TRUE} or \code{FALSE}: Should alternative
-#'   experiments be removed prior to agglomeration? This prohibits to many
+#'   experiments be removed prior to agglomeration? This prevents to many
 #'   nested alternative experiments by default (default:
 #'   \code{strip_altexp = TRUE})
+#'
+#' @details
+#' Based on the available taxonomic data and its structure setting
+#' \code{onRankOnly = TRUE} has certain implications on the interpretability of
+#' your results. If no loops exist (loops meaning two higher ranks containing
+#' the same lower rank), the results should be comparable. you can check for
+#' loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
 #'
 #' @return A taxonomically-agglomerated, optionally-pruned object of the same
 #'   class \code{x}.
 #'
+#' @name agglomerate-methods
 #' @seealso
 #' \code{\link[=merge-methods]{mergeRows}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
-#'
-#' @name agglomerate-methods
 #'
 #' @examples
 #' data(GlobalPatterns)
@@ -116,6 +124,9 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         }
         if(!.is_a_bool(na.rm)){
             stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if(nrow(x) == 0L){
+            stop("'x' has nrow(x) == 0L.",call. = FALSE)
         }
         if(ncol(rowData(x)) == 0L){
             stop("taxonomyData needs to be populated.", call. = FALSE)

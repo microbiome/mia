@@ -11,15 +11,13 @@
 \alias{bestDMNFit,SummarizedExperiment-method}
 \alias{getBestDMNFit}
 \alias{getBestDMNFit,SummarizedExperiment-method}
-\alias{plotDMNFit}
-\alias{plotDMNFit,SummarizedExperiment-method}
 \alias{calculateDMNgroup}
 \alias{calculateDMNgroup,ANY-method}
 \alias{calculateDMNgroup,SummarizedExperiment-method}
 \alias{performDMNgroupCV}
 \alias{performDMNgroupCV,ANY-method}
 \alias{performDMNgroupCV,SummarizedExperiment-method}
-\title{Dirichlet-Multinomial Mixture Model Machine Learning for Microbiome Data}
+\title{Dirichlet-Multinomial Mixture Model: Machine Learning for Microbiome Data}
 \usage{
 calculateDMN(x, ...)
 
@@ -46,10 +44,6 @@ bestDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
 getBestDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
 
 \S4method{getBestDMNFit}{SummarizedExperiment}(x, name = "DMN", type = c("laplace", "AIC", "BIC"))
-
-plotDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
-
-\S4method{plotDMNFit}{SummarizedExperiment}(x, name = "DMN", type = c("laplace", "AIC", "BIC"))
 
 calculateDMNgroup(x, ...)
 
@@ -125,8 +119,6 @@ one element per value for k given.
 \code{bestDMNFit} returns the index for the best fit and \code{getBestDMNFit}
 returns a single \code{DMN} object.
 
-\code{plotDMNFit} returns a \code{ggplot2} plot.
-
 \code{calculateDMNgroup} returns a
 \code{\link[DirichletMultinomial:DMNGroup-class]{DMNGroup}} object
 
@@ -134,7 +126,8 @@ returns a single \code{DMN} object.
 }
 \description{
 These function are accessors for functions implemented in the
-\code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}} package
+\code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}}
+package
 }
 \examples{
 fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
@@ -167,9 +160,6 @@ getDMN(dmn_se)
 bestDMNFit(dmn_se, type = "laplace")
 # return the model, which fits best
 getBestDMNFit(dmn_se, type = "laplace")
-
-# plot the fit
-plotDMNFit(dmn_se, type = "laplace")
 }
 \seealso{
 \code{\link[DirichletMultinomial:DMN-class]{DMN-class}},

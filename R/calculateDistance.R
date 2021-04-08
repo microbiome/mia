@@ -1,4 +1,4 @@
-#' Calculate distances for all sample pairs
+#' Calculate sample distances with \code{vegan}
 #'
 #' \code{calculateDistance} calculates a distance matrix between samples. The
 #' type of distance calculate can be modifier by setting \code{FUN}, which
@@ -12,11 +12,10 @@
 #'   expect the input matrix as its first argument. Samples have to be rows and
 #'   feature columns.
 #'
-#' @param exprs_values a single \code{character} value for specifying which assay to
-#'   use for calculation.
+#' @param exprs_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
-#'
 #'
 #' @param ... other arguments passed onto \code{FUN}
 #'

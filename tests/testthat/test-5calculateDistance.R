@@ -1,5 +1,6 @@
 context("calculateDistance")
 test_that("calculateDistance", {
+    library(scater)
     mat <- matrix(1:60, nrow = 6)
     df <- DataFrame(n = c(1:6))
     se <- SummarizedExperiment(assays = list(counts = mat),
@@ -30,9 +31,17 @@ test_that("calculateDistance", {
     expect_equal(actual[1], 0.1050480, tolerance = .0000001)
     expect_equal(actual[length(actual)], 0.1422409, tolerance = .0000001)
     #
-    enterotype <- runMDS2(enterotype, FUN = calculateJSD, name = "JSD")
+    enterotype <- runMDS(enterotype, FUN = calculateJSD, name = "JSD",
+                         exprs_values = "counts")
     expect_named(reducedDims(enterotype),"JSD")
-    esophagus <- runMDS2(esophagus, FUN = calculateUniFrac, name = "UniFrac",
-                         tree = rowTree(esophagus))
+    jsd <- matrix(c(-0.2993825,-0.1876141,-0.1761079,-0.1508764,-0.2822249,
+                    -0.3040909,-0.14425004,-0.13490508,-0.02830419,-0.06346108,
+                    -0.11871798,-0.11856633), ncol=2)
+    rownames(jsd) <- colnames(enterotype)[seq_len(nrow(jsd))]
+    expect_equal(round(head(reducedDim(enterotype,"JSD")),7),
+                 round(jsd,7))
+    esophagus <- runMDS(esophagus, FUN = calculateUniFrac, name = "UniFrac",
+                        exprs_values = "counts",
+                        tree = rowTree(esophagus))
     expect_named(reducedDims(esophagus),"UniFrac")
 })

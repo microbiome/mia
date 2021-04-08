@@ -2,9 +2,9 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check-bioc-devel](https://github.com/FelixErnst/mia/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/FelixErnst/mia/actions)
+[![R-CMD-check-bioc-devel](https://github.com/microbiome/mia/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/mia/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/FelixErnst/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/FelixErnst/mia?branch=master)
+coverage](https://codecov.io/gh/microbiome/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/mia?branch=master)
 
 <!-- badges: end -->
 
@@ -14,16 +14,12 @@ package is `TreeSummarizedExperiment`.
 
 Currently following things are implemented:
 
-- data wrangling functions (`agglomerate*`, `merge*`, `meltAssay`)
-- JSD and UniFrac distance calculation ported from `phyloseq` to work with `TreeSummarizedExperiment` objects
+- data wrangling functions (`agglomerate*`, `merge*`, and more)
 - CCA analysis via `vegan` package
 - Bray-Curtis dissimilarity via `vegan` package
-- MDS via the `scater` package
-- import functions for `biom` data, `DADA2` objects and `phyloseq` objects
-
-## ToDo
-
-- if `breakaway` ends up on CRAN or Bioconductor, alpha diversity calculation via the `breakaway` package
+- JSD and UniFrac distance calculation ported from `phyloseq` to work with `TreeSummarizedExperiment` objects
+- MDS via the `scater` package for any other distance objects
+- import functions for `biom` data, `DADA2` objects, `phyloseq` objects and more
 
 # Contribution
 
@@ -34,6 +30,27 @@ Feel free to contribute.
 Let's use a git flow kind of approach. Development version should be done 
 against the `master` branch and then merged to `release` for release. 
 (https://guides.github.com/introduction/flow/)
+
+## Installation
+
+Currently this is aimed to work with the Bioconductor devel branch.
+
+### Bioc-devel
+
+```
+BiocManager::install("microbiome/mia")
+```
+
+### Bioc-release
+
+However, with some additional manual steps `mia` can be installed on Bioc-release
+as well. Use at your own risk!
+
+```
+BiocManager::install("microbiome/microbiomeDataSets@release")
+BiocManager::install("fionarhuang/TreeSummarizedExperiment")
+BiocManager::install("microbiome/mia")
+```
 
 # Code of conduct
 
