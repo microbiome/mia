@@ -1,4 +1,7 @@
 #' Import Mothur results to \code{TreeSummarizedExperiment}
+#' 
+#' This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
+#' files that are provided as an input. 
 #'
 #' @param featureTableFile a single \code{character} value defining the file
 #'   path of the feature table to be imported.

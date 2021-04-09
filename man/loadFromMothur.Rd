@@ -46,7 +46,8 @@ A
 object
 }
 \description{
-Import Mothur results to \code{TreeSummarizedExperiment}
+This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
+files that are provided as an input.
 }
 \details{
 Results exported from Mothur can be imported as a
