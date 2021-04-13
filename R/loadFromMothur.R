@@ -44,7 +44,7 @@
 #' \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
 #' \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
 #' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
-#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{loadFromQIIME2}}
+#' \code{\link[=loadFromQIIME2}]{loadFromQIIME2}}
 #'
 #' @export
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -67,9 +67,9 @@
 loadFromMothur <- function(featureTableFile,
                            taxonomyTableFile = NULL,
                            sampleMetaFile = NULL,
-                           featureNamesAsRefSeq = TRUE,
-                           refSeqFile = NULL,
-                           phyTreeFile = NULL,
+                         #  featureNamesAsRefSeq = TRUE,
+                          # refSeqFile = NULL,
+                          # phyTreeFile = NULL,
                            ...) {
   
     # input check
@@ -85,22 +85,28 @@ loadFromMothur <- function(featureTableFile,
         stop("'sampleMetaFile' must be a single character value or NULL.",
             call. = FALSE)
     }
-    if(!.is_a_bool(featureNamesAsRefSeq)){
-        stop("'featureNamesAsRefSeq' must be TRUE or FALSE.", 
-            call. = FALSE)
-    }
-    if(!is.null(refSeqFile) && !.is_non_empty_string(refSeqFile)){
-        stop("'refSeqFile' must be a single character value or NULL.", 
-            call. = FALSE)
-    }
-    if(!is.null(phyTreeFile) && !.is_non_empty_string(phyTreeFile)){
-        stop("'phyTreeFile' must be a single character value or NULL.", 
-            call. = FALSE)
-    }
+  
+    # Tree and refseq files are not allowed
+    # if(!.is_a_bool(featureNamesAsRefSeq)){
+    #     stop("'featureNamesAsRefSeq' must be TRUE or FALSE.", 
+    #         call. = FALSE)
+    # }
+    # if(!is.null(refSeqFile) && !.is_non_empty_string(refSeqFile)){
+    #     stop("'refSeqFile' must be a single character value or NULL.", 
+    #         call. = FALSE)
+    # }
+    # if(!is.null(phyTreeFile) && !.is_non_empty_string(phyTreeFile)){
+    #     stop("'phyTreeFile' must be a single character value or NULL.", 
+    #         call. = FALSE)
+    # }
     #
     
     # Reads the featureTablefile 
-    feature_tab <- .read_mothur_feature(featureTableFile, ...)
+    feature_tab_and_data_to_colData <- .read_mothur_feature(featureTableFile, ...)
+    # Extracts feature_tab
+    feature_tab <- feature_tab_and_data_to_colData$assay
+    # Extracts data that goes to colData
+    data_to_colData <- feature_tab_and_data_to_colData$colData
     
     # If rowData information exists, gets that. Otherwise, tax_tab is just data frame without information
     if (!is.null(taxonomyTableFile)) {
@@ -109,27 +115,30 @@ loadFromMothur <- function(featureTableFile,
         taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
     }
     
-    # If colData information exists, gets that. Otherwise, sample_tab is just data frame without information
-    if (!is.null(sampleMetaFile)) {
-        sample_meta <- .read_mothur_sample_meta(sampleMetaFile, feature_tab)
+    # If colData informationor data_to_colData exists, gets that. Otherwise, sample_tab is just data frame without information
+    if (!is.null(sampleMetaFile) %% !is.null(data_to_colData)) {
+        sample_meta <- .read_mothur_sample_meta(sampleMetaFile, data_to_colData)
     } else {
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
     }
     
-    if (!is.null(phyTreeFile)) {
-        tree <- .read_qza(phyTreeFile, ...)
-    } else {
-        tree <- NULL
-    }
+    tree <- NULL
+    refseq <- NULL
     
-    # if row.names(feature_tab) is a DNA sequence,  set it as refseq
-    if (!is.null(refSeqFile)){
-        refseq <- .read_qza(refSeqFile, ...)
-    } else if (featureNamesAsRefSeq) {
-        refseq <- .rownames_as_dna_seq(rownames(feature_tab))
-    } else {
-        refseq <- NULL
-    }
+    # if (!is.null(phyTreeFile)) {
+    #     tree <- .read_qza(phyTreeFile, ...)
+    # } else {
+    #     tree <- NULL
+    # }
+    # 
+    # # if row.names(feature_tab) is a DNA sequence,  set it as refseq
+    # if (!is.null(refSeqFile)){
+    #     refseq <- .read_qza(refSeqFile, ...)
+    # } else if (featureNamesAsRefSeq) {
+    #     refseq <- .rownames_as_dna_seq(rownames(feature_tab))
+    # } else {
+    #     refseq <- NULL
+    # }
     
     return(TreeSummarizedExperiment(
         assays = S4Vectors::SimpleList(counts = feature_tab),
@@ -140,74 +149,169 @@ loadFromMothur <- function(featureTableFile,
     ))
     
 }
-
+# These extra information must be added to colData. Return list of assay and extra info
 .read_mothur_feature <- function(featureTableFile, ...){
-
-    # Reads the file
-    assay <- read.table(featureTableFile, check.names=FALSE, header=TRUE,
-                        sep="\t", stringsAsFactors=FALSE)
   
-    # File contains additional columns "label", "numOtus", and "Group". They are removed
-    assay$label <- NULL
-    assay$numOtus <- NULL
-    # Information of "Group" column is saved, it includes taxa information
-    x <- assay$Group
-    assay$Group <- NULL
-    
-    # Initializes rownames
-    rownames(assay) <- NULL
-    # Saves taxa to rownames
-    rownames(assay) <- x
-    
-    # Transposes and converts assay from dataframe to matrix
-    assay <- t(as.matrix(assay))
-    
-    return(assay)
+    if (.get_mothur_file_type(featureTableFile) != "shared") {
+      stop("The input '", featureTableFile, "' must be in `shared` format.",
+           call. = FALSE)
+    }
+    # 
+    # # Reads the file
+    # assay <- read.table(featureTableFile, check.names=FALSE, header=TRUE,
+    #                     sep="\t", stringsAsFactors=FALSE)
+    # 
+    # # File contains additional columns "label", "numOtus", and "Group". They are removed
+    # assay$label <- NULL
+    # assay$numOtus <- NULL
+    # # Information of "Group" column is saved, it includes sample information
+    # sample_names <- assay$Group
+    # assay$Group <- NULL
+    # 
+    # # Initializes rownames
+    # rownames(assay) <- NULL
+    # # Saves sample information to rownames of table
+    # rownames(assay) <- sample_names
+    # 
+    # # Transposes and converts assay from dataframe to matrix
+    # assay <- t(as.matrix(assay))
+    # return(assay)
+  
+    # Stores name of columns will be included in colData not in assays
+    MOTHUR_NON_ASSAY_COLS <- c("label","numOtus","Group")
+    data <- read.table(featureTableFile, check.names=FALSE, header=TRUE,
+                       sep="\t", stringsAsFactors=FALSE)
+    # Checks that colnames contain information and it is not NULL
+    if ( !(length(colnames(data)) > 0) || is.null(colnames(data)) ){
+        stop("'shared' does not include names of taxa.",
+           call. = FALSE)
+    }
+    # Takes all columns but not those that goes to colData, 
+    # and transforms the data frame to matrix
+    assay <- as.matrix(data[,!(colnames(data) %in% MOTHUR_NON_ASSAY_COLS )])
+    # Transposes the matrix --> taxa to rows
+    assay <- t(assay)
+    # Gets those data that goes to colData, and creates a data frame it
+    colData <- DataFrame(data[,MOTHUR_NON_ASSAY_COLS])
+    return(list(assay = assay,
+                colData = colData))
     
 }
 
 .read_mothur_taxonomy <- function(taxonomyTableFile, feature_tab, ...){
+  
+    if (.get_mothur_taxonomy_file_type(taxonomyTableFile) != "cons.taxonomy") {
+      stop("The input '", taxonomyTableFile, "' must be in `cons.taxonomy` format.",
+           call. = FALSE)
+    }
     
+    # # Reads the file
+    # rowData <- read.table(taxonomyTableFile, check.names=FALSE,
+    #                       header=TRUE, sep="\t", stringsAsFactors=FALSE)
+    # # Deletes additional information between taxa levels.
+    # rowData$Taxonomy <- gsub("[\"]", "", rowData$Taxonomy)
+    # rowData$Taxonomy <- gsub("[(1-100)]", "", rowData$Taxonomy)
+    # # Separate taxa to own columns
+    # rowData <- tidyr::separate(rowData, 
+    #                            "Taxonomy", 
+    #                            into=c("Kingdom", "Phylum", "Order", "Class", 
+    #                                   "Family", "Genus"), sep=";", 
+    #                            extra="merge")
+    # 
+    # # Deletes ";" from the end of Genus names
+    # rowData$Genus <- gsub(";", "", rowData$Genus)
+    # # Deletes addition "Size" column
+    # rowData$Size <- NULL
+    # 
+    # # Adds taxa to rownames
+    # rownames(rowData) <- rowData$OTU
+    # # Deletes addition "OTU" column
+    # rowData$OTU <- NULL
+    # 
+    # # # Creates a matrix from the table
+    # # rowData <- as.matrix(rowData)
+    # # rowData <- (rowData)
+    # 
+    # # Gets only those taxa that are included in feature_tab
+    # #rowData <- rowData[rownames(feature_tab),] # delete this <---------------------------------------------
+    # return(rowData)
+    
+    # Saves column that includes taxonomical information
+    MOTHUR_TAX_COL <- "Taxonomy"
     # Reads the file
-    rowData <- read.table(taxonomyTableFile, check.names=FALSE,
-                          header=TRUE, sep="\t", stringsAsFactors=FALSE)
-    # Deletes additional information between taxa levels.
-    rowData$Taxonomy <- gsub("[\"]", "", rowData$Taxonomy)
-    rowData$Taxonomy <- gsub("[(1-100)]", "", rowData$Taxonomy)
-    # Separate taxa to own columns
-    rowData <- tidyr::separate(rowData, 
-                               "Taxonomy", 
-                               into=c("Kingdom", "Phylum", "Order", "Class", 
-                                      "Family", "Genus"), sep=";", 
-                               extra="merge")
+    data <- read.table(taxonomyTableFile, check.names=FALSE,
+                       header=TRUE, sep="\t", stringsAsFactors=FALSE)
+    # Checks that colnames contain information, it is not NULL, and taxonomical information is present 
+    if ( !(length(colnames(data)) > 0) || is.null(colnames(data)) || is.null(data[[MOTHUR_TAX_COL]]) ){
+      stop("'taxonomy' does not include taxonomical information.",
+           call. = FALSE)
+    }
     
-    # Deletes ";" from the end of Genus names
-    rowData$Genus <- gsub(";", "", rowData$Genus)
-    # Deletes addition "Size" column
-    rowData$Size <- NULL
+    # Removes additional characters between taxa
+    data [,MOTHUR_TAX_COL] <- gsub("[\"]", "", data [,MOTHUR_TAX_COL])
+    data [,MOTHUR_TAX_COL] <- gsub("[(1-100)]", "", data [,MOTHUR_TAX_COL])
+    # Splits taxa level into separate columns
+    tax <- tidyr::separate(data , MOTHUR_TAX_COL, into=c("Kingdom", "Phylum", "Order", "Class", "Family", "Genus"), sep=";", extra="merge")
+    # Removes ";" from the end of genus level names
+    tax$Genus <- gsub(";", "", tax$Genus)
     
-    # Adds taxa to rownames
-    rownames(rowData) <- rowData$OTU
-    # Deletes addition "OTU" column
-    rowData$OTU <- NULL
-    
-    # Creates a matrix from the table
-    rowData <- as.matrix(rowData)
-    
-    # Gets only those taxa that are included in feature_tab
-    rowData <- rowData[rownames(feature_tab),]
-    
+    # Combines the extracted taxonomical data and unprocessed data and creates a data frame
+    rowData <- cbind(DataFrame(tax),
+                     DataFrame(data[, !(colnames(data) %in% MOTHUR_TAX_COL)]))
+    # If the data includes "OTU" column, that includes taxa
+    if( !is.null(rowData$OTU) ){
+      # Checks if the rownames are the same as in assay.
+      if( !identical(rowData$OTU, rownames(feature_tab)) ){
+        stop("taxa in 'taxonomyTableFile' does not match to taxa in 'featureTableFile'.",
+             call. = FALSE)
+      }
+      # Adds rownames
+      rownames(rowData) <- rowData$OTU
+    }
     return(rowData)
 
 }
 
-.read_mothur_sample_meta <- function(sampleMetaFile, feature_tab, ...){
+.read_mothur_sample_meta <- function(sampleMetaFile, data_to_colData, ...){
+  
+    if (.get_mothur_file_type(sampleMetaFile) != ".design") {
+      stop("The input '", sampleMetaFile, "' must be in `design` format.",
+           call. = FALSE)
+    }
   
     # Reads the file
-    colData <- read.csv(sampleMetaFile, row.names=1, check.names=FALSE)
-    # Gets only those samples that are included in feature_tab
-    colData <- colData[colnames(feature_tab), ]
+    colData <- read.table(taxonomyTableFile, check.names=FALSE,
+                          header=TRUE, sep="\t", stringsAsFactors=FALSE)
     
+    # Combines the extracted colData and data from the assay
+    colData <- cbind(colData, data_to_colData)
+    
+    # If the data includes 'group' column that includes the names of the samples
+    if( !is.null(colData$group) ){
+      # Checks if the sample names extracted from sample meta data ('group' column) 
+      # are the same as the ones that were extracted from assay ('Group' column)
+      if( !identical(colData$group, colData$Group) ){
+        stop("sample names in 'sampleMetaFile' does not match to sample names in 'featureTableFile'.",
+             call. = FALSE)
+      }
+      # Adds sample names to rownames of the data frame
+      rownames(colData) <- colData$group
+    }
     return(colData)
   
+}
+
+
+#' extract file extension
+#' @noRd
+.get_mothur_file_type <- function(file) {
+    ex <- strsplit(basename(file), split = ".", fixed = TRUE)[[1]]
+    ex[length(ex)]
+}
+
+#' extract file extension
+#' @noRd
+.get_mothur_taxonomy_file_type <- function(file) {
+    ex <- strsplit(basename(file), split = ".", fixed = TRUE)[[1]]
+    paste(c(ex[length(ex)-1], ".", ex[length(ex)]), collapse= "")
 }

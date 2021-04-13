@@ -8,9 +8,6 @@ loadFromMothur(
   featureTableFile,
   taxonomyTableFile = NULL,
   sampleMetaFile = NULL,
-  featureNamesAsRefSeq = TRUE,
-  refSeqFile = NULL,
-  phyTreeFile = NULL,
   ...
 )
 }
@@ -25,6 +22,8 @@ path of the taxonomy table to be imported. (default:
 \item{sampleMetaFile}{a single \code{character} value defining the file path
 of the sample metadata to be imported. (default: \code{sampleMetaFile = NULL}).}
 
+\item{...}{additional arguments:}
+
 \item{featureNamesAsRefSeq}{\code{TRUE} or \code{FALSE}: Should the feature
 names of the feature table be regarded as reference sequences? This setting
 will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
@@ -37,8 +36,6 @@ the reference sequences for each feature. (default: \code{refSeqFile =
 
 \item{phyTreeFile}{a single \code{character} value defining the file path of
 the phylogenetic tree. (default: \code{phyTreeFile = NULL}).}
-
-\item{...}{additional arguments:}
 }
 \value{
 A
@@ -75,7 +72,7 @@ meta <- "~/Desktop/Baxter_FITs_Microbiome_2016_mapping.csv"
 \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
 \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
 \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
-\code{\link[=makeTreeSummarizedExperimentFromDADA2]{loadFromQIIME2}}
+\code{\link[=loadFromQIIME2}]{loadFromQIIME2}}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
