@@ -3,25 +3,25 @@
 #' This method creates a \code{SummarizedExperiment} object from \code{Mothur}
 #' files that are provided as an input. 
 #'
-#' @param featureTableFile a single \code{character} value defining the file
+#' @param sharedFile a single \code{character} value defining the file
 #'   path of the feature table to be imported. 
 #'   The File has to be in \code{shared} file format.
 #'
-#' @param taxonomyTableFile a single \code{character} value defining the file
+#' @param taxonomyFile a single \code{character} value defining the file
 #'   path of the taxonomy table to be imported. 
-#'   The File has to be in \code{cons.taxonomy} file format. (default: \code{taxonomyTableFile = NULL}).
+#'   The File has to be in \code{cons.taxonomy} file format. (default: \code{taxonomyFile = NULL}).
 #'
-#' @param sampleMetaFile a single \code{character} value defining the file path
+#' @param designFile a single \code{character} value defining the file path
 #'   of the sample metadata to be imported. 
-#'   The File has to be in \code{desing} file format. (default: \code{sampleMetaFile = NULL}).
+#'   The File has to be in \code{desing} file format. (default: \code{designFile = NULL}).
 #'
 #' @param ... additional arguments:
 #'
 #' @details
 #' Results exported from Mothur can be imported as a
 #' \code{SummarizedExperiment} using \code{loadFromMothur}. Except for the
-#' \code{featureTableFile}, the other data types, \code{taxonomyTableFile}, and
-#' \code{sampleMetaFile}, are optional, but are highly -------------------------Check this
+#' \code{sharedFile}, the other data types, \code{taxonomyFile}, and
+#' \code{designFile}, are optional, but are highly -------------------------Check this
 #' encouraged to be provided.
 #'
 #' @return  A
@@ -53,42 +53,42 @@
 #' \dontrun{tse <- loadFromMothur(counts, taxa, meta)}
 #' 
 
-loadFromMothur <- function(featureTableFile,
-                           taxonomyTableFile = NULL,
-                           sampleMetaFile = NULL,
+loadFromMothur <- function(sharedFile,
+                           taxonomyFile = NULL,
+                           designFile = NULL,
                            ...) {
   
     # input check
-    if(!.is_non_empty_string(featureTableFile)){
-        stop("'featureTableFile' must be a single character value.", 
+    if(!.is_non_empty_string(sharedFile)){
+        stop("'sharedFile' must be a single character value.", 
             call. = FALSE)
     }
-    if(!is.null(taxonomyTableFile) && !.is_non_empty_string(taxonomyTableFile)){
-        stop("'taxonomyTableFile' must be a single character value or NULL.", 
+    if(!is.null(taxonomyFile) && !.is_non_empty_string(taxonomyFile)){
+        stop("'taxonomyFile' must be a single character value or NULL.", 
             call. = FALSE)
     }
-    if(!is.null(sampleMetaFile) && !.is_non_empty_string(sampleMetaFile)){
-        stop("'sampleMetaFile' must be a single character value or NULL.",
+    if(!is.null(designFile) && !.is_non_empty_string(designFile)){
+        stop("'designFile' must be a single character value or NULL.",
             call. = FALSE)
     }
     
-    # Reads the featureTablefile 
-    feature_tab_and_data_to_colData <- .read_mothur_feature(featureTableFile, ...)
+    # Reads the sharedFile 
+    feature_tab_and_data_to_colData <- .read_mothur_feature(sharedFile, ...)
     # Extracts feature_tab
     feature_tab <- feature_tab_and_data_to_colData$assay
     # Extracts data that goes to colData
     data_to_colData <- feature_tab_and_data_to_colData$colData
     
     # If rowData information exists, gets that. Otherwise, tax_tab is just data frame without information
-    if (!is.null(taxonomyTableFile)) {
-        taxa_tab <- .read_mothur_taxonomy(taxonomyTableFile, feature_tab, ...)
+    if (!is.null(taxonomyFile)) {
+        taxa_tab <- .read_mothur_taxonomy(taxonomyFile, feature_tab, ...)
     } else {
         taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
     }
     
     # If colData informationor data_to_colData exists, gets that. Otherwise, sample_tab is just data frame without information
-    if (!is.null(sampleMetaFile) %% !is.null(data_to_colData)) {
-        sample_meta <- .read_mothur_sample_meta(sampleMetaFile, data_to_colData)
+    if (!is.null(designFile) %% !is.null(data_to_colData)) {
+        sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData)
     } else {
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
     }
@@ -101,15 +101,15 @@ loadFromMothur <- function(featureTableFile,
     
 }
 # These extra information must be added to colData. Return list of assay and extra info
-.read_mothur_feature <- function(featureTableFile, ...){
+.read_mothur_feature <- function(sharedFile, ...){
   
-    if (.get_mothur_file_type(featureTableFile) != "shared") {
-      stop("The input '", featureTableFile, "' must be in `shared` format.",
+    if (.get_mothur_file_type(sharedFile) != "shared") {
+      stop("The input '", sharedFile, "' must be in `shared` format.",
            call. = FALSE)
     }
     # 
     # # Reads the file
-    # assay <- read.table(featureTableFile, check.names=FALSE, header=TRUE,
+    # assay <- read.table(sharedFile, check.names=FALSE, header=TRUE,
     #                     sep="\t", stringsAsFactors=FALSE)
     # 
     # # File contains additional columns "label", "numOtus", and "Group". They are removed
@@ -130,7 +130,7 @@ loadFromMothur <- function(featureTableFile,
   
     # Stores name of columns will be included in colData not in assays
     MOTHUR_NON_ASSAY_COLS <- c("label","numOtus","Group")
-    data <- read.table(featureTableFile, check.names=FALSE, header=TRUE,
+    data <- read.table(sharedFile, check.names=FALSE, header=TRUE,
                        sep="\t", stringsAsFactors=FALSE)
     # Checks that colnames contain information and it is not NULL
     if ( !(length(colnames(data)) > 0) || is.null(colnames(data)) ){
@@ -149,15 +149,15 @@ loadFromMothur <- function(featureTableFile,
     
 }
 
-.read_mothur_taxonomy <- function(taxonomyTableFile, feature_tab, ...){
+.read_mothur_taxonomy <- function(taxonomyFile, feature_tab, ...){
   
-    if (.get_mothur_taxonomy_file_type(taxonomyTableFile) != "cons.taxonomy") {
-      stop("The input '", taxonomyTableFile, "' must be in `cons.taxonomy` format.",
+    if (.get_mothur_taxonomy_file_type(taxonomyFile) != "cons.taxonomy") {
+      stop("The input '", taxonomyFile, "' must be in `cons.taxonomy` format.",
            call. = FALSE)
     }
     
     # # Reads the file
-    # rowData <- read.table(taxonomyTableFile, check.names=FALSE,
+    # rowData <- read.table(taxonomyFile, check.names=FALSE,
     #                       header=TRUE, sep="\t", stringsAsFactors=FALSE)
     # # Deletes additional information between taxa levels.
     # rowData$Taxonomy <- gsub("[\"]", "", rowData$Taxonomy)
@@ -190,7 +190,7 @@ loadFromMothur <- function(featureTableFile,
     # Saves column that includes taxonomical information
     MOTHUR_TAX_COL <- "Taxonomy"
     # Reads the file
-    data <- read.table(taxonomyTableFile, check.names=FALSE,
+    data <- read.table(taxonomyFile, check.names=FALSE,
                        header=TRUE, sep="\t", stringsAsFactors=FALSE)
     # Checks that colnames contain information, it is not NULL, and taxonomical information is present 
     if ( !(length(colnames(data)) > 0) || is.null(colnames(data)) || is.null(data[[MOTHUR_TAX_COL]]) ){
@@ -214,7 +214,7 @@ loadFromMothur <- function(featureTableFile,
     if( !is.null(rowData$OTU) ){
       # Checks if the rownames are the same as in assay.
       if( !identical(rowData$OTU, rownames(feature_tab)) ){
-        stop("taxa in 'taxonomyTableFile' does not match to taxa in 'featureTableFile'.",
+        stop("taxa in 'taxonomyFile' does not match to taxa in 'sharedFile'.",
              call. = FALSE)
       }
       # Adds rownames
@@ -224,15 +224,15 @@ loadFromMothur <- function(featureTableFile,
 
 }
 
-.read_mothur_sample_meta <- function(sampleMetaFile, data_to_colData, ...){
+.read_mothur_sample_meta <- function(designFile, data_to_colData, ...){
   
-    if (.get_mothur_file_type(sampleMetaFile) != "design") {
-      stop("The input '", sampleMetaFile, "' must be in `design` format.",
+    if (.get_mothur_file_type(designFile) != "design") {
+      stop("The input '", designFile, "' must be in `design` format.",
            call. = FALSE)
     }
   
     # Reads the file
-    colData <- read.table(sampleMetaFile, check.names=FALSE,
+    colData <- read.table(designFile, check.names=FALSE,
                           header=TRUE, sep="\t", stringsAsFactors=FALSE)
     
     # Combines the extracted colData and data from the assay
@@ -243,10 +243,10 @@ loadFromMothur <- function(featureTableFile,
       # Checks if the sample names extracted from sample meta data ('group' column) 
       # are the same as the ones that were extracted from assay ('Group' column)
       if( !identical(colData$group, colData$Group) ){
-        stop("sample names in 'sampleMetaFile' does not match to sample names in 'featureTableFile'.",
+        stop("sample names in 'designFile' does not match to sample names in 'sharedFile'.",
              call. = FALSE)
       }
-      # Adds sample names to rownames of the data frame
+      # Adds sample names to rownames of the data 
       rownames(colData) <- colData$group
     }
     return(colData)

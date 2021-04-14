@@ -4,25 +4,20 @@
 \alias{loadFromMothur}
 \title{Import Mothur results to \code{SummarizedExperiment}}
 \usage{
-loadFromMothur(
-  featureTableFile,
-  taxonomyTableFile = NULL,
-  sampleMetaFile = NULL,
-  ...
-)
+loadFromMothur(sharedFile, taxonomyFile = NULL, designFile = NULL, ...)
 }
 \arguments{
-\item{featureTableFile}{a single \code{character} value defining the file
+\item{sharedFile}{a single \code{character} value defining the file
 path of the feature table to be imported.
 The File has to be in \code{shared} file format.}
 
-\item{taxonomyTableFile}{a single \code{character} value defining the file
+\item{taxonomyFile}{a single \code{character} value defining the file
 path of the taxonomy table to be imported.
-The File has to be in \code{cons.taxonomy} file format. (default: \code{taxonomyTableFile = NULL}).}
+The File has to be in \code{cons.taxonomy} file format. (default: \code{taxonomyFile = NULL}).}
 
-\item{sampleMetaFile}{a single \code{character} value defining the file path
+\item{designFile}{a single \code{character} value defining the file path
 of the sample metadata to be imported.
-The File has to be in \code{desing} file format. (default: \code{sampleMetaFile = NULL}).}
+The File has to be in \code{desing} file format. (default: \code{designFile = NULL}).}
 
 \item{...}{additional arguments:}
 }
@@ -38,8 +33,8 @@ files that are provided as an input.
 \details{
 Results exported from Mothur can be imported as a
 \code{SummarizedExperiment} using \code{loadFromMothur}. Except for the
-\code{featureTableFile}, the other data types, \code{taxonomyTableFile}, and
-\code{sampleMetaFile}, are optional, but are highly -------------------------Check this
+\code{sharedFile}, the other data types, \code{taxonomyFile}, and
+\code{designFile}, are optional, but are highly -------------------------Check this
 encouraged to be provided.
 }
 \examples{
