@@ -107,26 +107,6 @@ loadFromMothur <- function(sharedFile,
       stop("The input '", sharedFile, "' must be in `shared` format.",
            call. = FALSE)
     }
-    # 
-    # # Reads the file
-    # assay <- read.table(sharedFile, check.names=FALSE, header=TRUE,
-    #                     sep="\t", stringsAsFactors=FALSE)
-    # 
-    # # File contains additional columns "label", "numOtus", and "Group". They are removed
-    # assay$label <- NULL
-    # assay$numOtus <- NULL
-    # # Information of "Group" column is saved, it includes sample information
-    # sample_names <- assay$Group
-    # assay$Group <- NULL
-    # 
-    # # Initializes rownames
-    # rownames(assay) <- NULL
-    # # Saves sample information to rownames of table
-    # rownames(assay) <- sample_names
-    # 
-    # # Transposes and converts assay from dataframe to matrix
-    # assay <- t(as.matrix(assay))
-    # return(assay)
   
     # Stores name of columns will be included in colData not in assays
     MOTHUR_NON_ASSAY_COLS <- c("label","numOtus","Group")
@@ -155,37 +135,6 @@ loadFromMothur <- function(sharedFile,
       stop("The input '", taxonomyFile, "' must be in `cons.taxonomy` format.",
            call. = FALSE)
     }
-    
-    # # Reads the file
-    # rowData <- read.table(taxonomyFile, check.names=FALSE,
-    #                       header=TRUE, sep="\t", stringsAsFactors=FALSE)
-    # # Deletes additional information between taxa levels.
-    # rowData$Taxonomy <- gsub("[\"]", "", rowData$Taxonomy)
-    # rowData$Taxonomy <- gsub("[(1-100)]", "", rowData$Taxonomy)
-    # # Separate taxa to own columns
-    # rowData <- tidyr::separate(rowData, 
-    #                            "Taxonomy", 
-    #                            into=c("Kingdom", "Phylum", "Order", "Class", 
-    #                                   "Family", "Genus"), sep=";", 
-    #                            extra="merge")
-    # 
-    # # Deletes ";" from the end of Genus names
-    # rowData$Genus <- gsub(";", "", rowData$Genus)
-    # # Deletes addition "Size" column
-    # rowData$Size <- NULL
-    # 
-    # # Adds taxa to rownames
-    # rownames(rowData) <- rowData$OTU
-    # # Deletes addition "OTU" column
-    # rowData$OTU <- NULL
-    # 
-    # # # Creates a matrix from the table
-    # # rowData <- as.matrix(rowData)
-    # # rowData <- (rowData)
-    # 
-    # # Gets only those taxa that are included in feature_tab
-    # #rowData <- rowData[rownames(feature_tab),] # delete this <---------------------------------------------
-    # return(rowData)
     
     # Saves column that includes taxonomical information
     MOTHUR_TAX_COL <- "Taxonomy"
