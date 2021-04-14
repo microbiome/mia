@@ -1,42 +1,31 @@
-#' Import Mothur results to \code{TreeSummarizedExperiment}
+#' Import Mothur results to \code{SummarizedExperiment}
 #' 
-#' This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
+#' This method creates a \code{SummarizedExperiment} object from \code{Mothur}
 #' files that are provided as an input. 
 #'
 #' @param featureTableFile a single \code{character} value defining the file
-#'   path of the feature table to be imported.
+#'   path of the feature table to be imported. 
+#'   The File has to be in \code{shared} file format.
 #'
 #' @param taxonomyTableFile a single \code{character} value defining the file
-#'   path of the taxonomy table to be imported. (default:
-#'   \code{taxonomyTableFile = NULL}).
+#'   path of the taxonomy table to be imported. 
+#'   The File has to be in \code{cons.taxonomy} file format. (default: \code{taxonomyTableFile = NULL}).
 #'
 #' @param sampleMetaFile a single \code{character} value defining the file path
-#'   of the sample metadata to be imported. (default: \code{sampleMetaFile = NULL}).
-#'
-#' @param featureNamesAsRefSeq \code{TRUE} or \code{FALSE}: Should the feature
-#'   names of the feature table be regarded as reference sequences? This setting
-#'   will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
-#'   feature names do not contain valid DNA characters only, the reference
-#'   sequences will not be set.
-#'
-#' @param refSeqFile a single \code{character} value defining the file path of
-#'   the reference sequences for each feature. (default: \code{refSeqFile =
-#'   NULL}).
-#'
-#' @param phyTreeFile a single \code{character} value defining the file path of
-#'   the phylogenetic tree. (default: \code{phyTreeFile = NULL}).
+#'   of the sample metadata to be imported. 
+#'   The File has to be in \code{desing} file format. (default: \code{sampleMetaFile = NULL}).
 #'
 #' @param ... additional arguments:
 #'
 #' @details
 #' Results exported from Mothur can be imported as a
-#' \code{TreeSummarizedExperiment} using \code{loadFromMothur}. Except for the
-#' \code{featureTableFile}, the other data types, \code{taxonomyTableFile},
-#' \code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
+#' \code{SummarizedExperiment} using \code{loadFromMothur}. Except for the
+#' \code{featureTableFile}, the other data types, \code{taxonomyTableFile}, and
+#' \code{sampleMetaFile}, are optional, but are highly -------------------------Check this
 #' encouraged to be provided.
 #'
 #' @return  A
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object
 #'
 #' @name loadFromMothur
@@ -67,9 +56,6 @@
 loadFromMothur <- function(featureTableFile,
                            taxonomyTableFile = NULL,
                            sampleMetaFile = NULL,
-                         #  featureNamesAsRefSeq = TRUE,
-                          # refSeqFile = NULL,
-                          # phyTreeFile = NULL,
                            ...) {
   
     # input check
@@ -85,21 +71,6 @@ loadFromMothur <- function(featureTableFile,
         stop("'sampleMetaFile' must be a single character value or NULL.",
             call. = FALSE)
     }
-  
-    # Tree and refseq files are not allowed
-    # if(!.is_a_bool(featureNamesAsRefSeq)){
-    #     stop("'featureNamesAsRefSeq' must be TRUE or FALSE.", 
-    #         call. = FALSE)
-    # }
-    # if(!is.null(refSeqFile) && !.is_non_empty_string(refSeqFile)){
-    #     stop("'refSeqFile' must be a single character value or NULL.", 
-    #         call. = FALSE)
-    # }
-    # if(!is.null(phyTreeFile) && !.is_non_empty_string(phyTreeFile)){
-    #     stop("'phyTreeFile' must be a single character value or NULL.", 
-    #         call. = FALSE)
-    # }
-    #
     
     # Reads the featureTablefile 
     feature_tab_and_data_to_colData <- .read_mothur_feature(featureTableFile, ...)
@@ -122,30 +93,10 @@ loadFromMothur <- function(featureTableFile,
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
     }
     
-    tree <- NULL
-    refseq <- NULL
-    
-    # if (!is.null(phyTreeFile)) {
-    #     tree <- .read_qza(phyTreeFile, ...)
-    # } else {
-    #     tree <- NULL
-    # }
-    # 
-    # # if row.names(feature_tab) is a DNA sequence,  set it as refseq
-    # if (!is.null(refSeqFile)){
-    #     refseq <- .read_qza(refSeqFile, ...)
-    # } else if (featureNamesAsRefSeq) {
-    #     refseq <- .rownames_as_dna_seq(rownames(feature_tab))
-    # } else {
-    #     refseq <- NULL
-    # }
-    
-    return(TreeSummarizedExperiment(
+    return(SummarizedExperiment(
         assays = S4Vectors::SimpleList(counts = feature_tab),
         rowData = taxa_tab,
-        colData = sample_meta,
-        rowTree = tree,
-        referenceSeq = refseq
+        colData = sample_meta
     ))
     
 }
@@ -256,8 +207,9 @@ loadFromMothur <- function(featureTableFile,
     tax$Genus <- gsub(";", "", tax$Genus)
     
     # Combines the extracted taxonomical data and unprocessed data and creates a data frame
-    rowData <- cbind(DataFrame(tax),
-                     DataFrame(data[, !(colnames(data) %in% MOTHUR_TAX_COL)]))
+    # rowData <- cbind(DataFrame(tax),
+    #                  DataFrame(data[, !(colnames(data) %in% MOTHUR_TAX_COL)]))
+    rowData <- tax
     # If the data includes "OTU" column, that includes taxa
     if( !is.null(rowData$OTU) ){
       # Checks if the rownames are the same as in assay.
@@ -274,13 +226,13 @@ loadFromMothur <- function(featureTableFile,
 
 .read_mothur_sample_meta <- function(sampleMetaFile, data_to_colData, ...){
   
-    if (.get_mothur_file_type(sampleMetaFile) != ".design") {
+    if (.get_mothur_file_type(sampleMetaFile) != "design") {
       stop("The input '", sampleMetaFile, "' must be in `design` format.",
            call. = FALSE)
     }
   
     # Reads the file
-    colData <- read.table(taxonomyTableFile, check.names=FALSE,
+    colData <- read.table(sampleMetaFile, check.names=FALSE,
                           header=TRUE, sep="\t", stringsAsFactors=FALSE)
     
     # Combines the extracted colData and data from the assay

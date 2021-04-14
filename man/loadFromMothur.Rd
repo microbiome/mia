@@ -2,7 +2,7 @@
 % Please edit documentation in R/loadFromMothur.R
 \name{loadFromMothur}
 \alias{loadFromMothur}
-\title{Import Mothur results to \code{TreeSummarizedExperiment}}
+\title{Import Mothur results to \code{SummarizedExperiment}}
 \usage{
 loadFromMothur(
   featureTableFile,
@@ -13,44 +13,33 @@ loadFromMothur(
 }
 \arguments{
 \item{featureTableFile}{a single \code{character} value defining the file
-path of the feature table to be imported.}
+path of the feature table to be imported.
+The File has to be in \code{shared} file format.}
 
 \item{taxonomyTableFile}{a single \code{character} value defining the file
-path of the taxonomy table to be imported. (default:
-\code{taxonomyTableFile = NULL}).}
+path of the taxonomy table to be imported.
+The File has to be in \code{cons.taxonomy} file format. (default: \code{taxonomyTableFile = NULL}).}
 
 \item{sampleMetaFile}{a single \code{character} value defining the file path
-of the sample metadata to be imported. (default: \code{sampleMetaFile = NULL}).}
+of the sample metadata to be imported.
+The File has to be in \code{desing} file format. (default: \code{sampleMetaFile = NULL}).}
 
 \item{...}{additional arguments:}
-
-\item{featureNamesAsRefSeq}{\code{TRUE} or \code{FALSE}: Should the feature
-names of the feature table be regarded as reference sequences? This setting
-will be disregarded, if \code{refSeqFile} is not \code{NULL}. If the
-feature names do not contain valid DNA characters only, the reference
-sequences will not be set.}
-
-\item{refSeqFile}{a single \code{character} value defining the file path of
-the reference sequences for each feature. (default: \code{refSeqFile =
-  NULL}).}
-
-\item{phyTreeFile}{a single \code{character} value defining the file path of
-the phylogenetic tree. (default: \code{phyTreeFile = NULL}).}
 }
 \value{
 A
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object
 }
 \description{
-This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
+This method creates a \code{SummarizedExperiment} object from \code{Mothur}
 files that are provided as an input.
 }
 \details{
 Results exported from Mothur can be imported as a
-\code{TreeSummarizedExperiment} using \code{loadFromMothur}. Except for the
-\code{featureTableFile}, the other data types, \code{taxonomyTableFile},
-\code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
+\code{SummarizedExperiment} using \code{loadFromMothur}. Except for the
+\code{featureTableFile}, the other data types, \code{taxonomyTableFile}, and
+\code{sampleMetaFile}, are optional, but are highly -------------------------Check this
 encouraged to be provided.
 }
 \examples{
