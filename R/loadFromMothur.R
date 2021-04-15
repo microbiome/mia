@@ -43,14 +43,15 @@
 #' 
 #' @examples
 #' # Abundance table
-#' counts <- "~/Desktop/Baxter_FITs_Microbiome_2016_fit.final.tx.1.subsample.shared"
-#' # Taxa table
-#' taxa <- "~/Desktop/Baxter_FITs_Microbiome_2016_fit.final.tx.1.cons.taxonomy"
+#' counts <- system.file("extdata", "mothur_example.shared", package = "mia")
+#' # Taxa table (in "cons.taxonomy" or "taxonomy" format)
+#' taxa <- system.file("extdata", "mothur_example.cons.taxonomy", package = "mia")
+#' #taxa <- system.file("extdata", "mothur_example.taxonomy", package = "mia")
 #' # Sample meta data
-#' meta <- "~/Desktop/Baxter_FITs_Microbiome_2016_mapping.csv"
+#' meta <- system.file("extdata", "mothur_example.design", package = "mia")
 #' 
-#' # Creates tse object from files
-#' \dontrun{tse <- loadFromMothur(counts, taxa, meta)}
+#' # Creates se object from files
+#' se <- loadFromMothur(counts, taxa, meta)
 #' 
 
 loadFromMothur <- function(sharedFile,
@@ -130,17 +131,27 @@ loadFromMothur <- function(sharedFile,
 }
 
 .read_mothur_taxonomy <- function(taxonomyFile, feature_tab, ...){
-  
-    if (.get_mothur_taxonomy_file_type(taxonomyFile) != "cons.taxonomy") {
-      stop("The input '", taxonomyFile, "' must be in `cons.taxonomy` format.",
+    
+    # Checks that the input file is correct, i.e., in "taxonomy" or "cons.taxonomy" format
+    if (.get_mothur_file_type(taxonomyFile) != "taxonomy") {
+      stop("The input '", taxonomyFile, "' must be in `taxonomy` or in `cons.taxonomy` format.",
            call. = FALSE)
     }
     
+    # If the file is in "cons.taxonomy" format
+    if (.get_mothur_taxonomy_file_type(taxonomyFile) == "cons.taxonomy") {
+      data <- read.table(taxonomyFile, check.names=FALSE,
+                         header=TRUE, sep="\t", stringsAsFactors=FALSE)
+    } 
+    # If the file is in "taxonomy" format, adds column names
+    else{
+      data <- read.table(taxonomyFile, check.names=FALSE,
+                         header=FALSE, sep="\t", stringsAsFactors=FALSE, col.names = c("OTU", "Taxonomy"))
+    }
+  
     # Saves column that includes taxonomical information
     MOTHUR_TAX_COL <- "Taxonomy"
-    # Reads the file
-    data <- read.table(taxonomyFile, check.names=FALSE,
-                       header=TRUE, sep="\t", stringsAsFactors=FALSE)
+
     # Checks that colnames contain information, it is not NULL, and taxonomical information is present 
     if ( !(length(colnames(data)) > 0) || is.null(colnames(data)) || is.null(data[[MOTHUR_TAX_COL]]) ){
       stop("'taxonomy' does not include taxonomical information.",
@@ -170,10 +181,9 @@ loadFromMothur <- function(sharedFile,
       rownames(rowData) <- rowData$OTU
     }
     return(rowData)
-
 }
 
-.read_mothur_sample_meta <- function(designFile, data_to_colData, ...){
+.read_mothur_sample_meta <- function(designFile, data_to_colData,...){
   
     if (.get_mothur_file_type(designFile) != "design") {
       stop("The input '", designFile, "' must be in `design` format.",
@@ -201,7 +211,6 @@ loadFromMothur <- function(sharedFile,
     return(colData)
   
 }
-
 
 #' extract file extension
 #' @noRd

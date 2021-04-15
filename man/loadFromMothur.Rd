@@ -39,14 +39,15 @@ encouraged to be provided.
 }
 \examples{
 # Abundance table
-counts <- "~/Desktop/Baxter_FITs_Microbiome_2016_fit.final.tx.1.subsample.shared"
-# Taxa table
-taxa <- "~/Desktop/Baxter_FITs_Microbiome_2016_fit.final.tx.1.cons.taxonomy"
+counts <- system.file("extdata", "mothur_example.shared", package = "mia")
+# Taxa table (in "cons.taxonomy" or "taxonomy" format)
+taxa <- system.file("extdata", "mothur_example.cons.taxonomy", package = "mia")
+#taxa <- system.file("extdata", "mothur_example.taxonomy", package = "mia")
 # Sample meta data
-meta <- "~/Desktop/Baxter_FITs_Microbiome_2016_mapping.csv"
+meta <- system.file("extdata", "mothur_example.design", package = "mia")
 
-# Creates tse object from files
-\dontrun{tse <- loadFromMothur(counts, taxa, meta)}
+# Creates se object from files
+se <- loadFromMothur(counts, taxa, meta)
 
 }
 \references{
