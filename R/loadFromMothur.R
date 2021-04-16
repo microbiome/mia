@@ -5,15 +5,16 @@
 #'
 #' @param sharedFile a single \code{character} value defining the file
 #'   path of the feature table to be imported. 
-#'   The File has to be in \code{shared} file format.
+#'   The File has to be in \code{shared file} format.
 #'
 #' @param taxonomyFile a single \code{character} value defining the file
 #'   path of the taxonomy table to be imported. 
-#'   The File has to be in \code{cons.taxonomy} file format. (default: \code{taxonomyFile = NULL}).
+#'   The File has to be in \code{taxonomy file} or \code{constaxonomy file} format. 
+#'   (default: \code{taxonomyFile = NULL}).
 #'
 #' @param designFile a single \code{character} value defining the file path
 #'   of the sample metadata to be imported. 
-#'   The File has to be in \code{desing} file format. (default: \code{designFile = NULL}).
+#'   The File has to be in \code{desing file} format. (default: \code{designFile = NULL}).
 #'
 #' @param ... additional arguments:
 #'
@@ -21,8 +22,7 @@
 #' Results exported from Mothur can be imported as a
 #' \code{SummarizedExperiment} using \code{loadFromMothur}. Except for the
 #' \code{sharedFile}, the other data types, \code{taxonomyFile}, and
-#' \code{designFile}, are optional, but are highly -------------------------Check this
-#' encouraged to be provided.
+#' \code{designFile}, are optional, but are highly encouraged to be provided.
 #'
 #' @return  A
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -33,13 +33,17 @@
 #' \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
 #' \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
 #' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
-#' \code{\link[=loadFromQIIME2}]{loadFromQIIME2}}
+#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #'
 #' @export
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @references
 #' \url{https://mothur.org/}
+#' \url{https://mothur.org/wiki/shared_file/}
+#' \url{https://mothur.org/wiki/taxonomy_file/}
+#' \url{https://mothur.org/wiki/constaxonomy_file/}
+#' \url{https://mothur.org/wiki/design_file/}
 #' 
 #' @examples
 #' # Abundance table
@@ -52,6 +56,7 @@
 #' 
 #' # Creates se object from files
 #' se <- loadFromMothur(counts, taxa, meta)
+#' se
 #' 
 
 loadFromMothur <- function(sharedFile,
@@ -149,7 +154,7 @@ loadFromMothur <- function(sharedFile,
                          header=FALSE, sep="\t", stringsAsFactors=FALSE, col.names = c("OTU", "Taxonomy"))
     }
   
-    # Saves column that includes taxonomical information
+    # Column that includes taxonomical information
     MOTHUR_TAX_COL <- "Taxonomy"
 
     # Checks that colnames contain information, it is not NULL, and taxonomical information is present 
@@ -167,8 +172,8 @@ loadFromMothur <- function(sharedFile,
     tax$Genus <- gsub(";", "", tax$Genus)
     
     # Combines the extracted taxonomical data and unprocessed data and creates a data frame
-    # rowData <- cbind(DataFrame(tax),
-    #                  DataFrame(data[, !(colnames(data) %in% MOTHUR_TAX_COL)]))
+    rowData <- cbind(DataFrame(tax),
+                     DataFrame(data[, !(colnames(data) %in% MOTHUR_TAX_COL)]))
     rowData <- tax
     # If the data includes "OTU" column, that includes taxa
     if( !is.null(rowData$OTU) ){

@@ -9,15 +9,16 @@ loadFromMothur(sharedFile, taxonomyFile = NULL, designFile = NULL, ...)
 \arguments{
 \item{sharedFile}{a single \code{character} value defining the file
 path of the feature table to be imported.
-The File has to be in \code{shared} file format.}
+The File has to be in \code{shared file} format.}
 
 \item{taxonomyFile}{a single \code{character} value defining the file
 path of the taxonomy table to be imported.
-The File has to be in \code{cons.taxonomy} file format. (default: \code{taxonomyFile = NULL}).}
+The File has to be in \code{taxonomy file} or \code{constaxonomy file} format.
+(default: \code{taxonomyFile = NULL}).}
 
 \item{designFile}{a single \code{character} value defining the file path
 of the sample metadata to be imported.
-The File has to be in \code{desing} file format. (default: \code{designFile = NULL}).}
+The File has to be in \code{desing file} format. (default: \code{designFile = NULL}).}
 
 \item{...}{additional arguments:}
 }
@@ -34,8 +35,7 @@ files that are provided as an input.
 Results exported from Mothur can be imported as a
 \code{SummarizedExperiment} using \code{loadFromMothur}. Except for the
 \code{sharedFile}, the other data types, \code{taxonomyFile}, and
-\code{designFile}, are optional, but are highly -------------------------Check this
-encouraged to be provided.
+\code{designFile}, are optional, but are highly encouraged to be provided.
 }
 \examples{
 # Abundance table
@@ -48,16 +48,21 @@ meta <- system.file("extdata", "mothur_example.design", package = "mia")
 
 # Creates se object from files
 se <- loadFromMothur(counts, taxa, meta)
+se
 
 }
 \references{
 \url{https://mothur.org/}
+\url{https://mothur.org/wiki/shared_file/}
+\url{https://mothur.org/wiki/taxonomy_file/}
+\url{https://mothur.org/wiki/constaxonomy_file/}
+\url{https://mothur.org/wiki/design_file/}
 }
 \seealso{
 \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
 \code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
 \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
-\code{\link[=loadFromQIIME2}]{loadFromQIIME2}}
+\code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

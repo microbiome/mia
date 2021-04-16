@@ -40,6 +40,19 @@ test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
     expect_s4_class(me, "TreeSummarizedExperiment")
 })
 
+test_that("Importing Mothur files yield SummarizedExperiment objects", {
+    
+    counts <- system.file("extdata", "mothur_example.shared", package = "mia")
+    taxa <- system.file("extdata", "mothur_example.cons.taxonomy", package = "mia")
+    taxa2 <- system.file("extdata", "mothur_example.taxonomy", package = "mia")
+    meta <- system.file("extdata", "mothur_example.design", package = "mia")
+    se <- loadFromMothur(counts, taxa, meta)
+    se2 <- loadFromMothur(counts, taxa2, meta)
+    
+    expect_s4_class(se, "SummarizedExperiment")
+    expect_s4_class(se2, "SummarizedExperiment")
+})
+
 featureTableFile <- system.file("extdata", "table.qza", package = "mia")
 taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
 refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
