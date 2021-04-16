@@ -73,7 +73,8 @@ Suggests:
     biomformat,
     reldist,
     ade4,
-    microbiomeDataSets
+    microbiomeDataSets,
+    rmarkdown
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
