@@ -34,7 +34,6 @@
 #' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
 #' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #'
-#' @export
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @references
@@ -56,6 +55,11 @@
 #' # Creates se object from files
 #' se <- loadFromMothur(counts, taxa, meta)
 #' se
+NULL
+
+#' @rdname loadFromMothur
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' @export
 loadFromMothur <- function(sharedFile,
                            taxonomyFile = NULL,
                            designFile = NULL) {

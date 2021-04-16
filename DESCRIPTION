@@ -45,6 +45,7 @@ Imports:
     utils,
     MASS,
     ape,
+    decontam,
     vegan,
     BiocGenerics,
     S4Vectors,
