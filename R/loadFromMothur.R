@@ -91,9 +91,8 @@ loadFromMothur <- function(sharedFile,
     
     # If colData informationor data_to_colData exists, gets that. Otherwise, 
     # sample_tab is just data frame without information
-    if (!is.null(designFile) %% !is.null(data_to_colData)) {
-        sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData,
-                                                feature_tab)
+    if (!is.null(designFile) && !is.null(data_to_colData)) {
+        sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData)
     } else {
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
     }
@@ -148,9 +147,9 @@ loadFromMothur <- function(sharedFile,
     }
     # Else the is not either gives an error
     else{
-        stop("The input '", taxonomyFile, "' must be in `taxonomy` or in ",
-             "`cons.taxonomy` format, and it needs to include same taxa as ",
-             "the 'sharedFile'",
+        stop("The input '", taxonomyFile, "' must be provided in the ",
+             "`taxonomy` or `cons.taxonomy` format. In addition, it must ",
+             "match the data of the 'sharedFile'",
              call. = FALSE)
     }
   
