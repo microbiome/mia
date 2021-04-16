@@ -72,8 +72,13 @@ as batch information. (default: \code{batch = NULL})}
 \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
 
-\item{...}{for \code{addContaminantQC}/\code{addNotContaminantQC}: arguments
+\item{...}{\itemize{
+\item{for \code{isContaminant}/ \code{isNotContaminant}: }{arguments
+passed on to \code{\link[decontam:isContaminant]{decontam:isContaminant}}
+or \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
+\item{for \code{addContaminantQC}/\code{addNotContaminantQC}: }{arguments
 passed on to \code{isContaminant}/ \code{isNotContaminant}}
+}}
 }
 \value{
 for \code{isContaminant}/ \code{isNotContaminant} a \code{DataFrame}
@@ -92,12 +97,16 @@ data(esophagus)
 colData(esophagus)$concentration <- c(1,2,3)
 colData(esophagus)$control <- c(FALSE,FALSE,TRUE)
 
-esophagus <- isContaminant(esophagus,
-                           method = "frequency",
-                           concentration = "concentration")
+isContaminant(esophagus,
+              method = "frequency",
+              concentration = "concentration")
+esophagus <- addContaminantQC(esophagus,
+                              method = "frequency",
+                              concentration = "concentration")
 colData(esophagus)
 
-esophagus <- isNotContaminant(esophagus, control = "control")
+isNotContaminant(esophagus, control = "control")
+esophagus <- addNotContaminantQC(esophagus, control = "control")
 colData(esophagus)
 }
 \seealso{

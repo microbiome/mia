@@ -40,9 +40,9 @@
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 #'   \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}
 #'
-#' @param ...
+#' @param ... 
 #' \itemize{
-#'   \item{for \code{isContaminant}/ \code{isNotContaminant}}: }{arguments
+#'   \item{for \code{isContaminant}/ \code{isNotContaminant}: }{arguments
 #'     passed on to \code{\link[decontam:isContaminant]{decontam:isContaminant}}
 #'     or \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
 #'   \item{for \code{addContaminantQC}/\code{addNotContaminantQC}: }{arguments
@@ -67,12 +67,16 @@
 #' colData(esophagus)$concentration <- c(1,2,3)
 #' colData(esophagus)$control <- c(FALSE,FALSE,TRUE)
 #'
-#' esophagus <- isContaminant(esophagus,
-#'                            method = "frequency",
-#'                            concentration = "concentration")
+#' isContaminant(esophagus,
+#'               method = "frequency",
+#'               concentration = "concentration")
+#' esophagus <- addContaminantQC(esophagus,
+#'                               method = "frequency",
+#'                               concentration = "concentration")
 #' colData(esophagus)
 #'
-#' esophagus <- isNotContaminant(esophagus, control = "control")
+#' isNotContaminant(esophagus, control = "control")
+#' esophagus <- addNotContaminantQC(esophagus, control = "control")
 #' colData(esophagus)
 NULL
 
