@@ -90,7 +90,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
              detailed = TRUE,
              ...){
         # input check
-        .check_abund_values(abund_values, seqtab)
+        .check_assay_present(abund_values, seqtab)
         if(!.is_a_string(name)){
             stop("'name' must be single character value.",call. = FALSE)
         }
@@ -155,7 +155,7 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
              detailed = FALSE,
              ...){
         # input check
-        .check_abund_values(abund_values, seqtab)
+        .check_assay_present(abund_values, seqtab)
         if(!.is_a_string(name)){
             stop("'name' must be single character value.",call. = FALSE)
         }
