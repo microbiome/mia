@@ -203,7 +203,7 @@ setGeneric("addContaminantQC", signature = c("x"),
 setMethod("addContaminantQC", signature = c("SummarizedExperiment"),
     function(x, name = "isContaminant", ...){
         contaminant <- isContaminant(x, ...)
-        rowData(x)[,name] <- I(contaminant)
+        rowData(x)[[name]] <- contaminant
         x
     }
 )
@@ -219,7 +219,7 @@ setGeneric("addNotContaminantQC", signature = c("x"),
 setMethod("addNotContaminantQC", signature = c("SummarizedExperiment"),
     function(x, name = "isNotContaminant", ...){
         not_contaminant <- isNotContaminant(x, ...)
-        rowData(x)[,name] <- I(not_contaminant)
+        rowData(x)[[name]] <- not_contaminant
         x
     }
 )
