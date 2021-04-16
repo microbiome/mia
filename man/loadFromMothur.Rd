@@ -2,25 +2,24 @@
 % Please edit documentation in R/loadFromMothur.R
 \name{loadFromMothur}
 \alias{loadFromMothur}
-\title{Import Mothur results to \code{SummarizedExperiment}}
+\title{Import Mothur results as a \code{SummarizedExperiment}}
 \usage{
-loadFromMothur(sharedFile, taxonomyFile = NULL, designFile = NULL, ...)
+loadFromMothur(sharedFile, taxonomyFile = NULL, designFile = NULL)
 }
 \arguments{
 \item{sharedFile}{a single \code{character} value defining the file
-path of the feature table to be imported.
-The File has to be in \code{shared file} format.}
+path of the feature table to be imported. The File has to be in
+\code{shared file} format as defined in Mothur documentation.}
 
-\item{taxonomyFile}{a single \code{character} value defining the file
-path of the taxonomy table to be imported.
-The File has to be in \code{taxonomy file} or \code{constaxonomy file} format.
-(default: \code{taxonomyFile = NULL}).}
+\item{taxonomyFile}{a single \code{character} value defining the file path of
+the taxonomy table to be imported. The File has to be in \code{taxonomy
+  file} or \code{constaxonomy file} format  as defined in Mothur
+documentation. (default: \code{taxonomyFile = NULL}).}
 
-\item{designFile}{a single \code{character} value defining the file path
-of the sample metadata to be imported.
-The File has to be in \code{desing file} format. (default: \code{designFile = NULL}).}
-
-\item{...}{additional arguments:}
+\item{designFile}{a single \code{character} value defining the file path of
+the sample metadata to be imported. The File has to be in \code{desing
+  file} format as defined in Mothur documentation. (default: \code{designFile
+  = NULL}).}
 }
 \value{
 A
@@ -29,7 +28,7 @@ object
 }
 \description{
 This method creates a \code{SummarizedExperiment} object from \code{Mothur}
-files that are provided as an input.
+files provided as input.
 }
 \details{
 Results exported from Mothur can be imported as a
@@ -49,7 +48,6 @@ meta <- system.file("extdata", "mothur_example.design", package = "mia")
 # Creates se object from files
 se <- loadFromMothur(counts, taxa, meta)
 se
-
 }
 \references{
 \url{https://mothur.org/}
