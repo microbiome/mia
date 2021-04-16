@@ -51,6 +51,53 @@ test_that("Importing Mothur files yield SummarizedExperiment objects", {
     
     expect_s4_class(se, "SummarizedExperiment")
     expect_s4_class(se2, "SummarizedExperiment")
+    
+    # Checks dimensions, rownames, and colnames of assay
+    expect_equal(nrow(assays(se)$counts), 100)
+    expect_equal(rownames(assays(se)$counts)[1:10],
+                          c("Otu001", "Otu002",  "Otu003",  "Otu004",  "Otu005",
+                            "Otu006", "Otu007", "Otu008", "Otu009", "Otu010"))
+    expect_equal(ncol(assays(se)$counts), 100)
+    expect_equal(colnames(assays(se)$counts)[1:10],
+                          c("Sample1", "Sample2", "Sample3", "Sample4", "Sample5", 
+                            "Sample6", "Sample7", "Sample8", "Sample9", "Sample10"))
+    expect_equal(nrow(assays(se2)$counts), 100)
+    expect_equal(rownames(assays(se2)$counts)[1:10],
+                 c("Otu001", "Otu002",  "Otu003",  "Otu004",  "Otu005",
+                   "Otu006", "Otu007", "Otu008", "Otu009", "Otu010"))
+    expect_equal(ncol(assays(se2)$counts), 100)
+    expect_equal(colnames(assays(se)$counts)[1:10],
+                          c("Sample1", "Sample2", "Sample3", "Sample4", "Sample5", 
+                            "Sample6", "Sample7", "Sample8", "Sample9", "Sample10"))
+    
+    # Checks that rowData has right dimensions, rownames, and colnames
+    expect_equal(nrow(rowData(se)), 100)
+    expect_equal(rownames(rowData(se))[1:10],
+                          c("Otu001", "Otu002",  "Otu003",  "Otu004",  "Otu005",
+                            "Otu006", "Otu007", "Otu008", "Otu009", "Otu010"))
+    expect_equal(colnames(rowData(se)),
+                 c("OTU", "Size", "Kingdom", "Phylum", "Order", "Class", "Family", "Genus"))
+    expect_equal(nrow(rowData(se2)), 100)
+    expect_equal(rownames(rowData(se2))[1:10],
+                          c("Otu001", "Otu002",  "Otu003",  "Otu004",  "Otu005",
+                            "Otu006", "Otu007", "Otu008", "Otu009", "Otu010"))
+    expect_equal(colnames(rowData(se2)),
+                 c("OTU", "Kingdom", "Phylum", "Order", "Class", "Family", "Genus"))
+    
+    expect_equal(nrow(colData(se)), 100)
+    expect_equal(rownames(colData(se))[1:10],
+                          c("Sample1", "Sample2", "Sample3", "Sample4", "Sample5", 
+                            "Sample6", "Sample7", "Sample8", "Sample9", "Sample10"))
+    
+    # Checks colData's dimensions and names of columns and rows
+    expect_equal(colnames(colData(se)),
+                          c("group", "sex", "age", "drug", "label", "numOtus", "Group"))
+    expect_equal(nrow(colData(se2)), 100)
+    expect_equal(rownames(colData(se2))[1:10],
+                          c("Sample1", "Sample2", "Sample3", "Sample4", "Sample5", 
+                            "Sample6", "Sample7", "Sample8", "Sample9", "Sample10"))
+    expect_equal(colnames(colData(se2)),
+                          c("group", "sex", "age", "drug", "label", "numOtus", "Group"))
 })
 
 featureTableFile <- system.file("extdata", "table.qza", package = "mia")

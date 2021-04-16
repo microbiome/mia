@@ -94,7 +94,7 @@ loadFromMothur <- function(sharedFile,
     
     # If colData informationor data_to_colData exists, gets that. Otherwise, sample_tab is just data frame without information
     if (!is.null(designFile) %% !is.null(data_to_colData)) {
-        sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData)
+        sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData, feature_tab)
     } else {
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
     }
@@ -109,7 +109,7 @@ loadFromMothur <- function(sharedFile,
 # These extra information must be added to colData. Return list of assay and extra info
 .read_mothur_feature <- function(sharedFile, ...){
   
-    if (.get_mothur_file_type(sharedFile) != "shared") {
+    if (!.is_mothur_shared_file(sharedFile)) {
       stop("The input '", sharedFile, "' must be in `shared` format.",
            call. = FALSE)
     }
@@ -137,21 +137,21 @@ loadFromMothur <- function(sharedFile,
 
 .read_mothur_taxonomy <- function(taxonomyFile, feature_tab, ...){
     
-    # Checks that the input file is correct, i.e., in "taxonomy" or "cons.taxonomy" format
-    if (.get_mothur_file_type(taxonomyFile) != "taxonomy") {
-      stop("The input '", taxonomyFile, "' must be in `taxonomy` or in `cons.taxonomy` format.",
-           call. = FALSE)
-    }
-    
     # If the file is in "cons.taxonomy" format
-    if (.get_mothur_taxonomy_file_type(taxonomyFile) == "cons.taxonomy") {
+    if (.is_mothur_constaxonomy_file(taxonomyFile, feature_tab)) {
       data <- read.table(taxonomyFile, check.names=FALSE,
                          header=TRUE, sep="\t", stringsAsFactors=FALSE)
     } 
     # If the file is in "taxonomy" format, adds column names
-    else{
+    else if (.is_mothur_taxonomy_file(taxonomyFile, feature_tab)){
       data <- read.table(taxonomyFile, check.names=FALSE,
                          header=FALSE, sep="\t", stringsAsFactors=FALSE, col.names = c("OTU", "Taxonomy"))
+    }
+    # Else the is not either gives an error
+    else{
+      stop("The input '", taxonomyFile, "' must be in `taxonomy` or in `cons.taxonomy` format,
+           and it needs to include same taxa as the 'sharedFile'",
+           call. = FALSE)
     }
   
     # Column that includes taxonomical information
@@ -170,28 +170,18 @@ loadFromMothur <- function(sharedFile,
     tax <- tidyr::separate(data , MOTHUR_TAX_COL, into=c("Kingdom", "Phylum", "Order", "Class", "Family", "Genus"), sep=";", extra="merge")
     # Removes ";" from the end of genus level names
     tax$Genus <- gsub(";", "", tax$Genus)
-    
-    # Combines the extracted taxonomical data and unprocessed data and creates a data frame
-    rowData <- cbind(DataFrame(tax),
-                     DataFrame(data[, !(colnames(data) %in% MOTHUR_TAX_COL)]))
     rowData <- tax
-    # If the data includes "OTU" column, that includes taxa
-    if( !is.null(rowData$OTU) ){
-      # Checks if the rownames are the same as in assay.
-      if( !identical(rowData$OTU, rownames(feature_tab)) ){
-        stop("taxa in 'taxonomyFile' does not match to taxa in 'sharedFile'.",
-             call. = FALSE)
-      }
-      # Adds rownames
-      rownames(rowData) <- rowData$OTU
-    }
+    # Adds rownames
+    rownames(rowData) <- rowData$OTU
     return(rowData)
 }
 
-.read_mothur_sample_meta <- function(designFile, data_to_colData,...){
-  
-    if (.get_mothur_file_type(designFile) != "design") {
-      stop("The input '", designFile, "' must be in `design` format.",
+.read_mothur_sample_meta <- function(designFile, data_to_colData, ...){
+    # Checks if file is in "design" format. data_to_colData$Group includes 
+    # sample names that were extracted from assay, i.e. sharedFile
+    if (!.is_mothur_design_file(designFile, data_to_colData$Group)) {
+      stop("The input '", designFile, "' must be in `design` format, 
+           and it must inlude same sample names as 'sharedFile'.",
            call. = FALSE)
     }
   
@@ -202,31 +192,79 @@ loadFromMothur <- function(sharedFile,
     # Combines the extracted colData and data from the assay
     colData <- cbind(colData, data_to_colData)
     
-    # If the data includes 'group' column that includes the names of the samples
-    if( !is.null(colData$group) ){
-      # Checks if the sample names extracted from sample meta data ('group' column) 
-      # are the same as the ones that were extracted from assay ('Group' column)
-      if( !identical(colData$group, colData$Group) ){
-        stop("sample names in 'designFile' does not match to sample names in 'sharedFile'.",
-             call. = FALSE)
-      }
-      # Adds sample names to rownames of the data 
-      rownames(colData) <- colData$group
-    }
+    # Adds sample names to rownames of the data 
+    rownames(colData) <- colData$group
     return(colData)
   
 }
 
 #' extract file extension
 #' @noRd
-.get_mothur_file_type <- function(file) {
-    ex <- strsplit(basename(file), split = ".", fixed = TRUE)[[1]]
-    ex[length(ex)]
+.is_mothur_shared_file <- function(file){
+    result <- FALSE
+    # Columns that every shared file should have
+    columns_that_must_be_found <- c("label","Group", "numOtus")
+    
+    # Reads the data
+    data <- read.table(file, check.names=FALSE, header=TRUE,
+                       sep="\t", stringsAsFactors=FALSE)
+    
+    # If data contains column names, then it is shared file
+    if( identical(colnames(data)[1:3], columns_that_must_be_found) ){
+      result <- TRUE
+    }
+    return(result)
+  
 }
 
 #' extract file extension
 #' @noRd
-.get_mothur_taxonomy_file_type <- function(file) {
-    ex <- strsplit(basename(file), split = ".", fixed = TRUE)[[1]]
-    paste(c(ex[length(ex)-1], ".", ex[length(ex)]), collapse= "")
+.is_mothur_taxonomy_file <- function(file, feature_tab){
+  result <- FALSE
+  
+  # Reads the data
+  data <- read.table(file, check.names=FALSE, header=FALSE,
+                     sep="\t", stringsAsFactors=FALSE)
+  
+  # If data contains 2 columns and the first column includes same taxa as feature_tab in rownames, 
+  # then it is taxonomy file
+  if( ncol(data) == 2 && identical(data[,1], rownames(feature_tab)) ){
+    result <- TRUE
+  }
+  return(result)
+  
+}
+
+#' extract file extension
+#' @noRd
+.is_mothur_constaxonomy_file <- function(file, feature_tab){
+  result <- FALSE
+  # Columns that every constaxonomy file should have
+  columns_that_must_be_found <- c("OTU", "Size", "Taxonomy")
+  
+  # Reads the data
+  data <- read.table(file, check.names=FALSE, header=TRUE,
+                     sep="\t", stringsAsFactors=FALSE)
+  
+  # If data contains column names, and "OTU" column that includes same taxa as feature_tab, 
+  # then it is constaxonomy file
+  if( identical(colnames(data), columns_that_must_be_found) && identical(data$OTU, rownames(feature_tab)) ){
+    result <- TRUE
+  }
+  return(result)
+  
+}
+
+.is_mothur_design_file <- function(file, sample_names){
+  result <- FALSE
+  # Reads the data
+  data <- read.table(file, check.names=FALSE, header=TRUE,
+                     sep="\t", stringsAsFactors=FALSE)
+  
+  # If data contains "group" column that include sample names, then it is design file
+  if( identical(data$group, sample_names) ){
+    result <- TRUE
+  }
+  return(result)
+  
 }
