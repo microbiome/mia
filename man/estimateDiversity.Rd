@@ -83,7 +83,8 @@ determining the threshold for coverage index. By default, the threshold is 0.9.}
 object specifying whether calculation of estimates should be parallelized.}
 
 \item{tree}{A phylogenetic tree that is used to calculate 'faith' index.
-By default, it is \code{rowTree(x)}.}
+If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is
+used by default.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}
