@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a phyloseq object from a TreeSummarizedExperiment object — makePhyloseqFromTreeSummarizedExperiment • mia</title>
+<title>Import Mothur results as a SummarizedExperiment — loadFromMothur • mia</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,9 @@
 
 
 
-<meta property="og:title" content="Create a phyloseq object from a TreeSummarizedExperiment object — makePhyloseqFromTreeSummarizedExperiment" />
-<meta property="og:description" content="This function creates a phyloseq object from a TreeSummarizedExperiment
-object. By using abund_values, it is possible to specify which table
-from assay is added to the phyloseq object." />
+<meta property="og:title" content="Import Mothur results as a SummarizedExperiment — loadFromMothur" />
+<meta property="og:description" content="This method creates a SummarizedExperiment object from Mothur
+files provided as input." />
 
 
 
@@ -113,81 +112,91 @@ from assay is added to the phyloseq object." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create a phyloseq object from a TreeSummarizedExperiment object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/microbiome/mia/blob/master/R/makephyloseqFromTreeSummarizedExperiment.R'><code>R/makephyloseqFromTreeSummarizedExperiment.R</code></a></small>
-    <div class="hidden name"><code>makePhyloseqFromTreeSummarizedExperiment.Rd</code></div>
+    <h1>Import Mothur results as a <code>SummarizedExperiment</code></h1>
+    <small class="dont-index">Source: <a href='https://github.com/microbiome/mia/blob/master/R/loadFromMothur.R'><code>R/loadFromMothur.R</code></a></small>
+    <div class="hidden name"><code>loadFromMothur.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function creates a phyloseq object from a TreeSummarizedExperiment
-object. By using <code>abund_values</code>, it is possible to specify which table
-from <code>assay</code> is added to the phyloseq object.</p>
+    <p>This method creates a <code>SummarizedExperiment</code> object from <code>Mothur</code>
+files provided as input.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>makePhyloseqFromTreeSummarizedExperiment</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>makePhyloseqFromTreeSummarizedExperiment</span><span class='op'>(</span><span class='va'>x</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
-
-<span class='co'># S4 method for TreeSummarizedExperiment</span>
-<span class='fu'>makePhyloseqFromTreeSummarizedExperiment</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>loadFromMothur</span><span class='op'>(</span><span class='va'>sharedFile</span>, taxonomyFile <span class='op'>=</span> <span class='cn'>NULL</span>, designFile <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>a <code>TreeSummarizedExperiment</code> object</p></td>
+      <th>sharedFile</th>
+      <td><p>a single <code>character</code> value defining the file
+path of the feature table to be imported. The File has to be in
+<code>shared file</code> format as defined in Mothur documentation.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>additional arguments</p></td>
+      <th>taxonomyFile</th>
+      <td><p>a single <code>character</code> value defining the file path of
+the taxonomy table to be imported. The File has to be in <code>taxonomy
+  file</code> or <code>constaxonomy file</code> format  as defined in Mothur
+documentation. (default: <code>taxonomyFile = NULL</code>).</p></td>
     </tr>
     <tr>
-      <th>abund_values</th>
-      <td><p>A single character value for selecting the
-<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assay</a></code> to be
-included in the phyloseq object that is created. By default, it is counts
-table.</p></td>
+      <th>designFile</th>
+      <td><p>a single <code>character</code> value defining the file path of
+the sample metadata to be imported. The File has to be in <code>desing
+  file</code> format as defined in Mothur documentation. (default: <code>designFile
+  = NULL</code>).</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>Phyloseq</code> object.</p>
+    <p>A
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code>
+object</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>makePhyloseqFromTreeSummarizedExperiment</code> is used for creating a
-phyloseq object from TreeSummarizedExperiment object.</p>
+    <p>Results exported from Mothur can be imported as a
+<code>SummarizedExperiment</code> using <code>loadFromMothur</code>. Except for the
+<code>sharedFile</code>, the other data types, <code>taxonomyFile</code>, and
+<code>designFile</code>, are optional, but are highly encouraged to be provided.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p><a href='https://mothur.org/'>https://mothur.org/</a>
+<a href='https://mothur.org/wiki/shared_file/'>https://mothur.org/wiki/shared_file/</a>
+<a href='https://mothur.org/wiki/taxonomy_file/'>https://mothur.org/wiki/taxonomy_file/</a>
+<a href='https://mothur.org/wiki/constaxonomy_file/'>https://mothur.org/wiki/constaxonomy_file/</a>
+<a href='https://mothur.org/wiki/design_file/'>https://mothur.org/wiki/design_file/</a></p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='makeTreeSummarizedExperimentFromphyloseq.html'>makeTreeSummarizedExperimentFromphyloseq</a></code>
+<code><a href='makeTreeSummarizedExperimentFromBiom.html'>makeTreeSummarizedExperimentFromBiom</a></code>
+<code><a href='makeTreeSummarizedExperimentFromDADA2.html'>makeTreeSummarizedExperimentFromDADA2</a></code>
+<code><a href='loadFromQIIME2.html'>loadFromQIIME2</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Leo Lahti and Tuomas Borman. Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Get tse object</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"GlobalPatterns"</span><span class='op'>)</span>
-<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
+    <pre class="examples"><div class='input'><span class='co'># Abundance table</span>
+<span class='va'>counts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"mothur_example.shared"</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span>
+<span class='co'># Taxa table (in "cons.taxonomy" or "taxonomy" format)</span>
+<span class='va'>taxa</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"mothur_example.cons.taxonomy"</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span>
+<span class='co'>#taxa &lt;- system.file("extdata", "mothur_example.taxonomy", package = "mia")</span>
+<span class='co'># Sample meta data</span>
+<span class='va'>meta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"mothur_example.design"</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span>
 
-<span class='co'># Create a phyloseq object from it</span>
-<span class='va'>phy</span> <span class='op'>&lt;-</span> <span class='fu'>makePhyloseqFromTreeSummarizedExperiment</span><span class='op'>(</span><span class='va'>tse</span><span class='op'>)</span>
-<span class='va'>phy</span>
-</div><div class='output co'>#&gt; phyloseq-class experiment-level object
-#&gt; otu_table()   OTU Table:         [ 19216 taxa and 26 samples ]
-#&gt; sample_data() Sample Data:       [ 26 samples by 7 sample variables ]
-#&gt; tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]
-#&gt; phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</div><div class='input'>
-<span class='co'># By default the chosen table is counts, but if there is other tables,</span>
-<span class='co'># they can be chosen with abund_values.</span>
-
-<span class='co'># Counts relative abundances table</span>
-<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'><a href='transformCounts.html'>transformCounts</a></span><span class='op'>(</span><span class='va'>tse</span>, method <span class='op'>=</span> <span class='st'>"relabundance"</span><span class='op'>)</span>
-<span class='va'>phy2</span> <span class='op'>&lt;-</span> <span class='fu'>makePhyloseqFromTreeSummarizedExperiment</span><span class='op'>(</span><span class='va'>tse</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span><span class='op'>)</span>
-<span class='va'>phy2</span>
-</div><div class='output co'>#&gt; phyloseq-class experiment-level object
-#&gt; otu_table()   OTU Table:         [ 19216 taxa and 26 samples ]
-#&gt; sample_data() Sample Data:       [ 26 samples by 7 sample variables ]
-#&gt; tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]
-#&gt; phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</div></pre>
+<span class='co'># Creates se object from files</span>
+<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>loadFromMothur</span><span class='op'>(</span><span class='va'>counts</span>, <span class='va'>taxa</span>, <span class='va'>meta</span><span class='op'>)</span>
+<span class='va'>se</span>
+</div><div class='output co'>#&gt; class: SummarizedExperiment 
+#&gt; dim: 100 100 
+#&gt; metadata(0):
+#&gt; assays(1): counts
+#&gt; rownames(100): Otu001 Otu002 ... Otu099 Otu100
+#&gt; rowData names(8): OTU Size ... Family Genus
+#&gt; colnames(100): Sample1 Sample2 ... Sample99 Sample100
+#&gt; colData names(7): group sex ... numOtus Group</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

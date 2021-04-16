@@ -73,7 +73,7 @@ wrapper functions. Some of them are implemented via the vegan package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.11</span>
       </span>
     </div>
 
@@ -215,7 +215,8 @@ object specifying whether calculation of estimates should be parallelized.</p></
     <tr>
       <th>tree</th>
       <td><p>A phylogenetic tree that is used to calculate 'faith' index.
-By default, it is <code>rowTree(x)</code>.</p></td>
+If <code>x</code> is a <code>TreeSummarizedExperiment</code>, <code>rowTree(x)</code> is
+used by default.</p></td>
     </tr>
     </table>
 
