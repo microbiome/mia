@@ -75,7 +75,7 @@ loadFromMothur <- function(sharedFile,
     }
     
     # Reads the sharedFile 
-    feature_tab_and_data_to_colData <- .read_mothur_feature(sharedFile, ...)
+    feature_tab_and_data_to_colData <- .read_mothur_feature(sharedFile)
     # Extracts feature_tab
     feature_tab <- feature_tab_and_data_to_colData$assay
     # Extracts data that goes to colData
@@ -84,7 +84,7 @@ loadFromMothur <- function(sharedFile,
     # If rowData information exists, gets that. Otherwise, tax_tab is just 
     # data.frame without information
     if (!is.null(taxonomyFile)) {
-        taxa_tab <- .read_mothur_taxonomy(taxonomyFile, feature_tab, ...)
+        taxa_tab <- .read_mothur_taxonomy(taxonomyFile, feature_tab)
     } else {
         taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
     }
