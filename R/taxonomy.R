@@ -167,9 +167,9 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
     function(x){
         tmp <- try(.check_for_taxonomic_data_order(x), silent = TRUE)
         if(is(tmp,"try-error")){
-            FALSE
+            return(FALSE)
         }
-        TRUE
+        return(TRUE)
     }
 )
 
