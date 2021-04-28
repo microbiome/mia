@@ -149,7 +149,7 @@ loadFromMothur <- function(sharedFile,
                            stringsAsFactors=FALSE, 
                            col.names = c("OTU", "Taxonomy"))
     }
-    # Else the is not either gives an error
+    # Else the file is not either gives an error
     else{
         stop("The input '", taxonomyFile, "' must be provided in the ",
              "`taxonomy` or `cons.taxonomy` format. In addition, it must ",
