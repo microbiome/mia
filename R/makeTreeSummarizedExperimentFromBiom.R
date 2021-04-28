@@ -54,6 +54,16 @@ makeTreeSummarizedExperimentFromBiom <- function(obj){
     counts <- as(biomformat::biom_data(obj), "matrix")
     sample_data <- biomformat::sample_metadata(obj)
     feature_data <- biomformat::observation_metadata(obj)
+    
+    # If sample_data and feature_data is not included in the file, they are NULL,
+    # which leads to error when object is created. --> NULLs are replaced with empty
+    # data frames.
+    if( is.null(sample_data) ){
+        sample_data <- S4Vectors:::make_zero_col_DataFrame(ncol(counts))
+    }
+    if( is.null(feature_data) ){
+        feature_data <- S4Vectors:::make_zero_col_DataFrame(nrow(counts))
+    }
 
     TreeSummarizedExperiment(assays = list(counts = counts),
                              colData = sample_data,
