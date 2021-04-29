@@ -5,27 +5,27 @@
 #' specific \code{ZTransform} function, Z-transformation can be applied for features.
 #' \code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
 #'
-#' @param x
-#' A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object.
+#' @param x A
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'    object.
 #'
-#' @param abund_values
-#' A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to be transformed.
+#' @param abund_values A single character value for selecting the
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
+#'   transformed.
 #'
-#' @param method
-#' A single character value for selecting the transformation method.
+#' @param method A single character value for selecting the transformation
+#'   method.
 #'
-#' @param name
-#' A single character value specifying the name of transformed abundance table.
+#' @param name A single character value specifying the name of transformed
+#'   abundance table.
 #'
-#' @param pseudocount
-#' FALSE or numeric value deciding whether pseudocount is added. Numerical
-#' value specifies the value of pseudocount.
+#' @param pseudocount FALSE or numeric value deciding whether pseudocount is
+#'   added. Numerical value specifies the value of pseudocount. (Only used for 
+#'   methods \code{method = "log10"}, \code{method = "hellinger"} or 
+#'   \code{method = "clr"})
 #'
-#' @param threshold
-#' A numeric value for setting threshold for pa transformation. By default it is 0.
+#' @param threshold A numeric value for setting threshold for pa transformation.
+#'   By default it is 0. (Only used for \code{method = "pa"})
 #'
 #' @param ... additional arguments
 #'
@@ -314,8 +314,6 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 .calc_hellinger <- function(mat, pseudocount, ...){
-    # Gets the relative abundance
-    mat <- .calc_rel_abund(mat)
     mat <- .apply_pseudocount(mat, pseudocount)
     # If there is negative values, gives an error.
     if (any(mat < 0, na.rm = TRUE)) {
@@ -324,6 +322,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
              "Try hellinger with pseudocount = 1 or other numeric value.",
              call. = FALSE)
     }
+    # Gets the relative abundance
+    mat <- .calc_rel_abund(mat)
     # Takes square root
     mat <- sqrt(mat)
     return(mat)
@@ -336,8 +336,9 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # If there is negative values, gives an error.
     if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
-             "clr-transformation is being applied without pseudocount. ",
-             "Try clr with pseudocount = 1 or other numeric value.",
+             "clr-transformation is being applied without (suitable) ",
+             "pseudocount. Try clr with pseudocount = 1 or other numeric ",
+             "value.",
              call. = FALSE)
     }
     # In every sample, calculates the log of individual entries. After that calculates
@@ -354,8 +355,9 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Log10 can not be calculated if there is zero
     if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
-             "Z-transformation is being applied without pseudocount. ",
-             "Try ZTransform with pseudocount = 1 or other numeric value.",
+             "Z-transformation is being applied without (suitable) ",
+             "pseudocount. Try ZTransform with pseudocount = 1 or other ",
+             "numeric value.",
              call. = FALSE)
     }
     # Gets the log transformed table, pseudocount was already applied

@@ -46,21 +46,27 @@ relAbundanceCounts(x, ...)
 \S4method{relAbundanceCounts}{SummarizedExperiment}(x, ...)
 }
 \arguments{
-\item{x}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+\item{x}{A
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
 \item{abund_values}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to be transformed.}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
+transformed.}
 
-\item{method}{A single character value for selecting the transformation method.}
+\item{method}{A single character value for selecting the transformation
+method.}
 
-\item{name}{A single character value specifying the name of transformed abundance table.}
+\item{name}{A single character value specifying the name of transformed
+abundance table.}
 
-\item{pseudocount}{FALSE or numeric value deciding whether pseudocount is added. Numerical
-value specifies the value of pseudocount.}
+\item{pseudocount}{FALSE or numeric value deciding whether pseudocount is
+added. Numerical value specifies the value of pseudocount. (Only used for
+methods \code{method = "log10"}, \code{method = "hellinger"} or
+\code{method = "clr"})}
 
-\item{threshold}{A numeric value for setting threshold for pa transformation. By default it is 0.}
+\item{threshold}{A numeric value for setting threshold for pa transformation.
+By default it is 0. (Only used for \code{method = "pa"})}
 
 \item{...}{additional arguments}
 }
