@@ -166,10 +166,11 @@ setGeneric("checkTaxonomy",
 setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
     function(x){
         tmp <- try(.check_for_taxonomic_data_order(x), silent = TRUE)
-        if(is(tmp,"try-error")){
-            FALSE
+        ans <- !is(tmp,"try-error")
+        if(!ans){
+            attr(ans, "msg") <- as.character(z)
         }
-        TRUE
+        ans
     }
 )
 

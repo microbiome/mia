@@ -1,6 +1,6 @@
 #' Loading a biom file
 #'
-#' For convenciance a few functions are available to convert data from a
+#' For convenience a few functions are available to convert data from a
 #' \sQuote{biom} file or object into a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
@@ -54,6 +54,12 @@ makeTreeSummarizedExperimentFromBiom <- function(obj){
     counts <- as(biomformat::biom_data(obj), "matrix")
     sample_data <- biomformat::sample_metadata(obj)
     feature_data <- biomformat::observation_metadata(obj)
+    
+    # If sample_data is not included in the file, it's NULL, which leads to error
+    # when object is created. --> NULL is replaced with empty data frame.
+    if( is.null(sample_data) ){
+        sample_data <- S4Vectors:::make_zero_col_DataFrame(ncol(counts))
+    }
 
     TreeSummarizedExperiment(assays = list(counts = counts),
                              colData = sample_data,
