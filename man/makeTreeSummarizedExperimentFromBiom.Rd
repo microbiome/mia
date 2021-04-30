@@ -19,7 +19,7 @@ An object of class
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 }
 \description{
-For convenciance a few functions are available to convert data from a
+For convenience a few functions are available to convert data from a
 \sQuote{biom} file or object into a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 }

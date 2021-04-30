@@ -45,11 +45,6 @@ test_that("transformCounts", {
                          x/sum(x)
                      }))
 
-        expect_equal(as.matrix(assays(mia::relAbundanceCounts(tse, pseudocount = 12))$relabundance),
-                     apply((as.matrix(assay(tse, "counts")) + 12), 2, FUN=function(x){
-                         x/sum(x)
-                     }))
-
         mat <- matrix(1:60, nrow = 6)
         df <- DataFrame(n = c(1:6))
         expect_error(relAbundanceCounts(SummarizedExperiment(assays = list(mat = mat),
@@ -117,9 +112,16 @@ test_that("transformCounts", {
 
         expect_equal(
             as.matrix(assays(mia::transformCounts(tse, method = "clr", pseudocount = pseudonumber))$clr),
-            apply(as.matrix(relative), 2, FUN=function(x){
+            apply(as.matrix(relative) + pseudonumber, 2, FUN=function(x){
                 log(x) - mean(log(x))
             }))
+        
+        
+        tse2 <- relAbundanceCounts(tse)
+        expect_true(all(round(as.matrix(assays(mia::transformCounts(tse2, method = "clr", 
+                                                                    abund_values = "relabundance", pseudocount = pseudonumber))$clr) -
+                                  as.matrix(assays(mia::transformCounts(tse, method = "clr", pseudocount = pseudonumber))$clr),
+                              8) == 0))
 
         #############################################################
         # Tests that samples have correct names
