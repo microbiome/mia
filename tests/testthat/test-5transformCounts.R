@@ -62,11 +62,11 @@ test_that("transformCounts", {
         expect_equal(assay(actual,"relabundance")[,1],
                      seq.int(1,6)/21)
 
-
-
         ##############################################################
-        # Calculates log10 transformation with pseudocount = 1. Should be equal.
-        expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "log10", pseudocount = 1))$log10),
+        # Calculates log10 transformation with pseudocount. Should be equal.
+	tmp <- mia::transformCounts(tse, method = "log10", pseudocount = 1)	
+        ass <- assays(tmp)$log10
+        expect_equal(as.matrix(ass),
                      apply(as.matrix(assay(tse, "counts")), 2, FUN=function(x){
                          log10(x+1)
                      }))
@@ -112,17 +112,12 @@ test_that("transformCounts", {
 
         expect_equal(
             as.matrix(assays(mia::transformCounts(tse, method = "clr", pseudocount = pseudonumber))$clr),
-            apply(as.matrix(relative) + pseudonumber, 2, FUN=function(x){
+            apply(as.matrix(relative), 2, FUN=function(x){
                 log(x) - mean(log(x))
             }))
-        
-        
-        tse2 <- relAbundanceCounts(tse)
-        expect_true(all(round(as.matrix(assays(mia::transformCounts(tse2, method = "clr", 
-                                                                    abund_values = "relabundance", pseudocount = pseudonumber))$clr) -
-                                  as.matrix(assays(mia::transformCounts(tse, method = "clr", pseudocount = pseudonumber))$clr),
-                              8) == 0))
 
+        tse <- relAbundanceCounts(tse)
+	
         #############################################################
         # Tests that samples have correct names
         expect_equal(colnames(assays(mia::transformCounts(tse, method = "clr", pseudocount = 1))$clr),
@@ -152,7 +147,8 @@ test_that("transformCounts", {
         rownames(df) <- rownames(assays(tse)$counts[1:20,])
 
         # Rounded, because hard-coded values have only 7 decimals
-        expect_equal(as.data.frame(round(assays(mia::ZTransform(tse, pseudocount = 1))$ZTransform,7))[1:20,],
+	tse <- transformCounts(tse, method = "log10", abund_values = "counts", pseudocount = 1)
+        expect_equal(as.data.frame(round(assays(mia::ZTransform(tse, abund_values = "log10", pseudocount = 0))$ZTransform,7))[1:20,],
                      df)
     }
 
