@@ -1,14 +1,14 @@
 
-test_that("Importing biom files yield TreeSummarizedExperiment objects", {
+test_that("Importing biom files yield SummarizedExperiment objects", {
     skip_if_not_installed("biomformat")
     rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
                                    package = "biomformat")
     me <- loadFromBiom(rich_dense_file)
-    expect_s4_class(me, "TreeSummarizedExperiment")
+    expect_s4_class(me, "SummarizedExperiment")
     # load from object
     x1 <- biomformat::read_biom(rich_dense_file)
-    me2 <- makeTreeSummarizedExperimentFromBiom(x1)
-    expect_s4_class(me2, "TreeSummarizedExperiment")
+    me2 <- makeSummarizedExperimentFromBiom(x1)
+    expect_s4_class(me2, "SummarizedExperiment")
     expect_equal(dim(me), dim(me2))
     expect_equal(rowData(me), rowData(me2))
 })
