@@ -2,18 +2,19 @@
 #'
 #' For convenience a few functions are available to convert data from a
 #' \sQuote{biom} file or object into a
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'
 #' @param file biom file location
 #'
 #' @return An object of class
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'
-#' @name makeTreeSummarizedExperimentFromBiom
+#' @name makeSummarizedExperimentFromBiom
 #' @seealso
-#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
 #' \code{\link[=makeTreeSummarizedExperimentFromphyloseq]{makeTreeSummarizedExperimentFromphyloseq}}
+#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
 #' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
+#' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'
 #' @examples
 #' if(requireNamespace("biomformat")) {
@@ -25,26 +26,26 @@
 #'
 #'   # load from object
 #'   x1 <- biomformat::read_biom(rich_dense_file)
-#'   tse <- makeTreeSummarizedExperimentFromBiom(x1)
+#'   tse <- makeSummarizedExperimentFromBiom(x1)
 #'   tse
 #' }
 NULL
 
-#' @rdname makeTreeSummarizedExperimentFromBiom
+#' @rdname makeSummarizedExperimentFromBiom
 #'
 #' @export
 loadFromBiom <- function(file) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    makeTreeSummarizedExperimentFromBiom(biom)
+    makeSummarizedExperimentFromBiom(biom)
 }
 
-#' @rdname makeTreeSummarizedExperimentFromBiom
+#' @rdname makeSummarizedExperimentFromBiom
 #'
 #' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
 #'
 #' @export
-makeTreeSummarizedExperimentFromBiom <- function(obj){
+makeSummarizedExperimentFromBiom <- function(obj){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){
@@ -61,7 +62,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj){
         sample_data <- S4Vectors:::make_zero_col_DataFrame(ncol(counts))
     }
 
-    TreeSummarizedExperiment(assays = list(counts = counts),
-                             colData = sample_data,
-                             rowData = feature_data)
+    SummarizedExperiment(assays = list(counts = counts),
+                         colData = sample_data,
+                         rowData = feature_data)
 }
