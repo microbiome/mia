@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Import Mothur results as a SummarizedExperiment — loadFromMothur • mia</title>
+<title>Loading a biom file — makeSummarizedExperimentFromBiom • mia</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,10 @@
 
 
 
-<meta property="og:title" content="Import Mothur results as a SummarizedExperiment — loadFromMothur" />
-<meta property="og:description" content="This method creates a SummarizedExperiment object from Mothur
-files provided as input." />
+<meta property="og:title" content="Loading a biom file — makeSummarizedExperimentFromBiom" />
+<meta property="og:description" content="For convenience a few functions are available to convert data from a
+&amp;#8216;biom&amp;#8217; file or object into a
+SummarizedExperiment" />
 
 
 
@@ -112,91 +113,67 @@ files provided as input." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Import Mothur results as a <code>SummarizedExperiment</code></h1>
-    <small class="dont-index">Source: <a href='https://github.com/microbiome/mia/blob/master/R/loadFromMothur.R'><code>R/loadFromMothur.R</code></a></small>
-    <div class="hidden name"><code>loadFromMothur.Rd</code></div>
+    <h1>Loading a biom file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/microbiome/mia/blob/master/R/makeSummarizedExperimentFromBiom.R'><code>R/makeSummarizedExperimentFromBiom.R</code></a></small>
+    <div class="hidden name"><code>makeSummarizedExperimentFromBiom.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This method creates a <code>SummarizedExperiment</code> object from <code>Mothur</code>
-files provided as input.</p>
+    <p>For convenience a few functions are available to convert data from a
+&#8216;biom&#8217; file or object into a
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code></p>
     </div>
 
-    <pre class="usage"><span class='fu'>loadFromMothur</span><span class='op'>(</span><span class='va'>sharedFile</span>, taxonomyFile <span class='op'>=</span> <span class='cn'>NULL</span>, designFile <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>loadFromBiom</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span>
+
+<span class='fu'>makeSummarizedExperimentFromBiom</span><span class='op'>(</span><span class='va'>obj</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>sharedFile</th>
-      <td><p>a single <code>character</code> value defining the file
-path of the feature table to be imported. The File has to be in
-<code>shared file</code> format as defined in Mothur documentation.</p></td>
+      <th>file</th>
+      <td><p>biom file location</p></td>
     </tr>
     <tr>
-      <th>taxonomyFile</th>
-      <td><p>a single <code>character</code> value defining the file path of
-the taxonomy table to be imported. The File has to be in <code>taxonomy
-  file</code> or <code>constaxonomy file</code> format  as defined in Mothur
-documentation. (default: <code>taxonomyFile = NULL</code>).</p></td>
-    </tr>
-    <tr>
-      <th>designFile</th>
-      <td><p>a single <code>character</code> value defining the file path of
-the sample metadata to be imported. The File has to be in <code>desing
-  file</code> format as defined in Mothur documentation. (default: <code>designFile
-  = NULL</code>).</p></td>
+      <th>obj</th>
+      <td><p>object of type <code><a href='https://rdrr.io/pkg/biomformat/man/read_biom.html'>biom</a></code></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A
-<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code>
-object</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Results exported from Mothur can be imported as a
-<code>SummarizedExperiment</code> using <code>loadFromMothur</code>. Except for the
-<code>sharedFile</code>, the other data types, <code>taxonomyFile</code>, and
-<code>designFile</code>, are optional, but are highly encouraged to be provided.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p><a href='https://mothur.org/'>https://mothur.org/</a>
-<a href='https://mothur.org/wiki/shared_file/'>https://mothur.org/wiki/shared_file/</a>
-<a href='https://mothur.org/wiki/taxonomy_file/'>https://mothur.org/wiki/taxonomy_file/</a>
-<a href='https://mothur.org/wiki/constaxonomy_file/'>https://mothur.org/wiki/constaxonomy_file/</a>
-<a href='https://mothur.org/wiki/design_file/'>https://mothur.org/wiki/design_file/</a></p>
+    <p>An object of class
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='makeTreeSummarizedExperimentFromphyloseq.html'>makeTreeSummarizedExperimentFromphyloseq</a></code>
-<code><a href='makeSummarizedExperimentFromBiom.html'>makeSummarizedExperimentFromBiom</a></code>
 <code><a href='makeTreeSummarizedExperimentFromDADA2.html'>makeTreeSummarizedExperimentFromDADA2</a></code>
-<code><a href='loadFromQIIME2.html'>loadFromQIIME2</a></code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p>Leo Lahti and Tuomas Borman. Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
+<code><a href='loadFromQIIME2.html'>loadFromQIIME2</a></code>
+<code><a href='loadFromMothur.html'>loadFromMothur</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Abundance table</span>
-<span class='va'>counts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"mothur_example.shared"</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span>
-<span class='co'># Taxa table (in "cons.taxonomy" or "taxonomy" format)</span>
-<span class='va'>taxa</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"mothur_example.cons.taxonomy"</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span>
-<span class='co'>#taxa &lt;- system.file("extdata", "mothur_example.taxonomy", package = "mia")</span>
-<span class='co'># Sample meta data</span>
-<span class='va'>meta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"mothur_example.design"</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"biomformat"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/joey711/biomformat/'>biomformat</a></span><span class='op'>)</span>
+  <span class='co'># load from file</span>
+  <span class='va'>rich_dense_file</span>  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"rich_dense_otu_table.biom"</span>,
+                                 package <span class='op'>=</span> <span class='st'>"biomformat"</span><span class='op'>)</span>
+  <span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'>loadFromBiom</span><span class='op'>(</span><span class='va'>rich_dense_file</span><span class='op'>)</span>
 
-<span class='co'># Creates se object from files</span>
-<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>loadFromMothur</span><span class='op'>(</span><span class='va'>counts</span>, <span class='va'>taxa</span>, <span class='va'>meta</span><span class='op'>)</span>
-<span class='va'>se</span>
+  <span class='co'># load from object</span>
+  <span class='va'>x1</span> <span class='op'>&lt;-</span> <span class='fu'>biomformat</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/biomformat/man/read_biom.html'>read_biom</a></span><span class='op'>(</span><span class='va'>rich_dense_file</span><span class='op'>)</span>
+  <span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'>makeSummarizedExperimentFromBiom</span><span class='op'>(</span><span class='va'>x1</span><span class='op'>)</span>
+  <span class='va'>tse</span>
+<span class='op'>}</span>
 </div><div class='output co'>#&gt; class: SummarizedExperiment 
-#&gt; dim: 100 100 
+#&gt; dim: 5 6 
 #&gt; metadata(0):
 #&gt; assays(1): counts
-#&gt; rownames(100): Otu001 Otu002 ... Otu099 Otu100
-#&gt; rowData names(8): OTU Size ... Family Genus
-#&gt; colnames(100): Sample1 Sample2 ... Sample99 Sample100
-#&gt; colData names(7): group sex ... numOtus Group</div></pre>
+#&gt; rownames(5): GG_OTU_1 GG_OTU_2 GG_OTU_3 GG_OTU_4 GG_OTU_5
+#&gt; rowData names(7): taxonomy1 taxonomy2 ... taxonomy6 taxonomy7
+#&gt; colnames(6): Sample1 Sample2 ... Sample5 Sample6
+#&gt; colData names(4): BarcodeSequence LinkerPrimerSequence BODY_SITE
+#&gt;   Description</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
