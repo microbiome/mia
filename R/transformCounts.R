@@ -125,6 +125,10 @@
 #' # threshold to desired level. By default, it is 0.
 #' x <- transformCounts(x, method="pa", threshold=35)
 #' head(assay(x, "pa"))
+#' 
+#' # rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
+#' x <- transformCounts(x, method="rank")
+#' head(assay(x, "rank"))
 #'
 #' # Z-transform can be done for features
 #' x <- ZTransform(x, pseudocount=1)
@@ -357,7 +361,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     mat <- .apply_pseudocount(mat, pseudocount)
     # For every sample, finds ranks of taxa.
     # Column-wise, NAs are kept as NAs, and ties get the minimum rank value
-    mat <- apply(mat, MARGIN = 2, FUN = rank, na.last = "keep", ties.method = "min")
+    # as.matrix, because otherwise error occurs if mat is, e.g., DelayedArray
+    mat <- apply(as.matrix(mat), MARGIN = 2, FUN = rank, na.last = "keep", ties.method = "min")
     return(mat)
 }
 

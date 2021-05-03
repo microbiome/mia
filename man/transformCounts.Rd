@@ -158,6 +158,10 @@ head(assay(x, "relabundance"))
 x <- transformCounts(x, method="pa", threshold=35)
 head(assay(x, "pa"))
 
+# rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
+x <- transformCounts(x, method="rank")
+head(assay(x, "rank"))
+
 # Z-transform can be done for features
 x <- ZTransform(x, pseudocount=1)
 head(assay(x, "ZTransform"))
