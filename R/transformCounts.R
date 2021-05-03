@@ -78,6 +78,9 @@
 #' clr = log10 x_r - log10 µ_r}
 #' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
 #' mean relative value".}
+#' 
+#' \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant 
+#' taxa get lower value and more abundant taxa bigger value.}
 #'
 #' }
 #'
@@ -138,7 +141,7 @@ NULL
 setGeneric("transformCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("relabundance", "log10", "pa", "hellinger", "clr"),
+                    method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -150,7 +153,7 @@ setGeneric("transformCounts", signature = c("x"),
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
              abund_values = "counts",
-             method = c("relabundance", "log10", "pa", "hellinger", "clr"),
+             method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
              name = method,
              pseudocount = FALSE,
              threshold = 0){
@@ -165,7 +168,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
         if(!.is_non_empty_string(method)){
             stop("'method' must be a non-empty single character value. \n",
                  "Give one method from the following list: \n",
-                 "'relabundance', 'log10', 'pa', 'hellinger', 'clr'",
+                 "'relabundance', 'log10', 'pa', 'hellinger', 'clr', 'rank'",
                  call. = FALSE)
         }
         method <- match.arg(method)
@@ -279,7 +282,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                   log10 = .calc_log10,
                   pa = .calc_pa,
                   hellinger = .calc_hellinger,
-                  clr = .calc_clr)
+                  clr = .calc_clr,
+                  rank = .calc_rank)
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
             list(mat = assay,
@@ -346,6 +350,14 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     clog <- log(mat)
     clogm <- colMeans2(clog)
     mat <- t(t(clog) - clogm)
+    return(mat)
+}
+
+.calc_rank <- function(mat, pseudocount, ...){
+    mat <- .apply_pseudocount(mat, pseudocount)
+    # For every sample, finds ranks of taxa.
+    # Column-wise, NAs are kept as NAs, and ties get the minimum rank value
+    mat <- apply(mat, MARGIN = 2, FUN = rank, na.last = "keep", ties.method = "min")
     return(mat)
 }
 

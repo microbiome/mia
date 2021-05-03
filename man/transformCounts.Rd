@@ -12,7 +12,7 @@
 transformCounts(
   x,
   abund_values = "counts",
-  method = c("relabundance", "log10", "pa", "hellinger", "clr"),
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -21,7 +21,7 @@ transformCounts(
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("relabundance", "log10", "pa", "hellinger", "clr"),
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -130,6 +130,9 @@ skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
 clr = log10 x_r - log10 µ_r}
 where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
 mean relative value".}
+
+\item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant
+taxa get lower value and more abundant taxa bigger value.}
 
 }
 }
