@@ -357,11 +357,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
+#' @importFrom DelayedMatrixStats colRanks
 .calc_rank <- function(mat, ...){
     # For every sample, finds ranks of taxa.
-    # Column-wise, NAs are kept as NAs, and ties get the minimum rank value
-    # as.matrix, because otherwise error occurs if mat is, e.g., DelayedArray
-    mat <- apply(as.matrix(mat), MARGIN = 2, FUN = rank, na.last = "keep", ties.method = "min")
+    # Column-wise, NAs are kept as NAs, and ties get the minimum rank value.
+    # Transpose ensures that dimensions of matrix are right.
+    mat <- t(colRanks(mat, ties.method = "min"))
     return(mat)
 }
 
