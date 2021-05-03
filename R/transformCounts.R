@@ -357,8 +357,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.calc_rank <- function(mat, pseudocount, ...){
-    mat <- .apply_pseudocount(mat, pseudocount)
+.calc_rank <- function(mat, ...){
     # For every sample, finds ranks of taxa.
     # Column-wise, NAs are kept as NAs, and ties get the minimum rank value
     # as.matrix, because otherwise error occurs if mat is, e.g., DelayedArray
