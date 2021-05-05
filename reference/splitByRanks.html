@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split/Unsplit a SingleCellExperiment be taxonomic ranks — splitByRanks • mia</title>
+<title>Split/Unsplit a SingleCellExperiment by taxonomic ranks — splitByRanks • mia</title>
 
 
 <!-- jquery -->
@@ -39,12 +39,11 @@
 
 
 
-<meta property="og:title" content="Split/Unsplit a SingleCellExperiment be taxonomic ranks — splitByRanks" />
-<meta property="og:description" content="splitByRanks and unsplitByRanks are functions for splitting a
-SummarizedExperiment along the taxonomic levels and storing the chunks
-as alternative experiments. unsplitByRanks takes these alternative
-experiments and flattens them again into a single
-SummarizedExperiment." />
+<meta property="og:title" content="Split/Unsplit a SingleCellExperiment by taxonomic ranks — splitByRanks" />
+<meta property="og:description" content="splitByRanks takes a SummarizedExperiment, splits it along the
+taxonomic ranks, aggregates the data per rank, converts the input to a
+SingleCellExperiment objects and stores the aggregated data as
+alternative experiments." />
 
 
 
@@ -76,7 +75,7 @@ SummarizedExperiment." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.16</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.17</span>
       </span>
     </div>
 
@@ -115,17 +114,16 @@ SummarizedExperiment." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Split/Unsplit a <code>SingleCellExperiment</code> be taxonomic ranks</h1>
+    <h1>Split/Unsplit a <code>SingleCellExperiment</code> by taxonomic ranks</h1>
     <small class="dont-index">Source: <a href='https://github.com/microbiome/mia/blob/master/R/splitByRanks.R'><code>R/splitByRanks.R</code></a></small>
     <div class="hidden name"><code>splitByRanks.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>splitByRanks</code> and <code>unsplitByRanks</code> are functions for splitting a
-<code>SummarizedExperiment</code> along the taxonomic levels and storing the chunks
-as alternative experiments. <code>unsplitByRanks</code> takes these alternative
-experiments and flattens them again into a single
-<code>SummarizedExperiment</code>.</p>
+    <p><code>splitByRanks</code> takes a <code>SummarizedExperiment</code>, splits it along the
+taxonomic ranks, aggregates the data per rank, converts the input to a
+<code>SingleCellExperiment</code> objects and stores the aggregated data as
+alternative experiments.</p>
     </div>
 
     <pre class="usage"><span class='fu'>splitByRanks</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -184,16 +182,22 @@ and any existing <code>rowTree</code> is dropped as well, since existing
 <code>rowLinks</code> are not valid anymore.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>splitByRanks</code> will use by default all available taxonomic levels, but
+    <p><code>unsplitByRanks</code> takes these alternative experiments and flattens them
+again into a single <code>SummarizedExperiment</code>.</p>
+<p><code>splitByRanks</code> will use by default all available taxonomic ranks, but
 this can be controlled by setting <code>ranks</code> manually. <code>NA</code> values
 are removed by default, since they would not make sense, if the result
-should by used for <code>unsplitByRanks</code> at some point.</p>
+should by used for <code>unsplitByRanks</code> at some point. The input data
+remains unchanged in the returned <code>SingleCellExperiment</code> objects.</p>
 <p><code>unsplitByRanks</code> will remove any <code>NA</code> value on each taxonomic rank
 so that no ambiguous data is created. In additional, a column
 <code>taxonomicLevel</code> is created or overwritten in the <code>rowData</code> to
 specify from which alternative experiment this originates from. This can also
 by used for <code><a href='https://rdrr.io/pkg/SingleCellExperiment/man/splitAltExps.html'>splitAltExps</a></code> to
-split the result again along the same factor again.</p>
+split the result along the same factor again. The input data from the base
+objects is not returned, only the data from the <code>altExp()</code>. Beaware that
+changes to <code>rowData</code> of the base object are not returned, whereas only
+the <code>colData</code> of the base obejct is kept.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='merge-methods.html'>mergeRows</a></code>,
