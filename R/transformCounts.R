@@ -165,7 +165,6 @@ setGeneric("transformCounts", signature = c("x"),
                     threshold = 0)
                standardGeneric("transformCounts"))
 
-
 #' @rdname transformCounts
 #' @export
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
@@ -175,7 +174,6 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
              name = method,
              pseudocount = FALSE,
              threshold = 0){
-
         # Input check
         # Check abund_values
         .check_assay_present(abund_values, x)
@@ -380,7 +378,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # For every sample, finds ranks of taxa.
     # Column-wise, NAs are kept as NAs, and ties get the minimum rank value.
     # Transpose ensures that dimensions of matrix are right.
-    mat <- t(colRanks(mat, ties.method = "min"))
+    mat <- t(colRanks(mat, ties.method="min"))
     return(mat)
 }
 
@@ -399,10 +397,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .apply_pseudocount <- function(mat, pseudocount){
     # If "pseudocount" is not FALSE, it is numeric value specified by user. 
     # Then add pseudocount.
-
     if(!pseudocount==FALSE){
         mat <- mat + pseudocount
     }
-
     mat
 }
