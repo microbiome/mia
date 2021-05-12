@@ -81,7 +81,8 @@
 #' mean relative value".}
 #' 
 #' \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant 
-#' taxa get lower value and more abundant taxa bigger value.}
+#' taxa get lower value and more abundant taxa bigger value. The implementation is 
+#' based on the colRanks function with ties.method="first".}
 #'
 #' }
 #'
@@ -117,7 +118,8 @@
 #' # Also, the target of transformation
 #' # can be specified with "abund_values".
 #' x <- transformCounts(x, method="relabundance")
-#' x <- transformCounts(x, method="clr", abund_values="relabundance", pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
+#' x <- transformCounts(x, method="clr", abund_values="relabundance", 
+#'                         pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
 #' x2 <- transformCounts(x, method="clr", abund_values="counts", pseudocount = 1)
 #' head(assay(x, "clr"))
 #'
@@ -141,7 +143,7 @@
 #' x <- transformCounts(x, method="rank")
 #' head(assay(x, "rank"))
 #'
-#' # Z-transform can be done for features
+#' # Z-transform can be done for features, not for samples as in the other transformations
 #' x <- ZTransform(x)
 #' head(assay(x, "ZTransform"))
 #' 
@@ -378,7 +380,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # For every sample, finds ranks of taxa.
     # Column-wise, NAs are kept as NAs, and ties get the minimum rank value.
     # Transpose ensures that dimensions of matrix are right.
-    mat <- t(colRanks(mat, ties.method="min"))
+    mat <- t(colRanks(mat, ties.method="first"))
     return(mat)
 }
 

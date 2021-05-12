@@ -123,54 +123,38 @@ test_that("transformCounts", {
         
         ############################################################
         # Calculates rank
-        tse_rank <- transformCounts(tse, method = "rank")
+        se_rank <- transformCounts(se, method = "rank")
         # Expect that assay contains count and rank table
-        expect_equal(names(assays(tse_rank)), c("counts", "rank") )
+        expect_equal(names(assays(se_rank)), c("counts", "rank") )
         
         for( i in c(1:10) ){
             # Gets columns from 'rank' table
-            ranks <- assay(tse_rank, "rank")[,i]
+            ranks <- assay(se_rank, "rank")[,i]
             # Gets columns from 'counts' table, and calculates ranks
-            counts_compare <- assay(tse_rank, "counts")[,i]
-            ranks_compare <- rank(counts_compare, na.last = "keep", ties.method = "min")
+            counts_compare <- assay(se_rank, "counts")[,i]
+            ranks_compare <- rank(counts_compare, na.last = "keep", ties.method = "first")
             # Expect that they are equal
             expect_equal(ranks, ranks_compare)
         }
         
         # Calculates rank with pseudocount
-        tse_rank_pseudo <- transformCounts(tse, method = "rank", pseudocount = runif(1, 0, 1000))
+        se_rank_pseudo <- transformCounts(se, method = "rank", pseudocount = runif(1, 0, 1000))
         # Pseudocount should not change the rank
-        expect_equal(tse_rank, tse_rank_pseudo)
+        expect_equal(se_rank, se_rank_pseudo)
+
+        # For other options for rank calculations, call the colRanks directly:
+	# data("esophagus"); x <- esophagus;  
+        # assay(x, "rank_average") <- t(colRanks(assay(x, "counts"), ties.method="average"))
+
         #############################################################
         # SE object
         data("esophagus")
         se <- esophagus
-        # Calculates Z-transformation for features
-        # Information collected with microbiome package
-        B <- c(0.9557828, -0.5773503, -0.1110960, -1.0750696, -0.5773503, -0.5773503, -0.3332626,
-               -0.5773503,  0.9626491, -0.5773503, -0.5773503, -0.5773503, -0.5773503, -0.5773503,
-               -0.5773503,  1.1547005, -0.5773503, -0.5773503,  1.1547005, -1.0750696)
+	
+        # Calculates Z-transformation for features	
+        xx <- t(scale(t(assay(se, "counts") + 1)))
+	expect_equal(max(abs(assays(mia::ZTransform(se, pseudocount = 1))$ZTransform - xx), na.rm=TRUE), 0, tolerance = 1e-16)
 
-        C <- c(0.08323189,  1.15470054,  1.05090886,  0.90245812, -0.57735027, -0.57735027, -0.79081431,
-               1.15470054, -1.03357456, -0.57735027, -0.57735027, -0.57735027, -0.57735027, -0.57735027,
-               1.15470054, -0.57735027,  1.15470054, -0.57735027, -0.57735027,  0.90245812)
-
-        D <- c(-1.0390147, -0.5773503, -0.9398129,  0.1726115,  1.1547005,  1.1547005,  1.1240769, -0.5773503,
-               0.0709255,  1.1547005,  1.1547005,  1.1547005,  1.1547005,  1.1547005, -0.5773503, -0.5773503,
-               -0.5773503,  1.1547005, -0.5773503,  0.1726115)
-
-        df <- data.frame(B, C, D)
-        df <- round(df, 7)
-        rownames(df) <- rownames(assays(se)$counts[1:20,])
-
-        # Rounded, because hard-coded values have only 7 decimals
-<<<<<<< HEAD
-	tse <- transformCounts(tse, method = "log10", abund_values = "counts", pseudocount = 1)
-        expect_equal(as.data.frame(round(assays(mia::ZTransform(tse, abund_values = "log10", pseudocount = 0))$ZTransform,7))[1:20,],
-=======
-        expect_equal(as.data.frame(round(assays(mia::ZTransform(se, pseudocount = 1))$ZTransform,7))[1:20,],
->>>>>>> 7d7e0910e2339bb9b16ccc21b1fda349869e17eb
-                     df)
     }
 
     # TSE object

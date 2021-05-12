@@ -133,7 +133,8 @@ where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
 mean relative value".}
 
 \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant
-taxa get lower value and more abundant taxa bigger value.}
+taxa get lower value and more abundant taxa bigger value. The implementation is
+based on the colRanks function with ties.method="first".}
 
 }
 }
@@ -149,7 +150,8 @@ head(assay(x, "clr"))
 # Also, the target of transformation
 # can be specified with "abund_values".
 x <- transformCounts(x, method="relabundance")
-x <- transformCounts(x, method="clr", abund_values="relabundance", pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
+x <- transformCounts(x, method="clr", abund_values="relabundance", 
+                        pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
 x2 <- transformCounts(x, method="clr", abund_values="counts", pseudocount = 1)
 head(assay(x, "clr"))
 
@@ -173,7 +175,7 @@ head(assay(x, "pa"))
 x <- transformCounts(x, method="rank")
 head(assay(x, "rank"))
 
-# Z-transform can be done for features
+# Z-transform can be done for features, not for samples as in the other transformations
 x <- ZTransform(x)
 head(assay(x, "ZTransform"))
 
