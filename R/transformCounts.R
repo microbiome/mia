@@ -304,13 +304,9 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                   log10 = .calc_log10,
                   pa = .calc_pa,
                   hellinger = .calc_hellinger,
-<<<<<<< HEAD
-                  clr = .calc_clr)
-
-=======
                   clr = .calc_clr,
                   rank = .calc_rank)
->>>>>>> 7d7e0910e2339bb9b16ccc21b1fda349869e17eb
+
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
             list(mat = assay,
