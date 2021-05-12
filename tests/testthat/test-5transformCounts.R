@@ -85,12 +85,6 @@ test_that("transformCounts", {
                      as.integer(as.matrix(assay(tse, "counts")) > 12.5))
         expect_equal(type(actual),"integer")
 
-        ###################################################################
-
-        # TSE object
-        data(esophagus)
-        tse <- esophagus
-
         ###############################################################
         # Calculates Hellinger transformation. Should be equal.
         # Calculates relative abundance table
@@ -120,14 +114,37 @@ test_that("transformCounts", {
 	
         #############################################################
         # Tests that samples have correct names
-        expect_equal(colnames(assays(mia::transformCounts(tse, method = "clr", pseudocount = 1))$clr),
+        expect_equal(colnames(assays(transformCounts(tse, method = "clr", pseudocount = 1))$clr),
                      colnames(assays(tse)$counts))
 
         # Tests that otus have correct names
-        expect_equal(rownames(assays(mia::transformCounts(tse, method = "hellinger", pseudocount = 1000))$hellinger),
+        expect_equal(rownames(assays(transformCounts(tse, method = "hellinger", pseudocount = 1000))$hellinger),
                      rownames(assays(tse)$counts))
-
+        
+        ############################################################
+        # Calculates rank
+        tse_rank <- transformCounts(tse, method = "rank")
+        # Expect that assay contains count and rank table
+        expect_equal(names(assays(tse_rank)), c("counts", "rank") )
+        
+        for( i in c(1:10) ){
+            # Gets columns from 'rank' table
+            ranks <- assay(tse_rank, "rank")[,i]
+            # Gets columns from 'counts' table, and calculates ranks
+            counts_compare <- assay(tse_rank, "counts")[,i]
+            ranks_compare <- rank(counts_compare, na.last = "keep", ties.method = "min")
+            # Expect that they are equal
+            expect_equal(ranks, ranks_compare)
+        }
+        
+        # Calculates rank with pseudocount
+        tse_rank_pseudo <- transformCounts(tse, method = "rank", pseudocount = runif(1, 0, 1000))
+        # Pseudocount should not change the rank
+        expect_equal(tse_rank, tse_rank_pseudo)
         #############################################################
+        # SE object
+        data("esophagus")
+        se <- esophagus
         # Calculates Z-transformation for features
         # Information collected with microbiome package
         B <- c(0.9557828, -0.5773503, -0.1110960, -1.0750696, -0.5773503, -0.5773503, -0.3332626,
@@ -144,11 +161,15 @@ test_that("transformCounts", {
 
         df <- data.frame(B, C, D)
         df <- round(df, 7)
-        rownames(df) <- rownames(assays(tse)$counts[1:20,])
+        rownames(df) <- rownames(assays(se)$counts[1:20,])
 
         # Rounded, because hard-coded values have only 7 decimals
+<<<<<<< HEAD
 	tse <- transformCounts(tse, method = "log10", abund_values = "counts", pseudocount = 1)
         expect_equal(as.data.frame(round(assays(mia::ZTransform(tse, abund_values = "log10", pseudocount = 0))$ZTransform,7))[1:20,],
+=======
+        expect_equal(as.data.frame(round(assays(mia::ZTransform(se, pseudocount = 1))$ZTransform,7))[1:20,],
+>>>>>>> 7d7e0910e2339bb9b16ccc21b1fda349869e17eb
                      df)
     }
 

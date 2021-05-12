@@ -361,9 +361,8 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 
 .calc_faith <- function(mat, tree, ...){
 
-    # Gets name of the samples
-    samples <- colnames(mat)
-    #taxa <- rownames(mat)
+    # Gets vector where number represent nth sample
+    samples <- c(1:ncol(mat))
 
     # Repeats taxa as many times there are samples, i.e. get all the taxa that are
     # analyzed in each sample.

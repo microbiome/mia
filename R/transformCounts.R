@@ -79,6 +79,9 @@
 #' clr = log10 x_r - log10 µ_r}
 #' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
 #' mean relative value".}
+#' 
+#' \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant 
+#' taxa get lower value and more abundant taxa bigger value.}
 #'
 #' }
 #'
@@ -133,6 +136,10 @@
 #' # threshold to desired level. By default, it is 0.
 #' x <- transformCounts(x, method="pa", threshold=35)
 #' head(assay(x, "pa"))
+#' 
+#' # rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
+#' x <- transformCounts(x, method="rank")
+#' head(assay(x, "rank"))
 #'
 #' # Z-transform can be done for features
 #' x <- ZTransform(x)
@@ -152,7 +159,7 @@ NULL
 setGeneric("transformCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("relabundance", "log10", "pa", "hellinger", "clr"),
+                    method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -164,7 +171,7 @@ setGeneric("transformCounts", signature = c("x"),
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
              abund_values = "counts",
-             method = c("relabundance", "log10", "pa", "hellinger", "clr"),
+             method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
              name = method,
              pseudocount = FALSE,
              threshold = 0){
@@ -179,7 +186,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
         if(!.is_non_empty_string(method)){
             stop("'method' must be a non-empty single character value. \n",
                  "Give one method from the following list: \n",
-                 "'relabundance', 'log10', 'pa', 'hellinger', 'clr'",
+                 "'relabundance', 'log10', 'pa', 'hellinger', 'clr', 'rank'",
                  call. = FALSE)
         }
         method <- match.arg(method)
@@ -297,8 +304,13 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                   log10 = .calc_log10,
                   pa = .calc_pa,
                   hellinger = .calc_hellinger,
+<<<<<<< HEAD
                   clr = .calc_clr)
 
+=======
+                  clr = .calc_clr,
+                  rank = .calc_rank)
+>>>>>>> 7d7e0910e2339bb9b16ccc21b1fda349869e17eb
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
             list(mat = assay,
@@ -364,6 +376,15 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     clog <- log(mat)
     clogm <- colMeans2(clog)
     mat <- t(t(clog) - clogm)
+    return(mat)
+}
+
+#' @importFrom DelayedMatrixStats colRanks
+.calc_rank <- function(mat, ...){
+    # For every sample, finds ranks of taxa.
+    # Column-wise, NAs are kept as NAs, and ties get the minimum rank value.
+    # Transpose ensures that dimensions of matrix are right.
+    mat <- t(colRanks(mat, ties.method = "min"))
     return(mat)
 }
 

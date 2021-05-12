@@ -168,7 +168,7 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
         tmp <- try(.check_for_taxonomic_data_order(x), silent = TRUE)
         ans <- !is(tmp,"try-error")
         if(!ans){
-            attr(ans, "msg") <- as.character(z)
+            attr(ans, "msg") <- as.character(ans)
         }
         ans
     }
