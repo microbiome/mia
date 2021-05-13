@@ -140,8 +140,12 @@
 #' head(assay(x, "pa"))
 #' 
 #' # rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
+#' # and using the ties.method="first" from the colRanks function
 #' x <- transformCounts(x, method="rank")
 #' head(assay(x, "rank"))
+#'
+#' # In order to use other ranking variants, modify the chosen assay directly:
+#' assay(x, "rank_average", withDimnames = FALSE) <- t(colRanks(assay(x, "counts"), ties.method="average"))
 #'
 #' # Z-transform can be done for features, not for samples as in the other transformations
 #' x <- ZTransform(x)
