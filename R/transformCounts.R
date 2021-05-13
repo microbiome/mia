@@ -54,7 +54,8 @@
 #'
 #' \item{'Z'}{ Z-transformation, Z score transformation, or Z-standardization normalizes
 #' the data by shifting (to mean \eqn{\mu}) and scaling (to standard deviation \eqn{\sigma}).
-#' Z-transformation can be done with function \code{ZTransform}. It is done per rows.
+#' Z-transformation can be done with function \code{ZTransform}. It is done per rows (features / taxa),
+#' unlike most other transformations. This is often preceded by log10p or clr transformation.
 #' In other words, single value is standardized with respect of feature's values.
 #'
 #' \deqn{Z = \frac{x + \mu}{\sigma}}{%
@@ -80,7 +81,8 @@
 #' mean relative value".}
 #' 
 #' \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant 
-#' taxa get lower value and more abundant taxa bigger value.}
+#' taxa get lower value and more abundant taxa bigger value. The implementation is 
+#' based on the colRanks function with ties.method="first".}
 #'
 #' }
 #'
@@ -113,13 +115,24 @@
 #' x <- transformCounts(x, method="clr", pseudocount=1)
 #' head(assay(x, "clr"))
 #'
-#' # Name of the stored table can be specified. Also, the target of transformation
+#' # Also, the target of transformation
 #' # can be specified with "abund_values".
-#' x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
-#' head(assay(x, "test"))
+#' x <- transformCounts(x, method="relabundance")
+#' x <- transformCounts(x, method="clr", abund_values="relabundance", 
+#'                         pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
+#' x2 <- transformCounts(x, method="clr", abund_values="counts", pseudocount = 1)
+#' head(assay(x, "clr"))
 #'
-#' x <- transformCounts(x, method="relabundance", abund_values="test")
-#' head(assay(x, "relabundance"))
+#' # Different pseudocounts used by default for counts and relative abundances
+#' x <- transformCounts(x, method="relabundance")
+#' mat <- assay(x, "relabundance"); 
+#' pseudonumber <- min(mat[mat>0])
+#' x <- transformCounts(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
+#' x <- transformCounts(x, method="clr", abund_values = "counts", pseudocount=1)
+#'
+#' # Name of the stored table can be specified. 
+#' x <- transformCounts(x, method="hellinger", name="test")
+#' head(assay(x, "test"))
 #'
 #' # pa returns presence absence table. With 'threshold', it is possible to set the
 #' # threshold to desired level. By default, it is 0.
@@ -127,12 +140,21 @@
 #' head(assay(x, "pa"))
 #' 
 #' # rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
+#' # and using the ties.method="first" from the colRanks function
 #' x <- transformCounts(x, method="rank")
 #' head(assay(x, "rank"))
 #'
-#' # Z-transform can be done for features
-#' x <- ZTransform(x, pseudocount=1)
+#' # In order to use other ranking variants, modify the chosen assay directly:
+#' assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"), 
+#'                                                            ties.method="average", 
+#'                                                            preserveShape = TRUE)  
+#'
+#' # Z-transform can be done for features, not for samples as in the other transformations
+#' x <- ZTransform(x)
 #' head(assay(x, "ZTransform"))
+#' 
+#' # For visualization purposes it is sometimes done CLR for samples, followed by Z transform for taxa
+#' x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
 #'
 #' # Relative abundances can be also calculate with the dedicated
 #' # relAbundanceCounts function.
@@ -149,23 +171,20 @@ setGeneric("transformCounts", signature = c("x"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
-               standardGeneric("transformCounts"))
-
+                    standardGeneric("transformCounts"))
 
 #' @rdname transformCounts
 #' @export
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
-             abund_values = "counts",
-             method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
-             name = method,
-             pseudocount = FALSE,
-             threshold = 0){
-        
+            abund_values = "counts",
+            method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+            name = method,
+            pseudocount = FALSE,
+            threshold = 0){
         # Input check
         # Check abund_values
         .check_assay_present(abund_values, x)
-
         # Check method
         # If method is not single string, user has not specified transform method,
         # or has given e.g. a vector
@@ -176,35 +195,43 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         method <- match.arg(method)
-
         # Check name
         if(!.is_non_empty_string(name) ||
-           name == abund_values){
+            name == abund_values){
             stop("'name' must be a non-empty single character value and be ",
                  "different from `abund_values`.",
                  call. = FALSE)
         }
-
         # Check pseudocount
-        if(!(pseudocount==FALSE || is.numeric(pseudocount))){
-            stop("'pseudocount' must be FALSE or numeric value.",
+        if(length(pseudocount) != 1L || 
+           !(pseudocount == FALSE || is.numeric(pseudocount))){
+            stop("'pseudocount' must be FALSE or a single numeric value.",
                  call. = FALSE)
+        } else if(is.numeric(pseudocount)){
+            if (method == "relabundance" && pseudocount > 0){
+                warning("Relative abundances vary in [0, 1]; adding a",
+                        "pseudocount > 0 on relabundance will cause ",
+                        "non-sensicale results. Recommended to cross-check ",
+                        "that the pseudocount choice is correct and intended.",
+                        call. = FALSE)
+            }
+            if(pseudocount == 0){
+                pseudocount <- FALSE
+            }
         }
-
         # Check threshold
         if(!is.numeric(threshold)){
             stop("'threshold' must be a numeric value, and it can be used ",
                  "only with transformation method 'pa'.",
                  call. = FALSE)
         }
-
+        # apply pseudocount
+        abund <- .apply_pseudocount(assay(x, abund_values), pseudocount)
         # Get transformed table
         transformed_table <-
-            .get_transformed_table(assay = assay(x, abund_values),
-                                   method = method,
-                                   pseudocount = pseudocount,
-                                   threshold = threshold)
-
+            .get_transformed_table(assay = abund,
+                                method = method,
+                                threshold = threshold)
         # Assign transformed table to assays
         assay(x, name, withDimnames=FALSE) <- transformed_table
         x
@@ -216,43 +243,39 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
 #' @rdname transformCounts
 #' @export
 setGeneric("ZTransform", signature = c("x"),
-           function(x,
+            function(x,
                     abund_values = "counts",
                     name = "ZTransform",
                     pseudocount = FALSE)
-               standardGeneric("ZTransform"))
+                    standardGeneric("ZTransform"))
 
 
 #' @rdname transformCounts
 #' @export
 setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
     function(x,
-             abund_values = "counts",
-             name = "ZTransform",
-             pseudocount = FALSE){
-
+            abund_values = "counts",
+            name = "ZTransform",
+            pseudocount = FALSE){
         # Input check
         # Check abund_values
         .check_assay_present(abund_values, x)
-
         # Check name
         if(!.is_non_empty_string(name) ||
-           name == abund_values){
-            stop("'name' must be a non-empty single character value and be ",
-                 "different from `abund_values`.",
-                 call. = FALSE)
+                name == abund_values){
+                stop("'name' must be a non-empty single character value and be",
+                     " different from `abund_values`.",
+                     call. = FALSE)
         }
-
         # Check pseudocount
         if(!(pseudocount==FALSE || is.numeric(pseudocount))){
-          stop("'pseudocount' must be FALSE or numeric value.",
-               call. = FALSE)
+            stop("'pseudocount' must be FALSE or numeric value.",
+            call. = FALSE)
         }
-
+        # apply pseudocount
+        mat <- .apply_pseudocount(assay(x, abund_values), pseudocount)
         # Get transformed table
-        transformed_table <- .calc_ztransform(mat = assay(x, abund_values),
-                                              pseudocount = pseudocount)
-
+        transformed_table <- .calc_ztransform(mat = mat)
         # Assign transformed table to assays
         assay(x, name) <- transformed_table
         x
@@ -263,8 +286,8 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname transformCounts
 setGeneric("relAbundanceCounts", signature = c("x"),
-           function(x, ...)
-               standardGeneric("relAbundanceCounts"))
+            function(x, ...)
+            standardGeneric("relAbundanceCounts"))
 
 #' @rdname transformCounts
 #' @importFrom SummarizedExperiment assay assay<-
@@ -279,7 +302,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 
 # Chooses which transformation function is applied
-.get_transformed_table <- function(assay, method, pseudocount, threshold){
+.get_transformed_table <- function(assay, method, threshold){
     # Function is selected based on the "method" variable
     FUN <- switch(method,
                   relabundance = .calc_rel_abund,
@@ -288,10 +311,10 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                   hellinger = .calc_hellinger,
                   clr = .calc_clr,
                   rank = .calc_rank)
+
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
             list(mat = assay,
-                 pseudocount = pseudocount,
                  threshold = threshold))
 }
 
@@ -301,15 +324,15 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.calc_log10 <- function(mat, pseudocount, ...){
-    mat <- .apply_pseudocount(mat, pseudocount)
+.calc_log10 <- function(mat, ...){
     # If abundance table contains zeros, gives an error, because it is not possible
     # to calculate log from zeros. If there is no zeros, calculates log.
     if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
-             "log10 transformation is being applied without pseudocount. ",
-             "Try log10 with pseudocount = 1 or other numeric value.",
-             call. = FALSE)
+            "log10 transformation is being applied without pseudocount.\n",
+            "Try to add pseudocount (default choice pseudocount = 1 for count ",
+            "assay; or pseudocount = min(x[x>0]) for relabundance assay).",
+            call. = FALSE)
     }
     mat <- log10(mat)
     return(mat)
@@ -321,14 +344,14 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.calc_hellinger <- function(mat, pseudocount, ...){
-    mat <- .apply_pseudocount(mat, pseudocount)
+.calc_hellinger <- function(mat, ...){
     # If there is negative values, gives an error.
     if (any(mat < 0, na.rm = TRUE)) {
         stop("Abundance table contains negative values and hellinger ",
-             "transformation is being applied without (suitable) pseudocount. ",
-             "Try hellinger with pseudocount = 1 or other numeric value.",
-             call. = FALSE)
+            "transformation is being applied without (suitable) pseudocount.\n",
+            "Try to add pseudocount (default choice pseudocount = 1 for count ",
+            "assay; or pseudocount = min(x[x>0]) with relabundance assay).",
+            call. = FALSE)
     }
     # Gets the relative abundance
     mat <- .calc_rel_abund(mat)
@@ -338,15 +361,16 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom DelayedMatrixStats colMeans2
-.calc_clr <- function(mat, pseudocount, ...){
+.calc_clr <- function(mat, ...){
     mat <- .calc_rel_abund(mat)
-    mat <- .apply_pseudocount(mat, pseudocount)
     # If there is negative values, gives an error.
     if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
              "clr-transformation is being applied without (suitable) ",
-             "pseudocount. Try clr with pseudocount = 1 or other numeric ",
-             "value.",
+             "pseudocount. \n",
+             "Try to add pseudocount (default choice pseudocount = 1 for ",
+             "count assay; or pseudocount = min(x[x>0]) with relabundance ",
+             "assay).",
              call. = FALSE)
     }
     # In every sample, calculates the log of individual entries. After that calculates
@@ -362,23 +386,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # For every sample, finds ranks of taxa.
     # Column-wise, NAs are kept as NAs, and ties get the minimum rank value.
     # Transpose ensures that dimensions of matrix are right.
-    mat <- t(colRanks(mat, ties.method = "min"))
+    mat <- colRanks(mat, ties.method = "first", preserveShape = TRUE)
     return(mat)
 }
 
 #' @importFrom DelayedMatrixStats rowMeans2 rowSds
-.calc_ztransform <- function(mat, pseudocount){
-    mat <- .apply_pseudocount(mat, pseudocount)
-    # Log10 can not be calculated if there is zero
-    if (any(mat <= 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero or negative values and ",
-             "Z-transformation is being applied without (suitable) ",
-             "pseudocount. Try ZTransform with pseudocount = 1 or other ",
-             "numeric value.",
-             call. = FALSE)
-    }
-    # Gets the log transformed table, pseudocount was already applied
-    mat <- .calc_log10(mat, pseudocount = FALSE)
+.calc_ztransform <- function(mat){
     # Z transform for features
     # Centers the feature data. After that, divides with
     # the standard deviation of feature.
@@ -391,8 +404,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .apply_pseudocount <- function(mat, pseudocount){
     # If "pseudocount" is not FALSE, it is numeric value specified by user. 
     # Then add pseudocount.
-    if(!pseudocount==FALSE){
+    if(!pseudocount == FALSE){
         mat <- mat + pseudocount
     }
-    mat
+    return(mat)
 }
