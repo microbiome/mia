@@ -102,7 +102,9 @@ test_that("transformCounts", {
         pseudonumber <- runif(1, 1, 100)
 
         # Calculates relative abundance table
-        relative <- assays(mia::transformCounts(tse, method = "relabundance", pseudocount = pseudonumber))$relabundance
+        relative <- expect_warning(assay(mia::transformCounts(tse, method = "relabundance", pseudocount = pseudonumber),
+                                         "relabundance"),
+                                   "Relative abundances vary")
 
         expect_equal(
             as.matrix(assays(mia::transformCounts(tse, method = "clr", pseudocount = pseudonumber))$clr),
@@ -125,7 +127,7 @@ test_that("transformCounts", {
         # Calculates rank
         se_rank <- transformCounts(se, method = "rank")
         # Expect that assay contains count and rank table
-        expect_equal(names(assays(se_rank)), c("counts", "rank") )
+        expect_equal(assayNames(se_rank), c("counts", "rank") )
         
         for( i in c(1:10) ){
             # Gets columns from 'rank' table
@@ -153,7 +155,9 @@ test_that("transformCounts", {
 	
         # Calculates Z-transformation for features	
         xx <- t(scale(t(assay(se, "counts") + 1)))
-	expect_equal(max(abs(assays(mia::ZTransform(se, pseudocount = 1))$ZTransform - xx), na.rm=TRUE), 0, tolerance = 1e-16)
+        expect_equal(max(abs(assays(mia::ZTransform(se, pseudocount = 1))$ZTransform - xx), na.rm=TRUE), 
+                     0,
+                     tolerance = 1e-16)
 
     }
 

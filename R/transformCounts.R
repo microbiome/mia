@@ -386,7 +386,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # For every sample, finds ranks of taxa.
     # Column-wise, NAs are kept as NAs, and ties get the minimum rank value.
     # Transpose ensures that dimensions of matrix are right.
-    colRanks(mat, ties.method = "first", preserveShape = TRUE)
+    mat <- colRanks(mat, ties.method = "first", preserveShape = TRUE)
     return(mat)
 }
 
