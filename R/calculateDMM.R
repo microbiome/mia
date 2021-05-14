@@ -145,8 +145,8 @@ runDMN <- function(x, name = "DMN", ...){
     if(!is(x,"SummarizedExperiment")){
         stop("'x' must be a SummarizedExperiment")
     }
-    metadata(se)[[name]] <- calculateDMN(x, ...)
-    se
+    metadata(x)[[name]] <- calculateDMN(x, ...)
+    x
 }
 
 ################################################################################
