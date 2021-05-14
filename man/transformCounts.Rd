@@ -106,7 +106,8 @@ than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). By def
 
 \item{'Z'}{ Z-transformation, Z score transformation, or Z-standardization normalizes
 the data by shifting (to mean \eqn{\mu}) and scaling (to standard deviation \eqn{\sigma}).
-Z-transformation can be done with function \code{ZTransform}. It is done per rows.
+Z-transformation can be done with function \code{ZTransform}. It is done per rows (features / taxa),
+unlike most other transformations. This is often preceded by log10p or clr transformation.
 In other words, single value is standardized with respect of feature's values.
 
 \deqn{Z = \frac{x + \mu}{\sigma}}{%
@@ -132,7 +133,8 @@ where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
 mean relative value".}
 
 \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant
-taxa get lower value and more abundant taxa bigger value.}
+taxa get lower value and more abundant taxa bigger value. The implementation is
+based on the colRanks function with ties.method="first".}
 
 }
 }
@@ -145,13 +147,24 @@ x <- esophagus
 x <- transformCounts(x, method="clr", pseudocount=1)
 head(assay(x, "clr"))
 
-# Name of the stored table can be specified. Also, the target of transformation
+# Also, the target of transformation
 # can be specified with "abund_values".
-x <- transformCounts(x, method="hellinger", name="test", pseudocount=5)
-head(assay(x, "test"))
+x <- transformCounts(x, method="relabundance")
+x <- transformCounts(x, method="clr", abund_values="relabundance", 
+                        pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
+x2 <- transformCounts(x, method="clr", abund_values="counts", pseudocount = 1)
+head(assay(x, "clr"))
 
-x <- transformCounts(x, method="relabundance", abund_values="test")
-head(assay(x, "relabundance"))
+# Different pseudocounts used by default for counts and relative abundances
+x <- transformCounts(x, method="relabundance")
+mat <- assay(x, "relabundance"); 
+pseudonumber <- min(mat[mat>0])
+x <- transformCounts(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
+x <- transformCounts(x, method="clr", abund_values = "counts", pseudocount=1)
+
+# Name of the stored table can be specified. 
+x <- transformCounts(x, method="hellinger", name="test")
+head(assay(x, "test"))
 
 # pa returns presence absence table. With 'threshold', it is possible to set the
 # threshold to desired level. By default, it is 0.
@@ -159,12 +172,21 @@ x <- transformCounts(x, method="pa", threshold=35)
 head(assay(x, "pa"))
 
 # rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
+# and using the ties.method="first" from the colRanks function
 x <- transformCounts(x, method="rank")
 head(assay(x, "rank"))
 
-# Z-transform can be done for features
-x <- ZTransform(x, pseudocount=1)
+# In order to use other ranking variants, modify the chosen assay directly:
+assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"), 
+                                                           ties.method="average", 
+                                                           preserveShape = TRUE)  
+
+# Z-transform can be done for features, not for samples as in the other transformations
+x <- ZTransform(x)
 head(assay(x, "ZTransform"))
+
+# For visualization purposes it is sometimes done CLR for samples, followed by Z transform for taxa
+x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
 
 # Relative abundances can be also calculate with the dedicated
 # relAbundanceCounts function.
