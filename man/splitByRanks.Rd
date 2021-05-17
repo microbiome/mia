@@ -2,16 +2,25 @@
 % Please edit documentation in R/splitByRanks.R
 \name{splitByRanks}
 \alias{splitByRanks}
-\alias{unsplitByRanks}
+\alias{splitByRanks,SummarizedExperiment-method}
+\alias{splitByRanks,SingleCellExperiment-method}
 \alias{splitByRanks,TreeSummarizedExperiment-method}
+\alias{unsplitByRanks}
+\alias{unsplitByRanks,SingleCellExperiment-method}
 \alias{unsplitByRanks,TreeSummarizedExperiment-method}
 \title{Split/Unsplit a \code{SingleCellExperiment} by taxonomic ranks}
 \usage{
 splitByRanks(x, ...)
 
-unsplitByRanks(x, ...)
+\S4method{splitByRanks}{SummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
+
+\S4method{splitByRanks}{SingleCellExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
 
 \S4method{splitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
+
+unsplitByRanks(x, ...)
+
+\S4method{unsplitByRanks}{SingleCellExperiment}(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...)
 
 \S4method{unsplitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...)
 }
