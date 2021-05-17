@@ -75,7 +75,7 @@ alternative experiments." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.21</span>
       </span>
     </div>
 
@@ -128,10 +128,19 @@ alternative experiments.</p>
 
     <pre class="usage"><span class='fu'>splitByRanks</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>unsplitByRanks</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>splitByRanks</span><span class='op'>(</span><span class='va'>x</span>, ranks <span class='op'>=</span> <span class='fu'><a href='taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SingleCellExperiment</span>
+<span class='fu'>splitByRanks</span><span class='op'>(</span><span class='va'>x</span>, ranks <span class='op'>=</span> <span class='fu'><a href='taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for TreeSummarizedExperiment</span>
 <span class='fu'>splitByRanks</span><span class='op'>(</span><span class='va'>x</span>, ranks <span class='op'>=</span> <span class='fu'><a href='taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>unsplitByRanks</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SingleCellExperiment</span>
+<span class='fu'>unsplitByRanks</span><span class='op'>(</span><span class='va'>x</span>, ranks <span class='op'>=</span> <span class='fu'><a href='taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, keep_reducedDims <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for TreeSummarizedExperiment</span>
 <span class='fu'>unsplitByRanks</span><span class='op'>(</span><span class='va'>x</span>, ranks <span class='op'>=</span> <span class='fu'><a href='taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, keep_reducedDims <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
