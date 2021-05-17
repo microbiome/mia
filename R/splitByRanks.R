@@ -80,12 +80,74 @@
 #' x
 NULL
 
+################################################################################
+# splitByRanks
+
 #' @rdname splitByRanks
 #' @export
 setGeneric("splitByRanks",
            signature = "x",
            function(x, ...)
                standardGeneric("splitByRanks"))
+
+.norm_args_for_split_by_ranks <- function(na.rm, ...){
+    args <- list(...)
+    if(missing(na.rm)){
+        na.rm <- TRUE
+    }
+    args[["na.rm"]] <- na.rm
+    args
+}
+
+.split_by_ranks <- function(x, ranks, args){
+    # input check
+    if(!.is_non_empty_character(ranks)){
+        stop("'ranks' must be character vector.",
+             call. = FALSE)
+    }
+    if(nrow(x) == 0L){
+        stop("'x' has nrow(x) == 0L.",call. = FALSE)
+    }
+    .check_taxonomic_ranks(ranks,x)
+    #
+    FUN <- function(rank){
+        do.call(agglomerateByRank,
+                c(list(x = x, rank = rank), args))
+    }
+    ans <- lapply(ranks,FUN)
+    names(ans) <- ranks
+    SimpleList(ans)
+}
+
+#' @rdname splitByRanks
+#' @export
+setMethod("splitByRanks", signature = c(x = "SummarizedExperiment"),
+    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
+        args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
+        .split_by_ranks(x, ranks, args)
+    }
+)
+
+#' @rdname splitByRanks
+#' @export
+setMethod("splitByRanks", signature = c(x = "SingleCellExperiment"),
+          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
+              args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
+              args[["strip_altexp"]] <- TRUE
+              .split_by_ranks(x, ranks, args)
+          }
+)
+
+#' @rdname splitByRanks
+#' @export
+setMethod("splitByRanks", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
+              callNextMethod()
+          }
+)
+
+################################################################################
+# unsplitByRanks
 
 #' @rdname splitByRanks
 #' @export
@@ -94,63 +156,34 @@ setGeneric("unsplitByRanks",
            function(x, ...)
                standardGeneric("unsplitByRanks"))
 
-#' @rdname splitByRanks
-#' @export
-setMethod("splitByRanks", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
-        # input check
-        if(!.is_non_empty_character(ranks)){
-            stop("'ranks' must be character vector.",
-                 call. = FALSE)
-        }
-        if(nrow(x) == 0L){
-            stop("'x' has nrow(x) == 0L.",call. = FALSE)
-        }
-        .check_taxonomic_ranks(ranks,x)
-        #
-        args <- list(...)
-        if(missing(na.rm)){
-            na.rm <- TRUE
-        }
-        args[["na.rm"]] <- na.rm
-        args[["strip_altexp"]] <- TRUE
-        FUN <- function(rank){
-            do.call(agglomerateByRank,
-                    c(list(x = x, rank = rank), args))
-        }
-        ans <- lapply(ranks,FUN)
-        names(ans) <- ranks
-        SimpleList(ans)
-    }
-)
 
 #' @rdname splitByRanks
 #' @importFrom SingleCellExperiment altExpNames altExp altExps reducedDims
 #' @export
-setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
     function(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...){
         # input check
         if(!.is_a_bool(keep_reducedDims)){
-            stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
+          stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
         }
         #
         class_x <- class(x)
         ae_names <- altExpNames(x)
         ae_names <- ae_names[ae_names %in% ranks]
         if(length(ae_names) == 0L){
-            stop("No altExp matching 'ranks' in name.", call. = FALSE)
+          stop("No altExp matching 'ranks' in name.", call. = FALSE)
         }
         ses <- altExps(x)[ae_names]
         # remove any empty information on the given ranke
         for(i in seq_along(ses)){
-            ses[[i]] <-
-                .remove_with_empty_taxonomic_info(ses[[i]], names(ses)[i], NA)
+          ses[[i]] <-
+              .remove_with_empty_taxonomic_info(ses[[i]], names(ses)[i], NA)
         }
         #
         args <- list(assays = .unsplit_assays(ses),
-                     colData = colData(x))
+                   colData = colData(x))
         if(keep_reducedDims){
-            args$reducedDims <- reducedDims(x)
+          args$reducedDims <- reducedDims(x)
         }
         rd <- .combine_rowData(ses)
         rr <- .combine_rowRanges(ses)
@@ -159,6 +192,15 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
         rowData(ans) <- rd
         rownames(ans) <- getTaxonomyLabels(ans, make_unique = FALSE)
         ans
+    }
+)
+
+#' @rdname splitByRanks
+#' @importFrom SingleCellExperiment altExpNames altExp altExps reducedDims
+#' @export
+setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
+    function(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...){
+        callNextMethod()
     }
 )
 
