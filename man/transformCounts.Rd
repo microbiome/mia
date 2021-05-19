@@ -2,7 +2,10 @@
 % Please edit documentation in R/transformCounts.R
 \name{transformCounts}
 \alias{transformCounts}
+\alias{transformSamples}
 \alias{transformCounts,SummarizedExperiment-method}
+\alias{transformFeatures}
+\alias{transformFeatures,SummarizedExperiment-method}
 \alias{ZTransform}
 \alias{ZTransform,SummarizedExperiment-method}
 \alias{relAbundanceCounts}
@@ -19,6 +22,33 @@ transformCounts(
 )
 
 \S4method{transformCounts}{SummarizedExperiment}(
+  x,
+  abund_values = "counts",
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+  name = method,
+  pseudocount = FALSE,
+  threshold = 0
+)
+
+transformCounts(
+  x,
+  abund_values = "counts",
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+  name = method,
+  pseudocount = FALSE,
+  threshold = 0
+)
+
+transformFeatures(
+  x,
+  abund_values = "counts",
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+  name = method,
+  pseudocount = FALSE,
+  threshold = 0
+)
+
+\S4method{transformFeatures}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
@@ -71,19 +101,21 @@ By default it is 0. (Only used for \code{method = "pa"})}
 \item{...}{additional arguments}
 }
 \value{
-\code{transformCounts}, \code{relAbundanceCounts}, and \code{ZTransform} return
-\code{x} with additional, transformed abundance table named \code{*name*} in
-the \code{\link{assay}}.
+\code{transformCounts}, \code{transformSamples}, \code{transformFeatures},
+\code{relAbundanceCounts}, and \code{ZTransform} return \code{x} with additional,
+transformed abundance table named \code{name} in the \code{\link{assay}}.
 }
 \description{
 These functions provide a variety of options for transforming abundance data.
-By using \code{transformCounts}, transformed table is in \code{assay}. By using
+By using these functions, transformed table is in \code{assay}. \code{transformSamples}
+does the transformation sample-wise, i.e., column-wise. It is alias for \code{transformCounts}.
+\code{transformFeatures}  does the transformation feature-wise, i.e., row-wise. By using
 specific \code{ZTransform} function, Z-transformation can be applied for features.
 \code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
 }
 \details{
-\code{transformCounts} applies transformation to abundance table.
-Provided transformation methods include:
+\code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
+applies transformation to abundance table. Provided transformation methods include:
 
 \itemize{
 \item {'relabundance'}{ Transforms abundances to relative. Generally, all microbiome
@@ -144,42 +176,50 @@ x <- esophagus
 
 # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 # Pseudocount can be added by specifying 'pseudocount'.
-x <- transformCounts(x, method="clr", pseudocount=1)
+x <- transformSamples(x, method="clr", pseudocount=1)
 head(assay(x, "clr"))
 
 # Also, the target of transformation
 # can be specified with "abund_values".
-x <- transformCounts(x, method="relabundance")
-x <- transformCounts(x, method="clr", abund_values="relabundance", 
+x <- transformSamples(x, method="relabundance")
+x <- transformSamples(x, method="clr", abund_values="relabundance", 
                         pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
-x2 <- transformCounts(x, method="clr", abund_values="counts", pseudocount = 1)
+x2 <- transformSamples(x, method="clr", abund_values="counts", pseudocount = 1)
 head(assay(x, "clr"))
 
 # Different pseudocounts used by default for counts and relative abundances
-x <- transformCounts(x, method="relabundance")
+x <- transformSamples(x, method="relabundance")
 mat <- assay(x, "relabundance"); 
 pseudonumber <- min(mat[mat>0])
-x <- transformCounts(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
-x <- transformCounts(x, method="clr", abund_values = "counts", pseudocount=1)
+x <- transformSamples(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
+x <- transformSamples(x, method="clr", abund_values = "counts", pseudocount=1)
 
-# Name of the stored table can be specified. 
-x <- transformCounts(x, method="hellinger", name="test")
+# Name of the stored table can be specified.
+x <- transformSamples(x, method="hellinger", name="test")
 head(assay(x, "test"))
 
 # pa returns presence absence table. With 'threshold', it is possible to set the
 # threshold to desired level. By default, it is 0.
-x <- transformCounts(x, method="pa", threshold=35)
+x <- transformSamples(x, method="pa", threshold=35)
 head(assay(x, "pa"))
 
 # rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
 # and using the ties.method="first" from the colRanks function
-x <- transformCounts(x, method="rank")
+x <- transformSamples(x, method="rank")
 head(assay(x, "rank"))
+
+# transformCounts is an alias for transformSamples
+x <- transformCounts(x, method="relabundance", name="test2")
+head(assay(x, "test2"))
 
 # In order to use other ranking variants, modify the chosen assay directly:
 assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"), 
                                                            ties.method="average", 
                                                            preserveShape = TRUE)  
+                                                           
+# If you want to do the transformation for features, you can do that by using
+x <- transformFeatures(x, method="hellinger", name="hellinger_features")
+head(assay(x, "hellinger_features"))
 
 # Z-transform can be done for features, not for samples as in the other transformations
 x <- ZTransform(x)

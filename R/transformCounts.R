@@ -1,7 +1,9 @@
 #' Transform Counts
 #'
 #' These functions provide a variety of options for transforming abundance data.
-#' By using \code{transformCounts}, transformed table is in \code{assay}. By using
+#' By using these functions, transformed table is in \code{assay}. \code{transformSamples} 
+#' does the transformation sample-wise, i.e., column-wise. It is alias for \code{transformCounts}.
+#' \code{transformFeatures}  does the transformation feature-wise, i.e., row-wise. By using
 #' specific \code{ZTransform} function, Z-transformation can be applied for features.
 #' \code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
 #'
@@ -30,8 +32,8 @@
 #' @param ... additional arguments
 #'
 #' @details
-#' \code{transformCounts} applies transformation to abundance table.
-#' Provided transformation methods include:
+#' \code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
+#' applies transformation to abundance table. Provided transformation methods include:
 #'
 #' \itemize{
 #' \item {'relabundance'}{ Transforms abundances to relative. Generally, all microbiome
@@ -97,9 +99,9 @@
 #'
 #'
 #' @return
-#' \code{transformCounts}, \code{relAbundanceCounts}, and \code{ZTransform} return
-#' \code{x} with additional, transformed abundance table named \code{*name*} in
-#' the \code{\link{assay}}.
+#' \code{transformCounts}, \code{transformSamples}, \code{transformFeatures}, 
+#' \code{relAbundanceCounts}, and \code{ZTransform} return \code{x} with additional, 
+#' transformed abundance table named \code{name} in the \code{\link{assay}}.
 #'
 #' @name transformCounts
 #' @export
@@ -112,42 +114,51 @@
 #'
 #' # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 #' # Pseudocount can be added by specifying 'pseudocount'.
-#' x <- transformCounts(x, method="clr", pseudocount=1)
+#' x <- transformSamples(x, method="clr", pseudocount=1)
+
 #' head(assay(x, "clr"))
 #'
 #' # Also, the target of transformation
 #' # can be specified with "abund_values".
-#' x <- transformCounts(x, method="relabundance")
-#' x <- transformCounts(x, method="clr", abund_values="relabundance", 
+#' x <- transformSamples(x, method="relabundance")
+#' x <- transformSamples(x, method="clr", abund_values="relabundance", 
 #'                         pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
-#' x2 <- transformCounts(x, method="clr", abund_values="counts", pseudocount = 1)
+#' x2 <- transformSamples(x, method="clr", abund_values="counts", pseudocount = 1)
 #' head(assay(x, "clr"))
 #'
 #' # Different pseudocounts used by default for counts and relative abundances
-#' x <- transformCounts(x, method="relabundance")
+#' x <- transformSamples(x, method="relabundance")
 #' mat <- assay(x, "relabundance"); 
 #' pseudonumber <- min(mat[mat>0])
-#' x <- transformCounts(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
-#' x <- transformCounts(x, method="clr", abund_values = "counts", pseudocount=1)
+#' x <- transformSamples(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
+#' x <- transformSamples(x, method="clr", abund_values = "counts", pseudocount=1)
 #'
-#' # Name of the stored table can be specified. 
-#' x <- transformCounts(x, method="hellinger", name="test")
+#' # Name of the stored table can be specified.
+#' x <- transformSamples(x, method="hellinger", name="test")
 #' head(assay(x, "test"))
 #'
 #' # pa returns presence absence table. With 'threshold', it is possible to set the
 #' # threshold to desired level. By default, it is 0.
-#' x <- transformCounts(x, method="pa", threshold=35)
+#' x <- transformSamples(x, method="pa", threshold=35)
 #' head(assay(x, "pa"))
 #' 
 #' # rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
 #' # and using the ties.method="first" from the colRanks function
-#' x <- transformCounts(x, method="rank")
+#' x <- transformSamples(x, method="rank")
 #' head(assay(x, "rank"))
+#' 
+#' # transformCounts is an alias for transformSamples
+#' x <- transformCounts(x, method="relabundance", name="test2")
+#' head(assay(x, "test2"))
 #'
 #' # In order to use other ranking variants, modify the chosen assay directly:
 #' assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"), 
 #'                                                            ties.method="average", 
 #'                                                            preserveShape = TRUE)  
+#'                                                            
+#' # If you want to do the transformation for features, you can do that by using
+#' x <- transformFeatures(x, method="hellinger", name="hellinger_features")
+#' head(assay(x, "hellinger_features"))
 #'
 #' # Z-transform can be done for features, not for samples as in the other transformations
 #' x <- ZTransform(x)
@@ -163,6 +174,7 @@
 NULL
 
 #' @rdname transformCounts
+#' @aliases transformSamples
 #' @export
 setGeneric("transformCounts", signature = c("x"),
            function(x,
@@ -174,6 +186,7 @@ setGeneric("transformCounts", signature = c("x"),
                     standardGeneric("transformCounts"))
 
 #' @rdname transformCounts
+#' @aliases transformSamples
 #' @export
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
@@ -185,59 +198,73 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
         # Input check
         # Check abund_values
         .check_assay_present(abund_values, x)
-        # Check method
-        # If method is not single string, user has not specified transform method,
-        # or has given e.g. a vector
-        if(!.is_non_empty_string(method)){
-            stop("'method' must be a non-empty single character value. \n",
-                 "Give one method from the following list: \n",
-                 "'relabundance', 'log10', 'pa', 'hellinger', 'clr', 'rank'",
-                 call. = FALSE)
-        }
-        method <- match.arg(method)
         # Check name
         if(!.is_non_empty_string(name) ||
-            name == abund_values){
+           name == abund_values){
             stop("'name' must be a non-empty single character value and be ",
                  "different from `abund_values`.",
                  call. = FALSE)
         }
-        # Check pseudocount
-        if(length(pseudocount) != 1L || 
-           !(pseudocount == FALSE || is.numeric(pseudocount))){
-            stop("'pseudocount' must be FALSE or a single numeric value.",
-                 call. = FALSE)
-        } else if(is.numeric(pseudocount)){
-            if (method == "relabundance" && pseudocount > 0){
-                warning("Relative abundances vary in [0, 1]; adding a",
-                        "pseudocount > 0 on relabundance will cause ",
-                        "non-sensicale results. Recommended to cross-check ",
-                        "that the pseudocount choice is correct and intended.",
-                        call. = FALSE)
-            }
-            if(pseudocount == 0){
-                pseudocount <- FALSE
-            }
-        }
-        # Check threshold
-        if(!is.numeric(threshold)){
-            stop("'threshold' must be a numeric value, and it can be used ",
-                 "only with transformation method 'pa'.",
-                 call. = FALSE)
-        }
-        # apply pseudocount
-        abund <- .apply_pseudocount(assay(x, abund_values), pseudocount)
-        # Get transformed table
-        transformed_table <-
-            .get_transformed_table(assay = abund,
-                                method = method,
-                                threshold = threshold)
+
+        # Gets the abundance table
+        assay <- assay(x, abund_values)
+        # Calls help function that does the transformation
+        transformed_table <- .apply_transformation(assay, method, pseudocount, threshold)
         # Assign transformed table to assays
         assay(x, name, withDimnames=FALSE) <- transformed_table
         x
     }
 )
 
+#' @rdname transformCounts
+#' @aliases transformCounts
+#' @export transformSamples
+transformSamples <- transformCounts
+
+###############################transformFeatures################################
+
+#' @rdname transformCounts
+#' @export
+setGeneric("transformFeatures", signature = c("x"),
+           function(x,
+                    abund_values = "counts",
+                    method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+                    name = method,
+                    pseudocount = FALSE,
+                    threshold = 0)
+               standardGeneric("transformFeatures"))
+
+#' @rdname transformCounts
+#' @export
+setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x,
+             abund_values = "counts",
+             method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+             name = method,
+             pseudocount = FALSE,
+             threshold = 0){
+        # Input check
+        # Check abund_values
+        .check_assay_present(abund_values, x)
+        # Check name
+        if(!.is_non_empty_string(name) ||
+           name == abund_values){
+            stop("'name' must be a non-empty single character value and be ",
+                 "different from `abund_values`.",
+                 call. = FALSE)
+            }
+      
+        # Gets the abundance table, and transposes it
+        assay <- t(assay(x, abund_values))
+        # Calls help function that does the transformation
+        transformed_table <- .apply_transformation(assay, method, pseudocount, threshold)
+        # Transposes transformed table to right orientation
+        transformed_table <- t(transformed_table)
+        # Assign transformed table to assays
+        assay(x, name, withDimnames=FALSE) <- transformed_table
+        x
+  }
+)
 ##################################Z-TRANSFORM###################################
 
 #' @rdname transformCounts
@@ -300,6 +327,56 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 ###########################HELP FUNCTIONS####################################
 
+# Help function for transformSamples and transformFeatures, takes abundance table
+# as input and returns transformed table.
+.apply_transformation <- function(assay, method = c("relabundance", "log10", "pa", 
+                                                    "hellinger", "clr", "rank"), 
+                                  pseudocount, threshold, ...){
+    # Input check
+    # Check method
+    # If method is not single string, user has not specified transform method,
+    # or has given e.g. a vector
+    if(!.is_non_empty_string(method)){
+        stop("'method' must be a non-empty single character value. \n",
+             "Give one method from the following list: \n",
+             "'relabundance', 'log10', 'pa', 'hellinger', 'clr', 'rank'",
+             call. = FALSE)
+    }
+    method <- match.arg(method)
+    # Check pseudocount
+    if(length(pseudocount) != 1L || 
+       !(pseudocount == FALSE || is.numeric(pseudocount))){
+        stop("'pseudocount' must be FALSE or a single numeric value.",
+             call. = FALSE)
+    } else if(is.numeric(pseudocount)){
+        if (method == "relabundance" && pseudocount > 0){
+            warning("Relative abundances vary in [0, 1]; adding a",
+                    "pseudocount > 0 on relabundance will cause ",
+                    "non-sensicale results. Recommended to cross-check ",
+                    "that the pseudocount choice is correct and intended.",
+                    call. = FALSE)
+        }
+        if(pseudocount == 0){
+            pseudocount <- FALSE
+        }
+    }
+    # Check threshold
+    if(!is.numeric(threshold)){
+        stop("'threshold' must be a numeric value, and it can be used ",
+             "only with transformation method 'pa'.",
+             call. = FALSE)
+    }
+    # Input check end
+    
+    # apply pseudocount
+    abund <- .apply_pseudocount(assay, pseudocount)
+    # Get transformed table
+    transformed_table <-
+        .get_transformed_table(assay = abund,
+                               method = method,
+                               threshold = threshold)
+    return(transformed_table)
+}
 
 # Chooses which transformation function is applied
 .get_transformed_table <- function(assay, method, threshold){
@@ -383,6 +460,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom DelayedMatrixStats colRanks
 .calc_rank <- function(mat, ...){
+    # Converts, e.g., DelayerArrays to matrix
+    mat <- as.matrix(mat)
     # For every sample, finds ranks of taxa.
     # Column-wise, NAs are kept as NAs, and ties get the minimum rank value.
     # Transpose ensures that dimensions of matrix are right.
