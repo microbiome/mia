@@ -36,7 +36,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -104,19 +104,24 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>Currently this is aimed to work with the Bioconductor devel branch.</p>
-<div id="bioc-devel" class="section level3">
-<h3 class="hasAnchor">
-<a href="#bioc-devel" class="anchor"></a>Bioc-devel</h3>
-<pre><code><a href="https://rdrr.io/pkg/BiocManager/man/install.html">BiocManager::install("microbiome/mia")</a></code></pre>
-</div>
 <div id="bioc-release" class="section level3">
 <h3 class="hasAnchor">
 <a href="#bioc-release" class="anchor"></a>Bioc-release</h3>
-<p>However, with some additional manual steps <code>mia</code> can be installed on Bioc-release as well. Use at your own risk!</p>
-<pre><code><a href="https://rdrr.io/pkg/BiocManager/man/install.html">BiocManager::install("microbiome/microbiomeDataSets@release")
-BiocManager::install("fionarhuang/TreeSummarizedExperiment")
-BiocManager::install("microbiome/mia")</a></code></pre>
+<pre><code>if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("mia")</code></pre>
+</div>
+<div id="bioc-devel" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bioc-devel" class="anchor"></a>Bioc-devel</h3>
+<pre><code>if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("mia")</code></pre>
 </div>
 </div>
 </div>
