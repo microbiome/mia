@@ -270,6 +270,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
 ##################################Z-TRANSFORM###################################
 
 #' @rdname transformCounts
+#' @export
 setGeneric("ZTransform", signature = c("x"),
            function(x, ...)
              standardGeneric("ZTransform"))
@@ -286,6 +287,7 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
 ###############################relAbundanceCounts###############################
 
 #' @rdname transformCounts
+#' @export
 setGeneric("relAbundanceCounts", signature = c("x"),
             function(x, ...)
             standardGeneric("relAbundanceCounts"))
