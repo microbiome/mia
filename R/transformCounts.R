@@ -1,11 +1,12 @@
 #' Transform Counts
 #'
 #' These functions provide a variety of options for transforming abundance data.
-#' By using these functions, transformed table is in \code{assay}. \code{transformSamples} 
-#' does the transformation sample-wise, i.e., column-wise. It is alias for \code{transformCounts}.
-#' \code{transformFeatures}  does the transformation feature-wise, i.e., row-wise. By using
-#' specific \code{ZTransform} function, Z-transformation can be applied for features.
-#' \code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
+#' By using these functions, transformed table is calculated and stored in \code{assay}. 
+#' \code{transformSamples} does the transformation sample-wise, i.e., column-wise. 
+#' It is alias for \code{transformCounts}. \code{transformFeatures}  does the transformation 
+#' feature-wise, i.e., row-wise. By using specific \code{ZTransform} function, Z-transformation 
+#' can be applied for features. \code{relAbundanceCounts} is a shortcut for fetching relative 
+#' abundance table.
 #'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -179,7 +180,7 @@ NULL
 setGeneric("transformCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+                    method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -191,7 +192,7 @@ setGeneric("transformCounts", signature = c("x"),
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
             abund_values = "counts",
-            method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+            method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
             name = method,
             pseudocount = FALSE,
             threshold = 0){
@@ -228,7 +229,7 @@ transformSamples <- transformCounts
 setGeneric("transformFeatures", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+                    method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -239,7 +240,7 @@ setGeneric("transformFeatures", signature = c("x"),
 setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
     function(x,
              abund_values = "counts",
-             method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+             method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
              name = method,
              pseudocount = FALSE,
              threshold = 0){
@@ -301,8 +302,12 @@ setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
         }
         # apply pseudocount
         mat <- .apply_pseudocount(assay(x, abund_values), pseudocount)
+        # Transposes the table
+        mat <- t(mat)
         # Get transformed table
         transformed_table <- .calc_ztransform(mat = mat)
+        # Transposes transformed table to right orientation
+        transformed_table <- t(transformed_table)
         # Assign transformed table to assays
         assay(x, name) <- transformed_table
         x
@@ -330,7 +335,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 # Help function for transformSamples and transformFeatures, takes abundance table
 # as input and returns transformed table.
 .apply_transformation <- function(assay, method = c("relabundance", "log10", "pa", 
-                                                    "hellinger", "clr", "rank"), 
+                                                    "hellinger", "clr", "rank", "z"), 
                                   pseudocount, threshold, ...){
     # Input check
     # Check method
@@ -339,7 +344,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     if(!.is_non_empty_string(method)){
         stop("'method' must be a non-empty single character value. \n",
              "Give one method from the following list: \n",
-             "'relabundance', 'log10', 'pa', 'hellinger', 'clr', 'rank'",
+             "'relabundance', 'log10', 'pa', 'hellinger', 'clr', 'rank', 'z'",
              call. = FALSE)
     }
     method <- match.arg(method)
@@ -387,7 +392,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                   pa = .calc_pa,
                   hellinger = .calc_hellinger,
                   clr = .calc_clr,
-                  rank = .calc_rank)
+                  rank = .calc_rank,
+                  z = .calc_ztransform)
 
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
@@ -460,7 +466,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom DelayedMatrixStats colRanks
 .calc_rank <- function(mat, ...){
-    # Converts, e.g., DelayerArrays to matrix
+    # Converts, e.g., DelayedArrays to matrix
     mat <- as.matrix(mat)
     # For every sample, finds ranks of taxa.
     # Column-wise, NAs are kept as NAs, and ties get the minimum rank value.
@@ -469,14 +475,21 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-#' @importFrom DelayedMatrixStats rowMeans2 rowSds
-.calc_ztransform <- function(mat){
-    # Z transform for features
+#' @importFrom DelayedMatrixStats colMeans2 colSds
+.calc_ztransform <- function(mat, ...){
+    # Converts, e.g., DelayedArrays to matrix
+    mat <- as.matrix(mat)
+    # Z transformation column-wise
     # Centers the feature data. After that, divides with
     # the standard deviation of feature.
-    rm <- rowMeans2(mat, na.rm = TRUE)
-    rsd <- rowSds(mat, na.rm = TRUE)
-    mat <- (mat - rm)/rsd
+    cm <- colMeans2(mat, na.rm = TRUE)
+    csd <- colSds(mat, na.rm = TRUE)
+    # Transposes the table, otherwise calculation below would be done in wrong 
+    # direction, e.g, cm and csd for samples would be applied to rows. 
+    mat <- t(mat)
+    mat <- (mat - cm)/csd
+    # Transposes the table
+    mat <- t(mat)
     return(mat)
 }
 
