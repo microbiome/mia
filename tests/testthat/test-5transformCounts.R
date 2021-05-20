@@ -234,12 +234,12 @@ test_that("transformCounts", {
         xx <- t(scale(t(as.matrix(assay(tse, "counts") + 1))))
         attr(xx,"scaled:center") <- NULL
         attr(xx,"scaled:scale") <- NULL
-        expect_equal(max(abs(assays(mia::ZTransform(tse, pseudocount = 1))$ZTransform - xx), na.rm=TRUE), 
+        expect_equal(max(abs(assays(mia::ZTransform(tse, pseudocount = 1))$z - xx), na.rm=TRUE), 
                      0,
                      tolerance = 1e-14)
         
         # Tests that ZTransform and transformFeatures gives the same result
-        expect_equal(assays(mia::ZTransform(tse, pseudocount = 12.3))$ZTransform,
+        expect_equal(assays(mia::ZTransform(tse, pseudocount = 12.3))$z,
                      assays(mia::transformFeatures(tse, method = "z", pseudocount = 12.3))$z)
 
         # Test transformSamples and transformCounts

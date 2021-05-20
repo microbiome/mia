@@ -161,9 +161,9 @@
 #' x <- transformFeatures(x, method="hellinger", name="hellinger_features")
 #' head(assay(x, "hellinger_features"))
 #'
-#' # Z-transform can be done for features, not for samples as in the other transformations
+#' # Z-transform can be done for features by using shortcut function
 #' x <- ZTransform(x)
-#' head(assay(x, "ZTransform"))
+#' head(assay(x, "z))
 #' 
 #' # For visualization purposes it is sometimes done CLR for samples, followed by Z transform for taxa
 #' x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
@@ -269,49 +269,17 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
 ##################################Z-TRANSFORM###################################
 
 #' @rdname transformCounts
-#' @export
 setGeneric("ZTransform", signature = c("x"),
-            function(x,
-                    abund_values = "counts",
-                    name = "ZTransform",
-                    pseudocount = FALSE)
-                    standardGeneric("ZTransform"))
-
+           function(x, ...)
+             standardGeneric("ZTransform"))
 
 #' @rdname transformCounts
+#' @importFrom SummarizedExperiment assay assay<-
 #' @export
 setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
-    function(x,
-            abund_values = "counts",
-            name = "ZTransform",
-            pseudocount = FALSE){
-        # Input check
-        # Check abund_values
-        .check_assay_present(abund_values, x)
-        # Check name
-        if(!.is_non_empty_string(name) ||
-                name == abund_values){
-                stop("'name' must be a non-empty single character value and be",
-                     " different from `abund_values`.",
-                     call. = FALSE)
-        }
-        # Check pseudocount
-        if(!(pseudocount==FALSE || is.numeric(pseudocount))){
-            stop("'pseudocount' must be FALSE or numeric value.",
-            call. = FALSE)
-        }
-        # apply pseudocount
-        mat <- .apply_pseudocount(assay(x, abund_values), pseudocount)
-        # Transposes the table
-        mat <- t(mat)
-        # Get transformed table
-        transformed_table <- .calc_ztransform(mat = mat)
-        # Transposes transformed table to right orientation
-        transformed_table <- t(transformed_table)
-        # Assign transformed table to assays
-        assay(x, name) <- transformed_table
-        x
-    }
+          function(x, ...){
+            transformFeatures(x, method = "z", ...)
+          }
 )
 
 ###############################relAbundanceCounts###############################

@@ -15,7 +15,7 @@
 transformCounts(
   x,
   abund_values = "counts",
-  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -24,7 +24,7 @@ transformCounts(
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -33,7 +33,7 @@ transformCounts(
 transformCounts(
   x,
   abund_values = "counts",
-  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -42,7 +42,7 @@ transformCounts(
 transformFeatures(
   x,
   abund_values = "counts",
-  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -51,25 +51,15 @@ transformFeatures(
 \S4method{transformFeatures}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank"),
+  method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
 )
 
-ZTransform(
-  x,
-  abund_values = "counts",
-  name = "ZTransform",
-  pseudocount = FALSE
-)
+ZTransform(x, ...)
 
-\S4method{ZTransform}{SummarizedExperiment}(
-  x,
-  abund_values = "counts",
-  name = "ZTransform",
-  pseudocount = FALSE
-)
+\S4method{ZTransform}{SummarizedExperiment}(x, ...)
 
 relAbundanceCounts(x, ...)
 
@@ -107,11 +97,12 @@ transformed abundance table named \code{name} in the \code{\link{assay}}.
 }
 \description{
 These functions provide a variety of options for transforming abundance data.
-By using these functions, transformed table is in \code{assay}. \code{transformSamples}
-does the transformation sample-wise, i.e., column-wise. It is alias for \code{transformCounts}.
-\code{transformFeatures}  does the transformation feature-wise, i.e., row-wise. By using
-specific \code{ZTransform} function, Z-transformation can be applied for features.
-\code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
+By using these functions, transformed table is calculated and stored in \code{assay}.
+\code{transformSamples} does the transformation sample-wise, i.e., column-wise.
+It is alias for \code{transformCounts}. \code{transformFeatures}  does the transformation
+feature-wise, i.e., row-wise. By using specific \code{ZTransform} function, Z-transformation
+can be applied for features. \code{relAbundanceCounts} is a shortcut for fetching relative
+abundance table.
 }
 \details{
 \code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
@@ -169,69 +160,6 @@ taxa get lower value and more abundant taxa bigger value. The implementation is
 based on the colRanks function with ties.method="first".}
 
 }
-}
-\examples{
-data(esophagus)
-x <- esophagus
-
-# By specifying, it is possible to apply different transformations, e.g. clr transformation.
-# Pseudocount can be added by specifying 'pseudocount'.
-x <- transformSamples(x, method="clr", pseudocount=1)
-head(assay(x, "clr"))
-
-# Also, the target of transformation
-# can be specified with "abund_values".
-x <- transformSamples(x, method="relabundance")
-x <- transformSamples(x, method="clr", abund_values="relabundance", 
-                        pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
-x2 <- transformSamples(x, method="clr", abund_values="counts", pseudocount = 1)
-head(assay(x, "clr"))
-
-# Different pseudocounts used by default for counts and relative abundances
-x <- transformSamples(x, method="relabundance")
-mat <- assay(x, "relabundance"); 
-pseudonumber <- min(mat[mat>0])
-x <- transformSamples(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
-x <- transformSamples(x, method="clr", abund_values = "counts", pseudocount=1)
-
-# Name of the stored table can be specified.
-x <- transformSamples(x, method="hellinger", name="test")
-head(assay(x, "test"))
-
-# pa returns presence absence table. With 'threshold', it is possible to set the
-# threshold to desired level. By default, it is 0.
-x <- transformSamples(x, method="pa", threshold=35)
-head(assay(x, "pa"))
-
-# rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
-# and using the ties.method="first" from the colRanks function
-x <- transformSamples(x, method="rank")
-head(assay(x, "rank"))
-
-# transformCounts is an alias for transformSamples
-x <- transformCounts(x, method="relabundance", name="test2")
-head(assay(x, "test2"))
-
-# In order to use other ranking variants, modify the chosen assay directly:
-assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"), 
-                                                           ties.method="average", 
-                                                           preserveShape = TRUE)  
-                                                           
-# If you want to do the transformation for features, you can do that by using
-x <- transformFeatures(x, method="hellinger", name="hellinger_features")
-head(assay(x, "hellinger_features"))
-
-# Z-transform can be done for features, not for samples as in the other transformations
-x <- ZTransform(x)
-head(assay(x, "ZTransform"))
-
-# For visualization purposes it is sometimes done CLR for samples, followed by Z transform for taxa
-x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
-
-# Relative abundances can be also calculate with the dedicated
-# relAbundanceCounts function.
-x <- relAbundanceCounts(x)
-head(assay(x, "relabundance"))
 }
 \references{
 Gloor GB, Macklaim JM, Pawlowsky-Glahn V & Egozcue JJ (2017)
