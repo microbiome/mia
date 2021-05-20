@@ -24,8 +24,8 @@
 #'
 #' @param pseudocount FALSE or numeric value deciding whether pseudocount is
 #'   added. Numerical value specifies the value of pseudocount. (Only used for 
-#'   methods \code{method = "log10"}, \code{method = "hellinger"} or 
-#'   \code{method = "clr"})
+#'   methods \code{method = "clr"}, \code{method = "hellinger"}, or
+#'   \code{method = "log10"})
 #'
 #' @param threshold A numeric value for setting threshold for pa transformation.
 #'   By default it is 0. (Only used for \code{method = "pa"})
@@ -37,6 +37,37 @@
 #' applies transformation to abundance table. Provided transformation methods include:
 #'
 #' \itemize{
+#' 
+#' \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
+#' skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
+#'
+#' \deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
+#' clr = log10 x_r - log10 µ_r}
+#' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
+#' mean relative value".}
+#' 
+#' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
+#' extreme data points. It can be utilize for clustering or ordination analysis.
+#' (See e.g. Legendre & Gallagher 2001.)
+#'
+#' \deqn{hellinger = \sqrt{\frac{x}{x_{tot}}}}{%
+#' hellinger = sqrt(x/x_tot)}
+#' where \eqn{x} is a single value and \eqn{x_{tot}} is the sum of
+#' all values}
+#' 
+#' \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
+#'
+#' \deqn{log10 = \log_10 x}{%
+#' log10 = log10(x)}
+#' where \eqn{x} is a single value of data.}
+#' 
+#' \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
+#' than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.}
+#' 
+#' \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant 
+#' taxa get lower value and more abundant taxa bigger value. The implementation is 
+#' based on the colRanks function with ties.method="first".}
+#' 
 #' \item {'relabundance'}{ Transforms abundances to relative. Generally, all microbiome
 #' data are compositional. That is, e.g., because all measuring instruments have their capacity limits.
 #' To make results comparable with other results, values must be relative. (See e.g. Gloor et al. 2017.)
@@ -46,46 +77,16 @@
 #' where \eqn{x} is a single value and \eqn{x_{tot}} is the sum of
 #' all values.}
 #'
-#' \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
-#'
-#' \deqn{log10 = \log_10 x}{%
-#' log10 = log10(x)}
-#' where \eqn{x} is a single value of data.}
-#'
-#' \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
-#' than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.}
-#'
-#' \item{'Z'}{ Z-transformation, Z score transformation, or Z-standardization normalizes
+#' \item{'z'}{ Z-transformation, Z score transformation, or Z-standardization normalizes
 #' the data by shifting (to mean \eqn{\mu}) and scaling (to standard deviation \eqn{\sigma}).
 #' Z-transformation can be done with function \code{ZTransform}. It is done per rows (features / taxa),
 #' unlike most other transformations. This is often preceded by log10p or clr transformation.
 #' In other words, single value is standardized with respect of feature's values.
 #'
-#' \deqn{Z = \frac{x + \mu}{\sigma}}{%
-#' Z = (x + µ)/σ}
+#' \deqn{z = \frac{x + \mu}{\sigma}}{%
+#' z = (x + µ)/σ}
 #' where \eqn{x} is a single value, \eqn{\mu} is the mean of the feature, and
 #' \eqn{\sigma} is the standard deviation of the feature.}
-#'
-#' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
-#' extreme data points. It can be utilize for clustering or ordination analysis.
-#' (See e.g. Legendre & Gallagher 2001.)
-#'
-#' \deqn{hellinger = \sqrt{\frac{x}{x_{tot}}}}{%
-#' hellinger = sqrt(x/x_tot)}
-#' where \eqn{x} is a single value and \eqn{x_{tot}} is the sum of
-#' all values}
-#'
-#' \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
-#' skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
-#'
-#' \deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
-#' clr = log10 x_r - log10 µ_r}
-#' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
-#' mean relative value".}
-#' 
-#' \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant 
-#' taxa get lower value and more abundant taxa bigger value. The implementation is 
-#' based on the colRanks function with ties.method="first".}
 #'
 #' }
 #'
@@ -163,7 +164,7 @@
 #'
 #' # Z-transform can be done for features by using shortcut function
 #' x <- ZTransform(x)
-#' head(assay(x, "z))
+#' head(assay(x, "z"))
 #' 
 #' # For visualization purposes it is sometimes done CLR for samples, followed by Z transform for taxa
 #' x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
@@ -180,7 +181,7 @@ NULL
 setGeneric("transformCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
+                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -192,7 +193,7 @@ setGeneric("transformCounts", signature = c("x"),
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
             abund_values = "counts",
-            method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
+            method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
             name = method,
             pseudocount = FALSE,
             threshold = 0){
@@ -229,7 +230,7 @@ transformSamples <- transformCounts
 setGeneric("transformFeatures", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
+                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -240,7 +241,7 @@ setGeneric("transformFeatures", signature = c("x"),
 setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
     function(x,
              abund_values = "counts",
-             method = c("relabundance", "log10", "pa", "hellinger", "clr", "rank", "z"),
+             method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
              name = method,
              pseudocount = FALSE,
              threshold = 0){
@@ -302,8 +303,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 # Help function for transformSamples and transformFeatures, takes abundance table
 # as input and returns transformed table.
-.apply_transformation <- function(assay, method = c("relabundance", "log10", "pa", 
-                                                    "hellinger", "clr", "rank", "z"), 
+.apply_transformation <- function(assay, method = c("clr", "hellinger", "log10", 
+                                                    "pa", "rank", "relabundance", "z"), 
                                   pseudocount, threshold, ...){
     # Input check
     # Check method
@@ -312,7 +313,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     if(!.is_non_empty_string(method)){
         stop("'method' must be a non-empty single character value. \n",
              "Give one method from the following list: \n",
-             "'relabundance', 'log10', 'pa', 'hellinger', 'clr', 'rank', 'z'",
+             "'clr', 'hellinger', 'log10', 'pa', 'rank', 'relabundance', 'z'",
              call. = FALSE)
     }
     method <- match.arg(method)
