@@ -12,7 +12,8 @@
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher",
+    "log_modulo_skewness"),
   name = index,
   ...
 )
@@ -20,7 +21,8 @@ estimateDiversity(
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher",
+    "log_modulo_skewness"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -30,7 +32,7 @@ estimateDiversity(
   x,
   abund_values = "counts",
   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher",
-    "faith"),
+    "faith", "log_modulo_skewness"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -76,6 +78,8 @@ stored in.}
 \itemize{
 \item{threshold}{ a numeric value in the unit interval,
 determining the threshold for coverage index. By default, the threshold is 0.9.}
+\item{quantile}{ a numeric value...}
+\item{num_of_classes}{ a numeric value...}
 }}
 
 \item{BPPARAM}{A
@@ -134,7 +138,7 @@ represent higher diversity. (Faith 1992)}
 }
 \examples{
 data(GlobalPatterns)
-se <- GlobalPatterns
+tse <- GlobalPatterns
 
 # All index names as known by the function
 index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "faith")
@@ -143,37 +147,37 @@ index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "fa
 name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Faith")
 
 # Calculate diversities
-se <- estimateDiversity(se, index = index)
+tse <- estimateDiversity(tse, index = index)
 
 # The colData contains the indices with their code names by default
-colData(se)[, index]
+colData(tse)[, index]
 
 # Removing indices
-colData(se)[, index] <- NULL
+colData(tse)[, index] <- NULL
 
 # It is recommended to specify also the final names used in the output.
-se <- estimateDiversity(se,
+tse <- estimateDiversity(se,
   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "faith"),
    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Faith"))
 
 # The colData contains the indices by their new names provided by the user
-colData(se)[, name]
+colData(tse)[, name]
 
 # Compare the indices visually
-pairs(colData(se)[, name])
+pairs(colData(tse)[, name])
 
 # Plotting the diversities - use the selected names
 library(scater)
-plotColData(se, "Shannon")
+plotColData(tse, "Shannon")
 # ... by sample type
-plotColData(se, "Shannon", "SampleType")
+plotColData(tse, "Shannon", "SampleType")
 \dontrun{
 # combining different plots
 library(patchwork)
 plot_index <- c("Shannon","GiniSimpson")
 plots <- lapply(plot_index,
                 plotColData,
-                object = se,
+                object = tse,
                 x = "SampleType",
                 colour_by = "SampleType")
 plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))

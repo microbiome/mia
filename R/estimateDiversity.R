@@ -31,6 +31,8 @@
 #' \itemize{
 #'   \item{threshold}{ a numeric value in the unit interval,
 #'   determining the threshold for coverage index. By default, the threshold is 0.9.}
+#'   \item{quantile}{ a numeric value...}
+#'   \item{num_of_classes}{ a numeric value...}
 #' }
 #'
 #' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
@@ -112,7 +114,7 @@
 #'
 #' @examples
 #' data(GlobalPatterns)
-#' se <- GlobalPatterns
+#' tse <- GlobalPatterns
 #'
 #' # All index names as known by the function
 #' index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "faith")
@@ -121,37 +123,37 @@
 #' name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Faith")
 #'
 #' # Calculate diversities
-#' se <- estimateDiversity(se, index = index)
+#' tse <- estimateDiversity(tse, index = index)
 #'
 #' # The colData contains the indices with their code names by default
-#' colData(se)[, index]
+#' colData(tse)[, index]
 #'
 #' # Removing indices
-#' colData(se)[, index] <- NULL
+#' colData(tse)[, index] <- NULL
 #'
 #' # It is recommended to specify also the final names used in the output.
-#' se <- estimateDiversity(se,
+#' tse <- estimateDiversity(se,
 #'   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "faith"),
 #'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Faith"))
 #'
 #' # The colData contains the indices by their new names provided by the user
-#' colData(se)[, name]
+#' colData(tse)[, name]
 #'
 #' # Compare the indices visually
-#' pairs(colData(se)[, name])
+#' pairs(colData(tse)[, name])
 #'
 #' # Plotting the diversities - use the selected names
 #' library(scater)
-#' plotColData(se, "Shannon")
+#' plotColData(tse, "Shannon")
 #' # ... by sample type
-#' plotColData(se, "Shannon", "SampleType")
+#' plotColData(tse, "Shannon", "SampleType")
 #' \dontrun{
 #' # combining different plots
 #' library(patchwork)
 #' plot_index <- c("Shannon","GiniSimpson")
 #' plots <- lapply(plot_index,
 #'                 plotColData,
-#'                 object = se,
+#'                 object = tse,
 #'                 x = "SampleType",
 #'                 colour_by = "SampleType")
 #' plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))
@@ -165,7 +167,7 @@ NULL
 setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
                     index = c("shannon","gini_simpson", "inverse_simpson",
-                              "coverage", "fisher"),
+                              "coverage", "fisher", "log_modulo_skewness"),
                     name = index, ...)
                standardGeneric("estimateDiversity"))
 
@@ -174,7 +176,7 @@ setGeneric("estimateDiversity",signature = c("x"),
 setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","gini_simpson","inverse_simpson",
-                       "coverage", "fisher"),
+                       "coverage", "fisher", "log_modulo_skewness"),
              name = index, ..., BPPARAM = SerialParam()){
 
         # input check
@@ -203,7 +205,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
 setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     function(x, abund_values = "counts",
              index = c("shannon","gini_simpson","inverse_simpson",
-                       "coverage", "fisher", "faith"),
+                       "coverage", "fisher", "faith", "log_modulo_skewness"),
              name = index, ..., BPPARAM = SerialParam()){
         
         # Gets the tree 
@@ -339,7 +341,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 .calc_coverage <- function(mat, threshold = 0.9, ...){
 
     # Threshold must be a numeric value between 0-1
-    if( !( is.numeric(threshold) && (threshold >= 0 || threshold <= 1) ) ){
+    if( !( is.numeric(threshold) && (threshold >= 0 && threshold <= 1) ) ){
         stop("'threshold' must be a numeric value between 0-1.",
              call. = FALSE)
     }
@@ -411,6 +413,39 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     return(faiths)
 }
 
+.calc_log_modulo_skewness <- function(mat, quantile = 0.5, num_of_classes = 50, ...){
+    # quantile must be a numeric value between 0-1
+    if( !( is.numeric(quantile) && (quantile >= 0 && quantile <= 1) ) ){
+        stop("'quantile' must be a numeric value between 0-1.",
+             call. = FALSE)
+    }
+    # num_of_classes must be a positive numeric value
+    if( !( is.numeric(num_of_classes) && num_of_classes > 0 ) ){
+        stop("'num_of_classes' must be a positive numeric value.",
+             call. = FALSE)
+    }
+    # Determine the quantile point.
+    quantile_point <- quantile(max(mat), quantile)
+    
+    # Tabulate the arithmetic abundance classes. Use the same classes
+    # for all samples for consistency    
+    cutpoints <- c(seq(0, quantile_point, length=num_of_classes), Inf)
+    
+    # Check skewness of the abundance classes for each sample
+    r <- apply(mat, 2, function(x) {
+        .calc_skewness(table(cut(x, cutpoints)))
+    })
+    
+    # Return log-modulo
+    log(1 + r)
+}
+
+.calc_skewness <- function(x) {
+    x <- x[!is.na(x)]
+    n <- length(x)
+    (sum((x - mean(x))^3)/n)/(sum((x - mean(x))^2)/n)^(3/2)
+}
+
 #' @importFrom SummarizedExperiment assay assays
 .get_diversity_values <- function(index, x, mat, tree, ...){
     FUN <- switch(index,
@@ -419,7 +454,8 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                         inverse_simpson = .calc_inverse_simpson,
                         coverage = .calc_coverage,
                         fisher = .calc_fisher,
-                        faith = .calc_faith
+                        faith = .calc_faith,
+                        log_modulo_skewness = .calc_log_modulo_skewness
                         )
 
     FUN(x = x, mat = mat, tree = tree, ...)
