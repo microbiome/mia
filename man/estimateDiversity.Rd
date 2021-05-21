@@ -12,8 +12,8 @@
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher",
-    "log_modulo_skewness"),
+  index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
+    "log_modulo_skewness", "shannon"),
   name = index,
   ...
 )
@@ -21,8 +21,8 @@ estimateDiversity(
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher",
-    "log_modulo_skewness"),
+  index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
+    "log_modulo_skewness", "shannon"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -31,8 +31,8 @@ estimateDiversity(
 \S4method{estimateDiversity}{TreeSummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher",
-    "faith", "log_modulo_skewness"),
+  index = c("coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
+    "log_modulo_skewness", "shannon"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -102,9 +102,9 @@ Several functions for calculation of diversity indices available via
 wrapper functions. Some of them are implemented via the \code{vegan} package.
 }
 \details{
-The available indices include the \sQuote{Shannon}, \sQuote{Gini-Simpson},
-\sQuote{Inverse Simpson}, \sQuote{Coverage}, \sQuote{Fisher alpha},
-\sQuote{Faith's phylogenetic diversity}, and \sQuote{log-modulo skewness}
+The available indices include the \sQuote{Coverage},
+\sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha}, \sQuote{Gini-Simpson},
+\sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon}
 diversity indices. See details for more information and references.
 
 Diversity is a joint quantity that combines elements or community richness and evenness.
@@ -113,11 +113,16 @@ Diversity increases, in general, when species richness or evenness increase.
 By default, this function returns all indices.
 
 \itemize{
-\item{'inverse_simpson' }{Inverse Simpson diversity:
-\eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative abundances.
-This corresponds to the diversity index
-'invsimpson' in vegan::diversity. Don't confuse this with the
-closely related Gini-Simpson index}
+
+\item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
+Tune this with the threshold argument.}
+
+\item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
+taxonomic distance is between taxa that are present in the sample. Larger value
+represent higher diversity. (Faith 1992)}
+
+\item{'fisher' }{Fisher's alpha; as implemented in
+\code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
 
 \item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
 Simpson index, calculated as the sum of squared relative abundances.
@@ -127,17 +132,11 @@ This is also called Gibbs–Martin, or Blau index in sociology,
 psychology and management studies. The Gini-Simpson index (1-lambda) should not be
 confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).}
 
-\item{'shannon' }{Shannon diversity (entropy).}
-
-\item{'fisher' }{Fisher's alpha; as implemented in
-\code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
-
-\item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
-Tune this with the threshold argument.}
-
-\item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
-taxonomic distance is between taxa that are present in the sample. Larger value
-represent higher diversity. (Faith 1992)}
+\item{'inverse_simpson' }{Inverse Simpson diversity:
+\eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative abundances.
+This corresponds to the diversity index
+'invsimpson' in vegan::diversity. Don't confuse this with the
+closely related Gini-Simpson index}
 
 \item{'log_modulo_skewness' }{The rarity index characterizes the concentration
 of species at low abundance. Here, we use the skewness of the frequency
@@ -146,6 +145,8 @@ These are typically right-skewed; to avoid taking log of occasional
 negative skews, we follow Locey & Lennon (2016) and use the log-modulo
 transformation that adds a value of one to each measure of skewness to
 allow logarithmization.}
+
+\item{'shannon' }{Shannon diversity (entropy).}
 
 }
 }
@@ -176,7 +177,7 @@ tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
 tse <- estimateDiversity(tse, index = "log_modulo_skewness", quantile = 0.75, num_of_classes = 100)
 
 # It is recommended to specify also the final names used in the output.
-tse <- estimateDiversity(se,
+tse <- estimateDiversity(tse,
   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", 
   "faith", "log_modulo_skewness"),
    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", 

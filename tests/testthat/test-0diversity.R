@@ -16,8 +16,9 @@ test_that("diversity estimates", {
     # colData.
     # Check that the order of indices is right / the same as the order
     # in the input vector.
-    expect_named(colData(tse_idx), c("shannon","gini_simpson","inverse_simpson", 
-                                     "coverage", "fisher", "log_modulo_skewness", "faith"))
+    expect_named(colData(tse_idx), c("coverage", "fisher", "gini_simpson",
+                                     "inverse_simpson", "log_modulo_skewness",
+                                     "shannon", "faith"))
 
     lambda <- unname(colSums(assays(tse_idx)$relabundance^2))
     ginisimpson <- 1 - lambda
