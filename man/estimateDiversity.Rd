@@ -77,12 +77,13 @@ stored in.}
 \item{...}{optional arguments:
 \itemize{
 \item{threshold}{ A numeric value in the unit interval,
-determining the threshold for coverage index. By default, the threshold is 0.9.}
+determining the threshold for coverage index. By default, \code{threshold} is 0.9.}
 \item{quantile}{ Arithmetic abundance classes are evenly cut up to to this quantile
 of the data. The assumption is that abundances higher than this are not common, and
-they are classified in their own group.}
+they are classified in their own group. By default, \code{quantile} is 0.5.}
 \item{num_of_classes}{ The number of arithmetic abundance classes from zero to
-the quantile cutoff indicated by \code{quantile}.}
+the quantile cutoff indicated by \code{quantile}.
+By default, \code{num_of_classes} is 50.}
 }}
 
 \item{BPPARAM}{A
@@ -168,6 +169,11 @@ colData(tse)[, index]
 
 # Removing indices
 colData(tse)[, index] <- NULL
+
+# 'threshold' can be used to determine threshold for 'coverage' index
+tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
+# 'quantile' and 'num_of_classes' can be used when 'log_modulo_skewness' is calculated
+tse <- estimateDiversity(tse, index = "log_modulo_skewness", quantile = 0.75, num_of_classes = 100)
 
 # It is recommended to specify also the final names used in the output.
 tse <- estimateDiversity(se,

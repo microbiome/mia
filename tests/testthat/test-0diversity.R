@@ -16,7 +16,8 @@ test_that("diversity estimates", {
     # colData.
     # Check that the order of indices is right / the same as the order
     # in the input vector.
-    expect_named(colData(tse_idx), c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "faith"))
+    expect_named(colData(tse_idx), c("shannon","gini_simpson","inverse_simpson", 
+                                     "coverage", "fisher", "log_modulo_skewness", "faith"))
 
     lambda <- unname(colSums(assays(tse_idx)$relabundance^2))
     ginisimpson <- 1 - lambda
@@ -37,6 +38,14 @@ test_that("diversity estimates", {
                  c(5.93021, 10.34606, 2.99177))
     expect_equal(unname(round(cd$coverage, 0)), c(2,3,1))
     expect_equal(unname(round(cd$fisher, 4)), c(8.8037, 10.0989, 13.2783))
+    expect_equal(unname(round(cd$log_modulo_skewness, 6)), c(2.013610, 1.827198, 2.013695))
+    
+    # Tests that 'quantile' and 'num_of_classes' are working
+    expect_equal(unname(round(colData(estimateDiversity(tse,index="log_modulo_skewness",
+                                                        quantile=0.855,
+                                                        num_of_classes=32)
+                                      )$log_modulo_skewness, 
+                              6)), c(1.814770, 1.756495, 1.842704))
 
     # Tests faith index with esophagus data
     for( i in c(1:(length(colnames(tse_idx)))) ){
