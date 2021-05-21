@@ -76,10 +76,13 @@ stored in.}
 
 \item{...}{optional arguments:
 \itemize{
-\item{threshold}{ a numeric value in the unit interval,
+\item{threshold}{ A numeric value in the unit interval,
 determining the threshold for coverage index. By default, the threshold is 0.9.}
-\item{quantile}{ a numeric value...}
-\item{num_of_classes}{ a numeric value...}
+\item{quantile}{ Arithmetic abundance classes are evenly cut up to to this quantile
+of the data. The assumption is that abundances higher than this are not common, and
+they are classified in their own group.}
+\item{num_of_classes}{ The number of arithmetic abundance classes from zero to
+the quantile cutoff indicated by \code{quantile}.}
 }}
 
 \item{BPPARAM}{A
@@ -99,9 +102,9 @@ wrapper functions. Some of them are implemented via the \code{vegan} package.
 }
 \details{
 The available indices include the \sQuote{Shannon}, \sQuote{Gini-Simpson},
-\sQuote{Inverse Simpson}, \sQuote{Coverage}, \sQuote{Fisher alpha}, and
-\sQuote{Faith's phylogenetic diversity} diversity indices.
-See details for more information and references.
+\sQuote{Inverse Simpson}, \sQuote{Coverage}, \sQuote{Fisher alpha},
+\sQuote{Faith's phylogenetic diversity}, and \sQuote{log-modulo skewness}
+diversity indices. See details for more information and references.
 
 Diversity is a joint quantity that combines elements or community richness and evenness.
 Diversity increases, in general, when species richness or evenness increase.
@@ -134,6 +137,15 @@ Tune this with the threshold argument.}
 \item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
 taxonomic distance is between taxa that are present in the sample. Larger value
 represent higher diversity. (Faith 1992)}
+
+\item{'log_modulo_skewness' }{The rarity index characterizes the concentration
+of species at low abundance. Here, we use the skewness of the frequency
+distribution of arithmetic abundance classes (see Magurran & McGill 2011).
+These are typically right-skewed; to avoid taking log of occasional
+negative skews, we follow Locey & Lennon (2016) and use the log-modulo
+transformation that adds a value of one to each measure of skewness to
+allow logarithmization.}
+
 }
 }
 \examples{
@@ -141,10 +153,12 @@ data(GlobalPatterns)
 tse <- GlobalPatterns
 
 # All index names as known by the function
-index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "faith")
+index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", 
+"faith",  "log_modulo_skewness")
 
 # Corresponding polished names
-name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Faith")
+name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", 
+"Faith",  "LogModSkewness")
 
 # Calculate diversities
 tse <- estimateDiversity(tse, index = index)
@@ -157,8 +171,10 @@ colData(tse)[, index] <- NULL
 
 # It is recommended to specify also the final names used in the output.
 tse <- estimateDiversity(se,
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "faith"),
-   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Faith"))
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", 
+  "faith", "log_modulo_skewness"),
+   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", 
+   "Faith", "LogModSkewness"))
 
 # The colData contains the indices by their new names provided by the user
 colData(tse)[, name]
@@ -195,14 +211,18 @@ Bulla L. (1994)
 An  index of diversity and its associated diversity measure.
 \emph{Oikos} 70:167--171
 
-Faith, D.P. (1992)
+Faith D.P. (1992)
 Conservation evaluation and phylogenetic diversity.
 \emph{Biological Conservation} 61(1):1-10.
 
-Fisher, R.A., Corbet, A.S. & Williams, C.B. (1943).
+Fisher R.A., Corbet, A.S. & Williams, C.B. (1943)
 The relation between the number of species and the number of individuals in a
 random sample of animal population.
 \emph{Journal of Animal Ecology} \emph{12}, 42-58.
+
+Locey K.J. & Lennon J.T. (2016)
+Scaling laws predict global microbial diversity.
+\emph{PNAS} 113(21):5970-5975.
 
 Magurran A.E., McGill BJ, eds (2011)
 Biological Diversity: Frontiers in Measurement and Assessment.
