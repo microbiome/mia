@@ -15,7 +15,7 @@
 transformCounts(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
+  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -24,7 +24,7 @@ transformCounts(
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
+  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -33,7 +33,7 @@ transformCounts(
 transformCounts(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
+  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -42,7 +42,7 @@ transformCounts(
 transformFeatures(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
+  method = c("log10", "pa", "z"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -51,7 +51,7 @@ transformFeatures(
 \S4method{transformFeatures}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
+  method = c("log10", "pa", "z"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -100,9 +100,8 @@ These functions provide a variety of options for transforming abundance data.
 By using these functions, transformed table is calculated and stored in \code{assay}.
 \code{transformSamples} does the transformation sample-wise, i.e., column-wise.
 It is alias for \code{transformCounts}. \code{transformFeatures}  does the transformation
-feature-wise, i.e., row-wise. By using specific \code{ZTransform} function, Z-transformation
-can be applied for features. \code{relAbundanceCounts} is a shortcut for fetching relative
-abundance table.
+feature-wise, i.e., row-wise. \code{ZTransform} is a shortcut for Z-transformation.
+\code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
 }
 \details{
 \code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
