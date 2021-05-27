@@ -453,24 +453,34 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     }
     # Determine the quantile point.
     quantile_point <- quantile(max(mat), quantile)
-    
     # Tabulate the arithmetic abundance classes. Use the same classes
     # for all samples for consistency    
     cutpoints <- c(seq(0, quantile_point, length=num_of_classes), Inf)
-    
-    # Check skewness of the abundance classes for each sample
-    r <- apply(mat, 2, function(x) {
-        .calc_skewness(table(cut(x, cutpoints)))
-    })
-    
+    # Calculates sample-wise frequencies. How many taxa in each interval?
+    freq_table <- table(c(cut(mat, cutpoints)), col(mat))
+    # Calculates the skewness of frequency table. Returns skewness for each sample
+    r <- .calc_skewness(freq_table)
     # Return log-modulo
     log(1 + r)
 }
 
 .calc_skewness <- function(x) {
-    x <- x[!is.na(x)]
-    n <- length(x)
-    (sum((x - mean(x))^3)/n)/(sum((x - mean(x))^2)/n)^(3/2)
+    # Transposes the table
+    x <- t(x)
+    # Each value is substracted by sample-wise mean, which is raised to the power of 3.
+    # Then the sample-wise sum is taken from these values. 
+    numerator <- rowSums2((x - rowMeans2(x))^3)
+    # Sample-wise sum is divided by number of taxa that are not NA.
+    numerator <- numerator/rowSums2(!is.na(x))
+    # Each value is substracted by sample-wise mean, which is raises to the power of 2.
+    # Then the sample-wise sum is taken from these values. 
+    denominator <- rowSums2((x - rowMeans2(x))^2)
+    # Sample-wise sum is divided by number of taxa that are not NA. Then these values
+    # are raised to the power of 3/2.
+    denominator <- (denominator/rowSums2(!is.na(x)))^(3/2)
+    # Result
+    result <- numerator/denominator
+    return(result)
 }
 
 #' @importFrom SummarizedExperiment assay assays
