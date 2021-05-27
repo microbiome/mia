@@ -175,37 +175,6 @@
 NULL
 
 #' @rdname transformCounts
-#' @aliases transformSamples
-#' @export
-setGeneric("transformCounts", signature = c("x"),
-           function(x,
-                    abund_values = "counts",
-                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
-                    name = method,
-                    pseudocount = FALSE,
-                    threshold = 0)
-             standardGeneric("transformCounts"))
-
-#' @rdname transformCounts
-#' @aliases transformSamples
-#' @export
-setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   abund_values = "counts",
-                   method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
-                   name = method,
-                   pseudocount = FALSE,
-                   threshold = 0){
-        transformSamples(x, 
-                         abund_values = abund_values,
-                         method = method,
-                         name = name,
-                         pseudocount = pseudocount,
-                         threshold = threshold)
-          }
-)
-
-#' @rdname transformCounts
 #' @aliases transformCounts
 #' @export
 setGeneric("transformSamples", signature = c("x"),
@@ -253,6 +222,37 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
         # Assign transformed table to assays
         assay(x, name, withDimnames=FALSE) <- transformed_table
         x
+    }
+)
+
+#' @rdname transformCounts
+#' @aliases transformSamples
+#' @export
+setGeneric("transformCounts", signature = c("x"),
+           function(x,
+                    abund_values = "counts",
+                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+                    name = method,
+                    pseudocount = FALSE,
+                    threshold = 0)
+               standardGeneric("transformCounts"))
+
+#' @rdname transformCounts
+#' @aliases transformSamples
+#' @export
+setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
+    function(x,
+             abund_values = "counts",
+             method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+             name = method,
+             pseudocount = FALSE,
+             threshold = 0){
+        transformSamples(x, 
+                       abund_values = abund_values,
+                       method = method,
+                       name = name,
+                       pseudocount = pseudocount,
+                       threshold = threshold)
     }
 )
 
@@ -338,7 +338,7 @@ setGeneric("relAbundanceCounts", signature = c("x"),
 #' @export
 setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     function(x, ...){
-        transformCounts(x, method = "relabundance", ...)
+        transformSamples(x, method = "relabundance", ...)
     }
 )
 

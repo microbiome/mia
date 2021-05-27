@@ -122,7 +122,7 @@ taxonomic distance is between taxa that are present in the sample. Larger value
 represent higher diversity. (Faith 1992)}
 
 \item{'fisher' }{Fisher's alpha; as implemented in
-\code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
+\code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
 
 \item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
 Simpson index, calculated as the sum of squared relative abundances.
