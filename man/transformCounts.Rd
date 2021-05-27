@@ -209,8 +209,8 @@ assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"),
                                                            preserveShape = TRUE)  
                                                            
 # If you want to do the transformation for features, you can do that by using
-x <- transformFeatures(x, method="hellinger", name="hellinger_features")
-head(assay(x, "hellinger_features"))
+x <- transformFeatures(x, method="log10", name="log10_features", pseudocount = 1)
+head(assay(x, "log10_features"))
 
 # Z-transform can be done for features by using shortcut function
 x <- ZTransform(x)
