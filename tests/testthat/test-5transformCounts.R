@@ -52,11 +52,8 @@ test_that("transformCounts", {
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance),
                      as.matrix(assays(mia::relAbundanceCounts(tse))$rel))
         
-        # Tests transformFeatures, calculates relative abundances. Should be equal.
-        expect_equal(as.matrix(assays(mia::transformFeatures(tse, method = "relabundance"))$relabundance),
-                     t(apply(as.matrix(t(assay(tse,"counts"))), 2, FUN=function(x){
-                         x/sum(x)
-                     })))
+        # Tests transformFeatures, tries to calculate relative abundances. Should be an error.
+        expect_error(mia::transformFeatures(tse, method = "relabundance"))
         
         mat <- matrix(1:60, nrow = 6)
         df <- DataFrame(n = c(1:6))
@@ -116,7 +113,7 @@ test_that("transformCounts", {
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "pa"))$pa),
                      as.matrix(assays(mia::transformSamples(tse, method = "pa"))$pa))
         
-        # Tests transformFeatures, alculates pa transformation. Should be equal.
+        # Tests transformFeatures, calculates pa transformation. Should be equal.
         actual <- assay(mia::transformFeatures(tse, method = "pa"),"pa")
         expect_equal(as.vector(actual),
                      as.integer(t(as.matrix(t(assay(tse, "counts"))) > 0)))
@@ -136,14 +133,8 @@ test_that("transformCounts", {
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "hellinger"))$hellinger),
                      as.matrix(assays(mia::transformSamples(tse, method = "hellinger"))$hellinger))
         
-        # Tests, transfromFeatures, calculates Hellinger transformation. Should be equal.
-        # Calculates relative abundance table
-        relative <- assays(mia::transformFeatures(tse, method = "relabundance", name = "relative"))$relative
-
-        expect_equal(as.matrix(assays(mia::transformFeatures(tse, method = "hellinger", name = "test_123"))$test_123),
-                     t(apply(as.matrix(t(relative)), 2, FUN=function(x){
-                         sqrt(x)
-                     })))
+        # Tests transformFeatures, tries to calculate hellinger. Should be an error.
+        expect_error(mia::transformFeatures(tse, method = "hellinger"))
         
         ############################### CLR ####################################
         # Calculates clr-transformation. Should be equal.
@@ -166,17 +157,8 @@ test_that("transformCounts", {
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance),
                      as.matrix(assays(mia::transformSamples(tse, method = "relabundance"))$relabundance))
         
-        # Tests transformFeatures, calculates clr-transformation. Should be equal.
-        # Calculates relative abundance table
-        relative <- expect_warning(assay(mia::transformFeatures(tse, method = "relabundance", 
-                                                                pseudocount = pseudonumber),
-                                         "relabundance"),
-                                   "Relative abundances vary")
-        expect_equal(
-            as.matrix(assays(mia::transformFeatures(tse, method = "clr", pseudocount = pseudonumber))$clr),
-            t(apply(as.matrix(t(relative)), 2, FUN=function(x){
-                log(x) - mean(log(x))
-            })))
+        # Tests transformFeatures, tries to calculate clr. Should be an error.
+        expect_error(mia::transformFeatures(tse, method = "clr"))
 
         ############################# NAMES ####################################
         # Tests that samples have correct names
@@ -184,7 +166,7 @@ test_that("transformCounts", {
                      colnames(assays(tse)$counts))
 
         # Tests that otus have correct names
-        expect_equal(rownames(assays(transformFeatures(tse, method = "hellinger", pseudocount = 1000))$hellinger),
+        expect_equal(rownames(assays(transformFeatures(tse, method = "log10", pseudocount = 1000))$log10),
                      rownames(assays(tse)$counts))
         
         ################################## RANK ################################
@@ -216,18 +198,8 @@ test_that("transformCounts", {
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "rank"))$rank),
                      as.matrix(assays(mia::transformSamples(tse, method = "rank"))$rank))
         
-        # Tests transformFeatures, calculates rank
-        # Calculates rank
-        tse_rank <- transformFeatures(tse, method = "rank")
-        for( i in c(1:10) ){
-            # Gets rows from 'rank' table
-            ranks <- assay(tse_rank, "rank")[i,]
-            # Gets rows from 'counts' table, and calculates ranks
-            counts_compare <- assay(tse_rank, "counts")[i,]
-            ranks_compare <- rank(counts_compare, na.last = "keep", ties.method = "first")
-            # Expect that they are equal
-            expect_equal(ranks, ranks_compare)
-        }
+        # Tests transformFeatures, tries to calculate rank. Should be an error.
+        expect_error(mia::transformFeatures(tse, method = "rank"))
         
         ############################## Z TRANSFORMATION ########################
         # Calculates Z-transformation for features	
@@ -242,20 +214,10 @@ test_that("transformCounts", {
         expect_equal(assays(mia::ZTransform(tse, pseudocount = 12.3))$z,
                      assays(mia::transformFeatures(tse, method = "z", pseudocount = 12.3))$z)
 
-        # Test transformSamples and transformCounts
-        # Calculates relative abundances
-        tse <- mia::transformSamples(tse, method = "relabundance")
-        # Calculates Z-transformation for samples	
-        xx <- scale(as.matrix(assay(tse, "relabundance")))
-        attr(xx,"scaled:center") <- NULL
-        attr(xx,"scaled:scale") <- NULL
-        table1 <- assays(mia::transformSamples(tse, abund_values = "relabundance", 
-                                               method = "z"))$z
-        table2 <- assays(mia::transformCounts(tse, abund_values = "relabundance", 
-                                              method = "z"))$z
-        
-        expect_equal(max(abs(table1 - xx), na.rm=TRUE), 0, tolerance = 1e-10)
-        expect_equal(table1, table2)
+        # Test transformSamples and transformCounts, should be an error.
+        # Tests transformSamples and transformCounts, tries to calculate z. Should be an error.
+        expect_error(mia::transformSamples(tse, method = "z"))
+        expect_error(mia::transformCounts(tse, method = "z"))
         
     }
 

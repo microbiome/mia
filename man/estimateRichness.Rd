@@ -8,7 +8,7 @@
 estimateRichness(
   x,
   abund_values = "counts",
-  index = c("observed", "chao1", "ace", "hill"),
+  index = c("ace", "chao1", "hill", "observed"),
   name = index,
   detection = 0,
   ...,
@@ -18,7 +18,7 @@ estimateRichness(
 \S4method{estimateRichness}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("observed", "chao1", "ace", "hill"),
+  index = c("ace", "chao1", "hill", "observed"),
   name = index,
   detection = 0,
   ...,
@@ -55,8 +55,8 @@ Several functions for calculation of community richness indices available via
 wrapper functions. They are implemented via the \code{vegan} package.
 }
 \details{
-These include the \sQuote{Observed}, \sQuote{Chao1} and
-\sQuote{ACE} and \sQuote{Hill} richness measures.
+These include the \sQuote{ACE}, \sQuote{Chao1}, \sQuote{Hill}, and
+\sQuote{Observed} richness measures.
 See details for more information and references.
 
 The richness is calculated per sample. This is a standard index in community
@@ -74,23 +74,6 @@ desired spelling through the argument \code{\link{name}} (see examples).
 The following richness indices are provided.
 
 \itemize{
-\item{'observed' }{The \emph{observed richness} gives the number of species that
-is detected above a given \code{detection} threshold in the observed sample
-(default 0). This is conceptually the simplest richness index. The corresponding
-index in the \pkg{vegan} package is "richness".}
-
-\item{'chao1' }{This is a nonparametric estimator of species richness. It
-assumes that rare species carry information about the (unknown) number
-of unobserved species. We use here the bias-corrected version
-(O'Hara 2005, Chiu et al. 2014) implemented in
-\code{\link[vegan:specpool]{estimateR}}. This index implicitly
-assumes that every taxa has equal probability of being observed. Note
-that it gives a lower bound to species richness. The bias-corrected
-For an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
-This estimator uses only the singleton and doubleton counts, and
-hence it gives more weight to the low abundance species.
-Note that this index comes with an additional column with standard
-error information.}
 
 \item{'ace' }{Abundance-based coverage estimator (ACE) is another nonparametric richness
 index that uses sample coverage, defined based on the sum of the probabilities
@@ -106,11 +89,30 @@ For an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
 Note that this index comes with an additional column with standard
 error information.}
 
+\item{'chao1' }{This is a nonparametric estimator of species richness. It
+assumes that rare species carry information about the (unknown) number
+of unobserved species. We use here the bias-corrected version
+(O'Hara 2005, Chiu et al. 2014) implemented in
+\code{\link[vegan:specpool]{estimateR}}. This index implicitly
+assumes that every taxa has equal probability of being observed. Note
+that it gives a lower bound to species richness. The bias-corrected
+For an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
+This estimator uses only the singleton and doubleton counts, and
+hence it gives more weight to the low abundance species.
+Note that this index comes with an additional column with standard
+error information.}
+
 \item{'hill' }{Effective species richness aka Hill index (see e.g. Chao et al. 2016).
 Currently only the case 1D is implemented. This corresponds to the exponent
 of Shannon diversity. Intuitively, the effective richness indicates the number of
 species whose even distribution would lead to tha same diversity than the observed
 community, where the species abundances are unevenly distributed.}
+
+\item{'observed' }{The \emph{observed richness} gives the number of species that
+is detected above a given \code{detection} threshold in the observed sample
+(default 0). This is conceptually the simplest richness index. The corresponding
+index in the \pkg{vegan} package is "richness".}
+
 }
 }
 \examples{

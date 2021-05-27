@@ -12,7 +12,8 @@
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
+  index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
+    "log_modulo_skewness", "shannon"),
   name = index,
   ...
 )
@@ -20,7 +21,8 @@ estimateDiversity(
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher"),
+  index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
+    "log_modulo_skewness", "shannon"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -29,8 +31,8 @@ estimateDiversity(
 \S4method{estimateDiversity}{TreeSummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher",
-    "faith"),
+  index = c("coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
+    "log_modulo_skewness", "shannon"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -74,8 +76,14 @@ stored in.}
 
 \item{...}{optional arguments:
 \itemize{
-\item{threshold}{ a numeric value in the unit interval,
-determining the threshold for coverage index. By default, the threshold is 0.9.}
+\item{threshold}{ A numeric value in the unit interval,
+determining the threshold for coverage index. By default, \code{threshold} is 0.9.}
+\item{quantile}{ Arithmetic abundance classes are evenly cut up to to this quantile
+of the data. The assumption is that abundances higher than this are not common, and
+they are classified in their own group. By default, \code{quantile} is 0.5.}
+\item{num_of_classes}{ The number of arithmetic abundance classes from zero to
+the quantile cutoff indicated by \code{quantile}.
+By default, \code{num_of_classes} is 50.}
 }}
 
 \item{BPPARAM}{A
@@ -94,10 +102,10 @@ Several functions for calculation of diversity indices available via
 wrapper functions. Some of them are implemented via the \code{vegan} package.
 }
 \details{
-The available indices include the \sQuote{Shannon}, \sQuote{Gini-Simpson},
-\sQuote{Inverse Simpson}, \sQuote{Coverage}, \sQuote{Fisher alpha}, and
-\sQuote{Faith's phylogenetic diversity} diversity indices.
-See details for more information and references.
+The available indices include the \sQuote{Coverage},
+\sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha}, \sQuote{Gini-Simpson},
+\sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon}
+diversity indices. See details for more information and references.
 
 Diversity is a joint quantity that combines elements or community richness and evenness.
 Diversity increases, in general, when species richness or evenness increase.
@@ -105,11 +113,16 @@ Diversity increases, in general, when species richness or evenness increase.
 By default, this function returns all indices.
 
 \itemize{
-\item{'inverse_simpson' }{Inverse Simpson diversity:
-\eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative abundances.
-This corresponds to the diversity index
-'invsimpson' in vegan::diversity. Don't confuse this with the
-closely related Gini-Simpson index}
+
+\item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
+Tune this with the threshold argument.}
+
+\item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
+taxonomic distance is between taxa that are present in the sample. Larger value
+represent higher diversity. (Faith 1992)}
+
+\item{'fisher' }{Fisher's alpha; as implemented in
+\code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
 
 \item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
 Simpson index, calculated as the sum of squared relative abundances.
@@ -119,61 +132,75 @@ This is also called Gibbs–Martin, or Blau index in sociology,
 psychology and management studies. The Gini-Simpson index (1-lambda) should not be
 confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).}
 
+\item{'inverse_simpson' }{Inverse Simpson diversity:
+\eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative abundances.
+This corresponds to the diversity index
+'invsimpson' in vegan::diversity. Don't confuse this with the
+closely related Gini-Simpson index}
+
+\item{'log_modulo_skewness' }{The rarity index characterizes the concentration
+of species at low abundance. Here, we use the skewness of the frequency
+distribution of arithmetic abundance classes (see Magurran & McGill 2011).
+These are typically right-skewed; to avoid taking log of occasional
+negative skews, we follow Locey & Lennon (2016) and use the log-modulo
+transformation that adds a value of one to each measure of skewness to
+allow logarithmization.}
+
 \item{'shannon' }{Shannon diversity (entropy).}
 
-\item{'fisher' }{Fisher's alpha; as implemented in
-\code{\link[vegan:fisher.alpha]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
-
-\item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
-Tune this with the threshold argument.}
-
-\item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
-taxonomic distance is between taxa that are present in the sample. Larger value
-represent higher diversity. (Faith 1992)}
 }
 }
 \examples{
 data(GlobalPatterns)
-se <- GlobalPatterns
+tse <- GlobalPatterns
 
 # All index names as known by the function
-index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "faith")
+index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", 
+"faith",  "log_modulo_skewness")
 
 # Corresponding polished names
-name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", "Faith")
+name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", 
+"Faith",  "LogModSkewness")
 
 # Calculate diversities
-se <- estimateDiversity(se, index = index)
+tse <- estimateDiversity(tse, index = index)
 
 # The colData contains the indices with their code names by default
-colData(se)[, index]
+colData(tse)[, index]
 
 # Removing indices
-colData(se)[, index] <- NULL
+colData(tse)[, index] <- NULL
+
+# 'threshold' can be used to determine threshold for 'coverage' index
+tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
+# 'quantile' and 'num_of_classes' can be used when 'log_modulo_skewness' is calculated
+tse <- estimateDiversity(tse, index = "log_modulo_skewness", quantile = 0.75, num_of_classes = 100)
 
 # It is recommended to specify also the final names used in the output.
-se <- estimateDiversity(se,
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", "faith"),
-   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", "Faith"))
+tse <- estimateDiversity(tse,
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", 
+  "faith", "log_modulo_skewness"),
+   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", 
+   "Faith", "LogModSkewness"))
 
 # The colData contains the indices by their new names provided by the user
-colData(se)[, name]
+colData(tse)[, name]
 
 # Compare the indices visually
-pairs(colData(se)[, name])
+pairs(colData(tse)[, name])
 
 # Plotting the diversities - use the selected names
 library(scater)
-plotColData(se, "Shannon")
+plotColData(tse, "Shannon")
 # ... by sample type
-plotColData(se, "Shannon", "SampleType")
+plotColData(tse, "Shannon", "SampleType")
 \dontrun{
 # combining different plots
 library(patchwork)
 plot_index <- c("Shannon","GiniSimpson")
 plots <- lapply(plot_index,
                 plotColData,
-                object = se,
+                object = tse,
                 x = "SampleType",
                 colour_by = "SampleType")
 plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))
@@ -191,14 +218,18 @@ Bulla L. (1994)
 An  index of diversity and its associated diversity measure.
 \emph{Oikos} 70:167--171
 
-Faith, D.P. (1992)
+Faith D.P. (1992)
 Conservation evaluation and phylogenetic diversity.
 \emph{Biological Conservation} 61(1):1-10.
 
-Fisher, R.A., Corbet, A.S. & Williams, C.B. (1943).
+Fisher R.A., Corbet, A.S. & Williams, C.B. (1943)
 The relation between the number of species and the number of individuals in a
 random sample of animal population.
 \emph{Journal of Animal Ecology} \emph{12}, 42-58.
+
+Locey K.J. & Lennon J.T. (2016)
+Scaling laws predict global microbial diversity.
+\emph{PNAS} 113(21):5970-5975.
 
 Magurran A.E., McGill BJ, eds (2011)
 Biological Diversity: Frontiers in Measurement and Assessment.

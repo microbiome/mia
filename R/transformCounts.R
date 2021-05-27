@@ -4,9 +4,8 @@
 #' By using these functions, transformed table is calculated and stored in \code{assay}. 
 #' \code{transformSamples} does the transformation sample-wise, i.e., column-wise. 
 #' It is alias for \code{transformCounts}. \code{transformFeatures}  does the transformation 
-#' feature-wise, i.e., row-wise. By using specific \code{ZTransform} function, Z-transformation 
-#' can be applied for features. \code{relAbundanceCounts} is a shortcut for fetching relative 
-#' abundance table.
+#' feature-wise, i.e., row-wise. \code{ZTransform} is a shortcut for Z-transformation.
+#' \code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
 #'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -159,8 +158,8 @@
 #'                                                            preserveShape = TRUE)  
 #'                                                            
 #' # If you want to do the transformation for features, you can do that by using
-#' x <- transformFeatures(x, method="hellinger", name="hellinger_features")
-#' head(assay(x, "hellinger_features"))
+#' x <- transformFeatures(x, method="log10", name="log10_features", pseudocount = 1)
+#' head(assay(x, "log10_features"))
 #'
 #' # Z-transform can be done for features by using shortcut function
 #' x <- ZTransform(x)
@@ -176,24 +175,24 @@
 NULL
 
 #' @rdname transformCounts
-#' @aliases transformSamples
+#' @aliases transformCounts
 #' @export
-setGeneric("transformCounts", signature = c("x"),
+setGeneric("transformSamples", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
+                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
-                    standardGeneric("transformCounts"))
+                    standardGeneric("transformSamples"))
 
 #' @rdname transformCounts
-#' @aliases transformSamples
+#' @aliases transformCounts
 #' @export
-setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
+setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
     function(x,
             abund_values = "counts",
-            method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
+            method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
             name = method,
             pseudocount = FALSE,
             threshold = 0){
@@ -207,6 +206,14 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                  "different from `abund_values`.",
                  call. = FALSE)
         }
+        # Check method
+        # If method is not single string, user has not specified transform method,
+        # or has given e.g. a vector
+        if(!.is_non_empty_string(method)){
+          stop("'method' must be a non-empty single character value.",
+               call. = FALSE)
+        }
+        method <- match.arg(method)
 
         # Gets the abundance table
         assay <- assay(x, abund_values)
@@ -219,9 +226,35 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname transformCounts
-#' @aliases transformCounts
-#' @export transformSamples
-transformSamples <- transformCounts
+#' @aliases transformSamples
+#' @export
+setGeneric("transformCounts", signature = c("x"),
+           function(x,
+                    abund_values = "counts",
+                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+                    name = method,
+                    pseudocount = FALSE,
+                    threshold = 0)
+               standardGeneric("transformCounts"))
+
+#' @rdname transformCounts
+#' @aliases transformSamples
+#' @export
+setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
+    function(x,
+             abund_values = "counts",
+             method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+             name = method,
+             pseudocount = FALSE,
+             threshold = 0){
+        transformSamples(x, 
+                       abund_values = abund_values,
+                       method = method,
+                       name = name,
+                       pseudocount = pseudocount,
+                       threshold = threshold)
+    }
+)
 
 ###############################transformFeatures################################
 
@@ -230,7 +263,7 @@ transformSamples <- transformCounts
 setGeneric("transformFeatures", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
+                    method = c("log10", "pa", "z"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -241,7 +274,7 @@ setGeneric("transformFeatures", signature = c("x"),
 setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
     function(x,
              abund_values = "counts",
-             method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance", "z"),
+             method = c("log10", "pa", "z"),
              name = method,
              pseudocount = FALSE,
              threshold = 0){
@@ -254,7 +287,15 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
             stop("'name' must be a non-empty single character value and be ",
                  "different from `abund_values`.",
                  call. = FALSE)
-            }
+        }
+        # Check method
+        # If method is not single string, user has not specified transform method,
+        # or has given e.g. a vector
+        if(!.is_non_empty_string(method)){
+          stop("'method' must be a non-empty single character value.",
+               call. = FALSE)
+        }
+        method <- match.arg(method)
       
         # Gets the abundance table, and transposes it
         assay <- t(assay(x, abund_values))
@@ -297,7 +338,7 @@ setGeneric("relAbundanceCounts", signature = c("x"),
 #' @export
 setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     function(x, ...){
-        transformCounts(x, method = "relabundance", ...)
+        transformSamples(x, method = "relabundance", ...)
     }
 )
 
@@ -305,20 +346,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 # Help function for transformSamples and transformFeatures, takes abundance table
 # as input and returns transformed table.
-.apply_transformation <- function(assay, method = c("clr", "hellinger", "log10", 
-                                                    "pa", "rank", "relabundance", "z"), 
-                                  pseudocount, threshold, ...){
+.apply_transformation <- function(assay, method, pseudocount, threshold, ...){
     # Input check
-    # Check method
-    # If method is not single string, user has not specified transform method,
-    # or has given e.g. a vector
-    if(!.is_non_empty_string(method)){
-        stop("'method' must be a non-empty single character value. \n",
-             "Give one method from the following list: \n",
-             "'clr', 'hellinger', 'log10', 'pa', 'rank', 'relabundance', 'z'",
-             call. = FALSE)
-    }
-    method <- match.arg(method)
     # Check pseudocount
     if(length(pseudocount) != 1L || 
        !(pseudocount == FALSE || is.numeric(pseudocount))){
