@@ -457,7 +457,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # for all samples for consistency    
     cutpoints <- c(seq(0, quantile_point, length=num_of_classes), Inf)
     # Calculates sample-wise frequencies. How many taxa in each interval?
-    freq_table <- table(c(cut(mat, cutpoints)), col(mat))
+    freq_table <- table(cut(mat, cutpoints), col(mat))
     # Calculates the skewness of frequency table. Returns skewness for each sample
     r <- .calc_skewness(freq_table)
     # Return log-modulo

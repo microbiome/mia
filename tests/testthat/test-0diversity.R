@@ -56,7 +56,7 @@ test_that("diversity estimates", {
     quantile_point <- quantile(max(mat), quantile)
     cutpoints <- c(seq(0, quantile_point, length=num_of_classes), Inf)
     
-    freq_table <- table(c(cut(mat, cutpoints)), col(mat))
+    freq_table <- table(cut(mat, cutpoints), col(mat))
     test1 <- mia:::.calc_skewness(freq_table)
     
     test2 <- mia:::.calc_skewness(apply(mat, 2, function(x) {
