@@ -210,9 +210,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
         # If method is not single string, user has not specified transform method,
         # or has given e.g. a vector
         if(!.is_non_empty_string(method)){
-          stop("'method' must be a non-empty single character value. \n",
-               "Give one method from the following list: \n",
-               "'clr', 'hellinger', 'log10', 'pa', 'rank', 'relabundance'",
+          stop("'method' must be a non-empty single character value.",
                call. = FALSE)
         }
         method <- match.arg(method)
@@ -268,9 +266,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
         # If method is not single string, user has not specified transform method,
         # or has given e.g. a vector
         if(!.is_non_empty_string(method)){
-          stop("'method' must be a non-empty single character value. \n",
-               "Give one method from the following list: \n",
-               "log10', 'pa', 'z'",
+          stop("'method' must be a non-empty single character value.",
                call. = FALSE)
         }
         method <- match.arg(method)
