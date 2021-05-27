@@ -4,6 +4,7 @@
 \alias{transformCounts}
 \alias{transformSamples}
 \alias{transformCounts,SummarizedExperiment-method}
+\alias{transformSamples,SummarizedExperiment-method}
 \alias{transformFeatures}
 \alias{transformFeatures,SummarizedExperiment-method}
 \alias{ZTransform}
@@ -30,7 +31,16 @@ transformCounts(
   threshold = 0
 )
 
-transformCounts(
+transformSamples(
+  x,
+  abund_values = "counts",
+  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  name = method,
+  pseudocount = FALSE,
+  threshold = 0
+)
+
+\S4method{transformSamples}{SummarizedExperiment}(
   x,
   abund_values = "counts",
   method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),

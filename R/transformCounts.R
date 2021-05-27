@@ -184,12 +184,43 @@ setGeneric("transformCounts", signature = c("x"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
-                    standardGeneric("transformCounts"))
+             standardGeneric("transformCounts"))
 
 #' @rdname transformCounts
 #' @aliases transformSamples
 #' @export
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
+          function(x,
+                   abund_values = "counts",
+                   method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+                   name = method,
+                   pseudocount = FALSE,
+                   threshold = 0){
+        transformSamples(x, 
+                         abund_values = abund_values,
+                         method = method,
+                         name = name,
+                         pseudocount = pseudocount,
+                         threshold = threshold)
+          }
+)
+
+#' @rdname transformCounts
+#' @aliases transformCounts
+#' @export
+setGeneric("transformSamples", signature = c("x"),
+           function(x,
+                    abund_values = "counts",
+                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+                    name = method,
+                    pseudocount = FALSE,
+                    threshold = 0)
+                    standardGeneric("transformSamples"))
+
+#' @rdname transformCounts
+#' @aliases transformCounts
+#' @export
+setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
     function(x,
             abund_values = "counts",
             method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
@@ -224,11 +255,6 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
         x
     }
 )
-
-#' @rdname transformCounts
-#' @aliases transformCounts
-#' @export transformSamples
-transformSamples <- transformCounts
 
 ###############################transformFeatures################################
 
