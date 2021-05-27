@@ -464,7 +464,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     log(1 + r)
 }
 
-#' @importFrom matrixStats rowSums2 rowMeans2
+#' @importFrom DelayedMatrixStats rowSums2 rowMeans2
 .calc_skewness <- function(x) {
     # Transposes the table
     x <- t(x)
