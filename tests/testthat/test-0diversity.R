@@ -47,6 +47,24 @@ test_that("diversity estimates", {
                                                         num_of_classes=32)
                                       )$log_modulo_skewness, 
                               6)), c(1.814770, 1.756495, 1.842704))
+    
+    # Tests that .calc_skewness returns right value
+    mat <- assay(tse, "counts")
+    num_of_classes <- 61
+    quantile <- 0.35
+    
+    quantile_point <- quantile(max(mat), quantile)
+    cutpoints <- c(seq(0, quantile_point, length=num_of_classes), Inf)
+    
+    freq_table <- table(c(cut(mat, cutpoints)), col(mat))
+    test1 <- mia:::.calc_skewness(freq_table)
+    
+    test2 <- mia:::.calc_skewness(apply(mat, 2, function(x) {
+        table(cut(x, cutpoints))
+        }))
+    
+    expect_equal(test1, test2)
+    expect_equal(round(test1, 6), c(7.256706, 6.098354, 7.278894))
 
     # Tests faith index with esophagus data
     for( i in c(1:(length(colnames(tse_idx)))) ){
