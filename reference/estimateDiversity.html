@@ -73,7 +73,7 @@ wrapper functions. Some of them are implemented via the vegan package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -125,7 +125,8 @@ wrapper functions. Some of them are implemented via the <code>vegan</code> packa
     <pre class="usage"><span class='fu'>estimateDiversity</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>,
+    <span class='st'>"log_modulo_skewness"</span>, <span class='st'>"shannon"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
@@ -134,7 +135,8 @@ wrapper functions. Some of them are implemented via the <code>vegan</code> packa
 <span class='fu'>estimateDiversity</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>,
+    <span class='st'>"log_modulo_skewness"</span>, <span class='st'>"shannon"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
   <span class='va'>...</span>,
   BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>
@@ -144,8 +146,8 @@ wrapper functions. Some of them are implemented via the <code>vegan</code> packa
 <span class='fu'>estimateDiversity</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>,
-    <span class='st'>"faith"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"coverage"</span>, <span class='st'>"faith"</span>, <span class='st'>"fisher"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>,
+    <span class='st'>"log_modulo_skewness"</span>, <span class='st'>"shannon"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
   <span class='va'>...</span>,
   BPPARAM <span class='op'>=</span> <span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span>
@@ -202,8 +204,14 @@ stored in.</p></td>
     <tr>
       <th>...</th>
       <td><p>optional arguments:</p><ul>
-<li><p>threshold a numeric value in the unit interval,
-determining the threshold for coverage index. By default, the threshold is 0.9.</p></li>
+<li><p>threshold A numeric value in the unit interval,
+determining the threshold for coverage index. By default, <code>threshold</code> is 0.9.</p></li>
+<li><p>quantile Arithmetic abundance classes are evenly cut up to to this quantile
+of the data. The assumption is that abundances higher than this are not common, and
+they are classified in their own group. By default, <code>quantile</code> is 0.5.</p></li>
+<li><p>num_of_classes The number of arithmetic abundance classes from zero to
+the quantile cutoff indicated by <code>quantile</code>.
+By default, <code>num_of_classes</code> is 50.</p></li>
 </ul></td>
     </tr>
     <tr>
@@ -225,19 +233,21 @@ used by default.</p></td>
     <p><code>x</code> with additional <code>colData</code> named <code>*name*</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The available indices include the &#8216;Shannon&#8217;, &#8216;Gini-Simpson&#8217;,
-&#8216;Inverse Simpson&#8217;, &#8216;Coverage&#8217;, &#8216;Fisher alpha&#8217;, and
-&#8216;Faith's phylogenetic diversity&#8217; diversity indices.
-See details for more information and references.</p>
+    <p>The available indices include the &#8216;Coverage&#8217;,
+&#8216;Faith's phylogenetic diversity&#8217;, &#8216;Fisher alpha&#8217;, &#8216;Gini-Simpson&#8217;,
+&#8216;Inverse Simpson&#8217;, &#8216;log-modulo skewness&#8217;, and &#8216;Shannon&#8217;
+diversity indices. See details for more information and references.</p>
 <p>Diversity is a joint quantity that combines elements or community richness and evenness.
 Diversity increases, in general, when species richness or evenness increase.</p>
 <p>By default, this function returns all indices.</p>
 <ul>
-<li><p>'inverse_simpson' Inverse Simpson diversity:
-\(1/lambda\) where \(lambda=sum(p^2)\) and p refers to relative abundances.
-This corresponds to the diversity index
-'invsimpson' in vegan::diversity. Don't confuse this with the
-closely related Gini-Simpson index</p></li>
+<li><p>'coverage' Number of species needed to cover a given fraction of the ecosystem (50\<!-- % by default). -->
+Tune this with the threshold argument.</p></li>
+<li><p>'faith' Faith's phylogenetic alpha diversity index measures how long the
+taxonomic distance is between taxa that are present in the sample. Larger value
+represent higher diversity. (Faith 1992)</p></li>
+<li><p>'fisher' Fisher's alpha; as implemented in
+<code><a href='https://rdrr.io/pkg/vegan/man/diversity.html'>vegan::fisher.alpha</a></code>. (Fisher et al. 1943)</p></li>
 <li><p>'gini_simpson' Gini-Simpson diversity i.e. \(1 - lambda\), where \(lambda\) is the
 Simpson index, calculated as the sum of squared relative abundances.
 This corresponds to the diversity index
@@ -245,14 +255,19 @@ This corresponds to the diversity index
 This is also called Gibbs–Martin, or Blau index in sociology,
 psychology and management studies. The Gini-Simpson index (1-lambda) should not be
 confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).</p></li>
+<li><p>'inverse_simpson' Inverse Simpson diversity:
+\(1/lambda\) where \(lambda=sum(p^2)\) and p refers to relative abundances.
+This corresponds to the diversity index
+'invsimpson' in vegan::diversity. Don't confuse this with the
+closely related Gini-Simpson index</p></li>
+<li><p>'log_modulo_skewness' The rarity index characterizes the concentration
+of species at low abundance. Here, we use the skewness of the frequency
+distribution of arithmetic abundance classes (see Magurran &amp; McGill 2011).
+These are typically right-skewed; to avoid taking log of occasional
+negative skews, we follow Locey &amp; Lennon (2016) and use the log-modulo
+transformation that adds a value of one to each measure of skewness to
+allow logarithmization.</p></li>
 <li><p>'shannon' Shannon diversity (entropy).</p></li>
-<li><p>'fisher' Fisher's alpha; as implemented in
-<code><a href='https://rdrr.io/pkg/vegan/man/diversity.html'>vegan::fisher.alpha</a></code>. (Fisher et al. 1943)</p></li>
-<li><p>'coverage' Number of species needed to cover a given fraction of the ecosystem (50\<!-- % by default). -->
-Tune this with the threshold argument.</p></li>
-<li><p>'faith' Faith's phylogenetic alpha diversity index measures how long the
-taxonomic distance is between taxa that are present in the sample. Larger value
-represent higher diversity. (Faith 1992)</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -264,13 +279,16 @@ A Comparative Analysis of Diversity Index Sensitivity.
 <p>Bulla L. (1994)
 An  index of diversity and its associated diversity measure.
 <em>Oikos</em> 70:167--171</p>
-<p>Faith, D.P. (1992)
+<p>Faith D.P. (1992)
 Conservation evaluation and phylogenetic diversity.
 <em>Biological Conservation</em> 61(1):1-10.</p>
-<p>Fisher, R.A., Corbet, A.S. &amp; Williams, C.B. (1943).
+<p>Fisher R.A., Corbet, A.S. &amp; Williams, C.B. (1943)
 The relation between the number of species and the number of individuals in a
 random sample of animal population.
 <em>Journal of Animal Ecology</em> <em>12</em>, 42-58.</p>
+<p>Locey K.J. &amp; Lennon J.T. (2016)
+Scaling laws predict global microbial diversity.
+<em>PNAS</em> 113(21):5970-5975.</p>
 <p>Magurran A.E., McGill BJ, eds (2011)
 Biological Diversity: Frontiers in Measurement and Assessment.
 (Oxford Univ Press, Oxford), Vol 12.</p>
@@ -290,20 +308,22 @@ A Consumer's Guide to Diversity Indices.
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
+<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
 
 <span class='co'># All index names as known by the function</span>
-<span class='va'>index</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>,<span class='st'>"gini_simpson"</span>,<span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>, <span class='st'>"faith"</span><span class='op'>)</span>
+<span class='va'>index</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>,<span class='st'>"gini_simpson"</span>,<span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>, 
+<span class='st'>"faith"</span>,  <span class='st'>"log_modulo_skewness"</span><span class='op'>)</span>
 
 <span class='co'># Corresponding polished names</span>
-<span class='va'>name</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Shannon"</span>,<span class='st'>"GiniSimpson"</span>,<span class='st'>"InverseSimpson"</span>, <span class='st'>"Coverage"</span>, <span class='st'>"Fisher"</span>, <span class='st'>"Faith"</span><span class='op'>)</span>
+<span class='va'>name</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Shannon"</span>,<span class='st'>"GiniSimpson"</span>,<span class='st'>"InverseSimpson"</span>, <span class='st'>"Coverage"</span>, <span class='st'>"Fisher"</span>, 
+<span class='st'>"Faith"</span>,  <span class='st'>"LogModSkewness"</span><span class='op'>)</span>
 
 <span class='co'># Calculate diversities</span>
-<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDiversity</span><span class='op'>(</span><span class='va'>se</span>, index <span class='op'>=</span> <span class='va'>index</span><span class='op'>)</span>
+<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDiversity</span><span class='op'>(</span><span class='va'>tse</span>, index <span class='op'>=</span> <span class='va'>index</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'>
 <span class='co'># The colData contains the indices with their code names by default</span>
-<span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>index</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; DataFrame with 26 rows and 6 columns
+<span class='fu'>colData</span><span class='op'>(</span><span class='va'>tse</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>index</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; DataFrame with 26 rows and 7 columns
 #&gt;           shannon gini_simpson inverse_simpson  coverage    fisher     faith
 #&gt;         &lt;numeric&gt;    &lt;numeric&gt;       &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt; &lt;numeric&gt;
 #&gt; CL3       6.57652     0.994656        187.1298      1113  1035.008   250.535
@@ -316,18 +336,38 @@ A Consumer's Guide to Diversity Indices.
 #&gt; TS29      3.45277     0.918098         12.2097        46   318.969   121.206
 #&gt; Even1     4.08366     0.968198         31.4447        51   546.578   179.938
 #&gt; Even2     3.95691     0.963916         27.7129        47   401.760   140.810
-#&gt; Even3     4.00637     0.967340         30.6189        49   344.939   126.569</div><div class='input'>
+#&gt; Even3     4.00637     0.967340         30.6189        49   344.939   126.569
+#&gt;         log_modulo_skewness
+#&gt;                   &lt;numeric&gt;
+#&gt; CL3                 2.06142
+#&gt; CC1                 2.06142
+#&gt; SV1                 2.06142
+#&gt; M31Fcsw             2.06141
+#&gt; M11Fcsw             2.06141
+#&gt; ...                     ...
+#&gt; TS28                2.06141
+#&gt; TS29                2.06142
+#&gt; Even1               2.06141
+#&gt; Even2               2.06141
+#&gt; Even3               2.06141</div><div class='input'>
 <span class='co'># Removing indices</span>
-<span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>index</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
+<span class='fu'>colData</span><span class='op'>(</span><span class='va'>tse</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>index</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
+
+<span class='co'># 'threshold' can be used to determine threshold for 'coverage' index</span>
+<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDiversity</span><span class='op'>(</span><span class='va'>tse</span>, index <span class='op'>=</span> <span class='st'>"coverage"</span>, threshold <span class='op'>=</span> <span class='fl'>0.75</span><span class='op'>)</span>
+<span class='co'># 'quantile' and 'num_of_classes' can be used when 'log_modulo_skewness' is calculated</span>
+<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDiversity</span><span class='op'>(</span><span class='va'>tse</span>, index <span class='op'>=</span> <span class='st'>"log_modulo_skewness"</span>, quantile <span class='op'>=</span> <span class='fl'>0.75</span>, num_of_classes <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
 
 <span class='co'># It is recommended to specify also the final names used in the output.</span>
-<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDiversity</span><span class='op'>(</span><span class='va'>se</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>, <span class='st'>"faith"</span><span class='op'>)</span>,
-   name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Shannon"</span>, <span class='st'>"GiniSimpson"</span>,  <span class='st'>"InverseSimpson"</span>,  <span class='st'>"Coverage"</span>, <span class='st'>"Fisher"</span>, <span class='st'>"Faith"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'>estimateDiversity</span><span class='op'>(</span><span class='va'>tse</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"shannon"</span>, <span class='st'>"gini_simpson"</span>, <span class='st'>"inverse_simpson"</span>, <span class='st'>"coverage"</span>, <span class='st'>"fisher"</span>, 
+  <span class='st'>"faith"</span>, <span class='st'>"log_modulo_skewness"</span><span class='op'>)</span>,
+   name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Shannon"</span>, <span class='st'>"GiniSimpson"</span>,  <span class='st'>"InverseSimpson"</span>,  <span class='st'>"Coverage"</span>, <span class='st'>"Fisher"</span>, 
+   <span class='st'>"Faith"</span>, <span class='st'>"LogModSkewness"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NaNs produced</span></div><div class='input'>
 <span class='co'># The colData contains the indices by their new names provided by the user</span>
-<span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>name</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; DataFrame with 26 rows and 6 columns
+<span class='fu'>colData</span><span class='op'>(</span><span class='va'>tse</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>name</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; DataFrame with 26 rows and 7 columns
 #&gt;           Shannon GiniSimpson InverseSimpson  Coverage    Fisher     Faith
 #&gt;         &lt;numeric&gt;   &lt;numeric&gt;      &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt; &lt;numeric&gt;
 #&gt; CL3       6.57652    0.994656       187.1298      1113  1035.008   250.535
@@ -340,22 +380,35 @@ A Consumer's Guide to Diversity Indices.
 #&gt; TS29      3.45277    0.918098        12.2097        46   318.969   121.206
 #&gt; Even1     4.08366    0.968198        31.4447        51   546.578   179.938
 #&gt; Even2     3.95691    0.963916        27.7129        47   401.760   140.810
-#&gt; Even3     4.00637    0.967340        30.6189        49   344.939   126.569</div><div class='input'>
+#&gt; Even3     4.00637    0.967340        30.6189        49   344.939   126.569
+#&gt;         LogModSkewness
+#&gt;              &lt;numeric&gt;
+#&gt; CL3            2.06142
+#&gt; CC1            2.06142
+#&gt; SV1            2.06142
+#&gt; M31Fcsw        2.06141
+#&gt; M11Fcsw        2.06141
+#&gt; ...                ...
+#&gt; TS28           2.06141
+#&gt; TS29           2.06142
+#&gt; Even1          2.06141
+#&gt; Even2          2.06141
+#&gt; Even3          2.06141</div><div class='input'>
 <span class='co'># Compare the indices visually</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/pairs.html'>pairs</a></span><span class='op'>(</span><span class='fu'>colData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>name</span><span class='op'>]</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/pairs.html'>pairs</a></span><span class='op'>(</span><span class='fu'>colData</span><span class='op'>(</span><span class='va'>tse</span><span class='op'>)</span><span class='op'>[</span>, <span class='va'>name</span><span class='op'>]</span><span class='op'>)</span>
 </div><div class='img'><img src='estimateDiversity-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Plotting the diversities - use the selected names</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://bioconductor.org/packages/scater/'>scater</a></span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></span><span class='op'>(</span><span class='va'>se</span>, <span class='st'>"Shannon"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"Shannon"</span><span class='op'>)</span>
 </div><div class='img'><img src='estimateDiversity-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># ... by sample type</span>
-<span class='fu'><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></span><span class='op'>(</span><span class='va'>se</span>, <span class='st'>"Shannon"</span>, <span class='st'>"SampleType"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/scater/man/plotColData.html'>plotColData</a></span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"Shannon"</span>, <span class='st'>"SampleType"</span><span class='op'>)</span>
 </div><div class='img'><img src='estimateDiversity-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># combining different plots</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://patchwork.data-imaginist.com'>patchwork</a></span><span class='op'>)</span>
 <span class='va'>plot_index</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Shannon"</span>,<span class='st'>"GiniSimpson"</span><span class='op'>)</span>
 <span class='va'>plots</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>plot_index</span>,
                 <span class='va'>plotColData</span>,
-                object <span class='op'>=</span> <span class='va'>se</span>,
+                object <span class='op'>=</span> <span class='va'>tse</span>,
                 x <span class='op'>=</span> <span class='st'>"SampleType"</span>,
                 colour_by <span class='op'>=</span> <span class='st'>"SampleType"</span><span class='op'>)</span>
 <span class='va'>plots</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>plots</span>,<span class='st'>"+"</span>, <span class='fu'>theme</span><span class='op'>(</span>axis.text.x <span class='op'>=</span> <span class='fu'>element_text</span><span class='op'>(</span>angle<span class='op'>=</span><span class='fl'>45</span>,hjust<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>

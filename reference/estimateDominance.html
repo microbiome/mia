@@ -41,9 +41,8 @@
 
 <meta property="og:title" content="Estimate dominance measures — estimateDominance" />
 <meta property="og:description" content="This function calculates community dominance indices.
-This includes the &amp;#8216;Berger-Parker&amp;#8217;, &amp;#8216;McNaughton’s&amp;#8217;, &amp;#8216;Absolute&amp;#8217;,
-&amp;#8216;Relative&amp;#8217;, &amp;#8216;Simpson's&amp;#8217;, &amp;#8216;Core abundance&amp;#8217;
-and &amp;#8216;Gini&amp;#8217; indices." />
+This includes the &amp;#8216;Absolute&amp;#8217;, &amp;#8216;Berger-Parker&amp;#8217;, &amp;#8216;Core abundance&amp;#8217;,
+&amp;#8216;Gini&amp;#8217;, &amp;#8216;McNaughton’s&amp;#8217;, &amp;#8216;Relative&amp;#8217;, and &amp;#8216;Simpson's&amp;#8217; indices." />
 
 
 
@@ -75,7 +74,7 @@ and &amp;#8216;Gini&amp;#8217; indices." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -121,16 +120,15 @@ and &amp;#8216;Gini&amp;#8217; indices." />
 
     <div class="ref-description">
     <p>This function calculates community dominance indices.
-This includes the &#8216;Berger-Parker&#8217;, &#8216;McNaughton’s&#8217;, &#8216;Absolute&#8217;,
-&#8216;Relative&#8217;, &#8216;Simpson's&#8217;, &#8216;Core abundance&#8217;
-and &#8216;Gini&#8217; indices.</p>
+This includes the &#8216;Absolute&#8217;, &#8216;Berger-Parker&#8217;, &#8216;Core abundance&#8217;,
+&#8216;Gini&#8217;, &#8216;McNaughton’s&#8217;, &#8216;Relative&#8217;, and &#8216;Simpson's&#8217; indices.</p>
     </div>
 
     <pre class="usage"><span class='fu'>estimateDominance</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dbp"</span>, <span class='st'>"dmn"</span>, <span class='st'>"absolute"</span>, <span class='st'>"relative"</span>, <span class='st'>"simpson_lambda"</span>, <span class='st'>"core_abundance"</span>,
-    <span class='st'>"gini"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"absolute"</span>, <span class='st'>"dbp"</span>, <span class='st'>"core_abundance"</span>, <span class='st'>"gini"</span>, <span class='st'>"dmn"</span>, <span class='st'>"relative"</span>,
+    <span class='st'>"simpson_lambda"</span><span class='op'>)</span>,
   ntaxa <span class='op'>=</span> <span class='fl'>1</span>,
   aggregate <span class='op'>=</span> <span class='cn'>TRUE</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
@@ -142,8 +140,8 @@ and &#8216;Gini&#8217; indices.</p>
 <span class='fu'>estimateDominance</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dbp"</span>, <span class='st'>"dmn"</span>, <span class='st'>"absolute"</span>, <span class='st'>"relative"</span>, <span class='st'>"simpson_lambda"</span>, <span class='st'>"core_abundance"</span>,
-    <span class='st'>"gini"</span><span class='op'>)</span>,
+  index <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"absolute"</span>, <span class='st'>"dbp"</span>, <span class='st'>"core_abundance"</span>, <span class='st'>"gini"</span>, <span class='st'>"dmn"</span>, <span class='st'>"relative"</span>,
+    <span class='st'>"simpson_lambda"</span><span class='op'>)</span>,
   ntaxa <span class='op'>=</span> <span class='fl'>1</span>,
   aggregate <span class='op'>=</span> <span class='cn'>TRUE</span>,
   name <span class='op'>=</span> <span class='va'>index</span>,
@@ -175,19 +173,18 @@ calculated.</p></td>
       <th>ntaxa</th>
       <td><p>Optional and only used for the <code>Absolute</code> and
 <code>Relative</code> dominance indices: The n-th position of the dominant taxa
-to consider (default: <code>ntaxa = 1</code>). Disregarded for the indices
-&#8220;Gini&#8221;, &#8220;Simpson&#8221;, &#8220;core_abundance&#8221;, &#8220;dbp&#8221; and
-&#8220;dmn&#8221;.</p></td>
+to consider (default: <code>ntaxa = 1</code>). Disregarded for the indices &#8220;dbp&#8221;,
+&#8220;core_abundance&#8221;, &#8220;Gini&#8221;, &#8220;dmn&#8221;, and &#8220;Simpson&#8221;.</p></td>
     </tr>
     <tr>
       <th>aggregate</th>
-      <td><p>Optional and only used for the <code>Absolute</code>,
-<code>Relative</code>, <code>dbp</code> and <code>dmn</code> dominance indices:
+      <td><p>Optional and only used for the <code>Absolute</code>, <code>dbp</code>,
+<code>Relative</code>, and <code>dmn</code> dominance indices:
 Aggregate the values for top members selected by <code>ntaxa</code> or not. If
 <code>TRUE</code>, then the sum of relative abundances is returned. Otherwise the
 relative abundance is returned for the single taxa with the indicated rank
 (default: <code>aggregate = TRUE</code>). Disregarded for the indices
-&#8220;gini&#8221;, &#8220;simpson&#8221;, &#8220;core_abundance&#8221;, &#8220;dmn&#8221;.</p></td>
+&#8220;core_abundance&#8221;, &#8220;gini&#8221;, &#8220;dmn&#8221;, and &#8220;simpson&#8221;.</p></td>
     </tr>
     <tr>
       <th>name</th>
@@ -221,33 +218,15 @@ communities are less diverse.</p>
 <p><code>estimateDominance</code> calculates the following community dominance
 indices:</p>
 <ul>
+<li><p>'absolute' Absolute index equals to the absolute abundance of the
+most dominant n species of the sample (specify the number with the argument <code>ntaxa</code>).
+Index gives positive integer values.</p></li>
 <li><p>'dbp' Berger-Parker index (See Berger &amp; Parker 1970) calculation
 is a special case of the 'relative' index. dbp is the relative abundance of the most
 abundant species of the sample. Index gives values in interval 0 to 1,
 where bigger value represent greater dominance.$$dbp = \frac{N_1}{N_{tot}}$$ where \(N_1\) is the absolute abundance of the most
 dominant species and \(N_{tot}\) is the sum of absolute abundances of all
 species.</p></li>
-<li><p>'dmn' McNaughton’s index is the sum of relative abundances of the two
-most abundant species of the sample (McNaughton &amp; Wolf, 1970). Index gives values in
-the unit interval:$$dmn = (N_1 + N_2)/N_tot$$where \(N_1\) and \(N_2\) are the absolute
-abundances of the two most dominant species and \(N_{tot}\) is the sum of
-absolute abundances of all species.</p></li>
-<li><p>'absolute' Absolute index equals to the absolute abundance of the
-most dominant n species of the sample (specify the number with the argument <code>ntaxa</code>).
-Index gives positive integer values.</p></li>
-<li><p>'relative'  Relative index equals to the relative abundance of the
-most dominant n species of the sample (specify the number with the argument <code>ntaxa</code>).
-This index gives values in interval 0 to 1.$$relative = N_1/N_tot$$where \(N_1\) is the absolute abundance of the most
-dominant species and \(N_{tot}\) is the sum of absolute abundances of all
-species.</p></li>
-<li><p>'simpson_lambda'  Simpson's (dominance) index or Simpson's lambda is
-the sum of squared relative abundances. This index gives values in the unit interval.
-This value equals the probability that two randomly chosen individuals belongs to the
-same species. The higher the probability, the greater the dominance (See
-e.g. Simpson 1949).$$lambda = \sum(p^2)$$where p refers to relative abundances.There is also a more advanced Simpson dominance index (Simpson 1949). However,
-this is not provided and the simpler squared sum of relative abundances is used
-instead as the alternative index is not in the unit interval and it is highly
-correlated with the simpler variant implemented here.</p></li>
 <li><p>'core_abundance'  Core abundance index is related to core species.
 Core species are species that are most abundant in all samples, i.e., in
 whole data set. Core species are defined as those species that have
@@ -261,11 +240,29 @@ abundances of all species.</p></li>
 <li><p>'gini'  Gini index is probably best-known from socio-economic
 contexts (Gini 1921). In economics, it is used to measure, for example, how unevenly
 income is distributed among population. Here, Gini index is used similarly,
-but income is replaced with abundance. If there is small group of species
+but income is replaced with abundance.If there is small group of species
 that represent large portion of total abundance of microbes, the inequality
 is large and Gini index closer to 1. If all species has equally large
 abundances, the equality is perfect and Gini index equals 0. This index
 should not be confused with Gini-Simpson index, which quantifies diversity.</p></li>
+<li><p>'dmn' McNaughton’s index is the sum of relative abundances of the two
+most abundant species of the sample (McNaughton &amp; Wolf, 1970). Index gives values in
+the unit interval:$$dmn = (N_1 + N_2)/N_tot$$where \(N_1\) and \(N_2\) are the absolute
+abundances of the two most dominant species and \(N_{tot}\) is the sum of
+absolute abundances of all species.</p></li>
+<li><p>'relative'  Relative index equals to the relative abundance of the
+most dominant n species of the sample (specify the number with the argument <code>ntaxa</code>).
+This index gives values in interval 0 to 1.$$relative = N_1/N_tot$$where \(N_1\) is the absolute abundance of the most
+dominant species and \(N_{tot}\) is the sum of absolute abundances of all
+species.</p></li>
+<li><p>'simpson_lambda'  Simpson's (dominance) index or Simpson's lambda is
+the sum of squared relative abundances. This index gives values in the unit interval.
+This value equals the probability that two randomly chosen individuals belongs to the
+same species. The higher the probability, the greater the dominance (See
+e.g. Simpson 1949).$$lambda = \sum(p^2)$$where p refers to relative abundances.There is also a more advanced Simpson dominance index (Simpson 1949). However,
+this is not provided and the simpler squared sum of relative abundances is used
+instead as the alternative index is not in the unit interval and it is highly
+correlated with the simpler variant implemented here.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -341,16 +338,16 @@ Measurement of Diversity.
 <span class='co'># Shows all indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; DataFrame with 3 rows and 7 columns
-#&gt;         dbp       dmn  absolute  relative simpson_lambda core_abundance
-#&gt;   &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;      &lt;numeric&gt;      &lt;numeric&gt;
-#&gt; B  0.256158  0.502463        52  0.256158      0.1686282       0.960591
-#&gt; C  0.164706  0.325490        42  0.164706      0.0966551       0.898039
-#&gt; D  0.566210  0.648402       124  0.566210      0.3342507       0.908676
-#&gt;        gini
-#&gt;   &lt;numeric&gt;
-#&gt; B  0.861474
-#&gt; C  0.787086
-#&gt; D  0.834278</div><div class='input'><span class='co'># Deletes all indices</span>
+#&gt;    absolute       dbp core_abundance      gini       dmn  relative
+#&gt;   &lt;numeric&gt; &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
+#&gt; B        52  0.256158       0.960591  0.861474  0.502463  0.256158
+#&gt; C        42  0.164706       0.898039  0.787086  0.325490  0.164706
+#&gt; D       124  0.566210       0.908676  0.834278  0.648402  0.566210
+#&gt;   simpson_lambda
+#&gt;        &lt;numeric&gt;
+#&gt; B      0.1686282
+#&gt; C      0.0966551
+#&gt; D      0.3342507</div><div class='input'><span class='co'># Deletes all indices</span>
 <span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
 
 <span class='co'># Calculates all indices with explicitly specified names</span>
