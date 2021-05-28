@@ -23,11 +23,11 @@
 #'   taxa will be stored in.
 #'
 #' @details
-#' \code{dominantTaxa} extracts the most abundant taxa in a
+#' \code{addDominantTaxa} extracts the most abundant taxa in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object, and stores the information in the \code{colData}.
-#' \code{GetDominantTaxa} returns information about most dominant taxa in a
-#' tibble. Information includes their absolute and relative abundances in whole
+#' object, and stores the information in the \code{colData}. It is a wrapper for
+#' \code{dominantTaxa}. \code{getDominantTaxa} returns information about most dominant 
+#' taxa in a tibble. Information includes their absolute and relative abundances in whole
 #' data set.
 #'
 #' With 'rank' parameter, it is possible to agglomerate taxa based on taxonomic
@@ -40,10 +40,10 @@
 #' 'healthy' and 'sick', and get the most dominant taxa of different health
 #' status.
 #'
-#' @return \code{dominantTaxa} returns \code{x} with additional
-#'   \code{\link{colData}} named \code{*name*}. \code{getDominantTaxa} returns
-#'   an overview in a tibble. It contains dominant taxa in a column named
-#'   \code{*name*} and its abundance in the data set.
+#' @return \code{addDominantTaxa} and \code{dominantTaxa} return \code{x} 
+#' with additional \code{\link{colData}} named \code{*name*}. \code{getDominantTaxa} 
+#' returns an overview in a tibble. It contains dominant taxa in a column named
+#' \code{*name*} and its abundance in the data set.
 #'
 #' @name dominantTaxa
 #' @export
@@ -55,7 +55,7 @@
 #' x <- GlobalPatterns
 #'
 #' # Finds the dominant taxa.
-#' x <- dominantTaxa(x)
+#' x <- addDominantTaxa(x)
 #' # Information is stored to colData
 #' colData(x)
 #' # Gets the overview of dominant taxa
@@ -65,20 +65,44 @@
 #' # If taxonomic information is available, it is possible to find the most
 #' # dominant group from specific taxonomic level, here family level. The name
 #' # of column can be specified.
-#' x <- dominantTaxa(x, rank="Family", name="dominant_taxa_ranked_with_family")
+#' x <- addDominantTaxa(x, rank="Family", name="dominant_taxa_ranked_with_family")
 #' colData(x)
 #' # Gets the overview of dominant taxa
 #' overview <- getDominantTaxa(x)
 #' overview
 #'
 #' x <- microbiomeDataSets::dietswap()
-#' x <- dominantTaxa(x)
+#' x <- addDominantTaxa(x)
 #' colData(x)
 #' # With group, it is possible to group observations based on groups specified
 #' # Gets the overview of dominant taxa
 #' overview <- getDominantTaxa(x, group = "nationality")
 #' overview
 NULL
+
+
+#' @rdname dominantTaxa
+#' @export
+setGeneric("addDominantTaxa",signature = c("x"),
+           function(x,
+                    abund_values = "counts",
+                    rank = NULL,
+                    name = "dominant_taxa")
+               standardGeneric("addDominantTaxa"))
+
+#' @rdname dominantTaxa
+#' @export
+setMethod("addDominantTaxa", signature = c(x = "SummarizedExperiment"),
+          function(x,
+                abund_values = "counts",
+                rank = NULL,
+                name = "dominant_taxa"){
+              dominantTaxa(x, 
+                           abund_values = abund_values,
+                           rank = rank,
+                           name = name)
+    }
+)
 
 #' @rdname dominantTaxa
 #' @export
@@ -88,7 +112,6 @@ setGeneric("dominantTaxa",signature = c("x"),
                     rank = NULL,
                     name = "dominant_taxa")
                standardGeneric("dominantTaxa"))
-
 
 #' @rdname dominantTaxa
 #' @importFrom utils tail
@@ -177,7 +200,6 @@ setGeneric("getDominantTaxa",signature = c("x"),
                     group = NULL,
                     name = "dominant_taxa")
                standardGeneric("getDominantTaxa"))
-
 
 #' @rdname dominantTaxa
 #' @export
