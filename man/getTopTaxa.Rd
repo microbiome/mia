@@ -3,6 +3,8 @@
 \name{getTopTaxa}
 \alias{getTopTaxa}
 \alias{getTopTaxa,SummarizedExperiment-method}
+\alias{getDominantTaxa}
+\alias{getDominantTaxa,SummarizedExperiment-method}
 \title{Summarizing microbiome data}
 \usage{
 getTopTaxa(
@@ -18,6 +20,22 @@ getTopTaxa(
   method = c("mean", "sum", "median", "prevalence"),
   abund_values = "counts"
 )
+
+getDominantTaxa(
+  x,
+  abund_values = "counts",
+  rank = NULL,
+  group = NULL,
+  name = "dominant_taxa"
+)
+
+\S4method{getDominantTaxa}{SummarizedExperiment}(
+  x,
+  abund_values = "counts",
+  rank = NULL,
+  group = NULL,
+  name = "dominant_taxa"
+)
 }
 \arguments{
 \item{x}{A
@@ -31,10 +49,21 @@ median or prevalence. Default is 'mean'.}
 
 \item{abund_values}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
+
+\item{rank}{A single character defining a taxonomic rank. Must be a value of
+the output of \code{taxonomicRanks()}.}
+
+\item{group}{With group, it is possible to group the observations in an
+overview. Must be a one of the column names of \code{colData}.}
+
+\item{name}{A name for the column of tibble table that includes taxa.}
 }
 \value{
 For \code{getTopTaxa}: A vector of the most \code{top} abundant
 \dQuote{FeatureID}s
+
+\code{getDominantTaxa} returns an overview in a tibble. It contains dominant taxa
+in a column named \code{*name*} and its abundance in the data set.
 }
 \description{
 To query a \code{SummarizedExperiment} for interesting features, several
@@ -44,6 +73,20 @@ functions are available.
 \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
 in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.
+
+\code{getDominantTaxa} returns information about most dominant
+taxa in a tibble. Information includes their absolute and relative abundances in whole
+data set.
+
+With \code{rank} parameter, it is possible to agglomerate taxa based on taxonomic
+ranks. E.g. if 'family' rank is used, all abundances of same family is added
+together, and those families are returned.
+
+With \code{group} parameter, it is possible to group observations of returned
+overview based on samples' features.  E.g., if samples contain information
+about patients' health status, it is possible to group observations, e.g. to
+'healthy' and 'sick', and get the most dominant taxa of different health
+status.
 }
 \examples{
 data(GlobalPatterns)
@@ -52,6 +95,16 @@ top_taxa <- getTopTaxa(GlobalPatterns,
                        top = 5,
                        abund_values = "counts")
 top_taxa
+
+# Gets the overview of dominant taxa
+dominant_taxa <- getDominantTaxa(GlobalPatterns, rank = "Family", name = "dominant_family")
+dominant_taxa
+
+# With group, it is possible to group observations based on specified groups 
+# Gets the overview of dominant taxa
+dominant_taxa <- getDominantTaxa(x, group = "nationality")
+dominant_taxa
+
 }
 \seealso{
 \code{\link[=getPrevalence]{getPrevalentTaxa}}

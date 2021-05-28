@@ -2,8 +2,7 @@
 #'
 #' These functions return information about the most dominant taxa in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object. Additionally, the information can be directly stored in the
-#' \code{colData}.
+#' object. Information will be stored in the \code{colData}.
 #'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -16,9 +15,6 @@
 #' @param rank A single character defining a taxonomic rank. Must be a value of
 #'   the output of \code{taxonomicRanks()}.
 #'
-#' @param group With group, it is possible to group the observations in an
-#'   overview. Must be a one of the column names of \code{colData}.
-#'
 #' @param name A name for the column of the \code{colData} where the dominant
 #'   taxa will be stored in.
 #'
@@ -26,24 +22,14 @@
 #' \code{addDominantTaxa} extracts the most abundant taxa in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object, and stores the information in the \code{colData}. It is a wrapper for
-#' \code{dominantTaxa}. \code{getDominantTaxa} returns information about most dominant 
-#' taxa in a tibble. Information includes their absolute and relative abundances in whole
-#' data set.
+#' \code{dominantTaxa}. 
 #'
-#' With 'rank' parameter, it is possible to agglomerate taxa based on taxonomic
+#' With \code{rank} parameter, it is possible to agglomerate taxa based on taxonomic
 #' ranks. E.g. if 'family' rank is used, all abundances of same family is added
 #' together, and those families are returned.
 #'
-#' With 'group' parameter, it is possible to group observations of returned
-#' overview based on samples' features.  E.g., if samples contain information
-#' about patients' health status, it is possible to group observations, e.g. to
-#' 'healthy' and 'sick', and get the most dominant taxa of different health
-#' status.
-#'
 #' @return \code{addDominantTaxa} and \code{dominantTaxa} return \code{x} 
-#' with additional \code{\link{colData}} named \code{*name*}. \code{getDominantTaxa} 
-#' returns an overview in a tibble. It contains dominant taxa in a column named
-#' \code{*name*} and its abundance in the data set.
+#' with additional \code{\link{colData}} named \code{*name*}.
 #'
 #' @name dominantTaxa
 #' @export
@@ -58,28 +44,18 @@
 #' x <- addDominantTaxa(x)
 #' # Information is stored to colData
 #' colData(x)
-#' # Gets the overview of dominant taxa
-#' overview <- getDominantTaxa(x)
-#' overview
 #'
 #' # If taxonomic information is available, it is possible to find the most
 #' # dominant group from specific taxonomic level, here family level. The name
 #' # of column can be specified.
 #' x <- addDominantTaxa(x, rank="Family", name="dominant_taxa_ranked_with_family")
 #' colData(x)
-#' # Gets the overview of dominant taxa
-#' overview <- getDominantTaxa(x)
-#' overview
 #'
 #' x <- microbiomeDataSets::dietswap()
 #' x <- addDominantTaxa(x)
 #' colData(x)
-#' # With group, it is possible to group observations based on groups specified
-#' # Gets the overview of dominant taxa
-#' overview <- getDominantTaxa(x, group = "nationality")
-#' overview
+#' 
 NULL
-
 
 #' @rdname dominantTaxa
 #' @export
@@ -191,42 +167,6 @@ setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname dominantTaxa
-#' @export
-setGeneric("getDominantTaxa",signature = c("x"),
-           function(x,
-                    abund_values = "counts",
-                    rank = NULL,
-                    group = NULL,
-                    name = "dominant_taxa")
-               standardGeneric("getDominantTaxa"))
-
-#' @rdname dominantTaxa
-#' @export
-setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x,
-             abund_values = "counts",
-             rank = NULL,
-             group = NULL,
-             name = "dominant_taxa"){
-
-        # Input check
-        # group check
-        if(!is.null(group)){
-        if(isFALSE(any(group %in% colnames(colData(x))))){
-          stop("'group' variable must be in colnames(colData(x))")
-        }
-        }
-
-        # Adds dominant taxas to colData
-        tmp <- dominantTaxa(x, abund_values, rank, name)
-
-        # Gets an overview
-        overview <- .get_overview(tmp, group, name)
-        overview
-    }
-)
-
 ################################HELP FUNCTIONS##################################
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors DataFrame
@@ -236,39 +176,3 @@ setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
     colData(x)[,name] <- dominances
     x
 }
-
-#' @importFrom S4Vectors as.data.frame
-#' @importFrom dplyr n desc tally group_by arrange mutate
-.get_overview <- function(x, group, name){
-
-    # Creates a tibble df that contains dominant taxa and number of times that
-    # they present in samples and relative portion of samples where they
-    # present.
-    if (is.null(group)) {
-        name <- sym(name)
-
-        overview <- as.data.frame(colData(x)) %>%
-            group_by(!!name) %>%
-            tally() %>%
-            mutate(
-                rel.freq = round(100 * n / sum(n), 1),
-                rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
-            ) %>%
-            arrange(desc(n))
-    } else {
-        group <- sym(group)
-        name <- sym(name)
-
-        overview <- as.data.frame(colData(x)) %>%
-            group_by(!!group, !!name) %>%
-            tally() %>%
-            mutate(
-                rel.freq = round(100 * n / sum(n), 1),
-                rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
-            ) %>%
-            arrange(desc(n))
-    }
-
-    return(overview)
-}
-
