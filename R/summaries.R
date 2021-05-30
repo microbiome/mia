@@ -41,12 +41,12 @@
 #' top_taxa
 #' 
 #' # Gets the overview of dominant taxa
-#' dominant_taxa <- getDominantTaxa(GlobalPatterns, rank = "Family", name = "dominant_family")
+#' dominant_taxa <- summarizeDominantTaxa(GlobalPatterns, rank = "Family", name = "dominant_family")
 #' dominant_taxa
 #' 
 #' # With group, it is possible to group observations based on specified groups 
 #' # Gets the overview of dominant taxa
-#' dominant_taxa <- getDominantTaxa(x, group = "nationality")
+#' dominant_taxa <- summarizeDominantTaxa(x, group = "nationality")
 #' dominant_taxa
 #' 
 NULL
@@ -109,7 +109,7 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 #' @param name A name for the column of tibble table that includes taxa.
 #' 
 #' @details
-#' \code{getDominantTaxa} returns information about most dominant 
+#' \code{summarizeDominantTaxa} returns information about most dominant 
 #' taxa in a tibble. Information includes their absolute and relative abundances in whole
 #' data set.
 #' 
@@ -124,21 +124,21 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 #' status.
 #' 
 #' @return 
-#' \code{getDominantTaxa} returns an overview in a tibble. It contains dominant taxa 
+#' \code{summarizeDominantTaxa} returns an overview in a tibble. It contains dominant taxa 
 #' in a column named \code{*name*} and its abundance in the data set.
 #' 
 #' @export
-setGeneric("getDominantTaxa",signature = c("x"),
+setGeneric("summarizeDominantTaxa",signature = c("x"),
            function(x,
                     abund_values = "counts",
                     rank = NULL,
                     group = NULL,
                     name = "dominant_taxa")
-               standardGeneric("getDominantTaxa"))
+               standardGeneric("summarizeDominantTaxa"))
 
 #' @rdname getTopTaxa
 #' @export
-setMethod("getDominantTaxa", signature = c(x = "SummarizedExperiment"),
+setMethod("summarizeDominantTaxa", signature = c(x = "SummarizedExperiment"),
     function(x,
              abund_values = "counts",
              rank = NULL,

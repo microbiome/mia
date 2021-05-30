@@ -85,53 +85,53 @@ test_that("dominantTaxa", {
 })
 
 
-test_that("getDominantTaxa", {
+test_that("summarizeDominantTaxa", {
 
-    test_getDominantTaxa <- function(tse){
-        expect_equal(getDominantTaxa(tse)$dominant_taxa,
+    test_summarizeDominantTaxa <- function(tse){
+        expect_equal(summarizeDominantTaxa(tse)$dominant_taxa,
                      c("331820",
                        "549656", "550960", "319044", "114821", "12812",  "189047", "256977",
                        "279599", "329744", "360229", "36155", "484436", "534609", "557211", "64396",
                        "71074", "87194", "98605" ))
 
-        expect_equal(getDominantTaxa(tse, rank = "Kingdom", name = "dominant_kingdom")$dominant_kingdom,
+        expect_equal(summarizeDominantTaxa(tse, rank = "Kingdom", name = "dominant_kingdom")$dominant_kingdom,
                      c("Bacteria"))
 
-        expect_equal(getDominantTaxa(tse, rank = "Order", name = "dominant_kingdom")$rel.freq,
+        expect_equal(summarizeDominantTaxa(tse, rank = "Order", name = "dominant_kingdom")$rel.freq,
                      c(23.1, 11.5, 7.7, 7.7, 7.7, 7.7, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8))
 
-        expect_equal(getDominantTaxa(tse, rank = "Class", name = "dominant_kingdom")$rel.freq.pct,
+        expect_equal(summarizeDominantTaxa(tse, rank = "Class", name = "dominant_kingdom")$rel.freq.pct,
                      c("23%", "15%", "12%", "8%", "8%", "8%", "4%", "4%", "4%", "4%", "4%", "4%", "4%"))
     }
 
     # TSE object
     data(GlobalPatterns)
-    test_getDominantTaxa(GlobalPatterns)
+    test_summarizeDominantTaxa(GlobalPatterns)
     tse <- GlobalPatterns
     assay(tse,"counts") <- DelayedArray(assay(tse,"counts"))
-    test_getDominantTaxa(tse)
+    test_summarizeDominantTaxa(tse)
 
     # TSE object
     tse <- microbiomeDataSets::dietswap()
 
-    expect_equal(getDominantTaxa(tse, rank = "Genus")$n,
+    expect_equal(summarizeDominantTaxa(tse, rank = "Genus")$n,
                  c(104, 57, 43, 9, 2, 2, 2, 1, 1, 1))
 
-    expect_equal(getDominantTaxa(tse, group = "nationality")$nationality,
+    expect_equal(summarizeDominantTaxa(tse, group = "nationality")$nationality,
                  as.factor(c("AFR", "AAM", "AAM", "AFR", "AAM", "AAM", "AAM", "AAM", "AFR",
                    "AAM", "AAM", "AAM", "AFR", "AFR")))
 
-    expect_equal(getDominantTaxa(tse, rank = "Family", group = "sex")$dominant_taxa,
+    expect_equal(summarizeDominantTaxa(tse, rank = "Family", group = "sex")$dominant_taxa,
                  c("Bacteroidetes", "Bacteroidetes", "Clostridium cluster IV", "Clostridium cluster IV",
                    "Clostridium cluster XIVa", "Verrucomicrobia"))
 
-    expect_equal(getDominantTaxa(tse, rank = "Phylum", group = "timepoint", name = "test")$n,
+    expect_equal(summarizeDominantTaxa(tse, rank = "Phylum", group = "timepoint", name = "test")$n,
                  c(24, 23, 20, 19, 19, 19, 19, 18, 17, 16, 15, 13))
 
-    expect_equal(getDominantTaxa(tse, rank = "Genus", group = "timepoint.within.group", name = "testing")$rel.freq,
+    expect_equal(summarizeDominantTaxa(tse, rank = "Genus", group = "timepoint.within.group", name = "testing")$rel.freq,
                  c(46.4, 47.3, 27.3, 24.1, 20.5, 18.2, 4.5, 3.6, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9))
 
-    expect_equal(getDominantTaxa(tse, group = "bmi_group")$rel.freq.pct,
+    expect_equal(summarizeDominantTaxa(tse, group = "bmi_group")$rel.freq.pct,
                  c("51%", "66%", "39%", "26%", "28%", "19%", "20%", "20%", "7%", "5%", "4%", "3%", "3%", "3%", "2%", "1%", "1%", "1%", "1%"))
 
 })
