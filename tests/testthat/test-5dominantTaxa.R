@@ -12,7 +12,7 @@ test_that("dominantTaxa", {
                        "71074",  "331820", "331820", "98605",  "484436", "64396",  "360229", "114821",
                        "279599", "329744", "549656", "549656", "549656", "557211", "534609", "12812",
                        "87194",  "319044", "319044", "331820", "189047", "550960", "550960", "550960"))
-        expect_equal(colData(dominantTaxa(tse, name="dominant"))$dominant, 
+        expect_equal(colData(dominantTaxa(tse, name="dominant"))$dominant,
                      colData(addDominantTaxa(tse, name="dominant"))$dominant)
 
         expect_equal(colData(dominantTaxa(tse, rank = "Order"))$dominant_taxa,
@@ -22,7 +22,7 @@ test_that("dominantTaxa", {
                        "Stramenopiles", "Stramenopiles", "Synechococcales", "Flavobacteriales", "Flavobacteriales",
                        "Chromatiales", "Desulfobacterales", "Chromatiales", "Clostridiales", "Clostridiales", "Clostridiales",
                        "Clostridiales", "Clostridiales"))
-        expect_equal(colData(dominantTaxa(tse, rank = "Order"))$dominant_taxa, 
+        expect_equal(colData(dominantTaxa(tse, rank = "Order"))$dominant_taxa,
                      colData(addDominantTaxa(tse, rank = "Order"))$dominant_taxa)
 
         expect_equal(colData(dominantTaxa(tse, rank = "Class"))$dominant_taxa,
@@ -31,7 +31,7 @@ test_that("dominantTaxa", {
                        "Bacilli", "Betaproteobacteria", "Clostridia", "Nostocophycideae", "Actinobacteria", "Chloroplast",
                        "Chloroplast", "Chloroplast", "Alphaproteobacteria", "Flavobacteria", "Chloroplast", "Gammaproteobacteria",
                        "Gammaproteobacteria", "Deltaproteobacteria", "Clostridia", "Clostridia", "Clostridia", "Clostridia", "Clostridia"))
-        expect_equal(colData(dominantTaxa(tse, rank = "Class"))$dominant_taxa, 
+        expect_equal(colData(dominantTaxa(tse, rank = "Class"))$dominant_taxa,
                      colData(addDominantTaxa(tse, rank = "Class"))$dominant_taxa)
 
         expect_equal(colData(dominantTaxa(tse, rank = "Kingdom"))$dominant_taxa,
@@ -39,7 +39,7 @@ test_that("dominantTaxa", {
                        "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria",
                        "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria",
                        "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria", "Bacteria"))
-        expect_equal(colData(dominantTaxa(tse, rank = "Kingdom"))$dominant_taxa, 
+        expect_equal(colData(dominantTaxa(tse, rank = "Kingdom"))$dominant_taxa,
                      colData(addDominantTaxa(tse, rank = "Kingdom"))$dominant_taxa)
 
     }
@@ -63,7 +63,7 @@ test_that("dominantTaxa", {
                    "Oscillospira guillermondii et rel.", "Prevotella melaninogenica et rel.", "Prevotella melaninogenica et rel.",
                    "Prevotella melaninogenica et rel.", "Oscillospira guillermondii et rel.", "Oscillospira guillermondii et rel.",
                    "Prevotella melaninogenica et rel." ))
-    expect_equal(colData(dominantTaxa(tse, rank = "Genus"))$dominant_taxa, 
+    expect_equal(colData(dominantTaxa(tse, rank = "Genus"))$dominant_taxa,
                  colData(addDominantTaxa(tse, rank = "Genus"))$dominant_taxa)
 
     expect_equal(head(colData(dominantTaxa(tse, rank = "Family"))$dominant_taxa, 20),
@@ -72,7 +72,7 @@ test_that("dominantTaxa", {
                    "Clostridium cluster IV", "Bacteroidetes", "Clostridium cluster IV", "Clostridium cluster IV", "Bacteroidetes",
                    "Bacteroidetes", "Clostridium cluster IV", "Clostridium cluster IV", "Bacteroidetes", "Clostridium cluster IV",
                    "Bacteroidetes", "Clostridium cluster IV", "Clostridium cluster IV", "Bacteroidetes"))
-    expect_equal(colData(dominantTaxa(tse, rank = "Family"))$dominant_taxa, 
+    expect_equal(colData(dominantTaxa(tse, rank = "Family"))$dominant_taxa,
                  colData(addDominantTaxa(tse, rank = "Family"))$dominant_taxa)
 
     expect_equal(head(colData(dominantTaxa(tse, rank = "Phylum"))$dominant_taxa, 20),
@@ -80,7 +80,7 @@ test_that("dominantTaxa", {
                    "Firmicutes", "Bacteroidetes", "Firmicutes", "Bacteroidetes", "Bacteroidetes", "Firmicutes", "Bacteroidetes",
                    "Firmicutes", "Firmicutes", "Bacteroidetes", "Firmicutes", "Firmicutes", "Firmicutes", "Bacteroidetes",
                    "Firmicutes", "Bacteroidetes", "Firmicutes", "Firmicutes", "Bacteroidetes"))
-    expect_equal(colData(dominantTaxa(tse, rank = "Phylum"))$dominant_taxa, 
+    expect_equal(colData(dominantTaxa(tse, rank = "Phylum"))$dominant_taxa,
                  colData(addDominantTaxa(tse, rank = "Phylum"))$dominant_taxa)
 })
 

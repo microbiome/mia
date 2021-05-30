@@ -1,0 +1,30 @@
+context("summarizeSE")
+
+test_that("summarizeSE", {
+
+  data("GlobalPatterns")
+  sumdf <- summarizeSE(GlobalPatterns)
+  samples.sum <- sumdf$samples
+
+  # check samples
+  colnames.samples <- c("total_counts", "min_counts",
+                        "max_counts", "median_counts",
+                        "mean_counts" ,"stdev_counts")
+  expect_equal(colnames(samples.sum),
+               colnames.samples)
+  sample.exp.vals <- c(28216678.0, 58688.0, 2357181.0, 1106849.0, 1085256.8, 650145.3)
+  expect_equal(ceiling(as.numeric(samples.sum[1,])),
+               ceiling(sample.exp.vals))
+  # check features
+  feature.sum <- sumdf$features
+  colnames.feature <- c("total", "singletons",
+                        "per_sample_avg", "median_counts",
+                        "mean_counts" ,"stdev_counts")
+  expect_equal(colnames(feature.sum),
+               colnames.feature)
+  feature.exp.vals <- c(19216.000,2134.000, 4022.231,
+                        1106849.000, 1085256.846, 650145.331)
+  expect_equal(ceiling(as.numeric(feature.sum[1,])),
+               ceiling(feature.exp.vals))
+})
+
