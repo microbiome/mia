@@ -2,7 +2,7 @@ context("summarizeSE")
 
 test_that("summarizeSE", {
 
-  data("GlobalPatterns")
+  data(GlobalPatterns)
   sumdf <- summarizeSE(GlobalPatterns)
   samples.sum <- sumdf$samples
 
@@ -33,7 +33,7 @@ context("getUniqueTaxa")
 
 test_that("getUniqueTaxa", {
 
-  data("GlobalPatterns")
+  data(GlobalPatterns)
   exp.phy <- c("Crenarchaeota","Euryarchaeota",
                "Actinobacteria","Spirochaetes","MVP-15")
 

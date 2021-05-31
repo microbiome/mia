@@ -2,7 +2,7 @@ context("diversity estimates")
 test_that("diversity estimates", {
 
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
-    data("esophagus")
+    data(esophagus)
 
     tse <- esophagus
     tse <- relAbundanceCounts(tse)

@@ -59,7 +59,7 @@ test_that("agglomerate", {
                  nrow(agglomerateByRank(enterotype,"Genus")))
 
     # agglomeration in all its forms
-    data("GlobalPatterns")
+    data(GlobalPatterns)
     se <- GlobalPatterns
     actual <- agglomerateByRank(se, rank = "Family")
     expect_equal(dim(actual),c(603,26))

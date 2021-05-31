@@ -295,7 +295,7 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     expect_error(phyloseq::refseq(phy))
 
     # TSE object
-    data("esophagus")
+    data(esophagus)
     tse <- esophagus
 
     phy <- makePhyloseqFromTreeSummarizedExperiment(esophagus)

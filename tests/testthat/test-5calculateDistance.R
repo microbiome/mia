@@ -10,8 +10,8 @@ test_that("calculateDistance", {
     actual2 <- dist(t(assay(se,"counts")))
     expect_true(all(actual == actual2))
     #
-    data("enterotype")
-    data("esophagus")
+    data(enterotype)
+    data(esophagus)
     # default
     actual <- calculateDistance(enterotype)
     expect_equal(actual[1], 0.22382452, tolerance = .0000001)

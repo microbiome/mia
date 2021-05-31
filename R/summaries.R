@@ -35,7 +35,7 @@
 #' Leo Lahti, Tuomas Borman and Sudarshan A. Shetty
 #'
 #' @examples
-#' data("GlobalPatterns")
+#' data(GlobalPatterns)
 #' top_taxa <- getTopTaxa(GlobalPatterns,
 #'                        method = "mean",
 #'                        top = 5,
