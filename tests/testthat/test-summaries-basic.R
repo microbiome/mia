@@ -28,3 +28,15 @@ test_that("summarizeSE", {
                ceiling(feature.exp.vals))
 })
 
+
+context("getUniqueTaxa")
+
+test_that("getUniqueTaxa", {
+
+  data("GlobalPatterns")
+  exp.phy <- c("Crenarchaeota","Euryarchaeota",
+               "Actinobacteria","Spirochaetes","MVP-15")
+
+  expect_equal(getUniqueTaxa(GlobalPatterns, "Phylum")[1:5],
+               exp.phy)
+})

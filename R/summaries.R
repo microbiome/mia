@@ -12,8 +12,10 @@
 #' @param method Specify the method to determine top taxa. Either sum, mean,
 #'   median or prevalence. Default is 'mean'.
 #'
-#' @param abund_values a \code{character} value to select an
+#' @param abund_values A \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
+#'
+#' @param ... Additional arguments not used.
 #'
 #' @details
 #' The \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
@@ -21,7 +23,7 @@
 #' object.
 #'
 #' @return
-#' For \code{getTopTaxa}: A vector of the most \code{top} abundant
+#' The \code{getTopTaxa} returns a vector of the most \code{top} abundant
 #' \dQuote{FeatureID}s
 #'
 #' @seealso
@@ -49,8 +51,11 @@
 #' dominant_taxa <- summarizeDominantTaxa(GlobalPatterns, group = "SampleType")
 #' dominant_taxa
 #'
-#' #
+#' # Get an overview of sample and taxa counts
 #' summarizeSE(GlobalPatterns)
+#'
+#' # Get unique taxa at a particulat taxonomic rank
+#' getUniqueTaxa(GlobalPatterns, "Phylum")
 #'
 NULL
 
@@ -106,6 +111,38 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 #' @param rank A single character defining a taxonomic rank. Must be a value of
 #'   the output of \code{taxonomicRanks()}.
 #'
+#' @details
+#' The \code{getUniqueTaxa} is a basic function to access different taxa at a
+#' particular taxonomic rank.
+#'
+#' @return
+#' The \code{getUniqueTaxa} returns a vector of unique taxa present at a
+#' particular rank
+#'
+#' @export
+
+setGeneric("getUniqueTaxa",
+           signature = c("x"),
+           function(x, ...)
+             standardGeneric("getUniqueTaxa")
+)
+
+#' @rdname summaries-basic
+#' @export
+setMethod("getUniqueTaxa",
+          signature = c(x = "SummarizedExperiment"),
+          function(x, rank = NULL){
+            .check_taxonomic_rank(rank, x)
+            unique(rowData(x)[,rank])
+          }
+)
+
+
+#' @rdname summaries-basic
+#'
+#' @param rank A single character defining a taxonomic rank. Must be a value of
+#'   the output of \code{taxonomicRanks()}.
+#'
 #' @param group With group, it is possible to group the observations in an
 #'   overview. Must be a one of the column names of \code{colData}.
 #'
@@ -130,7 +167,7 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 #'
 #'
 #' @return
-#' \code{summarizeDominantTaxa} returns an overview in a tibble. It contains dominant taxa
+#' The \code{summarizeDominantTaxa} returns an overview in a tibble. It contains dominant taxa
 #' in a column named \code{*name*} and its abundance in the data set.
 #'
 #' @export
@@ -208,8 +245,6 @@ setMethod("summarizeDominantTaxa", signature = c(x = "SummarizedExperiment"),
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 #'   By default it expects count data.
 #'
-#' @param ... additional arguments not used.
-#'
 #' @details
 #' The \code{summarizeSE} will return a summary of counts for all samples and
 #' features in
@@ -217,7 +252,7 @@ setMethod("summarizeDominantTaxa", signature = c(x = "SummarizedExperiment"),
 #' object.
 #'
 #' @return
-#' For \code{summarizeSE}: A list with two \code{tibble}s
+#' The \code{summarizeSE} returns a list with two \code{tibble}s
 #'
 #' @seealso
 #' \code{\link[scuttle:perCellQCMetrics]{perCellQCMetrics}},
@@ -296,3 +331,5 @@ setMethod("summarizeSE",
          call. = FALSE)
   }
 }
+
+

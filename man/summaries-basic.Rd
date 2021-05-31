@@ -4,6 +4,8 @@
 \alias{summaries-basic}
 \alias{getTopTaxa}
 \alias{getTopTaxa,SummarizedExperiment-method}
+\alias{getUniqueTaxa}
+\alias{getUniqueTaxa,SummarizedExperiment-method}
 \alias{summarizeDominantTaxa}
 \alias{summarizeDominantTaxa,SummarizedExperiment-method}
 \alias{summarizeSE}
@@ -23,6 +25,10 @@ getTopTaxa(
   method = c("mean", "sum", "median", "prevalence"),
   abund_values = "counts"
 )
+
+getUniqueTaxa(x, ...)
+
+\S4method{getUniqueTaxa}{SummarizedExperiment}(x, rank = NULL)
 
 summarizeDominantTaxa(
   x,
@@ -58,6 +64,8 @@ median or prevalence. Default is 'mean'.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 By default it expects count data.}
 
+\item{...}{Additional arguments not used.}
+
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomicRanks()}.}
 
@@ -65,17 +73,18 @@ the output of \code{taxonomicRanks()}.}
 overview. Must be a one of the column names of \code{colData}.}
 
 \item{name}{A name for the column of tibble table that includes taxa.}
-
-\item{...}{additional arguments not used.}
 }
 \value{
-For \code{getTopTaxa}: A vector of the most \code{top} abundant
+The \code{getTopTaxa} returns a vector of the most \code{top} abundant
 \dQuote{FeatureID}s
 
-\code{summarizeDominantTaxa} returns an overview in a tibble. It contains dominant taxa
+The \code{getUniqueTaxa} returns a vector of unique taxa present at a
+particular rank
+
+The \code{summarizeDominantTaxa} returns an overview in a tibble. It contains dominant taxa
 in a column named \code{*name*} and its abundance in the data set.
 
-For \code{summarizeSE}: A list with two \code{tibble}s
+The \code{summarizeSE} returns a list with two \code{tibble}s
 }
 \description{
 To query a \code{SummarizedExperiment} for interesting features, several
@@ -85,6 +94,9 @@ functions are available.
 The \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
 in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.
+
+The \code{getUniqueTaxa} is a basic function to access different taxa at a
+particular taxonomic rank.
 
 \code{summarizeDominantTaxa} returns information about most dominant
 taxa in a tibble. Information includes their absolute and relative abundances in whole
@@ -124,8 +136,11 @@ dominant_taxa
 dominant_taxa <- summarizeDominantTaxa(GlobalPatterns, group = "SampleType")
 dominant_taxa
 
-#
+# Get an overview of sample and taxa counts
 summarizeSE(GlobalPatterns)
+
+# Get unique taxa at a particulat taxonomic rank
+getUniqueTaxa(GlobalPatterns, "Phylum")
 
 }
 \seealso{
