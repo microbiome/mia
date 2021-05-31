@@ -213,26 +213,20 @@ setMethod("summarizeDominantTaxa", signature = c(x = "SummarizedExperiment"),
     if (is.null(group)) {
         name <- sym(name)
         overview <- as.data.frame(colData(x)) %>%
-            group_by(!!name) %>%
-            tally() %>%
-            mutate(
-                rel.freq = round(100 * n / sum(n), 1),
-                rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
-            ) %>%
-            arrange(desc(n))
+            group_by(!!name) 
     } else {
         group <- sym(group)
         name <- sym(name)
-
         overview <- as.data.frame(colData(x)) %>%
-            group_by(!!group, !!name) %>%
-            tally() %>%
-            mutate(
-                rel.freq = round(100 * n / sum(n), 1),
-                rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
-            ) %>%
-            arrange(desc(n))
+            group_by(!!group, !!name)
     }
+    overview <- overview %>%
+        tally() %>%
+        mutate(
+            rel.freq = round(100 * n / sum(n), 1),
+            rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
+        ) %>%
+        arrange(desc(n))
     return(overview)
 }
 
