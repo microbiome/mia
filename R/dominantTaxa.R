@@ -2,7 +2,7 @@
 #'
 #' These functions return information about the most dominant taxa in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object. Information will be stored in the \code{colData}.
+#' object.
 #'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -10,169 +10,124 @@
 #'
 #' @param abund_values A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to use for prevalence calculation.
+#'   to use for identifying dominant taxa.
 #'
 #' @param rank A single character defining a taxonomic rank. Must be a value of
 #'   the output of \code{taxonomicRanks()}.
 #'
 #' @param name A name for the column of the \code{colData} where the dominant
-#'   taxa will be stored in.
+#'   taxa will be stored in when using \code{addPerSampleDominantTaxa}.
+#'
+#' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
+#' \code{rank} is specified.
 #'
 #' @details
-#' \code{addDominantTaxa} extracts the most abundant taxa in a
+#' \code{addPerSampleDominantTaxa} extracts the most abundant taxa in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object, and stores the information in the \code{colData}. It is a wrapper for
-#' \code{dominantTaxa}. 
+#' \code{perSampleDominantTaxa}.
 #'
 #' With \code{rank} parameter, it is possible to agglomerate taxa based on taxonomic
-#' ranks. E.g. if 'family' rank is used, all abundances of same family is added
-#' together, and those families are returned.
+#' ranks. E.g. if 'Genus' rank is used, all abundances of same Genus is added
+#' together, and those families are returned. See \code{agglomerateByRank()} for
+#' additional arguments to deal with missing values or special characters.
 #'
-#' @return \code{addDominantTaxa} and \code{dominantTaxa} return \code{x} 
-#' with additional \code{\link{colData}} named \code{*name*}.
+#' @return \code{perSampleDominantTaxa} returns a named character vector \code{x}
+#' while \code{addPerSampleDominantTaxa} returns
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' with additional column in \code{\link{colData}} named \code{*name*}.
 #'
-#' @name dominantTaxa
+#' @name perSampleDominantTaxa
 #' @export
 #'
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
+#' @author Leo Lahti, Tuomas Borman and Sudarshan A. Shetty.
 #'
 #' @examples
 #' data(GlobalPatterns)
 #' x <- GlobalPatterns
 #'
 #' # Finds the dominant taxa.
-#' x <- addDominantTaxa(x)
-#' # Information is stored to colData
-#' colData(x)
+#' sim.dom <- perSampleDominantTaxa(x, rank="Genus")
 #'
-#' # If taxonomic information is available, it is possible to find the most
-#' # dominant group from specific taxonomic level, here family level. The name
-#' # of column can be specified.
-#' x <- addDominantTaxa(x, rank="Family", name="dominant_taxa_ranked_with_family")
+#' # Add information to colData
+#' x <- addPerSampleDominantTaxa(x, rank = "Genus", name="dominant_genera")
 #' colData(x)
-#'
-#' x <- microbiomeDataSets::dietswap()
-#' x <- addDominantTaxa(x)
-#' colData(x)
-#' 
 NULL
 
-#' @rdname dominantTaxa
+#' @rdname perSampleDominantTaxa
 #' @export
-setGeneric("addDominantTaxa",signature = c("x"),
+setGeneric("perSampleDominantTaxa",signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    rank = NULL,
-                    name = "dominant_taxa")
-               standardGeneric("addDominantTaxa"))
+                    rank = NULL, ...)
+               standardGeneric("perSampleDominantTaxa"))
 
-#' @rdname dominantTaxa
+#' @rdname perSampleDominantTaxa
+#' @importFrom IRanges relist
 #' @export
-setMethod("addDominantTaxa", signature = c(x = "SummarizedExperiment"),
+setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
           function(x,
-                abund_values = "counts",
-                rank = NULL,
-                name = "dominant_taxa"){
-              dominantTaxa(x, 
-                           abund_values = abund_values,
-                           rank = rank,
-                           name = name)
-    }
+                   abund_values = "counts",
+                   rank = NULL, ...){
+
+              # Input check
+              # Check abund_values
+              .check_assay_present(abund_values, x)
+
+              # rank check
+              if(!is.null(rank)){
+                  if(!.is_a_string(rank)){
+                      stop("'rank' must be an single character value.",
+                           call. = FALSE)
+                  }
+                  .check_taxonomic_rank(rank, x)
+              }
+
+              # If "rank" is not NULL, species are aggregated according to the
+              # taxonomic rank that is specified by user.
+              if (!is.null(rank)) {
+                  x <- agglomerateByRank(x, rank, ...)
+                  mat <- assay(x, abund_values)
+              } # Otherwise, if "rank" is NULL, abundances are stored without ranking
+              else {
+                  mat <- assay(x, abund_values)
+              }
+
+              # apply() function finds the indices of taxa's that has the highest
+              # abundance.
+              # rownames() returns the names of taxa that are the most abundant.
+              idx <- as.list(apply(t(mat) == colMaxs(mat),1L,which))
+              taxas <- rownames(mat)[unlist(idx)]
+              taxas <- unlist(relist(taxas,idx))
+              return(taxas)
+
+          }
 )
 
-#' @rdname dominantTaxa
+
+#' @rdname perSampleDominantTaxa
 #' @export
-setGeneric("dominantTaxa",signature = c("x"),
+setGeneric("addPerSampleDominantTaxa", signature = c("x"),
            function(x,
-                    abund_values = "counts",
-                    rank = NULL,
-                    name = "dominant_taxa")
-               standardGeneric("dominantTaxa"))
+                    name = "dominant_taxa", ...)
+               standardGeneric("addPerSampleDominantTaxa"))
 
-#' @rdname dominantTaxa
-#' @importFrom utils tail
-#' @importFrom IRanges IntegerList relist
+#' @rdname perSampleDominantTaxa
 #' @export
-setMethod("dominantTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x,
-             abund_values = "counts",
-             rank = NULL,
-             name = "dominant_taxa"){
+setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
+          function(x,
+                   name = "dominant_taxa", ...){
 
-        # Input check
-        # Check abund_values
-        .check_assay_present(abund_values, x)
+              # name check
+              if(!.is_non_empty_string(name)){
+                  stop("'name' must be a non-empty single character value.",
+                       call. = FALSE)
+              }
+              dom.taxa <- perSampleDominantTaxa(x, ...)
+              colData(x)[,name] <- dom.taxa
+              return(x)
+          }
 
-        # rank check
-        if(!is.null(rank)){
-            if(!.is_a_string(rank)){
-                stop("'rank' must be an single character value.",
-                     call. = FALSE)
-            }
-            .check_taxonomic_rank(rank, x)
-        }
-
-        # name check
-        if(!.is_non_empty_string(name)){
-            stop("'name' must be a non-empty single character value.",
-                 call. = FALSE)
-        }
-
-        # If "rank" is not NULL, species are aggregated according to the
-        # taxonomic rank that is specified by user.
-        if (!is.null(rank)) {
-            # Selects the level
-            col <- which( taxonomyRanks(x) %in% rank )
-
-            # Function from taxonomy.R. Divides taxas to groups where they
-            # belong.
-            tax_factors <- .get_tax_groups(x, col = col, onRankOnly = FALSE)
-
-            # Merges abundances within the groups
-            tmp <- mergeRows(x, f = tax_factors)
-
-            # Stores abundances
-            mat <- assay(tmp, abund_values)
-
-            # Changes the name of species to the name of corresponding rank
-            # If name contains upper rank, it is cut off
-            # Tax_factors[rownames(mat)] finds corresponding name
-            rownames(mat) <- tax_factors[rownames(mat)]
-
-            # Splits the rownames from "_" and takes the last single string
-            # --> upper ranks are removed
-            rownames(mat) <- vapply(strsplit(rownames(mat), "_"),
-                                    tail,
-                                    character(1),
-                                    n = 1)
-        } # Otherwise, if "rank" is NULL, abundances are stored without ranking
-        else {
-            mat <- assay(x, abund_values)
-        }
-
-        # apply() function finds the indices of taxa's that has the highest
-        # abundance.
-        # rownames() returns the names of taxa that are the most abundant.
-        idx <- IntegerList(as.list(apply(t(mat) == colMaxs(mat),1L,which)))
-        taxas <- rownames(mat)[unlist(idx)]
-        # relist, if ties exists and more than one row is equal to the
-        # maximum
-        if(length(unique(lengths(idx))) != 1L){
-            taxas <- relist(taxas,idx)
-        }
-
-        # Adds taxa to colData
-        x <- .add_dominant_taxas_to_colData(x, taxas, name)
-        x
-    }
 )
 
-################################HELP FUNCTIONS##################################
-#' @importFrom SummarizedExperiment colData colData<-
-#' @importFrom S4Vectors DataFrame
-.add_dominant_taxas_to_colData <- function(x, dominances, name){
-    dominances <- DataFrame(dominances)
-    colnames(dominances) <- name
-    colData(x)[,name] <- dominances
-    x
-}
+
