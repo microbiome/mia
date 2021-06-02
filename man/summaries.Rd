@@ -104,8 +104,7 @@ top_taxa
 
 # Gets the overview of dominant taxa
 dominant_taxa <- countDominantTaxa(GlobalPatterns,
-                                   rank = "Genus",
-                                   name = "dominant_genera")
+                                   rank = "Genus")
 dominant_taxa
 
 # With group, it is possible to group observations based on specified groups
