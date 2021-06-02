@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.3</span>
       </span>
     </div>
 
@@ -72,7 +72,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 class="date">2021-05-28</h4>
+            <h4 class="date">2021-06-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/master/vignettes/mia.Rmd"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -387,7 +387,7 @@
 <a href="#selecting-most-interesting-features" class="anchor"></a>Selecting most interesting features</h2>
 <p><code>getTopTaxa</code> returns a vector of the most <code>top</code> abundant feature IDs.</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTopTaxa.html">getTopTaxa</a></span><span class="op">(</span><span class="va">se</span>,
+<code class="sourceCode R"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaries.html">getTopTaxa</a></span><span class="op">(</span><span class="va">se</span>,
                        method <span class="op">=</span> <span class="st">"mean"</span>,
                        top <span class="op">=</span> <span class="fl">5</span>,
                        abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
@@ -451,14 +451,14 @@
 ## other attached packages:
 ##  [1] phyloseq_1.37.0                  scater_1.21.0                   
 ##  [3] ggplot2_3.3.3                    scuttle_1.3.0                   
-##  [5] mia_1.1.2                        TreeSummarizedExperiment_1.99.11
+##  [5] mia_1.1.3                        TreeSummarizedExperiment_1.99.11
 ##  [7] Biostrings_2.61.0                XVector_0.33.0                  
 ##  [9] SingleCellExperiment_1.15.1      SummarizedExperiment_1.23.0     
 ## [11] Biobase_2.53.0                   GenomicRanges_1.45.0            
 ## [13] GenomeInfoDb_1.29.0              IRanges_2.27.0                  
 ## [15] S4Vectors_0.31.0                 BiocGenerics_0.39.0             
-## [17] MatrixGenerics_1.5.0             matrixStats_0.58.0              
-## [19] BiocStyle_2.21.0                
+## [17] MatrixGenerics_1.5.0             matrixStats_0.59.0              
+## [19] BiocStyle_2.21.1                
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] ggbeeswarm_0.6.0            colorspace_2.0-1           
@@ -549,7 +549,7 @@ Morgan, Martin, Valerie Obenchain, Jim Hester, and Hervé Pagès. 2020. <em>Summ
 
 
       <footer><div class="copyright">
-  <p>Developed by Felix G.M. Ernst, Sudarshan Shetty, Tuomas Borman, Leo Lahti.</p>
+  <p>Developed by Felix G.M. Ernst, Sudarshan A. Shetty, Tuomas Borman, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">
