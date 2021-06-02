@@ -186,7 +186,7 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
             # Adds dominant taxas to colData
             tmp <- addPerSampleDominantTaxa(x, name, ...)
             # Gets an overview
-            overview <- .get_overview(tmp, group, name)
+            overview <- .get_overview_from_col_data(tmp, group, name)
             overview
           }
 )
@@ -195,7 +195,7 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom S4Vectors as.data.frame
 #' @importFrom dplyr n desc tally group_by arrange mutate
-.get_overview <- function(x, group, name){
+.get_overview_from_col_data <- function(x, group, name){
   # Creates a tibble df that contains dominant taxa and number of times that
   # they present in samples and relative portion of samples where they
   # present.
@@ -249,9 +249,9 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
           function(object, abund_values = "counts"){
 
             # check if counts
-            .check_rel_neg(object, abund_values)
+            .check_fraction_or_negative_values(object, abund_values)
             sample.summary <- .get_summary_col_data(object, abund_values)
-            feature.summary <- .get_summary_rowl_data(object, abund_values)
+            feature.summary <- .get_summary_row_data(object, abund_values)
             return(list("samples" = sample.summary, "features" = feature.summary))
           }
 )
@@ -276,8 +276,9 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 
 #' @importFrom DelayedMatrixStats colSums2
 #' @importFrom tibble tibble
-.get_summary_rowl_data <- function(x, abund_values){
-  # should check and extract assay
+.get_summary_row_data <- function(x, abund_values){
+  # Should check and extract assay
+  # Internal from splitByRanks
   assay.x <- .get_assay(x, abund_values)
   summary_row_data <- tibble(total = nrow(assay.x),
                              singletons = .get_singletons(assay.x),
@@ -294,9 +295,9 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
   length(rowSums2(x)[rowSums2(x) == 1])
 }
 
-# Check is relative or negative values
+# Check if values in assay are fractions or or negative values
 #' @importFrom DelayedMatrixStats colSums2
-.check_rel_neg <- function(x, abund_values){
+.check_fraction_or_negative_values <- function(x, abund_values){
   assay.x <- .get_assay(x, abund_values)
   if(any(colSums2(assay.x) < 1) | any(colSums2(assay.x) < 0)){
     stop("There are samples that sum to 1 or less counts. ",

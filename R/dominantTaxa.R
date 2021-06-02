@@ -108,16 +108,13 @@ setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
 #' @rdname perSampleDominantTaxa
 #' @export
 setGeneric("addPerSampleDominantTaxa", signature = c("x"),
-           function(x,
-                    name = "dominant_taxa", ...)
+           function(x, name = "dominant_taxa", ...)
                standardGeneric("addPerSampleDominantTaxa"))
 
 #' @rdname perSampleDominantTaxa
 #' @export
 setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   name = "dominant_taxa", ...){
-
+          function(x, name = "dominant_taxa", ...){
               # name check
               if(!.is_non_empty_string(name)){
                   stop("'name' must be a non-empty single character value.",
