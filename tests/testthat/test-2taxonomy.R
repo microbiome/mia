@@ -77,7 +77,7 @@ test_that("taxonomy", {
     expect_equal(length(rowTree(GlobalPatterns)$tip.label), 1645)
     # Id taxa conversion
     library(DECIPHER)
-    data("TrainingSet_16S", package = "DECIPHER")
+    data(TrainingSet_16S, package = "DECIPHER")
     fas <- system.file("extdata", "Bacteria_175seqs.fas", package="DECIPHER")
     dna <- readDNAStringSet(fas)
     dna <- RemoveGaps(dna)

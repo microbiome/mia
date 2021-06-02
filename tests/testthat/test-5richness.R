@@ -4,7 +4,7 @@ context("estimateRichness")
 test_that("estimateRichness", {
 
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
-    data("esophagus")
+    data(esophagus)
 
     tse <- estimateRichness(esophagus, detection = 1)
     cd <- colData(tse)    

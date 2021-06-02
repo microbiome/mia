@@ -191,7 +191,7 @@ test_that("transformCounts", {
         expect_equal(tse_rank, tse_rank_pseudo)
 
         # For other options for rank calculations, call the colRanks directly:
-	    # data("esophagus"); x <- esophagus;  
+	    # data(esophagus); x <- esophagus;  
         # assay(x, "rank_average") <- t(colRanks(assay(x, "counts"), ties.method="average"))
         
         # Tests that transformCounts and transfromSamples give same result
