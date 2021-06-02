@@ -57,51 +57,42 @@ NULL
 #' @rdname perSampleDominantTaxa
 #' @export
 setGeneric("perSampleDominantTaxa",signature = c("x"),
-           function(x,
-                    abund_values = "counts",
-                    rank = NULL, ...)
+           function(x, abund_values = "counts", rank = NULL, ...)
                standardGeneric("perSampleDominantTaxa"))
 
 #' @rdname perSampleDominantTaxa
 #' @importFrom IRanges relist
 #' @export
 setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   abund_values = "counts",
-                   rank = NULL, ...){
-
-              # Input check
-              # Check abund_values
-              .check_assay_present(abund_values, x)
-
-              # rank check
-              if(!is.null(rank)){
-                  if(!.is_a_string(rank)){
-                      stop("'rank' must be an single character value.",
-                           call. = FALSE)
-                  }
-                  .check_taxonomic_rank(rank, x)
-              }
-
-              # If "rank" is not NULL, species are aggregated according to the
-              # taxonomic rank that is specified by user.
-              if (!is.null(rank)) {
-                  x <- agglomerateByRank(x, rank, ...)
-                  mat <- assay(x, abund_values)
-              } # Otherwise, if "rank" is NULL, abundances are stored without ranking
-              else {
-                  mat <- assay(x, abund_values)
-              }
-
-              # apply() function finds the indices of taxa's that has the highest
-              # abundance.
-              # rownames() returns the names of taxa that are the most abundant.
-              idx <- as.list(apply(t(mat) == colMaxs(mat),1L,which))
-              taxas <- rownames(mat)[unlist(idx)]
-              taxas <- unlist(relist(taxas,idx))
-              return(taxas)
-
-          }
+    function(x, abund_values = "counts", rank = NULL, ...){
+        # Input check
+        # Check abund_values
+        .check_assay_present(abund_values, x)
+        # rank check
+        if(!is.null(rank)){
+            if(!.is_a_string(rank)){
+                stop("'rank' must be an single character value.",
+                     call. = FALSE)
+            }
+            .check_taxonomic_rank(rank, x)
+        }
+        # If "rank" is not NULL, species are aggregated according to the
+        # taxonomic rank that is specified by user.
+        if (!is.null(rank)) {
+            x <- agglomerateByRank(x, rank, ...)
+            mat <- assay(x, abund_values)
+        } # Otherwise, if "rank" is NULL, abundances are stored without ranking
+        else {
+            mat <- assay(x, abund_values)
+        }
+        # apply() function finds the indices of taxa's that has the highest
+        # abundance.
+        # rownames() returns the names of taxa that are the most abundant.
+        idx <- as.list(apply(t(mat) == colMaxs(mat),1L,which))
+        taxas <- rownames(mat)[unlist(idx)]
+        taxas <- unlist(relist(taxas,idx))
+        return(taxas)
+    }
 )
 
 
@@ -114,17 +105,14 @@ setGeneric("addPerSampleDominantTaxa", signature = c("x"),
 #' @rdname perSampleDominantTaxa
 #' @export
 setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
-          function(x, name = "dominant_taxa", ...){
-              # name check
-              if(!.is_non_empty_string(name)){
-                  stop("'name' must be a non-empty single character value.",
-                       call. = FALSE)
-              }
-              dom.taxa <- perSampleDominantTaxa(x, ...)
-              colData(x)[,name] <- dom.taxa
-              return(x)
-          }
-
+    function(x, name = "dominant_taxa", ...){
+        # name check
+        if(!.is_non_empty_string(name)){
+            stop("'name' must be a non-empty single character value.",
+                 call. = FALSE)
+        }
+        dom.taxa <- perSampleDominantTaxa(x, ...)
+        colData(x)[,name] <- dom.taxa
+        return(x)
+    }
 )
-
-

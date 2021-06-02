@@ -67,20 +67,19 @@
 NULL
 
 #' @rdname summaries
-#'
 #' @export
 setGeneric("getTopTaxa", signature = "x",
            function(x, top= 5L, method = c("mean","sum","median"),
                     abund_values = "counts")
-             standardGeneric("getTopTaxa"))
+               standardGeneric("getTopTaxa"))
 
 .check_max_taxa <- function(x, top, abund_values){
-  if(!is.numeric(top) || as.integer(top) != top){
-    top("'top' must be integer value", call. = FALSE)
-  }
-  if(top > nrow(assay(x,abund_values))){
-    stop("'top' must be <= nrow(x)", call. = FALSE)
-  }
+    if(!is.numeric(top) || as.integer(top) != top){
+        top("'top' must be integer value", call. = FALSE)
+    }
+    if(top > nrow(assay(x,abund_values))){
+        stop("'top' must be <= nrow(x)", call. = FALSE)
+    }
 }
 
 #' @rdname summaries
@@ -90,27 +89,28 @@ setGeneric("getTopTaxa", signature = "x",
 #'
 #' @export
 setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
-          function(x, top = 5L, method = c("mean","sum","median","prevalence"),
-                   abund_values = "counts"){
-            method <- match.arg(method, c("mean","sum","median","prevalence"))
-            # check max taxa
-            .check_max_taxa(x, top, abund_values)
-            # check assay
-            .check_assay_present(abund_values, x)
-            #
-            if(method == "prevalence"){
-              taxs <- getPrevalence(assay(x, abund_values), sort = TRUE,
-                                    include_lowest = TRUE)
-            } else {
-              taxs <- switch(method,
-                             mean = rowMeans2(assay(x, abund_values)),
-                             sum = rowSums2(assay(x, abund_values)),
-                             median = rowMedians(assay(x, abund_values)))
-              names(taxs) <- rownames(assay(x))
-              taxs <- sort(taxs,decreasing = TRUE)
-            }
-            head(names(taxs), n = top)
-          }
+    function(x, top = 5L, method = c("mean","sum","median","prevalence"),
+             abund_values = "counts"){
+        # input check
+        method <- match.arg(method, c("mean","sum","median","prevalence"))
+        # check max taxa
+        .check_max_taxa(x, top, abund_values)
+        # check assay
+        .check_assay_present(abund_values, x)
+        #
+        if(method == "prevalence"){
+            taxs <- getPrevalence(assay(x, abund_values), sort = TRUE,
+                                  include_lowest = TRUE)
+        } else {
+            taxs <- switch(method,
+                           mean = rowMeans2(assay(x, abund_values)),
+                           sum = rowSums2(assay(x, abund_values)),
+                           median = rowMedians(assay(x, abund_values)))
+            names(taxs) <- rownames(assay(x))
+            taxs <- sort(taxs,decreasing = TRUE)
+        }
+        head(names(taxs), n = top)
+    }
 )
 
 #' @rdname summaries
@@ -121,22 +121,20 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 #' @return
 #' The \code{getUniqueTaxa} returns a vector of unique taxa present at a
 #' particular rank
-#'
+#' 
 #' @export
-
 setGeneric("getUniqueTaxa",
            signature = c("x"),
            function(x, ...)
-             standardGeneric("getUniqueTaxa")
-)
+               standardGeneric("getUniqueTaxa"))
 
 #' @rdname summaries
 #' @export
 setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
-          function(x, rank = NULL){
-            .check_taxonomic_rank(rank, x)
-            unique(rowData(x)[,rank])
-          }
+    function(x, rank = NULL){
+        .check_taxonomic_rank(rank, x)
+        unique(rowData(x)[,rank])
+    }
 )
 
 
@@ -144,9 +142,6 @@ setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
 #'
 #' @param group With group, it is possible to group the observations in an
 #'   overview. Must be a one of the column names of \code{colData}.
-#'
-#' @param name A name for the column of the \code{colData} where the dominant
-#'   taxa will be stored and used for summarization.
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
 #'   \code{rank} is specified for \code{countDominantTaxa}.
@@ -160,63 +155,59 @@ setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
 #' @return
 #' The \code{countDominantTaxa} returns an overview in a tibble. It contains dominant taxa
 #' in a column named \code{*name*} and its abundance in the data set.
-#'
+#' 
 #' @export
 setGeneric("countDominantTaxa",signature = c("x"),
-           function(x,
-                    group = NULL,
-                    name = "dominant_taxa",
-                    ...)
-             standardGeneric("countDominantTaxa"))
+           function(x, group = NULL,  ...)
+               standardGeneric("countDominantTaxa"))
 
 #' @rdname summaries
 #' @export
 setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   group = NULL,
-                   name = "dominant_taxa",
-                   ...){
-            # Input check
-            # group check
-            if(!is.null(group)){
-              if(isFALSE(any(group %in% colnames(colData(x))))){
-                stop("'group' variable must be in colnames(colData(x))")
-              }
+    function(x, group = NULL, ...){
+        # Input check
+        # group check
+        if(!is.null(group)){
+            if(isFALSE(any(group %in% colnames(colData(x))))){
+                stop("'group' variable must be in colnames(colData(x))",
+                     call. = FALSE)
             }
-            # Adds dominant taxas to colData
-            tmp <- addPerSampleDominantTaxa(x, name, ...)
-            # Gets an overview
-            overview <- .get_overview_from_col_data(tmp, group, name)
-            overview
-          }
+        }
+        # Adds dominant taxas to colData
+        dominant_taxa <- perSampleDominantTaxa(x, ...)
+        data <- colData(x)
+        data$dominant_taxa <- dominant_taxa
+        # Gets an overview
+        .tally_col_data(data, group, name = "dominant_taxa")
+    }
 )
 
 ################################ HELP FUNCTIONS ################################
 
 #' @importFrom S4Vectors as.data.frame
 #' @importFrom dplyr n desc tally group_by arrange mutate
-.get_overview_from_col_data <- function(x, group, name){
-  # Creates a tibble df that contains dominant taxa and number of times that
-  # they present in samples and relative portion of samples where they
-  # present.
-  if (is.null(group)) {
-    name <- sym(name)
-    overview <- as.data.frame(colData(x)) %>%
-      group_by(!!name)
-  } else {
-    group <- sym(group)
-    name <- sym(name)
-    overview <- as.data.frame(colData(x)) %>%
-      group_by(!!group, !!name)
-  }
-  overview <- overview %>%
-    tally() %>%
-    mutate(
-      rel.freq = round(100 * n / sum(n), 1),
-      rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
-    ) %>%
-    arrange(desc(n))
-  return(overview)
+.tally_col_data <- function(data, group, name){
+    # Creates a tibble that contains number of times that a column of "name"
+    # is present in samples and relative portion of samples where they
+    # present.
+    if (is.null(group)) {
+        name <- sym(name)
+        data <- as.data.frame(data) %>%
+            group_by(!!name)
+    } else {
+        group <- sym(group)
+        name <- sym(name)
+        data <- as.data.frame(data) %>%
+            group_by(!!group, !!name)
+    }
+    tallied_data <- data %>%
+        tally() %>%
+        mutate(
+            rel.freq = round(100 * n / sum(n), 1),
+            rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
+        ) %>%
+        arrange(desc(n))
+    return(tallied_data)
 }
 
 #' @rdname summaries
@@ -246,14 +237,13 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
 #'
 #' @export
 setMethod("summary", signature = c(object = "SummarizedExperiment"),
-          function(object, abund_values = "counts"){
-
-            # check if counts
-            .check_fraction_or_negative_values(object, abund_values)
-            sample.summary <- .get_summary_col_data(object, abund_values)
-            feature.summary <- .get_summary_row_data(object, abund_values)
-            return(list("samples" = sample.summary, "features" = feature.summary))
-          }
+    function(object, abund_values = "counts"){
+        # check if counts
+        .check_fraction_or_negative_values(object, abund_values)
+        sample.summary <- .get_summary_col_data(object, abund_values)
+        feature.summary <- .get_summary_row_data(object, abund_values)
+        return(list("samples" = sample.summary, "features" = feature.summary))
+    }
 )
 
 ################################ HELP FUNCTIONS summary ####################
@@ -262,47 +252,43 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 #' @importFrom stats sd median
 #' @importFrom tibble tibble
 .get_summary_col_data <- function(x, abund_values){
-  # should check and extract assay
-  assay.x <- .get_assay(x, abund_values)
-  summary_col_data <- tibble(total_counts = sum(colSums2(assay.x)),
-                             min_counts = min(colSums2(assay.x)),
-                             max_counts = max(colSums2(assay.x)),
-                             median_counts = median(colSums2(assay.x)),
-                             mean_counts = mean(colSums2(assay.x)),
-                             stdev_counts = sd(colSums2(assay.x)))
-  return(summary_col_data)
-
+    # should check and extract assay
+    assay.x <- .get_assay(x, abund_values)
+    summary_col_data <- tibble(total_counts = sum(colSums2(assay.x)),
+                               min_counts = min(colSums2(assay.x)),
+                               max_counts = max(colSums2(assay.x)),
+                               median_counts = median(colSums2(assay.x)),
+                               mean_counts = mean(colSums2(assay.x)),
+                               stdev_counts = sd(colSums2(assay.x)))
+    return(summary_col_data)
 }
 
 #' @importFrom DelayedMatrixStats colSums2
 #' @importFrom tibble tibble
 .get_summary_row_data <- function(x, abund_values){
-  # Should check and extract assay
-  # Internal from splitByRanks
-  assay.x <- .get_assay(x, abund_values)
-  summary_row_data <- tibble(total = nrow(assay.x),
-                             singletons = .get_singletons(assay.x),
-                             per_sample_avg = mean(colSums2(assay.x != 0)))
-  return(summary_row_data)
+    # Should check and extract assay
+    # Internal from splitByRanks
+    assay.x <- .get_assay(x, abund_values)
+    summary_row_data <- tibble(total = nrow(assay.x),
+                               singletons = .get_singletons(assay.x),
+                               per_sample_avg = mean(colSums2(assay.x != 0)))
+    return(summary_row_data)
 }
-
-
 
 # Get singletons from assay matrix
 #' @importFrom DelayedMatrixStats rowSums2
 #' @importFrom tibble tibble
 .get_singletons<-function(x){
-  length(rowSums2(x)[rowSums2(x) == 1])
+    length(rowSums2(x)[rowSums2(x) == 1])
 }
 
 # Check if values in assay are fractions or or negative values
 #' @importFrom DelayedMatrixStats colSums2
 .check_fraction_or_negative_values <- function(x, abund_values){
-  assay.x <- .get_assay(x, abund_values)
-  if(any(colSums2(assay.x) < 1) | any(colSums2(assay.x) < 0)){
-    stop("There are samples that sum to 1 or less counts. ",
-         "Try to supply raw counts",
-         call. = FALSE)
-  }
+    assay.x <- .get_assay(x, abund_values)
+    if(any(colSums2(assay.x) < 1) | any(colSums2(assay.x) < 0)){
+        stop("There are samples that sum to 1 or less counts. ",
+             "Try to supply raw counts",
+             call. = FALSE)
+    }
 }
-

@@ -29,9 +29,9 @@ getUniqueTaxa(x, ...)
 
 \S4method{getUniqueTaxa}{SummarizedExperiment}(x, rank = NULL)
 
-countDominantTaxa(x, group = NULL, name = "dominant_taxa", ...)
+countDominantTaxa(x, group = NULL, ...)
 
-\S4method{countDominantTaxa}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
+\S4method{countDominantTaxa}{SummarizedExperiment}(x, group = NULL, ...)
 
 \S4method{summary}{SummarizedExperiment}(object, abund_values = "counts")
 }
@@ -57,9 +57,6 @@ the output of \code{taxonomicRanks()}.}
 
 \item{group}{With group, it is possible to group the observations in an
 overview. Must be a one of the column names of \code{colData}.}
-
-\item{name}{A name for the column of the \code{colData} where the dominant
-taxa will be stored and used for summarization.}
 
 \item{object}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
