@@ -64,8 +64,8 @@ test_that("getPrevalentTaxa", {
     expect_true(all(pr1 == pr2))
 
     # Retrieved taxa are the same for counts and relative abundances
-    pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0.1/100, as_relative=TRUE)
-    pr2 <- getPrevalentTaxa(GlobalPatterns, detection=0.1/100, as_relative=FALSE)
+    pr1 <- getPrevalentTaxa(GlobalPatterns, prevalence=0.1/100, as_relative=TRUE)
+    pr2 <- getPrevalentTaxa(GlobalPatterns, prevalence=0.1/100, as_relative=FALSE)
     expect_true(all(pr1 == pr2))
 
     # Prevalence and detection threshold at 0 has the same impact on counts and relative abundances
@@ -159,6 +159,71 @@ test_that("getRareTaxa", {
 
     }
 
+})
+
+test_that("subsetByPrevalentTaxa", {
+    data(GlobalPatterns)
+    expect_error(subsetByPrevalentTaxa(GlobalPatterns, prevalence="test"),
+                 "'prevalence' must be a single numeric value or coercible to one")
+    # Expect TSE object
+    expect_equal(class(subsetByPrevalentTaxa(GlobalPatterns)), class(GlobalPatterns))
+    
+    # Results compatible with getPrevalentTaxa
+    pr1 <- rownames(subsetByPrevalentTaxa(GlobalPatterns, rank = "Class", detection=0.1/100, 
+                                          as_relative=TRUE, sort=TRUE))
+    pr2 <- getPrevalentTaxa(GlobalPatterns, rank = "Class", detection=0.1/100, 
+                            as_relative=TRUE, sort=TRUE)
+    expect_true(all(pr1 == pr2))
+    
+    # Retrieved taxa are the same for counts and relative abundances
+    pr1 <- assay(subsetByPrevalentTaxa(GlobalPatterns, prevalence=0.1/100, as_relative=TRUE), "counts")
+    pr2 <- assay(subsetByPrevalentTaxa(GlobalPatterns, prevalence=0.1/100, as_relative=FALSE), "counts")
+    expect_true(all(pr1 == pr2))
+    
+    # Prevalence and detection threshold at 0 has the same impact on counts and relative abundances
+    pr1 <- rownames(subsetByPrevalentTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=TRUE))
+    pr2 <- rownames(subsetByPrevalentTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=FALSE))
+    expect_true(all(pr1 == pr2))
+    
+})
+
+test_that("subsetByRareTaxa", {
+    data(GlobalPatterns)
+    expect_error(subsetByRareTaxa(GlobalPatterns, prevalence="test"),
+                 "'prevalence' must be a single numeric value or coercible to one")
+    # Expect TSE object
+    expect_equal(class(subsetByRareTaxa(GlobalPatterns)), class(GlobalPatterns))
+    
+    # Results compatible with getRareTaxa
+    pr1 <- rownames(subsetByRareTaxa(GlobalPatterns, rank = "Phylum", detection=0.1/100, 
+                                     as_relative=TRUE, sort=TRUE))
+    pr2 <- getRareTaxa(GlobalPatterns, rank = "Phylum", detection=0.1/100, 
+                       as_relative=TRUE, sort=TRUE)
+    expect_true(all(pr1 == pr2))
+    
+    # Retrieved taxa are the same for counts and relative abundances
+    pr1 <- assay(subsetByRareTaxa(GlobalPatterns, prevalence=0.1/100, as_relative=TRUE), "counts")
+    pr2 <- assay(subsetByRareTaxa(GlobalPatterns, prevalence=0.1/100, as_relative=FALSE), "counts")
+    expect_true(all(pr1 == pr2))
+    
+    # Prevalence and detection threshold at 0 has the same impact on counts and relative abundances
+    pr1 <- rownames(subsetByRareTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=TRUE))
+    pr2 <- rownames(subsetByRareTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=FALSE))
+    expect_true(all(pr1 == pr2))
+    
+    # subsetByRareTaxa + subsetByPrevalentTaxa should include all the taxa in OTU level
+    d <- runif(1, 0.0001, 0.1)
+    p <- runif(1, 0.0001, 0.5)
+    rare <- rownames(subsetByRareTaxa(GlobalPatterns, detection=d, prevalence=p, 
+                                      as_relative=TRUE))
+    
+    prevalent <- rownames(subsetByPrevalentTaxa(GlobalPatterns, detection=d, prevalence=p, 
+                                                as_relative=TRUE))
+    
+    all_taxa <- c(rare, prevalent)
+    
+    expect_true( all(all_taxa %in% rownames(GlobalPatterns)) )
+    
 })
 
 test_that("agglomerateByPrevalence", {
