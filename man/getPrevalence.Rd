@@ -105,18 +105,16 @@ limit, set \code{include_lowest} to \code{TRUE}.}
 summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 }
 \value{
-a named \code{numeric} vector. For \code{getPrevalence} the names are either
-the row names of \code{x} or the names after agglomeration.
+\code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return subset of \code{x}.
+
+All other functions return a named \code{numeric} vector. For \code{getPrevalence}
+the names are either the row names of \code{x} or the names after agglomeration.
 
 For \code{getPrevalentAbundance} the names correspond to the column name
 names of \code{x} and include the joint abundance of prevalent taxa.
 
 For \code{getPrevalentTaxa} only the names exceeding the threshold set by
 \code{prevalence} are returned.
-
-A subset of \code{x}
-
-A subset of \code{x}
 }
 \description{
 These functions calculate the population prevalence for taxonomic ranks in a
@@ -136,16 +134,14 @@ proportion of the core species (in between 0 and 1). The core taxa are
 defined as those that exceed the given population prevalence threshold at the
 given detection level as set for \code{getPrevalentTaxa}.
 
+\code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return a subset of \code{x}.
+The subset includes the most prevalent or rare taxa that are calculated with
+\code{getPrevalentTaxa} or \code{getRareTaxa} respectively.
+
 \code{getPrevalentTaxa} returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.
 
 \code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
-
-Returns a subset of \code{x}. The subset includes the most prevalent taxa
-that are calculated with \code{getPrevalentTaxa}.
-
-Returns a subset of \code{x}. The subset includes the most prevalent taxa
-that are calculated with \code{getPrevalentTaxa}.
 }
 \examples{
 data(GlobalPatterns)

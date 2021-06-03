@@ -50,10 +50,16 @@
 #' proportion of the core species (in between 0 and 1). The core taxa are
 #' defined as those that exceed the given population prevalence threshold at the
 #' given detection level as set for \code{getPrevalentTaxa}.
+#' 
+#' \code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return a subset of \code{x}. 
+#' The subset includes the most prevalent or rare taxa that are calculated with 
+#' \code{getPrevalentTaxa} or \code{getRareTaxa} respectively.
 #'
 #' @return
-#' a named \code{numeric} vector. For \code{getPrevalence} the names are either
-#' the row names of \code{x} or the names after agglomeration.
+#' \code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return subset of \code{x}.
+#' 
+#' All other functions return a named \code{numeric} vector. For \code{getPrevalence} 
+#' the names are either the row names of \code{x} or the names after agglomeration.
 #'
 #' For \code{getPrevalentAbundance} the names correspond to the column name
 #' names of \code{x} and include the joint abundance of prevalent taxa.
@@ -330,14 +336,6 @@ setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
 ############################# subsetByPrevalentTaxa ############################
 
 #' @rdname getPrevalence
-#' 
-#' @details 
-#' Returns a subset of \code{x}. The subset includes the most prevalent taxa
-#' that are calculated with \code{getPrevalentTaxa}.
-#' 
-#' @return 
-#' A subset of \code{x}
-#' 
 #' @export
 setGeneric("subsetByPrevalentTaxa", signature = "x",
            function(x, ...)
@@ -367,14 +365,6 @@ setMethod("subsetByPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
 ############################# subsetByRareTaxa #################################
 
 #' @rdname getPrevalence
-#' 
-#' @details 
-#' Returns a subset of \code{x}. The subset includes the most prevalent taxa
-#' that are calculated with \code{getPrevalentTaxa}.
-#' 
-#' @return 
-#' A subset of \code{x}
-#' 
 #' @export
 setGeneric("subsetByRareTaxa", signature = "x",
            function(x, ...)
