@@ -109,12 +109,20 @@
 #' # Note that the data (GlobalPatterns) is here in absolute counts
 #' # (and not compositional, relative abundances)
 #' # Prevalence threshold 50 percent (strictly greater by default)
-#' taxa <- getPrevalentTaxa(GlobalPatterns,
-#'                          rank = "Phylum",
-#'                          detection = 1/100,
-#'                          prevalence = 50/100,
-#'                          as_relative = TRUE)
-#' head(taxa)
+#' prevalent <- getPrevalentTaxa(GlobalPatterns,
+#'                               rank = "Phylum",
+#'                               detection = 10,
+#'                               prevalence = 50/100,
+#'                               as_relative = FALSE)
+#' head(prevalent)
+#' 
+#' # Gets a subset of object that includes prevalent taxa
+#' x_prevalent <- subsetByPrevalentTaxa(GlobalPatterns,
+#'                                      rank = "Family",
+#'                                      detection = 0.05,
+#'                                      prevalence = 0.75,
+#'                                      as_relative = TRUE)
+#' x_prevalent                                     
 #'
 #' # getRareTaxa returns the inverse
 #' rare <- getRareTaxa(GlobalPatterns,
@@ -123,6 +131,14 @@
 #'                     prevalence = 50/100,
 #'                     as_relative = TRUE)
 #' head(rare)
+#' 
+#' # Gets a subset of object that includes rare taxa
+#' x_rare <- subsetByPrevalentTaxa(GlobalPatterns,
+#'                                 rank = "Class",
+#'                                 detection = 0.01,
+#'                                 prevalence = 0.1,
+#'                                 as_relative = TRUE)
+#' x_rare                                
 #'
 #' data(esophagus)
 #' getPrevalentAbundance(esophagus, abund_values = "counts")
@@ -311,6 +327,79 @@ setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+############################# subsetByPrevalentTaxa ############################
+
+#' @rdname getPrevalence
+#' 
+#' @details 
+#' Returns a subset of \code{x}. The subset includes the most prevalent taxa
+#' that are calculated with \code{getPrevalentTaxa}.
+#' 
+#' @return 
+#' A subset of \code{x}
+#' 
+#' @export
+setGeneric("subsetByPrevalentTaxa", signature = "x",
+           function(x, ...)
+               standardGeneric("subsetByPrevalentTaxa"))
+
+#' @rdname getPrevalence
+#' @export
+setMethod("subsetByPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, rank = NULL, ...){
+        # If rank is not NULL
+        if( !is.null(rank) ){
+            # Checks rank
+            .check_taxonomic_rank(rank, x)
+            # Agglomerates the object by rank. Taxa that do not have information
+            # at specific rank are excluded.
+            x <- agglomerateByRank(x, rank = rank, na.rm = TRUE)
+            # Changes rank to NULL, so that agglomeration is not done in next steps
+            rank <- NULL
+        }
+        # Gets the prevalent taxa
+        prevalent_taxa <- getPrevalentTaxa(x, ...)
+        # Subsets the object based on prevalent taxa
+        x <- x[prevalent_taxa]
+    }
+)
+
+############################# subsetByRareTaxa #################################
+
+#' @rdname getPrevalence
+#' 
+#' @details 
+#' Returns a subset of \code{x}. The subset includes the most prevalent taxa
+#' that are calculated with \code{getPrevalentTaxa}.
+#' 
+#' @return 
+#' A subset of \code{x}
+#' 
+#' @export
+setGeneric("subsetByRareTaxa", signature = "x",
+           function(x, ...)
+               standardGeneric("subsetByRareTaxa"))
+
+#' @rdname getPrevalence
+#' @export
+setMethod("subsetByRareTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, rank = NULL, ...){
+        # If rank is not NULL
+        if( !is.null(rank) ){
+            # Checks rank
+            .check_taxonomic_rank(rank, x)
+            # Agglomerates the object by rank. Taxa that do not have information
+            # at specific rank are excluded.
+            x <- agglomerateByRank(x, rank = rank, na.rm = TRUE)
+            # Changes rank to NULL, so that agglomeration is not done in next steps
+            rank <- NULL
+        }
+        # Gets the rare taxa
+        rare_taxa <- getRareTaxa(x, ...)
+        # Subsets the object based on rare taxa
+        x <- x[rare_taxa]
+    }
+)
 
 ############################# getPrevalentAbundance ############################
 

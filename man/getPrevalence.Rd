@@ -9,6 +9,10 @@
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
 \alias{getRareTaxa}
 \alias{getRareTaxa,SummarizedExperiment-method}
+\alias{subsetByPrevalentTaxa}
+\alias{subsetByPrevalentTaxa,SummarizedExperiment-method}
+\alias{subsetByRareTaxa}
+\alias{subsetByRareTaxa,SummarizedExperiment-method}
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
@@ -37,6 +41,14 @@ getPrevalentTaxa(x, ...)
 getRareTaxa(x, rank = NULL, ...)
 
 \S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
+
+subsetByPrevalentTaxa(x, ...)
+
+\S4method{subsetByPrevalentTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
+
+subsetByRareTaxa(x, ...)
+
+\S4method{subsetByRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
 getPrevalentAbundance(x, abund_values = "relabundance", ...)
 
@@ -101,6 +113,10 @@ names of \code{x} and include the joint abundance of prevalent taxa.
 
 For \code{getPrevalentTaxa} only the names exceeding the threshold set by
 \code{prevalence} are returned.
+
+A subset of \code{x}
+
+A subset of \code{x}
 }
 \description{
 These functions calculate the population prevalence for taxonomic ranks in a
@@ -124,6 +140,12 @@ given detection level as set for \code{getPrevalentTaxa}.
 given detection threshold for the selected taxonomic rank.
 
 \code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
+
+Returns a subset of \code{x}. The subset includes the most prevalent taxa
+that are calculated with \code{getPrevalentTaxa}.
+
+Returns a subset of \code{x}. The subset includes the most prevalent taxa
+that are calculated with \code{getPrevalentTaxa}.
 }
 \examples{
 data(GlobalPatterns)
@@ -152,12 +174,20 @@ head(prevalence.count)
 # Note that the data (GlobalPatterns) is here in absolute counts
 # (and not compositional, relative abundances)
 # Prevalence threshold 50 percent (strictly greater by default)
-taxa <- getPrevalentTaxa(GlobalPatterns,
-                         rank = "Phylum",
-                         detection = 1/100,
-                         prevalence = 50/100,
-                         as_relative = TRUE)
-head(taxa)
+prevalent <- getPrevalentTaxa(GlobalPatterns,
+                              rank = "Phylum",
+                              detection = 10,
+                              prevalence = 50/100,
+                              as_relative = FALSE)
+head(prevalent)
+
+# Gets a subset of object that includes prevalent taxa
+x_prevalent <- subsetByPrevalentTaxa(GlobalPatterns,
+                                     rank = "Family",
+                                     detection = 0.05,
+                                     prevalence = 0.75,
+                                     as_relative = TRUE)
+x_prevalent                                     
 
 # getRareTaxa returns the inverse
 rare <- getRareTaxa(GlobalPatterns,
@@ -166,6 +196,14 @@ rare <- getRareTaxa(GlobalPatterns,
                     prevalence = 50/100,
                     as_relative = TRUE)
 head(rare)
+
+# Gets a subset of object that includes rare taxa
+x_rare <- subsetByPrevalentTaxa(GlobalPatterns,
+                                rank = "Class",
+                                detection = 0.01,
+                                prevalence = 0.1,
+                                as_relative = TRUE)
+x_rare                                
 
 data(esophagus)
 getPrevalentAbundance(esophagus, abund_values = "counts")
