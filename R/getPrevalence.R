@@ -33,6 +33,9 @@
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
+#'   \item{for \code{getPrevalentTaxa}, \code{getRareaxa}, 
+#'     \code{subsetByPrevalentTaxa} and \code{subsetByRareaxa} additional 
+#'     parameters passed to \code{getPrevalence}}
 #'   \item{for \code{getPrevalentAbundance} additional parameters passed to
 #'     \code{getPrevalentTaxa}}
 #' }
@@ -50,16 +53,28 @@
 #' proportion of the core species (in between 0 and 1). The core taxa are
 #' defined as those that exceed the given population prevalence threshold at the
 #' given detection level as set for \code{getPrevalentTaxa}.
+#' 
+#' \code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return a subset of \code{x}. 
+#' The subset includes the most prevalent or rare taxa that are calculated with 
+#' \code{getPrevalentTaxa} or \code{getRareTaxa} respectively.
 #'
 #' @return
-#' a named \code{numeric} vector. For \code{getPrevalence} the names are either
-#' the row names of \code{x} or the names after agglomeration.
-#'
-#' For \code{getPrevalentAbundance} the names correspond to the column name
-#' names of \code{x} and include the joint abundance of prevalent taxa.
-#'
-#' For \code{getPrevalentTaxa} only the names exceeding the threshold set by
-#' \code{prevalence} are returned.
+#' \code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return subset of \code{x}.
+#' 
+#' All other functions return a named vectors:
+#' \itemize{
+#'   \item{\code{getPrevalence} returns a \code{numeric} vector with the 
+#'     names being set to either the row names of \code{x} or the names after 
+#'     agglomeration.}
+#'   \item{\code{getPrevalentAbundance} returns a \code{numeric} vector with
+#'     the names corresponding to the column name of \code{x} and include the 
+#'     joint abundance of prevalent taxa.}
+#'   \item{\code{getPrevalentTaxa} and \code{getRareTaxa} return a 
+#'     \code{character} vector with only the names exceeding the threshold set
+#'     by \code{prevalence}, if the \code{rownames} of \code{x} is set. 
+#'     Otherwise an \code{integer} vector is returned matching the rows in
+#'     \code{x}.}
+#' }
 #'
 #' @seealso
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
@@ -84,8 +99,9 @@
 #'
 #' @examples
 #' data(GlobalPatterns)
+#' tse <- GlobalPatterns
 #' # Get prevalence estimates for individual ASV/OTU
-#' prevalence.frequency <- getPrevalence(GlobalPatterns,
+#' prevalence.frequency <- getPrevalence(tse,
 #'                                       detection = 0,
 #'                                       sort = TRUE,
 #'                                       as_relative = TRUE)
@@ -93,7 +109,7 @@
 #'
 #' # Get prevalence estimates for phylums
 #' # - the getPrevalence function itself always returns population frequencies
-#' prevalence.frequency <- getPrevalence(GlobalPatterns,
+#' prevalence.frequency <- getPrevalence(tse,
 #'                                       rank = "Phylum",
 #'                                       detection = 0,
 #'                                       sort = TRUE,
@@ -102,37 +118,56 @@
 #'
 #' # - to obtain population counts, multiply frequencies with the sample size,
 #' # which answers the question "In how many samples is this phylum detectable"
-#' prevalence.count <- prevalence.frequency * ncol(GlobalPatterns)
+#' prevalence.count <- prevalence.frequency * ncol(tse)
 #' head(prevalence.count)
 #'
 #' # Detection threshold 1 (strictly greater by default);
 #' # Note that the data (GlobalPatterns) is here in absolute counts
 #' # (and not compositional, relative abundances)
 #' # Prevalence threshold 50 percent (strictly greater by default)
-#' taxa <- getPrevalentTaxa(GlobalPatterns,
-#'                          rank = "Phylum",
-#'                          detection = 1/100,
-#'                          prevalence = 50/100,
-#'                          as_relative = TRUE)
-#' head(taxa)
+#' prevalent <- getPrevalentTaxa(tse,
+#'                               rank = "Phylum",
+#'                               detection = 10,
+#'                               prevalence = 50/100,
+#'                               as_relative = FALSE)
+#' head(prevalent)
+#' 
+#' # Gets a subset of object that includes prevalent taxa
+#' altExp(tse, "prevalent") <- subsetByPrevalentTaxa(tse,
+#'                                        rank = "Family",
+#'                                        detection = 0.001,
+#'                                        prevalence = 0.55,
+#'                                        as_relative = TRUE)
+#' altExp(tse, "prevalent")                                 
 #'
 #' # getRareTaxa returns the inverse
-#' rare <- getRareTaxa(GlobalPatterns,
+#' rare <- getRareTaxa(tse,
 #'                     rank = "Phylum",
 #'                     detection = 1/100,
 #'                     prevalence = 50/100,
 #'                     as_relative = TRUE)
 #' head(rare)
-#'
+#' 
+#' # Gets a subset of object that includes rare taxa
+#' altExp(tse, "rare") <- subsetByRareTaxa(tse,
+#'                              rank = "Class",
+#'                              detection = 0.001,
+#'                              prevalence = 0.001,
+#'                              as_relative = TRUE)
+#' altExp(tse, "rare")      
+#' 
+#' # Names of both experiments, prevalent and rare, can be found from slot altExpNames
+#' tse
+#'                          
 #' data(esophagus)
 #' getPrevalentAbundance(esophagus, abund_values = "counts")
 #'
 #' # data can be aggregated based on prevalent taxonomic results
-#' agglomerateByPrevalence(GlobalPatterns,
-#'                          rank = "Phylum",
-#'                          detection = 1/100,
-#'                          prevalence = 50/100,
-#'                          as_relative = TRUE)
+#' agglomerateByPrevalence(tse,
+#'                         rank = "Phylum",
+#'                         detection = 1/100,
+#'                         prevalence = 50/100,
+#'                         as_relative = TRUE)
 NULL
 
 #' @rdname getPrevalence
@@ -202,7 +237,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", as_relative = TRUE,
              rank = NULL, ...){
-
+        # input check
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
@@ -233,7 +268,16 @@ setGeneric("getPrevalentTaxa", signature = "x",
            function(x, ...)
                standardGeneric("getPrevalentTaxa"))
 
-.get_prevalent_taxa <- function(x, rank, prevalence = 50/100,
+.norm_rownames <- function(x){
+    if(is.null(rownames(x))){
+        rownames(x) <- seq_len(nrow(x))
+    } else if(anyDuplicated(rownames(x))) {
+        rownames(x) <- make.unique(rownames(x))
+    }
+    x
+}
+
+.get_prevalent_indices <- function(x, prevalence = 50/100,
                                 include_lowest = FALSE, ...){
     # input check
     if (!.is_numeric_string(prevalence)) {
@@ -241,26 +285,49 @@ setGeneric("getPrevalentTaxa", signature = "x",
              "one.",
              call. = FALSE)
     }
-
+    
     prevalence <- as.numeric(prevalence)
     if(!.is_a_bool(include_lowest)){
         stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
     }
-
-    if(!is(x,"SummarizedExperiment")){
-        pr <- getPrevalence(x, ...)
-    } else {
-        pr <- getPrevalence(x, rank = rank, ...)
-    }
-
+    # rownames must bet set and unique, because if sort = TRUE, the order is 
+    # not preserved
+    x <- .norm_rownames(x)
+    pr <- getPrevalence(x, rank = NULL, ...)
+    
+    # get logical vector which row does exceed threshold
     if (include_lowest) {
-        taxa <- pr >= prevalence
+        f <- pr >= prevalence
     } else {
-        taxa <- pr > prevalence
+        f <- pr > prevalence
     }
+    # get it back into order of x
+    m <- match(rownames(x),names(f))
+    taxa <- f[m]
+    # Gets indices of most prevalent taxa
+    indices <- which(taxa)
+    # revert the order based on f
+    m <- match(names(f),names(indices))
+    m <- m[!is.na(m)]
+    indices <- indices[m]
+    # 
+    indices
+}
 
-    taxa <- names(which(taxa))
-    taxa
+.get_prevalent_taxa <- function(x, rank = NULL, ...){
+    if(is(x,"SummarizedExperiment")){
+        x <- .agg_for_prevalence(x, rank = rank, ...)
+    }
+    indices <- .get_prevalent_indices(x, ...)
+    # If named input return named output
+    if( !is.null(rownames(x)) ){
+        # Gets the names
+        taxa <- rownames(x)[indices]
+    } else {
+        # Otherwise indices are returned
+        taxa <- unname(indices)
+    }
+    unique(taxa)
 }
 
 #' @rdname getPrevalence
@@ -275,7 +342,7 @@ setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, prevalence = 50/100, rank = NULL,
+    function(x, rank = NULL, prevalence = 50/100, 
              include_lowest = FALSE, ...){
         .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
                             include_lowest = include_lowest, ...)
@@ -291,26 +358,88 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
 #'
 #' @export
 setGeneric("getRareTaxa", signature = "x",
-           function(x, rank = NULL, ...)
+           function(x, ...)
                standardGeneric("getRareTaxa"))
+
+.get_rare_indices <- function(x, ...){
+    indices <- .get_prevalent_indices(x = x, ...)
+    # reverse the indices
+    indices_x <- seq_len(nrow(x))
+    f <- !(indices_x %in% indices)
+    indices_new <- indices_x[f]
+    indices_new
+}
+    
+.get_rare_taxa <- function(x, rank = NULL, ...){
+    if(is(x,"SummarizedExperiment")){
+        x <- .agg_for_prevalence(x, rank = rank, ...)
+    }
+    indices <- .get_rare_indices(x, ...)
+    #
+    if( !is.null(rownames(x)) ){
+        # Gets the names
+        taxa <- rownames(x)[indices]
+    } else {
+        # Otherwise indices are returned
+        taxa <- indices
+    }
+    unique(taxa)
+}
+
+#' @rdname getPrevalence
+#' @export
+setMethod("getRareTaxa", signature = c(x = "ANY"),
+    function(x, prevalence = 50/100, include_lowest = FALSE, ...){
+        .get_rare_taxa(x, rank = NULL, prevalence = prevalence,
+                       include_lowest = include_lowest, ...)
+    }
+)
 
 #' @rdname getPrevalence
 #' @export
 setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, ...){
-        # Gets the prevalent taxa
-        prev_taxa <- getPrevalentTaxa(x, rank = rank, ...)
-        if( !is.null(rank) ){
-            # Gets names from specified taxonomic level
-            taxa <- rowData(x)[[rank]]
-        } else{
-            # Gets rownames if agglomeration is not done
-            taxa <- rownames(x)
-        }
-        unique(taxa[!is.na(taxa) & !(taxa %in% prev_taxa)])
+    function(x, rank = NULL, prevalence = 50/100, 
+             include_lowest = FALSE, ...){
+        .get_rare_taxa(x, rank = rank, prevalence = prevalence,
+                       include_lowest = include_lowest, ...)
     }
 )
 
+############################# subsetByPrevalentTaxa ############################
+
+#' @rdname getPrevalence
+#' @export
+setGeneric("subsetByPrevalentTaxa", signature = "x",
+           function(x, ...)
+               standardGeneric("subsetByPrevalentTaxa"))
+
+#' @rdname getPrevalence
+#' @export
+setMethod("subsetByPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, rank = NULL, ...){
+        x <- .agg_for_prevalence(x, rank = rank, ...)
+        prevalent_indices <- .get_prevalent_indices(x, ...)
+        x[prevalent_indices, ]
+    }
+)
+
+############################# subsetByRareTaxa #################################
+
+#' @rdname getPrevalence
+#' @export
+setGeneric("subsetByRareTaxa", signature = "x",
+           function(x, ...)
+               standardGeneric("subsetByRareTaxa"))
+
+#' @rdname getPrevalence
+#' @export
+setMethod("subsetByRareTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, rank = NULL, ...){
+        x <- .agg_for_prevalence(x, rank = rank, ...)
+        rare_indices <- .get_rare_indices(x, ...)
+        x[rare_indices, ]
+    }
+)
 
 ############################# getPrevalentAbundance ############################
 
