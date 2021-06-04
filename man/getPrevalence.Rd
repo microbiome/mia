@@ -145,8 +145,9 @@ given detection threshold for the selected taxonomic rank.
 }
 \examples{
 data(GlobalPatterns)
+tse <- GlobalPatterns
 # Get prevalence estimates for individual ASV/OTU
-prevalence.frequency <- getPrevalence(GlobalPatterns,
+prevalence.frequency <- getPrevalence(tse,
                                       detection = 0,
                                       sort = TRUE,
                                       as_relative = TRUE)
@@ -154,7 +155,7 @@ head(prevalence.frequency)
 
 # Get prevalence estimates for phylums
 # - the getPrevalence function itself always returns population frequencies
-prevalence.frequency <- getPrevalence(GlobalPatterns,
+prevalence.frequency <- getPrevalence(tse,
                                       rank = "Phylum",
                                       detection = 0,
                                       sort = TRUE,
@@ -163,14 +164,14 @@ head(prevalence.frequency)
 
 # - to obtain population counts, multiply frequencies with the sample size,
 # which answers the question "In how many samples is this phylum detectable"
-prevalence.count <- prevalence.frequency * ncol(GlobalPatterns)
+prevalence.count <- prevalence.frequency * ncol(tse)
 head(prevalence.count)
 
 # Detection threshold 1 (strictly greater by default);
 # Note that the data (GlobalPatterns) is here in absolute counts
 # (and not compositional, relative abundances)
 # Prevalence threshold 50 percent (strictly greater by default)
-prevalent <- getPrevalentTaxa(GlobalPatterns,
+prevalent <- getPrevalentTaxa(tse,
                               rank = "Phylum",
                               detection = 10,
                               prevalence = 50/100,
@@ -178,15 +179,18 @@ prevalent <- getPrevalentTaxa(GlobalPatterns,
 head(prevalent)
 
 # Gets a subset of object that includes prevalent taxa
-x_prevalent <- subsetByPrevalentTaxa(GlobalPatterns,
-                                     rank = "Family",
-                                     detection = 0.05,
-                                     prevalence = 0.75,
-                                     as_relative = TRUE)
-x_prevalent                                     
+tse_prevalent <- subsetByPrevalentTaxa(tse,
+                                       rank = "Family",
+                                       detection = 0.001,
+                                       prevalence = 0.55,
+                                       as_relative = TRUE)
+
+# Stores the subset to the original object as an alternative experiment
+altExp(tse, "prevalent_0.55") <- tse_prevalent    
+altExp(tse, "prevalent_0.55")                                 
 
 # getRareTaxa returns the inverse
-rare <- getRareTaxa(GlobalPatterns,
+rare <- getRareTaxa(tse,
                     rank = "Phylum",
                     detection = 1/100,
                     prevalence = 50/100,
@@ -194,22 +198,28 @@ rare <- getRareTaxa(GlobalPatterns,
 head(rare)
 
 # Gets a subset of object that includes rare taxa
-x_rare <- subsetByPrevalentTaxa(GlobalPatterns,
-                                rank = "Class",
-                                detection = 0.01,
-                                prevalence = 0.1,
-                                as_relative = TRUE)
-x_rare                                
+tse_rare <- subsetByRareTaxa(tse,
+                             rank = "Class",
+                             detection = 0.001,
+                             prevalence = 0.001,
+                             as_relative = TRUE)
+                             
+# Stores the subset to the original object as an alternative experiment
+altExp(tse, "rare_0.001") <- tse_rare
+altExp(tse, "rare_0.001")      
 
+# Names of both experiments, prevalent and rare, can be found from slot altExpNames
+tse
+                         
 data(esophagus)
 getPrevalentAbundance(esophagus, abund_values = "counts")
 
 # data can be aggregated based on prevalent taxonomic results
-agglomerateByPrevalence(GlobalPatterns,
-                         rank = "Phylum",
-                         detection = 1/100,
-                         prevalence = 50/100,
-                         as_relative = TRUE)
+agglomerateByPrevalence(tse,
+                        rank = "Phylum",
+                        detection = 1/100,
+                        prevalence = 50/100,
+                        as_relative = TRUE)
 }
 \references{
 A Salonen et al. The adult intestinal core microbiota is determined by
