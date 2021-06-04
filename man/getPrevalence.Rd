@@ -8,6 +8,7 @@
 \alias{getPrevalentTaxa,ANY-method}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
 \alias{getRareTaxa}
+\alias{getRareTaxa,ANY-method}
 \alias{getRareTaxa,SummarizedExperiment-method}
 \alias{subsetByPrevalentTaxa}
 \alias{subsetByPrevalentTaxa,SummarizedExperiment-method}
@@ -32,15 +33,17 @@ getPrevalentTaxa(x, ...)
 
 \S4method{getPrevalentTaxa}{SummarizedExperiment}(
   x,
-  prevalence = 50/100,
   rank = NULL,
+  prevalence = 50/100,
   include_lowest = FALSE,
   ...
 )
 
-getRareTaxa(x, rank = NULL, ...)
+getRareTaxa(x, ...)
 
-\S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
+\S4method{getRareTaxa}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
+
+\S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, prevalence = 50/100, include_lowest = FALSE, ...)
 
 subsetByPrevalentTaxa(x, ...)
 
@@ -93,6 +96,9 @@ on compositional (relative) abundances? (default: \code{TRUE})}
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 }
+\item{for \code{getPrevalentTaxa}, \code{getRareaxa},
+\code{subsetByPrevalentTaxa} and \code{subsetByRareaxa} additional
+parameters passed to \code{getPrevalence}}
 \item{for \code{getPrevalentAbundance} additional parameters passed to
 \code{getPrevalentTaxa}}
 }}
@@ -107,14 +113,20 @@ summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 \value{
 \code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return subset of \code{x}.
 
-All other functions return a named \code{numeric} vector. For \code{getPrevalence}
-the names are either the row names of \code{x} or the names after agglomeration.
-
-For \code{getPrevalentAbundance} the names correspond to the column name
-names of \code{x} and include the joint abundance of prevalent taxa.
-
-For \code{getPrevalentTaxa} only the names exceeding the threshold set by
-\code{prevalence} are returned.
+All other functions return a named vectors:
+\itemize{
+\item{\code{getPrevalence} returns a \code{numeric} vector with the
+names being set to either the row names of \code{x} or the names after
+agglomeration.}
+\item{\code{getPrevalentAbundance} returns a \code{numeric} vector with
+the names corresponding to the column name of \code{x} and include the
+joint abundance of prevalent taxa.}
+\item{\code{getPrevalentTaxa} and \code{getRareTaxa} return a
+\code{character} vector with only the names exceeding the threshold set
+by \code{prevalence}, if the \code{rownames} of \code{x} is set.
+Otherwise an \code{integer} vector is returned matching the rows in
+\code{x}.}
+}
 }
 \description{
 These functions calculate the population prevalence for taxonomic ranks in a
@@ -179,14 +191,11 @@ prevalent <- getPrevalentTaxa(tse,
 head(prevalent)
 
 # Gets a subset of object that includes prevalent taxa
-tse_prevalent <- subsetByPrevalentTaxa(tse,
+altExp(tse, "prevalent") <- subsetByPrevalentTaxa(tse,
                                        rank = "Family",
                                        detection = 0.001,
                                        prevalence = 0.55,
                                        as_relative = TRUE)
-
-# Stores the subset to the original object as an alternative experiment
-altExp(tse, "prevalent") <- tse_prevalent    
 altExp(tse, "prevalent")                                 
 
 # getRareTaxa returns the inverse
@@ -198,14 +207,11 @@ rare <- getRareTaxa(tse,
 head(rare)
 
 # Gets a subset of object that includes rare taxa
-tse_rare <- subsetByRareTaxa(tse,
+altExp(tse, "rare") <- subsetByRareTaxa(tse,
                              rank = "Class",
                              detection = 0.001,
                              prevalence = 0.001,
                              as_relative = TRUE)
-                             
-# Stores the subset to the original object as an alternative experiment
-altExp(tse, "rare") <- tse_rare
 altExp(tse, "rare")      
 
 # Names of both experiments, prevalent and rare, can be found from slot altExpNames

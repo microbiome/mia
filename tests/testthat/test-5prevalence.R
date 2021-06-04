@@ -182,6 +182,7 @@ test_that("getRareTaxa", {
                          !any( !( prevalent_and_rare_taxa %in% all_taxa) ) )
 
         # Expect that there are no duplicates
+        expect_true(!anyDuplicated(prevalent_taxa))
         expect_true(!anyDuplicated(rare_taxa))
 
     }
