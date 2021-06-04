@@ -200,11 +200,6 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
             prev <- x > detection
         }
         prev <- rowSums(prev)
-        # # If prev doesn't include names / if rownames(x) was NULL
-        # if( is.null(names(prev)) ){
-        #     # Adds indices as names
-        #     names(prev) <- factor(1:length(prev))
-        # }
         # Always return prevalence as a relative frequency.
         # This helps to avoid confusion with detection limit
         prev <- prev / ncol(x)
