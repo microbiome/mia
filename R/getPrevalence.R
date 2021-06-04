@@ -339,22 +339,21 @@ setGeneric("getRareTaxa", signature = "x",
 #' @export
 setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
+        # If rownames is not NULL
+        if( !is.null(rownames(x)) ){
+            # Gets rownames 
+            taxa <- rownames(x)
+        } else {
+            # Gets indices of taxa
+            taxa <- seq_along(x)
+        }
         # Gets the prevalent taxa
         prev_taxa <- getPrevalentTaxa(x, rank = rank, ...)
         # If agglomeration was done
         if( !is.null(rank) ){
             # Gets names from specified taxonomic level
             taxa <- rowData(x)[[rank]]
-        } else {
-            # If rownames is not NULL
-            if( !is.null(rownames(x)) ){
-                # Gets rownames 
-                taxa <- rownames(x)
-            } else {
-                # Gets indices of taxa
-                taxa <- seq_along(x)
-            }
-        }
+        } 
         unique(taxa[!is.na(taxa) & !(taxa %in% prev_taxa)])
     }
 )
