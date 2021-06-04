@@ -352,7 +352,7 @@ setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
                 taxa <- rownames(x)
             } else {
                 # Gets indices of taxa
-                taxa <- 1:nrow(tse)
+                taxa <- seq_along(x)
             }
         }
         unique(taxa[!is.na(taxa) & !(taxa %in% prev_taxa)])
