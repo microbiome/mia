@@ -358,7 +358,7 @@ setMethod("subsetByPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
         # Gets the prevalent taxa
         prevalent_taxa <- getPrevalentTaxa(x, ...)
         # Subsets the object based on prevalent taxa
-        x <- x[prevalent_taxa]
+        x <- x[prevalent_taxa, ]
     }
 )
 
@@ -387,7 +387,7 @@ setMethod("subsetByRareTaxa", signature = c(x = "SummarizedExperiment"),
         # Gets the rare taxa
         rare_taxa <- getRareTaxa(x, ...)
         # Subsets the object based on rare taxa
-        x <- x[rare_taxa]
+        x <- x[rare_taxa, ]
     }
 )
 
