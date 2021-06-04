@@ -44,7 +44,19 @@ test_that("getPrevalence", {
                          top=5,
                          abund_values="counts")
     expect_equal(pr, actual)
-
+    
+    # Check that works also when rownames is NULL
+    gp_null <- GlobalPatterns
+    rownames(gp_null) <- NULL
+    
+    pr1 <- unname(getPrevalence(GlobalPatterns, detection=0.004, as_relative=TRUE))
+    pr2 <- getPrevalence(gp_null, detection=0.004, as_relative=TRUE) 
+    expect_equal(pr1, pr2)
+    
+    pr1 <- getPrevalence(GlobalPatterns, detection=0.004, as_relative=TRUE, rank = "Family")
+    pr2 <- getPrevalence(gp_null, detection=0.004, as_relative=TRUE, rank = "Family") 
+    expect_equal(pr1, pr2)
+    
 })
 
 
@@ -72,6 +84,21 @@ test_that("getPrevalentTaxa", {
     pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=TRUE)
     pr2 <- getPrevalentTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=FALSE)
     expect_true(all(pr1 == pr2))
+    
+    # Check that works also when rownames is NULL
+    gp_null <- GlobalPatterns
+    rownames(gp_null) <- NULL
+    
+    pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
+    pr1 <- which(rownames(GlobalPatterns) %in% pr1)
+    pr2 <- getPrevalentTaxa(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
+    expect_equal(pr1, pr2)
+    
+    pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0.004, prevalence = 0.1, 
+                            as_relative=TRUE, rank = "Family")
+    pr2 <- getPrevalentTaxa(gp_null, detection=0.004, prevalence = 0.1, 
+                            as_relative=TRUE, rank = "Family") 
+    expect_equal(pr1, pr2)
 
 })
 
@@ -158,6 +185,21 @@ test_that("getRareTaxa", {
         expect_true(!anyDuplicated(rare_taxa))
 
     }
+    
+    # Check that works also when rownames is NULL
+    gp_null <- GlobalPatterns
+    rownames(gp_null) <- NULL
+    
+    pr1 <- getRareTaxa(GlobalPatterns, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
+    pr1 <- which(rownames(GlobalPatterns) %in% pr1)
+    pr2 <- getRareTaxa(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
+    expect_equal(pr1, pr2)
+    
+    pr1 <- getRareTaxa(GlobalPatterns, detection=0.004, prevalence = 0.1, 
+                       as_relative=TRUE, rank = "Family")
+    pr2 <- getRareTaxa(gp_null, detection=0.004, prevalence = 0.1, 
+                       as_relative=TRUE, rank = "Family") 
+    expect_equal(pr1, pr2)
 
 })
 
@@ -184,6 +226,22 @@ test_that("subsetByPrevalentTaxa", {
     pr1 <- rownames(subsetByPrevalentTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=TRUE))
     pr2 <- rownames(subsetByPrevalentTaxa(GlobalPatterns, detection=0, prevalence=0, as_relative=FALSE))
     expect_true(all(pr1 == pr2))
+    
+    # Check that works also when rownames is NULL
+    gp_null <- GlobalPatterns
+    rownames(gp_null) <- NULL
+    
+    pr1 <- subsetByPrevalentTaxa(GlobalPatterns, detection=12, prevalence = 0.33)
+    pr1 <- unname(assay(pr1, "counts"))
+    pr2 <- subsetByPrevalentTaxa(gp_null, detection=12, prevalence = 0.33) 
+    pr2 <- unname(assay(pr2, "counts"))
+    expect_equal(pr1, pr2)
+    
+    pr1 <- subsetByPrevalentTaxa(GlobalPatterns, detection=5, prevalence = 0.33, rank = "Phylum")
+    pr1 <- unname(assay(pr1, "counts"))
+    pr2 <- subsetByPrevalentTaxa(gp_null, detection=5, prevalence = 0.33, rank = "Phylum") 
+    pr2 <- unname(assay(pr2, "counts"))
+    expect_equal(pr1, pr2)
     
 })
 
@@ -223,6 +281,22 @@ test_that("subsetByRareTaxa", {
     all_taxa <- c(rare, prevalent)
     
     expect_true( all(all_taxa %in% rownames(GlobalPatterns)) )
+    
+    # Check that works also when rownames is NULL
+    gp_null <- GlobalPatterns
+    rownames(gp_null) <- NULL
+    
+    pr1 <- subsetByRareTaxa(GlobalPatterns, detection=12, prevalence = 0.33)
+    pr1 <- unname(assay(pr1, "counts"))
+    pr2 <- subsetByRareTaxa(gp_null, detection=12, prevalence = 0.33) 
+    pr2 <- unname(assay(pr2, "counts"))
+    expect_equal(pr1, pr2)
+    
+    pr1 <- subsetByRareTaxa(GlobalPatterns, detection=5, prevalence = 0.33, rank = "Phylum")
+    pr1 <- unname(assay(pr1, "counts"))
+    pr2 <- subsetByRareTaxa(gp_null, detection=5, prevalence = 0.33, rank = "Phylum") 
+    pr2 <- unname(assay(pr2, "counts"))
+    expect_equal(pr1, pr2)
     
 })
 
