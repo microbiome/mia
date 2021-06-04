@@ -131,8 +131,8 @@
 #'                                        as_relative = TRUE)
 #' 
 #' # Stores the subset to the original object as an alternative experiment
-#' altExp(tse, "prevalent_0.55") <- tse_prevalent    
-#' altExp(tse, "prevalent_0.55")                                 
+#' altExp(tse, "prevalent") <- tse_prevalent    
+#' altExp(tse, "prevalent")                                 
 #'
 #' # getRareTaxa returns the inverse
 #' rare <- getRareTaxa(tse,
@@ -150,8 +150,8 @@
 #'                              as_relative = TRUE)
 #'                              
 #' # Stores the subset to the original object as an alternative experiment
-#' altExp(tse, "rare_0.001") <- tse_rare
-#' altExp(tse, "rare_0.001")      
+#' altExp(tse, "rare") <- tse_rare
+#' altExp(tse, "rare")      
 #' 
 #' # Names of both experiments, prevalent and rare, can be found from slot altExpNames
 #' tse
@@ -200,6 +200,11 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
             prev <- x > detection
         }
         prev <- rowSums(prev)
+        # # If prev doesn't include names / if rownames(x) was NULL
+        # if( is.null(names(prev)) ){
+        #     # Adds indices as names
+        #     names(prev) <- factor(1:length(prev))
+        # }
         # Always return prevalence as a relative frequency.
         # This helps to avoid confusion with detection limit
         prev <- prev / ncol(x)
@@ -290,8 +295,17 @@ setGeneric("getPrevalentTaxa", signature = "x",
     } else {
         taxa <- pr > prevalence
     }
-
-    taxa <- names(which(taxa))
+    
+    # Gets indices of most prevalent taxa
+    indices  <- which(taxa)
+    # If vector contains names
+    if( !is.null(names(indices)) ){
+        # Gets the names
+        taxa <- names(indices)
+    } else {
+        # Otherwise indices are returned
+        taxa <- indices
+    }
     taxa
 }
 
@@ -332,12 +346,19 @@ setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
         # Gets the prevalent taxa
         prev_taxa <- getPrevalentTaxa(x, rank = rank, ...)
+        # If agglomeration was done
         if( !is.null(rank) ){
             # Gets names from specified taxonomic level
             taxa <- rowData(x)[[rank]]
-        } else{
-            # Gets rownames if agglomeration is not done
-            taxa <- rownames(x)
+        } else {
+            # If rownames is not NULL
+            if( !is.null(rownames(x)) ){
+                # Gets rownames 
+                taxa <- rownames(x)
+            } else {
+                # Gets indices of taxa
+                taxa <- 1:nrow(tse)
+            }
         }
         unique(taxa[!is.na(taxa) & !(taxa %in% prev_taxa)])
     }

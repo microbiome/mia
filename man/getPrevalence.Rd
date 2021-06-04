@@ -186,8 +186,8 @@ tse_prevalent <- subsetByPrevalentTaxa(tse,
                                        as_relative = TRUE)
 
 # Stores the subset to the original object as an alternative experiment
-altExp(tse, "prevalent_0.55") <- tse_prevalent    
-altExp(tse, "prevalent_0.55")                                 
+altExp(tse, "prevalent") <- tse_prevalent    
+altExp(tse, "prevalent")                                 
 
 # getRareTaxa returns the inverse
 rare <- getRareTaxa(tse,
@@ -205,8 +205,8 @@ tse_rare <- subsetByRareTaxa(tse,
                              as_relative = TRUE)
                              
 # Stores the subset to the original object as an alternative experiment
-altExp(tse, "rare_0.001") <- tse_rare
-altExp(tse, "rare_0.001")      
+altExp(tse, "rare") <- tse_rare
+altExp(tse, "rare")      
 
 # Names of both experiments, prevalent and rare, can be found from slot altExpNames
 tse
