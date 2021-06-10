@@ -52,6 +52,17 @@
 #'   be applied to the taxonomic data? Please note that has only an effect,
 #'   if the data is unique. (default: \code{resolve_loops = TRUE})
 #'
+#' @param taxa a \code{character} vector, which used for subsetting the 
+#'   taxonomic information. If no information is found,\code{NULL} is returned
+#'   for the individual element. (default: \code{NULL})
+#'
+#' @param from,to a scalar \code{character} value, which must be a valid 
+#'   taxonomic rank. (default: \code{NULL})
+#'   
+#' @param use_grepl \code{TRUE} or \code{FALSE}: should pattern matching via
+#'   \code{grepl} be used? Otherwise literal matching is used.
+#'   (default: \code{FALSE})
+#'
 #' @param ... optional arguments not used currently.
 #'
 #' @details
@@ -67,6 +78,10 @@
 #'   \item{\code{taxonomyRanks}:} {a \code{character} vector with all the
 #'     taxonomic ranks found in \code{colnames(rowData(x))}}
 #'   \item{\code{taxonomyRankEmpty}:} {a \code{logical} value}
+#'   \item{\code{mapTaxonomy}:} {a \code{list} per element of taxa. Each 
+#'     element is either a \code{DataFrame}, a \code{character} or \code{NULL}.
+#'     If all \code{character} results have the length of one, a single 
+#'     \code{character} vector is returned.}
 #' }
 #'
 #' @name taxonomy-methods
@@ -86,6 +101,14 @@
 #' table(taxonomyRankEmpty(GlobalPatterns,"Species"))
 #'
 #' getTaxonomyLabels(GlobalPatterns[1:20,])
+#' 
+#' # mapTaxonomy
+#' ## returns the unique taxonomic information
+#' mapTaxonomy(se)
+#' # returns specific unique taxonomic informatio
+#' mapTaxonomy(se, taxa = "Escherichia")
+#' # returns information on a single output
+#' mapTaxonomy(se, taxa = "Escherichia",to="Family")
 #'
 #' # adding a rowTree() based on the available taxonomic information. Please
 #' # note that any tree already stored in rowTree() will be overwritten.
@@ -396,6 +419,129 @@ setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @rdname taxonomy-methods
+setGeneric("mapTaxonomy",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("mapTaxonomy"))
+
+#' @importFrom BiocGenerics %in% grepl
+.get_taxa_row_match <- function(taxa, td, from, use_grepl = FALSE){
+    if(is.na(taxa)){
+        r_f <- is.na(td[[from]])
+    } else {
+        if(use_grepl){
+            r_f <- grepl(taxa, td[[from]])
+        } else {
+            r_f <- td[[from]] %in% taxa
+        }
+    }
+    r_f[is.na(r_f)] <- FALSE
+    r_f
+}
+
+#' @importFrom BiocGenerics %in% grepl
+.get_taxa_any_match <- function(taxa, td, use_grepl = FALSE){
+    if(is.na(taxa)){
+        r_f <- is.na(td)
+    } else {
+        if(use_grepl){
+            r_f <- vapply(td,grepl,logical(nrow(td)),pattern=taxa)
+        } else {
+            r_f <- t(as.matrix(td %in% taxa))
+        }
+    }
+    r_f <- rowSums(r_f, na.rm = TRUE) > 0
+    r_f[is.na(r_f)] <- FALSE
+    r_f
+}
+
+#' @rdname taxonomy-methods
+#' @importFrom BiocGenerics %in%
+#' @export
+setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
+    function(x, taxa = NULL, from = NULL, to = NULL, use_grepl = FALSE){
+        # input check
+        if(!checkTaxonomy(x)){
+            stop("Non compatible taxonomic information found. ",
+                 "checkTaxonomy(x) must be TRUE.",
+                 call. = FALSE)
+        }
+        if(!is.null(taxa)){
+            if(!is.character(taxa)){
+                stop("'taxa' must be a character vector.",
+                     call. = FALSE)
+            }
+        }
+        if(!is.null(from)){
+            if(!.is_a_string(from)){
+                stop("'from' must be a single character value.",
+                     call. = FALSE)
+            }
+            if(!(from %in% taxonomyRanks(x))){
+                stop("'from' must be an element of taxonomyRanks(x).",
+                     call. = FALSE)
+            }
+        } 
+        if(!is.null(to)){
+            if(!.is_a_string(to)){
+                stop("'to' must be a single character value.",
+                     call. = FALSE)
+            }
+            if(!(to %in% taxonomyRanks(x))){
+                stop("'to' must be an element of taxonomyRanks(x).",
+                     call. = FALSE)
+            }
+        }
+        if(!is.null(from) && !is.null(to)){
+            if(from  == to){
+                stop("'from' and 'to' must be different values.", call. = FALSE)    
+            }
+        }
+        if(!.is_a_bool(use_grepl)){
+            stop("'use_grepl' must be TRUE or FALSE.", call. = FALSE)
+        }
+        #
+        td <- rowData(x)[,taxonomyRanks(x)]
+        if(is.null(taxa)){
+            return(unique(td))
+        }
+        #
+        r_fs <- NULL
+        c_f <- rep(TRUE,ncol(td))
+        if(!is.null(from)){
+            r_fs <- lapply(taxa, .get_taxa_row_match, td = td, from = from,
+                           use_grepl = use_grepl)
+            names(r_fs) <- taxa
+        } else {
+            r_fs <- lapply(taxa, .get_taxa_any_match, td = td,
+                           use_grepl = use_grepl)
+            names(r_fs) <- taxa
+        }
+        if(!is.null(to)) {
+            c_f <- colnames(td) == to
+            c_f[is.na(c_f)] <- FALSE
+        }
+        # assemble the result
+        ans <- lapply(r_fs, .get_map_result, td = td, c_f = c_f)
+        names(ans) <- names(r_fs)
+        u_len <- unique(lengths(ans))
+        if(length(u_len) == 1L && u_len == 1L){
+            ans <- unlist(ans)
+        }
+        #
+        ans
+    }
+)
+
+.get_map_result <- function(r_f, td, c_f){
+    ans <- td[r_f,c_f]
+    ans <- unique(ans)
+    if(is(ans,"DataFrame") && unique(dim(ans)) == 0L){
+        return(NULL)
+    }
+    ans
+}
 
 ################################################################################
 # helper functions
