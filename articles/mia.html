@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -72,7 +72,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 class="date">2021-06-04</h4>
+            <h4 class="date">2021-06-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/master/vignettes/mia.Rmd"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -445,20 +445,20 @@
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
-## [1] parallel  stats4    stats     graphics  grDevices utils     datasets 
-## [8] methods   base     
+## [1] stats4    stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
 ## 
 ## other attached packages:
-##  [1] phyloseq_1.37.0                  scater_1.21.0                   
-##  [3] ggplot2_3.3.3                    scuttle_1.3.0                   
-##  [5] mia_1.1.4                        TreeSummarizedExperiment_1.99.11
-##  [7] Biostrings_2.61.0                XVector_0.33.0                  
-##  [9] SingleCellExperiment_1.15.1      SummarizedExperiment_1.23.0     
-## [11] Biobase_2.53.0                   GenomicRanges_1.45.0            
-## [13] GenomeInfoDb_1.29.0              IRanges_2.27.0                  
-## [15] S4Vectors_0.31.0                 BiocGenerics_0.39.0             
-## [17] MatrixGenerics_1.5.0             matrixStats_0.59.0              
-## [19] BiocStyle_2.21.1                
+##  [1] phyloseq_1.37.0                scater_1.21.0                 
+##  [3] ggplot2_3.3.3                  scuttle_1.3.0                 
+##  [5] mia_1.1.5                      TreeSummarizedExperiment_2.1.0
+##  [7] Biostrings_2.61.1              XVector_0.33.0                
+##  [9] SingleCellExperiment_1.15.1    SummarizedExperiment_1.23.0   
+## [11] Biobase_2.53.0                 GenomicRanges_1.45.0          
+## [13] GenomeInfoDb_1.29.0            IRanges_2.27.0                
+## [15] S4Vectors_0.31.0               BiocGenerics_0.39.1           
+## [17] MatrixGenerics_1.5.0           matrixStats_0.59.0            
+## [19] BiocStyle_2.21.2              
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] ggbeeswarm_0.6.0            colorspace_2.0-1           
@@ -473,7 +473,7 @@
 ##  [19] BiocManager_1.30.15         compiler_4.1.0             
 ##  [21] assertthat_0.2.1            Matrix_1.3-3               
 ##  [23] fastmap_1.1.0               cli_2.5.0                  
-##  [25] BiocSingular_1.9.0          prettyunits_1.1.1          
+##  [25] BiocSingular_1.9.1          prettyunits_1.1.1          
 ##  [27] htmltools_0.5.1.1           tools_4.1.0                
 ##  [29] igraph_1.2.6                rsvd_1.0.5                 
 ##  [31] gtable_0.3.0                glue_1.4.2                 
@@ -490,33 +490,33 @@
 ##  [53] zlibbioc_1.39.0             MASS_7.3-54                
 ##  [55] scales_1.1.1                hms_1.1.0                  
 ##  [57] ragg_1.1.2                  biomformat_1.21.0          
-##  [59] rhdf5_2.37.0                yaml_2.2.1                 
-##  [61] memoise_2.0.0               gridExtra_2.3              
-##  [63] sass_0.4.0                  stringi_1.6.2              
-##  [65] RSQLite_2.2.7               desc_1.3.0                 
-##  [67] foreach_1.5.1               ScaledMatrix_1.1.0         
-##  [69] permute_0.9-5               BiocParallel_1.27.0        
-##  [71] rlang_0.4.11                pkgconfig_2.0.3            
-##  [73] systemfonts_1.0.1           bitops_1.0-7               
-##  [75] evaluate_0.14               lattice_0.20-44            
-##  [77] Rhdf5lib_1.15.0             purrr_0.3.4                
-##  [79] bit_4.0.4                   tidyselect_1.1.1           
-##  [81] plyr_1.8.6                  magrittr_2.0.1             
-##  [83] bookdown_0.22               R6_2.5.0                   
-##  [85] generics_0.1.0              DelayedArray_0.19.0        
-##  [87] DBI_1.1.1                   pillar_1.6.1               
-##  [89] withr_2.4.2                 mgcv_1.8-35                
-##  [91] survival_3.2-11             RCurl_1.98-1.3             
-##  [93] tibble_3.1.2                crayon_1.4.1               
-##  [95] utf8_1.2.1                  rmarkdown_2.8              
-##  [97] progress_1.2.2              viridis_0.6.1              
-##  [99] grid_4.1.0                  data.table_1.14.0          
-## [101] blob_1.2.1                  vegan_2.6-0                
-## [103] digest_0.6.27               tidyr_1.1.3                
-## [105] textshaping_0.3.3           munsell_0.5.0              
-## [107] DirichletMultinomial_1.35.0 beeswarm_0.4.0             
-## [109] viridisLite_0.4.0           vipor_0.4.5                
-## [111] bslib_0.2.5.1</code></pre>
+##  [59] parallel_4.1.0              rhdf5_2.37.0               
+##  [61] yaml_2.2.1                  memoise_2.0.0              
+##  [63] gridExtra_2.3               sass_0.4.0                 
+##  [65] stringi_1.6.2               RSQLite_2.2.7              
+##  [67] desc_1.3.0                  foreach_1.5.1              
+##  [69] ScaledMatrix_1.1.0          permute_0.9-5              
+##  [71] BiocParallel_1.27.0         rlang_0.4.11               
+##  [73] pkgconfig_2.0.3             systemfonts_1.0.1          
+##  [75] bitops_1.0-7                evaluate_0.14              
+##  [77] lattice_0.20-44             Rhdf5lib_1.15.1            
+##  [79] purrr_0.3.4                 bit_4.0.4                  
+##  [81] tidyselect_1.1.1            plyr_1.8.6                 
+##  [83] magrittr_2.0.1              bookdown_0.22              
+##  [85] R6_2.5.0                    generics_0.1.0             
+##  [87] DelayedArray_0.19.0         DBI_1.1.1                  
+##  [89] pillar_1.6.1                withr_2.4.2                
+##  [91] mgcv_1.8-35                 survival_3.2-11            
+##  [93] RCurl_1.98-1.3              tibble_3.1.2               
+##  [95] crayon_1.4.1                utf8_1.2.1                 
+##  [97] rmarkdown_2.8               progress_1.2.2             
+##  [99] viridis_0.6.1               grid_4.1.0                 
+## [101] data.table_1.14.0           blob_1.2.1                 
+## [103] vegan_2.6-0                 digest_0.6.27              
+## [105] tidyr_1.1.3                 textshaping_0.3.3          
+## [107] munsell_0.5.0               DirichletMultinomial_1.35.0
+## [109] beeswarm_0.4.0              viridisLite_0.4.0          
+## [111] vipor_0.4.5                 bslib_0.2.5.1</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">

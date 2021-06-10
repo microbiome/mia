@@ -74,7 +74,7 @@ SummarizedExperiment." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -170,6 +170,11 @@ represent taxonomic data alongside the features of a
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>addTaxonomyTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
+<span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>x</span>, taxa <span class='op'>=</span> <span class='cn'>NULL</span>, from <span class='op'>=</span> <span class='cn'>NULL</span>, to <span class='op'>=</span> <span class='cn'>NULL</span>, use_grepl <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+
 <span class='fu'>IdTaxaToDataFrame</span><span class='op'>(</span><span class='va'>from</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -214,9 +219,30 @@ be applied to the taxonomic data? Please note that has only an effect,
 if the data is unique. (default: <code>resolve_loops = TRUE</code>)</p></td>
     </tr>
     <tr>
+      <th>taxa</th>
+      <td><p>a <code>character</code> vector, which used for subsetting the
+taxonomic information. If no information is found,<code>NULL</code> is returned
+for the individual element. (default: <code>NULL</code>)</p></td>
+    </tr>
+    <tr>
       <th>from</th>
-      <td><p>a <code>Taxa</code> object as returned by
-<code><a href='https://rdrr.io/pkg/DECIPHER/man/IdTaxa.html'>IdTaxa</a></code></p></td>
+      <td><ul>
+<li><p>For <code>mapTaxonomy</code>: a scalar <code>character</code> value, which
+must be a valid taxonomic rank. (default: <code>NULL</code>)</p></li>
+<li><p>otherwise a <code>Taxa</code> object as returned by
+<code><a href='https://rdrr.io/pkg/DECIPHER/man/IdTaxa.html'>IdTaxa</a></code></p></li>
+</ul></td>
+    </tr>
+    <tr>
+      <th>to</th>
+      <td><p>a scalar <code>character</code> value, which must be a valid
+taxonomic rank. (default: <code>NULL</code>)</p></td>
+    </tr>
+    <tr>
+      <th>use_grepl</th>
+      <td><p><code>TRUE</code> or <code>FALSE</code>: should pattern matching via
+<code>grepl</code> be used? Otherwise literal matching is used.
+(default: <code>FALSE</code>)</p></td>
     </tr>
     </table>
 
@@ -231,6 +257,10 @@ recognized. In functions this is used case insensitive.</p>
 <li><p><code>taxonomyRanks</code>: a <code>character</code> vector with all the
 taxonomic ranks found in <code><a href='https://rdrr.io/r/base/colnames.html'>colnames(rowData(x))</a></code></p></li>
 <li><p><code>taxonomyRankEmpty</code>: a <code>logical</code> value</p></li>
+<li><p><code>mapTaxonomy</code>: a <code>list</code> per element of taxa. Each
+element is either a <code>DataFrame</code>, a <code>character</code> or <code>NULL</code>.
+If all <code>character</code> results have the length of one, a single
+<code>character</code> vector is returned.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -303,6 +333,49 @@ be accessed using <code>metadata(df)$confidence</code>.</p>
 #&gt; [15] "Family:Cenarchaeaceae"            "Family:Cenarchaeaceae_1"         
 #&gt; [17] "Family:Cenarchaeaceae_2"          "Family:Cenarchaeaceae_3"         
 #&gt; [19] "Family:Cenarchaeaceae_4"          "Family:Cenarchaeaceae_5"         </div><div class='input'>
+<span class='co'># mapTaxonomy</span>
+<span class='co'>## returns the unique taxonomic information</span>
+<span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; DataFrame with 2307 rows and 7 columns
+#&gt;            Kingdom        Phylum          Class                  Order
+#&gt;        &lt;character&gt;   &lt;character&gt;    &lt;character&gt;            &lt;character&gt;
+#&gt; 549322     Archaea Crenarchaeota   Thermoprotei                     NA
+#&gt; 951        Archaea Crenarchaeota   Thermoprotei           Sulfolobales
+#&gt; 244423     Archaea Crenarchaeota          Sd-NA                     NA
+#&gt; 143239     Archaea Crenarchaeota          Sd-NA                  NRP-J
+#&gt; 215972     Archaea Crenarchaeota Thaumarchaeota          Cenarchaeales
+#&gt; ...            ...           ...            ...                    ...
+#&gt; 246195    Bacteria Synergistetes    Synergistia          Synergistales
+#&gt; 484439    Bacteria Synergistetes    Synergistia          Synergistales
+#&gt; 579616    Bacteria Synergistetes    Synergistia          Synergistales
+#&gt; 546622    Bacteria    Firmicutes     Clostridia Thermoanaerobacterales
+#&gt; 278222    Bacteria           SR1             NA                     NA
+#&gt;                        Family             Genus                Species
+#&gt;                   &lt;character&gt;       &lt;character&gt;            &lt;character&gt;
+#&gt; 549322                     NA                NA                     NA
+#&gt; 951             Sulfolobaceae        Sulfolobus Sulfolobusacidocalda..
+#&gt; 244423                     NA                NA                     NA
+#&gt; 143239                     NA                NA                     NA
+#&gt; 215972                SAGMA-X                NA                     NA
+#&gt; ...                       ...               ...                    ...
+#&gt; 246195 Dethiosulfovibrionac..               TG5                     NA
+#&gt; 484439 Dethiosulfovibrionac..       Jonquetella    Jonquetellaanthropi
+#&gt; 579616 Dethiosulfovibrionac..    Pyramidobacter                     NA
+#&gt; 546622   Thermodesulfobiaceae Coprothermobacter                     NA
+#&gt; 278222                     NA                NA                     NA</div><div class='input'><span class='co'># returns specific unique taxonomic informatio</span>
+<span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, taxa <span class='op'>=</span> <span class='st'>"Escherichia"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $Escherichia
+#&gt; DataFrame with 1 row and 7 columns
+#&gt;            Kingdom         Phylum               Class             Order
+#&gt;        &lt;character&gt;    &lt;character&gt;         &lt;character&gt;       &lt;character&gt;
+#&gt; 249227    Bacteria Proteobacteria Gammaproteobacteria Enterobacteriales
+#&gt;                    Family       Genus     Species
+#&gt;               &lt;character&gt; &lt;character&gt; &lt;character&gt;
+#&gt; 249227 Enterobacteriaceae Escherichia          NA
+#&gt; </div><div class='input'><span class='co'># returns information on a single output</span>
+<span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, taxa <span class='op'>=</span> <span class='st'>"Escherichia"</span>,to<span class='op'>=</span><span class='st'>"Family"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;          Escherichia 
+#&gt; "Enterobacteriaceae" </div><div class='input'>
 <span class='co'># adding a rowTree() based on the available taxonomic information. Please</span>
 <span class='co'># note that any tree already stored in rowTree() will be overwritten.</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
