@@ -542,8 +542,7 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
 .get_map_result <- function(r_f, td, c_f){
     ans <- td[r_f,c_f]
     ans <- unique(ans)
-    u_dims <- unique(dim(ans))
-    if(is(ans,"DataFrame") && length(u_dims) == 1L && u_dims == 0L){
+    if(is(ans,"DataFrame") && nrow(ans) == 0L){
         return(NULL)
     }
     ans
