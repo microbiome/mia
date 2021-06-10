@@ -31,9 +31,6 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
 #'
-#' @param from a \code{Taxa} object as returned by
-#'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}
-#'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomicRanks()} function.
 #'
@@ -56,7 +53,15 @@
 #'   taxonomic information. If no information is found,\code{NULL} is returned
 #'   for the individual element. (default: \code{NULL})
 #'
-#' @param from,to a scalar \code{character} value, which must be a valid 
+#' @param from 
+#' \itemize{
+#'   \item{For \code{mapTaxonomy}: }{a scalar \code{character} value, which 
+#'     must be a valid taxonomic rank. (default: \code{NULL})}
+#'   \item{otherwise a \code{Taxa} object as returned by 
+#'     \code{\link[DECIPHER:IdTaxa]{IdTaxa}}}
+#' }
+#'
+#' @param to a scalar \code{character} value, which must be a valid 
 #'   taxonomic rank. (default: \code{NULL})
 #'   
 #' @param use_grepl \code{TRUE} or \code{FALSE}: should pattern matching via
@@ -104,11 +109,11 @@
 #' 
 #' # mapTaxonomy
 #' ## returns the unique taxonomic information
-#' mapTaxonomy(se)
+#' mapTaxonomy(GlobalPatterns)
 #' # returns specific unique taxonomic informatio
-#' mapTaxonomy(se, taxa = "Escherichia")
+#' mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 #' # returns information on a single output
-#' mapTaxonomy(se, taxa = "Escherichia",to="Family")
+#' mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
 #'
 #' # adding a rowTree() based on the available taxonomic information. Please
 #' # note that any tree already stored in rowTree() will be overwritten.

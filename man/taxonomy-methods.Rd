@@ -101,15 +101,19 @@ if the data is unique. (default: \code{resolve_loops = TRUE})}
 taxonomic information. If no information is found,\code{NULL} is returned
 for the individual element. (default: \code{NULL})}
 
-\item{from}{a \code{Taxa} object as returned by
+\item{from}{\itemize{
+\item{For \code{mapTaxonomy}: }{a scalar \code{character} value, which
+must be a valid taxonomic rank. (default: \code{NULL})}
+\item{otherwise a \code{Taxa} object as returned by
 \code{\link[DECIPHER:IdTaxa]{IdTaxa}}}
+}}
+
+\item{to}{a scalar \code{character} value, which must be a valid
+taxonomic rank. (default: \code{NULL})}
 
 \item{use_grepl}{\code{TRUE} or \code{FALSE}: should pattern matching via
 \code{grepl} be used? Otherwise literal matching is used.
 (default: \code{FALSE})}
-
-\item{from, to}{a scalar \code{character} value, which must be a valid
-taxonomic rank. (default: \code{NULL})}
 }
 \value{
 \itemize{
@@ -172,11 +176,11 @@ getTaxonomyLabels(GlobalPatterns[1:20,])
 
 # mapTaxonomy
 ## returns the unique taxonomic information
-mapTaxonomy(se)
+mapTaxonomy(GlobalPatterns)
 # returns specific unique taxonomic informatio
-mapTaxonomy(se, taxa = "Escherichia")
+mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 # returns information on a single output
-mapTaxonomy(se, taxa = "Escherichia",to="Family")
+mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
 
 # adding a rowTree() based on the available taxonomic information. Please
 # note that any tree already stored in rowTree() will be overwritten.
