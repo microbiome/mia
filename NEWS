@@ -6,3 +6,5 @@ Changes in version 1.1.x (2021-06-04)
 + added log_modulo_skewness as a diversity index
 + added functions for summarizing dominant taxa information
 + added wrapper for adding dominant taxa information to colData
++ added specialized subsetting function for subsetting by prevalence (subsetByPrevalentTaxa/subsetByRareTaxa)
++ added mapTaxonomy
