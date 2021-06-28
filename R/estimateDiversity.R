@@ -41,10 +41,10 @@
 #'   a non-empty character value; either 'median' or 'mean'. \code{reference} specifies
 #'   the reference that is used to calculate \code{divergence} index. 
 #'   By default, \code{reference} = "median")}
-#'   \item{FUN}{A \code{function} for distance calculation. For more information, 
-#'   please check \code{calculateDistance}. By default, \code{FUN} is \code{vegan::vegdist}.}
+#'   \item{FUN_dist}{A \code{function} for distance calculation. For more information, 
+#'   please check \code{calculateDistance}. By default, \code{FUN_dist} is \code{vegan::vegdist}.}
 #'   \item{method}{A method that is used to calculate the distance. Method is passed to the
-#'   function that is specified by \code{FUN}. By default, \code{method} is "bray".}
+#'   function that is specified by \code{FUN_dist}. By default, \code{method} is "bray".}
 #' }
 #'
 #' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
@@ -167,6 +167,16 @@
 #' tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
 #' # 'quantile' and 'num_of_classes' can be used when 'log_modulo_skewness' is calculated
 #' tse <- estimateDiversity(tse, index = "log_modulo_skewness", quantile = 0.75, num_of_classes = 100)
+#' 
+#' # The method that are used to calculate distance in divergence index and reference can be specified. 
+#' # Here, euclidean distance and dist function from stats package are used. 
+#' # Reference is the first sample.
+#' tse <- estimateDiversity(tse, index = "divergence", name = "divergence_first_sample", 
+#'                          reference = assays(tse)$counts[,1], FUN_dist = stats::dist, method = "euclidean")
+#' 
+#' # Reference can also be median or mean of all samples. By default, divergence index is calculated
+#' by using median. Here, mean is used.
+#' tse <- estimateDiversity(tse, index = "divergence_mean", name = "divergence_average", reference = "mean")
 #'
 #' # It is recommended to specify also the final names used in the output.
 #' tse <- estimateDiversity(tse,
@@ -496,7 +506,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     return(result)
 }
 
-.calc_divergence <- function(mat, reference = "median", FUN = vegan::vegdist, method = "bray", ...){
+.calc_divergence <- function(mat, reference = "median", FUN_dist = vegan::vegdist, method = "bray", ...){
     # If "reference" is not right: 
     # it is null, its length does not equal to number of samples and it is not numeric,
     # reference is not "median" or "mean"
@@ -516,7 +526,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # Transposes the table so that distances are calculated for the samples
     mat <- t(mat)
     # Calculates the distance
-    dist <- calculateDistance(mat, FUN = FUN, method = method)
+    dist <- calculateDistance(mat, FUN = FUN_dist, method = method)
     # Takes only reference vs samples distances
     divergence <- as.matrix(dist)[-1,1]
     return(divergence)
