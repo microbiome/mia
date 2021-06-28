@@ -3,7 +3,7 @@
 #' Several functions for calculation of diversity indices available via
 #' wrapper functions. Some of them are implemented via the \code{vegan} package.
 #'
-#' The available indices include the \sQuote{Coverage}, 
+#' The available indices include the \sQuote{Coverage}, \sQuote{Divergence},
 #' \sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha}, \sQuote{Gini-Simpson}, 
 #' \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon} 
 #' diversity indices. See details for more information and references.
@@ -37,6 +37,14 @@
 #'   \item{num_of_classes}{ The number of arithmetic abundance classes from zero to 
 #'   the quantile cutoff indicated by \code{quantile}. 
 #'   By default, \code{num_of_classes} is 50.}
+#'   \item{reference}{A numeric vector that has length equal to number of features, or
+#'   a non-empty character value; either 'median' or 'mean'. \code{reference} specifies
+#'   the reference that is used to calculate \code{divergence} index. 
+#'   By default, \code{reference} = "median")}
+#'   \item{FUN}{A \code{function} for distance calculation. For more information, 
+#'   please check \code{calculateDistance}. By default, \code{FUN} is \code{vegan::vegdist}.}
+#'   \item{method}{A method that is used to calculate the distance. Method is passed to the
+#'   function that is specified by \code{FUN}. By default, \code{method} is "bray".}
 #' }
 #'
 #' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
@@ -52,6 +60,9 @@
 #' 
 #' \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\% by default).
 #' Tune this with the threshold argument.}
+#' 
+#' \item{'divergence' }{Quantify microbiota divergence (heterogeneity) within a
+#' given sample set with respect to a reference.}
 #' 
 #' \item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
 #' taxonomic distance is between taxa that are present in the sample. Larger value
@@ -124,6 +135,7 @@
 #'   \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
 #'   \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 #'   \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
+#'   \item{\code{\link[mia:estimateDistance]{estimateDistance}}}
 #'   \item{\code{\link[vegan:diversity]{diversity}}}
 #'   \item{\code{\link[vegan:specpool]{estimateR}}}
 #' }
@@ -193,8 +205,8 @@ NULL
 #' @export
 setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
-                    index = c("coverage", "fisher", "gini_simpson", "inverse_simpson", 
-                              "log_modulo_skewness", "shannon"),
+                    index = c("coverage", "divergence", "fisher", "gini_simpson", 
+                              "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ...)
                standardGeneric("estimateDiversity"))
 
@@ -202,13 +214,13 @@ setGeneric("estimateDiversity",signature = c("x"),
 #' @export
 setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("coverage", "fisher", "gini_simpson", "inverse_simpson", 
-                       "log_modulo_skewness", "shannon"),
+             index = c("coverage", "divergence", "fisher", "gini_simpson", 
+                       "inverse_simpson", "log_modulo_skewness", "shannon"),
              name = index, ..., BPPARAM = SerialParam()){
 
         # input check
         index<- match.arg(index, several.ok = TRUE)
-
+        
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                  "same length than 'index'.",
@@ -231,7 +243,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
 #' @export
 setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("coverage", "faith", "fisher", "gini_simpson", 
+             index = c("coverage", "divergence", "faith", "fisher", "gini_simpson", 
                        "inverse_simpson", "log_modulo_skewness", "shannon"),
              name = index, ..., BPPARAM = SerialParam()){
         
@@ -484,6 +496,37 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     return(result)
 }
 
+.calc_divergence <- function(mat, reference = "median", FUN = vegan::vegdist, method = "bray", ...){
+    # If "reference" is not right: 
+    # it is null, its length does not equal to number of samples and it is not numeric,
+    # reference is not "median" or "mean"
+    if( is.null(reference) || 
+        !((length(reference) == nrow(mat) && is.numeric(reference)) || 
+         (reference == "median" || reference == "mean")) ){
+        stop("'reference' must be a numeric vector that has lenght equal to
+                 number of features, or 'reference' must be either 'median' or 'mean'.",
+             call. = FALSE)
+    }
+    if( reference == "median" || reference == "mean" ){
+        reference <- .calc_median_or_mean(mat, reference)
+    }
+    
+    # Adds the reference to the table to the first column
+    mat <- cbind( matrix(reference, ncol=1), mat)
+    # Transposes the table so that distances are calculated for the samples
+    mat <- t(mat)
+    # Calculates the distance
+    dist <- calculateDistance(mat, FUN = FUN, method = method)
+    # Takes only reference vs samples distances
+    divergence <- as.matrix(dist)[-1,1]
+    return(divergence)
+}
+
+# Calculates median or mean
+.calc_median_or_mean <- function(mat, method){
+    apply(mat, 1, method)
+}
+
 #' @importFrom SummarizedExperiment assay assays
 .get_diversity_values <- function(index, x, mat, tree, ...){
     FUN <- switch(index,
@@ -493,7 +536,8 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                         coverage = .calc_coverage,
                         fisher = .calc_fisher,
                         faith = .calc_faith,
-                        log_modulo_skewness = .calc_log_modulo_skewness
+                        log_modulo_skewness = .calc_log_modulo_skewness,
+                        divergence = .calc_divergence
                         )
 
     FUN(x = x, mat = mat, tree = tree, ...)
