@@ -517,8 +517,9 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                  number of features, or 'reference' must be either 'median' or 'mean'.",
              call. = FALSE)
     }
+    # Calculates median or mean if that is specified
     if( reference == "median" || reference == "mean" ){
-        reference <- .calc_median_or_mean(mat, reference)
+        reference <- apply(mat, 1, reference)
     }
     
     # Adds the reference to the table to the first column
@@ -530,11 +531,6 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # Takes only reference vs samples distances
     divergence <- as.matrix(dist)[-1,1]
     return(divergence)
-}
-
-# Calculates median or mean
-.calc_median_or_mean <- function(mat, method){
-    apply(mat, 1, method)
 }
 
 #' @importFrom SummarizedExperiment assay assays
