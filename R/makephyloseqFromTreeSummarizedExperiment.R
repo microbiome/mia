@@ -109,6 +109,15 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
 setMethod("makePhyloseqFromTreeSummarizedExperiment",
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, ...){
+        
+        # If rowTree exists, checks if the rowTree match with rownames:
+        # every taxa is found from tip labels and just once
+        if( !is.null(rowTree(x)) && any(!(rownames(x) %in% rowTree(x)$tip)) && 
+                     length(rowTree(x)$tip) == length(rownames(x)) ){
+            stop("rowTree does not match with rownames. 'x' can not be converted
+                 to a phyloseq object. Check rowTree(x)$tip and rownames(x).",
+                 call. = FALSE)
+        }
 
         # Gets otu_table object from the function above this, if tse contains
         # only abundance table.

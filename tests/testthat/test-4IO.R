@@ -293,6 +293,14 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     # Test that referenceSeq is in refseq. Expect error, because there should not be
     # reference sequences.
     expect_error(phyloseq::refseq(phy))
+    
+    # Test with agglomeration that an error occurs when rowTree is incorrect
+    test1 <- agglomerateByRank(tse, rank = "Phylum")
+    test2 <- expect_warning(agglomerateByRank(tse, rank = "Phylum", agglomerateTree = TRUE))
+    test2_phy <- makePhyloseqFromTreeSummarizedExperiment(test2)
+    
+    expect_error(makePhyloseqFromTreeSummarizedExperiment(test1))
+    expect_equal(phyloseq::phy_tree(test2_phy), rowTree(test2))
 
     # TSE object
     data(esophagus)
@@ -306,7 +314,5 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
 
     # Test that rowTree is in phy_tree
     expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
-
-
 
 })
