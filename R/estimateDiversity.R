@@ -135,7 +135,7 @@
 #'   \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
 #'   \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 #'   \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
-#'   \item{\code{\link[mia:estimateDistance]{estimateDistance}}}
+#'   \item{\code{\link[mia:calculateDistance]{calculateDistance}}}
 #'   \item{\code{\link[vegan:diversity]{diversity}}}
 #'   \item{\code{\link[vegan:specpool]{estimateR}}}
 #' }
@@ -172,11 +172,13 @@
 #' # Here, euclidean distance and dist function from stats package are used. 
 #' # Reference is the first sample.
 #' tse <- estimateDiversity(tse, index = "divergence", name = "divergence_first_sample", 
-#'                          reference = assays(tse)$counts[,1], FUN_dist = stats::dist, method = "euclidean")
+#'                          reference = assays(tse)$counts[,1], 
+#'                          FUN_dist = stats::dist, method = "euclidean")
 #' 
-#' # Reference can also be median or mean of all samples. By default, divergence index is calculated
-#' by using median. Here, mean is used.
-#' tse <- estimateDiversity(tse, index = "divergence_mean", name = "divergence_average", reference = "mean")
+#' # Reference can also be median or mean of all samples. 
+#' # By default, divergence index is calculated by using median. Here, mean is used.
+#' tse <- estimateDiversity(tse, index = "divergence", name = "divergence_average", 
+#' reference = "mean")
 #'
 #' # It is recommended to specify also the final names used in the output.
 #' tse <- estimateDiversity(tse,
@@ -511,14 +513,15 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # it is null, its length does not equal to number of samples and it is not numeric,
     # reference is not "median" or "mean"
     if( is.null(reference) || 
-        !((length(reference) == nrow(mat) && is.numeric(reference)) || 
-         (reference == "median" || reference == "mean")) ){
+        !((is.numeric(reference) && length(reference) == nrow(mat)) || 
+         (length(reference) == 1 && 
+          ("median" %in% reference || "mean" %in% reference))) ){
         stop("'reference' must be a numeric vector that has lenght equal to
                  number of features, or 'reference' must be either 'median' or 'mean'.",
              call. = FALSE)
     }
     # Calculates median or mean if that is specified
-    if( reference == "median" || reference == "mean" ){
+    if( "median" %in% reference || "mean" %in% reference ){
         reference <- apply(mat, 1, reference)
     }
     

@@ -98,22 +98,25 @@ test_that("diversity estimates", {
                                    FUN_dist = stats::dist,
                                    method = "euclidean"))
     
-    expect_equal(unname(round(colData(estimateDiversity(tse, index = "divergence",
-                                   reference = "mean",
-                                   FUN_dist = stats::dist,
-                                   method = "euclidean"))$divergence, 6)),
+    expect_equal(unname(round(colData(
+        estimateDiversity(tse, index = "divergence",
+                          reference = "mean",
+                          FUN_dist = stats::dist,
+                          method = "euclidean"))$divergence, 6)),
                  round(c(35.35534, 42.16634, 59.44746)),6)
     
-    expect_equal(unname(round(colData(estimateDiversity(tse, index = "divergence",
-                                                        reference = assay(tse, "counts")[,3],
-                                                        FUN_dist = stats::dist,
-                                                        method = "manhattan"))$divergence, 6)),
+    expect_equal(unname(round(colData(
+        estimateDiversity(tse, index = "divergence",
+                          reference = assay(tse, "counts")[,3],
+                          FUN_dist = stats::dist,
+                          method = "manhattan"))$divergence, 6)),
                  round(c(210, 280, 0)),6)
     
-    expect_equal(unname(round(colData(estimateDiversity(tse, index = "divergence",
-                                                        reference = assay(tse, "counts")[,1],
-                                                        FUN_dist = vegan::vegdist,
-                                                        method = "chao"))$divergence, 6)),
+    expect_equal(unname(round(colData(
+        estimateDiversity(tse, index = "divergence",
+                          reference = assay(tse, "counts")[,1],
+                          FUN_dist = vegan::vegdist,
+                          method = "chao"))$divergence, 6)),
                  round(c(0.00000000, 0.10115766, 0.08239422)),6)
 
     ########## Check that estimateFaith works correctly ##########
