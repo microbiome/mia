@@ -294,13 +294,14 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     # reference sequences.
     expect_error(phyloseq::refseq(phy))
     
-    # Test with agglomeration that an error occurs when rowTree is incorrect
+    # Test with agglomeration that that pruning is done internally
     test1 <- agglomerateByRank(tse, rank = "Phylum")
     test2 <- expect_warning(agglomerateByRank(tse, rank = "Phylum", agglomerateTree = TRUE))
+    test1_phy <- expect_warning(makePhyloseqFromTreeSummarizedExperiment(test1))
     test2_phy <- makePhyloseqFromTreeSummarizedExperiment(test2)
     
-    expect_error(makePhyloseqFromTreeSummarizedExperiment(test1))
-    expect_equal(phyloseq::phy_tree(test2_phy), rowTree(test2))
+    expect_equal(phyloseq::phy_tree(test1_phy), rowTree(test2))
+    expect_equal(phyloseq::phy_tree(test1_phy), phyloseq::phy_tree(test2_phy))
 
     # TSE object
     data(esophagus)

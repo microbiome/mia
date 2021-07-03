@@ -111,12 +111,18 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
     function(x, ...){
         
         # If rowTree exists, checks if the rowTree match with rownames:
-        # every taxa is found from tip labels and just once
-        if( !is.null(rowTree(x)) && any(!(rownames(x) %in% rowTree(x)$tip)) && 
-                     length(rowTree(x)$tip) == length(rownames(x)) ){
-            stop("rowTree does not match with rownames. 'x' can not be converted
-                 to a phyloseq object. Check rowTree(x)$tip and rownames(x).",
-                 call. = FALSE)
+        # tips labels are found from rownames
+        if( !is.null(rowTree(x)) && any(!( rowTree(x)$tip) %in% rownames(x)) ){
+            # Tries to prune the tree. If that does not work, gives an error. 
+            x <- tryCatch(
+                {addTaxonomyTree(x)},
+                error = function(cond){
+                    stop("rowTree does not match with rownames. 'x' can not be converted
+                         to a phyloseq object. Check rowTree(x)$tip and rownames(x).",
+                         call. = FALSE)
+                }
+            )
+            warning("rowTree is agglomerated to match rownames.")
         }
 
         # Gets otu_table object from the function above this, if tse contains
@@ -134,7 +140,6 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
             # Adds otu_table to the list
             args[["otu_table"]] <- obj
         }
-
 
         # If rowTree has information, stores it to phy_tree and converts is to
         # phyloseq's phy_tree.
@@ -165,7 +170,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
                 args[["refseq"]] <- refseq
             }
         }
-
+        
         # If 'obj' is not a phyloseq object, creates one.
         if(!is(obj,"phyloseq")){
             # Creates a phyloseq object
