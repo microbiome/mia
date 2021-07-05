@@ -508,7 +508,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     return(result)
 }
 
-.calc_divergence <- function(mat, reference = "median", FUN_dist = vegan::vegdist, method = "bray", ...){
+.calc_divergence_ <- function(mat, reference = "median", FUN_dist = vegan::vegdist, method = "bray", ...){
     # If "reference" is not right: 
     # it is null, its length does not equal to number of samples and it is not numeric,
     # reference is not "median" or "mean"
@@ -546,7 +546,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                         fisher = .calc_fisher,
                         faith = .calc_faith,
                         log_modulo_skewness = .calc_log_modulo_skewness,
-                        divergence = .calc_divergence
+                        divergence = .calc_divergence_
                         )
 
     FUN(x = x, mat = mat, tree = tree, ...)
