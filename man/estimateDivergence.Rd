@@ -46,7 +46,7 @@ please check \code{calculateDistance}. By default, \code{FUN} is \code{vegan::ve
 \item{method}{a method that is used to calculate the distance. Method is passed to the
 function that is specified by \code{FUN}. By default, \code{method} is \code{"bray"}.}
 
-\item{...}{optional arguments:}
+\item{...}{optional arguments}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -75,7 +75,7 @@ tse <- GlobalPatterns
 # is "divergence" by default, but it can be specified. 
 tse <- estimateDivergence(tse)
 
-# The method that are used to calculate distance in divergence index and 
+# The method that are used to calculate distance in divergence and 
 # reference can be specified. Here, euclidean distance and dist function from 
 # stats package are used. Reference is the first sample.
 tse <- estimateDivergence(tse, name = "divergence_first_sample", 
@@ -83,7 +83,7 @@ tse <- estimateDivergence(tse, name = "divergence_first_sample",
                           FUN = stats::dist, method = "euclidean")
 
 # Reference can also be median or mean of all samples. 
-# By default, divergence index is calculated by using median. Here, mean is used.
+# By default, divergence is calculated by using median. Here, mean is used.
 tse <- estimateDivergence(tse, name = "divergence_average", reference = "mean")
 
 # All three divergence results are stored in colData.

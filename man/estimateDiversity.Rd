@@ -12,7 +12,7 @@
 estimateDiversity(
   x,
   abund_values = "counts",
-  index = c("coverage", "divergence", "fisher", "gini_simpson", "inverse_simpson",
+  index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
   ...
@@ -21,7 +21,7 @@ estimateDiversity(
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("coverage", "divergence", "fisher", "gini_simpson", "inverse_simpson",
+  index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
   ...,
@@ -31,8 +31,8 @@ estimateDiversity(
 \S4method{estimateDiversity}{TreeSummarizedExperiment}(
   x,
   abund_values = "counts",
-  index = c("coverage", "divergence", "faith", "fisher", "gini_simpson",
-    "inverse_simpson", "log_modulo_skewness", "shannon"),
+  index = c("coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
+    "log_modulo_skewness", "shannon"),
   name = index,
   ...,
   BPPARAM = SerialParam()
@@ -84,14 +84,6 @@ they are classified in their own group. By default, \code{quantile} is 0.5.}
 \item{num_of_classes}{ The number of arithmetic abundance classes from zero to
 the quantile cutoff indicated by \code{quantile}.
 By default, \code{num_of_classes} is 50.}
-\item{reference}{A numeric vector that has length equal to number of features, or
-a non-empty character value; either 'median' or 'mean'. \code{reference} specifies
-the reference that is used to calculate \code{divergence} index.
-By default, \code{reference} = "median")}
-\item{FUN_dist}{A \code{function} for distance calculation. For more information,
-please check \code{calculateDistance}. By default, \code{FUN_dist} is \code{vegan::vegdist}.}
-\item{method}{A method that is used to calculate the distance. Method is passed to the
-function that is specified by \code{FUN_dist}. By default, \code{method} is "bray".}
 }}
 
 \item{BPPARAM}{A
@@ -110,7 +102,7 @@ Several functions for calculation of diversity indices available via
 wrapper functions. Some of them are implemented via the \code{vegan} package.
 }
 \details{
-The available indices include the \sQuote{Coverage}, \sQuote{Divergence},
+The available indices include the \sQuote{Coverage},
 \sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha}, \sQuote{Gini-Simpson},
 \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon}
 diversity indices. See details for more information and references.
@@ -124,9 +116,6 @@ By default, this function returns all indices.
 
 \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
 Tune this with the threshold argument.}
-
-\item{'divergence' }{Quantify microbiota divergence (heterogeneity) within a
-given sample set with respect to a reference.}
 
 \item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
 taxonomic distance is between taxa that are present in the sample. Larger value
@@ -186,18 +175,6 @@ colData(tse)[, index] <- NULL
 tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
 # 'quantile' and 'num_of_classes' can be used when 'log_modulo_skewness' is calculated
 tse <- estimateDiversity(tse, index = "log_modulo_skewness", quantile = 0.75, num_of_classes = 100)
-
-# The method that are used to calculate distance in divergence index and reference can be specified. 
-# Here, euclidean distance and dist function from stats package are used. 
-# Reference is the first sample.
-tse <- estimateDiversity(tse, index = "divergence", name = "divergence_first_sample", 
-                         reference = assays(tse)$counts[,1], 
-                         FUN_dist = stats::dist, method = "euclidean")
-
-# Reference can also be median or mean of all samples. 
-# By default, divergence index is calculated by using median. Here, mean is used.
-tse <- estimateDiversity(tse, index = "divergence", name = "divergence_average", 
-reference = "mean")
 
 # It is recommended to specify also the final names used in the output.
 tse <- estimateDiversity(tse,
@@ -268,7 +245,6 @@ A Consumer's Guide to Diversity Indices.
 \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
 \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
-\item{\code{\link[mia:calculateDistance]{calculateDistance}}}
 \item{\code{\link[vegan:diversity]{diversity}}}
 \item{\code{\link[vegan:specpool]{estimateR}}}
 }

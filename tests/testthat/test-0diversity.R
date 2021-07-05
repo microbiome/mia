@@ -16,7 +16,7 @@ test_that("diversity estimates", {
     # colData.
     # Check that the order of indices is right / the same as the order
     # in the input vector.
-    expect_named(colData(tse_idx), c("coverage", "divergence", "fisher", "gini_simpson",
+    expect_named(colData(tse_idx), c("coverage", "fisher", "gini_simpson",
                                      "inverse_simpson", "log_modulo_skewness",
                                      "shannon", "faith"))
 
@@ -40,7 +40,6 @@ test_that("diversity estimates", {
     expect_equal(unname(round(cd$coverage, 0)), c(2,3,1))
     expect_equal(unname(round(cd$fisher, 4)), c(8.8037, 10.0989, 13.2783))
     expect_equal(unname(round(cd$log_modulo_skewness, 6)), c(2.013610, 1.827198, 2.013695))
-    expect_equal(unname(round(cd$divergence, 6)), round(c(0.1576087, 0.3047619, 0.3958333)),6)
     
     # Tests that 'quantile' and 'num_of_classes' are working
     expect_equal(unname(round(colData(estimateDiversity(tse,index="log_modulo_skewness",
@@ -80,44 +79,6 @@ test_that("diversity estimates", {
 
         expect_equal(cd$faith[i], faith)
     }
-    
-    # Check that divergence works correctly
-    # Reference values from microbiome pkg
-    expect_error(estimateDiversity(tse, index = "divergence",
-                                   reference = rep(0, nrow(tse)),
-                                   FUN_dist = "test",
-                                   method = "euclidean"))
-    
-    expect_error(estimateDiversity(tse, index = "divergence",
-                                   reference = rep(0, nrow(tse)),
-                                   FUN_dist = stats::dist,
-                                   method = "test"))
-    
-    expect_error(estimateDiversity(tse, index = "divergence",
-                                   reference = "test",
-                                   FUN_dist = stats::dist,
-                                   method = "euclidean"))
-    
-    expect_equal(unname(round(colData(
-        estimateDiversity(tse, index = "divergence",
-                          reference = "mean",
-                          FUN_dist = stats::dist,
-                          method = "euclidean"))$divergence, 6)),
-                 round(c(35.35534, 42.16634, 59.44746)),6)
-    
-    expect_equal(unname(round(colData(
-        estimateDiversity(tse, index = "divergence",
-                          reference = assay(tse, "counts")[,3],
-                          FUN_dist = stats::dist,
-                          method = "manhattan"))$divergence, 6)),
-                 round(c(210, 280, 0)),6)
-    
-    expect_equal(unname(round(colData(
-        estimateDiversity(tse, index = "divergence",
-                          reference = assay(tse, "counts")[,1],
-                          FUN_dist = vegan::vegdist,
-                          method = "chao"))$divergence, 6)),
-                 round(c(0.00000000, 0.10115766, 0.08239422)),6)
 
     ########## Check that estimateFaith works correctly ##########
     ########## with different SE object types ##########
