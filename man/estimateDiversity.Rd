@@ -249,3 +249,6 @@ A Consumer's Guide to Diversity Indices.
 \item{\code{\link[vegan:specpool]{estimateR}}}
 }
 }
+\author{
+Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
+}
