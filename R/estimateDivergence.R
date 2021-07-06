@@ -127,7 +127,6 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
                                        FUN = FUN,
                                        method = method, ...)
         .add_values_to_colData(x, divergence, name)
-        
     }
 )
 
