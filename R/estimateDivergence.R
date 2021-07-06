@@ -10,16 +10,18 @@
 #' @param name a name for the column of the colData the results should be
 #'   stored in. By defaut, \code{name} is \code{"divergence"}.
 #'   
-#' @param reference a numeric vector that has length equal to number of features, or
-#'   a non-empty character value; either 'median' or 'mean'. \code{reference} specifies
-#'   the reference that is used to calculate \code{divergence}. 
-#'   By default, \code{reference} is  \code{"median"}.
+#' @param reference a numeric vector that has length equal to number of
+#'   features, or a non-empty character value; either 'median' or 'mean'.
+#'   \code{reference} specifies the reference that is used to calculate
+#'   \code{divergence}. by default, \code{reference} is  \code{"median"}.
 #'   
-#' @param FUN a \code{function} for distance calculation. For more information, 
-#'   please check \code{calculateDistance}. By default, \code{FUN} is \code{vegan::vegdist}.
+#' @param FUN a \code{function} for distance calculation. For more information,
+#'   please check \code{calculateDistance}. By default, \code{FUN} is
+#'   \code{vegan::vegdist}.
 #'   
-#' @param method a method that is used to calculate the distance. Method is passed to the
-#'   function that is specified by \code{FUN}. By default, \code{method} is \code{"bray"}.
+#' @param method a method that is used to calculate the distance. Method is
+#'   passed to the function that is specified by \code{FUN}. By default,
+#'   \code{method} is \code{"bray"}.
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -92,47 +94,50 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
              reference = "median", FUN = vegan::vegdist, method = "bray", 
              ..., BPPARAM = SerialParam()){
         
-      ################### Input check ###############
-      # Check abund_values
-      .check_assay_present(abund_values, x)
-      # Check name
-      if(!.is_non_empty_character(name) || length(name) != 1){
-        stop("'name' must be a non-empty character value.",
-             call. = FALSE)
-      }
-      # Check regetence
-      # If "reference" is not right: 
-      # it is null, its length does not equal to number of samples and it is not numeric,
-      # reference is not "median" or "mean"
-      if( is.null(reference) || 
-          !((is.numeric(reference) && length(reference) == nrow(assay(x, abund_values))) || 
-            (length(reference) == 1 && 
-             ("median" %in% reference || "mean" %in% reference))) ){
-        stop("'reference' must be a numeric vector that has lenght equal to
-                   number of features, or 'reference' must be either 'median' or 'mean'.",
-             call. = FALSE)
-      }
-      ################# Input check end #############
-      
-      divergence <- .calc_divergence(mat = assay(x, abund_values),
-                                     reference = reference, 
-                                     FUN = FUN,
-                                     method = method, ...)
-      
-      .add_values_to_colData(x, divergence, name)
-      
-      }
+        ################### Input check ###############
+        # Check abund_values
+        .check_assay_present(abund_values, x)
+        # Check name
+        if(!.is_non_empty_character(name) || length(name) != 1L){
+            stop("'name' must be a non-empty character value.",
+                 call. = FALSE)
+        }
+        # Check regetence
+        # If "reference" is not right: 
+        # it is null, its length does not equal to number of samples and it is not numeric,
+        # reference is not "median" or "mean"
+        reference_stop_msg <- 
+            paste0("'reference' must be a numeric vector that has lenght equal",
+                   " to number of features, or 'reference' must be either",
+                   " 'median' or 'mean'.")
+        if( is.null(reference) ){
+            stop(reference_stop_msg, call. = FALSE)
+        } else {
+            if(is.numeric(reference) && length(reference) != nrow(x)){
+                stop(reference_stop_msg, call. = FALSE)
+            }
+            if(is.character(reference) && 
+               (length(reference) != 1L || !(reference %in% c("median","mean")))){
+                stop(reference_stop_msg, call. = FALSE)
+            }
+        }
+        ################# Input check end #############
+        divergence <- .calc_divergence(mat = assay(x, abund_values),
+                                       reference = reference, 
+                                       FUN = FUN,
+                                       method = method, ...)
+        .add_values_to_colData(x, divergence, name)
+        
+    }
 )
 
 ############################## HELP FUNCTIONS ##############################
 
 .calc_divergence <- function(mat, reference, FUN, method, ...){
-    
     # Calculates median or mean if that is specified
     if( "median" %in% reference || "mean" %in% reference ){
       reference <- apply(mat, 1, reference)
     }
-    
     # Adds the reference to the table to the first column
     mat <- cbind( matrix(reference, ncol=1), mat)
     # Transposes the table so that distances are calculated for the samples
