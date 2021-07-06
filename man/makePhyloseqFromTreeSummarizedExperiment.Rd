@@ -43,7 +43,7 @@ tse <- GlobalPatterns
 phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
 phy
 
-# By default the chosen table is counts, but if there is other tables,
+# By default the chosen table is counts, but if there are other tables,
 # they can be chosen with abund_values.
 
 # Counts relative abundances table

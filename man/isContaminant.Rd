@@ -61,7 +61,7 @@ column with logical values from the \code{colData} to define control and
 non-control samples. (default: \code{control = NULL})}
 
 \item{batch}{\code{NULL} or a single \code{character} value. Defining a
-column with values interpratable as a factor from the \code{colData} to use
+column with values interpretable as a factor from the \code{colData} to use
 as batch information. (default: \code{batch = NULL})}
 
 \item{threshold}{numeric scalar. See

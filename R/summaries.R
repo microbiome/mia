@@ -60,7 +60,7 @@
 #' # Get an overview of sample and taxa counts
 #' summary(GlobalPatterns)
 #'
-#' # Get unique taxa at a particulat taxonomic rank
+#' # Get unique taxa at a particular taxonomic rank
 #' getUniqueTaxa(GlobalPatterns, "Phylum")
 #'
 NULL
@@ -140,7 +140,7 @@ setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
 #' @rdname summaries
 #'
 #' @param group With group, it is possible to group the observations in an
-#'   overview. Must be a one of the column names of \code{colData}.
+#'   overview. Must be one of the column names of \code{colData}.
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
 #'   \code{rank} is specified for \code{countDominantTaxa}.

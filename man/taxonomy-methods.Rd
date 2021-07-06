@@ -23,7 +23,7 @@
 \title{Functions for accessing taxonomic data stored in \code{rowData}.}
 \format{
 a \code{character} vector of length 8 containing the taxonomy ranks
-recognized. In functions this is used case insensitive.
+recognized. In functions this is used as case insensitive.
 }
 \usage{
 TAXONOMY_RANKS
@@ -93,11 +93,11 @@ suffix? For example: "Phylum:Crenarchaeota" (default:
 \item{make_unique}{\code{TRUE} or \code{FALSE}: Should the labels be made
 unique, if there are any duplicates? (default: \code{make_unique = TRUE})}
 
-\item{resolve_loops}{\code{TRUE} or \code{FALSE}: Should \code{resolveLooops}
+\item{resolve_loops}{\code{TRUE} or \code{FALSE}: Should \code{resolveLoops}
 be applied to the taxonomic data? Please note that has only an effect,
 if the data is unique. (default: \code{resolve_loops = TRUE})}
 
-\item{taxa}{a \code{character} vector, which used for subsetting the
+\item{taxa}{a \code{character} vector, which is used for subsetting the
 taxonomic information. If no information is found,\code{NULL} is returned
 for the individual element. (default: \code{NULL})}
 
@@ -177,7 +177,7 @@ getTaxonomyLabels(GlobalPatterns[1:20,])
 # mapTaxonomy
 ## returns the unique taxonomic information
 mapTaxonomy(GlobalPatterns)
-# returns specific unique taxonomic informatio
+# returns specific unique taxonomic information
 mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 # returns information on a single output
 mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")

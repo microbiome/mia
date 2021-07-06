@@ -1,7 +1,7 @@
 #' Calculate sample distances with \code{vegan}
 #'
 #' \code{calculateDistance} calculates a distance matrix between samples. The
-#' type of distance calculate can be modifier by setting \code{FUN}, which
+#' type of distance calculated can be modified by setting \code{FUN}, which
 #' expects a function with a matrix input as its first argument.
 #'
 #' @param x a
@@ -9,8 +9,8 @@
 #'   object containing a tree.
 #'
 #' @param FUN a \code{function} for distance calculation. The function must
-#'   expect the input matrix as its first argument. Samples have to be rows and
-#'   feature columns.
+#'   expect the input matrix as its first argument. With rows as samples 
+#'   and columns as features.
 #'
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.

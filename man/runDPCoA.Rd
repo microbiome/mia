@@ -32,7 +32,7 @@ For \code{runDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
 expression values as well as a \code{rowTree} to calculate \code{y} using
 \code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.}
 
-\item{y}{a \code{dist} or a symmetric \code{matrix} comaptible with
+\item{y}{a \code{dist} or a symmetric \code{matrix} compatible with
 \code{ade4:dpcoa}}
 
 \item{...}{Currently not used.}
@@ -42,7 +42,7 @@ to obtain.}
 
 \item{ntop}{Numeric scalar specifying the number of features with the highest
 variances to use for dimensionality reduction. Alternatively \code{NULL},
-if all feature should be used. (default: \code{ntop = NULL})}
+if all features should be used. (default: \code{ntop = NULL})}
 
 \item{subset_row}{Vector specifying the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
@@ -80,7 +80,7 @@ Double Principal Correspondance analysis is made available via the
 \code{reducedDims} and are available for all the expected functions.
 }
 \details{
-In addition to the recuced dimension on the features, the reduced dimension
+In addition to the reduced dimension on the features, the reduced dimension
 for samples are returned as well as \code{sample_red} attribute.
 \code{eig}, \code{feature_weights} and \code{sample_weights} are
 returned as attributes as well.

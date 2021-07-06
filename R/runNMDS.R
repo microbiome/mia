@@ -60,7 +60,7 @@
 #' Either \code{\link[MASS:isoMDS]{MASS::isoMDS}} or
 #' \code{\link[vegan:monoMDS]{vegan::monoMDS}} are used internally to compute
 #' the NMDS components. If you supply a custom \code{FUN}, make sure that
-#' the arguments if \code{FUN} and \code{nmdsFUN} do not collide.
+#' the arguments of \code{FUN} and \code{nmdsFUN} do not collide.
 #'
 #' @name runNMDS
 #'

@@ -24,7 +24,7 @@
 #'   non-control samples. (default: \code{control = NULL})
 #'
 #' @param batch \code{NULL} or a single \code{character} value. Defining a
-#'   column with values interpratable as a factor from the \code{colData} to use
+#'   column with values interpretable as a factor from the \code{colData} to use
 #'   as batch information. (default: \code{batch = NULL})
 #'
 #' @param ... arguments passed onto

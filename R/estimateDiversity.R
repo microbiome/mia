@@ -1,6 +1,6 @@
 #' Estimate diversity measures
 #'
-#' Several functions for calculation of diversity indices available via
+#' Several functions for calculating diversity indices are available via
 #' wrapper functions. Some of them are implemented via the \code{vegan} package.
 #'
 #' The available indices include the \sQuote{Coverage}, 
@@ -14,8 +14,8 @@
 #'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
 #'   used by default.
 #'
-#' @param abund_values the name of the assay used for calculation of the
-#'   sample-wise estimates
+#' @param abund_values the name of the assay used for
+#'   calculation of the sample-wise estimates.
 #'
 #' @param index a \code{character} vector, specifying the diversity measures
 #'   to be calculated.

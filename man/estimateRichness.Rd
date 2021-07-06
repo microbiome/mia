@@ -96,7 +96,7 @@ of unobserved species. We use here the bias-corrected version
 \code{\link[vegan:specpool]{estimateR}}. This index implicitly
 assumes that every taxa has equal probability of being observed. Note
 that it gives a lower bound to species richness. The bias-corrected
-For an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
+for an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
 This estimator uses only the singleton and doubleton counts, and
 hence it gives more weight to the low abundance species.
 Note that this index comes with an additional column with standard
@@ -105,7 +105,7 @@ error information.}
 \item{'hill' }{Effective species richness aka Hill index (see e.g. Chao et al. 2016).
 Currently only the case 1D is implemented. This corresponds to the exponent
 of Shannon diversity. Intuitively, the effective richness indicates the number of
-species whose even distribution would lead to tha same diversity than the observed
+species whose even distribution would lead to the same diversity than the observed
 community, where the species abundances are unevenly distributed.}
 
 \item{'observed' }{The \emph{observed richness} gives the number of species that

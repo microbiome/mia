@@ -12,7 +12,7 @@
 #'   expression values as well as a \code{rowTree} to calculate \code{y} using
 #'   \code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.
 #'
-#' @param y a \code{dist} or a symmetric \code{matrix} comaptible with
+#' @param y a \code{dist} or a symmetric \code{matrix} compatible with
 #'   \code{ade4:dpcoa}
 #'
 #' @param ncomponents Numeric scalar indicating the number of DPCoA dimensions
@@ -20,7 +20,7 @@
 #'
 #' @param ntop Numeric scalar specifying the number of features with the highest
 #'   variances to use for dimensionality reduction. Alternatively \code{NULL},
-#'   if all feature should be used. (default: \code{ntop = NULL})
+#'   if all features should be used. (default: \code{ntop = NULL})
 #'
 #' @param subset_row Vector specifying the subset of features to use for
 #'   dimensionality reduction. This can be a character vector of row names, an
@@ -48,7 +48,7 @@
 #' @param ... Currently not used.
 #'
 #' @details
-#' In addition to the recuced dimension on the features, the reduced dimension
+#' In addition to the reduced dimension on the features, the reduced dimension
 #' for samples are returned as well as \code{sample_red} attribute.
 #' \code{eig}, \code{feature_weights} and \code{sample_weights} are
 #' returned as attributes as well.

@@ -8,8 +8,8 @@
 #' @param x a \code{\link{SummarizedExperiment}} object
 #'
 #' @param abund_values A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to use
-#'   for calculation of the sample-wise estimates.
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
+#'   calculation of the sample-wise estimates.
 #'
 #' @param index a \code{character} vector, specifying the eveness measures to be
 #'   calculated.

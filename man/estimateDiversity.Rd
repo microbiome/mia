@@ -65,8 +65,8 @@ estimateFaith(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
 
-\item{abund_values}{the name of the assay used for calculation of the
-sample-wise estimates}
+\item{abund_values}{the name of the assay used for
+calculation of the sample-wise estimates.}
 
 \item{index}{a \code{character} vector, specifying the diversity measures
 to be calculated.}
@@ -98,7 +98,7 @@ used by default.}
 \code{x} with additional \code{\link{colData}} named \code{*name*}
 }
 \description{
-Several functions for calculation of diversity indices available via
+Several functions for calculating diversity indices are available via
 wrapper functions. Some of them are implemented via the \code{vegan} package.
 }
 \details{
