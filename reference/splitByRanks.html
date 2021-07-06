@@ -176,7 +176,7 @@ will be dropped. This setting can be tweaked by defining
       <th>keep_reducedDims</th>
       <td><p><code>TRUE</code> or <code>FALSE</code>: Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
-breaks the link between the data used to calculated the reduced dims.
+breaks the link between the data used to calculate the reduced dims.
 (default: <code>keep_reducedDims = FALSE</code>)</p></td>
     </tr>
     </table>
@@ -196,17 +196,17 @@ again into a single <code>SummarizedExperiment</code>.</p>
 <p><code>splitByRanks</code> will use by default all available taxonomic ranks, but
 this can be controlled by setting <code>ranks</code> manually. <code>NA</code> values
 are removed by default, since they would not make sense, if the result
-should by used for <code>unsplitByRanks</code> at some point. The input data
+should be used for <code>unsplitByRanks</code> at some point. The input data
 remains unchanged in the returned <code>SingleCellExperiment</code> objects.</p>
 <p><code>unsplitByRanks</code> will remove any <code>NA</code> value on each taxonomic rank
 so that no ambiguous data is created. In additional, a column
 <code>taxonomicLevel</code> is created or overwritten in the <code>rowData</code> to
 specify from which alternative experiment this originates from. This can also
-by used for <code><a href='https://rdrr.io/pkg/SingleCellExperiment/man/splitAltExps.html'>splitAltExps</a></code> to
+be used for <code><a href='https://rdrr.io/pkg/SingleCellExperiment/man/splitAltExps.html'>splitAltExps</a></code> to
 split the result along the same factor again. The input data from the base
-objects is not returned, only the data from the <code>altExp()</code>. Beaware that
+objects is not returned, only the data from the <code>altExp()</code>. Be aware that
 changes to <code>rowData</code> of the base object are not returned, whereas only
-the <code>colData</code> of the base obejct is kept.</p>
+the <code>colData</code> of the base object is kept.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='merge-methods.html'>mergeRows</a></code>,
