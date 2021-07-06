@@ -43,7 +43,7 @@ will be dropped. This setting can be tweaked by defining
 
 \item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
-breaks the link between the data used to calculated the reduced dims.
+breaks the link between the data used to calculate the reduced dims.
 (default: \code{keep_reducedDims = FALSE})}
 }
 \value{
@@ -68,18 +68,18 @@ again into a single \code{SummarizedExperiment}.
 \code{splitByRanks} will use by default all available taxonomic ranks, but
 this can be controlled by setting \code{ranks} manually. \code{NA} values
 are removed by default, since they would not make sense, if the result
-should by used for \code{unsplitByRanks} at some point. The input data
+should be used for \code{unsplitByRanks} at some point. The input data
 remains unchanged in the returned \code{SingleCellExperiment} objects.
 
 \code{unsplitByRanks} will remove any \code{NA} value on each taxonomic rank
 so that no ambiguous data is created. In additional, a column
 \code{taxonomicLevel} is created or overwritten in the \code{rowData} to
 specify from which alternative experiment this originates from. This can also
-by used for \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}} to
+be used for \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}} to
 split the result along the same factor again. The input data from the base
-objects is not returned, only the data from the \code{altExp()}. Beaware that
+objects is not returned, only the data from the \code{altExp()}. Be aware that
 changes to \code{rowData} of the base object are not returned, whereas only
-the \code{colData} of the base obejct is kept.
+the \code{colData} of the base object is kept.
 }
 \examples{
 data(GlobalPatterns)

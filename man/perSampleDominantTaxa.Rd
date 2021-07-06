@@ -51,7 +51,7 @@ object, and stores the information in the \code{colData}. It is a wrapper for
 \code{perSampleDominantTaxa}.
 
 With \code{rank} parameter, it is possible to agglomerate taxa based on taxonomic
-ranks. E.g. if 'Genus' rank is used, all abundances of same Genus is added
+ranks. E.g. if 'Genus' rank is used, all abundances of same Genus are added
 together, and those families are returned. See \code{agglomerateByRank()} for
 additional arguments to deal with missing values or special characters.
 }

@@ -28,7 +28,7 @@ assay to use for calculation.}
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether the JSD calculation should be parallelized.}
 
-\item{chunkSize}{a integer scalar, defining the size of data send
+\item{chunkSize}{an integer scalar, defining the size of data send
 to the individual worker. Only has an effect, if \code{BPPARAM} defines
 more than one worker. (default: \code{chunkSize = nrow(x)})}
 }

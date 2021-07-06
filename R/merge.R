@@ -38,7 +38,7 @@
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 #' However, additional support for \code{TreeSummarizedExperiment} was added and
 #' science field agnostic names were used. In addition the \code{archetype}
-#' argument lets the user select how to preserve row or columns data.
+#' argument lets the user select how to preserve row or column data.
 #'
 #' For merge data of assays the function from \code{scuttle} are used.
 #'

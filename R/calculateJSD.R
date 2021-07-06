@@ -16,7 +16,7 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the JSD calculation should be parallelized.
 #'
-#' @param chunkSize a integer scalar, defining the size of data send
+#' @param chunkSize an integer scalar, defining the size of data send
 #'   to the individual worker. Only has an effect, if \code{BPPARAM} defines
 #'   more than one worker. (default: \code{chunkSize = nrow(x)})
 #'

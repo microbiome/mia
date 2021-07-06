@@ -200,7 +200,7 @@ x <- transformSamples(x, method="hellinger", name="test")
 head(assay(x, "test"))
 
 # pa returns presence absence table. With 'threshold', it is possible to set the
-# threshold to desired level. By default, it is 0.
+# threshold to a desired level. By default, it is 0.
 x <- transformSamples(x, method="pa", threshold=35)
 head(assay(x, "pa"))
 
@@ -226,10 +226,10 @@ head(assay(x, "log10_features"))
 x <- ZTransform(x)
 head(assay(x, "z"))
 
-# For visualization purposes it is sometimes done CLR for samples, followed by Z transform for taxa
+# For visualization purposes it is sometimes done by applying CLR for samples, followed by Z transform for taxa
 x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
 
-# Relative abundances can be also calculate with the dedicated
+# Relative abundances can be also calculated with the dedicated
 # relAbundanceCounts function.
 x <- relAbundanceCounts(x)
 head(assay(x, "relabundance"))
