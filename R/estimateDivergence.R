@@ -21,10 +21,6 @@
 #' @param method a method that is used to calculate the distance. Method is passed to the
 #'   function that is specified by \code{FUN}. By default, \code{method} is \code{"bray"}.
 #'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether calculation of estimates should be parallelized.
-#'
 #' @param ... optional arguments
 #' 
 #' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
@@ -89,8 +85,7 @@ setGeneric("estimateDivergence",signature = c("x"),
 #' @export
 setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
     function(x, abund_values = "counts", name = "divergence", 
-             reference = "median", FUN = vegan::vegdist, method = "bray", 
-             ..., BPPARAM = SerialParam()){
+             reference = "median", FUN = vegan::vegdist, method = "bray", ...){
         
       ################### Input check ###############
       # Check abund_values

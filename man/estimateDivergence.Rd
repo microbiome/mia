@@ -22,8 +22,7 @@ estimateDivergence(
   reference = "median",
   FUN = vegan::vegdist,
   method = "bray",
-  ...,
-  BPPARAM = SerialParam()
+  ...
 )
 }
 \arguments{
@@ -47,10 +46,6 @@ please check \code{calculateDistance}. By default, \code{FUN} is \code{vegan::ve
 function that is specified by \code{FUN}. By default, \code{method} is \code{"bray"}.}
 
 \item{...}{optional arguments}
-
-\item{BPPARAM}{A
-\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}
