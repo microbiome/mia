@@ -34,6 +34,18 @@ test_that("divergence estimates", {
                                   reference = "test",
                                   FUN = stats::dist,
                                   method = "euclidean"))
+  expect_error(estimateDivergence(tse, 
+                                  reference = rep("test", nrow(tse)),
+                                  FUN = stats::dist,
+                                  method = "euclidean"))
+  expect_error(estimateDivergence(tse, 
+                                  reference = rep(0, nrow(tse)-1),
+                                  FUN = stats::dist,
+                                  method = "euclidean"))
+  expect_error(estimateDivergence(tse, 
+                                  reference = rep("test", nrow(tse)-1),
+                                  FUN = stats::dist,
+                                  method = "euclidean"))
   
   # Reference values from microbiome pkg's divergence function
   expect_equal(unname(round(colData(

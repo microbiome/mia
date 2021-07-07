@@ -97,7 +97,7 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
             stop("'name' must be a non-empty character value.",
                  call. = FALSE)
         }
-        # Check regetence
+        # Check reference
         # If "reference" is not right: 
         # it is null, its length does not equal to number of samples and it is not numeric,
         # reference is not "median" or "mean"
