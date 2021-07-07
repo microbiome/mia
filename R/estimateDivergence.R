@@ -99,20 +99,21 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
         }
         # Check reference
         # If "reference" is not right: 
-        # it is null, its length does not equal to number of samples and it is not numeric,
+        # it is not numeric or character
+        # its length does not equal to number of samples when it's numeric,
         # reference is not "median" or "mean"
         reference_stop_msg <- 
             paste0("'reference' must be a numeric vector that has lenght equal",
                    " to number of features, or 'reference' must be either",
                    " 'median' or 'mean'.")
-        if( is.null(reference) ){
+        if( !(is.numeric(reference) || is.character(reference)) ){
             stop(reference_stop_msg, call. = FALSE)
         } else {
-            if(is.numeric(reference) && length(reference) != nrow(x)){
+            if( is.numeric(reference) && length(reference) != nrow(x) ){
                 stop(reference_stop_msg, call. = FALSE)
             }
-            if(is.character(reference) && 
-               (length(reference) != 1L || !(reference %in% c("median","mean")))){
+            if( is.character(reference) && length(reference) != 1L && 
+               !(reference %in% c("median","mean")) ){
                 stop(reference_stop_msg, call. = FALSE)
             }
         }
