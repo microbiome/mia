@@ -129,7 +129,10 @@
 #' }
 #'
 #' @name estimateDiversity
+#' @export
 #'
+#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
+#' 
 #' @examples
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
@@ -193,8 +196,8 @@ NULL
 #' @export
 setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
-                    index = c("coverage", "fisher", "gini_simpson", "inverse_simpson", 
-                              "log_modulo_skewness", "shannon"),
+                    index = c("coverage", "fisher", "gini_simpson", 
+                              "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ...)
                standardGeneric("estimateDiversity"))
 
@@ -202,13 +205,13 @@ setGeneric("estimateDiversity",signature = c("x"),
 #' @export
 setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("coverage", "fisher", "gini_simpson", "inverse_simpson", 
-                       "log_modulo_skewness", "shannon"),
+             index = c("coverage", "fisher", "gini_simpson", 
+                       "inverse_simpson", "log_modulo_skewness", "shannon"),
              name = index, ..., BPPARAM = SerialParam()){
 
         # input check
         index<- match.arg(index, several.ok = TRUE)
-
+        
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                  "same length than 'index'.",
