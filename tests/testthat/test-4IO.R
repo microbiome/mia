@@ -300,8 +300,10 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     test1_phy <- expect_warning(makePhyloseqFromTreeSummarizedExperiment(test1))
     test2_phy <- makePhyloseqFromTreeSummarizedExperiment(test2)
     
-    expect_equal(phyloseq::phy_tree(test1_phy), rowTree(test2))
-    expect_equal(phyloseq::phy_tree(test1_phy), phyloseq::phy_tree(test2_phy))
+    expect_equal(length(phyloseq::phy_tree(test1_phy)$nodeLabs), 
+                 length(ape::keep.tip(rowTree(test1), rowLinks(test2)$nodeLabs)))
+    expect_equal(phyloseq::phy_tree(test1_phy)$tip.label, rownames(test2))
+    expect_equal(phyloseq::phy_tree(test2_phy), rowTree(test2))
 
     # TSE object
     data(esophagus)

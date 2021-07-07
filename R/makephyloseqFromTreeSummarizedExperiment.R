@@ -107,16 +107,17 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
         # If rowTree exists, checks if the rowTree match with rownames:
         # tips labels are found from rownames
         if( !is.null(rowTree(x)) && any(!( rowTree(x)$tip) %in% rownames(x)) ){
-            # Tries to prune the tree. If that does not work, gives an error. 
-            x <- tryCatch(
-                {addTaxonomyTree(x)},
-                error = function(cond){
-                    stop("rowTree does not match with rownames. 'x' can not be converted
-                         to a phyloseq object. Check rowTree(x)$tip and rownames(x).",
-                         call. = FALSE)
-                }
-            )
-            warning("rowTree is agglomerated to match rownames.")
+            # Gets node labels
+            node_labs <- rowLinks(x)$nodeLab
+            # Gets the corresponding rownames
+            node_labs_rownames <- rownames(rowLinks(x))
+            # Prunes the tree
+            tree_pruned <- ape::keep.tip(rowTree(x), node_labs)
+            # Replace tip labels with corresponding rownames
+            tree_pruned$tip.label <- node_labs_rownames
+            # Assigns the pruned tree back to TSE object
+            rowTree(x) <- tree_pruned
+            warning("rowTree is pruned to match rownames.")
         }
         
         # Gets otu_table object from the function above this, if tse contains
