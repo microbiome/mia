@@ -34,16 +34,18 @@ sample-wise estimates}
 \item{name}{a name for the column of the colData the results should be
 stored in. By defaut, \code{name} is \code{"divergence"}.}
 
-\item{reference}{a numeric vector that has length equal to number of features, or
-a non-empty character value; either 'median' or 'mean'. \code{reference} specifies
-the reference that is used to calculate \code{divergence}.
-By default, \code{reference} is  \code{"median"}.}
+\item{reference}{a numeric vector that has length equal to number of
+features, or a non-empty character value; either 'median' or 'mean'.
+\code{reference} specifies the reference that is used to calculate
+\code{divergence}. by default, \code{reference} is  \code{"median"}.}
 
 \item{FUN}{a \code{function} for distance calculation. For more information,
-please check \code{calculateDistance}. By default, \code{FUN} is \code{vegan::vegdist}.}
+please check \code{calculateDistance}. By default, \code{FUN} is
+\code{vegan::vegdist}.}
 
-\item{method}{a method that is used to calculate the distance. Method is passed to the
-function that is specified by \code{FUN}. By default, \code{method} is \code{"bray"}.}
+\item{method}{a method that is used to calculate the distance. Method is
+passed to the function that is specified by \code{FUN}. By default,
+\code{method} is \code{"bray"}.}
 
 \item{...}{optional arguments}
 }
