@@ -300,11 +300,17 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     test1_phy <- expect_warning(makePhyloseqFromTreeSummarizedExperiment(test1))
     test2_phy <- makePhyloseqFromTreeSummarizedExperiment(test2)
     
-    expect_equal(length(phyloseq::phy_tree(test1_phy)$nodeLabs), 
-                 length(ape::keep.tip(rowTree(test1), rowLinks(test2)$nodeLabs)))
+    expect_equal(length(phyloseq::phy_tree(test1_phy)$node), 
+                 length(ape::keep.tip(rowTree(test1), rowLinks(test1)$nodeLab)$node))
     expect_equal(phyloseq::phy_tree(test1_phy)$tip.label, rownames(test2))
     expect_equal(phyloseq::phy_tree(test2_phy), rowTree(test2))
-
+    
+    # Check that everything works also with agglomerated data
+    for (level in colnames(rowData(tse)) ){
+        temp <- agglomerateByRank(tse, rank = level)
+        expect_warning(makePhyloseqFromTreeSummarizedExperiment(temp))
+    }
+    
     # TSE object
     data(esophagus)
     tse <- esophagus
@@ -317,5 +323,4 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
 
     # Test that rowTree is in phy_tree
     expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
-
 })

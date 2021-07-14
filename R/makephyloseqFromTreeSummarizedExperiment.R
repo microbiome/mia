@@ -65,7 +65,12 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
         }
         # Check abund_values
         .check_assay_present(abund_values, x)
-
+        
+        # phyloseq object requires nonduplicated rownames. If there are 
+        # duplicated rownames, they are converted so that they are unique
+        if( any(duplicated(rownames(x))) ){
+            rownames(x) <- getTaxonomyLabels(x)
+        }
         # List of arguments
         args = list()
         # Gets the abundance data from assay, and converts it to otu_table
@@ -104,6 +109,11 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
 setMethod("makePhyloseqFromTreeSummarizedExperiment",
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, ...){
+        # phyloseq and tree objects require nonduplicated rownames. If there are 
+        # duplicated rownames, they are converted so that they are unique
+        if( any(duplicated(rownames(x))) ){
+            rownames(x) <- getTaxonomyLabels(x)
+        }
         # If rowTree exists, checks if the rowTree match with rownames:
         # tips labels are found from rownames
         if( !is.null(rowTree(x)) && any(!( rowTree(x)$tip) %in% rownames(x)) ){
