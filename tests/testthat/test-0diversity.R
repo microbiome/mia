@@ -114,4 +114,6 @@ test_that("diversity estimates", {
     # se_tree should include "faith"
     expect_equal(colnames(colData(se_tree)), c(colnames(colData(se)), "faith"))
     
+    
+    
 })

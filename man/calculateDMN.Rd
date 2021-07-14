@@ -106,15 +106,15 @@ assay to use for calculation.}
 \item{name}{the name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
-\item{type}{the type of measure for access the goodness of fit. One of
+\item{type}{the type of measure used for the goodness of fit. One of
 \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.}
 
-\item{variable}{a variable from \code{colData} to use as grouping variable.
+\item{variable}{a variable from \code{colData} to use as a grouping variable.
 Must be a character of factor.}
 }
 \value{
 \code{calculateDMN} and \code{getDMN} return a list of \code{DMN} objects,
-one element per value for k given.
+one element for each value of k provided.
 
 \code{bestDMNFit} returns the index for the best fit and \code{getBestDMNFit}
 returns a single \code{DMN} object.
@@ -125,7 +125,7 @@ returns a single \code{DMN} object.
 \code{performDMNgroupCV} returns a \code{data.frame}
 }
 \description{
-These function are accessors for functions implemented in the
+These functions are accessors for functions implemented in the
 \code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}}
 package
 }

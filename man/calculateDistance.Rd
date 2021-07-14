@@ -24,8 +24,8 @@ calculateDistance(x, FUN = stats::dist, ...)
 object containing a tree.}
 
 \item{FUN}{a \code{function} for distance calculation. The function must
-expect the input matrix as its first argument. Samples have to be rows and
-feature columns.}
+expect the input matrix as its first argument. With rows as samples
+and columns as features.}
 
 \item{...}{other arguments passed onto \code{FUN}}
 
@@ -39,7 +39,7 @@ a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
 \code{calculateDistance} calculates a distance matrix between samples. The
-type of distance calculate can be modifier by setting \code{FUN}, which
+type of distance calculated can be modified by setting \code{FUN}, which
 expects a function with a matrix input as its first argument.
 }
 \examples{

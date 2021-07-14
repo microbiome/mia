@@ -8,7 +8,7 @@
 #'   object
 #'
 #' @param detection Detection threshold for absence/presence. Either an
-#'   absolutes value compared directly to the values of \code{x} or a relative
+#'   absolute value compared directly to the values of \code{x} or a relative
 #'   value between 0 and 1, if \code{as_relative = TRUE}.
 #'
 #' @param include_lowest logical scalar: Should the lower boundary of the
@@ -33,8 +33,8 @@
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
-#'   \item{for \code{getPrevalentTaxa}, \code{getRareaxa}, 
-#'     \code{subsetByPrevalentTaxa} and \code{subsetByRareaxa} additional 
+#'   \item{for \code{getPrevalentTaxa}, \code{getRareTaxa}, 
+#'     \code{subsetByPrevalentTaxa} and \code{subsetByRareTaxa} additional 
 #'     parameters passed to \code{getPrevalence}}
 #'   \item{for \code{getPrevalentAbundance} additional parameters passed to
 #'     \code{getPrevalentTaxa}}

@@ -1,6 +1,6 @@
 #' Estimate diversity measures
 #'
-#' Several functions for calculation of diversity indices available via
+#' Several functions for calculating diversity indices are available via
 #' wrapper functions. Some of them are implemented via the \code{vegan} package.
 #'
 #' The available indices include the \sQuote{Coverage}, 
@@ -14,8 +14,8 @@
 #'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
 #'   used by default.
 #'
-#' @param abund_values the name of the assay used for calculation of the
-#'   sample-wise estimates
+#' @param abund_values the name of the assay used for
+#'   calculation of the sample-wise estimates.
 #'
 #' @param index a \code{character} vector, specifying the diversity measures
 #'   to be calculated.
@@ -129,7 +129,10 @@
 #' }
 #'
 #' @name estimateDiversity
+#' @export
 #'
+#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
+#' 
 #' @examples
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
@@ -193,8 +196,8 @@ NULL
 #' @export
 setGeneric("estimateDiversity",signature = c("x"),
            function(x, abund_values = "counts",
-                    index = c("coverage", "fisher", "gini_simpson", "inverse_simpson", 
-                              "log_modulo_skewness", "shannon"),
+                    index = c("coverage", "fisher", "gini_simpson", 
+                              "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ...)
                standardGeneric("estimateDiversity"))
 
@@ -202,13 +205,13 @@ setGeneric("estimateDiversity",signature = c("x"),
 #' @export
 setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("coverage", "fisher", "gini_simpson", "inverse_simpson", 
-                       "log_modulo_skewness", "shannon"),
+             index = c("coverage", "fisher", "gini_simpson", 
+                       "inverse_simpson", "log_modulo_skewness", "shannon"),
              name = index, ..., BPPARAM = SerialParam()){
 
         # input check
         index<- match.arg(index, several.ok = TRUE)
-
+        
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                  "same length than 'index'.",

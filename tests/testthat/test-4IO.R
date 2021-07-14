@@ -323,4 +323,5 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
 
     # Test that rowTree is in phy_tree
     expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
+    
 })

@@ -56,7 +56,7 @@ By default it expects count data.}
 the output of \code{taxonomicRanks()}.}
 
 \item{group}{With group, it is possible to group the observations in an
-overview. Must be a one of the column names of \code{colData}.}
+overview. Must be one of the column names of \code{colData}.}
 
 \item{object}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
@@ -119,7 +119,7 @@ dominant_taxa
 # Get an overview of sample and taxa counts
 summary(GlobalPatterns)
 
-# Get unique taxa at a particulat taxonomic rank
+# Get unique taxa at a particular taxonomic rank
 getUniqueTaxa(GlobalPatterns, "Phylum")
 
 }
