@@ -1,14 +1,14 @@
 
-test_that("Importing biom files yield TreeSummarizedExperiment objects", {
+test_that("Importing biom files yield SummarizedExperiment objects", {
     skip_if_not_installed("biomformat")
     rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
                                    package = "biomformat")
     me <- loadFromBiom(rich_dense_file)
-    expect_s4_class(me, "TreeSummarizedExperiment")
+    expect_s4_class(me, "SummarizedExperiment")
     # load from object
     x1 <- biomformat::read_biom(rich_dense_file)
-    me2 <- makeTreeSummarizedExperimentFromBiom(x1)
-    expect_s4_class(me2, "TreeSummarizedExperiment")
+    me2 <- makeSummarizedExperimentFromBiom(x1)
+    expect_s4_class(me2, "SummarizedExperiment")
     expect_equal(dim(me), dim(me2))
     expect_equal(rowData(me), rowData(me2))
 })
@@ -293,9 +293,20 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     # Test that referenceSeq is in refseq. Expect error, because there should not be
     # reference sequences.
     expect_error(phyloseq::refseq(phy))
+    
+    # Test with agglomeration that that pruning is done internally
+    test1 <- agglomerateByRank(tse, rank = "Phylum")
+    test2 <- expect_warning(agglomerateByRank(tse, rank = "Phylum", agglomerateTree = TRUE))
+    test1_phy <- expect_warning(makePhyloseqFromTreeSummarizedExperiment(test1))
+    test2_phy <- makePhyloseqFromTreeSummarizedExperiment(test2)
+    
+    expect_equal(length(phyloseq::phy_tree(test1_phy)$nodeLabs), 
+                 length(ape::keep.tip(rowTree(test1), rowLinks(test2)$nodeLabs)))
+    expect_equal(phyloseq::phy_tree(test1_phy)$tip.label, rownames(test2))
+    expect_equal(phyloseq::phy_tree(test2_phy), rowTree(test2))
 
     # TSE object
-    data("esophagus")
+    data(esophagus)
     tse <- esophagus
 
     phy <- makePhyloseqFromTreeSummarizedExperiment(esophagus)
@@ -306,7 +317,5 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
 
     # Test that rowTree is in phy_tree
     expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
-
-
 
 })

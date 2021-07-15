@@ -8,7 +8,12 @@
 \alias{getPrevalentTaxa,ANY-method}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
 \alias{getRareTaxa}
+\alias{getRareTaxa,ANY-method}
 \alias{getRareTaxa,SummarizedExperiment-method}
+\alias{subsetByPrevalentTaxa}
+\alias{subsetByPrevalentTaxa,SummarizedExperiment-method}
+\alias{subsetByRareTaxa}
+\alias{subsetByRareTaxa,SummarizedExperiment-method}
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
@@ -28,15 +33,25 @@ getPrevalentTaxa(x, ...)
 
 \S4method{getPrevalentTaxa}{SummarizedExperiment}(
   x,
-  prevalence = 50/100,
   rank = NULL,
+  prevalence = 50/100,
   include_lowest = FALSE,
   ...
 )
 
-getRareTaxa(x, rank = NULL, ...)
+getRareTaxa(x, ...)
 
-\S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
+\S4method{getRareTaxa}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
+
+\S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, prevalence = 50/100, include_lowest = FALSE, ...)
+
+subsetByPrevalentTaxa(x, ...)
+
+\S4method{subsetByPrevalentTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
+
+subsetByRareTaxa(x, ...)
+
+\S4method{subsetByRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
 getPrevalentAbundance(x, abund_values = "relabundance", ...)
 
@@ -59,7 +74,7 @@ agglomerateByPrevalence(x, ...)
 object}
 
 \item{detection}{Detection threshold for absence/presence. Either an
-absolutes value compared directly to the values of \code{x} or a relative
+absolute value compared directly to the values of \code{x} or a relative
 value between 0 and 1, if \code{as_relative = TRUE}.}
 
 \item{include_lowest}{logical scalar: Should the lower boundary of the
@@ -81,6 +96,9 @@ on compositional (relative) abundances? (default: \code{TRUE})}
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 }
+\item{for \code{getPrevalentTaxa}, \code{getRareTaxa},
+\code{subsetByPrevalentTaxa} and \code{subsetByRareTaxa} additional
+parameters passed to \code{getPrevalence}}
 \item{for \code{getPrevalentAbundance} additional parameters passed to
 \code{getPrevalentTaxa}}
 }}
@@ -93,14 +111,22 @@ limit, set \code{include_lowest} to \code{TRUE}.}
 summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 }
 \value{
-a named \code{numeric} vector. For \code{getPrevalence} the names are either
-the row names of \code{x} or the names after agglomeration.
+\code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return subset of \code{x}.
 
-For \code{getPrevalentAbundance} the names correspond to the column name
-names of \code{x} and include the joint abundance of prevalent taxa.
-
-For \code{getPrevalentTaxa} only the names exceeding the threshold set by
-\code{prevalence} are returned.
+All other functions return a named vectors:
+\itemize{
+\item{\code{getPrevalence} returns a \code{numeric} vector with the
+names being set to either the row names of \code{x} or the names after
+agglomeration.}
+\item{\code{getPrevalentAbundance} returns a \code{numeric} vector with
+the names corresponding to the column name of \code{x} and include the
+joint abundance of prevalent taxa.}
+\item{\code{getPrevalentTaxa} and \code{getRareTaxa} return a
+\code{character} vector with only the names exceeding the threshold set
+by \code{prevalence}, if the \code{rownames} of \code{x} is set.
+Otherwise an \code{integer} vector is returned matching the rows in
+\code{x}.}
+}
 }
 \description{
 These functions calculate the population prevalence for taxonomic ranks in a
@@ -120,6 +146,10 @@ proportion of the core species (in between 0 and 1). The core taxa are
 defined as those that exceed the given population prevalence threshold at the
 given detection level as set for \code{getPrevalentTaxa}.
 
+\code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return a subset of \code{x}.
+The subset includes the most prevalent or rare taxa that are calculated with
+\code{getPrevalentTaxa} or \code{getRareTaxa} respectively.
+
 \code{getPrevalentTaxa} returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.
 
@@ -127,8 +157,9 @@ given detection threshold for the selected taxonomic rank.
 }
 \examples{
 data(GlobalPatterns)
+tse <- GlobalPatterns
 # Get prevalence estimates for individual ASV/OTU
-prevalence.frequency <- getPrevalence(GlobalPatterns,
+prevalence.frequency <- getPrevalence(tse,
                                       detection = 0,
                                       sort = TRUE,
                                       as_relative = TRUE)
@@ -136,7 +167,7 @@ head(prevalence.frequency)
 
 # Get prevalence estimates for phylums
 # - the getPrevalence function itself always returns population frequencies
-prevalence.frequency <- getPrevalence(GlobalPatterns,
+prevalence.frequency <- getPrevalence(tse,
                                       rank = "Phylum",
                                       detection = 0,
                                       sort = TRUE,
@@ -145,37 +176,56 @@ head(prevalence.frequency)
 
 # - to obtain population counts, multiply frequencies with the sample size,
 # which answers the question "In how many samples is this phylum detectable"
-prevalence.count <- prevalence.frequency * ncol(GlobalPatterns)
+prevalence.count <- prevalence.frequency * ncol(tse)
 head(prevalence.count)
 
 # Detection threshold 1 (strictly greater by default);
 # Note that the data (GlobalPatterns) is here in absolute counts
 # (and not compositional, relative abundances)
 # Prevalence threshold 50 percent (strictly greater by default)
-taxa <- getPrevalentTaxa(GlobalPatterns,
-                         rank = "Phylum",
-                         detection = 1/100,
-                         prevalence = 50/100,
-                         as_relative = TRUE)
-head(taxa)
+prevalent <- getPrevalentTaxa(tse,
+                              rank = "Phylum",
+                              detection = 10,
+                              prevalence = 50/100,
+                              as_relative = FALSE)
+head(prevalent)
+
+# Gets a subset of object that includes prevalent taxa
+altExp(tse, "prevalent") <- subsetByPrevalentTaxa(tse,
+                                       rank = "Family",
+                                       detection = 0.001,
+                                       prevalence = 0.55,
+                                       as_relative = TRUE)
+altExp(tse, "prevalent")                                 
 
 # getRareTaxa returns the inverse
-rare <- getRareTaxa(GlobalPatterns,
+rare <- getRareTaxa(tse,
                     rank = "Phylum",
                     detection = 1/100,
                     prevalence = 50/100,
                     as_relative = TRUE)
 head(rare)
 
+# Gets a subset of object that includes rare taxa
+altExp(tse, "rare") <- subsetByRareTaxa(tse,
+                             rank = "Class",
+                             detection = 0.001,
+                             prevalence = 0.001,
+                             as_relative = TRUE)
+altExp(tse, "rare")      
+
+# Names of both experiments, prevalent and rare, can be found from slot altExpNames
+tse
+                         
 data(esophagus)
 getPrevalentAbundance(esophagus, abund_values = "counts")
 
 # data can be aggregated based on prevalent taxonomic results
-agglomerateByPrevalence(GlobalPatterns,
-                         rank = "Phylum",
-                         detection = 1/100,
-                         prevalence = 50/100,
-                         as_relative = TRUE)
+agglomerateByPrevalence(tse,
+                        rank = "Phylum",
+                        detection = 1/100,
+                        prevalence = 50/100,
+                        as_relative = TRUE)
 }
 \references{
 A Salonen et al. The adult intestinal core microbiota is determined by

@@ -37,7 +37,7 @@ possible.}
 
 \item{tree}{if \code{x} is a matrix, a
 \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
-matrix. This means that the phylo object and the columns should related
+matrix. This means that the phylo object and the columns should relate
 to the same type of features (aka. microorganisms).}
 
 \item{weighted}{\code{TRUE} or \code{FALSE}: Should use weighted-UniFrac

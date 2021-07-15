@@ -20,9 +20,8 @@ test_that("estimateDominance", {
         #colData.
         #Checks also, that the order of indices is right / the same as the order
         #in the input vector.
-        expect_named(colData(tse_idx), c("dbp", "dmn", "absolute", "relative",
-                                         "simpson_lambda", "core_abundance",
-                                         "gini"))
+        expect_named(colData(tse_idx), c("absolute", "dbp", "core_abundance", "gini", 
+                                         "dmn", "relative", "simpson_lambda"))
 
         #.calc_core_dominance
         #Rounded because, without it gave an error (average difference was
@@ -90,7 +89,7 @@ test_that("estimateDominance", {
     }
 
     # TSE object
-    data("esophagus")
+    data(esophagus)
     tse <- esophagus
     test_internal_estimateDominance(tse)
 

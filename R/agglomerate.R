@@ -12,7 +12,7 @@
 #'   \code{taxonomicRanks()} function.
 #'
 #' @param onRankOnly \code{TRUE} or \code{FALSE}: Should information only from
-#'   the specified rank used or from ranks equal and above? See details.
+#'   the specified rank be used or from ranks equal and above? See details.
 #'   (default: \code{onRankOnly = FALSE})
 #'
 #' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
@@ -24,7 +24,7 @@
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 #'   removed if \code{na.rm = TRUE} before agglomeration.
 #'
-#' @param agglomerateTree \code{TRUE} or \code{FALSE}: should to
+#' @param agglomerateTree \code{TRUE} or \code{FALSE}: should
 #'   \code{rowTree()} also be agglomerated? (Default:
 #'   \code{agglomerateTree = FALSE})
 #'
@@ -49,7 +49,7 @@
 #' loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
 #'
 #' @return A taxonomically-agglomerated, optionally-pruned object of the same
-#'   class \code{x}.
+#'   class as \code{x}.
 #'
 #' @name agglomerate-methods
 #' @seealso

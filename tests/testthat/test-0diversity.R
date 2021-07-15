@@ -2,7 +2,7 @@ context("diversity estimates")
 test_that("diversity estimates", {
 
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
-    data("esophagus")
+    data(esophagus)
 
     tse <- esophagus
     tse <- relAbundanceCounts(tse)
@@ -16,7 +16,9 @@ test_that("diversity estimates", {
     # colData.
     # Check that the order of indices is right / the same as the order
     # in the input vector.
-    expect_named(colData(tse_idx), c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", "faith"))
+    expect_named(colData(tse_idx), c("coverage", "fisher", "gini_simpson",
+                                     "inverse_simpson", "log_modulo_skewness",
+                                     "shannon", "faith"))
 
     lambda <- unname(colSums(assays(tse_idx)$relabundance^2))
     ginisimpson <- 1 - lambda
@@ -37,6 +39,32 @@ test_that("diversity estimates", {
                  c(5.93021, 10.34606, 2.99177))
     expect_equal(unname(round(cd$coverage, 0)), c(2,3,1))
     expect_equal(unname(round(cd$fisher, 4)), c(8.8037, 10.0989, 13.2783))
+    expect_equal(unname(round(cd$log_modulo_skewness, 6)), c(2.013610, 1.827198, 2.013695))
+    
+    # Tests that 'quantile' and 'num_of_classes' are working
+    expect_equal(unname(round(colData(estimateDiversity(tse,index="log_modulo_skewness",
+                                                        quantile=0.855,
+                                                        num_of_classes=32)
+                                      )$log_modulo_skewness, 
+                              6)), c(1.814770, 1.756495, 1.842704))
+    
+    # Tests that .calc_skewness returns right value
+    mat <- assay(tse, "counts")
+    num_of_classes <- 61
+    quantile <- 0.35
+    
+    quantile_point <- quantile(max(mat), quantile)
+    cutpoints <- c(seq(0, quantile_point, length=num_of_classes), Inf)
+    
+    freq_table <- table(cut(mat, cutpoints), col(mat))
+    test1 <- mia:::.calc_skewness(freq_table)
+    
+    test2 <- mia:::.calc_skewness(apply(mat, 2, function(x) {
+        table(cut(x, cutpoints))
+        }))
+    
+    expect_equal(test1, test2)
+    expect_equal(round(test1, 6), c(7.256706, 6.098354, 7.278894))
 
     # Tests faith index with esophagus data
     for( i in c(1:(length(colnames(tse_idx)))) ){
@@ -85,5 +113,7 @@ test_that("diversity estimates", {
     expect_true(class(se_tree)== "SummarizedExperiment")
     # se_tree should include "faith"
     expect_equal(colnames(colData(se_tree)), c(colnames(colData(se)), "faith"))
+    
+    
     
 })

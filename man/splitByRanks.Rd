@@ -2,16 +2,25 @@
 % Please edit documentation in R/splitByRanks.R
 \name{splitByRanks}
 \alias{splitByRanks}
-\alias{unsplitByRanks}
+\alias{splitByRanks,SummarizedExperiment-method}
+\alias{splitByRanks,SingleCellExperiment-method}
 \alias{splitByRanks,TreeSummarizedExperiment-method}
+\alias{unsplitByRanks}
+\alias{unsplitByRanks,SingleCellExperiment-method}
 \alias{unsplitByRanks,TreeSummarizedExperiment-method}
-\title{Split/Unsplit a \code{SingleCellExperiment} be taxonomic ranks}
+\title{Split/Unsplit a \code{SingleCellExperiment} by taxonomic ranks}
 \usage{
 splitByRanks(x, ...)
 
-unsplitByRanks(x, ...)
+\S4method{splitByRanks}{SummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
+
+\S4method{splitByRanks}{SingleCellExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
 
 \S4method{splitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
+
+unsplitByRanks(x, ...)
+
+\S4method{unsplitByRanks}{SingleCellExperiment}(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...)
 
 \S4method{unsplitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...)
 }
@@ -34,7 +43,7 @@ will be dropped. This setting can be tweaked by defining
 
 \item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
-breaks the link between the data used to calculated the reduced dims.
+breaks the link between the data used to calculate the reduced dims.
 (default: \code{keep_reducedDims = FALSE})}
 }
 \value{
@@ -47,24 +56,30 @@ and any existing \code{rowTree} is dropped as well, since existing
 \code{rowLinks} are not valid anymore.
 }
 \description{
-\code{splitByRanks} and \code{unsplitByRanks} are functions for splitting a
-\code{SummarizedExperiment} along the taxonomic levels and storing the chunks
-as alternative experiments. \code{unsplitByRanks} takes these alternative
-experiments and flattens them again into a single
-\code{SummarizedExperiment}.
+\code{splitByRanks} takes a \code{SummarizedExperiment}, splits it along the
+taxonomic ranks, aggregates the data per rank, converts the input to a
+\code{SingleCellExperiment} objects and stores the aggregated data as
+alternative experiments.
 }
 \details{
-\code{splitByRanks} will use by default all available taxonomic levels, but
+\code{unsplitByRanks} takes these alternative experiments and flattens them
+again into a single \code{SummarizedExperiment}.
+
+\code{splitByRanks} will use by default all available taxonomic ranks, but
 this can be controlled by setting \code{ranks} manually. \code{NA} values
 are removed by default, since they would not make sense, if the result
-should by used for \code{unsplitByRanks} at some point.
+should be used for \code{unsplitByRanks} at some point. The input data
+remains unchanged in the returned \code{SingleCellExperiment} objects.
 
 \code{unsplitByRanks} will remove any \code{NA} value on each taxonomic rank
 so that no ambiguous data is created. In additional, a column
 \code{taxonomicLevel} is created or overwritten in the \code{rowData} to
 specify from which alternative experiment this originates from. This can also
-by used for \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}} to
-split the result again along the same factor again.
+be used for \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}} to
+split the result along the same factor again. The input data from the base
+objects is not returned, only the data from the \code{altExp()}. Be aware that
+changes to \code{rowData} of the base object are not returned, whereas only
+the \code{colData} of the base object is kept.
 }
 \examples{
 data(GlobalPatterns)

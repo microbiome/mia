@@ -4,7 +4,7 @@ context("estimateRichness")
 test_that("estimateRichness", {
 
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
-    data("esophagus")
+    data(esophagus)
 
     tse <- estimateRichness(esophagus, detection = 1)
     cd <- colData(tse)    
@@ -26,7 +26,7 @@ test_that("estimateRichness", {
         # colData.
         # Check that the order of indices is right / the same as the order
         # in the input vector.
-        expect_named(colData(tse_idx), c("observed", "chao1", "chao1_se", "ace", "ace_se", "hill"))
+        expect_named(colData(tse_idx), c("ace", "ace_se", "chao1", "chao1_se", "hill", "observed"))
 
         # Delete colData
 	colData(tse_idx) <- NULL

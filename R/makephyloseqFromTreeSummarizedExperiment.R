@@ -27,14 +27,14 @@
 #'
 #' @examples
 #' # Get tse object
-#' data("GlobalPatterns")
+#' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #'
 #' # Create a phyloseq object from it
 #' phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
 #' phy
 #'
-#' # By default the chosen table is counts, but if there is other tables,
+#' # By default the chosen table is counts, but if there are other tables,
 #' # they can be chosen with abund_values.
 #'
 #' # Counts relative abundances table
@@ -68,11 +68,9 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
 
         # List of arguments
         args = list()
-
         # Gets the abundance data from assay, and converts it to otu_table
         otu_table <- as.matrix(assay(x, abund_values))
         otu_table <- phyloseq::otu_table(otu_table, taxa_are_rows = TRUE)
-
         # Adds to the list
         args[["otu_table"]] <- otu_table
 
@@ -82,24 +80,21 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
             # Gets the taxonomic data from rowData, and converts it to tax_table
             tax_table <- as.matrix(rowData(x)[,taxonomyRanks(x)])
             tax_table <- phyloseq::tax_table(tax_table)
-
             # Adds to the list
             args[["tax_table"]] <- tax_table
         }
-
+        
         # If colData includes information
         if(!( length(colData(x)) == 0 || is.null(ncol(colData(x))) )){
             # Gets the feature_data from colData and converts it to sample_data
             sample_data <- as.data.frame(colData(x))
             sample_data <- phyloseq::sample_data(sample_data)
-
             # Adds to the list
             args[["sample_data"]] <- sample_data
         }
-
+        
         # Creates a phyloseq object
         phyloseq <- do.call(phyloseq::phyloseq, args)
-
         return(phyloseq)
     }
 )
@@ -109,16 +104,29 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
 setMethod("makePhyloseqFromTreeSummarizedExperiment",
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, ...){
-
+        # If rowTree exists, checks if the rowTree match with rownames:
+        # tips labels are found from rownames
+        if( !is.null(rowTree(x)) && any(!( rowTree(x)$tip) %in% rownames(x)) ){
+            # Gets node labels
+            node_labs <- rowLinks(x)$nodeLab
+            # Gets the corresponding rownames
+            node_labs_rownames <- rownames(rowLinks(x))
+            # Prunes the tree
+            tree_pruned <- ape::keep.tip(rowTree(x), node_labs)
+            # Replace tip labels with corresponding rownames
+            tree_pruned$tip.label <- node_labs_rownames
+            # Assigns the pruned tree back to TSE object
+            rowTree(x) <- tree_pruned
+            warning("rowTree is pruned to match rownames.")
+        }
+        
         # Gets otu_table object from the function above this, if tse contains
         # only abundance table.
         # Otherwise, gets a phyloseq object with otu_table, and tax_table
         # and/or sample_data
         obj <- callNextMethod()
-
         # List of arguments
         args = list()
-
         # Adds to the list of arguments, if 'obj' is not a phyloseq object
         # i.e. is an otu_table
         if(!is(obj,"phyloseq")){
@@ -126,13 +134,11 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
             args[["otu_table"]] <- obj
         }
 
-
         # If rowTree has information, stores it to phy_tree and converts is to
         # phyloseq's phy_tree.
         if(!( length(rowTree(x)) == 0 || is.null(rowTree(x)) )){
             phy_tree <- rowTree(x)
             phy_tree <- phyloseq::phy_tree(phy_tree)
-
             # If the object is a phyloseq object, adds phy_tree to it
             if(is(obj,"phyloseq")){
                 phyloseq::phy_tree(obj) <- phy_tree
@@ -147,7 +153,6 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
         if(!( length(referenceSeq(x)) == 0 || is.null(referenceSeq(x)) )){
             refseq <- referenceSeq(x)
             refseq <- phyloseq::refseq(refseq)
-
             # If the object is a phyloseq object, adds refseq to it
             if(is(obj,"phyloseq")){
                 obj <- phyloseq::merge_phyloseq(obj, refseq)
@@ -156,7 +161,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
                 args[["refseq"]] <- refseq
             }
         }
-
+        
         # If 'obj' is not a phyloseq object, creates one.
         if(!is(obj,"phyloseq")){
             # Creates a phyloseq object

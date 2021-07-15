@@ -3,6 +3,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check-bioc-devel](https://github.com/microbiome/mia/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/mia/actions)
+[![R-CMD-check-bioc](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml/badge.svg)](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml)
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/mia?branch=master)
 
@@ -33,23 +34,25 @@ against the `master` branch and then merged to `release` for release.
 
 ## Installation
 
-Currently this is aimed to work with the Bioconductor devel branch.
+### Bioc-release
+
+```
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("mia")
+```
 
 ### Bioc-devel
 
 ```
-BiocManager::install("microbiome/mia")
-```
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
 
-### Bioc-release
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
 
-However, with some additional manual steps `mia` can be installed on Bioc-release
-as well. Use at your own risk!
-
-```
-BiocManager::install("microbiome/microbiomeDataSets@release")
-BiocManager::install("fionarhuang/TreeSummarizedExperiment")
-BiocManager::install("microbiome/mia")
+BiocManager::install("mia")
 ```
 
 # Code of conduct

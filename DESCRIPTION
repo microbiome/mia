@@ -1,11 +1,11 @@
 Package: mia
 Type: Package
-Version: 0.99.15
+Version: 1.1.6
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
              comment = c(ORCID = "0000-0001-5064-0928")),
-      person(given = "Sudarshan", family = "Shetty", role = c("aut"),
+      person(given = "Sudarshan A.", family = "Shetty", role = c("aut"),
              email = "sudarshanshetty9@gmail.com",
              comment = c(ORCID = "0000-0001-7280-9915")),
       person(given = "Tuomas", family = "Borman", role = c("aut"),

@@ -36,14 +36,14 @@ phyloseq object from TreeSummarizedExperiment object.
 }
 \examples{
 # Get tse object
-data("GlobalPatterns")
+data(GlobalPatterns)
 tse <- GlobalPatterns
 
 # Create a phyloseq object from it
 phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
 phy
 
-# By default the chosen table is counts, but if there is other tables,
+# By default the chosen table is counts, but if there are other tables,
 # they can be chosen with abund_values.
 
 # Counts relative abundances table

@@ -30,7 +30,8 @@ if (requireNamespace("phyloseq")) {
 }
 }
 \seealso{
+\code{\link[=makeSummarizedExperimentFromBiom]{makeSummarizedExperimentFromBiom}}
 \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
-\code{\link[=makeTreeSummarizedExperimentFromBiom]{makeTreeSummarizedExperimentFromBiom}}
 \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
+\code{\link[=loadFromMothur]{loadFromMothur}}
 }

@@ -17,11 +17,13 @@
 \alias{taxonomyTree,SummarizedExperiment-method}
 \alias{addTaxonomyTree}
 \alias{addTaxonomyTree,SummarizedExperiment-method}
+\alias{mapTaxonomy}
+\alias{mapTaxonomy,SummarizedExperiment-method}
 \alias{IdTaxaToDataFrame}
 \title{Functions for accessing taxonomic data stored in \code{rowData}.}
 \format{
 a \code{character} vector of length 8 containing the taxonomy ranks
-recognized. In functions this is used case insensitive.
+recognized. In functions this is used as case insensitive.
 }
 \usage{
 TAXONOMY_RANKS
@@ -64,6 +66,10 @@ addTaxonomyTree(x, ...)
 
 \S4method{addTaxonomyTree}{SummarizedExperiment}(x)
 
+mapTaxonomy(x, ...)
+
+\S4method{mapTaxonomy}{SummarizedExperiment}(x, taxa = NULL, from = NULL, to = NULL, use_grepl = FALSE)
+
 IdTaxaToDataFrame(from)
 }
 \arguments{
@@ -87,18 +93,37 @@ suffix? For example: "Phylum:Crenarchaeota" (default:
 \item{make_unique}{\code{TRUE} or \code{FALSE}: Should the labels be made
 unique, if there are any duplicates? (default: \code{make_unique = TRUE})}
 
-\item{resolve_loops}{\code{TRUE} or \code{FALSE}: Should \code{resolveLooops}
+\item{resolve_loops}{\code{TRUE} or \code{FALSE}: Should \code{resolveLoops}
 be applied to the taxonomic data? Please note that has only an effect,
 if the data is unique. (default: \code{resolve_loops = TRUE})}
 
-\item{from}{a \code{Taxa} object as returned by
+\item{taxa}{a \code{character} vector, which is used for subsetting the
+taxonomic information. If no information is found,\code{NULL} is returned
+for the individual element. (default: \code{NULL})}
+
+\item{from}{\itemize{
+\item{For \code{mapTaxonomy}: }{a scalar \code{character} value, which
+must be a valid taxonomic rank. (default: \code{NULL})}
+\item{otherwise a \code{Taxa} object as returned by
 \code{\link[DECIPHER:IdTaxa]{IdTaxa}}}
+}}
+
+\item{to}{a scalar \code{character} value, which must be a valid
+taxonomic rank. (default: \code{NULL})}
+
+\item{use_grepl}{\code{TRUE} or \code{FALSE}: should pattern matching via
+\code{grepl} be used? Otherwise literal matching is used.
+(default: \code{FALSE})}
 }
 \value{
 \itemize{
 \item{\code{taxonomyRanks}:} {a \code{character} vector with all the
 taxonomic ranks found in \code{colnames(rowData(x))}}
 \item{\code{taxonomyRankEmpty}:} {a \code{logical} value}
+\item{\code{mapTaxonomy}:} {a \code{list} per element of taxa. Each
+element is either a \code{DataFrame}, a \code{character} or \code{NULL}.
+If all \code{character} results have the length of one, a single
+\code{character} vector is returned.}
 }
 }
 \description{
@@ -148,6 +173,14 @@ table(taxonomyRankEmpty(GlobalPatterns,"Kingdom"))
 table(taxonomyRankEmpty(GlobalPatterns,"Species"))
 
 getTaxonomyLabels(GlobalPatterns[1:20,])
+
+# mapTaxonomy
+## returns the unique taxonomic information
+mapTaxonomy(GlobalPatterns)
+# returns specific unique taxonomic information
+mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
+# returns information on a single output
+mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
 
 # adding a rowTree() based on the available taxonomic information. Please
 # note that any tree already stored in rowTree() will be overwritten.

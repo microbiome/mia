@@ -1,6 +1,6 @@
 #' Dirichlet-Multinomial Mixture Model: Machine Learning for Microbiome Data
 #'
-#' These function are accessors for functions implemented in the
+#' These functions are accessors for functions implemented in the
 #' \code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}}
 #' package
 #'
@@ -20,13 +20,13 @@
 #'
 #' @param transposed Logical scalar, is x transposed with samples in rows?
 #'
-#' @param type the type of measure for access the goodness of fit. One of
+#' @param type the type of measure used for the goodness of fit. One of
 #'   \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.
 #'
 #' @param name the name to store the result in
 #'   \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}
 #'
-#' @param variable a variable from \code{colData} to use as grouping variable.
+#' @param variable a variable from \code{colData} to use as a grouping variable.
 #'   Must be a character of factor.
 #'
 #' @param seed random number seed. See
@@ -36,7 +36,7 @@
 #'
 #' @return
 #' \code{calculateDMN} and \code{getDMN} return a list of \code{DMN} objects,
-#' one element per value for k given.
+#' one element for each value of k provided.
 #'
 #' \code{bestDMNFit} returns the index for the best fit and \code{getBestDMNFit}
 #' returns a single \code{DMN} object.
@@ -145,8 +145,8 @@ runDMN <- function(x, name = "DMN", ...){
     if(!is(x,"SummarizedExperiment")){
         stop("'x' must be a SummarizedExperiment")
     }
-    metadata(se)[[name]] <- calculateDMN(x, ...)
-    se
+    metadata(x)[[name]] <- calculateDMN(x, ...)
+    x
 }
 
 ################################################################################

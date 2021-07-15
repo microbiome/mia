@@ -30,7 +30,7 @@ object}
 \code{taxonomicRanks()} function.}
 
 \item{onRankOnly}{\code{TRUE} or \code{FALSE}: Should information only from
-the specified rank used or from ranks equal and above? See details.
+the specified rank be used or from ranks equal and above? See details.
 (default: \code{onRankOnly = FALSE})}
 
 \item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
@@ -55,13 +55,13 @@ experiments be removed prior to agglomeration? This prevents to many
 nested alternative experiments by default (default:
 \code{strip_altexp = TRUE})}
 
-\item{agglomerateTree}{\code{TRUE} or \code{FALSE}: should to
+\item{agglomerateTree}{\code{TRUE} or \code{FALSE}: should
 \code{rowTree()} also be agglomerated? (Default:
 \code{agglomerateTree = FALSE})}
 }
 \value{
 A taxonomically-agglomerated, optionally-pruned object of the same
-class \code{x}.
+class as \code{x}.
 }
 \description{
 \code{agglomerateByRank} can be used to sum up data based on the association
