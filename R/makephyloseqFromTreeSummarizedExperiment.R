@@ -65,7 +65,12 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
         }
         # Check abund_values
         .check_assay_present(abund_values, x)
-
+        
+        # phyloseq object requires nonduplicated rownames. If there are 
+        # duplicated rownames, they are converted so that they are unique
+        if( any(duplicated(rownames(x))) ){
+            rownames(x) <- getTaxonomyLabels(x)
+        }
         # List of arguments
         args = list()
         # Gets the abundance data from assay, and converts it to otu_table
@@ -104,22 +109,11 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
 setMethod("makePhyloseqFromTreeSummarizedExperiment",
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, ...){
-        # If rowTree exists, checks if the rowTree match with rownames:
-        # tips labels are found from rownames
-        if( !is.null(rowTree(x)) && any(!( rowTree(x)$tip) %in% rownames(x)) ){
-            # Gets node labels
-            node_labs <- rowLinks(x)$nodeLab
-            # Gets the corresponding rownames
-            node_labs_rownames <- rownames(rowLinks(x))
-            # Prunes the tree
-            tree_pruned <- ape::keep.tip(rowTree(x), node_labs)
-            # Replace tip labels with corresponding rownames
-            tree_pruned$tip.label <- node_labs_rownames
-            # Assigns the pruned tree back to TSE object
-            rowTree(x) <- tree_pruned
-            warning("rowTree is pruned to match rownames.")
+        # phyloseq and tree objects require nonduplicated rownames. If there are 
+        # duplicated rownames, they are converted so that they are unique
+        if( any(duplicated(rownames(x))) ){
+            rownames(x) <- getTaxonomyLabels(x)
         }
-        
         # Gets otu_table object from the function above this, if tse contains
         # only abundance table.
         # Otherwise, gets a phyloseq object with otu_table, and tax_table
@@ -137,6 +131,12 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
         # If rowTree has information, stores it to phy_tree and converts is to
         # phyloseq's phy_tree.
         if(!( length(rowTree(x)) == 0 || is.null(rowTree(x)) )){
+            # If rowTree exists, checks if the rowTree match with rownames:
+            # tips labels are found from rownames
+            if( any(!( rowTree(x)$tip) %in% rownames(x)) ){
+                # If rowtree do not match, tree is pruned
+                x <- .get_x_with_pruned_tree(x)
+            }
             phy_tree <- rowTree(x)
             phy_tree <- phyloseq::phy_tree(phy_tree)
             # If the object is a phyloseq object, adds phy_tree to it
@@ -172,3 +172,20 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
         phyloseq
     }
 )
+
+################################ HELP FUNCTIONS ################################
+
+.get_x_with_pruned_tree <- function(x){
+    # Gets node labels
+    node_labs <- rowLinks(x)$nodeLab
+    # Gets the corresponding rownames
+    node_labs_rownames <- rownames(rowLinks(x))
+    # Prunes the tree
+    tree_pruned <- ape::keep.tip(rowTree(x), node_labs)
+    # Replace tip labels with corresponding rownames
+    tree_pruned$tip.label <- node_labs_rownames
+    # Assigns the pruned tree back to TSE object
+    rowTree(x) <- tree_pruned
+    warning("rowTree is pruned to match rownames.")
+    return(x)
+}
