@@ -11,7 +11,7 @@ reference:
   - transformCounts
 - subtitle: Data loading
 - contents:
-  - makeTreeSummarizedExperimentFromphyloseq
+  - makeTreeSummarizedExperimentFromPhyloseq
   - makeTreeSummarizedExperimentFromDADA2
   - loadFromBiom
   - loadFromQIIME2
