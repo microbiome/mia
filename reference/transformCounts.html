@@ -77,7 +77,7 @@ relAbundanceCounts is a shortcut for fetching relative abundance table." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.8</span>
       </span>
     </div>
 
@@ -262,7 +262,8 @@ all values</p></li>
 <li><p>'log10' log10 transformation can be used for reducing the skewness of the data.$$log10 = \log_10 x$$
 where \(x\) is a single value of data.</p></li>
 <li><p>'pa' Transforms table to presence/absence table. All abundances higher
-than \(\epsilon\) are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.</p></li>
+than \(\epsilon\) are transformed to 1 (present), otherwise 0 (absent).
+By default, threshold is 0.</p></li>
 <li><p>'rank' Rank returns ranks of taxa. For each sample, the least abundant
 taxa get lower value and more abundant taxa bigger value. The implementation is
 based on the colRanks function with ties.method="first".</p></li>
@@ -395,7 +396,8 @@ Oecologia 129: 271-280.</p>
 #&gt; 65_3_22 -1.0000000  1.0000000  0.0000000
 #&gt; 65_5_1  -0.5773503 -0.5773503  1.1547005
 #&gt; 65_1_10 -0.5773503 -0.5773503  1.1547005</div><div class='input'>
-<span class='co'># For visualization purposes it is sometimes done by applying CLR for samples, followed by Z transform for taxa</span>
+<span class='co'># For visualization purposes it is sometimes done by applying CLR for samples,</span>
+<span class='co'># followed by Z transform for taxa</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>ZTransform</span><span class='op'>(</span><span class='fu'>transformCounts</span><span class='op'>(</span><span class='va'>x</span>, method<span class='op'>=</span><span class='st'>"clr"</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span>, pseudocount <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># Relative abundances can be also calculated with the dedicated</span>
