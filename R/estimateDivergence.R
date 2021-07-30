@@ -113,7 +113,7 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
                 stop(reference_stop_msg, call. = FALSE)
             }
             if( is.character(reference) && length(reference) != 1L && 
-               !(reference %in% c("median","mean")) ){
+               !any(c("median","mean") %in% reference) ){
                 stop(reference_stop_msg, call. = FALSE)
             }
         }

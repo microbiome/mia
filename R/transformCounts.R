@@ -61,7 +61,8 @@
 #' where \eqn{x} is a single value of data.}
 #' 
 #' \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
-#' than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.}
+#' than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). 
+#' By default, threshold is 0.}
 #' 
 #' \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant 
 #' taxa get lower value and more abundant taxa bigger value. The implementation is 
@@ -165,7 +166,8 @@
 #' x <- ZTransform(x)
 #' head(assay(x, "z"))
 #' 
-#' # For visualization purposes it is sometimes done by applying CLR for samples, followed by Z transform for taxa
+#' # For visualization purposes it is sometimes done by applying CLR for samples,
+#' # followed by Z transform for taxa
 #' x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
 #'
 #' # Relative abundances can be also calculated with the dedicated
