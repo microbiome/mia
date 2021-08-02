@@ -64,7 +64,7 @@ test_that("perSampleDominantTaxa", {
 
             expect_equal(countDominantTaxa(tse,
                                            rank = "Kingdom")$dominant_taxa[1],
-                         c("Bacteria"))
+                         c("Kingdom:Bacteria"))
 
             expect_equal(countDominantTaxa(tse, rank = "Order")$rel.freq,
                          c(23.1, 11.5, 7.7, 7.7, 7.7, 7.7, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8))

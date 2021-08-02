@@ -169,7 +169,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             }
         }
         # adjust rownames
-        rownames(x) <- .get_taxonomic_label(x, empty.fields)
+        rownames(x) <- .get_taxonomic_label(x, empty.fields, with_rank = TRUE)
         x
     }
 )
