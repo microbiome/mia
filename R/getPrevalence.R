@@ -168,6 +168,19 @@
 #'                         detection = 1/100,
 #'                         prevalence = 50/100,
 #'                         as_relative = TRUE)
+#'                         
+#' \donttest{
+#' # Prefixes, like "Family:", can be removed from names, e.g, with 
+#' # stringr package
+#' library(stringr)
+#' # Get available taxonomy ranks
+#' ranks <- taxonomyRanks(tse)
+#' # Create a long string that contains all the ranks separated by ":|"
+#' patterns = paste0(c(ranks, ""), collapse = ":|")
+#' # Removes patterns from names
+#' prevalent_clean <- str_remove(prevalent, pattern = patterns)
+#' head(prevalent_clean)
+#' }
 NULL
 
 #' @rdname getPrevalence

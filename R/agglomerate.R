@@ -87,6 +87,19 @@
 #' ## print the available taxonomic ranks. Shows only 1 rank available
 #' ## not useful for agglomerateByRank
 #' taxonomyRanks(enterotype)
+#' 
+#' \donttest{
+#' # Prefixes, like "Family:", can be removed from rownames, e.g, with 
+#' # stringr package
+#' library(stringr)
+#' # Get available taxonomy ranks
+#' ranks <- taxonomyRanks(x1)
+#' # Create a long string that contains all the ranks separated by ":|"
+#' patterns = paste0(c(ranks, ""), collapse = ":|")
+#' # Removes patterns from rownames
+#' rownames_clean <- str_remove(rownames(x1), pattern = patterns)
+#' head(rownames_clean)
+#' }
 NULL
 
 setGeneric("agglomerateByRank",
