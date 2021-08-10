@@ -16,7 +16,7 @@
 transformSamples(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "clr_robust", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -25,7 +25,7 @@ transformSamples(
 \S4method{transformSamples}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "clr_robust", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -34,7 +34,7 @@ transformSamples(
 transformCounts(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "clr_robust", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -43,7 +43,7 @@ transformCounts(
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "clr_robust", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -127,6 +127,14 @@ clr = log10 x_r - log10 µ_r}
 where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
 mean relative value".}
 
+\item{'clr_robust'}{ Centered log ratio (clr) transformation can be used for reducing the
+skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
+
+\deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
+clr = log10 x_r - log10 µ_r}
+where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
+mean relative value".}
+
 \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 extreme data points. It can be utilize for clustering or ordination analysis.
 (See e.g. Legendre & Gallagher 2001.)
@@ -138,7 +146,7 @@ all values}
 
 \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
 
-\deqn{log10 = \log_10 x}{%
+\deqn{log10 = \log_{10} x}{%
 log10 = log10(x)}
 where \eqn{x} is a single value of data.}
 
@@ -165,8 +173,8 @@ Z-transformation can be done with function \code{ZTransform}. It is done per row
 unlike most other transformations. This is often preceded by log10p or clr transformation.
 In other words, single value is standardized with respect of feature's values.
 
-\deqn{z = \frac{x + \mu}{\sigma}}{%
-z = (x + µ)/σ}
+\deqn{z = \frac{x - \mu}{\sigma}}{%
+z = (x - µ)/σ}
 where \eqn{x} is a single value, \eqn{\mu} is the mean of the feature, and
 \eqn{\sigma} is the standard deviation of the feature.}
 

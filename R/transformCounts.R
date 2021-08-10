@@ -64,7 +64,7 @@
 #' 
 #' \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
 #'
-#' \deqn{log10 = \log_10 x}{%
+#' \deqn{log10 = \log_{10} x}{%
 #' log10 = log10(x)}
 #' where \eqn{x} is a single value of data.}
 #' 
@@ -91,8 +91,8 @@
 #' unlike most other transformations. This is often preceded by log10p or clr transformation.
 #' In other words, single value is standardized with respect of feature's values.
 #'
-#' \deqn{z = \frac{x + \mu}{\sigma}}{%
-#' z = (x + µ)/σ}
+#' \deqn{z = \frac{x - \mu}{\sigma}}{%
+#' z = (x - µ)/σ}
 #' where \eqn{x} is a single value, \eqn{\mu} is the mean of the feature, and
 #' \eqn{\sigma} is the standard deviation of the feature.}
 #'
@@ -491,7 +491,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
    # Calculates exponential values from means, i.e., geometric means
    geometric_means_of_samples <- exp(mean_log_mat)
    # Divides all values by their sample-wide geometric means
-   values_divided_by_geom_mean <- t(matrix)/geometric_means_of_samples
+   values_divided_by_geom_mean <- t(mat)/geometric_means_of_samples
    # Does logarithmic transform and transposes the table back to its original form
    return_mat <- t(log(values_divided_by_geom_mean))
    # If there were zeros, there are infinite values after logarithmic transform. 
