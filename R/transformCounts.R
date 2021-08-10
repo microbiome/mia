@@ -45,6 +45,14 @@
 #' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
 #' mean relative value".}
 #' 
+#' \item{'clr_robust'}{ Centered log ratio (clr) transformation can be used for reducing the
+#' skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
+#'
+#' \deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
+#' clr = log10 x_r - log10 µ_r}
+#' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
+#' mean relative value".}
+#' 
 #' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 #' extreme data points. It can be utilize for clustering or ordination analysis.
 #' (See e.g. Legendre & Gallagher 2001.)
@@ -182,7 +190,8 @@ NULL
 setGeneric("transformSamples", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+                    method = c("clr", "clr_robust", "hellinger", "log10", "pa", 
+                               "rank", "relabundance"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -194,7 +203,8 @@ setGeneric("transformSamples", signature = c("x"),
 setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
     function(x,
             abund_values = "counts",
-            method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+            method = c("clr", "clr_robust", "hellinger", "log10", "pa", 
+                       "rank", "relabundance"),
             name = method,
             pseudocount = FALSE,
             threshold = 0){
@@ -233,7 +243,8 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
 setGeneric("transformCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+                    method = c("clr", "clr_robust", "hellinger", "log10", "pa", 
+                               "rank", "relabundance"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -245,7 +256,8 @@ setGeneric("transformCounts", signature = c("x"),
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
              abund_values = "counts",
-             method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+             method = c("clr", "clr_robust", "hellinger", "log10", "pa", 
+                        "rank", "relabundance"),
              name = method,
              pseudocount = FALSE,
              threshold = 0){
@@ -395,7 +407,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                   hellinger = .calc_hellinger,
                   clr = .calc_clr,
                   rank = .calc_rank,
-                  z = .calc_ztransform)
+                  z = .calc_ztransform,
+                  clr_robust = .calc_clr_robust)
 
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
@@ -464,6 +477,27 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     clogm <- colMeans2(clog)
     mat <- t(t(clog) - clogm)
     return(mat)
+}
+
+#' @importFrom DelayedMatrixStats colMeans2
+.calc_clr_robust <- function(mat, ...){
+   # Performs logarithmic transform
+   log_mat <- log(mat)
+   # If there are zeros, they are converted into infinite values. 
+   # They are converted to NAs.
+   log_mat[is.infinite(log_mat)] <- NA
+   # Calculates means for every sample, does not take NAs into account
+   mean_log_mat <- colMeans2(log_mat, na.rm = TRUE)
+   # Calculates exponential values from means, i.e., geometric means
+   geometric_means_of_samples <- exp(mean_log_mat)
+   # Divides all values by their sample-wide geometric means
+   values_divided_by_geom_mean <- t(matrix)/geometric_means_of_samples
+   # Does logarithmic transform and transposes the table back to its original form
+   return_mat <- t(log(values_divided_by_geom_mean))
+   # If there were zeros, there are infinite values after logarithmic transform. 
+   # They are converted to zero.
+   return_mat[is.infinite(return_mat)] <- 0
+   return(return_mat)
 }
 
 #' @importFrom DelayedMatrixStats colRanks
