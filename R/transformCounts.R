@@ -50,7 +50,11 @@
 #' clr is that logarithmic transformations leads to undefined values when zeros
 #' are present in the data. In robust clr, values are divided by geometric mean
 #' of observed taxa and zero values are not taken into account. Zero values will
-#' stay as zeroes. (See e.g. Martino et al. 2019.)
+#' stay as zeroes. 
+#' 
+#' Because of high-dimensionality of data, robust clr's geometric mean of 
+#' observed taxa is a good approximation to the true geometric mean.
+#' (See e.g. Martino et al. 2019.)
 #'
 #' \deqn{clr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
 #' clr = log10(x_r/g(x_r > 0))}
