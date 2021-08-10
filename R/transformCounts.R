@@ -40,18 +40,22 @@
 #' \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
 #' skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
 #'
-#' \deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
-#' clr = log10 x_r - log10 µ_r}
-#' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
-#' mean relative value".}
+#' \deqn{clr = log_{10}\frac{x_{r}}{g(x_{r})} = log_{10}x_{r} - log_{10}µ_{r}}{%
+#' clr = log10(x_r/g(x_r)) = log10 x_r - log10 µ_r}
+#' where \eqn{x_{r}} is a single relative value, g(x_{r}) is geometric mean of
+#' sample-wide relative values, and \eqn{\mu_{r}} is arithmetic mean of 
+#' sample-wide relative values".}
 #' 
-#' \item{'clr_robust'}{ Centered log ratio (clr) transformation can be used for reducing the
-#' skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
+#' \item{'clr_robust'}{ Robust clr is similar to regular clr. Problem of regular
+#' clr is that logarithmic transformations leads to undefined values when zeros
+#' are present in the data. In robust clr, values are divided by geometric mean
+#' of observed taxa and zero values are not taken into account. Zero values will
+#' stay as zeroes. (See e.g. Martino et al. 2019.)
 #'
-#' \deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
-#' clr = log10 x_r - log10 µ_r}
-#' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
-#' mean relative value".}
+#' \deqn{clr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
+#' clr = log10(x_r/g(x_r > 0))}
+#' where \eqn{x_{r}} is a single relative value, and g(x_{r} > 0) is geometric 
+#' mean of sample-wide relative values that are over 0".}
 #' 
 #' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 #' extreme data points. It can be utilize for clustering or ordination analysis.
@@ -106,6 +110,10 @@
 #' Legendre P & Gallagher ED (2001)
 #' Ecologically meaningful transformations for ordination of species data.
 #' Oecologia 129: 271-280.
+#' 
+#' Martino C, Morton JT, Marotz CA, Thompson LR, Tripathi A, Knight R & Zengler K
+#' (2019) A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
+#' mSystems 4: 1. doi: 10.1128/mSystems.00016-19
 #'
 #'
 #' @return
