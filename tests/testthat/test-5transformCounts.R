@@ -154,9 +154,9 @@ test_that("transformCounts", {
                 log(x) - mean(log(x))
             }))
         
-        # Tests clr_robust
+        # Tests rclr
         expect_equal(
-            round(as.matrix(assays(mia::transformCounts(tse, method = "clr_robust", pseudocount = pseudonumber))$clr_robust),4),
+            round(as.matrix(assays(mia::transformCounts(tse, method = "rclr", pseudocount = pseudonumber))$rclr),4),
             round(apply(as.matrix(relative), 2, FUN=function(x){
                 log(x) - mean(log(x))
             })),4)
@@ -164,7 +164,7 @@ test_that("transformCounts", {
         # Expect that error occurs
         expect_error(mia::transformCounts(tse, method = "clr"))
         # Expect that error does not occur
-        expect_error(mia::transformSamples(tse, method = "clr_robust"), NA)
+        expect_error(mia::transformSamples(tse, method = "rclr"), NA)
         
         # Tests that transformCounts and transfromSamples give same result
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance),
@@ -172,12 +172,12 @@ test_that("transformCounts", {
         
         # Tests transformCounts, tries to calculate clr. Should be an error, because of zeros.
         expect_error(mia::transformCounts(tse, method = "clr"))
-        # Tests transformSamples, tries to calculate clr_robust. Should not be an error.
-        expect_error(mia::transformSamples(tse, method = "clr_robust"), NA)
+        # Tests transformSamples, tries to calculate rclr. Should not be an error.
+        expect_error(mia::transformSamples(tse, method = "rclr"), NA)
         # Tests transformFeatures, tries to calculate clr. Should be an error.
         expect_error(mia::transformFeatures(tse, method = "clr"))
-        # Tests transformFeatures, tries to calculate clr_robust. Should be an error.
-        expect_error(mia::transformFeatures(tse, method = "clr_robust"))
+        # Tests transformFeatures, tries to calculate rclr. Should be an error.
+        expect_error(mia::transformFeatures(tse, method = "rclr"))
         
         # Tests that clr robust gives values that are approximately same if only 
         # one value per sample are changed to zero
@@ -188,8 +188,8 @@ test_that("transformCounts", {
         assay(tse, "test2")[1, ] <- 0
         
         # clr robust transformations
-        test <- assay(transformSamples(tse, method = "clr_robust", abund_values = "test"), "clr_robust")
-        test2 <- assay(transformSamples(tse, method = "clr_robust", abund_values = "test2"), "clr_robust")
+        test <- assay(transformSamples(tse, method = "rclr", abund_values = "test"), "rclr")
+        test2 <- assay(transformSamples(tse, method = "rclr", abund_values = "test2"), "rclr")
         
         # Removes first rows
         test <- test[-1, ]
