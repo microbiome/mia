@@ -16,7 +16,7 @@
 transformSamples(
   x,
   abund_values = "counts",
-  method = c("clr", "clr_robust", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -25,7 +25,7 @@ transformSamples(
 \S4method{transformSamples}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("clr", "clr_robust", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -34,7 +34,7 @@ transformSamples(
 transformCounts(
   x,
   abund_values = "counts",
-  method = c("clr", "clr_robust", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -43,7 +43,7 @@ transformCounts(
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("clr", "clr_robust", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -128,14 +128,18 @@ where \eqn{x_{r}} is a single relative value, g(x_{r}) is geometric mean of
 sample-wide relative values, and \eqn{\mu_{r}} is arithmetic mean of
 sample-wide relative values".}
 
-\item{'clr_robust'}{ Robust clr is similar to regular clr. Problem of regular
-clr is that logarithmic transformations leads to undefined values when zeros
-are present in the data. In robust clr, values are divided by geometric mean
+\item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
+clr is that logarithmic transformations lead to undefined values when zeros
+are present in the data. In rclr, values are divided by geometric mean
 of observed taxa and zero values are not taken into account. Zero values will
-stay as zeroes. (See e.g. Martino et al. 2019.)
+stay as zeroes.
 
-\deqn{clr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
-clr = log10(x_r/g(x_r > 0))}
+Because of high-dimensionality of data, rclr's geometric mean of
+observed taxa is a good approximation to the true geometric mean.
+(See e.g. Martino et al. 2019.)
+
+\deqn{rclr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
+rclr = log10(x_r/g(x_r > 0))}
 where \eqn{x_{r}} is a single relative value, and g(x_{r} > 0) is geometric
 mean of sample-wide relative values that are over 0".}
 
