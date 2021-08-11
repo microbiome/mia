@@ -77,7 +77,7 @@ relAbundanceCounts is a shortcut for fetching relative abundance table." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.9</span>
       </span>
     </div>
 
@@ -133,7 +133,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
     <pre class="usage"><span class='fu'>transformSamples</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clr"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"rank"</span>, <span class='st'>"relabundance"</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clr"</span>, <span class='st'>"rclr"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"rank"</span>, <span class='st'>"relabundance"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>method</span>,
   pseudocount <span class='op'>=</span> <span class='cn'>FALSE</span>,
   threshold <span class='op'>=</span> <span class='fl'>0</span>
@@ -143,7 +143,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 <span class='fu'>transformSamples</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clr"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"rank"</span>, <span class='st'>"relabundance"</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clr"</span>, <span class='st'>"rclr"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"rank"</span>, <span class='st'>"relabundance"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>method</span>,
   pseudocount <span class='op'>=</span> <span class='cn'>FALSE</span>,
   threshold <span class='op'>=</span> <span class='fl'>0</span>
@@ -152,7 +152,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 <span class='fu'>transformCounts</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clr"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"rank"</span>, <span class='st'>"relabundance"</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clr"</span>, <span class='st'>"rclr"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"rank"</span>, <span class='st'>"relabundance"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>method</span>,
   pseudocount <span class='op'>=</span> <span class='cn'>FALSE</span>,
   threshold <span class='op'>=</span> <span class='fl'>0</span>
@@ -162,7 +162,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 <span class='fu'>transformCounts</span><span class='op'>(</span>
   <span class='va'>x</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clr"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"rank"</span>, <span class='st'>"relabundance"</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clr"</span>, <span class='st'>"rclr"</span>, <span class='st'>"hellinger"</span>, <span class='st'>"log10"</span>, <span class='st'>"pa"</span>, <span class='st'>"rank"</span>, <span class='st'>"relabundance"</span><span class='op'>)</span>,
   name <span class='op'>=</span> <span class='va'>method</span>,
   pseudocount <span class='op'>=</span> <span class='cn'>FALSE</span>,
   threshold <span class='op'>=</span> <span class='fl'>0</span>
@@ -251,15 +251,25 @@ transformed abundance table named <code>name</code> in the <code>assay</code>.</
 applies transformation to abundance table. Provided transformation methods include:</p>
 <ul>
 <li><p>'clr' Centered log ratio (clr) transformation can be used for reducing the
-skewness of data and for centering it. (See e.g. Gloor et al. 2017.)$$clr = log_{10}x_{r} - log_{10}µ_{r}$$
-where \(x_{r}\) is a single relative value, \(\mu_{r}\) is
-mean relative value".</p></li>
+skewness of data and for centering it. (See e.g. Gloor et al. 2017.)$$clr = log_{10}\frac{x_{r}}{g(x_{r})} = log_{10}x_{r} - log_{10}µ_{r}$$
+where \(x_{r}\) is a single relative value, g(x_r) is geometric mean of
+sample-wide relative values, and \(\mu_{r}\) is arithmetic mean of
+sample-wide relative values".</p></li>
+<li><p>'rclr' rclr or robust clr is similar to regular clr. Problem of regular
+clr is that logarithmic transformations lead to undefined values when zeros
+are present in the data. In rclr, values are divided by geometric mean
+of observed taxa and zero values are not taken into account. Zero values will
+stay as zeroes.Because of high-dimensionality of data, rclr's geometric mean of
+observed taxa is a good approximation to the true geometric mean.
+(See e.g. Martino et al. 2019.)$$rclr = log_{10}\frac{x_{r}}{g(x_{r} &gt; 0)}$$
+where \(x_{r}\) is a single relative value, and g(x_r &gt; 0) is geometric
+mean of sample-wide relative values that are over 0".</p></li>
 <li><p>'hellinger' Hellinger transformation can be used to reduce the impact of
 extreme data points. It can be utilize for clustering or ordination analysis.
 (See e.g. Legendre &amp; Gallagher 2001.)$$hellinger = \sqrt{\frac{x}{x_{tot}}}$$
 where \(x\) is a single value and \(x_{tot}\) is the sum of
 all values</p></li>
-<li><p>'log10' log10 transformation can be used for reducing the skewness of the data.$$log10 = \log_10 x$$
+<li><p>'log10' log10 transformation can be used for reducing the skewness of the data.$$log10 = \log_{10} x$$
 where \(x\) is a single value of data.</p></li>
 <li><p>'pa' Transforms table to presence/absence table. All abundances higher
 than \(\epsilon\) are transformed to 1 (present), otherwise 0 (absent).
@@ -276,7 +286,7 @@ all values.</p></li>
 the data by shifting (to mean \(\mu\)) and scaling (to standard deviation \(\sigma\)).
 Z-transformation can be done with function <code>ZTransform</code>. It is done per rows (features / taxa),
 unlike most other transformations. This is often preceded by log10p or clr transformation.
-In other words, single value is standardized with respect of feature's values.$$z = \frac{x + \mu}{\sigma}$$
+In other words, single value is standardized with respect of feature's values.$$z = \frac{x - \mu}{\sigma}$$
 where \(x\) is a single value, \(\mu\) is the mean of the feature, and
 \(\sigma\) is the standard deviation of the feature.</p></li>
 </ul>
@@ -289,6 +299,9 @@ Frontiers in Microbiology 8: 2224. doi: 10.3389/fmicb.2017.02224</p>
 <p>Legendre P &amp; Gallagher ED (2001)
 Ecologically meaningful transformations for ordination of species data.
 Oecologia 129: 271-280.</p>
+<p>Martino C, Morton JT, Marotz CA, Thompson LR, Tripathi A, Knight R &amp; Zengler K
+(2019) A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
+mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Leo Lahti and Tuomas Borman. Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
