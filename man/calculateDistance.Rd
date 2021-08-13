@@ -47,13 +47,12 @@ type of distance calculated can be modified by setting \code{FUN}, which
 expects a function with a matrix input as its first argument.
 }
 \examples{
-\dontrun{
 # generate some example data
 mat <- matrix(1:60, nrow = 6)
 df <- DataFrame(n = c(1:6))
 se <- SummarizedExperiment(assays = list(counts = mat),
                            rowData = df)
 #
-mia::.calculateDistance(se)
-}
+mia:::.calculateDistance(se)
+
 }

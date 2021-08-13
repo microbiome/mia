@@ -26,15 +26,14 @@
 #' @name calculateDistance
 #'
 #' @examples
-#' \dontrun{
 #' # generate some example data
 #' mat <- matrix(1:60, nrow = 6)
 #' df <- DataFrame(n = c(1:6))
 #' se <- SummarizedExperiment(assays = list(counts = mat),
 #'                            rowData = df)
 #' #
-#' mia::.calculateDistance(se)
-#' }
+#' mia:::.calculateDistance(se)
+#' 
 NULL
 
 
