@@ -1,9 +1,11 @@
 #' Calculate sample distances with \code{vegan}
+#' 
+#' NOT EXPORTED. WILL BE REMOVED BY BIOC 3.15.
 #'
-#' \code{calculateDistance} calculates a distance matrix between samples. The
+#' \code{.calculateDistance} calculates a distance matrix between samples. The
 #' type of distance calculated can be modified by setting \code{FUN}, which
 #' expects a function with a matrix input as its first argument.
-#'
+#' 
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object containing a tree.
@@ -23,42 +25,39 @@
 #'
 #' @name calculateDistance
 #'
-#' @export
-#'
 #' @examples
+#' \dontrun{
 #' # generate some example data
 #' mat <- matrix(1:60, nrow = 6)
 #' df <- DataFrame(n = c(1:6))
 #' se <- SummarizedExperiment(assays = list(counts = mat),
 #'                            rowData = df)
 #' #
-#' calculateDistance(se)
+#' mia::.calculateDistance(se)
+#' }
 NULL
 
 
 #' @rdname calculateDistance
-#' @export
-setGeneric("calculateDistance", signature = c("x"),
+setGeneric(".calculateDistance", signature = c("x"),
            function(x, FUN = stats::dist, ...)
-             standardGeneric("calculateDistance"))
+             standardGeneric(".calculateDistance"))
 
 #' @rdname calculateDistance
-#' @export
-setMethod("calculateDistance", signature = c(x = "ANY"),
+setMethod(".calculateDistance", signature = c(x = "ANY"),
     function(x, FUN = stats::dist, ...){
         do.call(FUN, c(list(x),list(...)))
     }
 )
 
 #' @rdname calculateDistance
-#' @export
-setMethod("calculateDistance", signature = c(x = "SummarizedExperiment"),
+setMethod(".calculateDistance", signature = c(x = "SummarizedExperiment"),
     function(x, FUN = stats::dist, exprs_values = "counts", transposed = FALSE,
              ...){
         mat <- assay(x, exprs_values)
         if(!transposed){
             mat <- t(mat)
         }
-        calculateDistance(mat, FUN, ...)
+        .calculateDistance(mat, FUN, ...)
     }
 )

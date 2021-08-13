@@ -6,14 +6,14 @@ test_that("calculateDistance", {
     se <- SummarizedExperiment(assays = list(counts = mat),
                                rowData = df)
     # default
-    actual <- calculateDistance(se)
+    actual <- .calculateDistance(se)
     actual2 <- dist(t(assay(se,"counts")))
     expect_true(all(actual == actual2))
     #
     data(enterotype)
     data(esophagus)
     # default
-    actual <- calculateDistance(enterotype)
+    actual <- .calculateDistance(enterotype)
     expect_equal(actual[1], 0.22382452, tolerance = .0000001)
     expect_equal(actual[length(actual)], 0.3316593, tolerance = .0000001)
     # JSD
