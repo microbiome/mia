@@ -77,10 +77,16 @@
 #'
 #' # removing empty labels by setting na.rm = TRUE
 #' sum(is.na(rowData(GlobalPatterns)$Family))
-# x3 <- agglomerateByRank(GlobalPatterns, rank="Family",
-#                         agglomerateTree = TRUE,
-#                         na.rm = TRUE)
-# nrow(x3) # different from x2
+#' x3 <- agglomerateByRank(GlobalPatterns, rank="Family", na.rm = TRUE)
+#' nrow(x3) # different from x2
+#' 
+#' # Because all the rownames are from the same rank, rownames do not include 
+#' # prefixes, in this case "Family:". 
+#' print(rownames(x3[1:3,]))
+#' 
+#' # To add them, use getTaxonomyLabels function.
+#' rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
+#' print(rownames(x3[1:3,]))
 #'
 #' ## Look at enterotype dataset...
 #' data(enterotype)
