@@ -16,7 +16,7 @@
 transformSamples(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -25,7 +25,7 @@ transformSamples(
 \S4method{transformSamples}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -34,7 +34,7 @@ transformSamples(
 transformCounts(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -43,7 +43,7 @@ transformCounts(
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
   abund_values = "counts",
-  method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
   threshold = 0
@@ -122,10 +122,26 @@ applies transformation to abundance table. Provided transformation methods inclu
 \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
 skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
 
-\deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
-clr = log10 x_r - log10 µ_r}
-where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
-mean relative value".}
+\deqn{clr = log_{10}\frac{x_{r}}{g(x_{r})} = log_{10}x_{r} - log_{10}µ_{r}}{%
+clr = log10(x_r/g(x_r)) = log10 x_r - log10 µ_r}
+where \eqn{x_{r}} is a single relative value, g(x_{r}) is geometric mean of
+sample-wide relative values, and \eqn{\mu_{r}} is arithmetic mean of
+sample-wide relative values".}
+
+\item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
+clr is that logarithmic transformations lead to undefined values when zeros
+are present in the data. In rclr, values are divided by geometric mean
+of observed taxa and zero values are not taken into account. Zero values will
+stay as zeroes.
+
+Because of high-dimensionality of data, rclr's geometric mean of
+observed taxa is a good approximation to the true geometric mean.
+(See e.g. Martino et al. 2019.)
+
+\deqn{rclr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
+rclr = log10(x_r/g(x_r > 0))}
+where \eqn{x_{r}} is a single relative value, and g(x_{r} > 0) is geometric
+mean of sample-wide relative values that are over 0".}
 
 \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 extreme data points. It can be utilize for clustering or ordination analysis.
@@ -138,12 +154,13 @@ all values}
 
 \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
 
-\deqn{log10 = \log_10 x}{%
+\deqn{log10 = \log_{10} x}{%
 log10 = log10(x)}
 where \eqn{x} is a single value of data.}
 
 \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
-than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.}
+than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent).
+By default, threshold is 0.}
 
 \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant
 taxa get lower value and more abundant taxa bigger value. The implementation is
@@ -164,8 +181,8 @@ Z-transformation can be done with function \code{ZTransform}. It is done per row
 unlike most other transformations. This is often preceded by log10p or clr transformation.
 In other words, single value is standardized with respect of feature's values.
 
-\deqn{z = \frac{x + \mu}{\sigma}}{%
-z = (x + µ)/σ}
+\deqn{z = \frac{x - \mu}{\sigma}}{%
+z = (x - µ)/σ}
 where \eqn{x} is a single value, \eqn{\mu} is the mean of the feature, and
 \eqn{\sigma} is the standard deviation of the feature.}
 
@@ -226,7 +243,8 @@ head(assay(x, "log10_features"))
 x <- ZTransform(x)
 head(assay(x, "z"))
 
-# For visualization purposes it is sometimes done by applying CLR for samples, followed by Z transform for taxa
+# For visualization purposes it is sometimes done by applying CLR for samples,
+# followed by Z transform for taxa
 x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
 
 # Relative abundances can be also calculated with the dedicated
@@ -242,6 +260,10 @@ Frontiers in Microbiology 8: 2224. doi: 10.3389/fmicb.2017.02224
 Legendre P & Gallagher ED (2001)
 Ecologically meaningful transformations for ordination of species data.
 Oecologia 129: 271-280.
+
+Martino C, Morton JT, Marotz CA, Thompson LR, Tripathi A, Knight R & Zengler K
+(2019) A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
+mSystems 4: 1. doi: 10.1128/mSystems.00016-19
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

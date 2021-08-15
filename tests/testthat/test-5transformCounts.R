@@ -146,19 +146,57 @@ test_that("transformCounts", {
         relative <- expect_warning(assay(mia::transformCounts(tse, method = "relabundance", pseudocount = pseudonumber),
                                          "relabundance"),
                                    "Relative abundances vary")
-
+        
+        # Tests clr
         expect_equal(
             as.matrix(assays(mia::transformCounts(tse, method = "clr", pseudocount = pseudonumber))$clr),
             apply(as.matrix(relative), 2, FUN=function(x){
                 log(x) - mean(log(x))
             }))
         
+        # Tests rclr
+        expect_equal(
+            round(as.matrix(assays(mia::transformCounts(tse, method = "rclr", pseudocount = pseudonumber))$rclr),4),
+            round(apply(as.matrix(relative), 2, FUN=function(x){
+                log(x) - mean(log(x))
+            })),4)
+        
+        # Expect that error occurs
+        expect_error(mia::transformCounts(tse, method = "clr"))
+        # Expect that error does not occur
+        expect_error(mia::transformSamples(tse, method = "rclr"), NA)
+        
         # Tests that transformCounts and transfromSamples give same result
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance),
                      as.matrix(assays(mia::transformSamples(tse, method = "relabundance"))$relabundance))
         
+        # Tests transformCounts, tries to calculate clr. Should be an error, because of zeros.
+        expect_error(mia::transformCounts(tse, method = "clr"))
+        # Tests transformSamples, tries to calculate rclr. Should not be an error.
+        expect_error(mia::transformSamples(tse, method = "rclr"), NA)
         # Tests transformFeatures, tries to calculate clr. Should be an error.
         expect_error(mia::transformFeatures(tse, method = "clr"))
+        # Tests transformFeatures, tries to calculate rclr. Should be an error.
+        expect_error(mia::transformFeatures(tse, method = "rclr"))
+        
+        # Tests that clr robust gives values that are approximately same if only 
+        # one value per sample are changed to zero
+        # Adds pseudocount
+        assay(tse, "test") <- assay(tse, "counts")+1
+        assay(tse, "test2") <- assay(tse, "test") 
+        # First row is zeroes
+        assay(tse, "test2")[1, ] <- 0
+        
+        # clr robust transformations
+        test <- assay(transformSamples(tse, method = "rclr", abund_values = "test"), "rclr")
+        test2 <- assay(transformSamples(tse, method = "rclr", abund_values = "test2"), "rclr")
+        
+        # Removes first rows
+        test <- test[-1, ]
+        test2 <- test2[-1, ]
+        
+        # Expect that under 10 values are unequal. Values have only one decimal.
+        expect_true( sum(round(test, 1) != round(test2, 1), na.rm = TRUE) < 10 )
 
         ############################# NAMES ####################################
         # Tests that samples have correct names
@@ -173,7 +211,7 @@ test_that("transformCounts", {
         # Calculates rank
         tse_rank <- transformCounts(tse, method = "rank")
         # Expect that assay contains count and rank table
-        expect_equal(assayNames(tse_rank), c("counts", "rank") )
+        expect_true( all(c("counts", "rank") %in% assayNames(tse_rank)) )
         
         for( i in c(1:10) ){
             # Gets columns from 'rank' table

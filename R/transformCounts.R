@@ -40,10 +40,26 @@
 #' \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
 #' skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
 #'
-#' \deqn{clr = log_{10}x_{r} - log_{10}µ_{r}}{%
-#' clr = log10 x_r - log10 µ_r}
-#' where \eqn{x_{r}} is a single relative value, \eqn{\mu_{r}} is
-#' mean relative value".}
+#' \deqn{clr = log_{10}\frac{x_{r}}{g(x_{r})} = log_{10}x_{r} - log_{10}µ_{r}}{%
+#' clr = log10(x_r/g(x_r)) = log10 x_r - log10 µ_r}
+#' where \eqn{x_{r}} is a single relative value, g(x_{r}) is geometric mean of
+#' sample-wide relative values, and \eqn{\mu_{r}} is arithmetic mean of 
+#' sample-wide relative values".}
+#' 
+#' \item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
+#' clr is that logarithmic transformations lead to undefined values when zeros
+#' are present in the data. In rclr, values are divided by geometric mean
+#' of observed taxa and zero values are not taken into account. Zero values will
+#' stay as zeroes. 
+#' 
+#' Because of high-dimensionality of data, rclr's geometric mean of 
+#' observed taxa is a good approximation to the true geometric mean.
+#' (See e.g. Martino et al. 2019.)
+#'
+#' \deqn{rclr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
+#' rclr = log10(x_r/g(x_r > 0))}
+#' where \eqn{x_{r}} is a single relative value, and g(x_{r} > 0) is geometric 
+#' mean of sample-wide relative values that are over 0".}
 #' 
 #' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 #' extreme data points. It can be utilize for clustering or ordination analysis.
@@ -56,12 +72,13 @@
 #' 
 #' \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
 #'
-#' \deqn{log10 = \log_10 x}{%
+#' \deqn{log10 = \log_{10} x}{%
 #' log10 = log10(x)}
 #' where \eqn{x} is a single value of data.}
 #' 
 #' \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
-#' than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). By default, threshold is 0.}
+#' than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). 
+#' By default, threshold is 0.}
 #' 
 #' \item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant 
 #' taxa get lower value and more abundant taxa bigger value. The implementation is 
@@ -82,8 +99,8 @@
 #' unlike most other transformations. This is often preceded by log10p or clr transformation.
 #' In other words, single value is standardized with respect of feature's values.
 #'
-#' \deqn{z = \frac{x + \mu}{\sigma}}{%
-#' z = (x + µ)/σ}
+#' \deqn{z = \frac{x - \mu}{\sigma}}{%
+#' z = (x - µ)/σ}
 #' where \eqn{x} is a single value, \eqn{\mu} is the mean of the feature, and
 #' \eqn{\sigma} is the standard deviation of the feature.}
 #'
@@ -97,6 +114,10 @@
 #' Legendre P & Gallagher ED (2001)
 #' Ecologically meaningful transformations for ordination of species data.
 #' Oecologia 129: 271-280.
+#' 
+#' Martino C, Morton JT, Marotz CA, Thompson LR, Tripathi A, Knight R & Zengler K
+#' (2019) A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
+#' mSystems 4: 1. doi: 10.1128/mSystems.00016-19
 #'
 #'
 #' @return
@@ -165,7 +186,8 @@
 #' x <- ZTransform(x)
 #' head(assay(x, "z"))
 #' 
-#' # For visualization purposes it is sometimes done by applying CLR for samples, followed by Z transform for taxa
+#' # For visualization purposes it is sometimes done by applying CLR for samples,
+#' # followed by Z transform for taxa
 #' x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
 #'
 #' # Relative abundances can be also calculated with the dedicated
@@ -180,7 +202,8 @@ NULL
 setGeneric("transformSamples", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+                    method = c("clr", "rclr", "hellinger", "log10", "pa", 
+                               "rank", "relabundance"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -192,7 +215,8 @@ setGeneric("transformSamples", signature = c("x"),
 setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
     function(x,
             abund_values = "counts",
-            method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+            method = c("clr", "rclr", "hellinger", "log10", "pa", 
+                       "rank", "relabundance"),
             name = method,
             pseudocount = FALSE,
             threshold = 0){
@@ -231,7 +255,8 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
 setGeneric("transformCounts", signature = c("x"),
            function(x,
                     abund_values = "counts",
-                    method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+                    method = c("clr", "rclr", "hellinger", "log10", "pa", 
+                               "rank", "relabundance"),
                     name = method,
                     pseudocount = FALSE,
                     threshold = 0)
@@ -243,7 +268,8 @@ setGeneric("transformCounts", signature = c("x"),
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
              abund_values = "counts",
-             method = c("clr", "hellinger", "log10", "pa", "rank", "relabundance"),
+             method = c("clr", "rclr", "hellinger", "log10", "pa", 
+                        "rank", "relabundance"),
              name = method,
              pseudocount = FALSE,
              threshold = 0){
@@ -393,7 +419,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                   hellinger = .calc_hellinger,
                   clr = .calc_clr,
                   rank = .calc_rank,
-                  z = .calc_ztransform)
+                  z = .calc_ztransform,
+                  rclr = .calc_rclr)
 
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
@@ -462,6 +489,27 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     clogm <- colMeans2(clog)
     mat <- t(t(clog) - clogm)
     return(mat)
+}
+
+#' @importFrom DelayedMatrixStats colMeans2
+.calc_rclr <- function(mat, ...){
+   # Performs logarithmic transform
+   log_mat <- log(mat)
+   # If there are zeros, they are converted into infinite values. 
+   # They are converted to NAs.
+   log_mat[is.infinite(log_mat)] <- NA
+   # Calculates means for every sample, does not take NAs into account
+   mean_log_mat <- colMeans2(log_mat, na.rm = TRUE)
+   # Calculates exponential values from means, i.e., geometric means
+   geometric_means_of_samples <- exp(mean_log_mat)
+   # Divides all values by their sample-wide geometric means
+   values_divided_by_geom_mean <- t(mat)/geometric_means_of_samples
+   # Does logarithmic transform and transposes the table back to its original form
+   return_mat <- t(log(values_divided_by_geom_mean))
+   # If there were zeros, there are infinite values after logarithmic transform. 
+   # They are converted to zero.
+   return_mat[is.infinite(return_mat)] <- 0
+   return(return_mat)
 }
 
 #' @importFrom DelayedMatrixStats colRanks
