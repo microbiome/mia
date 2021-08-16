@@ -104,9 +104,9 @@ setGeneric("calculateUniFrac", signature = c("x", "tree"),
 setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
              BPPARAM = SerialParam()){
-        calculateDistance(x, FUN = runUniFrac, tree = tree,
-                          weighted = weighted, normalized = normalized,
-                          BPPARAM = BPPARAM)
+        .calculate_distance(x, FUN = runUniFrac, tree = tree,
+                            weighted = weighted, normalized = normalized,
+                            BPPARAM = BPPARAM)
     }
 )
 

@@ -1,4 +1,6 @@
 #' Calculate sample distances with \code{vegan}
+#' 
+#' Will be removed by Bioc 3.15
 #'
 #' \code{calculateDistance} calculates a distance matrix between samples. The
 #' type of distance calculated can be modified by setting \code{FUN}, which
@@ -47,7 +49,8 @@ setGeneric("calculateDistance", signature = c("x"),
 #' @export
 setMethod("calculateDistance", signature = c(x = "ANY"),
     function(x, FUN = stats::dist, ...){
-        do.call(FUN, c(list(x),list(...)))
+        .Deprecated("directly 'FUN' argument's specified function")
+        .calculate_distance(mat = x, FUN = stats::dist, ...)
     }
 )
 
@@ -63,3 +66,9 @@ setMethod("calculateDistance", signature = c(x = "SummarizedExperiment"),
         calculateDistance(mat, FUN, ...)
     }
 )
+
+################################ HELP FUNCTIONS ################################
+
+.calculate_distance <- function(mat, FUN = stats::dist, ...){
+    do.call(FUN, c(list(mat),list(...)))
+}
