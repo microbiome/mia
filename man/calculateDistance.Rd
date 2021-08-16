@@ -38,6 +38,9 @@ assay to use for calculation.}
 a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
+Will be removed by Bioc 3.15
+}
+\details{
 \code{calculateDistance} calculates a distance matrix between samples. The
 type of distance calculated can be modified by setting \code{FUN}, which
 expects a function with a matrix input as its first argument.
@@ -48,7 +51,8 @@ mat <- matrix(1:60, nrow = 6)
 df <- DataFrame(n = c(1:6))
 se <- SummarizedExperiment(assays = list(counts = mat),
                            rowData = df)
-                           
+\dontrun{
 calculateDistance(se)
+}
 
 }
