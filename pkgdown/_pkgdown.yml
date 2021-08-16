@@ -27,6 +27,7 @@ reference:
 - contents:
   - calculateUniFrac
   - calculateJSD
+  - calculateDistance
   - runNMDS
   - runCCA
 - subtitle: Other diversity measurements

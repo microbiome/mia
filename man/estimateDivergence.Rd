@@ -40,7 +40,7 @@ features, or a non-empty character value; either 'median' or 'mean'.
 \code{divergence}. by default, \code{reference} is  \code{"median"}.}
 
 \item{FUN}{a \code{function} for distance calculation. For more information,
-please check \code{.calculateDistance}. By default, \code{FUN} is
+please check \code{calculateDistance}. By default, \code{FUN} is
 \code{vegan::vegdist}.}
 
 \item{method}{a method that is used to calculate the distance. Method is
@@ -93,6 +93,7 @@ colData(tse)
 \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
 \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
+\item{\code{\link[mia:calculateDistance]{calculateDistance}}}
 }
 }
 \author{

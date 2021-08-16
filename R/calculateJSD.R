@@ -66,7 +66,7 @@ setGeneric("calculateJSD", signature = c("x"),
 #' @export
 setMethod("calculateJSD", signature = c(x = "ANY"),
     function(x, ...){
-        .calculateDistance(x, FUN = runJSD, ...)
+        calculateDistance(x, FUN = runJSD, ...)
     }
 )
 
