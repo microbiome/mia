@@ -95,16 +95,16 @@
 #' reducedDim(esophagus)
 NULL
 
-setGeneric("calculateUnifrac", signature = c("x", "tree"),
+setGeneric("calculateUniFrac", signature = c("x", "tree"),
            function(x, tree, ... )
-             standardGeneric("calculateUnifrac"))
+             standardGeneric("calculateUniFrac"))
 
 #' @rdname calculateUnifrac
 #' @export
-setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
+setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
              BPPARAM = SerialParam()){
-        calculateDistance(x, FUN = runUnifrac, tree = tree,
+        calculateDistance(x, FUN = runUniFrac, tree = tree,
                           weighted = weighted, normalized = normalized,
                           BPPARAM = BPPARAM)
     }
@@ -115,7 +115,7 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
 #' @importFrom SummarizedExperiment assay
 #'
 #' @export
-setMethod("calculateUnifrac",
+setMethod("calculateUniFrac",
           signature = c(x = "TreeSummarizedExperiment",
                         tree = "missing"),
     function(x, exprs_values = "counts", transposed = FALSE, ...){
@@ -132,7 +132,7 @@ setMethod("calculateUnifrac",
             }
             tree <- .norm_tree_to_be_rooted(colTree(x), colnames(x))
         }
-        calculateUnifrac(mat, tree = tree, ...)
+        calculateUniFrac(mat, tree = tree, ...)
     }
 )
 
@@ -153,7 +153,7 @@ setMethod("calculateUnifrac",
 #' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
+runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                        BPPARAM = SerialParam()){
     # x has samples as row. Therefore transpose. This benchmarks faster than
     # converting the function to work with the input matrix as is
@@ -257,7 +257,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
             # Explicitly re-order tipAges to match x
             tipAges <- tipAges[rownames(x)]
             distlist <- BiocParallel::bplapply(spn,
-                                               unifrac_weighted_norm,
+                                               uniFrac_weighted_norm,
                                                mat = x,
                                                tree = tree,
                                                samplesums = samplesums,
@@ -270,15 +270,15 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
         # (presence/absence binary) array
         edge_occ <- (edge_array > 0) - 0
         distlist <- BiocParallel::bplapply(spn,
-                                           unifrac_unweighted,
+                                           uniFrac_unweighted,
                                            tree = tree,
                                            samplesums = samplesums,
                                            edge_occ = edge_occ,
                                            BPPARAM = BPPARAM)
     }
     # Initialize UnifracMat with NAs
-    UnifracMat <- matrix(NA_real_, ncol(x), ncol(x))
-    rownames(UnifracMat) <- colnames(UnifracMat) <- colnames(x)
+    UniFracMat <- matrix(NA_real_, ncol(x), ncol(x))
+    rownames(UnifracMat) <- colnames(UniFracMat) <- colnames(x)
     # Matrix-assign lower-triangle of UnifracMat. Then coerce to dist and
     # return.
     matIndices <- matIndices <- matrix(c(vapply(spn,"[",character(1),2L),
@@ -286,10 +286,10 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                                        ncol = 2)
     UniFracMat[matIndices] <- unlist(distlist)
     #
-    stats::as.dist(UnifracMat)
+    stats::as.dist(UniFracMat)
 }
 
-unifrac_unweighted <- function(i, tree, samplesums, edge_occ){
+uniFrac_unweighted <- function(i, tree, samplesums, edge_occ){
     A  <- i[1]
     B  <- i[2]
     AT <- samplesums[A]
