@@ -153,7 +153,7 @@ setMethod("calculateUnifrac",
 #' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
+runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                        BPPARAM = SerialParam()){
     # x has samples as row. Therefore transpose. This benchmarks faster than
     # converting the function to work with the input matrix as is
@@ -257,7 +257,7 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
             # Explicitly re-order tipAges to match x
             tipAges <- tipAges[rownames(x)]
             distlist <- BiocParallel::bplapply(spn,
-                                               uniFrac_weighted_norm,
+                                               unifrac_weighted_norm,
                                                mat = x,
                                                tree = tree,
                                                samplesums = samplesums,
@@ -277,7 +277,7 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                                            BPPARAM = BPPARAM)
     }
     # Initialize UnifracMat with NAs
-    UniFracMat <- matrix(NA_real_, ncol(x), ncol(x))
+    UnifracMat <- matrix(NA_real_, ncol(x), ncol(x))
     rownames(UnifracMat) <- colnames(UnifracMat) <- colnames(x)
     # Matrix-assign lower-triangle of UnifracMat. Then coerce to dist and
     # return.
