@@ -50,7 +50,10 @@ setGeneric("calculateDistance", signature = c("x"),
 #' @export
 setMethod("calculateDistance", signature = c(x = "ANY"),
     function(x, FUN = stats::dist, ...){
-        .Deprecated("directly 'FUN' argument's specified function")
+        .Deprecated( msg = paste0("'calculateDistance' is deprecated. \n",
+                                  "Instead, use directly the function that is ",
+                                  "specified by 'FUN' argument. \n",
+                                  "See help('Deprecated')") )
         .calculate_distance(mat = x, FUN = stats::dist, ...)
     }
 )
