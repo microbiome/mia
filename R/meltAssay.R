@@ -144,7 +144,7 @@ setGeneric("meltAssay",
        !anyDuplicated(colData(x)[,sample_name])){
         molten_assay %>%
             select(!sym(sample_name)) %>%
-            dplyr::rename(sym(sample_name) := !!sym(.col_switch_name(sample_name)))
+            dplyr::rename(!!sym(sample_name) := !!sym(.col_switch_name(sample_name)))
     }
     molten_assay %>%
         mutate(!!sym(feature_name) := factor(!!sym(feature_name)),
