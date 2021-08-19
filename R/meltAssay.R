@@ -44,8 +44,7 @@
 #'   \item{check_names}{ A boolean value passed to data.frame function's check.name
 #'   argument. Determines if sample names are checked that they are syntactically 
 #'   valid variable names and are not duplicated. If they are not, sample names 
-#'   are modified. \code{check_names = TRUE} disables \code{add_col_data} argument.
-#'   (default: \code{check_names = TRUE})}
+#'   are modified. (default: \code{check_names = TRUE})}
 #' }
 #'
 #' @return A \code{tibble} with the molten data. The assay values are given in a
@@ -103,8 +102,8 @@ setGeneric("meltAssay",
     add_row_data
 }
 
-.norm_add_col_data <- function(add_col_data, x, sample_name, check_names = FALSE){
-    if(is.null(add_col_data) || check_names == TRUE){
+.norm_add_col_data <- function(add_col_data, x, sample_name){
+    if(is.null(add_col_data)){
         return(NULL)
     }
     if(anyNA(add_col_data)){
@@ -182,7 +181,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
         }
         # check selected colnames
         add_row_data <- .norm_add_row_data(add_row_data, x, feature_name)
-        add_col_data <- .norm_add_col_data(add_col_data, x, sample_name, ...)
+        add_col_data <- .norm_add_col_data(add_col_data, x, sample_name)
         molten_assay <- .melt_assay(x, abund_values, feature_name, sample_name, ...)
         if(!is.null(add_row_data)){
             molten_assay <-
