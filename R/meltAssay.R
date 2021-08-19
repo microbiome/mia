@@ -198,7 +198,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom rlang sym
 .melt_assay <- function(x, assay_name, feature_name, sample_name) {
     assay(x, assay_name) %>%
-        data.frame() %>%
+        data.frame(check.names = FALSE) %>%
         rownames_to_column(feature_name) %>%
         # SampleID is unique sample id
         pivot_longer(!sym(feature_name),
