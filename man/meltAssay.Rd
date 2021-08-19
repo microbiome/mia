@@ -55,7 +55,14 @@ for the feature identifier. (default: \code{feature_name = "FeatureID"})}
 \item{sample_name}{a \code{character} scalar to use as the output's name
 for the sample identifier. (default: \code{sample_name = "SampleID"})}
 
-\item{...}{optional arguments currently not used.}
+\item{...}{optional arguments:
+\itemize{
+\item{check_names}{ A boolean value passed to data.frame function's check.name
+argument. Determines if sample names are checked that they are syntactically
+valid variable names and are not duplicated. If they are not, sample names
+are modified. \code{check_names = TRUE} disables \code{add_col_data} argument.
+(default: \code{check_names = TRUE})}
+}}
 }
 \value{
 A \code{tibble} with the molten data. The assay values are given in a
