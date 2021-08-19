@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.10</span>
       </span>
     </div>
 
@@ -167,8 +167,9 @@ features, or a non-empty character value; either 'median' or 'mean'.
     </tr>
     <tr>
       <th>FUN</th>
-      <td><p>a <code>function</code> for distance calculation. For more information,
-please check <code>calculateDistance</code>. By default, <code>FUN</code> is
+      <td><p>a <code>function</code> for distance calculation. The function must
+expect the input matrix as its first argument. With rows as samples
+and columns as features. By default, <code>FUN</code> is
 <code><a href='https://rdrr.io/pkg/vegan/man/vegdist.html'>vegan::vegdist</a></code>.</p></td>
     </tr>
     <tr>
