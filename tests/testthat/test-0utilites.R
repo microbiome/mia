@@ -36,12 +36,12 @@ test_that("meltAssay", {
     molten_assay <- meltAssay(se,
                               add_row_data = TRUE,
                               add_col_data = c("X.SampleID", "Primer"),
-                              assay_name = "counts")
+                              abund_values = "counts")
     expect_s3_class(molten_assay, c("tbl_df","tbl","data.frame"))
     expect_equal(colnames(molten_assay)[c(1:4,11)], c("FeatureID","SampleID","counts","Kingdom","X.SampleID"))
     expect_equal(is.numeric(molten_assay$counts), TRUE)
 
-    only_assay <- meltAssay(se, assay_name = "counts")
+    only_assay <- meltAssay(se, abund_values = "counts")
     expect_equal(colnames(only_assay)[1:3], c("FeatureID","SampleID","counts"))
     expect_equal(is.numeric(only_assay$counts), TRUE)
 

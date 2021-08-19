@@ -294,7 +294,7 @@ To generate tidy data as used and required in most of the tidyverse,
 molten_data <- meltAssay(se,
                          add_row_data = TRUE,
                          add_col_data = TRUE,
-                         assay_name = "counts")
+                         abund_values = "counts")
 molten_data
 ```
 
