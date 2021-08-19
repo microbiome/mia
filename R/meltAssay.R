@@ -39,7 +39,14 @@
 #' @param sample_name a \code{character} scalar to use as the output's name
 #'   for the sample identifier. (default: \code{sample_name = "SampleID"})
 #'
-#' @param ... optional arguments currently not used.
+#' @param ... optional arguments:
+#' \itemize{
+#'   \item{check_names}{ A boolean value passed to data.frame function's check.name
+#'   argument. Determines if sample names are checked that they are syntactically 
+#'   valid variable names and are not duplicated. If they are not, sample names 
+#'   are modified. \code{check_names = TRUE} disables \code{add_col_data} argument.
+#'   (default: \code{check_names = TRUE})}
+#' }
 #'
 #' @return A \code{tibble} with the molten data. The assay values are given in a
 #' column named like the selected assay \code{assay_name}. In addition, a
@@ -96,8 +103,8 @@ setGeneric("meltAssay",
     add_row_data
 }
 
-.norm_add_col_data <- function(add_col_data, x, sample_name){
-    if(is.null(add_col_data)){
+.norm_add_col_data <- function(add_col_data, x, sample_name, check_names = FALSE){
+    if(is.null(add_col_data) || check_names == TRUE){
         return(NULL)
     }
     if(anyNA(add_col_data)){
@@ -175,8 +182,8 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
         }
         # check selected colnames
         add_row_data <- .norm_add_row_data(add_row_data, x, feature_name)
-        add_col_data <- .norm_add_col_data(add_col_data, x, sample_name)
-        molten_assay <- .melt_assay(x, assay_name, feature_name, sample_name)
+        add_col_data <- .norm_add_col_data(add_col_data, x, sample_name, ...)
+        molten_assay <- .melt_assay(x, assay_name, feature_name, sample_name, ...)
         if(!is.null(add_row_data)){
             molten_assay <-
                 .add_row_data_to_molten_assay(molten_assay, x, add_row_data,
@@ -196,9 +203,9 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang sym
-.melt_assay <- function(x, assay_name, feature_name, sample_name) {
+.melt_assay <- function(x, assay_name, feature_name, sample_name, check_names = FALSE) {
     assay(x, assay_name) %>%
-        data.frame(check.names = FALSE) %>%
+        data.frame(check.names = check_names) %>%
         rownames_to_column(feature_name) %>%
         # SampleID is unique sample id
         pivot_longer(!sym(feature_name),
