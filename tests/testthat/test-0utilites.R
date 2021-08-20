@@ -73,6 +73,21 @@ test_that("meltAssay", {
     actual3 <- meltAssay(x3, TRUE, TRUE)
     expect_false("FeatureID_row" %in% colnames(actual))
     expect_false("SampleID_col" %in% colnames(actual))
+    #
+    x4 <- se
+    # Change names to 1, 2, 3... format
+    colnames(x4) <- seq_along(colnames(x4))
+    melted <- meltAssay(x4, abund_values = "counts", add_col_data = TRUE)
+    melted2 <- meltAssay(x4, abund_values = "counts", add_col_data = TRUE, 
+                         check_names = TRUE)
+    # There should not be any NAs
+    expect_true(any(!(is.na(melted))))
+    expect_true(any(!(is.na(melted2))))
+    # Remove prefix from sample names
+    melted2$SampleID <- as.factor(gsub(pattern = "X", 
+                                       replacement = "", 
+                                       x = melted2$SampleID))
+    expect_equal(melted, melted2)
 })
 
 context("getAbundanceFeature/getAbundanceSample")
