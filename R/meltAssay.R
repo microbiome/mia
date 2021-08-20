@@ -191,7 +191,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
         if(!is.null(add_col_data)){
             molten_assay <-
                 .add_col_data_to_molten_assay(molten_assay, x, add_col_data,
-                                              sample_name)
+                                              sample_name, ...)
         }
         .format_molten_assay(molten_assay, x, feature_name, sample_name)
     }
@@ -237,9 +237,13 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tibble rownames_to_column
 #' @importFrom dplyr rename left_join
 .add_col_data_to_molten_assay <- function(molten_assay, x, add_col_data,
-                                          sample_name) {
+                                          sample_name, check_names = FALSE) {
     cd <- SummarizedExperiment::colData(x)[,add_col_data] %>%
         data.frame()
+    # This makes sure that sample names match
+    if(check_names == TRUE){
+        rownames(cd) <- make.names(rownames(cd))
+    }
     if(sample_name %in% add_col_data){
         cd <- cd %>%
             dplyr::rename(!!sym(.col_switch_name(sample_name)) := !!sym(sample_name))
