@@ -128,6 +128,14 @@ loadFromQIIME2 <- function(featureTableFile,
 
     if (!is.null(sampleMetaFile)) {
         sample_meta <- .read_q2sample_meta(sampleMetaFile)
+        if (nrow(sample_meta) != ncol(feature_tab)
+         || !setequal(rownames(sample_meta), colnames(feature_tab)))
+            stop("The sample ids in sample metadata file:\n",
+                 "    ", sampleMetaFile, "\n",
+                 "  are incompatible with those in feature table file:\n",
+                 "    ", featureTableFile)
+        if (!identical(rownames(sample_meta), colnames(feature_tab)))
+            sample_meta <- sample_meta[colnames(feature_tab), , drop = FALSE]
     } else {
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
     }
