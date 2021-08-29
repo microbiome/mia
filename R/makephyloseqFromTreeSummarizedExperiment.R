@@ -80,10 +80,10 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
         args[["otu_table"]] <- otu_table
 
         # If rowData includes information
-        if(!( length(rowData(x)[,taxonomyRanks(x)]) == 0 ||
-              is.null((rowData(x)[,taxonomyRanks(x)])) )){
+        if(!( length(rowData(x)) == 0 ||
+              is.null((rowData(x))) )){
             # Gets the taxonomic data from rowData, and converts it to tax_table
-            tax_table <- as.matrix(rowData(x)[,taxonomyRanks(x)])
+            tax_table <- as.matrix(rowData(x))
             tax_table <- phyloseq::tax_table(tax_table)
             # Adds to the list
             args[["tax_table"]] <- tax_table
