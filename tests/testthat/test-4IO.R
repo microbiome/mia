@@ -115,6 +115,7 @@ test_that("Importing Mothur files yield SummarizedExperiment objects", {
 
 featureTableFile <- system.file("extdata", "table.qza", package = "mia")
 taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
+sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 
 test_that("make TSE worked properly while no sample or taxa data", {
@@ -244,7 +245,6 @@ test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
 })
 
 test_that("`.read_q2sample_meta` remove  the row contained `#q2:types`", {
-    sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
     expect_false(any(as(.read_q2sample_meta(sampleMetaFile), "matrix") == "#q2:types"))
 })
 
@@ -254,9 +254,8 @@ test_that('get file extension', {
 })
 
 test_that('read qza file', {
-    sample_file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
     expect_error(.read_qza("abc"), "does not exist")
-    expect_error(.read_qza(sample_file), "must be in `qza` format")
+    expect_error(.read_qza(sampleMetaFile), "must be in `qza` format")
 })
 
 test_that("Confidence of taxa is numberic", {
@@ -266,6 +265,28 @@ test_that("Confidence of taxa is numberic", {
     )
     expect_true(is.numeric(S4Vectors::mcols(tse)$Confidence))
 })
+
+test_that("dimnames of feature table is identicle with meta data", {
+   feature_tab <- .read_qza(featureTableFile)
+   sample_meta <- .read_q2sample_meta(sampleMetaFile)
+   sample_meta2 <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+   taxa_meta <- .read_qza(taxonomyTableFile)
+   taxa_meta <- .subset_taxa_in_feature(taxa_meta, feature_tab)
+   taxa_meta <- .parse_q2taxonomy(taxa_meta)
+   taxa_meta2 <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+   
+   new_feature_tab <- .set_feature_tab_dimnames(
+       feature_tab, 
+       sample_meta, 
+       taxa_meta
+    )
+   expect_identical(rownames(new_feature_tab), rownames(taxa_meta))
+   expect_identical(colnames(new_feature_tab), rownames(sample_meta))
+   
+   # sample or feature meta is not provided (NULL)
+   expect_silent(.set_feature_tab_dimnames(feature_tab, sample_meta2, taxa_meta))
+})
+
 
 test_that("makePhyloseqFromTreeSummarizedExperiment", {
 

@@ -110,3 +110,39 @@
     colData(x) <- cbind(colData(x)[!f], values)
     x
 }
+
+# keep dimnames of feature table (assay) consistent with the meta data 
+# of sample (colData) and feature (rowData)
+.set_feature_tab_dimnames <- function(feature_tab, 
+                                      sample_meta, 
+                                      feature_meta) {
+    if (ncol(sample_meta) > 0) { # sampleMetaFile is not NULL
+        if (ncol(feature_tab) != nrow(sample_meta) 
+            || !setequal(colnames(feature_tab), rownames(sample_meta))) {
+            stop(
+                "The sample ids in feature table are not incompatible ",
+                "with those in sample meta",
+                call. = FALSE
+            )
+        }
+        if (!identical(colnames(feature_tab), rownames(sample_meta))) {
+            feature_tab <- feature_tab[, rownames(sample_meta), drop = FALSE]
+        }
+    }
+    
+    if (ncol(feature_meta) > 0) { # taxonomyTableFile is not NULL
+        if (nrow(feature_tab) != nrow(feature_meta)
+            || !setequal(rownames(feature_tab), rownames(feature_meta))) {
+            stop(
+                "The feature names in feature table are not incompatible ",
+                "with those in feature meta",
+                call. = FALSE
+            )
+        }
+        if (!identical(rownames(feature_tab), rownames(feature_meta))) {
+            feature_tab <- feature_tab[rownames(feature_meta), , drop = FALSE]
+        }
+    }
+  
+    feature_tab
+}

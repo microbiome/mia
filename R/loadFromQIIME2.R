@@ -128,14 +128,6 @@ loadFromQIIME2 <- function(featureTableFile,
 
     if (!is.null(sampleMetaFile)) {
         sample_meta <- .read_q2sample_meta(sampleMetaFile)
-        if (nrow(sample_meta) != ncol(feature_tab)
-         || !setequal(rownames(sample_meta), colnames(feature_tab)))
-            stop("The sample ids in sample metadata file:\n",
-                 "    ", sampleMetaFile, "\n",
-                 "  are incompatible with those in feature table file:\n",
-                 "    ", featureTableFile)
-        if (!identical(rownames(sample_meta), colnames(feature_tab)))
-            sample_meta <- sample_meta[colnames(feature_tab), , drop = FALSE]
     } else {
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
     }
@@ -154,7 +146,8 @@ loadFromQIIME2 <- function(featureTableFile,
     } else {
         refseq <- NULL
     }
-
+    
+    feature_tab <- .set_feature_tab_dimnames(feature_tab, sample_meta, taxa_tab)
     TreeSummarizedExperiment(
         assays = S4Vectors::SimpleList(counts = feature_tab),
         rowData = taxa_tab,
