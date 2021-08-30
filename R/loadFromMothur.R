@@ -102,8 +102,7 @@ loadFromMothur <- function(sharedFile,
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
         rownames(sample_meta) <- colnames(feature_tab)
     }
-    
-    feature_tab <- .set_feature_tab_dimnames(feature_tab, sample_meta, taxa_tab)
+
     SummarizedExperiment(assays = S4Vectors::SimpleList(counts = feature_tab),
                          rowData = taxa_tab,
                          colData = sample_meta)
