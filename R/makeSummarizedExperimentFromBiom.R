@@ -66,7 +66,6 @@ makeSummarizedExperimentFromBiom <- function(obj){
         rownames(feature_data) <- rownames(counts)
     }
     
-    feature_tab <- .set_feature_tab_dimnames(counts, sample_data, feature_data)
     SummarizedExperiment(assays = list(counts = counts),
                          colData = sample_data,
                          rowData = feature_data)
