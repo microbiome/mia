@@ -42,7 +42,7 @@ object into a long data.frame — meltAssay • mia</title>
 
 <meta property="og:title" content="Converting a SummarizedExperiment
 object into a long data.frame — meltAssay" />
-<meta property="og:description" content="metlAssaay Converts a
+<meta property="og:description" content="meltAssay Converts a
 SummarizedExperiment object into a
 long data.frame which can be used for tidyverse-tools." />
 
@@ -76,7 +76,7 @@ long data.frame which can be used for tidyverse-tools." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.13</span>
       </span>
     </div>
 
@@ -122,16 +122,16 @@ object into a long data.frame</h1>
     </div>
 
     <div class="ref-description">
-    <p><code>metlAssaay</code> Converts a
+    <p><code>meltAssay</code> Converts a
 <code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code> object into a
 long data.frame which can be used for <code>tidyverse</code>-tools.</p>
     </div>
 
     <pre class="usage"><span class='fu'>meltAssay</span><span class='op'>(</span>
   <span class='va'>x</span>,
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   add_row_data <span class='op'>=</span> <span class='cn'>NULL</span>,
   add_col_data <span class='op'>=</span> <span class='cn'>NULL</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   feature_name <span class='op'>=</span> <span class='st'>"FeatureID"</span>,
   sample_name <span class='op'>=</span> <span class='st'>"SampleID"</span>,
   <span class='va'>...</span>
@@ -140,9 +140,9 @@ long data.frame which can be used for <code>tidyverse</code>-tools.</p>
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>meltAssay</span><span class='op'>(</span>
   <span class='va'>x</span>,
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   add_row_data <span class='op'>=</span> <span class='cn'>NULL</span>,
   add_col_data <span class='op'>=</span> <span class='cn'>NULL</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   feature_name <span class='op'>=</span> <span class='st'>"FeatureID"</span>,
   sample_name <span class='op'>=</span> <span class='st'>"SampleID"</span>,
   <span class='va'>...</span>
@@ -155,6 +155,11 @@ long data.frame which can be used for <code>tidyverse</code>-tools.</p>
       <th>x</th>
       <td><p>A numeric matrix or a
 <code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code></p></td>
+    </tr>
+    <tr>
+      <th>abund_values</th>
+      <td><p>a <code>character</code> value to select an
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assayNames</a></code></p></td>
     </tr>
     <tr>
       <th>add_row_data</th>
@@ -175,11 +180,6 @@ If <code>add_col_data = NULL</code> no data will be added, if
 <code>add_col_data</code> is a <code>character</code> vector, it will be used to subset
 to given column names in <code>colData</code>. (default:
 <code>add_col_data = NULL</code>)</p></td>
-    </tr>
-    <tr>
-      <th>abund_values</th>
-      <td><p>a <code>character</code> value to select an
-<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assayNames</a></code></p></td>
     </tr>
     <tr>
       <th>feature_name</th>
@@ -221,9 +221,10 @@ names are set.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
 <span class='va'>molten_se</span> <span class='op'>&lt;-</span> <span class='fu'>meltAssay</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,
+                       abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
                        add_row_data <span class='op'>=</span> <span class='cn'>TRUE</span>,
-                       add_col_data <span class='op'>=</span> <span class='cn'>TRUE</span>,
-                       abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
+                       add_col_data <span class='op'>=</span> <span class='cn'>TRUE</span>
+                       <span class='op'>)</span>
 <span class='va'>molten_se</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 499,616 × 17</span>
 #&gt;    FeatureID SampleID counts Kingdom Phylum   Class   Order Family Genus Species
