@@ -268,23 +268,43 @@ test_that("Confidence of taxa is numberic", {
 
 test_that("dimnames of feature table is identicle with meta data", {
    feature_tab <- .read_qza(featureTableFile)
+   
    sample_meta <- .read_q2sample_meta(sampleMetaFile)
-   sample_meta2 <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
    taxa_meta <- .read_qza(taxonomyTableFile)
    taxa_meta <- .subset_taxa_in_feature(taxa_meta, feature_tab)
    taxa_meta <- .parse_q2taxonomy(taxa_meta)
-   taxa_meta2 <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
-   
    new_feature_tab <- .set_feature_tab_dimnames(
        feature_tab, 
        sample_meta, 
        taxa_meta
-    )
+   )
    expect_identical(rownames(new_feature_tab), rownames(taxa_meta))
    expect_identical(colnames(new_feature_tab), rownames(sample_meta))
    
-   # sample or feature meta is not provided (NULL)
+   # sample_meta or feature meta is NULL
+   sample_meta2 <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+   rownames(sample_meta2) <- colnames(feature_tab)
+   taxa_meta2 <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+   rownames(taxa_meta2) <- rownames(feature_tab)
    expect_silent(.set_feature_tab_dimnames(feature_tab, sample_meta2, taxa_meta))
+   
+   # sample meta or feature meta without any information, only contains sample/feature
+   # ID in its rownames
+   feature_tab3 <- S4Vectors::DataFrame(
+       sample1 = 1:3,
+       sample2 = 4:6,
+       sample3 = 7:9,
+       row.names = paste0("feature", 1:3)
+   )
+   sample_meta3 <- S4Vectors::DataFrame(row.names = paste0("sample", 3:1))
+   feature_meta3 <- S4Vectors::DataFrame(row.names = paste0("feature", c(2, 3, 1)))
+   new_feature_tab3 <- .set_feature_tab_dimnames(
+       feature_tab3, 
+       sample_meta3, 
+       feature_meta3
+    )
+   expect_identical(row.names(new_feature_tab3), paste0("feature", c(2, 3, 1)))
+   expect_identical(colnames(new_feature_tab3), paste0("sample", 3:1))
 })
 
 

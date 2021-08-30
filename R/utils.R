@@ -116,7 +116,7 @@
 .set_feature_tab_dimnames <- function(feature_tab, 
                                       sample_meta, 
                                       feature_meta) {
-    if (ncol(sample_meta) > 0) { # sampleMetaFile is not NULL
+    if (nrow(sample_meta) > 0 || ncol(sample_meta) > 0) {
         if (ncol(feature_tab) != nrow(sample_meta) 
             || !setequal(colnames(feature_tab), rownames(sample_meta))) {
             stop(
@@ -130,7 +130,7 @@
         }
     }
     
-    if (ncol(feature_meta) > 0) { # taxonomyTableFile is not NULL
+    if (nrow(feature_meta) > 0 || ncol(feature_meta) > 0) {
         if (nrow(feature_tab) != nrow(feature_meta)
             || !setequal(rownames(feature_tab), rownames(feature_meta))) {
             stop(
