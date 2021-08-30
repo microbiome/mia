@@ -91,6 +91,7 @@ loadFromMothur <- function(sharedFile,
         taxa_tab <- .read_mothur_taxonomy(taxonomyFile, feature_tab)
     } else {
         taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+        rownames(taxa_tab) <- rownames(feature_tab)
     }
     
     # If colData informationor data_to_colData exists, gets that. Otherwise, 
@@ -99,6 +100,7 @@ loadFromMothur <- function(sharedFile,
         sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData)
     } else {
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+        rownames(sample_meta) <- colnames(feature_tab)
     }
     
     SummarizedExperiment(assays = S4Vectors::SimpleList(counts = feature_tab),

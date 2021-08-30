@@ -59,9 +59,11 @@ makeSummarizedExperimentFromBiom <- function(obj){
     # colData and rowData are initialized with empty tables with rownames if they are NULL
     if( is.null(sample_data) ){
         sample_data <- S4Vectors:::make_zero_col_DataFrame(ncol(counts))
+        rownames(sample_data) <- colnames(counts)
     }
     if( is.null(feature_data) ){
         feature_data <- S4Vectors:::make_zero_col_DataFrame(nrow(counts))
+        rownames(feature_data) <- rownames(counts)
     }
 
     SummarizedExperiment(assays = list(counts = counts),
