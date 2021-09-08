@@ -15,8 +15,9 @@
 #'   \code{reference} specifies the reference that is used to calculate
 #'   \code{divergence}. by default, \code{reference} is  \code{"median"}.
 #'   
-#' @param FUN a \code{function} for distance calculation. For more information,
-#'   please check \code{calculateDistance}. By default, \code{FUN} is
+#' @param FUN a \code{function} for distance calculation. The function must
+#'   expect the input matrix as its first argument. With rows as samples 
+#'   and columns as features. By default, \code{FUN} is
 #'   \code{vegan::vegdist}.
 #'   
 #' @param method a method that is used to calculate the distance. Method is
@@ -138,7 +139,7 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
     # Transposes the table so that distances are calculated for the samples
     mat <- t(mat)
     # Calculates the distance
-    dist <- calculateDistance(mat, FUN = FUN, method = method)
+    dist <- .calculate_distance(mat, FUN = FUN, method = method)
     # Takes only reference vs samples distances
     divergence <- as.matrix(dist)[-1,1]
     # Creates a list 
