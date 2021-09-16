@@ -8,6 +8,7 @@
 \alias{esophagus}
 \alias{soilrep}
 \alias{dmn_se}
+\alias{atlas1006}
 \title{mia datasets}
 \format{
 An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
@@ -19,6 +20,8 @@ An object of class \code{TreeSummarizedExperiment} with 58 rows and 3 columns.
 An object of class \code{TreeSummarizedExperiment} with 16825 rows and 56 columns.
 
 An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
+
+An object of class \code{TreeSummarizedExperiment} with 130 rows and 1151 columns.
 }
 \usage{
 data(GlobalPatterns)
@@ -30,6 +33,8 @@ data(esophagus)
 data(soilrep)
 
 data(dmn_se)
+
+data(atlas1006)
 }
 \description{
 These datasets are conversions of the phyloseq datasets \code{GlobalPatterns}
@@ -38,5 +43,9 @@ These datasets are conversions of the phyloseq datasets \code{GlobalPatterns}
 \code{dmn_se} contains an example \code{SummarizedExperiment} derived
 from data in the \code{DirichletMultinomal} package. See \code{?calculateDMN}
 for more details.
+
+\code{atlas1006} is \code{TreeSummarizedExperiment}, originally documented in
+\code{data(atlas1006, package="microbiome")} and loaded as a TreeSE object
+with \code{data(atlas1006, package="mia")}.
 }
 \keyword{datasets}
