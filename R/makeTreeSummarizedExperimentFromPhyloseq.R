@@ -42,13 +42,13 @@ makeTreeSummarizedExperimentFromPhyloseq <- function(obj) {
     if(!is.null(obj@tax_table@.Data)){
         rowData <- DataFrame(data.frame(obj@tax_table@.Data))
     } else{
-        rowData <- S4Vectors:::make_zero_col_DataFrame(nrow(assays$counts))
+        rowData <- .make_zero_col_DataFrame(nrow(assays$counts))
         rownames(rowData) <- rownames(assays$counts)
     }
     if(!is.null(obj@sam_data)){
         colData <- DataFrame(data.frame(obj@sam_data))
     } else{
-        colData <- S4Vectors:::make_zero_col_DataFrame(ncol(assays$counts))
+        colData <- .make_zero_col_DataFrame(ncol(assays$counts))
         rownames(colData) <- colnames(assays$counts)
     }
     if(!is.null(obj@phy_tree)){

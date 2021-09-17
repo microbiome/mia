@@ -65,7 +65,8 @@ estimateFaith(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
 
-\item{abund_values}{the name of the assay for calculating the sample-wise estimates.}
+\item{abund_values}{the name of the assay for calculating the sample-wise
+estimates.}
 
 \item{index}{a \code{character} vector specifies the diversity indices
 to be calculated.}
@@ -97,15 +98,31 @@ used by default.}
 }
 \value{
 \code{x} with a new \code{\link{colData}} field named \code{name}
+}
+\description{
+Several functions for calculating diversity indices are available via
+wrapper functions. Some of them are implemented via the \code{vegan} package.
+}
+\details{
+Diversity is a joint quantity that combines elements or
+community richness and evenness. Diversity increases, in general,
+when species richness or evenness increase. By default, this function
+returns all indices.
+
+Available indices include
+\sQuote{Coverage},
+\sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha},
+\sQuote{Gini-Simpson}, \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness},
+and \sQuote{Shannon} diversity indices.
 
 \itemize{
 
 \item{'coverage' }{Number of species needed to cover a given fraction of
-the ecosystem (50\\% by default). Tune this with the threshold argument.}
+the ecosystem (50 percent by default). Tune this with the threshold argument.}
 
 \item{'faith' }{Faith's phylogenetic alpha diversity index measures how
 long the taxonomic distance is between taxa that are present in the sample.
-Larger value represent higher diversity. (Faith 1992)}
+Larger value represent higher diversity (Faith 1992).}
 
 \item{'fisher' }{Fisher's alpha; as implemented in
 \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
@@ -123,7 +140,7 @@ Simpson index (1/lambda).}
 \eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative
 abundances. This corresponds to the diversity index
 'invsimpson' in vegan::diversity. Don't confuse this with the
-closely related Gini-Simpson index}
+closely related Gini-Simpson index.}
 
 \item{'log_modulo_skewness' }{The rarity index characterizes the
 concentration of species at low abundance. Here, we use the skewness of
@@ -137,22 +154,6 @@ allow logarithmization.}
 \item{'shannon' }{Shannon diversity (entropy).}
 
 }
-}
-\description{
-Several functions for calculating diversity indices are available via
-wrapper functions. Some of them are implemented via the \code{vegan} package.
-}
-\details{
-The available indices include
-\sQuote{Coverage},
-\sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha},
-\sQuote{Gini-Simpson}, \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness},
-and \sQuote{Shannon} diversity indices.
-
-Diversity is a joint quantity that combines elements or
-community richness and evenness. Diversity increases, in general,
-when species richness or evenness increase. By default, this function
-returns all indices.
 }
 \examples{
 data(GlobalPatterns)
@@ -201,7 +202,7 @@ library(scater)
 plotColData(tse, "Shannon")
 # ... by sample type
 plotColData(tse, "Shannon", "SampleType")
-\dontrun{
+\donttest{
   # combining different plots
   library(patchwork)
   plot_index <- c("Shannon","GiniSimpson")

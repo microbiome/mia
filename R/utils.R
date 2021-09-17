@@ -79,6 +79,15 @@
 ################################################################################
 # internal wrappers for getter/setter
 
+.make_zero_col_DataFrame <- function (nrow = 0L){
+    stopifnot(isSingleNumber(nrow))
+    if (!is.integer(nrow)) 
+        nrow <- as.integer(nrow)
+    stopifnot(nrow >= 0L)
+    new2("DFrame", nrows = nrow, check = FALSE)
+}
+
+
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(x, values, name){
