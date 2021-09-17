@@ -78,8 +78,8 @@
 
 ################################################################################
 # internal wrappers for getter/setter
-
 .make_zero_col_DataFrame <- function (nrow = 0L){
+    # Sourced by S4vectors
     stopifnot(isSingleNumber(nrow))
     if (!is.integer(nrow)) 
         nrow <- as.integer(nrow)
