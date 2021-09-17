@@ -32,6 +32,10 @@
 #'   \code{SummarizedExperiment} objects,
 #'   \code{\link[=merge-methods]{mergeRows}} and
 #'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+#'   \itemize{
+#'   \item{abund_values}{ A vector of assay names defining those assays that are 
+#'   included in agglomerated object. (default: \code{abund_values = "counts})}
+#'   }
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -67,13 +71,19 @@
 #' ## How many taxa before/after agglomeration?
 #' nrow(GlobalPatterns)
 #' nrow(x1)
-#'
+#'  
 #' # with agglomeration of the tree
 #' x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
 #'                         agglomerateTree = TRUE)
 #' nrow(x2) # same number of rows, but
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
+#' 
+#'  # By default, only counts table are added to agglomerated object. 
+#'  # Use "abund_values" to add other assays
+#'  tse <- transformSamples(GlobalPatterns, method = "relabundance")
+#'  tse <- agglomerateByRank(tse, rank = "Genus", 
+#'                           abund_values = c("counts", "relabundance"))
 #'
 #' # removing empty labels by setting na.rm = TRUE
 #' sum(is.na(rowData(GlobalPatterns)$Family))
