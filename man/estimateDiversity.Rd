@@ -65,24 +65,25 @@ estimateFaith(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
 
-\item{abund_values}{the name of the assay used for
-calculation of the sample-wise estimates.}
+\item{abund_values}{the name of the assay for calculating the sample-wise estimates.}
 
-\item{index}{a \code{character} vector, specifying the diversity measures
+\item{index}{a \code{character} vector specifies the diversity indices
 to be calculated.}
 
-\item{name}{a name for the column(s) of the colData the results should be
-stored in.}
+\item{name}{a name for the column(s) of the colData wherein the results
+should be stored.}
 
 \item{...}{optional arguments:
 \itemize{
 \item{threshold}{ A numeric value in the unit interval,
-determining the threshold for coverage index. By default, \code{threshold} is 0.9.}
-\item{quantile}{ Arithmetic abundance classes are evenly cut up to to this quantile
-of the data. The assumption is that abundances higher than this are not common, and
-they are classified in their own group. By default, \code{quantile} is 0.5.}
-\item{num_of_classes}{ The number of arithmetic abundance classes from zero to
-the quantile cutoff indicated by \code{quantile}.
+determining the threshold for coverage index. By default,
+\code{threshold} is 0.9.}
+\item{quantile}{ Arithmetic abundance classes are evenly cut up to to
+this quantile of the data. The assumption is that abundances higher than
+this are not common, and they are classified in their own group.
+By default, \code{quantile} is 0.5.}
+\item{num_of_classes}{ The number of arithmetic abundance classes from
+zero to the quantile cutoff indicated by \code{quantile}.
 By default, \code{num_of_classes} is 50.}
 }}
 
@@ -95,51 +96,38 @@ If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is
 used by default.}
 }
 \value{
-\code{x} with additional \code{\link{colData}} named \code{*name*}
-}
-\description{
-Several functions for calculating diversity indices are available via
-wrapper functions. Some of them are implemented via the \code{vegan} package.
-}
-\details{
-The available indices include the \sQuote{Coverage},
-\sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha}, \sQuote{Gini-Simpson},
-\sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon}
-diversity indices. See details for more information and references.
-
-Diversity is a joint quantity that combines elements or community richness and evenness.
-Diversity increases, in general, when species richness or evenness increase.
-
-By default, this function returns all indices.
+\code{x} with a new \code{\link{colData}} field named \code{name}
 
 \itemize{
 
-\item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\\% by default).
-Tune this with the threshold argument.}
+\item{'coverage' }{Number of species needed to cover a given fraction of
+the ecosystem (50\\% by default). Tune this with the threshold argument.}
 
-\item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
-taxonomic distance is between taxa that are present in the sample. Larger value
-represent higher diversity. (Faith 1992)}
+\item{'faith' }{Faith's phylogenetic alpha diversity index measures how
+long the taxonomic distance is between taxa that are present in the sample.
+Larger value represent higher diversity. (Faith 1992)}
 
 \item{'fisher' }{Fisher's alpha; as implemented in
 \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
 
-\item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
-Simpson index, calculated as the sum of squared relative abundances.
-This corresponds to the diversity index
+\item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda},
+where \eqn{lambda} is the Simpson index, calculated as the sum of squared
+relative abundances. This corresponds to the diversity index
 'simpson' in \code{\link[vegan:diversity]{vegan::diversity}}.
 This is also called Gibbs–Martin, or Blau index in sociology,
-psychology and management studies. The Gini-Simpson index (1-lambda) should not be
-confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).}
+psychology and management studies. The Gini-Simpson index (1-lambda) should
+not be confused with Simpson's dominance (lambda), Gini index, or inverse
+Simpson index (1/lambda).}
 
 \item{'inverse_simpson' }{Inverse Simpson diversity:
-\eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative abundances.
-This corresponds to the diversity index
+\eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative
+abundances. This corresponds to the diversity index
 'invsimpson' in vegan::diversity. Don't confuse this with the
 closely related Gini-Simpson index}
 
-\item{'log_modulo_skewness' }{The rarity index characterizes the concentration
-of species at low abundance. Here, we use the skewness of the frequency
+\item{'log_modulo_skewness' }{The rarity index characterizes the
+concentration of species at low abundance. Here, we use the skewness of
+the frequency
 distribution of arithmetic abundance classes (see Magurran & McGill 2011).
 These are typically right-skewed; to avoid taking log of occasional
 negative skews, we follow Locey & Lennon (2016) and use the log-modulo
@@ -150,17 +138,33 @@ allow logarithmization.}
 
 }
 }
+\description{
+Several functions for calculating diversity indices are available via
+wrapper functions. Some of them are implemented via the \code{vegan} package.
+}
+\details{
+The available indices include
+\sQuote{Coverage},
+\sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha},
+\sQuote{Gini-Simpson}, \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness},
+and \sQuote{Shannon} diversity indices.
+
+Diversity is a joint quantity that combines elements or
+community richness and evenness. Diversity increases, in general,
+when species richness or evenness increase. By default, this function
+returns all indices.
+}
 \examples{
 data(GlobalPatterns)
 tse <- GlobalPatterns
 
 # All index names as known by the function
 index <- c("shannon","gini_simpson","inverse_simpson", "coverage", "fisher", 
-"faith",  "log_modulo_skewness")
+           "faith",  "log_modulo_skewness")
 
 # Corresponding polished names
 name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher", 
-"Faith",  "LogModSkewness")
+          "Faith",  "LogModSkewness")
 
 # Calculate diversities
 tse <- estimateDiversity(tse, index = index)
@@ -173,15 +177,18 @@ colData(tse)[, index] <- NULL
 
 # 'threshold' can be used to determine threshold for 'coverage' index
 tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
-# 'quantile' and 'num_of_classes' can be used when 'log_modulo_skewness' is calculated
-tse <- estimateDiversity(tse, index = "log_modulo_skewness", quantile = 0.75, num_of_classes = 100)
+# 'quantile' and 'num_of_classes' can be used when 'log_modulo_skewness'
+# is calculated
+
+tse <- estimateDiversity(tse, index = "log_modulo_skewness",
+         quantile = 0.75, num_of_classes = 100)
 
 # It is recommended to specify also the final names used in the output.
 tse <- estimateDiversity(tse,
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", 
-  "faith", "log_modulo_skewness"),
-   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", 
-   "Faith", "LogModSkewness"))
+  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage",
+            "fisher", "faith", "log_modulo_skewness"),
+   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
+            "Fisher", "Faith", "LogModSkewness"))
 
 # The colData contains the indices by their new names provided by the user
 colData(tse)[, name]
@@ -195,17 +202,18 @@ plotColData(tse, "Shannon")
 # ... by sample type
 plotColData(tse, "Shannon", "SampleType")
 \dontrun{
-# combining different plots
-library(patchwork)
-plot_index <- c("Shannon","GiniSimpson")
-plots <- lapply(plot_index,
+  # combining different plots
+  library(patchwork)
+  plot_index <- c("Shannon","GiniSimpson")
+  plots <- lapply(plot_index,
                 plotColData,
                 object = tse,
                 x = "SampleType",
                 colour_by = "SampleType")
-plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))
-names(plots) <- plot_index
-plots$Shannon + plots$GiniSimpson + plot_layout(guides = "collect")
+  plots <- lapply(plots,"+",
+           theme(axis.text.x = element_text(angle=45,hjust=1)))
+  names(plots) <- plot_index
+  plots$Shannon + plots$GiniSimpson + plot_layout(guides = "collect")
 }
 }
 \references{
@@ -223,8 +231,8 @@ Conservation evaluation and phylogenetic diversity.
 \emph{Biological Conservation} 61(1):1-10.
 
 Fisher R.A., Corbet, A.S. & Williams, C.B. (1943)
-The relation between the number of species and the number of individuals in a
-random sample of animal population.
+The relation between the number of species and the number of individuals in
+a random sample of animal population.
 \emph{Journal of Animal Ecology} \emph{12}, 42-58.
 
 Locey K.J. & Lennon J.T. (2016)

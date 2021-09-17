@@ -14,8 +14,8 @@
 #'
 #' @param designFile a single \code{character} value defining the file path of
 #'   the sample metadata to be imported. The File has to be in \code{desing
-#'   file} format as defined in Mothur documentation. (default: \code{designFile
-#'   = NULL}).
+#'   file} format as defined in Mothur documentation.
+#'   (default: \code{designFile = NULL}).
 #'
 #' @details
 #' Results exported from Mothur can be imported as a
@@ -162,8 +162,8 @@ loadFromMothur <- function(sharedFile,
     # Column that includes taxonomical information
     MOTHUR_TAX_COL <- "Taxonomy"
 
-    # Checks that colnames contain information, it is not NULL, and taxonomical 
-    # information is present 
+    # Checks that colnames contain information, it is not NULL, and
+    # taxonomical  information is present 
     if ( !(length(colnames(data)) > 0) || 
          is.null(colnames(data)) || 
          is.null(data[[MOTHUR_TAX_COL]]) ){
@@ -223,7 +223,7 @@ loadFromMothur <- function(sharedFile,
                        sep="\t", stringsAsFactors=FALSE)
     
     # If data contains column names, then it is shared file
-    if( identical(colnames(data)[1:3], columns_that_must_be_found) ){
+    if( identical(colnames(data)[seq_len(3)], columns_that_must_be_found) ){
         result <- TRUE
     }
     return(result)
@@ -257,7 +257,8 @@ loadFromMothur <- function(sharedFile,
     data <- read.table(file, check.names=FALSE, header=TRUE,
                        sep="\t", stringsAsFactors=FALSE)
     
-    # If data contains column names, and "OTU" column that includes same taxa as 
+    # If data contains column names, and "OTU" column that includes same
+    # taxa as 
     # feature_tab, 
     # then it is constaxonomy file
     if( identical(colnames(data), columns_that_must_be_found) && 

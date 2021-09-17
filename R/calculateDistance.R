@@ -43,17 +43,17 @@ NULL
 #' @rdname calculateDistance
 #' @export
 setGeneric("calculateDistance", signature = c("x"),
-           function(x, FUN = stats::dist, ...)
-             standardGeneric("calculateDistance"))
+            function(x, FUN = stats::dist, ...)
+            standardGeneric("calculateDistance"))
 
 #' @rdname calculateDistance
 #' @export
 setMethod("calculateDistance", signature = c(x = "ANY"),
     function(x, FUN = stats::dist, ...){
         .Deprecated( msg = paste0("'calculateDistance' is deprecated. \n",
-                                  "Instead, use directly the function that is ",
-                                  "specified by 'FUN' argument. \n",
-                                  "See help('Deprecated')") )
+                                "Instead, use directly the function that is ",
+                                "specified by 'FUN' argument. \n",
+                                "See help('Deprecated')") )
         .calculate_distance(mat = x, FUN = stats::dist, ...)
     }
 )

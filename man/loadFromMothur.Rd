@@ -18,8 +18,8 @@ documentation. (default: \code{taxonomyFile = NULL}).}
 
 \item{designFile}{a single \code{character} value defining the file path of
 the sample metadata to be imported. The File has to be in \code{desing
-  file} format as defined in Mothur documentation. (default: \code{designFile
-  = NULL}).}
+  file} format as defined in Mothur documentation.
+(default: \code{designFile = NULL}).}
 }
 \value{
 A

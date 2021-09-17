@@ -89,7 +89,7 @@ nrow(x1)
 
 # with agglomeration of the tree
 x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-                        agglomerateTree = TRUE)
+                       agglomerateTree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
