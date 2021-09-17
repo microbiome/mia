@@ -33,7 +33,7 @@
 #' df <- DataFrame(n = c(1:6))
 #' se <- SummarizedExperiment(assays = list(counts = mat),
 #'                            rowData = df)
-#' \dontrun{
+#' \donttest{
 #' calculateDistance(se)
 #' }
 #' 

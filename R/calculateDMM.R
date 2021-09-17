@@ -68,14 +68,12 @@
 #' se <- SummarizedExperiment(assays = list(counts = counts),
 #'                            colData = colData)
 #'
-#'
-#' #
 #' dmn <- calculateDMN(se)
 #' dmn[[1L]]
 #'
 #' # since this take a bit of resources to calculate for k > 1, the data is
 #' # loaded
-#' \dontrun{
+#' \donttest{
 #' se <- runDMN(se, name = "DMN", k = 1:7)
 #' }
 #' data(dmn_se)
@@ -92,20 +90,20 @@ NULL
 #' @rdname calculateDMN
 #' @export
 setGeneric("calculateDMN", signature = c("x"),
-           function(x, ...)
-               standardGeneric("calculateDMN"))
+            function(x, ...)
+            standardGeneric("calculateDMN"))
 
 #' @importFrom DirichletMultinomial dmn
 #' @importFrom stats runif
 .calculate_DMN <- function(x, k = 1, BPPARAM = SerialParam(),
-                           seed = runif(1, 0, .Machine$integer.max), ...){
+                        seed = runif(1, 0, .Machine$integer.max), ...){
     if(!is.numeric(k) ||
-       length(k) == 0 ||
-       anyNA(k) ||
-       any(k <= 0) ||
-       any(k != as.integer(k))){
+        length(k) == 0 ||
+        anyNA(k) ||
+        any(k <= 0) ||
+        any(k != as.integer(k))){
         stop("'k' must be an integer vector with positive values only.",
-             call. = FALSE)
+            call. = FALSE)
     }
     #
     old <- getAutoBPPARAM()
@@ -117,8 +115,8 @@ setGeneric("calculateDMN", signature = c("x"),
     }
 
     ans <- BiocParallel::bplapply(k, DirichletMultinomial::dmn, count = x,
-                                  seed = seed, ...,
-                                  BPPARAM = BPPARAM)
+                                seed = seed, ...,
+                                BPPARAM = BPPARAM)
     ans
 }
 
@@ -168,17 +166,17 @@ runDMN <- function(x, name = "DMN", ...){
 .get_dmn_fit_FUN <- function(type){
     type <- match.arg(type, c("laplace","AIC","BIC"))
     fit_FUN <- switch(type,
-                      laplace = DirichletMultinomial::laplace,
-                      AIC = DirichletMultinomial::AIC,
-                      BIC = DirichletMultinomial::BIC)
+                    laplace = DirichletMultinomial::laplace,
+                    AIC = DirichletMultinomial::AIC,
+                    BIC = DirichletMultinomial::BIC)
     fit_FUN
 }
 
 #' @rdname calculateDMN
 #' @export
 setGeneric("getDMN", signature = "x",
-           function(x, name = "DMN", ...)
-               standardGeneric("getDMN"))
+            function(x, name = "DMN", ...)
+                standardGeneric("getDMN"))
 
 #' @rdname calculateDMN
 #' @importFrom DirichletMultinomial laplace AIC BIC
@@ -198,8 +196,8 @@ setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
 #' @rdname calculateDMN
 #' @export
 setGeneric("bestDMNFit", signature = "x",
-           function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
-               standardGeneric("bestDMNFit"))
+            function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
+                standardGeneric("bestDMNFit"))
 
 #' @rdname calculateDMN
 #' @importFrom DirichletMultinomial laplace AIC BIC
@@ -217,8 +215,8 @@ setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
 #' @rdname calculateDMN
 #' @export
 setGeneric("getBestDMNFit", signature = "x",
-           function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
-               standardGeneric("getBestDMNFit"))
+            function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
+                standardGeneric("getBestDMNFit"))
 
 #' @rdname calculateDMN
 #' @importFrom DirichletMultinomial laplace AIC BIC
@@ -237,8 +235,8 @@ setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
 #' @rdname calculateDMN
 #' @export
 setGeneric("calculateDMNgroup", signature = c("x"),
-           function(x, ...)
-               standardGeneric("calculateDMNgroup"))
+            function(x, ...)
+                standardGeneric("calculateDMNgroup"))
 
 #' @importFrom DirichletMultinomial dmngroup
 #' @importFrom stats runif
@@ -282,13 +280,13 @@ setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
 #' @rdname calculateDMN
 #' @export
 setGeneric("performDMNgroupCV", signature = c("x"),
-           function(x, ...)
-               standardGeneric("performDMNgroupCV"))
+            function(x, ...)
+                standardGeneric("performDMNgroupCV"))
 
 #' @importFrom DirichletMultinomial cvdmngroup
 #' @importFrom stats runif
 .perform_DMNgroup_cv <- function(x, variable, k = 1,
-                                 seed = runif(1, 0, .Machine$integer.max), ...){
+                                seed = runif(1, 0, .Machine$integer.max), ...){
     # input check
     if(!is.factor(variable) && is.character(variable)){
         variable <- factor(variable, unique(variable))

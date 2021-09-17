@@ -78,6 +78,8 @@
 
 ################################################################################
 # internal wrappers for getter/setter
+#' @importFrom S4Vectors isSingleNumber
+#' @importFrom S4Vectors new2
 .make_zero_col_DataFrame <- function (nrow = 0L){
     # Sourced by S4vectors
     stopifnot(isSingleNumber(nrow))
@@ -86,6 +88,8 @@
     stopifnot(nrow >= 0L)
     new2("DFrame", nrows = nrow, check = FALSE)
 }
+
+
 
 
 #' @importFrom SummarizedExperiment colData colData<-
