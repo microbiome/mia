@@ -189,7 +189,7 @@
 #' plotColData(tse, "Shannon")
 #' # ... by sample type
 #' plotColData(tse, "Shannon", "SampleType")
-#' \donttest{
+#' \dontrun{
 #' # combining different plots
 #' library(patchwork)
 #' plot_index <- c("Shannon","GiniSimpson")

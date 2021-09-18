@@ -148,7 +148,7 @@ dmn[[1L]]
 
 # since this take a bit of resources to calculate for k > 1, the data is
 # loaded
-\donttest{
+\dontrun{
 se <- runDMN(se, name = "DMN", k = 1:7)
 }
 data(dmn_se)
