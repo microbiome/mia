@@ -8,7 +8,7 @@
 \alias{esophagus}
 \alias{soilrep}
 \alias{dmn_se}
-\alias{atlas1006}
+\alias{hitchip1006}
 \title{mia datasets}
 \format{
 An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
@@ -34,7 +34,7 @@ data(soilrep)
 
 data(dmn_se)
 
-data(atlas1006)
+data(hitchip1006)
 }
 \description{
 These datasets are conversions of the phyloseq datasets \code{GlobalPatterns}
@@ -44,8 +44,16 @@ These datasets are conversions of the phyloseq datasets \code{GlobalPatterns}
 from data in the \code{DirichletMultinomal} package. See \code{?calculateDMN}
 for more details.
 
-\code{atlas1006} is \code{TreeSummarizedExperiment}, originally documented in
-\code{data(atlas1006, package="microbiome")} and loaded as a TreeSE object
-with \code{data(atlas1006, package="mia")}.
+\code{hitchip1006} is \code{TreeSummarizedExperiment}, originally
+documented in the \pkg{microbiome} R package as
+\code{data(atlas1006, package="microbiome")}. In \pkg{mia} it is provided
+as a TreeSE object with \code{data(hitchip1006, package="mia")}.
+This \sQuote{HITChip Atlas} data set contains genus-level microbiota
+profiles obtained with the phylogenetic 16S rRNA microarray,
+Human Intestinal Tract (HIT)Chip, for 1006 western adults who had no
+reported health complications, from Lahti et al.
+Tipping elements of the human intestinal ecosystem.
+Nature Communications 5:4344, 2014. \url{https://doi.org/10.1038/ncomms5344}.
+Some of the subjects also have short time series.
 }
 \keyword{datasets}

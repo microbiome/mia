@@ -30,9 +30,17 @@ NULL
 #' from data in the \code{DirichletMultinomal} package. See \code{?calculateDMN}
 #' for more details.
 #'
-#' \code{atlas1006} is \code{TreeSummarizedExperiment}, originally documented in
-#' \code{data(atlas1006, package="microbiome")} and loaded as a TreeSE object
-#' with \code{data(atlas1006, package="mia")}.
+#' \code{hitchip1006} is \code{TreeSummarizedExperiment}, originally
+#' documented in the \pkg{microbiome} R package as
+#' \code{data(atlas1006, package="microbiome")}. In \pkg{mia} it is provided
+#' as a TreeSE object with \code{data(hitchip1006, package="mia")}.
+#' This \sQuote{HITChip Atlas} data set contains genus-level microbiota
+#' profiles obtained with the phylogenetic 16S rRNA microarray,
+#' Human Intestinal Tract (HIT)Chip, for 1006 western adults who had no
+#' reported health complications, from Lahti et al.
+#' Tipping elements of the human intestinal ecosystem. 
+#' Nature Communications 5:4344, 2014. \url{https://doi.org/10.1038/ncomms5344}.
+#' Some of the subjects also have short time series.
 #'
 #' @name mia-datasets
 #' @docType data
@@ -52,5 +60,6 @@ NULL
 #' @usage data(dmn_se)
 "dmn_se"
 #' @name mia-datasets
-#' @usage data(atlas1006)
-"atlas1006"
+#' @usage data(hitchip1006)
+"hitchip1006"
+
