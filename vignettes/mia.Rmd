@@ -33,10 +33,9 @@ are the main scope of this package.
 To install `mia`, install `BiocManager` first, if it is not installed.
 Afterwards use the `install` function from `BiocManager`.
 
-```{r}
+```{r, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-
 BiocManager::install("mia")
 ```
 

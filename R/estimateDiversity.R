@@ -4,7 +4,8 @@
 #' wrapper functions. Some of them are implemented via the \code{vegan} package.
 #'
 #' The available indices include the \sQuote{Coverage}, 
-#' \sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha}, \sQuote{Gini-Simpson}, 
+#' \sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha},
+#' \sQuote{Gini-Simpson}, 
 #' \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon} 
 #' diversity indices. See details for more information and references.
 #'
@@ -30,12 +31,14 @@
 #' @param ... optional arguments:
 #' \itemize{
 #'   \item{threshold}{ A numeric value in the unit interval,
-#'   determining the threshold for coverage index. By default, \code{threshold} is 0.9.}
-#'   \item{quantile}{ Arithmetic abundance classes are evenly cut up to to this quantile 
-#'   of the data. The assumption is that abundances higher than this are not common, and 
-#'   they are classified in their own group. By default, \code{quantile} is 0.5.}
-#'   \item{num_of_classes}{ The number of arithmetic abundance classes from zero to 
-#'   the quantile cutoff indicated by \code{quantile}. 
+#'   determining the threshold for coverage index. By default,
+#'   \code{threshold} is 0.9.}
+#'   \item{quantile}{ Arithmetic abundance classes are evenly cut up to to
+#'   this quantile of the data. The assumption is that abundances higher than
+#'   this are not common, and they are classified in their own group.
+#'   By default, \code{quantile} is 0.5.}
+#'   \item{num_of_classes}{ The number of arithmetic abundance classes
+#'   from zero to the quantile cutoff indicated by \code{quantile}. 
 #'   By default, \code{num_of_classes} is 50.}
 #' }
 #'
@@ -43,39 +46,46 @@
 #'
 #' @details
 #'
-#' Diversity is a joint quantity that combines elements or community richness and evenness.
-#' Diversity increases, in general, when species richness or evenness increase.
+#' Diversity is a joint quantity that combines elements or community richness
+#' and evenness. Diversity increases, in general, when species richness or
+#' evenness increase.
 #'
 #' By default, this function returns all indices.
 #'
 #' \itemize{
 #' 
-#' \item{'coverage' }{Number of species needed to cover a given fraction of the ecosystem (50\% by default).
-#' Tune this with the threshold argument.}
+#' \item{'coverage' }{Number of species needed to cover a given fraction of
+#' the ecosystem (50 percent by default). Tune this with the threshold
+#' argument.}
 #' 
-#' \item{'faith' }{Faith's phylogenetic alpha diversity index measures how long the
-#' taxonomic distance is between taxa that are present in the sample. Larger value
-#' represent higher diversity. (Faith 1992)}
+#' \item{'faith' }{Faith's phylogenetic alpha diversity index measures how
+#' long the taxonomic distance is between taxa that are present in the sample.
+#' Larger values represent higher diversity. (Faith 1992)}
 #' 
 #' \item{'fisher' }{Fisher's alpha; as implemented in
 #' \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
 #' 
-#' \item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda}, where \eqn{lambda} is the
+#' \item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda},
+#' where \eqn{lambda} is the
 #' Simpson index, calculated as the sum of squared relative abundances.
 #' This corresponds to the diversity index
 #' 'simpson' in \code{\link[vegan:diversity]{vegan::diversity}}.
 #' This is also called Gibbs–Martin, or Blau index in sociology,
-#' psychology and management studies. The Gini-Simpson index (1-lambda) should not be
-#' confused with Simpson's dominance (lambda), Gini index, or inverse Simpson index (1/lambda).}
+#' psychology and management studies. The Gini-Simpson index (1-lambda)
+#' should not be
+#' confused with Simpson's dominance (lambda), Gini index, or
+#' inverse Simpson index (1/lambda).}
 #' 
 #' \item{'inverse_simpson' }{Inverse Simpson diversity:
-#' \eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative abundances.
+#' \eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative
+#' abundances.
 #' This corresponds to the diversity index
 #' 'invsimpson' in vegan::diversity. Don't confuse this with the
 #' closely related Gini-Simpson index}
 #'
-#' \item{'log_modulo_skewness' }{The rarity index characterizes the concentration 
-#' of species at low abundance. Here, we use the skewness of the frequency 
+#' \item{'log_modulo_skewness' }{The rarity index characterizes the
+#' concentration of species at low abundance. Here, we use the skewness of
+#' the frequency 
 #' distribution of arithmetic abundance classes (see Magurran & McGill 2011).
 #' These are typically right-skewed; to avoid taking log of occasional
 #' negative skews, we follow Locey & Lennon (2016) and use the log-modulo
@@ -102,8 +112,8 @@
 #' _Biological Conservation_ 61(1):1-10.
 #'
 #' Fisher R.A., Corbet, A.S. & Williams, C.B. (1943)
-#' The relation between the number of species and the number of individuals in a
-#' random sample of animal population.
+#' The relation between the number of species and the number of individuals in
+#' a random sample of animal population.
 #' _Journal of Animal Ecology_ *12*, 42-58.
 #' 
 #' Locey K.J. & Lennon J.T. (2016)
@@ -156,15 +166,17 @@
 #' 
 #' # 'threshold' can be used to determine threshold for 'coverage' index
 #' tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
-#' # 'quantile' and 'num_of_classes' can be used when 'log_modulo_skewness' is calculated
-#' tse <- estimateDiversity(tse, index = "log_modulo_skewness", quantile = 0.75, num_of_classes = 100)
+#' # 'quantile' and 'num_of_classes' can be used when
+#' # 'log_modulo_skewness' is calculated
+#' tse <- estimateDiversity(tse, index = "log_modulo_skewness",
+#'        quantile = 0.75, num_of_classes = 100)
 #'
 #' # It is recommended to specify also the final names used in the output.
 #' tse <- estimateDiversity(tse,
-#'   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage", "fisher", 
-#'   "faith", "log_modulo_skewness"),
-#'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage", "Fisher", 
-#'    "Faith", "LogModSkewness"))
+#'   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage",
+#'                "fisher", "faith", "log_modulo_skewness"),
+#'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
+#'                "Fisher", "Faith", "LogModSkewness"))
 #'
 #' # The colData contains the indices by their new names provided by the user
 #' colData(tse)[, name]
@@ -177,16 +189,17 @@
 #' plotColData(tse, "Shannon")
 #' # ... by sample type
 #' plotColData(tse, "Shannon", "SampleType")
-#' \dontrun{
+#' \donttest{
 #' # combining different plots
 #' library(patchwork)
 #' plot_index <- c("Shannon","GiniSimpson")
 #' plots <- lapply(plot_index,
-#'                 plotColData,
-#'                 object = tse,
-#'                 x = "SampleType",
-#'                 colour_by = "SampleType")
-#' plots <- lapply(plots,"+", theme(axis.text.x = element_text(angle=45,hjust=1)))
+#'                plotColData,
+#'                object = tse,
+#'                x = "SampleType",
+#'                colour_by = "SampleType")
+#' plots <- lapply(plots,"+",
+#'    theme(axis.text.x = element_text(angle=45,hjust=1)))
 #' names(plots) <- plot_index
 #' plots$Shannon + plots$GiniSimpson + plot_layout(guides = "collect")
 #' }
@@ -195,37 +208,37 @@ NULL
 #' @rdname estimateDiversity
 #' @export
 setGeneric("estimateDiversity",signature = c("x"),
-           function(x, abund_values = "counts",
-                    index = c("coverage", "fisher", "gini_simpson", 
-                              "inverse_simpson", "log_modulo_skewness", "shannon"),
+        function(x, abund_values = "counts",
+                index = c("coverage", "fisher", "gini_simpson", 
+                        "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ...)
-               standardGeneric("estimateDiversity"))
+                    standardGeneric("estimateDiversity"))
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("coverage", "fisher", "gini_simpson", 
-                       "inverse_simpson", "log_modulo_skewness", "shannon"),
-             name = index, ..., BPPARAM = SerialParam()){
+            index = c("coverage", "fisher", "gini_simpson", 
+                    "inverse_simpson", "log_modulo_skewness", "shannon"),
+                    name = index, ..., BPPARAM = SerialParam()){
 
         # input check
         index<- match.arg(index, several.ok = TRUE)
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                 "same length than 'index'.",
-                 call. = FALSE)
+                "same length than 'index'.",
+                call. = FALSE)
         }
         .check_assay_present(abund_values, x)
         .require_package("vegan")
 
         dvrsts <- BiocParallel::bplapply(index,
-                                         .get_diversity_values,
-                                         x = x,
-                                         mat = assay(x, abund_values),
-                                         BPPARAM = BPPARAM,
-                                         ...)
+                                        .get_diversity_values,
+                                        x = x,
+                                        mat = assay(x, abund_values),
+                                        BPPARAM = BPPARAM,
+                                        ...)
         .add_values_to_colData(x, dvrsts, name)
     }
 )
@@ -234,24 +247,26 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
 #' @export
 setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     function(x, abund_values = "counts",
-             index = c("coverage", "faith", "fisher", "gini_simpson", 
-                       "inverse_simpson", "log_modulo_skewness", "shannon"),
-             name = index, ..., BPPARAM = SerialParam()){
+            index = c("coverage", "faith", "fisher", "gini_simpson", 
+                    "inverse_simpson", "log_modulo_skewness", "shannon"),
+                    name = index, ..., BPPARAM = SerialParam()){
         
         # Gets the tree 
         tree <- rowTree(x)
         # input check
         # If object does not have a tree
-        if( ("faith" %in% index) && (is.null(tree) || is.null(tree$edge.length)) ){
-            stop("Object does not have a tree or the tree does not have any branches.
-             'faith' is not possible to calculate.",
-                 call. = FALSE)
+        if( ("faith" %in% index) &&
+        (is.null(tree) || is.null(tree$edge.length)) ){
+                stop("Object does not have a tree or the tree does not 
+                    have any branches.
+                    'faith' is not possible to calculate.",
+                call. = FALSE)
         }
         index<- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                 "same length than 'index'.",
-                 call. = FALSE)
+                "same length than 'index'.",
+                call. = FALSE)
         }
         
         # If 'faith' is one of the indices
@@ -271,7 +286,8 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             calc_faith <- FALSE
         }
         
-        # If index list contained other than 'faith' index, the length of the list is over 0
+        # If index list contained other than 'faith' index, the length of the
+        # list is over 0
         if( length(index)>0){
             # Calculates all indices but not 'faith'
             x <- callNextMethod()
@@ -288,9 +304,9 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
 #' @rdname estimateDiversity
 #' @export
 setGeneric("estimateFaith",signature = c("x", "tree"),
-           function(x, tree = "missing", abund_values = "counts",
+            function(x, tree = "missing", abund_values = "counts",
                     name = "faith", ...)
-               standardGeneric("estimateFaith"))
+            standardGeneric("estimateFaith"))
 
 #' @rdname estimateDiversity
 #' @export
@@ -302,15 +318,15 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         # IF there is no rowTree gives an error
         if( is.null(tree) || is.null(tree$edge.length) ){
             stop("'tree' is NULL or it does not have any branches.",
-                 "'faith' is not possible to calculate.",
-                 call. = FALSE)
+                "'faith' is not possible to calculate.",
+                call. = FALSE)
         }
         # Check 'abund_values'
         .check_assay_present(abund_values, x)
         # Check 'name'
         if(!.is_non_empty_character(name)){
             stop("'name' must be a non-empty character value.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         # Calculates Faith index
         faith <- list(.calc_faith(assay(x, abund_values), tree))
@@ -323,12 +339,12 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
 #' @export
 setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
     function(x, abund_values = "counts",
-             name = "faith", ...){
+            name = "faith", ...){
         # Gets the tree
         tree <- rowTree(x)
         if(is.null(tree)){
             stop("rowTree(x) is NULL. Faith's diversity cannot be calculated.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         # Calculates the Faith index
         estimateFaith(x, tree, name = name, ...)
@@ -373,13 +389,14 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # Threshold must be a numeric value between 0-1
     if( !( is.numeric(threshold) && (threshold >= 0 && threshold <= 1) ) ){
         stop("'threshold' must be a numeric value between 0-1.",
-             call. = FALSE)
+            call. = FALSE)
     }
 
     # Convert table to relative values
     rel <- .calc_rel_abund(mat)
 
-    # Number of groups needed to have threshold (e.g. 50 %) of the ecosystem occupied
+    # Number of groups needed to have threshold (e.g. 50 %) of the
+    # ecosystem occupied
     coverage <- apply(rel, 2, function(x) {
         min(which(cumsum(rev(sort(x/sum(x)))) >= threshold))
     })
@@ -394,13 +411,16 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 .calc_faith <- function(mat, tree, ...){
 
     # Gets vector where number represent nth sample
-    samples <- c(1:ncol(mat))
+    samples <- seq_len(ncol(mat))
 
-    # Repeats taxa as many times there are samples, i.e. get all the taxa that are
+    # Repeats taxa as many times there are samples, i.e. get all the
+    # taxa that are
+    
     # analyzed in each sample.
     taxa <- rep(rownames(mat), length(samples))
 
-    # Gets those taxa that are present/absent in each sample. Gets one big list that combines
+    # Gets those taxa that are present/absent in each sample.
+    # Gets one big list that combines
     # taxa from all the samples.
     present_combined <- taxa[ mat[, samples] > 0 ]
     absent_combined <- taxa[ mat[, samples] == 0 ]
@@ -410,13 +430,16 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     split_present <- as.vector(cumsum(colSums(mat > 0)))
     split_absent <- as.vector(cumsum(colSums(mat == 0)))
     
-    # Determines which taxa belongs to which sample by first determining the splitting points,
+    # Determines which taxa belongs to which sample by first determining
+    # the splitting points,
     # and after that giving every taxa number which tells their sample.
-    split_present <- as.factor(cumsum((seq_along(present_combined)-1) %in% split_present))
-    split_absent <- as.factor(cumsum((seq_along(absent_combined)-1) %in% split_absent))
+    split_present <- as.factor(cumsum((seq_along(present_combined)-1) %in%
+                        split_present))
+    split_absent <- as.factor(cumsum((seq_along(absent_combined)-1) %in%
+                        split_absent))
     
-    # Assigns taxa to right samples based on their number that they got from previous step,
-    # and deletes unnecessary names.
+    # Assigns taxa to right samples based on their number that they got from
+    # previous step, and deletes unnecessary names.
     present <- unname(split(present_combined, split_present))
     absent <- unname(split(absent_combined, split_absent))
 
@@ -447,21 +470,22 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # quantile must be a numeric value between 0-1
     if( !( is.numeric(quantile) && (quantile >= 0 && quantile <= 1) ) ){
         stop("'quantile' must be a numeric value between 0-1.",
-             call. = FALSE)
+            call. = FALSE)
     }
     # num_of_classes must be a positive numeric value
     if( !( is.numeric(num_of_classes) && num_of_classes > 0 ) ){
         stop("'num_of_classes' must be a positive numeric value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     # Determine the quantile point.
     quantile_point <- quantile(max(mat), quantile)
     # Tabulate the arithmetic abundance classes. Use the same classes
-    # for all samples for consistency    
+    # for all samples for consistency
     cutpoints <- c(seq(0, quantile_point, length=num_of_classes), Inf)
     # Calculates sample-wise frequencies. How many taxa in each interval?
     freq_table <- table(cut(mat, cutpoints), col(mat))
-    # Calculates the skewness of frequency table. Returns skewness for each sample
+    # Calculates the skewness of frequency table. Returns skewness for each
+    # sample
     r <- .calc_skewness(freq_table)
     # Return log-modulo
     log(1 + r)
@@ -471,15 +495,18 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 .calc_skewness <- function(x) {
     # Transposes the table
     x <- t(x)
-    # Each value is substracted by sample-wise mean, which is raised to the power of 3.
+    # Each value is substracted by sample-wise mean, which is raised to the
+    # power of 3.
     # Then the sample-wise sum is taken from these values. 
     numerator <- rowSums2((x - rowMeans2(x))^3)
     # Sample-wise sum is divided by number of taxa that are not NA.
     numerator <- numerator/rowSums2(!is.na(x))
-    # Each value is substracted by sample-wise mean, which is raises to the power of 2.
+    # Each value is substracted by sample-wise mean, which is raises to the
+    # power of 2.
     # Then the sample-wise sum is taken from these values. 
     denominator <- rowSums2((x - rowMeans2(x))^2)
-    # Sample-wise sum is divided by number of taxa that are not NA. Then these values
+    # Sample-wise sum is divided by number of taxa that are not NA. Then
+    # these values
     # are raised to the power of 3/2.
     denominator <- (denominator/rowSums2(!is.na(x)))^(3/2)
     # Result

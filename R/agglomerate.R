@@ -70,7 +70,7 @@
 #'
 #' # with agglomeration of the tree
 #' x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-#'                         agglomerateTree = TRUE)
+#'                        agglomerateTree = TRUE)
 #' nrow(x2) # same number of rows, but
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
@@ -96,9 +96,9 @@
 NULL
 
 setGeneric("agglomerateByRank",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("agglomerateByRank"))
+            signature = "x",
+            function(x, ...)
+                standardGeneric("agglomerateByRank"))
 
 .remove_with_empty_taxonomic_info <-
     function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
@@ -119,11 +119,11 @@ setGeneric("agglomerateByRank",
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
-       empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+        empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         if(!.is_a_bool(onRankOnly)){
             stop("'onRankOnly' must be TRUE or FALSE.", call. = FALSE)
@@ -149,7 +149,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         # tree will be pruned later, if agglomerateTree = TRUE
         if( na.rm ){
             x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
-                                                   empty.fields)
+                                                empty.fields)
         }
         # If rank is the only rank that is available and this data is unique,
         # then the data is already 'aggregated' and no further operations

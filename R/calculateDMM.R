@@ -75,7 +75,7 @@
 #'
 #' # since this take a bit of resources to calculate for k > 1, the data is
 #' # loaded
-#' \dontrun{
+#' \donttest{
 #' se <- runDMN(se, name = "DMN", k = 1:7)
 #' }
 #' data(dmn_se)
