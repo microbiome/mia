@@ -30,6 +30,10 @@ NULL
 #' from data in the \code{DirichletMultinomal} package. See \code{?calculateDMN}
 #' for more details.
 #'
+#' \code{atlas1006} is \code{TreeSummarizedExperiment}, originally documented in
+#' \code{data(atlas1006, package="microbiome")} and loaded as a TreeSE object
+#' with \code{data(atlas1006, package="mia")}.
+#'
 #' @name mia-datasets
 #' @docType data
 #' @keywords datasets
@@ -47,3 +51,6 @@ NULL
 #' @name mia-datasets
 #' @usage data(dmn_se)
 "dmn_se"
+#' @name mia-datasets
+#' @usage data(atlas1006)
+"atlas1006"
