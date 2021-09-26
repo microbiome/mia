@@ -103,11 +103,32 @@ setMethod("getSubsample", signature = c(x = "SummarizedExperiment"),
               message("`set.seed(", seed, ")` was used to initialize repeatable random subsampling.")
               message("Please record this for your records so others can reproduce. \n ... \n")
             }
+            
+            if(!.is_numeric_string(seed)){
+              stop("`seed` has to be an numeric value See `?set.seed`\n")
+            } 
+            
+            if(!.is_a_bool(verbose)){
+              stop("`seed` has to be an integer value See `?set.seed`\n")
+            } 
+            
+            if(!is.logical(replace)){
+              stop("`replace` has to be logical i.e. TRUE or FALSE")
+            } 
+            
+            # Check name
+            if(!.is_non_empty_string(name) ||
+               name == abund_values){
+              stop("'name' must be a non-empty single character value and be ",
+                   "different from `abund_values`.",
+                   call. = FALSE)
+            }
+            
             set.seed(seed)
             # Make sure min_size is of length 1.
             if(length(min_size) > 1){
-              warning("`min_size` had more than one value. ", 
-                      "Using only the first. \n ... \n")
+              stop("`min_size` had more than one value. ", 
+                      "Specifiy a sinlge integer value. \n ... \n")
               min_size <- min_size[1]	
             }
             if(min_size <= 0){
@@ -123,6 +144,8 @@ setMethod("getSubsample", signature = c(x = "SummarizedExperiment"),
               }
               # remove sample(s)
               newtse <- x[, !colnames(x) %in% rmsams]
+            } else {
+              newtse <- x
             }
             newassay <- apply(assay(newtse, abund_values), 2, 
                               .subsample_assay,
@@ -130,7 +153,7 @@ setMethod("getSubsample", signature = c(x = "SummarizedExperiment"),
             rownames(newassay) <- rownames(newtse)
             # remove features not present in any samples after subsampling
             message(paste(length(which(rowSums2(newassay) == 0)), "features", 
-                          "removed becasue they are not present in all samples", 
+                          "removed because they are not present in all samples", 
                           "after subsampling.\n"))
             # get features features with non-zero sum across samples.
             keepfeatures <- rownames(newassay[which(rowSums2(newassay) != 0),])
