@@ -1,5 +1,4 @@
-#' Subsample a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object
+#' Subsample a \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object
 #' 
 #' \code{getSubsample} will randomly subsample counts in SE/TSE to return a SE/TSE in
 #' which each sample has same number of total observations/counts/reads. 
@@ -10,13 +9,12 @@
 #' can be useful. Note that the output of \code{getSubsample} is a modified SE/TSE.
 #'
 #' @param x A
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'    object.
+#'   \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object.
 #'
 #' @param abund_values A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
-#'   random subsampling. Only counts are useful and other transformed data as input
-#'   will give meaningless output.
+#'   \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} \code{assay} 
+#'   used for random subsampling. Only counts are useful and other transformed 
+#'   data as input will give meaningless output.
 #'   
 #' @param min_size A single integer value equal to the number of counts being 
 #'   simulated this can equal to lowest number of total counts 
@@ -50,7 +48,9 @@
 #' microbial differential abundance strategies depend upon data characteristics. 
 #' Microbiome. 2017 Dec;5(1):1-8.
 #' 
-#' @return a TSE with subsampled data that is different from input TSE.
+#' @return a \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object 
+#'   with subsampled data that is different from input 
+#'   \code{SummarizedExperiment} or \code{TreeSummarizedExperiment}
 #' 
 #' @author Sudarshan A. Shetty 
 #' 
@@ -79,7 +79,7 @@ setGeneric("getSubsample", signature = c("x"),
                     min_size = min(colSums2(assay(x))),
                     seed = runif(1, 0, .Machine$integer.max),
                     replace = TRUE,
-                    name = "rarefied",
+                    name = "subsampled",
                     verbose = TRUE, ...)
              standardGeneric("getSubsample"))
 
@@ -103,6 +103,7 @@ setMethod("getSubsample", signature = c(x = "SummarizedExperiment"),
               message("`set.seed(", seed, ")` was used to initialize repeatable random subsampling.")
               message("Please record this for your records so others can reproduce. \n ... \n")
             }
+            set.seed(seed)
             # Make sure min_size is of length 1.
             if(length(min_size) > 1){
               warning("`min_size` had more than one value. ", 
