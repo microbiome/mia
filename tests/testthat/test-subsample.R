@@ -1,9 +1,9 @@
-context("getSubsample")
-test_that("getSubsample", {
+context("subsampleCounts")
+test_that("subsampleCounts", {
   
   data(GlobalPatterns)
   
-  tse.subsampled <- getSubsample(GlobalPatterns, 
+  tse.subsampled <- subsampleCounts(GlobalPatterns, 
                                  min_size = 60000, 
                                  name = "subsampled",
                                  replace = TRUE,
@@ -31,7 +31,7 @@ test_that("getSubsample", {
   expect_equal(colSums2(assay(tse.subsampled, "subsampled")), expColSums)
   
   # When replace = FALSE
-  tse.subsampled.rp <- getSubsample(GlobalPatterns, 
+  tse.subsampled.rp <- subsampleCounts(GlobalPatterns, 
                                     min_size = 60000, 
                                     name = "subsampled",
                                     replace = FALSE,

@@ -1,12 +1,12 @@
-#' Subsample a \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object
+#' Subsample Counts in a \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object
 #' 
-#' \code{getSubsample} will randomly subsample counts in SE/TSE to return a SE/TSE in
+#' \code{subsampleCounts} will randomly subsample counts in SE/TreeSE to return a SE/TreeSE in
 #' which each sample has same number of total observations/counts/reads. 
 #'
 #' @details
 #' Although the subsampling approach is highly debated in microbiome research, 
-#' we include the \code{getSubsample} function because in some instances these 
-#' can be useful. Note that the output of \code{getSubsample} is a modified SE/TSE.
+#' we include the \code{subsampleCounts} function because in some instances these 
+#' can be useful. Note that the output of \code{subsampleCounts} is a modified SE/TSE.
 #'
 #' @param x A
 #'   \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object.
@@ -54,15 +54,15 @@
 #' 
 #' @author Sudarshan A. Shetty 
 #' 
-#' @name getSubsample
+#' @name subsampleCounts
 #'  
 #' @examples
-#' # When samples in TSE are less than specified min_size, they will be removed.
+#' # When samples in TreeSE are less than specified min_size, they will be removed.
 #' # If after subsampling features are not present in any of the samples, 
 #' # they will be removed.
 #' data("GlobalPatterns")
 #' tse <- GlobalPatterns
-#' tse.subsampled <- getSubsample(tse, min_size = 60000, name = "subsampled")
+#' tse.subsampled <- subsampleCounts(tse, min_size = 60000, name = "subsampled")
 #' tse.subsampled
 #' 
 #' dim(tse)
@@ -71,9 +71,10 @@
 #' 
 NULL
 
-#' @rdname getSubsample
+#' @rdname subsampleCounts
+#' @aliases rarifyCounts
 #' @export
-setGeneric("getSubsample", signature = c("x"),
+setGeneric("subsampleCounts", signature = c("x"),
            function(x, 
                     abund_values = "counts",
                     min_size = min(colSums2(assay(x))),
@@ -81,14 +82,14 @@ setGeneric("getSubsample", signature = c("x"),
                     replace = TRUE,
                     name = "subsampled",
                     verbose = TRUE, ...)
-             standardGeneric("getSubsample"))
-
+             standardGeneric("subsampleCounts"))
 
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom DelayedMatrixStats colSums2 rowSums2
-#' @rdname getSubsample
+#' @rdname subsampleCounts
+#' @aliases rarifyCounts
 #' @export
-setMethod("getSubsample", signature = c(x = "SummarizedExperiment"),
+setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
           function(x, 
                    abund_values = "counts",
                    min_size = min(colSums2(assay(x))),
@@ -159,7 +160,7 @@ setMethod("getSubsample", signature = c(x = "SummarizedExperiment"),
             keepfeatures <- rownames(newassay[which(rowSums2(newassay) != 0),])
             # add the subsampled assay
             assay(newtse, name, withDimnames=FALSE) <- newassay
-            # filter tse to keep only features with non-zero sum across samples
+            # filter TreeSE to keep only features with non-zero sum across samples
             newtse <- newtse[keepfeatures,]
             newtse
           }
