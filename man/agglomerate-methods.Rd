@@ -74,6 +74,11 @@ Based on the available taxonomic data and its structure setting
 your results. If no loops exist (loops meaning two higher ranks containing
 the same lower rank), the results should be comparable. you can check for
 loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
+
+Agglomeration sum up values of assays at specified taxonomic level. Certain assays,
+e.g. those that include binary or negative values, can lead to meaningless values,
+when values are summed. In those cases, consider doing agglomeration first and then
+transformation.
 }
 \examples{
 data(GlobalPatterns)
