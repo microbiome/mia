@@ -35,15 +35,16 @@ estimateDominance(
 object}
 
 \item{abund_values}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
-calculation of the sample-wise estimates.}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
+to calculate the sample-wise estimates.}
 
 \item{index}{a \code{character} vector, specifying the indices to be
 calculated.}
 
 \item{ntaxa}{Optional and only used for the \code{Absolute} and
 \code{Relative} dominance indices: The n-th position of the dominant taxa
-to consider (default: \code{ntaxa = 1}). Disregarded for the indices \dQuote{dbp},
+to consider (default: \code{ntaxa = 1}). Disregarded for the indices
+\dQuote{dbp},
 \dQuote{core_abundance}, \dQuote{Gini}, \dQuote{dmn}, and \dQuote{Simpson}.}
 
 \item{aggregate}{Optional and only used for the \code{Absolute}, \code{dbp},
@@ -70,8 +71,10 @@ object specifying whether calculation of estimates should be parallelized.
 }
 \description{
 This function calculates community dominance indices.
-This includes the \sQuote{Absolute}, \sQuote{Berger-Parker}, \sQuote{Core abundance},
-\sQuote{Gini}, \sQuote{McNaughton’s}, \sQuote{Relative}, and \sQuote{Simpson's} indices.
+This includes the \sQuote{Absolute}, \sQuote{Berger-Parker},
+\sQuote{Core abundance},
+\sQuote{Gini}, \sQuote{McNaughton’s}, \sQuote{Relative}, and
+\sQuote{Simpson's} indices.
 }
 \details{
 A dominance index quantifies the dominance of one or few species in a
@@ -87,11 +90,12 @@ indices:
 \itemize{
 
 \item{'absolute' }{Absolute index equals to the absolute abundance of the
-most dominant n species of the sample (specify the number with the argument \code{ntaxa}).
-Index gives positive integer values.}
+most dominant n species of the sample (specify the number with the argument
+\code{ntaxa}). Index gives positive integer values.}
 
 \item{'dbp' }{Berger-Parker index (See Berger & Parker 1970) calculation
-is a special case of the 'relative' index. dbp is the relative abundance of the most
+is a special case of the 'relative' index. dbp is the relative abundance of
+the most
 abundant species of the sample. Index gives values in interval 0 to 1,
 where bigger value represent greater dominance.
 
@@ -106,8 +110,8 @@ whole data set. Core species are defined as those species that have
 prevalence over 50\\%. It means that in order to belong to core species,
 species must be prevalent in 50\\% of samples. Core species are used to
 calculate the core abundance index. Core abundance index is sum of relative
-abundances of core species in the sample. Index gives values in interval 0 to
-1, where bigger value represent greater dominance.
+abundances of core species in the sample. Index gives values in interval
+0 to 1, where bigger value represent greater dominance.
 
 \deqn{core_abundance = \frac{N_{core}}{N_{tot}}}{%
 core_abundance = N_core/N_tot} where \eqn{N_{core}} is the sum of absolute
@@ -115,9 +119,9 @@ abundance of the core species and \eqn{N_{tot}} is the sum of absolute
 abundances of all species.}
 
 \item{'gini' }{ Gini index is probably best-known from socio-economic
-contexts (Gini 1921). In economics, it is used to measure, for example, how unevenly
-income is distributed among population. Here, Gini index is used similarly,
-but income is replaced with abundance.
+contexts (Gini 1921). In economics, it is used to measure, for example, how
+unevenly income is distributed among population. Here, Gini index is used
+similarly, but income is replaced with abundance.
 
 If there is small group of species
 that represent large portion of total abundance of microbes, the inequality
@@ -126,8 +130,8 @@ abundances, the equality is perfect and Gini index equals 0. This index
 should not be confused with Gini-Simpson index, which quantifies diversity.}
 
 \item{'dmn' }{McNaughton’s index is the sum of relative abundances of the two
-most abundant species of the sample (McNaughton & Wolf, 1970). Index gives values in
-the unit interval:
+most abundant species of the sample (McNaughton & Wolf, 1970). Index gives
+values in the unit interval:
 
 \deqn{dmn = (N_1 + N_2)/N_tot}
 
@@ -136,7 +140,8 @@ abundances of the two most dominant species and \eqn{N_{tot}} is the sum of
 absolute abundances of all species.}
 
 \item{'relative' }{ Relative index equals to the relative abundance of the
-most dominant n species of the sample (specify the number with the argument \code{ntaxa}).
+most dominant n species of the sample (specify the number with the
+argument \code{ntaxa}).
 This index gives values in interval 0 to 1.
 
 \deqn{relative = N_1/N_tot}
@@ -147,7 +152,8 @@ species.}
 
 \item{'simpson_lambda' }{ Simpson's (dominance) index or Simpson's lambda is
 the sum of squared relative abundances. This index gives values in the unit interval.
-This value equals the probability that two randomly chosen individuals belongs to the
+This value equals the probability that two randomly chosen individuals
+belongs to the
 same species. The higher the probability, the greater the dominance (See
 e.g. Simpson 1949).
 
@@ -155,9 +161,10 @@ e.g. Simpson 1949).
 
 where p refers to relative abundances.
 
-There is also a more advanced Simpson dominance index (Simpson 1949). However,
-this is not provided and the simpler squared sum of relative abundances is used
-instead as the alternative index is not in the unit interval and it is highly
+There is also a more advanced Simpson dominance index (Simpson 1949).
+However, this is not provided and the simpler squared sum of relative
+abundances is used instead as the alternative index is not in the unit
+interval and it is highly
 correlated with the simpler variant implemented here.}
 
 }
@@ -173,7 +180,7 @@ colData(esophagus)
 
 # Indices must be written correctly (e.g. dbp, not dbp), otherwise an error
 # gets thrown
-\dontrun{esophagus <- estimateDominance(esophagus, index="DBP")}
+\dontrun{esophagus <- estimateDominance(esophagus, index="dbp")}
 # Calculates dbp and Core Abundance indices
 esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
 # Shows all indices

@@ -74,6 +74,11 @@ Based on the available taxonomic data and its structure setting
 your results. If no loops exist (loops meaning two higher ranks containing
 the same lower rank), the results should be comparable. you can check for
 loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
+
+Agglomeration sum up values of assays at specified taxonomic level. Certain assays,
+e.g. those that include binary or negative values, can lead to meaningless values,
+when values are summed. In those cases, consider doing agglomeration first and then
+transformation.
 }
 \examples{
 data(GlobalPatterns)
@@ -89,10 +94,17 @@ nrow(x1)
 
 # with agglomeration of the tree
 x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-                        agglomerateTree = TRUE)
+                       agglomerateTree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
+
+ # If assay contains binary or negative values, summing might lead to meaningless
+ # values, and you will get a warning. In these cases, you might want to do 
+ # agglomeration again at chosen taxonomic level.
+ tse <- transformSamples(GlobalPatterns, method = "pa")
+ tse <- agglomerateByRank(tse, rank = "Genus")
+ tse <- transformSamples(tse, method = "pa")
 
 # removing empty labels by setting na.rm = TRUE
 sum(is.na(rowData(GlobalPatterns)$Family))

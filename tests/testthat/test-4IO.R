@@ -352,15 +352,21 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
         expect_warning(makePhyloseqFromTreeSummarizedExperiment(temp))
     }
     
+    tse2 <- tse
+    # Concerts data frame to factors
+    rowData(tse2) <- DataFrame(lapply(rowData(tse2), as.factor))
+    phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
+    phy2 <- makePhyloseqFromTreeSummarizedExperiment(tse2)
+    expect_equal(phyloseq::tax_table(phy2), phyloseq::tax_table(phy))
+    
     # TSE object
     data(esophagus)
     tse <- esophagus
 
-    phy <- makePhyloseqFromTreeSummarizedExperiment(esophagus)
+    phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
-
 
     # Test that rowTree is in phy_tree
     expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
