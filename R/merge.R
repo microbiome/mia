@@ -19,11 +19,6 @@
 #'   as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
 #'   element encountered per factor level will be kept)
 #'   
-#' @param abund_values A vector of single character values for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assays}} to be
-#'   included in the agglomerated object that is created. By default, it is counts
-#'   table.
-#'
 #' @param mergeTree \code{TRUE} or \code{FALSE}: should to
 #'   \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})
 #'
@@ -76,7 +71,7 @@ NULL
 #' @export
 setGeneric("mergeRows",
            signature = "x",
-           function(x, f, archetype = 1L, abund_values = "counts", ...)
+           function(x, f, archetype = 1L, ...)
                standardGeneric("mergeRows"))
 
 #' @rdname merge-methods
@@ -139,7 +134,7 @@ setGeneric("mergeCols",
 }
 
 #' @importFrom S4Vectors SimpleList
-.merge_rows <- function(x, f, archetype = 1L, abund_values = "counts", ...){
+.merge_rows <- function(x, f, archetype = 1L, ...){
     # input check
     f <- .norm_f(nrow(x), f)
     if(length(levels(f)) == nrow(x)){
@@ -209,8 +204,8 @@ setGeneric("mergeCols",
 #' @rdname merge-methods
 #' @export
 setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
-    function(x, f, archetype = 1L, abund_values = "counts", ...){
-        .merge_rows(x, f, archetype = archetype,  abund_values, ...)
+    function(x, f, archetype = 1L, ...){
+        .merge_rows(x, f, archetype = archetype, ...)
     }
 )
 
@@ -266,8 +261,7 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
 #' @importFrom ape keep.tip
 #' @export
 setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f, archetype = 1L, abund_values = "counts", 
-             mergeTree = FALSE, mergeRefSeq = FALSE, ...){
+    function(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...){
         # input check
         if(!.is_a_bool(mergeTree)){
             stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
@@ -275,19 +269,13 @@ setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
         if(!.is_a_bool(mergeRefSeq)){
             stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
         }
-        # Check abund_values individually
-        abund_values_temp <- abund_values
-        for(abund_values in abund_values_temp){
-            .check_assay_present(abund_values, x)
-        }
-        abund_values <- abund_values_temp
         # for optionally merging referenceSeq
         refSeq <- NULL
         if(mergeRefSeq){
             refSeq <- referenceSeq(x)
         }
         #
-        x <- callNextMethod(x, f, archetype = 1L, abund_values, ...)
+        x <- callNextMethod(x, f, archetype = 1L, ...)
         # optionally merge rowTree
         tree <- rowTree(x)
         if(!is.null(tree) && mergeTree){

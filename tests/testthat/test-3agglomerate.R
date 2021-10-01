@@ -14,42 +14,42 @@ test_that("agglomerate", {
     rowData(xtse) <- tax_data
     # mergeRows for agglomerateByRank
     tax_factors <- mia:::.get_tax_groups(xtse, col = 2)
-    actual_family <- actual <- mergeRows(xtse, f = tax_factors, abund_values = "mat")
+    actual_family <- actual <- mergeRows(xtse, f = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(8,10))
     expect_equal(assays(actual)$mat[8,1],c(8))
     expect_equal(assays(actual)$mat[7,1],c(16))
     tax_factors <- mia:::.get_tax_groups(xtse, col = 1)
-    actual_phylum <- actual <- mergeRows(xtse, f = tax_factors, abund_values = "mat")
+    actual_phylum <- actual <- mergeRows(xtse, f = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(3,10))
     expect_equal(assays(actual)$mat[1,1],c(6))
     expect_equal(assays(actual)$mat[2,1],c(36))
     expect_equal(assays(actual)$mat[3,1],c(24))
     #
-    expect_error(agglomerateByRank(xtse,"",na.rm=FALSE, abund_values = "mat"),
+    expect_error(agglomerateByRank(xtse,"",na.rm=FALSE),
                  "'rank' must be an non empty single character value")
     expect_error(agglomerateByRank(xtse,"Family",na.rm=""),
                  "'na.rm' must be TRUE or FALSE")
-    expect_error(agglomerateByRank(xtse,"Family",na.rm=FALSE,agglomerateTree="", abund_values = "mat"),
+    expect_error(agglomerateByRank(xtse,"Family",na.rm=FALSE,agglomerateTree=""),
                  "'agglomerateTree' must be TRUE or FALSE")
     xtse2 <- xtse
     rowData(xtse2) <- NULL
     expect_error(agglomerateByRank(xtse2,"Family",na.rm=FALSE),
                  "taxonomyData needs to be populated")
     #
-    actual <- agglomerateByRank(xtse,"Family",na.rm=FALSE, abund_values = "mat")
+    actual <- agglomerateByRank(xtse,"Family",na.rm=FALSE)
     expect_equivalent(rowData(actual),rowData(actual_family))
-    actual <- agglomerateByRank(xtse,"Phylum",na.rm=FALSE, abund_values = "mat")
+    actual <- agglomerateByRank(xtse,"Phylum",na.rm=FALSE)
     expect_equivalent(rowData(actual),rowData(actual_phylum))
     #
-    actual <- agglomerateByRank(xtse,"Family", na.rm = TRUE, abund_values = "mat")
+    actual <- agglomerateByRank(xtse,"Family", na.rm = TRUE)
     expect_equal(dim(actual),c(6,10))
     expect_equal(rowData(actual)$Family,c("c","d","e","f","g","h"))
-    actual <- agglomerateByRank(xtse,"Family", na.rm = FALSE, abund_values = "mat") # the default
+    actual <- agglomerateByRank(xtse,"Family", na.rm = FALSE) # the default
     expect_equal(dim(actual),c(8,10))
     expect_equal(rowData(actual)$Family,c("c",NA,"d","e","f","g","h",NA))
-    actual <- agglomerateByRank(xtse,"Phylum", abund_values = "mat")
+    actual <- agglomerateByRank(xtse,"Phylum")
     expect_equivalent(rowData(actual),rowData(actual_phylum))
 
     # Only one rank available in the object -
@@ -74,6 +74,12 @@ test_that("agglomerate", {
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
                  496)
+    # Test that warning occurs when assay contian binary or negative values
+    se1 <- transformSamples(se, method = "pa")
+    se2 <- se1
+    assay(se2, "pa")[1, 1] <- -1
+    expect_warning(agglomerateByRank(se1, rank = "Phylum"))
+    expect_warning(agglomerateByRank(se1, rank = "Order"))
 
     # checking reference consensus sequence generation
     se <- microbiomeDataSets::SilvermanAGutData()

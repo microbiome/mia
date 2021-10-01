@@ -57,13 +57,13 @@ test_that("merge", {
                                 rowRanges = unname(grl))
     expect_error(mia:::.merge_rows(x),
                  'argument "f" is missing')
-    FUN_check_x <- function(x,archetype=1, assay="counts"){
-        actual <- mergeRows(x, f, archetype, assay)
+    FUN_check_x <- function(x,archetype=1){
+        actual <- mergeRows(x, f, archetype)
         expect_s4_class(actual,class(x))
         expect_equal(dim(actual),c(2,10))
     }
-    lapply(list(x,xr,xrl),FUN_check_x, assay="mat")
-    lapply(list(x,xr,xrl),FUN_check_x,archetype=2, assay="mat")
+    lapply(list(x,xr,xrl),FUN_check_x)
+    lapply(list(x,xr,xrl),FUN_check_x,archetype=2)
     #
     f <- factor(c(rep("a",3),rep("b",3)))
     mat <- matrix(1:60, nrow = 6)
@@ -73,11 +73,11 @@ test_that("merge", {
     grl <- splitAsList(gr,1:6)
     xtse <- TreeSummarizedExperiment(assays = list(mat = mat),
                                      rowRanges = unname(grl))
-    FUN_check_x <- function(x,archetype=1, assay="counts"){
-      actual <- mergeRows(x, f, archetype, assay)
+    FUN_check_x <- function(x,archetype=1){
+      actual <- mergeRows(x, f, archetype)
       expect_s4_class(actual,class(x))
       expect_equal(dim(actual),c(2,10))
     }
-    lapply(list(xtse),FUN_check_x, assay = "mat")
-    lapply(list(xtse),FUN_check_x,archetype=2, assay = "mat")
+    lapply(list(xtse),FUN_check_x)
+    lapply(list(xtse),FUN_check_x,archetype=2)
 })

@@ -45,11 +45,7 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects,
 \code{\link[=merge-methods]{mergeRows}} and
-\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
-\itemize{
-\item{abund_values}{ A vector of assay names defining those assays that are
-included in agglomerated object. (default: \code{abund_values = "counts})}
-}}
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -90,7 +86,7 @@ x1 <- agglomerateByRank(GlobalPatterns, rank="Family")
 ## How many taxa before/after agglomeration?
 nrow(GlobalPatterns)
 nrow(x1)
- 
+
 # with agglomeration of the tree
 x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
                         agglomerateTree = TRUE)
