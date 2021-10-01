@@ -157,14 +157,18 @@ setGeneric("mergeCols",
     assay <- assay(x, assay_name)
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
-        warning(paste0(assay_name, " includes binary values. Agglomeration of it 
-                       might lead to meaningless values. Check the assay, and consider 
-                       doing transformation again manually with agglomerated data."))
+        warning(paste0("'",assay_name,"'", " includes binary values."),
+        "\nAgglomeration of it might lead to meaningless values.", 
+        "\nCheck the assay, and consider doing transformation again manually", 
+        " with agglomerated data.",
+                call. = FALSE)
     }
     if( any(assay < 0) ){
-        warning(paste0(assay_name, " includes negative values. Agglomeration of it 
-                       might lead to meaningless values. Check the assay, and consider 
-                       doing transformation again manually with agglomerated data."))
+        warning(paste0("'",assay_name,"'", " includes negative values."),
+                "\nAgglomeration of it might lead to meaningless values.",
+                "\nCheck the assay, and consider doing transformation again manually", 
+                " with agglomerated data.",
+                call. = FALSE)
     }
     assay <- scuttle::sumCountsAcrossFeatures(assay, 
                                               ids = f, 
