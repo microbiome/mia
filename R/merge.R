@@ -18,7 +18,7 @@
 #'   This can be single interger value or an integer vector of the same length
 #'   as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
 #'   element encountered per factor level will be kept)
-#'
+#'   
 #' @param mergeTree \code{TRUE} or \code{FALSE}: should to
 #'   \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})
 #'
@@ -134,7 +134,6 @@ setGeneric("mergeCols",
 }
 
 #' @importFrom S4Vectors SimpleList
-#' @importFrom scuttle sumCountsAcrossFeatures
 .merge_rows <- function(x, f, archetype = 1L, ...){
     # input check
     f <- .norm_f(nrow(x), f)
@@ -144,14 +143,39 @@ setGeneric("mergeCols",
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)
-    assays <- S4Vectors::SimpleList(lapply(assays, scuttle::sumCountsAcrossFeatures,
-                                           ids = f, subset_row = NULL,
-                                           subset_col = NULL, ...))
+    assays <- S4Vectors::SimpleList(lapply(names(assays), .calculate_merge_row_values, 
+                                           x = x, f = f, ...))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]
     assays(x, withDimnames = FALSE) <- assays
     x
+}
+
+#' @importFrom scuttle sumCountsAcrossFeatures
+.calculate_merge_row_values <- function(assay_name, x, f, ...){
+    assay <- assay(x, assay_name)
+    # Check if assays include binary or negative values
+    if( all(assay == 0 | assay == 1) ){
+        warning(paste0("'",assay_name,"'", " includes binary values."),
+        "\nAgglomeration of it might lead to meaningless values.", 
+        "\nCheck the assay, and consider doing transformation again manually", 
+        " with agglomerated data.",
+                call. = FALSE)
+    }
+    if( any(assay < 0) ){
+        warning(paste0("'",assay_name,"'", " includes negative values."),
+                "\nAgglomeration of it might lead to meaningless values.",
+                "\nCheck the assay, and consider doing transformation again manually", 
+                " with agglomerated data.",
+                call. = FALSE)
+    }
+    assay <- scuttle::sumCountsAcrossFeatures(assay, 
+                                              ids = f, 
+                                              subset_row = NULL, 
+                                              subset_col = NULL, 
+                                              ...)
+    return(assay)
 }
 
 #' @importFrom S4Vectors SimpleList
@@ -185,7 +209,7 @@ setGeneric("mergeCols",
 #' @export
 setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
     function(x, f, archetype = 1L, ...){
-        .merge_rows(x, f, archetype = archetype,  ...)
+        .merge_rows(x, f, archetype = archetype, ...)
     }
 )
 
