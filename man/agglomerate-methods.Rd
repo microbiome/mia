@@ -45,7 +45,11 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects,
 \code{\link[=merge-methods]{mergeRows}} and
-\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.}
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+\itemize{
+\item{abund_values}{ A vector of assay names defining those assays that are
+included in agglomerated object. (default: \code{abund_values = "counts})}
+}}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -86,13 +90,20 @@ x1 <- agglomerateByRank(GlobalPatterns, rank="Family")
 ## How many taxa before/after agglomeration?
 nrow(GlobalPatterns)
 nrow(x1)
-
+ 
 # with agglomeration of the tree
 x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
                         agglomerateTree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
+
+ # If assay contains binary or negative values, summing might lead to meaningless
+ # values, and you will get a warning. In these cases, you might want to do 
+ # agglomeration again at chosen taxonomic level.
+ tse <- transformSamples(GlobalPatterns, method = "pa")
+ tse <- agglomerateByRank(tse, rank = "Genus")
+ tse <- transformSamples(tse, method = "pa")
 
 # removing empty labels by setting na.rm = TRUE
 sum(is.na(rowData(GlobalPatterns)$Family))

@@ -79,11 +79,12 @@
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
 #' 
-#'  # By default, only counts table are added to agglomerated object. 
-#'  # Use "abund_values" to add other assays
-#'  tse <- transformSamples(GlobalPatterns, method = "relabundance")
-#'  tse <- agglomerateByRank(tse, rank = "Genus", 
-#'                           abund_values = c("counts", "relabundance"))
+#'  # If assay contains binary or negative values, summing might lead to meaningless
+#'  # values, and you will get a warning. In these cases, you might want to do 
+#'  # agglomeration again at chosen taxonomic level.
+#'  tse <- transformSamples(GlobalPatterns, method = "pa")
+#'  tse <- agglomerateByRank(tse, rank = "Genus")
+#'  tse <- transformSamples(tse, method = "pa")
 #'
 #' # removing empty labels by setting na.rm = TRUE
 #' sum(is.na(rowData(GlobalPatterns)$Family))

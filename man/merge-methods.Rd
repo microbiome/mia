@@ -10,15 +10,23 @@
 \alias{mergeCols,TreeSummarizedExperiment-method}
 \title{Merge a subset of the rows or columns of a \code{SummarizedExperiment}}
 \usage{
-mergeRows(x, f, archetype = 1L, ...)
+mergeRows(x, f, archetype = 1L, abund_values = "counts", ...)
 
 mergeCols(x, f, archetype = 1L, ...)
 
-\S4method{mergeRows}{SummarizedExperiment}(x, f, archetype = 1L, ...)
+\S4method{mergeRows}{SummarizedExperiment}(x, f, archetype = 1L, abund_values = "counts", ...)
 
 \S4method{mergeCols}{SummarizedExperiment}(x, f, archetype = 1L, ...)
 
-\S4method{mergeRows}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...)
+\S4method{mergeRows}{TreeSummarizedExperiment}(
+  x,
+  f,
+  archetype = 1L,
+  abund_values = "counts",
+  mergeTree = FALSE,
+  mergeRefSeq = FALSE,
+  ...
+)
 
 \S4method{mergeCols}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, ...)
 }
@@ -36,6 +44,11 @@ as the archetype and metadata in the columns or rows kept, while merging?
 This can be single interger value or an integer vector of the same length
 as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
 element encountered per factor level will be kept)}
+
+\item{abund_values}{A vector of single character values for selecting the
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assays}} to be
+included in the agglomerated object that is created. By default, it is counts
+table.}
 
 \item{...}{optional arguments:
 \itemize{
