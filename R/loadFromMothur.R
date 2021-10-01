@@ -223,7 +223,7 @@ loadFromMothur <- function(sharedFile,
                        sep="\t", stringsAsFactors=FALSE)
     
     # If data contains column names, then it is shared file
-    if( identical(colnames(data)[1:3], columns_that_must_be_found) ){
+    if( identical(colnames(data)[seq_len(3)], columns_that_must_be_found) ){
         result <- TRUE
     }
     return(result)
