@@ -32,6 +32,19 @@
 #' 
 #' @param verbose Logical Default is \code{TRUE}. When \code{TRUE} an additional 
 #'   message about the random number used is printed.
+#'   
+#' @param return_type Either TreeSummarizedExperiment or MultiAssayExperiment 
+#'   If samples are removed after subsampling the input TreeSE object is 
+#'   modified. In such senario, if the return_type = MultiAssayExperiment then 
+#'   the output TreeSE is returned within a \code{MultiAssayExperiment} object 
+#'   which includes the input and modified output TreeSE as experiments within the  
+#'   \code{\link[MultiAssayExperiment:experiments]{MultiAssayExperiment::experiments}}.
+#'   However, if samples are removed after subsampling and the 
+#'   return_type = TreeSummarizedExperiment then the modified TreeSE is returned. 
+#'   
+#'   If the output does not have any samples removed then the subsampled assay 
+#'   is returned as an alternative experiment i.e. \code{altExps}.
+#'   
 #' 
 #' @param ... additional arguments not used
 #' 
@@ -48,9 +61,8 @@
 #' microbial differential abundance strategies depend upon data characteristics. 
 #' Microbiome. 2017 Dec;5(1):1-8.
 #' 
-#' @return a \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object 
-#'   with subsampled data that is different from input 
-#'   \code{SummarizedExperiment} or \code{TreeSummarizedExperiment}
+#' @return Either a \code{TreeSummarizedExperiment} or a 
+#'   \code{MultiAssayExperiment} object
 #' 
 #' @author Sudarshan A. Shetty 
 #' 
@@ -62,12 +74,22 @@
 #' # they will be removed.
 #' data("GlobalPatterns")
 #' tse <- GlobalPatterns
-#' tse.subsampled <- subsampleCounts(tse, min_size = 60000, name = "subsampled")
+#' tse.subsampled <- subsampleCounts(tse, 
+#'                                   min_size = 60000, 
+#'                                   name = "subsampled", 
+#'                                   seed = 123,
+#'                                   return_type = "TreeSummarizedExperiment")
 #' tse.subsampled
-#' 
 #' dim(tse)
-#' 
 #' dim(tse.subsampled)
+#' 
+#' # Return MultiAssayExperiment
+#' mae <- subsampleCounts(tse, 
+#'                        min_size = 60000, 
+#'                        name = "subsampled",
+#'                        seed = 123,
+#'                        return_type = "MultiAssayExperiment")
+#' mae
 #' 
 NULL
 
@@ -75,10 +97,11 @@ NULL
 #' @aliases rarifyCounts
 #' @export
 setGeneric("subsampleCounts", signature = c("x"),
-    function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
-             seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
-             name = "subsampled", verbose = TRUE, ...)
-      standardGeneric("subsampleCounts"))
+  function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
+           seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
+           name = "subsampled", verbose = TRUE, 
+           return_type=c("TreeSummarizedExperiment", "MultiAssayExperiment"), ...)
+    standardGeneric("subsampleCounts"))
 
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom DelayedMatrixStats colSums2 rowSums2
@@ -86,76 +109,77 @@ setGeneric("subsampleCounts", signature = c("x"),
 #' @aliases rarifyCounts
 #' @export
 setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
-             seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
-             name = "subsampled", verbose = TRUE, ...){
-      
-      warning("Subsampling/Rarefying may undermine downstream analyses",
-              "\nand have unintended consequences therefore, make sure",
-              "\nthis normalization is appropriate for your data",
-              call. = FALSE)
-      # Input check
-      .check_assay_present(abund_values, x)
+  function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
+           seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
+           name = "subsampled", verbose = TRUE, 
+           return_type=c("TreeSummarizedExperiment", "MultiAssayExperiment"), ...){
+    warning("Subsampling/Rarefying may undermine downstream analyses",
+            "\nand have unintended consequences. Therefore, make sure",
+            "\nthis normalization is appropriate for your data",
+            call. = FALSE)
+    # Input check
+    .check_assay_present(abund_values, x)
+    if(verbose){
+      # Print to screen this value
+      message("`set.seed(", seed, ")` was used to initialize repeatable random subsampling.")
+      message("Please record this for your records so others can reproduce. \n ... \n")
+      }
+    if(!.is_numeric_string(seed)){
+      stop("`seed` has to be an numeric value See `?set.seed`\n")
+      } 
+    if(!.is_a_bool(verbose)){
+      stop("`seed` has to be an integer value See `?set.seed`\n")
+      } 
+    if(!is.logical(replace)){
+      stop("`replace` has to be logical i.e. TRUE or FALSE")
+      } 
+    # Check name
+    if(!.is_non_empty_string(name) ||
+       name == abund_values){
+      stop("'name' must be a non-empty single character value and be ",
+           "different from `abund_values`.",
+           call. = FALSE)
+      }
+    set.seed(seed)
+    # Make sure min_size is of length 1.
+    if(length(min_size) > 1){
+      stop("`min_size` had more than one value. ", 
+           "Specifiy a sinlge integer value. \n ... \n")
+      min_size <- min_size[1]	
+      }
+    if(min_size <= 0){
+      stop("min_size less than or equal to zero. ", 
+           "Need positive sample size to work.")
+      }
+    # get samples with less than min number of reads
+    if(min(colSums2(assay(x, abund_values))) < min_size){
+      rmsams <- colnames(x)[colSums2(assay(x, abund_values)) < min_size]
       if(verbose){
-        # Print to screen this value
-        message("`set.seed(", seed, ")` was used to initialize repeatable random subsampling.")
-        message("Please record this for your records so others can reproduce. \n ... \n")
-      }
-      if(!.is_numeric_string(seed)){
-        stop("`seed` has to be an numeric value See `?set.seed`\n")
-        } 
-      if(!.is_a_bool(verbose)){
-        stop("`seed` has to be an integer value See `?set.seed`\n")
-      } 
-      if(!is.logical(replace)){
-        stop("`replace` has to be logical i.e. TRUE or FALSE")
-      } 
-      # Check name
-      if(!.is_non_empty_string(name) ||
-         name == abund_values){
-        stop("'name' must be a non-empty single character value and be ",
-             "different from `abund_values`.",
-             call. = FALSE)
-      }
-      set.seed(seed)
-      # Make sure min_size is of length 1.
-      if(length(min_size) > 1){
-        stop("`min_size` had more than one value. ", 
-             "Specifiy a sinlge integer value. \n ... \n")
-        min_size <- min_size[1]	
+        message(length(rmsams), " samples removed ",
+                "because they contained fewer reads than `min_size`.")
         }
-      if(min_size <= 0){
-        stop("min_size less than or equal to zero. ", 
-             "Need positive sample size to work.")
+      # remove sample(s)
+      newtse <- x[, !colnames(x) %in% rmsams]
+      } else {
+        newtse <- x
         }
-      # get samples with less than min number of reads
-      if(min(colSums2(assay(x, abund_values))) < min_size){
-        rmsams <- colnames(x)[colSums2(assay(x, abund_values)) < min_size]
-        if(verbose){
-          message(length(rmsams), " samples removed ",
-                  "because they contained fewer reads than `min_size`.")
-          }
-        # remove sample(s)
-        newtse <- x[, !colnames(x) %in% rmsams]
-        } else {
-          newtse <- x
-          }
-      newassay <- apply(assay(newtse, abund_values), 2, 
-                        .subsample_assay,
-                        min_size=min_size, replace=replace)
-      rownames(newassay) <- rownames(newtse)
-      # remove features not present in any samples after subsampling
-      message(paste(length(which(rowSums2(newassay) == 0)), "features", 
-                    "removed because they are not present in all samples", 
-                    "after subsampling.\n"))
-      # get features features with non-zero sum across samples.
-      keepfeatures <- rownames(newassay[which(rowSums2(newassay) != 0),])
-      # add the subsampled assay
-      assay(newtse, name, withDimnames=FALSE) <- newassay
-      # filter TreeSE to keep only features with non-zero sum across samples
-      newtse <- newtse[keepfeatures,]
+    newassay <- apply(assay(newtse, abund_values), 2, 
+                      .subsample_assay,
+                      min_size=min_size, replace=replace)
+    rownames(newassay) <- rownames(newtse)
+    # remove features not present in any samples after subsampling
+    message(paste(length(which(rowSums2(newassay) == 0)), "features", 
+                  "removed because they are not present in all samples", 
+                  "after subsampling.\n"))
+    #keepfeatures <- rownames(newassay[(which(rowSums2(newassay) != 0)),])
+    newassay <- newassay[rowSums2(newassay)>0,]
+    newtse <- .return_tse(x, newtse, newassay, name)
+    if(return_type == "TreeSummarizedExperiment"){
       newtse
+      } else if(return_type == "MultiAssayExperiment"){
+        .return_mae(x, newtse, name)
       }
+}
 )
 
 
@@ -192,3 +216,33 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
   # Return abundance vector. Let replacement happen elsewhere.
   return(rarvec)
 }
+
+#' @importFrom SummarizedExperiment assay assay<-
+#' @importFrom SingleCellExperiment altExp 
+.return_tse <- function(x, newtse, newassay, name){
+  
+  if(length(colnames(newassay)) == length(colnames(x))){
+    altTSE <- newtse[rownames(newassay),]
+    assay(altTSE, name, withDimnames=FALSE) <- newassay
+    altExp(newtse, name) <- altTSE
+    return(newtse)
+  } else {
+    # add the subsampled assay
+    message("Returning subsampled TreeSE!")
+    newtse <- newtse[rownames(newassay),]
+    assay(newtse, name, withDimnames=FALSE) <- newassay
+    return(newtse)
+  }
+  
+}
+
+#' @importFrom MultiAssayExperiment MultiAssayExperiment
+.return_mae <- function(x, newtse, name){
+  
+  mae <- MultiAssayExperiment::MultiAssayExperiment(c("inputTreeSE" = x,
+                                                      "subsampledTreeSE" = newtse))
+  return(mae)
+  
+}
+
+

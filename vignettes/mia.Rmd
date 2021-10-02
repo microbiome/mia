@@ -197,12 +197,29 @@ tse.subsampled <- subsampleCounts(GlobalPatterns,
                                   min_size = 60000, 
                                   name = "subsampled",
                                   replace = TRUE,
-                                  seed = 1938)
+                                  seed = 1938,
+                                  return_type = "TreeSummarizedExperiment")
 tse.subsampled
+
+```
+Alternatively, one can save both original TreeSE and subsampled TreeSE within a MultiAssayExperiment object.  
+```{r}
+
+mae <- subsampleCounts(GlobalPatterns, 
+                       min_size = 60000, 
+                       name = "subsampled",
+                       replace = TRUE,
+                       seed = 1938,
+                       return_type = "MultiAssayExperiment")
+mae
 ```
 
+```{r}
+# To extract specifically the subsampled TreeSE
+experiments(mae)$subsampledTreeSE
+```
 
-## Community indices.
+## Community indices
 
 In the field of microbiome ecology several indices to describe samples and
 community of samples are available. In this vignette we just want to give a

@@ -14,6 +14,7 @@ subsampleCounts(
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
+  return_type = c("TreeSummarizedExperiment", "MultiAssayExperiment"),
   ...
 )
 
@@ -25,6 +26,7 @@ subsampleCounts(
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
+  return_type = c("TreeSummarizedExperiment", "MultiAssayExperiment"),
   ...
 )
 }
@@ -54,12 +56,23 @@ abundance table.}
 \item{verbose}{Logical Default is \code{TRUE}. When \code{TRUE} an additional
 message about the random number used is printed.}
 
+\item{return_type}{Either TreeSummarizedExperiment or MultiAssayExperiment
+If samples are removed after subsampling the input TreeSE object is
+modified. In such senario, if the return_type = MultiAssayExperiment then
+the output TreeSE is returned within a \code{MultiAssayExperiment} object
+which includes the input and modified output TreeSE as experiments within the
+\code{\link[MultiAssayExperiment:experiments]{MultiAssayExperiment::experiments}}.
+However, if samples are removed after subsampling and the
+return_type = TreeSummarizedExperiment then the modified TreeSE is returned.
+
+If the output does not have any samples removed then the subsampled assay
+is returned as an alternative experiment i.e. \code{altExps}.}
+
 \item{...}{additional arguments not used}
 }
 \value{
-a \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object
-with subsampled data that is different from input
-\code{SummarizedExperiment} or \code{TreeSummarizedExperiment}
+Either a \code{TreeSummarizedExperiment} or a
+\code{MultiAssayExperiment} object
 }
 \description{
 \code{subsampleCounts} will randomly subsample counts in SE/TreeSE to return a SE/TreeSE in
@@ -76,12 +89,22 @@ can be useful. Note that the output of \code{subsampleCounts} is a modified SE/T
 # they will be removed.
 data("GlobalPatterns")
 tse <- GlobalPatterns
-tse.subsampled <- subsampleCounts(tse, min_size = 60000, name = "subsampled")
+tse.subsampled <- subsampleCounts(tse, 
+                                  min_size = 60000, 
+                                  name = "subsampled", 
+                                  seed = 123,
+                                  return_type = "TreeSummarizedExperiment")
 tse.subsampled
-
 dim(tse)
-
 dim(tse.subsampled)
+
+# Return MultiAssayExperiment
+mae <- subsampleCounts(tse, 
+                       min_size = 60000, 
+                       name = "subsampled",
+                       seed = 123,
+                       return_type = "MultiAssayExperiment")
+mae
 
 }
 \references{

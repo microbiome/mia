@@ -61,7 +61,8 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr
+    tidyr,
+    MultiAssayExperiment
 Suggests:
     testthat,
     knitr,
