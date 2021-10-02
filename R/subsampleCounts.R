@@ -115,7 +115,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
            return_type=c("TreeSummarizedExperiment", "MultiAssayExperiment"), ...){
     warning("Subsampling/Rarefying may undermine downstream analyses",
             "\nand have unintended consequences. Therefore, make sure",
-            "\nthis normalization is appropriate for your data",
+            "\nthis normalization is appropriate for your data. \n ",
             call. = FALSE)
     # Input check
     .check_assay_present(abund_values, x)

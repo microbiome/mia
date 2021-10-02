@@ -215,6 +215,7 @@ mae
 ```
 
 ```{r}
+library(MultiAssayExperiment)
 # To extract specifically the subsampled TreeSE
 experiments(mae)$subsampledTreeSE
 ```
