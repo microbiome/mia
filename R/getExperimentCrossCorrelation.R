@@ -75,36 +75,28 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         # Converts tables to data frame
         assay1 <- as.data.frame(assay1)
         assay2 <- assay2
-        # names of features
-        feature_names1 <- colnames(assay1)
-        feature_names2 <- colnames(assay2)
         
+        # Get assay in right format
         assay1 <- .cor_test_data_type(assay1, method)
-        
-        results <- .calculate_correlation(assay1, assay2, method, feature_names1, feature_names2, p_adj_method)
+        # Calculate correlations
+        results <- .calculate_correlation(assay1, assay2, method, p_adj_method)
         correlations <- results$correlations
         p_values <- results$p_values
         p_values_adjusted <- results$p_values_adjusted
-        
+        # Do filtering
         result <- .correlation_filter(correlations, 
                                       p_values, 
                                       p_values_adjusted, 
                                       p_adj_threshold,
                                       n_signif, 
                                       cth,
-                                      order)
-        
-        # Filter self correlations if it's specified
-        if (nrow(assay1) == nrow(assay2) && ncol(assay1) == ncol(assay2) && filter_self_correlations) {
-          diag(res$cor) <- diag(res$pval) <- diag(res$p.adj) <- NA
-        }
-        
+                                      order,
+                                      assay1, assay2, filter_self_correlations)
+        # Matrix or table?
         if (mode == "table") {
           result <- .correlation_matrix_to_table(result)
         }
-        
         return(result)
-        
     }
 )
 
@@ -142,12 +134,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
     }
 )
 
-######################## HELP FUNCTIONS #############################
+################################ HELP FUNCTIONS ################################
 .cor_test_data_type <- function(assay, method){
   # Different available methods
   numeric_methods <- c("spearman", "pearson")
   categorical_methods <- c("categorical")
-  # Check if method match with values, othewise give warning.
+  # Check if method match with values, otherwise give warning.
   # For numeric methods, get only numeric values. For categorical methods, get only factors.
   if (method %in% numeric_methods) {
     inds <- vapply(assay, is.numeric, TRUE)
@@ -186,7 +178,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
   return(assay)
 }
 
-.calculate_correlation <- function(assay1, assay2, method, feature_names1, feature_names2, p_adj_method){
+.calculate_correlation <- function(assay1, assay2, method, p_adj_method){
   # Create empty matrices
   correlations <- matrix(NA, ncol(assay1), ncol(assay2))
   rownames(correlations) <- colnames(assay1)
@@ -273,7 +265,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
                                 p_adj_threshold,
                                 n_signif,
                                 cth, 
-                                order){
+                                order,
+                                assay1, assay2, filter_self_correlations){
   # Filter
   if (!is.null(p_adj_threshold) || !is.null(cth)) {
     
@@ -369,11 +362,14 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
     }
   }
   res <- list(cor=correlations, pval=p_values, p.adj=p_values_adjusted)
+  # Filter self correlations if it's specified
+  if (nrow(assay1) == nrow(assay2) && ncol(assay1) == ncol(assay2) && filter_self_correlations) {
+    diag(res$cor) <- diag(res$pval) <- diag(res$p.adj) <- NA
+  }
   return(res)
 }
 
 .correlation_matrix_to_table <- function(res) {
-  
   # Melt correlation table
   ctab <- ID <- NULL
   if (!is.null(res$cor)) {
