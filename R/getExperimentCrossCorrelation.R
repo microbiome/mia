@@ -1,14 +1,34 @@
 #' Calculate cross-correlation
 #' 
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
-#'
+#' @param x A
+#'   \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}} or
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   object.
+#' @param experiment1 ....
+#' @param experiment2 .........
+#' @param abund_values1 A single character value for selecting the
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
+#'   transformed.
+#' @param abund_values2 A single character value for selecting the
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
+#'   transformed.
+#' @param method ..............
+#' @param mode ................
+#' @param p_adj_method .............
+#' @param p_adj_threshold ......................
+#' @param n_signif .......................
+#' @param cth ................
+#' @param order ........................
+#' @param filter_self_correlations...................
+#' 
 #' @details
+#' Calculate cross-correlation.
 #'
 #' @references
+#' Add references here.
 #'
 #' @return 
+#' Matrix or table.
 #'
 #' @name getExperimentCrossCorrelation
 #' @export
@@ -16,6 +36,15 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
+#' mae <- microbiomeDataSets::peerj32()
+#' 
+#' # Subset so that less observations / quicker to run, just for example
+#' mae[[1]] <- mae[[1]][1:20, 1:10]
+#' mae[[2]] <- mae[[2]][1:20, 1:10]
+#' # Calculate cross-correlations
+#' result <- getExperimentCrossCorrelation(mae, method = "pearson")
+#' # Show first 5 entries
+#' head(result, 5)
 #'
 NULL
 
@@ -36,7 +65,6 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
                     order = FALSE,
                     filter_self_correlations = FALSE)
              standardGeneric("getExperimentCrossCorrelation"))
-
 
 #' @rdname getExperimentCrossCorrelation
 #' @export
