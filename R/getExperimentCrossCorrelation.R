@@ -43,10 +43,10 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
 setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperiment"),
     function(x,
              experiment1 = 1,
-             experiment2 = NULL,
+             experiment2 = 2,
              abund_values1 = "counts",
              abund_values2 = "counts",
-             method = "spearman",
+             method = c("categorical", "pearson","spearman"),
              mode = "table",
              p_adj_method = "fdr",
              p_adj_threshold = 0.05,
@@ -54,18 +54,69 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
              cth = NULL,
              order = FALSE,
              filter_self_correlations = FALSE){
-        # INPT CHECK
-      
-        # INPUT CHECK END
-        
+        ############################# INPUT CHECK ##############################
+        # Check experiment1 and experiment2
+        if( is.character(experiment1) && !experiment1 %in% names(experiments(x)) || 
+            is.numeric(experiment1) && !experiment1 <= length(experiments(x)) ){
+          stop("'experiment1' must be numeric or character value specifying", 
+               " experiment in experiment(x).", call. = FALSE)
+        }
+        if( is.character(experiment2) && !experiment2 %in% names(experiments(x)) || 
+            is.numeric(experiment2) && !experiment2 <= length(experiments(x)) ){
+          stop("'experiment2' must be numeric or character value specifying", 
+               " experiment in experiment(x).", call. = FALSE)
+        }
         # Fetch tse objects
         tse1 <- mae[[experiment1]]
-        # If object2 is not specified, then correlate object1 with object1
-        if(is.null(experiment2)){
-          tse2 <- mae[[experiment1]]
-        } else{
-          tse2 <- mae[[experiment2]]
+        tse2 <- mae[[experiment2]]
+        # # If object2 is not specified, then correlate object1 with object1
+        # if(is.null(experiment2)){
+        #   tse2 <- mae[[experiment1]]
+        # } else{
+        #   tse2 <- mae[[experiment2]]
+        # }
+        # 
+        # Check abund_values1 and abund_values2
+        .check_assay_present(abund_values1, tse1)
+        .check_assay_present(abund_values2, tse2)
+        # Check method
+        # If method is not single string, user has not specified method,
+        # or has given e.g. a vector
+        if(!.is_non_empty_string(method)){
+          stop("'method' must be a non-empty single character value.",
+               call. = FALSE)
         }
+        method <- match.arg(method)
+        # Check mode
+        if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
+          stop("'mode' must be 'matrix' or 'table'.", call. = FALSE)
+        }
+        # p_adj_method is checked in p.adjust
+        # Check p_adj_threshold
+        if( !is.numeric(p_adj_threshold) && p_adj_threshold>=0 || p_adj_threshold<=1 ){
+          stop("'p_adj_threshold' must be a numeric value >= 0.", call. = FALSE)
+        }
+        # Check n_signif
+        if (!is.numeric(n_signif) && n_signif > 0 ){
+          stop("'p_adj_threshold' must be a numeric value greater than or equal to 0.", 
+               call. = FALSE)
+        }
+        # Check cth
+        if (!is.null(cth) || !is.numeric(cth) && cth >= 0 ){
+          stop("'cth' must be a numeric value greater than or equal to 0.", 
+               call. = FALSE)
+        }
+        # Check order
+        if( !is.boolean(order) ){
+          stop("'order' must be a boolean value.", 
+               call. = FALSE)
+        }
+        # Check filter_self_correlations
+        if( !is.boolean(filter_self_correlations) ){
+          stop("'filter_self_correlations' must be a boolean value.", 
+               call. = FALSE)
+        }
+        ############################ INPUT CHECK END ###########################
         # Fetch assays to correlate
         assay1 <- assay(tse1, abund_values1)
         assay2 <- assay(tse2, abund_values1)
@@ -115,9 +166,18 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
              cth = NULL,
              order = FALSE,
              filter_self_correlations = FALSE){
+        ############################## INPUT CHECK #############################
+        if( is.character(experiment2) && !experiment2 %in% names(experiments(x)) || 
+            is.numeric(experiment2) && !experiment2 <= length(experiments(x)) ){
+          stop("'experiment2' must be numeric or character value specifying", 
+               " experiment in altExps(x).", call. = FALSE)
+        }
+        ############################ INPUT CHECK END ###########################
+        # Fetch data sets and create a MAE object
         exp1 <- x
         exp2 <- altExp(x, experiment2)
         x <- MultiAssayExperiment::MultiAssayExperiment(experiments = ExperimentList(exp1 = exp1, exp2 = exp2))
+        # Call method with MAE object as an input
         getExperimentCrossCorrelation(x,
                                       experiment1 = 1,
                                       experiment2 = 2,
@@ -294,10 +354,10 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
     # Which features have correlation over correlation threshold?
     if (!is.null(cth)) {
       inds1.c <- apply(abs(correlations), 1, function(x) {
-        sum(x > cth) >= n_signif
+        sum(x > cth | x < cth) >= n_signif
       })
       inds2.c <- apply(abs(correlations), 2, function(x) {
-        sum(x > cth) >= n_signif
+        sum(x > cth | x < cth) >= n_signif
       })
     }
     
