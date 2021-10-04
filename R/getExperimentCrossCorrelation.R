@@ -253,24 +253,16 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
         n <- sum(keep)
         # Calculate cross-correlation using Goorma and Kruskal tau
         correlations[varname, lev] <- .calculate_gktau(xvec, yvec) 
-        
       }
     }
   }
   
+  # If there are p_values that are not NA, adjust them
   if (!all(is.na(p_values))) {
-    
-    rownames(p_values) <- feature_names1
-    colnames(p_values) <- feature_names2
-    
-    rownames(correlations) <- feature_names1
-    colnames(p_values) <- feature_names2
-    
     # Corrected p-values
     p_values_adjusted <- array(NA, dim=dim(p_values))
     p_values_adjusted <- matrix(p.adjust(p_values, method=p_adj_method), nrow=nrow(p_values))
     dimnames(p_values_adjusted) <- dimnames(p_values)
-    
   }
   
   return(list(correlations = correlations, 
@@ -283,8 +275,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
                                 p_values_adjusted,
                                 p_adj_threshold,
                                 n_signif,
-                                cth, order){
-  
+                                cth, 
+                                order){
   # Filter
   if (!is.null(p_adj_threshold) || !is.null(cth)) {
     
