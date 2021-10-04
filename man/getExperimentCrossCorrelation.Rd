@@ -107,6 +107,14 @@ result <- getExperimentCrossCorrelation(mae, method = "pearson")
 # Show first 5 entries
 head(result, 5)
 
+# Same can be done with TreeSummarizedExperiment and altExp
+# Create TreeSE with altExp
+tse <- mae[[1]]
+altExp(tse, "experiment2") <- mae[[2]]
+result <- getExperimentCrossCorrelation(tse, experiment2 = "experiment2", method = "pearson")
+# Show first 5 entries
+head(result, 5)
+
 }
 \references{
 Add references here.

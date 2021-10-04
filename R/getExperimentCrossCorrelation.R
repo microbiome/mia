@@ -45,7 +45,15 @@
 #' result <- getExperimentCrossCorrelation(mae, method = "pearson")
 #' # Show first 5 entries
 #' head(result, 5)
-#'
+#' 
+#' # Same can be done with TreeSummarizedExperiment and altExp
+#' # Create TreeSE with altExp
+#' tse <- mae[[1]]
+#' altExp(tse, "experiment2") <- mae[[2]]
+#' result <- getExperimentCrossCorrelation(tse, experiment2 = "experiment2", method = "pearson")
+#' # Show first 5 entries
+#' head(result, 5)
+#' 
 NULL
 
 #' @rdname getExperimentCrossCorrelation
@@ -121,7 +129,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         }
         # p_adj_method is checked in p.adjust
         # Check p_adj_threshold
-        if( !is.numeric(p_adj_threshold) && p_adj_threshold>=0 || p_adj_threshold<=1 ){
+        if( !is.numeric(p_adj_threshold) && p_adj_threshold<0 || p_adj_threshold>1 ){
           stop("'p_adj_threshold' must be a numeric value >= 0.", call. = FALSE)
         }
         # Check n_signif
@@ -130,17 +138,17 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
                call. = FALSE)
         }
         # Check cth
-        if (!is.null(cth) || !is.numeric(cth) && cth >= 0 ){
+        if( ifelse( is.numeric(cth), !(cth>=0 && cth<=1), !is.null(cth)) ){
           stop("'cth' must be a numeric value greater than or equal to 0.", 
                call. = FALSE)
         }
         # Check order
-        if( !is.boolean(order) ){
+        if( !(order == TRUE || order == FALSE) ){
           stop("'order' must be a boolean value.", 
                call. = FALSE)
         }
         # Check filter_self_correlations
-        if( !is.boolean(filter_self_correlations) ){
+        if( !(filter_self_correlations == TRUE || filter_self_correlations == FALSE) ){
           stop("'filter_self_correlations' must be a boolean value.", 
                call. = FALSE)
         }
