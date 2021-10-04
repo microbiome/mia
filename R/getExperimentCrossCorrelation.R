@@ -154,20 +154,30 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
   # For numeric methods, get only numeric values. For categorical methods, get only factors.
   if (method %in% numeric_methods) {
     inds <- vapply(assay, is.numeric, TRUE)
-    if (any(!inds)) {
+    # If there are no numeric values, give an error
+    if( all(!inds) ){
+      stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
+           " numeric values. Choose categorical method for 'method'.",
+           call. = FALSE)
+    }
+    else if (any(!inds)) {
       warning("Considering only numeric annotations for \n       
                     pearson/spearman")
     }
-    inds <- names(which(inds))
   } else if (method %in% categorical_methods) {
     inds <- vapply(assay, is.factor, TRUE)
-    if (any(!inds)) {
+    # If there are no factor values, give an error
+    if( all(!inds) ){
+      stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
+           " factor values. Choose numeric method for 'method'.",
+           call. = FALSE)
+    }
+    else if (any(!inds)) {
       warning("Considering only categorical annotations for factors")
     }
-    inds <- names(which(inds))
   }
-  # Names of features
-  names <- inds
+  # Names of features that are numeric or factor (based on previous step)
+  names <- names(which(inds))
   # Subset assay to get only numeric or factor values
   if (!is.vector(assay)) {
     assay <- suppressWarnings(as.matrix(assay[, inds], ncol=length(inds)))
@@ -215,14 +225,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
         # Return res which will be stored in jc object
         res
       })
-      ###############################################################
       
-      # js object includes all the correlation between individual feature from assay2
-      # and all the featurs from assay1
+      # 'jc' object includes all the correlation between individual feature from assay2
+      # and all the features from assay1
       # Finally, store correlations and continue loop with next feature of assay2
       correlations[, j] <- jc[1, ]
       p_values[, j] <- jc[2, ]
-      
     }
   } 
   # If method is categorical
@@ -235,6 +243,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
         xvec <- assay1[, varname]
         yvec <- assay2[, lev]
         
+        # Keep only those samples that have values in both features
         keep <- rowSums(is.na(cbind(xvec, yvec))) == 0
         xvec <- xvec[keep]
         yvec <- yvec[keep]
@@ -242,7 +251,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
         # Number of data-annotation samples for
         # calculating the correlations
         n <- sum(keep)
-        correlations[varname, lev] <- gktau(xvec, yvec) 
+        # Calculate cross-correlation using Goorma and Kruskal tau
+        correlations[varname, lev] <- .calculate_gktau(xvec, yvec) 
         
       }
     }
@@ -446,3 +456,20 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
   
 }
 
+.calculate_gktau <- function(x, y){
+  # First, compute the IxJ contingency table between x and y
+  Nij <- table(x, y, useNA="ifany")
+  # Next, convert this table into a joint probability estimate
+  PIij <- Nij/sum(Nij)
+  # Compute the marginal probability estimates
+  PIiPlus <- apply(PIij, MARGIN=1, sum)
+  PIPlusj <- apply(PIij, MARGIN=2, sum)
+  # Compute the marginal variation of y
+  Vy <- 1 - sum(PIPlusj^2)
+  # Compute the expected conditional variation of y given x
+  InnerSum <- apply(PIij^2, MARGIN=1, sum)
+  VyBarx <- 1 - sum(InnerSum/PIiPlus)
+  # Compute and return Goodman and Kruskal's tau measure
+  tau <- (Vy - VyBarx)/Vy
+  tau
+}
