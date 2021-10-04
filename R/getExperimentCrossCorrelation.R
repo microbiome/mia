@@ -28,7 +28,6 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
                     abund_values1 = "counts",
                     abund_values2 = "counts",
                     method = "spearman",
-                    verbose = TRUE,
                     mode = "table",
                     p_adj_method = "fdr",
                     p_adj_threshold = 0.05,
@@ -117,7 +116,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
              abund_values1 = "counts",
              abund_values2 = "counts",
              method = "spearman",
-             verbose = TRUE,
              mode = "table",
              p_adj_method = "fdr",
              p_adj_threshold = 0.05,
@@ -134,7 +132,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
                                       abund_values1,
                                       abund_values2,
                                       method,
-                                      verbose,
                                       mode,
                                       p_adj_method,
                                       p_adj_threshold,
@@ -288,6 +285,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
     # Filter by adjusted pvalues and correlations
     inds1.q <- inds2.q <- inds1.c <- inds2.c <- NULL
     
+    # Which features have more adjusted p-values under the threshold than the 
+    # 'n_signif' specifies
     if (!is.null(p_adj_threshold)) {
       
       inds1.q <- apply(p_values_adjusted, 1, function(x) {
@@ -299,6 +298,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
       })
     }
     
+    # Which features have correlation over correlation threshold?
     if (!is.null(cth)) {
       inds1.c <- apply(abs(correlations), 1, function(x) {
         sum(x > cth) >= n_signif
@@ -308,11 +308,10 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
       })
     }
     
+    # Combine results from previous step
     if (!is.null(p_adj_threshold) && !is.null(cth)) {
-      
       inds1 <- inds1.q & inds1.c
       inds2 <- inds2.q & inds2.c
-      
     } else if (is.null(p_adj_threshold) && !is.null(cth)) {
       inds1 <- inds1.c
       inds2 <- inds2.c
@@ -321,129 +320,113 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
       inds2 <- inds2.q
     }
     
-    Cmat <- as.matrix(0)
-    
     # TODO: add also correlation filter, not only significance
     # Require each has at least n_signif. correlations
     
+    # If both features have more TRUEs than n_signif specifies /
+    # if there are significant correlations
     if (sum(inds1) >= n_signif && sum(inds2) >= n_signif) {
-      
+      # Get names of those features that were TRUE
       rnams <- rownames(correlations)[inds1]
       cnams <- colnames(correlations)[inds2]
-      
+      # Subset correlations, p_values, and adjusted p_values table
       correlations <- matrix(correlations[inds1, inds2, drop=FALSE], nrow=sum(inds1))
       p_values <- matrix(p_values[inds1, inds2, drop=FALSE], nrow=sum(inds1))
       p_values_adjusted <- matrix(p_values_adjusted[inds1, inds2, drop=FALSE], nrow=sum(inds1))
-      
+      # Add row and column names
       rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rnams
       colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- cnams
       
+      # If order was specified and there is more than 1 feature left in both feature sets
       if (order && sum(inds1) >= 2 && sum(inds2) >= 2) {
         
         # Order in visually appealing order
         tmp <- correlations
         rownames(tmp) <- NULL
         colnames(tmp) <- NULL
-        
+        # Do hierarchical clustering
         rind <- hclust(as.dist(1 - cor(t(tmp),
                                        use="pairwise.complete.obs")))$order
         cind <- hclust(as.dist(1 - cor(tmp,
                                        use="pairwise.complete.obs")))$order
-        
+        # Get the order of features from hiearchical clustering
         rnams <- rownames(correlations)[rind]
         cnams <- colnames(correlations)[cind]
         
+        # Order the tables based on order of hiearchical clustering
         correlations <- correlations[rind, cind]
         p_values <- p_values[rind, cind]
         p_values_adjusted <- p_values_adjusted[rind, cind]
-        
+        # Add column and rownames
         rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rnams
         colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- cnams
-        
       }
-      
-    } else {
+    } 
+    # If there were no significant correlations, give a message
+    else {
       message("No significant correlations with the given criteria\n")
       correlations <- p_values <- p_values_adjusted <- NULL
     }
   }
-  ################################################################################
-  
   res <- list(cor=correlations, pval=p_values, p.adj=p_values_adjusted)
-  
   return(res)
-  
 }
 
-
-
-
-
-.correlation_matrix_to_table <- function(res, verbose=FALSE) {
+.correlation_matrix_to_table <- function(res) {
   
+  # Melt correlation table
   ctab <- ID <- NULL
-  
   if (!is.null(res$cor)) {
     ctab <- as.data.frame(res$cor)
     ctab$ID <- rownames(res$cor)
     ctab <- reshape2::melt(ctab, "ID")
-    
     colnames(ctab) <- c("X1", "X2", "Correlation")
     ctab$Correlation <- as.numeric(as.character(ctab$Correlation))
-  }
   
-  correlation <- NULL  # circumwent warning on globabl vars
-  
-  if (!is.null(res$p.adj)) {
-    
-    if (verbose) {
-      message("Arranging the table")
-    }
-    
-    ctab2 <- as.data.frame(res$p.adj)
-    ctab2$ID <- rownames(res$p.adj)
-    ctab2 <- reshape2::melt(ctab2, "ID")
-    colnames(ctab2) <- c("X1", "X2", "p.adj")
-    ctab2$p.adj <- as.numeric(as.character(ctab2$p.adj))
-    
-    ctab <- cbind(ctab, ctab2$p.adj)
-    colnames(ctab) <- c("X1", "X2", "Correlation", "p.adj")
-    ctab <- ctab[order(ctab$p.adj), ]
-    colnames(ctab) <- c("X1", "X2", "Correlation", "p.adj")
-    
-  } else {
-    message("No significant adjusted p-values")
-    if (!is.null(ctab)) {
-      
-      ctab2 <- as.data.frame(res$pval)
-      ctab2$ID <- rownames(res$pval)
+    # Melt p-values and add them to the melted correlation table
+    # If there are adjusted p_values
+    if (!is.null(res$p.adj)) {
+      ctab2 <- as.data.frame(res$p.adj)
+      ctab2$ID <- rownames(res$p.adj)
       ctab2 <- reshape2::melt(ctab2, "ID")
-      colnames(ctab2) <- c("X1", "X2", "value")
-      ctab2$value <- as.numeric(as.character(ctab2$value))
+      colnames(ctab2) <- c("X1", "X2", "p.adj")
+      ctab2$p.adj <- as.numeric(as.character(ctab2$p.adj))
       
-      ctab <- cbind(ctab, ctab2$value)
-      ctab <- ctab[order(-abs(ctab$Correlation)), ]
-      colnames(ctab) <- c("X1", "X2", "Correlation", "pvalue")
+      ctab <- cbind(ctab, ctab2$p.adj)
+      colnames(ctab) <- c("X1", "X2", "Correlation", "p.adj")
+      ctab <- ctab[order(ctab$p.adj), ]
+      colnames(ctab) <- c("X1", "X2", "Correlation", "p.adj")
+      
+    } 
+    # If there are only p-values that are not adjusted
+    else {
+        ctab2 <- as.data.frame(res$pval)
+        ctab2$ID <- rownames(res$pval)
+        ctab2 <- reshape2::melt(ctab2, "ID")
+        colnames(ctab2) <- c("X1", "X2", "value")
+        ctab2$value <- as.numeric(as.character(ctab2$value))
+        
+        ctab <- cbind(ctab, ctab2$value)
+        ctab <- ctab[order(-abs(ctab$Correlation)), ]
+        colnames(ctab) <- c("X1", "X2", "Correlation", "pvalue")
+    }
+  
+    # Convert feature names into characters
+    ctab$X1 <- as.character(ctab$X1)
+    ctab$X2 <- as.character(ctab$X2)
+    # Keep the original order of factor levels
+    ctab$X1 <- factor(as.character(ctab$X1), levels=rownames(res$cor))
+    ctab$X2 <- factor(as.character(ctab$X2), levels=colnames(res$cor))
+    # Remove NAs
+    ctab <- ctab[!is.na(ctab$Correlation), ]
+    
+    # Order the table by p-value
+    if ("p.adj" %in% colnames(ctab)) {
+      ctab <- ctab[order(ctab$p.adj), ]
+    } else if ("pvalue" %in% colnames(ctab)) {
+      ctab <- ctab[order(ctab$pvalue), ]
     }
   }
-  
-  ctab$X1 <- as.character(ctab$X1)
-  ctab$X2 <- as.character(ctab$X2)
-  
-  # Keep the original order of factor levels
-  ctab$X1 <- factor(as.character(ctab$X1), levels=rownames(res$cor))
-  ctab$X2 <- factor(as.character(ctab$X2), levels=colnames(res$cor))
-  
-  # Remove NAs
-  ctab <- ctab[!is.na(ctab$Correlation), ]
-  
-  # Order the table by p-value
-  if ("p.adj" %in% colnames(ctab)) {
-    ctab <- ctab[order(ctab$p.adj), ]
-  } else if ("pvalue" %in% colnames(ctab)) {
-    ctab <- ctab[order(ctab$pvalue), ]
-  }
-  
   ctab
   
 }
