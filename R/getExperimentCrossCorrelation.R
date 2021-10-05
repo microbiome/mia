@@ -227,6 +227,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
 )
 
 ################################ HELP FUNCTIONS ################################
+############################## .cor_test_data_type #############################
 .cor_test_data_type <- function(assay, method){
   # Different available methods
   numeric_methods <- c("spearman", "pearson")
@@ -270,6 +271,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
   return(assay)
 }
 
+############################# .calculate_correlation ###########################
 .calculate_correlation <- function(assay1, assay2, method, p_adj_method){
   # Create empty matrices
   correlations <- matrix(NA, ncol(assay1), ncol(assay2))
@@ -351,6 +353,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
               p_values_adjusted = p_values_adjusted))
 }
 
+############################## .correlation_filter #############################
 .correlation_filter <- function(correlations,
                                 p_values,
                                 p_values_adjusted,
@@ -452,6 +455,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
   return(res)
 }
 
+######################### .correlation_matrix_to_table #########################
 .correlation_matrix_to_table <- function(res) {
   # Melt correlation table
   ctab <- ID <- NULL
@@ -509,6 +513,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
   ctab
 }
 
+############################### .calculate_gktau ###############################
 .calculate_gktau <- function(x, y){
   # First, compute the IxJ contingency table between x and y
   Nij <- table(x, y, useNA="ifany")
