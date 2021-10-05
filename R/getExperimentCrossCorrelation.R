@@ -371,22 +371,18 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
     p_values[is.na(p_values_adjusted)] <- 1
     correlations[is.na(correlations)] <- 0
     
-    # Filter by adjusted pvalues and correlations
+    # Filter by adjusted p-values and correlations
     inds1.q <- inds2.q <- inds1.c <- inds2.c <- NULL
-    
     # Which features have more adjusted p-values under the threshold than the 
     # 'n_signif' specifies
     if (!is.null(p_adj_threshold)) {
-      
       inds1.q <- apply(p_values_adjusted, 1, function(x) {
         sum(x < p_adj_threshold) >= n_signif
       })
-      
       inds2.q <- apply(p_values_adjusted, 2, function(x) {
         sum(x < p_adj_threshold) >= n_signif
       })
     }
-    
     # Which features have correlation over correlation threshold?
     if (!is.null(cth)) {
       inds1.c <- apply(abs(correlations), 1, function(x) {
@@ -396,8 +392,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
         sum(x > cth | x < cth) >= n_signif
       })
     }
-    
-    # Combine results from previous step
+    # Combine results from previous steps
     if (!is.null(p_adj_threshold) && !is.null(cth)) {
       inds1 <- inds1.q & inds1.c
       inds2 <- inds2.q & inds2.c
@@ -408,9 +403,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
       inds1 <- inds1.q
       inds2 <- inds2.q
     }
-    
-    # TODO: add also correlation filter, not only significance
-    # Require each has at least n_signif. correlations
     
     # If both features have more TRUEs than n_signif specifies /
     # if there are significant correlations
@@ -428,7 +420,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
       
       # If order was specified and there is more than 1 feature left in both feature sets
       if (order && sum(inds1) >= 2 && sum(inds2) >= 2) {
-        
         # Order in visually appealing order
         tmp <- correlations
         rownames(tmp) <- NULL
@@ -492,15 +483,15 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
     } 
     # If there are only p-values that are not adjusted
     else {
-        ctab2 <- as.data.frame(res$pval)
-        ctab2$ID <- rownames(res$pval)
-        ctab2 <- reshape2::melt(ctab2, "ID")
-        colnames(ctab2) <- c("X1", "X2", "value")
-        ctab2$value <- as.numeric(as.character(ctab2$value))
-        
-        ctab <- cbind(ctab, ctab2$value)
-        ctab <- ctab[order(-abs(ctab$Correlation)), ]
-        colnames(ctab) <- c("X1", "X2", "Correlation", "pvalue")
+      ctab2 <- as.data.frame(res$pval)
+      ctab2$ID <- rownames(res$pval)
+      ctab2 <- reshape2::melt(ctab2, "ID")
+      colnames(ctab2) <- c("X1", "X2", "value")
+      ctab2$value <- as.numeric(as.character(ctab2$value))
+      
+      ctab <- cbind(ctab, ctab2$value)
+      ctab <- ctab[order(-abs(ctab$Correlation)), ]
+      colnames(ctab) <- c("X1", "X2", "Correlation", "pvalue")
     }
   
     # Convert feature names into characters
@@ -520,7 +511,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
     }
   }
   ctab
-  
 }
 
 .calculate_gktau <- function(x, y){
