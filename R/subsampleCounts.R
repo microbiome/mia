@@ -119,6 +119,13 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
             call. = FALSE)
     # Input check
     .check_assay_present(abund_values, x)
+    
+    # check return_type
+    if(!return_type[1] %in% c("TreeSummarizedExperiment", "MultiAssayExperiment")){
+      message("`return_type` must be either `TreeSummarizedExperiment`",
+              "or `MultiAssayExperiment`")
+    }
+    
     if(verbose){
       # Print to screen this value
       message("`set.seed(", seed, ")` was used to initialize repeatable random subsampling.")
@@ -174,6 +181,8 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     #keepfeatures <- rownames(newassay[(which(rowSums2(newassay) != 0)),])
     newassay <- newassay[rowSums2(newassay)>0,]
     newtse <- .return_tse(x, newtse, newassay, name)
+    
+    
     if(return_type == "TreeSummarizedExperiment"){
       newtse
       } else if(return_type == "MultiAssayExperiment"){
