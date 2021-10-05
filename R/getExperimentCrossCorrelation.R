@@ -4,25 +4,28 @@
 #'   \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}} or
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
-#' @param experiment1 ....
-#' @param experiment2 .........
+#' @param experiment1 experiment 1 (MAE)
+#' @param experiment2 experiment 2 (MAE and TreeSE)
 #' @param abund_values1 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #'   transformed.
 #' @param abund_values2 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #'   transformed.
-#' @param method ..............
-#' @param mode ................
-#' @param p_adj_method .............
-#' @param p_adj_threshold ......................
-#' @param n_signif .......................
-#' @param cth ................
-#' @param order ........................
-#' @param filter_self_correlations...................
+#' @param method association method ('pearson', or 'spearman'
+#' for continuous; categorical for discrete)
+#' @param mode Specify output format ('table' or 'matrix')
+#' @param p_adj_method p-value multiple testing correction method. 
+#' @param p_adj_threshold q-value threshold to include features 
+#' @param n_signif mininum number of significant correlations for each 
+#' element
+#' @param cth correlation threshold to include features 
+#' @param order order the results
+#' @param filter_self_correlations Filter out correlations between 
+#' identical items.
 #' 
 #' @details
-#' Calculate cross-correlation.
+#' Calculate cross-correlation. ADD INFORMATION ABOUT PARAMETERS###################
 #'
 #' @references
 #' Add references here.
@@ -49,8 +52,8 @@
 #' # Same can be done with TreeSummarizedExperiment and altExp
 #' # Create TreeSE with altExp
 #' tse <- mae[[1]]
-#' altExp(tse, "experiment2") <- mae[[2]]
-#' result <- getExperimentCrossCorrelation(tse, experiment2 = "experiment2", method = "pearson")
+#' altExp(tse, "exp2") <- mae[[2]]
+#' result <- getExperimentCrossCorrelation(tse, experiment2 = "exp2", method = "pearson")
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
@@ -105,13 +108,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         # Fetch tse objects
         tse1 <- mae[[experiment1]]
         tse2 <- mae[[experiment2]]
-        # # If object2 is not specified, then correlate object1 with object1
-        # if(is.null(experiment2)){
-        #   tse2 <- mae[[experiment1]]
-        # } else{
-        #   tse2 <- mae[[experiment2]]
-        # }
-        # 
         # Check abund_values1 and abund_values2
         .check_assay_present(abund_values1, tse1)
         .check_assay_present(abund_values2, tse2)
