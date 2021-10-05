@@ -59,9 +59,9 @@ getExperimentCrossCorrelation(
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{experiment1}{....}
+\item{experiment1}{experiment 1 (MAE)}
 
-\item{experiment2}{.........}
+\item{experiment2}{experiment 2 (MAE and TreeSE)}
 
 \item{abund_values1}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
@@ -71,21 +71,24 @@ transformed.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 transformed.}
 
-\item{method}{..............}
+\item{method}{association method ('pearson', or 'spearman'
+for continuous; categorical for discrete)}
 
-\item{mode}{................}
+\item{mode}{Specify output format ('table' or 'matrix')}
 
-\item{p_adj_method}{.............}
+\item{p_adj_method}{p-value multiple testing correction method.}
 
-\item{p_adj_threshold}{......................}
+\item{p_adj_threshold}{q-value threshold to include features}
 
-\item{n_signif}{.......................}
+\item{n_signif}{mininum number of significant correlations for each
+element}
 
-\item{cth}{................}
+\item{cth}{correlation threshold to include features}
 
-\item{order}{........................}
+\item{order}{order the results}
 
-\item{filter_self_correlations...................}{}
+\item{filter_self_correlations}{Filter out correlations between
+identical items.}
 }
 \value{
 Matrix or table.
@@ -94,7 +97,7 @@ Matrix or table.
 Calculate cross-correlation
 }
 \details{
-Calculate cross-correlation.
+Calculate cross-correlation. ADD INFORMATION ABOUT PARAMETERS###################
 }
 \examples{
 mae <- microbiomeDataSets::peerj32()
@@ -110,8 +113,8 @@ head(result, 5)
 # Same can be done with TreeSummarizedExperiment and altExp
 # Create TreeSE with altExp
 tse <- mae[[1]]
-altExp(tse, "experiment2") <- mae[[2]]
-result <- getExperimentCrossCorrelation(tse, experiment2 = "experiment2", method = "pearson")
+altExp(tse, "exp2") <- mae[[2]]
+result <- getExperimentCrossCorrelation(tse, experiment2 = "exp2", method = "pearson")
 # Show first 5 entries
 head(result, 5)
 
