@@ -49,35 +49,74 @@ setMethod("estimateOverlap", signature = c(x = "SummarizedExperiment"),
         ########################### INPUT CHECK END ############################
         # Get assay
         assay <- assay(x, abund_values)
-        # Create empty matrix samples * samples
-        result <- matrix(NA, nrow = ncol(assay), ncol = ncol(assay))
+        # Create empty matrices samples * samples
+        result_overlap <- matrix(NA, nrow = ncol(assay), ncol = ncol(assay))
+        result_JSD <- result_overlap
+        result_rJSD <- result_overlap
+        
         # Loop through all samples, but not last one
         for (i in seq_len(ncol(assay)-1) ) {
           # Loop through all samples that have larger index than i --> all 
           # combinations are went through only once
           for (j in seq(i+1, ncol(assay)) ) {
             # Get samples
-            x <- assay[ , i]
-            y <- assay[ , j]
-            # Store overlap of two samples to coordinates i,j and j,i
-            result[i, j] <- result[j, i] <- .calculate_overlap(x, y, detection)
+            sample1 <- assay[ , i]
+            sample2 <- assay[ , j]
+            
+            # Galculate overlap, JSD and rJSD
+            temp_result <- .calculate_overlap(sample1, 
+                                              sample2, 
+                                              detection,
+                                              abund_values)
+            
+            # Store values of two samples to coordinates i,j and j,i
+            result_overlap[i, j] <- result_overlap[j, i] <- temp_result$overlap
+            result_JSD[i, j] <- result_JSD[j, i] <- temp_result$JSD
+            result_rJSD[i, j] <- result_rJSD[j, i] <- temp_result$rJSD
           }
         }
+        # Change sample names
+        colnames(result_overlap) <- colnames(x)
+        rownames(result_overlap) <- colnames(x)
+        colnames(result_JSD) <- colnames(x)
+        rownames(result_JSD) <- colnames(x)
+        colnames(result_rJSD) <- colnames(x)
+        rownames(result_rJSD) <- colnames(x)
+        
+        # Result is a list of matrices
+        result <- list(overlap = result_overlap,
+                       JSD = result_JSD,
+                       rJSD = result_rJSD)
+        
         return(result)
     }
 )
 
 ################################ HELP FUNCTIONS ################################
 
-.calculate_overlap <- function (x, y, detection) {
+.calculate_overlap <- function (x, y, detection, abund_values) {
   # Take those taxa that have abundance over threshold
   inds <- which(x > detection & y > detection)
   x <- x[inds]
   y <- y[inds]
+  
   # Overlap is the average of the sums of the values in each sample
   overlap <- (sum(x) + sum(y))/2
-  return(overlap)
+  
+  # Create a matrix for JSD function
+  mat <- t(cbind(x, y))
+  # Calculate JSD
+  JSD <- calculateJSD(mat)
+  # Calculate rJSD
+  rJSD <- sqrt(JSD)
+  
+  overlaps <- list(overlap = overlap,
+                   JSD = JSD,
+                   rJSD = rJSD)
+  
+  return(overlaps)
 }
+
 
 
 
