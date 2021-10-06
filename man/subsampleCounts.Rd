@@ -75,8 +75,9 @@ Either a \code{TreeSummarizedExperiment} or a
 \code{MultiAssayExperiment} object
 }
 \description{
-\code{subsampleCounts} will randomly subsample counts in SE/TreeSE to return a SE/TreeSE in
-which each sample has same number of total observations/counts/reads.
+\code{subsampleCounts} will randomly subsample counts in TreeSE and return either
+a modified TreeSE or MAE with both unmodified and modified TreeSE which each
+sample has same number of total observations/counts/reads.
 }
 \details{
 Although the subsampling approach is highly debated in microbiome research,

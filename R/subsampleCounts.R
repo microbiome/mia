@@ -1,7 +1,8 @@
 #' Subsample Counts in a \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object
 #' 
-#' \code{subsampleCounts} will randomly subsample counts in SE/TreeSE to return a SE/TreeSE in
-#' which each sample has same number of total observations/counts/reads. 
+#' \code{subsampleCounts} will randomly subsample counts in TreeSE and return either 
+#' a modified TreeSE or MAE with both unmodified and modified TreeSE which each 
+#' sample has same number of total observations/counts/reads. 
 #'
 #' @details
 #' Although the subsampling approach is highly debated in microbiome research, 
@@ -119,6 +120,9 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
             call. = FALSE)
     # Input check
     .check_assay_present(abund_values, x)
+    if(any(assay(x, abund_values) %% 1 != 0)){
+      warning("assay contains non-integer values. Only counts table is applicable, or something...")
+    } 
     
     # check return_type
     if(!return_type[1] %in% c("TreeSummarizedExperiment", "MultiAssayExperiment")){
@@ -149,15 +153,15 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
       }
     set.seed(seed)
     # Make sure min_size is of length 1.
+    
     if(length(min_size) > 1){
       stop("`min_size` had more than one value. ", 
            "Specifiy a sinlge integer value. \n ... \n")
       min_size <- min_size[1]	
       }
-    if(min_size <= 0){
-      stop("min_size less than or equal to zero. ", 
-           "Need positive sample size to work.")
-      }
+    if(!is.numeric(min_size) || as.integer(min_size) != min_size && min_size <= 0){
+      stop("min_size needs to be a positive integer value.")
+    }
     # get samples with less than min number of reads
     if(min(colSums2(assay(x, abund_values))) < min_size){
       rmsams <- colnames(x)[colSums2(assay(x, abund_values)) < min_size]
@@ -178,14 +182,14 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     message(paste(length(which(rowSums2(newassay) == 0)), "features", 
                   "removed because they are not present in all samples", 
                   "after subsampling.\n"))
-    #keepfeatures <- rownames(newassay[(which(rowSums2(newassay) != 0)),])
+    
     newassay <- newassay[rowSums2(newassay)>0,]
     newtse <- .return_tse(x, newtse, newassay, name)
     
     
-    if(return_type == "TreeSummarizedExperiment"){
+    if(return_type[1] == "TreeSummarizedExperiment"){
       newtse
-      } else if(return_type == "MultiAssayExperiment"){
+      } else if(return_type[1] == "MultiAssayExperiment"){
         .return_mae(x, newtse, name)
       }
 }
