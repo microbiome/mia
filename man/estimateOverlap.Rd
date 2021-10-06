@@ -26,12 +26,18 @@ a list of matrices
 \description{
 Estimate overlap
 }
+\details{
+Calculate overlap.
+}
 \examples{
 data(esophagus)
 tse <- esophagus
 overlap <- estimateOverlap(tse)
 head(overlap, 5)
 
+}
+\seealso{
+\code{\link[mia:calculateJSD]{calculateJSD}}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
