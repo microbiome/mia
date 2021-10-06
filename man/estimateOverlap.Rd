@@ -32,6 +32,7 @@ Calculate overlap.
 \examples{
 data(esophagus)
 tse <- esophagus
+tse <- transformSamples(tse, method = "relabundance")
 overlap <- estimateOverlap(tse)
 head(overlap, 5)
 

@@ -9,7 +9,7 @@
 \usage{
 \S4method{calculateJSD}{ANY}(x, ...)
 
-\S4method{calculateJSD}{SummarizedExperiment}(x, exprs_values = "counts", transposed = FALSE, ...)
+\S4method{calculateJSD}{SummarizedExperiment}(x, abund_values = "counts", transposed = FALSE, ...)
 
 runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x))
 }
@@ -19,7 +19,7 @@ runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x))
 
 \item{...}{optional arguments not used.}
 
-\item{exprs_values}{a single \code{character} value for specifying which
+\item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
@@ -50,7 +50,7 @@ class(jsd)
 head(jsd)
 
 enterotype <- runMDS(enterotype, FUN = calculateJSD, name = "JSD",
-                     exprs_values = "counts")
+                     abund_values = "counts")
 head(reducedDim(enterotype))
 head(attr(reducedDim(enterotype),"eig"))
 attr(reducedDim(enterotype),"GOF")
