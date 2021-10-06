@@ -24,12 +24,12 @@ calculateNMDS(x, ...)
   ...
 )
 
-\S4method{calculateNMDS}{SummarizedExperiment}(x, ..., exprs_values = "counts", FUN = vegdist)
+\S4method{calculateNMDS}{SummarizedExperiment}(x, ..., abund_values = "counts", FUN = vegdist)
 
 \S4method{calculateNMDS}{SingleCellExperiment}(
   x,
   ...,
-  exprs_values = "counts",
+  abund_values = "counts",
   dimred = NULL,
   n_dimred = NULL,
   FUN = vegdist
@@ -75,7 +75,7 @@ integer vector of row indices or a logical vector.}
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
 the matrix returned/stored by \code{calculateNMDS}/ \code{runNMDS}.}
 
-\item{exprs_values}{a single \code{character} value for specifying which
+\item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
 \item{dimred}{String or integer scalar specifying the existing dimensionality

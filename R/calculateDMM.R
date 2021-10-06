@@ -8,7 +8,7 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'
-#' @param exprs_values a single \code{character} value for specifying which
+#' @param abund_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
 #' @param k the number of Dirichlet components to fit. See
@@ -129,8 +129,8 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
-    function(x, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, exprs_values)
+    function(x, abund_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, abund_values)
         if(!transposed){
             mat <- t(mat)
         }
@@ -262,8 +262,8 @@ setMethod("calculateDMNgroup", signature = c(x = "ANY"), .calculate_DMNgroup)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
-    function(x, variable, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, exprs_values)
+    function(x, variable, abund_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, abund_values)
         if(!transposed){
             mat <- t(mat)
         }
@@ -311,8 +311,8 @@ setMethod("performDMNgroupCV", signature = c(x = "ANY"), .perform_DMNgroup_cv)
 #' @rdname calculateDMN
 #' @export
 setMethod("performDMNgroupCV", signature = c(x = "SummarizedExperiment"),
-    function(x, variable, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, exprs_values)
+    function(x, variable, abund_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, abund_values)
         if(!transposed){
             mat <- t(mat)
         }

@@ -19,7 +19,7 @@ calculateDPCoA(x, y, ...)
   transposed = FALSE
 )
 
-\S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(x, ..., exprs_values = "counts", dimred = NULL, n_dimred = NULL)
+\S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(x, ..., abund_values = "counts", dimred = NULL, n_dimred = NULL)
 
 runDPCoA(x, ..., altexp = NULL, name = "DPCoA")
 }
@@ -52,7 +52,7 @@ integer vector of row indices or a logical vector.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 
-\item{exprs_values}{a single \code{character} value for specifying which
+\item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
 \item{dimred}{String or integer scalar specifying the existing dimensionality

@@ -21,7 +21,7 @@
 #'   matrix. This means that the phylo object and the columns should relate
 #'   to the same type of features (aka. microorganisms).
 #'
-#' @param exprs_values a single \code{character} value for specifying which
+#' @param abund_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
 #' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-UniFrac
@@ -90,7 +90,7 @@
 #' # be disabled
 #' esophagus <- runMDS(esophagus, FUN = calculateUniFrac, name = "UniFrac",
 #'                     tree = rowTree(esophagus),
-#'                     exprs_values = "counts",
+#'                     abund_values = "counts",
 #'                     ntop = nrow(esophagus))
 #' reducedDim(esophagus)
 NULL
@@ -118,8 +118,8 @@ setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
 setMethod("calculateUniFrac",
           signature = c(x = "TreeSummarizedExperiment",
                         tree = "missing"),
-    function(x, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, exprs_values)
+    function(x, abund_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, abund_values)
         if(!transposed){
             if(is.null(rowTree(x))){
                 stop("'rowTree(x)' must not be NULL", call. = FALSE)
