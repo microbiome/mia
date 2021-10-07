@@ -17,8 +17,8 @@ getExperimentCrossCorrelation(
   p_adj_method = "fdr",
   p_adj_threshold = 0.05,
   n_signif = 0,
-  cth = NULL,
-  order = FALSE,
+  cor_threshold = NULL,
+  sort = FALSE,
   filter_self_correlations = FALSE
 )
 
@@ -33,8 +33,8 @@ getExperimentCrossCorrelation(
   p_adj_method = "fdr",
   p_adj_threshold = 0.05,
   n_signif = 0,
-  cth = NULL,
-  order = FALSE,
+  cor_threshold = NULL,
+  sort = FALSE,
   filter_self_correlations = FALSE
 )
 
@@ -48,8 +48,8 @@ getExperimentCrossCorrelation(
   p_adj_method = "fdr",
   p_adj_threshold = 0.05,
   n_signif = 0,
-  cth = NULL,
-  order = FALSE,
+  cor_threshold = NULL,
+  sort = FALSE,
   filter_self_correlations = FALSE
 )
 }
@@ -59,45 +59,63 @@ getExperimentCrossCorrelation(
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{experiment1}{experiment 1 (MAE)}
+\item{experiment1}{A single character or numeric value for selecting the experiment 1
+from \code{experiment(x)} of \code{MultiassayExperiment} object.
+(By default: \code{experiment1 = 1})}
 
-\item{experiment2}{experiment 2 (MAE and TreeSE)}
+\item{experiment2}{A single character or numeric value for selecting the experiment 2
+from\code{experiment(x)} of \code{MultiAssayExperiment} object or
+\code{altExp(x)} of \code{TreeSummarizedExperiment} object.
+(By default: \code{experiment2 = 2} when input is \code{MAE} and
+\code{experiment2 = NULL} when input is \code{TreeSE})}
 
 \item{abund_values1}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-transformed.}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
+experiment 1 to be transformed. (By default: \code{abund_values1 = "counts"})}
 
 \item{abund_values2}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-transformed.}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
+experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})}
 
-\item{method}{association method ('pearson', or 'spearman'
-for continuous; categorical for discrete)}
+\item{method}{A single character value for selecting association method
+('pearson', or 'spearman' for continuous; categorical for discrete)
+(By default: \code{method = "spearman"})}
 
-\item{mode}{Specify output format ('table' or 'matrix')}
+\item{mode}{A single character value for selecting output format
+Must be 'table' or 'matrix'.  (By default: \code{mode = "table"})}
 
-\item{p_adj_method}{p-value multiple testing correction method.}
+\item{p_adj_method}{A single character value for selecting adjustment method of
+p-values. Passed to \code{p.adjust} function.
+Check available methods from \code{help(p.adjust))}.
+(By default: \code{p_adj_method = "fdr"})}
 
-\item{p_adj_threshold}{q-value threshold to include features}
+\item{p_adj_threshold}{A single numeric value (in \link{0, 1}) for selecting
+adjusted p-value threshold. (By default: \code{p_adj_threshold = 0.05})}
 
-\item{n_signif}{mininum number of significant correlations for each
-element}
+\item{n_signif}{A single positive numeric value for selecting minimum number of significant
+correlations for each element. (By default: \code{n_signif = 0})}
 
-\item{cth}{correlation threshold to include features}
+\item{cor_threshold}{A single numeric absolute value (in \link{0, 1}) for selecting
+correlation threshold to include features. (By default: \code{cor_threshold = NULL})}
 
-\item{order}{order the results}
+\item{sort}{A single boolean value for selecting whether to sort features or not
+in result. Used method is hierarchical clustering. (By default: \code{sort = FALSE})}
 
-\item{filter_self_correlations}{Filter out correlations between
-identical items.}
+\item{filter_self_correlations}{A single boolean value for selecting whether to
+filter out correlations between identical items. Applies only when correlation
+between experiment itself is tested, i.e., when input is \code{MAE} and
+\code{experiment1 == experiment2} or when input is \code{MAE} and
+\code{experiment2 = NULL}.
+(By default: \code{filter_self_correlations = FALSE})}
 }
 \value{
-Matrix or table.
+Matrix or table. ##############################################################
 }
 \description{
 Calculate cross-correlation
 }
 \details{
-Calculate cross-correlation. ADD INFORMATION ABOUT PARAMETERS###################
+Calculate cross-correlations between features of two experiments.
 }
 \examples{
 mae <- microbiomeDataSets::peerj32()
@@ -120,7 +138,7 @@ head(result, 5)
 
 }
 \references{
-Add references here.
+Add references here. ###########################################################
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

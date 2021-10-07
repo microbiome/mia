@@ -4,34 +4,64 @@
 #'   \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}} or
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
-#' @param experiment1 experiment 1 (MAE)
-#' @param experiment2 experiment 2 (MAE and TreeSE)
+#'   
+#' @param experiment1 A single character or numeric value for selecting the experiment 1
+#'    from \code{experiment(x)} of \code{MultiassayExperiment} object. 
+#'    (By default: \code{experiment1 = 1})
+#'    
+#' @param experiment2 A single character or numeric value for selecting the experiment 2
+#'    from\code{experiment(x)} of \code{MultiAssayExperiment} object or 
+#'    \code{altExp(x)} of \code{TreeSummarizedExperiment} object.
+#'    (By default: \code{experiment2 = 2} when input is \code{MAE} and 
+#'    \code{experiment2 = NULL} when input is \code{TreeSE})
+#'    
 #' @param abund_values1 A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   transformed.
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
+#'   experiment 1 to be transformed. (By default: \code{abund_values1 = "counts"})
+#'   
 #' @param abund_values2 A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   transformed.
-#' @param method association method ('pearson', or 'spearman'
-#' for continuous; categorical for discrete)
-#' @param mode Specify output format ('table' or 'matrix')
-#' @param p_adj_method p-value multiple testing correction method. 
-#' @param p_adj_threshold q-value threshold to include features 
-#' @param n_signif mininum number of significant correlations for each 
-#' element
-#' @param cth correlation threshold to include features 
-#' @param order order the results
-#' @param filter_self_correlations Filter out correlations between 
-#' identical items.
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
+#'   experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})
+#'   
+#' @param method A single character value for selecting association method 
+#'    ('pearson', or 'spearman' for continuous; categorical for discrete)
+#'     (By default: \code{method = "spearman"})
+#' 
+#' @param mode A single character value for selecting output format 
+#'    Must be 'table' or 'matrix'.  (By default: \code{mode = "table"})
+#' 
+#' @param p_adj_method A single character value for selecting adjustment method of
+#'    p-values. Passed to \code{p.adjust} function. 
+#'    Check available methods from \code{help(p.adjust))}.
+#'    (By default: \code{p_adj_method = "fdr"})
+#' 
+#' @param p_adj_threshold A single numeric value (in [0, 1]) for selecting 
+#'    adjusted p-value threshold. (By default: \code{p_adj_threshold = 0.05})
+#' 
+#' @param n_signif A single positive numeric value for selecting minimum number of significant 
+#'    correlations for each element. (By default: \code{n_signif = 0})
+#' 
+#' @param cor_threshold A single numeric absolute value (in [0, 1]) for selecting 
+#'    correlation threshold to include features. (By default: \code{cor_threshold = NULL})
+#' 
+#' @param sort A single boolean value for selecting whether to sort features or not
+#'    in result. Used method is hierarchical clustering. (By default: \code{sort = FALSE})
+#' 
+#' @param filter_self_correlations A single boolean value for selecting whether to 
+#'    filter out correlations between identical items. Applies only when correlation
+#'    between experiment itself is tested, i.e., when input is \code{MAE} and 
+#'    \code{experiment1 == experiment2} or when input is \code{MAE} and 
+#'    \code{experiment2 = NULL}.
+#'    (By default: \code{filter_self_correlations = FALSE})
 #' 
 #' @details
-#' Calculate cross-correlation. ADD INFORMATION ABOUT PARAMETERS###################
+#' Calculate cross-correlations between features of two experiments. 
 #'
 #' @references
-#' Add references here.
+#' Add references here. ###########################################################
 #'
 #' @return 
-#' Matrix or table.
+#' Matrix or table. ##############################################################
 #'
 #' @name getExperimentCrossCorrelation
 #' @export
@@ -72,8 +102,8 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
                     p_adj_method = "fdr",
                     p_adj_threshold = 0.05,
                     n_signif = 0,
-                    cth = NULL,
-                    order = FALSE,
+                    cor_threshold = NULL,
+                    sort = FALSE,
                     filter_self_correlations = FALSE)
              standardGeneric("getExperimentCrossCorrelation"))
 
@@ -90,20 +120,24 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
              p_adj_method = "fdr",
              p_adj_threshold = 0.05,
              n_signif = 0,
-             cth = NULL,
-             order = FALSE,
+             cor_threshold = NULL,
+             sort = FALSE,
              filter_self_correlations = FALSE){
         ############################# INPUT CHECK ##############################
         # Check experiment1 and experiment2
-        if( is.character(experiment1) && !experiment1 %in% names(experiments(x)) || 
-            is.numeric(experiment1) && !experiment1 <= length(experiments(x)) ){
+        if( !( is.character(experiment1) && experiment1 %in% names(experiments(x)) || 
+            is.numeric(experiment1) && experiment1 <= length(experiments(x)) ) ){
           stop("'experiment1' must be numeric or character value specifying", 
                " experiment in experiment(x).", call. = FALSE)
         }
-        if( is.character(experiment2) && !experiment2 %in% names(experiments(x)) || 
-            is.numeric(experiment2) && !experiment2 <= length(experiments(x)) ){
+        if( !( is.character(experiment2) && experiment2 %in% names(experiments(x)) || 
+            is.numeric(experiment2) && experiment2 <= length(experiments(x)) ) ){
           stop("'experiment2' must be numeric or character value specifying", 
                " experiment in experiment(x).", call. = FALSE)
+        }
+        # If experiments are not the same, disable filter_self_correlations
+        if( experiment1 != experiment2 ){
+          filter_self_correlations <- FALSE
         }
         # Fetch tse objects
         tse1 <- mae[[experiment1]]
@@ -129,18 +163,18 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
           stop("'p_adj_threshold' must be a numeric value >= 0.", call. = FALSE)
         }
         # Check n_signif
-        if (!is.numeric(n_signif) && n_signif > 0 ){
-          stop("'p_adj_threshold' must be a numeric value greater than or equal to 0.", 
+        if (!is.numeric(n_signif) && n_signif >= 0 ){
+          stop("'n_signif' must be a numeric value greater than or equal to 0.", 
                call. = FALSE)
         }
-        # Check cth
-        if( ifelse( is.numeric(cth), !(cth>=0 && cth<=1), !is.null(cth)) ){
-          stop("'cth' must be a numeric value greater than or equal to 0.", 
+        # Check cor_threshold
+        if( ifelse( is.numeric(cor_threshold), !(cor_threshold>=0 && cor_threshold<=1), !is.null(cor_threshold)) ){
+          stop("'cor_threshold' must be a numeric value greater than or equal to 0.", 
                call. = FALSE)
         }
-        # Check order
-        if( !(order == TRUE || order == FALSE) ){
-          stop("'order' must be a boolean value.", 
+        # Check sort
+        if( !(sort == TRUE || sort == FALSE) ){
+          stop("'sort' must be a boolean value.", 
                call. = FALSE)
         }
         # Check filter_self_correlations
@@ -172,8 +206,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
                                       p_values_adjusted, 
                                       p_adj_threshold,
                                       n_signif, 
-                                      cth,
-                                      order,
+                                      cor_threshold,
+                                      sort,
                                       assay1, assay2, filter_self_correlations)
         # Matrix or table?
         if (mode == "table") {
@@ -195,24 +229,34 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
              p_adj_method = "fdr",
              p_adj_threshold = 0.05,
              n_signif = 0,
-             cth = NULL,
-             order = FALSE,
+             cor_threshold = NULL,
+             sort = FALSE,
              filter_self_correlations = FALSE){
         ############################## INPUT CHECK #############################
-        if( is.character(experiment2) && !experiment2 %in% names(experiments(x)) || 
-            is.numeric(experiment2) && !experiment2 <= length(experiments(x)) ){
+        if( !( is.character(experiment2) && experiment2 %in% names(altExps(x))  || 
+            is.numeric(experiment2) && experiment2 <= length(altExps(x)) ||
+            is.null(experiment2) ) ){
           stop("'experiment2' must be numeric or character value specifying", 
-               " experiment in altExps(x).", call. = FALSE)
+               " experiment in altExps(x) or it must be NULL.", call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
         # Fetch data sets and create a MAE object
         exp1 <- x
-        exp2 <- altExp(x, experiment2)
-        x <- MultiAssayExperiment::MultiAssayExperiment(experiments = ExperimentList(exp1 = exp1, exp2 = exp2))
+        # If experiment2 is NULL, then experiment1 == experiment2
+        if( is.null(experiment2) ){
+          exp2 <- exp1
+          x <- MultiAssayExperiment::MultiAssayExperiment(experiments = ExperimentList(exp1 = exp1))
+          exp2_num <- 1
+          
+        } else{
+          exp2 <- altExps(x)[[experiment2]]
+          x <- MultiAssayExperiment::MultiAssayExperiment(experiments = ExperimentList(exp1 = exp1, exp2 = exp2))
+          exp2_num <- 2
+        }
         # Call method with MAE object as an input
         getExperimentCrossCorrelation(x,
                                       experiment1 = 1,
-                                      experiment2 = 2,
+                                      experiment2 = exp2_num,
                                       abund_values1,
                                       abund_values2,
                                       method,
@@ -220,8 +264,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
                                       p_adj_method,
                                       p_adj_threshold,
                                       n_signif,
-                                      cth,
-                                      order,
+                                      cor_threshold,
+                                      sort,
                                       filter_self_correlations)
     }
 )
@@ -359,11 +403,11 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
                                 p_values_adjusted,
                                 p_adj_threshold,
                                 n_signif,
-                                cth, 
-                                order,
+                                cor_threshold, 
+                                sort,
                                 assay1, assay2, filter_self_correlations){
   # Filter
-  if (!is.null(p_adj_threshold) || !is.null(cth)) {
+  if (!is.null(p_adj_threshold) || !is.null(cor_threshold)) {
     
     # Replace NAs with extreme values for filtering purposes
     p_values_adjusted[is.na(p_values_adjusted)] <- 1
@@ -383,22 +427,22 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
       })
     }
     # Which features have correlation over correlation threshold?
-    if (!is.null(cth)) {
+    if (!is.null(cor_threshold)) {
       inds1.c <- apply(abs(correlations), 1, function(x) {
-        sum(x > cth | x < cth) >= n_signif
+        sum(x > cor_threshold | x < cor_threshold) >= n_signif
       })
       inds2.c <- apply(abs(correlations), 2, function(x) {
-        sum(x > cth | x < cth) >= n_signif
+        sum(x > cor_threshold | x < cor_threshold) >= n_signif
       })
     }
     # Combine results from previous steps
-    if (!is.null(p_adj_threshold) && !is.null(cth)) {
+    if (!is.null(p_adj_threshold) && !is.null(cor_threshold)) {
       inds1 <- inds1.q & inds1.c
       inds2 <- inds2.q & inds2.c
-    } else if (is.null(p_adj_threshold) && !is.null(cth)) {
+    } else if (is.null(p_adj_threshold) && !is.null(cor_threshold)) {
       inds1 <- inds1.c
       inds2 <- inds2.c
-    } else if (!is.null(p_adj_threshold) && is.null(cth)) {
+    } else if (!is.null(p_adj_threshold) && is.null(cor_threshold)) {
       inds1 <- inds1.q
       inds2 <- inds2.q
     }
@@ -417,8 +461,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
       rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rnams
       colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- cnams
       
-      # If order was specified and there is more than 1 feature left in both feature sets
-      if (order && sum(inds1) >= 2 && sum(inds2) >= 2) {
+      # If sort was specified and there is more than 1 feature left in both feature sets
+      if (sort && sum(inds1) >= 2 && sum(inds2) >= 2) {
         # Order in visually appealing order
         tmp <- correlations
         rownames(tmp) <- NULL
