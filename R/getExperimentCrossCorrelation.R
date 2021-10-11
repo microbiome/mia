@@ -197,8 +197,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         assay1 <- t(assay1)
         assay2 <- t(assay2)
 
-        # Get assay in right format
-        assay1 <- .cor_test_data_type(assay1, method)
+        # Test if data is in right format
+        .cor_test_data_type(assay1, method)
+        .cor_test_data_type(assay2, method)
         # Calculate correlations
         results <- .calculate_correlation(assay1, assay2, method, p_adj_method)
         correlations <- results$correlations
@@ -287,42 +288,19 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   # Different available methods
   numeric_methods <- c("spearman", "pearson")
   categorical_methods <- c("categorical")
-  # Check if method match with values, otherwise give warning.
-  # For numeric methods, get only numeric values. For categorical methods, get only factors.
-  if (method %in% numeric_methods) {
-    inds <- apply(assay, 2, is.numeric)
+  # Check if method match with values, otherwise give an error.
+  # For numeric methods, expect only numeric values. For categorical methods, expect only factors.
+  if (method %in% numeric_methods && !is.numeric(assay)) {
     # If there are no numeric values, give an error
-    if( all(!inds) ){
-      stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
-           " numeric values. Choose categorical method for 'method'.",
-           call. = FALSE)
-    }
-    else if (any(!inds)) {
-      warning("Considering only numeric annotations for \n       
-                    pearson/spearman")
-    }
-  } else if (method %in% categorical_methods) {
-    inds <- vapply(assay, is.factor, TRUE)
+    stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
+         " numeric values. Choose categorical method for 'method'.",
+         call. = FALSE)
+  } else if (method %in% categorical_methods && !is.factor(assay)) {
     # If there are no factor values, give an error
-    if( all(!inds) ){
-      stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
-           " factor values. Choose numeric method for 'method'.",
-           call. = FALSE)
-    }
-    else if (any(!inds)) {
-      warning("Considering only categorical annotations for factors")
-    }
+    stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
+         " factor values. Choose numeric method for 'method'.",
+         call. = FALSE)
   }
-  # Names of features that are numeric or factor (based on previous step)
-  names <- names(which(inds))
-  # Subset assay to get only numeric or factor values
-  if (!is.vector(assay)) {
-    assay <- suppressWarnings(as.matrix(assay[, inds], ncol=length(inds)))
-  } else {
-    assay <- as.matrix(assay[inds], ncol=length(inds))
-  }
-  # Add colnames to assay
-  colnames(assay) <- names
   return(assay)
 }
 
