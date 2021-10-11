@@ -314,7 +314,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   
   # Calculate correlations, different methods for numeric and categorical data
   if (method %in% c("pearson", "spearman")) {
-    # Loop over every feature in assay2
+    # Loop over every feature in assay2. Result is a list (feature1) of lists 
+    # (correlations and p_values: individual feature1 vs all the feature2)
     correlations_and_p_values <- apply(assay2, 2, function(yi) {
       # Loop over every feature in assay1
       temp <- apply(assay1, 2, function(xi) {
@@ -322,13 +323,11 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
         # to temporary object
           temp2 <- cor.test(xi, yi, 
                           method=method, use="pairwise.complete.obs")
+          # Take only correlation and p-value
           temp2 <- c(temp2$estimate, temp2$p.value)
       })
-      # 'jc' object includes all the correlation between individual feature from assay2
-      # and all the features from assay1
-      # Finally, store correlations and continue loop with next feature of assay2
-      # correlations[, j] <- jc[1, ]
-      # p_values[, j] <- jc[2, ]
+      # Return a list where 1st element includes all the correlation values, and
+      # second all thep-values
       list(temp[1,], temp[2,])
     })
     # Store correct names
