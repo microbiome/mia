@@ -105,7 +105,8 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
                     n_signif = 0,
                     cor_threshold = NULL,
                     sort = FALSE,
-                    filter_self_correlations = FALSE)
+                    filter_self_correlations = FALSE, 
+                    ...)
              standardGeneric("getExperimentCrossCorrelation"))
 
 #' @rdname getExperimentCrossCorrelation
@@ -124,7 +125,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
              n_signif = 0,
              cor_threshold = NULL,
              sort = FALSE,
-             filter_self_correlations = FALSE){
+             filter_self_correlations = FALSE,
+             ...){
         ############################# INPUT CHECK ##############################
         # Check experiment1 and experiment2
         # Negation of "if value is character and can be found from experiments or
@@ -194,10 +196,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         # Transposes tables to right format
         assay1 <- t(assay1)
         assay2 <- t(assay2)
-        # Converts tables to data frame
-        assay1 <- as.data.frame(assay1)
-        assay2 <- assay2
-        
+
         # Get assay in right format
         assay1 <- .cor_test_data_type(assay1, method)
         # Calculate correlations
@@ -237,7 +236,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
              n_signif = 0,
              cor_threshold = NULL,
              sort = FALSE,
-             filter_self_correlations = FALSE){
+             filter_self_correlations = FALSE,
+             ...){
         ############################## INPUT CHECK #############################
         if( !(class(y) == "SummarizedExperiment" || class(y) == "TreeSummarizedExperiment") ||
             !( is.character(experiment2) && experiment2 %in% names(altExps(x))  || 
@@ -290,7 +290,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   # Check if method match with values, otherwise give warning.
   # For numeric methods, get only numeric values. For categorical methods, get only factors.
   if (method %in% numeric_methods) {
-    inds <- vapply(assay, is.numeric, TRUE)
+    inds <- apply(assay, 2, is.numeric)
     # If there are no numeric values, give an error
     if( all(!inds) ){
       stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
