@@ -2,7 +2,7 @@
 #' 
 #' @param x A
 #'   \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}} or
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'   
 #' @param experiment1 A single character or numeric value for selecting the experiment 1
@@ -11,7 +11,7 @@
 #'    
 #' @param experiment2 A single character or numeric value for selecting the experiment 2
 #'    from\code{experiment(x)} of \code{MultiAssayExperiment} object or 
-#'    \code{altExp(x)} of \code{TreeSummarizedExperiment} object.
+#'    \code{altExp(x)} of \code{SummarizedExperiment} object.
 #'    (By default: \code{experiment2 = 2} when input is \code{MAE} and 
 #'    \code{experiment2 = NULL} when input is \code{TreeSE})
 #'    
@@ -79,7 +79,7 @@
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
-#' # Same can be done with TreeSummarizedExperiment and altExp
+#' # Same can be done with SummarizedExperiment and altExp
 #' # Create TreeSE with altExp
 #' tse <- mae[[1]]
 #' altExp(tse, "exp2") <- mae[[2]]
@@ -99,7 +99,8 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
                     abund_values2 = "counts",
                     method = "spearman",
                     mode = "table",
-                    p_adj_method = "fdr",
+                    p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
+                                     "holm", "hommel", "none"),
                     p_adj_threshold = 0.05,
                     n_signif = 0,
                     cor_threshold = NULL,
@@ -117,7 +118,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
              abund_values2 = "counts",
              method = c("categorical", "pearson","spearman"),
              mode = "table",
-             p_adj_method = "fdr",
+             p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
+                              "holm", "hommel", "none"),
              p_adj_threshold = 0.05,
              n_signif = 0,
              cor_threshold = NULL,
@@ -125,6 +127,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
              filter_self_correlations = FALSE){
         ############################# INPUT CHECK ##############################
         # Check experiment1 and experiment2
+        # Negation of "if value is character and can be found from experiments or
+        # if value is numeric and is smaller or equal to the list of experiments.
         if( !( is.character(experiment1) && experiment1 %in% names(experiments(x)) || 
             is.numeric(experiment1) && experiment1 <= length(experiments(x)) ) ){
           stop("'experiment1' must be numeric or character value specifying", 
@@ -157,7 +161,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
           stop("'mode' must be 'matrix' or 'table'.", call. = FALSE)
         }
-        # p_adj_method is checked in p.adjust
+        # Check p_adj_method
+        p_adj_method <- match.arg(p_adj_method)
         # Check p_adj_threshold
         if( !is.numeric(p_adj_threshold) && p_adj_threshold<0 || p_adj_threshold>1 ){
           stop("'p_adj_threshold' must be a numeric value >= 0.", call. = FALSE)
@@ -219,24 +224,26 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
 
 #' @rdname getExperimentCrossCorrelation
 #' @export
-setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperiment"),
     function(x,
-             experiment2 = NULL,
+             y = NULL,
              abund_values1 = "counts",
              abund_values2 = "counts",
              method = "spearman",
              mode = "table",
-             p_adj_method = "fdr",
+             p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
+                              "holm", "hommel", "none"),
              p_adj_threshold = 0.05,
              n_signif = 0,
              cor_threshold = NULL,
              sort = FALSE,
              filter_self_correlations = FALSE){
         ############################## INPUT CHECK #############################
-        if( !( is.character(experiment2) && experiment2 %in% names(altExps(x))  || 
+        if( !(class(y) == "SummarizedExperiment" || class(y) == "TreeSummarizedExperiment") ||
+            !( is.character(experiment2) && experiment2 %in% names(altExps(x))  || 
             is.numeric(experiment2) && experiment2 <= length(altExps(x)) ||
             is.null(experiment2) ) ){
-          stop("'experiment2' must be numeric or character value specifying", 
+          stop("'experiment2' must be SE or TreeSE object, or numeric or character value specifying", 
                " experiment in altExps(x) or it must be NULL.", call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
@@ -248,8 +255,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "TreeSummarizedExpe
           x <- MultiAssayExperiment::MultiAssayExperiment(experiments = ExperimentList(exp1 = exp1))
           exp2_num <- 1
           
-        } else{
+        } else if ( is.character(experiment2) ){
           exp2 <- altExps(x)[[experiment2]]
+          x <- MultiAssayExperiment::MultiAssayExperiment(experiments = ExperimentList(exp1 = exp1, exp2 = exp2))
+          exp2_num <- 2
+        } else {
+          exp2 <- y
           x <- MultiAssayExperiment::MultiAssayExperiment(experiments = ExperimentList(exp1 = exp1, exp2 = exp2))
           exp2_num <- 2
         }
