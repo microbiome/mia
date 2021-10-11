@@ -314,40 +314,41 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   
   # Calculate correlations, different methods for numeric and categorical data
   if (method %in% c("pearson", "spearman")) {
-    # Specify minimum number of observation needed to do correlation analysis
-    minimum_number_of_observations <- 8
     # Loop over every feature in assay2
-    for (j in seq_len(ncol(assay2))) {
+    correlations_and_p_values <- apply(assay2, 2, function(yi) {
       # Loop over every feature in assay1
-      jc <- apply(assay1, 2, function(xi) {
-        # If there are enough observations/samples, do correlation test, and store the result
+      temp <- apply(assay1, 2, function(xi) {
+        # Do correlation test, and store the result
         # to temporary object
-        if (sum(!is.na(xi)) >= minimum_number_of_observations) {
-          res <- suppressWarnings(
-            cor.test(xi, unlist(assay2[, j], use.names=FALSE), 
-                     method=method, use="pairwise.complete.obs"))
-          res <- c(res$estimate, res$p.value)
-        } 
-        # If there are not enough observations/samples, give a warning, and store
-        # just NAs
-        else {
-          warning(paste("Not enough observations (",
-                        minimum_number_of_observations, "required); \n   
-                        (", 
-                        sum(!is.na(xi)), ") \n \n 
-                        - skipping correlation estimation"))
-          res <- c(NA, NA)
-        }
-        # Return res which will be stored in jc object
-        res
+          temp2 <- cor.test(xi, yi, 
+                          method=method, use="pairwise.complete.obs")
+          temp2 <- c(temp2$estimate, temp2$p.value)
       })
-      
       # 'jc' object includes all the correlation between individual feature from assay2
       # and all the features from assay1
       # Finally, store correlations and continue loop with next feature of assay2
-      correlations[, j] <- jc[1, ]
-      p_values[, j] <- jc[2, ]
-    }
+      # correlations[, j] <- jc[1, ]
+      # p_values[, j] <- jc[2, ]
+      list(temp[1,], temp[2,])
+    })
+    # Store correct names
+    feature_names <- names(correlations_and_p_values)
+    # Unlist list of lists to list
+    correlations_and_p_values <- unlist(correlations_and_p_values, recursive = FALSE)
+    # Take only correlations
+    correlations <- correlations_and_p_values[seq(1, length(correlations_and_p_values), 2)]
+    # Take only p-values
+    p_values <- correlations_and_p_values[seq(2, length(correlations_and_p_values), 2)]
+    
+    # Unlisting changed names because otherwise there would have been duplicated names.
+    # Give correct names back
+    names(correlations) <- feature_names
+    names(p_values) <- feature_names
+    
+    # Convert frist to data frame and then to matrix
+    correlations <- as.matrix(as.data.frame(correlations, check.names = FALSE))
+    p_values <- as.matrix(as.data.frame(p_values, check.names = FALSE))
+    
   } 
   # If method is categorical
   else if (method == "categorical") {
@@ -403,24 +404,24 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     if (!is.null(p_adj_threshold)) {
       p_adj_under_th <- p_values_adjusted < p_adj_threshold
       features1_p_value <- rowSums(p_adj_under_th, na.rm = TRUE) >= n_signif
-      features1_p_value <- colSums(p_adj_under_th, na.rm = TRUE) >= n_signif
+      features2_p_value <- colSums(p_adj_under_th, na.rm = TRUE) >= n_signif
     }
     # Which features have correlation over correlation threshold?
     if (!is.null(cor_threshold)) {
       corr_over_th <- abs(correlations) > cor_threshold | abs(correlations) < cor_threshold
       features1_correlation <- rowSums(p_adj_under_th, na.rm = TRUE) >= n_signif
-      features1_correlation <- colSums(p_adj_under_th, na.rm = TRUE) >= n_signif
+      features2_correlation <- colSums(p_adj_under_th, na.rm = TRUE) >= n_signif
     }
     # Combine results from previous steps
     if (!is.null(p_adj_threshold) && !is.null(cor_threshold)) {
       features1 <- features1_p_value & features1_correlation
-      features2 <- features1_p_value & features1_correlation
+      features2 <- features2_p_value & features2_correlation
     } else if (is.null(p_adj_threshold) && !is.null(cor_threshold)) {
       features1 <- features1_correlation
-      features2 <- features1_correlation
+      features2 <- features2_correlation
     } else if (!is.null(p_adj_threshold) && is.null(cor_threshold)) {
       features1 <- features1_p_value
-      features2 <- features1_p_value
+      features2 <- features2_p_value
     }
     
     # If both features have more TRUEs than n_signif specifies /
@@ -452,7 +453,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
         rownames <- rownames(correlations)[row_index]
         colnames <- colnames(correlations)[col_index]
         
-        # Order the tables based on order of hiearchical clustering
+        # Order the tables based on order of hierarchical clustering
         correlations <- correlations[row_index, col_index]
         p_values <- p_values[row_index, col_index]
         p_values_adjusted <- p_values_adjusted[row_index, col_index]
