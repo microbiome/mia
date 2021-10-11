@@ -376,7 +376,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   # If there are p_values that are not NA, adjust them
   if (!all(is.na(p_values))) {
     # Corrected p-values
-    p_values_adjusted <- array(NA, dim=dim(p_values))
     p_values_adjusted <- matrix(p.adjust(p_values, method=p_adj_method), nrow=nrow(p_values))
     dimnames(p_values_adjusted) <- dimnames(p_values)
   }
@@ -397,81 +396,69 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                                 assay1, assay2, filter_self_correlations){
   # Filter
   if (!is.null(p_adj_threshold) || !is.null(cor_threshold)) {
-    
-    # Replace NAs with extreme values for filtering purposes
-    p_values_adjusted[is.na(p_values_adjusted)] <- 1
-    p_values[is.na(p_values_adjusted)] <- 1
-    correlations[is.na(correlations)] <- 0
-    
     # Filter by adjusted p-values and correlations
-    inds1.q <- inds2.q <- inds1.c <- inds2.c <- NULL
+    features1_p_value <- features1_p_value <- features1_correlation <- features1_correlation <- NULL
     # Which features have more adjusted p-values under the threshold than the 
     # 'n_signif' specifies
     if (!is.null(p_adj_threshold)) {
-      inds1.q <- apply(p_values_adjusted, 1, function(x) {
-        sum(x < p_adj_threshold) >= n_signif
-      })
-      inds2.q <- apply(p_values_adjusted, 2, function(x) {
-        sum(x < p_adj_threshold) >= n_signif
-      })
+      p_adj_under_th <- p_values_adjusted < p_adj_threshold
+      features1_p_value <- rowSums(p_adj_under_th, na.rm = TRUE) >= n_signif
+      features1_p_value <- colSums(p_adj_under_th, na.rm = TRUE) >= n_signif
     }
     # Which features have correlation over correlation threshold?
     if (!is.null(cor_threshold)) {
-      inds1.c <- apply(abs(correlations), 1, function(x) {
-        sum(x > cor_threshold | x < cor_threshold) >= n_signif
-      })
-      inds2.c <- apply(abs(correlations), 2, function(x) {
-        sum(x > cor_threshold | x < cor_threshold) >= n_signif
-      })
+      corr_over_th <- abs(correlations) > cor_threshold | abs(correlations) < cor_threshold
+      features1_correlation <- rowSums(p_adj_under_th, na.rm = TRUE) >= n_signif
+      features1_correlation <- colSums(p_adj_under_th, na.rm = TRUE) >= n_signif
     }
     # Combine results from previous steps
     if (!is.null(p_adj_threshold) && !is.null(cor_threshold)) {
-      inds1 <- inds1.q & inds1.c
-      inds2 <- inds2.q & inds2.c
+      features1 <- features1_p_value & features1_correlation
+      features2 <- features1_p_value & features1_correlation
     } else if (is.null(p_adj_threshold) && !is.null(cor_threshold)) {
-      inds1 <- inds1.c
-      inds2 <- inds2.c
+      features1 <- features1_correlation
+      features2 <- features1_correlation
     } else if (!is.null(p_adj_threshold) && is.null(cor_threshold)) {
-      inds1 <- inds1.q
-      inds2 <- inds2.q
+      features1 <- features1_p_value
+      features2 <- features1_p_value
     }
     
     # If both features have more TRUEs than n_signif specifies /
     # if there are significant correlations
-    if (sum(inds1) >= n_signif && sum(inds2) >= n_signif) {
+    if (sum(features1) >= n_signif && sum(features2) >= n_signif) {
       # Get names of those features that were TRUE
-      rnams <- rownames(correlations)[inds1]
-      cnams <- colnames(correlations)[inds2]
+      rownames <- rownames(correlations)[features1]
+      colnames <- colnames(correlations)[features2]
       # Subset correlations, p_values, and adjusted p_values table
-      correlations <- matrix(correlations[inds1, inds2, drop=FALSE], nrow=sum(inds1))
-      p_values <- matrix(p_values[inds1, inds2, drop=FALSE], nrow=sum(inds1))
-      p_values_adjusted <- matrix(p_values_adjusted[inds1, inds2, drop=FALSE], nrow=sum(inds1))
+      correlations <- matrix(correlations[features1, features2, drop=FALSE], nrow=sum(features1))
+      p_values <- matrix(p_values[features1, features2, drop=FALSE], nrow=sum(features1))
+      p_values_adjusted <- matrix(p_values_adjusted[features1, features2, drop=FALSE], nrow=sum(features1))
       # Add row and column names
-      rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rnams
-      colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- cnams
+      rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
+      colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
       
       # If sort was specified and there is more than 1 feature left in both feature sets
-      if (sort && sum(inds1) >= 2 && sum(inds2) >= 2) {
+      if (sort && sum(features1) >= 2 && sum(features2) >= 2) {
         # Order in visually appealing order
         tmp <- correlations
         rownames(tmp) <- NULL
         colnames(tmp) <- NULL
         # Do hierarchical clustering
-        rind <- hclust(as.dist(1 - cor(t(tmp),
+        row_index <- hclust(as.dist(1 - cor(t(tmp),
                                        use="pairwise.complete.obs")))$order
-        cind <- hclust(as.dist(1 - cor(tmp,
+        col_index <- hclust(as.dist(1 - cor(tmp,
                                        use="pairwise.complete.obs")))$order
         # Get the order of features from hiearchical clustering
-        rnams <- rownames(correlations)[rind]
-        cnams <- colnames(correlations)[cind]
+        rownames <- rownames(correlations)[row_index]
+        colnames <- colnames(correlations)[col_index]
         
         # Order the tables based on order of hiearchical clustering
-        correlations <- correlations[rind, cind]
-        p_values <- p_values[rind, cind]
-        p_values_adjusted <- p_values_adjusted[rind, cind]
+        correlations <- correlations[row_index, col_index]
+        p_values <- p_values[row_index, col_index]
+        p_values_adjusted <- p_values_adjusted[row_index, col_index]
         # Add column and rownames
-        rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rnams
-        colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- cnams
+        rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
+        colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
       }
     } 
     # If there were no significant correlations, give a message
