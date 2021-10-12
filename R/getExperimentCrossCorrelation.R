@@ -38,9 +38,6 @@
 #' @param p_adj_threshold A single numeric value (in [0, 1]) for selecting 
 #'    adjusted p-value threshold. (By default: \code{p_adj_threshold = 0.05})
 #' 
-#' @param n_signif A single positive numeric value for selecting minimum number of significant 
-#'    correlations for each element. (By default: \code{n_signif = 0})
-#' 
 #' @param cor_threshold A single numeric absolute value (in [0, 1]) for selecting 
 #'    correlation threshold to include features. (By default: \code{cor_threshold = NULL})
 #' 
@@ -102,7 +99,6 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
                     p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
                                      "holm", "hommel", "none"),
                     p_adj_threshold = 0.05,
-                    n_signif = 0,
                     cor_threshold = NULL,
                     sort = FALSE,
                     filter_self_correlations = FALSE, 
@@ -122,7 +118,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
              p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
                               "holm", "hommel", "none"),
              p_adj_threshold = 0.05,
-             n_signif = 0,
              cor_threshold = NULL,
              sort = FALSE,
              filter_self_correlations = FALSE,
@@ -169,11 +164,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         if( !is.numeric(p_adj_threshold) && p_adj_threshold<0 || p_adj_threshold>1 ){
           stop("'p_adj_threshold' must be a numeric value >= 0.", call. = FALSE)
         }
-        # Check n_signif
-        if (!is.numeric(n_signif) && n_signif >= 0 ){
-          stop("'n_signif' must be a numeric value greater than or equal to 0.", 
-               call. = FALSE)
-        }
         # Check cor_threshold
         if( ifelse( is.numeric(cor_threshold), !(cor_threshold>=0 && cor_threshold<=1), !is.null(cor_threshold)) ){
           stop("'cor_threshold' must be a numeric value greater than or equal to 0.", 
@@ -210,7 +200,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
                                       p_values, 
                                       p_values_adjusted, 
                                       p_adj_threshold,
-                                      n_signif, 
                                       cor_threshold,
                                       sort,
                                       assay1, assay2, filter_self_correlations)
@@ -234,7 +223,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
              p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
                               "holm", "hommel", "none"),
              p_adj_threshold = 0.05,
-             n_signif = 0,
              cor_threshold = NULL,
              sort = FALSE,
              filter_self_correlations = FALSE,
@@ -275,7 +263,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                                       mode,
                                       p_adj_method,
                                       p_adj_threshold,
-                                      n_signif,
                                       cor_threshold,
                                       sort,
                                       filter_self_correlations)
@@ -388,7 +375,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                                 p_values,
                                 p_values_adjusted,
                                 p_adj_threshold,
-                                n_signif,
                                 cor_threshold, 
                                 sort,
                                 assay1, assay2, filter_self_correlations){
@@ -400,18 +386,17 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   if (!is.null(p_adj_threshold) || !is.null(cor_threshold)) {
     # Filter by adjusted p-values and correlations
     features1_p_value <- features1_p_value <- features1_correlation <- features1_correlation <- NULL
-    # Which features have more adjusted p-values under the threshold than the 
-    # 'n_signif' specifies
+    # Which features have significant correlations?
     if (!is.null(p_adj_threshold) ) {
       p_adj_under_th <- p_values_adjusted < p_adj_threshold
-      features1_p_value <- rowSums(p_adj_under_th, na.rm = TRUE) >= n_signif
-      features2_p_value <- colSums(p_adj_under_th, na.rm = TRUE) >= n_signif
+      features1_p_value <- rowSums(p_adj_under_th, na.rm = TRUE) > 0
+      features2_p_value <- colSums(p_adj_under_th, na.rm = TRUE) > 0
     }
     # Which features have correlation over correlation threshold?
     if (!is.null(cor_threshold)) {
       corr_over_th <- abs(correlations) > cor_threshold | abs(correlations) < cor_threshold
-      features1_correlation <- rowSums(corr_over_th, na.rm = TRUE) >= n_signif
-      features2_correlation <- colSums(corr_over_th, na.rm = TRUE) >= n_signif
+      features1_correlation <- rowSums(corr_over_th, na.rm = TRUE) > 0
+      features2_correlation <- colSums(corr_over_th, na.rm = TRUE) > 0
     }
     # Combine results from previous steps
     if (!is.null(p_adj_threshold) && !is.null(cor_threshold)) {
@@ -425,9 +410,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       features2 <- features2_p_value
     }
     
-    # If both features have more TRUEs than n_signif specifies /
-    # if there are significant correlations
-    if (sum(features1) >= n_signif && sum(features2) >= n_signif) {
+    # If both features have significant correlations
+    if (sum(features1) > 0 && sum(features2) > 0) {
       # Get names of those features that were TRUE
       rownames <- rownames(correlations)[features1]
       colnames <- colnames(correlations)[features2]

@@ -3,7 +3,7 @@
 \name{getExperimentCrossCorrelation}
 \alias{getExperimentCrossCorrelation}
 \alias{getExperimentCrossCorrelation,MultiAssayExperiment-method}
-\alias{getExperimentCrossCorrelation,TreeSummarizedExperiment-method}
+\alias{getExperimentCrossCorrelation,SummarizedExperiment-method}
 \title{Calculate cross-correlation}
 \usage{
 getExperimentCrossCorrelation(
@@ -14,12 +14,13 @@ getExperimentCrossCorrelation(
   abund_values2 = "counts",
   method = "spearman",
   mode = "table",
-  p_adj_method = "fdr",
+  p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", "holm", "hommel",
+    "none"),
   p_adj_threshold = 0.05,
-  n_signif = 0,
   cor_threshold = NULL,
   sort = FALSE,
-  filter_self_correlations = FALSE
+  filter_self_correlations = FALSE,
+  ...
 )
 
 \S4method{getExperimentCrossCorrelation}{MultiAssayExperiment}(
@@ -30,33 +31,35 @@ getExperimentCrossCorrelation(
   abund_values2 = "counts",
   method = c("categorical", "pearson", "spearman"),
   mode = "table",
-  p_adj_method = "fdr",
+  p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", "holm", "hommel",
+    "none"),
   p_adj_threshold = 0.05,
-  n_signif = 0,
   cor_threshold = NULL,
   sort = FALSE,
-  filter_self_correlations = FALSE
+  filter_self_correlations = FALSE,
+  ...
 )
 
-\S4method{getExperimentCrossCorrelation}{TreeSummarizedExperiment}(
+\S4method{getExperimentCrossCorrelation}{SummarizedExperiment}(
   x,
-  experiment2 = NULL,
+  y = NULL,
   abund_values1 = "counts",
   abund_values2 = "counts",
   method = "spearman",
   mode = "table",
-  p_adj_method = "fdr",
+  p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", "holm", "hommel",
+    "none"),
   p_adj_threshold = 0.05,
-  n_signif = 0,
   cor_threshold = NULL,
   sort = FALSE,
-  filter_self_correlations = FALSE
+  filter_self_correlations = FALSE,
+  ...
 )
 }
 \arguments{
 \item{x}{A
 \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}} or
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
 \item{experiment1}{A single character or numeric value for selecting the experiment 1
@@ -65,7 +68,7 @@ from \code{experiment(x)} of \code{MultiassayExperiment} object.
 
 \item{experiment2}{A single character or numeric value for selecting the experiment 2
 from\code{experiment(x)} of \code{MultiAssayExperiment} object or
-\code{altExp(x)} of \code{TreeSummarizedExperiment} object.
+\code{altExp(x)} of \code{SummarizedExperiment} object.
 (By default: \code{experiment2 = 2} when input is \code{MAE} and
 \code{experiment2 = NULL} when input is \code{TreeSE})}
 
@@ -91,9 +94,6 @@ Check available methods from \code{help(p.adjust))}.
 
 \item{p_adj_threshold}{A single numeric value (in \link{0, 1}) for selecting
 adjusted p-value threshold. (By default: \code{p_adj_threshold = 0.05})}
-
-\item{n_signif}{A single positive numeric value for selecting minimum number of significant
-correlations for each element. (By default: \code{n_signif = 0})}
 
 \item{cor_threshold}{A single numeric absolute value (in \link{0, 1}) for selecting
 correlation threshold to include features. (By default: \code{cor_threshold = NULL})}
@@ -128,7 +128,7 @@ result <- getExperimentCrossCorrelation(mae, method = "pearson")
 # Show first 5 entries
 head(result, 5)
 
-# Same can be done with TreeSummarizedExperiment and altExp
+# Same can be done with SummarizedExperiment and altExp
 # Create TreeSE with altExp
 tse <- mae[[1]]
 altExp(tse, "exp2") <- mae[[2]]
