@@ -94,7 +94,7 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
                     experiment2 = 2,
                     abund_values1 = "counts",
                     abund_values2 = "counts",
-                    method = "spearman",
+                    method = c("categorical", "kendall", "pearson","spearman"),
                     mode = "table",
                     p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
                                      "holm", "hommel", "none"),
@@ -113,7 +113,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
              experiment2 = 2,
              abund_values1 = "counts",
              abund_values2 = "counts",
-             method = c("categorical", "pearson","spearman"),
+             method = c("categorical", "kendall", "pearson","spearman"),
              mode = "table",
              p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
                               "holm", "hommel", "none"),
@@ -218,7 +218,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
              y = NULL,
              abund_values1 = "counts",
              abund_values2 = "counts",
-             method = "spearman",
+             method = c("categorical", "kendall", "pearson","spearman"),
              mode = "table",
              p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
                               "holm", "hommel", "none"),
@@ -273,7 +273,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
 ############################## .cor_test_data_type #############################
 .cor_test_data_type <- function(assay, method){
   # Different available methods
-  numeric_methods <- c("spearman", "pearson")
+  numeric_methods <- c("kendall", "pearson","spearman")
   categorical_methods <- c("categorical")
   # Check if method match with values, otherwise give an error.
   # For numeric methods, expect only numeric values. For categorical methods, expect only factors.
@@ -300,7 +300,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   p_values <- correlations
   
   # Calculate correlations, different methods for numeric and categorical data
-  if (method %in% c("pearson", "spearman")) {
+  if (method %in% c("kendall", "pearson","spearman")) {
     # Loop over every feature in assay2. Result is a list (feature1) of lists 
     # (correlations and p_values: individual feature1 vs all the feature2)
     correlations_and_p_values <- apply(assay2, 2, function(yi) {
