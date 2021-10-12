@@ -153,7 +153,7 @@ setMethod("calculateUnifrac",
 #' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
+runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                        BPPARAM = SerialParam()){
     # x has samples as row. Therefore transpose. This benchmarks faster than
     # converting the function to work with the input matrix as is
@@ -257,7 +257,7 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
             # Explicitly re-order tipAges to match x
             tipAges <- tipAges[rownames(x)]
             distlist <- BiocParallel::bplapply(spn,
-                                               uniFrac_weighted_norm,
+                                               unifrac_weighted_norm,
                                                mat = x,
                                                tree = tree,
                                                samplesums = samplesums,
@@ -277,14 +277,14 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                                            BPPARAM = BPPARAM)
     }
     # Initialize UnifracMat with NAs
-    UniFracMat <- matrix(NA_real_, ncol(x), ncol(x))
+    UnifracMat <- matrix(NA_real_, ncol(x), ncol(x))
     rownames(UnifracMat) <- colnames(UnifracMat) <- colnames(x)
     # Matrix-assign lower-triangle of UnifracMat. Then coerce to dist and
     # return.
     matIndices <- matIndices <- matrix(c(vapply(spn,"[",character(1),2L),
                                          vapply(spn,"[",character(1),1L)),
                                        ncol = 2)
-    UniFracMat[matIndices] <- unlist(distlist)
+    UnifracMat[matIndices] <- unlist(distlist)
     #
     stats::as.dist(UnifracMat)
 }
@@ -350,7 +350,7 @@ unifrac_weighted_norm <- function(i, mat, tree, samplesums, edge_array,
                      resolve.root = TRUE, interactive = FALSE)
         if( !is.rooted(tree) ){
             stop("Problem automatically rooting tree. Make sure your tree ",
-                 "is rooted before attempting UniFrac calculation. See ",
+                 "is rooted before attempting Unifrac calculation. See ",
                  "?ape::root")
         }
     }
