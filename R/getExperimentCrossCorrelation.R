@@ -295,7 +295,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
          " numeric values. Choose categorical method for 'method'.",
          call. = FALSE)
-  } else if (method %in% categorical_methods && !is.factor(assay)) {
+  } else if (method %in% categorical_methods && !is.character(assay)) {
     # If there are no factor values, give an error
     stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
          " factor values. Choose numeric method for 'method'.",
@@ -351,33 +351,31 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   } 
   # If method is categorical
   else if (method == "categorical") {
-    # Loop through all the features from assay1
-    for (varname in colnames(assay1)) {
-      # Loop through all the features from assay2
-      for (lev in colnames(assay2)) {
-        # Get all the values of individual features
-        xvec <- assay1[, varname]
-        yvec <- assay2[, lev]
+    
+    correlations <- apply(assay2, 2, function(yi) {
+      # Loop over every feature in assay1
+      temp <- apply(assay1, 2, function(xi) {
         
         # Keep only those samples that have values in both features
-        keep <- rowSums(is.na(cbind(xvec, yvec))) == 0
-        xvec <- xvec[keep]
-        yvec <- yvec[keep]
+        keep <- rowSums(is.na(cbind(xi, yi))) == 0
+        xi <- xi[keep]
+        yi <- yi[keep]
         
-        # Number of data-annotation samples for
-        # calculating the correlations
-        n <- sum(keep)
         # Calculate cross-correlation using Goorma and Kruskal tau
-        correlations[varname, lev] <- .calculate_gktau(xvec, yvec) 
-      }
-    }
+        .calculate_gktau(xi, yi) 
+      })
+    })
+    p_values <- NULL
+    p_values_adjusted <- NULL
   }
   
   # If there are p_values that are not NA, adjust them
-  if (!all(is.na(p_values))) {
+  if (!all(is.na(p_values)) && !is.null(p_values_adjusted)) {
     # Corrected p-values
     p_values_adjusted <- matrix(p.adjust(p_values, method=p_adj_method), nrow=nrow(p_values))
     dimnames(p_values_adjusted) <- dimnames(p_values)
+  } else{
+    p_values_adjusted <- NULL
   }
   
   return(list(correlations = correlations, 
@@ -394,13 +392,17 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                                 cor_threshold, 
                                 sort,
                                 assay1, assay2, filter_self_correlations){
+  if( is.null(p_values_adjusted) ){
+    p_adj_threshold <- NULL
+  }
+  
   # Filter
   if (!is.null(p_adj_threshold) || !is.null(cor_threshold)) {
     # Filter by adjusted p-values and correlations
     features1_p_value <- features1_p_value <- features1_correlation <- features1_correlation <- NULL
     # Which features have more adjusted p-values under the threshold than the 
     # 'n_signif' specifies
-    if (!is.null(p_adj_threshold)) {
+    if (!is.null(p_adj_threshold) ) {
       p_adj_under_th <- p_values_adjusted < p_adj_threshold
       features1_p_value <- rowSums(p_adj_under_th, na.rm = TRUE) >= n_signif
       features2_p_value <- colSums(p_adj_under_th, na.rm = TRUE) >= n_signif
@@ -408,8 +410,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     # Which features have correlation over correlation threshold?
     if (!is.null(cor_threshold)) {
       corr_over_th <- abs(correlations) > cor_threshold | abs(correlations) < cor_threshold
-      features1_correlation <- rowSums(p_adj_under_th, na.rm = TRUE) >= n_signif
-      features2_correlation <- colSums(p_adj_under_th, na.rm = TRUE) >= n_signif
+      features1_correlation <- rowSums(corr_over_th, na.rm = TRUE) >= n_signif
+      features2_correlation <- colSums(corr_over_th, na.rm = TRUE) >= n_signif
     }
     # Combine results from previous steps
     if (!is.null(p_adj_threshold) && !is.null(cor_threshold)) {
@@ -431,11 +433,21 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       colnames <- colnames(correlations)[features2]
       # Subset correlations, p_values, and adjusted p_values table
       correlations <- matrix(correlations[features1, features2, drop=FALSE], nrow=sum(features1))
-      p_values <- matrix(p_values[features1, features2, drop=FALSE], nrow=sum(features1))
-      p_values_adjusted <- matrix(p_values_adjusted[features1, features2, drop=FALSE], nrow=sum(features1))
-      # Add row and column names
-      rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
-      colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
+      
+      if(!is.null(p_values) && !is.null(p_values_adjusted) ){
+        p_values <- matrix(p_values[features1, features2, drop=FALSE], nrow=sum(features1))
+        p_values_adjusted <- matrix(p_values_adjusted[features1, features2, drop=FALSE], nrow=sum(features1))
+        
+        # Add row and column names
+        rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
+        colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
+      } else{
+        # Add row and column names
+        rownames(correlations) <- rownames
+        colnames(correlations) <- colnames
+      }
+      
+      
       
       # If sort was specified and there is more than 1 feature left in both feature sets
       if (sort && sum(features1) >= 2 && sum(features2) >= 2) {
@@ -454,11 +466,19 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
         
         # Order the tables based on order of hierarchical clustering
         correlations <- correlations[row_index, col_index]
-        p_values <- p_values[row_index, col_index]
-        p_values_adjusted <- p_values_adjusted[row_index, col_index]
-        # Add column and rownames
-        rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
-        colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
+        
+        if(!is.null(p_values) && !is.null(p_values_adjusted) ){
+          p_values <- p_values[row_index, col_index]
+          p_values_adjusted <- p_values_adjusted[row_index, col_index]
+          
+          # Add column and rownames
+          rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
+          colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
+        } else{
+          # Add column and rownames
+          rownames(correlations) <- rownames
+          colnames(correlations) <- colnames
+        }
       }
     } 
     # If there were no significant correlations, give a message
