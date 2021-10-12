@@ -228,24 +228,24 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
              filter_self_correlations = FALSE,
              ...){
         ############################## INPUT CHECK #############################
-        if( !(class(y) == "SummarizedExperiment" || class(y) == "TreeSummarizedExperiment") ||
-            !( is.character(experiment2) && experiment2 %in% names(altExps(x))  || 
-            is.numeric(experiment2) && experiment2 <= length(altExps(x)) ||
-            is.null(experiment2) ) ){
-          stop("'experiment2' must be SE or TreeSE object, or numeric or character value specifying", 
+        if( !(class(y) == "SummarizedExperiment" || class(y) == "TreeSummarizedExperiment" ||
+            (is.character(y) && y %in% names(altExps(x)))  || 
+            (is.numeric(y) && y <= length(altExps(x))) ||
+            is.null(y) ) ){
+          stop("'y' must be SE or TreeSE object, or numeric or character value specifying", 
                " experiment in altExps(x) or it must be NULL.", call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
         # Fetch data sets and create a MAE object
         exp1 <- x
         # If experiment2 is NULL, then experiment1 == experiment2
-        if( is.null(experiment2) ){
+        if( is.null(y) ){
           exp2 <- exp1
           x <- MultiAssayExperiment::MultiAssayExperiment(experiments = ExperimentList(exp1 = exp1))
           exp2_num <- 1
           
-        } else if ( is.character(experiment2) ){
-          exp2 <- altExps(x)[[experiment2]]
+        } else if ( is.character(y) ){
+          exp2 <- altExps(x)[[y]]
           x <- MultiAssayExperiment::MultiAssayExperiment(experiments = ExperimentList(exp1 = exp1, exp2 = exp2))
           exp2_num <- 2
         } else {
@@ -331,7 +331,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     names(correlations) <- feature_names
     names(p_values) <- feature_names
     
-    # Convert frist to data frame and then to matrix
+    # Convert first to data frame and then to matrix
     correlations <- as.matrix(as.data.frame(correlations, check.names = FALSE))
     p_values <- as.matrix(as.data.frame(p_values, check.names = FALSE))
     
@@ -357,7 +357,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   }
   
   # If there are p_values that are not NA, adjust them
-  if (!all(is.na(p_values)) && !is.null(p_values_adjusted)) {
+  if ( !is.null(p_values) ) {
     # Corrected p-values
     p_values_adjusted <- matrix(p.adjust(p_values, method=p_adj_method), nrow=nrow(p_values))
     dimnames(p_values_adjusted) <- dimnames(p_values)
