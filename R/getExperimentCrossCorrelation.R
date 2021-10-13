@@ -191,18 +191,15 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         .cor_test_data_type(assay1, method)
         .cor_test_data_type(assay2, method)
         # Calculate correlations
-        results <- .calculate_correlation(assay1, assay2, method, p_adj_method)
-        correlations <- results$correlations
-        p_values <- results$p_values
-        p_values_adjusted <- results$p_values_adjusted
+        result <- .calculate_correlation(assay1, assay2, method, p_adj_method)
         # Do filtering
-        result <- .correlation_filter(correlations, 
-                                      p_values, 
-                                      p_values_adjusted, 
+        result <- .correlation_filter(result, 
                                       p_adj_threshold,
                                       cor_threshold,
                                       sort,
                                       assay1, assay2, filter_self_correlations)
+        # Do sorting
+        result <- .correlation_sort(result, sort)
         # Matrix or table?
         if (mode == "table") {
           result <- .correlation_matrix_to_table(result)
@@ -365,24 +362,27 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     p_values_adjusted <- NULL
   }
   
-  return(list(correlations = correlations, 
-              p_values = p_values, 
-              p_values_adjusted = p_values_adjusted))
+  return(list(cor = correlations, 
+              pval = p_values, 
+              p_adj = p_values_adjusted))
 }
 
 ############################## .correlation_filter #############################
-.correlation_filter <- function(correlations,
-                                p_values,
-                                p_values_adjusted,
+.correlation_filter <- function(result,
                                 p_adj_threshold,
                                 cor_threshold, 
                                 sort,
                                 assay1, assay2, filter_self_correlations){
+  # Fetch data
+  correlations <- result$correlations
+  p_values <- result$pval
+  p_values_adjusted <- result$p_adj
+  
   if( is.null(p_values_adjusted) ){
     p_adj_threshold <- NULL
   }
   
-  # Filter
+  # Filter if thresholds are specified
   if (!is.null(p_adj_threshold) || !is.null(cor_threshold)) {
     # Filter by adjusted p-values and correlations
     features1_p_value <- features1_p_value <- features1_correlation <- features1_correlation <- NULL
@@ -398,7 +398,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       features1_correlation <- rowSums(corr_over_th, na.rm = TRUE) > 0
       features2_correlation <- colSums(corr_over_th, na.rm = TRUE) > 0
     }
-    # Combine results from previous steps
+    # Combine results from previous steps / which features passed threshold filtering
     if (!is.null(p_adj_threshold) && !is.null(cor_threshold)) {
       features1 <- features1_p_value & features1_correlation
       features2 <- features2_p_value & features2_correlation
@@ -430,40 +430,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
         rownames(correlations) <- rownames
         colnames(correlations) <- colnames
       }
-      
-      
-      
-      # If sort was specified and there is more than 1 feature left in both feature sets
-      if (sort && sum(features1) >= 2 && sum(features2) >= 2) {
-        # Order in visually appealing order
-        tmp <- correlations
-        rownames(tmp) <- NULL
-        colnames(tmp) <- NULL
-        # Do hierarchical clustering
-        row_index <- hclust(as.dist(1 - cor(t(tmp),
-                                       use="pairwise.complete.obs")))$order
-        col_index <- hclust(as.dist(1 - cor(tmp,
-                                       use="pairwise.complete.obs")))$order
-        # Get the order of features from hiearchical clustering
-        rownames <- rownames(correlations)[row_index]
-        colnames <- colnames(correlations)[col_index]
-        
-        # Order the tables based on order of hierarchical clustering
-        correlations <- correlations[row_index, col_index]
-        
-        if(!is.null(p_values) && !is.null(p_values_adjusted) ){
-          p_values <- p_values[row_index, col_index]
-          p_values_adjusted <- p_values_adjusted[row_index, col_index]
-          
-          # Add column and rownames
-          rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
-          colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
-        } else{
-          # Add column and rownames
-          rownames(correlations) <- rownames
-          colnames(correlations) <- colnames
-        }
-      }
     } 
     # If there were no significant correlations, give a message
     else {
@@ -471,16 +437,58 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       correlations <- p_values <- p_values_adjusted <- NULL
     }
   }
-  res <- list(cor=correlations, pval=p_values, p.adj=p_values_adjusted)
+  res <- list(cor=correlations, pval=p_values, p_adj=p_values_adjusted)
   # Filter self correlations if it's specified
-  if (nrow(assay1) == nrow(assay2) && ncol(assay1) == ncol(assay2) && filter_self_correlations) {
+  if (rownames(assay1) == rownames(assay2) && colnames(assay1) == colnames(assay2) && filter_self_correlations) {
     diag(res$cor) <- diag(res$pval) <- diag(res$p.adj) <- NA
   }
   return(res)
 }
 
+.correlation_sort <- function(result, sort){
+  # Fetch data
+  correlations <- result$cor
+  p_values <- result$pval
+  p_values_adjusted <- result$p_adj
+  
+  # If sort was specified and there is more than 1 feature left in both feature sets
+  if (sort && nrow(correlations) >= 2 && ncol(correlations) >= 2) {
+    # Order in visually appealing order
+    tmp <- correlations
+    rownames(tmp) <- NULL
+    colnames(tmp) <- NULL
+    # Do hierarchical clustering
+    row_index <- hclust(as.dist(1 - cor(t(tmp),
+                                        use="pairwise.complete.obs")))$order
+    col_index <- hclust(as.dist(1 - cor(tmp,
+                                        use="pairwise.complete.obs")))$order
+    # Get the order of features from hierarchical clustering
+    rownames <- rownames(correlations)[row_index]
+    colnames <- colnames(correlations)[col_index]
+    
+    # Order the tables based on order of hierarchical clustering
+    correlations <- correlations[row_index, col_index]
+    
+    if(!is.null(p_values) && !is.null(p_values_adjusted) ){
+      p_values <- p_values[row_index, col_index]
+      p_values_adjusted <- p_values_adjusted[row_index, col_index]
+      
+      # Add column and rownames
+      rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
+      colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
+    } else{
+      # Add column and rownames
+      rownames(correlations) <- rownames
+      colnames(correlations) <- colnames
+    }
+  }
+  return(list(cor = correlations, 
+              pval = p_values, 
+              p_adj = p_values_adjusted))
+}
+
 ######################### .correlation_matrix_to_table #########################
-.correlation_matrix_to_table <- function(res) {
+.correlation_matrix_to_table <- function(res){
   # Melt correlation table
   ctab <- ID <- NULL
   if (!is.null(res$cor)) {
