@@ -12,7 +12,7 @@ getExperimentCrossCorrelation(
   experiment2 = 2,
   abund_values1 = "counts",
   abund_values2 = "counts",
-  method = "spearman",
+  method = c("categorical", "kendall", "pearson", "spearman"),
   mode = "table",
   p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", "holm", "hommel",
     "none"),
@@ -20,6 +20,7 @@ getExperimentCrossCorrelation(
   cor_threshold = NULL,
   sort = FALSE,
   filter_self_correlations = FALSE,
+  verbose = TRUE,
   ...
 )
 
@@ -29,7 +30,7 @@ getExperimentCrossCorrelation(
   experiment2 = 2,
   abund_values1 = "counts",
   abund_values2 = "counts",
-  method = c("categorical", "pearson", "spearman"),
+  method = c("categorical", "kendall", "pearson", "spearman"),
   mode = "table",
   p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", "holm", "hommel",
     "none"),
@@ -37,6 +38,7 @@ getExperimentCrossCorrelation(
   cor_threshold = NULL,
   sort = FALSE,
   filter_self_correlations = FALSE,
+  verbose = TRUE,
   ...
 )
 
@@ -45,7 +47,7 @@ getExperimentCrossCorrelation(
   y = NULL,
   abund_values1 = "counts",
   abund_values2 = "counts",
-  method = "spearman",
+  method = c("categorical", "kendall", "pearson", "spearman"),
   mode = "table",
   p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", "holm", "hommel",
     "none"),
@@ -107,6 +109,10 @@ between experiment itself is tested, i.e., when input is \code{MAE} and
 \code{experiment1 == experiment2} or when input is \code{MAE} and
 \code{experiment2 = NULL}.
 (By default: \code{filter_self_correlations = FALSE})}
+
+\item{verbose}{Verbose}
+
+\item{...}{Additional arguments.}
 }
 \value{
 Matrix or table. ##############################################################

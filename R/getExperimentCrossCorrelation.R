@@ -51,6 +51,11 @@
 #'    \code{experiment2 = NULL}.
 #'    (By default: \code{filter_self_correlations = FALSE})
 #' 
+#' @param verbose Verbose
+#'    
+#' @param ... Additional arguments.
+#'    
+#'    
 #' @details
 #' Calculate cross-correlations between features of two experiments. 
 #'
@@ -101,7 +106,8 @@ setGeneric("getExperimentCrossCorrelation", signature = c("x"),
                     p_adj_threshold = 0.05,
                     cor_threshold = NULL,
                     sort = FALSE,
-                    filter_self_correlations = FALSE, 
+                    filter_self_correlations = FALSE,
+                    verbose = TRUE,
                     ...)
              standardGeneric("getExperimentCrossCorrelation"))
 
@@ -191,17 +197,36 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         .cor_test_data_type(assay1, method)
         .cor_test_data_type(assay2, method)
         # Calculate correlations
+        if(verbose){
+          message("Calculating correlations...")
+        }
         result <- .calculate_correlation(assay1, assay2, method, p_adj_method)
         # Do filtering
-        result <- .correlation_filter(result, 
-                                      p_adj_threshold,
-                                      cor_threshold,
-                                      sort,
-                                      assay1, assay2, filter_self_correlations)
+        if( p_adj_threshold || cor_threshold || filter_self_correlations ){
+          if(verbose){
+            message("Filtering results...")
+          }
+          result <- .correlation_filter(result, 
+                                        p_adj_threshold,
+                                        cor_threshold,
+                                        sort,
+                                        assay1, 
+                                        assay2, 
+                                        filter_self_correlations)
+          
+        }
         # Do sorting
-        result <- .correlation_sort(result, sort)
+        if(sort){
+          if(verbose){
+            message("Sorting results...")
+          }
+          result <- .correlation_sort(result, sort)
+        }
         # Matrix or table?
         if (mode == "table") {
+          if(verbose){
+            message("Converting matrices into table...")
+          }
           result <- .correlation_matrix_to_table(result)
         }
         return(result)
@@ -374,7 +399,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                                 sort,
                                 assay1, assay2, filter_self_correlations){
   # Fetch data
-  correlations <- result$correlations
+  correlations <- result$cor
   p_values <- result$pval
   p_values_adjusted <- result$p_adj
   
@@ -417,19 +442,19 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       colnames <- colnames(correlations)[features2]
       # Subset correlations, p_values, and adjusted p_values table
       correlations <- matrix(correlations[features1, features2, drop=FALSE], nrow=sum(features1))
+      # Add row and column names to only correlation matrix
+      rownames(correlations) <- rownames
+      colnames(correlations) <- colnames
       
+      # If p_values are not NULL
       if(!is.null(p_values) && !is.null(p_values_adjusted) ){
+        # Subset
         p_values <- matrix(p_values[features1, features2, drop=FALSE], nrow=sum(features1))
         p_values_adjusted <- matrix(p_values_adjusted[features1, features2, drop=FALSE], nrow=sum(features1))
-        
-        # Add row and column names
-        rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
-        colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
-      } else{
-        # Add row and column names
-        rownames(correlations) <- rownames
-        colnames(correlations) <- colnames
-      }
+        # Add row and column names to all the matrices
+        rownames(p_values_adjusted) <- rownames(p_values) <- rownames
+        colnames(p_values_adjusted) <- colnames(p_values) <- colnames
+      } 
     } 
     # If there were no significant correlations, give a message
     else {
@@ -437,12 +462,21 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       correlations <- p_values <- p_values_adjusted <- NULL
     }
   }
-  res <- list(cor=correlations, pval=p_values, p_adj=p_values_adjusted)
+  
   # Filter self correlations if it's specified
-  if (rownames(assay1) == rownames(assay2) && colnames(assay1) == colnames(assay2) && filter_self_correlations) {
-    diag(res$cor) <- diag(res$pval) <- diag(res$p.adj) <- NA
+  if ( identical(assay1, assay2) && filter_self_correlations ) {
+    # If p_values are not NULL
+    if(!is.null(p_values) && !is.null(p_values_adjusted) ){
+      # Remove diagonal values from all the matrices
+      diag(correlations) <- diag(p_values) <- diag(p_values_adjusted) <- NA
+    } else{
+      # Remove diagonal values only from correlation matrix
+      diag(correlations) <- NA
+    }
   }
-  return(res)
+  return(list(cor = correlations, 
+              pval = p_values, 
+              p_adj = p_values_adjusted))
 }
 
 .correlation_sort <- function(result, sort){
@@ -466,20 +500,19 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     rownames <- rownames(correlations)[row_index]
     colnames <- colnames(correlations)[col_index]
     
-    # Order the tables based on order of hierarchical clustering
+    # Order the correlation matrix  based on order of hierarchical clustering
     correlations <- correlations[row_index, col_index]
+    # Add column and rownames
+    rownames(correlations) <- rownames
+    colnames(correlations) <- colnames
     
+    # Oder also p-values if they are not NULL
     if(!is.null(p_values) && !is.null(p_values_adjusted) ){
       p_values <- p_values[row_index, col_index]
       p_values_adjusted <- p_values_adjusted[row_index, col_index]
-      
       # Add column and rownames
-      rownames(p_values_adjusted) <- rownames(p_values) <- rownames(correlations) <- rownames
-      colnames(p_values_adjusted) <- colnames(p_values) <- colnames(correlations) <- colnames
-    } else{
-      # Add column and rownames
-      rownames(correlations) <- rownames
-      colnames(correlations) <- colnames
+      rownames(p_values_adjusted) <- rownames(p_values) <- rownames
+      colnames(p_values_adjusted) <- colnames(p_values) <- colnames
     }
   }
   return(list(cor = correlations, 
@@ -500,17 +533,17 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
   
     # Melt p-values and add them to the melted correlation table
     # If there are adjusted p_values
-    if (!is.null(res$p.adj)) {
-      ctab2 <- as.data.frame(res$p.adj)
-      ctab2$ID <- rownames(res$p.adj)
+    if (!is.null(res$p_adj)) {
+      ctab2 <- as.data.frame(res$p_adj)
+      ctab2$ID <- rownames(res$p_adj)
       ctab2 <- reshape2::melt(ctab2, "ID")
-      colnames(ctab2) <- c("X1", "X2", "p.adj")
-      ctab2$p.adj <- as.numeric(as.character(ctab2$p.adj))
+      colnames(ctab2) <- c("X1", "X2", "p_adj")
+      ctab2$p_adj <- as.numeric(as.character(ctab2$p_adj))
       
-      ctab <- cbind(ctab, ctab2$p.adj)
-      colnames(ctab) <- c("X1", "X2", "Correlation", "p.adj")
-      ctab <- ctab[order(ctab$p.adj), ]
-      colnames(ctab) <- c("X1", "X2", "Correlation", "p.adj")
+      ctab <- cbind(ctab, ctab2$p_adj)
+      colnames(ctab) <- c("X1", "X2", "Correlation", "p_adj")
+      ctab <- ctab[order(ctab$p_adj), ]
+      colnames(ctab) <- c("X1", "X2", "Correlation", "p_adj")
       
     } 
     # If there are only p-values that are not adjusted
@@ -523,7 +556,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       
       ctab <- cbind(ctab, ctab2$value)
       ctab <- ctab[order(-abs(ctab$Correlation)), ]
-      colnames(ctab) <- c("X1", "X2", "Correlation", "pvalue")
+      colnames(ctab) <- c("X1", "X2", "Correlation", "pval")
     }
   
     # Convert feature names into characters
@@ -536,10 +569,10 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     ctab <- ctab[!is.na(ctab$Correlation), ]
     
     # Order the table by p-value
-    if ("p.adj" %in% colnames(ctab)) {
-      ctab <- ctab[order(ctab$p.adj), ]
-    } else if ("pvalue" %in% colnames(ctab)) {
-      ctab <- ctab[order(ctab$pvalue), ]
+    if ("p_adj" %in% colnames(ctab)) {
+      ctab <- ctab[order(ctab$p_adj), ]
+    } else if ("pval" %in% colnames(ctab)) {
+      ctab <- ctab[order(ctab$pval), ]
     }
   }
   ctab
