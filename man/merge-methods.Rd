@@ -33,7 +33,7 @@ returned unchanged.}
 
 \item{archetype}{Of each level of \code{f}, which element should be regarded
 as the archetype and metadata in the columns or rows kept, while merging?
-This can be single interger value or an integer vector of the same length
+This can be single integer value or an integer vector of the same length
 as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
 element encountered per factor level will be kept)}
 
@@ -62,6 +62,10 @@ chosen dimension. Metadata from the \code{rowData} or \code{colData} are
 retained as defined by \code{archetype}.
 }
 \details{
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are
+agglomerated, i.e.. summed up. Other than counts / absolute values might lead
+to meaningless values.
+
 These functions are similar to
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 However, additional support for \code{TreeSummarizedExperiment} was added and

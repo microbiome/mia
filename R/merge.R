@@ -4,6 +4,10 @@
 #' \code{SummarizedExperiment} as defined by a \code{factor} alongside the
 #' chosen dimension. Metadata from the \code{rowData} or \code{colData} are
 #' retained as defined by \code{archetype}.
+#' 
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are 
+#' agglomerated, i.e.. summed up. Other than counts / absolute values might lead
+#' to meaningless values. 
 #'
 #' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
 #'   a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -15,7 +19,7 @@
 #'
 #' @param archetype Of each level of \code{f}, which element should be regarded
 #'   as the archetype and metadata in the columns or rows kept, while merging?
-#'   This can be single interger value or an integer vector of the same length
+#'   This can be single integer value or an integer vector of the same length
 #'   as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
 #'   element encountered per factor level will be kept)
 #'   
@@ -179,7 +183,7 @@ setGeneric("mergeCols",
 }
 
 #' @importFrom S4Vectors SimpleList
-#' @importFrom scuttle sumCountsAcrossCells
+#' @importFrom scuttle summarizeAssayByGroup
 .merge_cols <- function(x, f, archetype = 1L, ...){
     # input check
     f <- .norm_f(ncol(x), f, "columns")
@@ -192,12 +196,16 @@ setGeneric("mergeCols",
     col_data <- colData(x)[element_pos,,drop=FALSE]
     # merge assays
     assays <- assays(x)
-    assays <- S4Vectors::SimpleList(lapply(assays,
-                                           scuttle::sumCountsAcrossCells,
-                                           ids = f,
-                                           subset_row = NULL,
-                                           subset_col = NULL,
-                                           ...))
+    assays <- S4Vectors::SimpleList(lapply(assays, FUN = function(mat, ...){
+        temp <- scuttle::summarizeAssayByGroup(mat,
+                                               ids = f,
+                                               subset.row = NULL,
+                                               subset.col = NULL,
+                                               ...)
+        # "sum" includes agglomerated (summed up) data
+        mat <- assay(temp, "sum")
+        return(mat)
+    }))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[,.get_element_pos(f, archetype = archetype)]
