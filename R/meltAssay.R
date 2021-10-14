@@ -180,12 +180,9 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
             stop("'sample_name' must be a single non-empty character value.",
                  call. = FALSE)
         }
-        # check if names are duplicated, and if they are, change
+        # check if rownames are duplicated, and if they are, modify
         if( any(duplicated(rownames(x))) ){
-            rownames(x) <- make.names(rownames(x))
-        }
-        if( any(duplicated(colnames(x))) ){
-            colnames(x) <- make.names(colnames(x))
+            rownames(x) <- getTaxonomyLabels(x)
         }
         # check selected colnames
         add_row_data <- .norm_add_row_data(add_row_data, x, feature_name)
