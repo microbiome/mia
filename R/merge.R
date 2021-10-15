@@ -210,6 +210,8 @@ setGeneric("mergeCols",
     # merge to result
     x <- x[,.get_element_pos(f, archetype = archetype)]
     assays(x, withDimnames = FALSE) <- assays
+    # Change colnames to group names 
+    colnames(x) <- colnames(assays[[1]])
     x
 }
 
