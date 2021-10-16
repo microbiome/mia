@@ -182,7 +182,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
         }
         # check if rownames are duplicated, and if they are, modify
         if( any(duplicated(rownames(x))) ){
-            rownames(x) <- getTaxonomyLabels(x)
+            rownames(x) <- make.unique(rownames(x))
             warning("rownames(x) included duplicates.",
                     " rownames(x) are made unique. ",
                     call. = FALSE)
