@@ -44,4 +44,23 @@ test_that("calculateDistance", {
                         exprs_values = "counts",
                         tree = rowTree(esophagus))
     expect_named(reducedDims(esophagus),"UniFrac")
+    # Test overlap
+    tse <- enterotype
+    overlap <- calculateOverlap(tse, detection = 3)
+    expect_equal(class(overlap), "dist")
+    overlap <- as.matrix(overlap)
+    expect_equal(nrow(overlap), ncol(assay(tse)))
+    expect_equal(nrow(overlap), ncol(overlap))
+    expect_error(calculateOverlap(tse, detection = "test"))
+    expect_error(calculateOverlap(tse, detection = TRUE))
+    expect_error(calculateOverlap(tse, abund_values = "test"))
+    esophagus <- transformSamples(esophagus, method = "relabundance")
+    overlap <- as.matrix(calculateOverlap(esophagus, abund_values = "relabundance", detection = 0.05))
+    dimnames(overlap) <- NULL
+    # Reference values from microbiome::overlap(esophagus, detection = 0.05)
+    col1 <- c(0.0000000, 0.6572394, 0.5434127)
+    col2 <- c(0.6572394, 0.0000000, 0.4849852)
+    col3 <- c(0.5434127, 0.4849852, 0.0000000)
+    test <- matrix(c(col1, col2, col3), ncol = 3)
+    expect_equal(round(overlap,7), round(test,7))
 })
