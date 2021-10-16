@@ -147,17 +147,26 @@ setGeneric("mergeCols",
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)
-    assays <- S4Vectors::SimpleList(lapply(names(assays), .calculate_merge_row_values, 
-                                           x = x, f = f, ...))
+    assays <- S4Vectors::SimpleList(lapply(assays, FUN = function(mat, ...){
+        .check_assays_for_merge
+        temp <- scuttle::sumCountsAcrossFeatures(mat, 
+                                                 ids = f, 
+                                                 subset_row = NULL, 
+                                                 subset_col = NULL, 
+                                                 ...)
+        return(temp)
+    }))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]
     assays(x, withDimnames = FALSE) <- assays
+    # Change rownames to group names 
+    rownames(x) <- rownames(assays[[1]])
     x
 }
 
 #' @importFrom scuttle sumCountsAcrossFeatures
-.calculate_merge_row_values <- function(assay_name, x, f, ...){
+.check_assays_for_merge <- function(assay_name, x, f, ...){
     assay <- assay(x, assay_name)
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
@@ -174,11 +183,6 @@ setGeneric("mergeCols",
                 " with agglomerated data.",
                 call. = FALSE)
     }
-    assay <- scuttle::sumCountsAcrossFeatures(assay, 
-                                              ids = f, 
-                                              subset_row = NULL, 
-                                              subset_col = NULL, 
-                                              ...)
     return(assay)
 }
 
@@ -197,6 +201,7 @@ setGeneric("mergeCols",
     # merge assays
     assays <- assays(x)
     assays <- S4Vectors::SimpleList(lapply(assays, FUN = function(mat, ...){
+        .check_assays_for_merge
         temp <- scuttle::summarizeAssayByGroup(mat,
                                                ids = f,
                                                subset.row = NULL,
