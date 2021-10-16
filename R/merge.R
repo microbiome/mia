@@ -201,6 +201,7 @@ setGeneric("mergeCols",
                                                ids = f,
                                                subset.row = NULL,
                                                subset.col = NULL,
+                                               statistics = "sum",
                                                ...)
         # "sum" includes agglomerated (summed up) data
         mat <- assay(temp, "sum")
