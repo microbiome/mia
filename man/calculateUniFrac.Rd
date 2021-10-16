@@ -15,7 +15,7 @@
   BPPARAM = SerialParam()
 )
 
-\S4method{calculateUniFrac}{TreeSummarizedExperiment,missing}(x, abund_values = "counts", transposed = FALSE, ...)
+\S4method{calculateUniFrac}{TreeSummarizedExperiment,missing}(x, exprs_values = "counts", transposed = FALSE, ...)
 
 runUniFrac(
   x,
@@ -56,7 +56,7 @@ always normalized by total branch-length, and so this value is ignored when
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether the UniFrac calculation should be parallelized.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
@@ -86,7 +86,7 @@ calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)
 # be disabled
 esophagus <- runMDS(esophagus, FUN = calculateUniFrac, name = "UniFrac",
                     tree = rowTree(esophagus),
-                    abund_values = "counts",
+                    exprs_values = "counts",
                     ntop = nrow(esophagus))
 reducedDim(esophagus)
 }

@@ -7,7 +7,7 @@
 #' @param x a numeric matrix or a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
@@ -52,7 +52,7 @@
 #' head(jsd)
 #'
 #' enterotype <- runMDS(enterotype, FUN = calculateJSD, name = "JSD",
-#'                      abund_values = "counts")
+#'                      exprs_values = "counts")
 #' head(reducedDim(enterotype))
 #' head(attr(reducedDim(enterotype),"eig"))
 #' attr(reducedDim(enterotype),"GOF")
@@ -76,8 +76,8 @@ setMethod("calculateJSD", signature = c(x = "ANY"),
 #'
 #' @export
 setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, abund_values)
+    function(x, exprs_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, exprs_values)
         if(!transposed){
             mat <- t(mat)
         }

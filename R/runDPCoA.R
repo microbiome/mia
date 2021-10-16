@@ -30,7 +30,7 @@
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
 #' @param dimred String or integer scalar specifying the existing dimensionality
@@ -131,10 +131,10 @@ setMethod("calculateDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 #' @importFrom ape cophenetic.phylo
 #' @rdname runDPCoA
 setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
-    function(x, ..., abund_values = "counts", dimred = NULL, n_dimred = NULL)
+    function(x, ..., exprs_values = "counts", dimred = NULL, n_dimred = NULL)
     {
         .require_package("ade4")
-        mat <- assay(x, abund_values)
+        mat <- assay(x, exprs_values)
         dist <- cophenetic.phylo(rowTree(x))
         calculateDPCoA(mat, dist, ...)
     }

@@ -23,13 +23,13 @@ runRDA(x, ...)
 
 \S4method{calculateCCA}{ANY}(x, formula, variables, scale = TRUE)
 
-\S4method{calculateCCA}{SummarizedExperiment}(x, formula, ..., abund_values = "counts")
+\S4method{calculateCCA}{SummarizedExperiment}(x, formula, ..., exprs_values = "counts")
 
 \S4method{runCCA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "CCA")
 
 \S4method{calculateRDA}{ANY}(x, formula, variables, scale = TRUE)
 
-\S4method{calculateRDA}{SummarizedExperiment}(x, formula, ..., abund_values = "counts")
+\S4method{calculateRDA}{SummarizedExperiment}(x, formula, ..., exprs_values = "counts")
 
 \S4method{runRDA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "RDA")
 }
@@ -56,7 +56,7 @@ consider only some of them.}
 
 \item{scale}{Logical scalar, should the expression values be standardized?}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment

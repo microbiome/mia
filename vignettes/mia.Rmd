@@ -219,7 +219,7 @@ altExp(se,"Genus") <- runMDS(altExp(se,"Genus"),
                              method = "bray",
                              name = "BrayCurtis", 
                              ncomponents = 5, 
-                             abund_values = "counts", 
+                             exprs_values = "counts", 
                              keep_dist = TRUE)
 ```
 

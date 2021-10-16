@@ -29,7 +29,7 @@ calculateDMN(x, ...)
   ...
 )
 
-\S4method{calculateDMN}{SummarizedExperiment}(x, abund_values = "counts", transposed = FALSE, ...)
+\S4method{calculateDMN}{SummarizedExperiment}(x, exprs_values = "counts", transposed = FALSE, ...)
 
 runDMN(x, name = "DMN", ...)
 
@@ -58,7 +58,7 @@ calculateDMNgroup(x, ...)
 \S4method{calculateDMNgroup}{SummarizedExperiment}(
   x,
   variable,
-  abund_values = "counts",
+  exprs_values = "counts",
   transposed = FALSE,
   ...
 )
@@ -76,7 +76,7 @@ performDMNgroupCV(x, ...)
 \S4method{performDMNgroupCV}{SummarizedExperiment}(
   x,
   variable,
-  abund_values = "counts",
+  exprs_values = "counts",
   transposed = FALSE,
   ...
 )
@@ -98,7 +98,7 @@ object specifying whether the UniFrac calculation should be parallelized.}
 \item{seed}{random number seed. See
 \code{\link[DirichletMultinomial:dmn]{dmn}}}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
 \item{transposed}{Logical scalar, is x transposed with samples in rows?}

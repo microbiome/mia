@@ -27,7 +27,7 @@
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
 #' @param FUN a \code{function} or \code{character} value with a function
@@ -177,17 +177,17 @@ setMethod("calculateNMDS", "ANY", .calculate_nmds)
 #' @importFrom SummarizedExperiment assay
 #' @export
 setMethod("calculateNMDS", "SummarizedExperiment",
-    function(x, ..., abund_values = "counts", FUN = vegdist) {
-        .calculate_nmds(assay(x, abund_values), FUN = FUN, ...)
+    function(x, ..., exprs_values = "counts", FUN = vegdist) {
+        .calculate_nmds(assay(x, exprs_values), FUN = FUN, ...)
     }
 )
 
 #' @rdname runNMDS
 #' @export
 setMethod("calculateNMDS", "SingleCellExperiment",
-    function(x, ..., abund_values = "counts", dimred = NULL, n_dimred = NULL,
+    function(x, ..., exprs_values = "counts", dimred = NULL, n_dimred = NULL,
              FUN = vegdist){
-        mat <- .get_mat_from_sce(x, abund_values = abund_values,
+        mat <- .get_mat_from_sce(x, exprs_values = exprs_values,
                                  dimred = dimred, n_dimred = n_dimred)
         calculateNMDS(mat, transposed = !is.null(dimred), FUN = FUN,...)
     }
