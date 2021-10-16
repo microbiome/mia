@@ -147,15 +147,18 @@ setGeneric("mergeCols",
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)
-    assays <- S4Vectors::SimpleList(lapply(assays, FUN = function(mat, ...){
-        .check_assays_for_merge
-        temp <- scuttle::sumCountsAcrossFeatures(mat, 
-                                                 ids = f, 
-                                                 subset_row = NULL, 
-                                                 subset_col = NULL, 
-                                                 ...)
-        return(temp)
-    }))
+    mapply(.check_assays_for_merge, names(assays), assays)
+    FUN <- function(mat, f = f, ...){
+        temp <- scuttle::summarizeAssayByGroup(mat, 
+                                               ids = f, 
+                                               subset_row = NULL, 
+                                               subset_col = NULL, 
+                                               statistics = "sum",
+                                               ...)
+        mat <- assay(temp, "sum")
+        return(mat)
+    }
+    assays <- S4Vectors::SimpleList(lapply(assays, FUN, f = f, ...))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]
@@ -166,8 +169,7 @@ setGeneric("mergeCols",
 }
 
 #' @importFrom scuttle sumCountsAcrossFeatures
-.check_assays_for_merge <- function(assay_name, x, f, ...){
-    assay <- assay(x, assay_name)
+.check_assays_for_merge <- function(assay_name, assay){
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
         warning(paste0("'",assay_name,"'", " includes binary values."),
@@ -183,7 +185,6 @@ setGeneric("mergeCols",
                 " with agglomerated data.",
                 call. = FALSE)
     }
-    return(assay)
 }
 
 #' @importFrom S4Vectors SimpleList
