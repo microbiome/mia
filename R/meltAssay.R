@@ -180,6 +180,13 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
             stop("'sample_name' must be a single non-empty character value.",
                  call. = FALSE)
         }
+        # check if rownames are duplicated, and if they are, modify
+        if( any(duplicated(rownames(x))) ){
+            rownames(x) <- make.unique(rownames(x))
+            warning("rownames(x) included duplicates.",
+                    " rownames(x) are made unique. ",
+                    call. = FALSE)
+        }
         # check selected colnames
         add_row_data <- .norm_add_row_data(add_row_data, x, feature_name)
         add_col_data <- .norm_add_col_data(add_col_data, x, sample_name)
