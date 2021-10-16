@@ -197,18 +197,21 @@ setGeneric("mergeCols",
     col_data <- colData(x)[element_pos,,drop=FALSE]
     # merge assays
     assays <- assays(x)
-    assays <- S4Vectors::SimpleList(lapply(assays, FUN = function(mat, ...){
-        .check_assays_for_merge
+    mapply(.check_assays_for_merge, names(assays), assays)
+    FUN <- function(mat, ...){
         temp <- scuttle::summarizeAssayByGroup(mat,
-                                               ids = f,
-                                               subset.row = NULL,
-                                               subset.col = NULL,
                                                statistics = "sum",
                                                ...)
         # "sum" includes agglomerated (summed up) data
         mat <- assay(temp, "sum")
         return(mat)
-    }))
+    }
+    assays <- S4Vectors::SimpleList(lapply(assays,
+                                           FUN = FUN,
+                                           ids = f, 
+                                           subset.row = NULL, 
+                                           subset.col = NULL,
+                                           ...))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[,.get_element_pos(f, archetype = archetype)]
