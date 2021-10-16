@@ -18,16 +18,28 @@ object containing a tree.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to calculate the overlap.}
 
-\item{detection}{Detection threshold for absence/presence.}
+\item{detection}{A single numeric value for selecting detection threshold for
+absence/presence of features. Feature that has abundance under threshold in
+either of samples, will be discarded when evaluating overlap between samples.}
+
+\item{...}{Optional arguments not used.}
 }
 \value{
-a list of matrices
+A sample-by-sample distance matrix.
 }
 \description{
-Estimate overlap
+This function calculates overlap for all sample-pairs
+in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.
 }
 \details{
-Calculate overlap.
+This function calculates overlap between all the sample-pairs. Overlap
+reflects similarity between sample-pairs.
+
+When overlap is calculated using relative abundances, the higher the value the
+higher the similarity is, When using relative abundances, overlap value 1 means that
+all the abundances of features are equal between two samples, and 0 means that
+samples have completely different relative abundances.
 }
 \examples{
 data(esophagus)
