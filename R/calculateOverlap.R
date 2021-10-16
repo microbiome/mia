@@ -71,30 +71,25 @@ setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
         ########################### INPUT CHECK END ############################
         # Get assay
         assay <- assay(x, abund_values)
-        # Create empty matrices samples * samples
-        result <- matrix(NA, nrow = ncol(assay), ncol = ncol(assay))
         
-        # Loop through all samples, but not last one
-        for (i in seq_len(ncol(assay)-1) ) {
-          # Loop through all samples that have larger index than i --> all 
-          # combinations are went through only once
-          for (j in seq(i+1, ncol(assay)) ) {
-            # Get samples
-            sample1 <- assay[ , i]
-            sample2 <- assay[ , j]
-            
-            # Galculate overlap
-            temp_result <- .calculate_overlap(sample1, 
-                                              sample2, 
-                                              detection)
-            
-            # Store values of two samples to coordinates i,j and j,i
-            result[i, j] <- result[j, i] <- temp_result
-          }
-        }
-        # Change sample names
-        colnames(result) <- colnames(x)
-        rownames(result) <- colnames(x)
+        # All the sample pairs
+        sample_pairs <- as.matrix(expand.grid(colnames(x), colnames(x)))
+        
+        # Loop through all sample pairs
+        result <- apply(sample_pairs, 1, FUN = function(sample_pair){
+          # Get samples
+          sample1 <- assay[ , sample_pair[1]]
+          sample2 <- assay[ , sample_pair[2]]
+          # Calculate overlap
+          temp_result <- .calculate_overlap(sample1, 
+                                            sample2, 
+                                            detection)
+        })
+        # Create a matrix from result vector and give name to rownames and colnames
+        result <- matrix(result, ncol = ncol(assay))
+        colnames(result) <- colnames(assay)
+        rownames(result) <- colnames(assay)
+        
         # Convert into distances
         result <- stats::as.dist(result)
         return(result)
