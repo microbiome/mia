@@ -138,7 +138,7 @@ setGeneric("mergeCols",
 }
 
 #' @importFrom S4Vectors SimpleList
-#' @importFrom scuttle summarizeAssayByGroup
+#' @importFrom scuttle sumCountsAcrossFeatures
 .merge_rows <- function(x, f, archetype = 1L, ...){
     # input check
     f <- .norm_f(nrow(x), f)
@@ -149,17 +149,12 @@ setGeneric("mergeCols",
     # merge assays
     assays <- assays(x)
     mapply(.check_assays_for_merge, names(assays), assays)
-    FUN <- function(mat, f = f, ...){
-        temp <- scuttle::summarizeAssayByGroup(mat, 
-                                               ids = f, 
-                                               subset.row = NULL, 
-                                               subset.col = NULL, 
-                                               statistics = "sum",
-                                               ...)
-        mat <- assay(temp, "sum")
-        return(mat)
-    }
-    assays <- S4Vectors::SimpleList(lapply(assays, FUN, f = f, ...))
+    assays <- S4Vectors::SimpleList(lapply(assays,
+                                           scuttle::sumCountsAcrossFeatures,
+                                           ids = f, 
+                                           subset.row = NULL, 
+                                           subset.col = NULL,
+                                           ...))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]
