@@ -15,10 +15,11 @@
 #' @details Calculate overlap.
 #'
 #' @seealso
-#'    \code{\link[mia:calculateJSD]{calculateJSD}}
+#' \code{\link[mia:calculateJSD]{calculateJSD}}
+#' \code{\link[mia:calculateUniFrac]{calculateUniFrac}}
 #' 
 #' 
-#' @name estimateOverlap
+#' @name calculateOverlap
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -27,21 +28,21 @@
 #' data(esophagus)
 #' tse <- esophagus
 #' tse <- transformSamples(tse, method = "relabundance")
-#' overlap <- estimateOverlap(tse)
-#' head(overlap, 5)
+#' overlap <- calculateOverlap(tse, abund_values = "relabundance")
+#' overlap
 #' 
 NULL
 
 
-#' @rdname estimateOverlap
+#' @rdname calculateOverlap
 #' @export
-setGeneric("estimateOverlap", signature = c("x"),
+setGeneric("calculateOverlap", signature = c("x"),
            function(x, abund_values = "counts", detection = 0, ...)
-             standardGeneric("estimateOverlap"))
+             standardGeneric("calculateOverlap"))
 
-#' @rdname estimateOverlap
+#' @rdname calculateOverlap
 #' @export
-setMethod("estimateOverlap", signature = c(x = "SummarizedExperiment"),
+setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", detection = 0, ...){
         ############################# INPUT CHECK ##############################
         # Check abund_values
@@ -80,7 +81,8 @@ setMethod("estimateOverlap", signature = c(x = "SummarizedExperiment"),
         # Change sample names
         colnames(result) <- colnames(x)
         rownames(result) <- colnames(x)
-
+        # Convert into distances
+        result <- stats::as.dist(result)
         return(result)
     }
 )
