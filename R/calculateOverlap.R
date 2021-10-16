@@ -99,11 +99,11 @@ setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
 ################################ HELP FUNCTIONS ################################
 
 .calculate_overlap <- function (x, y, detection) {
-  # Take those taxa that have abundance over threshold
-  inds <- which(x > detection & y > detection)
-  x <- x[inds]
-  y <- y[inds]
-  # Overlap is the average of the sums of the values in each sample
-  overlap <- (sum(x) + sum(y))/2
-  return(overlap)
+    # Take those taxa that have abundance over threshold
+    inds <- which(x > detection & y > detection)
+    x <- x[inds]
+    y <- y[inds]
+    # Overlap is the average of the sums of the values in each sample
+    overlap <- (sum(x) + sum(y))/2
+    return(overlap)
 }
