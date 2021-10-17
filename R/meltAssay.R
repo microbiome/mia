@@ -180,6 +180,13 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
             stop("'sample_name' must be a single non-empty character value.",
                  call. = FALSE)
         }
+        # check if rownames are duplicated, and if they are, modify
+        if( any(duplicated(rownames(x))) ){
+            rownames(x) <- make.unique(rownames(x))
+            warning("rownames(x) included duplicates.",
+                    " rownames(x) are made unique. ",
+                    call. = FALSE)
+        }
         # check selected colnames
         add_row_data <- .norm_add_row_data(add_row_data, x, feature_name)
         add_col_data <- .norm_add_col_data(add_col_data, x, sample_name)
@@ -204,7 +211,11 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang sym
 .melt_assay <- function(x, abund_values, feature_name, sample_name, check_names = FALSE) {
-    assay(x, abund_values) %>%
+    mat <- assay(x, abund_values) %>%
+        as.matrix() 
+    rownames(mat) <- rownames(x)
+    colnames(mat) <- colnames(x)
+    mat %>%
         data.frame(check.names = check_names) %>%
         rownames_to_column(feature_name) %>%
         # SampleID is unique sample id

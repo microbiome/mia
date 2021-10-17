@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.1.17
+Version: 1.1.19
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -61,8 +61,7 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr,
-    MultiAssayExperiment
+    tidyr
 Suggests:
     testthat,
     knitr,
