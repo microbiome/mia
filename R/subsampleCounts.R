@@ -1,21 +1,22 @@
-#' Subsample Counts in a \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object
+#' Subsample Counts
 #' 
-#' \code{subsampleCounts} will randomly subsample counts in TreeSE and return either 
-#' a modified TreeSE or MAE with both unmodified and modified TreeSE which each 
+#' \code{subsampleCounts} will randomly subsample counts in 
+#' \code{SummarizedExperiment} and return the a modified object in which each 
 #' sample has same number of total observations/counts/reads. 
 #'
 #' @details
 #' Although the subsampling approach is highly debated in microbiome research, 
-#' we include the \code{subsampleCounts} function because in some instances these 
-#' can be useful. Note that the output of \code{subsampleCounts} is a modified SE/TSE.
+#' we include the \code{subsampleCounts} function because there may be some 
+#' instances where it can be used. Note that the output of \code{subsampleCounts} 
+#' is not the same as input.
 #'
 #' @param x A
-#'   \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object.
+#'   \code{SummarizedExperiment} object.
 #'
 #' @param abund_values A single character value for selecting the
-#'   \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} \code{assay} 
-#'   used for random subsampling. Only counts are useful and other transformed 
-#'   data as input will give meaningless output.
+#'   \code{SummarizedExperiment} \code{assay} used for random subsampling. 
+#'   Only counts are useful and other transformed data as input will give 
+#'   meaningless output.
 #'   
 #' @param min_size A single integer value equal to the number of counts being 
 #'   simulated this can equal to lowest number of total counts 
@@ -33,19 +34,6 @@
 #' 
 #' @param verbose Logical Default is \code{TRUE}. When \code{TRUE} an additional 
 #'   message about the random number used is printed.
-#'   
-#' @param return_type Either TreeSummarizedExperiment or MultiAssayExperiment 
-#'   If samples are removed after subsampling the input TreeSE object is 
-#'   modified. In such senario, if the return_type = MultiAssayExperiment then 
-#'   the output TreeSE is returned within a \code{MultiAssayExperiment} object 
-#'   which includes the input and modified output TreeSE as experiments within the  
-#'   \code{\link[MultiAssayExperiment:experiments]{MultiAssayExperiment::experiments}}.
-#'   However, if samples are removed after subsampling and the 
-#'   return_type = TreeSummarizedExperiment then the modified TreeSE is returned. 
-#'   
-#'   If the output does not have any samples removed then the subsampled assay 
-#'   is returned as an alternative experiment i.e. \code{altExps}.
-#'   
 #' 
 #' @param ... additional arguments not used
 #' 
@@ -62,8 +50,7 @@
 #' microbial differential abundance strategies depend upon data characteristics. 
 #' Microbiome. 2017 Dec;5(1):1-8.
 #' 
-#' @return Either a \code{TreeSummarizedExperiment} or a 
-#'   \code{MultiAssayExperiment} object
+#' @return \code{subsampleCounts} return \code{x} with subsampled data.
 #' 
 #' @author Sudarshan A. Shetty 
 #' 
@@ -99,19 +86,20 @@ setGeneric("subsampleCounts", signature = c("x"),
 #' @rdname subsampleCounts
 #' @aliases rarifyCounts
 #' @export
-setMethod("subsampleCounts", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
            seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
            name = "subsampled", verbose = TRUE, ...){
       
       warning("Subsampling/Rarefying may undermine downstream analyses",
-            "\nand have unintended consequences. Therefore, make sure",
-            "\nthis normalization is appropriate for your data. \n ",
-            call. = FALSE)
+              "\nand have unintended consequences. Therefore, make sure",
+              "\nthis normalization is appropriate for your data. \n ",
+              call. = FALSE)
       
       .check_assay_present(abund_values, x)
       if(any(assay(x, abund_values) %% 1 != 0)){
-        warning("assay contains non-integer values. Only counts table is applicable, or something...")
+        warning("assay contains non-integer values. Only counts table",
+                "\nis applicable...")
       } 
       
       if(!is.logical(verbose)){
@@ -168,7 +156,8 @@ setMethod("subsampleCounts", signature = c(x = "TreeSummarizedExperiment"),
                     "after subsampling.\n"))
       
       newassay <- newassay[rowSums2(newassay)>0,]
-      message("Returning subsampled TreeSE!")
+      message("Returning subsampled TreeSE!",
+              "The original assays are also modified")
       
       newtse <- newtse[rownames(newassay),]
       assay(newtse, name, withDimnames=FALSE) <- newassay

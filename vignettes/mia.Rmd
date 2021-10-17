@@ -197,25 +197,19 @@ tse.subsampled <- subsampleCounts(GlobalPatterns,
                                   min_size = 60000, 
                                   name = "subsampled",
                                   replace = TRUE,
-                                  seed = 1938,
-                                  return_type = "TreeSummarizedExperiment")
+                                  seed = 1938)
 tse.subsampled
 
 ```
 Alternatively, one can save both original TreeSE and subsampled TreeSE within a MultiAssayExperiment object.  
 ```{r}
-
-mae <- subsampleCounts(GlobalPatterns, 
-                       min_size = 60000, 
-                       name = "subsampled",
-                       replace = TRUE,
-                       seed = 1938,
-                       return_type = "MultiAssayExperiment")
+library(MultiAssayExperiment)
+mae <- MultiAssayExperiment(c("originalTreeSE" = GlobalPatterns,
+                              "subsampledTreeSE" = tse.subsampled))
 mae
 ```
 
 ```{r}
-library(MultiAssayExperiment)
 # To extract specifically the subsampled TreeSE
 experiments(mae)$subsampledTreeSE
 ```
@@ -278,7 +272,7 @@ are available.
 
 Functions to load data from `biom` files, `QIIME2` output, `DADA2` objects 
 [@dada2] or `phyloseq` objects are available. 
- 
+
 ```{r, message=FALSE, warning=FALSE}
 data(esophagus, package = "phyloseq")
 ```
@@ -325,7 +319,7 @@ molten_data <- meltAssay(se,
                          abund_values = "counts",
                          add_row_data = TRUE,
                          add_col_data = TRUE
-                         )
+)
 molten_data
 ```
 

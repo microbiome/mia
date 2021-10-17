@@ -4,7 +4,7 @@
 \alias{subsampleCounts}
 \alias{rarifyCounts}
 \alias{subsampleCounts,SummarizedExperiment-method}
-\title{Subsample Counts in a \code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object}
+\title{Subsample Counts}
 \usage{
 subsampleCounts(
   x,
@@ -14,7 +14,6 @@ subsampleCounts(
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
-  return_type = c("TreeSummarizedExperiment", "MultiAssayExperiment"),
   ...
 )
 
@@ -26,18 +25,17 @@ subsampleCounts(
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
-  return_type = c("TreeSummarizedExperiment", "MultiAssayExperiment"),
   ...
 )
 }
 \arguments{
 \item{x}{A
-\code{SummarizedExperiment} or \code{TreeSummarizedExperiment} object.}
+\code{SummarizedExperiment} object.}
 
 \item{abund_values}{A single character value for selecting the
-\code{SummarizedExperiment} or \code{TreeSummarizedExperiment} \code{assay}
-used for random subsampling. Only counts are useful and other transformed
-data as input will give meaningless output.}
+\code{SummarizedExperiment} \code{assay} used for random subsampling.
+Only counts are useful and other transformed data as input will give
+meaningless output.}
 
 \item{min_size}{A single integer value equal to the number of counts being
 simulated this can equal to lowest number of total counts
@@ -56,33 +54,21 @@ abundance table.}
 \item{verbose}{Logical Default is \code{TRUE}. When \code{TRUE} an additional
 message about the random number used is printed.}
 
-\item{return_type}{Either TreeSummarizedExperiment or MultiAssayExperiment
-If samples are removed after subsampling the input TreeSE object is
-modified. In such senario, if the return_type = MultiAssayExperiment then
-the output TreeSE is returned within a \code{MultiAssayExperiment} object
-which includes the input and modified output TreeSE as experiments within the
-\code{\link[MultiAssayExperiment:experiments]{MultiAssayExperiment::experiments}}.
-However, if samples are removed after subsampling and the
-return_type = TreeSummarizedExperiment then the modified TreeSE is returned.
-
-If the output does not have any samples removed then the subsampled assay
-is returned as an alternative experiment i.e. \code{altExps}.}
-
 \item{...}{additional arguments not used}
 }
 \value{
-Either a \code{TreeSummarizedExperiment} or a
-\code{MultiAssayExperiment} object
+\code{subsampleCounts} return \code{x} with subsampled data.
 }
 \description{
-\code{subsampleCounts} will randomly subsample counts in TreeSE and return either
-a modified TreeSE or MAE with both unmodified and modified TreeSE which each
+\code{subsampleCounts} will randomly subsample counts in
+\code{SummarizedExperiment} and return the a modified object in which each
 sample has same number of total observations/counts/reads.
 }
 \details{
 Although the subsampling approach is highly debated in microbiome research,
-we include the \code{subsampleCounts} function because in some instances these
-can be useful. Note that the output of \code{subsampleCounts} is a modified SE/TSE.
+we include the \code{subsampleCounts} function because there may be some
+instances where it can be used. Note that the output of \code{subsampleCounts}
+is not the same as input.
 }
 \examples{
 # When samples in TreeSE are less than specified min_size, they will be removed.
@@ -93,19 +79,10 @@ tse <- GlobalPatterns
 tse.subsampled <- subsampleCounts(tse, 
                                   min_size = 60000, 
                                   name = "subsampled", 
-                                  seed = 123,
-                                  return_type = "TreeSummarizedExperiment")
+                                  seed = 123)
 tse.subsampled
 dim(tse)
 dim(tse.subsampled)
-
-# Return MultiAssayExperiment
-mae <- subsampleCounts(tse, 
-                       min_size = 60000, 
-                       name = "subsampled",
-                       seed = 123,
-                       return_type = "MultiAssayExperiment")
-mae
 
 }
 \references{
