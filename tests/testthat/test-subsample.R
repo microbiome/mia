@@ -7,8 +7,7 @@ test_that("subsampleCounts", {
                                     min_size = 60000, 
                                     name = "subsampled",
                                     replace = TRUE,
-                                    seed = 1938,
-                                    return_type = "TreeSummarizedExperiment")
+                                    seed = 1938)
   # check class 
   expect_s4_class(tse.subsampled, "TreeSummarizedExperiment")
   expect_equal(nrow(tse.subsampled), 12403)
@@ -40,8 +39,7 @@ test_that("subsampleCounts", {
                                        min_size = 60000, 
                                        name = "subsampled",
                                        replace = FALSE,
-                                       seed = 1938,
-                                       return_type = "TreeSummarizedExperiment")
+                                       seed = 1938)
   
   # check number of features removed is correct
   expnFeaturesRemovedRp <- 6731
@@ -59,29 +57,4 @@ test_that("subsampleCounts", {
                             "31759","30678","138353","406058","1126")
   
   expect_equal(obsFeaturesRemovedRp[1:10], expFeaturesRemovedRP)
-  
-  # Check if altExp 
-  tse.altExp <- subsampleCounts(GlobalPatterns, 
-                                min_size = 5000, 
-                                name = "subsampled",
-                                replace = TRUE,
-                                seed = 1938,
-                                return_type = "TreeSummarizedExperiment")
-  expect_equal(altExpNames(tse.altExp),
-               "subsampled")
-  expect_equal(dim(altExp(tse.altExp,"subsampled")),c(6730,26))
-  
-  # MultiAssay
-  mae <- subsampleCounts(GlobalPatterns, 
-                         min_size = 60000, 
-                         name = "subsampled",
-                         replace = TRUE,
-                         seed = 1938,
-                         return_type = "MultiAssayExperiment")
-  expect_s4_class(mae, "MultiAssayExperiment")
-  expect_equal(names(mae), c("inputTreeSE","subsampledTreeSE"))
-  expect_equal(dim(experiments(mae)$subsampledTreeSE),c(12403,25))
-  # check if original treeSE is stored correctly.
-  expect_equal(dim(experiments(mae)$inputTreeSE),dim(GlobalPatterns))
-  
 })
