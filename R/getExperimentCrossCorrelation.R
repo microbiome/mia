@@ -315,81 +315,130 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
 
 ############################# .calculate_correlation ###########################
 .calculate_correlation <- function(assay1, assay2, method, p_adj_method){
-  # Create empty matrices
-  correlations <- matrix(NA, ncol(assay1), ncol(assay2))
-  rownames(correlations) <- colnames(assay1)
-  colnames(correlations) <- colnames(assay2)
-  p_values <- correlations
+  # # Create empty matrices
+  # correlations <- matrix(NA, ncol(assay1), ncol(assay2))
+  # rownames(correlations) <- colnames(assay1)
+  # colnames(correlations) <- colnames(assay2)
+  # p_values <- correlations
+  # 
+  # # Calculate correlations, different methods for numeric and categorical data
+  # if (method %in% c("kendall", "pearson","spearman")) {
+  #   # Loop over every feature in assay2. Result is a list (feature1) of lists 
+  #   # (correlations and p_values: individual feature1 vs all the feature2)
+  #   correlations_and_p_values <- apply(assay2, 2, function(yi) {
+  #     # Loop over every feature in assay1
+  #     temp <- apply(assay1, 2, function(xi) {
+  #       # Do correlation test, and store the result
+  #       # to temporary object
+  #         temp2 <- cor.test(xi, yi, 
+  #                         method=method, use="pairwise.complete.obs")
+  #         # Take only correlation and p-value
+  #         temp2 <- c(temp2$estimate, temp2$p.value)
+  #     })
+  #     # Return a list where 1st element includes all the correlation values, and
+  #     # second all thep-values
+  #     list(temp[1,], temp[2,])
+  #   })
+  #   # Store correct names
+  #   feature_names <- names(correlations_and_p_values)
+  #   # Unlist list of lists to list
+  #   correlations_and_p_values <- unlist(correlations_and_p_values, recursive = FALSE)
+  #   # Take only correlations
+  #   correlations <- correlations_and_p_values[seq(1, length(correlations_and_p_values), 2)]
+  #   # Take only p-values
+  #   p_values <- correlations_and_p_values[seq(2, length(correlations_and_p_values), 2)]
+  #   
+  #   # Unlisting changed names because otherwise there would have been duplicated names.
+  #   # Give correct names back
+  #   names(correlations) <- feature_names
+  #   names(p_values) <- feature_names
+  #   
+  #   # Convert first to data frame and then to matrix
+  #   correlations <- as.matrix(as.data.frame(correlations, check.names = FALSE))
+  #   p_values <- as.matrix(as.data.frame(p_values, check.names = FALSE))
+  #   
+  # } 
+  # # If method is categorical
+  # else if (method == "categorical") {
+  #   
+  #   correlations <- apply(assay2, 2, function(yi) {
+  #     # Loop over every feature in assay1
+  #     temp <- apply(assay1, 2, function(xi) {
+  #       
+  #       # Keep only those samples that have values in both features
+  #       keep <- rowSums(is.na(cbind(xi, yi))) == 0
+  #       xi <- xi[keep]
+  #       yi <- yi[keep]
+  #       
+  #       # Calculate cross-correlation using Goorma and Kruskal tau
+  #       .calculate_gktau(xi, yi) 
+  #     })
+  #   })
+  #   p_values <- NULL
+  #   p_values_adjusted <- NULL
+  # }
+  # 
+  # # If there are p_values that are not NA, adjust them
+  # if ( !is.null(p_values) ) {
+  #   # Corrected p-values
+  #   p_values_adjusted <- matrix(p.adjust(p_values, method=p_adj_method), nrow=nrow(p_values))
+  #   dimnames(p_values_adjusted) <- dimnames(p_values)
+  # } else{
+  #   p_values_adjusted <- NULL
+  # }
+  # 
+  # return(list(cor = correlations, 
+  #             pval = p_values, 
+  #             p_adj = p_values_adjusted))
   
-  # Calculate correlations, different methods for numeric and categorical data
-  if (method %in% c("kendall", "pearson","spearman")) {
-    # Loop over every feature in assay2. Result is a list (feature1) of lists 
-    # (correlations and p_values: individual feature1 vs all the feature2)
-    correlations_and_p_values <- apply(assay2, 2, function(yi) {
-      # Loop over every feature in assay1
-      temp <- apply(assay1, 2, function(xi) {
-        # Do correlation test, and store the result
-        # to temporary object
-          temp2 <- cor.test(xi, yi, 
-                          method=method, use="pairwise.complete.obs")
-          # Take only correlation and p-value
-          temp2 <- c(temp2$estimate, temp2$p.value)
-      })
-      # Return a list where 1st element includes all the correlation values, and
-      # second all thep-values
-      list(temp[1,], temp[2,])
-    })
-    # Store correct names
-    feature_names <- names(correlations_and_p_values)
-    # Unlist list of lists to list
-    correlations_and_p_values <- unlist(correlations_and_p_values, recursive = FALSE)
-    # Take only correlations
-    correlations <- correlations_and_p_values[seq(1, length(correlations_and_p_values), 2)]
-    # Take only p-values
-    p_values <- correlations_and_p_values[seq(2, length(correlations_and_p_values), 2)]
+    FUN_numeric <- function(feature_pair){
+      feature1 <- assay1[ , feature_pair[1]]
+      feature2 <- assay2[ , feature_pair[2]]
+      temp <- cor.test(feature1, feature2, 
+                       method=method, use="pairwise.complete.obs")
+      # Take only correlation and p-value
+      temp <- c(temp$estimate, temp$p.value)
+      return(temp)
+    }
+    FUN_categorigal <- function(feature_pair){
+      feature1 <- assay1[ , feature_pair[1]]
+      feature2 <- assay2[ , feature_pair[2]]
+      # Keep only those samples that have values in both features
+      keep <- rowSums(is.na(cbind(feature1, feature2))) == 0
+      feature1 <- feature1[keep]
+      feature2 <- feature2[keep]
+      # Calculate cross-correlation using Goorma and Kruskal tau
+      .calculate_gktau(feature1, feature2)
+    }
+    # Calculate correlations, different methods for numeric and categorical data
+    if (method %in% c("kendall", "pearson","spearman")) {
+      FUN <- FUN_numeric
+    } else {
+      FUN <- FUN_categorical
+    }
     
-    # Unlisting changed names because otherwise there would have been duplicated names.
-    # Give correct names back
-    names(correlations) <- feature_names
-    names(p_values) <- feature_names
+    # All the sample pairs
+    feature_pairs <- as.data.frame(expand.grid(colnames(assay1), colnames(assay2)))
+    # Calculate correlations
+    correlations_and_p_values <- apply(feature_pairs, 1, FUN = FUN)
+    # Transpose into the same orientation as feature-pairs
+    correlations_and_p_values  <- t(correlations_and_p_values)
+    # Give names
+    if( ncol(correlations_and_p_values) == 1 ){
+      colnames(correlations_and_p_values) <- c("cor")
+    }
+    else if( ncol(correlations_and_p_values) == 2 ){
+      colnames(correlations_and_p_values) <- c("cor", "pval")
+    }
+    # Combine feature-pair names with correlation and p-values
+    correlations_and_p_values <- cbind(feature_pairs, correlations_and_p_values)
+    # If there are p_values that are not NA, adjust them
+    if( !is.null(correlations_and_p_values$pval) ){
+      correlations_and_p_values$p_adj <- p.adjust(correlations_and_p_values$pval,
+                                                  method=p_adj_method)
+    }
     
-    # Convert first to data frame and then to matrix
-    correlations <- as.matrix(as.data.frame(correlations, check.names = FALSE))
-    p_values <- as.matrix(as.data.frame(p_values, check.names = FALSE))
-    
-  } 
-  # If method is categorical
-  else if (method == "categorical") {
-    
-    correlations <- apply(assay2, 2, function(yi) {
-      # Loop over every feature in assay1
-      temp <- apply(assay1, 2, function(xi) {
-        
-        # Keep only those samples that have values in both features
-        keep <- rowSums(is.na(cbind(xi, yi))) == 0
-        xi <- xi[keep]
-        yi <- yi[keep]
-        
-        # Calculate cross-correlation using Goorma and Kruskal tau
-        .calculate_gktau(xi, yi) 
-      })
-    })
-    p_values <- NULL
-    p_values_adjusted <- NULL
-  }
-  
-  # If there are p_values that are not NA, adjust them
-  if ( !is.null(p_values) ) {
-    # Corrected p-values
-    p_values_adjusted <- matrix(p.adjust(p_values, method=p_adj_method), nrow=nrow(p_values))
-    dimnames(p_values_adjusted) <- dimnames(p_values)
-  } else{
-    p_values_adjusted <- NULL
-  }
-  
-  return(list(cor = correlations, 
-              pval = p_values, 
-              p_adj = p_values_adjusted))
+    return(correlations_and_p_values)
 }
 
 ############################## .correlation_filter #############################
