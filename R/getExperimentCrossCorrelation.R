@@ -400,7 +400,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
         temp <- c(temp$estimate, temp$p.value)
         return(temp)
       }
-      FUN_categorigal <- function(feature_pair){
+      FUN_categorical <- function(feature_pair){
         feature1 <- assay1[ , feature_pair[1]]
         feature2 <- assay2[ , feature_pair[2]]
         # Keep only those samples that have values in both features
