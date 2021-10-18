@@ -167,8 +167,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         # Check p_adj_method
         p_adj_method <- match.arg(p_adj_method)
         # Check p_adj_threshold
-        if( !is.numeric(p_adj_threshold) && p_adj_threshold<0 || p_adj_threshold>1 ){
-          stop("'p_adj_threshold' must be a numeric value >= 0.", call. = FALSE)
+        if( !(is.numeric(p_adj_threshold) && (p_adj_threshold>=0 && p_adj_threshold<=1)  || 
+            is.null(cor_threshold) ) ){
+          stop("'p_adj_threshold' must be a numeric value [0,1].", call. = FALSE)
         }
         # Check cor_threshold
         if( ifelse( is.numeric(cor_threshold), !(cor_threshold>=0 && cor_threshold<=1), !is.null(cor_threshold)) ){
@@ -202,7 +203,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
         }
         result <- .calculate_correlation(assay1, assay2, method, p_adj_method)
         # Do filtering
-        if( p_adj_threshold || cor_threshold || filter_self_correlations ){
+        if( !is.null(p_adj_threshold) || !is.null(cor_threshold) || filter_self_correlations ){
           if(verbose){
             message("Filtering results...")
           }
@@ -447,85 +448,125 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                                 cor_threshold, 
                                 sort,
                                 assay1, assay2, filter_self_correlations){
-    # Fetch data
-    correlations <- result$cor
-    p_values <- result$pval
-    p_values_adjusted <- result$p_adj
+    # # Fetch data
+    # correlations <- result$cor
+    # p_values <- result$pval
+    # p_values_adjusted <- result$p_adj
+    # 
+    # if( is.null(p_values_adjusted) ){
+    #   p_adj_threshold <- NULL
+    # }
+    # 
+    # # Filter if thresholds are specified
+    # if (!is.null(p_adj_threshold) || !is.null(cor_threshold)) {
+    #   # Filter by adjusted p-values and correlations
+    #   features1_p_value <- features1_p_value <- features1_correlation <- features1_correlation <- NULL
+    #   # Which features have significant correlations?
+    #   if (!is.null(p_adj_threshold) ) {
+    #     p_adj_under_th <- p_values_adjusted < p_adj_threshold
+    #     features1_p_value <- rowSums(p_adj_under_th, na.rm = TRUE) > 0
+    #     features2_p_value <- colSums(p_adj_under_th, na.rm = TRUE) > 0
+    #   }
+    #   # Which features have correlation over correlation threshold?
+    #   if (!is.null(cor_threshold)) {
+    #     corr_over_th <- abs(correlations) > cor_threshold | abs(correlations) < cor_threshold
+    #     features1_correlation <- rowSums(corr_over_th, na.rm = TRUE) > 0
+    #     features2_correlation <- colSums(corr_over_th, na.rm = TRUE) > 0
+    #   }
+    #   # Combine results from previous steps / which features passed threshold filtering
+    #   if (!is.null(p_adj_threshold) && !is.null(cor_threshold)) {
+    #     features1 <- features1_p_value & features1_correlation
+    #     features2 <- features2_p_value & features2_correlation
+    #   } else if (is.null(p_adj_threshold) && !is.null(cor_threshold)) {
+    #     features1 <- features1_correlation
+    #     features2 <- features2_correlation
+    #   } else if (!is.null(p_adj_threshold) && is.null(cor_threshold)) {
+    #     features1 <- features1_p_value
+    #     features2 <- features2_p_value
+    #   }
+    #   
+    #   # If both features have significant correlations
+    #   if (sum(features1) > 0 && sum(features2) > 0) {
+    #     # Get names of those features that were TRUE
+    #     rownames <- rownames(correlations)[features1]
+    #     colnames <- colnames(correlations)[features2]
+    #     # Subset correlations, p_values, and adjusted p_values table
+    #     correlations <- matrix(correlations[features1, features2, drop=FALSE], nrow=sum(features1))
+    #     # Add row and column names to only correlation matrix
+    #     rownames(correlations) <- rownames
+    #     colnames(correlations) <- colnames
+    #     
+    #     # If p_values are not NULL
+    #     if(!is.null(p_values) && !is.null(p_values_adjusted) ){
+    #       # Subset
+    #       p_values <- matrix(p_values[features1, features2, drop=FALSE], nrow=sum(features1))
+    #       p_values_adjusted <- matrix(p_values_adjusted[features1, features2, drop=FALSE], nrow=sum(features1))
+    #       # Add row and column names to all the matrices
+    #       rownames(p_values_adjusted) <- rownames(p_values) <- rownames
+    #       colnames(p_values_adjusted) <- colnames(p_values) <- colnames
+    #     } 
+    #   } 
+    #   # If there were no significant correlations, give a message
+    #   else {
+    #     message("No significant correlations with the given criteria\n")
+    #     correlations <- p_values <- p_values_adjusted <- NULL
+    #   }
+    # }
+    # 
+    # # Filter self correlations if it's specified
+    # if ( identical(assay1, assay2) && filter_self_correlations ) {
+    #   # If p_values are not NULL
+    #   if(!is.null(p_values) && !is.null(p_values_adjusted) ){
+    #     # Remove diagonal values from all the matrices
+    #     diag(correlations) <- diag(p_values) <- diag(p_values_adjusted) <- NA
+    #   } else{
+    #     # Remove diagonal values only from correlation matrix
+    #     diag(correlations) <- NA
+    #   }
+    # }
+    # return(list(cor = correlations, 
+    #             pval = p_values, 
+    #             p_adj = p_values_adjusted))
     
-    if( is.null(p_values_adjusted) ){
+    
+    if( is.null(result$p_adj) ){
       p_adj_threshold <- NULL
     }
     
     # Filter if thresholds are specified
     if (!is.null(p_adj_threshold) || !is.null(cor_threshold)) {
-      # Filter by adjusted p-values and correlations
-      features1_p_value <- features1_p_value <- features1_correlation <- features1_correlation <- NULL
+      
       # Which features have significant correlations?
-      if (!is.null(p_adj_threshold) ) {
-        p_adj_under_th <- p_values_adjusted < p_adj_threshold
-        features1_p_value <- rowSums(p_adj_under_th, na.rm = TRUE) > 0
-        features2_p_value <- colSums(p_adj_under_th, na.rm = TRUE) > 0
+      if ( !is.null(result$p_adj) ) {
+        # Get those feature-pairs that have significant correlations
+        p_adj_under_th <- result[result$p_adj < p_adj_threshold, ]
+        # Subset so that there are only feature1s that have atleast one significant correlation
+        result <- result[result[, "Var1"] %in% unique(p_adj_under_th[, "Var1"]), ]
+        # Subset so that there are only feature2s that have atleast one significant correlation
+        result <- result[result[, "Var2"] %in% unique(p_adj_under_th[, "Var2"]), ]
       }
       # Which features have correlation over correlation threshold?
-      if (!is.null(cor_threshold)) {
-        corr_over_th <- abs(correlations) > cor_threshold | abs(correlations) < cor_threshold
-        features1_correlation <- rowSums(corr_over_th, na.rm = TRUE) > 0
-        features2_correlation <- colSums(corr_over_th, na.rm = TRUE) > 0
-      }
-      # Combine results from previous steps / which features passed threshold filtering
-      if (!is.null(p_adj_threshold) && !is.null(cor_threshold)) {
-        features1 <- features1_p_value & features1_correlation
-        features2 <- features2_p_value & features2_correlation
-      } else if (is.null(p_adj_threshold) && !is.null(cor_threshold)) {
-        features1 <- features1_correlation
-        features2 <- features2_correlation
-      } else if (!is.null(p_adj_threshold) && is.null(cor_threshold)) {
-        features1 <- features1_p_value
-        features2 <- features2_p_value
+      if ( !is.null(cor_threshold) ) {
+        # Get those feature-pairs that have correlations over threshold
+        corr_over_th <- result[abs(result$cor) > cor_threshold | abs(result$cor) < cor_threshold, ]
+        # Subset so that there are only feature1s that have atleast one correlation over threshold
+        result <- result[result[, "Var1"] %in% unique(corr_over_th[, "Var1"]), ]
+        # Subset so that there are only feature2s that have atleast one correlation over threshold
+        result <- result[result[, "Var2"] %in% unique(corr_over_th[, "Var2"]), ]
       }
       
       # If both features have significant correlations
-      if (sum(features1) > 0 && sum(features2) > 0) {
-        # Get names of those features that were TRUE
-        rownames <- rownames(correlations)[features1]
-        colnames <- colnames(correlations)[features2]
-        # Subset correlations, p_values, and adjusted p_values table
-        correlations <- matrix(correlations[features1, features2, drop=FALSE], nrow=sum(features1))
-        # Add row and column names to only correlation matrix
-        rownames(correlations) <- rownames
-        colnames(correlations) <- colnames
-        
-        # If p_values are not NULL
-        if(!is.null(p_values) && !is.null(p_values_adjusted) ){
-          # Subset
-          p_values <- matrix(p_values[features1, features2, drop=FALSE], nrow=sum(features1))
-          p_values_adjusted <- matrix(p_values_adjusted[features1, features2, drop=FALSE], nrow=sum(features1))
-          # Add row and column names to all the matrices
-          rownames(p_values_adjusted) <- rownames(p_values) <- rownames
-          colnames(p_values_adjusted) <- colnames(p_values) <- colnames
-        } 
-      } 
-      # If there were no significant correlations, give a message
-      else {
+      if ( nrow(result) == 0 ) {
         message("No significant correlations with the given criteria\n")
-        correlations <- p_values <- p_values_adjusted <- NULL
       }
     }
     
     # Filter self correlations if it's specified
     if ( identical(assay1, assay2) && filter_self_correlations ) {
-      # If p_values are not NULL
-      if(!is.null(p_values) && !is.null(p_values_adjusted) ){
-        # Remove diagonal values from all the matrices
-        diag(correlations) <- diag(p_values) <- diag(p_values_adjusted) <- NA
-      } else{
-        # Remove diagonal values only from correlation matrix
-        diag(correlations) <- NA
-      }
+      # Take only those rows where features differ
+      result <- result[result$Var1 != result$Var2, ]
     }
-    return(list(cor = correlations, 
-                pval = p_values, 
-                p_adj = p_values_adjusted))
+    return(result)
 }
 
 .correlation_sort <- function(result, sort){
