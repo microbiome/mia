@@ -391,54 +391,54 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     #             pval = p_values, 
     #             p_adj = p_values_adjusted))
     
-      FUN_numeric <- function(feature_pair){
-        feature1 <- assay1[ , feature_pair[1]]
-        feature2 <- assay2[ , feature_pair[2]]
-        temp <- cor.test(feature1, feature2, 
-                         method=method, use="pairwise.complete.obs")
-        # Take only correlation and p-value
-        temp <- c(temp$estimate, temp$p.value)
-        return(temp)
-      }
-      FUN_categorical <- function(feature_pair){
-        feature1 <- assay1[ , feature_pair[1]]
-        feature2 <- assay2[ , feature_pair[2]]
-        # Keep only those samples that have values in both features
-        keep <- rowSums(is.na(cbind(feature1, feature2))) == 0
-        feature1 <- feature1[keep]
-        feature2 <- feature2[keep]
-        # Calculate cross-correlation using Goorma and Kruskal tau
-        .calculate_gktau(feature1, feature2)
-      }
-      # Calculate correlations, different methods for numeric and categorical data
-      if (method %in% c("kendall", "pearson","spearman")) {
-        FUN <- FUN_numeric
-      } else {
-        FUN <- FUN_categorical
-      }
-      
-      # All the sample pairs
-      feature_pairs <- as.data.frame(expand.grid(colnames(assay1), colnames(assay2)))
-      # Calculate correlations
-      correlations_and_p_values <- apply(feature_pairs, 1, FUN = FUN)
-      # Transpose into the same orientation as feature-pairs
-      correlations_and_p_values  <- t(correlations_and_p_values)
-      # Give names
-      if( ncol(correlations_and_p_values) == 1 ){
-        colnames(correlations_and_p_values) <- c("cor")
-      }
-      else if( ncol(correlations_and_p_values) == 2 ){
-        colnames(correlations_and_p_values) <- c("cor", "pval")
-      }
-      # Combine feature-pair names with correlation and p-values
-      correlations_and_p_values <- cbind(feature_pairs, correlations_and_p_values)
-      # If there are p_values that are not NA, adjust them
-      if( !is.null(correlations_and_p_values$pval) ){
-        correlations_and_p_values$p_adj <- p.adjust(correlations_and_p_values$pval,
-                                                    method=p_adj_method)
-      }
-      
-      return(correlations_and_p_values)
+    FUN_numeric <- function(feature_pair){
+      feature1 <- assay1[ , feature_pair[1]]
+      feature2 <- assay2[ , feature_pair[2]]
+      temp <- cor.test(feature1, feature2, 
+                       method=method, use="pairwise.complete.obs")
+      # Take only correlation and p-value
+      temp <- c(temp$estimate, temp$p.value)
+      return(temp)
+    }
+    FUN_categorical <- function(feature_pair){
+      feature1 <- assay1[ , feature_pair[1]]
+      feature2 <- assay2[ , feature_pair[2]]
+      # Keep only those samples that have values in both features
+      keep <- rowSums(is.na(cbind(feature1, feature2))) == 0
+      feature1 <- feature1[keep]
+      feature2 <- feature2[keep]
+      # Calculate cross-correlation using Goorma and Kruskal tau
+      .calculate_gktau(feature1, feature2)
+    }
+    # Calculate correlations, different methods for numeric and categorical data
+    if (method %in% c("kendall", "pearson","spearman")) {
+      FUN <- FUN_numeric
+    } else {
+      FUN <- FUN_categorical
+    }
+    
+    # All the sample pairs
+    feature_pairs <- as.data.frame(expand.grid(colnames(assay1), colnames(assay2)))
+    # Calculate correlations
+    correlations_and_p_values <- apply(feature_pairs, 1, FUN = FUN)
+    # Transpose into the same orientation as feature-pairs
+    correlations_and_p_values  <- t(correlations_and_p_values)
+    # Give names
+    if( ncol(correlations_and_p_values) == 1 ){
+      colnames(correlations_and_p_values) <- c("cor")
+    }
+    else if( ncol(correlations_and_p_values) == 2 ){
+      colnames(correlations_and_p_values) <- c("cor", "pval")
+    }
+    # Combine feature-pair names with correlation and p-values
+    correlations_and_p_values <- cbind(feature_pairs, correlations_and_p_values)
+    # If there are p_values that are not NA, adjust them
+    if( !is.null(correlations_and_p_values$pval) ){
+      correlations_and_p_values$p_adj <- p.adjust(correlations_and_p_values$pval,
+                                                  method=p_adj_method)
+    }
+    
+    return(correlations_and_p_values)
 }
 
 ############################## .correlation_filter #############################
