@@ -216,20 +216,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
                                         filter_self_correlations)
           
         }
-        # # Do sorting
-        # if(sort){
-        #   if(verbose){
-        #     message("Sorting results...")
-        #   }
-        #   result <- .correlation_sort(result, sort)
-        # }
-        # # Matrix or table?
-        # if (mode == "table") {
-        #   if(verbose){
-        #     message("Converting matrices into table...")
-        #   }
-        #   result <- .correlation_matrix_to_table(result)
-        # }
         # Matrix or table?
         if (mode == "matrix") {
           if(verbose){
@@ -329,83 +315,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
 
 ############################# .calculate_correlation ###########################
 .calculate_correlation <- function(assay1, assay2, method, p_adj_method){
-    # # Create empty matrices
-    # correlations <- matrix(NA, ncol(assay1), ncol(assay2))
-    # rownames(correlations) <- colnames(assay1)
-    # colnames(correlations) <- colnames(assay2)
-    # p_values <- correlations
-    # 
-    # # Calculate correlations, different methods for numeric and categorical data
-    # if (method %in% c("kendall", "pearson","spearman")) {
-    #   # Loop over every feature in assay2. Result is a list (feature1) of lists 
-    #   # (correlations and p_values: individual feature1 vs all the feature2)
-    #   correlations_and_p_values <- apply(assay2, 2, function(yi) {
-    #     # Loop over every feature in assay1
-    #     temp <- apply(assay1, 2, function(xi) {
-    #       # Do correlation test, and store the result
-    #       # to temporary object
-    #         temp2 <- cor.test(xi, yi, 
-    #                         method=method, use="pairwise.complete.obs")
-    #         # Take only correlation and p-value
-    #         temp2 <- c(temp2$estimate, temp2$p.value)
-    #     })
-    #     # Return a list where 1st element includes all the correlation values, and
-    #     # second all thep-values
-    #     list(temp[1,], temp[2,])
-    #   })
-    #   # Store correct names
-    #   feature_names <- names(correlations_and_p_values)
-    #   # Unlist list of lists to list
-    #   correlations_and_p_values <- unlist(correlations_and_p_values, recursive = FALSE)
-    #   # Take only correlations
-    #   correlations <- correlations_and_p_values[seq(1, length(correlations_and_p_values), 2)]
-    #   # Take only p-values
-    #   p_values <- correlations_and_p_values[seq(2, length(correlations_and_p_values), 2)]
-    #   
-    #   # Unlisting changed names because otherwise there would have been duplicated names.
-    #   # Give correct names back
-    #   names(correlations) <- feature_names
-    #   names(p_values) <- feature_names
-    #   
-    #   # Convert first to data frame and then to matrix
-    #   correlations <- as.matrix(as.data.frame(correlations, check.names = FALSE))
-    #   p_values <- as.matrix(as.data.frame(p_values, check.names = FALSE))
-    #   
-    # } 
-    # # If method is categorical
-    # else if (method == "categorical") {
-    #   
-    #   correlations <- apply(assay2, 2, function(yi) {
-    #     # Loop over every feature in assay1
-    #     temp <- apply(assay1, 2, function(xi) {
-    #       
-    #       # Keep only those samples that have values in both features
-    #       keep <- rowSums(is.na(cbind(xi, yi))) == 0
-    #       xi <- xi[keep]
-    #       yi <- yi[keep]
-    #       
-    #       # Calculate cross-correlation using Goorma and Kruskal tau
-    #       .calculate_gktau(xi, yi) 
-    #     })
-    #   })
-    #   p_values <- NULL
-    #   p_values_adjusted <- NULL
-    # }
-    # 
-    # # If there are p_values that are not NA, adjust them
-    # if ( !is.null(p_values) ) {
-    #   # Corrected p-values
-    #   p_values_adjusted <- matrix(p.adjust(p_values, method=p_adj_method), nrow=nrow(p_values))
-    #   dimnames(p_values_adjusted) <- dimnames(p_values)
-    # } else{
-    #   p_values_adjusted <- NULL
-    # }
-    # 
-    # return(list(cor = correlations, 
-    #             pval = p_values, 
-    #             p_adj = p_values_adjusted))
-    
+    # Functions for correlation calculation
     FUN_numeric <- function(feature_pair){
+      # Get features
       feature1 <- assay1[ , feature_pair[1]]
       feature2 <- assay2[ , feature_pair[2]]
       temp <- cor.test(feature1, feature2, 
@@ -461,87 +373,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                                 cor_threshold, 
                                 sort,
                                 assay1, assay2, filter_self_correlations){
-    # # Fetch data
-    # correlations <- result$cor
-    # p_values <- result$pval
-    # p_values_adjusted <- result$p_adj
-    # 
-    # if( is.null(p_values_adjusted) ){
-    #   p_adj_threshold <- NULL
-    # }
-    # 
-    # # Filter if thresholds are specified
-    # if (!is.null(p_adj_threshold) || !is.null(cor_threshold)) {
-    #   # Filter by adjusted p-values and correlations
-    #   features1_p_value <- features1_p_value <- features1_correlation <- features1_correlation <- NULL
-    #   # Which features have significant correlations?
-    #   if (!is.null(p_adj_threshold) ) {
-    #     p_adj_under_th <- p_values_adjusted < p_adj_threshold
-    #     features1_p_value <- rowSums(p_adj_under_th, na.rm = TRUE) > 0
-    #     features2_p_value <- colSums(p_adj_under_th, na.rm = TRUE) > 0
-    #   }
-    #   # Which features have correlation over correlation threshold?
-    #   if (!is.null(cor_threshold)) {
-    #     corr_over_th <- abs(correlations) > cor_threshold | abs(correlations) < cor_threshold
-    #     features1_correlation <- rowSums(corr_over_th, na.rm = TRUE) > 0
-    #     features2_correlation <- colSums(corr_over_th, na.rm = TRUE) > 0
-    #   }
-    #   # Combine results from previous steps / which features passed threshold filtering
-    #   if (!is.null(p_adj_threshold) && !is.null(cor_threshold)) {
-    #     features1 <- features1_p_value & features1_correlation
-    #     features2 <- features2_p_value & features2_correlation
-    #   } else if (is.null(p_adj_threshold) && !is.null(cor_threshold)) {
-    #     features1 <- features1_correlation
-    #     features2 <- features2_correlation
-    #   } else if (!is.null(p_adj_threshold) && is.null(cor_threshold)) {
-    #     features1 <- features1_p_value
-    #     features2 <- features2_p_value
-    #   }
-    #   
-    #   # If both features have significant correlations
-    #   if (sum(features1) > 0 && sum(features2) > 0) {
-    #     # Get names of those features that were TRUE
-    #     rownames <- rownames(correlations)[features1]
-    #     colnames <- colnames(correlations)[features2]
-    #     # Subset correlations, p_values, and adjusted p_values table
-    #     correlations <- matrix(correlations[features1, features2, drop=FALSE], nrow=sum(features1))
-    #     # Add row and column names to only correlation matrix
-    #     rownames(correlations) <- rownames
-    #     colnames(correlations) <- colnames
-    #     
-    #     # If p_values are not NULL
-    #     if(!is.null(p_values) && !is.null(p_values_adjusted) ){
-    #       # Subset
-    #       p_values <- matrix(p_values[features1, features2, drop=FALSE], nrow=sum(features1))
-    #       p_values_adjusted <- matrix(p_values_adjusted[features1, features2, drop=FALSE], nrow=sum(features1))
-    #       # Add row and column names to all the matrices
-    #       rownames(p_values_adjusted) <- rownames(p_values) <- rownames
-    #       colnames(p_values_adjusted) <- colnames(p_values) <- colnames
-    #     } 
-    #   } 
-    #   # If there were no significant correlations, give a message
-    #   else {
-    #     message("No significant correlations with the given criteria\n")
-    #     correlations <- p_values <- p_values_adjusted <- NULL
-    #   }
-    # }
-    # 
-    # # Filter self correlations if it's specified
-    # if ( identical(assay1, assay2) && filter_self_correlations ) {
-    #   # If p_values are not NULL
-    #   if(!is.null(p_values) && !is.null(p_values_adjusted) ){
-    #     # Remove diagonal values from all the matrices
-    #     diag(correlations) <- diag(p_values) <- diag(p_values_adjusted) <- NA
-    #   } else{
-    #     # Remove diagonal values only from correlation matrix
-    #     diag(correlations) <- NA
-    #   }
-    # }
-    # return(list(cor = correlations, 
-    #             pval = p_values, 
-    #             p_adj = p_values_adjusted))
-    
-    
+    # If if there are no p_values disable p-value threshold
     if( is.null(result$p_adj) ){
       p_adj_threshold <- NULL
     }
@@ -641,63 +473,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     p_adj <- NULL
   }
   return(list(cor = cor, pval = pval, p_adj = p_adj))
-}
-######################### .correlation_matrix_to_table #########################
-.correlation_matrix_to_table <- function(res){
-    # Melt correlation table
-    ctab <- ID <- NULL
-    if (!is.null(res$cor)) {
-      ctab <- as.data.frame(res$cor)
-      ctab$ID <- rownames(res$cor)
-      ctab <- reshape2::melt(ctab, "ID")
-      colnames(ctab) <- c("X1", "X2", "Correlation")
-      ctab$Correlation <- as.numeric(as.character(ctab$Correlation))
-    
-      # Melt p-values and add them to the melted correlation table
-      # If there are adjusted p_values
-      if (!is.null(res$p_adj)) {
-        ctab2 <- as.data.frame(res$p_adj)
-        ctab2$ID <- rownames(res$p_adj)
-        ctab2 <- reshape2::melt(ctab2, "ID")
-        colnames(ctab2) <- c("X1", "X2", "p_adj")
-        ctab2$p_adj <- as.numeric(as.character(ctab2$p_adj))
-        
-        ctab <- cbind(ctab, ctab2$p_adj)
-        colnames(ctab) <- c("X1", "X2", "Correlation", "p_adj")
-        ctab <- ctab[order(ctab$p_adj), ]
-        colnames(ctab) <- c("X1", "X2", "Correlation", "p_adj")
-        
-      } 
-      # If there are only p-values that are not adjusted
-      else {
-        ctab2 <- as.data.frame(res$pval)
-        ctab2$ID <- rownames(res$pval)
-        ctab2 <- reshape2::melt(ctab2, "ID")
-        colnames(ctab2) <- c("X1", "X2", "value")
-        ctab2$value <- as.numeric(as.character(ctab2$value))
-        
-        ctab <- cbind(ctab, ctab2$value)
-        ctab <- ctab[order(-abs(ctab$Correlation)), ]
-        colnames(ctab) <- c("X1", "X2", "Correlation", "pval")
-      }
-    
-      # Convert feature names into characters
-      ctab$X1 <- as.character(ctab$X1)
-      ctab$X2 <- as.character(ctab$X2)
-      # Keep the original order of factor levels
-      ctab$X1 <- factor(as.character(ctab$X1), levels=rownames(res$cor))
-      ctab$X2 <- factor(as.character(ctab$X2), levels=colnames(res$cor))
-      # Remove NAs
-      ctab <- ctab[!is.na(ctab$Correlation), ]
-      
-      # Order the table by p-value
-      if ("p_adj" %in% colnames(ctab)) {
-        ctab <- ctab[order(ctab$p_adj), ]
-      } else if ("pval" %in% colnames(ctab)) {
-        ctab <- ctab[order(ctab$pval), ]
-      }
-    }
-    ctab
 }
 
 ############################### .calculate_gktau ###############################
