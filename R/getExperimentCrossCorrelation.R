@@ -216,19 +216,32 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
                                         filter_self_correlations)
           
         }
-        # Do sorting
-        if(sort){
-          if(verbose){
-            message("Sorting results...")
-          }
-          result <- .correlation_sort(result, sort)
-        }
+        # # Do sorting
+        # if(sort){
+        #   if(verbose){
+        #     message("Sorting results...")
+        #   }
+        #   result <- .correlation_sort(result, sort)
+        # }
+        # # Matrix or table?
+        # if (mode == "table") {
+        #   if(verbose){
+        #     message("Converting matrices into table...")
+        #   }
+        #   result <- .correlation_matrix_to_table(result)
+        # }
         # Matrix or table?
-        if (mode == "table") {
+        if (mode == "matrix") {
           if(verbose){
             message("Converting matrices into table...")
           }
-          result <- .correlation_matrix_to_table(result)
+          result <- .correlation_table_to_matrix(result)
+          if(sort){
+            if(verbose){
+              message("Sorting results...")
+            }
+            result <- .correlation_sort(result, sort)
+          }
         }
         return(result)
     }
@@ -554,6 +567,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
         # Subset so that there are only feature2s that have atleast one correlation over threshold
         result <- result[result[, "Var2"] %in% unique(corr_over_th[, "Var2"]), ]
       }
+      # Adjust levels
+      result$Var1 <- factor(result$Var1)
+      result$Var2 <- factor(result$Var2)
       
       # If both features have significant correlations
       if ( nrow(result) == 0 ) {
@@ -610,6 +626,22 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                 p_adj = p_values_adjusted))
 }
 
+######################### .correlation_table_to_matrix #########################
+#' @importFrom reshape2 acast
+.correlation_table_to_matrix <- function(result){
+  cor <- reshape2::acast(result, Var1 ~ Var2, value.var = "cor")
+  if( !is.null(result$pval) ){
+    pval <- reshape2::acast(result, Var1 ~ Var2, value.var = "pval")
+  } else{
+    pval <- NULL
+  }
+  if( !is.null(result$p_adj) ){
+    p_adj <- reshape2::acast(result, Var1 ~ Var2, value.var = "p_adj")
+  } else{
+    p_adj <- NULL
+  }
+  return(list(cor = cor, pval = pval, p_adj = p_adj))
+}
 ######################### .correlation_matrix_to_table #########################
 .correlation_matrix_to_table <- function(res){
     # Melt correlation table
