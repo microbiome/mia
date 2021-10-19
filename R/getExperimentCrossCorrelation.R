@@ -344,7 +344,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     }
     
     # All the sample pairs
-    feature_pairs <- as.data.frame(expand.grid(colnames(assay1), colnames(assay2)))
+    feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     # Calculate correlations
     correlations_and_p_values <- apply(feature_pairs, 1, FUN = FUN)
     # Transpose into the same orientation as feature-pairs
