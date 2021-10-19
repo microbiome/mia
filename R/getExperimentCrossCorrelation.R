@@ -377,42 +377,41 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     if( is.null(result$p_adj) ){
       p_adj_threshold <- NULL
     }
+    # Which features have significant correlations?
+    if ( !is.null(result$p_adj) && !is.null(p_adj_threshold) ) {
+      # Get those feature-pairs that have significant correlations
+      p_adj_under_th <- result[result$p_adj < p_adj_threshold, ]
+      # Subset so that there are only feature1s that have atleast one significant correlation
+      result <- result[result[, "Var1"] %in% unique(p_adj_under_th[, "Var1"]), ]
+      # Subset so that there are only feature2s that have atleast one significant correlation
+      result <- result[result[, "Var2"] %in% unique(p_adj_under_th[, "Var2"]), ]
+    }
+    # Which features have correlation over correlation threshold?
+    if ( !is.null(cor_threshold) ) {
+      # Get those feature-pairs that have correlations over threshold
+      corr_over_th <- result[abs(result$cor) > cor_threshold | abs(result$cor) < cor_threshold, ]
+      # Subset so that there are only feature1s that have atleast one correlation over threshold
+      result <- result[result[, "Var1"] %in% unique(corr_over_th[, "Var1"]), ]
+      # Subset so that there are only feature2s that have atleast one correlation over threshold
+      result <- result[result[, "Var2"] %in% unique(corr_over_th[, "Var2"]), ]
+    }
     
-    # Filter if thresholds are specified
-    if (!is.null(p_adj_threshold) || !is.null(cor_threshold)) {
-      
-      # Which features have significant correlations?
-      if ( !is.null(result$p_adj) ) {
-        # Get those feature-pairs that have significant correlations
-        p_adj_under_th <- result[result$p_adj < p_adj_threshold, ]
-        # Subset so that there are only feature1s that have atleast one significant correlation
-        result <- result[result[, "Var1"] %in% unique(p_adj_under_th[, "Var1"]), ]
-        # Subset so that there are only feature2s that have atleast one significant correlation
-        result <- result[result[, "Var2"] %in% unique(p_adj_under_th[, "Var2"]), ]
-      }
-      # Which features have correlation over correlation threshold?
-      if ( !is.null(cor_threshold) ) {
-        # Get those feature-pairs that have correlations over threshold
-        corr_over_th <- result[abs(result$cor) > cor_threshold | abs(result$cor) < cor_threshold, ]
-        # Subset so that there are only feature1s that have atleast one correlation over threshold
-        result <- result[result[, "Var1"] %in% unique(corr_over_th[, "Var1"]), ]
-        # Subset so that there are only feature2s that have atleast one correlation over threshold
-        result <- result[result[, "Var2"] %in% unique(corr_over_th[, "Var2"]), ]
-      }
+    # If there are no significant correlations
+    if ( nrow(result) == 0 ) {
+      message("No significant correlations with the given criteria\n")
+      result <- NULL
+    } else{
       # Adjust levels
       result$Var1 <- factor(result$Var1)
       result$Var2 <- factor(result$Var2)
-      
-      # If both features have significant correlations
-      if ( nrow(result) == 0 ) {
-        message("No significant correlations with the given criteria\n")
+
+      # Filter self correlations if it's specified
+      if ( identical(assay1, assay2) && filter_self_correlations ) {
+        # Take only those rows where features differ
+        result <- result[result$Var1 != result$Var2, ]
       }
-    }
-    
-    # Filter self correlations if it's specified
-    if ( identical(assay1, assay2) && filter_self_correlations ) {
-      # Take only those rows where features differ
-      result <- result[result$Var1 != result$Var2, ]
+      # Adjust rownames
+      rownames(result) <- seq(nrow(result))
     }
     return(result)
 }
