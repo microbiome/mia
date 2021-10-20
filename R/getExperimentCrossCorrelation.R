@@ -114,6 +114,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
              cor_threshold = NULL,
              sort = FALSE,
              filter_self_correlations = FALSE,
+             verbose = TRUE,
              ...){
         .get_experiment_cross_correlation(x,
                                           experiment1 = experiment1,
@@ -127,6 +128,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
                                           cor_threshold = cor_threshold,
                                           sort = sort,
                                           filter_self_correlations = filter_self_correlations,
+                                          verbose = verbose,
+                                          significance_test = TRUE,
                                           ...)
     }
 )
@@ -185,6 +188,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                                               cor_threshold = NULL,
                                               sort = FALSE,
                                               filter_self_correlations = FALSE,
+                                              verbose = TRUE,
+                                              significance_test = TRUE,
                                               ...){
     ############################# INPUT CHECK ##############################
     # Check experiment1 and experiment2
@@ -244,6 +249,11 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       stop("'filter_self_correlations' must be a boolean value.", 
            call. = FALSE)
     }
+    # Check significance_test
+    if( !(significance_test == TRUE || significance_test == FALSE) ){
+      stop("'significance_test' must be a boolean value.", 
+           call. = FALSE)
+    }
     ############################ INPUT CHECK END ###########################
     # Fetch assays to correlate
     assay1 <- assay(tse1, abund_values1)
@@ -259,7 +269,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     if(verbose){
       message("Calculating correlations...")
     }
-    result <- .calculate_correlation(assay1, assay2, method, p_adj_method)
+    result <- .calculate_correlation(assay1, assay2, method, p_adj_method, significance_test)
     # Do filtering
     if( !is.null(p_adj_threshold) || !is.null(cor_threshold) || filter_self_correlations ){
       if(verbose){
@@ -280,12 +290,17 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
         message("Converting matrices into table...")
       }
       result <- .correlation_table_to_matrix(result)
-      if(sort){
+      # If sort was specified and there are more than 1 features
+      if(sort && nrow(result$cor) > 1 && ncol(result$cor) > 1 ){
         if(verbose){
           message("Sorting results...")
         }
-        result <- .correlation_sort(result, sort)
+        result <- .correlation_sort(result)
       }
+    }
+    # If result includes only one element, return it
+    if( length(result) == 1 ){
+      result <- result[[1]]
     }
     return(result)
 }
@@ -313,9 +328,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
 }
 
 ############################# .calculate_correlation ###########################
-.calculate_correlation <- function(assay1, assay2, method, p_adj_method){
+.calculate_correlation <- function(assay1, assay2, method, p_adj_method, significance_test){
     # Functions for correlation calculation
-    FUN_numeric <- function(feature_pair){
+    FUN_numeric_sig <- function(feature_pair){
       # Get features
       feature1 <- assay1[ , feature_pair[1]]
       feature2 <- assay2[ , feature_pair[2]]
@@ -324,6 +339,14 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       # Take only correlation and p-value
       temp <- c(temp$estimate, temp$p.value)
       return(temp)
+    }
+    FUN_numeric <- function(feature_pair){
+      # Get features
+      feature1 <- assay1[ , feature_pair[1]]
+      feature2 <- assay2[ , feature_pair[2]]
+      # Calculate only correlation value
+      cor(feature1, feature2, 
+          method=method, use="pairwise.complete.obs")
     }
     FUN_categorical <- function(feature_pair){
       feature1 <- assay1[ , feature_pair[1]]
@@ -336,7 +359,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       .calculate_gktau(feature1, feature2)
     }
     # Calculate correlations, different methods for numeric and categorical data
-    if (method %in% c("kendall", "pearson","spearman")) {
+    if( method %in% c("kendall", "pearson","spearman") && significance_test ) {
+      FUN <- FUN_numeric_sig
+    } else if( method %in% c("kendall", "pearson","spearman") &&  !significance_test ){
       FUN <- FUN_numeric
     } else {
       FUN <- FUN_categorical
@@ -346,8 +371,13 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     # Calculate correlations
     correlations_and_p_values <- apply(feature_pairs, 1, FUN = FUN)
-    # Transpose into the same orientation as feature-pairs
-    correlations_and_p_values  <- t(correlations_and_p_values)
+    # Convert into data.frame if it is vector, 
+    # otherwise transpose into the same orientation as feature-pairs if it's not vector
+    if( is.vector(correlations_and_p_values) ){
+      correlations_and_p_values <- data.frame(correlations_and_p_values)
+    } else{
+      correlations_and_p_values  <- t(correlations_and_p_values)
+    }
     # Give names
     if( ncol(correlations_and_p_values) == 1 ){
       colnames(correlations_and_p_values) <- c("cor")
@@ -415,62 +445,61 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     return(result)
 }
 
-.correlation_sort <- function(result, sort){
+.correlation_sort <- function(result){
     # Fetch data
     correlations <- result$cor
     p_values <- result$pval
     p_values_adjusted <- result$p_adj
     
-    # If sort was specified and there is more than 1 feature left in both feature sets
-    if (sort && nrow(correlations) >= 2 && ncol(correlations) >= 2) {
-      # Order in visually appealing order
-      tmp <- correlations
-      rownames(tmp) <- NULL
-      colnames(tmp) <- NULL
-      # Do hierarchical clustering
-      row_index <- hclust(as.dist(1 - cor(t(tmp),
-                                          use="pairwise.complete.obs")))$order
-      col_index <- hclust(as.dist(1 - cor(tmp,
-                                          use="pairwise.complete.obs")))$order
-      # Get the order of features from hierarchical clustering
-      rownames <- rownames(correlations)[row_index]
-      colnames <- colnames(correlations)[col_index]
-      
-      # Order the correlation matrix  based on order of hierarchical clustering
-      correlations <- correlations[row_index, col_index]
+    # Order in visually appealing order
+    tmp <- correlations
+    rownames(tmp) <- NULL
+    colnames(tmp) <- NULL
+    # Do hierarchical clustering
+    row_index <- hclust(as.dist(1 - cor(t(tmp),
+                                        use="pairwise.complete.obs")))$order
+    col_index <- hclust(as.dist(1 - cor(tmp,
+                                        use="pairwise.complete.obs")))$order
+    # Get the order of features from hierarchical clustering
+    rownames <- rownames(correlations)[row_index]
+    colnames <- colnames(correlations)[col_index]
+    
+    # Order the correlation matrix  based on order of hierarchical clustering
+    correlations <- correlations[row_index, col_index]
+    # Add column and rownames
+    rownames(correlations) <- rownames
+    colnames(correlations) <- colnames
+    
+    # Order also p-values if they are not NULL
+    if(!is.null(p_values) && !is.null(p_values_adjusted) ){
+      p_values <- p_values[row_index, col_index]
+      p_values_adjusted <- p_values_adjusted[row_index, col_index]
       # Add column and rownames
-      rownames(correlations) <- rownames
-      colnames(correlations) <- colnames
-      
-      # Oder also p-values if they are not NULL
-      if(!is.null(p_values) && !is.null(p_values_adjusted) ){
-        p_values <- p_values[row_index, col_index]
-        p_values_adjusted <- p_values_adjusted[row_index, col_index]
-        # Add column and rownames
-        rownames(p_values_adjusted) <- rownames(p_values) <- rownames
-        colnames(p_values_adjusted) <- colnames(p_values) <- colnames
-      }
+      rownames(p_values_adjusted) <- rownames(p_values) <- rownames
+      colnames(p_values_adjusted) <- colnames(p_values) <- colnames
+      return(list(cor = correlations, 
+                  pval = p_values, 
+                  p_adj = p_values_adjusted))
+    } else{
+      return(list(cor = correlations))
     }
-    return(list(cor = correlations, 
-                pval = p_values, 
-                p_adj = p_values_adjusted))
+    
 }
 
 ######################### .correlation_table_to_matrix #########################
 #' @importFrom reshape2 acast
 .correlation_table_to_matrix <- function(result){
   cor <- reshape2::acast(result, Var1 ~ Var2, value.var = "cor")
+  result_list <- list(cor = cor)
   if( !is.null(result$pval) ){
     pval <- reshape2::acast(result, Var1 ~ Var2, value.var = "pval")
-  } else{
-    pval <- NULL
-  }
+    result_list[["pval"]] <- pval
+  } 
   if( !is.null(result$p_adj) ){
     p_adj <- reshape2::acast(result, Var1 ~ Var2, value.var = "p_adj")
-  } else{
-    p_adj <- NULL
-  }
-  return(list(cor = cor, pval = pval, p_adj = p_adj))
+    result_list[["p_adj"]] <- p_adj
+  } 
+  return(result_list)
 }
 
 ############################### .calculate_gktau ###############################
