@@ -129,7 +129,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
                                           sort = sort,
                                           filter_self_correlations = filter_self_correlations,
                                           verbose = verbose,
-                                          significance_test = TRUE,
                                           ...)
     }
 )
@@ -174,10 +173,26 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     }
 )
 
+#' @rdname getExperimentCrossCorrelation
+#' @export
+setGeneric("testForExperimentCrossCorrelation", signature = c("x"),
+           function(x,
+                    ...)
+             standardGeneric("testForExperimentCrossCorrelation"))
+
+#' @rdname getExperimentCrossCorrelation
+#' @export
+setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
+          function(x, ...){
+            getExperimentCrossCorrelation(x, significance_test = TRUE, ...)
+          }
+)
+
+
 ############################## MAIN FUNCTIONALITY ##############################
 .get_experiment_cross_correlation <- function(x,
-                                              experiment1 = NULL,
-                                              experiment2 = NULL,
+                                              experiment1 = 1,
+                                              experiment2 = 2,
                                               abund_values1 = "counts",
                                               abund_values2 = "counts",
                                               method = c("spearman", "categorical", "kendall", "pearson"),
@@ -189,7 +204,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
                                               sort = FALSE,
                                               filter_self_correlations = FALSE,
                                               verbose = TRUE,
-                                              significance_test = TRUE,
+                                              significance_test = FALSE,
                                               ...){
     ############################# INPUT CHECK ##############################
     # Check experiment1 and experiment2
@@ -210,8 +225,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
       filter_self_correlations <- FALSE
     }
     # Fetch tse objects
-    tse1 <- mae[[experiment1]]
-    tse2 <- mae[[experiment2]]
+    tse1 <- x[[experiment1]]
+    tse2 <- x[[experiment2]]
     # Check abund_values1 and abund_values2
     .check_assay_present(abund_values1, tse1)
     .check_assay_present(abund_values2, tse2)
@@ -253,6 +268,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
     if( !(significance_test == TRUE || significance_test == FALSE) ){
       stop("'significance_test' must be a boolean value.", 
            call. = FALSE)
+    }
+    # significance test is not availbale for categorical method
+    if( significance_test && method == "categorical" ){
+      warning("Significance test is not available for method 'categorical'.",
+              call. = FALSE)
+      significance_test <- FALSE
     }
     ############################ INPUT CHECK END ###########################
     # Fetch assays to correlate

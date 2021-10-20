@@ -4,6 +4,8 @@
 \alias{getExperimentCrossCorrelation}
 \alias{getExperimentCrossCorrelation,MultiAssayExperiment-method}
 \alias{getExperimentCrossCorrelation,SummarizedExperiment-method}
+\alias{testForExperimentCrossCorrelation}
+\alias{testForExperimentCrossCorrelation,ANY-method}
 \title{Calculate cross-correlation}
 \usage{
 getExperimentCrossCorrelation(x, ...)
@@ -22,10 +24,15 @@ getExperimentCrossCorrelation(x, ...)
   cor_threshold = NULL,
   sort = FALSE,
   filter_self_correlations = FALSE,
+  verbose = TRUE,
   ...
 )
 
 \S4method{getExperimentCrossCorrelation}{SummarizedExperiment}(x, y = NULL, ...)
+
+testForExperimentCrossCorrelation(x, ...)
+
+\S4method{testForExperimentCrossCorrelation}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{A
