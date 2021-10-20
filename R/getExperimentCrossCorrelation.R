@@ -95,19 +95,6 @@ NULL
 #' @export
 setGeneric("getExperimentCrossCorrelation", signature = c("x"),
            function(x,
-                    experiment1 = 1,
-                    experiment2 = 2,
-                    abund_values1 = "counts",
-                    abund_values2 = "counts",
-                    method = c("categorical", "kendall", "pearson","spearman"),
-                    mode = "table",
-                    p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
-                                     "holm", "hommel", "none"),
-                    p_adj_threshold = 0.05,
-                    cor_threshold = NULL,
-                    sort = FALSE,
-                    filter_self_correlations = FALSE,
-                    verbose = TRUE,
                     ...)
              standardGeneric("getExperimentCrossCorrelation"))
 
@@ -119,117 +106,28 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
              experiment2 = 2,
              abund_values1 = "counts",
              abund_values2 = "counts",
-             method = c("categorical", "kendall", "pearson","spearman"),
+             method = c("spearman", "categorical", "kendall", "pearson"),
              mode = "table",
-             p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
+             p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                               "holm", "hommel", "none"),
              p_adj_threshold = 0.05,
              cor_threshold = NULL,
              sort = FALSE,
              filter_self_correlations = FALSE,
              ...){
-        ############################# INPUT CHECK ##############################
-        # Check experiment1 and experiment2
-        # Negation of "if value is character and can be found from experiments or
-        # if value is numeric and is smaller or equal to the list of experiments.
-        if( !( is.character(experiment1) && experiment1 %in% names(experiments(x)) || 
-            is.numeric(experiment1) && experiment1 <= length(experiments(x)) ) ){
-          stop("'experiment1' must be numeric or character value specifying", 
-               " experiment in experiment(x).", call. = FALSE)
-        }
-        if( !( is.character(experiment2) && experiment2 %in% names(experiments(x)) || 
-            is.numeric(experiment2) && experiment2 <= length(experiments(x)) ) ){
-          stop("'experiment2' must be numeric or character value specifying", 
-               " experiment in experiment(x).", call. = FALSE)
-        }
-        # If experiments are not the same, disable filter_self_correlations
-        if( experiment1 != experiment2 ){
-          filter_self_correlations <- FALSE
-        }
-        # Fetch tse objects
-        tse1 <- mae[[experiment1]]
-        tse2 <- mae[[experiment2]]
-        # Check abund_values1 and abund_values2
-        .check_assay_present(abund_values1, tse1)
-        .check_assay_present(abund_values2, tse2)
-        # Check method
-        # If method is not single string, user has not specified method,
-        # or has given e.g. a vector
-        if(!.is_non_empty_string(method)){
-          stop("'method' must be a non-empty single character value.",
-               call. = FALSE)
-        }
-        method <- match.arg(method)
-        # Check mode
-        if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
-          stop("'mode' must be 'matrix' or 'table'.", call. = FALSE)
-        }
-        # Check p_adj_method
-        p_adj_method <- match.arg(p_adj_method)
-        # Check p_adj_threshold
-        if( !(is.numeric(p_adj_threshold) && (p_adj_threshold>=0 && p_adj_threshold<=1)  || 
-            is.null(cor_threshold) ) ){
-          stop("'p_adj_threshold' must be a numeric value [0,1].", call. = FALSE)
-        }
-        # Check cor_threshold
-        if( ifelse( is.numeric(cor_threshold), !(cor_threshold>=0 && cor_threshold<=1), !is.null(cor_threshold)) ){
-          stop("'cor_threshold' must be a numeric value greater than or equal to 0.", 
-               call. = FALSE)
-        }
-        # Check sort
-        if( !(sort == TRUE || sort == FALSE) ){
-          stop("'sort' must be a boolean value.", 
-               call. = FALSE)
-        }
-        # Check filter_self_correlations
-        if( !(filter_self_correlations == TRUE || filter_self_correlations == FALSE) ){
-          stop("'filter_self_correlations' must be a boolean value.", 
-               call. = FALSE)
-        }
-        ############################ INPUT CHECK END ###########################
-        # Fetch assays to correlate
-        assay1 <- assay(tse1, abund_values1)
-        assay2 <- assay(tse2, abund_values1)
-        # Transposes tables to right format
-        assay1 <- t(assay1)
-        assay2 <- t(assay2)
-
-        # Test if data is in right format
-        .cor_test_data_type(assay1, method)
-        .cor_test_data_type(assay2, method)
-        # Calculate correlations
-        if(verbose){
-          message("Calculating correlations...")
-        }
-        result <- .calculate_correlation(assay1, assay2, method, p_adj_method)
-        # Do filtering
-        if( !is.null(p_adj_threshold) || !is.null(cor_threshold) || filter_self_correlations ){
-          if(verbose){
-            message("Filtering results...")
-          }
-          result <- .correlation_filter(result, 
-                                        p_adj_threshold,
-                                        cor_threshold,
-                                        sort,
-                                        assay1, 
-                                        assay2, 
-                                        filter_self_correlations)
-          
-        }
-        # Matrix or table?
-        if (mode == "matrix") {
-          if(verbose){
-            message("Converting matrices into table...")
-          }
-          result <- .correlation_table_to_matrix(result)
-          if(sort){
-            if(verbose){
-              message("Sorting results...")
-            }
-            result <- .correlation_sort(result, sort)
-          }
-        }
-        return(result)
+        .get_experiment_cross_correlation(x,
+                                          experiment1 = experiment1,
+                                          experiment2 = experiment2,
+                                          abund_values1 = abund_values1,
+                                          abund_values2 = abund_values2,
+                                          method = method,
+                                          mode = mode,
+                                          p_adj_method = p_adj_method,
+                                          p_adj_threshold = p_adj_threshold,
+                                          cor_threshold = cor_threshold,
+                                          sort = sort,
+                                          filter_self_correlations = filter_self_correlations,
+                                          ...)
     }
 )
 
@@ -238,16 +136,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
 setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperiment"),
     function(x,
              y = NULL,
-             abund_values1 = "counts",
-             abund_values2 = "counts",
-             method = c("categorical", "kendall", "pearson","spearman"),
-             mode = "table",
-             p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", 
-                              "holm", "hommel", "none"),
-             p_adj_threshold = 0.05,
-             cor_threshold = NULL,
-             sort = FALSE,
-             filter_self_correlations = FALSE,
              ...){
         ############################## INPUT CHECK #############################
         if( !(class(y) == "SummarizedExperiment" || class(y) == "TreeSummarizedExperiment" ||
@@ -276,20 +164,131 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
           exp2_num <- 2
         }
         # Call method with MAE object as an input
-        getExperimentCrossCorrelation(x,
-                                      experiment1 = 1,
-                                      experiment2 = exp2_num,
-                                      abund_values1,
-                                      abund_values2,
-                                      method,
-                                      mode,
-                                      p_adj_method,
-                                      p_adj_threshold,
-                                      cor_threshold,
-                                      sort,
-                                      filter_self_correlations)
+        .get_experiment_cross_correlation(x = x,
+                                          experiment1 = 1,
+                                          experiment2 = exp2_num,
+                                          ...)
     }
 )
+
+############################## MAIN FUNCTIONALITY ##############################
+.get_experiment_cross_correlation <- function(x,
+                                              experiment1 = NULL,
+                                              experiment2 = NULL,
+                                              abund_values1 = "counts",
+                                              abund_values2 = "counts",
+                                              method = c("spearman", "categorical", "kendall", "pearson"),
+                                              mode = "table",
+                                              p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
+                                                               "holm", "hommel", "none"),
+                                              p_adj_threshold = 0.05,
+                                              cor_threshold = NULL,
+                                              sort = FALSE,
+                                              filter_self_correlations = FALSE,
+                                              ...){
+    ############################# INPUT CHECK ##############################
+    # Check experiment1 and experiment2
+    # Negation of "if value is character and can be found from experiments or
+    # if value is numeric and is smaller or equal to the list of experiments.
+    if( !( is.character(experiment1) && experiment1 %in% names(experiments(x)) || 
+           is.numeric(experiment1) && experiment1 <= length(experiments(x)) ) ){
+      stop("'experiment1' must be numeric or character value specifying", 
+           " experiment in experiment(x).", call. = FALSE)
+    }
+    if( !( is.character(experiment2) && experiment2 %in% names(experiments(x)) || 
+           is.numeric(experiment2) && experiment2 <= length(experiments(x)) ) ){
+      stop("'experiment2' must be numeric or character value specifying", 
+           " experiment in experiment(x).", call. = FALSE)
+    }
+    # If experiments are not the same, disable filter_self_correlations
+    if( experiment1 != experiment2 ){
+      filter_self_correlations <- FALSE
+    }
+    # Fetch tse objects
+    tse1 <- mae[[experiment1]]
+    tse2 <- mae[[experiment2]]
+    # Check abund_values1 and abund_values2
+    .check_assay_present(abund_values1, tse1)
+    .check_assay_present(abund_values2, tse2)
+    # Check method
+    # If method is not single string, user has not specified method,
+    # or has given e.g. a vector
+    if(!.is_non_empty_string(method)){
+      stop("'method' must be a non-empty single character value.",
+           call. = FALSE)
+    }
+    method <- match.arg(method)
+    # Check mode
+    if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
+      stop("'mode' must be 'matrix' or 'table'.", call. = FALSE)
+    }
+    # Check p_adj_method
+    p_adj_method <- match.arg(p_adj_method)
+    # Check p_adj_threshold
+    if( !(is.numeric(p_adj_threshold) && (p_adj_threshold>=0 && p_adj_threshold<=1)  || 
+          is.null(cor_threshold) ) ){
+      stop("'p_adj_threshold' must be a numeric value [0,1].", call. = FALSE)
+    }
+    # Check cor_threshold
+    if( ifelse( is.numeric(cor_threshold), !(cor_threshold>=0 && cor_threshold<=1), !is.null(cor_threshold)) ){
+      stop("'cor_threshold' must be a numeric value greater than or equal to 0.", 
+           call. = FALSE)
+    }
+    # Check sort
+    if( !(sort == TRUE || sort == FALSE) ){
+      stop("'sort' must be a boolean value.", 
+           call. = FALSE)
+    }
+    # Check filter_self_correlations
+    if( !(filter_self_correlations == TRUE || filter_self_correlations == FALSE) ){
+      stop("'filter_self_correlations' must be a boolean value.", 
+           call. = FALSE)
+    }
+    ############################ INPUT CHECK END ###########################
+    # Fetch assays to correlate
+    assay1 <- assay(tse1, abund_values1)
+    assay2 <- assay(tse2, abund_values1)
+    # Transposes tables to right format
+    assay1 <- t(assay1)
+    assay2 <- t(assay2)
+    
+    # Test if data is in right format
+    .cor_test_data_type(assay1, method)
+    .cor_test_data_type(assay2, method)
+    # Calculate correlations
+    if(verbose){
+      message("Calculating correlations...")
+    }
+    result <- .calculate_correlation(assay1, assay2, method, p_adj_method)
+    # Do filtering
+    if( !is.null(p_adj_threshold) || !is.null(cor_threshold) || filter_self_correlations ){
+      if(verbose){
+        message("Filtering results...")
+      }
+      result <- .correlation_filter(result, 
+                                    p_adj_threshold,
+                                    cor_threshold,
+                                    sort,
+                                    assay1, 
+                                    assay2, 
+                                    filter_self_correlations)
+      
+    }
+    # Matrix or table?
+    if (mode == "matrix") {
+      if(verbose){
+        message("Converting matrices into table...")
+      }
+      result <- .correlation_table_to_matrix(result)
+      if(sort){
+        if(verbose){
+          message("Sorting results...")
+        }
+        result <- .correlation_sort(result, sort)
+      }
+    }
+    return(result)
+}
 
 ################################ HELP FUNCTIONS ################################
 ############################## .cor_test_data_type #############################

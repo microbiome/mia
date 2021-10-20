@@ -6,23 +6,7 @@
 \alias{getExperimentCrossCorrelation,SummarizedExperiment-method}
 \title{Calculate cross-correlation}
 \usage{
-getExperimentCrossCorrelation(
-  x,
-  experiment1 = 1,
-  experiment2 = 2,
-  abund_values1 = "counts",
-  abund_values2 = "counts",
-  method = c("categorical", "kendall", "pearson", "spearman"),
-  mode = "table",
-  p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", "holm", "hommel",
-    "none"),
-  p_adj_threshold = 0.05,
-  cor_threshold = NULL,
-  sort = FALSE,
-  filter_self_correlations = FALSE,
-  verbose = TRUE,
-  ...
-)
+getExperimentCrossCorrelation(x, ...)
 
 \S4method{getExperimentCrossCorrelation}{MultiAssayExperiment}(
   x,
@@ -30,39 +14,26 @@ getExperimentCrossCorrelation(
   experiment2 = 2,
   abund_values1 = "counts",
   abund_values2 = "counts",
-  method = c("categorical", "kendall", "pearson", "spearman"),
+  method = c("spearman", "categorical", "kendall", "pearson"),
   mode = "table",
-  p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", "holm", "hommel",
+  p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel",
     "none"),
   p_adj_threshold = 0.05,
   cor_threshold = NULL,
   sort = FALSE,
   filter_self_correlations = FALSE,
-  verbose = TRUE,
   ...
 )
 
-\S4method{getExperimentCrossCorrelation}{SummarizedExperiment}(
-  x,
-  y = NULL,
-  abund_values1 = "counts",
-  abund_values2 = "counts",
-  method = c("categorical", "kendall", "pearson", "spearman"),
-  mode = "table",
-  p_adj_method = c("BH", "bonferroni", "BY", "fdr", "hochberg", "holm", "hommel",
-    "none"),
-  p_adj_threshold = 0.05,
-  cor_threshold = NULL,
-  sort = FALSE,
-  filter_self_correlations = FALSE,
-  ...
-)
+\S4method{getExperimentCrossCorrelation}{SummarizedExperiment}(x, y = NULL, ...)
 }
 \arguments{
 \item{x}{A
 \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}} or
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
+
+\item{...}{Additional arguments.}
 
 \item{experiment1}{A single character or numeric value for selecting the experiment 1
 from \code{experiment(x)} of \code{MultiassayExperiment} object.
@@ -111,8 +82,6 @@ between experiment itself is tested, i.e., when input is \code{MAE} and
 (By default: \code{filter_self_correlations = FALSE})}
 
 \item{verbose}{Verbose}
-
-\item{...}{Additional arguments.}
 }
 \value{
 Matrix or table. ##############################################################
