@@ -269,12 +269,6 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
       stop("'significance_test' must be a boolean value.", 
            call. = FALSE)
     }
-    # significance test is not availbale for categorical method
-    if( significance_test && method == "categorical" ){
-      warning("Significance test is not available for method 'categorical'.",
-              call. = FALSE)
-      significance_test <- FALSE
-    }
     ############################ INPUT CHECK END ###########################
     # Fetch assays to correlate
     assay1 <- assay(tse1, abund_values1)
@@ -306,7 +300,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
       
     }
     # Matrix or table?
-    if (mode == "matrix") {
+    if (mode == "matrix" && !is.null(result) ) {
       if(verbose){
         message("Converting matrices into table...")
       }
@@ -320,7 +314,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
       }
     }
     # If result includes only one element, return it
-    if( length(result) == 1 ){
+    if( length(result) == 1 && is.null(result) ){
       result <- result[[1]]
     }
     return(result)
@@ -369,6 +363,19 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
       cor(feature1, feature2, 
           method=method, use="pairwise.complete.obs")
     }
+    FUN_categorical_sig <- function(feature_pair){
+      feature1 <- assay1[ , feature_pair[1]]
+      feature2 <- assay2[ , feature_pair[2]]
+      # Keep only those samples that have values in both features
+      keep <- rowSums(is.na(cbind(feature1, feature2))) == 0
+      feature1 <- feature1[keep]
+      feature2 <- feature2[keep]
+      # Calculate cross-correlation using Goodman and Kruskal tau
+      temp <- .calculate_gktau(feature1, feature2, test_significance = TRUE)
+      # Take only correlation and p-value
+      temp <- c(temp$estimate, temp$p.value)
+      return(temp)
+    }
     FUN_categorical <- function(feature_pair){
       feature1 <- assay1[ , feature_pair[1]]
       feature2 <- assay2[ , feature_pair[2]]
@@ -376,15 +383,17 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
       keep <- rowSums(is.na(cbind(feature1, feature2))) == 0
       feature1 <- feature1[keep]
       feature2 <- feature2[keep]
-      # Calculate cross-correlation using Goorma and Kruskal tau
-      .calculate_gktau(feature1, feature2)
+      # Calculate cross-correlation using Goodman and Kruskal tau
+      .calculate_gktau(feature1, feature2, test_significance = FALSE)
     }
     # Calculate correlations, different methods for numeric and categorical data
     if( method %in% c("kendall", "pearson","spearman") && significance_test ) {
       FUN <- FUN_numeric_sig
     } else if( method %in% c("kendall", "pearson","spearman") &&  !significance_test ){
       FUN <- FUN_numeric
-    } else {
+    } else if( method == "categorical" && significance_test ){
+      FUN <- FUN_categorical_sig
+    } else if( method == "categorical" && !significance_test ){
       FUN <- FUN_categorical
     }
     
@@ -524,7 +533,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 }
 
 ############################### .calculate_gktau ###############################
-.calculate_gktau <- function(x, y){
+.calculate_gktau <- function(x, y, test_significance = FALSE){
     # First, compute the IxJ contingency table between x and y
     Nij <- table(x, y, useNA="ifany")
     # Next, convert this table into a joint probability estimate
@@ -539,5 +548,17 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     VyBarx <- 1 - sum(InnerSum/PIiPlus)
     # Compute and return Goodman and Kruskal's tau measure
     tau <- (Vy - VyBarx)/Vy
-    tau
+    
+    # If test significance is specified, then calculate significance with chi-squared test.
+    # Are these two features independent or not?
+    if ( test_significance ){
+      temp <- chisq.test(x, y)
+      p_value <- temp$p.value
+      return(list(estimate = tau, p.value = p_value))
+    } 
+    # Otherwise return just tau
+    else{
+      return(tau)
+    }
+    
 }
