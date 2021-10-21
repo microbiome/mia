@@ -176,20 +176,19 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "SummarizedExperime
 #' @rdname getExperimentCrossCorrelation
 #' @export
 setGeneric("testForExperimentCrossCorrelation", signature = c("x"),
-           function(x,
-                    ...)
+           function(x, ...)
              standardGeneric("testForExperimentCrossCorrelation"))
 
 #' @rdname getExperimentCrossCorrelation
 #' @export
 setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
           function(x, ...){
-            getExperimentCrossCorrelation(x, significance_test = TRUE, ...)
+            getExperimentCrossCorrelation(x, test_significance = TRUE, ...)
           }
 )
 
-
 ############################## MAIN FUNCTIONALITY ##############################
+# This function includes all the main functionality. 
 .get_experiment_cross_correlation <- function(x,
                                               experiment1 = 1,
                                               experiment2 = 2,
@@ -204,7 +203,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               sort = FALSE,
                                               filter_self_correlations = FALSE,
                                               verbose = TRUE,
-                                              significance_test = FALSE,
+                                              test_significance = FALSE,
                                               ...){
     ############################# INPUT CHECK ##############################
     # Check experiment1 and experiment2
@@ -264,9 +263,9 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
       stop("'filter_self_correlations' must be a boolean value.", 
            call. = FALSE)
     }
-    # Check significance_test
-    if( !(significance_test == TRUE || significance_test == FALSE) ){
-      stop("'significance_test' must be a boolean value.", 
+    # Check test_significance
+    if( !(test_significance == TRUE || test_significance == FALSE) ){
+      stop("'test_significance' must be a boolean value.", 
            call. = FALSE)
     }
     ############################ INPUT CHECK END ###########################
@@ -284,7 +283,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     if(verbose){
       message("Calculating correlations...")
     }
-    result <- .calculate_correlation(assay1, assay2, method, p_adj_method, significance_test)
+    result <- .calculate_correlation(assay1, assay2, method, p_adj_method, test_significance)
     # Do filtering
     if( !is.null(p_adj_threshold) || !is.null(cor_threshold) || filter_self_correlations ){
       if(verbose){
@@ -313,8 +312,8 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
         result <- .correlation_sort(result)
       }
     }
-    # If result includes only one element, return it
-    if( length(result) == 1 && is.null(result) ){
+    # If result includes only one element, return only the element
+    if( length(result) == 1 ){
       result <- result[[1]]
     }
     return(result)
@@ -322,20 +321,27 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 ################################ HELP FUNCTIONS ################################
 ############################## .cor_test_data_type #############################
+# This function tests if values match with chosen method. With numeric methods, 
+# numeric values are expected, and with categorical method factor or character values
+# are expected. Otherwise gives an error.
+
+# Input: assay and method
+# Output: assay
 .cor_test_data_type <- function(assay, method){
     # Different available methods
     numeric_methods <- c("kendall", "pearson","spearman")
     categorical_methods <- c("categorical")
     # Check if method match with values, otherwise give an error.
-    # For numeric methods, expect only numeric values. For categorical methods, expect only factors.
+    # For numeric methods, expect only numeric values. For categorical methods, 
+    # expect only factors/characters.
     if (method %in% numeric_methods && !is.numeric(assay)) {
       # If there are no numeric values, give an error
-      stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
+      stop("Assay, specified by 'abund_values', of 'experiment' does not include",
            " numeric values. Choose categorical method for 'method'.",
            call. = FALSE)
     } else if (method %in% categorical_methods && !is.character(assay)) {
       # If there are no factor values, give an error
-      stop("Assay, specified by 'abund_values', of 'experiment1' does not include",
+      stop("Assay, specified by 'abund_values', of 'experiment' does not include",
            " factor values. Choose numeric method for 'method'.",
            call. = FALSE)
     }
@@ -343,27 +349,33 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 }
 
 ############################# .calculate_correlation ###########################
-.calculate_correlation <- function(assay1, assay2, method, p_adj_method, significance_test){
+# This function calculates correlations between every feature-pair. For numeric
+# values uses cor.test() cor() and for categorical values Goodman and Kruskal's tau test.
+
+# Input: Assays that share samples but that have different features and different parameters.
+# Output: Correlation table including correlation values (and p-values and adjusted p-values)
+.calculate_correlation <- function(assay1, assay2, method, p_adj_method, test_significance){
     # Functions for correlation calculation
-    FUN_numeric_sig <- function(feature_pair){
+    FUN_numeric <- function(feature_pair, test_significance){
       # Get features
       feature1 <- assay1[ , feature_pair[1]]
       feature2 <- assay2[ , feature_pair[2]]
-      temp <- cor.test(feature1, feature2, 
-                       method=method, use="pairwise.complete.obs")
-      # Take only correlation and p-value
-      temp <- c(temp$estimate, temp$p.value)
+      # Whether to test significance
+      if( test_significance ){
+         #calculate correlatiom
+        temp <- cor.test(feature1, feature2, 
+                         method=method, use="pairwise.complete.obs")
+        # Take only correlation and p-value
+        temp <- c(temp$estimate, temp$p.value)
+      } else{
+        # Calculate only correlation value
+        temp <- cor(feature1, feature2, 
+                    method=method, use="pairwise.complete.obs")
+      }
       return(temp)
     }
-    FUN_numeric <- function(feature_pair){
+    FUN_categorical <- function(feature_pair, test_significance){
       # Get features
-      feature1 <- assay1[ , feature_pair[1]]
-      feature2 <- assay2[ , feature_pair[2]]
-      # Calculate only correlation value
-      cor(feature1, feature2, 
-          method=method, use="pairwise.complete.obs")
-    }
-    FUN_categorical_sig <- function(feature_pair){
       feature1 <- assay1[ , feature_pair[1]]
       feature2 <- assay2[ , feature_pair[2]]
       # Keep only those samples that have values in both features
@@ -371,38 +383,28 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
       feature1 <- feature1[keep]
       feature2 <- feature2[keep]
       # Calculate cross-correlation using Goodman and Kruskal tau
-      temp <- .calculate_gktau(feature1, feature2, test_significance = TRUE)
-      # Take only correlation and p-value
-      temp <- c(temp$estimate, temp$p.value)
+      temp <- .calculate_gktau(feature1, feature2, test_significance = test_significance)
+      # Whether to test significance
+      if( test_significance ){
+        # Take only correlation and p-value
+        temp <- c(temp$estimate, temp$p.value)
+      } 
       return(temp)
     }
-    FUN_categorical <- function(feature_pair){
-      feature1 <- assay1[ , feature_pair[1]]
-      feature2 <- assay2[ , feature_pair[2]]
-      # Keep only those samples that have values in both features
-      keep <- rowSums(is.na(cbind(feature1, feature2))) == 0
-      feature1 <- feature1[keep]
-      feature2 <- feature2[keep]
-      # Calculate cross-correlation using Goodman and Kruskal tau
-      .calculate_gktau(feature1, feature2, test_significance = FALSE)
-    }
-    # Calculate correlations, different methods for numeric and categorical data
-    if( method %in% c("kendall", "pearson","spearman") && significance_test ) {
+    
+    # Choose correct method for numeric and categorical data
+    if( method %in% c("kendall", "pearson","spearman") ) {
       FUN <- FUN_numeric_sig
-    } else if( method %in% c("kendall", "pearson","spearman") &&  !significance_test ){
-      FUN <- FUN_numeric
-    } else if( method == "categorical" && significance_test ){
-      FUN <- FUN_categorical_sig
-    } else if( method == "categorical" && !significance_test ){
+    } else if( method == "categorical" ){
       FUN <- FUN_categorical
     }
     
-    # All the sample pairs
+    # Get all the sample pairs
     feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     # Calculate correlations
-    correlations_and_p_values <- apply(feature_pairs, 1, FUN = FUN)
+    correlations_and_p_values <- apply(feature_pairs, 1, FUN = FUN, test_significance = test_significance)
     # Convert into data.frame if it is vector, 
-    # otherwise transpose into the same orientation as feature-pairs if it's not vector
+    # otherwise transpose into the same orientation as feature-pairs if it's not a vector
     if( is.vector(correlations_and_p_values) ){
       correlations_and_p_values <- data.frame(correlations_and_p_values)
     } else{
@@ -415,18 +417,21 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     else if( ncol(correlations_and_p_values) == 2 ){
       colnames(correlations_and_p_values) <- c("cor", "pval")
     }
-    # Combine feature-pair names with correlation and p-values
+    # Combine feature-pair names with correlation values and p-values
     correlations_and_p_values <- cbind(feature_pairs, correlations_and_p_values)
-    # If there are p_values that are not NA, adjust them
+    # If there are p_values, adjust them
     if( !is.null(correlations_and_p_values$pval) ){
       correlations_and_p_values$p_adj <- p.adjust(correlations_and_p_values$pval,
                                                   method=p_adj_method)
     }
-    
     return(correlations_and_p_values)
 }
 
 ############################## .correlation_filter #############################
+# This filters off features that do not have any value under specified thresholds. 
+
+# Input: Correlation table and thresholds
+# Output: Filtered correlation table (or NULL if there are no observations after filtering)
 .correlation_filter <- function(result,
                                 p_adj_threshold,
                                 cor_threshold, 
@@ -464,19 +469,25 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
       result$Var1 <- factor(result$Var1)
       result$Var2 <- factor(result$Var2)
 
-      # Filter self correlations if it's specified
+      # Filter self correlations if it's specified and assays match with each other
       if ( identical(assay1, assay2) && filter_self_correlations ) {
         # Take only those rows where features differ
         result <- result[result$Var1 != result$Var2, ]
       }
-      # Adjust rownames
+      # Adjust rownames, numbers from 1 to nrow()
       rownames(result) <- seq(nrow(result))
     }
     return(result)
 }
 
+############################## .correlation_sort  ##############################
+# This sorts correlation, p-value and adjusted p-values matrices based on 
+# hierarchical clustering
+
+# Input: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
+# Output: Lst of sorted matrices (cor, p-values and adjusted p-values / matrix (cor)
 .correlation_sort <- function(result){
-    # Fetch data
+    # Fetch data matrices
     correlations <- result$cor
     p_values <- result$pval
     p_values_adjusted <- result$p_adj
@@ -497,34 +508,52 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Order the correlation matrix  based on order of hierarchical clustering
     correlations <- correlations[row_index, col_index]
     # Add column and rownames
-    rownames(correlations) <- rownames
     colnames(correlations) <- colnames
+    rownames(correlations) <- rownames
     
-    # Order also p-values if they are not NULL
-    if(!is.null(p_values) && !is.null(p_values_adjusted) ){
+    # Create a result list
+    result_list <- list(cor = correlations)
+    
+    # If p_values is not NULL. order and add to the list
+    if( !is.null(p_values) ){
+      # Sort the matrix
       p_values <- p_values[row_index, col_index]
+      # Add column and rownames
+      colnames(p_values) <- colnames
+      rownames(p_values) <- rownames
+      # Add matrix to result list
+      result_list[["pval"]] <- p_values
+    }
+    # If p_values_adjusted is not NULL. order and add to the list
+    if( !is.null(p_values_adjusted) ){
+      # Sort the matrix
       p_values_adjusted <- p_values_adjusted[row_index, col_index]
       # Add column and rownames
-      rownames(p_values_adjusted) <- rownames(p_values) <- rownames
-      colnames(p_values_adjusted) <- colnames(p_values) <- colnames
-      return(list(cor = correlations, 
-                  pval = p_values, 
-                  p_adj = p_values_adjusted))
-    } else{
-      return(list(cor = correlations))
+      colnames(p_values_adjusted) <- colnames
+      rownames(p_values_adjusted) <- rownames
+      # Add matrix to result list
+      result_list[["p_adj"]] <- p_values_adjusted
     }
-    
+    return(result_list)
 }
 
 ######################### .correlation_table_to_matrix #########################
+# This function converts correlation table into matrices
+
+# Input: Correlation table
+# Output: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 #' @importFrom reshape2 acast
 .correlation_table_to_matrix <- function(result){
+  # Correlation matrix is done from cor column, Var1 to rows and Var2 to columns
   cor <- reshape2::acast(result, Var1 ~ Var2, value.var = "cor")
+  # Create a result list
   result_list <- list(cor = cor)
+  # If p_values exist, then create a matrix and add to the result list
   if( !is.null(result$pval) ){
     pval <- reshape2::acast(result, Var1 ~ Var2, value.var = "pval")
     result_list[["pval"]] <- pval
   } 
+  # If adjusted p_values exist, then create a matrix and add to the result list
   if( !is.null(result$p_adj) ){
     p_adj <- reshape2::acast(result, Var1 ~ Var2, value.var = "p_adj")
     result_list[["p_adj"]] <- p_adj
@@ -533,6 +562,11 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 }
 
 ############################### .calculate_gktau ###############################
+# This function calculates association with Goodman and Kruskal's tau test and 
+# p-value with  Pearson's chi-squared test
+
+# Input: Two vectors, one represent feature1, other feature2, which share samples
+# Output: list of tau and p-value or just tau
 .calculate_gktau <- function(x, y, test_significance = FALSE){
     # First, compute the IxJ contingency table between x and y
     Nij <- table(x, y, useNA="ifany")
@@ -552,13 +586,16 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     # If test significance is specified, then calculate significance with chi-squared test.
     # Are these two features independent or not?
     if ( test_significance ){
+      # Do the Pearson's chi-squared test
       temp <- chisq.test(x, y)
+      # Take the p-value
       p_value <- temp$p.value
-      return(list(estimate = tau, p.value = p_value))
+      # Result is combination of tau and p-value
+      result <- list(estimate = tau, p.value = p_value)
     } 
     # Otherwise return just tau
     else{
-      return(tau)
+      result <- tau
     }
-    
+    return(result)
 }
