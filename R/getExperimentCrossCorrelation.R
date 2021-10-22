@@ -355,54 +355,22 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: Assays that share samples but that have different features and different parameters.
 # Output: Correlation table including correlation values (and p-values and adjusted p-values)
 .calculate_correlation <- function(assay1, assay2, method, p_adj_method, test_significance){
-    # Functions for correlation calculation
-    FUN_numeric <- function(feature_pair, test_significance){
-      # Get features
-      feature1 <- assay1[ , feature_pair[1]]
-      feature2 <- assay2[ , feature_pair[2]]
-      # Whether to test significance
-      if( test_significance ){
-         #calculate correlatiom
-        temp <- cor.test(feature1, feature2, 
-                         method=method, use="pairwise.complete.obs")
-        # Take only correlation and p-value
-        temp <- c(temp$estimate, temp$p.value)
-      } else{
-        # Calculate only correlation value
-        temp <- cor(feature1, feature2, 
-                    method=method, use="pairwise.complete.obs")
-      }
-      return(temp)
-    }
-    FUN_categorical <- function(feature_pair, test_significance){
-      # Get features
-      feature1 <- assay1[ , feature_pair[1]]
-      feature2 <- assay2[ , feature_pair[2]]
-      # Keep only those samples that have values in both features
-      keep <- rowSums(is.na(cbind(feature1, feature2))) == 0
-      feature1 <- feature1[keep]
-      feature2 <- feature2[keep]
-      # Calculate cross-correlation using Goodman and Kruskal tau
-      temp <- .calculate_gktau(feature1, feature2, test_significance = test_significance)
-      # Whether to test significance
-      if( test_significance ){
-        # Take only correlation and p-value
-        temp <- c(temp$estimate, temp$p.value)
-      } 
-      return(temp)
-    }
-    
     # Choose correct method for numeric and categorical data
     if( method %in% c("kendall", "pearson","spearman") ) {
-      FUN <- FUN_numeric_sig
+      FUN <- .calculate_correlation_for_numeric_values
     } else if( method == "categorical" ){
-      FUN <- FUN_categorical
+      FUN <- .calculate_correlation_for_categorical_values
     }
     
     # Get all the sample pairs
     feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     # Calculate correlations
-    correlations_and_p_values <- apply(feature_pairs, 1, FUN = FUN, test_significance = test_significance)
+    correlations_and_p_values <- apply(feature_pairs, 1, FUN = FUN, 
+                                       test_significance = test_significance, 
+                                       assay1 = assay1, 
+                                       assay2 = assay2,
+                                       method = method)
+    
     # Convert into data.frame if it is vector, 
     # otherwise transpose into the same orientation as feature-pairs if it's not a vector
     if( is.vector(correlations_and_p_values) ){
@@ -425,6 +393,58 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
                                                   method=p_adj_method)
     }
     return(correlations_and_p_values)
+}
+
+################### .calculate_correlation_for_numeric_values ##################
+# This function calculates correlation between feature-pair. If significance test
+# is specified, then it uses cor.test(), if not then cor().
+
+# Input: Vector of names that belong to feature pair, and assays.
+# Output: Correlation value or list that includes correlation value and p-value.
+.calculate_correlation_for_numeric_values <- function(feature_pair, test_significance, 
+                                                      assay1, assay2, method, ...){
+    # Get features
+    feature1 <- assay1[ , feature_pair[1]]
+    feature2 <- assay2[ , feature_pair[2]]
+    # Whether to test significance
+    if( test_significance ){
+      #calculate correlatiom
+      temp <- cor.test(feature1, feature2, 
+                       method=method, use="pairwise.complete.obs")
+      # Take only correlation and p-value
+      temp <- c(temp$estimate, temp$p.value)
+    } else{
+      # Calculate only correlation value
+      temp <- cor(feature1, feature2, 
+                  method=method, use="pairwise.complete.obs")
+    }
+    return(temp)
+}
+
+################# .calculate_correlation_for_categorical_values ################
+# This function calculates correlation between feature-pair. Correlation value is 
+# calculated with Goodman and Kruskal's tau test. P-value is calculated with Pearson's
+# chi-squared test.
+
+# Input: Vector of names that belong to feature pair, and assays.
+# Output: Correlation value or list that includes correlation value and p-value.
+.calculate_correlation_for_categorical_values <- function(feature_pair, test_significance, 
+                                                          assay1, assay2, ...){
+     # Get features
+    feature1 <- assay1[ , feature_pair[1]]
+    feature2 <- assay2[ , feature_pair[2]]
+    # Keep only those samples that have values in both features
+    keep <- rowSums2(is.na(cbind(feature1, feature2))) == 0
+    feature1 <- feature1[keep]
+    feature2 <- feature2[keep]
+    # Calculate cross-correlation using Goodman and Kruskal tau
+    temp <- .calculate_gktau(feature1, feature2, test_significance = test_significance)
+    # Whether to test significance
+    if( test_significance ){
+      # Take only correlation and p-value
+      temp <- c(temp$estimate, temp$p.value)
+    } 
+    return(temp)
 }
 
 ############################## .correlation_filter #############################
@@ -567,18 +587,23 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 # Input: Two vectors, one represent feature1, other feature2, which share samples
 # Output: list of tau and p-value or just tau
+#' @importFrom MatrixStats rowSums2 colSums2
 .calculate_gktau <- function(x, y, test_significance = FALSE){
     # First, compute the IxJ contingency table between x and y
     Nij <- table(x, y, useNA="ifany")
     # Next, convert this table into a joint probability estimate
     PIij <- Nij/sum(Nij)
     # Compute the marginal probability estimates
-    PIiPlus <- apply(PIij, MARGIN=1, sum)
-    PIPlusj <- apply(PIij, MARGIN=2, sum)
+    #PIiPlus <- apply(PIij, MARGIN=1, sum)
+    PIiPlus <- rowSums2(PIij)
+    #PIPlusj <- apply(PIij, MARGIN=2, sum)
+    PIPlusj <- colSums2(PIij)
     # Compute the marginal variation of y
     Vy <- 1 - sum(PIPlusj^2)
     # Compute the expected conditional variation of y given x
-    InnerSum <- apply(PIij^2, MARGIN=1, sum)
+    # Because of the previous step, there should not be any NAs
+    #InnerSum <- apply(PIij^2, MARGIN=1, sum)
+    InnerSum <- rowSums2(PIij^2)
     VyBarx <- 1 - sum(InnerSum/PIiPlus)
     # Compute and return Goodman and Kruskal's tau measure
     tau <- (Vy - VyBarx)/Vy
