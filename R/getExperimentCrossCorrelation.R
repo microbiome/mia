@@ -226,6 +226,11 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Fetch tse objects
     tse1 <- x[[experiment1]]
     tse2 <- x[[experiment2]]
+    # Check that experiments have same amount of samples
+    if( ncol(tse1) != ncol(tse2) ){
+      stop("Samples must match between experiments.",
+           call. = FALSE)
+    }
     # Check abund_values1 and abund_values2
     .check_assay_present(abund_values1, tse1)
     .check_assay_present(abund_values2, tse2)
@@ -587,7 +592,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 # Input: Two vectors, one represent feature1, other feature2, which share samples
 # Output: list of tau and p-value or just tau
-#' @importFrom MatrixStats rowSums2 colSums2
+#' @importFrom DelayedMatrixStats rowSums2 colSums2
 .calculate_gktau <- function(x, y, test_significance = FALSE){
     # First, compute the IxJ contingency table between x and y
     Nij <- table(x, y, useNA="ifany")
