@@ -14,9 +14,13 @@
 #'   expect the input matrix as its first argument. With rows as samples 
 #'   and columns as features.
 #'
-#' @param exprs_values a single \code{character} value for specifying which
+#' @param abund_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
+#' @param exprs_values a single \code{character} value for specifying which
+#'   assay to use for calculation. 
+#'   (Use \code{abund_values} instead. \code{exprs_values} will be disabled.)
+#'   
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
 #' @param ... other arguments passed onto \code{FUN}
@@ -61,9 +65,9 @@ setMethod("calculateDistance", signature = c(x = "ANY"),
 #' @rdname calculateDistance
 #' @export
 setMethod("calculateDistance", signature = c(x = "SummarizedExperiment"),
-    function(x, FUN = stats::dist, exprs_values = "counts", transposed = FALSE,
+    function(x, FUN = stats::dist, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE,
              ...){
-        mat <- assay(x, exprs_values)
+        mat <- assay(x, abund_values)
         if(!transposed){
             mat <- t(mat)
         }

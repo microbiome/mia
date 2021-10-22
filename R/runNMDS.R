@@ -27,8 +27,12 @@
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
+#'   (Use \code{abund_values} instead. \code{exprs_values} will be disabled.)
 #'
 #' @param FUN a \code{function} or \code{character} value with a function
 #'   name returning a \code{\link[stats:dist]{dist}} object
@@ -177,17 +181,17 @@ setMethod("calculateNMDS", "ANY", .calculate_nmds)
 #' @importFrom SummarizedExperiment assay
 #' @export
 setMethod("calculateNMDS", "SummarizedExperiment",
-    function(x, ..., exprs_values = "counts", FUN = vegdist) {
-        .calculate_nmds(assay(x, exprs_values), FUN = FUN, ...)
+    function(x, ..., abund_values = exprs_values, exprs_values = "counts", FUN = vegdist) {
+        .calculate_nmds(assay(x, abund_values), FUN = FUN, ...)
     }
 )
 
 #' @rdname runNMDS
 #' @export
 setMethod("calculateNMDS", "SingleCellExperiment",
-    function(x, ..., exprs_values = "counts", dimred = NULL, n_dimred = NULL,
+    function(x, ..., abund_values = exprs_values, exprs_values = "counts", dimred = NULL, n_dimred = NULL,
              FUN = vegdist){
-        mat <- .get_mat_from_sce(x, exprs_values = exprs_values,
+        mat <- .get_mat_from_sce(x, exprs_values = abund_values,
                                  dimred = dimred, n_dimred = n_dimred)
         calculateNMDS(mat, transposed = !is.null(dimred), FUN = FUN,...)
     }
