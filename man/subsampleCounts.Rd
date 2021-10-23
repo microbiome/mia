@@ -99,5 +99,5 @@ microbial differential abundance strategies depend upon data characteristics.
 Microbiome. 2017 Dec;5(1):1-8.
 }
 \author{
-Sudarshan A. Shetty
+Sudarshan A. Shetty and Felix G.M. Ernst
 }

@@ -52,7 +52,7 @@
 #' 
 #' @return \code{subsampleCounts} return \code{x} with subsampled data.
 #' 
-#' @author Sudarshan A. Shetty 
+#' @author Sudarshan A. Shetty and Felix G.M. Ernst
 #' 
 #' @name subsampleCounts
 #'  
@@ -161,7 +161,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
 )
 
 
-# Sub sampling function from phyloseq internals
+## Modified Sub sampling function from phyloseq internals
 .subsample_assay <- function(x, min_size, replace){
     # Create replacement species vector
     rarvec <- numeric(length(x))    
