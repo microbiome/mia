@@ -258,7 +258,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
         stop("'cor_threshold' must be a numeric value greater than or ",
              "equal to 0.", 
              call. = FALSE)
-    } else if(cor_threshold >= 0 && cor_threshold <= 1){
+    } else if(cor_threshold >= 0 && cor_threshold <= 1 && !is.null(cor_threshold)){
         stop("'cor_threshold' must be a numeric value greater than or ",
              "equal to 0.", 
              call. = FALSE)
@@ -315,7 +315,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Matrix or table?
     if (mode == "matrix" && !is.null(result) ) {
         if(verbose){
-            message("Converting matrices into table...")
+            message("Converting table into matrices...")
         }
         result <- .correlation_table_to_matrix(result)
         # If sort was specified and there are more than 1 features
@@ -589,20 +589,41 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 # Input: Correlation table
 # Output: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
-#' @importFrom reshape2 acast
+#' @importFrom dplyr select
+#' @importFrom tidyr pivot_wider
 .correlation_table_to_matrix <- function(result){
-    # Correlation matrix is done from cor column, Var1 to rows and Var2 to columns
-    cor <- reshape2::acast(result, Var1 ~ Var2, value.var = "cor")
+    # Correlation matrix is done from Var1, Var2, and cor columns
+    # Select correct columns
+    cor <- result %>% dplyr::select(Var1, Var2, cor) %>% 
+      # Create a tibble, colum names from Var2, values from cor,
+      # first column includes Var1
+      tidyr::pivot_wider(names_from = Var2, values_from = cor) %>%
+      # Convert into data frame
+      as.data.frame()
+    # Give rownames and remove additional column
+    rownames(cor) <- cor$Var1
+    cor$Var1 <- NULL
+    cor <- as.matrix(cor)
     # Create a result list
     result_list <- list(cor = cor)
     # If p_values exist, then create a matrix and add to the result list
     if( !is.null(result$pval) ){
-        pval <- reshape2::acast(result, Var1 ~ Var2, value.var = "pval")
+        pval <- result %>% dplyr::select(Var1, Var2, pval) %>% 
+          tidyr::pivot_wider(names_from = Var2, values_from = pval) %>% 
+          as.data.frame()
+        rownames(pval) <- pval$Var1
+        pval$Var1 <- NULL
+        pval <- as.matrix(pval)
         result_list[["pval"]] <- pval
     } 
     # If adjusted p_values exist, then create a matrix and add to the result list
     if( !is.null(result$p_adj) ){
-        p_adj <- reshape2::acast(result, Var1 ~ Var2, value.var = "p_adj")
+        p_adj <- result %>% dplyr::select(Var1, Var2, p_adj) %>% 
+          tidyr::pivot_wider(names_from = Var2, values_from = p_adj) %>% 
+          as.data.frame()
+        rownames(p_adj) <- p_adj$Var1
+        p_adj$Var1 <- NULL
+        p_adj <- as.matrix(p_adj)
         result_list[["p_adj"]] <- p_adj
     } 
     return(result_list)

@@ -117,7 +117,6 @@ altExp(tse, "exp2") <- mae[[2]]
 result <- getExperimentCrossCorrelation(tse, experiment2 = "exp2", method = "pearson")
 # Show first 5 entries
 head(result, 5)
-
 }
 \references{
 Add references here. ###########################################################
