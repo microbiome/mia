@@ -138,13 +138,19 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
 setMethod("getExperimentCrossCorrelation", signature = "SummarizedExperiment",
     function(x, y = NULL, ...){
         ############################## INPUT CHECK #############################
-        if( !(class(y) == "SummarizedExperiment" || 
-              class(y) == "TreeSummarizedExperiment" ||
-              (is.character(y) && y %in% names(altExps(x)))  || 
-              (is.numeric(y) && y <= length(altExps(x))) ||
-              is.null(y) ) ){
+        # If y is  SE or TreeSE object
+        if( class(y) == "SummarizedExperiment" || 
+            class(y) == "TreeSummarizedExperiment" ){}
+        # If y is  character specifying name of altExp, 
+        else if( is.character(y) && y %in% names(altExps(x)) ){}
+        # If y is numeric value specifying altExp
+        else if( is.numeric(y) && y <= length(altExps(x)) ){} 
+        # If y is NULL
+        else if( is.null(y) ){}
+        # If y does not match, then give error
+        else{
             stop("'y' must be SE or TreeSE object, or numeric or character value specifying", 
-                 " experiment in altExps(x) or it must be NULL.", call. = FALSE)
+                " experiment in altExps(x) or it must be NULL.", call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
         # Fetch data sets and create a MAE object
@@ -154,7 +160,7 @@ setMethod("getExperimentCrossCorrelation", signature = "SummarizedExperiment",
             exp2 <- exp1
             experiments <- ExperimentList(exp1 = exp1)
             exp2_num <- 1
-        } else if ( is.character(y) ){
+        } else if ( is.character(y) || is.numeric(y) ){
             exp2 <- altExps(x)[[y]]
             experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
             exp2_num <- 2
