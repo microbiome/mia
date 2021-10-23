@@ -127,7 +127,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         if(length(min_size) > 1){
             stop("`min_size` had more than one value. ", 
                  "Specifiy a single integer value.")
-            min_size <- min_size[1]	
+            min_size <- min_size[1]    
         }
         if(!is.numeric(min_size) || 
            as.integer(min_size) != min_size && min_size <= 0){
@@ -164,7 +164,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
 # Sub sampling function from phyloseq internals
 .subsample_assay <- function(x, min_size, replace){
     # Create replacement species vector
-    rarvec <- numeric(length(x))	
+    rarvec <- numeric(length(x))    
     # Perform the sub-sampling. Suppress warnings due to old R compat issue.
     # Also, make sure to avoid errors from x summing to zero, 
     # and there are no observations to sample.
