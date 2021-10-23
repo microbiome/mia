@@ -76,10 +76,10 @@ NULL
 #' @aliases rarifyCounts
 #' @export
 setGeneric("subsampleCounts", signature = c("x"),
-    function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
-             seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
-             name = "subsampled", verbose = TRUE, ...)
-      standardGeneric("subsampleCounts"))
+           function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
+                    seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
+                    name = "subsampled", verbose = TRUE, ...)
+               standardGeneric("subsampleCounts"))
 
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom DelayedMatrixStats colSums2 rowSums2
@@ -88,62 +88,63 @@ setGeneric("subsampleCounts", signature = c("x"),
 #' @export
 setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
-           seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
-           name = "subsampled", verbose = TRUE, ...){
-      
+       seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
+       name = "subsampled", verbose = TRUE, ...){
+    
         warning("Subsampling/Rarefying may undermine downstream analyses",
-                "\nand have unintended consequences. Therefore, make sure",
-                "\nthis normalization is appropriate for your data. \n ",
-                call. = FALSE)
+                "and have unintended consequences. Therefore, make sure",
+                "this normalization is appropriate for your data.",
+              call. = FALSE)
         .check_assay_present(abund_values, x)
         if(any(assay(x, abund_values) %% 1 != 0)){
-          warning("assay contains non-integer values. Only counts table",
-                  "\nis applicable...")
-          }
+            warning("assay contains non-integer values. Only counts table",
+                    "is applicable...")
+        }
         if(!is.logical(verbose)){
-          stop("`verbose` has to be logical i.e. TRUE or FALSE")
-          }
+            stop("`verbose` has to be logical i.e. TRUE or FALSE")
+        }
         if(verbose){
-          # Print to screen this value
-          message("`set.seed(", seed, ")` was used to initialize repeatable random subsampling.")
-          message("Please record this for your records so others can reproduce. \n ... \n")
-          }
+            # Print to screen this value
+            message("`set.seed(", seed, ")` was used to initialize repeatable ",
+                    "random subsampling.","\nPlease record this for your ",
+                    "records so others can reproduce.")
+        }
         if(!.is_numeric_string(seed)){
-          stop("`seed` has to be an numeric value See `?set.seed`\n")
-          } 
+            stop("`seed` has to be an numeric value See `?set.seed`")
+        } 
         if(!is.logical(replace)){
-          stop("`replace` has to be logical i.e. TRUE or FALSE")
-          } 
+            stop("`replace` has to be logical i.e. TRUE or FALSE")
+        } 
         # Check name
         if(!.is_non_empty_string(name) ||
            name == abund_values){
-          stop("'name' must be a non-empty single character value and be ",
-               "different from `abund_values`.",
-               call. = FALSE)
-          }
+            stop("'name' must be a non-empty single character value and be ",
+                 "different from `abund_values`.",
+                 call. = FALSE)
+        }
         set.seed(seed)
         # Make sure min_size is of length 1.
         if(length(min_size) > 1){
-          stop("`min_size` had more than one value. ", 
-               "Specifiy a single integer value. \n ... \n")
-          min_size <- min_size[1]	
-          }
+            stop("`min_size` had more than one value. ", 
+                 "Specifiy a single integer value.")
+            min_size <- min_size[1]	
+        }
         if(!is.numeric(min_size) || 
            as.integer(min_size) != min_size && min_size <= 0){
-          stop("min_size needs to be a positive integer value.")
-          }
+            stop("min_size needs to be a positive integer value.")
+        }
         # get samples with less than min number of reads
         if(min(colSums2(assay(x, abund_values))) < min_size){
-          rmsams <- colnames(x)[colSums2(assay(x, abund_values)) < min_size]
-          if(verbose){
-            message(length(rmsams), " samples removed ",
-                    "because they contained fewer reads than `min_size`.")
+            rmsams <- colnames(x)[colSums2(assay(x, abund_values)) < min_size]
+            if(verbose){
+                message(length(rmsams), " samples removed ",
+                        "because they contained fewer reads than `min_size`.")
             }
-          # remove sample(s)
-          newtse <- x[, !colnames(x) %in% rmsams]
-          } else {
+            # remove sample(s)
+            newtse <- x[, !colnames(x) %in% rmsams]
+        } else {
             newtse <- x
-            }
+        }
         newassay <- apply(assay(newtse, abund_values), 2, 
                           .subsample_assay,
                           min_size=min_size, replace=replace)
@@ -151,15 +152,12 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         # remove features not present in any samples after subsampling
         message(paste(length(which(rowSums2(newassay) == 0)), "features", 
                       "removed because they are not present in all samples", 
-                      "after subsampling.\n"))
+                      "after subsampling."))
         newassay <- newassay[rowSums2(newassay)>0,]
-        message("Returning subsampled TreeSE!",
-                "The original assays are also modified")
-        
         newtse <- newtse[rownames(newassay),]
         assay(newtse, name, withDimnames=FALSE) <- newassay
         return(newtse)
-        }
+    }
 )
 
 
@@ -172,22 +170,25 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     # and there are no observations to sample.
     # The initialization of rarvec above is already sufficient.
     if(sum(x) <= 0){
-      # Protect against, and quickly return an empty vector, 
-      # if x is already an empty count vector
-      return(rarvec)
-      }
+        # Protect against, and quickly return an empty vector, 
+        # if x is already an empty count vector
+        return(rarvec)
+    }
     if(replace){
-      # resample with replacement
-      suppressWarnings(subsample <- sample(1:length(x), min_size, replace=TRUE, prob=x))
-      } else {
+        # resample with replacement
+        obsvec <- seq_along(x)
+        prob <- x
+    } else {
         # resample without replacement
-        obsvec <- apply(data.frame(featuresi=1:length(x), times=x), 1, function(x){
-          rep_len(x["featuresi"], x["times"])
-          })
-        obsvec <- unlist(obsvec, use.names=FALSE)
+        obsvec <- mapply(rep_len, x = seq_along(x), length.out = x)
+        obsvec <- unlist(obsvec, use.names = FALSE)
         # use `sample` for subsampling. Hope that obsvec doesn't overflow.
-        suppressWarnings(subsample <- sample(obsvec, min_size, replace=FALSE))
-        }
+        prob <- NULL
+    }
+    suppressWarnings(subsample <- sample(obsvec,
+                                         min_size,
+                                         replace = replace,
+                                         prob = prob))
     # Tabulate the results (these are already named by the order in `x`)
     sstab <- table(subsample)
     # Assign the tabulated random subsample values to the species vector
@@ -195,6 +196,3 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     # Return abundance vector. Let replacement happen elsewhere.
     return(rarvec)
 }
-
-
-
