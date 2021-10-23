@@ -32,7 +32,8 @@
 #'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Use \code{abund_values} instead. \code{exprs_values} will be disabled.)
+#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
+#'   will be disabled.)
 #'
 #' @param FUN a \code{function} or \code{character} value with a function
 #'   name returning a \code{\link[stats:dist]{dist}} object

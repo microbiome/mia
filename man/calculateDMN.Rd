@@ -111,7 +111,8 @@ assay to use for calculation.}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Use \code{abund_values} instead. \code{exprs_values} will be disabled.)}
+(Please use \code{abund_values} instead. At some point \code{exprs_values}
+will be disabled.)}
 
 \item{transposed}{Logical scalar, is x transposed with samples in rows?}
 
