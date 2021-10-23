@@ -637,17 +637,13 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     
     # If test significance is specified, then calculate significance with chi-squared test.
     # Are these two features independent or not?
-    if ( test_significance ){
-        # Do the Pearson's chi-squared test
-        temp <- chisq.test(x, y)
-        # Take the p-value
-        p_value <- temp$p.value
-        # Result is combination of tau and p-value
-        result <- list(estimate = tau, p.value = p_value)
+    if ( !test_significance ){
+        return(tau)
     } 
-    # Otherwise return just tau
-    else{
-        result <- tau
-    }
-    return(result)
+    # Do the Pearson's chi-squared test
+    temp <- chisq.test(x, y)
+    # Take the p-value
+    p_value <- temp$p.value
+    # Result is combination of tau and p-value
+    list(estimate = tau, p.value = p_value)
 }
