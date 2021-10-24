@@ -114,7 +114,7 @@ head(result, 5)
 # Create TreeSE with altExp
 tse <- mae[[1]]
 altExp(tse, "exp2") <- mae[[2]]
-result <- getExperimentCrossCorrelation(tse, experiment2 = "exp2", method = "pearson")
+result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson")
 # Show first 5 entries
 head(result, 5)
 }

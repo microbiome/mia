@@ -38,7 +38,8 @@ Depends:
     R (>= 4.0),
     SummarizedExperiment,
     SingleCellExperiment,
-    TreeSummarizedExperiment (>= 1.99.3)
+    TreeSummarizedExperiment (>= 1.99.3),
+    MultiAssayExperiment
 Imports:
     methods,
     stats,
@@ -75,7 +76,6 @@ Suggests:
     reldist,
     ade4,
     microbiomeDataSets,
-    MultiAssayExperiment,
     rmarkdown
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues

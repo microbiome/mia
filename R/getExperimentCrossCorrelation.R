@@ -85,7 +85,7 @@
 #' # Create TreeSE with altExp
 #' tse <- mae[[1]]
 #' altExp(tse, "exp2") <- mae[[2]]
-#' result <- getExperimentCrossCorrelation(tse, experiment2 = "exp2", method = "pearson")
+#' result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson")
 #' # Show first 5 entries
 #' head(result, 5)
 NULL
@@ -374,6 +374,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 # Input: Assays that share samples but that have different features and different parameters.
 # Output: Correlation table including correlation values (and p-values and adjusted p-values)
+#' @importFrom stats p.adjust
 .calculate_correlation <- function(assay1, assay2, method, p_adj_method, test_significance){
     # Choose correct method for numeric and categorical data
     if( method %in% c("kendall", "pearson","spearman") ) {
@@ -423,6 +424,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 # Input: Vector of names that belong to feature pair, and assays.
 # Output: Correlation value or list that includes correlation value and p-value.
+#' @importFrom stats cor.test cor 
 .calculate_correlation_for_numeric_values <- function(feature_pair, test_significance, 
                                                       assay1, assay2, method, ...){
     # Get features
@@ -542,6 +544,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 # Input: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 # Output: Lst of sorted matrices (cor, p-values and adjusted p-values / matrix (cor)
+#' @importFrom stats hclust
 .correlation_sort <- function(result){
     # Fetch data matrices
     correlations <- result$cor
@@ -645,6 +648,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: Two vectors, one represent feature1, other feature2, which share samples
 # Output: list of tau and p-value or just tau
 #' @importFrom DelayedMatrixStats rowSums2 colSums2
+#' @importFrom stats chisq.test
 .calculate_gktau <- function(x, y, test_significance = FALSE){
     # First, compute the IxJ contingency table between x and y
     Nij <- table(x, y, useNA="ifany")
