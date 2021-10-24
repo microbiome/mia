@@ -28,7 +28,7 @@ getExperimentCrossCorrelation(x, ...)
   ...
 )
 
-\S4method{getExperimentCrossCorrelation}{SummarizedExperiment}(x, y = NULL, ...)
+\S4method{getExperimentCrossCorrelation}{SummarizedExperiment}(x, experiment2 = x, ...)
 
 testForExperimentCrossCorrelation(x, ...)
 
@@ -40,7 +40,13 @@ testForExperimentCrossCorrelation(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments:
+\itemize{
+\item{\code{test_significance}}{A single boolean value
+in function \code{getExperimentCrossCorrelation} for selecting
+whether to test significance or not.
+(By default: \code{test_significance = FALSE})}
+}}
 
 \item{experiment1}{A single character or numeric value for selecting the experiment 1
 from \code{experiment(x)} of \code{MultiassayExperiment} object.
@@ -48,9 +54,10 @@ from \code{experiment(x)} of \code{MultiassayExperiment} object.
 
 \item{experiment2}{A single character or numeric value for selecting the experiment 2
 from\code{experiment(x)} of \code{MultiAssayExperiment} object or
-\code{altExp(x)} of \code{SummarizedExperiment} object.
-(By default: \code{experiment2 = 2} when input is \code{MAE} and
-\code{experiment2 = NULL} when input is \code{TreeSE})}
+\code{altExp(x)} of \code{SummarizedExperiment} object. Alternatively,
+\code{experiment2} can also be \code{SE} object when \code{x} is \code{SE} object.
+(By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and
+\code{experiment2 = x} when \code{x} is \code{SE})}
 
 \item{abund_values1}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
@@ -61,7 +68,7 @@ experiment 1 to be transformed. (By default: \code{abund_values1 = "counts"})}
 experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})}
 
 \item{method}{A single character value for selecting association method
-('pearson', or 'spearman' for continuous; categorical for discrete)
+('kendall', pearson', or 'spearman' for continuous; 'categorical' for discrete)
 (By default: \code{method = "spearman"})}
 
 \item{mode}{A single character value for selecting output format
@@ -69,7 +76,6 @@ Must be 'table' or 'matrix'.  (By default: \code{mode = "table"})}
 
 \item{p_adj_method}{A single character value for selecting adjustment method of
 p-values. Passed to \code{p.adjust} function.
-Check available methods from \code{help(p.adjust))}.
 (By default: \code{p_adj_method = "fdr"})}
 
 \item{p_adj_threshold}{A single numeric value (in \link{0, 1}) for selecting
@@ -79,25 +85,35 @@ adjusted p-value threshold. (By default: \code{p_adj_threshold = 0.05})}
 correlation threshold to include features. (By default: \code{cor_threshold = NULL})}
 
 \item{sort}{A single boolean value for selecting whether to sort features or not
-in result. Used method is hierarchical clustering. (By default: \code{sort = FALSE})}
+in result matrices. Used method is hierarchical clustering.
+Disabled when \code{mode = "table}. (By default: \code{sort = FALSE})}
 
 \item{filter_self_correlations}{A single boolean value for selecting whether to
 filter out correlations between identical items. Applies only when correlation
 between experiment itself is tested, i.e., when input is \code{MAE} and
-\code{experiment1 == experiment2} or when input is \code{MAE} and
-\code{experiment2 = NULL}.
+\code{experiment1 == experiment2} and \code{abund_values1 == abund_values2}
+or when input is two identical \code{SE} objects
+and \code{abund_values1 == abund_values2}.
 (By default: \code{filter_self_correlations = FALSE})}
 
-\item{verbose}{Verbose}
+\item{verbose}{A single boolean value for selecting whether to get messages
+about progress of calculation.}
 }
 \value{
-Matrix or table. ##############################################################
+These functions return associations in table or matrix format. In table format,
+returned value is a data frame that includes  features and associations
+(and p-values) in columns. In matrix format, returned value is a one matrix
+when only associations are calculated. If also significances are tested, then
+returned value is a list of matrices.
 }
 \description{
 Calculate cross-correlation
 }
 \details{
-Calculate cross-correlations between features of two experiments.
+These functions calculates associations between features of two experiments.
+\code{getExperimentCrossCorrelation} calculates only associations by default.
+\code{testForExperimentCrossCorrelation} calculates also significance of
+associations.
 }
 \examples{
 mae <- microbiomeDataSets::peerj32()
@@ -114,12 +130,25 @@ head(result, 5)
 # Create TreeSE with altExp
 tse <- mae[[1]]
 altExp(tse, "exp2") <- mae[[2]]
-result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson")
+# Whe mode = matrix, matrix is returned
+result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson", 
+                                        mode = "matrix")
 # Show first 5 entries
 head(result, 5)
-}
-\references{
-Add references here. ###########################################################
+
+# testForExperimentCorrelation returns also significances
+# filter_self_correlations = TRUE filters self correlations
+result <- testForExperimentCrossCorrelation(tse, y = tse, method = "pearson",
+                                            filter_self_correlations = TRUE)
+# Show first 5 entries
+head(result, 5)
+
+# Also getExperimentCrossCorrelation returns significances when 
+# test_signicance = TRUE
+result <- getExperimentCrossCorrelation(mae[[1]], y = mae[[2]], method = "pearson",
+                                        mode = "matrix", test_significance = TRUE)
+# Returned value is a list of matrices
+names(result)
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

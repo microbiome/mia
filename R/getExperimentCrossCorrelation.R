@@ -11,9 +11,10 @@
 #'    
 #' @param experiment2 A single character or numeric value for selecting the experiment 2
 #'    from\code{experiment(x)} of \code{MultiAssayExperiment} object or 
-#'    \code{altExp(x)} of \code{SummarizedExperiment} object.
-#'    (By default: \code{experiment2 = 2} when input is \code{MAE} and 
-#'    \code{experiment2 = NULL} when input is \code{TreeSE})
+#'    \code{altExp(x)} of \code{SummarizedExperiment} object. Alternatively, 
+#'    \code{experiment2} can also be \code{SE} object when \code{x} is \code{SE} object.
+#'    (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and 
+#'    \code{experiment2 = x} when \code{x} is \code{SE})
 #'    
 #' @param abund_values1 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
@@ -24,7 +25,7 @@
 #'   experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})
 #'   
 #' @param method A single character value for selecting association method 
-#'    ('pearson', or 'spearman' for continuous; categorical for discrete)
+#'    ('kendall', pearson', or 'spearman' for continuous; 'categorical' for discrete)
 #'     (By default: \code{method = "spearman"})
 #' 
 #' @param mode A single character value for selecting output format 
@@ -32,7 +33,6 @@
 #' 
 #' @param p_adj_method A single character value for selecting adjustment method of
 #'    p-values. Passed to \code{p.adjust} function. 
-#'    Check available methods from \code{help(p.adjust))}.
 #'    (By default: \code{p_adj_method = "fdr"})
 #' 
 #' @param p_adj_threshold A single numeric value (in [0, 1]) for selecting 
@@ -42,28 +42,41 @@
 #'    correlation threshold to include features. (By default: \code{cor_threshold = NULL})
 #' 
 #' @param sort A single boolean value for selecting whether to sort features or not
-#'    in result. Used method is hierarchical clustering. (By default: \code{sort = FALSE})
+#'    in result matrices. Used method is hierarchical clustering. 
+#'    Disabled when \code{mode = "table}. (By default: \code{sort = FALSE})
 #' 
 #' @param filter_self_correlations A single boolean value for selecting whether to 
 #'    filter out correlations between identical items. Applies only when correlation
 #'    between experiment itself is tested, i.e., when input is \code{MAE} and 
-#'    \code{experiment1 == experiment2} or when input is \code{MAE} and 
-#'    \code{experiment2 = NULL}.
+#'    \code{experiment1 == experiment2} and \code{abund_values1 == abund_values2} 
+#'    or when input is two identical \code{SE} objects 
+#'    and \code{abund_values1 == abund_values2}. 
 #'    (By default: \code{filter_self_correlations = FALSE})
 #' 
-#' @param verbose Verbose
-#'    
-#' @param ... Additional arguments.
+#' @param verbose A single boolean value for selecting whether to get messages
+#'    about progress of calculation.
+#'
+#' @param ... Additional arguments:
+#'    \itemize{
+#'        \item{\code{test_significance}}{A single boolean value 
+#'        in function \code{getExperimentCrossCorrelation} for selecting 
+#'        whether to test significance or not. 
+#'        (By default: \code{test_significance = FALSE})}
+#'    }
 #'    
 #'    
 #' @details
-#' Calculate cross-correlations between features of two experiments. 
-#'
-#' @references
-#' Add references here. ###########################################################
+#' These functions calculates associations between features of two experiments. 
+#' \code{getExperimentCrossCorrelation} calculates only associations by default.
+#' \code{testForExperimentCrossCorrelation} calculates also significance of 
+#' associations.
 #'
 #' @return 
-#' Matrix or table. ##############################################################
+#' These functions return associations in table or matrix format. In table format,
+#' returned value is a data frame that includes  features and associations 
+#' (and p-values) in columns. In matrix format, returned value is a one matrix
+#' when only associations are calculated. If also significances are tested, then
+#' returned value is a list of matrices.
 #'
 #' @name getExperimentCrossCorrelation
 #' @export
@@ -85,9 +98,25 @@
 #' # Create TreeSE with altExp
 #' tse <- mae[[1]]
 #' altExp(tse, "exp2") <- mae[[2]]
-#' result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson")
+#' # Whe mode = matrix, matrix is returned
+#' result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson", 
+#'                                         mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
+#' 
+#' # testForExperimentCorrelation returns also significances
+#' # filter_self_correlations = TRUE filters self correlations
+#' result <- testForExperimentCrossCorrelation(tse, y = tse, method = "pearson",
+#'                                             filter_self_correlations = TRUE)
+#' # Show first 5 entries
+#' head(result, 5)
+#' 
+#' # Also getExperimentCrossCorrelation returns significances when 
+#' # test_signicance = TRUE
+#' result <- getExperimentCrossCorrelation(mae[[1]], y = mae[[2]], method = "pearson",
+#'                                         mode = "matrix", test_significance = TRUE)
+#' # Returned value is a list of matrices
+#' names(result)
 NULL
 
 #' @rdname getExperimentCrossCorrelation
@@ -136,17 +165,15 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
 #' @importFrom SingleCellExperiment altExps
 #' @export
 setMethod("getExperimentCrossCorrelation", signature = "SummarizedExperiment",
-    function(x, y = NULL, ...){
+    function(x, experiment2 = x, ...){
         ############################## INPUT CHECK #############################
         # If y is  SE or TreeSE object
-        if( class(y) == "SummarizedExperiment" || 
-            class(y) == "TreeSummarizedExperiment" ){}
+        if( class(experiment2) == "SummarizedExperiment" || 
+            class(experiment2) == "TreeSummarizedExperiment" ){}
         # If y is  character specifying name of altExp, 
-        else if( is.character(y) && y %in% names(altExps(x)) ){}
+        else if( is.character(experiment2) && experiment2 %in% names(altExps(x)) ){}
         # If y is numeric value specifying altExp
-        else if( is.numeric(y) && y <= length(altExps(x)) ){} 
-        # If y is NULL
-        else if( is.null(y) ){}
+        else if( is.numeric(experiment2) && experiment2 <= length(altExps(x)) ){} 
         # If y does not match, then give error
         else{
             stop("'y' must be SE or TreeSE object, or numeric or character value specifying", 
@@ -155,17 +182,13 @@ setMethod("getExperimentCrossCorrelation", signature = "SummarizedExperiment",
         ############################ INPUT CHECK END ###########################
         # Fetch data sets and create a MAE object
         exp1 <- x
-        # If experiment2 is NULL, then experiment1 == experiment2
-        if( is.null(y) ){
-            exp2 <- exp1
-            experiments <- ExperimentList(exp1 = exp1)
-            exp2_num <- 1
-        } else if ( is.character(y) || is.numeric(y) ){
-            exp2 <- altExps(x)[[y]]
+        # If experiment2 is character or numeric, it specifies altExp
+        if ( is.character(experiment2) || is.numeric(experiment2) ){
+            exp2 <- altExps(x)[[experiment2]]
             experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
             exp2_num <- 2
         } else {
-            exp2 <- y
+            exp2 <- experiment2
             experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
             exp2_num <- 2
         }
@@ -223,10 +246,6 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
            is.numeric(experiment2) && experiment2 <= length(experiments(x)) ) ){
         stop("'experiment2' must be numeric or character value specifying", 
              " experiment in experiment(x).", call. = FALSE)
-    }
-    # If experiments are not the same, disable filter_self_correlations
-    if( experiment1 != experiment2 ){
-        filter_self_correlations <- FALSE
     }
     # Fetch tse objects
     tse1 <- x[[experiment1]]
