@@ -21,8 +21,13 @@
 #'   matrix. This means that the phylo object and the columns should relate
 #'   to the same type of features (aka. microorganisms).
 #'
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
+#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
+#'   will be disabled.)
 #'
 #' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-UniFrac
 #'   calculation? Weighted-UniFrac takes into account the relative abundance of
@@ -118,8 +123,8 @@ setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
 setMethod("calculateUniFrac",
           signature = c(x = "TreeSummarizedExperiment",
                         tree = "missing"),
-    function(x, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, exprs_values)
+    function(x, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, abund_values)
         if(!transposed){
             if(is.null(rowTree(x))){
                 stop("'rowTree(x)' must not be NULL", call. = FALSE)

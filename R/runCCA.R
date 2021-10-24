@@ -22,9 +22,14 @@
 #'   consider only some of them.
 #'
 #' @param scale Logical scalar, should the expression values be standardized?
+#' 
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
 #'
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
+#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
+#'   will be disabled.)
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -148,9 +153,9 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
 #' @export
 #' @rdname runCCA
 setMethod("calculateCCA", "SummarizedExperiment",
-    function(x, formula, ..., exprs_values = "counts")
+    function(x, formula, ..., abund_values = exprs_values, exprs_values = "counts")
     {
-        mat <- assay(x,exprs_values)
+        mat <- assay(x, abund_values)
         variables <- .get_variables_from_data_and_formula(x, formula)
         .calculate_cca(mat, formula, variables, ...)
     }
@@ -210,9 +215,9 @@ setMethod("calculateRDA", "ANY", .calculate_rda)
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "SummarizedExperiment",
-    function(x, formula, ..., exprs_values = "counts")
+    function(x, formula, ..., abund_values = exprs_values, exprs_values = "counts")
     {
-        mat <- assay(x, exprs_values)
+        mat <- assay(x, abund_values)
         variables <- .get_variables_from_data_and_formula(x, formula)
         .calculate_rda(mat, formula, variables, ...)
     }

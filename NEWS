@@ -10,3 +10,6 @@ Changes in version 1.1.x (2021-06-04)
 + added mapTaxonomy
 + added estimateDivergence
 + bugfix: makePhyloseqFromTreeSummarizedExperiment checks now for rowTree be compatible
++ bugfix: meltAssay supports Matrix types
++ bugfix: meltAssay is able to include rowData also when there are duplicated rownames
++ added subsampleCounts for Subsampling/Rarefying data
