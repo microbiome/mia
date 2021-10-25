@@ -6,11 +6,11 @@
 #'   object.
 #'   
 #' @param experiment1 A single character or numeric value for selecting the experiment 1
-#'    from \code{experiment(x)} of \code{MultiassayExperiment} object. 
+#'    from \code{experiments(x)} of \code{MultiassayExperiment} object. 
 #'    (By default: \code{experiment1 = 1})
 #'    
 #' @param experiment2 A single character or numeric value for selecting the experiment 2
-#'    from\code{experiment(x)} of \code{MultiAssayExperiment} object or 
+#'    from\code{experiments(x)} of \code{MultiAssayExperiment} object or 
 #'    \code{altExp(x)} of \code{SummarizedExperiment} object. Alternatively, 
 #'    \code{experiment2} can also be \code{SE} object when \code{x} is \code{SE} object.
 #'    (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and 
@@ -25,11 +25,11 @@
 #'   experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})
 #'   
 #' @param method A single character value for selecting association method 
-#'    ('kendall', pearson', or 'spearman' for continuous; 'categorical' for discrete)
+#'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
 #'     (By default: \code{method = "spearman"})
 #' 
 #' @param mode A single character value for selecting output format 
-#'    Must be 'table' or 'matrix'.  (By default: \code{mode = "table"})
+#'    Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})
 #' 
 #' @param p_adj_method A single character value for selecting adjustment method of
 #'    p-values. Passed to \code{p.adjust} function. 
@@ -47,10 +47,7 @@
 #' 
 #' @param filter_self_correlations A single boolean value for selecting whether to 
 #'    filter out correlations between identical items. Applies only when correlation
-#'    between experiment itself is tested, i.e., when input is \code{MAE} and 
-#'    \code{experiment1 == experiment2} and \code{abund_values1 == abund_values2} 
-#'    or when input is two identical \code{SE} objects 
-#'    and \code{abund_values1 == abund_values2}. 
+#'    between experiment itself is tested, i.e., when assays are identical. 
 #'    (By default: \code{filter_self_correlations = FALSE})
 #' 
 #' @param verbose A single boolean value for selecting whether to get messages
@@ -63,7 +60,6 @@
 #'        whether to test significance or not. 
 #'        (By default: \code{test_significance = FALSE})}
 #'    }
-#'    
 #'    
 #' @details
 #' These functions calculates associations between features of two experiments. 
@@ -317,7 +313,9 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     .cor_test_data_type(assay2, method)
     # Calculate correlations
     if(verbose){
-        message("Calculating correlations...")
+        message( paste0("Calculating correlations...\nmethod: ", method,
+                        ", p_adj_method: ",
+                        ifelse(test_significance, p_adj_method, "-")) )
     }
     result <- .calculate_correlation(assay1, assay2, method, p_adj_method, 
                                      test_significance)
@@ -326,12 +324,17 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
         !is.null(cor_threshold) || 
         filter_self_correlations ){
         if(verbose){
-            message("Filtering results...")
+            message( paste0("\nFiltering results...\np_adj_threshold: ",
+                            ifelse(!is.null(result$p_adj) && !is.null(p_adj_threshold), 
+                                   p_adj_threshold, "-"), ", cor_threshold: ", 
+                            ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
+                            ", filter_self_correlations: ", 
+                            ifelse(identical(assay1, assay2) && filter_self_correlations,
+                            filter_self_correlations, "-")) )
         }
         result <- .correlation_filter(result, 
                                       p_adj_threshold,
                                       cor_threshold,
-                                      sort,
                                       assay1, 
                                       assay2, 
                                       filter_self_correlations)
@@ -340,13 +343,13 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Matrix or table?
     if (mode == "matrix" && !is.null(result) ) {
         if(verbose){
-            message("Converting table into matrices...")
+            message("\nConverting table into matrices...")
         }
         result <- .correlation_table_to_matrix(result)
         # If sort was specified and there are more than 1 features
         if(sort && nrow(result$cor) > 1 && ncol(result$cor) > 1 ){
             if(verbose){
-                message("Sorting results...")
+                message("\nSorting results...")
             }
             result <- .correlation_sort(result)
         }
@@ -511,7 +514,6 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 .correlation_filter <- function(result,
                                 p_adj_threshold,
                                 cor_threshold, 
-                                sort,
                                 assay1,
                                 assay2,
                                 filter_self_correlations){

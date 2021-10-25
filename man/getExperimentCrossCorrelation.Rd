@@ -49,11 +49,11 @@ whether to test significance or not.
 }}
 
 \item{experiment1}{A single character or numeric value for selecting the experiment 1
-from \code{experiment(x)} of \code{MultiassayExperiment} object.
+from \code{experiments(x)} of \code{MultiassayExperiment} object.
 (By default: \code{experiment1 = 1})}
 
 \item{experiment2}{A single character or numeric value for selecting the experiment 2
-from\code{experiment(x)} of \code{MultiAssayExperiment} object or
+from\code{experiments(x)} of \code{MultiAssayExperiment} object or
 \code{altExp(x)} of \code{SummarizedExperiment} object. Alternatively,
 \code{experiment2} can also be \code{SE} object when \code{x} is \code{SE} object.
 (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and
@@ -68,11 +68,11 @@ experiment 1 to be transformed. (By default: \code{abund_values1 = "counts"})}
 experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})}
 
 \item{method}{A single character value for selecting association method
-('kendall', pearson', or 'spearman' for continuous; 'categorical' for discrete)
+('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
 (By default: \code{method = "spearman"})}
 
 \item{mode}{A single character value for selecting output format
-Must be 'table' or 'matrix'.  (By default: \code{mode = "table"})}
+Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})}
 
 \item{p_adj_method}{A single character value for selecting adjustment method of
 p-values. Passed to \code{p.adjust} function.
@@ -90,10 +90,7 @@ Disabled when \code{mode = "table"}. (By default: \code{sort = FALSE})}
 
 \item{filter_self_correlations}{A single boolean value for selecting whether to
 filter out correlations between identical items. Applies only when correlation
-between experiment itself is tested, i.e., when input is \code{MAE} and
-\code{experiment1 == experiment2} and \code{abund_values1 == abund_values2}
-or when input is two identical \code{SE} objects
-and \code{abund_values1 == abund_values2}.
+between experiment itself is tested, i.e., when assays are identical.
 (By default: \code{filter_self_correlations = FALSE})}
 
 \item{verbose}{A single boolean value for selecting whether to get messages
