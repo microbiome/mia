@@ -43,7 +43,7 @@
 #' 
 #' @param sort A single boolean value for selecting whether to sort features or not
 #'    in result matrices. Used method is hierarchical clustering. 
-#'    Disabled when \code{mode = "table}. (By default: \code{sort = FALSE})
+#'    Disabled when \code{mode = "table"}. (By default: \code{sort = FALSE})
 #' 
 #' @param filter_self_correlations A single boolean value for selecting whether to 
 #'    filter out correlations between identical items. Applies only when correlation
