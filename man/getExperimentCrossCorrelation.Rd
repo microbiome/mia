@@ -78,10 +78,10 @@ Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"}
 p-values. Passed to \code{p.adjust} function.
 (By default: \code{p_adj_method = "fdr"})}
 
-\item{p_adj_threshold}{A single numeric value (in \link{0, 1}) for selecting
+\item{p_adj_threshold}{A single numeric value (from 0 to  1) for selecting
 adjusted p-value threshold. (By default: \code{p_adj_threshold = 0.05})}
 
-\item{cor_threshold}{A single numeric absolute value (in \link{0, 1}) for selecting
+\item{cor_threshold}{A single numeric absolute value (from 0 to 1]) for selecting
 correlation threshold to include features. (By default: \code{cor_threshold = NULL})}
 
 \item{sort}{A single boolean value for selecting whether to sort features or not

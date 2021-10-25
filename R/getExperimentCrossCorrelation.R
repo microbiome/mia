@@ -35,10 +35,10 @@
 #'    p-values. Passed to \code{p.adjust} function. 
 #'    (By default: \code{p_adj_method = "fdr"})
 #' 
-#' @param p_adj_threshold A single numeric value (in [0, 1]) for selecting 
+#' @param p_adj_threshold A single numeric value (from 0 to  1) for selecting 
 #'    adjusted p-value threshold. (By default: \code{p_adj_threshold = 0.05})
 #' 
-#' @param cor_threshold A single numeric absolute value (in [0, 1]) for selecting 
+#' @param cor_threshold A single numeric absolute value (from 0 to 1]) for selecting 
 #'    correlation threshold to include features. (By default: \code{cor_threshold = NULL})
 #' 
 #' @param sort A single boolean value for selecting whether to sort features or not
@@ -543,7 +543,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     # If there are no significant correlations
     if ( nrow(result) == 0 ) {
         message("No significant correlations with the given criteria\n")
-        return(N)
+        return(NULL)
     }
     # Adjust levels
     result$Var1 <- factor(result$Var1)
@@ -627,10 +627,10 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 .correlation_table_to_matrix <- function(result){
     # Correlation matrix is done from Var1, Var2, and cor columns
     # Select correct columns
-    cor <- result %>% dplyr::select(Var1, Var2, cor) %>% 
+    cor <- result %>% dplyr::select("Var1", "Var2", "cor") %>% 
       # Create a tibble, colum names from Var2, values from cor,
       # first column includes Var1
-      tidyr::pivot_wider(names_from = Var2, values_from = cor) %>%
+      tidyr::pivot_wider(names_from = "Var2", values_from = "cor") %>%
       # Convert into data frame
       as.data.frame()
     # Give rownames and remove additional column
@@ -641,8 +641,8 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     result_list <- list(cor = cor)
     # If p_values exist, then create a matrix and add to the result list
     if( !is.null(result$pval) ){
-        pval <- result %>% dplyr::select(Var1, Var2, pval) %>% 
-          tidyr::pivot_wider(names_from = Var2, values_from = pval) %>% 
+        pval <- result %>% dplyr::select("Var1", "Var2", "pval") %>% 
+          tidyr::pivot_wider(names_from = "Var2", values_from = "pval") %>% 
           as.data.frame()
         rownames(pval) <- pval$Var1
         pval$Var1 <- NULL
@@ -651,8 +651,8 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     } 
     # If adjusted p_values exist, then create a matrix and add to the result list
     if( !is.null(result$p_adj) ){
-        p_adj <- result %>% dplyr::select(Var1, Var2, p_adj) %>% 
-          tidyr::pivot_wider(names_from = Var2, values_from = p_adj) %>% 
+        p_adj <- result %>% dplyr::select("Var1", "Var2", "p_adj") %>% 
+          tidyr::pivot_wider(names_from = "Var2", values_from = "p_adj") %>% 
           as.data.frame()
         rownames(p_adj) <- p_adj$Var1
         p_adj$Var1 <- NULL
