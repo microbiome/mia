@@ -255,12 +255,6 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     .check_assay_present(abund_values1, tse1)
     .check_assay_present(abund_values2, tse2)
     # Check method
-    # If method is not single string, user has not specified method,
-    # or has given e.g. a vector
-    if(!.is_non_empty_string(method)){
-        stop("'method' must be a non-empty single character value.",
-             call. = FALSE)
-    }
     method <- match.arg(method)
     # Check mode
     if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
