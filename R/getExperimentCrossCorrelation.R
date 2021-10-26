@@ -271,34 +271,38 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Check p_adj_threshold
     if( !(is.numeric(p_adj_threshold) && 
           (p_adj_threshold>=0 && p_adj_threshold<=1)  || 
-          is.null(cor_threshold) ) ){
+          is.null(p_adj_threshold) ) ){
         stop("'p_adj_threshold' must be a numeric value [0,1].", call. = FALSE)
     }
     # Check cor_threshold
-    if(!is.numeric(cor_threshold) && !is.null(cor_threshold)){
-        stop("'cor_threshold' must be a numeric value greater than or ",
-             "equal to 0.", 
-             call. = FALSE)
-    } else if(cor_threshold >= 0 && cor_threshold <= 1 && !is.null(cor_threshold)){
-        stop("'cor_threshold' must be a numeric value greater than or ",
-             "equal to 0.", 
-             call. = FALSE)
+    if( !(is.numeric(cor_threshold) && 
+          (cor_threshold>=0 && cor_threshold<=1)  || 
+          is.null(cor_threshold) ) ){
+      stop("'cor_threshold' must be a numeric value [0,1].", call. = FALSE)
     }
     # Check sort
-    if( !(sort == TRUE || sort == FALSE) ){
+    if( !(sort == TRUE || sort == FALSE) || is.numeric(sort) ){
         stop("'sort' must be a boolean value.", 
              call. = FALSE)
     }
     # Check filter_self_correlations
     if( !(filter_self_correlations == TRUE || 
-          filter_self_correlations == FALSE) ){
+          filter_self_correlations == FALSE) ||
+        is.numeric(filter_self_correlations) ){
         stop("'filter_self_correlations' must be a boolean value.", 
              call. = FALSE)
     }
     # Check test_significance
-    if( !(test_significance == TRUE || test_significance == FALSE) ){
+    if( !(test_significance == TRUE || test_significance == FALSE) ||
+        is.numeric(test_significance) ){
         stop("'test_significance' must be a boolean value.", 
              call. = FALSE)
+    }
+    # Check verbose
+    if( !(verbose == TRUE || verbose == FALSE) ||
+        is.numeric(verbose) ){
+      stop("'verbose' must be a boolean value.", 
+           call. = FALSE)
     }
     ############################ INPUT CHECK END ###########################
     # Fetch assays to correlate
