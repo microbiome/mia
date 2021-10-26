@@ -354,8 +354,8 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 .test_experiment_of_mae <- function(x, experiment){
   # If experiment is numeric and bigger than the number of experiments
   if( is.numeric(experiment) && experiment > length(experiments(x)) ){
-      stop(paste0("MAE object do not include ", experiment, 
-                  " experiments."), call. = FALSE)
+      stop(paste0("'", deparse(substitute(experiment)), "' is greater than the",
+                  " number of experiments in MAE object."), call. = FALSE)
   }
   # Negation of "if value is character and can be found from experiments or
   # if value is numeric and is smaller or equal to the list of experiments.
