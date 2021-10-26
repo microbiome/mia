@@ -231,18 +231,8 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               ...){
     ############################# INPUT CHECK ##############################
     # Check experiment1 and experiment2
-    # Negation of "if value is character and can be found from experiments or
-    # if value is numeric and is smaller or equal to the list of experiments.
-    if( !( is.character(experiment1) && experiment1 %in% names(experiments(x)) || 
-           is.numeric(experiment1) && experiment1 <= length(experiments(x)) ) ){
-        stop("'experiment1' must be numeric or character value specifying", 
-             " experiment in experiment(x).", call. = FALSE)
-    }
-    if( !( is.character(experiment2) && experiment2 %in% names(experiments(x)) || 
-           is.numeric(experiment2) && experiment2 <= length(experiments(x)) ) ){
-        stop("'experiment2' must be numeric or character value specifying", 
-             " experiment in experiment(x).", call. = FALSE)
-    }
+    .test_experiment_of_mae(x, experiment1)
+    .test_experiment_of_mae(x, experiment2)
     # Fetch tse objects
     tse1 <- x[[experiment1]]
     tse2 <- x[[experiment2]]
@@ -360,6 +350,22 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 }
 
 ################################ HELP FUNCTIONS ################################
+# This function is for testing if experiment can be found from MAE
+.test_experiment_of_mae <- function(x, experiment){
+  # If experiment is numeric and bigger than the number of experiments
+  if( is.numeric(experiment) && experiment > length(experiments(x)) ){
+      stop(paste0("MAE object do not include ", experiment, 
+                  " experiments."), call. = FALSE)
+  }
+  # Negation of "if value is character and can be found from experiments or
+  # if value is numeric and is smaller or equal to the list of experiments.
+  if( !( is.character(experiment) && experiment %in% names(experiments(x)) || 
+         is.numeric(experiment) && experiment <= length(experiments(x)) ) ){
+    stop(paste0("'", deparse(substitute(experiment)), "'", 
+                " must be numeric or character value specifying", 
+                " experiment in experiment(x)."), call. = FALSE)
+  }
+}
 ############################## .cor_test_data_type #############################
 # This function tests if values match with chosen method. With numeric methods, 
 # numeric values are expected, and with categorical method factor or character 
