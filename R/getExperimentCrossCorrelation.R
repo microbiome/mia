@@ -352,19 +352,19 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
 ################################ HELP FUNCTIONS ################################
 # This function is for testing if experiment can be found from MAE
 .test_experiment_of_mae <- function(x, experiment){
-  # If experiment is numeric and bigger than the number of experiments
-  if( is.numeric(experiment) && experiment > length(experiments(x)) ){
-      stop(paste0("'", deparse(substitute(experiment)), "' is greater than the",
-                  " number of experiments in MAE object."), call. = FALSE)
-  }
-  # Negation of "if value is character and can be found from experiments or
-  # if value is numeric and is smaller or equal to the list of experiments.
-  if( !( is.character(experiment) && experiment %in% names(experiments(x)) || 
-         is.numeric(experiment) && experiment <= length(experiments(x)) ) ){
-    stop(paste0("'", deparse(substitute(experiment)), "'", 
-                " must be numeric or character value specifying", 
-                " experiment in experiment(x)."), call. = FALSE)
-  }
+    # If experiment is numeric and bigger than the number of experiments
+    if( is.numeric(experiment) && experiment > length(experiments(x)) ){
+        stop(paste0("'", deparse(substitute(experiment)), "' is greater than the",
+                    " number of experiments in MAE object."), call. = FALSE)
+    }
+    # Negation of "if value is character and can be found from experiments or
+    # if value is numeric and is smaller or equal to the list of experiments.
+    if( !( is.character(experiment) && experiment %in% names(experiments(x)) || 
+        is.numeric(experiment) && experiment <= length(experiments(x)) ) ){
+        stop(paste0("'", deparse(substitute(experiment)), "'", 
+                    " must be numeric or character value specifying", 
+                    " experiment in experiment(x)."), call. = FALSE)
+    }
 }
 ############################## .cor_test_data_type #############################
 # This function tests if values match with chosen method. With numeric methods, 
