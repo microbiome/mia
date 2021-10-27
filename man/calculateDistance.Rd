@@ -13,6 +13,7 @@ calculateDistance(x, FUN = stats::dist, ...)
 \S4method{calculateDistance}{SummarizedExperiment}(
   x,
   FUN = stats::dist,
+  abund_values = exprs_values,
   exprs_values = "counts",
   transposed = FALSE,
   ...
@@ -29,8 +30,12 @@ and columns as features.}
 
 \item{...}{other arguments passed onto \code{FUN}}
 
-\item{exprs_values}{a single \code{character} value for specifying which
+\item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
+
+\item{exprs_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Use \code{abund_values} instead. \code{exprs_values} will be disabled.)}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 }

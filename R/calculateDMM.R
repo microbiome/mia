@@ -8,8 +8,13 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
+#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
+#'   will be disabled.)
 #'
 #' @param k the number of Dirichlet components to fit. See
 #'   \code{\link[DirichletMultinomial:dmn]{dmn}}
@@ -129,8 +134,8 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
-    function(x, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, exprs_values)
+    function(x, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, abund_values)
         if(!transposed){
             mat <- t(mat)
         }
@@ -262,8 +267,8 @@ setMethod("calculateDMNgroup", signature = c(x = "ANY"), .calculate_DMNgroup)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
-    function(x, variable, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, exprs_values)
+    function(x, variable, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, abund_values)
         if(!transposed){
             mat <- t(mat)
         }
@@ -311,8 +316,8 @@ setMethod("performDMNgroupCV", signature = c(x = "ANY"), .perform_DMNgroup_cv)
 #' @rdname calculateDMN
 #' @export
 setMethod("performDMNgroupCV", signature = c(x = "SummarizedExperiment"),
-    function(x, variable, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, exprs_values)
+    function(x, variable, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, abund_values)
         if(!transposed){
             mat <- t(mat)
         }
