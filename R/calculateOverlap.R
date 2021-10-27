@@ -1,7 +1,7 @@
 #' Estimate overlap
 #' 
 #' This function calculates overlap for all sample-pairs
-#' in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #'
 #' @param x a
