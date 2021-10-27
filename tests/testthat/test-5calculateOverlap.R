@@ -29,7 +29,7 @@ test_that("calculateOverlap", {
     result <- as.matrix(result)
     # Reference
     # data("esophagus", package = "phyloseq")
-    reference <- microbiome::overlap(esophagus, detection = 0)
+    # reference <- microbiome::overlap(esophagus, detection = 0)
     reference <- matrix(c(0.0000000, 0.8811552, 0.9038734, 0.8811552, 0.0000000, 
                           0.8390008, 0.9038734, 0.8390008, 0.00000000), nrow=3)
     expect_equal(unname(result), reference)
