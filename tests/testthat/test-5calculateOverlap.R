@@ -11,12 +11,12 @@ test_that("calculateOverlap", {
     expect_error(calculateOverlap(tse, detection = "TEST"))
     expect_error(calculateOverlap(tse, detection = TRUE))
     
-    # Test output
-    expect_true(class(result) == "dist")
-    
-    # Test values
+    # Calculate overlap
     tse <- transformSamples(tse, method = "relabundance")
     result <- calculateOverlap(tse, abund_values = "relabundance", detection = 0.15)
+    # Test output
+    expect_true(class(result) == "dist")
+    # Test values
     result <- as.matrix(result)
     # Reference
     # data("esophagus", package = "phyloseq")
