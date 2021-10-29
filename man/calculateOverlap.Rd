@@ -3,11 +3,17 @@
 \name{calculateOverlap}
 \alias{calculateOverlap}
 \alias{calculateOverlap,SummarizedExperiment-method}
+\alias{runOverlap}
+\alias{runOverlap,SummarizedExperiment-method}
 \title{Estimate overlap}
 \usage{
 calculateOverlap(x, abund_values = "counts", detection = 0, ...)
 
 \S4method{calculateOverlap}{SummarizedExperiment}(x, abund_values = "counts", detection = 0, ...)
+
+runOverlap(x, ...)
+
+\S4method{runOverlap}{SummarizedExperiment}(x, name = "overlap", ...)
 }
 \arguments{
 \item{x}{a
@@ -23,9 +29,14 @@ absence/presence of features. Feature that has abundance under threshold in
 either of samples, will be discarded when evaluating overlap between samples.}
 
 \item{...}{Optional arguments not used.}
+
+\item{name}{A single character value specifying the name of overlap matrix that
+is stored in reducedDim(x).}
 }
 \value{
-A sample-by-sample distance matrix.
+calculateOverlap returns sample-by-sample distance matrix.
+runOverlap returns \code{x} that includes overlap matrix in its
+reducedDim.
 }
 \description{
 This function calculates overlap for all sample-pairs
@@ -33,7 +44,7 @@ in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExpe
 object.
 }
 \details{
-This function calculates overlap between all the sample-pairs. Overlap
+These function calculates overlap between all the sample-pairs. Overlap
 reflects similarity between sample-pairs.
 
 When overlap is calculated using relative abundances, the higher the value the
@@ -47,6 +58,10 @@ tse <- esophagus
 tse <- transformSamples(tse, method = "relabundance")
 overlap <- calculateOverlap(tse, abund_values = "relabundance")
 overlap
+
+# Store result to reducedDim
+tse <- runOverlap(tse, abund_values = "relabundance", name = "overlap_between_samples")
+head(reducedDims(tse)$overlap_between_samples)
 
 }
 \seealso{

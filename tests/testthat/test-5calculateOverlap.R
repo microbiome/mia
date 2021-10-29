@@ -33,5 +33,12 @@ test_that("calculateOverlap", {
     reference <- matrix(c(0.0000000, 0.8811552, 0.9038734, 0.8811552, 0.0000000, 
                           0.8390008, 0.9038734, 0.8390008, 0.00000000), nrow=3)
     expect_equal(round(unname(result), 7), round(reference, 7))
+    # Test runOverlap
+    expect_error(runOverlap(tse, name = 1))
+    expect_error(runOverlap(tse, name = c("A", "B")))
+    expect_error(runOverlap(tse, name = TRUE))
+    expect_equal( reducedDim(runOverlap(tse)), as.matrix(calculateOverlap(tse)) )
+    expect_equal( reducedDim(runOverlap(tse, abund_values = "relabundance", detection = 0.08)), 
+                  as.matrix(calculateOverlap(tse, abund_values = "relabundance", detection = 0.08)) )
 })
 

@@ -18,9 +18,11 @@
 #'   
 #' @param ... Optional arguments not used.
 #'   
-#' @return A sample-by-sample distance matrix.
+#' @return calculateOverlap returns sample-by-sample distance matrix. 
+#'   runOverlap returns \code{x} that includes overlap matrix in its 
+#'   reducedDim. 
 #' 
-#' @details This function calculates overlap between all the sample-pairs. Overlap
+#' @details These function calculates overlap between all the sample-pairs. Overlap
 #'   reflects similarity between sample-pairs. 
 #'   
 #'   When overlap is calculated using relative abundances, the higher the value the 
@@ -44,6 +46,10 @@
 #' tse <- transformSamples(tse, method = "relabundance")
 #' overlap <- calculateOverlap(tse, abund_values = "relabundance")
 #' overlap
+#' 
+#' # Store result to reducedDim
+#' tse <- runOverlap(tse, abund_values = "relabundance", name = "overlap_between_samples")
+#' head(reducedDims(tse)$overlap_between_samples)
 #' 
 NULL
 
@@ -96,6 +102,34 @@ setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @rdname calculateOverlap
+#' @export
+setGeneric("runOverlap", signature = c("x"),
+           function(x, ...)
+               standardGeneric("runOverlap"))
+
+#' @rdname calculateOverlap
+#' 
+#' @param name A single character value specifying the name of overlap matrix that
+#' is stored in reducedDim(x).
+#'   
+#' @export
+setMethod("runOverlap", signature = c(x = "SummarizedExperiment"),
+    function(x, name = "overlap", ...){
+        # Check name
+        if(!.is_non_empty_string(name)){
+            stop("'name' must be a non-empty single character value.",
+                call. = FALSE)
+        }
+        # Calculate overlap
+        mat <- calculateOverlap(x, ...)
+        # Convert it into matrix so that nrow equals number of samples
+        mat <- as.matrix(mat)
+        # Store it to reducedDim
+        reducedDims(x)[[name]] <- mat
+        return(x)
+    }
+)
 ################################ HELP FUNCTIONS ################################
 
 .calculate_overlap <- function (x, y, detection) {
