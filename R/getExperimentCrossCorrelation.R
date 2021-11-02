@@ -310,15 +310,15 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     result <- .calculate_correlation(assay1, assay2, method, p_adj_method, 
                                      test_significance)
     # Disable p_adj_threshold if there is no adjusted p-values
-    if(is.null(result$p_adj)){
+    if( is.null(result$p_adj) ){
       p_adj_threshold <- NULL
     }
     # Disable cor_threshold if there is no correlations
-    if(is.null(result$cor)){
+    if( is.null(result$cor) ){
       cor_threshold <- NULL
     }
     # Disable filter_self_correlation if assays are not the same
-    if(!identical(assay1, assay2)){
+    if( !identical(assay1, assay2) ){
       filter_self_correlations <- FALSE
     }
     # Do filtering
@@ -569,8 +569,8 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     result$Var1 <- factor(result$Var1)
     result$Var2 <- factor(result$Var2)
     
-    # Filter self correlations if it's specified and assays match with each other
-    if ( identical(assay1, assay2) && filter_self_correlations ) {
+    # Filter self correlations if it's specified
+    if ( filter_self_correlations ) {
         # Take only those rows where features differ
         result <- result[result$Var1 != result$Var2, ]
     }
