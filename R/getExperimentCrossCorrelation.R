@@ -319,7 +319,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     # Disable filter_self_correlation if assays are not the same
     if(!identical(assay1, assay2)){
-      filter_self_correlations <- NULL
+      filter_self_correlations <- FALSE
     }
     # Do filtering
     if( !is.null(p_adj_threshold) || 
