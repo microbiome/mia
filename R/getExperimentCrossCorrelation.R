@@ -307,17 +307,29 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     result <- .calculate_correlation(assay1, assay2, method, p_adj_method, 
                                      test_significance)
+    # Disable p_adj_threshold if there is no adjusted p-values
+    if(is.null(result$p_adj)){
+      p_adj_threshold <- NULL
+    }
+    # Disable cor_threshold if there is no correlations
+    if(is.null(result$cor)){
+      cor_threshold <- NULL
+    }
+    # Disable filter_self_correlation if assays are not the same
+    if(!identical(assay1, assay2)){
+      filter_self_correlations <- NULL
+    }
     # Do filtering
     if( !is.null(p_adj_threshold) || 
         !is.null(cor_threshold) || 
         filter_self_correlations ){
         if(verbose){
             message( paste0("\nFiltering results...\np_adj_threshold: ",
-                            ifelse(!is.null(result$p_adj) && !is.null(p_adj_threshold), 
-                                   p_adj_threshold, "-"), ", cor_threshold: ", 
+                            ifelse(!is.null(p_adj_threshold),  p_adj_threshold, "-"), 
+                            ", cor_threshold: ", 
                             ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
                             ", filter_self_correlations: ", 
-                            ifelse(identical(assay1, assay2) && filter_self_correlations,
+                            ifelse(filter_self_correlations,
                             filter_self_correlations, "-")) )
         }
         result <- .correlation_filter(result, 
@@ -326,7 +338,6 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
                                       assay1, 
                                       assay2, 
                                       filter_self_correlations)
-        
     }
     # Matrix or table?
     if (mode == "matrix" && !is.null(result) ) {
