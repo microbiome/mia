@@ -458,19 +458,22 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     feature2 <- assay2[ , feature_pair[2]]
     # Whether to test significance
     if( test_significance ){
-        #calculate correlatiom
-        temp <- cor.test(feature1,
-                         feature2, 
-                         method = method,
-                         use = "pairwise.complete.obs")
+        # Calculate correlation
+        # Suppress warnings that might occur when calculating correlaitons (NAs...)
+        # or p-values (ties, and exact p-values cannot be calculated...)
+        temp <- suppressWarnings( cor.test(feature1,
+                                        feature2, 
+                                        method = method,
+                                        use = "pairwise.complete.obs") )
         # Take only correlation and p-value
         temp <- c(temp$estimate, temp$p.value)
     } else{
         # Calculate only correlation value
-        temp <- cor(feature1,
-                    feature2, 
-                    method = method,
-                    use = "pairwise.complete.obs")
+        # Suppress warnings that might occur when there are NAs in the data
+        temp <- suppressWarnings( cor(feature1,
+                                    feature2, 
+                                    method = method,
+                                    use = "pairwise.complete.obs") )
     }
     return(temp)
 }
@@ -699,8 +702,10 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     if ( !test_significance ){
         return(list(estimate = tau))
     } 
-    # Do the Pearson's chi-squared test
-    temp <- chisq.test(x, y)
+    # Do the Pearson's chi-squared test.
+    # Suppress warnings that might occur when there are ties, and exact p-value
+    # cant be calculated
+    temp <- suppressWarnings( chisq.test(x, y) )
     # Take the p-value
     p_value <- temp$p.value
     # Result is combination of tau and p-value
