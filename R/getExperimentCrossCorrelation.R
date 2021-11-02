@@ -36,10 +36,12 @@
 #'    (By default: \code{p_adj_method = "fdr"})
 #' 
 #' @param p_adj_threshold A single numeric value (from 0 to  1) for selecting 
-#'    adjusted p-value threshold. (By default: \code{p_adj_threshold = 0.05})
+#'    adjusted p-value threshold for filtering. 
+#'    (By default: \code{p_adj_threshold = NULL})
 #' 
 #' @param cor_threshold A single numeric absolute value (from 0 to 1]) for selecting 
-#'    correlation threshold to include features. (By default: \code{cor_threshold = NULL})
+#'    correlation threshold for filtering.
+#'    (By default: \code{cor_threshold = NULL})
 #' 
 #' @param sort A single boolean value for selecting whether to sort features or not
 #'    in result matrices. Used method is hierarchical clustering. 
@@ -133,7 +135,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
            mode = "table",
            p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                             "holm", "hommel", "none"),
-           p_adj_threshold = 0.05,
+           p_adj_threshold = NULL,
            cor_threshold = NULL,
            sort = FALSE,
            filter_self_correlations = FALSE,
@@ -222,7 +224,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               mode = "table",
                                               p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                                                                "holm", "hommel", "none"),
-                                              p_adj_threshold = 0.05,
+                                              p_adj_threshold = NULL,
                                               cor_threshold = NULL,
                                               sort = FALSE,
                                               filter_self_correlations = FALSE,
