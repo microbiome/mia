@@ -228,7 +228,7 @@ test_that("getExperimentCrossCorrelation", {
     p_adj_compare <- c(0.001247967, 0.784472862, 0.785332288, 0.830362548, 
                        0.836148425, 0.856762552, 0.859203260, 0.938444366, 0.942610008)
     # Calculate correlation
-    cor <- testForExperimentCrossCorrelation(mae, method = "pearson", p_adj_threshold = NULL)
+    cor <- testExperimentCrossCorrelation(mae, method = "pearson", p_adj_threshold = NULL)
     # Take only specific taxa and lipids
     df <- cor[cor$Var1 %in% c("Fusobacteria", "Campylobacter", "Actinomycetaceae") & 
                  cor$Var2 %in% c("PE(48:7)", "TG(50:0)", "SM(d18:1/18:0)"), ]
@@ -262,16 +262,16 @@ test_that("getExperimentCrossCorrelation", {
     mae <- mae[1:10, 1:10]
     # Test that output is in correct type
     expect_true( is.data.frame(suppressWarnings(
-        testForExperimentCrossCorrelation(mae, p_adj_threshold = NULL))) )
+        testExperimentCrossCorrelation(mae, p_adj_threshold = NULL))) )
     expect_true( is.data.frame(suppressWarnings(
         getExperimentCrossCorrelation(mae, test_significance = TRUE, p_adj_threshold = NULL))) )
     expect_true( is.data.frame(getExperimentCrossCorrelation(mae)) )
     # There should not be any p-values that are under 0
     expect_true( is.null(suppressWarnings(
-        testForExperimentCrossCorrelation(mae, p_adj_threshold = 0))) )
+        testExperimentCrossCorrelation(mae, p_adj_threshold = 0))) )
     # Test that output is in correct type
     expect_true( is.list(suppressWarnings(
-        testForExperimentCrossCorrelation(mae, mode = "matrix", 
+        testExperimentCrossCorrelation(mae, mode = "matrix", 
                                           p_adj_threshold = NULL))) )
     expect_true( is.list(suppressWarnings(
         getExperimentCrossCorrelation(mae, test_significance = TRUE, 
@@ -279,7 +279,7 @@ test_that("getExperimentCrossCorrelation", {
     expect_true( is.matrix(getExperimentCrossCorrelation(mae, mode = "matrix")) )
     # There should not be any p-values that are under 0
     expect_true( is.null(suppressWarnings(
-        testForExperimentCrossCorrelation(mae, p_adj_threshold = 0, mode = "matrix"))) )
+        testExperimentCrossCorrelation(mae, p_adj_threshold = 0, mode = "matrix"))) )
     
 })
 

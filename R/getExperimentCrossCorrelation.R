@@ -66,7 +66,7 @@
 #' @details
 #' These functions calculates associations between features of two experiments. 
 #' \code{getExperimentCrossCorrelation} calculates only associations by default.
-#' \code{testForExperimentCrossCorrelation} calculates also significance of 
+#' \code{testExperimentCrossCorrelation} calculates also significance of 
 #' associations.
 #'
 #' @return 
@@ -104,7 +104,7 @@
 #' 
 #' # testForExperimentCorrelation returns also significances
 #' # filter_self_correlations = TRUE filters self correlations
-#' result <- testForExperimentCrossCorrelation(tse, y = tse, method = "pearson",
+#' result <- testExperimentCrossCorrelation(tse, y = tse, method = "pearson",
 #'                                             filter_self_correlations = TRUE)
 #' # Show first 5 entries
 #' head(result, 5)
@@ -201,13 +201,13 @@ setMethod("getExperimentCrossCorrelation", signature = "SummarizedExperiment",
 
 #' @rdname getExperimentCrossCorrelation
 #' @export
-setGeneric("testForExperimentCrossCorrelation", signature = c("x"),
+setGeneric("testExperimentCrossCorrelation", signature = c("x"),
            function(x, ...)
-               standardGeneric("testForExperimentCrossCorrelation"))
+               standardGeneric("testExperimentCrossCorrelation"))
 
 #' @rdname getExperimentCrossCorrelation
 #' @export
-setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
+setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
           function(x, ...){
               getExperimentCrossCorrelation(x, test_significance = TRUE, ...)
           }

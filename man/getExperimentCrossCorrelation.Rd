@@ -4,8 +4,8 @@
 \alias{getExperimentCrossCorrelation}
 \alias{getExperimentCrossCorrelation,MultiAssayExperiment-method}
 \alias{getExperimentCrossCorrelation,SummarizedExperiment-method}
-\alias{testForExperimentCrossCorrelation}
-\alias{testForExperimentCrossCorrelation,ANY-method}
+\alias{testExperimentCrossCorrelation}
+\alias{testExperimentCrossCorrelation,ANY-method}
 \title{Calculate cross-correlation}
 \usage{
 getExperimentCrossCorrelation(x, ...)
@@ -30,9 +30,9 @@ getExperimentCrossCorrelation(x, ...)
 
 \S4method{getExperimentCrossCorrelation}{SummarizedExperiment}(x, experiment2 = x, ...)
 
-testForExperimentCrossCorrelation(x, ...)
+testExperimentCrossCorrelation(x, ...)
 
-\S4method{testForExperimentCrossCorrelation}{ANY}(x, ...)
+\S4method{testExperimentCrossCorrelation}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{A
@@ -111,7 +111,7 @@ Calculate cross-correlation
 \details{
 These functions calculates associations between features of two experiments.
 \code{getExperimentCrossCorrelation} calculates only associations by default.
-\code{testForExperimentCrossCorrelation} calculates also significance of
+\code{testExperimentCrossCorrelation} calculates also significance of
 associations.
 }
 \examples{
@@ -137,7 +137,7 @@ head(result, 5)
 
 # testForExperimentCorrelation returns also significances
 # filter_self_correlations = TRUE filters self correlations
-result <- testForExperimentCrossCorrelation(tse, y = tse, method = "pearson",
+result <- testExperimentCrossCorrelation(tse, y = tse, method = "pearson",
                                             filter_self_correlations = TRUE)
 # Show first 5 entries
 head(result, 5)
