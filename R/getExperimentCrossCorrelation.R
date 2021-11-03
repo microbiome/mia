@@ -1,4 +1,4 @@
-#' Calculate associations between features of two experiments.
+#' Calculate correlations between features of two experiments.
 #' 
 #' @param x A
 #'   \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}} or
@@ -96,13 +96,16 @@
 #' # Create TreeSE with altExp
 #' tse <- mae[[1]]
 #' altExp(tse, "exp2") <- mae[[2]]
-#' # Whe mode = matrix, matrix is returned
+#' 
+#' # When mode = matrix, matrix is returned
+#' # with p_adj_threshold it is possible to filter those features that do no have
+#' # any correlations that have p-value under threshold
 #' result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson", 
-#'                                         mode = "matrix")
+#'                                         mode = "matrix", p_adj_threshold = 0.05)
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
-#' # testForExperimentCorrelation returns also significances
+#' # testExperimentCorrelation returns also significances
 #' # filter_self_correlations = TRUE filters self correlations
 #' result <- testExperimentCrossCorrelation(tse, y = tse, method = "pearson",
 #'                                             filter_self_correlations = TRUE)
