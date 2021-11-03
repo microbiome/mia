@@ -6,7 +6,7 @@
 \alias{getExperimentCrossCorrelation,SummarizedExperiment-method}
 \alias{testExperimentCrossCorrelation}
 \alias{testExperimentCrossCorrelation,ANY-method}
-\title{Calculate cross-correlation}
+\title{Calculate associations between features of two experiments.}
 \usage{
 getExperimentCrossCorrelation(x, ...)
 
@@ -106,7 +106,7 @@ when only associations are calculated. If also significances are tested, then
 returned value is a list of matrices.
 }
 \description{
-Calculate cross-correlation
+Calculate associations between features of two experiments.
 }
 \details{
 These functions calculates associations between features of two experiments.

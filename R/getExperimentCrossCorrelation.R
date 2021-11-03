@@ -1,4 +1,4 @@
-#' Calculate cross-correlation
+#' Calculate associations between features of two experiments.
 #' 
 #' @param x A
 #'   \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}} or
