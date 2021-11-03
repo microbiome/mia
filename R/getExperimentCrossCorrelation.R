@@ -98,17 +98,18 @@
 #' altExp(tse, "exp2") <- mae[[2]]
 #' 
 #' # When mode = matrix, matrix is returned
-#' # with p_adj_threshold it is possible to filter those features that do no have
-#' # any correlations that have p-value under threshold
 #' result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson", 
-#'                                         mode = "matrix", p_adj_threshold = 0.05)
+#'                                         mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
 #' # testExperimentCorrelation returns also significances
 #' # filter_self_correlations = TRUE filters self correlations
+#' # With p_adj_threshold it is possible to filter those features that do no have
+#' # any correlations that have p-value under threshold
 #' result <- testExperimentCrossCorrelation(tse, y = tse, method = "pearson",
-#'                                             filter_self_correlations = TRUE)
+#'                                          filter_self_correlations = TRUE,
+#'                                          p_adj_threshold = 0.05)
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
@@ -304,11 +305,17 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Test if data is in right format
     .cor_test_data_type(assay1, method)
     .cor_test_data_type(assay2, method)
+    
+    # If significance is not calculated, p_adj_method is NULL
+    if( !test_significance ){
+      p_adj_method <- NULL
+    }
     # Calculate correlations
     if(verbose){
         message( paste0("Calculating correlations...\nmethod: ", method,
+                        ", test_significance: ", test_significance,
                         ", p_adj_method: ",
-                        ifelse(test_significance, p_adj_method, "-")) )
+                        ifelse(!is.null(p_adj_method), p_adj_method, "-")) )
     }
     result <- .calculate_correlation(assay1, assay2, method, p_adj_method, 
                                      test_significance)

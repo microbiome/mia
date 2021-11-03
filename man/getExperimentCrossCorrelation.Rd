@@ -6,7 +6,7 @@
 \alias{getExperimentCrossCorrelation,SummarizedExperiment-method}
 \alias{testExperimentCrossCorrelation}
 \alias{testExperimentCrossCorrelation,ANY-method}
-\title{Calculate associations between features of two experiments.}
+\title{Calculate correlations between features of two experiments.}
 \usage{
 getExperimentCrossCorrelation(x, ...)
 
@@ -106,7 +106,7 @@ when only associations are calculated. If also significances are tested, then
 returned value is a list of matrices.
 }
 \description{
-Calculate associations between features of two experiments.
+Calculate correlations between features of two experiments.
 }
 \details{
 These functions calculates associations between features of two experiments.
@@ -129,16 +129,20 @@ head(result, 5)
 # Create TreeSE with altExp
 tse <- mae[[1]]
 altExp(tse, "exp2") <- mae[[2]]
-# Whe mode = matrix, matrix is returned
+
+# When mode = matrix, matrix is returned
 result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson", 
                                         mode = "matrix")
 # Show first 5 entries
 head(result, 5)
 
-# testForExperimentCorrelation returns also significances
+# testExperimentCorrelation returns also significances
 # filter_self_correlations = TRUE filters self correlations
+# With p_adj_threshold it is possible to filter those features that do no have
+# any correlations that have p-value under threshold
 result <- testExperimentCrossCorrelation(tse, y = tse, method = "pearson",
-                                            filter_self_correlations = TRUE)
+                                         filter_self_correlations = TRUE,
+                                         p_adj_threshold = 0.05)
 # Show first 5 entries
 head(result, 5)
 
