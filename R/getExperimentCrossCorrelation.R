@@ -374,6 +374,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 ################################ HELP FUNCTIONS ################################
 # This function is for testing if experiment can be found from MAE
+#' @importFrom MultiAssayExperiment experiments
 .test_experiment_of_mae <- function(x, experiment){
     # If experiment is numeric and bigger than the number of experiments
     if( is.numeric(experiment) && experiment > length(experiments(x)) ){
