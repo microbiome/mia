@@ -65,7 +65,7 @@
 #' dominant_taxa <- countDominantTaxa(GlobalPatterns,
 #'                                    rank = "Genus",
 #'                                    group = "SampleType",
-#'                                    na.rm= TRUE)
+#'                                    na.rm = TRUE)
 #'
 #' dominant_taxa
 #'
