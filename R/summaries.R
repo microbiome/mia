@@ -74,7 +74,7 @@ setGeneric("getTopTaxa", signature = "x",
 
 .check_max_taxa <- function(x, top, abund_values){
     if(!is.numeric(top) || as.integer(top) != top){
-        top("'top' must be integer value", call. = FALSE)
+        stop("'top' must be integer value", call. = FALSE)
     }
     if(top > nrow(assay(x,abund_values))){
         stop("'top' must be <= nrow(x)", call. = FALSE)
