@@ -14,3 +14,4 @@ Changes in version 1.1.x (2021-06-04)
 + bugfix: meltAssay is able to include rowData also when there are duplicated rownames
 + added subsampleCounts for Subsampling/Rarefying data
 + added getExperimentCrossCorrelation for calculatting cross-correlation between features
++ added calculateOverlap
