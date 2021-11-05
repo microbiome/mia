@@ -329,7 +329,7 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
                  phyloseq::sample_data(data.frame(colData(tse))))
 
     # Test that rowTree is in phy_tree
-    expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
+    expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
 
     # Test that referenceSeq is in refseq. Expect error, because there should not be
     # reference sequences.
@@ -344,7 +344,7 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     expect_equal(length(phyloseq::phy_tree(test1_phy)$node), 
                  length(ape::keep.tip(rowTree(test1), rowLinks(test1)$nodeLab)$node))
     expect_equal(phyloseq::phy_tree(test1_phy)$tip.label, rownames(test2))
-    expect_equal(phyloseq::phy_tree(test2_phy), rowTree(test2))
+    expect_identical(phyloseq::phy_tree(test2_phy), rowTree(test2))
     
     # Check that everything works also with agglomerated data
     for (level in colnames(rowData(tse)) ){
@@ -369,6 +369,6 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
 
     # Test that rowTree is in phy_tree
-    expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
+    expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
     
 })
