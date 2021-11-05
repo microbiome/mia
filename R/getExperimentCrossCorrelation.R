@@ -291,7 +291,7 @@ setMethod("testForExperimentCrossCorrelation", signature = c(x = "ANY"),
     ############################ INPUT CHECK END ###########################
     # Fetch assays to correlate
     assay1 <- assay(tse1, abund_values1)
-    assay2 <- assay(tse2, abund_values1)
+    assay2 <- assay(tse2, abund_values2)
     # Transposes tables to right format
     assay1 <- t(assay1)
     assay2 <- t(assay2)
