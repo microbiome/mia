@@ -122,8 +122,9 @@ dominant_taxa
 summary(GlobalPatterns)
 
 # Get unique taxa at a particular taxonomic rank
-# sort = TRUE means that output is sorted in alphabetical order. 
-# sort can also be used in function getTopTaxa
+# sort = TRUE means that output is sorted in alphabetical order
+# With na.rm = TRUE, it is possible to remove NAs
+# sort and na.rm can also be used in function getTopTaxa
 getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE)
 
 }
