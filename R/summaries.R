@@ -21,6 +21,10 @@
 #'        whether to sort taxa in alphabetical order or not. Enabled in functions
 #'        \code{getUniqueTaxa}, and \code{getTopTaxa}.
 #'        (By default: \code{sort = FALSE})}
+#'        \item{\code{na.rm}}{A single boolean value for selecting 
+#'        whether to remove missing values or not. Enabled in functions
+#'        \code{getUniqueTaxa}, and \code{getTopTaxa}.
+#'        (By default: \code{sort = FALSE})}
 #'    }
 #'    
 #' @details
@@ -309,16 +313,22 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 }
 
 # Remove NAs and order in alphabetical order
-.remove_NAs_and_sort <- function(names, sort = FALSE, ...){
+.remove_NAs_and_sort <- function(names, sort = FALSE, na.rm = FALSE, ...){
     # Check sort
     if( !.is_a_bool(sort) ){
         stop("'sort' must be a boolean value.", call. = FALSE)
     }
-    # Remove NAs
-    names <- names[ !is.na(names) ]
+    # Check na.rm
+    if( !.is_a_bool(na.rm) ){
+        stop("'na.rm' must be a boolean value.", call. = FALSE)
+    }
+    # Remove NAs if specified
+    if( na.rm ){
+        names <- names[ !is.na(names) ]
+    }
     # Sort in alphabetical order if sort is TRUE
     if( sort ){
-        names <- sort(names)
+        names <- sort(names, na.last = TRUE)
     }
     return(names)
 }
