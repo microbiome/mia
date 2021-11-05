@@ -74,7 +74,7 @@ object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -187,55 +187,56 @@ additional arguments to deal with missing values or special characters.</p>
     <p>Leo Lahti, Tuomas Borman and Sudarshan A. Shetty.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
-
-<span class='co'># Finds the dominant taxa.</span>
-<span class='va'>sim.dom</span> <span class='op'>&lt;-</span> <span class='fu'>perSampleDominantTaxa</span><span class='op'>(</span><span class='va'>x</span>, rank<span class='op'>=</span><span class='st'>"Genus"</span><span class='op'>)</span>
-
-<span class='co'># Add information to colData</span>
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>addPerSampleDominantTaxa</span><span class='op'>(</span><span class='va'>x</span>, rank <span class='op'>=</span> <span class='st'>"Genus"</span>, name<span class='op'>=</span><span class='st'>"dominant_genera"</span><span class='op'>)</span>
-<span class='fu'>colData</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; DataFrame with 26 rows and 8 columns
-#&gt;         X.SampleID   Primer Final_Barcode Barcode_truncated_plus_T
-#&gt;           &lt;factor&gt; &lt;factor&gt;      &lt;factor&gt;                 &lt;factor&gt;
-#&gt; CL3        CL3      ILBC_01        AACGCA                   TGCGTT
-#&gt; CC1        CC1      ILBC_02        AACTCG                   CGAGTT
-#&gt; SV1        SV1      ILBC_03        AACTGT                   ACAGTT
-#&gt; M31Fcsw    M31Fcsw  ILBC_04        AAGAGA                   TCTCTT
-#&gt; M11Fcsw    M11Fcsw  ILBC_05        AAGCTG                   CAGCTT
-#&gt; ...            ...      ...           ...                      ...
-#&gt; TS28         TS28   ILBC_25        ACCAGA                   TCTGGT
-#&gt; TS29         TS29   ILBC_26        ACCAGC                   GCTGGT
-#&gt; Even1        Even1  ILBC_27        ACCGCA                   TGCGGT
-#&gt; Even2        Even2  ILBC_28        ACCTCG                   CGAGGT
-#&gt; Even3        Even3  ILBC_29        ACCTGT                   ACAGGT
-#&gt;         Barcode_full_length SampleType
-#&gt;                    &lt;factor&gt;   &lt;factor&gt;
-#&gt; CL3             CTAGCGTGCGT      Soil 
-#&gt; CC1             CATCGACGAGT      Soil 
-#&gt; SV1             GTACGCACAGT      Soil 
-#&gt; M31Fcsw         TCGACATCTCT      Feces
-#&gt; M11Fcsw         CGACTGCAGCT      Feces
-#&gt; ...                     ...        ...
-#&gt; TS28            GCATCGTCTGG      Feces
-#&gt; TS29            CTAGTCGCTGG      Feces
-#&gt; Even1           TGACTCTGCGG      Mock 
-#&gt; Even2           TCTGATCGAGG      Mock 
-#&gt; Even3           AGAGAGACAGG      Mock 
-#&gt;                                        Description        dominant_genera
-#&gt;                                           &lt;factor&gt;            &lt;character&gt;
-#&gt; CL3     Calhoun South Carolina Pine soil, pH 4.9   Genus:CandidatusSoli..
-#&gt; CC1     Cedar Creek Minnesota, grassland, pH 6.1               Genus:MC18
-#&gt; SV1     Sevilleta new Mexico, desert scrub, pH 8.3 Class:Chloracidobact..
-#&gt; M31Fcsw M3, Day 1, fecal swab, whole body study         Genus:Bacteroides
-#&gt; M11Fcsw M1, Day 1, fecal swab, whole body study         Genus:Bacteroides
-#&gt; ...                                            ...                    ...
-#&gt; TS28                                       Twin #1 Genus:Faecalibacterium
-#&gt; TS29                                       Twin #2 Family:Ruminococcaceae
-#&gt; Even1                                      Even1        Genus:Bacteroides
-#&gt; Even2                                      Even2        Genus:Bacteroides
-#&gt; Even3                                      Even3        Genus:Bacteroides</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Finds the dominant taxa.</span></span>
+<span class='r-in'><span class='va'>sim.dom</span> <span class='op'>&lt;-</span> <span class='fu'>perSampleDominantTaxa</span><span class='op'>(</span><span class='va'>x</span>, rank<span class='op'>=</span><span class='st'>"Genus"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Add information to colData</span></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>addPerSampleDominantTaxa</span><span class='op'>(</span><span class='va'>x</span>, rank <span class='op'>=</span> <span class='st'>"Genus"</span>, name<span class='op'>=</span><span class='st'>"dominant_genera"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>colData</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 26 rows and 8 columns</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         X.SampleID   Primer Final_Barcode Barcode_truncated_plus_T</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           &lt;factor&gt; &lt;factor&gt;      &lt;factor&gt;                 &lt;factor&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CL3        CL3      ILBC_01        AACGCA                   TGCGTT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CC1        CC1      ILBC_02        AACTCG                   CGAGTT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> SV1        SV1      ILBC_03        AACTGT                   ACAGTT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> M31Fcsw    M31Fcsw  ILBC_04        AAGAGA                   TCTCTT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> M11Fcsw    M11Fcsw  ILBC_05        AAGCTG                   CAGCTT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...            ...      ...           ...                      ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> TS28         TS28   ILBC_25        ACCAGA                   TCTGGT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> TS29         TS29   ILBC_26        ACCAGC                   GCTGGT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Even1        Even1  ILBC_27        ACCGCA                   TGCGGT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Even2        Even2  ILBC_28        ACCTCG                   CGAGGT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Even3        Even3  ILBC_29        ACCTGT                   ACAGGT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         Barcode_full_length SampleType</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                    &lt;factor&gt;   &lt;factor&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CL3             CTAGCGTGCGT      Soil </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CC1             CATCGACGAGT      Soil </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> SV1             GTACGCACAGT      Soil </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> M31Fcsw         TCGACATCTCT      Feces</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> M11Fcsw         CGACTGCAGCT      Feces</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...                     ...        ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> TS28            GCATCGTCTGG      Feces</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> TS29            CTAGTCGCTGG      Feces</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Even1           TGACTCTGCGG      Mock </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Even2           TCTGATCGAGG      Mock </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Even3           AGAGAGACAGG      Mock </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                                        Description        dominant_genera</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                                           &lt;factor&gt;            &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CL3     Calhoun South Carolina Pine soil, pH 4.9   Genus:CandidatusSoli..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CC1     Cedar Creek Minnesota, grassland, pH 6.1               Genus:MC18</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> SV1     Sevilleta new Mexico, desert scrub, pH 8.3 Class:Chloracidobact..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> M31Fcsw M3, Day 1, fecal swab, whole body study         Genus:Bacteroides</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> M11Fcsw M1, Day 1, fecal swab, whole body study         Genus:Bacteroides</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...                                            ...                    ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> TS28                                       Twin #1 Genus:Faecalibacterium</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> TS29                                       Twin #2 Family:Ruminococcaceae</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Even1                                      Even1        Genus:Bacteroides</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Even2                                      Even2        Genus:Bacteroides</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Even3                                      Even3        Genus:Bacteroides</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

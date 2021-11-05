@@ -73,7 +73,7 @@ data in a SingleCellExperiment object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -139,12 +139,19 @@ data in a <code>SingleCellExperiment</code> object.</p>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>calculateNMDS</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>, FUN <span class='op'>=</span> <span class='va'>vegdist</span><span class='op'>)</span>
+<span class='fu'>calculateNMDS</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>...</span>,
+  abund_values <span class='op'>=</span> <span class='va'>exprs_values</span>,
+  exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  FUN <span class='op'>=</span> <span class='va'>vegdist</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for SingleCellExperiment</span>
 <span class='fu'>calculateNMDS</span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>...</span>,
+  abund_values <span class='op'>=</span> <span class='va'>exprs_values</span>,
   exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   dimred <span class='op'>=</span> <span class='cn'>NULL</span>,
   n_dimred <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -163,7 +170,7 @@ data in a <code>SingleCellExperiment</code> object.</p>
       <td><p>For <code>calculateNMDS</code>, a numeric matrix of expression values
 where rows are features and columns are cells.
 Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.</p>
-<p>For <code>runNMDS</code> a SingleCellExperiment</p></td>
+<p>For <code>runNMDS</code> a <a href='https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html'>SingleCellExperiment</a></p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -213,9 +220,16 @@ calculated by <code>FUN</code> should be stored as &#8216;dist&#8217; attribute 
 the matrix returned/stored by <code>calculateNMDS</code>/ <code>runNMDS</code>.</p></td>
     </tr>
     <tr>
-      <th>exprs_values</th>
+      <th>abund_values</th>
       <td><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></td>
+    </tr>
+    <tr>
+      <th>exprs_values</th>
+      <td><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>abund_values</code> instead. At some point <code>exprs_values</code>
+will be disabled.)</p></td>
     </tr>
     <tr>
       <th>dimred</th>
@@ -261,42 +275,47 @@ results.</p></div>
     <p>Felix Ernst</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># generate some example data</span>
-<span class='va'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>60</span>, nrow <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span>
-<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'>DataFrame</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>SummarizedExperiment</span><span class='op'>(</span>assays <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>counts <span class='op'>=</span> <span class='va'>mat</span><span class='op'>)</span>,
-                           rowData <span class='op'>=</span> <span class='va'>df</span><span class='op'>)</span>
-<span class='co'>#</span>
-<span class='fu'>calculateNMDS</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; initial  value 0.383462 
-#&gt; iter   5 value 0.161655
-#&gt; iter  10 value 0.113278
-#&gt; final  value 0.003270 
-#&gt; converged</div><div class='output co'>#&gt;              [,1]         [,2]
-#&gt;  [1,] -0.60647893  0.282119175
-#&gt;  [2,] -0.38097446 -0.130374816
-#&gt;  [3,] -0.17579928 -0.184259003
-#&gt;  [4,] -0.02959516 -0.158516980
-#&gt;  [5,]  0.09082607 -0.111879947
-#&gt;  [6,]  0.14427170 -0.047910688
-#&gt;  [7,]  0.20118089 -0.001837781
-#&gt;  [8,]  0.22817639  0.061022767
-#&gt;  [9,]  0.25717122  0.116809029
-#&gt; [10,]  0.27122156  0.174828245
-#&gt; attr(,"Stress")
-#&gt; [1] 0.003269857</div><div class='input'>
-<span class='co'>#</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-<span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>runNMDS</span><span class='op'>(</span><span class='va'>esophagus</span>, FUN <span class='op'>=</span> <span class='fu'>vegan</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/vegan/man/vegdist.html'>vegdist</a></span>, name <span class='op'>=</span> <span class='st'>"BC"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; initial  value 0.000000 
-#&gt; final  value 0.000000 
-#&gt; converged</div><div class='input'><span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>runNMDS</span><span class='op'>(</span><span class='va'>esophagus</span>, FUN <span class='op'>=</span> <span class='fu'>vegan</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/vegan/man/vegdist.html'>vegdist</a></span>, name <span class='op'>=</span> <span class='st'>"euclidean"</span>,
-                     method <span class='op'>=</span> <span class='st'>"euclidean"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; initial  value 0.000000 
-#&gt; final  value 0.000000 
-#&gt; converged</div><div class='input'><span class='fu'>reducedDims</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of length 2
-#&gt; names(2): BC euclidean</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># generate some example data</span></span>
+<span class='r-in'><span class='va'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>60</span>, nrow <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'>DataFrame</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>SummarizedExperiment</span><span class='op'>(</span>assays <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>counts <span class='op'>=</span> <span class='va'>mat</span><span class='op'>)</span>,</span>
+<span class='r-in'>                           rowData <span class='op'>=</span> <span class='va'>df</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>#</span></span>
+<span class='r-in'><span class='fu'>calculateNMDS</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> initial  value 0.383462 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> iter   5 value 0.161655</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> iter  10 value 0.113278</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> final  value 0.003270 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> converged</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              [,1]         [,2]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,] -0.60647893  0.282119175</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,] -0.38097446 -0.130374816</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,] -0.17579928 -0.184259003</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,] -0.02959516 -0.158516980</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,]  0.09082607 -0.111879947</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,]  0.14427170 -0.047910688</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,]  0.20118089 -0.001837781</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,]  0.22817639  0.061022767</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,]  0.25717122  0.116809029</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,]  0.27122156  0.174828245</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> attr(,"Stress")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.003269857</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>#</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>runNMDS</span><span class='op'>(</span><span class='va'>esophagus</span>, FUN <span class='op'>=</span> <span class='fu'>vegan</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/vegan/man/vegdist.html'>vegdist</a></span>, name <span class='op'>=</span> <span class='st'>"BC"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> initial  value 0.000000 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> final  value 0.000000 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> converged</span>
+<span class='r-in'><span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>runNMDS</span><span class='op'>(</span><span class='va'>esophagus</span>, FUN <span class='op'>=</span> <span class='fu'>vegan</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/vegan/man/vegdist.html'>vegdist</a></span>, name <span class='op'>=</span> <span class='st'>"euclidean"</span>,</span>
+<span class='r-in'>                     method <span class='op'>=</span> <span class='st'>"euclidean"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> initial  value 0.000000 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> final  value 0.000000 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> converged</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html'>reducedDims</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of length 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> names(2): BC euclidean</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

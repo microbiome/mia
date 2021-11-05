@@ -76,7 +76,7 @@ long data.frame which can be used for tidyverse-tools." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -219,29 +219,30 @@ names are set.</p>
     <p>Sudarshan A. Shetty</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>molten_se</span> <span class='op'>&lt;-</span> <span class='fu'>meltAssay</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,
-                       abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
-                       add_row_data <span class='op'>=</span> <span class='cn'>TRUE</span>,
-                       add_col_data <span class='op'>=</span> <span class='cn'>TRUE</span>
-                       <span class='op'>)</span>
-<span class='va'>molten_se</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 499,616 × 17</span>
-#&gt;    FeatureID SampleID counts Kingdom Phylum   Class   Order Family Genus Species
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  
-#&gt; <span style='color: #BCBCBC;'> 1</span> 549322    CL3           0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 2</span> 549322    CC1           0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 3</span> 549322    SV1           0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 4</span> 549322    M31Fcsw       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 5</span> 549322    M11Fcsw       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 6</span> 549322    M31Plmr       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 7</span> 549322    M11Plmr       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 8</span> 549322    F21Plmr       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 9</span> 549322    M31Tong       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'>10</span> 549322    M11Tong       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #949494;'># … with 499,606 more rows, and 7 more variables: X.SampleID &lt;fct&gt;,</span>
-#&gt; <span style='color: #949494;'>#   Primer &lt;fct&gt;, Final_Barcode &lt;fct&gt;, Barcode_truncated_plus_T &lt;fct&gt;,</span>
-#&gt; <span style='color: #949494;'>#   Barcode_full_length &lt;fct&gt;, SampleType &lt;fct&gt;, Description &lt;fct&gt;</span></div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>molten_se</span> <span class='op'>&lt;-</span> <span class='fu'>meltAssay</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,</span>
+<span class='r-in'>                       abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,</span>
+<span class='r-in'>                       add_row_data <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>                       add_col_data <span class='op'>=</span> <span class='cn'>TRUE</span></span>
+<span class='r-in'>                       <span class='op'>)</span></span>
+<span class='r-in'><span class='va'>molten_se</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 499,616 × 17</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    FeatureID SampleID counts Kingdom Phylum   Class   Order Family Genus Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 549322    CL3           0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 549322    CC1           0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 549322    SV1           0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 549322    M31Fcsw       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 549322    M11Fcsw       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 549322    M31Plmr       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 549322    M11Plmr       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 549322    F21Plmr       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 549322    M31Tong       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 549322    M11Tong       0 Archaea Crenarc… Thermo… <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 499,606 more rows, and 7 more variables: X.SampleID &lt;fct&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   Primer &lt;fct&gt;, Final_Barcode &lt;fct&gt;, Barcode_truncated_plus_T &lt;fct&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   Barcode_full_length &lt;fct&gt;, SampleType &lt;fct&gt;, Description &lt;fct&gt;</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

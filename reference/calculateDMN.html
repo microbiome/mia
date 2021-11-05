@@ -74,7 +74,7 @@ package" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -136,7 +136,13 @@ package</p>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>calculateDMN</span><span class='op'>(</span><span class='va'>x</span>, exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>, transposed <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>calculateDMN</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  abund_values <span class='op'>=</span> <span class='va'>exprs_values</span>,
+  exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  transposed <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='fu'>runDMN</span><span class='op'>(</span><span class='va'>x</span>, name <span class='op'>=</span> <span class='st'>"DMN"</span>, <span class='va'>...</span><span class='op'>)</span>
 
@@ -170,6 +176,7 @@ package</p>
 <span class='fu'>calculateDMNgroup</span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>variable</span>,
+  abund_values <span class='op'>=</span> <span class='va'>exprs_values</span>,
   exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   transposed <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
@@ -190,6 +197,7 @@ package</p>
 <span class='fu'>performDMNgroupCV</span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>variable</span>,
+  abund_values <span class='op'>=</span> <span class='va'>exprs_values</span>,
   exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   transposed <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
@@ -225,9 +233,16 @@ object specifying whether the UniFrac calculation should be parallelized.</p></t
 <code><a href='https://rdrr.io/pkg/DirichletMultinomial/man/dmn.html'>dmn</a></code></p></td>
     </tr>
     <tr>
-      <th>exprs_values</th>
+      <th>abund_values</th>
       <td><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></td>
+    </tr>
+    <tr>
+      <th>exprs_values</th>
+      <td><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>abund_values</code> instead. At some point <code>exprs_values</code>
+will be disabled.)</p></td>
     </tr>
     <tr>
       <th>transposed</th>
@@ -269,84 +284,89 @@ returns a single <code>DMN</code> object.</p>
 <code>accessors for DMN objects</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>fl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package<span class='op'>=</span><span class='st'>"DirichletMultinomial"</span>, <span class='st'>"extdata"</span>, <span class='st'>"Twins.csv"</span><span class='op'>)</span>
-<span class='va'>counts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.csv</a></span><span class='op'>(</span><span class='va'>fl</span>, row.names<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>fl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package<span class='op'>=</span><span class='st'>"DirichletMultinomial"</span>, <span class='st'>"extdata"</span>, <span class='st'>"TwinStudy.t"</span><span class='op'>)</span>
-<span class='va'>pheno0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/scan.html'>scan</a></span><span class='op'>(</span><span class='va'>fl</span><span class='op'>)</span>
-<span class='va'>lvls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Lean"</span>, <span class='st'>"Obese"</span>, <span class='st'>"Overwt"</span><span class='op'>)</span>
-<span class='va'>pheno</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>lvls</span><span class='op'>[</span><span class='va'>pheno0</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>]</span>, levels<span class='op'>=</span><span class='va'>lvls</span><span class='op'>)</span>
-<span class='va'>colData</span> <span class='op'>&lt;-</span> <span class='fu'>DataFrame</span><span class='op'>(</span>pheno <span class='op'>=</span> <span class='va'>pheno</span><span class='op'>)</span>
-
-<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>SummarizedExperiment</span><span class='op'>(</span>assays <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>counts <span class='op'>=</span> <span class='va'>counts</span><span class='op'>)</span>,
-                           colData <span class='op'>=</span> <span class='va'>colData</span><span class='op'>)</span>
-
-
-<span class='co'>#</span>
-<span class='va'>dmn</span> <span class='op'>&lt;-</span> <span class='fu'>calculateDMN</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
-<span class='va'>dmn</span><span class='op'>[[</span><span class='fl'>1L</span><span class='op'>]</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; class: DMN 
-#&gt; k: 1 
-#&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 39227.39 BIC: 39527.91 AIC: 39292.11 </div><div class='input'>
-<span class='co'># since this take a bit of resources to calculate for k &gt; 1, the data is</span>
-<span class='co'># loaded</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>runDMN</span><span class='op'>(</span><span class='va'>se</span>, name <span class='op'>=</span> <span class='st'>"DMN"</span>, k <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>7</span><span class='op'>)</span>
-<span class='op'>}</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'>metadata</span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "DMN"</div><div class='input'>
-<span class='co'># return a list of DMN objects</span>
-<span class='fu'>getDMN</span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; class: DMN 
-#&gt; k: 1 
-#&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 39227.38 BIC: 39527.91 AIC: 39292.11 
-#&gt; 
-#&gt; [[2]]
-#&gt; class: DMN 
-#&gt; k: 2 
-#&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 38872.47 BIC: 39588.93 AIC: 39115.53 
-#&gt; 
-#&gt; [[3]]
-#&gt; class: DMN 
-#&gt; k: 3 
-#&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 38854.27 BIC: 40001.15 AIC: 39290.14 
-#&gt; 
-#&gt; [[4]]
-#&gt; class: DMN 
-#&gt; k: 4 
-#&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 38838.6 BIC: 40425.31 AIC: 39476.69 
-#&gt; 
-#&gt; [[5]]
-#&gt; class: DMN 
-#&gt; k: 5 
-#&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 38989.29 BIC: 40994.44 AIC: 39808.21 
-#&gt; 
-#&gt; [[6]]
-#&gt; class: DMN 
-#&gt; k: 6 
-#&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 39135.28 BIC: 41578.21 AIC: 40154.37 
-#&gt; 
-#&gt; [[7]]
-#&gt; class: DMN 
-#&gt; k: 7 
-#&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 39336.29 BIC: 42210.96 AIC: 40549.51 
-#&gt; </div><div class='input'><span class='co'># return, which objects fits best</span>
-<span class='fu'>bestDMNFit</span><span class='op'>(</span><span class='va'>dmn_se</span>, type <span class='op'>=</span> <span class='st'>"laplace"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 4</div><div class='input'><span class='co'># return the model, which fits best</span>
-<span class='fu'>getBestDMNFit</span><span class='op'>(</span><span class='va'>dmn_se</span>, type <span class='op'>=</span> <span class='st'>"laplace"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; class: DMN 
-#&gt; k: 4 
-#&gt; samples x taxa: 278 x 130 
-#&gt; Laplace: 38838.6 BIC: 40425.31 AIC: 39476.69 </div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>fl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package<span class='op'>=</span><span class='st'>"DirichletMultinomial"</span>, <span class='st'>"extdata"</span>, <span class='st'>"Twins.csv"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>counts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.csv</a></span><span class='op'>(</span><span class='va'>fl</span>, row.names<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>fl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package<span class='op'>=</span><span class='st'>"DirichletMultinomial"</span>, <span class='st'>"extdata"</span>, <span class='st'>"TwinStudy.t"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>pheno0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/scan.html'>scan</a></span><span class='op'>(</span><span class='va'>fl</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>lvls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Lean"</span>, <span class='st'>"Obese"</span>, <span class='st'>"Overwt"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>pheno</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>lvls</span><span class='op'>[</span><span class='va'>pheno0</span> <span class='op'>+</span> <span class='fl'>1</span><span class='op'>]</span>, levels<span class='op'>=</span><span class='va'>lvls</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>colData</span> <span class='op'>&lt;-</span> <span class='fu'>DataFrame</span><span class='op'>(</span>pheno <span class='op'>=</span> <span class='va'>pheno</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>SummarizedExperiment</span><span class='op'>(</span>assays <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>counts <span class='op'>=</span> <span class='va'>counts</span><span class='op'>)</span>,</span>
+<span class='r-in'>                           colData <span class='op'>=</span> <span class='va'>colData</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>#</span></span>
+<span class='r-in'><span class='va'>dmn</span> <span class='op'>&lt;-</span> <span class='fu'>calculateDMN</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>dmn</span><span class='op'>[[</span><span class='fl'>1L</span><span class='op'>]</span><span class='op'>]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: DMN </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> k: 1 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> samples x taxa: 278 x 130 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Laplace: 39227.38 BIC: 39527.91 AIC: 39292.11 </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># since this take a bit of resources to calculate for k &gt; 1, the data is</span></span>
+<span class='r-in'><span class='co'># loaded</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>runDMN</span><span class='op'>(</span><span class='va'>se</span>, name <span class='op'>=</span> <span class='st'>"DMN"</span>, k <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>7</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'>metadata</span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "DMN"</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># return a list of DMN objects</span></span>
+<span class='r-in'><span class='fu'>getDMN</span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: DMN </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> k: 1 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> samples x taxa: 278 x 130 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Laplace: 39227.38 BIC: 39527.91 AIC: 39292.11 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: DMN </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> k: 2 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> samples x taxa: 278 x 130 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Laplace: 38872.47 BIC: 39588.93 AIC: 39115.53 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[3]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: DMN </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> k: 3 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> samples x taxa: 278 x 130 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Laplace: 38854.27 BIC: 40001.15 AIC: 39290.14 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[4]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: DMN </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> k: 4 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> samples x taxa: 278 x 130 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Laplace: 38838.6 BIC: 40425.31 AIC: 39476.69 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[5]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: DMN </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> k: 5 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> samples x taxa: 278 x 130 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Laplace: 38989.29 BIC: 40994.44 AIC: 39808.21 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[6]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: DMN </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> k: 6 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> samples x taxa: 278 x 130 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Laplace: 39135.28 BIC: 41578.21 AIC: 40154.37 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[7]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: DMN </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> k: 7 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> samples x taxa: 278 x 130 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Laplace: 39336.29 BIC: 42210.96 AIC: 40549.51 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='co'># return, which objects fits best</span></span>
+<span class='r-in'><span class='fu'>bestDMNFit</span><span class='op'>(</span><span class='va'>dmn_se</span>, type <span class='op'>=</span> <span class='st'>"laplace"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 4</span>
+<span class='r-in'><span class='co'># return the model, which fits best</span></span>
+<span class='r-in'><span class='fu'>getBestDMNFit</span><span class='op'>(</span><span class='va'>dmn_se</span>, type <span class='op'>=</span> <span class='st'>"laplace"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: DMN </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> k: 4 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> samples x taxa: 278 x 130 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Laplace: 38838.6 BIC: 40425.31 AIC: 39476.69 </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

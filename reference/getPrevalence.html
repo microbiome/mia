@@ -73,7 +73,7 @@ SummarizedExperiment-class object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -265,7 +265,7 @@ Otherwise an <code>integer</code> vector is returned matching the rows in
 the detection threshold. For <code>SummarizedExperiment</code> objects, the
 prevalence is calculated for the selected taxonomic rank, otherwise for the
 rows. The absolute population prevalence can be obtained by multiplying the
-prevalence by the number of samples (<code><a href='https://rdrr.io/r/base/nrow.html'>ncol(x)</a></code>). If <code>as_relative =
+prevalence by the number of samples (<code>ncol(x)</code>). If <code>as_relative =
 TRUE</code> the relative frequency (between 0 and 1) is used to check against the
 <code>detection</code> threshold.</p>
 <p>The core abundance index from <code>getPrevalentAbundance</code> gives the relative
@@ -295,144 +295,154 @@ For <code>getPrevalentAbundance</code>: Leo Lahti and Tuomas Borman.
 Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
-<span class='co'># Get prevalence estimates for individual ASV/OTU</span>
-<span class='va'>prevalence.frequency</span> <span class='op'>&lt;-</span> <span class='fu'>getPrevalence</span><span class='op'>(</span><span class='va'>tse</span>,
-                                      detection <span class='op'>=</span> <span class='fl'>0</span>,
-                                      sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
-                                      as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalence.frequency</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 145149 114821 108747 526804 332405  98605 
-#&gt;      1      1      1      1      1      1 </div><div class='input'>
-<span class='co'># Get prevalence estimates for phylums</span>
-<span class='co'># - the getPrevalence function itself always returns population frequencies</span>
-<span class='va'>prevalence.frequency</span> <span class='op'>&lt;-</span> <span class='fu'>getPrevalence</span><span class='op'>(</span><span class='va'>tse</span>,
-                                      rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,
-                                      detection <span class='op'>=</span> <span class='fl'>0</span>,
-                                      sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
-                                      as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalence.frequency</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;     Chloroflexi           WPS-2      Firmicutes  Planctomycetes Verrucomicrobia 
-#&gt;               1               1               1               1               1 
-#&gt;             WS3 
-#&gt;               1 </div><div class='input'>
-<span class='co'># - to obtain population counts, multiply frequencies with the sample size,</span>
-<span class='co'># which answers the question "In how many samples is this phylum detectable"</span>
-<span class='va'>prevalence.count</span> <span class='op'>&lt;-</span> <span class='va'>prevalence.frequency</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>tse</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalence.count</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;     Chloroflexi           WPS-2      Firmicutes  Planctomycetes Verrucomicrobia 
-#&gt;              26              26              26              26              26 
-#&gt;             WS3 
-#&gt;              26 </div><div class='input'>
-<span class='co'># Detection threshold 1 (strictly greater by default);</span>
-<span class='co'># Note that the data (GlobalPatterns) is here in absolute counts</span>
-<span class='co'># (and not compositional, relative abundances)</span>
-<span class='co'># Prevalence threshold 50 percent (strictly greater by default)</span>
-<span class='va'>prevalent</span> <span class='op'>&lt;-</span> <span class='fu'>getPrevalentTaxa</span><span class='op'>(</span><span class='va'>tse</span>,
-                              rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,
-                              detection <span class='op'>=</span> <span class='fl'>10</span>,
-                              prevalence <span class='op'>=</span> <span class='fl'>50</span><span class='op'>/</span><span class='fl'>100</span>,
-                              as_relative <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalent</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "Crenarchaeota"  "Euryarchaeota"  "Actinobacteria" "Spirochaetes"  
-#&gt; [5] "Proteobacteria" "Fusobacteria"  </div><div class='input'>
-<span class='co'># Gets a subset of object that includes prevalent taxa</span>
-<span class='fu'>altExp</span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"prevalent"</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>subsetByPrevalentTaxa</span><span class='op'>(</span><span class='va'>tse</span>,
-                                       rank <span class='op'>=</span> <span class='st'>"Family"</span>,
-                                       detection <span class='op'>=</span> <span class='fl'>0.001</span>,
-                                       prevalence <span class='op'>=</span> <span class='fl'>0.55</span>,
-                                       as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'>altExp</span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"prevalent"</span><span class='op'>)</span>                                 
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 7 26 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(7): Rhodobacteraceae Sphingomonadaceae ... Lachnospiraceae
-#&gt;   Veillonellaceae
-#&gt; rowData names(7): Kingdom Phylum ... Genus Species
-#&gt; colnames(26): CL3 CC1 ... Even2 Even3
-#&gt; colData names(7): X.SampleID Primer ... SampleType Description
-#&gt; reducedDimNames(0):
-#&gt; mainExpName: NULL
-#&gt; altExpNames(0):
-#&gt; rowLinks: a LinkDataFrame (7 rows)
-#&gt; rowTree: 1 phylo tree(s) (19216 leaves)
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div><div class='input'>
-<span class='co'># getRareTaxa returns the inverse</span>
-<span class='va'>rare</span> <span class='op'>&lt;-</span> <span class='fu'>getRareTaxa</span><span class='op'>(</span><span class='va'>tse</span>,
-                    rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,
-                    detection <span class='op'>=</span> <span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>,
-                    prevalence <span class='op'>=</span> <span class='fl'>50</span><span class='op'>/</span><span class='fl'>100</span>,
-                    as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>rare</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "Crenarchaeota" "Euryarchaeota" "Spirochaetes"  "MVP-15"       
-#&gt; [5] "SBR1093"       "Fusobacteria" </div><div class='input'>
-<span class='co'># Gets a subset of object that includes rare taxa</span>
-<span class='fu'>altExp</span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"rare"</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>subsetByRareTaxa</span><span class='op'>(</span><span class='va'>tse</span>,
-                             rank <span class='op'>=</span> <span class='st'>"Class"</span>,
-                             detection <span class='op'>=</span> <span class='fl'>0.001</span>,
-                             prevalence <span class='op'>=</span> <span class='fl'>0.001</span>,
-                             as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'>altExp</span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"rare"</span><span class='op'>)</span>      
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 71 26 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(71): Thermoprotei Sd-NA ... Thermotogae Synergistia
-#&gt; rowData names(7): Kingdom Phylum ... Genus Species
-#&gt; colnames(26): CL3 CC1 ... Even2 Even3
-#&gt; colData names(7): X.SampleID Primer ... SampleType Description
-#&gt; reducedDimNames(0):
-#&gt; mainExpName: NULL
-#&gt; altExpNames(0):
-#&gt; rowLinks: a LinkDataFrame (71 rows)
-#&gt; rowTree: 1 phylo tree(s) (19216 leaves)
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div><div class='input'>
-<span class='co'># Names of both experiments, prevalent and rare, can be found from slot altExpNames</span>
-<span class='va'>tse</span>
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 19216 26 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(19216): 549322 522457 ... 200359 271582
-#&gt; rowData names(7): Kingdom Phylum ... Genus Species
-#&gt; colnames(26): CL3 CC1 ... Even2 Even3
-#&gt; colData names(7): X.SampleID Primer ... SampleType Description
-#&gt; reducedDimNames(0):
-#&gt; mainExpName: NULL
-#&gt; altExpNames(2): prevalent rare
-#&gt; rowLinks: a LinkDataFrame (19216 rows)
-#&gt; rowTree: 1 phylo tree(s) (19216 leaves)
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div><div class='input'>                         
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-<span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>esophagus</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;         B         C         D 
-#&gt; 0.9605911 0.8980392 0.9086758 </div><div class='input'>
-<span class='co'># data can be aggregated based on prevalent taxonomic results</span>
-<span class='fu'>agglomerateByPrevalence</span><span class='op'>(</span><span class='va'>tse</span>,
-                        rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,
-                        detection <span class='op'>=</span> <span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>,
-                        prevalence <span class='op'>=</span> <span class='fl'>50</span><span class='op'>/</span><span class='fl'>100</span>,
-                        as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 6 26 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(6): Actinobacteria Proteobacteria ... Firmicutes Other
-#&gt; rowData names(7): Kingdom Phylum ... Genus Species
-#&gt; colnames(26): CL3 CC1 ... Even2 Even3
-#&gt; colData names(7): X.SampleID Primer ... SampleType Description
-#&gt; reducedDimNames(0):
-#&gt; mainExpName: NULL
-#&gt; altExpNames(0):
-#&gt; rowLinks: NULL
-#&gt; rowTree: NULL
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span></span>
+<span class='r-in'><span class='co'># Get prevalence estimates for individual ASV/OTU</span></span>
+<span class='r-in'><span class='va'>prevalence.frequency</span> <span class='op'>&lt;-</span> <span class='fu'>getPrevalence</span><span class='op'>(</span><span class='va'>tse</span>,</span>
+<span class='r-in'>                                      detection <span class='op'>=</span> <span class='fl'>0</span>,</span>
+<span class='r-in'>                                      sort <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>                                      as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalence.frequency</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 145149 114821 108747 526804 332405  98605 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      1      1      1      1      1      1 </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Get prevalence estimates for phylums</span></span>
+<span class='r-in'><span class='co'># - the getPrevalence function itself always returns population frequencies</span></span>
+<span class='r-in'><span class='va'>prevalence.frequency</span> <span class='op'>&lt;-</span> <span class='fu'>getPrevalence</span><span class='op'>(</span><span class='va'>tse</span>,</span>
+<span class='r-in'>                                      rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,</span>
+<span class='r-in'>                                      detection <span class='op'>=</span> <span class='fl'>0</span>,</span>
+<span class='r-in'>                                      sort <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>                                      as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalence.frequency</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     Chloroflexi           WPS-2      Firmicutes  Planctomycetes Verrucomicrobia </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               1               1               1               1               1 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             WS3 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               1 </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># - to obtain population counts, multiply frequencies with the sample size,</span></span>
+<span class='r-in'><span class='co'># which answers the question "In how many samples is this phylum detectable"</span></span>
+<span class='r-in'><span class='va'>prevalence.count</span> <span class='op'>&lt;-</span> <span class='va'>prevalence.frequency</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>tse</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalence.count</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     Chloroflexi           WPS-2      Firmicutes  Planctomycetes Verrucomicrobia </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              26              26              26              26              26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             WS3 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              26 </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Detection threshold 1 (strictly greater by default);</span></span>
+<span class='r-in'><span class='co'># Note that the data (GlobalPatterns) is here in absolute counts</span></span>
+<span class='r-in'><span class='co'># (and not compositional, relative abundances)</span></span>
+<span class='r-in'><span class='co'># Prevalence threshold 50 percent (strictly greater by default)</span></span>
+<span class='r-in'><span class='va'>prevalent</span> <span class='op'>&lt;-</span> <span class='fu'>getPrevalentTaxa</span><span class='op'>(</span><span class='va'>tse</span>,</span>
+<span class='r-in'>                              rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,</span>
+<span class='r-in'>                              detection <span class='op'>=</span> <span class='fl'>10</span>,</span>
+<span class='r-in'>                              prevalence <span class='op'>=</span> <span class='fl'>50</span><span class='op'>/</span><span class='fl'>100</span>,</span>
+<span class='r-in'>                              as_relative <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>prevalent</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Crenarchaeota"  "Euryarchaeota"  "Actinobacteria" "Spirochaetes"  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [5] "Proteobacteria" "Fusobacteria"  </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Gets a subset of object that includes prevalent taxa</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExp</a></span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"prevalent"</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>subsetByPrevalentTaxa</span><span class='op'>(</span><span class='va'>tse</span>,</span>
+<span class='r-in'>                                       rank <span class='op'>=</span> <span class='st'>"Family"</span>,</span>
+<span class='r-in'>                                       detection <span class='op'>=</span> <span class='fl'>0.001</span>,</span>
+<span class='r-in'>                                       prevalence <span class='op'>=</span> <span class='fl'>0.55</span>,</span>
+<span class='r-in'>                                       as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExp</a></span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"prevalent"</span><span class='op'>)</span>                                 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> dim: 7 26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> metadata(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> assays(1): counts</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rownames(7): Rhodobacteraceae Sphingomonadaceae ... Lachnospiraceae</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Veillonellaceae</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> reducedDimNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> mainExpName: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> altExpNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowLinks: a LinkDataFrame (7 rows)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colTree: NULL</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># getRareTaxa returns the inverse</span></span>
+<span class='r-in'><span class='va'>rare</span> <span class='op'>&lt;-</span> <span class='fu'>getRareTaxa</span><span class='op'>(</span><span class='va'>tse</span>,</span>
+<span class='r-in'>                    rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,</span>
+<span class='r-in'>                    detection <span class='op'>=</span> <span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>,</span>
+<span class='r-in'>                    prevalence <span class='op'>=</span> <span class='fl'>50</span><span class='op'>/</span><span class='fl'>100</span>,</span>
+<span class='r-in'>                    as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>rare</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Crenarchaeota" "Euryarchaeota" "Spirochaetes"  "MVP-15"       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [5] "SBR1093"       "Fusobacteria" </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Gets a subset of object that includes rare taxa</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExp</a></span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"rare"</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>subsetByRareTaxa</span><span class='op'>(</span><span class='va'>tse</span>,</span>
+<span class='r-in'>                             rank <span class='op'>=</span> <span class='st'>"Class"</span>,</span>
+<span class='r-in'>                             detection <span class='op'>=</span> <span class='fl'>0.001</span>,</span>
+<span class='r-in'>                             prevalence <span class='op'>=</span> <span class='fl'>0.001</span>,</span>
+<span class='r-in'>                             as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExp</a></span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"rare"</span><span class='op'>)</span>      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> dim: 71 26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> metadata(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> assays(1): counts</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rownames(71): Thermoprotei Sd-NA ... Thermotogae Synergistia</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> reducedDimNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> mainExpName: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> altExpNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowLinks: a LinkDataFrame (71 rows)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colTree: NULL</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Names of both experiments, prevalent and rare, can be found from slot altExpNames</span></span>
+<span class='r-in'><span class='va'>tse</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> dim: 19216 26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> metadata(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> assays(1): counts</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rownames(19216): 549322 522457 ... 200359 271582</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> reducedDimNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> mainExpName: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> altExpNames(2): prevalent rare</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowLinks: a LinkDataFrame (19216 rows)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colTree: NULL</span>
+<span class='r-in'>                         </span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>getPrevalentAbundance</span><span class='op'>(</span><span class='va'>esophagus</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         B         C         D </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 0.9605911 0.8980392 0.9086758 </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># data can be aggregated based on prevalent taxonomic results</span></span>
+<span class='r-in'><span class='fu'>agglomerateByPrevalence</span><span class='op'>(</span><span class='va'>tse</span>,</span>
+<span class='r-in'>                        rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,</span>
+<span class='r-in'>                        detection <span class='op'>=</span> <span class='fl'>1</span><span class='op'>/</span><span class='fl'>100</span>,</span>
+<span class='r-in'>                        prevalence <span class='op'>=</span> <span class='fl'>50</span><span class='op'>/</span><span class='fl'>100</span>,</span>
+<span class='r-in'>                        as_relative <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> dim: 6 26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> metadata(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> assays(1): counts</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rownames(6): Actinobacteria Proteobacteria ... Firmicutes Other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> reducedDimNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> mainExpName: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> altExpNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowTree: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colTree: NULL</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

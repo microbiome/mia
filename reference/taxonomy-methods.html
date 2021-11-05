@@ -74,7 +74,7 @@ SummarizedExperiment." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -194,7 +194,7 @@ object</p></td>
     <tr>
       <th>empty.fields</th>
       <td><p>a <code>character</code> value defining, which values should be
-regarded as empty. (Default: <code><a href='https://rdrr.io/r/base/c.html'>c(NA, "", " ", "\t")</a></code>). They will be
+regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
 removed if <code>na.rm = TRUE</code> before agglomeration.</p></td>
     </tr>
     <tr>
@@ -255,7 +255,7 @@ recognized. In functions this is used as case insensitive.</p>
     
 <ul>
 <li><p><code>taxonomyRanks</code>: a <code>character</code> vector with all the
-taxonomic ranks found in <code><a href='https://rdrr.io/r/base/colnames.html'>colnames(rowData(x))</a></code></p></li>
+taxonomic ranks found in <code>colnames(rowData(x))</code></p></li>
 <li><p><code>taxonomyRankEmpty</code>: a <code>logical</code> value</p></li>
 <li><p><code>mapTaxonomy</code>: a <code>list</code> per element of taxa. Each
 element is either a <code>DataFrame</code>, a <code>character</code> or <code>NULL</code>.
@@ -295,108 +295,121 @@ be accessed using <code>metadata(df)$confidence</code>.</p>
 <code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/resolveLoop.html'>resolveLoop</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>GlobalPatterns</span>
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 19216 26 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(19216): 549322 522457 ... 200359 271582
-#&gt; rowData names(7): Kingdom Phylum ... Genus Species
-#&gt; colnames(26): CL3 CC1 ... Even2 Even3
-#&gt; colData names(7): X.SampleID Primer ... SampleType Description
-#&gt; reducedDimNames(0):
-#&gt; mainExpName: NULL
-#&gt; altExpNames(0):
-#&gt; rowLinks: a LinkDataFrame (19216 rows)
-#&gt; rowTree: 1 phylo tree(s) (19216 leaves)
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div><div class='input'><span class='fu'>taxonomyRanks</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</div><div class='input'>
-<span class='fu'>checkTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'>taxonomyRankEmpty</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Kingdom"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; FALSE 
-#&gt; 19216 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'>taxonomyRankEmpty</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Species"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; FALSE  TRUE 
-#&gt;  1413 17803 </div><div class='input'>
-<span class='fu'>getTaxonomyLabels</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>20</span>,<span class='op'>]</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  [1] "Class:Thermoprotei"               "Class:Thermoprotei_1"            
-#&gt;  [3] "Species:Sulfolobusacidocaldarius" "Class:Sd-NA"                     
-#&gt;  [5] "Class:Sd-NA_1"                    "Class:Sd-NA_2"                   
-#&gt;  [7] "Order:NRP-J"                      "Order:NRP-J_1"                   
-#&gt;  [9] "Order:NRP-J_2"                    "Order:NRP-J_3"                   
-#&gt; [11] "Order:NRP-J_4"                    "Family:SAGMA-X"                  
-#&gt; [13] "Family:SAGMA-X_1"                 "Family:SAGMA-X_2"                
-#&gt; [15] "Family:Cenarchaeaceae"            "Family:Cenarchaeaceae_1"         
-#&gt; [17] "Family:Cenarchaeaceae_2"          "Family:Cenarchaeaceae_3"         
-#&gt; [19] "Family:Cenarchaeaceae_4"          "Family:Cenarchaeaceae_5"         </div><div class='input'>
-<span class='co'># mapTaxonomy</span>
-<span class='co'>## returns the unique taxonomic information</span>
-<span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; DataFrame with 2307 rows and 7 columns
-#&gt;            Kingdom        Phylum          Class                  Order
-#&gt;        &lt;character&gt;   &lt;character&gt;    &lt;character&gt;            &lt;character&gt;
-#&gt; 549322     Archaea Crenarchaeota   Thermoprotei                     NA
-#&gt; 951        Archaea Crenarchaeota   Thermoprotei           Sulfolobales
-#&gt; 244423     Archaea Crenarchaeota          Sd-NA                     NA
-#&gt; 143239     Archaea Crenarchaeota          Sd-NA                  NRP-J
-#&gt; 215972     Archaea Crenarchaeota Thaumarchaeota          Cenarchaeales
-#&gt; ...            ...           ...            ...                    ...
-#&gt; 246195    Bacteria Synergistetes    Synergistia          Synergistales
-#&gt; 484439    Bacteria Synergistetes    Synergistia          Synergistales
-#&gt; 579616    Bacteria Synergistetes    Synergistia          Synergistales
-#&gt; 546622    Bacteria    Firmicutes     Clostridia Thermoanaerobacterales
-#&gt; 278222    Bacteria           SR1             NA                     NA
-#&gt;                        Family             Genus                Species
-#&gt;                   &lt;character&gt;       &lt;character&gt;            &lt;character&gt;
-#&gt; 549322                     NA                NA                     NA
-#&gt; 951             Sulfolobaceae        Sulfolobus Sulfolobusacidocalda..
-#&gt; 244423                     NA                NA                     NA
-#&gt; 143239                     NA                NA                     NA
-#&gt; 215972                SAGMA-X                NA                     NA
-#&gt; ...                       ...               ...                    ...
-#&gt; 246195 Dethiosulfovibrionac..               TG5                     NA
-#&gt; 484439 Dethiosulfovibrionac..       Jonquetella    Jonquetellaanthropi
-#&gt; 579616 Dethiosulfovibrionac..    Pyramidobacter                     NA
-#&gt; 546622   Thermodesulfobiaceae Coprothermobacter                     NA
-#&gt; 278222                     NA                NA                     NA</div><div class='input'><span class='co'># returns specific unique taxonomic information</span>
-<span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, taxa <span class='op'>=</span> <span class='st'>"Escherichia"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $Escherichia
-#&gt; DataFrame with 1 row and 7 columns
-#&gt;            Kingdom         Phylum               Class             Order
-#&gt;        &lt;character&gt;    &lt;character&gt;         &lt;character&gt;       &lt;character&gt;
-#&gt; 249227    Bacteria Proteobacteria Gammaproteobacteria Enterobacteriales
-#&gt;                    Family       Genus     Species
-#&gt;               &lt;character&gt; &lt;character&gt; &lt;character&gt;
-#&gt; 249227 Enterobacteriaceae Escherichia          NA
-#&gt; </div><div class='input'><span class='co'># returns information on a single output</span>
-<span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, taxa <span class='op'>=</span> <span class='st'>"Escherichia"</span>,to<span class='op'>=</span><span class='st'>"Family"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;          Escherichia 
-#&gt; "Enterobacteriaceae" </div><div class='input'>
-<span class='co'># adding a rowTree() based on the available taxonomic information. Please</span>
-<span class='co'># note that any tree already stored in rowTree() will be overwritten.</span>
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>addTaxonomyTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: 16909 duplicated rows are removed</span></div><div class='output co'>#&gt; <span class='warning'>Warning: The root is added with label 'ALL'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Multiple nodes are found to have the same label.</span></div><div class='input'><span class='va'>x</span>
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 19216 26 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(19216): Class:Thermoprotei Class:Thermoprotei ... Phylum:SR1
-#&gt;   Phylum:SR1
-#&gt; rowData names(7): Kingdom Phylum ... Genus Species
-#&gt; colnames(26): CL3 CC1 ... Even2 Even3
-#&gt; colData names(7): X.SampleID Primer ... SampleType Description
-#&gt; reducedDimNames(0):
-#&gt; mainExpName: NULL
-#&gt; altExpNames(0):
-#&gt; rowLinks: a LinkDataFrame (19216 rows)
-#&gt; rowTree: 1 phylo tree(s) (1645 leaves)
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>GlobalPatterns</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> dim: 19216 26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> metadata(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> assays(1): counts</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rownames(19216): 549322 522457 ... 200359 271582</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> reducedDimNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> mainExpName: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> altExpNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowLinks: a LinkDataFrame (19216 rows)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colTree: NULL</span>
+<span class='r-in'><span class='fu'>taxonomyRanks</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>checkTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'>taxonomyRankEmpty</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Kingdom"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FALSE </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19216 </span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'>taxonomyRankEmpty</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Species"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FALSE  TRUE </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1413 17803 </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>getTaxonomyLabels</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>20</span>,<span class='op'>]</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] "Class:Thermoprotei"               "Class:Thermoprotei_1"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3] "Species:Sulfolobusacidocaldarius" "Class:Sd-NA"                     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5] "Class:Sd-NA_1"                    "Class:Sd-NA_2"                   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7] "Order:NRP-J"                      "Order:NRP-J_1"                   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9] "Order:NRP-J_2"                    "Order:NRP-J_3"                   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11] "Order:NRP-J_4"                    "Family:SAGMA-X"                  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13] "Family:SAGMA-X_1"                 "Family:SAGMA-X_2"                </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15] "Family:Cenarchaeaceae"            "Family:Cenarchaeaceae_1"         </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17] "Family:Cenarchaeaceae_2"          "Family:Cenarchaeaceae_3"         </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [19] "Family:Cenarchaeaceae_4"          "Family:Cenarchaeaceae_5"         </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># mapTaxonomy</span></span>
+<span class='r-in'><span class='co'>## returns the unique taxonomic information</span></span>
+<span class='r-in'><span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 2307 rows and 7 columns</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Kingdom        Phylum          Class                  Order</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        &lt;character&gt;   &lt;character&gt;    &lt;character&gt;            &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 549322     Archaea Crenarchaeota   Thermoprotei                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 951        Archaea Crenarchaeota   Thermoprotei           Sulfolobales</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 244423     Archaea Crenarchaeota          Sd-NA                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 143239     Archaea Crenarchaeota          Sd-NA                  NRP-J</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 215972     Archaea Crenarchaeota Thaumarchaeota          Cenarchaeales</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...            ...           ...            ...                    ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 246195    Bacteria Synergistetes    Synergistia          Synergistales</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 484439    Bacteria Synergistetes    Synergistia          Synergistales</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 579616    Bacteria Synergistetes    Synergistia          Synergistales</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 546622    Bacteria    Firmicutes     Clostridia Thermoanaerobacterales</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 278222    Bacteria           SR1             NA                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                        Family             Genus                Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   &lt;character&gt;       &lt;character&gt;            &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 549322                     NA                NA                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 951             Sulfolobaceae        Sulfolobus Sulfolobusacidocalda..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 244423                     NA                NA                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 143239                     NA                NA                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 215972                SAGMA-X                NA                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...                       ...               ...                    ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 246195 Dethiosulfovibrionac..               TG5                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 484439 Dethiosulfovibrionac..       Jonquetella    Jonquetellaanthropi</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 579616 Dethiosulfovibrionac..    Pyramidobacter                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 546622   Thermodesulfobiaceae Coprothermobacter                     NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 278222                     NA                NA                     NA</span>
+<span class='r-in'><span class='co'># returns specific unique taxonomic information</span></span>
+<span class='r-in'><span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, taxa <span class='op'>=</span> <span class='st'>"Escherichia"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $Escherichia</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 1 row and 7 columns</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Kingdom         Phylum               Class             Order</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        &lt;character&gt;    &lt;character&gt;         &lt;character&gt;       &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 249227    Bacteria Proteobacteria Gammaproteobacteria Enterobacteriales</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                    Family       Genus     Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 249227 Enterobacteriaceae Escherichia          NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='co'># returns information on a single output</span></span>
+<span class='r-in'><span class='fu'>mapTaxonomy</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, taxa <span class='op'>=</span> <span class='st'>"Escherichia"</span>,to<span class='op'>=</span><span class='st'>"Family"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          Escherichia </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> "Enterobacteriaceae" </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># adding a rowTree() based on the available taxonomic information. Please</span></span>
+<span class='r-in'><span class='co'># note that any tree already stored in rowTree() will be overwritten.</span></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>addTaxonomyTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>16909 duplicated rows are removed</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>The root is added with label 'ALL'</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>Multiple nodes are found to have the same label.</span>
+<span class='r-in'><span class='va'>x</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> dim: 19216 26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> metadata(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> assays(1): counts</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rownames(19216): Class:Thermoprotei Class:Thermoprotei ... Phylum:SR1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Phylum:SR1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> reducedDimNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> mainExpName: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> altExpNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowLinks: a LinkDataFrame (19216 rows)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowTree: 1 phylo tree(s) (1645 leaves)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colTree: NULL</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

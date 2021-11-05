@@ -75,7 +75,7 @@ alternative experiments." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -204,7 +204,7 @@ so that no ambiguous data is created. In additional, a column
 specify from which alternative experiment this originates from. This can also
 be used for <code><a href='https://rdrr.io/pkg/SingleCellExperiment/man/splitAltExps.html'>splitAltExps</a></code> to
 split the result along the same factor again. The input data from the base
-objects is not returned, only the data from the <code>altExp()</code>. Be aware that
+objects is not returned, only the data from the <code><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExp()</a></code>. Be aware that
 changes to <code>rowData</code> of the base object are not returned, whereas only
 the <code>colData</code> of the base object is kept.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -216,65 +216,70 @@ the <code>colData</code> of the base object is kept.</p>
 <code><a href='https://rdrr.io/pkg/SingleCellExperiment/man/splitAltExps.html'>splitAltExps</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='co'># print the available taxonomic ranks</span>
-<span class='fu'><a href='taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</div><div class='input'>
-<span class='co'># splitByRanks</span>
-<span class='fu'>altExps</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>splitByRanks</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='fu'>altExps</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of length 7
-#&gt; names(7): Kingdom Phylum Class Order Family Genus Species</div><div class='input'><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Kingdom"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 2 26 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(2): Archaea Bacteria
-#&gt; rowData names(7): Kingdom Phylum ... Genus Species
-#&gt; colnames(26): CL3 CC1 ... Even2 Even3
-#&gt; colData names(7): X.SampleID Primer ... SampleType Description
-#&gt; reducedDimNames(0):
-#&gt; mainExpName: NULL
-#&gt; altExpNames(0):
-#&gt; rowLinks: a LinkDataFrame (2 rows)
-#&gt; rowTree: 1 phylo tree(s) (19216 leaves)
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div><div class='input'><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Species"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 944 26 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(944): Sulfolobusacidocaldarius Cenarchaeumsymbiosum ...
-#&gt;   Thermanaerovibrioacidaminovorans Jonquetellaanthropi
-#&gt; rowData names(7): Kingdom Phylum ... Genus Species
-#&gt; colnames(26): CL3 CC1 ... Even2 Even3
-#&gt; colData names(7): X.SampleID Primer ... SampleType Description
-#&gt; reducedDimNames(0):
-#&gt; mainExpName: NULL
-#&gt; altExpNames(0):
-#&gt; rowLinks: a LinkDataFrame (944 rows)
-#&gt; rowTree: 1 phylo tree(s) (19216 leaves)
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div><div class='input'>
-<span class='co'># unsplitByRanks</span>
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>unsplitByRanks</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>x</span>
-</div><div class='output co'>#&gt; class: TreeSummarizedExperiment 
-#&gt; dim: 2692 26 
-#&gt; metadata(0):
-#&gt; assays(1): counts
-#&gt; rownames(2692): Kingdom:Archaea Kingdom:Bacteria ...
-#&gt;   Species:Thermanaerovibrioacidaminovorans Species:Jonquetellaanthropi
-#&gt; rowData names(8): Kingdom Phylum ... Species taxonomicLevel
-#&gt; colnames(26): CL3 CC1 ... Even2 Even3
-#&gt; colData names(7): X.SampleID Primer ... SampleType Description
-#&gt; reducedDimNames(0):
-#&gt; mainExpName: NULL
-#&gt; altExpNames(0):
-#&gt; rowLinks: NULL
-#&gt; rowTree: NULL
-#&gt; colLinks: NULL
-#&gt; colTree: NULL</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># print the available taxonomic ranks</span></span>
+<span class='r-in'><span class='fu'><a href='taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># splitByRanks</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExps</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>splitByRanks</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExps</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of length 7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> names(7): Kingdom Phylum Class Order Family Genus Species</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExp</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Kingdom"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> dim: 2 26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> metadata(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> assays(1): counts</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rownames(2): Archaea Bacteria</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> reducedDimNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> mainExpName: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> altExpNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowLinks: a LinkDataFrame (2 rows)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colTree: NULL</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExp</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Species"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> dim: 944 26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> metadata(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> assays(1): counts</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rownames(944): Sulfolobusacidocaldarius Cenarchaeumsymbiosum ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Thermanaerovibrioacidaminovorans Jonquetellaanthropi</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> reducedDimNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> mainExpName: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> altExpNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowLinks: a LinkDataFrame (944 rows)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colTree: NULL</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># unsplitByRanks</span></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>unsplitByRanks</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>x</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> dim: 2692 26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> metadata(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> assays(1): counts</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rownames(2692): Kingdom:Archaea Kingdom:Bacteria ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Species:Thermanaerovibrioacidaminovorans Species:Jonquetellaanthropi</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowData names(8): Kingdom Phylum ... Species taxonomicLevel</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> reducedDimNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> mainExpName: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> altExpNames(0):</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> rowTree: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colLinks: NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> colTree: NULL</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

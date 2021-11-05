@@ -75,7 +75,7 @@ objects." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -226,57 +226,65 @@ passed on to <code>isContaminant</code>/ <code>isNotContaminant</code></p></li>
 
     <p>for <code>isContaminant</code>/ <code>isNotContaminant</code> a <code>DataFrame</code>
 or for <code>addContaminantQC</code>/<code>addNotContaminantQC</code> a modified object
-of <code><a href='https://rdrr.io/r/base/class.html'>class(x)</a></code></p>
+of <code>class(x)</code></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/decontam/man/isContaminant.html'>decontam:isContaminant</a></code>,
 <code><a href='https://rdrr.io/pkg/decontam/man/isNotContaminant.html'>decontam:isNotContaminant</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-<span class='co'># setup of some mock data</span>
-<span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>concentration</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span><span class='op'>)</span>
-<span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>control</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>FALSE</span>,<span class='cn'>FALSE</span>,<span class='cn'>TRUE</span><span class='op'>)</span>
-
-<span class='fu'>isContaminant</span><span class='op'>(</span><span class='va'>esophagus</span>,
-              method <span class='op'>=</span> <span class='st'>"frequency"</span>,
-              concentration <span class='op'>=</span> <span class='st'>"concentration"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Some batches have very few (&lt;=4) samples.</span></div><div class='output co'>#&gt; DataFrame with 58 rows and 6 columns
-#&gt;               freq      prev    p.freq    p.prev         p contaminant
-#&gt;          &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt; &lt;logical&gt; &lt;numeric&gt;   &lt;logical&gt;
-#&gt; 59_8_22 0.11454876         3  0.227201        NA  0.227201       FALSE
-#&gt; 59_5_13 0.00261438         1        NA        NA        NA       FALSE
-#&gt; 59_8_12 0.02027754         2  0.609754        NA  0.609754       FALSE
-#&gt; 65_3_22 0.00413645         2  0.156237        NA  0.156237       FALSE
-#&gt; 65_5_1  0.00152207         1        NA        NA        NA       FALSE
-#&gt; ...            ...       ...       ...       ...       ...         ...
-#&gt; 59_4_16 0.00130719         1        NA        NA        NA       FALSE
-#&gt; 59_8_3  0.00522876         1        NA        NA        NA       FALSE
-#&gt; 59_5_19 0.09311117         3  0.588847        NA  0.588847       FALSE
-#&gt; 65_9_9  0.00282926         2  0.830389        NA  0.830389       FALSE
-#&gt; 59_2_6  0.32771733         3  0.724753        NA  0.724753       FALSE</div><div class='input'><span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>addContaminantQC</span><span class='op'>(</span><span class='va'>esophagus</span>,
-                              method <span class='op'>=</span> <span class='st'>"frequency"</span>,
-                              concentration <span class='op'>=</span> <span class='st'>"concentration"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Some batches have very few (&lt;=4) samples.</span></div><div class='input'><span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; DataFrame with 3 rows and 2 columns
-#&gt;   concentration   control
-#&gt;       &lt;numeric&gt; &lt;logical&gt;
-#&gt; B             1     FALSE
-#&gt; C             2     FALSE
-#&gt; D             3      TRUE</div><div class='input'>
-<span class='fu'>isNotContaminant</span><span class='op'>(</span><span class='va'>esophagus</span>, control <span class='op'>=</span> <span class='st'>"control"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Some batches have very few (&lt;=4) samples.</span></div><div class='output co'>#&gt;  [1] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-#&gt; [13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-#&gt; [25] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-#&gt; [37] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-#&gt; [49] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</div><div class='input'><span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>addNotContaminantQC</span><span class='op'>(</span><span class='va'>esophagus</span>, control <span class='op'>=</span> <span class='st'>"control"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Some batches have very few (&lt;=4) samples.</span></div><div class='input'><span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; DataFrame with 3 rows and 2 columns
-#&gt;   concentration   control
-#&gt;       &lt;numeric&gt; &lt;logical&gt;
-#&gt; B             1     FALSE
-#&gt; C             2     FALSE
-#&gt; D             3      TRUE</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># setup of some mock data</span></span>
+<span class='r-in'><span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>concentration</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span><span class='op'>$</span><span class='va'>control</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>FALSE</span>,<span class='cn'>FALSE</span>,<span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>isContaminant</span><span class='op'>(</span><span class='va'>esophagus</span>,</span>
+<span class='r-in'>              method <span class='op'>=</span> <span class='st'>"frequency"</span>,</span>
+<span class='r-in'>              concentration <span class='op'>=</span> <span class='st'>"concentration"</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>Some batches have very few (&lt;=4) samples.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 58 rows and 6 columns</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               freq      prev    p.freq    p.prev         p contaminant</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt; &lt;logical&gt; &lt;numeric&gt;   &lt;logical&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59_8_22 0.11454876         3  0.227201        NA  0.227201       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59_5_13 0.00261438         1        NA        NA        NA       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59_8_12 0.02027754         2  0.609754        NA  0.609754       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 65_3_22 0.00413645         2  0.156237        NA  0.156237       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 65_5_1  0.00152207         1        NA        NA        NA       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...            ...       ...       ...       ...       ...         ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59_4_16 0.00130719         1        NA        NA        NA       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59_8_3  0.00522876         1        NA        NA        NA       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59_5_19 0.09311117         3  0.588847        NA  0.588847       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 65_9_9  0.00282926         2  0.830389        NA  0.830389       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59_2_6  0.32771733         3  0.724753        NA  0.724753       FALSE</span>
+<span class='r-in'><span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>addContaminantQC</span><span class='op'>(</span><span class='va'>esophagus</span>,</span>
+<span class='r-in'>                              method <span class='op'>=</span> <span class='st'>"frequency"</span>,</span>
+<span class='r-in'>                              concentration <span class='op'>=</span> <span class='st'>"concentration"</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>Some batches have very few (&lt;=4) samples.</span>
+<span class='r-in'><span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 3 rows and 2 columns</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   concentration   control</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;numeric&gt; &lt;logical&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> B             1     FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> C             2     FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> D             3      TRUE</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>isNotContaminant</span><span class='op'>(</span><span class='va'>esophagus</span>, control <span class='op'>=</span> <span class='st'>"control"</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>Some batches have very few (&lt;=4) samples.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [25] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [37] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [49] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span>
+<span class='r-in'><span class='va'>esophagus</span> <span class='op'>&lt;-</span> <span class='fu'>addNotContaminantQC</span><span class='op'>(</span><span class='va'>esophagus</span>, control <span class='op'>=</span> <span class='st'>"control"</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>Some batches have very few (&lt;=4) samples.</span>
+<span class='r-in'><span class='fu'>colData</span><span class='op'>(</span><span class='va'>esophagus</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 3 rows and 2 columns</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   concentration   control</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;numeric&gt; &lt;logical&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> B             1     FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> C             2     FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> D             3      TRUE</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

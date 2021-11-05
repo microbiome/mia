@@ -74,7 +74,7 @@ from assay is added to the phyloseq object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -164,30 +164,32 @@ phyloseq object from TreeSummarizedExperiment object.</p>
     <p>Leo Lahti and Tuomas Borman. Contact: <a href='microbiome.github.io'>microbiome.github.io</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Get tse object</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
-
-<span class='co'># Create a phyloseq object from it</span>
-<span class='va'>phy</span> <span class='op'>&lt;-</span> <span class='fu'>makePhyloseqFromTreeSummarizedExperiment</span><span class='op'>(</span><span class='va'>tse</span><span class='op'>)</span>
-<span class='va'>phy</span>
-</div><div class='output co'>#&gt; phyloseq-class experiment-level object
-#&gt; otu_table()   OTU Table:         [ 19216 taxa and 26 samples ]
-#&gt; sample_data() Sample Data:       [ 26 samples by 7 sample variables ]
-#&gt; tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]
-#&gt; phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</div><div class='input'>
-<span class='co'># By default the chosen table is counts, but if there are other tables,</span>
-<span class='co'># they can be chosen with abund_values.</span>
-
-<span class='co'># Counts relative abundances table</span>
-<span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'><a href='transformCounts.html'>transformCounts</a></span><span class='op'>(</span><span class='va'>tse</span>, method <span class='op'>=</span> <span class='st'>"relabundance"</span><span class='op'>)</span>
-<span class='va'>phy2</span> <span class='op'>&lt;-</span> <span class='fu'>makePhyloseqFromTreeSummarizedExperiment</span><span class='op'>(</span><span class='va'>tse</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span><span class='op'>)</span>
-<span class='va'>phy2</span>
-</div><div class='output co'>#&gt; phyloseq-class experiment-level object
-#&gt; otu_table()   OTU Table:         [ 19216 taxa and 26 samples ]
-#&gt; sample_data() Sample Data:       [ 26 samples by 7 sample variables ]
-#&gt; tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]
-#&gt; phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># Get tse object</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Create a phyloseq object from it</span></span>
+<span class='r-in'><span class='va'>phy</span> <span class='op'>&lt;-</span> <span class='fu'>makePhyloseqFromTreeSummarizedExperiment</span><span class='op'>(</span><span class='va'>tse</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>phy</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> phyloseq-class experiment-level object</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> otu_table()   OTU Table:         [ 19216 taxa and 26 samples ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> sample_data() Sample Data:       [ 26 samples by 7 sample variables ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># By default the chosen table is counts, but if there are other tables,</span></span>
+<span class='r-in'><span class='co'># they can be chosen with abund_values.</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Counts relative abundances table</span></span>
+<span class='r-in'><span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'><a href='transformCounts.html'>transformCounts</a></span><span class='op'>(</span><span class='va'>tse</span>, method <span class='op'>=</span> <span class='st'>"relabundance"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>phy2</span> <span class='op'>&lt;-</span> <span class='fu'>makePhyloseqFromTreeSummarizedExperiment</span><span class='op'>(</span><span class='va'>tse</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>phy2</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> phyloseq-class experiment-level object</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> otu_table()   OTU Table:         [ 19216 taxa and 26 samples ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> sample_data() Sample Data:       [ 26 samples by 7 sample variables ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
