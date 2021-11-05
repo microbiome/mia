@@ -25,6 +25,7 @@ getExperimentCrossCorrelation(x, ...)
   sort = FALSE,
   filter_self_correlations = FALSE,
   verbose = TRUE,
+  show_warnings = TRUE,
   ...
 )
 
@@ -97,6 +98,9 @@ between experiment itself is tested, i.e., when assays are identical.
 
 \item{verbose}{A single boolean value for selecting whether to get messages
 about progress of calculation.}
+
+\item{show_warnings}{A single boolean value for selecting whether to show warnings
+that might occur when correlations and p-values are calculated.}
 }
 \value{
 These functions return associations in table or matrix format. In table format,
@@ -148,8 +152,10 @@ head(result, 5)
 
 # Also getExperimentCrossCorrelation returns significances when 
 # test_signicance = TRUE
+# Warnings can be suppressed by using show_warnings = FALSE
 result <- getExperimentCrossCorrelation(mae[[1]], y = mae[[2]], method = "pearson",
-                                        mode = "matrix", test_significance = TRUE)
+                                        mode = "matrix", test_significance = TRUE,
+                                        show_warnings = FALSE)
 # Returned value is a list of matrices
 names(result)
 }
