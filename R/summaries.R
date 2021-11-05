@@ -15,6 +15,14 @@
 #' @param abund_values A \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 #'
+#' @param ... Additional arguments:
+#'    \itemize{
+#'        \item{\code{sort}}{A single boolean value for selecting 
+#'        whether to sort taxa in alphabetical order or not. Enabled in functions
+#'        \code{getUniqueTaxa}, and \code{getTopTaxa}.
+#'        (By default: \code{sort = FALSE})}
+#'    }
+#'    
 #' @details
 #' The \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
 #' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -61,7 +69,9 @@
 #' summary(GlobalPatterns)
 #'
 #' # Get unique taxa at a particular taxonomic rank
-#' getUniqueTaxa(GlobalPatterns, "Phylum")
+#' # sort = TRUE means that output is sorted in alphabetical order. 
+#' # sort can also be used in function getTopTaxa
+#' getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE)
 #'
 NULL
 
@@ -69,7 +79,7 @@ NULL
 #' @export
 setGeneric("getTopTaxa", signature = "x",
            function(x, top= 5L, method = c("mean","sum","median"),
-                    abund_values = "counts")
+                    abund_values = "counts", ...)
                standardGeneric("getTopTaxa"))
 
 .check_max_taxa <- function(x, top, abund_values){
@@ -89,7 +99,7 @@ setGeneric("getTopTaxa", signature = "x",
 #' @export
 setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, top = 5L, method = c("mean","sum","median","prevalence"),
-             abund_values = "counts"){
+             abund_values = "counts", ...){
         # input check
         method <- match.arg(method, c("mean","sum","median","prevalence"))
         # check max taxa
@@ -108,7 +118,10 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
             names(taxs) <- rownames(assay(x))
             taxs <- sort(taxs,decreasing = TRUE)
         }
-        head(names(taxs), n = top)
+        names <- head(names(taxs), n = top)
+        # Remove NAs and sort if specified
+        names <- .remove_NAs_and_sort(names, ... )
+        return(names)
     }
 )
 
@@ -130,9 +143,12 @@ setGeneric("getUniqueTaxa",
 #' @rdname summaries
 #' @export
 setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL){
+    function(x, rank = NULL, ...){
         .check_taxonomic_rank(rank, x)
-        unique(rowData(x)[,rank])
+        names <- unique(rowData(x)[,rank])
+        # Remove NAs and sort if specified
+        names <- .remove_NAs_and_sort(names, ... )
+        return(names)
     }
 )
 
@@ -293,14 +309,16 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 }
 
 # Remove NAs and order in alphabetical order
-.remove_NAs_and_sort <- function(names, sort = TRUE, ...){
+.remove_NAs_and_sort <- function(names, sort = FALSE, ...){
     # Check sort
-    if( sort != TRUE || sort != FALSE ){
+    if( !(sort == TRUE || sort == FALSE) ){
         stop("'sort' must be a boolean value.", call. = FALSE)
     }
     # Remove NAs
     names <- names[ !is.na(names) ]
     # Sort in alphabetical order if sort is TRUE
-    names <- ifelse(sort, sort(names), names)
+    if( sort ){
+        names <- sort(names)
+    }
     return(names)
 }
