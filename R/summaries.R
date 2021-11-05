@@ -24,7 +24,7 @@
 #'        \item{\code{na.rm}}{A single boolean value for selecting 
 #'        whether to remove missing values or not. Enabled in functions
 #'        \code{getUniqueTaxa}, and \code{getTopTaxa}.
-#'        (By default: \code{sort = FALSE})}
+#'        (By default: \code{na.rm = FALSE})}
 #'    }
 #'    
 #' @details
