@@ -291,3 +291,16 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
              call. = FALSE)
     }
 }
+
+# Remove NAs and order in alphabetical order
+.remove_NAs_and_sort <- function(names, sort = TRUE, ...){
+    # Check sort
+    if( sort != TRUE || sort != FALSE ){
+        stop("'sort' must be a boolean value.", call. = FALSE)
+    }
+    # Remove NAs
+    names <- names[ !is.na(names) ]
+    # Sort in alphabetical order if sort is TRUE
+    names <- ifelse(sort, sort(names), names)
+    return(names)
+}
