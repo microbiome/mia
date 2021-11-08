@@ -95,6 +95,8 @@
 #' reducedDim(esophagus)
 NULL
 
+#' @rdname calculateUnifrac
+#' @export
 setGeneric("calculateUnifrac", signature = c("x", "tree"),
            function(x, tree, ... )
              standardGeneric("calculateUnifrac"))
@@ -133,6 +135,25 @@ setMethod("calculateUnifrac",
             tree <- .norm_tree_to_be_rooted(colTree(x), colnames(x))
         }
         calculateUnifrac(mat, tree = tree, ...)
+    }
+)
+
+#' @rdname calculateUnifrac
+#' @export
+setGeneric("calculateUniFrac", signature = c("x"),
+           function(x, ... )
+             standardGeneric("calculateUniFrac"))
+
+#' @rdname calculateUnifrac
+#' @export
+setMethod("calculateUniFrac",
+          signature = c(x = "ANY"),
+    function(x, ...){
+        .Deprecated( msg = paste0("The name of the function 'calculateUniFrac' is",
+                                  " changed to 'calculateUnifrac'. \nPlease use the new",
+                                  " name instead.\n",
+                                  "See help('Deprecated')") )
+        calculateUnifrac(x, ...)
     }
 )
 
