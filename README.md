@@ -9,7 +9,7 @@ coverage](https://codecov.io/gh/microbiome/mia/branch/master/graph/badge.svg)](h
 
 <!-- badges: end -->
 
-This project provides functions and workflows examples for analyses
+This project is aimed to provide functions and workflows examples for analyses
 of microbiome data. The main class for working with microbiome data in this
 package is `TreeSummarizedExperiment`.
 

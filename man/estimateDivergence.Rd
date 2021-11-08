@@ -39,9 +39,8 @@ features, or a non-empty character value; either 'median' or 'mean'.
 \code{reference} specifies the reference that is used to calculate
 \code{divergence}. by default, \code{reference} is  \code{"median"}.}
 
-\item{FUN}{a \code{function} for distance calculation. The function must
-expect the input matrix as its first argument. With rows as samples
-and columns as features. By default, \code{FUN} is
+\item{FUN}{a \code{function} for distance calculation. For more information,
+please check \code{calculateDistance}. By default, \code{FUN} is
 \code{vegan::vegdist}.}
 
 \item{method}{a method that is used to calculate the distance. Method is

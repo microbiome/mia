@@ -33,9 +33,10 @@ are the main scope of this package.
 To install `mia`, install `BiocManager` first, if it is not installed.
 Afterwards use the `install` function from `BiocManager`.
 
-```{r, eval=FALSE}
+```{r}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
+
 BiocManager::install("mia")
 ```
 
@@ -187,34 +188,9 @@ anterotype <- transformCounts(enterotype, method = "log10", pseudocount = 1)
 assayNames(enterotype)
 ```
 
-For more details have a look at the man page `?transformCounts`.  
+For more details have a look at the man page `?transformCounts`.
 
-Sub-sampling to equal number of counts per sample. Also known as rarefying.  
-```{r}
-data(GlobalPatterns, package = "mia")
-
-tse.subsampled <- subsampleCounts(GlobalPatterns, 
-                                  min_size = 60000, 
-                                  name = "subsampled",
-                                  replace = TRUE,
-                                  seed = 1938)
-tse.subsampled
-
-```
-Alternatively, one can save both original TreeSE and subsampled TreeSE within a MultiAssayExperiment object.  
-```{r}
-library(MultiAssayExperiment)
-mae <- MultiAssayExperiment(c("originalTreeSE" = GlobalPatterns,
-                              "subsampledTreeSE" = tse.subsampled))
-mae
-```
-
-```{r}
-# To extract specifically the subsampled TreeSE
-experiments(mae)$subsampledTreeSE
-```
-
-## Community indices
+## Community indices.
 
 In the field of microbiome ecology several indices to describe samples and
 community of samples are available. In this vignette we just want to give a
@@ -272,7 +248,7 @@ are available.
 
 Functions to load data from `biom` files, `QIIME2` output, `DADA2` objects 
 [@dada2] or `phyloseq` objects are available. 
-
+ 
 ```{r, message=FALSE, warning=FALSE}
 data(esophagus, package = "phyloseq")
 ```
@@ -316,10 +292,9 @@ To generate tidy data as used and required in most of the tidyverse,
 
 ```{r}
 molten_data <- meltAssay(se,
-                         abund_values = "counts",
                          add_row_data = TRUE,
-                         add_col_data = TRUE
-)
+                         add_col_data = TRUE,
+                         abund_values = "counts")
 molten_data
 ```
 

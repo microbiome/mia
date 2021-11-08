@@ -82,8 +82,6 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
         # If rowData includes information
         if(!( length(rowData(x)[,taxonomyRanks(x)]) == 0 ||
               is.null((rowData(x)[,taxonomyRanks(x)])) )){
-            # Converts taxonomy table to characters if it's not already
-            rowData(x) <- DataFrame(lapply(rowData(x), as.character))
             # Gets the taxonomic data from rowData, and converts it to tax_table
             tax_table <- as.matrix(rowData(x)[,taxonomyRanks(x)])
             tax_table <- phyloseq::tax_table(tax_table)

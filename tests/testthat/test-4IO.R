@@ -115,7 +115,6 @@ test_that("Importing Mothur files yield SummarizedExperiment objects", {
 
 featureTableFile <- system.file("extdata", "table.qza", package = "mia")
 taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
-sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 
 test_that("make TSE worked properly while no sample or taxa data", {
@@ -245,6 +244,7 @@ test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
 })
 
 test_that("`.read_q2sample_meta` remove  the row contained `#q2:types`", {
+    sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
     expect_false(any(as(.read_q2sample_meta(sampleMetaFile), "matrix") == "#q2:types"))
 })
 
@@ -254,8 +254,9 @@ test_that('get file extension', {
 })
 
 test_that('read qza file', {
+    sample_file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
     expect_error(.read_qza("abc"), "does not exist")
-    expect_error(.read_qza(sampleMetaFile), "must be in `qza` format")
+    expect_error(.read_qza(sample_file), "must be in `qza` format")
 })
 
 test_that("Confidence of taxa is numberic", {
@@ -265,48 +266,6 @@ test_that("Confidence of taxa is numberic", {
     )
     expect_true(is.numeric(S4Vectors::mcols(tse)$Confidence))
 })
-
-test_that("dimnames of feature table is identicle with meta data", {
-   feature_tab <- .read_qza(featureTableFile)
-   
-   sample_meta <- .read_q2sample_meta(sampleMetaFile)
-   taxa_meta <- .read_qza(taxonomyTableFile)
-   taxa_meta <- .subset_taxa_in_feature(taxa_meta, feature_tab)
-   taxa_meta <- .parse_q2taxonomy(taxa_meta)
-   new_feature_tab <- .set_feature_tab_dimnames(
-       feature_tab, 
-       sample_meta, 
-       taxa_meta
-   )
-   expect_identical(rownames(new_feature_tab), rownames(taxa_meta))
-   expect_identical(colnames(new_feature_tab), rownames(sample_meta))
-   
-   # sample_meta or feature meta is NULL
-   sample_meta2 <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
-   rownames(sample_meta2) <- colnames(feature_tab)
-   taxa_meta2 <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
-   rownames(taxa_meta2) <- rownames(feature_tab)
-   expect_silent(.set_feature_tab_dimnames(feature_tab, sample_meta2, taxa_meta))
-   
-   # sample meta or feature meta without any information, only contains sample/feature
-   # ID in its rownames
-   feature_tab3 <- S4Vectors::DataFrame(
-       sample1 = 1:3,
-       sample2 = 4:6,
-       sample3 = 7:9,
-       row.names = paste0("feature", 1:3)
-   )
-   sample_meta3 <- S4Vectors::DataFrame(row.names = paste0("sample", 3:1))
-   feature_meta3 <- S4Vectors::DataFrame(row.names = paste0("feature", c(2, 3, 1)))
-   new_feature_tab3 <- .set_feature_tab_dimnames(
-       feature_tab3, 
-       sample_meta3, 
-       feature_meta3
-    )
-   expect_identical(row.names(new_feature_tab3), paste0("feature", c(2, 3, 1)))
-   expect_identical(colnames(new_feature_tab3), paste0("sample", 3:1))
-})
-
 
 test_that("makePhyloseqFromTreeSummarizedExperiment", {
 
@@ -329,7 +288,7 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
                  phyloseq::sample_data(data.frame(colData(tse))))
 
     # Test that rowTree is in phy_tree
-    expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
+    expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
 
     # Test that referenceSeq is in refseq. Expect error, because there should not be
     # reference sequences.
@@ -344,7 +303,7 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     expect_equal(length(phyloseq::phy_tree(test1_phy)$node), 
                  length(ape::keep.tip(rowTree(test1), rowLinks(test1)$nodeLab)$node))
     expect_equal(phyloseq::phy_tree(test1_phy)$tip.label, rownames(test2))
-    expect_identical(phyloseq::phy_tree(test2_phy), rowTree(test2))
+    expect_equal(phyloseq::phy_tree(test2_phy), rowTree(test2))
     
     # Check that everything works also with agglomerated data
     for (level in colnames(rowData(tse)) ){
@@ -352,23 +311,17 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
         expect_warning(makePhyloseqFromTreeSummarizedExperiment(temp))
     }
     
-    tse2 <- tse
-    # Concerts data frame to factors
-    rowData(tse2) <- DataFrame(lapply(rowData(tse2), as.factor))
-    phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
-    phy2 <- makePhyloseqFromTreeSummarizedExperiment(tse2)
-    expect_equal(phyloseq::tax_table(phy2), phyloseq::tax_table(phy))
-    
     # TSE object
     data(esophagus)
     tse <- esophagus
 
-    phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
+    phy <- makePhyloseqFromTreeSummarizedExperiment(esophagus)
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
 
+
     # Test that rowTree is in phy_tree
-    expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
+    expect_equal(phyloseq::phy_tree(phy), rowTree(tse))
     
 })

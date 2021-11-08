@@ -91,7 +91,6 @@ loadFromMothur <- function(sharedFile,
         taxa_tab <- .read_mothur_taxonomy(taxonomyFile, feature_tab)
     } else {
         taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
-        rownames(taxa_tab) <- rownames(feature_tab)
     }
     
     # If colData informationor data_to_colData exists, gets that. Otherwise, 
@@ -100,9 +99,8 @@ loadFromMothur <- function(sharedFile,
         sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData)
     } else {
         sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
-        rownames(sample_meta) <- colnames(feature_tab)
     }
-
+    
     SummarizedExperiment(assays = S4Vectors::SimpleList(counts = feature_tab),
                          rowData = taxa_tab,
                          colData = sample_meta)
@@ -223,7 +221,7 @@ loadFromMothur <- function(sharedFile,
                        sep="\t", stringsAsFactors=FALSE)
     
     # If data contains column names, then it is shared file
-    if( identical(colnames(data)[seq_len(3)], columns_that_must_be_found) ){
+    if( identical(colnames(data)[1:3], columns_that_must_be_found) ){
         result <- TRUE
     }
     return(result)

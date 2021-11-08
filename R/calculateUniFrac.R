@@ -21,13 +21,8 @@
 #'   matrix. This means that the phylo object and the columns should relate
 #'   to the same type of features (aka. microorganisms).
 #'
-#' @param abund_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
-#'   will be disabled.)
 #'
 #' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
 #'   calculation? Weighted-Unifrac takes into account the relative abundance of
@@ -100,8 +95,6 @@
 #' reducedDim(esophagus)
 NULL
 
-#' @rdname calculateUnifrac
-#' @export
 setGeneric("calculateUnifrac", signature = c("x", "tree"),
            function(x, tree, ... )
              standardGeneric("calculateUnifrac"))
@@ -111,20 +104,22 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
              BPPARAM = SerialParam()){
-        .calculate_distance(x, FUN = runUnifrac, tree = tree,
-                            weighted = weighted, normalized = normalized,
-                            BPPARAM = BPPARAM)
+        calculateDistance(x, FUN = runUnifrac, tree = tree,
+                          weighted = weighted, normalized = normalized,
+                          BPPARAM = BPPARAM)
     }
 )
 
 #' @rdname calculateUnifrac
+#'
 #' @importFrom SummarizedExperiment assay
+#'
 #' @export
 setMethod("calculateUnifrac",
           signature = c(x = "TreeSummarizedExperiment",
                         tree = "missing"),
-    function(x, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, abund_values)
+    function(x, exprs_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, exprs_values)
         if(!transposed){
             if(is.null(rowTree(x))){
                 stop("'rowTree(x)' must not be NULL", call. = FALSE)
@@ -141,24 +136,6 @@ setMethod("calculateUnifrac",
     }
 )
 
-#' @rdname calculateUnifrac
-#' @export
-setGeneric("calculateUniFrac", signature = c("x"),
-           function(x, ... )
-             standardGeneric("calculateUniFrac"))
-
-#' @rdname calculateUnifrac
-#' @export
-setMethod("calculateUniFrac",
-          signature = c(x = "ANY"),
-    function(x, ...){
-        .Deprecated( msg = paste0("The name of the function 'calculateUniFrac' is",
-                                  " changed to 'calculateUnifrac'. \nPlease use the new",
-                                  " name instead.\n",
-                                  "See help('Deprecated')") )
-        calculateUnifrac(x, ...)
-    }
-)
 
 ################################################################################
 # Fast Unifrac for R.

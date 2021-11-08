@@ -1,7 +1,7 @@
 #' Converting a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object into a long data.frame
 #'
-#' \code{meltAssay} Converts a
+#' \code{metlAssaay} Converts a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object into a
 #' long data.frame which can be used for \code{tidyverse}-tools.
 #'
@@ -13,9 +13,6 @@
 #'
 #' @param x A numeric matrix or a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   
-#' @param abund_values a \code{character} value to select an
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 #'
 #' @param add_col_data \code{NULL}, \code{TRUE} or a \code{character} vector to
 #'   select information from the \code{colData} to add to the molten assay data.
@@ -33,22 +30,19 @@
 #'   to given column names in \code{rowData}. (default:
 #'   \code{add_row_data = NULL})
 #'
+#' @param assay_name a \code{character} value to select an
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
+#'
 #' @param feature_name a \code{character} scalar to use as the output's name
 #'   for the feature identifier. (default: \code{feature_name = "FeatureID"})
 #'
 #' @param sample_name a \code{character} scalar to use as the output's name
 #'   for the sample identifier. (default: \code{sample_name = "SampleID"})
 #'
-#' @param ... optional arguments:
-#' \itemize{
-#'   \item{check_names}{ A boolean value passed to data.frame function's check.name
-#'   argument. Determines if sample names are checked that they are syntactically 
-#'   valid variable names and are not duplicated. If they are not, sample names 
-#'   are modified. (default: \code{check_names = TRUE})}
-#' }
+#' @param ... optional arguments currently not used.
 #'
 #' @return A \code{tibble} with the molten data. The assay values are given in a
-#' column named like the selected assay \code{abund_values}. In addition, a
+#' column named like the selected assay \code{assay_name}. In addition, a
 #' column \dQuote{FeatureID} will contain the rownames, if set, and analogously
 #' a column \dQuote{SampleID} with the colnames, if set
 #'
@@ -60,10 +54,9 @@
 #' @examples
 #' data(GlobalPatterns)
 #' molten_se <- meltAssay(GlobalPatterns,
-#'                        abund_values = "counts",
 #'                        add_row_data = TRUE,
-#'                        add_col_data = TRUE
-#'                        )
+#'                        add_col_data = TRUE,
+#'                        assay_name = "counts")
 #' molten_se
 NULL
 
@@ -72,9 +65,9 @@ NULL
 setGeneric("meltAssay",
            signature = "x",
            function(x,
-                    abund_values = "counts",
                     add_row_data = NULL,
                     add_col_data = NULL,
+                    assay_name = "counts", 
                     feature_name = "FeatureID",
                     sample_name = "SampleID",
                     ...)
@@ -151,7 +144,7 @@ setGeneric("meltAssay",
        !anyDuplicated(colData(x)[,sample_name])){
         molten_assay %>%
             select(!sym(sample_name)) %>%
-            dplyr::rename(!!sym(sample_name) := !!sym(.col_switch_name(sample_name)))
+            dplyr::rename(sym(sample_name) := !!sym(.col_switch_name(sample_name)))
     }
     molten_assay %>%
         mutate(!!sym(feature_name) := factor(!!sym(feature_name)),
@@ -164,14 +157,14 @@ setGeneric("meltAssay",
 #' @export
 setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
-             abund_values = "counts", 
              add_row_data = NULL,
              add_col_data = NULL,
+             assay_name = "counts", 
              feature_name = "FeatureID",
              sample_name = "SampleID",
              ...) {
         # input check
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay_name, x)
         if(!.is_a_string(feature_name)){
             stop("'feature_name' must be a single non-empty character value.",
                  call. = FALSE)
@@ -180,17 +173,10 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
             stop("'sample_name' must be a single non-empty character value.",
                  call. = FALSE)
         }
-        # check if rownames are duplicated, and if they are, modify
-        if( any(duplicated(rownames(x))) ){
-            rownames(x) <- make.unique(rownames(x))
-            warning("rownames(x) included duplicates.",
-                    " rownames(x) are made unique. ",
-                    call. = FALSE)
-        }
         # check selected colnames
         add_row_data <- .norm_add_row_data(add_row_data, x, feature_name)
         add_col_data <- .norm_add_col_data(add_col_data, x, sample_name)
-        molten_assay <- .melt_assay(x, abund_values, feature_name, sample_name, ...)
+        molten_assay <- .melt_assay(x, assay_name, feature_name, sample_name)
         if(!is.null(add_row_data)){
             molten_assay <-
                 .add_row_data_to_molten_assay(molten_assay, x, add_row_data,
@@ -199,7 +185,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
         if(!is.null(add_col_data)){
             molten_assay <-
                 .add_col_data_to_molten_assay(molten_assay, x, add_col_data,
-                                              sample_name, ...)
+                                              sample_name)
         }
         .format_molten_assay(molten_assay, x, feature_name, sample_name)
     }
@@ -210,17 +196,13 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang sym
-.melt_assay <- function(x, abund_values, feature_name, sample_name, check_names = FALSE) {
-    mat <- assay(x, abund_values) %>%
-        as.matrix() 
-    rownames(mat) <- rownames(x)
-    colnames(mat) <- colnames(x)
-    mat %>%
-        data.frame(check.names = check_names) %>%
+.melt_assay <- function(x, assay_name, feature_name, sample_name) {
+    assay(x, assay_name) %>%
+        data.frame() %>%
         rownames_to_column(feature_name) %>%
         # SampleID is unique sample id
         pivot_longer(!sym(feature_name),
-                     values_to = abund_values,
+                     values_to = assay_name,
                      names_to = sample_name)
 }
 
@@ -231,7 +213,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom dplyr rename left_join
 .add_row_data_to_molten_assay <- function(molten_assay, x, add_row_data,
                                           feature_name) {
-    rd <- SummarizedExperiment::rowData(x)[,add_row_data,drop=FALSE] %>%
+    rd <- SummarizedExperiment::rowData(x)[,add_row_data] %>%
         data.frame()
     if(feature_name %in% add_row_data){
         rd <- rd %>%
@@ -249,13 +231,9 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tibble rownames_to_column
 #' @importFrom dplyr rename left_join
 .add_col_data_to_molten_assay <- function(molten_assay, x, add_col_data,
-                                          sample_name, check_names = FALSE) {
-    cd <- SummarizedExperiment::colData(x)[,add_col_data,drop=FALSE] %>%
+                                          sample_name) {
+    cd <- SummarizedExperiment::colData(x)[,add_col_data] %>%
         data.frame()
-    # This makes sure that sample names match
-    if(check_names == TRUE){
-        rownames(cd) <- make.names(rownames(cd))
-    }
     if(sample_name %in% add_col_data){
         cd <- cd %>%
             dplyr::rename(!!sym(.col_switch_name(sample_name)) := !!sym(sample_name))

@@ -13,7 +13,6 @@ calculateDistance(x, FUN = stats::dist, ...)
 \S4method{calculateDistance}{SummarizedExperiment}(
   x,
   FUN = stats::dist,
-  abund_values = exprs_values,
   exprs_values = "counts",
   transposed = FALSE,
   ...
@@ -30,12 +29,8 @@ and columns as features.}
 
 \item{...}{other arguments passed onto \code{FUN}}
 
-\item{abund_values}{a single \code{character} value for specifying which
-assay to use for calculation.}
-
 \item{exprs_values}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Use \code{abund_values} instead. \code{exprs_values} will be disabled.)}
+assay to use for calculation.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 }
@@ -43,9 +38,6 @@ assay to use for calculation.
 a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
-Will be removed by Bioc 3.15
-}
-\details{
 \code{calculateDistance} calculates a distance matrix between samples. The
 type of distance calculated can be modified by setting \code{FUN}, which
 expects a function with a matrix input as its first argument.
@@ -56,8 +48,6 @@ mat <- matrix(1:60, nrow = 6)
 df <- DataFrame(n = c(1:6))
 se <- SummarizedExperiment(assays = list(counts = mat),
                            rowData = df)
-\dontrun{
+#
 calculateDistance(se)
-}
-
 }

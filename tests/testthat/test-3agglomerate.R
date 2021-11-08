@@ -17,15 +17,15 @@ test_that("agglomerate", {
     actual_family <- actual <- mergeRows(xtse, f = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(8,10))
-    expect_equal(assays(actual)$mat[8,1],c(c_NA = 8))
-    expect_equal(assays(actual)$mat[7,1],c(c_h = 16))
+    expect_equal(assays(actual)$mat[8,1],c(8))
+    expect_equal(assays(actual)$mat[7,1],c(16))
     tax_factors <- mia:::.get_tax_groups(xtse, col = 1)
     actual_phylum <- actual <- mergeRows(xtse, f = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(3,10))
-    expect_equal(assays(actual)$mat[1,1],c(a = 6))
-    expect_equal(assays(actual)$mat[2,1],c(b = 36))
-    expect_equal(assays(actual)$mat[3,1],c(c = 24))
+    expect_equal(assays(actual)$mat[1,1],c(6))
+    expect_equal(assays(actual)$mat[2,1],c(36))
+    expect_equal(assays(actual)$mat[3,1],c(24))
     #
     expect_error(agglomerateByRank(xtse,"",na.rm=FALSE),
                  "'rank' must be an non empty single character value")
@@ -74,12 +74,6 @@ test_that("agglomerate", {
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
                  496)
-    # Test that warning occurs when assay contian binary or negative values
-    se1 <- transformSamples(se, method = "pa")
-    se2 <- se1
-    assay(se2, "pa")[1, 1] <- -1
-    expect_warning(agglomerateByRank(se1, rank = "Phylum"))
-    expect_warning(agglomerateByRank(se1, rank = "Order"))
 
     # checking reference consensus sequence generation
     se <- microbiomeDataSets::SilvermanAGutData()
