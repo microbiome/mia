@@ -46,9 +46,9 @@
 #'   object specifying whether the UniFrac calculation should be parallelized.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
-#'   is Unifrac distance calculated based on rpws (FALSE) or columns (TRUE).
+#'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 #'   (By default: \code{transposed = FALSE})
-#'
+#'   
 #' @param ... optional arguments not used.
 #'
 #' @return a sample-by-sample distance matrix, suitable for NMDS, etc.
@@ -108,7 +108,7 @@ setGeneric("calculateUniFrac", signature = c("x", "tree"),
 
 #' @rdname calculateUniFrac
 #' @export
-setMethod("calculateUniFrac", signature = c(x = "matrix", tree = "phylo"),
+setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
              BPPARAM = SerialParam()){
         if(is(x,"SummarizedExperiment")){
@@ -168,6 +168,10 @@ setMethod("calculateUniFrac",
 #' @export
 runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                        BPPARAM = SerialParam()){
+    # Check x
+    if( !is.matrix(as.matrix(x)) ){
+        stop("'x' must be a matrix", call. = FALSE)
+    }
     # x has samples as row. Therefore transpose. This benchmarks faster than
     # converting the function to work with the input matrix as is
     x <- try(t(x), silent = TRUE)
@@ -177,10 +181,10 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     }
     # input check
     if(!.is_a_bool(weighted)){
-        stop("'weighted' must be TRU or FALSE.", call. = FALSE)
+        stop("'weighted' must be TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(normalized)){
-        stop("'normalized' must be TRU or FALSE.", call. = FALSE)
+        stop("'normalized' must be TRUE or FALSE.", call. = FALSE)
     }
     # check that matrix and tree are compatible
     if(length(tree$tip.label) != nrow(x) && length(tree$tip.label) > 0L) {

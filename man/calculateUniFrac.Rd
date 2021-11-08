@@ -2,12 +2,12 @@
 % Please edit documentation in R/calculateUniFrac.R
 \name{calculateUniFrac}
 \alias{calculateUniFrac}
-\alias{calculateUniFrac,matrix,phylo-method}
+\alias{calculateUniFrac,ANY,phylo-method}
 \alias{calculateUniFrac,TreeSummarizedExperiment,missing-method}
 \alias{runUniFrac}
 \title{Calculate weighted or unweighted (Fast) UniFrac distance}
 \usage{
-\S4method{calculateUniFrac}{matrix,phylo}(
+\S4method{calculateUniFrac}{ANY,phylo}(
   x,
   tree,
   weighted = FALSE,
@@ -71,7 +71,7 @@ assay to use for calculation.
 will be disabled.)}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
-is Unifrac distance calculated based on rpws (FALSE) or columns (TRUE).
+is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: \code{transposed = FALSE})}
 
 \item{...}{optional arguments not used.}
