@@ -46,7 +46,7 @@
 #'   object specifying whether the UniFrac calculation should be parallelized.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
-#'   is Unifrac distance calculated based on rpws (FALSE) or columns (TRUE).
+#'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 #'   (By default: \code{transposed = FALSE})
 #'   
 #' @param ... optional arguments not used.
