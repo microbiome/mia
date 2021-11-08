@@ -171,10 +171,10 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     x <- t(x)
     # input check
     if(!.is_a_bool(weighted)){
-        stop("'weighted' must be TRU or FALSE.", call. = FALSE)
+        stop("'weighted' must be TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(normalized)){
-        stop("'normalized' must be TRU or FALSE.", call. = FALSE)
+        stop("'normalized' must be TRUE or FALSE.", call. = FALSE)
     }
     # check that matrix and tree are compatible
     if(length(tree$tip.label) != nrow(x) && length(tree$tip.label) > 0L) {
