@@ -45,8 +45,10 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the UniFrac calculation should be parallelized.
 #'
-#' @param transposed Logical scalar, is x transposed with cells in rows?
-#'
+#' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
+#'   is Unifrac distance calculated based on rpws (FALSE) or columns (TRUE).
+#'   (By default: \code{transposed = FALSE})
+#'   
 #' @param ... optional arguments not used.
 #'
 #' @return a sample-by-sample distance matrix, suitable for NMDS, etc.
