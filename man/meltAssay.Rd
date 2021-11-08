@@ -8,9 +8,9 @@ object into a long data.frame}
 \usage{
 meltAssay(
   x,
+  abund_values = "counts",
   add_row_data = NULL,
   add_col_data = NULL,
-  assay_name = "counts",
   feature_name = "FeatureID",
   sample_name = "SampleID",
   ...
@@ -18,9 +18,9 @@ meltAssay(
 
 \S4method{meltAssay}{SummarizedExperiment}(
   x,
+  abund_values = "counts",
   add_row_data = NULL,
   add_col_data = NULL,
-  assay_name = "counts",
   feature_name = "FeatureID",
   sample_name = "SampleID",
   ...
@@ -29,6 +29,9 @@ meltAssay(
 \arguments{
 \item{x}{A numeric matrix or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
+
+\item{abund_values}{a \code{character} value to select an
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
 
 \item{add_row_data}{\code{NULL}, \code{TRUE} or a \code{character} vector to
 select information from the \code{rowData} to add to the molten assay data.
@@ -46,25 +49,28 @@ If \code{add_col_data = NULL} no data will be added, if
 to given column names in \code{colData}. (default:
 \code{add_col_data = NULL})}
 
-\item{assay_name}{a \code{character} value to select an
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
-
 \item{feature_name}{a \code{character} scalar to use as the output's name
 for the feature identifier. (default: \code{feature_name = "FeatureID"})}
 
 \item{sample_name}{a \code{character} scalar to use as the output's name
 for the sample identifier. (default: \code{sample_name = "SampleID"})}
 
-\item{...}{optional arguments currently not used.}
+\item{...}{optional arguments:
+\itemize{
+\item{check_names}{ A boolean value passed to data.frame function's check.name
+argument. Determines if sample names are checked that they are syntactically
+valid variable names and are not duplicated. If they are not, sample names
+are modified. (default: \code{check_names = TRUE})}
+}}
 }
 \value{
 A \code{tibble} with the molten data. The assay values are given in a
-column named like the selected assay \code{assay_name}. In addition, a
+column named like the selected assay \code{abund_values}. In addition, a
 column \dQuote{FeatureID} will contain the rownames, if set, and analogously
 a column \dQuote{SampleID} with the colnames, if set
 }
 \description{
-\code{metlAssaay} Converts a
+\code{meltAssay} Converts a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object into a
 long data.frame which can be used for \code{tidyverse}-tools.
 }
@@ -77,9 +83,10 @@ names are set.
 \examples{
 data(GlobalPatterns)
 molten_se <- meltAssay(GlobalPatterns,
+                       abund_values = "counts",
                        add_row_data = TRUE,
-                       add_col_data = TRUE,
-                       assay_name = "counts")
+                       add_col_data = TRUE
+                       )
 molten_se
 }
 \author{

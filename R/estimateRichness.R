@@ -3,7 +3,7 @@
 #' Several functions for calculation of community richness indices available via
 #' wrapper functions. They are implemented via the \code{vegan} package.
 #'
-#' These include the \sQuote{ACE}, \sQuote{Chao1}, \sQuote{Hill}, and 
+#' These include the \sQuote{ace}, \sQuote{Chao1}, \sQuote{Hill}, and 
 #' \sQuote{Observed} richness measures.
 #' See details for more information and references.
 #'
@@ -34,28 +34,34 @@
 #'
 #' The richness is calculated per sample. This is a standard index in community
 #' ecology, and it provides an estimate of the number of unique species in the
-#' community. This is often not directly observed for the whole community but only
-#' for a limited sample from the community. This has led to alternative richness
-#* indices that provide different ways to estimate the species richness.
+#' community. This is often not directly observed for the whole community but
+#' only for a limited sample from the community. This has led to alternative
+#' richness indices that provide different ways to estimate the species
+#' richness.
 #'
 #' Richness index differs from the concept of species diversity or evenness in
 #' that it ignores species abundance, and focuses on the binary presence/absence
 #' values that indicate simply whether the species was detected.
 #'
-#' The function takes all index names in full lowercase. The user can provide the
-#' desired spelling through the argument \code{\link{name}} (see examples).
+#' The function takes all index names in full lowercase. The user can provide
+#' the desired spelling through the argument \code{\link{name}} (see examples).
 #'
 #' The following richness indices are provided.
 #'
 #' \itemize{
 #'   
-#'   \item{'ace' }{Abundance-based coverage estimator (ACE) is another nonparametric richness
-#'   index that uses sample coverage, defined based on the sum of the probabilities
-#'   of the observed species. This method divides the species into abundant (more than 10
+#'   \item{'ace' }{Abundance-based coverage estimator (ACE) is another
+#'   nonparametric richness
+#'   index that uses sample coverage, defined based on the sum of the
+#'   probabilities
+#'   of the observed species. This method divides the species into abundant
+#'   (more than 10
 #'   reads or observations) and rare groups
-#'   in a sample and tends to underestimate the real number of species. The ACE index
+#'   in a sample and tends to underestimate the real number of species. The
+#'   ACE index
 #'   ignores the abundance information for the abundant species,
-#'   based on the assumption that the abundant species are observed regardless of their
+#'   based on the assumption that the abundant species are observed regardless
+#'   of their
 #'   exact abundance. We use here the bias-corrected version
 #'   (O'Hara 2005, Chiu et al. 2014) implemented in
 #'   \code{\link[vegan:specpool]{estimateR}}.
@@ -76,16 +82,19 @@
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
 #'   
-#'   \item{'hill' }{Effective species richness aka Hill index (see e.g. Chao et al. 2016).
+#'   \item{'hill' }{Effective species richness aka Hill index
+#'   (see e.g. Chao et al. 2016).
 #'   Currently only the case 1D is implemented. This corresponds to the exponent
-#'   of Shannon diversity. Intuitively, the effective richness indicates the number of
-#'   species whose even distribution would lead to the same diversity than the observed
+#'   of Shannon diversity. Intuitively, the effective richness indicates the
+#'   number of
+#'   species whose even distribution would lead to the same diversity than the
+#'   observed
 #'   community, where the species abundances are unevenly distributed.}
 #'   
 #'   \item{'observed' }{The _observed richness_ gives the number of species that
 #'   is detected above a given \code{detection} threshold in the observed sample
-#'   (default 0). This is conceptually the simplest richness index. The corresponding
-#'   index in the \pkg{vegan} package is "richness".}
+#'   (default 0). This is conceptually the simplest richness index. The
+#'   corresponding index in the \pkg{vegan} package is "richness".}
 #'   
 #' }
 #'
@@ -98,8 +107,10 @@
 #'
 #' Chao A, Chun-Huo C, Jost L (2016).
 #' Phylogenetic Diversity Measures and Their Decomposition:
-#' A Framework Based on Hill Numbers. Biodiversity Conservation and Phylogenetic Systematics,
-#' Springer International Publishing, pp. 141–172, doi:10.1007/978-3-319-22461-9_8.
+#' A Framework Based on Hill Numbers. Biodiversity Conservation and
+#' Phylogenetic Systematics,
+#' Springer International Publishing, pp. 141–172,
+#' doi:10.1007/978-3-319-22461-9_8.
 #'
 #' Chiu, C.H., Wang, Y.T., Walther, B.A. & Chao, A. (2014).
 #' Improved nonparametric lower bound of species richness via a modified
@@ -162,15 +173,17 @@
 #'
 #' # Indices must be written correctly (all lowercase), otherwise an error
 #' # gets thrown
-#' \dontrun{esophagus <- estimateRichness(esophagus, index="ACE")}
+#' \dontrun{esophagus <- estimateRichness(esophagus, index="ace")}
 #'
 #' # Calculates Chao1 and ACE indices only
-#' esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"), name=c("Chao1", "ACE"))
+#' esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"),
+#'                                           name=c("Chao1", "ACE"))
 #'
 #' # Deletes all colData (including the indices)
 #' colData(esophagus) <- NULL
 #'
-#' # Names of columns can be chosen arbitrarily, but the length of arguments must match.
+#' # Names of columns can be chosen arbitrarily, but the length of arguments
+#' # must match.
 #' esophagus <- estimateRichness(esophagus,
 #'                                index = c("ace", "chao1"),
 #'                                name = c("index1", "index2"))

@@ -47,6 +47,11 @@
 #' your results. If no loops exist (loops meaning two higher ranks containing
 #' the same lower rank), the results should be comparable. you can check for
 #' loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
+#' 
+#' Agglomeration sum up values of assays at specified taxonomic level. Certain assays,
+#' e.g. those that include binary or negative values, can lead to meaningless values, 
+#' when values are summed. In those cases, consider doing agglomeration first and then 
+#' transformation.
 #'
 #' @return A taxonomically-agglomerated, optionally-pruned object of the same
 #'   class as \code{x}.
@@ -67,13 +72,20 @@
 #' ## How many taxa before/after agglomeration?
 #' nrow(GlobalPatterns)
 #' nrow(x1)
-#'
+#' 
 #' # with agglomeration of the tree
 #' x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-#'                         agglomerateTree = TRUE)
+#'                        agglomerateTree = TRUE)
 #' nrow(x2) # same number of rows, but
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
+#' 
+#'  # If assay contains binary or negative values, summing might lead to meaningless
+#'  # values, and you will get a warning. In these cases, you might want to do 
+#'  # agglomeration again at chosen taxonomic level.
+#'  tse <- transformSamples(GlobalPatterns, method = "pa")
+#'  tse <- agglomerateByRank(tse, rank = "Genus")
+#'  tse <- transformSamples(tse, method = "pa")
 #'
 #' # removing empty labels by setting na.rm = TRUE
 #' sum(is.na(rowData(GlobalPatterns)$Family))
@@ -96,9 +108,9 @@
 NULL
 
 setGeneric("agglomerateByRank",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("agglomerateByRank"))
+            signature = "x",
+            function(x, ...)
+                standardGeneric("agglomerateByRank"))
 
 .remove_with_empty_taxonomic_info <-
     function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
@@ -119,11 +131,11 @@ setGeneric("agglomerateByRank",
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
-       empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+        empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         if(!.is_a_bool(onRankOnly)){
             stop("'onRankOnly' must be TRUE or FALSE.", call. = FALSE)
@@ -149,7 +161,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         # tree will be pruned later, if agglomerateTree = TRUE
         if( na.rm ){
             x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
-                                                   empty.fields)
+                                                empty.fields)
         }
         # If rank is the only rank that is available and this data is unique,
         # then the data is already 'aggregated' and no further operations

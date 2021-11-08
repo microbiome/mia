@@ -47,5 +47,8 @@ removed in Bioconductor release 3.15 (April, 2022).
 \examples{
 data(GlobalPatterns)
 subsetSamples(GlobalPatterns, colData(GlobalPatterns)$SampleType == "Soil")
-subsetFeatures(GlobalPatterns, rowData(GlobalPatterns)$Kingdom == "Bacteria")
+# Vector that is used to specify subset must not include NAs 
+subsetFeatures(GlobalPatterns, rowData(GlobalPatterns)$Phylum == "Actinobacteria" & 
+               !is.na(rowData(GlobalPatterns)$Phylum))
+               
 }
