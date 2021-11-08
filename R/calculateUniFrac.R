@@ -46,9 +46,15 @@
 #'   object specifying whether the UniFrac calculation should be parallelized.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
+<<<<<<< HEAD
 #'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 #'   (By default: \code{transposed = FALSE})
 #'   
+=======
+#'   is Unifrac distance calculated based on rpws (FALSE) or columns (TRUE).
+#'   (By default: \code{transposed = FALSE})
+#'
+>>>>>>> e519e8692ae57980930662d77dfc9c22ebfe07f0
 #' @param ... optional arguments not used.
 #'
 #' @return a sample-by-sample distance matrix, suitable for NMDS, etc.
@@ -108,7 +114,7 @@ setGeneric("calculateUniFrac", signature = c("x", "tree"),
 
 #' @rdname calculateUniFrac
 #' @export
-setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
+setMethod("calculateUniFrac", signature = c(x = "matrix", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
              BPPARAM = SerialParam()){
         .calculate_distance(x, FUN = runUniFrac, tree = tree,
