@@ -1,17 +1,17 @@
-#' Calculate weighted or unweighted (Fast) UniFrac distance
+#' Calculate weighted or unweighted (Fast) Unifrac distance
 #'
-#' This function calculates the (Fast) UniFrac distance for all sample-pairs
+#' This function calculates the (Fast) Unifrac distance for all sample-pairs
 #' in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
 #'
-#' Please note that if \code{calculateUniFrac} is used as a \code{FUN} for
+#' Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
 #' \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
 #'
 #' @param x a numeric matrix or a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object containing a tree.
 #'
-#'   Please  note that \code{runUniFrac} expects a matrix with samples per row
+#'   Please  note that \code{runUnifrac} expects a matrix with samples per row
 #'   and not per column. This is implemented to be compatible with other
 #'   distance calculations such as \code{\link[stats:dist]{dist}} as much as
 #'   possible.
@@ -29,21 +29,21 @@
 #'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
 #'   will be disabled.)
 #'
-#' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-UniFrac
-#'   calculation? Weighted-UniFrac takes into account the relative abundance of
-#'   species/taxa shared between samples, whereas unweighted-UniFrac only
+#' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
+#'   calculation? Weighted-Unifrac takes into account the relative abundance of
+#'   species/taxa shared between samples, whereas unweighted-Unifrac only
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
-#'   unweighted-UniFrac distance is calculated for all pairs of samples.
+#'   unweighted-Unifrac distance is calculated for all pairs of samples.
 #'
 #' @param normalized \code{TRUE} or \code{FALSE}: Should the output be
 #'   normalized such that values range from 0 to 1 independent of branch length
-#'   values? Default is \code{TRUE}. Note that (unweighted) \code{UniFrac} is
+#'   values? Default is \code{TRUE}. Note that (unweighted) \code{Unifrac} is
 #'   always normalized by total branch-length, and so this value is ignored when
 #'   \code{weighted == FALSE}.
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the UniFrac calculation should be parallelized.
+#'   object specifying whether the Unifrac calculation should be parallelized.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
@@ -54,7 +54,7 @@
 #' @references
 #' \url{http://bmf.colorado.edu/unifrac/}
 #'
-#' The main implementation (Fast UniFrac) is adapted from the algorithm's
+#' The main implementation (Fast Unifrac) is adapted from the algorithm's
 #' description in:
 #'
 #' Hamady, Lozupone, and Knight,
@@ -63,9 +63,9 @@
 #' communities including analysis of pyrosequencing and PhyloChip data.'' The
 #' ISME Journal (2010) 4, 17--27.
 #'
-#' See also additional descriptions of UniFrac in the following articles:
+#' See also additional descriptions of Unifrac in the following articles:
 #'
-#' Lozupone, Hamady and Knight, ``UniFrac - An Online Tool for Comparing
+#' Lozupone, Hamady and Knight, ``Unifrac - An Online Tool for Comparing
 #' Microbial Community Diversity in a Phylogenetic Context.'', BMC
 #' Bioinformatics 2006, 7:371
 #'
@@ -73,10 +73,10 @@
 #' diversity measures lead to different insights into factors that structure
 #' microbial communities.'' Appl Environ Microbiol. 2007
 #'
-#' Lozupone C, Knight R. ``UniFrac: a new phylogenetic method for comparing
+#' Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
 #' microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
 #'
-#' @name calculateUniFrac
+#' @name calculateUnifrac
 #'
 #' @export
 #'
@@ -87,26 +87,28 @@
 #' @examples
 #' data(esophagus)
 #' library(scater)
-#' calculateUniFrac(esophagus, weighted = FALSE)
-#' calculateUniFrac(esophagus, weighted = TRUE)
-#' calculateUniFrac(esophagus, weighted = TRUE, normalized = FALSE)
-#' # for using calculateUniFrac in conjunction with runMDS the tree argument
+#' calculateUnifrac(esophagus, weighted = FALSE)
+#' calculateUnifrac(esophagus, weighted = TRUE)
+#' calculateUnifrac(esophagus, weighted = TRUE, normalized = FALSE)
+#' # for using calculateUnifrac in conjunction with runMDS the tree argument
 #' # has to be given separately. In addition, subsetting using ntop must
 #' # be disabled
-#' esophagus <- runMDS(esophagus, FUN = calculateUniFrac, name = "UniFrac",
+#' esophagus <- runMDS(esophagus, FUN = calculateUnifrac, name = "Unifrac",
 #'                     tree = rowTree(esophagus),
 #'                     exprs_values = "counts",
 #'                     ntop = nrow(esophagus))
 #' reducedDim(esophagus)
 NULL
 
-setGeneric("calculateUniFrac", signature = c("x", "tree"),
-           function(x, tree, ... )
-             standardGeneric("calculateUniFrac"))
-
-#' @rdname calculateUniFrac
+#' @rdname calculateUnifrac
 #' @export
-setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
+setGeneric("calculateUnifrac", signature = c("x", "tree"),
+           function(x, tree, ... )
+             standardGeneric("calculateUnifrac"))
+
+#' @rdname calculateUnifrac
+#' @export
+setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
              BPPARAM = SerialParam()){
         .calculate_distance(x, FUN = runUniFrac, tree = tree,
@@ -115,12 +117,12 @@ setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
     }
 )
 
-#' @rdname calculateUniFrac
+#' @rdname calculateUnifrac
 #'
 #' @importFrom SummarizedExperiment assay
 #'
 #' @export
-setMethod("calculateUniFrac",
+setMethod("calculateUnifrac",
           signature = c(x = "TreeSummarizedExperiment",
                         tree = "missing"),
     function(x, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
@@ -137,19 +139,38 @@ setMethod("calculateUniFrac",
             }
             tree <- .norm_tree_to_be_rooted(colTree(x), colnames(x))
         }
-        calculateUniFrac(mat, tree = tree, ...)
+        calculateUnifrac(mat, tree = tree, ...)
+    }
+)
+
+#' @rdname calculateUnifrac
+#' @export
+setGeneric("calculateUniFrac", signature = c("x"),
+           function(x, ... )
+             standardGeneric("calculateUniFrac"))
+
+#' @rdname calculateUnifrac
+#' @export
+setMethod("calculateUniFrac",
+          signature = c(x = "ANY"),
+    function(x, ...){
+        .Deprecated( msg = paste0("The name of the function 'calculateUniFrac' is",
+                                  " changed to 'calculateUnifrac'. \nPlease use the new",
+                                  " name instead.\n",
+                                  "See help('Deprecated')") )
+        calculateUnifrac(x, ...)
     }
 )
 
 
 ################################################################################
-# Fast UniFrac for R.
+# Fast Unifrac for R.
 # Adapted from The ISME Journal (2010) 4, 17-27; doi:10.1038/ismej.2009.97
 #
 # adopted from original implementation in phyloseq implemented by
 # Paul J. McMurdie (https://github.com/joey711/phyloseq)
 ################################################################################
-#' @rdname calculateUniFrac
+#' @rdname calculateUnifrac
 #'
 #' @importFrom ape prop.part reorder.phylo node.depth node.depth.edgelength
 #' @importFrom utils combn
@@ -158,7 +179,7 @@ setMethod("calculateUniFrac",
 #' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
+runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                        BPPARAM = SerialParam()){
     # x has samples as row. Therefore transpose. This benchmarks faster than
     # converting the function to work with the input matrix as is
@@ -192,9 +213,9 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
 
     ########################################
     # Build the requisite matrices as defined
-    # in the Fast UniFrac article.
+    # in the Fast Unifrac article.
     ########################################
-    ## This only needs to happen once in a call to UniFrac.
+    ## This only needs to happen once in a call to Unifrac.
     ## Notice that A and B do not appear in this section.
     # Begin by building the edge descendants matrix (edge-by-sample)
     # `edge_array`
@@ -239,13 +260,13 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     if(weighted){
         if(!normalized){
             distlist <- BiocParallel::bplapply(spn,
-                                               uniFrac_weighted_not_norm,
+                                               unifrac_weighted_not_norm,
                                                tree = tree,
                                                samplesums = samplesums,
                                                edge_array = edge_array,
                                                BPPARAM = BPPARAM)
         } else {
-            # This is only relevant to weighted-UniFrac.
+            # This is only relevant to weighted-Unifrac.
             # For denominator in the normalized distance, we need the age of each
             # tip.
             # 'z' is the tree in postorder order used in calls to .C
@@ -262,7 +283,7 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
             # Explicitly re-order tipAges to match x
             tipAges <- tipAges[rownames(x)]
             distlist <- BiocParallel::bplapply(spn,
-                                               uniFrac_weighted_norm,
+                                               unifrac_weighted_norm,
                                                mat = x,
                                                tree = tree,
                                                samplesums = samplesums,
@@ -271,35 +292,35 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                                                BPPARAM = BPPARAM)
         }
     } else {
-        # For unweighted UniFrac, convert the edge_array to an occurrence
+        # For unweighted Unifrac, convert the edge_array to an occurrence
         # (presence/absence binary) array
         edge_occ <- (edge_array > 0) - 0
         distlist <- BiocParallel::bplapply(spn,
-                                           uniFrac_unweighted,
+                                           unifrac_unweighted,
                                            tree = tree,
                                            samplesums = samplesums,
                                            edge_occ = edge_occ,
                                            BPPARAM = BPPARAM)
     }
-    # Initialize UniFracMat with NAs
-    UniFracMat <- matrix(NA_real_, ncol(x), ncol(x))
-    rownames(UniFracMat) <- colnames(UniFracMat) <- colnames(x)
-    # Matrix-assign lower-triangle of UniFracMat. Then coerce to dist and
+    # Initialize UnifracMat with NAs
+    UnifracMat <- matrix(NA_real_, ncol(x), ncol(x))
+    rownames(UnifracMat) <- colnames(UnifracMat) <- colnames(x)
+    # Matrix-assign lower-triangle of UnifracMat. Then coerce to dist and
     # return.
     matIndices <- matIndices <- matrix(c(vapply(spn,"[",character(1),2L),
                                          vapply(spn,"[",character(1),1L)),
                                        ncol = 2)
-    UniFracMat[matIndices] <- unlist(distlist)
+    UnifracMat[matIndices] <- unlist(distlist)
     #
-    stats::as.dist(UniFracMat)
+    stats::as.dist(UnifracMat)
 }
 
-uniFrac_unweighted <- function(i, tree, samplesums, edge_occ){
+unifrac_unweighted <- function(i, tree, samplesums, edge_occ){
     A  <- i[1]
     B  <- i[2]
     AT <- samplesums[A]
     BT <- samplesums[B]
-    # Unweighted UniFrac
+    # Unweighted Unifrac
     # Subset matrix to just columns A and B
     edge_occ_AB <- edge_occ[, c(A, B)]
     edge_occ_AB_rS <- rowSums(edge_occ_AB, na.rm = TRUE)
@@ -312,34 +333,34 @@ uniFrac_unweighted <- function(i, tree, samplesums, edge_occ){
         sum(tree$edge.length[edge_occ_AB_rS > 0])
     uwUFpairdist
 }
-# if not-normalized weighted UniFrac, just return "numerator";
-# the u-value in the w-UniFrac description
-uniFrac_weighted_not_norm <- function(i, tree, samplesums, edge_array){
+# if not-normalized weighted Unifrac, just return "numerator";
+# the u-value in the w-Unifrac description
+unifrac_weighted_not_norm <- function(i, tree, samplesums, edge_array){
     A  <- i[1]
     B  <- i[2]
     AT <- samplesums[A]
     BT <- samplesums[B]
-    # weighted UniFrac
+    # weighted Unifrac
     wUF_branchweight <- abs(edge_array[, A]/AT - edge_array[, B]/BT)
     # calculate the w-UF numerator
     numerator <- sum((tree$edge.length * wUF_branchweight), na.rm = TRUE)
-    # if not-normalized weighted UniFrac, just return "numerator";
-    # the u-value in the w-UniFrac description
+    # if not-normalized weighted Unifrac, just return "numerator";
+    # the u-value in the w-Unifrac description
     numerator
 }
-uniFrac_weighted_norm <- function(i, mat, tree, samplesums, edge_array,
+unifrac_weighted_norm <- function(i, mat, tree, samplesums, edge_array,
                                   tipAges){
     A  <- i[1]
     B  <- i[2]
     AT <- samplesums[A]
     BT <- samplesums[B]
-    # weighted UniFrac
+    # weighted Unifrac
     wUF_branchweight <- abs(edge_array[, A]/AT - edge_array[, B]/BT)
     # calculate the w-UF numerator
     numerator <- sum((tree$edge.length * wUF_branchweight), na.rm = TRUE)
     # denominator (assumes tree-indices and matrix indices are same order)
     denominator <- sum((tipAges * (mat[, A]/AT + mat[, B]/BT)), na.rm = TRUE)
-    # return the normalized weighted UniFrac values
+    # return the normalized weighted Unifrac values
     numerator / denominator
 }
 
@@ -355,7 +376,7 @@ uniFrac_weighted_norm <- function(i, mat, tree, samplesums, edge_array,
                      resolve.root = TRUE, interactive = FALSE)
         if( !is.rooted(tree) ){
             stop("Problem automatically rooting tree. Make sure your tree ",
-                 "is rooted before attempting UniFrac calculation. See ",
+                 "is rooted before attempting Unifrac calculation. See ",
                  "?ape::root")
         }
     }
