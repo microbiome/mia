@@ -160,6 +160,10 @@ setMethod("calculateUniFrac",
 #' @export
 runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                        BPPARAM = SerialParam()){
+    # Check x
+    if( !is.matrix(as.matrix(x)) ){
+        stop("'x' must be a matrix", call. = FALSE)
+    }
     # x has samples as row. Therefore transpose. This benchmarks faster than
     # converting the function to work with the input matrix as is
     x <- t(x)
