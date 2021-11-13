@@ -2,6 +2,7 @@
 % Please edit documentation in R/loadFromQIIME2.R
 \name{loadFromQIIME2}
 \alias{loadFromQIIME2}
+\alias{readQZA}
 \title{Import QIIME2 results to \code{TreeSummarizedExperiment}}
 \usage{
 loadFromQIIME2(
@@ -13,6 +14,8 @@ loadFromQIIME2(
   phyTreeFile = NULL,
   ...
 )
+
+readQZA(file, temp = tempdir(), ...)
 }
 \arguments{
 \item{featureTableFile}{a single \code{character} value defining the file
@@ -47,11 +50,24 @@ data. (default: \code{tempdir()})}
 taxonomic prefixes be removed? (default:
 \code{removeTaxaPrefixes = FALSE})}
 }}
+
+\item{file}{character, path of the input qza file. Only files in format of
+\code{BIOMV210DirFmt} (feature table), \code{TSVTaxonomyDirectoryFormat} (taxonomic
+table), \code{NewickDirectoryFormat} (phylogenetic tree ) and
+\code{DNASequencesDirectoryFormat} (representative sequences) are supported
+right now.}
+
+\item{temp}{character, a temporary directory in which the qza file will be
+decompressed to, default \code{tempdir()}.}
 }
 \value{
 A
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object
+
+\code{matrix} object for feature table, \code{DataFrame} for taxonomic table,
+\code{\link[ape:read.tree]{ape::phylo}} object for phylogenetic tree,
+\code{\link[Biostrings:XStringSet-class]{Biostrings::DNAStringSet}} for representative sequences of taxa.
 }
 \description{
 Results exported from QIMME2 can be imported as a
@@ -59,6 +75,8 @@ Results exported from QIMME2 can be imported as a
 \code{featureTableFile}, the other data types, \code{taxonomyTableFile},
 \code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
 encouraged to be provided.
+
+Import the QIIME2 artifacts to R.
 }
 \details{
 Both arguments \code{featureNamesAsRefSeq} and \code{refSeqFile} can be used
@@ -82,6 +100,26 @@ tse <- loadFromQIIME2(
 )
 
 tse
+# Read individual files
+featureTableFile <- system.file("extdata", "table.qza", package = "mia")
+taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
+sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+
+assay <- readQZA(featureTableFile)
+rowdata <- readQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
+coldata <- read.table(sampleMetaFile, header = TRUE, sep = "\t", comment.char = "")
+
+# Assign rownames 
+rownames(coldata) <- coldata[, 1]
+coldata[, 1] <- NULL
+
+# Order coldata based on assay
+coldata <- coldata[match(colnames(assay), rownames(coldata)), ]
+
+# Create SE from individual files
+se <- SummarizedExperiment(assays = list(assay), rowData = rowdata, colData = coldata)
+se
+
 }
 \references{
 Bolyen E et al. 2019: Reproducible, interactive, scalable and extensible
