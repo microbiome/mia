@@ -178,10 +178,26 @@ loadFromQIIME2 <- function(featureTableFile,
 #' @export
 #'
 #' @examples 
-#' # Read only taxonomy file
+#' # Read individual files
+#' featureTableFile <- system.file("extdata", "table.qza", package = "mia")
 #' taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
-#' taxonomy <- readQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
-#' head(taxonomy, 3)
+#' sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+#' 
+#' assay <- readQZA(featureTableFile)
+#' rowdata <- readQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
+#' coldata <- read.table(sampleMetaFile, header = TRUE, sep = "\t", comment.char = "")
+#' 
+#' # Assign rownames 
+#' rownames(coldata) <- coldata[, 1]
+#' coldata[, 1] <- NULL
+#' 
+#' # Order coldata based on assay
+#' coldata <- coldata[match(colnames(assay), rownames(coldata)), ]
+#' 
+#' # Create SE from individual files
+#' se <- SummarizedExperiment(assays = list(assay), rowData = rowdata, colData = coldata)
+#' se
+#' 
 #' @importFrom utils unzip
 #' @importFrom ape read.tree
 #' @importFrom Biostrings readDNAStringSet
