@@ -116,10 +116,10 @@ loadFromQIIME2 <- function(featureTableFile,
     }
     #
 
-    feature_tab <- .read_qza(featureTableFile, ...)
+    feature_tab <- readQZA(featureTableFile, ...)
 
     if (!is.null(taxonomyTableFile)) {
-        taxa_tab <- .read_qza(taxonomyTableFile, ...)
+        taxa_tab <- readQZA(taxonomyTableFile, ...)
         taxa_tab <- .subset_taxa_in_feature(taxa_tab, feature_tab)
         taxa_tab <- .parse_q2taxonomy(taxa_tab, ...)
     } else {
@@ -135,14 +135,14 @@ loadFromQIIME2 <- function(featureTableFile,
     }
 
     if (!is.null(phyTreeFile)) {
-        tree <- .read_qza(phyTreeFile, ...)
+        tree <- readQZA(phyTreeFile, ...)
     } else {
         tree <- NULL
     }
 
     # if row.names(feature_tab) is a DNA sequence,  set it as refseq
     if (!is.null(refSeqFile)){
-        refseq <- .read_qza(refSeqFile, ...)
+        refseq <- readQZA(refSeqFile, ...)
     } else if (featureNamesAsRefSeq) {
         refseq <- .rownames_as_dna_seq(rownames(feature_tab))
     } else {
@@ -173,13 +173,14 @@ loadFromQIIME2 <- function(featureTableFile,
 #' @return `matrix` object for feature table, `DataFrame` for taxonomic table,
 #'   [`ape::phylo`] object for phylogenetic tree,
 #'   [`Biostrings::DNAStringSet-class`] for representative sequences of taxa.
-#' @noRd
+#'   
+#' @name loadFromQIIME2
+#' @export
 #'
 #' @importFrom utils unzip
 #' @importFrom ape read.tree
 #' @importFrom Biostrings readDNAStringSet
-#' @keywords internal
-.read_qza <- function(file, temp = tempdir(), ...) {
+readQZA <- function(file, temp = tempdir(), ...) {
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
