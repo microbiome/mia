@@ -82,6 +82,7 @@
 #' )
 #'
 #' tse
+
 loadFromQIIME2 <- function(featureTableFile,
                            taxonomyTableFile = NULL,
                            sampleMetaFile = NULL,
@@ -121,7 +122,6 @@ loadFromQIIME2 <- function(featureTableFile,
     if (!is.null(taxonomyTableFile)) {
         taxa_tab <- readQZA(taxonomyTableFile, ...)
         taxa_tab <- .subset_taxa_in_feature(taxa_tab, feature_tab)
-        taxa_tab <- .parse_q2taxonomy(taxa_tab, ...)
     } else {
         taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
         rownames(taxa_tab) <- rownames(feature_tab)
@@ -177,6 +177,11 @@ loadFromQIIME2 <- function(featureTableFile,
 #' @name loadFromQIIME2
 #' @export
 #'
+#' @examples 
+#' # Read only taxonomy file
+#' taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
+#' taxonomy <- readQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
+#' head(taxonomy, 3)
 #' @importFrom utils unzip
 #' @importFrom ape read.tree
 #' @importFrom Biostrings readDNAStringSet
@@ -215,7 +220,7 @@ readQZA <- function(file, temp = tempdir(), ...) {
     res <- switch (
         format,
         BIOMV = .read_q2biom(file),
-        TSVTaxonomyDirectoryFormat = .read_q2taxa(file),
+        TSVTaxonomyDirectoryFormat = .read_q2taxa(file, ...),
         NewickDirectoryFormat = read.tree(file),
         DNASequencesDirectoryFormat = readDNAStringSet(file),
         stop(
@@ -243,9 +248,9 @@ readQZA <- function(file, temp = tempdir(), ...) {
 #' @keywords internal
 #' @importFrom utils read.table
 #' @noRd
-.read_q2taxa <- function(file) {
+.read_q2taxa <- function(file, ...) {
     taxa_tab <- utils::read.table(file, sep = '\t', header = TRUE)
-
+    taxa_tab <- .parse_q2taxonomy(taxa_tab, ...)
     taxa_tab
 }
 
@@ -273,9 +278,8 @@ readQZA <- function(file, temp = tempdir(), ...) {
 #' @keywords internal
 #' @noRd
 .subset_taxa_in_feature <- function(taxa_tab, feature_tab) {
-    idx <- match(rownames(feature_tab), taxa_tab[, "Feature.ID"])
+    idx <- match( rownames(feature_tab), rownames(taxa_tab) )
     taxa_tab <- taxa_tab[idx, , drop = FALSE]
-    rownames(taxa_tab) <- taxa_tab[, "Feature.ID"]
 
     taxa_tab
 }

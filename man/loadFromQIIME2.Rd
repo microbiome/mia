@@ -100,6 +100,10 @@ tse <- loadFromQIIME2(
 )
 
 tse
+# Read only taxonomy file
+taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
+taxonomy <- readQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
+head(taxonomy, 3)
 }
 \references{
 Bolyen E et al. 2019: Reproducible, interactive, scalable and extensible
