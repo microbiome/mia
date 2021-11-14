@@ -136,8 +136,8 @@ test_that("reference sequences of TSE", {
         refSeqFile = refSeqFile,
         featureNamesAsRefseq = FALSE
     )
-    expect_identical(tse@referenceSeq, .read_qza(refSeqFile))
-    expect_identical(tse2@referenceSeq, .read_qza(refSeqFile))
+    expect_identical(tse@referenceSeq, readQZA(refSeqFile))
+    expect_identical(tse2@referenceSeq, readQZA(refSeqFile))
 
     # 2. row.names of feature table as refseq
     # 2.1 element of row.names of feature table is not DNA sequence
@@ -152,7 +152,7 @@ test_that("reference sequences of TSE", {
     # codes used for create sample data (donot run)
     if (FALSE) {
         .require_package("biomformat")
-        feature_tab <- .read_qza(featureTableFile)
+        feature_tab <- readQZA(featureTableFile)
         n_feature <- nrow(feature_tab)
         random_seq <- sapply(
             rep(20, n_feature),
@@ -186,7 +186,7 @@ test_that("reference sequences of TSE", {
         featureTableFile2,
         featureNamesAsRefseq = TRUE
     )
-    feature_tab <- .read_qza(featureTableFile2)
+    feature_tab <- readQZA(featureTableFile2)
     names_seq <- Biostrings::DNAStringSet(row.names(feature_tab))
     names(names_seq) <- paste0("seq_", seq_along(names_seq))
     expect_identical(tse@referenceSeq, names_seq)
@@ -198,7 +198,7 @@ test_that("reference sequences of TSE", {
         featureNamesAsRefseq = TRUE,
         refSeqFile = refSeqFile
     )
-    expect_identical(tse@referenceSeq, .read_qza(refSeqFile))
+    expect_identical(tse@referenceSeq, readQZA(refSeqFile))
 
     # 3. refSeqFile = NULL, featureNamesAsRefseq = FALSE
     tse <- loadFromQIIME2(
@@ -254,8 +254,8 @@ test_that('get file extension', {
 })
 
 test_that('read qza file', {
-    expect_error(.read_qza("abc"), "does not exist")
-    expect_error(.read_qza(sampleMetaFile), "must be in `qza` format")
+    expect_error(readQZA("abc"), "does not exist")
+    expect_error(readQZA(sampleMetaFile), "must be in `qza` format")
 })
 
 test_that("Confidence of taxa is numberic", {
@@ -267,12 +267,11 @@ test_that("Confidence of taxa is numberic", {
 })
 
 test_that("dimnames of feature table is identicle with meta data", {
-   feature_tab <- .read_qza(featureTableFile)
+   feature_tab <- readQZA(featureTableFile)
    
    sample_meta <- .read_q2sample_meta(sampleMetaFile)
-   taxa_meta <- .read_qza(taxonomyTableFile)
+   taxa_meta <- readQZA(taxonomyTableFile)
    taxa_meta <- .subset_taxa_in_feature(taxa_meta, feature_tab)
-   taxa_meta <- .parse_q2taxonomy(taxa_meta)
    new_feature_tab <- .set_feature_tab_dimnames(
        feature_tab, 
        sample_meta, 

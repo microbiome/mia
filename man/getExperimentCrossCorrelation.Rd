@@ -4,9 +4,9 @@
 \alias{getExperimentCrossCorrelation}
 \alias{getExperimentCrossCorrelation,MultiAssayExperiment-method}
 \alias{getExperimentCrossCorrelation,SummarizedExperiment-method}
-\alias{testForExperimentCrossCorrelation}
-\alias{testForExperimentCrossCorrelation,ANY-method}
-\title{Calculate cross-correlation}
+\alias{testExperimentCrossCorrelation}
+\alias{testExperimentCrossCorrelation,ANY-method}
+\title{Calculate correlations between features of two experiments.}
 \usage{
 getExperimentCrossCorrelation(x, ...)
 
@@ -20,19 +20,20 @@ getExperimentCrossCorrelation(x, ...)
   mode = "table",
   p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel",
     "none"),
-  p_adj_threshold = 0.05,
+  p_adj_threshold = NULL,
   cor_threshold = NULL,
   sort = FALSE,
   filter_self_correlations = FALSE,
   verbose = TRUE,
+  show_warnings = TRUE,
   ...
 )
 
 \S4method{getExperimentCrossCorrelation}{SummarizedExperiment}(x, experiment2 = x, ...)
 
-testForExperimentCrossCorrelation(x, ...)
+testExperimentCrossCorrelation(x, ...)
 
-\S4method{testForExperimentCrossCorrelation}{ANY}(x, ...)
+\S4method{testExperimentCrossCorrelation}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{A
@@ -79,10 +80,12 @@ p-values. Passed to \code{p.adjust} function.
 (By default: \code{p_adj_method = "fdr"})}
 
 \item{p_adj_threshold}{A single numeric value (from 0 to  1) for selecting
-adjusted p-value threshold. (By default: \code{p_adj_threshold = 0.05})}
+adjusted p-value threshold for filtering.
+(By default: \code{p_adj_threshold = NULL})}
 
 \item{cor_threshold}{A single numeric absolute value (from 0 to 1]) for selecting
-correlation threshold to include features. (By default: \code{cor_threshold = NULL})}
+correlation threshold for filtering.
+(By default: \code{cor_threshold = NULL})}
 
 \item{sort}{A single boolean value for selecting whether to sort features or not
 in result matrices. Used method is hierarchical clustering.
@@ -95,6 +98,9 @@ between experiment itself is tested, i.e., when assays are identical.
 
 \item{verbose}{A single boolean value for selecting whether to get messages
 about progress of calculation.}
+
+\item{show_warnings}{A single boolean value for selecting whether to show warnings
+that might occur when correlations and p-values are calculated.}
 }
 \value{
 These functions return associations in table or matrix format. In table format,
@@ -104,12 +110,12 @@ when only associations are calculated. If also significances are tested, then
 returned value is a list of matrices.
 }
 \description{
-Calculate cross-correlation
+Calculate correlations between features of two experiments.
 }
 \details{
 These functions calculates associations between features of two experiments.
 \code{getExperimentCrossCorrelation} calculates only associations by default.
-\code{testForExperimentCrossCorrelation} calculates also significance of
+\code{testExperimentCrossCorrelation} calculates also significance of
 associations.
 }
 \examples{
@@ -127,23 +133,29 @@ head(result, 5)
 # Create TreeSE with altExp
 tse <- mae[[1]]
 altExp(tse, "exp2") <- mae[[2]]
-# Whe mode = matrix, matrix is returned
+
+# When mode = matrix, matrix is returned
 result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson", 
                                         mode = "matrix")
 # Show first 5 entries
 head(result, 5)
 
-# testForExperimentCorrelation returns also significances
+# testExperimentCorrelation returns also significances
 # filter_self_correlations = TRUE filters self correlations
-result <- testForExperimentCrossCorrelation(tse, y = tse, method = "pearson",
-                                            filter_self_correlations = TRUE)
+# With p_adj_threshold it is possible to filter those features that do no have
+# any correlations that have p-value under threshold
+result <- testExperimentCrossCorrelation(tse, y = tse, method = "pearson",
+                                         filter_self_correlations = TRUE,
+                                         p_adj_threshold = 0.05)
 # Show first 5 entries
 head(result, 5)
 
 # Also getExperimentCrossCorrelation returns significances when 
 # test_signicance = TRUE
+# Warnings can be suppressed by using show_warnings = FALSE
 result <- getExperimentCrossCorrelation(mae[[1]], y = mae[[2]], method = "pearson",
-                                        mode = "matrix", test_significance = TRUE)
+                                        mode = "matrix", test_significance = TRUE,
+                                        show_warnings = FALSE)
 # Returned value is a list of matrices
 names(result)
 }
