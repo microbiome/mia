@@ -82,6 +82,7 @@
 #' )
 #'
 #' tse
+
 loadFromQIIME2 <- function(featureTableFile,
                            taxonomyTableFile = NULL,
                            sampleMetaFile = NULL,
@@ -116,12 +117,11 @@ loadFromQIIME2 <- function(featureTableFile,
     }
     #
 
-    feature_tab <- .read_qza(featureTableFile, ...)
+    feature_tab <- readQZA(featureTableFile, ...)
 
     if (!is.null(taxonomyTableFile)) {
-        taxa_tab <- .read_qza(taxonomyTableFile, ...)
+        taxa_tab <- readQZA(taxonomyTableFile, ...)
         taxa_tab <- .subset_taxa_in_feature(taxa_tab, feature_tab)
-        taxa_tab <- .parse_q2taxonomy(taxa_tab, ...)
     } else {
         taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
         rownames(taxa_tab) <- rownames(feature_tab)
@@ -135,14 +135,14 @@ loadFromQIIME2 <- function(featureTableFile,
     }
 
     if (!is.null(phyTreeFile)) {
-        tree <- .read_qza(phyTreeFile, ...)
+        tree <- readQZA(phyTreeFile, ...)
     } else {
         tree <- NULL
     }
 
     # if row.names(feature_tab) is a DNA sequence,  set it as refseq
     if (!is.null(refSeqFile)){
-        refseq <- .read_qza(refSeqFile, ...)
+        refseq <- readQZA(refSeqFile, ...)
     } else if (featureNamesAsRefSeq) {
         refseq <- .rownames_as_dna_seq(rownames(feature_tab))
     } else {
@@ -173,13 +173,35 @@ loadFromQIIME2 <- function(featureTableFile,
 #' @return `matrix` object for feature table, `DataFrame` for taxonomic table,
 #'   [`ape::phylo`] object for phylogenetic tree,
 #'   [`Biostrings::DNAStringSet-class`] for representative sequences of taxa.
-#' @noRd
+#'   
+#' @name loadFromQIIME2
+#' @export
 #'
+#' @examples 
+#' # Read individual files
+#' featureTableFile <- system.file("extdata", "table.qza", package = "mia")
+#' taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
+#' sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+#' 
+#' assay <- readQZA(featureTableFile)
+#' rowdata <- readQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
+#' coldata <- read.table(sampleMetaFile, header = TRUE, sep = "\t", comment.char = "")
+#' 
+#' # Assign rownames 
+#' rownames(coldata) <- coldata[, 1]
+#' coldata[, 1] <- NULL
+#' 
+#' # Order coldata based on assay
+#' coldata <- coldata[match(colnames(assay), rownames(coldata)), ]
+#' 
+#' # Create SE from individual files
+#' se <- SummarizedExperiment(assays = list(assay), rowData = rowdata, colData = coldata)
+#' se
+#' 
 #' @importFrom utils unzip
 #' @importFrom ape read.tree
 #' @importFrom Biostrings readDNAStringSet
-#' @keywords internal
-.read_qza <- function(file, temp = tempdir(), ...) {
+readQZA <- function(file, temp = tempdir(), ...) {
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
@@ -214,7 +236,7 @@ loadFromQIIME2 <- function(featureTableFile,
     res <- switch (
         format,
         BIOMV = .read_q2biom(file),
-        TSVTaxonomyDirectoryFormat = .read_q2taxa(file),
+        TSVTaxonomyDirectoryFormat = .read_q2taxa(file, ...),
         NewickDirectoryFormat = read.tree(file),
         DNASequencesDirectoryFormat = readDNAStringSet(file),
         stop(
@@ -242,9 +264,9 @@ loadFromQIIME2 <- function(featureTableFile,
 #' @keywords internal
 #' @importFrom utils read.table
 #' @noRd
-.read_q2taxa <- function(file) {
+.read_q2taxa <- function(file, ...) {
     taxa_tab <- utils::read.table(file, sep = '\t', header = TRUE)
-
+    taxa_tab <- .parse_q2taxonomy(taxa_tab, ...)
     taxa_tab
 }
 
@@ -272,9 +294,8 @@ loadFromQIIME2 <- function(featureTableFile,
 #' @keywords internal
 #' @noRd
 .subset_taxa_in_feature <- function(taxa_tab, feature_tab) {
-    idx <- match(rownames(feature_tab), taxa_tab[, "Feature.ID"])
+    idx <- match( rownames(feature_tab), rownames(taxa_tab) )
     taxa_tab <- taxa_tab[idx, , drop = FALSE]
-    rownames(taxa_tab) <- taxa_tab[, "Feature.ID"]
 
     taxa_tab
 }

@@ -15,19 +15,21 @@ getTopTaxa(
   x,
   top = 5L,
   method = c("mean", "sum", "median"),
-  abund_values = "counts"
+  abund_values = "counts",
+  ...
 )
 
 \S4method{getTopTaxa}{SummarizedExperiment}(
   x,
   top = 5L,
   method = c("mean", "sum", "median", "prevalence"),
-  abund_values = "counts"
+  abund_values = "counts",
+  ...
 )
 
 getUniqueTaxa(x, ...)
 
-\S4method{getUniqueTaxa}{SummarizedExperiment}(x, rank = NULL)
+\S4method{getUniqueTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
 countDominantTaxa(x, group = NULL, ...)
 
@@ -112,7 +114,7 @@ dominant_taxa
 dominant_taxa <- countDominantTaxa(GlobalPatterns,
                                    rank = "Genus",
                                    group = "SampleType",
-                                   na.rm= TRUE)
+                                   na.rm = TRUE)
 
 dominant_taxa
 
@@ -120,7 +122,10 @@ dominant_taxa
 summary(GlobalPatterns)
 
 # Get unique taxa at a particular taxonomic rank
-getUniqueTaxa(GlobalPatterns, "Phylum")
+# sort = TRUE means that output is sorted in alphabetical order
+# With na.rm = TRUE, it is possible to remove NAs
+# sort and na.rm can also be used in function getTopTaxa
+getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE)
 
 }
 \seealso{
