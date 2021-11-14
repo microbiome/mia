@@ -119,7 +119,7 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
                 "combining both into a 'TreeSummarizedExperiment' object.",
                 call. = FALSE) 
         }
-        .calculate_distance(x, FUN = runUniFrac, tree = tree,
+        .calculate_distance(x, FUN = runUnifrac, tree = tree,
                             weighted = weighted, normalized = normalized,
                             BPPARAM = BPPARAM)
     }
@@ -197,7 +197,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # converting the function to work with the input matrix as is
     x <- try(t(x), silent = TRUE)
     if(is(x,"try-error")){
-        stop("The input to 'runUniFrac' must be a matrix-like object: ", 
+        stop("The input to 'runUnifrac' must be a matrix-like object: ", 
              as.character(x))
     }
     # input check
