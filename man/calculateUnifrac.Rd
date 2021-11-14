@@ -80,7 +80,9 @@ assay to use for calculation.
 (Please use \code{abund_values} instead. At some point \code{exprs_values}
 will be disabled.)}
 
-\item{transposed}{Logical scalar, is x transposed with cells in rows?}
+\item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
+is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
+(By default: \code{transposed = FALSE})}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.

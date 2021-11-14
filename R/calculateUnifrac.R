@@ -45,8 +45,10 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the Unifrac calculation should be parallelized.
 #'
-#' @param transposed Logical scalar, is x transposed with cells in rows?
-#'
+#' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
+#'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
+#'   (By default: \code{transposed = FALSE})
+#'   
 #' @param ... optional arguments not used.
 #'
 #' @return a sample-by-sample distance matrix, suitable for NMDS, etc.
@@ -111,6 +113,12 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
              BPPARAM = SerialParam()){
+        if(is(x,"SummarizedExperiment")){
+           stop("When providing a 'tree', please provide a matrix-like as 'x'",
+                " and not a 'SummarizedExperiment' object. Please consider ",
+                "combining both into a 'TreeSummarizedExperiment' object.",
+                call. = FALSE) 
+        }
         .calculate_distance(x, FUN = runUniFrac, tree = tree,
                             weighted = weighted, normalized = normalized,
                             BPPARAM = BPPARAM)
@@ -181,15 +189,23 @@ setMethod("calculateUniFrac",
 #' @export
 runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
                        BPPARAM = SerialParam()){
+    # Check x
+    if( !is.matrix(as.matrix(x)) ){
+        stop("'x' must be a matrix", call. = FALSE)
+    }
     # x has samples as row. Therefore transpose. This benchmarks faster than
     # converting the function to work with the input matrix as is
-    x <- t(x)
+    x <- try(t(x), silent = TRUE)
+    if(is(x,"try-error")){
+        stop("The input to 'runUniFrac' must be a matrix-like object: ", 
+             as.character(x))
+    }
     # input check
     if(!.is_a_bool(weighted)){
-        stop("'weighted' must be TRU or FALSE.", call. = FALSE)
+        stop("'weighted' must be TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(normalized)){
-        stop("'normalized' must be TRU or FALSE.", call. = FALSE)
+        stop("'normalized' must be TRUE or FALSE.", call. = FALSE)
     }
     # check that matrix and tree are compatible
     if(length(tree$tip.label) != nrow(x) && length(tree$tip.label) > 0L) {
