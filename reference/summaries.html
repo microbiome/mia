@@ -73,7 +73,7 @@ functions are available." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.6</span>
       </span>
     </div>
 
@@ -126,7 +126,8 @@ functions are available.</p>
   <span class='va'>x</span>,
   top <span class='op'>=</span> <span class='fl'>5L</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mean"</span>, <span class='st'>"sum"</span>, <span class='st'>"median"</span><span class='op'>)</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
@@ -134,13 +135,14 @@ functions are available.</p>
   <span class='va'>x</span>,
   top <span class='op'>=</span> <span class='fl'>5L</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mean"</span>, <span class='st'>"sum"</span>, <span class='st'>"median"</span>, <span class='st'>"prevalence"</span><span class='op'>)</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
+  <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='fu'>getUniqueTaxa</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
-<span class='fu'>getUniqueTaxa</span><span class='op'>(</span><span class='va'>x</span>, rank <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
+<span class='fu'>getUniqueTaxa</span><span class='op'>(</span><span class='va'>x</span>, rank <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>countDominantTaxa</span><span class='op'>(</span><span class='va'>x</span>, group <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
 
@@ -270,7 +272,7 @@ object.</p>
 <span class='r-in'><span class='va'>dominant_taxa</span> <span class='op'>&lt;-</span> <span class='fu'>countDominantTaxa</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,</span>
 <span class='r-in'>                                   rank <span class='op'>=</span> <span class='st'>"Genus"</span>,</span>
 <span class='r-in'>                                   group <span class='op'>=</span> <span class='st'>"SampleType"</span>,</span>
-<span class='r-in'>                                   na.rm<span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'>                                   na.rm <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='va'>dominant_taxa</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 20 × 5</span></span>
@@ -314,24 +316,27 @@ object.</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># Get unique taxa at a particular taxonomic rank</span></span>
-<span class='r-in'><span class='fu'>getUniqueTaxa</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, <span class='st'>"Phylum"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] "Crenarchaeota"    "Euryarchaeota"    "Actinobacteria"   "Spirochaetes"    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5] "MVP-15"           "Proteobacteria"   "SBR1093"          "Fusobacteria"    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9] "Tenericutes"      "ZB3"              "Cyanobacteria"    "GOUTA4"          </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [13] "TG3"              "Chlorobi"         "Bacteroidetes"    "Caldithrix"      </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [17] "KSB1"             "SAR406"           "LCP-89"           "Thermi"          </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [21] "Gemmatimonadetes" "Fibrobacteres"    "GN06"             "AC1"             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [25] "TM6"              "OP8"              "Elusimicrobia"    "NC10"            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [29] "SPAM"             NA                 "Acidobacteria"    "CCM11b"          </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [33] "Nitrospirae"      "NKB19"            "BRC1"             "Hyd24-12"        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [37] "WS3"              "PAUC34f"          "GN04"             "GN12"            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [41] "Verrucomicrobia"  "Lentisphaerae"    "LD1"              "Chlamydiae"      </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [45] "OP3"              "Planctomycetes"   "Firmicutes"       "OP9"             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [49] "WPS-2"            "Armatimonadetes"  "SC3"              "TM7"             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [53] "GN02"             "SM2F11"           "ABY1_OD1"         "ZB2"             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [57] "OP11"             "Chloroflexi"      "SC4"              "WS1"             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [61] "GAL15"            "AD3"              "WS2"              "Caldiserica"     </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [65] "Thermotogae"      "Synergistetes"    "SR1"             </span>
+<span class='r-in'><span class='co'># sort = TRUE means that output is sorted in alphabetical order</span></span>
+<span class='r-in'><span class='co'># With na.rm = TRUE, it is possible to remove NAs</span></span>
+<span class='r-in'><span class='co'># sort and na.rm can also be used in function getTopTaxa</span></span>
+<span class='r-in'><span class='fu'>getUniqueTaxa</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, <span class='st'>"Phylum"</span>, sort <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] "ABY1_OD1"         "AC1"              "Acidobacteria"    "Actinobacteria"  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5] "AD3"              "Armatimonadetes"  "Bacteroidetes"    "BRC1"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9] "Caldiserica"      "Caldithrix"       "CCM11b"           "Chlamydiae"      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13] "Chlorobi"         "Chloroflexi"      "Crenarchaeota"    "Cyanobacteria"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17] "Elusimicrobia"    "Euryarchaeota"    "Fibrobacteres"    "Firmicutes"      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [21] "Fusobacteria"     "GAL15"            "Gemmatimonadetes" "GN02"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [25] "GN04"             "GN06"             "GN12"             "GOUTA4"          </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [29] "Hyd24-12"         "KSB1"             "LCP-89"           "LD1"             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [33] "Lentisphaerae"    "MVP-15"           "NC10"             "Nitrospirae"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [37] "NKB19"            "OP11"             "OP3"              "OP8"             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [41] "OP9"              "PAUC34f"          "Planctomycetes"   "Proteobacteria"  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [45] "SAR406"           "SBR1093"          "SC3"              "SC4"             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [49] "SM2F11"           "SPAM"             "Spirochaetes"     "SR1"             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [53] "Synergistetes"    "Tenericutes"      "TG3"              "Thermi"          </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [57] "Thermotogae"      "TM6"              "TM7"              "Verrucomicrobia" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [61] "WPS-2"            "WS1"              "WS2"              "WS3"             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [65] "ZB2"              "ZB3"              NA                </span>
 <span class='r-in'></span>
 </pre>
   </div>

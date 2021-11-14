@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate cross-correlation — getExperimentCrossCorrelation • mia</title>
+<title>Calculate correlations between features of two experiments. — getExperimentCrossCorrelation • mia</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Calculate cross-correlation — getExperimentCrossCorrelation" />
-<meta property="og:description" content="Calculate cross-correlation" />
+<meta property="og:title" content="Calculate correlations between features of two experiments. — getExperimentCrossCorrelation" />
+<meta property="og:description" content="Calculate correlations between features of two experiments." />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.6</span>
       </span>
     </div>
 
@@ -111,13 +111,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate cross-correlation</h1>
+    <h1>Calculate correlations between features of two experiments.</h1>
     <small class="dont-index">Source: <a href='https://github.com/microbiome/mia/blob/master/R/getExperimentCrossCorrelation.R'><code>R/getExperimentCrossCorrelation.R</code></a></small>
     <div class="hidden name"><code>getExperimentCrossCorrelation.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate cross-correlation</p>
+    <p>Calculate correlations between features of two experiments.</p>
     </div>
 
     <pre class="usage"><span class='fu'>getExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -133,21 +133,22 @@
   mode <span class='op'>=</span> <span class='st'>"table"</span>,
   p_adj_method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"fdr"</span>, <span class='st'>"BH"</span>, <span class='st'>"bonferroni"</span>, <span class='st'>"BY"</span>, <span class='st'>"hochberg"</span>, <span class='st'>"holm"</span>, <span class='st'>"hommel"</span>,
     <span class='st'>"none"</span><span class='op'>)</span>,
-  p_adj_threshold <span class='op'>=</span> <span class='fl'>0.05</span>,
+  p_adj_threshold <span class='op'>=</span> <span class='cn'>NULL</span>,
   cor_threshold <span class='op'>=</span> <span class='cn'>NULL</span>,
   sort <span class='op'>=</span> <span class='cn'>FALSE</span>,
   filter_self_correlations <span class='op'>=</span> <span class='cn'>FALSE</span>,
   verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  show_warnings <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>getExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>x</span>, experiment2 <span class='op'>=</span> <span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>testForExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>testExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for ANY</span>
-<span class='fu'>testForExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>testExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -215,12 +216,14 @@ p-values. Passed to <code>p.adjust</code> function.
     <tr>
       <th>p_adj_threshold</th>
       <td><p>A single numeric value (from 0 to  1) for selecting
-adjusted p-value threshold. (By default: <code>p_adj_threshold = 0.05</code>)</p></td>
+adjusted p-value threshold for filtering.
+(By default: <code>p_adj_threshold = NULL</code>)</p></td>
     </tr>
     <tr>
       <th>cor_threshold</th>
       <td><p>A single numeric absolute value (from 0 to 1]) for selecting
-correlation threshold to include features. (By default: <code>cor_threshold = NULL</code>)</p></td>
+correlation threshold for filtering.
+(By default: <code>cor_threshold = NULL</code>)</p></td>
     </tr>
     <tr>
       <th>sort</th>
@@ -240,6 +243,11 @@ between experiment itself is tested, i.e., when assays are identical.
       <td><p>A single boolean value for selecting whether to get messages
 about progress of calculation.</p></td>
     </tr>
+    <tr>
+      <th>show_warnings</th>
+      <td><p>A single boolean value for selecting whether to show warnings
+that might occur when correlations and p-values are calculated.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -253,7 +261,7 @@ returned value is a list of matrices.</p>
 
     <p>These functions calculates associations between features of two experiments.
 <code>getExperimentCrossCorrelation</code> calculates only associations by default.
-<code>testForExperimentCrossCorrelation</code> calculates also significance of
+<code>testExperimentCrossCorrelation</code> calculates also significance of
 associations.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
@@ -282,10 +290,7 @@ associations.</p>
 <span class='r-in'><span class='co'># Calculate cross-correlations</span></span>
 <span class='r-in'><span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>getExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>mae</span>, method <span class='op'>=</span> <span class='st'>"pearson"</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Calculating correlations...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> method: pearson, p_adj_method: -</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Filtering results...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> p_adj_threshold: -, cor_threshold: -, filter_self_correlations: -</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> method: pearson, test_significance: FALSE, p_adj_method: -</span>
 <span class='r-in'><span class='co'># Show first 5 entries</span></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>result</span>, <span class='fl'>5</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>                           Var1              Var2        cor</span>
@@ -299,14 +304,12 @@ associations.</p>
 <span class='r-in'><span class='co'># Create TreeSE with altExp</span></span>
 <span class='r-in'><span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='va'>mae</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html'>altExp</a></span><span class='op'>(</span><span class='va'>tse</span>, <span class='st'>"exp2"</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>mae</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span></span>
-<span class='r-in'><span class='co'># Whe mode = matrix, matrix is returned</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># When mode = matrix, matrix is returned</span></span>
 <span class='r-in'><span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>getExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>tse</span>, y <span class='op'>=</span> <span class='st'>"exp2"</span>, method <span class='op'>=</span> <span class='st'>"pearson"</span>, </span>
 <span class='r-in'>                                        mode <span class='op'>=</span> <span class='st'>"matrix"</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Calculating correlations...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> method: pearson, p_adj_method: -</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Filtering results...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> p_adj_threshold: -, cor_threshold: -, filter_self_correlations: -</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> method: pearson, test_significance: FALSE, p_adj_method: -</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Converting table into matrices...</span>
 <span class='r-in'><span class='co'># Show first 5 entries</span></span>
@@ -378,12 +381,15 @@ associations.</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Akkermansia                                    -0.2190822</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Alcaligenes faecalis et rel.                    0.2054672</span>
 <span class='r-in'></span>
-<span class='r-in'><span class='co'># testForExperimentCorrelation returns also significances</span></span>
+<span class='r-in'><span class='co'># testExperimentCorrelation returns also significances</span></span>
 <span class='r-in'><span class='co'># filter_self_correlations = TRUE filters self correlations</span></span>
-<span class='r-in'><span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>testForExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>tse</span>, y <span class='op'>=</span> <span class='va'>tse</span>, method <span class='op'>=</span> <span class='st'>"pearson"</span>,</span>
-<span class='r-in'>                                            filter_self_correlations <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># With p_adj_threshold it is possible to filter those features that do no have</span></span>
+<span class='r-in'><span class='co'># any correlations that have p-value under threshold</span></span>
+<span class='r-in'><span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>testExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>tse</span>, y <span class='op'>=</span> <span class='va'>tse</span>, method <span class='op'>=</span> <span class='st'>"pearson"</span>,</span>
+<span class='r-in'>                                         filter_self_correlations <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>                                         p_adj_threshold <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Calculating correlations...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> method: pearson, p_adj_method: fdr</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> method: pearson, test_significance: TRUE, p_adj_method: fdr</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Filtering results...</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> p_adj_threshold: 0.05, cor_threshold: -, filter_self_correlations: TRUE</span>
@@ -398,13 +404,12 @@ associations.</p>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># Also getExperimentCrossCorrelation returns significances when </span></span>
 <span class='r-in'><span class='co'># test_signicance = TRUE</span></span>
+<span class='r-in'><span class='co'># Warnings can be suppressed by using show_warnings = FALSE</span></span>
 <span class='r-in'><span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>getExperimentCrossCorrelation</span><span class='op'>(</span><span class='va'>mae</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>, y <span class='op'>=</span> <span class='va'>mae</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span>, method <span class='op'>=</span> <span class='st'>"pearson"</span>,</span>
-<span class='r-in'>                                        mode <span class='op'>=</span> <span class='st'>"matrix"</span>, test_significance <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'>                                        mode <span class='op'>=</span> <span class='st'>"matrix"</span>, test_significance <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>                                        show_warnings <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Calculating correlations...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> method: pearson, p_adj_method: fdr</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Filtering results...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> p_adj_threshold: 0.05, cor_threshold: -, filter_self_correlations: -</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> method: pearson, test_significance: TRUE, p_adj_method: fdr</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Converting table into matrices...</span>
 <span class='r-in'><span class='co'># Returned value is a list of matrices</span></span>
