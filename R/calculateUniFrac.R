@@ -111,6 +111,12 @@ setGeneric("calculateUniFrac", signature = c("x", "tree"),
 setMethod("calculateUniFrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
              BPPARAM = SerialParam()){
+        if(is(x,"SummarizedExperiment")){
+           stop("When providing a 'tree', please provide a matrix-like as 'x'",
+                " and not a 'SummarizedExperiment' object. Please consider ",
+                "combining both into a 'TreeSummarizedExperiment' object.",
+                call. = FALSE) 
+        }
         .calculate_distance(x, FUN = runUniFrac, tree = tree,
                             weighted = weighted, normalized = normalized,
                             BPPARAM = BPPARAM)
@@ -168,7 +174,11 @@ runUniFrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     }
     # x has samples as row. Therefore transpose. This benchmarks faster than
     # converting the function to work with the input matrix as is
-    x <- t(x)
+    x <- try(t(x), silent = TRUE)
+    if(is(x,"try-error")){
+        stop("The input to 'runUniFrac' must be a matrix-like object: ", 
+             as.character(x))
+    }
     # input check
     if(!.is_a_bool(weighted)){
         stop("'weighted' must be TRUE or FALSE.", call. = FALSE)
