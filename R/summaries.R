@@ -15,6 +15,18 @@
 #' @param abund_values A \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 #'
+#' @param ... Additional arguments:
+#'    \itemize{
+#'        \item{\code{sort}}{A single boolean value for selecting 
+#'        whether to sort taxa in alphabetical order or not. Enabled in functions
+#'        \code{getUniqueTaxa}, and \code{getTopTaxa}.
+#'        (By default: \code{sort = FALSE})}
+#'        \item{\code{na.rm}}{A single boolean value for selecting 
+#'        whether to remove missing values or not. Enabled in functions
+#'        \code{getUniqueTaxa}, and \code{getTopTaxa}.
+#'        (By default: \code{na.rm = FALSE})}
+#'    }
+#'    
 #' @details
 #' The \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
 #' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -53,7 +65,7 @@
 #' dominant_taxa <- countDominantTaxa(GlobalPatterns,
 #'                                    rank = "Genus",
 #'                                    group = "SampleType",
-#'                                    na.rm= TRUE)
+#'                                    na.rm = TRUE)
 #'
 #' dominant_taxa
 #'
@@ -61,7 +73,10 @@
 #' summary(GlobalPatterns)
 #'
 #' # Get unique taxa at a particular taxonomic rank
-#' getUniqueTaxa(GlobalPatterns, "Phylum")
+#' # sort = TRUE means that output is sorted in alphabetical order
+#' # With na.rm = TRUE, it is possible to remove NAs
+#' # sort and na.rm can also be used in function getTopTaxa
+#' getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE)
 #'
 NULL
 
@@ -69,12 +84,12 @@ NULL
 #' @export
 setGeneric("getTopTaxa", signature = "x",
            function(x, top= 5L, method = c("mean","sum","median"),
-                    abund_values = "counts")
+                    abund_values = "counts", ...)
                standardGeneric("getTopTaxa"))
 
 .check_max_taxa <- function(x, top, abund_values){
     if(!is.numeric(top) || as.integer(top) != top){
-        top("'top' must be integer value", call. = FALSE)
+        stop("'top' must be integer value", call. = FALSE)
     }
     if(top > nrow(assay(x,abund_values))){
         stop("'top' must be <= nrow(x)", call. = FALSE)
@@ -89,7 +104,7 @@ setGeneric("getTopTaxa", signature = "x",
 #' @export
 setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, top = 5L, method = c("mean","sum","median","prevalence"),
-             abund_values = "counts"){
+             abund_values = "counts", ...){
         # input check
         method <- match.arg(method, c("mean","sum","median","prevalence"))
         # check max taxa
@@ -108,7 +123,10 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
             names(taxs) <- rownames(assay(x))
             taxs <- sort(taxs,decreasing = TRUE)
         }
-        head(names(taxs), n = top)
+        names <- head(names(taxs), n = top)
+        # Remove NAs and sort if specified
+        names <- .remove_NAs_and_sort(names, ... )
+        return(names)
     }
 )
 
@@ -130,9 +148,12 @@ setGeneric("getUniqueTaxa",
 #' @rdname summaries
 #' @export
 setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL){
+    function(x, rank = NULL, ...){
         .check_taxonomic_rank(rank, x)
-        unique(rowData(x)[,rank])
+        names <- unique(rowData(x)[,rank])
+        # Remove NAs and sort if specified
+        names <- .remove_NAs_and_sort(names, ... )
+        return(names)
     }
 )
 
@@ -290,4 +311,25 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
              "Try to supply raw counts",
              call. = FALSE)
     }
+}
+
+# Remove NAs and order in alphabetical order
+.remove_NAs_and_sort <- function(names, sort = FALSE, na.rm = FALSE, ...){
+    # Check sort
+    if( !.is_a_bool(sort) ){
+        stop("'sort' must be a boolean value.", call. = FALSE)
+    }
+    # Check na.rm
+    if( !.is_a_bool(na.rm) ){
+        stop("'na.rm' must be a boolean value.", call. = FALSE)
+    }
+    # Remove NAs if specified
+    if( na.rm ){
+        names <- names[ !is.na(names) ]
+    }
+    # Sort in alphabetical order if sort is TRUE
+    if( sort ){
+        names <- sort(names, na.last = TRUE)
+    }
+    return(names)
 }
