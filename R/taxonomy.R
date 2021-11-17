@@ -379,9 +379,10 @@ setGeneric("taxonomyTree",
 #' @export
 setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
-        td <- rowData(x)[,taxonomyRanks(x)]
+        # Converted to data.frame so that drop = FALSE is enabled
+        td <- data.frame(rowData(x)[,taxonomyRanks(x)])
         # Remove empty taxonomic levels
-        td <- td[,!vapply(td,function(tl){all(is.na(tl))},logical(1))]
+        td <- td[,!vapply(td,function(tl){all(is.na(tl))},logical(1)), drop = FALSE]
         # Make information unique
         td_NA <- DataFrame(lapply(td,is.na))
         td <- as.data.frame(td)
