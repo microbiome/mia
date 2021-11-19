@@ -33,7 +33,7 @@ taxonomy
 rowdata[, "clade_name"] <- NULL
 rowdata
 # 
-# taxonomy <- .parse_taxonomy(taxonomy, sep = "\\|", column_name = "clade_name", removeTaxaPrefixes = FALSE)
+ taxonomy <- .parse_taxonomy(taxonomy, sep = "\\|", column_name = "clade_name", ...)
 # 
 # # .parse_taxonomy <- function(taxa_table, column_name = "Taxon", sep = "\\|",
 #                             removeTaxaPrefixes = FALSE, ...){
@@ -74,6 +74,7 @@ assay
 
 se <- SummarizedExperiment::SummarizedExperiment(assays = list(counts = assay), 
                                            rowData = rowdata)
-#rownames(se) <- .get_taxonomic_label(se)
+rownames(se) <- .get_taxonomic_label(se)
 
 se
+rowData(se)
