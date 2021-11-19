@@ -4,8 +4,10 @@ file <- "~/Downloads/merged_abundance_table.txt"
 
 readLines(file)
 
+# Read the table
 table <- read.table(file, header = TRUE)
 
+# Get the lowest level of each row
 levels <- sapply(table[["clade_name"]], FUN = .get_level)
 
 .get_level <- function(string){
@@ -16,64 +18,37 @@ levels <- sapply(table[["clade_name"]], FUN = .get_level)
 }
 
 order <- c("s", "g", "f", "o", "c", "p", "k")
-
+# Order the data and get the lowest level of data
 lowest_level_found <- levels[order(match(levels, order))][1]
 lowest_level_found 
 
+# Get those rows that include information at lowest level
 table <- table[grepl(paste0(lowest_level_found, "__"), table[["clade_name"]]), ]
 table
-rowdata <- table[, c("clade_name", "NCBI_tax_id")]
 
-assay_columns <- colnames(table)[!colnames(table) %in% c("clade_name", "NCBI_tax_id")]
+# Get the data that belongs to rowData
+rowdata_columns <- c("clade_name", "NCBI_tax_id")
+rowdata <- table[, colnames(table) %in% rowdata_columns, drop = FALSE]
 
-assay <- table[, assay_columns]
+# Get those columns that belong to assay
+assay_columns <- colnames(table)[!colnames(table) %in% rowdata_columns]
+assay <- table[, assay_columns, drop = FALSE]
 
-taxonomy <- rowdata[, "clade_name", drop = FALSE]
-taxonomy
-rowdata[, "clade_name"] <- NULL
-rowdata
-# 
- taxonomy <- .parse_taxonomy(taxonomy, sep = "\\|", column_name = "clade_name", ...)
-# 
-# # .parse_taxonomy <- function(taxa_table, column_name = "Taxon", sep = "\\|",
-#                             removeTaxaPrefixes = FALSE, ...){
-#     
-#     #  work with any combination of taxonomic ranks available
-#     all_ranks <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
-#     all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__")
-#     
-#     # split the taxa strings
-#     taxa_split <- CharacterList(strsplit(taxa_tab[,"Taxon"],sep))
-#     # extract present prefixes
-#     taxa_prefixes <- lapply(taxa_split, substr, 1L, 3L)
-#     # match them to the order given by present_prefixes
-#     taxa_prefixes_match <- lapply(taxa_prefixes, match, x = all_prefixes)
-#     taxa_prefixes_match <- IntegerList(taxa_prefixes_match)
-#     # get the taxa values
-#     if(removeTaxaPrefixes){
-#         taxa_split <- lapply(taxa_split,
-#                              gsub,
-#                              pattern = "([kpcofgs]+)__",
-#                              replacement = "")
-#         taxa_split <- CharacterList(taxa_split)
-#     }
-#     # extract by order matches
-#     taxa_split <- taxa_split[taxa_prefixes_match]
-#     #
-#     if(length(unique(lengths(taxa_split))) != 1L){
-#         stop("Internal error. Something went wrong")
-#     }
-#     taxa_tab <- DataFrame(as.matrix(taxa_split))
-#     colnames(taxa_tab) <- all_ranks
-# }
+# Store taxonomic ids to add them later
+tax_id <- rowdata$NCBI_tax_id
 
+# Psrse taxonomic levels
+rowdata <- .parse_taxonomy(rowdata, sep = "\\|", column_name = "clade_name")
 
-rowdata <- cbind(taxonomy, rowdata)
+# Add taxonomic ids
+rowdata$NCBI_tax_id <- tax_id
 
 assay
 
+# Create SE
 se <- SummarizedExperiment::SummarizedExperiment(assays = list(counts = assay), 
                                            rowData = rowdata)
+# Add rownames from the lowest taxonomic level
 rownames(se) <- .get_taxonomic_label(se)
 
 se
