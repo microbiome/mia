@@ -146,3 +146,73 @@
   
     feature_tab
 }
+
+#' Parse taxa in different taxonomic levels
+#' @param taxa_tab `data.frame` object.
+#' 
+#' @param sep character string containing a regular expression, separator
+#'  between different taxonomic levels, defaults to one compatible with both
+#'  GreenGenes and SILVA `; |;"`.
+#'  
+#' @param column_name a single \code{character} value defining the column of taxa_tab
+#'  that includes taxonomical information.
+#'  
+#' @param removeTaxaPrefixes {\code{TRUE} or \code{FALSE}: Should 
+#'  taxonomic prefixes be removed? (default:
+#'  \code{removeTaxaPrefixes = FALSE})}
+#'  
+#' @return  a `data.frame`.
+#' @keywords internal
+#' @importFrom IRanges CharacterList IntegerList
+#' @importFrom S4Vectors DataFrame
+#' @noRd
+.parse_taxonomy <- function(taxa_tab, sep = "; |;", column_name = "Taxon",
+                            removeTaxaPrefixes = FALSE, ...) {
+  # Input check
+  if(!.is_non_empty_string(sep)){
+    stop("'sep' must be a single character value.",
+         call. = FALSE)
+  }
+  if( !(.is_non_empty_string(column_name) && column_name %in% colnames(taxa_tab)) ){
+    stop("'column_name' must be a single character value defining column that includes",
+         " information about taxonomic levels.",
+         call. = FALSE)
+  }
+  
+  if(!.is_a_bool(removeTaxaPrefixes)){
+    stop("'removeTaxaPrefixes' must be TRUE or FALSE.", call. = FALSE)
+  }
+  
+  
+  
+  #  work with any combination of taxonomic ranks available
+  all_ranks <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+  all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__")
+  
+  # split the taxa strings
+  taxa_split <- CharacterList(strsplit(taxa_tab[, column_name],sep))
+  # extract present prefixes
+  taxa_prefixes <- lapply(taxa_split, substr, 1L, 3L)
+  # match them to the order given by present_prefixes
+  taxa_prefixes_match <- lapply(taxa_prefixes, match, x = all_prefixes)
+  taxa_prefixes_match <- IntegerList(taxa_prefixes_match)
+  # get the taxa values
+  if(removeTaxaPrefixes){
+    taxa_split <- lapply(taxa_split,
+                         gsub,
+                         pattern = "([kpcofgs]+)__",
+                         replacement = "")
+    taxa_split <- CharacterList(taxa_split)
+  }
+  # extract by order matches
+  taxa_split <- taxa_split[taxa_prefixes_match]
+  #
+  if(length(unique(lengths(taxa_split))) != 1L){
+    stop("Internal error. Something went wrong while splitting taxonomic levels.",
+         "Please check that 'sep' is correct.")
+  }
+  taxa_tab <- DataFrame(as.matrix(taxa_split))
+  colnames(taxa_tab) <- all_ranks
+  
+  taxa_tab
+}
