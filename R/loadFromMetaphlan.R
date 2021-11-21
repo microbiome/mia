@@ -50,15 +50,31 @@ loadFromMetaphlan <- function(file, ...){
         stop(file, " does not exist", call. = FALSE)
     }
     ############################## Input check end #############################
+    # Parse assay and rowdata from the file
+    assay_and_rowdata <- .parse_assay_and_rowdata_from_metaphlan(file, ...)
+    assay <- assay_and_rowdata$assay
+    rowdata <- assay_and_rowdata$rowdata
+    
+    # Create SE
+    x <- SummarizedExperiment::SummarizedExperiment(assays = list(counts = assay), 
+                                                    rowData = rowdata)
+    # Add rownames from the lowest taxonomic level
+    rownames(x) <- .get_taxonomic_label(x)
+    return(x)
+}
+
+################################ HELP FUNCTIONS ################################
+# Parse assay and rowdata from metaphlan file 
+.parse_assay_and_rowdata_from_metaphlan <- function(file, ...){
     # Read the table. Catch error and give more informative message
     table <- tryCatch(
         {
             read.table(file, header = TRUE, comment.char = "#")
         },
-            error = function(condition){
-                stop("Error while reading ", file,
-                     "\nPlease check that the file is in merged Metaphlan file format.",
-                     call. = FALSE)
+        error = function(condition){
+            stop("Error while reading ", file,
+                 "\nPlease check that the file is in merged Metaphlan file format.",
+                 call. = FALSE)
         }
     )
     # Subset so that only those rows are included that include all taxonomic levels
@@ -72,15 +88,9 @@ loadFromMetaphlan <- function(file, ...){
     # Add parsed taxonomy level information to rowdata
     rowdata <- cbind(taxonomy, rowdata)
     
-    # Create SE
-    x <- SummarizedExperiment::SummarizedExperiment(assays = list(counts = assay), 
-                                                    rowData = rowdata)
-    # Add rownames from the lowest taxonomic level
-    rownames(x) <- .get_taxonomic_label(x)
-    return(x)
+    return(list(assay = assay, rowdata = rowdata))
 }
 
-################################ HELP FUNCTIONS ################################
 # Get the lowest level of the string that contains multiple taxonomic levels with prefixes
 # Output is single character that specifies the rank, e.g, "s" == "Species"
 .get_lowest_taxonomic_level <- function(string){
