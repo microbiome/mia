@@ -4,11 +4,19 @@
 \alias{loadFromMetaphlan}
 \title{Import Metaphlan results to \code{SummarizedExperiment}}
 \usage{
-loadFromMetaphlan(file, ...)
+loadFromMetaphlan(metaphlan, sample_meta = NULL, phy_tree = NULL, ...)
 }
 \arguments{
-\item{file}{a single \code{character} value defining the file
-path of the file. The file must be in merged Metaphlan format.}
+\item{metaphlan}{a single \code{character} value defining the file
+path of the Metaphlan file. The file must be in merged Metaphlan format.}
+
+\item{sample_meta}{a single \code{character} value defining the file
+path of the sample metadata file. The file must be in \code{tsv} format
+(default: \code{sample_meta = NULL}).}
+
+\item{phy_tree}{a single \code{character} value defining the file
+path of the phylogenetic tree.
+(default: \code{phy_tree = NULL}).}
 
 \item{...}{additional arguments:
 \itemize{
@@ -33,7 +41,7 @@ Import Metaphlan results. Input must be in merged Metaphlan format.
 # File path
 file_path <- "/data/metaphlan_result.txt"
 # Import data
-se <- loadFromMetaphlan(file)
+se <- loadFromMetaphlan(file_path)
 se
 }
 

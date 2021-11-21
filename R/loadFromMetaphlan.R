@@ -1,8 +1,16 @@
-#' Import Metaphlan results to \code{SummarizedExperiment}
+#' Import Metaphlan results to \code{TreeSummarizedExperiment}
 #
-#' @param file a single \code{character} value defining the file
-#'   path of the file. The file must be in merged Metaphlan format.
+#' @param metaphlan a single \code{character} value defining the file
+#'   path of the Metaphlan file. The file must be in merged Metaphlan format.
 #'
+#' @param sample_meta a single \code{character} value defining the file
+#'   path of the sample metadata file. The file must be in \code{tsv} format
+#'   (default: \code{sample_meta = NULL}).
+#'   
+#' @param phy_tree a single \code{character} value defining the file
+#'   path of the phylogenetic tree.
+#'   (default: \code{phy_tree = NULL}).
+#'   
 #' @param ... additional arguments:
 #' \itemize{
 #'   \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
@@ -14,7 +22,7 @@
 #' Import Metaphlan results. Input must be in merged Metaphlan format.
 #'
 #' @return  A
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
 #' @name loadFromMetaphlan
@@ -35,31 +43,56 @@
 #' # File path
 #' file_path <- "/data/metaphlan_result.txt"
 #' # Import data
-#' se <- loadFromMetaphlan(file)
-#' se
+#' tse <- loadFromMetaphlan(file_path)
+#' tse
 #' }
 #' 
 
-loadFromMetaphlan <- function(file, ...){
+loadFromMetaphlan <- function(metaphlan, sample_meta = NULL, phy_tree = NULL, ...){
     ################################ Input check ################################
-    if(!.is_non_empty_string(file)){
-        stop("'file' must be a single character value.",
+    if(!.is_non_empty_string(metaphlan)){
+        stop("'metaphlan' must be a single character value.",
              call. = FALSE)
     }
-    if (!file.exists(file)) {
-        stop(file, " does not exist", call. = FALSE)
+    if (!file.exists(metaphlan)) {
+        stop(metaphlan, " does not exist", call. = FALSE)
+    }
+    if(!is.null(sample_meta) && !.is_non_empty_string(sample_meta)){
+        stop("'sample_meta' must be a single character value or NULL.",
+             call. = FALSE)
+    }
+    if(!is.null(phy_tree) && !.is_non_empty_string(phy_tree)){
+        stop("'phy_tree' must be a single character value or NULL.",
+             call. = FALSE)
     }
     ############################## Input check end #############################
     # Parse assay and rowdata from the file
-    assay_and_rowdata <- .parse_assay_and_rowdata_from_metaphlan(file, ...)
+    assay_and_rowdata <- .parse_assay_and_rowdata_from_metaphlan(metaphlan, ...)
     assay <- assay_and_rowdata$assay
     rowdata <- assay_and_rowdata$rowdata
     
-    # Create SE
-    x <- SummarizedExperiment::SummarizedExperiment(assays = list(counts = assay), 
-                                                    rowData = rowdata)
-    # Add rownames from the lowest taxonomic level
-    rownames(x) <- .get_taxonomic_label(x)
+    # Load sample meta data if it is provided, otherwise initialize empty table
+    if (!is.null(sample_meta)) {
+        coldata <- read.table(file = sample_meta, header = TRUE, sep = "\t")
+    } else {
+        coldata <- S4Vectors:::make_zero_col_DataFrame(ncol(assay))
+        rownames(coldata) <- colnames(assay)
+    }
+    
+    # Load tree if it is provided
+    if (!is.null(phy_tree)) {
+        tree <- ape::read.tree(phy_tree)
+    } else {
+        tree <- NULL
+    }
+    
+    # Check that features and samples match
+    assay <- .set_feature_tab_dimnames(assay, coldata, rowdata)
+    # Create TSE
+    x <- TreeSummarizedExperiment(assays = list(counts = assay), 
+                                    rowData = rowdata, 
+                                    colData = coldata, 
+                                    rowTree = tree)
     return(x)
 }
 
@@ -87,6 +120,9 @@ loadFromMetaphlan <- function(file, ...){
     taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
     # Add parsed taxonomy level information to rowdata
     rowdata <- cbind(taxonomy, rowdata)
+    # Lowest level includes rownames
+    rownames(rowdata) <- taxonomy[ , ncol(taxonomy)]
+    rownames(assay) <- taxonomy[ , ncol(taxonomy)]
     
     return(list(assay = assay, rowdata = rowdata))
 }
