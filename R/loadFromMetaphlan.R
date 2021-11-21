@@ -54,19 +54,14 @@ loadFromMetaphlan <- function(file, ...){
     table <- read.table(file, header = TRUE)
     # Subset so that only those rows are included that include all taxonomic levels
     table <- .get_rows_that_include_lowest_level(table)
-    # Get the data that belongs to rowData
-    rowdata_columns <- c("clade_name", "NCBI_tax_id")
-    rowdata <- table[, colnames(table) %in% rowdata_columns, drop = FALSE]
+    # Get those columns that belong to rowData
+    rowdata <- table[, 1:2, drop = FALSE]
     # Get those columns that belong to assay
-    assay_columns <- colnames(table)[!colnames(table) %in% rowdata_columns]
-    assay <- table[, assay_columns, drop = FALSE]
-    
-    # Store taxonomic ids to add them later
-    tax_id <- rowdata$NCBI_tax_id
+    assay <- table[, 3:ncol(table), drop = FALSE]
     # Parse taxonomic levels
-    rowdata <- .parse_taxonomy(rowdata, sep = "\\|", column_name = "clade_name", ...)
-    # Add taxonomic ids
-    rowdata$NCBI_tax_id <- tax_id
+    taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
+    # Add parsed taxonomy level information to rowdata
+    rowdata <- cbind(taxonomy, rowdata)
     
     # Create SE
     x <- SummarizedExperiment::SummarizedExperiment(assays = list(counts = assay), 
