@@ -53,7 +53,7 @@ loadFromMetaphlan <- function(file, ...){
     # Read the table. Catch error and give more informative message
     table <- tryCatch(
         {
-            read.table(file, header = TRUE)
+            read.table(file, header = TRUE, comment.char = "#")
         },
             error = function(condition){
                 stop("Error while reading ", file,
