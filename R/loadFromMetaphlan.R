@@ -50,13 +50,13 @@ loadFromMetaphlan <- function(file, ...){
         stop(file, " does not exist", call. = FALSE)
     }
     ############################## Input check end #############################
-    # Read the table
+    # Read the table. Catch error and give more informative message
     table <- tryCatch(
         {
             read.table(file, header = TRUE)
         },
             error = function(condition){
-                stop("Error occured while reading ", file,
+                stop("Error while reading ", file,
                      "\nPlease check that the file is in merged Metaphlan file format.",
                      call. = FALSE)
         }
