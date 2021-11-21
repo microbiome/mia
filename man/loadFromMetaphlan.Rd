@@ -8,7 +8,7 @@ loadFromMetaphlan(file, ...)
 }
 \arguments{
 \item{file}{a single \code{character} value defining the file
-path of the metaphlan file.}
+path of the file. The file must be in merged Metaphlan format.}
 
 \item{...}{additional arguments:
 \itemize{
@@ -26,7 +26,7 @@ object
 Import Metaphlan results to \code{SummarizedExperiment}
 }
 \details{
-Import metaphlan results
+Import Metaphlan results. Input must be in merged Metaphlan format.
 }
 \examples{
 \dontrun{

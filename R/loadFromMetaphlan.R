@@ -1,7 +1,7 @@
 #' Import Metaphlan results to \code{SummarizedExperiment}
 #
 #' @param file a single \code{character} value defining the file
-#'   path of the metaphlan file.
+#'   path of the file. The file must be in merged Metaphlan format.
 #'
 #' @param ... additional arguments:
 #' \itemize{
@@ -11,7 +11,7 @@
 #' }
 #'
 #' @details
-#' Import Metaphlan results. Input must be in in merged Metaphlan format.
+#' Import Metaphlan results. Input must be in merged Metaphlan format.
 #'
 #' @return  A
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
