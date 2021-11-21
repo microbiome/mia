@@ -11,7 +11,7 @@
 #' }
 #'
 #' @details
-#' Import metaphlan results
+#' Import Metaphlan results. Input must be in in merged Metaphlan format.
 #'
 #' @return  A
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -51,7 +51,16 @@ loadFromMetaphlan <- function(file, ...){
     }
     ############################## Input check end #############################
     # Read the table
-    table <- read.table(file, header = TRUE)
+    table <- tryCatch(
+        {
+            read.table(file, header = TRUE)
+        },
+            error = function(condition){
+                stop("Error occured while reading ", file,
+                     "\nPlease check that the file is in merged Metaphlan file format.",
+                     call. = FALSE)
+        }
+    )
     # Subset so that only those rows are included that include all taxonomic levels
     table <- .get_rows_that_include_lowest_level(table)
     # Get those columns that belong to rowData
