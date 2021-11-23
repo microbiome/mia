@@ -61,6 +61,8 @@ makeTreeSummarizedExperimentFromPhyloseq <- function(obj) {
     } else {
         referenceSeq <- NULL
     }
+    print(rowData)
+    print(rowTree)
     TreeSummarizedExperiment(assays = assays,
                              rowData = rowData,
                              colData = colData,
