@@ -2,7 +2,7 @@
 % Please edit documentation in R/loadFromMetaphlan.R
 \name{loadFromMetaphlan}
 \alias{loadFromMetaphlan}
-\title{Import Metaphlan results to \code{SummarizedExperiment}}
+\title{Import Metaphlan results to \code{TreeSummarizedExperiment}}
 \usage{
 loadFromMetaphlan(metaphlan, sample_meta = NULL, phy_tree = NULL, ...)
 }
@@ -27,22 +27,31 @@ taxonomic prefixes be removed? (default:
 }
 \value{
 A
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object
 }
 \description{
-Import Metaphlan results to \code{SummarizedExperiment}
+Import Metaphlan results to \code{TreeSummarizedExperiment}
 }
 \details{
 Import Metaphlan results. Input must be in merged Metaphlan format.
+Data is imported so that data at the lowest rank is imported as a
+\code{TreeSE} object. Data at higher rank is imported as a
+\code{SE} objects which are stored to \code{altExp} of
+\code{TreeSE} object.
 }
 \examples{
 \dontrun{
 # File path
 file_path <- "/data/metaphlan_result.txt"
 # Import data
-se <- loadFromMetaphlan(file_path)
-se
+tse <- loadFromMetaphlan(file_path)
+# Data at the lowest rank
+tse
+# Data at higher rank is stored in altExp
+altExps(tse)
+# Higher rank data is in SE format, for example, Phylum rank
+altExp(tse, "Phylum")
 }
 
 }

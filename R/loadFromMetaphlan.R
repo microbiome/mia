@@ -20,6 +20,10 @@
 #'
 #' @details
 #' Import Metaphlan results. Input must be in merged Metaphlan format.
+#' Data is imported so that data at the lowest rank is imported as a 
+#' \code{TreeSE} object. Data at higher rank is imported as a
+#' \code{SE} objects which are stored to \code{altExp} of
+#' \code{TreeSE} object.
 #'
 #' @return  A
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -44,7 +48,12 @@
 #' file_path <- "/data/metaphlan_result.txt"
 #' # Import data
 #' tse <- loadFromMetaphlan(file_path)
+#' # Data at the lowest rank
 #' tse
+#' # Data at higher rank is stored in altExp
+#' altExps(tse)
+#' # Higher rank data is in SE format, for example, Phylum rank
+#' altExp(tse, "Phylum")
 #' }
 #' 
 
@@ -66,39 +75,41 @@ loadFromMetaphlan <- function(metaphlan, sample_meta = NULL, phy_tree = NULL, ..
              call. = FALSE)
     }
     ############################## Input check end #############################
-    # Parse assay and rowdata from the file
-    assay_and_rowdata <- .parse_assay_and_rowdata_from_metaphlan(metaphlan, ...)
-    assay <- assay_and_rowdata$assay
-    rowdata <- assay_and_rowdata$rowdata
+    # Create a list SE objects from the Metaphlan data. All represent own taxonomic rank
+    se_objects <- .read_metaphlan_into_se_objects(metaphlan, ...)
+    # Get the object with lowest rank
+    tse <- se_objects[[ length(se_objects) ]]
+    # Convert it to TreeSE so that it has altExp
+    tse <- as(tse, "TreeSummarizedExperiment")
+    # Remove it, so that it is not added multiple times
+    se_objects[[ length(se_objects) ]] <- NULL
+    # Add rest of the objects to altExp
+    if( length(se_objects) > 0 ){
+        for( rank in names(se_objects) ){
+            # Add SEs to altExp of tse, give name according to rank
+            altExp(tse, rank) <- se_objects[[rank]]
+        }
+    }
     
     # Load sample meta data if it is provided, otherwise initialize empty table
     if (!is.null(sample_meta)) {
         coldata <- read.table(file = sample_meta, header = TRUE, sep = "\t")
-    } else {
-        coldata <- S4Vectors:::make_zero_col_DataFrame(ncol(assay))
-        rownames(coldata) <- colnames(assay)
+        colData(tse) <- coldata
     }
     
     # Load tree if it is provided
     if (!is.null(phy_tree)) {
         tree <- ape::read.tree(phy_tree)
-    } else {
-        tree <- NULL
-    }
+        rowTree(tse) <- tree
+    } 
     
-    # Check that features and samples match
-    assay <- .set_feature_tab_dimnames(assay, coldata, rowdata)
-    # Create TSE
-    x <- TreeSummarizedExperiment(assays = list(counts = assay), 
-                                    rowData = rowdata, 
-                                    colData = coldata, 
-                                    rowTree = tree)
-    return(x)
+    return(tse)
 }
 
 ################################ HELP FUNCTIONS ################################
-# Parse assay and rowdata from metaphlan file 
-.parse_assay_and_rowdata_from_metaphlan <- function(file, ...){
+
+# Read Metaphlan file into SE objects
+.read_metaphlan_into_se_objects <- function(file, ...){
     # Read the table. Catch error and give more informative message
     table <- tryCatch(
         {
@@ -111,20 +122,9 @@ loadFromMetaphlan <- function(metaphlan, sample_meta = NULL, phy_tree = NULL, ..
         }
     )
     # Subset so that only those rows are included that include all taxonomic levels
-    table <- .get_rows_that_include_lowest_level(table)
-    # Get those columns that belong to rowData
-    rowdata <- table[, 1:2, drop = FALSE]
-    # Get those columns that belong to assay
-    assay <- table[, 3:ncol(table), drop = FALSE]
-    # Parse taxonomic levels
-    taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
-    # Add parsed taxonomy level information to rowdata
-    rowdata <- cbind(taxonomy, rowdata)
-    # Lowest level includes rownames
-    rownames(rowdata) <- taxonomy[ , ncol(taxonomy)]
-    rownames(assay) <- taxonomy[ , ncol(taxonomy)]
+    se_objects <- .parse_metaphlan_to_se_objects(table, ...)
     
-    return(list(assay = assay, rowdata = rowdata))
+    return(se_objects)
 }
 
 # Get the lowest level of the string that contains multiple taxonomic levels with prefixes
@@ -136,18 +136,53 @@ loadFromMetaphlan <- function(metaphlan, sample_meta = NULL, phy_tree = NULL, ..
     lowest_level_ind <- levels[length(levels)]
     # Get the lowest rank that was found
     lowest_level <- substr(string, start = lowest_level_ind, stop = lowest_level_ind)
+    
+    # List all ranks and what prefix they correspond
+    ranks <- c(Domain = "d", Kingdom = "k", Phylum = "p", Order = "o", 
+               Family = "f", Genus = "g", Species = "s")
+    # Convert prefix into full rank name
+    lowest_level <- names(ranks[ match(lowest_level, ranks) ])
     return(lowest_level)
 }
 
-# Subset rows so that only those rows are included that have all the taxonomic levels
-# that are present in the data
-.get_rows_that_include_lowest_level <- function(table){
+# Get table as input and create SE objects from it
+.parse_metaphlan_to_se_objects <- function(table, ...){
     # Get the lowest level of each row
-    levels <- sapply(table[["clade_name"]], FUN = .get_lowest_taxonomic_level)
-    # Order the data and get the lowest level of that the data includes
-    order <- c("s", "g", "f", "o", "c", "p", "k")
-    lowest_level_found <- levels[order(match(levels, order))][1]
-    # Get those rows that include information at lowest level
-    table <- table[grepl(paste0(lowest_level_found, "__"), table[["clade_name"]]), ]
-    return(table)
+    levels <- lapply(table[["clade_name"]], FUN = .get_lowest_taxonomic_level)
+    # Convert list to vector
+    levels <- unlist(levels)
+    # Split table so that each individual table contains information only
+    # at specific rank
+    tables <- split(table, levels)
+    # Different ranks in order
+    ranks <- c("Domain", "Kingdom", "Phylum", "Order", "Family", "Genus", "Species")
+    # Get the order
+    indices <- match(ranks, names(tables))
+    # Remove NAs which occurs if rank is not included
+    indices <- indices[!is.na(indices)]
+    # Order tables 
+    tables <- tables[indices]
+    # Create multiple SE objects at different rank from the data
+    se_objects <- lapply(tables, .create_se_from_metaphlan, ...)
+    return(se_objects)
+}
+
+# Create TreeSE object that include rowdata and assay, from the metaphlan table
+.create_se_from_metaphlan <- function(table, ...){
+    
+    # Get those columns that belong to rowData
+    rowdata <- table[, 1:2, drop = FALSE]
+    # Get those columns that belong to assay
+    assay <- table[, 3:ncol(table), drop = FALSE]
+    # Parse taxonomic levels
+    taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
+    # Add parsed taxonomy level information to rowdata
+    rowdata <- cbind(taxonomy, rowdata)
+
+    # Create TreeSE
+    se <- SummarizedExperiment(assays = list(counts = assay),
+                                rowData = rowdata)
+    # Add taxonomy labels
+    rownames(se) <- getTaxonomyLabels(se)
+    return(se)
 }
