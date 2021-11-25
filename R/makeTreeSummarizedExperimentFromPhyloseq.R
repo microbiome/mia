@@ -37,9 +37,7 @@ makeTreeSummarizedExperimentFromPhyloseq <- function(obj) {
         stop("'obj' must be a 'phyloseq' object")
     }
     #
-    warning("1")
     assays <- SimpleList(counts = obj@otu_table@.Data)
-    warning("2")
     
     if(!is.null(obj@tax_table@.Data)){
         rowData <- DataFrame(data.frame(obj@tax_table@.Data))
@@ -47,28 +45,22 @@ makeTreeSummarizedExperimentFromPhyloseq <- function(obj) {
         rowData <- S4Vectors:::make_zero_col_DataFrame(nrow(assays$counts))
         rownames(rowData) <- rownames(assays$counts)
     }
-    warning("3")
     if(!is.null(obj@sam_data)){
         colData <- DataFrame(data.frame(obj@sam_data))
     } else{
         colData <- S4Vectors:::make_zero_col_DataFrame(ncol(assays$counts))
         rownames(colData) <- colnames(assays$counts)
     }
-    warning("4")
     if(!is.null(obj@phy_tree)){
         rowTree <- obj@phy_tree
     } else {
         rowTree <- NULL
     }
-    warning("5")
     if (!is.null(obj@refseq)) {
         referenceSeq <- obj@refseq
     } else {
         referenceSeq <- NULL
     }
-    warning("6")
-    print(rowData)
-    print(rowTree)
     TreeSummarizedExperiment(assays = assays,
                              rowData = rowData,
                              colData = colData,
