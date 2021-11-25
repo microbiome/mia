@@ -25,7 +25,7 @@ object.}
 to use for identifying dominant taxa.}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
-the output of \code{taxonomicRanks()}.}
+the output of \code{taxonomyRanks()}.}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified.}
