@@ -1,6 +1,6 @@
 #' Import Metaphlan results to \code{TreeSummarizedExperiment}
 #
-#' @param metaphlan a single \code{character} value defining the file
+#' @param file a single \code{character} value defining the file
 #'   path of the Metaphlan file. The file must be in merged Metaphlan format.
 #'
 #' @param sample_meta a single \code{character} value defining the file
@@ -57,14 +57,14 @@
 #' }
 #' 
 
-loadFromMetaphlan <- function(metaphlan, sample_meta = NULL, phy_tree = NULL, ...){
+loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     ################################ Input check ################################
-    if(!.is_non_empty_string(metaphlan)){
-        stop("'metaphlan' must be a single character value.",
+    if(!.is_non_empty_string(file)){
+        stop("'file' must be a single character value.",
              call. = FALSE)
     }
-    if (!file.exists(metaphlan)) {
-        stop(metaphlan, " does not exist", call. = FALSE)
+    if (!file.exists(file)) {
+        stop(file, " does not exist", call. = FALSE)
     }
     if(!is.null(sample_meta) && !.is_non_empty_string(sample_meta)){
         stop("'sample_meta' must be a single character value or NULL.",
@@ -76,7 +76,7 @@ loadFromMetaphlan <- function(metaphlan, sample_meta = NULL, phy_tree = NULL, ..
     }
     ############################## Input check end #############################
     # Create a list SE objects from the Metaphlan data. All represent own taxonomic rank
-    se_objects <- .read_metaphlan_into_se_objects(metaphlan, ...)
+    se_objects <- .read_metaphlan_into_se_objects(file, ...)
     # Get the object with lowest rank
     tse <- se_objects[[ length(se_objects) ]]
     # Convert it to TreeSE so that it has altExp

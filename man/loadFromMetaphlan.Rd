@@ -4,10 +4,10 @@
 \alias{loadFromMetaphlan}
 \title{Import Metaphlan results to \code{TreeSummarizedExperiment}}
 \usage{
-loadFromMetaphlan(metaphlan, sample_meta = NULL, phy_tree = NULL, ...)
+loadFromMetaphlan(file, sample_meta = NULL, phy_tree = NULL, ...)
 }
 \arguments{
-\item{metaphlan}{a single \code{character} value defining the file
+\item{file}{a single \code{character} value defining the file
 path of the Metaphlan file. The file must be in merged Metaphlan format.}
 
 \item{sample_meta}{a single \code{character} value defining the file
