@@ -18,4 +18,3 @@ Changes in version 1.1.x (2021-06-04)
 + getUniqueTaxa & getTopTaxa: added option for alphabetical order
 + name change: testForExperimentCrossCorrelation to testExperimentCrossCorrelation
 + getExperimentCrossCorrelation: Filtering disabled by default, option to suppress warnings
-+ bugfix: taxonomyTree gave error when taxa were agglomerated at highest level (taxa name mismatch)
