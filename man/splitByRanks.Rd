@@ -34,7 +34,7 @@ object}
 See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 
 \item{ranks}{a character vector defining taxonomic ranks. Must all be values
-of \code{taxonomicRanks()} function.}
+of \code{taxonomyRanks()} function.}
 
 \item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
 removed? Use it with caution, since results with NA on the selected rank
