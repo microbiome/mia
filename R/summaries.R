@@ -133,7 +133,7 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 #' @rdname summaries
 #'
 #' @param rank A single character defining a taxonomic rank. Must be a value of
-#' the output of \code{taxonomicRanks()}.
+#' the output of \code{taxonomyRanks()}.
 #'
 #' @return
 #' The \code{getUniqueTaxa} returns a vector of unique taxa present at a

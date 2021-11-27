@@ -55,7 +55,7 @@ By default it expects count data.}
 \code{rank} is specified for \code{countDominantTaxa}.}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
-the output of \code{taxonomicRanks()}.}
+the output of \code{taxonomyRanks()}.}
 
 \item{group}{With group, it is possible to group the observations in an
 overview. Must be one of the column names of \code{colData}.}

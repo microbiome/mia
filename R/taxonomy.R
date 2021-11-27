@@ -32,7 +32,7 @@
 #'   object
 #'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomicRanks()} function.
+#'   \code{taxonomyRanks()} function.
 #'
 #' @param empty.fields a \code{character} value defining, which values should be
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
@@ -135,7 +135,6 @@ setGeneric("taxonomyRanks", signature = c("x"),
              standardGeneric("taxonomyRanks"))
 
 #' @rdname taxonomy-methods
-#' @aliases taxonomicRanks
 #'
 #' @importFrom SummarizedExperiment rowData
 #'
@@ -379,9 +378,10 @@ setGeneric("taxonomyTree",
 #' @export
 setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
-        td <- rowData(x)[,taxonomyRanks(x)]
+        # Converted to data.frame so that drop = FALSE is enabled
+        td <- data.frame(rowData(x)[,taxonomyRanks(x)])
         # Remove empty taxonomic levels
-        td <- td[,!vapply(td,function(tl){all(is.na(tl))},logical(1))]
+        td <- td[,!vapply(td,function(tl){all(is.na(tl))},logical(1)), drop = FALSE]
         # Make information unique
         td_NA <- DataFrame(lapply(td,is.na))
         td <- as.data.frame(td)
