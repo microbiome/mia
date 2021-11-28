@@ -13,6 +13,9 @@
 #'   
 #' @param ... additional arguments:
 #' \itemize{
+#'   \item{\code{abund_values}:} {A single character value for naming 
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} 
+#'   (default: \code{abund_values = "counts})}
 #'   \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
 #'     taxonomic prefixes be removed? (default:
 #'     \code{removeTaxaPrefixes = FALSE})}
@@ -75,8 +78,13 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
              call. = FALSE)
     }
     ############################## Input check end #############################
-    # Create a list SE objects from the Metaphlan data. All represent own taxonomic rank
-    se_objects <- .read_metaphlan_into_se_objects(file, ...)
+    # Read metaphlan data
+    data <- .read_metaphlan(file, ...)
+    # Parse data into separate tables, which include data at certain taxonomy rank
+    tables <- .parse_metaphlan(data, ...)
+    # Create multiple SE objects at different rank from the data
+    se_objects <- lapply(tables, .create_se_from_metaphlan, ...)
+    
     # Get the object with lowest rank
     tse <- se_objects[[ length(se_objects) ]]
     # Convert it to TreeSE so that it has altExp
@@ -108,8 +116,8 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 
 ################################ HELP FUNCTIONS ################################
 
-# Read Metaphlan file into SE objects
-.read_metaphlan_into_se_objects <- function(file, ...){
+# Read Metaphlan file, catch error if it occurs
+.read_metaphlan <- function(file, ...){
     # Read the table. Catch error and give more informative message
     table <- tryCatch(
         {
@@ -121,10 +129,54 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
                  call. = FALSE)
         }
     )
-    # Subset so that only those rows are included that include all taxonomic levels
-    se_objects <- .parse_metaphlan_to_se_objects(table, ...)
+    # Check that file is in right format
+    if( .check_metaphlan(table) ){
+        stop("Error while reading ", file,
+             "\nPlease check that the file is in merged Metaphlan file format.",
+             call. = FALSE)
+    }
+    return(table)
+}
+
+# Check that metaphlan file contains correct information
+.check_metaphlan <- function(data, ...){
+    # Get rowdata columns
+    rowdata_columns <- data[ , 1:2]
+    # Get columns that go to assay
+    assay_columns <- data[ , 3:ncol(data)]
+    # Initialize result 
+    result <- TRUE
     
-    return(se_objects)
+    # Check rowdata column names that they contain right information, and check that 
+    # rest of the columns represents abundances in samples.
+    # If these requirements are met, give FALSE. Otherwise, give TRUE.
+    if( any(colnames(rowdata_columns) %in% "clade_name") && 
+        any(grepl("id", colnames(rowdata_columns))) && 
+        is.numeric(unlist(assay_columns)) ){
+        result <- FALSE
+    }
+    return(result)
+}
+
+# Get metaphlan table as input and return multiple tables which each include data at
+# certain taxonomy rank
+.parse_metaphlan <- function(table, ...){
+    # Get the lowest level of each row
+    levels <- lapply(table[["clade_name"]], FUN = .get_lowest_taxonomic_level)
+    # Convert list to vector
+    levels <- unlist(levels)
+    # Split table so that each individual table contains information only
+    # at specific rank
+    tables <- split(table, levels)
+    # Different ranks in order
+    ranks <- c("Domain", "Kingdom", "Phylum", "Order", "Family", "Genus", "Species")
+    # Get the order
+    indices <- match(ranks, names(tables))
+    # Remove NAs which occurs if rank is not included
+    indices <- indices[!is.na(indices)]
+    # Order tables 
+    tables <- tables[indices]
+    return(tables)
 }
 
 # Get the lowest level of the string that contains multiple taxonomic levels with prefixes
@@ -145,31 +197,13 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     return(lowest_level)
 }
 
-# Get table as input and create SE objects from it
-.parse_metaphlan_to_se_objects <- function(table, ...){
-    # Get the lowest level of each row
-    levels <- lapply(table[["clade_name"]], FUN = .get_lowest_taxonomic_level)
-    # Convert list to vector
-    levels <- unlist(levels)
-    # Split table so that each individual table contains information only
-    # at specific rank
-    tables <- split(table, levels)
-    # Different ranks in order
-    ranks <- c("Domain", "Kingdom", "Phylum", "Order", "Family", "Genus", "Species")
-    # Get the order
-    indices <- match(ranks, names(tables))
-    # Remove NAs which occurs if rank is not included
-    indices <- indices[!is.na(indices)]
-    # Order tables 
-    tables <- tables[indices]
-    # Create multiple SE objects at different rank from the data
-    se_objects <- lapply(tables, .create_se_from_metaphlan, ...)
-    return(se_objects)
-}
-
-# Create TreeSE object that include rowdata and assay, from the metaphlan table
-.create_se_from_metaphlan <- function(table, ...){
-    
+# Create SE object that include rowdata and assay, from the metaphlan table
+.create_se_from_metaphlan <- function(table, abund_values = "counts", ...){
+    # Check abund_values
+    if( !.is_non_empty_character(abund_values) ){
+        stop("'abund_values' must be a non-empty character value.",
+             call. = FALSE)
+    }
     # Get those columns that belong to rowData
     rowdata <- table[, 1:2, drop = FALSE]
     # Get those columns that belong to assay
@@ -178,9 +212,13 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
     # Add parsed taxonomy level information to rowdata
     rowdata <- cbind(taxonomy, rowdata)
-
-    # Create TreeSE
-    se <- SummarizedExperiment(assays = list(counts = assay),
+    
+    # Create assays list and add assay with specific name
+    assays <- S4Vectors::SimpleList()
+    assays[[abund_values]] <- assay
+    
+    # Create SE
+    se <- SummarizedExperiment(assays = assays,
                                 rowData = rowdata)
     # Add taxonomy labels
     rownames(se) <- getTaxonomyLabels(se)
