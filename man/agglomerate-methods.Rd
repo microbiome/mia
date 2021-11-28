@@ -27,7 +27,7 @@
 object}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
-\code{taxonomicRanks()} function.}
+\code{taxonomyRanks()} function.}
 
 \item{onRankOnly}{\code{TRUE} or \code{FALSE}: Should information only from
 the specified rank be used or from ranks equal and above? See details.
@@ -66,7 +66,7 @@ class as \code{x}.
 \description{
 \code{agglomerateByRank} can be used to sum up data based on the association
 to certain taxonomic ranks given as \code{rowData}. Only available
-\code{\link{taxonomicRanks}} can be used.
+\code{\link{taxonomyRanks}} can be used.
 }
 \details{
 Based on the available taxonomic data and its structure setting

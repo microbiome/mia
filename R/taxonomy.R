@@ -32,7 +32,7 @@
 #'   object
 #'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomicRanks()} function.
+#'   \code{taxonomyRanks()} function.
 #'
 #' @param empty.fields a \code{character} value defining, which values should be
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
@@ -135,7 +135,6 @@ setGeneric("taxonomyRanks", signature = c("x"),
              standardGeneric("taxonomyRanks"))
 
 #' @rdname taxonomy-methods
-#' @aliases taxonomicRanks
 #'
 #' @importFrom SummarizedExperiment rowData
 #'

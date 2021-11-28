@@ -6,7 +6,6 @@
 \alias{TAXONOMY_RANKS}
 \alias{taxonomyRanks}
 \alias{taxonomyRanks,SummarizedExperiment-method}
-\alias{taxonomicRanks}
 \alias{taxonomyRankEmpty}
 \alias{taxonomyRankEmpty,SummarizedExperiment-method}
 \alias{checkTaxonomy}
@@ -78,7 +77,7 @@ IdTaxaToDataFrame(from)
 object}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
-\code{taxonomicRanks()} function.}
+\code{taxonomyRanks()} function.}
 
 \item{empty.fields}{a \code{character} value defining, which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be

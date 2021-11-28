@@ -13,7 +13,7 @@
 #'   to use for identifying dominant taxa.
 #'
 #' @param rank A single character defining a taxonomic rank. Must be a value of
-#'   the output of \code{taxonomicRanks()}.
+#'   the output of \code{taxonomyRanks()}.
 #'
 #' @param name A name for the column of the \code{colData} where the dominant
 #'   taxa will be stored in when using \code{addPerSampleDominantTaxa}.
