@@ -139,7 +139,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 }
 
 # Check that metaphlan file contains correct information
-.check_metaphlan <- function(data, ...){
+.check_metaphlan <- function(data){
     # Get rowdata columns
     rowdata_columns <- data[ , 1:2]
     # Get columns that go to assay
