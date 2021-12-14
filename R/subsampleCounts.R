@@ -91,13 +91,13 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
        seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
        name = "subsampled", verbose = TRUE, ...){
     
-        warning("Subsampling/Rarefying may undermine downstream analyses",
-                "and have unintended consequences. Therefore, make sure",
+        warning("Subsampling/Rarefying may undermine downstream analyses ",
+                "and have unintended consequences. Therefore, make sure ",
                 "this normalization is appropriate for your data.",
               call. = FALSE)
         .check_assay_present(abund_values, x)
         if(any(assay(x, abund_values) %% 1 != 0)){
-            warning("assay contains non-integer values. Only counts table",
+            warning("assay contains non-integer values. Only counts table ",
                     "is applicable...")
         }
         if(!is.logical(verbose)){
@@ -148,6 +148,11 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         newassay <- apply(assay(newtse, abund_values), 2, 
                           .subsample_assay,
                           min_size=min_size, replace=replace)
+        # Return NULL, if no samples were found after subsampling
+        if( identical(newassay, numeric(0)) ){
+            message("No samples were found after subsampling.")
+            return(NULL)
+        }
         rownames(newassay) <- rownames(newtse)
         # remove features not present in any samples after subsampling
         message(paste(length(which(rowSums2(newassay) == 0)), "features", 
