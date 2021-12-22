@@ -303,6 +303,16 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
            call. = FALSE)
     }
     ############################ INPUT CHECK END ###########################
+    # Make labels unique to avoid problems when mode == "matrix"
+    # (.correlation_table_to_matrix & dplyr::select)
+    if( mode == "matrix" ){
+      # Store original rownames
+      original_rownames1 <- rownames(tse1)
+      original_rownames2 <- rownames(tse2)
+      # Make rownames unique
+      rownames(tse1) <- make.unique(rownames(tse1))
+      rownames(tse2) <- make.unique(rownames(tse2))
+    }
     # Fetch assays to correlate
     assay1 <- assay(tse1, abund_values1)
     assay2 <- assay(tse2, abund_values2)
@@ -364,7 +374,10 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         if(verbose){
             message("\nConverting table into matrices...")
         }
+        # Create matrices
         result <- .correlation_table_to_matrix(result)
+        # Adjust their row and column names
+        result <- .adjust_matrix_feature_names(result, original_rownames1, original_rownames2)
         # If sort was specified and there are more than 1 features
         if(sort && nrow(result$cor) > 1 && ncol(result$cor) > 1 ){
             if(verbose){
@@ -721,6 +734,24 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         result_list[["p_adj"]] <- p_adj
     } 
     return(result_list)
+}
+
+########################## .adjust_matrix_feature_names #########################
+# This function converts rownames / feature names back to original names. 
+# To avoid problems with .correlation_table_to_matrix and dplyr::select, they were
+# converted unique in the beginning.
+
+# Input: Correlation matrices with unique rownames
+# Output: Correlation matrices with original rownames
+.adjust_matrix_feature_names <- function(corr_matrices, original_rownames1, original_rownames2){
+  corr_matrices <- lapply(corr_matrices, FUN = function(x){
+    # Change rownames
+    rownames(x) <- original_rownames1
+    # Change colnames
+    colnames(x) <- original_rownames2
+    return(x)
+  })
+  return(corr_matrices)
 }
 
 ############################### .calculate_gktau ###############################
