@@ -1,0 +1,34 @@
+# Loading example data
+
+```{r, message=FALSE, warning=FALSE}
+library(mia)
+data("GlobalPatterns")
+tse <- GlobalPatterns
+tse <- agglomerateByRank(tse, rank="Class")
+source("../../R/rowClust.R")
+```
+
+# Clustering
+
+```{r}
+tse <- rowClust(tse, method = "ward.D2",metric = "spearman", k = 6)
+head(rowData(tse))
+```
+
+```{r}
+tse <- rowClust(tse, method = "average",metric = "cosine", k = 6)
+head(rowData(tse))
+```
+
+# Aggregating by clusters with `mia::mergeRows`
+
+```{r}
+tse_CAG_sum <- mergeRows(tse, rowData(tse)$clust_id)
+head(assay(tse_CAG_sum))
+```
+
+```{r}
+tse_CAG_av <- mergeRows(tse, rowData(tse)$clust_id, average=TRUE)
+head(assay(tse_CAG_av))
+```
+
