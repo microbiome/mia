@@ -44,6 +44,11 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #' 
 #' @references
+#' Beghini F, McIver LJ, Blanco-Míguez A, Dubois L, Asnicar F, Maharjan S, Mailyan A, 
+#' Manghi P, Scholz M, Thomas AM, Valles-Colomer M, Weingart G, Zhang Y, Zolfo M, 
+#' Huttenhower C, Franzosa EA, & Segata N (2021) Integrating taxonomic, functional, 
+#' and strain-level profiling of diverse microbial communities with bioBakery 3.
+#' Elife 10:e65088. doi: 10.7554/eLife.65088
 #'
 #' @examples
 #' \dontrun{
