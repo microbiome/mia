@@ -65,6 +65,7 @@
 #' # Higher rank data is in SE format, for example, Phylum rank
 #' altExp(tse, "Phylum")
 #' 
+NULL
 
 loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     ################################ Input check ################################

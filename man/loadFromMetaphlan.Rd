@@ -3,9 +3,6 @@
 \name{loadFromMetaphlan}
 \alias{loadFromMetaphlan}
 \title{Import Metaphlan results to \code{TreeSummarizedExperiment}}
-\usage{
-loadFromMetaphlan(file, sample_meta = NULL, phy_tree = NULL, ...)
-}
 \arguments{
 \item{file}{a single \code{character} value defining the file
 path of the Metaphlan file. The file must be in merged Metaphlan format.}
