@@ -44,9 +44,11 @@ Data is imported so that data at the lowest rank is imported as a
 \code{TreeSE} object.
 }
 \examples{
-\dontrun{
+# (Data is from tutorial
+# https://github.com/biobakery/biobakery/wiki/metaphlan3#merge-outputs)
+
 # File path
-file_path <- "/data/metaphlan_result.txt"
+file_path <- system.file("extdata", "merged_abundance_table.txt", package = "mia")
 # Import data
 tse <- loadFromMetaphlan(file_path)
 # Data at the lowest rank
@@ -55,7 +57,6 @@ tse
 altExps(tse)
 # Higher rank data is in SE format, for example, Phylum rank
 altExp(tse, "Phylum")
-}
 
 }
 \references{

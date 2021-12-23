@@ -51,9 +51,11 @@
 #' Elife 10:e65088. doi: 10.7554/eLife.65088
 #'
 #' @examples
-#' \dontrun{
+#' # (Data is from tutorial
+#' # https://github.com/biobakery/biobakery/wiki/metaphlan3#merge-outputs)
+#' 
 #' # File path
-#' file_path <- "/data/metaphlan_result.txt"
+#' file_path <- system.file("extdata", "merged_abundance_table.txt", package = "mia")
 #' # Import data
 #' tse <- loadFromMetaphlan(file_path)
 #' # Data at the lowest rank
@@ -62,7 +64,6 @@
 #' altExps(tse)
 #' # Higher rank data is in SE format, for example, Phylum rank
 #' altExp(tse, "Phylum")
-#' }
 #' 
 
 loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
