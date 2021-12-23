@@ -19,7 +19,7 @@ path of the phylogenetic tree.
 \itemize{
 \item{\code{abund_values}:} {A single character value for naming
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-(default: \code{abund_values = "counts})}
+(default: \code{abund_values = "counts"})}
 \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
 \code{removeTaxaPrefixes = FALSE})}
