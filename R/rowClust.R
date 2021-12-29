@@ -1,6 +1,6 @@
-#' Clusters rowData using hierarchical clustering
+#' Cluster assay rows
 #'
-#' \code{rowClust} Performs hierarchical clustering on rowData of the 
+#' \code{rowClust} Performs clustering on assay rows of the 
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}, 
 #' by using the dissimilarity function provided at \code{dissimilarity_FUN}.
 #'
@@ -31,14 +31,14 @@
 #'  correlates with diet and health in the elderly. Nature 488, 178–184 (2012)
 #' \url{https://doi.org/10.1038/nature11319}
 #'
-#' @references
 #' Minot, S. S., & Willis, A. D. (2019). Clustering co-abundant genes identifies
 #' components of the gut microbiome that are reproducibly associated with 
 #' colorectal cancer and inflammatory bowel disease. Microbiome, 7(1), 110.
 #' \url{https://doi.org/10.1186/s40168-019-0722-6}
 #'
 #' @name rowClust
-#'
+#' @export
+#' 
 #' @examples
 #' # Load example data
 #' library(mia)
@@ -55,6 +55,14 @@
 #'                 clustering_FUN = function(x) stats::hclust(x, method="ward.D2"),
 #'                 dissimilarity_FUN = function(x) 1 - stats::cor(t(x),method="spearman"),
 #'                 k = 6)
+#' # OR
+#' \dontrun{
+#' tse <- rowClust(tse,
+#'                 abund_values = "clr",
+#'                 clustering_FUN = function(x) fastcluster::hclust(x, method="ward.D2"),
+#'                 dissimilarity_FUN = function(x) 1 - stats::cor(t(x),method="spearman"),
+#'                 k = 6)
+#' }
 #' # Removing clr assay, since the next aggregation of values would be 
 #' # meaningless on clr transform.
 #' assay(tse, "clr") <- NULL
@@ -64,7 +72,7 @@
 #'
 NULL
 
-#' @importFrom stats hclust cutree as.dist
+
 
 #' @rdname rowClust
 #' @export
@@ -75,6 +83,7 @@ setGeneric("rowClust",signature = c("x"),
         standardGeneric("rowClust"))
 
 #' @rdname rowClust
+#' @importFrom stats hclust cutree as.dist
 #' @export
 setMethod("rowClust", signature = c(x="SummarizedExperiment"), 
     function(x, abund_values = "counts", name = "clust_id",

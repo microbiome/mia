@@ -3,7 +3,7 @@
 \name{rowClust}
 \alias{rowClust}
 \alias{rowClust,SummarizedExperiment-method}
-\title{Clusters rowData using hierarchical clustering}
+\title{Cluster assay rows}
 \usage{
 rowClust(
   x,
@@ -46,7 +46,7 @@ object. Example functions: 'stats::hclust' or 'fastcluster::hclust'}
 \code{x} with additional column at \code{rowData} named \code{*name*}
 }
 \description{
-\code{rowClust} Performs hierarchical clustering on rowData of the
+\code{rowClust} Performs clustering on assay rows of the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}},
 by using the dissimilarity function provided at \code{dissimilarity_FUN}.
 }
@@ -66,6 +66,14 @@ tse <- rowClust(tse,
                 clustering_FUN = function(x) stats::hclust(x, method="ward.D2"),
                 dissimilarity_FUN = function(x) 1 - stats::cor(t(x),method="spearman"),
                 k = 6)
+# OR
+\dontrun{
+tse <- rowClust(tse,
+                abund_values = "clr",
+                clustering_FUN = function(x) fastcluster::hclust(x, method="ward.D2"),
+                dissimilarity_FUN = function(x) 1 - stats::cor(t(x),method="spearman"),
+                k = 6)
+}
 # Removing clr assay, since the next aggregation of values would be 
 # meaningless on clr transform.
 assay(tse, "clr") <- NULL
