@@ -1,4 +1,4 @@
-#' Clusters rowData using \code{fastcluster::hclust}
+#' Clusters rowData using hierarchical clustering
 #'
 #' \code{rowClust} Performs hierarchical clustering on rowData of the 
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}, 
@@ -12,18 +12,32 @@
 #' 
 #' @param name a \code{character} vector, name of the new column at \code{rowData} where to place cluster ids.
 #' 
-#' @param clustering_method a \code{character} vector representing the clustering 
-#' method to be used, same as methods available at \code{\link[hclust]{hclust}}.
+#' @param clustering_FUN a \code{stats::hclust} a function defined and provided by
+#'  user, to compute the clustering. Note! The function should return an \code{hclust}
+#'  object. Example functions: 'stats::hclust' or 'fastcluster::hclust'
 #' 
-#' @param transposed \code{logical} whether the data should be transposed.
+#' @param dissimilarity_FUN \code{function(x) 1 - stats::cor(t(x))} a function defined and provided by
+#'  user, to compute the dissimilarity matrix. Note! the function expects an input
+#'  of type (features x samples).
 #' 
-#' @param dissimilarity_FUN \code{stats::cor} function to compute the dissimilarity matrix
-#' 
-#' @param ... other arguments passed onto \code{\link[cutree]{cutree}}
+#' @param ... other arguments passed onto \code{\link[stats:cutree]{cutree}}
 #'
-#' @return \code{x} with additional \code{\link{rowData}} named \code{*name*}
+#' @return \code{x} with additional column at \code{rowData} named \code{*name*}
 #'
 #' @export
+#'
+#' @references
+#' Claesson, M., Jeffery, I., Conde, S. et al. Gut microbiota composition
+#'  correlates with diet and health in the elderly. Nature 488, 178–184 (2012)
+#' \url{https://doi.org/10.1038/nature11319}
+#'
+#' @references
+#' Minot, S. S., & Willis, A. D. (2019). Clustering co-abundant genes identifies
+#' components of the gut microbiome that are reproducibly associated with 
+#' colorectal cancer and inflammatory bowel disease. Microbiome, 7(1), 110.
+#' \url{https://doi.org/10.1186/s40168-019-0722-6}
+#'
+#' @name rowClust
 #'
 #' @examples
 #' # Load example data
@@ -32,39 +46,44 @@
 #' tse <- GlobalPatterns
 #' # Agglomerate to Class rank; for speeding up the example.
 #' tse <- agglomerateByRank(tse, rank="Class")
-#' # Cluster using Spearman correlation as a dissimilarity and ward.D2 
-#' # for clustering; with results having 6 clusters
-#' tse <- rowClust(tse, clustering_method = "ward.D2",
-#'                 dissimilarity_FUN = function(x) stats::cor(x, method="spearman"),
+#' # Transforming abundance data with clr
+#' tse <- transformCounts(tse, "counts", "clr", pseudocount = 1)
+#' # Spearman correlation is used as a dissimilarity and ward.D2 
+#' # for clustering; with results having 6 clusters:
+#' tse <- rowClust(tse,
+#'                 abund_values = "clr",
+#'                 clustering_FUN = function(x) stats::hclust(x, method="ward.D2"),
+#'                 dissimilarity_FUN = function(x) 1 - stats::cor(t(x),method="spearman"),
 #'                 k = 6)
+#' # Removing clr assay, since the next aggregation of values would be 
+#' # meaningless on clr transform.
+#' assay(tse, "clr") <- NULL
 #' # Aggregate clusters as a sum of each cluster values
 #' # (CAG: Co-Abundance Groups)
 #' tse_CAG <- mergeRows(tse, rowData(tse)$clust_id)
 #'
 NULL
 
-#' @importFrom fastcluster hclust
-#' @importFrom stats cutree as.dist
+#' @importFrom stats hclust cutree as.dist
 
+#' @rdname rowClust
 #' @export
 setGeneric("rowClust",signature = c("x"),
     function(x, abund_values = "counts", name = "clust_id",
-             dissimilarity_FUN = stats::cor,
-             clustering_method = "complete", transposed = TRUE,
-             ...)
+             dissimilarity_FUN = function(x) 1 - stats::cor(t(x)),
+             clustering_FUN = stats::hclust, ...)
         standardGeneric("rowClust"))
 
+#' @rdname rowClust
 #' @export
 setMethod("rowClust", signature = c(x="SummarizedExperiment"), 
     function(x, abund_values = "counts", name = "clust_id",
-             dissimilarity_FUN = stats::cor,
-             clustering_method = "complete", transposed = TRUE,
-             ...) {
+             dissimilarity_FUN = function(x) 1 - stats::cor(t(x)),
+             clustering_FUN = stats::hclust, ...) {
 
         # Checking and getting data
         .check_assay_present(abund_values, x)
         mat <- assay(x, abund_values)
-        if (transposed) mat <- t(mat)
         
         # Calculating dissimilarity
         if(!.is_function(dissimilarity_FUN))
@@ -73,7 +92,10 @@ setMethod("rowClust", signature = c(x="SummarizedExperiment"),
         mat <- do.call(dissimilarity_FUN, list(mat))
         
         # Clustering
-        hc <- hclust(as.dist(mat), method = clustering_method)
+        if (!.is_function(clustering_FUN))
+            stop("'", clustering_FUN, "' is not a function", call. = FALSE)
+        hc <- do.call(clustering_FUN, list(as.dist(mat)))
+        .check_clust_obj(hc)
         
         # Checking and setting cut-off
         clusters <- cutree(hc, ...)
@@ -81,3 +103,12 @@ setMethod("rowClust", signature = c(x="SummarizedExperiment"),
         return(x)
     }
 )
+
+################################ HELPER FUNCTIONS ##############################
+
+.check_clust_obj <- function(obj){
+    if (!is(obj, "hclust"))
+        stop("The clustering function should return an object of class 'hclust'.
+        Example functions to be used: 'stats::hclust' or 'fastcluster::hclust'",
+             call. = FALSE)
+}

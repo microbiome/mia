@@ -62,8 +62,7 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr,
-    fastcluster
+    tidyr
 Suggests:
     testthat,
     knitr,

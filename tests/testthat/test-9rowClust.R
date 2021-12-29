@@ -11,6 +11,6 @@ test_that("Clustering rowData", {
     # Checking args
     expect_error(rowClust(tse, abund_values = "assay_not_present"))
     expect_error(rowClust(tse, dissimilarity_FUN = "FUN_not_char"))
-    expect_error(rowClust(tse, clustering_method = "non-existing-method"))
+    expect_error(rowClust(tse, clustering_FUN = function(x) stats::kmeans(x,centers = 6)))
     expect_error(rowClust(tse, param = "arg_not_in_cutree"))
 })
