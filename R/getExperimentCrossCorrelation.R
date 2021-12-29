@@ -258,7 +258,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     .check_assay_present(abund_values1, tse1)
     .check_assay_present(abund_values2, tse2)
     # Check method
-    method <- match.arg(method)
+    # Checked in .calculate_correlation
     # Check mode
     if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
         stop("'mode' must be 'matrix' or 'table'.", call. = FALSE)
@@ -326,7 +326,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
                         ifelse(!is.null(p_adj_method), p_adj_method, "-")) )
     }
     result <- .calculate_correlation(assay1, assay2, method, p_adj_method, 
-                                     test_significance, show_warnings)
+                                     test_significance, show_warnings, ...)
     # Disable p_adj_threshold if there is no adjusted p-values
     if( is.null(result$p_adj) ){
       p_adj_threshold <- NULL
@@ -433,25 +433,40 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: Assays that share samples but that have different features and different parameters.
 # Output: Correlation table including correlation values (and p-values and adjusted p-values)
 #' @importFrom stats p.adjust
-.calculate_correlation <- function(assay1, assay2, method, p_adj_method, 
-                                   test_significance, show_warnings){
-    # Choose correct method for numeric and categorical data
-    if( method %in% c("kendall", "pearson","spearman") ) {
-        FUN <- .calculate_correlation_for_numeric_values
-    } else if( method == "categorical" ){
-        FUN <- .calculate_correlation_for_categorical_values
+.calculate_correlation <- function(assay1, 
+                                   assay2, 
+                                   method = c("spearman", "categorical", "kendall", "pearson"), 
+                                   p_adj_method, 
+                                   test_significance, 
+                                   show_warnings, 
+                                   corr_FUN = NULL, 
+                                   ...){
+    # Check method if corr_FUN is not NULL
+    if( is.null(corr_FUN) ){
+      method <- match.arg(method)
     }
+    # If corr_FUN is provided by user, use approriate function.
+    # Otherwise, choose correct method for numeric and categorical data
+    if( !is.null(corr_FUN) ){
+      FUN_ <- .calculate_with_own_function
+    } else if( method %in% c("kendall", "pearson","spearman") ) {
+      FUN_ <- .calculate_correlation_for_numeric_values
+    } else if( method == "categorical" ){
+      FUN_ <- .calculate_correlation_for_categorical_values
+    } 
     
     # Get all the sample pairs
     feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     # Calculate correlations
     correlations_and_p_values <- apply(feature_pairs, 1, 
-                                       FUN = FUN, 
+                                       FUN = FUN_, 
                                        test_significance = test_significance, 
                                        assay1 = assay1, 
                                        assay2 = assay2,
                                        method = method,
-                                       show_warnings = show_warnings)
+                                       show_warnings = show_warnings, 
+                                       corr_FUN, 
+                                       ...)
     
     # Convert into data.frame if it is vector, 
     # otherwise transpose into the same orientation as feature-pairs if it's not a vector
@@ -565,6 +580,36 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         temp <- temp$estimate
     }
     return(temp)
+}
+
+######################### .calculate_with_own_function  ########################
+# This function calculates (dis-)similarity between feature-pair with function 
+# that is specified by user.
+
+# Input: Vector of names that belong to feature pair, and assays.
+# Output: Correlation value or list that includes correlation value and p-value.
+#' @importFrom stats cor.test cor 
+.calculate_with_own_function <- function(feature_pair,
+                                         assay1, assay2, 
+                                         corr_FUN, 
+                                         show_warnings,
+                                         test_significance,
+                                         ...){
+  # Get features
+  feature1 <- assay1[ , feature_pair[1]]
+  feature2 <- assay2[ , feature_pair[2]]
+  
+  # If user does not want warnings, 
+  # suppress warnings that might occur when calculating correlations (NAs...)
+  # or p-values (ties, and exact p-values cannot be calculated...)
+  if( show_warnings ){
+    temp <- do.call(corr_FUN, args = c(list(feature1, feature2), list(...)))
+  } else {
+    temp <- suppressWarnings( do.call(corr_FUN, args = c(list(feature1, feature2), list(...))) )
+  }
+  # Take only correlation and p-value
+  temp <- c(temp$estimate, temp$p.value)
+  return(temp)
 }
 
 ############################## .correlation_filter #############################
