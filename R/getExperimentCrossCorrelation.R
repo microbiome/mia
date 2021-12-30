@@ -64,6 +64,10 @@
 #'        in function \code{getExperimentCrossCorrelation} for selecting 
 #'        whether to test significance or not. 
 #'        (By default: \code{test_significance = FALSE})}
+#'        \item{\code{corr_FUN}}{A function that is used to calculate (dis-)similarity
+#'        between features. Function must take matrix as an input and give numeric
+#'        values as an output. Adjust \code{method} and other parameters correspondigly.
+#'        Suitable functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.}
 #'    }
 #'    
 #' @details
@@ -124,6 +128,10 @@
 #'                                         show_warnings = FALSE)
 #' # Returned value is a list of matrices
 #' names(result)
+#' 
+#' # Calculate Bray-Curtis dissimilarity between features
+#' result <- getExperimentCrossCorrelation(mae[[1]], mae[[2]], 
+#'                                         corr_FUN = vegan::vegdist, method = "bray")
 NULL
 
 #' @rdname getExperimentCrossCorrelation
@@ -465,7 +473,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
                                        assay2 = assay2,
                                        method = method,
                                        show_warnings = show_warnings, 
-                                       corr_FUN, 
+                                       corr_FUN = corr_FUN, 
                                        ...)
     
     # Convert into data.frame if it is vector, 
@@ -598,17 +606,17 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
   # Get features
   feature1 <- assay1[ , feature_pair[1]]
   feature2 <- assay2[ , feature_pair[2]]
+  # Create a matrix 
+  feature_mat <- rbind(feature1, feature2)
   
   # If user does not want warnings, 
   # suppress warnings that might occur when calculating correlations (NAs...)
   # or p-values (ties, and exact p-values cannot be calculated...)
   if( show_warnings ){
-    temp <- do.call(corr_FUN, args = c(list(feature1, feature2), list(...)))
+    temp <- do.call(corr_FUN, args = c(list(feature_mat), list(...)))
   } else {
-    temp <- suppressWarnings( do.call(corr_FUN, args = c(list(feature1, feature2), list(...))) )
+    temp <- suppressWarnings( do.call(corr_FUN, args = c(list(feature_mat), list(...))) )
   }
-  # Take only correlation and p-value
-  temp <- c(temp$estimate, temp$p.value)
   return(temp)
 }
 
