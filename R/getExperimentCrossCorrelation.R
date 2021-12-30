@@ -148,6 +148,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
            experiment2 = 2,
            abund_values1 = "counts",
            abund_values2 = "counts",
+           direction = c("row", "column"),
            method = c("spearman", "categorical", "kendall", "pearson"),
            mode = "table",
            p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
@@ -158,12 +159,14 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
            filter_self_correlations = FALSE,
            verbose = TRUE,
            show_warnings = TRUE,
+           paired = FALSE,
            ...){
         .get_experiment_cross_correlation(x,
                                           experiment1 = experiment1,
                                           experiment2 = experiment2,
                                           abund_values1 = abund_values1,
                                           abund_values2 = abund_values2,
+                                          direction = direction,
                                           method = method,
                                           mode = mode,
                                           p_adj_method = p_adj_method,
@@ -172,6 +175,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
                                           sort = sort,
                                           filter_self_correlations = filter_self_correlations,
                                           verbose = verbose,
+                                          paired = paired,
                                           ...)
     }
 )
@@ -238,6 +242,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               experiment2 = 2,
                                               abund_values1 = "counts",
                                               abund_values2 = "counts",
+                                              direction = c("row", "column"),
                                               method = c("spearman", "categorical", "kendall", "pearson"),
                                               mode = "table",
                                               p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
@@ -249,6 +254,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               verbose = TRUE,
                                               test_significance = FALSE,
                                               show_warnings = TRUE,
+                                              paired = FALSE,
                                               ...){
     ############################# INPUT CHECK ##############################
     # Check experiment1 and experiment2
@@ -265,6 +271,9 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Check abund_values1 and abund_values2
     .check_assay_present(abund_values1, tse1)
     .check_assay_present(abund_values2, tse2)
+    # Check direction
+    match.arg(direction, several.ok = FALSE)
+    direction <- direction[1]
     # Check method
     # Checked in .calculate_correlation
     # Check mode
@@ -310,13 +319,21 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
       stop("'show_warnings' must be a boolean value.", 
            call. = FALSE)
     }
+    # Check paired
+    if( !.is_a_bool(paired) ){
+      stop("'paired' must be a boolean value.", 
+           call. = FALSE)
+    }
     ############################ INPUT CHECK END ###########################
     # Fetch assays to correlate
     assay1 <- assay(tse1, abund_values1)
     assay2 <- assay(tse2, abund_values2)
-    # Transposes tables to right format
-    assay1 <- t(assay1)
-    assay2 <- t(assay2)
+    # Transposes tables to right format, if row is specified
+    if( direction == "row" ){
+      assay1 <- t(assay1)
+      assay2 <- t(assay2)
+      paired <- FALSE
+    }
     
     # Test if data is in right format
     .cor_test_data_type(assay1, method)
@@ -328,13 +345,15 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     # Calculate correlations
     if(verbose){
-        message( paste0("Calculating correlations...\nmethod: ", method,
+        message( paste0("Calculating correlations...\ndirection: ", direction, 
+                        ", method: ", method,
                         ", test_significance: ", test_significance,
                         ", p_adj_method: ",
-                        ifelse(!is.null(p_adj_method), p_adj_method, "-")) )
+                        ifelse(!is.null(p_adj_method), p_adj_method, "-"),
+                        ", paired: ", paired) )
     }
     result <- .calculate_correlation(assay1, assay2, method, p_adj_method, 
-                                     test_significance, show_warnings, ...)
+                                     test_significance, show_warnings, paired, ...)
     # Disable p_adj_threshold if there is no adjusted p-values
     if( is.null(result$p_adj) ){
       p_adj_threshold <- NULL
@@ -434,6 +453,14 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     return(assay)
 }
 
+############################## .cor_test_data_type #############################
+# Check if experiments are paired
+.check_if_paired <- function(assay1, assay2){
+  if( !all(colnames(assay1) == colnames(assay2)) ){
+    stop("Experiments are not paired or samples are in wrong order.", 
+         "Check that colnames match between experiments.", call. = FALSE)
+  }
+}
 ############################# .calculate_correlation ###########################
 # This function calculates correlations between every feature-pair. For numeric
 # values uses cor.test() cor() and for categorical values Goodman and Kruskal's tau test.
@@ -447,6 +474,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
                                    p_adj_method, 
                                    test_significance, 
                                    show_warnings, 
+                                   paired,
                                    corr_FUN = NULL, 
                                    ...){
     # Check method if corr_FUN is not NULL
@@ -463,8 +491,14 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
       FUN_ <- .calculate_correlation_for_categorical_values
     } 
     
-    # Get all the sample pairs
-    feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
+    # Get all the sample/feature pairs
+    if( paired ){
+      .check_if_paired(assay1, assay2)
+      feature_pairs <- data.frame(Var1 = colnames(assay1), Var2 = colnames(assay2))
+    } else{
+      feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
+    }
+    
     # Calculate correlations
     correlations_and_p_values <- apply(feature_pairs, 1, 
                                        FUN = FUN_, 
