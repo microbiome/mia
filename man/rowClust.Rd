@@ -52,13 +52,14 @@ by using the dissimilarity function provided at \code{dissimilarity_FUN}.
 }
 \examples{
 # Load example data
-library(mia)
 data("GlobalPatterns")
 tse <- GlobalPatterns
 # Agglomerate to Class rank; for speeding up the example.
 tse <- agglomerateByRank(tse, rank="Class")
 # Transforming abundance data with clr
 tse <- transformCounts(tse, "counts", "clr", pseudocount = 1)
+# Clustering with default methods using clr transform and 6 clusters as output
+tse <- rowClust(tse, abund_values = "clr", k = 6)
 # Spearman correlation is used as a dissimilarity and ward.D2 
 # for clustering; with results having 6 clusters:
 tse <- rowClust(tse,
@@ -66,7 +67,7 @@ tse <- rowClust(tse,
                 clustering_FUN = function(x) stats::hclust(x, method="ward.D2"),
                 dissimilarity_FUN = function(x) 1 - stats::cor(t(x),method="spearman"),
                 k = 6)
-# OR
+# OR, using fastcluster package
 \dontrun{
 tse <- rowClust(tse,
                 abund_values = "clr",
