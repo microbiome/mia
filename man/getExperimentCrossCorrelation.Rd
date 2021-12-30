@@ -47,6 +47,10 @@ object.}
 in function \code{getExperimentCrossCorrelation} for selecting
 whether to test significance or not.
 (By default: \code{test_significance = FALSE})}
+\item{\code{corr_FUN}}{A function that is used to calculate (dis-)similarity
+between features. Function must take matrix as an input and give numeric
+values as an output. Adjust \code{method} and other parameters correspondigly.
+Suitable functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.}
 }}
 
 \item{experiment1}{A single character or numeric value for selecting the experiment 1
@@ -158,6 +162,10 @@ result <- getExperimentCrossCorrelation(mae[[1]], y = mae[[2]], method = "pearso
                                         show_warnings = FALSE)
 # Returned value is a list of matrices
 names(result)
+
+# Calculate Bray-Curtis dissimilarity between features
+result <- getExperimentCrossCorrelation(mae[[1]], mae[[2]], 
+                                        corr_FUN = vegan::vegdist, method = "bray")
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
