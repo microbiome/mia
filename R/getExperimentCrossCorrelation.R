@@ -231,7 +231,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               abund_values1 = "counts",
                                               abund_values2 = "counts",
                                               method = c("spearman", "categorical", "kendall", "pearson"),
-                                              mode = "table",
+                                              mode = c("table", "matrix"),
                                               p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                                                                "holm", "hommel", "none"),
                                               p_adj_threshold = NULL,
@@ -258,13 +258,12 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     .check_assay_present(abund_values1, tse1)
     .check_assay_present(abund_values2, tse2)
     # Check method
-    method <- match.arg(method)
-    # Check mode
-    if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
-        stop("'mode' must be 'matrix' or 'table'.", call. = FALSE)
-    }
-    # Check p_adj_method
-    p_adj_method <- match.arg(p_adj_method)
+    method <- match.arg(method,
+                        c("spearman", "categorical", "kendall","pearson"))
+    mode <- match.arg(mode, c("table", "matrix"))
+    p_adj_method <- match.arg(p_adj_method,
+                              c("fdr", "BH", "bonferroni", "BY", "hochberg", 
+                                "holm", "hommel", "none"))
     # Check p_adj_threshold
     if( !(is.numeric(p_adj_threshold) && 
           (p_adj_threshold>=0 && p_adj_threshold<=1)  || 
@@ -330,10 +329,10 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     # Calculate correlations
     if(verbose){
-        message( paste0("Calculating correlations...\nmethod: ", method,
-                        ", test_significance: ", test_significance,
-                        ", p_adj_method: ",
-                        ifelse(!is.null(p_adj_method), p_adj_method, "-")) )
+        message( "Calculating correlations...\nmethod: ", method,
+                 ", test_significance: ", test_significance,
+                 ", p_adj_method: ",
+                 ifelse(!is.null(p_adj_method), p_adj_method, "-"))
     }
     result <- .calculate_correlation(assay1, assay2, method, p_adj_method, 
                                      test_significance, show_warnings)
@@ -354,13 +353,13 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         !is.null(cor_threshold) || 
         filter_self_correlations ){
         if(verbose){
-            message( paste0("\nFiltering results...\np_adj_threshold: ",
-                            ifelse(!is.null(p_adj_threshold),  p_adj_threshold, "-"), 
-                            ", cor_threshold: ", 
-                            ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
-                            ", filter_self_correlations: ", 
-                            ifelse(filter_self_correlations,
-                            filter_self_correlations, "-")) )
+            message( "Filtering results...\np_adj_threshold: ",
+                     ifelse(!is.null(p_adj_threshold),  p_adj_threshold, "-"), 
+                     ", cor_threshold: ", 
+                     ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
+                     ", filter_self_correlations: ", 
+                     ifelse(filter_self_correlations,
+                            filter_self_correlations, "-"))
         }
         result <- .correlation_filter(result, 
                                       p_adj_threshold,
@@ -372,7 +371,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Matrix or table?
     if (mode == "matrix" && !is.null(result) ) {
         if(verbose){
-            message("\nConverting table into matrices...")
+            message("Converting table into matrices...")
         }
         # Create matrices
         result <- .correlation_table_to_matrix(result)
@@ -381,7 +380,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         # If sort was specified and there are more than 1 features
         if(sort && nrow(result$cor) > 1 && ncol(result$cor) > 1 ){
             if(verbose){
-                message("\nSorting results...")
+                message("Sorting results...")
             }
             result <- .correlation_sort(result)
         }
@@ -399,16 +398,18 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
 .test_experiment_of_mae <- function(x, experiment){
     # If experiment is numeric and bigger than the number of experiments
     if( is.numeric(experiment) && experiment > length(experiments(x)) ){
-        stop(paste0("'", deparse(substitute(experiment)), "' is greater than the",
-                    " number of experiments in MAE object."), call. = FALSE)
+        stop("'", deparse(substitute(experiment)), "' is greater than the",
+             " number of experiments in MAE object.",
+             call. = FALSE)
     }
     # Negation of "if value is character and can be found from experiments or
     # if value is numeric and is smaller or equal to the list of experiments.
     if( !( is.character(experiment) && experiment %in% names(experiments(x)) || 
         is.numeric(experiment) && experiment <= length(experiments(x)) ) ){
-        stop(paste0("'", deparse(substitute(experiment)), "'", 
-                    " must be numeric or character value specifying", 
-                    " experiment in experiment(x)."), call. = FALSE)
+        stop("'", deparse(substitute(experiment)), "'", 
+             " must be numeric or character value specifying", 
+             " experiment in experiment(x).",
+             call. = FALSE)
     }
 }
 ############################## .cor_test_data_type #############################
