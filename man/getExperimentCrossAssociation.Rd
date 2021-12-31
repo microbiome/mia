@@ -149,7 +149,7 @@ tse <- mae[[1]]
 altExp(tse, "exp2") <- mae[[2]]
 
 # When mode = matrix, matrix is returned
-result <- getExperimentCrossAssociation(tse, y = "exp2", method = "pearson", 
+result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", method = "pearson", 
                                         mode = "matrix")
 # Show first 5 entries
 head(result, 5)
@@ -158,7 +158,7 @@ head(result, 5)
 # filter_self_correlations = TRUE filters self correlations
 # With p_adj_threshold it is possible to filter those features that do no have
 # any correlations that have p-value under threshold
-result <- testExperimentCrossAssociation(tse, y = tse, method = "pearson",
+result <- testExperimentCrossAssociation(tse, experiment2 = tse, method = "pearson",
                                          filter_self_correlations = TRUE,
                                          p_adj_threshold = 0.05)
 # Show first 5 entries
@@ -167,7 +167,7 @@ head(result, 5)
 # Also getExperimentCrossAssociation returns significances when 
 # test_signicance = TRUE
 # Warnings can be suppressed by using show_warnings = FALSE
-result <- getExperimentCrossAssociation(mae[[1]], y = mae[[2]], method = "pearson",
+result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
                                         mode = "matrix", test_significance = TRUE,
                                         show_warnings = FALSE)
 # Returned value is a list of matrices

@@ -113,7 +113,7 @@
 #' altExp(tse, "exp2") <- mae[[2]]
 #' 
 #' # When mode = matrix, matrix is returned
-#' result <- getExperimentCrossAssociation(tse, y = "exp2", method = "pearson", 
+#' result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", method = "pearson", 
 #'                                         mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
@@ -122,7 +122,7 @@
 #' # filter_self_correlations = TRUE filters self correlations
 #' # With p_adj_threshold it is possible to filter those features that do no have
 #' # any correlations that have p-value under threshold
-#' result <- testExperimentCrossAssociation(tse, y = tse, method = "pearson",
+#' result <- testExperimentCrossAssociation(tse, experiment2 = tse, method = "pearson",
 #'                                          filter_self_correlations = TRUE,
 #'                                          p_adj_threshold = 0.05)
 #' # Show first 5 entries
@@ -131,7 +131,7 @@
 #' # Also getExperimentCrossAssociation returns significances when 
 #' # test_signicance = TRUE
 #' # Warnings can be suppressed by using show_warnings = FALSE
-#' result <- getExperimentCrossAssociation(mae[[1]], y = mae[[2]], method = "pearson",
+#' result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
 #'                                         mode = "matrix", test_significance = TRUE,
 #'                                         show_warnings = FALSE)
 #' # Returned value is a list of matrices
@@ -341,6 +341,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     if( direction == "row" ){
       assay1 <- t(assay1)
       assay2 <- t(assay2)
+      # Disable paired
       paired <- FALSE
     }
     
@@ -486,7 +487,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     if( is.null(association_FUN) ){
         method <- match.arg(method)
         # Get function name for message
-        function_name <- ifelse(method == "categorical", "gktau", 
+        function_name <- ifelse(method == "categorical", "mia:::.calculate_gktau()", 
                                 ifelse(test_significance, "stats::cor.test()", "stats::cor()"))
     } else{
         # Get name of function
@@ -503,7 +504,8 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                     ", test_significance: ", test_significance,
                     ", p_adj_method: ",
                     ifelse(!is.null(p_adj_method), p_adj_method, "-"),
-                    ", paired: ", paired) )
+                    ", paired: ", paired,
+                    ", show_warnings: ", show_warnings) )
     }
   
     # If association_FUN is provided by user, use appropriate function.
