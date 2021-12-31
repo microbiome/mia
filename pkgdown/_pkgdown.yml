@@ -42,7 +42,7 @@ reference:
   - getAbundanceSample
 - subtitle: Dominance
 - contents:
-  - getDominantTaxa
+  - perSampleDominantTaxa
   - estimateDominance
 - subtitle: Evenness indeces
 - contents:
