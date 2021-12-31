@@ -23,6 +23,10 @@
 #' @param abund_values2 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
 #'   experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})
+#' 
+#' @param direction A single character value for selecting if association are calculated
+#'   row-wise (for features) or column-wise (for samples). Must be \code{"row"} or
+#'   \code{"column"}. (By default: \code{direction = "row"}) 
 #'   
 #' @param method A single character value for selecting association method 
 #'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
@@ -58,16 +62,20 @@
 #' @param show_warnings A single boolean value for selecting whether to show warnings
 #'    that might occur when correlations and p-values are calculated.
 #'
+#' @param paired A single boolean value for specifying if samples are paired or not.
+#'    \code{colnames} must match between twp experiments. \code{paired} is disabled
+#'    when \code{direction = "row"}. (By default: \code{paired = FALSE})
+#'
 #' @param ... Additional arguments:
 #'    \itemize{
 #'        \item{\code{test_significance}}{A single boolean value 
 #'        in function \code{getExperimentCrossAssociation} for selecting 
 #'        whether to test significance or not. 
 #'        (By default: \code{test_significance = FALSE})}
-#'        \item{\code{corr_FUN}}{A function that is used to calculate (dis-)similarity
+#'        \item{\code{association_FUN}}{A function that is used to calculate (dis-)similarity
 #'        between features. Function must take matrix as an input and give numeric
-#'        values as an output. Adjust \code{method} and other parameters correspondigly.
-#'        Suitable functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.}
+#'        values as an output. Adjust \code{method} and other parameters correspondingly.
+#'        Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.}
 #'    }
 #'    
 #' @details
@@ -131,7 +139,7 @@
 #' 
 #' # Calculate Bray-Curtis dissimilarity between features
 #' result <- getExperimentCrossAssociation(mae[[1]], mae[[2]], 
-#'                                         corr_FUN = vegan::vegdist, method = "bray")
+#'                                         association_FUN = vegan::vegdist, method = "bray")
 NULL
 
 #' @rdname getExperimentCrossAssociation
@@ -148,7 +156,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            experiment2 = 2,
            abund_values1 = "counts",
            abund_values2 = "counts",
-           direction = c("row", "column"),
+           direction = "row",
            method = c("spearman", "categorical", "kendall", "pearson"),
            mode = "table",
            p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
@@ -161,7 +169,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            show_warnings = TRUE,
            paired = FALSE,
            ...){
-        .get_experiment_cross_correlation(x,
+        .get_experiment_cross_association(x,
                                           experiment1 = experiment1,
                                           experiment2 = experiment2,
                                           abund_values1 = abund_values1,
@@ -214,7 +222,7 @@ setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
         }
         x <- MultiAssayExperiment(experiments = experiments)
         # Call method with MAE object as an input
-        .get_experiment_cross_correlation(x = x,
+        .get_experiment_cross_association(x = x,
                                           experiment1 = 1,
                                           experiment2 = exp2_num,
                                           ...)
@@ -237,12 +245,12 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 
 ############################## MAIN FUNCTIONALITY ##############################
 # This function includes all the main functionality. 
-.get_experiment_cross_correlation <- function(x,
+.get_experiment_cross_association <- function(x,
                                               experiment1 = 1,
                                               experiment2 = 2,
                                               abund_values1 = "counts",
                                               abund_values2 = "counts",
-                                              direction = c("row", "column"),
+                                              direction = "row",
                                               method = c("spearman", "categorical", "kendall", "pearson"),
                                               mode = "table",
                                               p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
@@ -272,10 +280,11 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     .check_assay_present(abund_values1, tse1)
     .check_assay_present(abund_values2, tse2)
     # Check direction
-    match.arg(direction, several.ok = FALSE)
-    direction <- direction[1]
+    if( !.is_non_empty_string(direction) && !direction %in% c("row", "column") ){
+      stop("'direction' must be 'row' or 'column'.", call. = FALSE)
+    }
     # Check method
-    # Checked in .calculate_correlation
+    # Checked in .calculate_association
     # Check mode
     if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
         stop("'mode' must be 'matrix' or 'table'.", call. = FALSE)
@@ -336,24 +345,17 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     }
     
     # Test if data is in right format
-    .cor_test_data_type(assay1, method)
-    .cor_test_data_type(assay2, method)
+    .cross_association_test_data_type(assay1, method)
+    .cross_association_test_data_type(assay2, method)
     
     # If significance is not calculated, p_adj_method is NULL
     if( !test_significance ){
       p_adj_method <- NULL
     }
     # Calculate correlations
-    if(verbose){
-        message( paste0("Calculating correlations...\ndirection: ", direction, 
-                        ", method: ", method,
-                        ", test_significance: ", test_significance,
-                        ", p_adj_method: ",
-                        ifelse(!is.null(p_adj_method), p_adj_method, "-"),
-                        ", paired: ", paired) )
-    }
-    result <- .calculate_correlation(assay1, assay2, method, p_adj_method, 
-                                     test_significance, show_warnings, paired, ...)
+    result <- .calculate_association(assay1, assay2, method, p_adj_method, 
+                                     test_significance, show_warnings, paired, 
+                                     verbose, direction, ...)
     # Disable p_adj_threshold if there is no adjusted p-values
     if( is.null(result$p_adj) ){
       p_adj_threshold <- NULL
@@ -379,7 +381,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                             ifelse(filter_self_correlations,
                             filter_self_correlations, "-")) )
         }
-        result <- .correlation_filter(result, 
+        result <- .association_filter(result, 
                                       p_adj_threshold,
                                       cor_threshold,
                                       assay1, 
@@ -391,13 +393,13 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         if(verbose){
             message("\nConverting table into matrices...")
         }
-        result <- .correlation_table_to_matrix(result)
+        result <- .association_table_to_matrix(result)
         # If sort was specified and there are more than 1 features
         if(sort && nrow(result$cor) > 1 && ncol(result$cor) > 1 ){
             if(verbose){
                 message("\nSorting results...")
             }
-            result <- .correlation_sort(result)
+            result <- .association_sort(result)
         }
     }
     # If result includes only one element, return only the element
@@ -425,14 +427,14 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                     " experiment in experiment(x)."), call. = FALSE)
     }
 }
-############################## .cor_test_data_type #############################
+####################### .cross_association_test_data_type ######################
 # This function tests if values match with chosen method. With numeric methods, 
 # numeric values are expected, and with categorical method factor or character 
 # values are expected. Otherwise gives an error.
 
 # Input: assay and method
 # Output: assay
-.cor_test_data_type <- function(assay, method){
+.cross_association_test_data_type <- function(assay, method){
     # Different available methods
     numeric_methods <- c("kendall", "pearson","spearman")
     categorical_methods <- c("categorical")
@@ -453,47 +455,70 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     return(assay)
 }
 
-############################## .cor_test_data_type #############################
-# Check if experiments are paired
-.check_if_paired <- function(assay1, assay2){
+########################### .check_if_paired_samples ###########################
+# Check if samples are paired
+.check_if_paired_samples <- function(assay1, assay2){
   if( !all(colnames(assay1) == colnames(assay2)) ){
     stop("Experiments are not paired or samples are in wrong order.", 
          "Check that colnames match between experiments.", call. = FALSE)
   }
 }
-############################# .calculate_correlation ###########################
+
+############################# .calculate_association ###########################
 # This function calculates correlations between every feature-pair. For numeric
 # values uses cor.test() cor() and for categorical values Goodman and Kruskal's tau test.
 
 # Input: Assays that share samples but that have different features and different parameters.
 # Output: Correlation table including correlation values (and p-values and adjusted p-values)
 #' @importFrom stats p.adjust
-.calculate_correlation <- function(assay1, 
+.calculate_association <- function(assay1, 
                                    assay2, 
                                    method = c("spearman", "categorical", "kendall", "pearson"), 
                                    p_adj_method, 
                                    test_significance, 
                                    show_warnings, 
                                    paired,
-                                   corr_FUN = NULL, 
+                                   verbose,
+                                   direction,
+                                   association_FUN = NULL, 
                                    ...){
-    # Check method if corr_FUN is not NULL
-    if( is.null(corr_FUN) ){
-      method <- match.arg(method)
+    # Check method if association_FUN is not NULL
+    if( is.null(association_FUN) ){
+        method <- match.arg(method)
+        # Get function name for message
+        function_name <- ifelse(method == "categorical", "gktau", 
+                                ifelse(test_significance, "stats::cor.test()", "stats::cor()"))
+    } else{
+        # Get name of function
+        function_name <- deparse(substitute(association_FUN()))
+        test_significance <- FALSE
+        p_adj_method <- NULL
     }
-    # If corr_FUN is provided by user, use approriate function.
+    # Message details of calculation
+    if(verbose){
+        message( paste0("Calculating correlations...\n",
+                    "direction: ", direction, 
+                    ", function: ", function_name, 
+                    ", method: ", method,
+                    ", test_significance: ", test_significance,
+                    ", p_adj_method: ",
+                    ifelse(!is.null(p_adj_method), p_adj_method, "-"),
+                    ", paired: ", paired) )
+    }
+  
+    # If association_FUN is provided by user, use appropriate function.
     # Otherwise, choose correct method for numeric and categorical data
-    if( !is.null(corr_FUN) ){
-      FUN_ <- .calculate_with_own_function
+    if( !is.null(association_FUN) ){
+      FUN_ <- .calculate_association_with_own_function
     } else if( method %in% c("kendall", "pearson","spearman") ) {
-      FUN_ <- .calculate_correlation_for_numeric_values
+      FUN_ <- .calculate_association_for_numeric_values
     } else if( method == "categorical" ){
-      FUN_ <- .calculate_correlation_for_categorical_values
+      FUN_ <- .calculate_association_for_categorical_values
     } 
     
     # Get all the sample/feature pairs
     if( paired ){
-      .check_if_paired(assay1, assay2)
+      .check_if_paired_samples(assay1, assay2)
       feature_pairs <- data.frame(Var1 = colnames(assay1), Var2 = colnames(assay2))
     } else{
       feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
@@ -507,7 +532,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                        assay2 = assay2,
                                        method = method,
                                        show_warnings = show_warnings, 
-                                       corr_FUN = corr_FUN, 
+                                       association_FUN = association_FUN, 
                                        ...)
     
     # Convert into data.frame if it is vector, 
@@ -535,14 +560,14 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     return(correlations_and_p_values)
 }
 
-################### .calculate_correlation_for_numeric_values ##################
+################### .calculate_association_for_numeric_values ##################
 # This function calculates correlation between feature-pair. If significance test
 # is specified, then it uses cor.test(), if not then cor().
 
 # Input: Vector of names that belong to feature pair, and assays.
 # Output: Correlation value or list that includes correlation value and p-value.
 #' @importFrom stats cor.test cor 
-.calculate_correlation_for_numeric_values <- function(feature_pair, test_significance, 
+.calculate_association_for_numeric_values <- function(feature_pair, test_significance, 
                                                       assay1, assay2, method, show_warnings,
                                                       ...){
     # Get features
@@ -587,14 +612,14 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     return(temp)
 }
 
-################# .calculate_correlation_for_categorical_values ################
+################# .calculate_association_for_categorical_values ################
 # This function calculates correlation between feature-pair. Correlation value is 
 # calculated with Goodman and Kruskal's tau test. P-value is calculated with Pearson's
 # chi-squared test.
 
 # Input: Vector of names that belong to feature pair, and assays.
 # Output: Correlation value or list that includes correlation value and p-value.
-.calculate_correlation_for_categorical_values <- 
+.calculate_association_for_categorical_values <- 
     function(feature_pair,
              test_significance, 
              assay1,
@@ -624,16 +649,16 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     return(temp)
 }
 
-######################### .calculate_with_own_function  ########################
+################### .calculate_association_with_own_function  ##################
 # This function calculates (dis-)similarity between feature-pair with function 
 # that is specified by user.
 
 # Input: Vector of names that belong to feature pair, and assays.
 # Output: Correlation value or list that includes correlation value and p-value.
 #' @importFrom stats cor.test cor 
-.calculate_with_own_function <- function(feature_pair,
+.calculate_association_with_own_function <- function(feature_pair,
                                          assay1, assay2, 
-                                         corr_FUN, 
+                                         association_FUN, 
                                          show_warnings,
                                          test_significance,
                                          ...){
@@ -647,19 +672,19 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
   # suppress warnings that might occur when calculating correlations (NAs...)
   # or p-values (ties, and exact p-values cannot be calculated...)
   if( show_warnings ){
-    temp <- do.call(corr_FUN, args = c(list(feature_mat), list(...)))
+    temp <- do.call(association_FUN, args = c(list(feature_mat), list(...)))
   } else {
-    temp <- suppressWarnings( do.call(corr_FUN, args = c(list(feature_mat), list(...))) )
+    temp <- suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
   }
   return(temp)
 }
 
-############################## .correlation_filter #############################
+############################## .association_filter #############################
 # This filters off features that do not have any value under specified thresholds. 
 
 # Input: Correlation table and thresholds
 # Output: Filtered correlation table (or NULL if there are no observations after filtering)
-.correlation_filter <- function(result,
+.association_filter <- function(result,
                                 p_adj_threshold,
                                 cor_threshold, 
                                 assay1,
@@ -707,14 +732,14 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     return(result)
 }
 
-############################## .correlation_sort  ##############################
+############################## .association_sort  ##############################
 # This sorts correlation, p-value and adjusted p-values matrices based on 
 # hierarchical clustering
 
 # Input: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 # Output: Lst of sorted matrices (cor, p-values and adjusted p-values / matrix (cor)
 #' @importFrom stats hclust
-.correlation_sort <- function(result){
+.association_sort <- function(result){
     # Fetch data matrices
     correlations <- result$cor
     p_values <- result$pval
@@ -765,14 +790,14 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     return(result_list)
 }
 
-######################### .correlation_table_to_matrix #########################
+######################### .association_table_to_matrix #########################
 # This function converts correlation table into matrices
 
 # Input: Correlation table
 # Output: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 #' @importFrom dplyr select
 #' @importFrom tidyr pivot_wider
-.correlation_table_to_matrix <- function(result){
+.association_table_to_matrix <- function(result){
     # Correlation matrix is done from Var1, Var2, and cor columns
     # Select correct columns
     cor <- result %>% dplyr::select("Var1", "Var2", "cor") %>% 
