@@ -61,7 +61,7 @@
 #' @param ... Additional arguments:
 #'    \itemize{
 #'        \item{\code{test_significance}}{A single boolean value 
-#'        in function \code{getExperimentCrossCorrelation} for selecting 
+#'        in function \code{getExperimentCrossAssociation} for selecting 
 #'        whether to test significance or not. 
 #'        (By default: \code{test_significance = FALSE})}
 #'        \item{\code{corr_FUN}}{A function that is used to calculate (dis-)similarity
@@ -72,8 +72,8 @@
 #'    
 #' @details
 #' These functions calculates associations between features of two experiments. 
-#' \code{getExperimentCrossCorrelation} calculates only associations by default.
-#' \code{testExperimentCrossCorrelation} calculates also significance of 
+#' \code{getExperimentCrossAssociation} calculates only associations by default.
+#' \code{testExperimentCrossAssociation} calculates also significance of 
 #' associations.
 #'
 #' @return 
@@ -83,7 +83,7 @@
 #' when only associations are calculated. If also significances are tested, then
 #' returned value is a list of matrices.
 #'
-#' @name getExperimentCrossCorrelation
+#' @name getExperimentCrossAssociation
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -95,7 +95,7 @@
 #' mae[[1]] <- mae[[1]][1:20, 1:10]
 #' mae[[2]] <- mae[[2]][1:20, 1:10]
 #' # Calculate cross-correlations
-#' result <- getExperimentCrossCorrelation(mae, method = "pearson")
+#' result <- getExperimentCrossAssociation(mae, method = "pearson")
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
@@ -105,7 +105,7 @@
 #' altExp(tse, "exp2") <- mae[[2]]
 #' 
 #' # When mode = matrix, matrix is returned
-#' result <- getExperimentCrossCorrelation(tse, y = "exp2", method = "pearson", 
+#' result <- getExperimentCrossAssociation(tse, y = "exp2", method = "pearson", 
 #'                                         mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
@@ -114,35 +114,35 @@
 #' # filter_self_correlations = TRUE filters self correlations
 #' # With p_adj_threshold it is possible to filter those features that do no have
 #' # any correlations that have p-value under threshold
-#' result <- testExperimentCrossCorrelation(tse, y = tse, method = "pearson",
+#' result <- testExperimentCrossAssociation(tse, y = tse, method = "pearson",
 #'                                          filter_self_correlations = TRUE,
 #'                                          p_adj_threshold = 0.05)
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
-#' # Also getExperimentCrossCorrelation returns significances when 
+#' # Also getExperimentCrossAssociation returns significances when 
 #' # test_signicance = TRUE
 #' # Warnings can be suppressed by using show_warnings = FALSE
-#' result <- getExperimentCrossCorrelation(mae[[1]], y = mae[[2]], method = "pearson",
+#' result <- getExperimentCrossAssociation(mae[[1]], y = mae[[2]], method = "pearson",
 #'                                         mode = "matrix", test_significance = TRUE,
 #'                                         show_warnings = FALSE)
 #' # Returned value is a list of matrices
 #' names(result)
 #' 
 #' # Calculate Bray-Curtis dissimilarity between features
-#' result <- getExperimentCrossCorrelation(mae[[1]], mae[[2]], 
+#' result <- getExperimentCrossAssociation(mae[[1]], mae[[2]], 
 #'                                         corr_FUN = vegan::vegdist, method = "bray")
 NULL
 
-#' @rdname getExperimentCrossCorrelation
+#' @rdname getExperimentCrossAssociation
 #' @export
-setGeneric("getExperimentCrossCorrelation", signature = c("x"),
+setGeneric("getExperimentCrossAssociation", signature = c("x"),
            function(x, ...)
-               standardGeneric("getExperimentCrossCorrelation"))
+               standardGeneric("getExperimentCrossAssociation"))
 
-#' @rdname getExperimentCrossCorrelation
+#' @rdname getExperimentCrossAssociation
 #' @export
-setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperiment"),
+setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperiment"),
     function(x,
            experiment1 = 1,
            experiment2 = 2,
@@ -180,11 +180,11 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "MultiAssayExperime
     }
 )
 
-#' @rdname getExperimentCrossCorrelation
+#' @rdname getExperimentCrossAssociation
 #' @importFrom MultiAssayExperiment MultiAssayExperiment ExperimentList
 #' @importFrom SingleCellExperiment altExps
 #' @export
-setMethod("getExperimentCrossCorrelation", signature = "SummarizedExperiment",
+setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
     function(x, experiment2 = x, ...){
         ############################## INPUT CHECK #############################
         # If y is  SE or TreeSE object
@@ -221,17 +221,17 @@ setMethod("getExperimentCrossCorrelation", signature = "SummarizedExperiment",
     }
 )
 
-#' @rdname getExperimentCrossCorrelation
+#' @rdname getExperimentCrossAssociation
 #' @export
-setGeneric("testExperimentCrossCorrelation", signature = c("x"),
+setGeneric("testExperimentCrossAssociation", signature = c("x"),
            function(x, ...)
-               standardGeneric("testExperimentCrossCorrelation"))
+               standardGeneric("testExperimentCrossAssociation"))
 
-#' @rdname getExperimentCrossCorrelation
+#' @rdname getExperimentCrossAssociation
 #' @export
-setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
+setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
           function(x, ...){
-              getExperimentCrossCorrelation(x, test_significance = TRUE, ...)
+              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
           }
 )
 
