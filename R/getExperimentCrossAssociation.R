@@ -373,34 +373,31 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     if( !is.null(p_adj_threshold) || 
         !is.null(cor_threshold) || 
         filter_self_correlations ){
-        if(verbose){
-            message( paste0("\nFiltering results...\np_adj_threshold: ",
-                            ifelse(!is.null(p_adj_threshold),  p_adj_threshold, "-"), 
-                            ", cor_threshold: ", 
-                            ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
-                            ", filter_self_correlations: ", 
-                            ifelse(filter_self_correlations,
-                            filter_self_correlations, "-")) )
-        }
+        # Filter associations
         result <- .association_filter(result, 
                                       p_adj_threshold,
                                       cor_threshold,
                                       assay1, 
                                       assay2, 
-                                      filter_self_correlations)
+                                      filter_self_correlations,
+                                      verbose)
     }
     # Matrix or table?
     if (mode == "matrix" && !is.null(result) ) {
-        if(verbose){
-            message("\nConverting table into matrices...")
+        # Create matrices from table
+        result <- .association_table_to_matrix(result, verbose)
+        
+        # If matrix contains rows or columns that have only NAs, error occur in hclust
+        if( any(rowSums(is.na(result$cor)) == ncol(result$cor)) || 
+            any(colSums(is.na(result$cor)) == nrow(result$cor)) ){
+            message("\nCorrelation matrices cannot be sorted, because correlation matrix ",
+                    "contains rows and/or columns that contain only NAs.")
+            sort <- FALSE
         }
-        result <- .association_table_to_matrix(result)
         # If sort was specified and there are more than 1 features
         if(sort && nrow(result$cor) > 1 && ncol(result$cor) > 1 ){
-            if(verbose){
-                message("\nSorting results...")
-            }
-            result <- .association_sort(result)
+            # Sort associations
+            result <- .association_sort(result, verbose)
         }
     }
     # If result includes only one element, return only the element
@@ -715,10 +712,17 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                 cor_threshold, 
                                 assay1,
                                 assay2,
-                                filter_self_correlations){
-    # If if there are no p_values disable p-value threshold
-    if( is.null(result$p_adj) ){
-        p_adj_threshold <- NULL
+                                filter_self_correlations, 
+                                verbose){
+    # Give message if verbose == TRUE
+    if(verbose){
+      message( paste0("\nFiltering results...\np_adj_threshold: ",
+                      ifelse(!is.null(p_adj_threshold),  p_adj_threshold, "-"), 
+                      ", cor_threshold: ", 
+                      ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
+                      ", filter_self_correlations: ", 
+                      ifelse(filter_self_correlations,
+                             filter_self_correlations, "-")) )
     }
     # Which features have significant correlations?
     if ( !is.null(result$p_adj) && !is.null(p_adj_threshold) ) {
@@ -741,7 +745,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     
     # If there are no significant correlations
     if ( nrow(result) == 0 ) {
-        message("No significant correlations with the given criteria\n")
+        message("\nNo significant correlations with the given criteria\n")
         return(NULL)
     }
     # Adjust levels
@@ -765,7 +769,11 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Input: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 # Output: Lst of sorted matrices (cor, p-values and adjusted p-values / matrix (cor)
 #' @importFrom stats hclust
-.association_sort <- function(result){
+.association_sort <- function(result, verbose){
+    # Give message if verbose == TRUE
+    if(verbose){
+      message("\nSorting results...")
+    }
     # Fetch data matrices
     correlations <- result$cor
     p_values <- result$pval
@@ -775,6 +783,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     tmp <- correlations
     rownames(tmp) <- NULL
     colnames(tmp) <- NULL
+    
     # Do hierarchical clustering
     row_index <- hclust(as.dist(1 - cor(t(tmp),
                                         use="pairwise.complete.obs")))$order
@@ -823,7 +832,11 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Output: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 #' @importFrom dplyr select
 #' @importFrom tidyr pivot_wider
-.association_table_to_matrix <- function(result){
+.association_table_to_matrix <- function(result, verbose){
+    # Give message if verbose == TRUE
+    if(verbose){
+      message("\nConverting table into matrices...")
+    }
     # Correlation matrix is done from Var1, Var2, and cor columns
     # Select correct columns
     cor <- result %>% dplyr::select("Var1", "Var2", "cor") %>% 
