@@ -136,6 +136,11 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         # get samples with less than min number of reads
         if(min(colSums2(assay(x, abund_values))) < min_size){
             rmsams <- colnames(x)[colSums2(assay(x, abund_values)) < min_size]
+            # Return NULL, if no samples were found after subsampling
+            if( !any(!colnames(x) %in% rmsams) ){
+                stop("No samples were found after subsampling.",
+                     call. = FALSE)
+            }
             if(verbose){
                 message(length(rmsams), " samples removed ",
                         "because they contained fewer reads than `min_size`.")
@@ -148,11 +153,6 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         newassay <- apply(assay(newtse, abund_values), 2, 
                           .subsample_assay,
                           min_size=min_size, replace=replace)
-        # Return NULL, if no samples were found after subsampling
-        if( identical(newassay, numeric(0)) ){
-            message("No samples were found after subsampling.")
-            return(NULL)
-        }
         rownames(newassay) <- rownames(newtse)
         # remove features not present in any samples after subsampling
         message(paste(length(which(rowSums2(newassay) == 0)), "features", 
