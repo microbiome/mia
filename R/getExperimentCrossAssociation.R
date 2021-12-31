@@ -671,11 +671,35 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
   # If user does not want warnings, 
   # suppress warnings that might occur when calculating correlations (NAs...)
   # or p-values (ties, and exact p-values cannot be calculated...)
+  # Use try-catch to catch errors that might occur.
   if( show_warnings ){
-    temp <- do.call(association_FUN, args = c(list(feature_mat), list(...)))
+      temp <- tryCatch({
+          do.call(association_FUN, args = c(list(feature_mat), list(...)))
+      },
+      error = function(cond) {
+          stop(paste0("Error occurred during calculation. Check that 
+                      'association_FUN' fulfills requirements."), 
+              call. = FALSE)
+      }
+      )
   } else {
-    temp <- suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
+      temp <- tryCatch({
+          suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
+      },
+      error = function(cond) {
+          stop(paste0("Error occurred during calculation. Check that ",
+                      "'association_FUN' fulfills requirements."), 
+              call. = FALSE)
+      }
+      )
   }
+  
+  # If temp's length is not 1, then function does not return single numeric value for each pair
+  if( length(temp) != 1 ){
+      stop(paste0("Error occurred during calculation. Check that ", 
+                      "'association_FUN' fulfills requirements."), 
+           call. = FALSE)
+  } 
   return(temp)
 }
 
