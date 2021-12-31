@@ -509,19 +509,19 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # If association_FUN is provided by user, use appropriate function.
     # Otherwise, choose correct method for numeric and categorical data
     if( !is.null(association_FUN) ){
-      FUN_ <- .calculate_association_with_own_function
+        FUN_ <- .calculate_association_with_own_function
     } else if( method %in% c("kendall", "pearson","spearman") ) {
-      FUN_ <- .calculate_association_for_numeric_values
+        FUN_ <- .calculate_association_for_numeric_values
     } else if( method == "categorical" ){
-      FUN_ <- .calculate_association_for_categorical_values
+        FUN_ <- .calculate_association_for_categorical_values
     } 
     
     # Get all the sample/feature pairs
     if( paired ){
-      .check_if_paired_samples(assay1, assay2)
-      feature_pairs <- data.frame(Var1 = colnames(assay1), Var2 = colnames(assay2))
+        .check_if_paired_samples(assay1, assay2)
+        feature_pairs <- data.frame(Var1 = colnames(assay1), Var2 = colnames(assay2))
     } else{
-      feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
+        feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     }
     
     # Calculate correlations
