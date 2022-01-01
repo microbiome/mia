@@ -21,3 +21,4 @@ Changes in version 1.3.x
 + name change: testForExperimentCrossCorrelation to testExperimentCrossCorrelation
 + getExperimentCrossCorrelation: Filtering disabled by default, option to suppress warnings
 + bugfix: taxonomyTree gave error when taxa were agglomerated at highest level (taxa name mismatch)
++ renamed calculateUniFrac to calculateUnifrac 
