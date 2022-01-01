@@ -27,7 +27,7 @@ reference:
   - estimateDivergence
 - subtitle: Beta Diversity
 - contents:
-  - calculateUniFrac
+  - calculateUnifrac
   - calculateJSD
   - calculateDistance
   - runNMDS
