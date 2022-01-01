@@ -34,7 +34,7 @@
     <loc>/reference/calculateOverlap.html</loc>
   </url>
   <url>
-    <loc>/reference/calculateUniFrac.html</loc>
+    <loc>/reference/calculateUnifrac.html</loc>
   </url>
   <url>
     <loc>/reference/estimateDivergence.html</loc>
@@ -65,6 +65,9 @@
   </url>
   <url>
     <loc>/reference/isContaminant.html</loc>
+  </url>
+  <url>
+    <loc>/reference/loadFromMetaphlan.html</loc>
   </url>
   <url>
     <loc>/reference/loadFromMothur.html</loc>
