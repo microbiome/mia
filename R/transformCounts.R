@@ -119,6 +119,9 @@
 #' (2019) A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
 #' mSystems 4: 1. doi: 10.1128/mSystems.00016-19
 #'
+#' Silverman JD, Washburne AD, Mukherjee S, David LA (2017).
+#' A phylogenetic transform enhances analysis of compositional microbiota data.
+#' eLife 6:e21887. doi: 10.7554/eLife.21887
 #'
 #' @return
 #' \code{transformCounts}, \code{transformSamples}, \code{transformFeatures}, 
@@ -195,7 +198,7 @@
 #' head(assay(x, "relabundance"))
 #'
 #' # Further transformations are available through other packages
-#' # For instance, the philr transformation utilizes
+#' # For instance, the philr transformation (Silverman et al. 2017) utilizes
 #' # phylogenetic tree information
 #' library(mia)
 #' library(philr)
