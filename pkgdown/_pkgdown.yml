@@ -15,6 +15,7 @@ reference:
   - makeTreeSummarizedExperimentFromDADA2
   - loadFromBiom
   - loadFromQIIME2
+  - loadFromMothur
   - makePhyloseqFromTreeSummarizedExperiment
 - title: Taxonomic data
   contents:
@@ -23,16 +24,19 @@ reference:
 - subtitle: Alpha Diversity
 - contents:
   - estimateDiversity
+  - estimateDivergence
 - subtitle: Beta Diversity
 - contents:
-  - calculateUniFrac
+  - calculateUnifrac
   - calculateJSD
   - calculateDistance
   - runNMDS
   - runCCA
+  - calculateOverlap
 - subtitle: Other diversity measurements
 - contents:
   - runDPCoA
+  - estimateRichness
 - title: Other functions
 - subtitle: Dataset description
 - contents:
@@ -40,9 +44,10 @@ reference:
   - getPrevalentAbundance
   - getTopTaxa
   - getAbundanceSample
+  - getExperimentCrossCorrelation
 - subtitle: Dominance
 - contents:
-  - getDominantTaxa
+  - perSampleDominantTaxa
   - estimateDominance
 - subtitle: Evenness indeces
 - contents:
@@ -50,10 +55,15 @@ reference:
 - subtitle: Dirichlet-Multinomial Mixture Model
 - contents:
   - calculateDMN
+- subtitle: decontam
+- contents:
+  - isContaminant
 - subtitle: Helper
 - contents:
   - meltAssay
   - relabundance
+  - subsampleCounts
+  - subsetSamples
 - subtitle: Datasets
 - contents:
   - GlobalPatterns

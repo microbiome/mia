@@ -7,8 +7,9 @@
 #' @details
 #' Although the subsampling approach is highly debated in microbiome research, 
 #' we include the \code{subsampleCounts} function because there may be some 
-#' instances where it can be used. Note that the output of \code{subsampleCounts} 
-#' is not the same as input.
+#' instances where it can be useful.
+#' Note that the output of \code{subsampleCounts} is not the equivalent as the 
+#' input and any result have to be verified with the original dataset.
 #'
 #' @param x A
 #'   \code{SummarizedExperiment} object.
@@ -91,13 +92,13 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
        seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
        name = "subsampled", verbose = TRUE, ...){
     
-        warning("Subsampling/Rarefying may undermine downstream analyses",
-                "and have unintended consequences. Therefore, make sure",
+        warning("Subsampling/Rarefying may undermine downstream analyses ",
+                "and have unintended consequences. Therefore, make sure ",
                 "this normalization is appropriate for your data.",
               call. = FALSE)
         .check_assay_present(abund_values, x)
         if(any(assay(x, abund_values) %% 1 != 0)){
-            warning("assay contains non-integer values. Only counts table",
+            warning("assay contains non-integer values. Only counts table ",
                     "is applicable...")
         }
         if(!is.logical(verbose)){
@@ -136,6 +137,11 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         # get samples with less than min number of reads
         if(min(colSums2(assay(x, abund_values))) < min_size){
             rmsams <- colnames(x)[colSums2(assay(x, abund_values)) < min_size]
+            # Return NULL, if no samples were found after subsampling
+            if( !any(!colnames(x) %in% rmsams) ){
+                stop("No samples were found after subsampling.",
+                     call. = FALSE)
+            }
             if(verbose){
                 message(length(rmsams), " samples removed ",
                         "because they contained fewer reads than `min_size`.")
