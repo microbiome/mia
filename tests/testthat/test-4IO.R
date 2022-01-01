@@ -210,7 +210,7 @@ test_that("reference sequences of TSE", {
 })
 
 
-test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
+test_that("`.parse_taxonomy` work with any combination of taxonomic ranks", {
     test_taxa <- matrix(
         c("a", "k__Bacteria; c__Bacteroidia; s__", 0.88,
           "b", "k__Bacteria; c__Clostridia; s__", 0.9),
@@ -218,7 +218,7 @@ test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
         byrow = TRUE,
         dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
     )
-    expect_silent(mia:::.parse_q2taxonomy(test_taxa))
+    expect_silent(mia:::.parse_taxonomy(test_taxa))
 
     # at certain rank (e.g. species): some taxa can not be determined which
     # species it assigned to (NA)
@@ -229,7 +229,7 @@ test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
         byrow = TRUE,
         dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
     )
-    expect_true(is.na(mia:::.parse_q2taxonomy(test_taxa)[2,"Species"]))
+    expect_true(is.na(mia:::.parse_taxonomy(test_taxa)[2,"Species"]))
 
     # if the expexted order is not present it will return a correct result
     test_taxa <- matrix(
@@ -239,8 +239,8 @@ test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
         byrow = TRUE,
         dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
     )
-    expect_equal(mia:::.parse_q2taxonomy(test_taxa)[,"Species"],c("s__test",NA))
-    expect_equal(mia:::.parse_q2taxonomy(test_taxa, removeTaxaPrefixes = TRUE)[,"Species"],
+    expect_equal(mia:::.parse_taxonomy(test_taxa)[,"Species"],c("s__test",NA))
+    expect_equal(mia:::.parse_taxonomy(test_taxa, removeTaxaPrefixes = TRUE)[,"Species"],
                  c("test",NA))
 })
 
