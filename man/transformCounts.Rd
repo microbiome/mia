@@ -253,21 +253,17 @@ x <- relAbundanceCounts(x)
 head(assay(x, "relabundance"))
 
 # Further transformations are available through other packages
-# For instance, the philr transformation utilizes
+# For instance, the philr transformation (Silverman et al. 2017) utilizes
 # phylogenetic tree information
 library(mia)
 library(philr)
 library(tidyr)
 # Load TreeSummarizedExperiment example data
 data(GlobalPatterns, package="mia")
-## Select prevalent taxa 
-tse <-  GlobalPatterns \%>\% subsetByPrevalentTaxa(
-    detection = 3,
-   prevalence = 20/100,
-    as_relative = FALSE)
-# Collapse the tree as well
-tree <- ape::keep.tip(phy = rowTree(tse), tip = rowLinks(tse)$nodeNum)
-rowTree(tse) <- tree
+tse <- GlobalPatterns
+## Select prevalent taxa
+taxa <- getPrevalentTaxa(tse, detection = 0, prevalence = 90/100)
+tse <- subsetByLeaf(x = tse, rowLeaf = taxa) # Collapses the tree
 ## Add a new assay with a pseudocount 
 assays(tse)$counts_with_pseudocount <- assay(tse, "counts") + 1
 
@@ -299,6 +295,10 @@ Oecologia 129: 271-280.
 Martino C, Morton JT, Marotz CA, Thompson LR, Tripathi A, Knight R & Zengler K
 (2019) A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
 mSystems 4: 1. doi: 10.1128/mSystems.00016-19
+
+Silverman JD, Washburne AD, Mukherjee S, David LA (2017).
+A phylogenetic transform enhances analysis of compositional microbiota data.
+eLife 6:e21887. doi: 10.7554/eLife.21887
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

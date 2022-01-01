@@ -205,14 +205,10 @@
 #' library(tidyr)
 #' # Load TreeSummarizedExperiment example data
 #' data(GlobalPatterns, package="mia")
-#' ## Select prevalent taxa 
-#' tse <-  GlobalPatterns %>% subsetByPrevalentTaxa(
-#'     detection = 3,
-#'    prevalence = 20/100,
-#'     as_relative = FALSE)
-#' # Collapse the tree as well
-#' tree <- ape::keep.tip(phy = rowTree(tse), tip = rowLinks(tse)$nodeNum)
-#' rowTree(tse) <- tree
+#' tse <- GlobalPatterns
+#' ## Select prevalent taxa
+#' taxa <- getPrevalentTaxa(tse, detection = 0, prevalence = 90/100)
+#' tse <- subsetByLeaf(x = tse, rowLeaf = taxa) # Collapses the tree
 #' ## Add a new assay with a pseudocount 
 #' assays(tse)$counts_with_pseudocount <- assay(tse, "counts") + 1
 #' 
