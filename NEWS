@@ -1,7 +1,7 @@
-Changes in version 0.99.0 (2021-03-19)
+Changes in version 0.99.0
 + Submitted to Bioconductor
 
-Changes in version 1.1.x (2021-06-04)
+Changes in version 1.1.x
 + split transformCounts into transformSamples and transformFeatures
 + added log_modulo_skewness as a diversity index
 + added functions for summarizing dominant taxa information
@@ -16,6 +16,8 @@ Changes in version 1.1.x (2021-06-04)
 + added getExperimentCrossCorrelation for calculatting cross-correlation between features
 + added calculateOverlap
 + getUniqueTaxa & getTopTaxa: added option for alphabetical order
+
+Changes in version 1.3.x 
 + name change: testForExperimentCrossCorrelation to testExperimentCrossCorrelation
 + getExperimentCrossCorrelation: Filtering disabled by default, option to suppress warnings
 + bugfix: taxonomyTree gave error when taxa were agglomerated at highest level (taxa name mismatch)

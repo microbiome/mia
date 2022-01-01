@@ -161,7 +161,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         # tree will be pruned later, if agglomerateTree = TRUE
         if( na.rm ){
             x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
-                                                empty.fields)
+                                                   empty.fields)
         }
         # If rank is the only rank that is available and this data is unique,
         # then the data is already 'aggregated' and no further operations
