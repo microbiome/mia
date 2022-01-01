@@ -274,12 +274,12 @@ Functions to load data from `biom` files, `QIIME2` output, `DADA2` objects
 [@dada2] or `phyloseq` objects are available. 
 
 ```{r, message=FALSE, warning=FALSE}
-data("GlobalPatterns", package = "phyloseq")
+data("esophagus", package = "phyloseq")
 ```
 ```{r}
-GlobalPatterns
-GlobalPatterns <- makeTreeSummarizedExperimentFromPhyloseq(GlobalPatterns)
-GlobalPatterns
+esophagus
+esophagus <- makeTreeSummarizedExperimentFromPhyloseq(esophagus)
+esophagus
 ```
 
 For more details have a look at the man page, for examples 
