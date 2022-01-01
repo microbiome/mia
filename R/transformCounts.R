@@ -137,7 +137,6 @@
 #' # By specifying, it is possible to apply different transformations, e.g. clr transformation.
 #' # Pseudocount can be added by specifying 'pseudocount'.
 #' x <- transformSamples(x, method="clr", pseudocount=1)
-
 #' head(assay(x, "clr"))
 #'
 #' # Also, the target of transformation
@@ -194,6 +193,41 @@
 #' # relAbundanceCounts function.
 #' x <- relAbundanceCounts(x)
 #' head(assay(x, "relabundance"))
+#'
+#' # Further transformations are available through other packages
+#' # For instance, the philr transformation utilizes
+#' # phylogenetic tree information
+#' library(mia)
+#' library(philr)
+#' library(tidyr)
+#' # Load TreeSummarizedExperiment example data
+#' data(GlobalPatterns, package="mia")
+#' ## Select prevalent taxa 
+#' tse <-  GlobalPatterns %>% subsetByPrevalentTaxa(
+#'     detection = 3,
+#'    prevalence = 20/100,
+#'     as_relative = FALSE)
+#' # Collapse the tree as well
+#' tree <- ape::keep.tip(phy = rowTree(tse), tip = rowLinks(tse)$nodeNum)
+#' rowTree(tse) <- tree
+#' ## Add a new assay with a pseudocount 
+#' assays(tse)$counts_with_pseudocount <- assay(tse, "counts") + 1
+#' 
+#' ## Run philr for TreeSummarizedExperiment object
+#' ## using the pseudocount data
+#' m <- philr(tse,
+#'     part.weights='enorm.x.gm.counts',
+#'     ilr.weights='blw.sqrt',
+#'     return.all=FALSE,
+#'     abund_values="counts_with_pseudocount")
+#' 
+#' # Add the philr transformed data to altExp.
+#' # We need to use altExp because the row features do not match
+#' # with the original data and hence the assay mechanism is not applicable
+#' # Also note that philr returns the data as samples x features,
+#' # this is here transposed for SummarizedExperiment as t(m):
+#' altExp(tse, "philr") <- SummarizedExperiment(
+#'                             assays = SimpleList(philr=t(m)))
 NULL
 
 #' @rdname transformCounts
