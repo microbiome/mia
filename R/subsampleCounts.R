@@ -7,8 +7,9 @@
 #' @details
 #' Although the subsampling approach is highly debated in microbiome research, 
 #' we include the \code{subsampleCounts} function because there may be some 
-#' instances where it can be used. Note that the output of \code{subsampleCounts} 
-#' is not the same as input.
+#' instances where it can be useful.
+#' Note that the output of \code{subsampleCounts} is not the equivalent as the 
+#' input and any result have to be verified with the original dataset.
 #'
 #' @param x A
 #'   \code{SummarizedExperiment} object.
