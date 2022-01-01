@@ -52,8 +52,8 @@ A few example datasets are available via `mia`. For this vignette the
 
 ```{r}
 data(GlobalPatterns, package = "mia")
-se <- GlobalPatterns
-se
+tse <- GlobalPatterns
+tse
 ```
 
 # Functions for working with microbiome data
@@ -70,10 +70,10 @@ taxonomic levels. This can be used, for example, for subsetting.
 
 ```{r}
 # print the available taxonomic ranks
-colnames(rowData(se))
-taxonomyRanks(se)
+colnames(rowData(tse))
+taxonomyRanks(tse)
 # subset to taxonomic data only
-rowData(se)[,taxonomyRanks(se)]
+rowData(tse)[,taxonomyRanks(tse)]
 ```
 
 The columns are recognized case insensitive. Additional functions are 
@@ -81,8 +81,8 @@ available to check for validity of taxonomic information or generate labels
 based on the taxonomic information.
 
 ```{r}
-table(taxonomyRankEmpty(se, "Species"))
-head(getTaxonomyLabels(se))
+table(taxonomyRankEmpty(tse, "Species"))
+head(getTaxonomyLabels(tse))
 ```
 
 For more details see the man page `?taxonomyRanks`.
@@ -100,9 +100,9 @@ page via `?mergeRows`.
 
 ```{r}
 # agglomerate at the Family taxonomic rank
-x1 <- agglomerateByRank(se, rank = "Family")
+x1 <- agglomerateByRank(tse, rank = "Family")
 ## How many taxa before/after agglomeration?
-nrow(se)
+nrow(tse)
 nrow(x1)
 ```
 
@@ -111,7 +111,7 @@ by default.
 
 ```{r}
 # with agglomeration of the tree
-x2 <- agglomerateByRank(se, rank = "Family",
+x2 <- agglomerateByRank(tse, rank = "Family",
                         agglomerateTree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
@@ -133,7 +133,7 @@ experiment in the object of origin. With this synchronized sample subsetting
 becomes very easy.
 
 ```{r}
-altExp(se, "family") <- x2
+altExp(tse, "family") <- x2
 ```
 
 Keep in mind, that if you set `na.rm = TRUE`, rows with `NA` or similar value
@@ -141,10 +141,10 @@ Keep in mind, that if you set `na.rm = TRUE`, rows with `NA` or similar value
 settings different number of rows will be returned.
 
 ```{r}
-x1 <- agglomerateByRank(se, rank = "Species", na.rm = TRUE)
-altExp(se,"species") <- agglomerateByRank(se, rank = "Species", na.rm = FALSE)
+x1 <- agglomerateByRank(tse, rank = "Species", na.rm = TRUE)
+altExp(tse,"species") <- agglomerateByRank(tse, rank = "Species", na.rm = FALSE)
 dim(x1)
-dim(altExp(se,"species"))
+dim(altExp(tse,"species"))
 ```
 
 For convenience the function `splitByRanks` is available, which agglomerates
@@ -152,9 +152,9 @@ data on all `ranks` selected. By default all available ranks will be used.
 The output is compatible to be stored as alternative experiments.
 
 ```{r}
-altExps(se) <- splitByRanks(se)
-se
-altExpNames(se)
+altExps(tse) <- splitByRanks(tse)
+tse
+altExpNames(tse)
 ```
 
 ## Constructing a tree from taxonomic data
@@ -164,12 +164,12 @@ straightforward and uses mostly functions implemented in
 `TreeSummarizedExperiment`.
 
 ```{r}
-taxa <- rowData(altExp(se,"Species"))[,taxonomyRanks(se)]
+taxa <- rowData(altExp(tse,"Species"))[,taxonomyRanks(tse)]
 taxa_res <- resolveLoop(as.data.frame(taxa))
 taxa_tree <- toTree(data = taxa_res)
-taxa_tree$tip.label <- getTaxonomyLabels(altExp(se,"Species"))
-rowNodeLab <- getTaxonomyLabels(altExp(se,"Species"), make_unique = FALSE)
-altExp(se,"Species") <- changeTree(altExp(se,"Species"),
+taxa_tree$tip.label <- getTaxonomyLabels(altExp(tse,"Species"))
+rowNodeLab <- getTaxonomyLabels(altExp(tse,"Species"), make_unique = FALSE)
+altExp(tse,"Species") <- changeTree(altExp(tse,"Species"),
                                    rowTree = taxa_tree,
                                    rowNodeLab = rowNodeLab)
 ```
@@ -226,8 +226,8 @@ and results are stored automatically in `colData`. Selected indices can be
 calculated individually by setting `index = "shannon"` for example. 
 
 ```{r}
-se <- estimateDiversity(se)
-colnames(colData(se))[8:ncol(colData(se))]
+tse <- estimateDiversity(tse)
+colnames(colData(tse))[8:ncol(colData(tse))]
 ```
 
 Beta diversity indices are used to describe inter-sample connections. 
@@ -239,13 +239,13 @@ package using comparable inputs.
 
 ```{r}
 library(scater)
-altExp(se,"Genus") <- runMDS(altExp(se,"Genus"), 
-                             FUN = vegan::vegdist,
-                             method = "bray",
-                             name = "BrayCurtis", 
-                             ncomponents = 5, 
-                             exprs_values = "counts", 
-                             keep_dist = TRUE)
+altExp(tse,"Genus") <- runMDS(altExp(tse,"Genus"), 
+                              FUN = vegan::vegdist,
+                              method = "bray",
+                              name = "BrayCurtis", 
+                              ncomponents = 5, 
+                              exprs_values = "counts", 
+                              keep_dist = TRUE)
 ```
 
 JSD and UniFrac are implemented in `mia` as well. `calculateJSD` can be used
@@ -274,7 +274,7 @@ Functions to load data from `biom` files, `QIIME2` output, `DADA2` objects
 [@dada2] or `phyloseq` objects are available. 
 
 ```{r, message=FALSE, warning=FALSE}
-data(esophagus, package = "phyloseq")
+data("esophagus", package = "phyloseq")
 ```
 ```{r}
 esophagus
@@ -291,10 +291,10 @@ For more details have a look at the man page, for examples
 column-wise assay data subsetting.
 
 ```{r}
-abund <- getAbundanceSample(se, "CC1", abund_values = "counts")
-all(abund == assay(se, "counts")[,"CC1"])
-abund <- getAbundanceFeature(se, "522457", abund_values = "counts")
-all(abund == assay(se, "counts")["522457",])
+abund <- getAbundanceSample(tse, "CC1", abund_values = "counts")
+all(abund == assay(tse, "counts")[,"CC1"])
+abund <- getAbundanceFeature(tse, "522457", abund_values = "counts")
+all(abund == assay(tse, "counts")["522457",])
 ```
 
 ## Selecting most interesting features 
@@ -302,7 +302,8 @@ all(abund == assay(se, "counts")["522457",])
 `getTopTaxa` returns a vector of the most `top` abundant feature IDs.
 
 ```{r}
-top_taxa <- getTopTaxa(se,
+data("esophagus", package = "mia")
+top_taxa <- getTopTaxa(esophagus,
                        method = "mean",
                        top = 5,
                        abund_values = "counts")
@@ -315,7 +316,7 @@ To generate tidy data as used and required in most of the tidyverse,
 `meltAssay` can be used. A `data.frame` in the long format will be returned.
 
 ```{r}
-molten_data <- meltAssay(se,
+molten_data <- meltAssay(tse,
                          abund_values = "counts",
                          add_row_data = TRUE,
                          add_col_data = TRUE
