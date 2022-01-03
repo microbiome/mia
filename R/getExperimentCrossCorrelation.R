@@ -311,16 +311,6 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
            call. = FALSE)
     }
     ############################ INPUT CHECK END ###########################
-    # Make labels unique to avoid problems when mode == "matrix"
-    # (.correlation_table_to_matrix & dplyr::select)
-    if( mode == "matrix" ){
-      # Store original rownames
-      original_rownames1 <- rownames(tse1)
-      original_rownames2 <- rownames(tse2)
-      # Make rownames unique
-      rownames(tse1) <- make.unique(rownames(tse1))
-      rownames(tse2) <- make.unique(rownames(tse2))
-    }
     # Fetch assays to correlate
     assay1 <- assay(tse1, abund_values1)
     assay2 <- assay(tse2, abund_values2)
@@ -383,9 +373,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
             message("\nConverting table into matrices...")
         }
         # Create matrices
-        result <- .correlation_table_to_matrix(result)
-        # Adjust their row and column names
-        result <- .adjust_matrix_feature_names(result, original_rownames1, original_rownames2)
+        result <- .correlation_table_to_matrix(result, assay1,  assay2)
         # If sort was specified and there are more than 1 features
         if(sort && nrow(result$cor) > 1 && ncol(result$cor) > 1 ){
             if(verbose){
@@ -706,60 +694,63 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Output: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 #' @importFrom dplyr select
 #' @importFrom tidyr pivot_wider
-.correlation_table_to_matrix <- function(result){
+.correlation_table_to_matrix <- function(result, assay1, assay2){
+    # Store original names
+    assay1_names_original <- colnames(assay1)
+    assay2_names_original <- colnames(assay2)
+    # Create unique names to identify also equally named variables
+    assay1_names_unique <- make.unique(assay1_names_original)
+    assay2_names_unique <- make.unique(assay2_names_original)
+    # Assign unique names to result table
+    result$Var1 <- rep(assay1_names_unique, times = ncol(assay2))
+    result$Var2 <- rep(assay2_names_unique, each = ncol(assay1))
+    
     # Correlation matrix is done from Var1, Var2, and cor columns
     # Select correct columns
     cor <- result %>% dplyr::select("Var1", "Var2", "cor") %>% 
       # Create a tibble, colum names from Var2, values from cor,
       # first column includes Var1
-      tidyr::pivot_wider(names_from = "Var2", values_from = "cor") %>%
-      # Convert into data frame
-      as.data.frame()
-    # Give rownames and remove additional column
-    rownames(cor) <- cor$Var1
+      tidyr::pivot_wider(names_from = "Var2", values_from = "cor") 
+    # Remove an additional column
     cor$Var1 <- NULL
+    # Convert into matrix
     cor <- as.matrix(cor)
+    # Adjust rownames and colnames 
+    rownames(cor) <- assay1_names_original
+    colnames(cor) <- assay2_names_original
     # Create a result list
     result_list <- list(cor = cor)
     # If p_values exist, then create a matrix and add to the result list
     if( !is.null(result$pval) ){
         pval <- result %>% dplyr::select("Var1", "Var2", "pval") %>% 
-          tidyr::pivot_wider(names_from = "Var2", values_from = "pval") %>% 
-          as.data.frame()
-        rownames(pval) <- pval$Var1
+          tidyr::pivot_wider(names_from = "Var2", values_from = "pval")
+        # Remove an additional column
         pval$Var1 <- NULL
+        # Convert into matrix
+        pval <- as.matrix(pval)
+        # Adjust rownames and colnames
+        rownames(pval) <- assay1_names_original
+        colnames(pval) <- assay2_names_original
+        # Convert into matrix and add it to result list
         pval <- as.matrix(pval)
         result_list[["pval"]] <- pval
     } 
     # If adjusted p_values exist, then create a matrix and add to the result list
     if( !is.null(result$p_adj) ){
         p_adj <- result %>% dplyr::select("Var1", "Var2", "p_adj") %>% 
-          tidyr::pivot_wider(names_from = "Var2", values_from = "p_adj") %>% 
-          as.data.frame()
-        rownames(p_adj) <- p_adj$Var1
+          tidyr::pivot_wider(names_from = "Var2", values_from = "p_adj")
+        # Remove an additional column
         p_adj$Var1 <- NULL
+        # Convert into matrix
+        p_adj <- as.matrix(p_adj)
+        # Adjust rownames and colnames
+        rownames(p_adj) <- assay1_names_original
+        colnames(p_adj) <- assay2_names_original
+        # Convert into matrix and add it to result list
         p_adj <- as.matrix(p_adj)
         result_list[["p_adj"]] <- p_adj
     } 
     return(result_list)
-}
-
-########################## .adjust_matrix_feature_names #########################
-# This function converts rownames / feature names back to original names. 
-# To avoid problems with .correlation_table_to_matrix and dplyr::select, they were
-# converted unique in the beginning.
-
-# Input: Correlation matrices with unique rownames
-# Output: Correlation matrices with original rownames
-.adjust_matrix_feature_names <- function(corr_matrices, original_rownames1, original_rownames2){
-  corr_matrices <- lapply(corr_matrices, FUN = function(x){
-    # Change rownames
-    rownames(x) <- original_rownames1
-    # Change colnames
-    colnames(x) <- original_rownames2
-    return(x)
-  })
-  return(corr_matrices)
 }
 
 ############################### .calculate_gktau ###############################
