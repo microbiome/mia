@@ -16,7 +16,7 @@ getTopTaxa(
   top = 5L,
   method = c("mean", "sum", "median"),
   abund_values = "counts",
-  remove_na = TRUE,
+  na.rm = TRUE,
   ...
 )
 
@@ -25,7 +25,7 @@ getTopTaxa(
   top = 5L,
   method = c("mean", "sum", "median", "prevalence"),
   abund_values = "counts",
-  remove_na = TRUE,
+  na.rm = TRUE,
   ...
 )
 
@@ -53,7 +53,7 @@ median or prevalence. Default is 'mean'.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 By default it expects count data.}
 
-\item{remove_na}{For \code{getTopTaxa} logical argument for calculation method
+\item{na.rm}{For \code{getTopTaxa} logical argument for calculation method
 specified to argument \code{method}. Default is TRUE.}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
