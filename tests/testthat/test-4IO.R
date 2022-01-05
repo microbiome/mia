@@ -27,6 +27,10 @@ test_that("Importing phyloseq objects yield TreeSummarizedExperiment objects", {
     me <- makeTreeSummarizedExperimentFromPhyloseq(esophagus)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(58,3))
+    esophagus2 <- esophagus
+    phyloseq::otu_table(esophagus2) <- t(phyloseq::otu_table(esophagus))
+    me2 <- makeTreeSummarizedExperimentFromPhyloseq(esophagus2)
+    expect_equal(me, me2)
 })
 
 test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
