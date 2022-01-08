@@ -13,10 +13,7 @@
 #'   median or prevalence. Default is 'mean'.
 #'
 #' @param abund_values A \code{character} value to select an
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}} 
-#'   
-#' @param na.rm For \code{getTopTaxa} logical argument for calculation method 
-#'              specified to argument \code{method}. Default is TRUE. 
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 #'
 #' @param ... Additional arguments:
 #'    \itemize{
@@ -87,7 +84,7 @@ NULL
 #' @export
 setGeneric("getTopTaxa", signature = "x",
            function(x, top= 5L, method = c("mean","sum","median"),
-                    abund_values = "counts", na.rm = TRUE, ...)
+                    abund_values = "counts", ...)
                standardGeneric("getTopTaxa"))
 
 .check_max_taxa <- function(x, top, abund_values){
@@ -107,7 +104,7 @@ setGeneric("getTopTaxa", signature = "x",
 #' @export
 setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, top = 5L, method = c("mean","sum","median","prevalence"),
-             abund_values = "counts", na.rm = TRUE, ...){
+             abund_values = "counts", ...){
         # input check
         method <- match.arg(method, c("mean","sum","median","prevalence"))
         # check max taxa
@@ -120,9 +117,9 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
                                   include_lowest = TRUE)
         } else {
             taxs <- switch(method,
-                           mean = rowMeans2(assay(x, abund_values), na.rm = na.rm),
-                           sum = rowSums2(assay(x, abund_values), na.rm = na.rm),
-                           median = rowMedians(assay(x, abund_values)), na.rm = na.rm)
+                           mean = rowMeans2(assay(x, abund_values)),
+                           sum = rowSums2(assay(x, abund_values)),
+                           median = rowMedians(assay(x, abund_values)))
             names(taxs) <- rownames(assay(x))
             taxs <- sort(taxs,decreasing = TRUE)
         }
