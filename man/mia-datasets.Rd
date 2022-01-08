@@ -6,7 +6,6 @@
 \alias{GlobalPatterns}
 \alias{enterotype}
 \alias{esophagus}
-\alias{soilrep}
 \alias{dmn_se}
 \alias{dmn_se,}
 \alias{twins}
@@ -18,8 +17,6 @@ An object of class \code{TreeSummarizedExperiment} with 553 rows and 280 columns
 
 An object of class \code{TreeSummarizedExperiment} with 58 rows and 3 columns.
 
-An object of class \code{TreeSummarizedExperiment} with 16825 rows and 56 columns.
-
 An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
 }
 \usage{
@@ -29,13 +26,11 @@ data(enterotype)
 
 data(esophagus)
 
-data(soilrep)
-
 data(dmn_se)
 }
 \description{
 These datasets are conversions of the \pkg{phyloseq} datasets
-\code{GlobalPatterns}, \code{enterotype}, \code{esophagus} and \code{soilrep} into the
+\code{GlobalPatterns}, \code{enterotype}, and \code{esophagus} into the
 \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}
 data container.
 
@@ -65,12 +60,6 @@ The esophagus data set from Pei et al. (2004)
 includes 3 samples from 3 human adults based on biopsies analysed with 16S rDNA PCR.
 The 16S rRNA sequence processing has been provided in the mothur wiki
 at the link below.
-
-This data set compares 24 soil microbial communities under four treatments
-via multiplexed/barcoded 454-pyrosequencing of PCR-amplified 16S rRNA gene
-fragments. The data set was originally
-imported to from raw files supplied directly by the authors via personal
-communication for the inclusion as an example in \pkg{phyloseq} package.
 
 This data set from Turnbaugh et al. (2009) was used to introduce
 Dirichlet Multinomial Mixtures (DMM) for microbiota stratification by
@@ -104,12 +93,6 @@ and graphics of microbiome census data. PLoS ONE. 8(4):e61217.
 Mothur-processed files and the sequence data can be downloaded at:
 \url{http://www.mothur.org/wiki/Esophageal_community_analysis}
 
-Zhou, J., Wu, L., Deng, Y., Zhi, X., Jiang, Y.-H., Tu, Q.,
-Xie, J., et al.
-Reproducibility and quantitation of amplicon sequencing-based detection.
-The ISME Journal. (2011) 5(8):1303-1313. \code{doi:10.1038/ismej.2011.11}
-\url{http://www.nature.com/ismej/journal/v5/n8/full/ismej201111a.html}
-
 Holmes I, Harris K, Quince C (2012).
 Dirichlet Multinomial Mixtures: Generative Models for Microbial Metagenomics.
 PLoS ONE 7(2): e30126. \url{https://doi.org/10.1371/journal.pone.0030126}
@@ -124,8 +107,6 @@ Caporaso, J. G., et al.
 Arumugam, M., Raes, J., et al.
 
 Pei et al. \email{zhiheng.pei@med.nyu.edu}.
-
-Jizhong Zhou, et al.
 
 Turnbaugh, PJ et al.
 }

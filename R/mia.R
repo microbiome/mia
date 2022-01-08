@@ -24,7 +24,7 @@ NULL
 #'
 #' @description
 #' These datasets are conversions of the \pkg{phyloseq} datasets
-#' \code{GlobalPatterns}, \code{enterotype}, \code{esophagus} and \code{soilrep} into the
+#' \code{GlobalPatterns}, \code{enterotype}, and \code{esophagus} into the
 #' \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}
 #' data container.
 #'
@@ -110,27 +110,7 @@ NULL
 #' Mothur-processed files and the sequence data can be downloaded at:
 #' \url{http://www.mothur.org/wiki/Esophageal_community_analysis}
 "esophagus"
-
-#' Reproducibility of soil microbiome data (2011)
 #'
-#' This data set compares 24 soil microbial communities under four treatments
-#' via multiplexed/barcoded 454-pyrosequencing of PCR-amplified 16S rRNA gene
-#' fragments. The data set was originally
-#' imported to from raw files supplied directly by the authors via personal
-#' communication for the inclusion as an example in \pkg{phyloseq} package.
-#'
-#' @name mia-datasets
-#' @aliases soilrep
-#' @keywords data
-#' @usage data(soilrep)
-#' @author Jizhong Zhou, et al.
-#' @docType data
-#' @references Zhou, J., Wu, L., Deng, Y., Zhi, X., Jiang, Y.-H., Tu, Q.,
-#' Xie, J., et al. 
-#' Reproducibility and quantitation of amplicon sequencing-based detection. 
-#' The ISME Journal. (2011) 5(8):1303-1313. \code{doi:10.1038/ismej.2011.11}
-#' \url{http://www.nature.com/ismej/journal/v5/n8/full/ismej201111a.html}
-"soilrep"
 
 #' Twins data set for Dirichlet Multinomial Mixtures (DMM)
 #'
