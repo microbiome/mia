@@ -605,6 +605,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 
 # Input: assays
 # Output: correlation table
+#' @importFrom stats cor 
 .calculate_stats_cor <- function(assay1, assay2, method, feature_pairs, show_warnings){
     # If user does not want warnings, 
     # suppress warnings that might occur when calculating correlaitons (NAs...)
@@ -634,7 +635,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 
 # Input: Vector of names that belong to feature pair, and assays.
 # Output: Correlation value or list that includes correlation value and p-value.
-#' @importFrom stats cor.test cor 
+#' @importFrom stats cor.test
 .calculate_association_for_numeric_values <- function(feature_pair, test_significance, 
                                                       assay1, assay2, method, show_warnings,
                                                       ...){
@@ -707,7 +708,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 
 # Input: Vector of names that belong to feature pair, and assays.
 # Output: Correlation value or list that includes correlation value and p-value.
-#' @importFrom stats cor.test cor 
 .calculate_association_with_own_function <- function(feature_pair,
                                          assay1, assay2, 
                                          association_FUN, 
