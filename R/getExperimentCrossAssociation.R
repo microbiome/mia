@@ -645,7 +645,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                                   correlations_and_p_values, 
                                                   by = c("Var1_sorted", "Var2_sorted"))
     # Drop additional columns
-    correlations_and_p_values <- correlations_and_p_values[ colnames(correlations_and_p_values) %in% 
+    correlations_and_p_values <- correlations_and_p_values[ !colnames(correlations_and_p_values) %in% 
                                                               c("Var1_sorted", "Var2_sorted", 
                                                                 "Var1_", "Var2_")]
     return(correlations_and_p_values)
