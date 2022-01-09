@@ -170,6 +170,7 @@ head(result, 5)
 result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
                                         mode = "matrix", test_significance = TRUE,
                                         show_warnings = FALSE)
+                                        
 # Returned value is a list of matrices
 names(result)
 

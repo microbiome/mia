@@ -67,8 +67,9 @@ sample has same number of total observations/counts/reads.
 \details{
 Although the subsampling approach is highly debated in microbiome research,
 we include the \code{subsampleCounts} function because there may be some
-instances where it can be used. Note that the output of \code{subsampleCounts}
-is not the same as input.
+instances where it can be useful.
+Note that the output of \code{subsampleCounts} is not the equivalent as the
+input and any result have to be verified with the original dataset.
 }
 \examples{
 # When samples in TreeSE are less than specified min_size, they will be removed.
