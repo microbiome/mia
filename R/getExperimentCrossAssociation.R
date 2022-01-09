@@ -484,11 +484,11 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     if( is.null(association_FUN) ){
         method <- match.arg(method)
         # Get function name for message
-        function_name <- ifelse(method == "categorical", "mia:::.calculate_gktau()", 
-                                ifelse(test_significance, "stats::cor.test()", "stats::cor()"))
+        function_name <- ifelse(method == "categorical", "mia:::.calculate_gktau", 
+                                ifelse(test_significance, "stats::cor.test", "stats::cor"))
     } else{
         # Get name of function
-        function_name <- deparse(substitute(association_FUN()))
+        function_name <- deparse(substitute(association_FUN))
         test_significance <- FALSE
         p_adj_method <- NULL
     }
@@ -523,33 +523,26 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     }
     
-    # Calculate correlations
-    correlations_and_p_values <- apply(feature_pairs, 1, 
-                                       FUN = FUN_, 
-                                       test_significance = test_significance, 
-                                       assay1 = assay1, 
-                                       assay2 = assay2,
-                                       method = method,
-                                       show_warnings = show_warnings, 
-                                       association_FUN = association_FUN, 
-                                       ...)
-    
-    # Convert into data.frame if it is vector, 
-    # otherwise transpose into the same orientation as feature-pairs if it's not a vector
-    if( is.vector(correlations_and_p_values) ){
-        correlations_and_p_values <- data.frame(correlations_and_p_values)
+    # If function is stats::cor, then calculate associations directly with matrices
+    # Otherwise, loop through feature_pairs
+    if( function_name == "stats::cor" ){
+        correlations_and_p_values <- .calculate_stats_cor(assay1 = assay1,
+                                                          assay2 = assay2,
+                                                          method = method,
+                                                          feature_pairs = feature_pairs,
+                                                          show_warnings = show_warnings)
     } else{
-        correlations_and_p_values  <- t(correlations_and_p_values)
+        correlations_and_p_values <- .calculate_association_table(feature_pairs = feature_pairs,
+                                                                  FUN_ = FUN_, 
+                                                                  test_significance = test_significance, 
+                                                                  assay1 = assay1, 
+                                                                  assay2 = assay2,
+                                                                  method = method,
+                                                                  show_warnings = show_warnings, 
+                                                                  association_FUN = association_FUN, 
+                                                                  ...)
     }
-    # Give names
-    if( ncol(correlations_and_p_values) == 1 ){
-        colnames(correlations_and_p_values) <- c("cor")
-    }
-    else if( ncol(correlations_and_p_values) == 2 ){
-        colnames(correlations_and_p_values) <- c("cor", "pval")
-    }
-    # Combine feature-pair names with correlation values and p-values
-    correlations_and_p_values <- cbind(feature_pairs, correlations_and_p_values)
+    
     # If there are p_values, adjust them
     if( !is.null(correlations_and_p_values$pval) ){
         correlations_and_p_values$p_adj <- 
@@ -557,6 +550,82 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                      method = p_adj_method)
     }
     return(correlations_and_p_values)
+}
+
+######################### .calculate_association_table #########################
+# This function calculates association by looping through feature/sample-pairs.
+
+# Input: feature/sample_pairs, and assays
+# Output: correlation table with variable names in Var1 and Var2, and correlation 
+# values in cor. Additionally, table can also include pval for p-values.
+.calculate_association_table <- function(feature_pairs,
+                                         FUN_, 
+                                         test_significance, 
+                                         assay1, 
+                                         assay2,
+                                         method,
+                                         show_warnings, 
+                                         association_FUN, 
+                                         ...){
+  
+  # Calculate correlations
+  correlations_and_p_values <- apply(feature_pairs, 1, 
+                                     FUN = FUN_, 
+                                     test_significance = test_significance, 
+                                     assay1 = assay1, 
+                                     assay2 = assay2,
+                                     method = method,
+                                     show_warnings = show_warnings, 
+                                     association_FUN = association_FUN, 
+                                     ...)
+  
+    # Convert into data.frame if it is vector, 
+    # otherwise transpose into the same orientation as feature-pairs if it's not a vector
+    if( is.vector(correlations_and_p_values) ){
+      correlations_and_p_values <- data.frame(correlations_and_p_values)
+    } else{
+      correlations_and_p_values  <- t(correlations_and_p_values)
+    }
+    # Give names
+    if( ncol(correlations_and_p_values) == 1 ){
+      colnames(correlations_and_p_values) <- c("cor")
+    }
+    else if( ncol(correlations_and_p_values) == 2 ){
+      colnames(correlations_and_p_values) <- c("cor", "pval")
+    }
+    # Combine feature-pair names with correlation values and p-values
+    correlations_and_p_values <- cbind(feature_pairs, correlations_and_p_values)
+    return(correlations_and_p_values)
+  
+}
+
+############################# .calculate_stats_cor #############################
+# This function calculates correlations with stats::cor. Compared to other functions,
+# it can take whole matrices as an input.
+
+# Input: assays
+# Output: correlation table
+.calculate_stats_cor <- function(assay1, assay2, method, feature_pairs, show_warnings){
+    # If user does not want warnings, 
+    # suppress warnings that might occur when calculating correlaitons (NAs...)
+    # or p-values (ties, and exact p-values cannot be calculated...)
+    if( show_warnings ){
+      correlations <- stats::cor(assay1, assay2, 
+                                              method = method,
+                                              use = "pairwise.complete.obs")
+    } else{
+      correlations <- suppressWarnings(stats::cor(assay1, assay2, 
+                                                               method = method,
+                                                               use = "pairwise.complete.obs") )
+    }
+    # melt matrices into long format, so that it match with output of other functions
+    correlations <- reshape2::melt(correlations)
+    # Adjust names
+    colnames(correlations) <- c("Var1", "Var2", "cor")
+    # Adjust order or drop pairs, e.g., if only paired samples were wanted
+    correlations <- correlations[ correlations$Var1 == feature_pairs[, 1] & 
+                                    correlations$Var2 == feature_pairs[, 2], ]
+    return(correlations)
 }
 
 ################### .calculate_association_for_numeric_values ##################
@@ -572,42 +641,26 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Get features
     feature1 <- assay1[ , feature_pair[1]]
     feature2 <- assay2[ , feature_pair[2]]
-    # Whether to test significance
-    if( test_significance ){
-        # Calculate correlation
-        # If user does not want warnings, 
-        # suppress warnings that might occur when calculating correlaitons (NAs...)
-        # or p-values (ties, and exact p-values cannot be calculated...)
-        if( show_warnings ){
-            temp <- cor.test(feature1,
-                                feature2, 
-                                method = method,
-                                use = "pairwise.complete.obs")
-        } else {
-            temp <- suppressWarnings( cor.test(feature1,
-                                                feature2, 
-                                                method = method,
-                                                use = "pairwise.complete.obs") )
-        }
-        
-        # Take only correlation and p-value
-        temp <- c(temp$estimate, temp$p.value)
-    } else{
-        # Calculate only correlation value
-        # If user does not want warnings, 
-        # suppress warnings that might occur when there are NAs in the data
-        if( show_warnings ){
-          temp <- cor(feature1,
-                      feature2, 
-                      method = method,
-                      use = "pairwise.complete.obs")
-        } else {
-          temp <- suppressWarnings( cor(feature1,
-                                          feature2, 
-                                          method = method,
-                                          use = "pairwise.complete.obs") )
-        }
+
+    # Calculate correlation
+    # If user does not want warnings, 
+    # suppress warnings that might occur when calculating correlaitons (NAs...)
+    # or p-values (ties, and exact p-values cannot be calculated...)
+    if( show_warnings ){
+        temp <- cor.test(feature1,
+                            feature2, 
+                            method = method,
+                            use = "pairwise.complete.obs")
+    } else {
+        temp <- suppressWarnings( cor.test(feature1,
+                                            feature2, 
+                                            method = method,
+                                            use = "pairwise.complete.obs") )
     }
+    
+    # Take only correlation and p-value
+    temp <- c(temp$estimate, temp$p.value)
+
     return(temp)
 }
 
