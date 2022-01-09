@@ -519,21 +519,21 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Get all the sample/feature pairs
     if( paired ){
         .check_if_paired_samples(assay1, assay2)
-        feature_pairs <- data.frame(Var1 = colnames(assay1), Var2 = colnames(assay2))
+        variable_pairs <- data.frame(Var1 = colnames(assay1), Var2 = colnames(assay2))
     } else{
-        feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
+        variable_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     }
     
     # If function is stats::cor, then calculate associations directly with matrices
-    # Otherwise, loop through feature_pairs
+    # Otherwise, loop through variable_pairs
     if( function_name == "stats::cor" ){
         correlations_and_p_values <- .calculate_stats_cor(assay1 = assay1,
                                                           assay2 = assay2,
                                                           method = method,
-                                                          feature_pairs = feature_pairs,
+                                                          variable_pairs = variable_pairs,
                                                           show_warnings = show_warnings)
     } else{
-        correlations_and_p_values <- .calculate_association_table(feature_pairs = feature_pairs,
+        correlations_and_p_values <- .calculate_association_table(variable_pairs = variable_pairs,
                                                                   FUN_ = FUN_, 
                                                                   test_significance = test_significance, 
                                                                   assay1 = assay1, 
@@ -553,13 +553,45 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     return(correlations_and_p_values)
 }
 
+######################### .sort_variable_pairs_row_wise ########################
+# This function adds two columns to variable pair data.frame. This function
+# sorts each variable pair in alphabetical order. First additional column includes
+# first variable, and second second variable from variable pair.
+
+# Input: variable pair data.frame
+# Output: varianle pair data.frame with two additiona columns
+
+#' @importFrom reshape2 melt dcast
+.sort_variable_pairs_row_wise <- function(variable_pairs){
+  
+  variable_pairs_sorted <- variable_pairs
+  # Create column that tells in which feature/sample pair variable is
+  variable_pairs_sorted$ID <- 1:nrow(variable_pairs_sorted)
+  # Convert into longer format so that one column have all variable names
+  variable_pairs_sorted <- variable_pairs_sorted %>% reshape2::melt(id.vars = "ID")
+  # Order based on ID (variable pair number) and value (alphabetical order of variable name)
+  variable_pairs_sorted <- variable_pairs_sorted[order(variable_pairs_sorted$ID , variable_pairs_sorted$value), ]
+  # First member of each variable pair is Var1 and second is Var2
+  variable_pairs_sorted$variable <- paste0("Var", rep(c(1,2), times = nrow(variable_pairs_sorted)/2) )
+  # Convert into wider format. Now table have own columns for each variable name and
+  # variable names are in right order.
+  variable_pairs_sorted  <- variable_pairs_sorted %>% reshape2::dcast(ID ~ variable, value.var = "value")
+  # Take only columns that include variable names
+  variable_pairs_sorted  <- variable_pairs_sorted[ , colnames(variable_pairs_sorted) %in%  c("Var1", "Var2") ]
+  # Add new colnames
+  colnames(variable_pairs_sorted) <- c("Var1_sorted", "Var2_sorted")
+  # Add sorted feature pairs to original
+  variable_pairs <- cbind(variable_pairs, variable_pairs_sorted)
+  return(variable_pairs)
+}
 ######################### .calculate_association_table #########################
 # This function calculates association by looping through feature/sample-pairs.
 
 # Input: feature/sample_pairs, and assays
 # Output: correlation table with variable names in Var1 and Var2, and correlation 
 # values in cor. Additionally, table can also include pval for p-values.
-.calculate_association_table <- function(feature_pairs,
+#' @importFrom dplyr filter left_join
+.calculate_association_table <- function(variable_pairs,
                                          FUN_, 
                                          test_significance, 
                                          assay1, 
@@ -568,17 +600,25 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                          show_warnings, 
                                          association_FUN, 
                                          ...){
+    # Unfactor so that filter works correctly
+    variable_pairs$Var1 <- unfactor(variable_pairs$Var1)
+    variable_pairs$Var2 <- unfactor(variable_pairs$Var2)
+    # Sort features row-wise
+    variable_pairs <- .sort_variable_pairs_row_wise(variable_pairs)
+    # Get unique feature/sample pairs
+    variable_pairs_unique <- variable_pairs %>% 
+      dplyr::filter(Var1 > Var2 | Var1 == Var2)
   
-  # Calculate correlations
-  correlations_and_p_values <- apply(feature_pairs, 1, 
-                                     FUN = FUN_, 
-                                     test_significance = test_significance, 
-                                     assay1 = assay1, 
-                                     assay2 = assay2,
-                                     method = method,
-                                     show_warnings = show_warnings, 
-                                     association_FUN = association_FUN, 
-                                     ...)
+    # Calculate correlations
+    correlations_and_p_values <- apply(variable_pairs_unique, 1, 
+                                       FUN = FUN_, 
+                                       test_significance = test_significance, 
+                                       assay1 = assay1, 
+                                       assay2 = assay2,
+                                       method = method,
+                                       show_warnings = show_warnings, 
+                                       association_FUN = association_FUN, 
+                                       ...)
   
     # Convert into data.frame if it is vector, 
     # otherwise transpose into the same orientation as feature-pairs if it's not a vector
@@ -594,10 +634,21 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     else if( ncol(correlations_and_p_values) == 2 ){
       colnames(correlations_and_p_values) <- c("cor", "pval")
     }
+    # Change names so that they are not equal to colnames of variable_pairs
+    colnames(variable_pairs_unique)[1:2] <- c("Var1_", "Var2_")
     # Combine feature-pair names with correlation values and p-values
-    correlations_and_p_values <- cbind(feature_pairs, correlations_and_p_values)
+    correlations_and_p_values <- cbind(variable_pairs_unique, correlations_and_p_values)
+    
+    # Combine two tables so that values are assigned to larger table with all the 
+    # variable pairs
+    correlations_and_p_values <- dplyr::left_join(variable_pairs, 
+                                                  correlations_and_p_values, 
+                                                  by = c("Var1_sorted", "Var2_sorted"))
+    # Drop additional columns
+    correlations_and_p_values <- correlations_and_p_values[ colnames(correlations_and_p_values) %in% 
+                                                              c("Var1_sorted", "Var2_sorted", 
+                                                                "Var1_", "Var2_")]
     return(correlations_and_p_values)
-  
 }
 
 ############################# .calculate_stats_cor #############################
@@ -607,7 +658,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Input: assays
 # Output: correlation table
 #' @importFrom stats cor 
-.calculate_stats_cor <- function(assay1, assay2, method, feature_pairs, show_warnings){
+.calculate_stats_cor <- function(assay1, assay2, method, variable_pairs, show_warnings){
     # If user does not want warnings, 
     # suppress warnings that might occur when calculating correlaitons (NAs...)
     # or p-values (ties, and exact p-values cannot be calculated...)
@@ -625,8 +676,8 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Adjust names
     colnames(correlations) <- c("Var1", "Var2", "cor")
     # Adjust order or drop pairs, e.g., if only paired samples were wanted
-    correlations <- correlations[ correlations$Var1 == feature_pairs[, 1] & 
-                                    correlations$Var2 == feature_pairs[, 2], ]
+    correlations <- correlations[ correlations$Var1 == variable_pairs[, 1] & 
+                                    correlations$Var2 == variable_pairs[, 2], ]
     return(correlations)
 }
 
