@@ -23,27 +23,112 @@ NULL
 #' @title mia datasets
 #'
 #' @description
-#' These datasets are conversions of the phyloseq datasets \code{GlobalPatterns}
-#' \code{enterotype}, \code{esophagus} and \code{soilrep}.
+#' These datasets are conversions of the \pkg{phyloseq} datasets
+#' \code{GlobalPatterns}, \code{enterotype}, and \code{esophagus} into the
+#' \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}
+#' data container.
 #'
 #' \code{dmn_se} contains an example \code{SummarizedExperiment} derived
-#' from data in the \code{DirichletMultinomal} package. See \code{?calculateDMN}
-#' for more details.
+#' from data in the \pkg{DirichletMultinomial} package. See
+#' \code{?calculateDMN} for more details.
+#'
+
+#' Global patterns of 16S rRNA diversity at a depth of millions of sequences per sample (2011)
+#'
+#' This work compared the microbial communities from 25 environmental samples and three known ``mock communities''
+#' at a an averag depth of 3.1 million reads per sample.
+#' Authors reproduced diversity patterns seen in many other 
+#' published studies, while invesitigating technical issues/bias by 
+#' applying the same techniques to simulated microbial communities of known
+#' composition. Many thanks to J. Gregory Caporaso for providing the OTU-clustered data files
+#' for inclusion in the \pkg{phyloseq} package, from which this data \code{TreeSummarizedExperiment}
+#' version was then converted.
 #'
 #' @name mia-datasets
-#' @docType data
-#' @keywords datasets
+#' @aliases GlobalPatterns
+#' @keywords data
 #' @usage data(GlobalPatterns)
+#' @author Caporaso, J. G., et al.
+#' @docType data
+#' @references
+#' Caporaso, J. G., et al. (2011). 
+#' Global patterns of 16S rRNA diversity at a depth of millions of sequences per sample.
+#' PNAS, 108, 4516-4522.
+#' \url{http://www.pnas.org/content/108/suppl.1/4516.short}
 "GlobalPatterns"
+
+#' Enterotype data
+#'
+#' The enterotype data of the human gut microbiome (Arumugam et al. 2011) includes
+#' taxonomic profiling for 280 fecal samples from 22 subjects based on shotgun DNA sequencing.
+#' The authors claimed that the data naturally clumps into three community-level clusters, or
+#' ``enterotypes'', that are not immediately explained by sequencing technology or demographic 
+#' features of the subjects. A later addendum (2014) the authors stated that enterotypes
+#' "should not be seen as discrete clusters, but as a way of stratifying samples to reduce complexity."
+#'
 #' @name mia-datasets
+#' @aliases enterotype
+#' @keywords data
 #' @usage data(enterotype)
+#' @author Arumugam, M., Raes, J., et al.
+#' @docType data
+#' @references
+#' Arumugam, M., et al. (2011). Enterotypes of the human gut microbiome.
+#' Nature, 473(7346), 174-180.
+#' \url{http://www.nature.com/doifinder/10.1038/nature09944}
+#' Supplemental information includes subject data. 
+#' OTU-clustered data was initially downloaded from the publicly-accessible:
+#' \url{http://www.bork.embl.de/Docu/Arumugam_et_al_2011/downloads.html}
+#'
+#' Arumugam, M., et al. (2014). Addendum: Enterotypes of the human gut microbiome.
+#' Nature 506, 516 (2014). \url{https://doi.org/10.1038/nature13075}
 "enterotype"
+
+#' Small example dataset from a human esophageal community
+#' 
+#' The esophagus data set from Pei et al. (2004)
+#' includes 3 samples from 3 human adults based on biopsies analysed with 16S rDNA PCR.
+#' The 16S rRNA sequence processing has been provided in the mothur wiki
+#' at the link below. 
+#'
 #' @name mia-datasets
+#' @aliases esophagus
+#' @keywords data
 #' @usage data(esophagus)
+#' @author Pei et al. \email{zhiheng.pei@@med.nyu.edu}.
+#' @docType data
+#' @references 
+#' Pei, Z., Bini, E. J., Yang, L., Zhou, M., Francois, F., & Blaser, M. J. (2004). 
+#' Bacterial biota in the human distal esophagus.
+#' Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4250-4255.
+#' \url{http://www.ncbi.nlm.nih.gov/pmc/articles/PMC384727}
+#'
+#' McMurdie, J. & Holmes, S. (2013) \emph{phyloseq}: An R Package for reproducible interactive analysis
+#' and graphics of microbiome census data. PLoS ONE. 8(4):e61217.
+#' \url{https://doi.org/10.1371/journal.pone.0061217}
+#'
+#' Mothur-processed files and the sequence data can be downloaded at:
+#' \url{http://www.mothur.org/wiki/Esophageal_community_analysis}
 "esophagus"
+#'
+
+#' Twins data set for Dirichlet Multinomial Mixtures (DMM)
+#'
+#' This data set from Turnbaugh et al. (2009) was used to introduce
+#' Dirichlet Multinomial Mixtures (DMM) for microbiota stratification by
+#' Holmes et al. (2012).
+#' 
 #' @name mia-datasets
-#' @usage data(soilrep)
-"soilrep"
-#' @name mia-datasets
+#' @aliases dmn_se, twins
+#' @keywords data
 #' @usage data(dmn_se)
+#' @author Turnbaugh, PJ et al.
+#' @references
+#' Holmes I, Harris K, Quince C (2012).
+#' Dirichlet Multinomial Mixtures: Generative Models for Microbial Metagenomics.
+#' PLoS ONE 7(2): e30126. \url{https://doi.org/10.1371/journal.pone.0030126}
+#'
+#' Turnbaugh PJ, Hamady M, Yatsunenko T, Cantarel BL, Duncan A, et al. (2009).
+#' A core gut microbiome in obese and lean twins. Nature 457: 480–484. 
+#' \url{https://doi.org/10.1038/nature07540}
 "dmn_se"
