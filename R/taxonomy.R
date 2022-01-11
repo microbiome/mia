@@ -27,6 +27,14 @@
 #' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 #'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
 #'
+#' \code{mapTaxonomy} maps the given features (taxonomic groups; \code{taxa})
+#'   to the specified taxonomic level (\code{to} argument) in \code{rowData}
+#'   of the \code{SummarizedExperiment} data object
+#'   (i.e. \code{rowData(x)[,taxonomyRanks(x)]}). If the argument \code{to} is
+#'   not provided, then all matching taxonomy rows in \code{rowData} will be
+#'   returned. This function allows handy conversions between different
+#    taxonomic levels.
+#'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
