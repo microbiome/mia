@@ -196,7 +196,7 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
                      call. = FALSE)
             }
         }
-        # Adds dominant taxas to colData
+        # Adds dominant taxa to colData
         dominant_taxa <- perSampleDominantTaxa(x, ...)
         data <- colData(x)
         
