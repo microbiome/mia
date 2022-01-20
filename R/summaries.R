@@ -199,6 +199,21 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
         # Adds dominant taxas to colData
         dominant_taxa <- perSampleDominantTaxa(x, ...)
         data <- colData(x)
+        
+        # If the length of dominant taxa is not equal to number of rows, then add rows
+        # because there are multiple dominan taxa
+        if(length(dominant_taxa) > nrow(data) ){
+            # Get the order
+            order <- unique(names(dominant_taxa))
+            # there are multiple dominant taxa in one sample (counts are equal), length
+            # of dominant is greater than rows in colData. --> create a list that contain
+            # dominant taxa, and is as long as there are rows in colData
+            dominant_taxa_list <- split(dominant_taxa, rep(names(dominant_taxa), lengths(dominant_taxa)) )
+            # Order the data
+            dominant_taxa_list <- dominant_taxa_list[order]
+            data <- data[rep(seq_len(nrow(data)), lengths(dominant_taxa_list)), ]
+        }
+        # Add dominant taxa to data
         data$dominant_taxa <- dominant_taxa
         # Gets an overview
         .tally_col_data(data, group, name = "dominant_taxa")
@@ -210,17 +225,33 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
 #' @importFrom S4Vectors as.data.frame
 #' @importFrom dplyr n desc tally group_by arrange mutate
 .tally_col_data <- function(data, group, name){
+    # Convert data to data.frame
+    data <- as.data.frame(data)
+    
+    # 
+    # # If there are multiple dominant taxa in one sample, the column is a list.
+    # # Convert it so that there are multiple rows for sample and each row contains
+    # # one dominant taxa.
+    # if( is.list(data[[name]]) ){
+    #     # Get dominant taxa as a vector
+    #     dominant_taxa <- unlist(data[[name]])
+    #     # Create additional rows
+    #     data <- data[rep(seq_len(nrow(data)), lengths(data[[name]])), ]
+    #     # Add dominant taxa
+    #     data[[name]] <- dominant_taxa
+    # }
+    
     # Creates a tibble that contains number of times that a column of "name"
     # is present in samples and relative portion of samples where they
     # present.
     if (is.null(group)) {
         name <- sym(name)
-        data <- as.data.frame(data) %>%
+        data <- data %>%
             group_by(!!name)
     } else {
         group <- sym(group)
         name <- sym(name)
-        data <- as.data.frame(data) %>%
+        data <- data %>%
             group_by(!!group, !!name)
     }
     tallied_data <- data %>%
