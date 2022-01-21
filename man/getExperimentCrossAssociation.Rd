@@ -93,7 +93,7 @@ p-values. Passed to \code{p.adjust} function.
 adjusted p-value threshold for filtering.
 (By default: \code{p_adj_threshold = NULL})}
 
-\item{cor_threshold}{A single numeric absolute value (from 0 to 1]) for selecting
+\item{cor_threshold}{A single numeric absolute value (from 0 to 1) for selecting
 correlation threshold for filtering.
 (By default: \code{cor_threshold = NULL})}
 

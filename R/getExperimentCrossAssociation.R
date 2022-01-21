@@ -43,7 +43,7 @@
 #'    adjusted p-value threshold for filtering. 
 #'    (By default: \code{p_adj_threshold = NULL})
 #' 
-#' @param cor_threshold A single numeric absolute value (from 0 to 1]) for selecting 
+#' @param cor_threshold A single numeric absolute value (from 0 to 1) for selecting 
 #'    correlation threshold for filtering.
 #'    (By default: \code{cor_threshold = NULL})
 #' 
@@ -559,7 +559,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # first variable, and second second variable from variable pair.
 
 # Input: variable pair data.frame
-# Output: varianle pair data.frame with two additiona columns
+# Output: variable pair data.frame with two additional columns
 
 #' @importFrom reshape2 melt dcast
 .sort_variable_pairs_row_wise <- function(variable_pairs){
