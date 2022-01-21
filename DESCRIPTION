@@ -62,7 +62,8 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr
+    tidyr,
+    reshape2
 Suggests:
     testthat,
     knitr,
