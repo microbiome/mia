@@ -658,6 +658,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Input: assays
 # Output: correlation table
 #' @importFrom stats cor 
+#' @importFrom reshape2 melt
 .calculate_stats_cor <- function(assay1, assay2, method, variable_pairs, show_warnings){
     # If user does not want warnings, 
     # suppress warnings that might occur when calculating correlaitons (NAs...)
