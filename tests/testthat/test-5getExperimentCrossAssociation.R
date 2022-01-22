@@ -228,7 +228,8 @@ test_that("getExperimentCrossAssociation", {
     p_adj_compare <- c(0.001247967, 0.784472862, 0.785332288, 0.830362548, 
                        0.836148425, 0.856762552, 0.859203260, 0.938444366, 0.942610008)
     # Calculate correlation
-    cor <- testExperimentCrossAssociation(mae, method = "pearson", p_adj_threshold = NULL)
+    cor <- testExperimentCrossAssociation(mae, method = "pearson", 
+                                          p_adj_threshold = NULL, show_warnings = F)
     # Take only specific taxa and lipids
     df <- cor[cor$Var1 %in% c("Fusobacteria", "Campylobacter", "Actinomycetaceae") & 
                  cor$Var2 %in% c("PE(48:7)", "TG(50:0)", "SM(d18:1/18:0)"), ]
@@ -259,27 +260,66 @@ test_that("getExperimentCrossAssociation", {
     # Values should be the same
     expect_equal(round(result, 4), round(ref, 4))
     
-    mae <- mae[1:10, 1:10]
+    mae_sub <- mae[1:10, 1:10]
     # Test that output is in correct type
     expect_true( is.data.frame(suppressWarnings(
-        testExperimentCrossAssociation(mae, p_adj_threshold = NULL))) )
+        testExperimentCrossAssociation(mae_sub, p_adj_threshold = NULL))) )
     expect_true( is.data.frame(suppressWarnings(
-        getExperimentCrossAssociation(mae, test_significance = TRUE, p_adj_threshold = NULL))) )
-    expect_true( is.data.frame(getExperimentCrossAssociation(mae)) )
+        getExperimentCrossAssociation(mae_sub, test_significance = TRUE, p_adj_threshold = NULL))) )
+    expect_true( is.data.frame(getExperimentCrossAssociation(mae_sub, show_warnings = F)) )
     # There should not be any p-values that are under 0
     expect_true( is.null(suppressWarnings(
-        testExperimentCrossAssociation(mae, p_adj_threshold = 0))) )
+        testExperimentCrossAssociation(mae_sub, p_adj_threshold = 0))) )
     # Test that output is in correct type
     expect_true( is.list(suppressWarnings(
-        testExperimentCrossAssociation(mae, mode = "matrix", 
+        testExperimentCrossAssociation(mae_sub, mode = "matrix", 
                                           p_adj_threshold = NULL))) )
     expect_true( is.list(suppressWarnings(
-        getExperimentCrossAssociation(mae, test_significance = TRUE, 
+        getExperimentCrossAssociation(mae_sub, test_significance = TRUE, 
                                       mode = "matrix", p_adj_threshold = NULL))) )
-    expect_true( is.matrix(getExperimentCrossAssociation(mae, mode = "matrix")) )
-    # There should not be any p-values that are under 0
-    expect_true( is.null(suppressWarnings(
-        testExperimentCrossAssociation(mae, p_adj_threshold = 0, mode = "matrix"))) )
+    expect_true( is.matrix(getExperimentCrossAssociation(mae_sub, mode = "matrix", 
+                                                         show_warnings = F)) )
     
+    # There should not be any p-values that are under 0
+    expect_true( is.null(
+        testExperimentCrossAssociation(mae_sub, p_adj_threshold = 0, mode = "matrix", show_warnings = FALSE)) )
+    
+    # When correlation between same assay is calculated, calculation is made faster
+    # by not calculating duplicates
+    cor <-  testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
+                                           show_warnings = F)
+    # Get random variables and test that their duplicates are equal
+    for(i in 1:10 ){
+        random_var1 <- sample(cor$Var1, 1)
+        random_var2 <- sample(cor$Var1, 1)
+        expect_equal(as.numeric(cor[cor$Var1 == random_var1 & cor$Var2 == random_var2, c("cor", "pval", "p_adj")]),
+                     as.numeric(cor[cor$Var1 == random_var2 & cor$Var2 == random_var1, c("cor", "pval", "p_adj")]))
+    }
+    # Test that paired samples work correctly
+    tse1 <- mae[[1]]
+    tse2 <- mae[[1]]
+    # Convert assay to have random values
+    mat <- matrix(sample(0:100, nrow(tse2)*ncol(tse2), replace = T), 
+                  nrow = nrow(tse2), ncol = ncol(tse2))
+    colnames(mat) <- colnames(tse2)
+    rownames(mat) <- rownames(tse2)
+    assay(tse2) <- mat
+    # Calculate with paired samples
+    cor_paired <- testExperimentCrossAssociation(tse1,
+                                                 experiment2 = tse2,  
+                                                 paired = T, 
+                                                 direction = "col", 
+                                                 show_warnings = F)
+    # Calculate all pairs
+    cor <- testExperimentCrossAssociation(tse1,
+                                          experiment2 = tse2,  
+                                          direction = "col", 
+                                          show_warnings = F)
+    # Take only pairs that are paired
+    cor <- cor[cor$Var1 == cor$Var2, ]
+    rownames(cor) <- NULL
+    
+    # Should be equal
+    expect_equal(cor[, c("cor", "pval")], 
+                 cor_paired[, c("cor", "pval")])
 })
-

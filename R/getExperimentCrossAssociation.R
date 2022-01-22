@@ -167,6 +167,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            sort = FALSE,
            filter_self_correlations = FALSE,
            verbose = TRUE,
+           test_significance = FALSE,
            show_warnings = TRUE,
            paired = FALSE,
            ...){
@@ -184,6 +185,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           sort = sort,
                                           filter_self_correlations = filter_self_correlations,
                                           verbose = verbose,
+                                          test_significance = test_significance,
+                                          show_warnings = show_warnings,
                                           paired = paired,
                                           ...)
     }
@@ -600,17 +603,25 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                          show_warnings, 
                                          association_FUN, 
                                          ...){
-    # Unfactor so that filter works correctly
-    variable_pairs$Var1 <- unfactor(variable_pairs$Var1)
-    variable_pairs$Var2 <- unfactor(variable_pairs$Var2)
-    # Sort features row-wise
-    variable_pairs <- .sort_variable_pairs_row_wise(variable_pairs)
-    # Get unique feature/sample pairs
-    variable_pairs_unique <- variable_pairs %>% 
-      dplyr::filter(Var1 > Var2 | Var1 == Var2)
-  
+    # Are assays identical?
+    assays_identical <- identical(assay1, assay2)
+    # If they are identical, we can make calculation faster
+    # row1 vs col2 equals to row2 vs col1
+    if( assays_identical ){
+        # Unfactor/convert into characters so that filter works correctly
+        variable_pairs$Var1 <- as.character(variable_pairs$Var1)
+        variable_pairs$Var2 <- as.character(variable_pairs$Var2)
+        
+        variable_pairs_all <- variable_pairs
+        # Sort features row-wise
+        variable_pairs_all <- .sort_variable_pairs_row_wise(variable_pairs_all)
+        # Get unique feature/sample pairs
+        variable_pairs <- 
+            variable_pairs_all[ !duplicated(variable_pairs_all[ , c("Var1_sorted", "Var2_sorted")]), ]
+    }
+    
     # Calculate correlations
-    correlations_and_p_values <- apply(variable_pairs_unique, 1, 
+    correlations_and_p_values <- apply(variable_pairs, 1, 
                                        FUN = FUN_, 
                                        test_significance = test_significance, 
                                        assay1 = assay1, 
@@ -634,20 +645,32 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     else if( ncol(correlations_and_p_values) == 2 ){
       colnames(correlations_and_p_values) <- c("cor", "pval")
     }
-    # Change names so that they are not equal to colnames of variable_pairs
-    colnames(variable_pairs_unique)[1:2] <- c("Var1_", "Var2_")
-    # Combine feature-pair names with correlation values and p-values
-    correlations_and_p_values <- cbind(variable_pairs_unique, correlations_and_p_values)
     
-    # Combine two tables so that values are assigned to larger table with all the 
-    # variable pairs
-    correlations_and_p_values <- dplyr::left_join(variable_pairs, 
-                                                  correlations_and_p_values, 
-                                                  by = c("Var1_sorted", "Var2_sorted"))
-    # Drop additional columns
-    correlations_and_p_values <- correlations_and_p_values[ !colnames(correlations_and_p_values) %in% 
-                                                              c("Var1_sorted", "Var2_sorted", 
-                                                                "Var1_", "Var2_")]
+    # If assays were identical, and duplicate variable pairs were dropped
+    if( assays_identical ){
+        # Change names so that they are not equal to colnames of variable_pairs
+        colnames(variable_pairs)[1:2] <- c("Var1_", "Var2_")
+        # Combine feature-pair names with correlation values and p-values
+        correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
+        
+        # Combine two tables so that values are assigned to larger table with all the 
+        # variable pairs
+        correlations_and_p_values <- dplyr::left_join(variable_pairs_all, 
+                                                      correlations_and_p_values, 
+                                                      by = c("Var1_sorted", "Var2_sorted"))
+        # Drop off additional columns
+        correlations_and_p_values <- correlations_and_p_values[ !colnames(correlations_and_p_values) %in% 
+                                                                  c("Var1_sorted", "Var2_sorted", 
+                                                                    "Var1_", "Var2_")]
+    } else{
+        # Otherwise just add variable names
+        correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
+    }
+    
+    # Create factors from variable names
+    correlations_and_p_values$Var1 <- factor(correlations_and_p_values$Var1)
+    correlations_and_p_values$Var2 <- factor(correlations_and_p_values$Var2)
+    
     return(correlations_and_p_values)
 }
 
@@ -698,7 +721,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 
     # Calculate correlation
     # If user does not want warnings, 
-    # suppress warnings that might occur when calculating correlaitons (NAs...)
+    # suppress warnings that might occur when calculating correlations (NAs...)
     # or p-values (ties, and exact p-values cannot be calculated...)
     if( show_warnings ){
         temp <- cor.test(feature1,
@@ -851,7 +874,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     
     # If there are no significant correlations
     if ( nrow(result) == 0 ) {
-        message("\nNo significant correlations with the given criteria\n")
+        message("\nNo significant correlations with the given criteria.\n")
         return(NULL)
     }
     # Adjust levels
