@@ -26,6 +26,7 @@ getExperimentCrossAssociation(x, ...)
   sort = FALSE,
   filter_self_correlations = FALSE,
   verbose = TRUE,
+  test_significance = FALSE,
   show_warnings = TRUE,
   paired = FALSE,
   ...
