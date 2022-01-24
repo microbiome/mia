@@ -97,6 +97,17 @@ test_that("agglomerate", {
                         "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
                         "RWDWTNDBRVRRAMHHCMRDKKSSRARGSSVSYYHNYBRRVHNDNNHYKRMVV",
                         "YKVRDNNNSRAARSBDKGGKK"))
+    # Test that remove_empty_ranks work
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = NULL))
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = 1))
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = c(TRUE, TRUE)))
+    x <- agglomerateByRank(se, rank = "Class")
+    rd1 <- rowData(x)[, 1:3]
+    x <- agglomerateByRank(se, rank = "Class", remove_empty_ranks = TRUE)
+    rd2 <- rowData(x)
+    expect_equal(rd1, rd2)
+    
 })
 
 

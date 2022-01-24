@@ -32,6 +32,11 @@
 #'   \code{SummarizedExperiment} objects,
 #'   \code{\link[=merge-methods]{mergeRows}} and
 #'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+#'   \itemize{
+#'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
+#'        whether to remove those columns of rowData that include only NAs after
+#'        agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
+#'    }
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -99,6 +104,10 @@
 #' # To add them, use getTaxonomyLabels function.
 #' rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
 #' print(rownames(x3[1:3,]))
+#' 
+#' # use 'remove_empty_ranks' to remove columns that include only NAs
+#' x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
+#' head(rowData(x4))
 #'
 #' ## Look at enterotype dataset...
 #' data(enterotype)
@@ -111,17 +120,6 @@ setGeneric("agglomerateByRank",
             signature = "x",
             function(x, ...)
                 standardGeneric("agglomerateByRank"))
-
-.remove_with_empty_taxonomic_info <-
-    function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
-{
-    tax <- as.character(rowData(x)[,column])
-    f <- !(tax %in% empty.fields)
-    if(any(!f)){
-        x <- x[f, , drop=FALSE]
-    }
-    x
-}
 
 #' @rdname agglomerate-methods
 #' @aliases agglomerateByRank
@@ -233,9 +231,20 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
 
 ################################ HELP FUNCTIONS ################################
 
+.remove_with_empty_taxonomic_info <-
+    function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
+    {
+        tax <- as.character(rowData(x)[,column])
+        f <- !(tax %in% empty.fields)
+        if(any(!f)){
+            x <- x[f, , drop=FALSE]
+        }
+        x
+    }
+
 # This function removes empty columns from rowdata. (Those that include only
 # NA values)
-.remove_NA_cols_from_rowdata <- function(x, remove_empty_ranks = FALSE){
+.remove_NA_cols_from_rowdata <- function(x, remove_empty_ranks = FALSE, ...){
     # Check remove_empty_ranks
     if( !.is_a_bool(remove_empty_ranks) ){
         stop("'remove_empty_ranks' must be a boolean value.", 
