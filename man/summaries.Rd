@@ -16,7 +16,8 @@ getTopTaxa(
   top = 5L,
   method = c("mean", "sum", "median"),
   abund_values = "counts",
-  na.rm = TRUE,
+  remove_na = TRUE,
+  rank = NULL,
   ...
 )
 
@@ -25,7 +26,8 @@ getTopTaxa(
   top = 5L,
   method = c("mean", "sum", "median", "prevalence"),
   abund_values = "counts",
-  na.rm = TRUE,
+  remove_na = TRUE,
+  rank = NULL,
   ...
 )
 
@@ -53,14 +55,14 @@ median or prevalence. Default is 'mean'.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 By default it expects count data.}
 
-\item{na.rm}{For \code{getTopTaxa} logical argument for calculation method
+\item{remove_na}{For \code{getTopTaxa} logical argument for calculation method
 specified to argument \code{method}. Default is TRUE.}
-
-\item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
-\code{rank} is specified for \code{countDominantTaxa}.}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomyRanks()}.}
+
+\item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
+\code{rank} is specified for \code{countDominantTaxa}.}
 
 \item{group}{With group, it is possible to group the observations in an
 overview. Must be one of the column names of \code{colData}.}
@@ -103,10 +105,14 @@ object.
 }
 \examples{
 data(GlobalPatterns)
+
+# Get top genera
 top_taxa <- getTopTaxa(GlobalPatterns,
                        method = "mean",
                        top = 5,
-                       abund_values = "counts")
+                       abund_values = "counts",
+                       rank = "Genus",
+                       na.rm = TRUE)
 top_taxa
 
 # Gets the overview of dominant taxa
