@@ -46,10 +46,6 @@ object.}
 
 \item{...}{Additional arguments:
 \itemize{
-\item{\code{test_significance}}{A single boolean value
-in function \code{getExperimentCrossAssociation} for selecting
-whether to test significance or not.
-(By default: \code{test_significance = FALSE})}
 \item{\code{association_FUN}}{A function that is used to calculate (dis-)similarity
 between features. Function must take matrix as an input and give numeric
 values as an output. Adjust \code{method} and other parameters correspondingly.
