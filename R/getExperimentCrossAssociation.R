@@ -349,10 +349,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
       paired <- FALSE
     }
     
-    # Test if data is in right format
-    .cross_association_test_data_type(assay1, method)
-    .cross_association_test_data_type(assay2, method)
-    
     # If significance is not calculated, p_adj_method is NULL
     if( !test_significance ){
       p_adj_method <- NULL
@@ -490,12 +486,17 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         # Get function name for message
         function_name <- ifelse(method == "categorical", "mia:::.calculate_gktau", 
                                 ifelse(test_significance, "stats::cor.test", "stats::cor"))
+        
+        # Test if data is in right format
+        .cross_association_test_data_type(assay1, method)
+        .cross_association_test_data_type(assay2, method)
     } else{
         # Get name of function
         function_name <- deparse(substitute(association_FUN))
         test_significance <- FALSE
         p_adj_method <- NULL
     }
+    
     # Message details of calculation
     if(verbose){
         message( paste0("Calculating correlations...\n",
