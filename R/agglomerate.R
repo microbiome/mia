@@ -188,7 +188,8 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         }
         # adjust rownames
         rownames(x) <- .get_taxonomic_label(x, empty.fields)
-        x
+        # Remove those columns from rowData that include only NAs
+        x <- .remove_NA_cols_from_rowdata(x, ...)
     }
 )
 
@@ -229,3 +230,27 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
         x
     }
 )
+
+################################ HELP FUNCTIONS ################################
+
+# This function removes empty columns from rowdata. (Those that include only
+# NA values)
+.remove_NA_cols_from_rowdata <- function(x, remove_empty_ranks = FALSE){
+    # Check remove_empty_ranks
+    if( !.is_a_bool(remove_empty_ranks) ){
+        stop("'remove_empty_ranks' must be a boolean value.", 
+             call. = FALSE)
+    }
+    # If user wants to remove those columns
+    if( remove_empty_ranks ){
+        # Get rowData
+        rd <- rowData(x)
+        # Does teh column include data?
+        columns_including_data <- apply(rd, 2, function(x){!all(is.na(x))})
+        # Subset data so that it includes only columns that include data
+        rd <- rd[, columns_including_data]
+        # Assign it back to SE
+        rowData(x) <- rd
+    }
+    return(x)
+}
