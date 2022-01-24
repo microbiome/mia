@@ -59,6 +59,9 @@
 #' @param verbose A single boolean value for selecting whether to get messages
 #'    about progress of calculation.
 #'    
+#' @param test_significance A single boolean value for selecting whether to test
+#'    statistical significance of associations.
+#'    
 #' @param show_warnings A single boolean value for selecting whether to show warnings
 #'    that might occur when correlations and p-values are calculated.
 #'
