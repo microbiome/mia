@@ -146,4 +146,20 @@ test_that("getTopTaxa", {
     expect_equal(top_mean, mean.taxa)
     expect_equal(top_sum, sum.taxa)
     expect_equal(top_median, median.taxa)
+    # Test agglomeration option
+    tse <- GlobalPatterns
+    tse <- agglomerateByRank(tse, rank = "Phylum")
+    mat <- assay(tse)
+    rowsums <- rowSums2(mat)
+    top_taxa_ref <- rownames(tse)[order(rowsums, decreasing = T)][1:5]
+    top_taxa <- getTopTaxa(GlobalPatterns, rank = "Phylum", top = 5, method = "sum")
+    expect_equal(top_taxa, top_taxa_ref)
+    # Test agglomeration option with na.rm
+    tse <- GlobalPatterns
+    tse <- agglomerateByRank(tse, rank = "Genus", na.rm = T)
+    mat <- assay(tse)
+    rowmedians <- rowMedians(mat)
+    top_taxa_ref <- rownames(tse)[order(rowmedians, decreasing = T)][1:20]
+    top_taxa <- getTopTaxa(GlobalPatterns, rank = "Genus", top = 20, na.rm = T,  method = "median")
+    expect_equal(top_taxa, top_taxa_ref)
 })
