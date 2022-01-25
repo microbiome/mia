@@ -299,7 +299,7 @@ test_that("getExperimentCrossAssociation", {
     tse1 <- mae[[1]]
     tse2 <- mae[[1]]
     # Convert assay to have random values
-    mat <- matrix(sample(0:100, nrow(tse2)*ncol(tse2), replace = T), 
+    mat <- matrix(sample(0:100, nrow(tse2)*ncol(tse2), replace = TRUE), 
                   nrow = nrow(tse2), ncol = ncol(tse2))
     colnames(mat) <- colnames(tse2)
     rownames(mat) <- rownames(tse2)
@@ -307,14 +307,14 @@ test_that("getExperimentCrossAssociation", {
     # Calculate with paired samples
     cor_paired <- testExperimentCrossAssociation(tse1,
                                                  experiment2 = tse2,  
-                                                 paired = T, 
+                                                 paired = TRUE, 
                                                  direction = "col", 
-                                                 show_warnings = F)
+                                                 show_warnings = FALSE)
     # Calculate all pairs
     cor <- testExperimentCrossAssociation(tse1,
                                           experiment2 = tse2,  
                                           direction = "col", 
-                                          show_warnings = F)
+                                          show_warnings = FALSE)
     # Take only pairs that are paired
     cor <- cor[cor$Var1 == cor$Var2, ]
     rownames(cor) <- NULL
