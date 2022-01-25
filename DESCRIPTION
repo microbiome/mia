@@ -63,7 +63,7 @@ Imports:
     dplyr,
     tibble,
     tidyr,
-    reshape2
+    data.table
 Suggests:
     testthat,
     knitr,

@@ -229,7 +229,7 @@ test_that("getExperimentCrossAssociation", {
                        0.836148425, 0.856762552, 0.859203260, 0.938444366, 0.942610008)
     # Calculate correlation
     cor <- testExperimentCrossAssociation(mae, method = "pearson", 
-                                          p_adj_threshold = NULL, show_warnings = F)
+                                          p_adj_threshold = NULL, show_warnings = FALSE)
     # Take only specific taxa and lipids
     df <- cor[cor$Var1 %in% c("Fusobacteria", "Campylobacter", "Actinomycetaceae") & 
                  cor$Var2 %in% c("PE(48:7)", "TG(50:0)", "SM(d18:1/18:0)"), ]
@@ -262,23 +262,25 @@ test_that("getExperimentCrossAssociation", {
     
     mae_sub <- mae[1:10, 1:10]
     # Test that output is in correct type
-    expect_true( is.data.frame(suppressWarnings(
-        testExperimentCrossAssociation(mae_sub, p_adj_threshold = NULL))) )
-    expect_true( is.data.frame(suppressWarnings(
-        getExperimentCrossAssociation(mae_sub, test_significance = TRUE, p_adj_threshold = NULL))) )
-    expect_true( is.data.frame(getExperimentCrossAssociation(mae_sub, show_warnings = F)) )
-    # There should not be any p-values that are under 0
-    expect_true( is.null(suppressWarnings(
-        testExperimentCrossAssociation(mae_sub, p_adj_threshold = 0))) )
-    # Test that output is in correct type
-    expect_true( is.list(suppressWarnings(
-        testExperimentCrossAssociation(mae_sub, mode = "matrix", 
-                                          p_adj_threshold = NULL))) )
-    expect_true( is.list(suppressWarnings(
+    expect_true( is.data.frame(
+        testExperimentCrossAssociation(mae_sub, p_adj_threshold = NULL, show_warnings = FALSE)) )
+    expect_true( is.data.frame(
         getExperimentCrossAssociation(mae_sub, test_significance = TRUE, 
-                                      mode = "matrix", p_adj_threshold = NULL))) )
+                                      p_adj_threshold = NULL, show_warnings = FALSE)) )
+    expect_true( is.data.frame(getExperimentCrossAssociation(mae_sub, show_warnings = FALSE)) )
+    # There should not be any p-values that are under 0
+    expect_true( is.null(
+        testExperimentCrossAssociation(mae_sub, p_adj_threshold = 0, show_warnings = FALSE)) )
+    # Test that output is in correct type
+    expect_true( is.list(
+        testExperimentCrossAssociation(mae_sub, mode = "matrix", 
+                                          p_adj_threshold = NULL, show_warnings = FALSE)) )
+    expect_true( is.list(
+        getExperimentCrossAssociation(mae_sub, test_significance = TRUE, 
+                                      mode = "matrix", 
+                                      p_adj_threshold = NULL, show_warnings = FALSE)) )
     expect_true( is.matrix(getExperimentCrossAssociation(mae_sub, mode = "matrix", 
-                                                         show_warnings = F)) )
+                                                         show_warnings = FALSE)) )
     
     # There should not be any p-values that are under 0
     expect_true( is.null(
@@ -287,7 +289,7 @@ test_that("getExperimentCrossAssociation", {
     # When correlation between same assay is calculated, calculation is made faster
     # by not calculating duplicates
     cor <-  testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
-                                           show_warnings = F)
+                                           show_warnings = FALSE)
     # Get random variables and test that their duplicates are equal
     for(i in 1:10 ){
         random_var1 <- sample(cor$Var1, 1)
