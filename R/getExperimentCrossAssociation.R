@@ -74,7 +74,7 @@
 #'        \item{\code{symmetric}}{A single boolean value for specifying if 
 #'        measure is symmetric or not. When \code{symmetric = TRUE}, associations
 #'        are calculated only for unique variable-pairs, and they are assigned to 
-#'        corresponding variable-pair. This decreases the number of calculations in 2-fold, 
+#'        corresponding variable-pair. This decreases the number of calculations in 2-fold 
 #'        meaning faster execution. (By default: \code{symmetric = FALSE})}
 #'        
 #'        \item{\code{association_FUN}}{A function that is used to calculate (dis-)similarity
@@ -107,6 +107,9 @@
 #' # Subset so that less observations / quicker to run, just for example
 #' mae[[1]] <- mae[[1]][1:20, 1:10]
 #' mae[[2]] <- mae[[2]][1:20, 1:10]
+#' # Transform data
+#' mae[[1]] <- transformSamples(mae[[1]], method = "rclr")
+#' mae[[2]] <- transformSamples(mae[[2]], method = "log10")
 #' # Calculate cross-correlations
 #' result <- getExperimentCrossAssociation(mae, method = "pearson")
 #' # Show first 5 entries
@@ -118,8 +121,9 @@
 #' altExp(tse, "exp2") <- mae[[2]]
 #' 
 #' # When mode = matrix, matrix is returned
-#' result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", method = "pearson", 
-#'                                         mode = "matrix")
+#' result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", 
+#'                                         abund_values1 = "rclr", abund_values2 = "log10",
+#'                                         method = "pearson", mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
@@ -146,6 +150,15 @@
 #' # Calculate Bray-Curtis dissimilarity between features
 #' result <- getExperimentCrossAssociation(mae[[1]], mae[[2]], 
 #'                                         association_FUN = vegan::vegdist, method = "bray")
+#' 
+#' # If experiments are equal and measure is symmetric (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),
+#' # it is possible to speed-up calculations by calculating association only for unique
+#' # variable-pairs. Use "symmetric" to choose whether to measure association for only
+#' # other half of of variable-pairs.
+#' result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experiment2 = "microbiome" 
+#'                                         abund_values1 = "counts", abund_values2 = "counts",
+#'                                         symmetric = TRUE)
+#' 
 NULL
 
 #' @rdname getExperimentCrossAssociation
