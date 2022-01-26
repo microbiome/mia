@@ -155,7 +155,7 @@
 #' # it is possible to speed-up calculations by calculating association only for unique
 #' # variable-pairs. Use "symmetric" to choose whether to measure association for only
 #' # other half of of variable-pairs.
-#' result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experiment2 = "microbiome" 
+#' result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experiment2 = "microbiome", 
 #'                                         abund_values1 = "counts", abund_values2 = "counts",
 #'                                         symmetric = TRUE)
 #' 
