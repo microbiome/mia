@@ -146,8 +146,7 @@ mae[[1]] <- mae[[1]][1:20, 1:10]
 mae[[2]] <- mae[[2]][1:20, 1:10]
 # Transform data
 mae[[1]] <- transformSamples(mae[[1]], method = "rclr")
-mae[[2]] <- transformSamples(mae[[2]], method = "log10", 
-                             pseudocount = min(assay(mae[[2]])[assay(mae[[2]])>0]))
+
 # Calculate cross-correlations
 result <- getExperimentCrossAssociation(mae, method = "pearson")
 # Show first 5 entries
@@ -160,7 +159,7 @@ altExp(tse, "exp2") <- mae[[2]]
 
 # When mode = matrix, matrix is returned
 result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", 
-                                        abund_values1 = "rclr", abund_values2 = "log10",
+                                        abund_values1 = "rclr", abund_values2 = "counts",
                                         method = "pearson", mode = "matrix")
 # Show first 5 entries
 head(result, 5)
