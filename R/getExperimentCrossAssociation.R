@@ -521,7 +521,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     
     # Message details of calculation
     if(verbose){
-        message( paste0("Calculating correlations...\n",
+        message( "Calculating correlations...\n",
                     "direction: ", direction, 
                     ", function: ", function_name, 
                     ", method: ", method,
@@ -529,7 +529,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                     ", p_adj_method: ",
                     ifelse(!is.null(p_adj_method), p_adj_method, "-"),
                     ", paired: ", paired,
-                    ", show_warnings: ", show_warnings) )
+                    ", show_warnings: ", show_warnings, "\n" ) 
     }
   
     # If association_FUN is provided by user, use appropriate function.
@@ -908,13 +908,13 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                 verbose){
     # Give message if verbose == TRUE
     if(verbose){
-      message( paste0("\nFiltering results...\np_adj_threshold: ",
+      message( "Filtering results...\np_adj_threshold: ",
                       ifelse(!is.null(p_adj_threshold),  p_adj_threshold, "-"), 
                       ", cor_threshold: ", 
                       ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
                       ", filter_self_correlations: ", 
                       ifelse(filter_self_correlations,
-                             filter_self_correlations, "-")) )
+                             filter_self_correlations, "-\n") )
     }
     # Which features have significant correlations?
     if ( !is.null(result$p_adj) && !is.null(p_adj_threshold) ) {
@@ -929,7 +929,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     
     # If there are no significant correlations
     if ( nrow(result) == 0 ) {
-        message("\nNo significant correlations with the given criteria.\n")
+        message("No significant correlations with the given criteria.\n")
         return(NULL)
     }
     # Adjust levels
@@ -954,7 +954,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 .association_sort <- function(result, verbose){
     # Give message if verbose == TRUE
     if(verbose){
-      message("\nSorting results...")
+      message("Sorting results...\n")
     }
     # Fetch data matrices
     correlations <- result$cor
@@ -966,11 +966,28 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     rownames(tmp) <- NULL
     colnames(tmp) <- NULL
     
-    # Do hierarchical clustering
-    row_index <- hclust(as.dist(1 - cor(t(tmp),
-                                        use="pairwise.complete.obs")))$order
-    col_index <- hclust(as.dist(1 - cor(tmp,
-                                        use="pairwise.complete.obs")))$order
+    # Do hierarchical clustering, use try-catch to catch errors that might occur
+    # if data contains NAs
+    row_index <- tryCatch({
+        hclust(as.dist(1 - cor(t(tmp),
+                               use="pairwise.complete.obs")))$order
+    },
+    error = function(cond) {
+        stop(paste0("Error occurred during sorting. Possible reason is that ",
+                    "correlation matrix includes NAs. Try with 'sort = FALSE'."), 
+             call. = FALSE)
+    }
+    )
+    col_index <- tryCatch({
+        hclust(as.dist(1 - cor(tmp,
+                               use="pairwise.complete.obs")))$order
+    },
+    error = function(cond) {
+        stop(paste0("Error occurred during sorting. Possible reason is that ",
+                    "correlation matrix includes NAs. Try with 'sort = FALSE'."), 
+             call. = FALSE)
+    }
+    )
     # Get the order of features from hierarchical clustering
     rownames <- rownames(correlations)[row_index]
     colnames <- colnames(correlations)[col_index]
@@ -1017,7 +1034,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 .association_table_to_matrix <- function(result, verbose){
     # Give message if verbose == TRUE
     if(verbose){
-      message("\nConverting table into matrices...")
+      message("Converting table into matrices...\n")
     }
     # Correlation matrix is done from Var1, Var2, and cor columns
     # Select correct columns
