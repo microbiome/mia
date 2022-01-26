@@ -83,6 +83,7 @@
 #'
 #' tse
 
+#' @importFrom S4Vectors make_zero_col_DFrame
 loadFromQIIME2 <- function(featureTableFile,
                            taxonomyTableFile = NULL,
                            sampleMetaFile = NULL,
@@ -123,14 +124,14 @@ loadFromQIIME2 <- function(featureTableFile,
         taxa_tab <- readQZA(taxonomyTableFile, ...)
         taxa_tab <- .subset_taxa_in_feature(taxa_tab, feature_tab)
     } else {
-        taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+        taxa_tab <- S4Vectors::make_zero_col_DFrame(nrow(feature_tab))
         rownames(taxa_tab) <- rownames(feature_tab)
     }
 
     if (!is.null(sampleMetaFile)) {
         sample_meta <- .read_q2sample_meta(sampleMetaFile)
     } else {
-        sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+        sample_meta <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
         rownames(sample_meta) <- colnames(feature_tab)
     }
 
