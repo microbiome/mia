@@ -694,15 +694,20 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         correlations_and_p_values <- merge(variable_pairs_all, correlations_and_p_values, 
                                            by = c("Var1_sorted", "Var2_sorted"), 
                                            all.x = TRUE)
+        
+        # Get the order based on original order of variable-pairs
+        order <- match( paste0(correlations_and_p_values$Var1, 
+                               correlations_and_p_values$Var2),
+                        paste0(variable_pairs_all$Var1, 
+                               variable_pairs_all$Var2) )
+        # Order the table
+        correlations_and_p_values <- correlations_and_p_values[ order, ]
+        
         # Drop off additional columns
-        correlations_and_p_values <- correlations_and_p_values[ , !c("Var1_sorted", "Var2_sorted", 
-                                                                     "Var1_", "Var2_") ]
-        # Sort table based on original order of variable_pairs
-        correlations_and_p_values <- 
-            correlations_and_p_values[
-                match( paste0(variable_pairs_all$Var1, variable_pairs_all$Var2),
-                       paste0(correlations_and_p_values$Var1, correlations_and_p_values$Var2) 
-                ), ]
+        correlations_and_p_values <- correlations_and_p_values[ , !c("Var1_sorted", 
+                                                                     "Var2_sorted", 
+                                                                     "Var1_", 
+                                                                     "Var2_") ]
     } else{
         # Otherwise just add variable names
         correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
