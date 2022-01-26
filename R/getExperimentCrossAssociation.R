@@ -109,7 +109,8 @@
 #' mae[[2]] <- mae[[2]][1:20, 1:10]
 #' # Transform data
 #' mae[[1]] <- transformSamples(mae[[1]], method = "rclr")
-#' mae[[2]] <- transformSamples(mae[[2]], method = "log10")
+#' mae[[2]] <- transformSamples(mae[[2]], method = "log10", 
+#'                              pseudocount = min(assay(mae[[2]])[assay(mae[[2]])>0]))
 #' # Calculate cross-correlations
 #' result <- getExperimentCrossAssociation(mae, method = "pearson")
 #' # Show first 5 entries
