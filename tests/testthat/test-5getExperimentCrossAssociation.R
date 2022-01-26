@@ -288,17 +288,17 @@ test_that("getExperimentCrossAssociation", {
     # When correlation between same assay is calculated, calculation is made faster
     # by not calculating duplicates
     expect_error(testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
-                                                show_warnings = FALSE, symmetric_measure = "TRUE"))
+                                                show_warnings = FALSE, symmetric = "TRUE"))
     expect_error(testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
-                                                show_warnings = FALSE, symmetric_measure = 1))
+                                                show_warnings = FALSE, symmetric = 1))
     expect_error(testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
-                                                show_warnings = FALSE, symmetric_measure = NULL))
+                                                show_warnings = FALSE, symmetric = NULL))
     expect_error(testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
-                                                show_warnings = FALSE, symmetric_measure = c(TRUE, TRUE)))
+                                                show_warnings = FALSE, symmetric = c(TRUE, TRUE)))
     
     time <- system.time(
         cor <-  testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
-                                           show_warnings = FALSE, symmetric_measure = TRUE)
+                                           show_warnings = FALSE, symmetric = TRUE)
     )
     time2 <- system.time(
         cor2 <-  testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
@@ -312,7 +312,7 @@ test_that("getExperimentCrossAssociation", {
                      as.numeric(cor[cor$Var1 == random_var2 & cor$Var2 == random_var1, c("cor", "pval", "p_adj")]))
     }
     expect_equal(cor, cor2)
-    # Test that symmetric_measure = TRUE was faster
+    # Test that symmetric = TRUE was faster
     expect_true(time[3] < time2[3])
     # Test that paired samples work correctly
     tse1 <- mae[[1]]

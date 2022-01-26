@@ -71,11 +71,11 @@
 #'
 #' @param ... Additional arguments:
 #'    \itemize{
-#'        \item{\code{symmetric_measure}}{A single boolean value for specifying if 
-#'        measure is symmetric or not. When \code{symmetric_measure = TRUE}, associations
+#'        \item{\code{symmetric}}{A single boolean value for specifying if 
+#'        measure is symmetric or not. When \code{symmetric = TRUE}, associations
 #'        are calculated only for unique variable-pairs, and they are assigned to 
 #'        corresponding variable-pair. This decreases the number of calculations in 2-fold, 
-#'        meaning faster execution. (By default: \code{symmetric_measure = FALSE})}
+#'        meaning faster execution. (By default: \code{symmetric = FALSE})}
 #'        
 #'        \item{\code{association_FUN}}{A function that is used to calculate (dis-)similarity
 #'        between features. Function must take matrix as an input and give numeric
@@ -620,16 +620,16 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                          method,
                                          show_warnings, 
                                          association_FUN, 
-                                         symmetric_measure = FALSE,
+                                         symmetric = FALSE,
                                          ...){
-    # Check symmetric_measure
-    if( !.is_a_bool(symmetric_measure) ){
-        stop("'symmetric_measure' must be a boolean value.", 
+    # Check symmetric
+    if( !.is_a_bool(symmetric) ){
+        stop("'symmetric' must be a boolean value.", 
              call. = FALSE)
     }
     # 
     # If user has specified that the masure is symmetric
-    if( symmetric_measure ){
+    if( symmetric ){
         # Are assays identical? If so, calculate only unique variable-pairs
         assays_identical <- identical(assay1, assay2)
     } else{
@@ -696,10 +696,10 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                            all.x = TRUE)
         
         # Get the order based on original order of variable-pairs
-        order <- match( paste0(correlations_and_p_values$Var1, 
-                               correlations_and_p_values$Var2),
-                        paste0(variable_pairs_all$Var1, 
-                               variable_pairs_all$Var2) )
+        order <- match( paste0(variable_pairs_all$Var1, 
+                               variable_pairs_all$Var2),
+                        paste0(correlations_and_p_values$Var1, 
+                               correlations_and_p_values$Var2) )
         # Order the table
         correlations_and_p_values <- correlations_and_p_values[ order, ]
         
