@@ -3,7 +3,6 @@ context("getExperimentCrossAssociation")
 
 test_that("getExperimentCrossAssociation", {
     
-    
     # Get data
     mae <- microbiomeDataSets::peerj32()
     ############################### Test input ###############################
@@ -288,8 +287,23 @@ test_that("getExperimentCrossAssociation", {
     
     # When correlation between same assay is calculated, calculation is made faster
     # by not calculating duplicates
-    cor <-  testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
-                                           show_warnings = FALSE)
+    expect_error(testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
+                                                show_warnings = FALSE, symmetric_measure = "TRUE"))
+    expect_error(testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
+                                                show_warnings = FALSE, symmetric_measure = 1))
+    expect_error(testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
+                                                show_warnings = FALSE, symmetric_measure = NULL))
+    expect_error(testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
+                                                show_warnings = FALSE, symmetric_measure = c(TRUE, TRUE)))
+    
+    time <- system.time(
+        cor <-  testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
+                                           show_warnings = FALSE, symmetric_measure = TRUE)
+    )
+    time2 <- system.time(
+        cor2 <-  testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
+                                                show_warnings = FALSE)
+    )
     # Get random variables and test that their duplicates are equal
     for(i in 1:10 ){
         random_var1 <- sample(cor$Var1, 1)
@@ -297,6 +311,9 @@ test_that("getExperimentCrossAssociation", {
         expect_equal(as.numeric(cor[cor$Var1 == random_var1 & cor$Var2 == random_var2, c("cor", "pval", "p_adj")]),
                      as.numeric(cor[cor$Var1 == random_var2 & cor$Var2 == random_var1, c("cor", "pval", "p_adj")]))
     }
+    expect_equal(cor, cor2)
+    # Test that symmetric_measure = TRUE was faster
+    expect_true(time[3] < time2[3])
     # Test that paired samples work correctly
     tse1 <- mae[[1]]
     tse2 <- mae[[1]]
@@ -324,4 +341,5 @@ test_that("getExperimentCrossAssociation", {
     # Should be equal
     expect_equal(cor[, c("cor", "pval")], 
                  cor_paired[, c("cor", "pval")])
+    
 })

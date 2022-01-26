@@ -71,6 +71,12 @@
 #'
 #' @param ... Additional arguments:
 #'    \itemize{
+#'        \item{\code{symmetric_measure}}{A single boolean value for specifying if 
+#'        measure is symmetric or not. When \code{symmetric_measure = TRUE}, associations
+#'        are calculated only for unique variable-pairs, and they are assigned to 
+#'        corresponding variable-pair. This decreases the number of calculations in 2-fold, 
+#'        meaning faster execution. (By default: \code{symmetric_measure = FALSE})}
+#'        
 #'        \item{\code{association_FUN}}{A function that is used to calculate (dis-)similarity
 #'        between features. Function must take matrix as an input and give numeric
 #'        values as an output. Adjust \code{method} and other parameters correspondingly.
@@ -614,9 +620,23 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                          method,
                                          show_warnings, 
                                          association_FUN, 
+                                         symmetric_measure = FALSE,
                                          ...){
-    # Are assays identical?
-    assays_identical <- identical(assay1, assay2)
+    # Check symmetric_measure
+    if( !.is_a_bool(symmetric_measure) ){
+        stop("'symmetric_measure' must be a boolean value.", 
+             call. = FALSE)
+    }
+    # 
+    # If user has specified that the masure is symmetric
+    if( symmetric_measure ){
+        # Are assays identical? If so, calculate only unique variable-pairs
+        assays_identical <- identical(assay1, assay2)
+    } else{
+        # Calculate all variable-pairs
+        assays_identical <- FALSE
+    }
+    
     # If they are identical, we can make calculation faster
     # row1 vs col2 equals to row2 vs col1
     if( assays_identical ){
@@ -657,6 +677,9 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     }
     else if( ncol(correlations_and_p_values) == 2 ){
       colnames(correlations_and_p_values) <- c("cor", "pval")
+    } else{
+        stop("Unexpected error occurred during calculation.",
+             call. = FALSE)
     }
     
     # If assays were identical, and duplicate variable pairs were dropped
@@ -674,13 +697,21 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         # Drop off additional columns
         correlations_and_p_values <- correlations_and_p_values[ , !c("Var1_sorted", "Var2_sorted", 
                                                                      "Var1_", "Var2_") ]
+        # Sort table based on original order of variable_pairs
+        correlations_and_p_values <- 
+            correlations_and_p_values[
+                match( paste0(variable_pairs_all$Var1, variable_pairs_all$Var2),
+                       paste0(correlations_and_p_values$Var1, correlations_and_p_values$Var2) 
+                ), ]
     } else{
         # Otherwise just add variable names
         correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
     }
-    # Create factors from variable names
-    correlations_and_p_values$Var1 <- factor(correlations_and_p_values$Var1)
-    correlations_and_p_values$Var2 <- factor(correlations_and_p_values$Var2)
+    # Adjust factors
+    correlations_and_p_values$Var1 <- factor(correlations_and_p_values$Var1,
+                                             levels = unique(correlations_and_p_values$Var1))
+    correlations_and_p_values$Var2 <- factor(correlations_and_p_values$Var2,
+                                             levels = unique(correlations_and_p_values$Var2))
     
     return(correlations_and_p_values)
 }
