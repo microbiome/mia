@@ -1,21 +1,29 @@
-#' Split/Unsplit a \code{SingleCellExperiment} by grouping variable.s
+#' Split \code{SummarizedExperiment} by grouping variables
 #'
-#'
-#' @param x a
+#' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
 #'
-#' @param ... arguments passed to \code{agglomerateByRank} function for
-#'   \code{SummarizedExperiment} objects and other functions.
-#'   See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
+#' @param grouping A single character value for selecting the grouping variable
+#'   from \code{colData} or \code{rowData}.
+#' 
+#' @param direction A single character value for selecting from where grouping
+#'   variable should be searched. Must be "col" or "row". 
+#'   
+#' @param ... 
+#' \itemize{
+#'   \item{\code{use_names} A boolean value to select whether to name elements of
+#'   list by their group names.}
+#' }
 #'
 #' @return
-#' For \code{splitBy}: \code{x}, with objects of \code{x} agglomerated for
-#' selected ranks as \code{altExps}.
+#' List of \code{SummarizedExperiment} objects.
 #'
 #'
 #' @details
-#' \code{splitBy} will use by default ...
+#' \code{splitBy} split data based on grouping variable. Splitting can be done
+#' column-wise or row-wise. Returned value is a list of \code{SummarizedExperiment}
+#' objects; each element containing members of each group.
 #'
 #' @seealso
 #' \code{\link[mia::splitByRanks]{splitByRanks}},
@@ -27,11 +35,36 @@
 #' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
 #'
 #' @name splitBy
+#' @export
+#' 
+#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
 #' data(GlobalPatterns)
+#' tse <- GlobalPatterns
+#' # Split data based on SampleType. 
+#' se_list <- splitBy(tse, grouping = "SampleType")
+#' 
+#' # List of SE objects is returned. 
+#' # Each element is named based on their group name. If you don't want to name
+#' # elements, use use_name = FALSE
+#' se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE)
+#' 
+#' # Create arbitrary groups
+#' colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
+#' rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
+#' 
+#' # If variable named equally can be found from both colData and rowData, 
+#' # direction must be specified
+#' se_list <- splitBy(tse, grouping = "SampleType", direction = "col")
+#' 
+#' # It is possible to split data also in row-wise
+#' se_list <- splitBy(tse, grouping = "SampleType", direction = "row")
+#' 
+#' # However, if you want to split data based on ranks, use splitByRanks
+#' se_list <- splitByRanks(tse)
+#' 
 NULL
-
 
 #' @rdname splitBy
 #' @export
@@ -40,11 +73,9 @@ setGeneric("splitBy",
            function(x, grouping = NULL, direction = NULL, ...)
                standardGeneric("splitBy"))
 
-
-
 #' @rdname splitBy
 #' @export
-setMethod("splitBy", signature = c(x = "any"),
+setMethod("splitBy", signature = c(x = "ANY"),
     function(x, grouping = NULL, direction = NULL, ...){
         ############################## INPUT CHECK #############################
         # Check grouping
@@ -60,7 +91,25 @@ setMethod("splitBy", signature = c(x = "any"),
         }
         
         # Check if variable can be found
-        if( direction == "col" ){
+        if( is.null(direction) ){
+            # Is variable from colData or rowData?
+            is_coldata_variable <- any( grouping %in% colnames(colData(x)) )
+            is_rowdata_variable <- any( grouping %in% colnames(rowData(x)) )
+            
+            # If variable is can be found from both, but direction is not specified
+            if( is_coldata_variable && is_rowdata_variable ){
+                stop("'grouping' defines variable from both colData and rowData.",
+                     " Use 'direction' to specify the direction.",
+                     call. = FALSE)
+            }
+            # If variable cannot be found
+            if( !is_coldata_variable && !is_rowdata_variable ){
+                stop("Variable defined by 'grouping' cannot be found.",
+                     call. = FALSE)
+            }
+            # Specify direction
+            direction <- ifelse(is_coldata_variable, "col", "row")
+        } else if( direction == "col" ){
             # Can variable be found from colData?
             is_coldata_variable <- any( grouping %in% colnames(colData(x)) )
             is_rowdata_variable <- FALSE
@@ -80,22 +129,6 @@ setMethod("splitBy", signature = c(x = "any"),
                 stop("Variable defined by 'grouping' cannot be found from rowData.",
                 call. = FALSE)
             }
-        } else{
-            # Is variable from colData or rowData?
-            is_coldata_variable <- any( grouping %in% colnames(colData(x)) )
-            is_rowdata_variable <- any( grouping %in% colnames(rowData(x)) )
-            
-            # If variable is can be found from both, but direction is not specified
-            if( is_coldata_variable && is_rowdata_variable ){
-                stop("'grouping' defines variable from both colData and rowData.",
-                     " Use 'direction' to specify the direction.",
-                     call. = FALSE)
-            }
-            # If variable cannot be found
-            if( !is_coldata_variable && !is_rowdata_variable ){
-                stop("Variable defined by 'grouping' cannot be found.",
-                     call. = FALSE)
-            }
         }
         # If variable is taxonomy rank
         if( is_rowdata_variable && any(grouping %in% taxonomyRanks(x)) ){
@@ -103,9 +136,41 @@ setMethod("splitBy", signature = c(x = "any"),
                  call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
-        
-        
-        
+        se_list <- .split_by(x, grouping, direction, ...)
+        return(se_list)
     }
 )
-
+################################ HELP FUNCTIONS ################################
+# Split data in column-wise or row-wise based on grouping variable. 
+.split_by <- function(x, grouping, direction, use_names = TRUE, ...){
+    # Check use_names
+    if( !.is_a_bool(use_names) ){
+        stop("'use_names' must be a boolean value.", 
+             call. = FALSE)
+    }
+    #
+    # Split data in column-wise
+    if( direction == "col" ){
+        # Get sample indices for each group
+        group_indices <- split(1:ncol(x), colData(x)[[grouping]])
+        # Split data
+        se_list <- lapply(seq_along(group_indices), function(i){ 
+            temp <- x[ , group_indices[[i]] ]
+            return(temp)
+        })
+        # Split data in row-wise
+    } else if(direction == "row" ){
+        # Get sample indices for each group
+        group_indices <- split(1:nrow(x), rowData(x)[[grouping]])
+        # Split data
+        se_list <- lapply(seq_along(group_indices), function(i){ 
+            temp <- x[ group_indices[[i]], ]
+            return(temp)
+        })
+    }
+    # If TRUE, give group names for elements of list
+    if( use_names ){
+        names(se_list) <- names(group_indices)
+    }
+    return(se_list)
+}
