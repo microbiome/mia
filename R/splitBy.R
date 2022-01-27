@@ -45,10 +45,7 @@
 #' # Split data based on SampleType. 
 #' se_list <- splitBy(tse, grouping = "SampleType")
 #' 
-#' # List of SE objects is returned. 
-#' # Each element is named based on their group name. If you don't want to name
-#' # elements, use use_name = FALSE
-#' se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE)
+#' se_list[1:2]
 #' 
 #' # Create arbitrary groups
 #' colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
@@ -63,6 +60,14 @@
 #' 
 #' # However, if you want to split data based on ranks, use splitByRanks
 #' se_list <- splitByRanks(tse)
+#' 
+#' # List of SE objects is returned. 
+#' # Each element is named based on their group name. If you don't want to name
+#' # elements, use use_name = FALSE
+#' se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE)
+#' 
+#' # If you want to combine groups back together, you can use cbind or rbind
+#' do.call(cbind, se_list)
 #' 
 NULL
 
@@ -148,7 +153,7 @@ setMethod("splitBy", signature = c(x = "ANY"),
         stop("'use_names' must be a boolean value.", 
              call. = FALSE)
     }
-    #
+    
     # Split data in column-wise
     if( direction == "col" ){
         # Get sample indices for each group
