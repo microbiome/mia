@@ -59,10 +59,10 @@ rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
 
 # If variable named equally can be found from both colData and rowData, 
 # MARGIN must be specified
-se_list <- splitBy(tse, grouping = "SampleType", MARGIN = "col")
+se_list <- splitBy(tse, grouping = "SampleType", MARGIN = 2)
 
 # It is possible to split data also in row-wise
-se_list <- splitBy(tse, grouping = "SampleType", MARGIN = "row")
+se_list <- splitBy(tse, grouping = "SampleType", MARGIN = 1)
 
 # Split data based on Phyla
 se_list <- splitBy(tse, "Phylum")
