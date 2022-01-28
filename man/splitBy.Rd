@@ -26,7 +26,7 @@ list by their group names.}
 }}
 }
 \value{
-List of \code{SummarizedExperiment} objects.
+List of \code{SummarizedExperiment} objects in \code{SimpleList} format.
 }
 \description{
 Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable
@@ -42,7 +42,7 @@ tse <- GlobalPatterns
 # Split data based on SampleType. 
 se_list <- splitBy(tse, grouping = "SampleType")
 
-se_list[1:2]
+se_list
 
 # Create arbitrary groups
 colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)

@@ -17,7 +17,7 @@
 #' }
 #'
 #' @return
-#' List of \code{SummarizedExperiment} objects.
+#' List of \code{SummarizedExperiment} objects in \code{SimpleList} format.
 #'
 #'
 #' @details
@@ -45,7 +45,7 @@
 #' # Split data based on SampleType. 
 #' se_list <- splitBy(tse, grouping = "SampleType")
 #' 
-#' se_list[1:2]
+#' se_list
 #' 
 #' # Create arbitrary groups
 #' colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
@@ -133,6 +133,8 @@ setMethod("splitBy", signature = c(x = "ANY"),
     if( use_names ){
         names(se_list) <- names(group_indices)
     }
+    # Convert into SimpleList
+    se_list <- SimpleList(se_list)
     return(se_list)
 }
 
