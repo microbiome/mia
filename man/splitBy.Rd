@@ -55,8 +55,10 @@ se_list <- splitBy(tse, grouping = "SampleType", MARGIN = "col")
 # It is possible to split data also in row-wise
 se_list <- splitBy(tse, grouping = "SampleType", MARGIN = "row")
 
-# However, if you want to split data based on ranks, use splitByRanks
-se_list <- splitByRanks(tse)
+# Split data based on Phyla
+se_list <- splitBy(tse, "Phylum")
+
+se_list
 
 # List of SE objects is returned. 
 # Each element is named based on their group name. If you don't want to name
