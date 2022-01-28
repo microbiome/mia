@@ -3,20 +3,20 @@
 \name{splitBy}
 \alias{splitBy}
 \alias{splitBy,ANY-method}
-\alias{unSplitBy}
-\alias{unSplitBy,list-method}
-\alias{unSplitBy,SimpleList-method}
+\alias{unsplitBy}
+\alias{unsplitBy,list-method}
+\alias{unsplitBy,SimpleList-method}
 \title{Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable}
 \usage{
 splitBy(x, grouping = NULL, MARGIN = NULL, ...)
 
 \S4method{splitBy}{ANY}(x, grouping = NULL, MARGIN = NULL, ...)
 
-unSplitBy(x, MARGIN = NULL, ...)
+unsplitBy(x, MARGIN = NULL, ...)
 
-\S4method{unSplitBy}{list}(x, MARGIN = NULL, ...)
+\S4method{unsplitBy}{list}(x, MARGIN = NULL, ...)
 
-\S4method{unSplitBy}{SimpleList}(x, MARGIN = NULL, ...)
+\S4method{unsplitBy}{SimpleList}(x, MARGIN = NULL, ...)
 }
 \arguments{
 \item{x}{A list of
@@ -59,10 +59,10 @@ rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
 
 # If variable named equally can be found from both colData and rowData, 
 # MARGIN must be specified
-se_list <- splitBy(tse, grouping = "SampleType", MARGIN = 2)
+se_list <- splitBy(tse, grouping = "group", MARGIN = 2)
 
 # It is possible to split data also in row-wise
-se_list <- splitBy(tse, grouping = "SampleType", MARGIN = 1)
+se_list <- splitBy(tse, grouping = "group", MARGIN = 1)
 
 # Split data based on Phyla
 se_list <- splitBy(tse, "Phylum")
@@ -74,13 +74,13 @@ se_list
 # elements, use use_name = FALSE
 se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE)
 
-# If you want to combine groups back together, you can use unSplitBy
-unSplitBy(se_list)
+# If you want to combine groups back together, you can use unsplitBy
+unsplitBy(se_list)
 
 }
 \seealso{
 \code{\link[=splitByRanks]{splitByRanks}}
-\code{\link[=unSplitByRanks]{unSplitByRanks}}
+\code{\link[=unsplitByRanks]{unsplitByRanks}}
 \code{\link[=merge-methods]{mergeRows}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 \code{\link[=agglomerate-methods]{agglomerateByRank}},

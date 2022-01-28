@@ -98,7 +98,7 @@ x
 }
 \seealso{
 \code{\link[=splitBy]{splitBy}}
-\code{\link[=unSplitBy]{unSplitBy}}
+\code{\link[=unsplitBy]{unsplitBy}}
 \code{\link[=merge-methods]{mergeRows}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 \code{\link[=agglomerate-methods]{agglomerateByRank}},

@@ -27,7 +27,7 @@
 #'
 #' @seealso
 #' \code{\link[=splitByRanks]{splitByRanks}}
-#' \code{\link[=unSplitByRanks]{unSplitByRanks}}
+#' \code{\link[=unsplitByRanks]{unsplitByRanks}}
 #' \code{\link[=merge-methods]{mergeRows}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
@@ -54,10 +54,10 @@
 #' 
 #' # If variable named equally can be found from both colData and rowData, 
 #' # MARGIN must be specified
-#' se_list <- splitBy(tse, grouping = "SampleType", MARGIN = 2)
+#' se_list <- splitBy(tse, grouping = "group", MARGIN = 2)
 #' 
 #' # It is possible to split data also in row-wise
-#' se_list <- splitBy(tse, grouping = "SampleType", MARGIN = 1)
+#' se_list <- splitBy(tse, grouping = "group", MARGIN = 1)
 #' 
 #' # Split data based on Phyla
 #' se_list <- splitBy(tse, "Phylum")
@@ -69,8 +69,8 @@
 #' # elements, use use_name = FALSE
 #' se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE)
 #' 
-#' # If you want to combine groups back together, you can use unSplitBy
-#' unSplitBy(se_list)
+#' # If you want to combine groups back together, you can use unsplitBy
+#' unsplitBy(se_list)
 #' 
 NULL
 
@@ -114,14 +114,14 @@ setMethod("splitBy", signature = c(x = "ANY"),
 #' 
 #' @rdname splitBy
 #' @export
-setGeneric("unSplitBy",
+setGeneric("unsplitBy",
            signature = c("x"),
            function(x, MARGIN = NULL, ...)
-               standardGeneric("unSplitBy"))
+               standardGeneric("unsplitBy"))
 
 #' @rdname splitBy
 #' @export
-setMethod("unSplitBy", signature = c(x = "list"),
+setMethod("unsplitBy", signature = c(x = "list"),
     function(x, MARGIN = NULL, ...){
         ############################## INPUT CHECK #############################
         # Check MARGIN
@@ -172,11 +172,11 @@ setMethod("unSplitBy", signature = c(x = "list"),
    
 #' @rdname splitBy
 #' @export
-setMethod("unSplitBy", signature = c(x = "SimpleList"),
+setMethod("unsplitBy", signature = c(x = "SimpleList"),
     function(x, MARGIN = NULL, ...){
         # Convert into a list
         x <- as.list(x)
-        unSplitBy(x, MARGIN, ...)
+        unsplitBy(x, MARGIN, ...)
     }
 )
 ################################ HELP FUNCTIONS ################################
