@@ -3,11 +3,17 @@
 \name{splitBy}
 \alias{splitBy}
 \alias{splitBy,ANY-method}
+\alias{unSplitBy}
+\alias{unSplitBy,ANY-method}
 \title{Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable}
 \usage{
 splitBy(x, grouping = NULL, MARGIN = NULL, ...)
 
 \S4method{splitBy}{ANY}(x, grouping = NULL, MARGIN = NULL, ...)
+
+unSplitBy(x, MARGIN = NULL, ...)
+
+\S4method{unSplitBy}{ANY}(x, MARGIN = NULL, ...)
 }
 \arguments{
 \item{x}{A

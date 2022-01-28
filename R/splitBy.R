@@ -68,8 +68,8 @@
 #' # elements, use use_name = FALSE
 #' se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE)
 #' 
-#' # If you want to combine groups back together, you can use cbind or rbind
-#' do.call(cbind, se_list)
+#' # If you want to combine groups back together, you can use unSplitBy
+#' unSplitBy(se_list)
 #' 
 NULL
 
@@ -104,6 +104,78 @@ setMethod("splitBy", signature = c(x = "ANY"),
         # Split data
         se_list <- .split_by(x, grouping, MARGIN, ...)
         return(se_list)
+    }
+)
+
+#' @param x A list of
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   objects
+#'   
+#' @rdname splitBy
+#' @export
+setGeneric("unSplitBy",
+           signature = c("x"),
+           function(x, MARGIN = NULL, ...)
+               standardGeneric("unSplitBy"))
+
+#' @rdname splitBy
+#' @export
+setMethod("unSplitBy", signature = c(x = "list"),
+    function(x, MARGIN = NULL, ...){
+        ############################## INPUT CHECK #############################
+        # Check MARGIN
+        if( !(MARGIN == "row" || MARGIN == "col" || is.null(MARGIN) ||
+              (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2))) ){
+            stop("'MARGIN' must be 'row', 1, 'col', 2, or NULL",
+                 call. = FALSE)
+        }
+        ############################ INPUT CHECK END ###########################
+        # Can data be combined row-wise or column-wise
+        # If row_wise, then column names should be equal
+        row_wise <- all(sapply(x, FUN = function(obj){
+            identical( colnames(obj), colnames(x[[1]])) 
+        }))
+        # If col-wise, then rownames should be equal
+        col_wise <- all(sapply(x, FUN = function(obj){
+            identical( rownames(obj), rownames(x[[1]])) 
+        }))
+        
+        # Combine data
+        # If data can be combined in both directions, and MARGIN is not specified
+        if( row_wise && col_wise && is.null(MARGIN) ){
+            stop("Both rownames and colnames match. Specify with 'MARGIN' ",
+                 "whether to combine data column-wise or row-wise.",
+                 call. = FALSE)
+            # If data is combined column-wise
+        } else if( col_wise && (MARGIN == "col" || MARGIN == 2 || is.null(MARGIN)) ){
+            se <- do.call(cbind, x)
+            # If data is combined row-wise
+        } else if( row_wise && (MARGIN == "row" || MARGIN == 1 || is.null(MARGIN)) ){
+            se <- do.call(rbind, x)
+            # If MARGIN is specified but rownames do not match
+        } else if ( !col_wise && (MARGIN == "col" || MARGIN == 2) ){
+            stop("rownames should match when data is combined column-wise",
+                 call. = FALSE)
+            # If MARGIN is specified but colnames do not match
+        } else if ( !row_wise && (MARGIN == "row" || MARGIN == 1) ){
+            stop("colnames should match when data is combined row-wise",
+                 call. = FALSE)
+            # If rownames nor colnames do not match, data cannot be combined
+        } else{
+            stop("Data cannot be combined since rownames nor colnames do not match.",
+                 call. = FALSE)
+        }
+        return(se)
+    }
+)
+   
+#' @rdname splitBy
+#' @export
+setMethod("unSplitBy", signature = c(x = "SimpleList"),
+    function(x, MARGIN = NULL, ...){
+        # Convert into a list
+        x <- as.list(x)
+        unSplitBy(x, MARGIN, ...)
     }
 )
 ################################ HELP FUNCTIONS ################################
