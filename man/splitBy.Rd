@@ -3,11 +3,11 @@
 \name{splitBy}
 \alias{splitBy}
 \alias{splitBy,ANY-method}
-\title{Split \code{SummarizedExperiment} by grouping variables}
+\title{Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable}
 \usage{
-splitBy(x, grouping = NULL, direction = NULL, ...)
+splitBy(x, grouping = NULL, MARGIN = NULL, ...)
 
-\S4method{splitBy}{ANY}(x, grouping = NULL, direction = NULL, ...)
+\S4method{splitBy}{ANY}(x, grouping = NULL, MARGIN = NULL, ...)
 }
 \arguments{
 \item{x}{A
@@ -17,8 +17,8 @@ object}
 \item{grouping}{A single character value for selecting the grouping variable
 from \code{colData} or \code{rowData}.}
 
-\item{direction}{A single character value for selecting from where grouping
-variable should be searched. Must be "col" or "row".}
+\item{MARGIN}{A single character or numeric value for selecting from where grouping
+variable should be searched. Must be "row"/1 or "col"/2.}
 
 \item{...}{\itemize{
 \item{\code{use_names} A boolean value to select whether to name elements of
@@ -29,7 +29,7 @@ list by their group names.}
 List of \code{SummarizedExperiment} objects.
 }
 \description{
-Split \code{SummarizedExperiment} by grouping variables
+Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable
 }
 \details{
 \code{splitBy} split data based on grouping variable. Splitting can be done
@@ -49,11 +49,11 @@ colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
 rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
 
 # If variable named equally can be found from both colData and rowData, 
-# direction must be specified
-se_list <- splitBy(tse, grouping = "SampleType", direction = "col")
+# MARGIN must be specified
+se_list <- splitBy(tse, grouping = "SampleType", MARGIN = "col")
 
 # It is possible to split data also in row-wise
-se_list <- splitBy(tse, grouping = "SampleType", direction = "row")
+se_list <- splitBy(tse, grouping = "SampleType", MARGIN = "row")
 
 # However, if you want to split data based on ranks, use splitByRanks
 se_list <- splitByRanks(tse)

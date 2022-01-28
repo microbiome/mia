@@ -1,4 +1,4 @@
-#' Split \code{SummarizedExperiment} by grouping variables
+#' Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable
 #'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -7,8 +7,8 @@
 #' @param grouping A single character value for selecting the grouping variable
 #'   from \code{colData} or \code{rowData}.
 #' 
-#' @param direction A single character value for selecting from where grouping
-#'   variable should be searched. Must be "col" or "row". 
+#' @param MARGIN A single character or numeric value for selecting from where grouping
+#'   variable should be searched. Must be "row"/1 or "col"/2. 
 #'   
 #' @param ... 
 #' \itemize{
@@ -52,11 +52,11 @@
 #' rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
 #' 
 #' # If variable named equally can be found from both colData and rowData, 
-#' # direction must be specified
-#' se_list <- splitBy(tse, grouping = "SampleType", direction = "col")
+#' # MARGIN must be specified
+#' se_list <- splitBy(tse, grouping = "SampleType", MARGIN = "col")
 #' 
 #' # It is possible to split data also in row-wise
-#' se_list <- splitBy(tse, grouping = "SampleType", direction = "row")
+#' se_list <- splitBy(tse, grouping = "SampleType", MARGIN = "row")
 #' 
 #' # However, if you want to split data based on ranks, use splitByRanks
 #' se_list <- splitByRanks(tse)
@@ -75,13 +75,13 @@ NULL
 #' @export
 setGeneric("splitBy",
            signature = "x",
-           function(x, grouping = NULL, direction = NULL, ...)
+           function(x, grouping = NULL, MARGIN = NULL, ...)
                standardGeneric("splitBy"))
 
 #' @rdname splitBy
 #' @export
 setMethod("splitBy", signature = c(x = "ANY"),
-    function(x, grouping = NULL, direction = NULL, ...){
+    function(x, grouping = NULL, MARGIN = NULL, ...){
         ############################## INPUT CHECK #############################
         # Check grouping
         if( !.is_non_empty_string(grouping) ){
@@ -89,65 +89,21 @@ setMethod("splitBy", signature = c(x = "ANY"),
                  "and it must specify variable from colData or rowData.",
                  call. = FALSE)
         }
-        # Check direction
-        if( !(direction == "row" || direction == "col" || is.null(direction)) ){
-            stop("'direction' must be 'row', 'col', or NULL",
-                 call. = FALSE)
-        }
-        
-        # Check if variable can be found
-        if( is.null(direction) ){
-            # Is variable from colData or rowData?
-            is_coldata_variable <- any( grouping %in% colnames(colData(x)) )
-            is_rowdata_variable <- any( grouping %in% colnames(rowData(x)) )
-            
-            # If variable is can be found from both, but direction is not specified
-            if( is_coldata_variable && is_rowdata_variable ){
-                stop("'grouping' defines variable from both colData and rowData.",
-                     " Use 'direction' to specify the direction.",
-                     call. = FALSE)
-            }
-            # If variable cannot be found
-            if( !is_coldata_variable && !is_rowdata_variable ){
-                stop("Variable defined by 'grouping' cannot be found.",
-                     call. = FALSE)
-            }
-            # Specify direction
-            direction <- ifelse(is_coldata_variable, "col", "row")
-        } else if( direction == "col" ){
-            # Can variable be found from colData?
-            is_coldata_variable <- any( grouping %in% colnames(colData(x)) )
-            is_rowdata_variable <- FALSE
-
-            # If variable cannot be found
-            if( !is_coldata_variable ){
-                stop("Variable defined by 'grouping' cannot be found from colData.",
-                     call. = FALSE)
-            }
-        } else if( direction == "row" ){
-            # Can variable be found from rowData?
-            is_rowdata_variable <- any( grouping %in% colnames(rowData(x)) )
-            is_coldata_variable <- FALSE
-            
-            # If variable cannot be found
-            if( !is_rowdata_variable ){
-                stop("Variable defined by 'grouping' cannot be found from rowData.",
-                call. = FALSE)
-            }
-        }
-        # If variable is taxonomy rank
-        if( is_rowdata_variable && any(grouping %in% taxonomyRanks(x)) ){
-            stop("'grouping' defines a taxonomy rank. Please use splitByRank instead.",
+        # Check MARGIN
+        if( !(MARGIN == "row" || MARGIN == "col" || is.null(MARGIN) ||
+              (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2))) ){
+            stop("'MARGIN' must be 'row', 1, 'col', 2, or NULL",
                  call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
-        se_list <- .split_by(x, grouping, direction, ...)
+        MARGIN <- .split_by_rowise_or_colwise(x, grouping, MARGIN)
+        se_list <- .split_by(x, grouping, MARGIN, ...)
         return(se_list)
     }
 )
 ################################ HELP FUNCTIONS ################################
 # Split data in column-wise or row-wise based on grouping variable. 
-.split_by <- function(x, grouping, direction, use_names = TRUE, ...){
+.split_by <- function(x, grouping, MARGIN, use_names = TRUE, ...){
     # Check use_names
     if( !.is_a_bool(use_names) ){
         stop("'use_names' must be a boolean value.", 
@@ -155,7 +111,7 @@ setMethod("splitBy", signature = c(x = "ANY"),
     }
     
     # Split data in column-wise
-    if( direction == "col" ){
+    if( MARGIN == "col" || MARGIN == 2 ){
         # Get sample indices for each group
         group_indices <- split(1:ncol(x), colData(x)[[grouping]])
         # Split data
@@ -164,7 +120,7 @@ setMethod("splitBy", signature = c(x = "ANY"),
             return(temp)
         })
         # Split data in row-wise
-    } else if(direction == "row" ){
+    } else if( MARGIN == "row" || MARGIN == 1 ){
         # Get sample indices for each group
         group_indices <- split(1:nrow(x), rowData(x)[[grouping]])
         # Split data
@@ -178,4 +134,53 @@ setMethod("splitBy", signature = c(x = "ANY"),
         names(se_list) <- names(group_indices)
     }
     return(se_list)
+}
+
+.split_by_rowise_or_colwise <- function(x, grouping, MARGIN){
+    # Check if variable can be found
+    if( is.null(MARGIN) ){
+        # Is variable from colData or rowData?
+        is_coldata_variable <- any( grouping %in% colnames(colData(x)) )
+        is_rowdata_variable <- any( grouping %in% colnames(rowData(x)) )
+        
+        # If variable is can be found from both, but MARGIN is not specified
+        if( is_coldata_variable && is_rowdata_variable ){
+            stop("'grouping' defines variable from both colData and rowData.",
+                 " Use 'MARGIN' to specify the MARGIN.",
+                 call. = FALSE)
+        }
+        # If variable cannot be found
+        if( !is_coldata_variable && !is_rowdata_variable ){
+            stop("Variable defined by 'grouping' cannot be found.",
+                 call. = FALSE)
+        }
+        # Specify MARGIN
+        MARGIN <- ifelse(is_coldata_variable, "col", "row")
+    } else if( MARGIN == "col" || MARGIN == 2 ){
+        # Can variable be found from colData?
+        is_coldata_variable <- any( grouping %in% colnames(colData(x)) )
+        is_rowdata_variable <- FALSE
+        
+        # If variable cannot be found
+        if( !is_coldata_variable ){
+            stop("Variable defined by 'grouping' cannot be found from colData.",
+                 call. = FALSE)
+        }
+    } else if( MARGIN == "row" || MARGIN == 1 ){
+        # Can variable be found from rowData?
+        is_rowdata_variable <- any( grouping %in% colnames(rowData(x)) )
+        is_coldata_variable <- FALSE
+        
+        # If variable cannot be found
+        if( !is_rowdata_variable ){
+            stop("Variable defined by 'grouping' cannot be found from rowData.",
+                 call. = FALSE)
+        }
+    }
+    # If variable is taxonomy rank
+    if( is_rowdata_variable && any(grouping %in% taxonomyRanks(x)) ){
+        stop("'grouping' defines a taxonomy rank. Please use splitByRank instead.",
+             call. = FALSE)
+    }
+    return(MARGIN)
 }
