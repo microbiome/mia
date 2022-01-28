@@ -7,8 +7,8 @@
 #' @param grouping A single character value for selecting the grouping variable
 #'   from \code{colData} or \code{rowData}.
 #' 
-#' @param MARGIN A single character or numeric value for selecting from where grouping
-#'   variable should be searched. Must be "row"/1 or "col"/2. 
+#' @param MARGIN A single numeric value, 1 (row) or 2 (col),  for selecting from 
+#'   where grouping variable should be searched.
 #'   
 #' @param ... 
 #' \itemize{
@@ -94,7 +94,7 @@ setMethod("splitBy", signature = c(x = "ANY"),
         # Check MARGIN
         if( !(MARGIN == "row" || MARGIN == "col" || is.null(MARGIN) ||
               (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2))) ){
-            stop("'MARGIN' must be 'row', 1, 'col', 2, or NULL",
+            stop("'MARGIN' must be 1, 2, or NULL",
                  call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
@@ -126,7 +126,7 @@ setMethod("unSplitBy", signature = c(x = "list"),
         # Check MARGIN
         if( !(MARGIN == "row" || MARGIN == "col" || is.null(MARGIN) ||
               (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2))) ){
-            stop("'MARGIN' must be 'row', 1, 'col', 2, or NULL",
+            stop("'MARGIN' must be 1, 2, or NULL",
                  call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################

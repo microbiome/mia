@@ -4,7 +4,8 @@
 \alias{splitBy}
 \alias{splitBy,ANY-method}
 \alias{unSplitBy}
-\alias{unSplitBy,ANY-method}
+\alias{unSplitBy,list-method}
+\alias{unSplitBy,SimpleList-method}
 \title{Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable}
 \usage{
 splitBy(x, grouping = NULL, MARGIN = NULL, ...)
@@ -13,18 +14,20 @@ splitBy(x, grouping = NULL, MARGIN = NULL, ...)
 
 unSplitBy(x, MARGIN = NULL, ...)
 
-\S4method{unSplitBy}{ANY}(x, MARGIN = NULL, ...)
+\S4method{unSplitBy}{list}(x, MARGIN = NULL, ...)
+
+\S4method{unSplitBy}{SimpleList}(x, MARGIN = NULL, ...)
 }
 \arguments{
-\item{x}{A
+\item{x}{A list of
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object}
+objects}
 
 \item{grouping}{A single character value for selecting the grouping variable
 from \code{colData} or \code{rowData}.}
 
-\item{MARGIN}{A single character or numeric value for selecting from where grouping
-variable should be searched. Must be "row"/1 or "col"/2.}
+\item{MARGIN}{A single numeric value, 1 (row) or 2 (col),  for selecting from
+where grouping variable should be searched.}
 
 \item{...}{\itemize{
 \item{\code{use_names} A boolean value to select whether to name elements of
@@ -71,8 +74,8 @@ se_list
 # elements, use use_name = FALSE
 se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE)
 
-# If you want to combine groups back together, you can use cbind or rbind
-do.call(cbind, se_list)
+# If you want to combine groups back together, you can use unSplitBy
+unSplitBy(se_list)
 
 }
 \seealso{
