@@ -98,7 +98,10 @@ setMethod("splitBy", signature = c(x = "ANY"),
                  call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
+        # Should data be splitted row-wise or column-wise?
+        # Chek that variable can be found.
         MARGIN <- .split_by_rowise_or_colwise(x, grouping, MARGIN)
+        # Split data
         se_list <- .split_by(x, grouping, MARGIN, ...)
         return(se_list)
     }
@@ -140,6 +143,9 @@ setMethod("splitBy", signature = c(x = "ANY"),
     return(se_list)
 }
 
+# This function returns the MARGIN: where the grouping variable is found. 
+# It also checks, that variable can be found. 
+# If user has specified MARGIN, it checks that it is correct.
 .split_by_rowise_or_colwise <- function(x, grouping, MARGIN){
     # Check if variable can be found
     if( is.null(MARGIN) ){
