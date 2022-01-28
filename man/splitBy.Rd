@@ -79,8 +79,8 @@ unSplitBy(se_list)
 
 }
 \seealso{
-\code{\link[mia::splitByRanks]{splitByRanks}},
-\code{\link[mia::unSplitByRanks]{unSplitByRanks}},
+\code{\link[=splitByRanks]{splitByRanks}}
+\code{\link[=unSplitByRanks]{unSplitByRanks}}
 \code{\link[=merge-methods]{mergeRows}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 \code{\link[=agglomerate-methods]{agglomerateByRank}},

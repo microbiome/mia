@@ -26,13 +26,14 @@
 #' objects; each element containing members of each group.
 #'
 #' @seealso
-#' \code{\link[mia::splitByRanks]{splitByRanks}},
-#' \code{\link[mia::unSplitByRanks]{unSplitByRanks}},
+#' \code{\link[=splitByRanks]{splitByRanks}}
+#' \code{\link[=unSplitByRanks]{unSplitByRanks}}
 #' \code{\link[=merge-methods]{mergeRows}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
 #' \code{\link[SingleCellExperiment:altExps]{altExps}},
 #' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
+#'
 #'
 #' @name splitBy
 #' @export
@@ -110,7 +111,7 @@ setMethod("splitBy", signature = c(x = "ANY"),
 #' @param x A list of
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   objects
-#'   
+#' 
 #' @rdname splitBy
 #' @export
 setGeneric("unSplitBy",

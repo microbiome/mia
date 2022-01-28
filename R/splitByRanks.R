@@ -56,6 +56,8 @@
 #' the \code{colData} of the base object is kept. 
 #'
 #' @seealso
+#' \code{\link[=splitBy]{splitBy}}
+#' \code{\link[=unSplitBy]{unSplitBy}}
 #' \code{\link[=merge-methods]{mergeRows}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
