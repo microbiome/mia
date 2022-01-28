@@ -115,7 +115,7 @@ setMethod("splitBy", signature = c(x = "ANY"),
     # Split data in column-wise
     if( MARGIN == "col" || MARGIN == 2 ){
         # Get sample indices for each group
-        group_indices <- split(1:ncol(x), colData(x)[[grouping]])
+        group_indices <- split(seq_len(ncol(x)), colData(x)[[grouping]])
         # Split data
         se_list <- lapply(seq_along(group_indices), function(i){ 
             temp <- x[ , group_indices[[i]] ]
@@ -124,7 +124,7 @@ setMethod("splitBy", signature = c(x = "ANY"),
         # Split data in row-wise
     } else if( MARGIN == "row" || MARGIN == 1 ){
         # Get sample indices for each group
-        group_indices <- split(1:nrow(x), rowData(x)[[grouping]])
+        group_indices <- split(seq_len(nrow(x)), rowData(x)[[grouping]])
         # Split data
         se_list <- lapply(seq_along(group_indices), function(i){ 
             temp <- x[ group_indices[[i]], ]
