@@ -9,7 +9,7 @@
 #'
 #' @return An object of class \code{TreeSummarizedExperiment}
 #'
-#' @importFrom S4Vectors SimpleList DataFrame
+#' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
 #' @importFrom SummarizedExperiment colData colData<-
 #'
 #' @export
@@ -37,18 +37,25 @@ makeTreeSummarizedExperimentFromPhyloseq <- function(obj) {
         stop("'obj' must be a 'phyloseq' object")
     }
     #
-    assays <- SimpleList(counts = obj@otu_table@.Data)
+    # Get the assay
+    counts <- obj@otu_table@.Data
+    # Check the orientation, and transpose if necessary
+    if( !obj@otu_table@taxa_are_rows ){
+        counts <- t(counts)
+    }
+    # Create a list of assays
+    assays <- SimpleList(counts = counts)
     
     if(!is.null(obj@tax_table@.Data)){
         rowData <- DataFrame(data.frame(obj@tax_table@.Data))
     } else{
-        rowData <- S4Vectors:::make_zero_col_DataFrame(nrow(assays$counts))
+        rowData <- S4Vectors::make_zero_col_DFrame(nrow(assays$counts))
         rownames(rowData) <- rownames(assays$counts)
     }
     if(!is.null(obj@sam_data)){
         colData <- DataFrame(data.frame(obj@sam_data))
     } else{
-        colData <- S4Vectors:::make_zero_col_DataFrame(ncol(assays$counts))
+        colData <- S4Vectors::make_zero_col_DFrame(ncol(assays$counts))
         rownames(colData) <- colnames(assays$counts)
     }
     if(!is.null(obj@phy_tree)){
