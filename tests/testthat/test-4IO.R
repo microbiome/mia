@@ -27,6 +27,10 @@ test_that("Importing phyloseq objects yield TreeSummarizedExperiment objects", {
     me <- makeTreeSummarizedExperimentFromPhyloseq(esophagus)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(58,3))
+    esophagus2 <- esophagus
+    phyloseq::otu_table(esophagus2) <- t(phyloseq::otu_table(esophagus))
+    me2 <- makeTreeSummarizedExperimentFromPhyloseq(esophagus2)
+    expect_equal(me, me2)
 })
 
 test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
@@ -281,9 +285,9 @@ test_that("dimnames of feature table is identicle with meta data", {
    expect_identical(colnames(new_feature_tab), rownames(sample_meta))
    
    # sample_meta or feature meta is NULL
-   sample_meta2 <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+   sample_meta2 <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
    rownames(sample_meta2) <- colnames(feature_tab)
-   taxa_meta2 <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+   taxa_meta2 <- S4Vectors::make_zero_col_DFrame(nrow(feature_tab))
    rownames(taxa_meta2) <- rownames(feature_tab)
    expect_silent(.set_feature_tab_dimnames(feature_tab, sample_meta2, taxa_meta))
    
