@@ -45,6 +45,7 @@ loadFromBiom <- function(file) {
 #' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
 #'
 #' @export
+#' @importFrom S4Vectors make_zero_col_DFrame
 makeSummarizedExperimentFromBiom <- function(obj){
     # input check
     .require_package("biomformat")
@@ -58,11 +59,11 @@ makeSummarizedExperimentFromBiom <- function(obj){
     
     # colData and rowData are initialized with empty tables with rownames if they are NULL
     if( is.null(sample_data) ){
-        sample_data <- S4Vectors:::make_zero_col_DataFrame(ncol(counts))
+        sample_data <- S4Vectors::make_zero_col_DFrame(ncol(counts))
         rownames(sample_data) <- colnames(counts)
     }
     if( is.null(feature_data) ){
-        feature_data <- S4Vectors:::make_zero_col_DataFrame(nrow(counts))
+        feature_data <- S4Vectors::make_zero_col_DFrame(nrow(counts))
         rownames(feature_data) <- rownames(counts)
     }
     

@@ -114,6 +114,7 @@ setGeneric("runOverlap", signature = c("x"),
 #' is stored in reducedDim(x).
 #'   
 #' @export
+#' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runOverlap", signature = c(x = "SummarizedExperiment"),
     function(x, name = "overlap", ...){
         # Check name
@@ -126,7 +127,7 @@ setMethod("runOverlap", signature = c(x = "SummarizedExperiment"),
         # Convert it into matrix so that nrow equals number of samples
         mat <- as.matrix(mat)
         # Store it to reducedDim
-        reducedDims(x)[[name]] <- mat
+        reducedDim(x, name) <- mat
         return(x)
     }
 )
