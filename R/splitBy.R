@@ -4,37 +4,49 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
 #'
-#' @param grouping A single character value for selecting the grouping variable
-#'   from \code{colData} or \code{rowData}.
-#' 
-#' @param MARGIN A single numeric value, 1 (row) or 2 (col),  for selecting from 
-#'   where grouping variable should be searched.
+#' @param f A single character value for selecting the grouping variable
+#'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
+#'   with the same length as one of the dimensions. Rows take precedence.
+#'   Split by cols is not encouraged, since this is not compatible with 
+#'   storing the results in \code{altExps}.
 #'   
-#' @param agglomerate A single boolean value to select whether to agglomerate the 
-#'   data or not. (By default: \code{agglomerate = TRUE})
+#' @param skip_agglomerate \code{TRUE} or \code{FALSE}: Should the agglomerate
+#'   be skipped? (By default: \code{skip_agglomerate = FALSE})
+#'
+#' @param keep_reducedDims \code{TRUE} or \code{FALSE}: Should the
+#'   \code{reducedDims(x)} be transferred to the result? Please note, that this
+#'   breaks the link between the data used to calculate the reduced dims.
+#'   (default: \code{keep_reducedDims = FALSE})
 #'   
-#' @param ... Arguments passed to \code{agglomerateByRank} function for
+#' @param ... Arguments passed to \code{mergeRows}/\code{mergeCols} function for
 #'   \code{SummarizedExperiment} objects and other functions.
-#'   See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
+#'   See \code{\link[=agglomerate-methods]{mergeRows}} for more details.
 #'   \itemize{
 #'     \item{\code{use_names} A single boolean value to select whether to name elements of
 #'     list by their group names.}
 #'   }
 #'
 #' @return
-#' If the data is agglomerated, the result is a single \code{SummarizedExperiment}
-#' object. If the data is not agglomerated, the result is a list of 
-#' \code{SummarizedExperiment} objects in \code{SimpleList} format.
+#' For \code{splitBy}: if \code{skip_agglomerate == FALSE} a
+#' \code{SummarizedExperiment}. Otherwise \code{SummarizedExperiment} objects in
+#' a \code{SimpleList}.
+#'
+#' For \code{unsplitBy}: \code{x}, with \code{rowData} and \code{assay}
+#' data replaced by the unsplit data. \code{colData} of x is kept as well
+#' and any existing \code{rowTree} is dropped as well, since existing
+#' \code{rowLinks} are not valid anymore.
 #'
 #' @details
 #' \code{splitBy} split data based on grouping variable. Splitting can be done
-#' column-wise or row-wise. You can specify if you want to agglomerate the data or not.
+#' column-wise or row-wise. You can specify if you want to agglomerate the data
+#' or not.
 #' 
 #' If data is agglomerated the returned value is a \code{SummarizedExperiment}
 #' object that has values ummed-up based on grouping variable.
 #' 
-#' If data is not agglomerated, the returned value is a list of 
-#' \code{SummarizedExperiment} objects; each element containing members of each group.
+#' If data is not agglomerated, the returned value is a list of
+#' \code{SummarizedExperiment} objects; each element containing members of each
+#' group.
 #'
 #' @seealso
 #' \code{\link[=splitByRanks]{splitByRanks}}
@@ -47,14 +59,12 @@
 #'
 #' @name splitBy
 #' @export
-#' 
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' # Split data based on SampleType. 
-#' se_list <- splitBy(tse, grouping = "SampleType", agglomerate = FALSE)
+#' se_list <- splitBy(tse, f = "SampleType", skip_agglomerate = TRUE)
 #' 
 #' se_list
 #' 
@@ -66,27 +76,15 @@
 #' rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
 #' 
 #' # If variable named equally can be found from both colData and rowData, 
-#' # MARGIN must be specified
-#' se_ <- splitBy(tse, grouping = "group", MARGIN = 2, agglomerate = TRUE)
-#' 
-#' # It is possible to split data also in row-wise. 
-#' se <- splitBy(tse, grouping = "group", MARGIN = 1, agglomerate = TRUE)
-#' 
-#' # Split data based on Phyla. If agglomerate = TRUE, 
-#' # splitBy equals to agglomerateByRank
-#' se <- splitBy(tse, "Phylum", agglomerate = TRUE)
-#' 
-#' se
-#' 
-#' # Split data withtout agglomeration
-#' se_list <- splitBy(tse, "Phylum", agglomerate = FALSE)
-#' 
+#' # row takes precedence
+#' se_list <- splitBy(tse, f = "group", skip_agglomerate = TRUE)
 #' se_list
 #' 
 #' # List of SE objects is returned. 
 #' # Each element is named based on their group name. If you don't want to name
 #' # elements, use use_name = FALSE
-#' se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE, agglomerate = FALSE)
+#' se_list <- splitBy(tse, f = "SampleType", use_names = FALSE,
+#'                    skip_agglomerate = TRUE)
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitBy(se_list)
@@ -97,218 +95,208 @@ NULL
 #' @export
 setGeneric("splitBy",
            signature = "x",
-           function(x, grouping = NULL, MARGIN = NULL, agglomerate = TRUE, ...)
+           function(x, ...)
                standardGeneric("splitBy"))
+
+.norm_args_for_split_by <- function(x, f, skip_agglomerate = FALSE,
+                                    use_names = TRUE, ...){
+    # input check
+    if(is.null(f)){
+        stop("'f' must either be a single non-empty character value or",
+             " vector coercible to factor alongside one of the ",
+             "dimensions of 'x'",
+             call. = FALSE)
+    }
+    # Check f or extract the factor from rowData or colData
+    if( !.is_non_empty_string(f) ){
+        if(length(f) > 1L && (is.character(f) || is.numeric(f))){
+            f <- factor(f, unique(f))
+        }
+        if(length(f) %in% dim(x)){
+            stop("'f' must either be a single non-empty character value or",
+                 " vector coercible to factor alongside one of the ",
+                 "dimensions of 'x'",
+                 call. = FALSE)
+        }
+        MARGIN <- which(dim(x) %in% length(f))
+    } else {
+        tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
+                 silent = TRUE)
+        if(is(tmp,"try-error")){
+            tmp <- try({retrieveCellInfo(x, f, search = "colData")},
+                     silent = TRUE)
+            if(is(f,"try-error")){
+                stop("", call. = FALSE)
+            } 
+            MARGIN <- 2L
+        } else {
+            MARGIN <- 1L
+        }
+        f <- tmp$value
+        f <- factor(f, unique(f))
+    }
+    # Check skip_agglomerate
+    if( !.is_a_bool(skip_agglomerate) ){
+        stop("'skip_agglomerate must be TRUE or FALSE.",
+             call. = FALSE)
+    }
+    # Check use_names
+    if( !.is_a_bool(use_names) ){
+        stop("'use_names must be TRUE or FALSE.",
+             call. = FALSE)
+    }
+    list(f = f,
+         MARGIN = MARGIN,
+         skip_agglomerate = skip_agglomerate,
+         use_names = use_names)
+}
+
+.split_by <- function(x, args, ...){
+    f <- args[["f"]]
+    if(!args[["skip_agglomerate"]]){
+        merge_FUN <- switch(args[["MARGIN"]],
+                            "1" = mergeRows,
+                            "2" = mergeCols )
+        return(merge_FUN(x, f, ...))
+    }
+    dim_FUN <- switch(args[["MARGIN"]],
+                      "1" = nrow,
+                      "2" = ncol)
+    idx <- seq_len(dim_FUN(x))
+    idxs <- split(idx, f)
+    subset_FUN <- function(x, i = TRUE, j = TRUE){
+        x[i, j]
+    }
+    if(args[["MARGIN"]] == 1){
+        ans <- SimpleList(lapply(idxs, subset_FUN, x = x))
+    } else {
+        ans <- SimpleList(lapply(idxs, subset_FUN, x = x, i = TRUE))
+    }
+    if(!args[["use_names"]]){
+        ans <- unname(ans)
+    }
+    ans
+}
+
+#' @rdname splitBy
+#' @export
+setMethod("splitBy", signature = c(x = "SummarizedExperiment"),
+    function(x, f = NULL, skip_agglomerate = FALSE, ...){
+        args <- .norm_args_for_split_by(x, f = f, 
+                                        skip_agglomerate = skip_agglomerate)
+        # Split data
+        .split_by(x, args, ...)
+    }
+)
 
 #' @rdname splitBy
 #' @export
 setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
-    function(x, grouping = NULL, MARGIN = NULL, agglomerate = TRUE, ...){
-        ############################## INPUT CHECK #############################
-        # Check grouping
-        if( !.is_non_empty_string(grouping) ){
-            stop("'grouping' must be a single non-empty character value ",
-                 "and it must specify variable from colData or rowData.",
-                 call. = FALSE)
-        }
-        # Check MARGIN
-        if( !(MARGIN == "row" || MARGIN == "col" || is.null(MARGIN) ||
-              (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2))) ){
-            stop("'MARGIN' must be 1, 2, or NULL.",
-                 call. = FALSE)
-        }
-        # Check agglomerate
-        if( !.is_a_bool(agglomerate) ){
-            stop("'agglomerate must be TRUE or FALSE.",
-                 call. = FALSE)
-        }
-        ############################ INPUT CHECK END ###########################
-        # Should data be splitted row-wise or column-wise?
-        # Check that variable can be found.
-        MARGIN <- .split_by_rowise_or_colwise(x, grouping, MARGIN)
+    function(x, f = NULL, skip_agglomerate = FALSE, ...){
+        args <- .norm_args_for_split_by(x, f = f,
+                                      skip_agglomerate = skip_agglomerate)
+        args[["strip_altexp"]] <- TRUE
         # Split data
-        result <- .split_by(x, grouping, MARGIN, agglomerate, ...)
-        return(result)
+        .split_by(x, args, ...)
     }
 )
 
-#' @param x A list of
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   objects
-#' 
+#' @rdname splitBy
+#' @export
+setMethod("splitBy", signature = c(x = "TreeSummarizedExperiment"),
+    function(x, f = NULL, skip_agglomerate = FALSE, ...){
+        callNextMethod()
+    }
+)
+
+################################################################################
+# unsplitBy
+
 #' @rdname splitBy
 #' @export
 setGeneric("unsplitBy",
            signature = c("x"),
-           function(x, MARGIN = NULL, ...)
+           function(x, ...)
                standardGeneric("unsplitBy"))
 
+.list_unsplit_by <- function(ses, ...){
+    dims <- vapply(ses, dim, integer(2L))
+    if(length(unique(dims[1L,])) == 1L){
+        MARGIN <- 2L
+    } else if(length(unique(dims[2L,])) == 1L) {
+        MARGIN <- 1L
+    } else {
+        stop("No dimensions are equal across all elmenents.", call. = FALSE)
+    }
+    #
+    class_x <- class(ses[[1L]])
+    #
+    args <- list(assays = .unsplit_assays(ses, MARGIN = MARGIN))
+    if(MARGIN == 1L){
+        rd <- .combine_rowData(ses)
+        rr <- .combine_rowRanges(ses)
+        args$rowRanges <- rr
+    } else {
+        args$colData <- .combine_colData(ses)
+        args$rowRanges <- rowRanges(ses[[1L]])
+        rd <- rowData(ses[[1L]])
+    }
+    ans <- do.call(class_x, args)
+    rowData(ans) <- rd
+    ans
+}
+
+#' @importFrom SummarizedExperiment colData
+#' @importFrom BiocGenerics rbind
+.combine_colData <- function(ses) {
+    cds <- lapply(ses, colData)
+    cd <- do.call(rbind,unname(cds))
+    rownames(cd) <- unlist(unname(lapply(ses, colnames)))
+    cd
+}
+
+
 #' @rdname splitBy
+#' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitBy", signature = c(x = "list"),
-    function(x, MARGIN = NULL, ...){
-        ############################## INPUT CHECK #############################
-        # Check MARGIN
-        if( !(MARGIN == "row" || MARGIN == "col" || is.null(MARGIN) ||
-              (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2))) ){
-            stop("'MARGIN' must be 1, 2, or NULL",
-                 call. = FALSE)
+    function(x, ...){
+        .list_unsplit_by(x, ...)
+    }
+)
+#' @rdname splitBy
+#' @importFrom SingleCellExperiment altExpNames altExp altExps
+#' @export
+setMethod("unsplitBy", signature = c(x = "SimpleList"),
+    function(x, ...){
+        unsplitBy(as.list(x), ...)
+    }
+)
+
+#' @rdname splitBy
+#' @importFrom SingleCellExperiment altExpNames altExp altExps
+#' @export
+setMethod("unsplitBy", signature = c(x = "SingleCellExperiment"),
+    function(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...){
+        # input check
+        if(!.is_a_bool(keep_reducedDims)){
+            stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
         }
-        ############################ INPUT CHECK END ###########################
-        # Can data be combined row-wise or column-wise
-        # If row_wise, then column names should be equal
-        row_wise <- all(sapply(x, FUN = function(obj){
-            identical( colnames(obj), colnames(x[[1]])) 
-        }))
-        # If col-wise, then rownames should be equal
-        col_wise <- all(sapply(x, FUN = function(obj){
-            identical( rownames(obj), rownames(x[[1]])) 
-        }))
-        
-        # Combine data
-        # If data can be combined in both directions, and MARGIN is not specified
-        if( row_wise && col_wise && is.null(MARGIN) ){
-            stop("Both rownames and colnames match. Specify with 'MARGIN' ",
-                 "whether to combine data column-wise or row-wise.",
-                 call. = FALSE)
-            # If data is combined column-wise
-        } else if( col_wise && (MARGIN == "col" || MARGIN == 2 || is.null(MARGIN)) ){
-            se <- do.call(cbind, x)
-            # If data is combined row-wise
-        } else if( row_wise && (MARGIN == "row" || MARGIN == 1 || is.null(MARGIN)) ){
-            se <- do.call(rbind, x)
-            # If MARGIN is specified but rownames do not match
-        } else if ( !col_wise && (MARGIN == "col" || MARGIN == 2) ){
-            stop("rownames should match when data is combined column-wise",
-                 call. = FALSE)
-            # If MARGIN is specified but colnames do not match
-        } else if ( !row_wise && (MARGIN == "row" || MARGIN == 1) ){
-            stop("colnames should match when data is combined row-wise",
-                 call. = FALSE)
-            # If rownames nor colnames do not match, data cannot be combined
-        } else{
-            stop("Data cannot be combined since rownames nor colnames do not match.",
-                 call. = FALSE)
+        #
+        ae_names <- altExpNames(x)
+        ae_names <- ae_names[ae_names %in% altExpNames]
+        if(length(ae_names) == 0L){
+            stop("No altExp matching 'altExpNames' in name.", call. = FALSE)
         }
-        return(se)
+        ses <- altExps(x)[ae_names]
+        .unsplit_by(x, ses, keep_reducedDims, ...)
     }
 )
    
-#' @rdname splitBy
+#' @rdname unsplitBy
 #' @export
-setMethod("unsplitBy", signature = c(x = "SimpleList"),
-    function(x, MARGIN = NULL, ...){
-        # Convert into a list
-        x <- as.list(x)
-        unsplitBy(x, MARGIN, ...)
+setMethod("unsplitBy", signature = c(x = "TreeSummarizedExperiment"),
+    function(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...){
+        callNextMethod()
     }
 )
-
-################################ HELP FUNCTIONS ################################
-# Split data in column-wise or row-wise based on grouping variable. 
-.split_by <- function(x, grouping, MARGIN, agglomerate, use_names = TRUE, ...){
-    # Check use_names
-    if( !.is_a_bool(use_names) ){
-        stop("'use_names' must be a boolean value.", 
-             call. = FALSE)
-    }
-    # If agglomerate is TRUE, use mergeRows/mergeCols which agglomerate data
-    # Otherwise, create a list of SE objects
-    if( agglomerate ){
-        result <- .split_and_agglomerate(x, grouping, MARGIN, ...)
-    } else{
-        result <- .split_not_agglomerate(x, grouping, MARGIN, use_names, ...)
-    }
-    return(result)
-}
-
-# This function agglomerates the data based on grouping variable.
-# Output is SE object.
-.split_and_agglomerate <- function(x, grouping, MARGIN, ...){
-    # Split data in column-wise
-    if( MARGIN == "col" || MARGIN == 2 ){
-        se <- mergeCols(x, colData(x)[ , grouping], ...)
-        # Split data in row-wise
-    } else if( MARGIN == "row" || MARGIN == 1 ){
-        se <- mergeRows(x, rowData(x)[ , grouping], ...)
-    }
-    return(se)
-}
-
-# This function splits the data without agglomeration. 
-# Output is a list of SE objects.
-.split_not_agglomerate <- function(x, grouping, MARGIN, use_names, ...){
-    # Split data in column-wise
-    if( MARGIN == "col" || MARGIN == 2 ){
-        # Get sample indices for each group
-        group_indices <- split(seq_len(ncol(x)), colData(x)[[grouping]])
-        # Split data
-        se_list <- lapply(seq_along(group_indices), function(i){ 
-            temp <- x[ , group_indices[[i]] ]
-            return(temp)
-        })
-        # Split data in row-wise
-    } else if( MARGIN == "row" || MARGIN == 1 ){
-        # Get sample indices for each group
-        group_indices <- split(seq_len(nrow(x)), rowData(x)[[grouping]])
-        # Split data
-        se_list <- lapply(seq_along(group_indices), function(i){ 
-            temp <- x[ group_indices[[i]], ]
-            return(temp)
-        })
-    }
-    # If TRUE, give group names for elements of list
-    if( use_names ){
-        names(se_list) <- names(group_indices)
-    }
-    # Convert into SimpleList
-    se_list <- SimpleList(se_list)
-    return(se_list)
-}
-
-# This function returns the MARGIN: where the grouping variable is found. 
-# It also checks, that variable can be found. 
-# If user has specified MARGIN, it checks that it is correct.
-.split_by_rowise_or_colwise <- function(x, grouping, MARGIN){
-    # Check if variable can be found
-    if( is.null(MARGIN) ){
-        # Is variable from colData or rowData?
-        is_coldata_variable <- any( grouping %in% colnames(colData(x)) )
-        is_rowdata_variable <- any( grouping %in% colnames(rowData(x)) )
-        
-        # If variable is can be found from both, but MARGIN is not specified
-        if( is_coldata_variable && is_rowdata_variable ){
-            stop("'grouping' defines variable from both colData and rowData.",
-                 " Use 'MARGIN' to specify the MARGIN.",
-                 call. = FALSE)
-        }
-        # If variable cannot be found
-        if( !is_coldata_variable && !is_rowdata_variable ){
-            stop("Variable defined by 'grouping' cannot be found.",
-                 call. = FALSE)
-        }
-        # Specify MARGIN
-        MARGIN <- ifelse(is_coldata_variable, "col", "row")
-    } else if( MARGIN == "col" || MARGIN == 2 ){
-        # Can variable be found from colData?
-        is_coldata_variable <- any( grouping %in% colnames(colData(x)) )
-        is_rowdata_variable <- FALSE
-        
-        # If variable cannot be found
-        if( !is_coldata_variable ){
-            stop("Variable defined by 'grouping' cannot be found from colData.",
-                 call. = FALSE)
-        }
-    } else if( MARGIN == "row" || MARGIN == 1 ){
-        # Can variable be found from rowData?
-        is_rowdata_variable <- any( grouping %in% colnames(rowData(x)) )
-        is_coldata_variable <- FALSE
-        
-        # If variable cannot be found
-        if( !is_rowdata_variable ){
-            stop("Variable defined by 'grouping' cannot be found from rowData.",
-                 call. = FALSE)
-        }
-    }
-    return(MARGIN)
-}

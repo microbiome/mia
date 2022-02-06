@@ -2,67 +2,88 @@
 % Please edit documentation in R/splitBy.R
 \name{splitBy}
 \alias{splitBy}
+\alias{splitBy,SummarizedExperiment-method}
 \alias{splitBy,SingleCellExperiment-method}
+\alias{splitBy,TreeSummarizedExperiment-method}
 \alias{unsplitBy}
 \alias{unsplitBy,list-method}
 \alias{unsplitBy,SimpleList-method}
+\alias{unsplitBy,SingleCellExperiment-method}
 \title{Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable}
 \usage{
-splitBy(x, grouping = NULL, MARGIN = NULL, agglomerate = TRUE, ...)
+splitBy(x, ...)
 
-\S4method{splitBy}{SingleCellExperiment}(x, grouping = NULL, MARGIN = NULL, agglomerate = TRUE, ...)
+\S4method{splitBy}{SummarizedExperiment}(x, f = NULL, skip_agglomerate = FALSE, ...)
 
-unsplitBy(x, MARGIN = NULL, ...)
+\S4method{splitBy}{SingleCellExperiment}(x, f = NULL, skip_agglomerate = FALSE, ...)
 
-\S4method{unsplitBy}{list}(x, MARGIN = NULL, ...)
+\S4method{splitBy}{TreeSummarizedExperiment}(x, f = NULL, skip_agglomerate = FALSE, ...)
 
-\S4method{unsplitBy}{SimpleList}(x, MARGIN = NULL, ...)
+unsplitBy(x, ...)
+
+\S4method{unsplitBy}{list}(x, ...)
+
+\S4method{unsplitBy}{SimpleList}(x, ...)
+
+\S4method{unsplitBy}{SingleCellExperiment}(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...)
 }
 \arguments{
-\item{x}{A list of
+\item{x}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-objects}
+object}
 
-\item{grouping}{A single character value for selecting the grouping variable
-from \code{colData} or \code{rowData}.}
-
-\item{MARGIN}{A single numeric value, 1 (row) or 2 (col),  for selecting from
-where grouping variable should be searched.}
-
-\item{agglomerate}{A single boolean value to select whether to agglomerate the
-data or not. (By default: \code{agglomerate = TRUE})}
-
-\item{...}{Arguments passed to \code{agglomerateByRank} function for
+\item{...}{Arguments passed to \code{mergeRows}/\code{mergeCols} function for
 \code{SummarizedExperiment} objects and other functions.
-See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
+See \code{\link[=agglomerate-methods]{mergeRows}} for more details.
 \itemize{
 \item{\code{use_names} A single boolean value to select whether to name elements of
 list by their group names.}
 }}
+
+\item{f}{A single character value for selecting the grouping variable
+from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
+with the same length as one of the dimensions. Rows take precedence.
+Split by cols is not encouraged, since this is not compatible with
+storing the results in \code{altExps}.}
+
+\item{skip_agglomerate}{\code{TRUE} or \code{FALSE}: Should the agglomerate
+be skipped? (By default: \code{skip_agglomerate = FALSE})}
+
+\item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
+\code{reducedDims(x)} be transferred to the result? Please note, that this
+breaks the link between the data used to calculate the reduced dims.
+(default: \code{keep_reducedDims = FALSE})}
 }
 \value{
-If the data is agglomerated, the result is a single \code{SummarizedExperiment}
-object. If the data is not agglomerated, the result is a list of
-\code{SummarizedExperiment} objects in \code{SimpleList} format.
+For \code{splitBy}: if \code{skip_agglomerate == FALSE} a
+\code{SummarizedExperiment}. Otherwise \code{SummarizedExperiment} objects in
+a \code{SimpleList}.
+
+For \code{unsplitBy}: \code{x}, with \code{rowData} and \code{assay}
+data replaced by the unsplit data. \code{colData} of x is kept as well
+and any existing \code{rowTree} is dropped as well, since existing
+\code{rowLinks} are not valid anymore.
 }
 \description{
 Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable
 }
 \details{
 \code{splitBy} split data based on grouping variable. Splitting can be done
-column-wise or row-wise. You can specify if you want to agglomerate the data or not.
+column-wise or row-wise. You can specify if you want to agglomerate the data
+or not.
 
 If data is agglomerated the returned value is a \code{SummarizedExperiment}
 object that has values ummed-up based on grouping variable.
 
 If data is not agglomerated, the returned value is a list of
-\code{SummarizedExperiment} objects; each element containing members of each group.
+\code{SummarizedExperiment} objects; each element containing members of each
+group.
 }
 \examples{
 data(GlobalPatterns)
 tse <- GlobalPatterns
 # Split data based on SampleType. 
-se_list <- splitBy(tse, grouping = "SampleType", agglomerate = FALSE)
+se_list <- splitBy(tse, f = "SampleType", skip_agglomerate = TRUE)
 
 se_list
 
@@ -74,27 +95,15 @@ colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
 rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
 
 # If variable named equally can be found from both colData and rowData, 
-# MARGIN must be specified
-se_ <- splitBy(tse, grouping = "group", MARGIN = 2, agglomerate = TRUE)
-
-# It is possible to split data also in row-wise. 
-se <- splitBy(tse, grouping = "group", MARGIN = 1, agglomerate = TRUE)
-
-# Split data based on Phyla. If agglomerate = TRUE, 
-# splitBy equals to agglomerateByRank
-se <- splitBy(tse, "Phylum", agglomerate = TRUE)
-
-se
-
-# Split data withtout agglomeration
-se_list <- splitBy(tse, "Phylum", agglomerate = FALSE)
-
+# row takes precedence
+se_list <- splitBy(tse, f = "group", skip_agglomerate = TRUE)
 se_list
 
 # List of SE objects is returned. 
 # Each element is named based on their group name. If you don't want to name
 # elements, use use_name = FALSE
-se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE, agglomerate = FALSE)
+se_list <- splitBy(tse, f = "SampleType", use_names = FALSE,
+                   skip_agglomerate = TRUE)
 
 # If you want to combine groups back together, you can use unsplitBy
 unsplitBy(se_list)
@@ -108,7 +117,4 @@ unsplitBy(se_list)
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
 \code{\link[SingleCellExperiment:altExps]{altExps}},
 \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
-}
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 }
