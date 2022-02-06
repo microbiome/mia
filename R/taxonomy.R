@@ -262,6 +262,10 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"),
              with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE){
         # input check
+        if(nrow(x) == 0L){
+            stop("No data available in `x` ('x' has nrow(x) == 0L.)",
+                 call. = FALSE)
+        }
         if(ncol(rowData(x)) == 0L){
             stop("rowData needs to be populated.", call. = FALSE)
         }
