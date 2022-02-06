@@ -8,9 +8,9 @@
 \alias{unsplitBy,SimpleList-method}
 \title{Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable}
 \usage{
-splitBy(x, grouping = NULL, MARGIN = NULL, ...)
+splitBy(x, grouping = NULL, MARGIN = NULL, agglomerate = TRUE, ...)
 
-\S4method{splitBy}{SingleCellExperiment}(x, grouping = NULL, MARGIN = NULL, ...)
+\S4method{splitBy}{SingleCellExperiment}(x, grouping = NULL, MARGIN = NULL, agglomerate = TRUE, ...)
 
 unsplitBy(x, MARGIN = NULL, ...)
 
@@ -29,29 +29,42 @@ from \code{colData} or \code{rowData}.}
 \item{MARGIN}{A single numeric value, 1 (row) or 2 (col),  for selecting from
 where grouping variable should be searched.}
 
+\item{agglomerate}{A single boolean value to select whether to agglomerate the
+data or not. (By default: \code{agglomerate = TRUE})}
+
 \item{...}{\itemize{
-\item{\code{use_names} A boolean value to select whether to name elements of
+\item{\code{use_names} A single boolean value to select whether to name elements of
 list by their group names.}
 }}
 }
 \value{
-List of \code{SummarizedExperiment} objects in \code{SimpleList} format.
+If the data is agglomerated, the result is a single \code{SummarizedExperiment}
+object. If the data is not agglomerated, the result is a list of
+\code{SummarizedExperiment} objects in \code{SimpleList} format.
 }
 \description{
 Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable
 }
 \details{
 \code{splitBy} split data based on grouping variable. Splitting can be done
-column-wise or row-wise. Returned value is a list of \code{SummarizedExperiment}
-objects; each element containing members of each group.
+column-wise or row-wise. You can specify if you want to agglomerate the data or not.
+
+If data is agglomerated the returned value is a \code{SummarizedExperiment}
+object that has values ummed-up based on grouping variable.
+
+If data is not agglomerated, the returned value is a list of
+\code{SummarizedExperiment} objects; each element containing members of each group.
 }
 \examples{
 data(GlobalPatterns)
 tse <- GlobalPatterns
 # Split data based on SampleType. 
-se_list <- splitBy(tse, grouping = "SampleType")
+se_list <- splitBy(tse, grouping = "SampleType", agglomerate = FALSE)
 
 se_list
+
+# You can also agglomerate (sum-up) data based on grouping variable
+se <- splitBy(tse, grouping = "SampleType")
 
 # Create arbitrary groups
 colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
@@ -59,20 +72,26 @@ rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
 
 # If variable named equally can be found from both colData and rowData, 
 # MARGIN must be specified
-se_list <- splitBy(tse, grouping = "group", MARGIN = 2)
+se_ <- splitBy(tse, grouping = "group", MARGIN = 2, agglomerate = TRUE)
 
-# It is possible to split data also in row-wise
-se_list <- splitBy(tse, grouping = "group", MARGIN = 1)
+# It is possible to split data also in row-wise. 
+se <- splitBy(tse, grouping = "group", MARGIN = 1, agglomerate = TRUE)
 
-# Split data based on Phyla
-se_list <- splitBy(tse, "Phylum")
+# Split data based on Phyla. If agglomerate = TRUE, 
+# splitBy equals to agglomerateByRank
+se <- splitBy(tse, "Phylum", agglomerate = TRUE)
+
+se
+
+# Split data withtout agglomeration
+se_list <- splitBy(tse, "Phylum", agglomerate = FALSE)
 
 se_list
 
 # List of SE objects is returned. 
 # Each element is named based on their group name. If you don't want to name
 # elements, use use_name = FALSE
-se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE)
+se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE, agglomerate = FALSE)
 
 # If you want to combine groups back together, you can use unsplitBy
 unsplitBy(se_list)

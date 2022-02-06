@@ -10,20 +10,29 @@
 #' @param MARGIN A single numeric value, 1 (row) or 2 (col),  for selecting from 
 #'   where grouping variable should be searched.
 #'   
+#' @param agglomerate A single boolean value to select whether to agglomerate the 
+#'   data or not. (By default: \code{agglomerate = TRUE})
+#'   
 #' @param ... 
 #' \itemize{
-#'   \item{\code{use_names} A boolean value to select whether to name elements of
+#'   \item{\code{use_names} A single boolean value to select whether to name elements of
 #'   list by their group names.}
 #' }
 #'
 #' @return
-#' List of \code{SummarizedExperiment} objects in \code{SimpleList} format.
-#'
+#' If the data is agglomerated, the result is a single \code{SummarizedExperiment}
+#' object. If the data is not agglomerated, the result is a list of 
+#' \code{SummarizedExperiment} objects in \code{SimpleList} format.
 #'
 #' @details
 #' \code{splitBy} split data based on grouping variable. Splitting can be done
-#' column-wise or row-wise. Returned value is a list of \code{SummarizedExperiment}
-#' objects; each element containing members of each group.
+#' column-wise or row-wise. You can specify if you want to agglomerate the data or not.
+#' 
+#' If data is agglomerated the returned value is a \code{SummarizedExperiment}
+#' object that has values ummed-up based on grouping variable.
+#' 
+#' If data is not agglomerated, the returned value is a list of 
+#' \code{SummarizedExperiment} objects; each element containing members of each group.
 #'
 #' @seealso
 #' \code{\link[=splitByRanks]{splitByRanks}}
@@ -34,7 +43,6 @@
 #' \code{\link[SingleCellExperiment:altExps]{altExps}},
 #' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
 #'
-#'
 #' @name splitBy
 #' @export
 #' 
@@ -44,9 +52,12 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' # Split data based on SampleType. 
-#' se_list <- splitBy(tse, grouping = "SampleType")
+#' se_list <- splitBy(tse, grouping = "SampleType", agglomerate = FALSE)
 #' 
 #' se_list
+#' 
+#' # You can also agglomerate (sum-up) data based on grouping variable
+#' se <- splitBy(tse, grouping = "SampleType")
 #' 
 #' # Create arbitrary groups
 #' colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
@@ -54,20 +65,26 @@
 #' 
 #' # If variable named equally can be found from both colData and rowData, 
 #' # MARGIN must be specified
-#' se_list <- splitBy(tse, grouping = "group", MARGIN = 2)
+#' se_ <- splitBy(tse, grouping = "group", MARGIN = 2, agglomerate = TRUE)
 #' 
-#' # It is possible to split data also in row-wise
-#' se_list <- splitBy(tse, grouping = "group", MARGIN = 1)
+#' # It is possible to split data also in row-wise. 
+#' se <- splitBy(tse, grouping = "group", MARGIN = 1, agglomerate = TRUE)
 #' 
-#' # Split data based on Phyla
-#' se_list <- splitBy(tse, "Phylum")
+#' # Split data based on Phyla. If agglomerate = TRUE, 
+#' # splitBy equals to agglomerateByRank
+#' se <- splitBy(tse, "Phylum", agglomerate = TRUE)
+#' 
+#' se
+#' 
+#' # Split data withtout agglomeration
+#' se_list <- splitBy(tse, "Phylum", agglomerate = FALSE)
 #' 
 #' se_list
 #' 
 #' # List of SE objects is returned. 
 #' # Each element is named based on their group name. If you don't want to name
 #' # elements, use use_name = FALSE
-#' se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE)
+#' se_list <- splitBy(tse, grouping = "SampleType", use_name = FALSE, agglomerate = FALSE)
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitBy(se_list)
@@ -78,13 +95,13 @@ NULL
 #' @export
 setGeneric("splitBy",
            signature = "x",
-           function(x, grouping = NULL, MARGIN = NULL, ...)
+           function(x, grouping = NULL, MARGIN = NULL, agglomerate = TRUE, ...)
                standardGeneric("splitBy"))
 
 #' @rdname splitBy
 #' @export
 setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
-    function(x, grouping = NULL, MARGIN = NULL, ...){
+    function(x, grouping = NULL, MARGIN = NULL, agglomerate = TRUE, ...){
         ############################## INPUT CHECK #############################
         # Check grouping
         if( !.is_non_empty_string(grouping) ){
@@ -95,16 +112,21 @@ setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
         # Check MARGIN
         if( !(MARGIN == "row" || MARGIN == "col" || is.null(MARGIN) ||
               (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2))) ){
-            stop("'MARGIN' must be 1, 2, or NULL",
+            stop("'MARGIN' must be 1, 2, or NULL.",
+                 call. = FALSE)
+        }
+        # Check agglomerate
+        if( !.is_a_bool(agglomerate) ){
+            stop("'agglomerate must be TRUE or FALSE.",
                  call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
         # Should data be splitted row-wise or column-wise?
-        # Chek that variable can be found.
+        # Check that variable can be found.
         MARGIN <- .split_by_rowise_or_colwise(x, grouping, MARGIN)
         # Split data
-        se_list <- .split_by(x, grouping, MARGIN, ...)
-        return(se_list)
+        result <- .split_by(x, grouping, MARGIN, agglomerate, ...)
+        return(result)
     }
 )
 
@@ -181,13 +203,38 @@ setMethod("unsplitBy", signature = c(x = "SimpleList"),
 )
 ################################ HELP FUNCTIONS ################################
 # Split data in column-wise or row-wise based on grouping variable. 
-.split_by <- function(x, grouping, MARGIN, use_names = TRUE, ...){
+.split_by <- function(x, grouping, MARGIN, agglomerate, use_names = TRUE, ...){
     # Check use_names
     if( !.is_a_bool(use_names) ){
         stop("'use_names' must be a boolean value.", 
              call. = FALSE)
     }
-    
+    # If agglomerate is TRUE, use mergeRows/mergeCols which agglomerate data
+    # Otherwise, create a list of SE objects
+    if( agglomerate ){
+        result <- .split_and_agglomerate(x, grouping, MARGIN, ...)
+    } else{
+        result <- .split_not_agglomerate(x, grouping, MARGIN, use_names, ...)
+    }
+    return(result)
+}
+
+# This function agglomerates the data based on grouping variable.
+# Output is SE object.
+.split_and_agglomerate <- function(x, grouping, MARGIN, ...){
+    # Split data in column-wise
+    if( MARGIN == "col" || MARGIN == 2 ){
+        se <- mergeCols(x, colData(x)[ , grouping], ...)
+        # Split data in row-wise
+    } else if( MARGIN == "row" || MARGIN == 1 ){
+        se <- mergeRows(x, rowData(x)[ , grouping], ...)
+    }
+    return(se)
+}
+
+# This function splits the data without agglomeration. 
+# Output is a list of SE objects.
+.split_not_agglomerate <- function(x, grouping, MARGIN, use_names, ...){
     # Split data in column-wise
     if( MARGIN == "col" || MARGIN == 2 ){
         # Get sample indices for each group
