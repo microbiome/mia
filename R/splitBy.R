@@ -83,7 +83,7 @@ setGeneric("splitBy",
 
 #' @rdname splitBy
 #' @export
-setMethod("splitBy", signature = c(x = "ANY"),
+setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
     function(x, grouping = NULL, MARGIN = NULL, ...){
         ############################## INPUT CHECK #############################
         # Check grouping

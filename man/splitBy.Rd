@@ -2,7 +2,7 @@
 % Please edit documentation in R/splitBy.R
 \name{splitBy}
 \alias{splitBy}
-\alias{splitBy,ANY-method}
+\alias{splitBy,SingleCellExperiment-method}
 \alias{unsplitBy}
 \alias{unsplitBy,list-method}
 \alias{unsplitBy,SimpleList-method}
@@ -10,7 +10,7 @@
 \usage{
 splitBy(x, grouping = NULL, MARGIN = NULL, ...)
 
-\S4method{splitBy}{ANY}(x, grouping = NULL, MARGIN = NULL, ...)
+\S4method{splitBy}{SingleCellExperiment}(x, grouping = NULL, MARGIN = NULL, ...)
 
 unsplitBy(x, MARGIN = NULL, ...)
 
