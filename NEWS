@@ -25,3 +25,5 @@ Changes in version 1.3.x
 + added loadFromMetaphlan
 + renamed calculateUniFrac to calculateUnifrac 
 + added na.rm option to getTopTaxa function   
++ bugfix: makeTreeSEFromPseq -- orientation of assay is taken into account
++ bugfix: getExperimentCrossCorrelation's "matrix"" mode works with features named equally

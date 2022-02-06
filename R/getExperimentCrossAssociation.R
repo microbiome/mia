@@ -274,7 +274,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                               abund_values2 = "counts",
                                               direction = "row",
                                               method = c("spearman", "categorical", "kendall", "pearson"),
-                                              mode = "table",
+                                              mode = c("table", "matrix"),
                                               p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                                                                "holm", "hommel", "none"),
                                               p_adj_threshold = NULL,
@@ -306,13 +306,12 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
       stop("'direction' must be 'row' or 'column'.", call. = FALSE)
     }
     # Check method
-    # Checked in .calculate_association
-    # Check mode
-    if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
-        stop("'mode' must be 'matrix' or 'table'.", call. = FALSE)
-    }
-    # Check p_adj_method
-    p_adj_method <- match.arg(p_adj_method)
+    method <- match.arg(method,
+                        c("spearman", "categorical", "kendall","pearson"))
+    mode <- match.arg(mode, c("table", "matrix"))
+    p_adj_method <- match.arg(p_adj_method,
+                              c("fdr", "BH", "bonferroni", "BY", "hochberg", 
+                                "holm", "hommel", "none"))
     # Check p_adj_threshold
     if( !(is.numeric(p_adj_threshold) && 
           (p_adj_threshold>=0 && p_adj_threshold<=1)  || 
@@ -392,7 +391,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         !is.null(cor_threshold) || 
         filter_self_correlations ){
         # Filter associations
-        result <- .association_filter(result, 
+        result <- .association_filter(result,
                                       p_adj_threshold,
                                       cor_threshold,
                                       assay1, 
@@ -434,16 +433,18 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 .test_experiment_of_mae <- function(x, experiment){
     # If experiment is numeric and bigger than the number of experiments
     if( is.numeric(experiment) && experiment > length(experiments(x)) ){
-        stop(paste0("'", deparse(substitute(experiment)), "' is greater than the",
-                    " number of experiments in MAE object."), call. = FALSE)
+        stop("'", deparse(substitute(experiment)), "' is greater than the",
+             " number of experiments in MAE object.",
+             call. = FALSE)
     }
     # Negation of "if value is character and can be found from experiments or
     # if value is numeric and is smaller or equal to the list of experiments.
     if( !( is.character(experiment) && experiment %in% names(experiments(x)) || 
         is.numeric(experiment) && experiment <= length(experiments(x)) ) ){
-        stop(paste0("'", deparse(substitute(experiment)), "'", 
-                    " must be numeric or character value specifying", 
-                    " experiment in experiment(x)."), call. = FALSE)
+        stop("'", deparse(substitute(experiment)), "'", 
+             " must be numeric or character value specifying", 
+             " experiment in experiment(x).",
+             call. = FALSE)
     }
 }
 ####################### .cross_association_test_data_type ######################
@@ -1046,7 +1047,11 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Give rownames and remove additional column
     rownames(cor) <- cor$Var1
     cor$Var1 <- NULL
+    # Convert into matrix
     cor <- as.matrix(cor)
+    # Adjust rownames and colnames 
+    rownames(cor) <- assay1_names_original
+    colnames(cor) <- assay2_names_original
     # Create a result list
     result_list <- list(cor = cor)
     # If p_values exist, then create a matrix and add to the result list
@@ -1059,6 +1064,12 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         # Adjust rownames and remove an additional column
         rownames(pval) <- pval$Var1
         pval$Var1 <- NULL
+        # Convert into matrix
+        pval <- as.matrix(pval)
+        # Adjust rownames and colnames
+        rownames(pval) <- assay1_names_original
+        colnames(pval) <- assay2_names_original
+        # Convert into matrix and add it to result list
         pval <- as.matrix(pval)
         result_list[["pval"]] <- pval
     } 
@@ -1072,6 +1083,12 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         # Adjust rownames and remove an  additional column
         rownames(p_adj) <- p_adj$Var1
         p_adj$Var1 <- NULL
+        # Convert into matrix
+        p_adj <- as.matrix(p_adj)
+        # Adjust rownames and colnames
+        rownames(p_adj) <- assay1_names_original
+        colnames(p_adj) <- assay2_names_original
+        # Convert into matrix and add it to result list
         p_adj <- as.matrix(p_adj)
         result_list[["p_adj"]] <- p_adj
     } 
