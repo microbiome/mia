@@ -89,9 +89,12 @@ setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
         # abundance.
         # rownames() returns the names of taxa that are the most abundant.
         idx <- as.list(apply(t(mat) == colMaxs(mat),1L,which))
-        taxas <- rownames(mat)[unlist(idx)]
-        taxas <- unlist(relist(taxas,idx))
-        return(taxas)
+        # Get rownames based on indices
+        taxa <- rownames(mat)[unlist(idx)]
+        # If multiple dominant taxa were found, names contain taxa in addition to 
+        # sample name. Names are converted so that they include only sample names.
+        names(taxa) <- rep( names(idx), times = lengths(idx) )
+        return(taxa)
     }
 )
 
@@ -112,7 +115,18 @@ setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         dom.taxa <- perSampleDominantTaxa(x, ...)
-        colData(x)[,name] <- dom.taxa
+        # If individual sample contains multiple dominant taxa (they have equal counts)
+        if( length(dom.taxa) > nrow(colData(x)) ){
+            # Store order
+            order <- unique(names(dom.taxa))
+            # there are multiple dominant taxa in one sample (counts are equal), length
+            # of dominant is greater than rows in colData. --> create a list that contain
+            # dominant taxa, and is as long as there are rows in colData
+            dom.taxa <- split(dom.taxa, rep(names(dom.taxa), lengths(dom.taxa)) )
+            # Order the data
+            dom.taxa <- dom.taxa[order]
+        }
+        colData(x)[[name]] <- dom.taxa
         return(x)
     }
 )
