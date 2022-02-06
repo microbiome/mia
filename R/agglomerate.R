@@ -189,6 +189,8 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         rownames(x) <- .get_taxonomic_label(x, empty.fields)
         # Remove those columns from rowData that include only NAs
         x <- .remove_NA_cols_from_rowdata(x, ...)
+        x <- .add_values_to_metadata(x, "agglomerated_by_rank", rank)
+        x
     }
 )
 
