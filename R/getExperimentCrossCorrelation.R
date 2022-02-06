@@ -239,7 +239,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               abund_values1 = "counts",
                                               abund_values2 = "counts",
                                               method = c("spearman", "categorical", "kendall", "pearson"),
-                                              mode = "table",
+                                              mode = c("table", "matrix"),
                                               p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                                                                "holm", "hommel", "none"),
                                               p_adj_threshold = NULL,
@@ -266,13 +266,12 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     .check_assay_present(abund_values1, tse1)
     .check_assay_present(abund_values2, tse2)
     # Check method
-    method <- match.arg(method)
-    # Check mode
-    if( !.is_non_empty_string(mode) && !mode %in% c("matrix", "table") ){
-        stop("'mode' must be 'matrix' or 'table'.", call. = FALSE)
-    }
-    # Check p_adj_method
-    p_adj_method <- match.arg(p_adj_method)
+    method <- match.arg(method,
+                        c("spearman", "categorical", "kendall","pearson"))
+    mode <- match.arg(mode, c("table", "matrix"))
+    p_adj_method <- match.arg(p_adj_method,
+                              c("fdr", "BH", "bonferroni", "BY", "hochberg", 
+                                "holm", "hommel", "none"))
     # Check p_adj_threshold
     if( !(is.numeric(p_adj_threshold) && 
           (p_adj_threshold>=0 && p_adj_threshold<=1)  || 
@@ -328,10 +327,10 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     # Calculate correlations
     if(verbose){
-        message( paste0("Calculating correlations...\nmethod: ", method,
-                        ", test_significance: ", test_significance,
-                        ", p_adj_method: ",
-                        ifelse(!is.null(p_adj_method), p_adj_method, "-")) )
+        message( "Calculating correlations...\nmethod: ", method,
+                 ", test_significance: ", test_significance,
+                 ", p_adj_method: ",
+                 ifelse(!is.null(p_adj_method), p_adj_method, "-"))
     }
     result <- .calculate_correlation(assay1, assay2, method, p_adj_method, 
                                      test_significance, show_warnings)
@@ -352,13 +351,13 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         !is.null(cor_threshold) || 
         filter_self_correlations ){
         if(verbose){
-            message( paste0("\nFiltering results...\np_adj_threshold: ",
-                            ifelse(!is.null(p_adj_threshold),  p_adj_threshold, "-"), 
-                            ", cor_threshold: ", 
-                            ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
-                            ", filter_self_correlations: ", 
-                            ifelse(filter_self_correlations,
-                            filter_self_correlations, "-")) )
+            message( "Filtering results...\np_adj_threshold: ",
+                     ifelse(!is.null(p_adj_threshold),  p_adj_threshold, "-"), 
+                     ", cor_threshold: ", 
+                     ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
+                     ", filter_self_correlations: ", 
+                     ifelse(filter_self_correlations,
+                            filter_self_correlations, "-"))
         }
         result <- .correlation_filter(result, 
                                       p_adj_threshold,
@@ -370,13 +369,14 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Matrix or table?
     if (mode == "matrix" && !is.null(result) ) {
         if(verbose){
-            message("\nConverting table into matrices...")
+            message("Converting table into matrices...")
         }
-        result <- .correlation_table_to_matrix(result)
+        # Create matrices
+        result <- .correlation_table_to_matrix(result, assay1,  assay2)
         # If sort was specified and there are more than 1 features
         if(sort && nrow(result$cor) > 1 && ncol(result$cor) > 1 ){
             if(verbose){
-                message("\nSorting results...")
+                message("Sorting results...")
             }
             result <- .correlation_sort(result)
         }
@@ -394,16 +394,18 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
 .test_experiment_of_mae <- function(x, experiment){
     # If experiment is numeric and bigger than the number of experiments
     if( is.numeric(experiment) && experiment > length(experiments(x)) ){
-        stop(paste0("'", deparse(substitute(experiment)), "' is greater than the",
-                    " number of experiments in MAE object."), call. = FALSE)
+        stop("'", deparse(substitute(experiment)), "' is greater than the",
+             " number of experiments in MAE object.",
+             call. = FALSE)
     }
     # Negation of "if value is character and can be found from experiments or
     # if value is numeric and is smaller or equal to the list of experiments.
     if( !( is.character(experiment) && experiment %in% names(experiments(x)) || 
         is.numeric(experiment) && experiment <= length(experiments(x)) ) ){
-        stop(paste0("'", deparse(substitute(experiment)), "'", 
-                    " must be numeric or character value specifying", 
-                    " experiment in experiment(x)."), call. = FALSE)
+        stop("'", deparse(substitute(experiment)), "'", 
+             " must be numeric or character value specifying", 
+             " experiment in experiment(x).",
+             call. = FALSE)
     }
 }
 ############################## .cor_test_data_type #############################
@@ -693,38 +695,59 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Output: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 #' @importFrom dplyr select
 #' @importFrom tidyr pivot_wider
-.correlation_table_to_matrix <- function(result){
+.correlation_table_to_matrix <- function(result, assay1, assay2){
+    # Store original names
+    assay1_names_original <- colnames(assay1)
+    assay2_names_original <- colnames(assay2)
+    # Create unique names to identify also equally named variables
+    assay1_names_unique <- make.unique(assay1_names_original)
+    assay2_names_unique <- make.unique(assay2_names_original)
+    # Assign unique names to result table
+    result$Var1 <- rep(assay1_names_unique, times = ncol(assay2))
+    result$Var2 <- rep(assay2_names_unique, each = ncol(assay1))
+    
     # Correlation matrix is done from Var1, Var2, and cor columns
     # Select correct columns
     cor <- result %>% dplyr::select("Var1", "Var2", "cor") %>% 
       # Create a tibble, colum names from Var2, values from cor,
       # first column includes Var1
-      tidyr::pivot_wider(names_from = "Var2", values_from = "cor") %>%
-      # Convert into data frame
-      as.data.frame()
-    # Give rownames and remove additional column
-    rownames(cor) <- cor$Var1
+      tidyr::pivot_wider(names_from = "Var2", values_from = "cor") 
+    # Remove an additional column
     cor$Var1 <- NULL
+    # Convert into matrix
     cor <- as.matrix(cor)
+    # Adjust rownames and colnames 
+    rownames(cor) <- assay1_names_original
+    colnames(cor) <- assay2_names_original
     # Create a result list
     result_list <- list(cor = cor)
     # If p_values exist, then create a matrix and add to the result list
     if( !is.null(result$pval) ){
         pval <- result %>% dplyr::select("Var1", "Var2", "pval") %>% 
-          tidyr::pivot_wider(names_from = "Var2", values_from = "pval") %>% 
-          as.data.frame()
-        rownames(pval) <- pval$Var1
+          tidyr::pivot_wider(names_from = "Var2", values_from = "pval")
+        # Remove an additional column
         pval$Var1 <- NULL
+        # Convert into matrix
+        pval <- as.matrix(pval)
+        # Adjust rownames and colnames
+        rownames(pval) <- assay1_names_original
+        colnames(pval) <- assay2_names_original
+        # Convert into matrix and add it to result list
         pval <- as.matrix(pval)
         result_list[["pval"]] <- pval
     } 
     # If adjusted p_values exist, then create a matrix and add to the result list
     if( !is.null(result$p_adj) ){
         p_adj <- result %>% dplyr::select("Var1", "Var2", "p_adj") %>% 
-          tidyr::pivot_wider(names_from = "Var2", values_from = "p_adj") %>% 
-          as.data.frame()
-        rownames(p_adj) <- p_adj$Var1
+          tidyr::pivot_wider(names_from = "Var2", values_from = "p_adj")
+        # Remove an additional column
         p_adj$Var1 <- NULL
+        # Convert into matrix
+        p_adj <- as.matrix(p_adj)
+        # Adjust rownames and colnames
+        rownames(p_adj) <- assay1_names_original
+        colnames(p_adj) <- assay2_names_original
+        # Convert into matrix and add it to result list
         p_adj <- as.matrix(p_adj)
         result_list[["p_adj"]] <- p_adj
     } 

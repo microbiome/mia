@@ -131,6 +131,10 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
         empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
+        if(nrow(x) == 0L){
+            stop("No data available in `x` ('x' has nrow(x) == 0L.)",
+                 call. = FALSE)
+        }
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
                 call. = FALSE)
@@ -140,9 +144,6 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         }
         if(!.is_a_bool(na.rm)){
             stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if(nrow(x) == 0L){
-            stop("'x' has nrow(x) == 0L.",call. = FALSE)
         }
         if(ncol(rowData(x)) == 0L){
             stop("taxonomyData needs to be populated.", call. = FALSE)
