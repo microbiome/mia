@@ -142,6 +142,12 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
                                      ...)
         if(is.data.frame(contaminant)){
             contaminant <- DataFrame(contaminant)
+            metadata(contaminant) <- list(conc = concentration,
+                                          neg = control,
+                                          batch = batch,
+                                          threshold = threshold,
+                                          normalize = normalize,
+                                          detailed =  detailed)
         }
         contaminant
     }
@@ -191,6 +197,10 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
                                             ...)
         if(is.data.frame(not_contaminant)){
             not_contaminant <- DataFrame(not_contaminant)
+            metadata(not_contaminant) <- list(neg = control,
+                                              threshold = threshold,
+                                              normalize = normalize,
+                                              detailed =  detailed)
         }
         not_contaminant
     }
@@ -208,6 +218,11 @@ setMethod("addContaminantQC", signature = c("SummarizedExperiment"),
     function(x, name = "isContaminant", ...){
         contaminant <- isContaminant(x, ...)
         rowData(x)[[name]] <- contaminant
+        # save metadata
+        add_metadata <- metadata(contaminant)
+        names(add_metadata) paste0("decontam_",names(add_metadata))
+        metadata(x) <- c(metadata(x),add_metadata)
+        #
         x
     }
 )
@@ -224,6 +239,11 @@ setMethod("addNotContaminantQC", signature = c("SummarizedExperiment"),
     function(x, name = "isNotContaminant", ...){
         not_contaminant <- isNotContaminant(x, ...)
         rowData(x)[[name]] <- not_contaminant
+        # save metadata
+        add_metadata <- metadata(not_contaminant)
+        names(add_metadata) paste0("decontam_",names(add_metadata))
+        metadata(x) <- c(metadata(x),add_metadata)
+        #
         x
     }
 )

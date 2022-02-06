@@ -162,6 +162,9 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         newassay <- newassay[rowSums2(newassay)>0,]
         newtse <- newtse[rownames(newassay),]
         assay(newtse, name, withDimnames=FALSE) <- newassay
+        newtse <- .add_values_to_metadata(newtse, 
+                                          "subsampleCounts_min_size",
+                                          min_size)
         return(newtse)
     }
 )
