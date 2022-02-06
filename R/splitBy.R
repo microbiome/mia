@@ -13,11 +13,13 @@
 #' @param agglomerate A single boolean value to select whether to agglomerate the 
 #'   data or not. (By default: \code{agglomerate = TRUE})
 #'   
-#' @param ... 
-#' \itemize{
-#'   \item{\code{use_names} A single boolean value to select whether to name elements of
-#'   list by their group names.}
-#' }
+#' @param ... Arguments passed to \code{agglomerateByRank} function for
+#'   \code{SummarizedExperiment} objects and other functions.
+#'   See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
+#'   \itemize{
+#'     \item{\code{use_names} A single boolean value to select whether to name elements of
+#'     list by their group names.}
+#'   }
 #'
 #' @return
 #' If the data is agglomerated, the result is a single \code{SummarizedExperiment}
@@ -201,6 +203,7 @@ setMethod("unsplitBy", signature = c(x = "SimpleList"),
         unsplitBy(x, MARGIN, ...)
     }
 )
+
 ################################ HELP FUNCTIONS ################################
 # Split data in column-wise or row-wise based on grouping variable. 
 .split_by <- function(x, grouping, MARGIN, agglomerate, use_names = TRUE, ...){

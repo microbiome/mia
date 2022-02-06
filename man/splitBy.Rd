@@ -32,7 +32,10 @@ where grouping variable should be searched.}
 \item{agglomerate}{A single boolean value to select whether to agglomerate the
 data or not. (By default: \code{agglomerate = TRUE})}
 
-\item{...}{\itemize{
+\item{...}{Arguments passed to \code{agglomerateByRank} function for
+\code{SummarizedExperiment} objects and other functions.
+See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
+\itemize{
 \item{\code{use_names} A single boolean value to select whether to name elements of
 list by their group names.}
 }}
