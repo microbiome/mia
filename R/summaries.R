@@ -57,6 +57,11 @@
 #'                        top = 5,
 #'                        abund_values = "counts")
 #' top_taxa
+#' 
+#' # Top taxa os specific rank
+#' getTopTaxa(agglomerateByRank(GlobalPatterns,
+#'                              rank = "Genus",
+#'                              na.rm = TRUE))
 #'
 #' # Gets the overview of dominant taxa
 #' dominant_taxa <- countDominantTaxa(GlobalPatterns,
