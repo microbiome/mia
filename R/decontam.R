@@ -220,7 +220,7 @@ setMethod("addContaminantQC", signature = c("SummarizedExperiment"),
         rowData(x)[[name]] <- contaminant
         # save metadata
         add_metadata <- metadata(contaminant)
-        names(add_metadata) paste0("decontam_",names(add_metadata))
+        names(add_metadata) <- paste0("decontam_",names(add_metadata))
         metadata(x) <- c(metadata(x),add_metadata)
         #
         x
@@ -241,7 +241,7 @@ setMethod("addNotContaminantQC", signature = c("SummarizedExperiment"),
         rowData(x)[[name]] <- not_contaminant
         # save metadata
         add_metadata <- metadata(not_contaminant)
-        names(add_metadata) paste0("decontam_",names(add_metadata))
+        names(add_metadata) <- paste0("decontam_",names(add_metadata))
         metadata(x) <- c(metadata(x),add_metadata)
         #
         x
