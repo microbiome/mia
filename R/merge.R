@@ -139,7 +139,10 @@ setGeneric("mergeCols",
 
 #' @importFrom S4Vectors SimpleList
 #' @importFrom scuttle sumCountsAcrossFeatures
-.merge_rows <- function(x, f, archetype = 1L, ...){
+.merge_rows <- function(x, f, archetype = 1L, 
+                        average = FALSE,
+                        BPPARAM = SerialParam(), 
+                        ...){
     # input check
     f <- .norm_f(nrow(x), f)
     if(length(levels(f)) == nrow(x)){
@@ -154,7 +157,8 @@ setGeneric("mergeCols",
                                            ids = f, 
                                            subset.row = NULL, 
                                            subset.col = NULL,
-                                           ...))
+                                           average = average,
+                                           BPPARAM = BPPARAM))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]

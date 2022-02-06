@@ -45,7 +45,12 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects,
 \code{\link[=merge-methods]{mergeRows}} and
-\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.}
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+\itemize{
+\item{\code{remove_empty_ranks}}{A single boolean value for selecting
+whether to remove those columns of rowData that include only NAs after
+agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
+}}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -118,6 +123,10 @@ print(rownames(x3[1:3,]))
 # To add them, use getTaxonomyLabels function.
 rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
 print(rownames(x3[1:3,]))
+
+# use 'remove_empty_ranks' to remove columns that include only NAs
+x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
+head(rowData(x4))
 
 ## Look at enterotype dataset...
 data(enterotype)
