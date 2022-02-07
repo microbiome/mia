@@ -452,22 +452,13 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         FUN <- .calculate_correlation_for_categorical_values
     }
     
-    # If assays includes features named equally, this causes problems. 
-    # Change names unique if there are equal names, and store original names
-    assay_names_ununique <- FALSE
-    if( any(duplicated(colnames(assay1))) || any(duplicated(colnames(assay2))) ){
-        # Create feature_pairs from original names
-        feature_pairs_original <- expand.grid(colnames(assay1), colnames(assay2))
-        # assay1
-        colnames(assay1) <- make.unique(colnames(assay1))
-        # assay2
-        colnames(assay2) <- make.unique(colnames(assay2))
-        # Ununique names were found
-        assay_names_ununique <- TRUE
-    }
+    # Get feature_pairs as indices
+    feature_pairs <- expand.grid( seq_len(ncol(assay1)), seq_len(ncol(assay2)) )
+    # Get corresponding names
+    feature_pairs_names <- feature_pairs
+    feature_pairs_names$Var1 <- colnames(assay1)[ feature_pairs_names$Var1 ]
+    feature_pairs_names$Var2 <- colnames(assay2)[ feature_pairs_names$Var2 ]
     
-    # Get all the sample pairs
-    feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     # Calculate correlations
     correlations_and_p_values <- apply(feature_pairs, 1, 
                                        FUN = FUN, 
@@ -476,12 +467,6 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
                                        assay2 = assay2,
                                        method = method,
                                        show_warnings = show_warnings)
-    
-    # If there were equal names, feature_pairs include mutated names. 
-    # If so, convert them back to original
-    if( assay_names_ununique ){
-        feature_pairs <- feature_pairs_original
-    }
     
     # Convert into data.frame if it is vector, 
     # otherwise transpose into the same orientation as feature-pairs if it's not a vector
@@ -498,7 +483,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         colnames(correlations_and_p_values) <- c("cor", "pval")
     }
     # Combine feature-pair names with correlation values and p-values
-    correlations_and_p_values <- cbind(feature_pairs, correlations_and_p_values)
+    correlations_and_p_values <- cbind(feature_pairs_names, correlations_and_p_values)
     # If there are p_values, adjust them
     if( !is.null(correlations_and_p_values$pval) ){
         correlations_and_p_values$p_adj <- 
