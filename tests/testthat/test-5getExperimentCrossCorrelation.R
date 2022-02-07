@@ -259,27 +259,36 @@ test_that("getExperimentCrossCorrelation", {
     # Values should be the same
     expect_equal(round(result, 4), round(ref, 4))
     
-    mae <- mae[1:10, 1:10]
+    mae2 <- mae[1:10, 1:10]
     # Test that output is in correct type
     expect_true( is.data.frame(suppressWarnings(
-        testExperimentCrossCorrelation(mae, p_adj_threshold = NULL))) )
+        testExperimentCrossCorrelation(mae2, p_adj_threshold = NULL))) )
     expect_true( is.data.frame(suppressWarnings(
-        getExperimentCrossCorrelation(mae, test_significance = TRUE, p_adj_threshold = NULL))) )
-    expect_true( is.data.frame(getExperimentCrossCorrelation(mae)) )
+        getExperimentCrossCorrelation(mae2, test_significance = TRUE, p_adj_threshold = NULL))) )
+    expect_true( is.data.frame(getExperimentCrossCorrelation(mae2)) )
     # There should not be any p-values that are under 0
     expect_true( is.null(suppressWarnings(
-        testExperimentCrossCorrelation(mae, p_adj_threshold = 0))) )
+        testExperimentCrossCorrelation(mae2, p_adj_threshold = 0))) )
     # Test that output is in correct type
     expect_true( is.list(suppressWarnings(
-        testExperimentCrossCorrelation(mae, mode = "matrix", 
+        testExperimentCrossCorrelation(mae2, mode = "matrix", 
                                           p_adj_threshold = NULL))) )
     expect_true( is.list(suppressWarnings(
-        getExperimentCrossCorrelation(mae, test_significance = TRUE, 
+        getExperimentCrossCorrelation(mae2, test_significance = TRUE, 
                                       mode = "matrix", p_adj_threshold = NULL))) )
-    expect_true( is.matrix(getExperimentCrossCorrelation(mae, mode = "matrix")) )
+    expect_true( is.matrix(getExperimentCrossCorrelation(mae2, mode = "matrix")) )
     # There should not be any p-values that are under 0
     expect_true( is.null(suppressWarnings(
-        testExperimentCrossCorrelation(mae, p_adj_threshold = 0, mode = "matrix"))) )
+        testExperimentCrossCorrelation(mae2, p_adj_threshold = 0, mode = "matrix"))) )
     
+    # Test that result does not depend on names (if there are equal names)
+    tse <- mae[[1]]
+    rownames(tse)[1:10] <- rep("Unknown", 10)
+    # show_warning does not work currently, 
+    # PR https://github.com/microbiome/mia/pull/195 fixes it
+    # Remove suppressWarnings after it has been merged
+    suppressWarnings( cor_table <- testExperimentCrossCorrelation(tse, show_warnings = TRUE) )
+    suppressWarnings( cor_table_ref <- testExperimentCrossCorrelation(mae[[1]], show_warnings = TRUE) )
+    expect_equal(cor_table[ , 3:5], cor_table_ref[ , 3:5])
 })
 
