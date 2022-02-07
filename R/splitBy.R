@@ -109,16 +109,26 @@ setGeneric("splitBy",
     }
     # Check f or extract the factor from rowData or colData
     if( !.is_non_empty_string(f) ){
-        if(length(f) > 1L && (is.character(f) || is.numeric(f))){
+        if( length(f) > 1L ){
             f <- factor(f, unique(f))
         }
-        if(length(f) %in% dim(x)){
+        # Check if the length of f matches with one of the dimensions
+        if(!length(f) %in% dim(x)){
             stop("'f' must either be a single non-empty character value or",
                  " vector coercible to factor alongside one of the ",
                  "dimensions of 'x'",
                  call. = FALSE)
         }
+        # Get the dimension that matches
         MARGIN <- which(dim(x) %in% length(f))
+        # If it matches with both directions
+        if(length(MARGIN) > 1 ){
+            # Get 2 if f can be found from colData, otherwise get 1
+            MARGIN <- ifelse(any( sapply(colData(x), 
+                                         function(var){all.equal(as.character(var), 
+                                                                 as.character(f))}) == TRUE ), 
+                             2, 1)
+        }
     } else {
         tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
                  silent = TRUE)
