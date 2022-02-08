@@ -275,7 +275,7 @@ setGeneric("unsplitBy",
 
 .list_unsplit_by <- function(ses, update_rowTree, ...){
     # Input check
-    is_check <- vapply(ses,is,"SummarizedExperiment",logical(1L))
+    is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
         stop("Input must be a list of SummarizedExperiment or derived objects ",
              "only.",
