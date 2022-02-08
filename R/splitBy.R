@@ -98,6 +98,8 @@ setGeneric("splitBy",
            function(x, ...)
                standardGeneric("splitBy"))
 
+# This function collects f (grouping variable), MARGIN, skip_aggglomerate, and 
+# use_names and returns them as a list.
 .norm_args_for_split_by <- function(x, f, skip_agglomerate = FALSE,
                                     use_names = TRUE, ...){
     # input check
@@ -123,25 +125,31 @@ setGeneric("splitBy",
         MARGIN <- which(dim(x) %in% length(f))
         # If it matches with both directions
         if(length(MARGIN) > 1 ){
-            # Get 2 if f can be found from colData, otherwise get 1
+            # Get 2 if it can be found from colData, otherwise get 1
             MARGIN <- ifelse(any( sapply(colData(x), 
                                          function(var){all.equal(as.character(var), 
                                                                  as.character(f))}) == TRUE ), 
                              2, 1)
         }
     } else {
+        # Try to get informaton from rowData
         tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
                  silent = TRUE)
         if(is(tmp,"try-error")){
+            # If it cannot be found from rowData, try to find it from colData
             tmp <- try({retrieveCellInfo(x, f, search = "colData")},
                      silent = TRUE)
+            # Give error if it cannot be found from neither
             if(is(f,"try-error")){
                 stop("", call. = FALSE)
             } 
+            # Margin is columns
             MARGIN <- 2L
         } else {
+            # If info can be found from rowData, margin is rows
             MARGIN <- 1L
         }
+        # Get values and convert them into factors
         f <- tmp$value
         f <- factor(f, unique(f))
     }
@@ -155,6 +163,7 @@ setGeneric("splitBy",
         stop("'use_names must be TRUE or FALSE.",
              call. = FALSE)
     }
+    # Create a list from arguments
     list(f = f,
          MARGIN = MARGIN,
          skip_agglomerate = skip_agglomerate,
@@ -162,26 +171,36 @@ setGeneric("splitBy",
 }
 
 .split_by <- function(x, args, ...){
+    # Get grouping variable and its values
     f <- args[["f"]]
+    # If user want to agglomerate data, agglomerate it based on MARGIN and 
+    # and grouping variable
     if(!args[["skip_agglomerate"]]){
         merge_FUN <- switch(args[["MARGIN"]],
                             "1" = mergeRows,
                             "2" = mergeCols )
         return(merge_FUN(x, f, ...))
     }
+    # Choose nrow or ncol based on MARGIN
     dim_FUN <- switch(args[["MARGIN"]],
                       "1" = nrow,
                       "2" = ncol)
+    # Get indices from 1 to nrow/ncol
     idx <- seq_len(dim_FUN(x))
+    # Split indices into groups based on grouping variable
     idxs <- split(idx, f)
+    # SUbset function takes SE and list of groups which have indices
+    # It divides the data into groups
     subset_FUN <- function(x, i = TRUE, j = TRUE){
         x[i, j]
     }
+    # Based on MARGIN, divide data in row-wise or column-wise
     if(args[["MARGIN"]] == 1){
         ans <- SimpleList(lapply(idxs, subset_FUN, x = x))
     } else {
         ans <- SimpleList(lapply(idxs, subset_FUN, x = x, i = TRUE))
     }
+    # If user do not want to use names, unname
     if(!args[["use_names"]]){
         ans <- unname(ans)
     }
@@ -192,6 +211,7 @@ setGeneric("splitBy",
 #' @export
 setMethod("splitBy", signature = c(x = "SummarizedExperiment"),
     function(x, f = NULL, skip_agglomerate = FALSE, ...){
+        # Get arguments
         args <- .norm_args_for_split_by(x, f = f, 
                                         skip_agglomerate = skip_agglomerate)
         # Split data
@@ -203,8 +223,10 @@ setMethod("splitBy", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
     function(x, f = NULL, skip_agglomerate = FALSE, ...){
+        # Get arguments
         args <- .norm_args_for_split_by(x, f = f,
                                       skip_agglomerate = skip_agglomerate)
+        # Should alternative experiment be removed? --> yes
         args[["strip_altexp"]] <- TRUE
         # Split data
         .split_by(x, args, ...)
