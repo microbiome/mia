@@ -65,6 +65,9 @@ based on splitted data? Option is enabled when \code{x} is a
 \code{TreeSummarizedExperiment} object or a list of such objects.
 (By default: \code{update_rowTree = FALSE})}
 
+\item{altExpNames}{a \code{character} vector specifying the alternative experiments
+to be unsplit. (By default: \code{altExpNames = altExpNames(x)})}
+
 \item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.

@@ -25,6 +25,9 @@
 #'   \code{TreeSummarizedExperiment} object or a list of such objects. 
 #'   (By default: \code{update_rowTree = FALSE})
 #'   
+#' @param altExpNames a \code{character} vector specifying the alternative experiments
+#'   to be unsplit. (By default: \code{altExpNames = altExpNames(x)})
+#'   
 #' @param ... Arguments passed to \code{mergeRows}/\code{mergeCols} function for
 #'   \code{SummarizedExperiment} objects and other functions.
 #'   See \code{\link[=agglomerate-methods]{mergeRows}} for more details.
@@ -235,7 +238,8 @@ setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitBy
 #' @export
 setMethod("splitBy", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f = NULL, skip_agglomerate = FALSE, update_rowTree = FALSE, ...){
+    function(x, f = NULL, skip_agglomerate = FALSE, update_rowTree = FALSE,
+             ...){
         # Input check
         # Check update_rowTree
         if( !.is_a_bool(update_rowTree) ){
