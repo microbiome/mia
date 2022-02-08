@@ -2,7 +2,9 @@
 #'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
+#'   object or a list of 
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   objects.
 #'
 #' @param f A single character value for selecting the grouping variable
 #'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
@@ -16,7 +18,12 @@
 #' @param keep_reducedDims \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
-#'   (default: \code{keep_reducedDims = FALSE})
+#'   (By default: \code{keep_reducedDims = FALSE})
+#'   
+#' @param update_rowTree \code{TRUE} or \code{FALSE}: Should the rowTree be updated
+#'   based on splitted data? Option is enabled when \code{x} is a 
+#'   \code{TreeSummarizedExperiment} object or a list of such objects. 
+#'   (By default: \code{update_rowTree = FALSE})
 #'   
 #' @param ... Arguments passed to \code{mergeRows}/\code{mergeCols} function for
 #'   \code{SummarizedExperiment} objects and other functions.
@@ -189,7 +196,7 @@ setGeneric("splitBy",
     idx <- seq_len(dim_FUN(x))
     # Split indices into groups based on grouping variable
     idxs <- split(idx, f)
-    # SUbset function takes SE and list of groups which have indices
+    # Subset function takes SE and list of groups which have indices
     # It divides the data into groups
     subset_FUN <- function(x, i = TRUE, j = TRUE){
         x[i, j]
@@ -236,8 +243,27 @@ setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitBy
 #' @export
 setMethod("splitBy", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f = NULL, skip_agglomerate = FALSE, ...){
-        callNextMethod()
+    function(x, f = NULL, skip_agglomerate = FALSE, update_rowTree = FALSE, ...){
+        # Input check
+        # Check update_rowTree
+        if( !.is_a_bool(update_rowTree) ){
+            stop("'update_rowTree' must be TRUE or FALSE.",
+                 call. = FALSE)
+        }
+        # Input check end
+        # Split data
+        x <- callNextMethod()
+        # Manipulate rowTree or not?
+        if( update_rowTree ){
+            # If the returned value is a list, go through all of them
+            if( class(x) == "SimpleList" ){
+                x <- SimpleList(lapply(x, addTaxonomyTree))
+            } else {
+                # Otherwise, the returned value is TreeSE
+                x <- addTaxonomyTree(x)
+            }
+        }
+        return(x)
     }
 )
 
@@ -248,10 +274,17 @@ setMethod("splitBy", signature = c(x = "TreeSummarizedExperiment"),
 #' @export
 setGeneric("unsplitBy",
            signature = c("x"),
-           function(x, ...)
+           function(x, update_rowTree = FALSE, ...)
                standardGeneric("unsplitBy"))
 
-.list_unsplit_by <- function(ses, ...){
+.list_unsplit_by <- function(ses, update_rowTree, ...){
+    # Input check
+    # Check update_rowTree
+    if( !.is_a_bool(update_rowTree) ){
+        stop("'update_rowTree' must be TRUE or FALSE.",
+             call. = FALSE)
+    }
+    # Input check end
     # Get dimensions of each SE in the list
     dims <- vapply(ses, dim, integer(2L))
     # Based on which dimension SE objects share, select MARGIN.
@@ -279,7 +312,12 @@ setGeneric("unsplitBy",
     }
     # Create a object specified by class_x from the data
     ans <- do.call(class_x, args)
+    # Add rowData
     rowData(ans) <- rd
+    # Update rowTree if object is TreeSE and if specified
+    if( class(ans) == "TreeSummarizedExperiment" && update_rowTree ){
+        ans <- addTaxonomyTree(ans)
+    }
     ans
 }
 
@@ -300,17 +338,17 @@ setGeneric("unsplitBy",
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitBy", signature = c(x = "list"),
-    function(x, ...){
+    function(x, update_rowTree = FALSE, ...){
         # Unsplit list and create SCE, SE, or TreeSE from it
-        .list_unsplit_by(x, ...)
+        .list_unsplit_by(x, update_rowTree, ...)
     }
 )
 #' @rdname splitBy
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitBy", signature = c(x = "SimpleList"),
-    function(x, ...){
-        unsplitBy(as.list(x), ...)
+    function(x, update_rowTree = FALSE, ...){
+        unsplitBy(as.list(x), update_rowTree, ...)
     }
 )
 
@@ -323,7 +361,7 @@ setMethod("unsplitBy", signature = c(x = "SingleCellExperiment"),
         if(!.is_a_bool(keep_reducedDims)){
             stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
         }
-        # Get alternative experiment names, since data is located there
+        # Get alternative experiment names since data is located there
         ae_names <- altExpNames(x)
         # Get only those experiments that user has specified
         ae_names <- ae_names[ae_names %in% altExpNames]
@@ -337,7 +375,7 @@ setMethod("unsplitBy", signature = c(x = "SingleCellExperiment"),
     }
 )
    
-#' @rdname unsplitBy
+#' @rdname splitBy
 #' @export
 setMethod("unsplitBy", signature = c(x = "TreeSummarizedExperiment"),
     function(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...){

@@ -9,6 +9,7 @@
 \alias{unsplitBy,list-method}
 \alias{unsplitBy,SimpleList-method}
 \alias{unsplitBy,SingleCellExperiment-method}
+\alias{unsplitBy,TreeSummarizedExperiment-method}
 \title{Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable}
 \usage{
 splitBy(x, ...)
@@ -17,20 +18,24 @@ splitBy(x, ...)
 
 \S4method{splitBy}{SingleCellExperiment}(x, f = NULL, skip_agglomerate = FALSE, ...)
 
-\S4method{splitBy}{TreeSummarizedExperiment}(x, f = NULL, skip_agglomerate = FALSE, ...)
+\S4method{splitBy}{TreeSummarizedExperiment}(x, f = NULL, skip_agglomerate = FALSE, update_rowTree = FALSE, ...)
 
-unsplitBy(x, ...)
+unsplitBy(x, update_rowTree = FALSE, ...)
 
-\S4method{unsplitBy}{list}(x, ...)
+\S4method{unsplitBy}{list}(x, update_rowTree = FALSE, ...)
 
-\S4method{unsplitBy}{SimpleList}(x, ...)
+\S4method{unsplitBy}{SimpleList}(x, update_rowTree = FALSE, ...)
 
 \S4method{unsplitBy}{SingleCellExperiment}(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...)
+
+\S4method{unsplitBy}{TreeSummarizedExperiment}(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...)
 }
 \arguments{
 \item{x}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object}
+object or a list of
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+objects.}
 
 \item{...}{Arguments passed to \code{mergeRows}/\code{mergeCols} function for
 \code{SummarizedExperiment} objects and other functions.
@@ -49,10 +54,15 @@ storing the results in \code{altExps}.}
 \item{skip_agglomerate}{\code{TRUE} or \code{FALSE}: Should the agglomerate
 be skipped? (By default: \code{skip_agglomerate = FALSE})}
 
+\item{update_rowTree}{\code{TRUE} or \code{FALSE}: Should the rowTree be updated
+based on splitted data? Option is enabled when \code{x} is a
+\code{TreeSummarizedExperiment} object or a list of such objects.
+(By default: \code{update_rowTree = FALSE})}
+
 \item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(default: \code{keep_reducedDims = FALSE})}
+(By default: \code{keep_reducedDims = FALSE})}
 }
 \value{
 For \code{splitBy}: if \code{skip_agglomerate == FALSE} a
