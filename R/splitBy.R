@@ -129,15 +129,7 @@ setGeneric("splitBy",
                  call. = FALSE)
         }
         # Get the dimension that matches
-        MARGIN <- which(dim(x) %in% length(f))
-        # If it matches with both directions
-        if(length(MARGIN) > 1 ){
-            # Get 2 if it can be found from colData, otherwise get 1
-            MARGIN <- ifelse(any( sapply(colData(x), 
-                                         function(var){all.equal(as.character(var), 
-                                                                 as.character(f))}) == TRUE ), 
-                             2, 1)
-        }
+        MARGIN <- which(dim(x) %in% length(f))[1L]
     } else {
         # Try to get informaton from rowData
         tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
