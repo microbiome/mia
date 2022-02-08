@@ -452,8 +452,13 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         FUN <- .calculate_correlation_for_categorical_values
     }
     
-    # Get all the sample pairs
-    feature_pairs <- expand.grid(colnames(assay1), colnames(assay2))
+    # Get feature_pairs as indices
+    feature_pairs <- expand.grid( seq_len(ncol(assay1)), seq_len(ncol(assay2)) )
+    # Get corresponding names
+    feature_pairs_names <- feature_pairs
+    feature_pairs_names$Var1 <- colnames(assay1)[ feature_pairs_names$Var1 ]
+    feature_pairs_names$Var2 <- colnames(assay2)[ feature_pairs_names$Var2 ]
+    
     # Calculate correlations
     correlations_and_p_values <- apply(feature_pairs, 1, 
                                        FUN = FUN, 
@@ -478,7 +483,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
         colnames(correlations_and_p_values) <- c("cor", "pval")
     }
     # Combine feature-pair names with correlation values and p-values
-    correlations_and_p_values <- cbind(feature_pairs, correlations_and_p_values)
+    correlations_and_p_values <- cbind(feature_pairs_names, correlations_and_p_values)
     # If there are p_values, adjust them
     if( !is.null(correlations_and_p_values$pval) ){
         correlations_and_p_values$p_adj <- 
