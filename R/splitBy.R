@@ -252,7 +252,10 @@ setGeneric("unsplitBy",
                standardGeneric("unsplitBy"))
 
 .list_unsplit_by <- function(ses, ...){
+    # Get dimensions of each SE in the list
     dims <- vapply(ses, dim, integer(2L))
+    # Based on which dimension SE objects share, select MARGIN.
+    # If they share rows, then MARGIN is col, and vice versa
     if(length(unique(dims[1L,])) == 1L){
         MARGIN <- 2L
     } else if(length(unique(dims[2L,])) == 1L) {
@@ -260,10 +263,11 @@ setGeneric("unsplitBy",
     } else {
         stop("No dimensions are equal across all elmenents.", call. = FALSE)
     }
-    #
+    # Get the class of objects SCE, SE or TreeSE
     class_x <- class(ses[[1L]])
-    #
+    # Combine assays
     args <- list(assays = .unsplit_assays(ses, MARGIN = MARGIN))
+    # Combine rowData if data share columns, and vice versa
     if(MARGIN == 1L){
         rd <- .combine_rowData(ses)
         rr <- .combine_rowRanges(ses)
@@ -273,6 +277,7 @@ setGeneric("unsplitBy",
         args$rowRanges <- rowRanges(ses[[1L]])
         rd <- rowData(ses[[1L]])
     }
+    # Create a object specified by class_x from the data
     ans <- do.call(class_x, args)
     rowData(ans) <- rd
     ans
@@ -281,8 +286,11 @@ setGeneric("unsplitBy",
 #' @importFrom SummarizedExperiment colData
 #' @importFrom BiocGenerics rbind
 .combine_colData <- function(ses) {
+    # Get colDatas of objects
     cds <- lapply(ses, colData)
+    # Bind them together row-wise
     cd <- do.call(rbind,unname(cds))
+    # Add sample names
     rownames(cd) <- unlist(unname(lapply(ses, colnames)))
     cd
 }
@@ -293,6 +301,7 @@ setGeneric("unsplitBy",
 #' @export
 setMethod("unsplitBy", signature = c(x = "list"),
     function(x, ...){
+        # Unsplit list and create SCE, SE, or TreeSE from it
         .list_unsplit_by(x, ...)
     }
 )
@@ -314,13 +323,16 @@ setMethod("unsplitBy", signature = c(x = "SingleCellExperiment"),
         if(!.is_a_bool(keep_reducedDims)){
             stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
         }
-        #
+        # Get alternative experiment names, since data is located there
         ae_names <- altExpNames(x)
+        # Get only those experiments that user has specified
         ae_names <- ae_names[ae_names %in% altExpNames]
         if(length(ae_names) == 0L){
             stop("No altExp matching 'altExpNames' in name.", call. = FALSE)
         }
+        # Get alternative experiments as a list
         ses <- altExps(x)[ae_names]
+        # And unsplit the data
         .unsplit_by(x, ses, keep_reducedDims, ...)
     }
 )
