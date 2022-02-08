@@ -131,7 +131,7 @@ setGeneric("splitBy",
         # Get the dimension that matches
         MARGIN <- which(dim(x) %in% length(f))[1L]
     } else {
-        # Try to get informaton from rowData
+        # Try to get information from rowData
         tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
                  silent = TRUE)
         if(is(tmp,"try-error")){
@@ -154,12 +154,12 @@ setGeneric("splitBy",
     }
     # Check skip_agglomerate
     if( !.is_a_bool(skip_agglomerate) ){
-        stop("'skip_agglomerate must be TRUE or FALSE.",
+        stop("'skip_agglomerate' must be TRUE or FALSE.",
              call. = FALSE)
     }
     # Check use_names
     if( !.is_a_bool(use_names) ){
-        stop("'use_names must be TRUE or FALSE.",
+        stop("'use_names' must be TRUE or FALSE.",
              call. = FALSE)
     }
     # Create a list from arguments
@@ -255,7 +255,7 @@ setMethod("splitBy", signature = c(x = "TreeSummarizedExperiment"),
                 x <- addTaxonomyTree(x)
             }
         }
-        return(x)
+        x
     }
 )
 
@@ -266,11 +266,17 @@ setMethod("splitBy", signature = c(x = "TreeSummarizedExperiment"),
 #' @export
 setGeneric("unsplitBy",
            signature = c("x"),
-           function(x, update_rowTree = FALSE, ...)
+           function(x, ...)
                standardGeneric("unsplitBy"))
 
 .list_unsplit_by <- function(ses, update_rowTree, ...){
     # Input check
+    is_check <- vapply(ses,is,"SummarizedExperiment",logical(1L))
+    if(!all(is_check)){
+        stop("Input must be a list of SummarizedExperiment or derived objects ",
+             "only.",
+             call. = FALSE)
+    }
     # Check update_rowTree
     if( !.is_a_bool(update_rowTree) ){
         stop("'update_rowTree' must be TRUE or FALSE.",
@@ -306,8 +312,7 @@ setGeneric("unsplitBy",
     ans <- do.call(class_x, args)
     # Add rowData
     rowData(ans) <- rd
-    # Update rowTree if object is TreeSE and if specified
-    if( class(ans) == "TreeSummarizedExperiment" && update_rowTree ){
+    if( class_x == "TreeSummarizedExperiment" && update_rowTree ){
         ans <- addTaxonomyTree(ans)
     }
     ans
@@ -370,7 +375,17 @@ setMethod("unsplitBy", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitBy
 #' @export
 setMethod("unsplitBy", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...){
-        callNextMethod()
+    function(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, 
+             update_rowTree = FALSE, ...){
+        # input check
+        if(!.is_a_bool(update_rowTree)){
+            stop("'update_rowTree' must be TRUE or FALSE.", call. = FALSE)
+        }
+        ans <- callNextMethod()
+        #
+        if( update_rowTree ){
+            ans <- addTaxonomyTree(ans)
+        }
+        ans
     }
 )
