@@ -20,7 +20,7 @@ splitBy(x, ...)
 
 \S4method{splitBy}{TreeSummarizedExperiment}(x, f = NULL, skip_agglomerate = FALSE, update_rowTree = FALSE, ...)
 
-unsplitBy(x, update_rowTree = FALSE, ...)
+unsplitBy(x, ...)
 
 \S4method{unsplitBy}{list}(x, update_rowTree = FALSE, ...)
 
@@ -28,7 +28,13 @@ unsplitBy(x, update_rowTree = FALSE, ...)
 
 \S4method{unsplitBy}{SingleCellExperiment}(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...)
 
-\S4method{unsplitBy}{TreeSummarizedExperiment}(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...)
+\S4method{unsplitBy}{TreeSummarizedExperiment}(
+  x,
+  altExpNames = altExpNames(x),
+  keep_reducedDims = FALSE,
+  update_rowTree = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A
@@ -98,7 +104,7 @@ se_list <- splitBy(tse, f = "SampleType", skip_agglomerate = TRUE)
 se_list
 
 # You can also agglomerate (sum-up) data based on grouping variable
-se <- splitBy(tse, grouping = "SampleType")
+se <- splitBy(tse, f = "SampleType")
 
 # Create arbitrary groups
 colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)

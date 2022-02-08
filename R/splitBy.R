@@ -76,7 +76,7 @@
 #' se_list
 #' 
 #' # You can also agglomerate (sum-up) data based on grouping variable
-#' se <- splitBy(tse, grouping = "SampleType")
+#' se <- splitBy(tse, f = "SampleType")
 #' 
 #' # Create arbitrary groups
 #' colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
