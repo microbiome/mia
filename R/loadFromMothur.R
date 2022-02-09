@@ -59,6 +59,7 @@ NULL
 
 #' @rdname loadFromMothur
 #' @importFrom SummarizedExperiment SummarizedExperiment
+#' @importFrom S4Vectors make_zero_col_DFrame
 #' @export
 loadFromMothur <- function(sharedFile,
                            taxonomyFile = NULL,
@@ -90,7 +91,7 @@ loadFromMothur <- function(sharedFile,
     if (!is.null(taxonomyFile)) {
         taxa_tab <- .read_mothur_taxonomy(taxonomyFile, feature_tab)
     } else {
-        taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+        taxa_tab <- S4Vectors::make_zero_col_DFrame(nrow(feature_tab))
         rownames(taxa_tab) <- rownames(feature_tab)
     }
     
@@ -99,7 +100,7 @@ loadFromMothur <- function(sharedFile,
     if (!is.null(designFile) && !is.null(data_to_colData)) {
         sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData)
     } else {
-        sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+        sample_meta <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
         rownames(sample_meta) <- colnames(feature_tab)
     }
 
