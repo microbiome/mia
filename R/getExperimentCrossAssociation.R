@@ -417,9 +417,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
             # Sort associations
             result <- .association_sort(result, verbose)
         }
-    } else if( !is.null(result) ){
-        # If format is table, convert data.table into data.frame
-        result <- as.data.frame(result)
     }
     # If result includes only one element, return only the element
     if( length(result) == 1 ){
@@ -490,7 +487,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Input: Assays that share samples but that have different features and different parameters.
 # Output: Correlation table including correlation values (and p-values and adjusted p-values)
 #' @importFrom stats p.adjust
-#' @importFrom data.table setDT 
 .calculate_association <- function(assay1, 
                                    assay2, 
                                    method = c("spearman", "categorical", "kendall", "pearson"), 
@@ -549,8 +545,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     } else{
         variable_pairs <- expand.grid(colnames(assay1), colnames(assay2))
     }
-    # Convert into data.table
-    variable_pairs <- data.table::setDT(variable_pairs)
     
     # If function is stats::cor, then calculate associations directly with matrices
     # Otherwise, loop through variable_pairs
@@ -589,29 +583,27 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Input: variable pair data.frame
 # Output: variable pair data.frame with two additional columns
 
-#' @importFrom data.table melt dcast
+#' @importFrom tidyr pivot_longer pivot_wider
 .sort_variable_pairs_row_wise <- function(variable_pairs){
   
   variable_pairs_sorted <- variable_pairs
-  # # Convert into data.table
-  # variable_pairs_sorted <- data.table::setDT(variable_pairs_sorted)
   # Create column that tells in which feature/sample pair variable is
   variable_pairs_sorted$ID <- 1:nrow(variable_pairs_sorted)
   # Convert into longer format so that one column have all variable names
-  variable_pairs_sorted <- variable_pairs_sorted %>% data.table::melt(id.vars = "ID")
+  variable_pairs_sorted <- variable_pairs_sorted %>% tidyr::pivot_longer(cols = !ID)
   # Order based on ID (variable pair number) and value (alphabetical order of variable name)
   variable_pairs_sorted <- variable_pairs_sorted[order(variable_pairs_sorted$ID , variable_pairs_sorted$value), ]
   # First member of each variable pair is Var1 and second is Var2
-  variable_pairs_sorted$variable <- paste0("Var", rep(c(1,2), times = nrow(variable_pairs_sorted)/2) )
+  variable_pairs_sorted$name <- paste0("Var", rep(c(1,2), times = nrow(variable_pairs_sorted)/2) )
   # Convert into wider format. Now table have own columns for each variable name and
   # variable names are in right order.
-  variable_pairs_sorted  <- variable_pairs_sorted %>% data.table::dcast(ID ~ variable, value.var = "value")
+  variable_pairs_sorted  <- variable_pairs_sorted %>% tidyr::pivot_wider(id_cols = c("ID", "name"))
+  
   # Take only columns that include variable names
   variable_pairs_sorted  <- variable_pairs_sorted[ , c("Var1", "Var2") ]
   # Add new colnames
   colnames(variable_pairs_sorted) <- c("Var1_sorted", "Var2_sorted")
-  # # Convert back into data.fame
-  # variable_pairs_sorted <- data.table::setDF(variable_pairs_sorted)
+  # # Convert back into data.frame
   # Add sorted feature pairs to original
   variable_pairs <- cbind(variable_pairs, variable_pairs_sorted)
   # # Ensure that the object is data.frame
@@ -624,7 +616,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Input: feature/sample_pairs, and assays
 # Output: correlation table with variable names in Var1 and Var2, and correlation 
 # values in cor. Additionally, table can also include pval for p-values.
-#' @importFrom data.table setDT
 .calculate_association_table <- function(variable_pairs,
                                          FUN_, 
                                          test_significance, 
@@ -641,7 +632,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
              call. = FALSE)
     }
     # 
-    # If user has specified that the masure is symmetric
+    # If user has specified that the measure is symmetric
     if( symmetric ){
         # Are assays identical? If so, calculate only unique variable-pairs
         assays_identical <- identical(assay1, assay2)
@@ -676,13 +667,13 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                        association_FUN = association_FUN, 
                                        ...)
   
-    # Convert into data.table if it is vector, 
-    # otherwise transpose into the same orientation as feature-pairs and then convert it to DT
+    # Convert into data.frameif it is vector, 
+    # otherwise transpose into the same orientation as feature-pairs and then convert it to df
     if( is.vector(correlations_and_p_values) ){
-      correlations_and_p_values <- data.table::setDT(data.frame(correlations_and_p_values))
+      correlations_and_p_values <- data.frame(correlations_and_p_values)
     } else{
       correlations_and_p_values  <- t(correlations_and_p_values)
-      correlations_and_p_values <- data.table::setDT(as.data.frame(correlations_and_p_values))
+      correlations_and_p_values <- as.data.frame(correlations_and_p_values)
     }
     # Give names
     if( ncol(correlations_and_p_values) == 1 ){
@@ -717,10 +708,12 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         correlations_and_p_values <- correlations_and_p_values[ order, ]
         
         # Drop off additional columns
-        correlations_and_p_values <- correlations_and_p_values[ , !c("Var1_sorted", 
-                                                                     "Var2_sorted", 
-                                                                     "Var1_", 
-                                                                     "Var2_") ]
+        correlations_and_p_values <- 
+            correlations_and_p_values[ , !colnames(correlations_and_p_values) %in% 
+                                           c("Var1_sorted", 
+                                             "Var2_sorted", 
+                                             "Var1_", 
+                                             "Var2_") ]
     } else{
         # Otherwise just add variable names
         correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
@@ -741,7 +734,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Input: assays
 # Output: correlation table
 #' @importFrom stats cor 
-#' @importFrom data.table melt
+#' @importFrom tidyr pivot_longer
 .calculate_stats_cor <- function(assay1, assay2, method, variable_pairs, show_warnings){
     # If user does not want warnings, 
     # suppress warnings that might occur when calculating correlaitons (NAs...)
@@ -758,8 +751,9 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # 
     correlations <- as.data.frame(correlations)
     correlations$ID <- rownames(correlations)
-    # melt matrices into long format, so that it match with output of other functions
-    correlations <- data.table::melt(data.table::setDT(correlations), id.vars = "ID")
+    # melt matrix into long format, so that it match with output of other functions
+    correlations <- correlations %>% tidyr::pivot_longer(cols = !ID)
+    
     # Adjust names
     colnames(correlations) <- c("Var1", "Var2", "cor")
     # Adjust order or drop pairs, e.g., if only paired samples were wanted
@@ -1029,20 +1023,18 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 
 # Input: Correlation table
 # Output: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
-#' @importFrom dplyr select
-#' @importFrom data.table dcast setDF
+#' @importFrom tidyr pivot_wider
 .association_table_to_matrix <- function(result, verbose){
     # Give message if verbose == TRUE
     if(verbose){
       message("Converting table into matrices...\n")
     }
     # Correlation matrix is done from Var1, Var2, and cor columns
-    # Select correct columns
-    cor <- result %>% dplyr::select("Var1", "Var2", "cor") %>% 
+    cor <- result %>%
         # Convert into long format
-        data.table::dcast(Var1~Var2, value.var = "cor") %>%
+        tidyr::pivot_wider(id_cols = Var1, names_from = Var2, values_from = "cor") %>%
         # Convert into data.frame
-        data.table::setDF()
+        as.data.frame()
     # Give rownames and remove additional column
     rownames(cor) <- cor$Var1
     cor$Var1 <- NULL
@@ -1051,11 +1043,11 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     result_list <- list(cor = cor)
     # If p_values exist, then create a matrix and add to the result list
     if( !is.null(result$pval) ){
-        pval <- result %>% dplyr::select("Var1", "Var2", "pval") %>% 
+        pval <- result %>%
             # Convert into long format
-            data.table::dcast(Var1~Var2, value.var = "pval") %>%
+            tidyr::pivot_wider(id_cols = Var1, names_from = Var2, values_from = "pval") %>%
             # Convert into data.frame
-            data.table::setDF()
+            as.data.frame()
         # Adjust rownames and remove an additional column
         rownames(pval) <- pval$Var1
         pval$Var1 <- NULL
@@ -1064,11 +1056,11 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     } 
     # If adjusted p_values exist, then create a matrix and add to the result list
     if( !is.null(result$p_adj) ){
-        p_adj <- result %>% dplyr::select("Var1", "Var2", "p_adj") %>% 
+        p_adj <- result %>%
             # Convert into long format
-            data.table::dcast(Var1~Var2, value.var = "p_adj") %>%
+            tidyr::pivot_wider(id_cols = Var1, names_from = Var2, values_from = "p_adj") %>%
             # Convert into data.frame
-            data.table::setDF()
+            as.data.frame()
         # Adjust rownames and remove an  additional column
         rownames(p_adj) <- p_adj$Var1
         p_adj$Var1 <- NULL
