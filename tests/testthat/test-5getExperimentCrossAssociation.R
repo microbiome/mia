@@ -349,4 +349,19 @@ test_that("getExperimentCrossAssociation", {
     cor_table_ref <- testExperimentCrossAssociation(mae[[1]], show_warnings = FALSE)
     expect_equal(cor_table[ , 3:5], cor_table_ref[ , 3:5])
     
+    # Test user's own function
+    expect_true( is.data.frame(getExperimentCrossAssociation(tse, method = "canberra",
+                                                             mode = "table", 
+                                                             show_warnings = T,
+                                                             association_FUN = stats::dist) ) )
+    
+    expect_true( is.matrix( testExperimentCrossAssociation(tse, method = "bray",
+                                                           show_warnings = FALSE,
+                                                           mode = "matrix",
+                                                           association_FUN = vegan::vegdist) ) )
+    expect_error( testExperimentCrossAssociation(tse, method = "bray",
+                                                           show_warnings = FALSE,
+                                                           mode = "matrix",
+                                                           association_FUN = DelayedMatrixStats::rowSums2) )
+    
 })
