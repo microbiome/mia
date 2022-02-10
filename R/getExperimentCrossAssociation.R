@@ -162,6 +162,12 @@
 #'                                         abund_values1 = "counts", abund_values2 = "counts",
 #'                                         symmetric = TRUE)
 #' 
+#' # For big data sets, calculation might take long. To make calculations quicker, you can take
+#' # a random sample from data. In a complex biological problems, random sample
+#' # can describe the data enough. Here our random sample is 30 % of whole data.
+#' result <- testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 2,
+#'                                          random_sample = 0.3)
+#'                                         
 NULL
 
 #' @rdname getExperimentCrossAssociation
@@ -570,6 +576,12 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
             # Subset the data
             assay1 <- assay1[ , random_var1]
             assay2 <- assay2[ , random_var2]
+            
+            # Check that data still includes variables
+            if( ncol(assay1) == 0 || ncol(assay2) == 0 ){
+                stop("The size of random sample is too small. Please choose greater 'random_sample'.", 
+                     call. = FALSE)
+            }
         }
         # Get feature_pairs as indices
         variable_pairs <- expand.grid( seq_len(ncol(assay1)), seq_len(ncol(assay2)) )

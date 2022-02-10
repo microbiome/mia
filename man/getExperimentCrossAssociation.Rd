@@ -200,6 +200,12 @@ result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experim
                                         abund_values1 = "counts", abund_values2 = "counts",
                                         symmetric = TRUE)
 
+# For big data sets, calculation might take long. To make calculations quicker, you can take
+# a random sample from data. In a complex biological problems, random sample
+# can describe the data enough. Here our random sample is 30 \% of whole data.
+result <- testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 2,
+                                         random_sample = 0.3)
+                                        
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

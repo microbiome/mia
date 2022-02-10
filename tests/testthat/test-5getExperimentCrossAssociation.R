@@ -216,6 +216,12 @@ test_that("getExperimentCrossAssociation", {
                                                 sort = TRUE,
                                                 filter_self_correlations = TRUE,
                                                 verbose = 1))
+     expect_error(getExperimentCrossAssociation(mae[[1]], random_sample = 0))
+     expect_error(getExperimentCrossAssociation(mae[[1]], random_sample = 0.0001))
+     expect_error(getExperimentCrossAssociation(mae[[1]], random_sample = 2))
+     expect_error(getExperimentCrossAssociation(mae[[1]], random_sample = -0.5))
+     expect_error(getExperimentCrossAssociation(mae[[1]], random_sample = TRUE))
+     expect_error(getExperimentCrossAssociation(mae[[1]], random_sample = "0.5"))
      ############################# Test input end #############################
      # Test that association is calculated correctly with numeric data
      # Result from
@@ -348,4 +354,15 @@ test_that("getExperimentCrossAssociation", {
     cor_table <- testExperimentCrossAssociation(tse, show_warnings = FALSE)
     cor_table_ref <- testExperimentCrossAssociation(mae[[1]], show_warnings = FALSE)
     expect_equal(cor_table[ , 3:5], cor_table_ref[ , 3:5])
+    
+    # Test that random_sample makes calculation quicker / there are less to calculate
+    time <- system.time(
+        cor <-  testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
+                                               show_warnings = FALSE, random_sample = 0.1)
+    )
+    time2 <- system.time(
+        cor2 <-  testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
+                                                show_warnings = FALSE)
+    )
+    expect_true(time[3]<time2[3])
 })
