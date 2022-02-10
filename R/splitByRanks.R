@@ -146,6 +146,64 @@ setMethod("splitByRanks", signature = c(x = "TreeSummarizedExperiment"),
           }
 )
 
+
+################################################################################
+# splitByAlternativeRanks
+
+#' @rdname splitByRanks
+#' @export
+setGeneric("splitByAlternativeRanks",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("splitByAlternativeRanks"))
+
+.merge_rows_wrapper - function(x, col, ...){
+    f <- rowData(x)[,col,drop=TRUE]
+    f <- factor(f, unqiue(f))
+    mergeRows(x, f = f,) 
+}
+
+.split_by_alt_ranks <- function(x, alt_ranks, ...){
+    # input check
+    if(!.is_non_empty_character(alt_ranks)){
+        stop("'alt_ranks' must be character vector.",
+             call. = FALSE)
+    }
+    if(nrow(x) == 0L){
+        stop("'x' has nrow(x) == 0L.",call. = FALSE)
+    }
+    #
+    ans <- lapply(alt_ranks, .merge_rows_wrapper, x = x)
+    names(ans) <- alt_ranks
+    SimpleList(ans)
+}
+
+#' @rdname splitByRanks
+#' @export
+setMethod("splitByAlternativeRanks", signature = c(x = "SummarizedExperiment"),
+          function(x, alt_ranks, ...){
+              .split_by_alt_ranks(x, ranks, ...)
+          }
+)
+
+#' @rdname splitByRanks
+#' @export
+setMethod("splitByAlternativeRanks", signature = c(x = "SingleCellExperiment"),
+          function(x, alt_ranks, ...){
+              altExps(x) <- NULL
+              x <- .split_by_alt_ranks(x, ranks, ...)
+              x
+          }
+)
+
+#' @rdname splitByRanks
+#' @export
+setMethod("splitByAlternativeRanks", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, alt_ranks, ...){
+              callNextMethod()
+          }
+)
+
 ################################################################################
 # unsplitByRanks
 
