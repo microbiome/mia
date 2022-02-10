@@ -583,33 +583,24 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 
 # Input: variable pair data.frame
 # Output: variable pair data.frame with two additional columns
-
-#' @importFrom tidyr pivot_longer pivot_wider
 .sort_variable_pairs_row_wise <- function(variable_pairs){
-  
-  variable_pairs_sorted <- variable_pairs
-  # Create column that tells in which feature/sample pair variable is
-  variable_pairs_sorted$ID <- 1:nrow(variable_pairs_sorted)
-  # Convert into longer format so that one column have all variable names
-  variable_pairs_sorted <- variable_pairs_sorted %>% tidyr::pivot_longer(cols = !ID)
-  # Order based on ID (variable pair number) and value (alphabetical order of variable name)
-  variable_pairs_sorted <- variable_pairs_sorted[order(variable_pairs_sorted$ID , variable_pairs_sorted$value), ]
-  # First member of each variable pair is Var1 and second is Var2
-  variable_pairs_sorted$name <- paste0("Var", rep(c(1,2), times = nrow(variable_pairs_sorted)/2) )
-  # Convert into wider format. Now table have own columns for each variable name and
-  # variable names are in right order.
-  variable_pairs_sorted  <- variable_pairs_sorted %>% tidyr::pivot_wider(id_cols = c("ID", "name"))
-  
-  # Take only columns that include variable names
-  variable_pairs_sorted  <- variable_pairs_sorted[ , c("Var1", "Var2") ]
-  # Add new colnames
-  colnames(variable_pairs_sorted) <- c("Var1_sorted", "Var2_sorted")
-  # # Convert back into data.frame
-  # Add sorted feature pairs to original
-  variable_pairs <- cbind(variable_pairs, variable_pairs_sorted)
-  # # Ensure that the object is data.frame
-  # variable_pairs <- as.data.frame(variable_pairs)
-  return(variable_pairs)
+    # Loop through variable-pairs row-wise
+    variable_pairs_sorted <- apply(variable_pairs, 1, function(x){
+        # Get the index of max value (alphabetical or other order)
+        temp_ind1 <- which(x == max(x))[1]
+        # Get the index of other variable
+        temp_ind2 <- ifelse(temp_ind1 == 1, 2, 1)
+        # Combine result in vector
+        temp <- c(x[temp_ind1], x[temp_ind2])
+        return(temp)
+        })
+    # Transpose
+    variable_pairs_sorted <- t(variable_pairs_sorted)
+    # Add new colnames
+    colnames(variable_pairs_sorted) <- c("Var1_sorted", "Var2_sorted")
+    # Add sorted feature pairs to original
+    variable_pairs <- cbind(variable_pairs, variable_pairs_sorted)
+    return(variable_pairs)
 }
 ######################### .calculate_association_table #########################
 # This function calculates association by looping through feature/sample-pairs.
@@ -668,7 +659,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                        association_FUN = association_FUN, 
                                        ...)
   
-    # Convert into data.frameif it is vector, 
+    # Convert into data.frame if it is vector, 
     # otherwise transpose into the same orientation as feature-pairs and then convert it to df
     if( is.vector(correlations_and_p_values) ){
       correlations_and_p_values <- data.frame(correlations_and_p_values)
@@ -1041,9 +1032,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     cor$Var1 <- NULL
     # Convert into matrix
     cor <- as.matrix(cor)
-    # Adjust rownames and colnames 
-    rownames(cor) <- assay1_names_original
-    colnames(cor) <- assay2_names_original
     # Create a result list
     result_list <- list(cor = cor)
     # If p_values exist, then create a matrix and add to the result list
@@ -1058,9 +1046,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         pval$Var1 <- NULL
         # Convert into matrix
         pval <- as.matrix(pval)
-        # Adjust rownames and colnames
-        rownames(pval) <- assay1_names_original
-        colnames(pval) <- assay2_names_original
         # Convert into matrix and add it to result list
         pval <- as.matrix(pval)
         result_list[["pval"]] <- pval
@@ -1077,9 +1062,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         p_adj$Var1 <- NULL
         # Convert into matrix
         p_adj <- as.matrix(p_adj)
-        # Adjust rownames and colnames
-        rownames(p_adj) <- assay1_names_original
-        colnames(p_adj) <- assay2_names_original
         # Convert into matrix and add it to result list
         p_adj <- as.matrix(p_adj)
         result_list[["p_adj"]] <- p_adj
