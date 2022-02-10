@@ -568,6 +568,14 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                                                   ...)
     }
     
+    # Get the order based on original order of variable-pairs
+    order <- match( paste0(colnames(assay1)[variable_pairs$Var1], 
+                           colnames(assay2)[variable_pairs$Var2]),
+                    paste0(correlations_and_p_values$Var1, 
+                           correlations_and_p_values$Var2) )
+    # Order the table
+    correlations_and_p_values <- correlations_and_p_values[ order, ]
+    
     # If there are p_values, adjust them
     if( !is.null(correlations_and_p_values$pval) ){
         correlations_and_p_values$p_adj <- 
@@ -688,14 +696,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                                       correlations_and_p_values, 
                                                       by = c("Var1_sorted", "Var2_sorted"))
         
-        # Get the order based on original order of variable-pairs
-        order <- match( paste0(variable_pairs_all$Var1, 
-                               variable_pairs_all$Var2),
-                        paste0(correlations_and_p_values$Var1, 
-                               correlations_and_p_values$Var2) )
-        # Order the table
-        correlations_and_p_values <- correlations_and_p_values[ order, ]
-        
         # Drop off additional columns
         correlations_and_p_values <- 
             correlations_and_p_values[ , !colnames(correlations_and_p_values) %in% 
@@ -703,6 +703,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                              "Var2_sorted", 
                                              "Var1_", 
                                              "Var2_") ]
+        
     } else{
         # Otherwise just add variable names
         correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
@@ -710,6 +711,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Adjust names
     correlations_and_p_values$Var1 <- colnames(assay1)[ correlations_and_p_values$Var1 ]
     correlations_and_p_values$Var2 <- colnames(assay2)[ correlations_and_p_values$Var2 ]
+    
     # Adjust factors
     correlations_and_p_values$Var1 <- factor(correlations_and_p_values$Var1,
                                              levels = unique(correlations_and_p_values$Var1))
@@ -748,9 +750,8 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     
     # Adjust names
     colnames(correlations) <- c("Var1", "Var2", "cor")
-    # Adjust order or drop pairs, e.g., if only paired samples were wanted
-    correlations <- correlations[ correlations[["Var1"]] == variable_pairs[[1]] & 
-                                    correlations[["Var2"]] == variable_pairs[[2]]  ]
+    # Convert into data,frame
+    correlations <- as.data.frame( correlations )
     return(correlations)
 }
 
