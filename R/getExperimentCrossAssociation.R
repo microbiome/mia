@@ -317,7 +317,8 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     if( !.is_non_empty_string(direction) && !direction %in% c("row", "column") ){
       stop("'direction' must be 'row' or 'column'.", call. = FALSE)
     }
-    # Method is checked in .calculate_association. Otherwise association_FUN would
+    # Check method
+    # method is checked in .calculate_association. Otherwise association_FUN would
     # not work. (It can be "anything", and it might also have method parameter.)
     # Check mode
     mode <- match.arg(mode, c("table", "matrix"))
