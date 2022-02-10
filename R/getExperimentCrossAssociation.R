@@ -542,9 +542,10 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Get all the sample/feature pairs
     if( paired ){
         .check_if_paired_samples(assay1, assay2)
-        variable_pairs <- data.frame(Var1 = colnames(assay1), Var2 = colnames(assay2))
+        variable_pairs <- data.frame( Var1 = seq_len(ncol(assay1)), Var2 = seq_len(ncol(assay2)) )
     } else{
-        variable_pairs <- expand.grid(colnames(assay1), colnames(assay2))
+        # Get feature_pairs as indices
+        variable_pairs <- expand.grid( seq_len(ncol(assay1)), seq_len(ncol(assay2)) )
     }
     
     # If function is stats::cor, then calculate associations directly with matrices
@@ -636,9 +637,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # If they are identical, we can make calculation faster
     # row1 vs col2 equals to row2 vs col1
     if( assays_identical ){
-        # Unfactor/convert into characters so that filter works correctly
-        variable_pairs$Var1 <- as.character(variable_pairs$Var1)
-        variable_pairs$Var2 <- as.character(variable_pairs$Var2)
         
         variable_pairs_all <- variable_pairs
         # Sort features row-wise
@@ -710,6 +708,9 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         # Otherwise just add variable names
         correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
     }
+    # Adjust names
+    correlations_and_p_values$Var1 <- colnames(assay1)[ correlations_and_p_values$Var1 ]
+    correlations_and_p_values$Var2 <- colnames(assay2)[ correlations_and_p_values$Var2 ]
     # Adjust factors
     correlations_and_p_values$Var1 <- factor(correlations_and_p_values$Var1,
                                              levels = unique(correlations_and_p_values$Var1))

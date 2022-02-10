@@ -111,6 +111,15 @@
     x
 }
 
+
+#' @importFrom S4Vectors metadata metadata<-
+.add_values_to_metadata <- function(x, names, values){
+    add_metadata <- as.list(values)
+    names(add_metadata) <- names
+    metadata(x) <- c(metadata(x), add_metadata)
+    x
+}
+
 # keep dimnames of feature table (assay) consistent with the meta data 
 # of sample (colData) and feature (rowData)
 .set_feature_tab_dimnames <- function(feature_tab, 

@@ -342,4 +342,10 @@ test_that("getExperimentCrossAssociation", {
     expect_equal(cor[, c("cor", "pval")], 
                  cor_paired[, c("cor", "pval")])
     
+    # Test that result does not depend on names (if there are equal names)
+    tse <- mae[[1]]
+    rownames(tse)[1:10] <- rep("Unknown", 10)
+    cor_table <- testExperimentCrossCorrelation(tse, show_warnings = TRUE)
+    cor_table_ref <- testExperimentCrossCorrelation(mae[[1]], show_warnings = TRUE)
+    expect_equal(cor_table[ , 3:5], cor_table_ref[ , 3:5])
 })
