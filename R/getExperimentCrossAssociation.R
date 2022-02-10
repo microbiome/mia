@@ -788,7 +788,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     colnames(correlations) <- seq_len( ncol(correlations) )
     correlations$ID <- rownames(correlations)
     # melt matrix into long format, so that it match with output of other functions
-    correlations <- correlations %>% tidyr::pivot_longer(cols = !ID)
+    correlations <- correlations %>% tidyr::pivot_longer(cols = !"ID")
     
     # Adjust names
     colnames(correlations) <- c("Var1", "Var2", "cor")
@@ -1071,7 +1071,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Correlation matrix is done from Var1, Var2, and cor columns
     cor <- result %>%
         # Convert into long format
-        tidyr::pivot_wider(id_cols = Var1, names_from = Var2, values_from = "cor") %>%
+        tidyr::pivot_wider(id_cols = "Var1", names_from = "Var2", values_from = "cor") %>%
         # Convert into data.frame
         as.data.frame()
     # Give rownames and remove additional column
@@ -1085,7 +1085,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     if( !is.null(result$pval) ){
         pval <- result %>%
             # Convert into long format
-            tidyr::pivot_wider(id_cols = Var1, names_from = Var2, values_from = "pval") %>%
+            tidyr::pivot_wider(id_cols = "Var1", names_from = "Var2", values_from = "pval") %>%
             # Convert into data.frame
             as.data.frame()
         # Adjust rownames and remove an additional column
@@ -1101,7 +1101,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     if( !is.null(result$p_adj) ){
         p_adj <- result %>%
             # Convert into long format
-            tidyr::pivot_wider(id_cols = Var1, names_from = Var2, values_from = "p_adj") %>%
+            tidyr::pivot_wider(id_cols = "Var1", names_from = "Var2", values_from = "p_adj") %>%
             # Convert into data.frame
             as.data.frame()
         # Adjust rownames and remove an  additional column
