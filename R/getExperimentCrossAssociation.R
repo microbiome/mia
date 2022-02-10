@@ -24,9 +24,9 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
 #'   experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})
 #' 
-#' @param direction A single character value for selecting if association are calculated
-#'   row-wise (for features) or column-wise (for samples). Must be \code{"row"} or
-#'   \code{"column"}. (By default: \code{direction = "row"}) 
+#' @param MARGIN A single numeric value for selecting if association are calculated
+#'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
+#'   \code{2}. (By default: \code{MARGIN = 1}) 
 #'   
 #' @param method A single character value for selecting association method 
 #'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
@@ -67,7 +67,7 @@
 #'
 #' @param paired A single boolean value for specifying if samples are paired or not.
 #'    \code{colnames} must match between twp experiments. \code{paired} is disabled
-#'    when \code{direction = "row"}. (By default: \code{paired = FALSE})
+#'    when \code{MARGIN = 1}. (By default: \code{paired = FALSE})
 #'
 #' @param ... Additional arguments:
 #'    \itemize{
@@ -147,9 +147,11 @@
 #' # Returned value is a list of matrices
 #' names(result)
 #' 
-#' # Calculate Bray-Curtis dissimilarity between features
-#' result <- getExperimentCrossAssociation(mae[[1]], mae[[2]], 
+#' # Calculate Bray-Curtis dissimilarity between samples. If dataset includes
+#' # paired samples, you can use paired = TRUE.
+#' result <- getExperimentCrossAssociation(mae[[1]], mae[[2]], MARGIN = 2, paired = FALSE,
 #'                                         association_FUN = vegan::vegdist, method = "bray")
+#'                                         
 #' 
 #' # If experiments are equal and measure is symmetric (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),
 #' # it is possible to speed-up calculations by calculating association only for unique
@@ -162,6 +164,7 @@
 #' # For big data sets, calculation might take long. To make calculations quicker, you can take
 #' # a random sample from data. In a complex biological problems, random sample
 #' # can describe the data enough. Here our random sample is 30 % of whole data.
+#' sample_size <- 0.3
 #' tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
 #' result <- testExperimentCrossAssociation(tse_sub)
 #'                                          
@@ -182,7 +185,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            experiment2 = 2,
            abund_values1 = "counts",
            abund_values2 = "counts",
-           direction = "row",
+           MARGIN = 1,
            method = c("spearman", "categorical", "kendall", "pearson"),
            mode = "table",
            p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
@@ -201,7 +204,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           experiment2 = experiment2,
                                           abund_values1 = abund_values1,
                                           abund_values2 = abund_values2,
-                                          direction = direction,
+                                          MARGIN = MARGIN,
                                           method = method,
                                           mode = mode,
                                           p_adj_method = p_adj_method,
@@ -279,7 +282,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                               experiment2 = 2,
                                               abund_values1 = "counts",
                                               abund_values2 = "counts",
-                                              direction = "row",
+                                              MARGIN = 1,
                                               method = c("spearman", "categorical", "kendall", "pearson"),
                                               mode = c("table", "matrix"),
                                               p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
@@ -308,9 +311,9 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Check abund_values1 and abund_values2
     .check_assay_present(abund_values1, tse1)
     .check_assay_present(abund_values2, tse2)
-    # Check direction
-    if( !.is_non_empty_string(direction) && !direction %in% c("row", "column") ){
-      stop("'direction' must be 'row' or 'column'.", call. = FALSE)
+    # Check MARGIN
+    if( !is.numeric(MARGIN) && !MARGIN %in% c(1, 2) ){
+      stop("'MARGIN' must be 1 or 2.", call. = FALSE)
     }
     # Check method
     # method is checked in .calculate_association. Otherwise association_FUN would
@@ -367,7 +370,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     assay1 <- assay(tse1, abund_values1)
     assay2 <- assay(tse2, abund_values2)
     # Transposes tables to right format, if row is specified
-    if( direction == "row" ){
+    if( MARGIN == 1 ){
       assay1 <- t(assay1)
       assay2 <- t(assay2)
       # Disable paired
@@ -383,7 +386,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                      p_adj_method, 
                                      test_significance, 
                                      show_warnings, paired, 
-                                     verbose, direction, ...)
+                                     verbose, MARGIN, ...)
     # Disable p_adj_threshold if there is no adjusted p-values
     if( is.null(result$p_adj) ){
       p_adj_threshold <- NULL
@@ -506,7 +509,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                    show_warnings, 
                                    paired,
                                    verbose,
-                                   direction,
+                                   MARGIN,
                                    association_FUN = NULL, 
                                    ...){
     # Check method if association_FUN is not NULL
@@ -529,7 +532,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Message details of calculation
     if(verbose){
         message( "Calculating correlations...\n",
-                    "direction: ", direction, 
+                    "MARGIN: ", MARGIN, 
                     ", function: ", function_name, 
                     ", method: ", method,
                     ", test_significance: ", test_significance,
