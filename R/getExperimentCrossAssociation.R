@@ -55,9 +55,6 @@
 #'    filter out correlations between identical items. Applies only when correlation
 #'    between experiment itself is tested, i.e., when assays are identical. 
 #'    (By default: \code{filter_self_correlations = FALSE})
-#'    
-#' @param random_sample A single numeric value (from 0 to 1) or NULL for selecting
-#'    the size of random sample of data. (By default: \code{random_sample = NULL})
 #' 
 #' @param verbose A single boolean value for selecting whether to get messages
 #'    about progress of calculation.
@@ -165,8 +162,9 @@
 #' # For big data sets, calculation might take long. To make calculations quicker, you can take
 #' # a random sample from data. In a complex biological problems, random sample
 #' # can describe the data enough. Here our random sample is 30 % of whole data.
-#' result <- testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 2,
-#'                                          random_sample = 0.3)
+#' tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
+#' result <- testExperimentCrossAssociation(tse_sub)
+#'                                          
 #'                                         
 NULL
 
@@ -193,7 +191,6 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            cor_threshold = NULL,
            sort = FALSE,
            filter_self_correlations = FALSE,
-           random_sample = NULL,
            verbose = TRUE,
            test_significance = FALSE,
            show_warnings = TRUE,
@@ -212,7 +209,6 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           cor_threshold = cor_threshold,
                                           sort = sort,
                                           filter_self_correlations = filter_self_correlations,
-                                          random_sample = random_sample,
                                           verbose = verbose,
                                           test_significance = test_significance,
                                           show_warnings = show_warnings,
@@ -292,7 +288,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                               cor_threshold = NULL,
                                               sort = FALSE,
                                               filter_self_correlations = FALSE,
-                                              random_sample = NULL,
                                               verbose = TRUE,
                                               test_significance = FALSE,
                                               show_warnings = TRUE,
@@ -347,12 +342,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         stop("'filter_self_correlations' must be a boolean value.", 
              call. = FALSE)
     }
-    # Check random_sample
-    if( !(is.numeric(random_sample) && 
-          (random_sample>=0 && random_sample<=1)  || 
-          is.null(random_sample) ) ){
-        stop("'random_sample' must be a numeric value [0,1].", call. = FALSE)
-    }
     # Check test_significance
     if( !.is_a_bool(test_significance) ){
         stop("'test_significance' must be a boolean value.", 
@@ -392,7 +381,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Calculate correlations
     result <- .calculate_association(assay1, assay2, method, 
                                      p_adj_method, 
-                                     test_significance, random_sample, 
+                                     test_significance, 
                                      show_warnings, paired, 
                                      verbose, direction, ...)
     # Disable p_adj_threshold if there is no adjusted p-values
@@ -514,7 +503,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                    method = c("spearman", "categorical", "kendall", "pearson"), 
                                    p_adj_method, 
                                    test_significance, 
-                                   random_sample,
                                    show_warnings, 
                                    paired,
                                    verbose,
@@ -548,8 +536,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                     ", p_adj_method: ",
                     ifelse(!is.null(p_adj_method), p_adj_method, "-"),
                     ", paired: ", paired,
-                    ", random_sample: ",
-                    ifelse(!is.null(random_sample), random_sample, "-"),
                     ", show_warnings: ", show_warnings, "\n" ) 
     }
   
@@ -568,22 +554,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         .check_if_paired_samples(assay1, assay2)
         variable_pairs <- data.frame( Var1 = seq_len(ncol(assay1)), Var2 = seq_len(ncol(assay2)) )
     } else{
-        if( !is.null(random_sample) ){
-            # Get random samples from the data
-            random_var1 <- sample.int(n = ncol(assay1), 
-                                      size = floor(random_sample*ncol(assay1)), replace = F)
-            random_var2 <- sample.int(n = ncol(assay2), 
-                                      size = floor(random_sample*ncol(assay2)), replace = F)
-            # Subset the data
-            assay1 <- assay1[ , random_var1]
-            assay2 <- assay2[ , random_var2]
-            
-            # Check that data still includes variables
-            if( ncol(assay1) == 0 || ncol(assay2) == 0 ){
-                stop("The size of random sample is too small. Please choose greater 'random_sample'.", 
-                     call. = FALSE)
-            }
-        }
         # Get feature_pairs as indices
         variable_pairs <- expand.grid( seq_len(ncol(assay1)), seq_len(ncol(assay2)) )
     }

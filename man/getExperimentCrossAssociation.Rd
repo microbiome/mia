@@ -25,7 +25,6 @@ getExperimentCrossAssociation(x, ...)
   cor_threshold = NULL,
   sort = FALSE,
   filter_self_correlations = FALSE,
-  random_sample = NULL,
   verbose = TRUE,
   test_significance = FALSE,
   show_warnings = TRUE,
@@ -109,9 +108,6 @@ Disabled when \code{mode = "table"}. (By default: \code{sort = FALSE})}
 filter out correlations between identical items. Applies only when correlation
 between experiment itself is tested, i.e., when assays are identical.
 (By default: \code{filter_self_correlations = FALSE})}
-
-\item{random_sample}{A single numeric value (from 0 to 1) or NULL for selecting
-the size of random sample of data. (By default: \code{random_sample = NULL})}
 
 \item{verbose}{A single boolean value for selecting whether to get messages
 about progress of calculation.}
@@ -203,8 +199,9 @@ result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experim
 # For big data sets, calculation might take long. To make calculations quicker, you can take
 # a random sample from data. In a complex biological problems, random sample
 # can describe the data enough. Here our random sample is 30 \% of whole data.
-result <- testExperimentCrossAssociation(mae, experiment1 = 1, experiment2 = 2,
-                                         random_sample = 0.3)
+tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
+result <- testExperimentCrossAssociation(tse_sub)
+                                         
                                         
 }
 \author{
