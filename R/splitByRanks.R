@@ -157,7 +157,7 @@ setGeneric("splitByAlternativeRanks",
            function(x, ...)
                standardGeneric("splitByAlternativeRanks"))
 
-.merge_rows_wrapper - function(x, col, ...){
+.merge_rows_wrapper <- function(x, col, ...){
     f <- rowData(x)[,col,drop=TRUE]
     f <- factor(f, unqiue(f))
     mergeRows(x, f = f,) 
