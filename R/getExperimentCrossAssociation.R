@@ -584,23 +584,20 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 
 # Input: variable pair data.frame
 # Output: variable pair data.frame with two additional columns
+#' @importFrom MatrixGenerics rowMins rowMaxs
 .sort_variable_pairs_row_wise <- function(variable_pairs){
-    # Loop through variable-pairs row-wise
-    variable_pairs_sorted <- apply(variable_pairs, 1, function(x){
-        # Get the index of max value (alphabetical or other order)
-        temp_ind1 <- which(x == max(x))[1]
-        # Get the index of other variable
-        temp_ind2 <- ifelse(temp_ind1 == 1, 2, 1)
-        # Combine result in vector
-        temp <- c(x[temp_ind1], x[temp_ind2])
-        return(temp)
-        })
-    # Transpose
-    variable_pairs_sorted <- t(variable_pairs_sorted)
-    # Add new colnames
-    colnames(variable_pairs_sorted) <- c("Var1_sorted", "Var2_sorted")
-    # Add sorted feature pairs to original
-    variable_pairs <- cbind(variable_pairs, variable_pairs_sorted)
+    # Convert into matrix
+    variable_pairs <- as.matrix(variable_pairs)
+    # Get rowmins
+    rowmins <- rowMins( variable_pairs )
+    # Get rowmaxs
+    rowmaxs <- rowMaxs( variable_pairs )
+    # Convert back into data.frame
+    variable_pairs <- as.data.frame( variable_pairs )
+    # Add rowMins
+    variable_pairs$Var1_sorted <- rowmins
+    # Add rowMaxs
+    variable_pairs$Var2_sorted <- rowmaxs
     return(variable_pairs)
 }
 ######################### .calculate_association_table #########################
@@ -609,6 +606,8 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Input: feature/sample_pairs, and assays
 # Output: correlation table with variable names in Var1 and Var2, and correlation 
 # values in cor. Additionally, table can also include pval for p-values.
+
+#' @importFrom dplyr left_join
 .calculate_association_table <- function(variable_pairs,
                                          FUN_, 
                                          test_significance, 
@@ -685,9 +684,9 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         
         # Combine two tables so that values are assigned to larger table with all the 
         # variable pairs
-        correlations_and_p_values <- merge(variable_pairs_all, correlations_and_p_values, 
-                                           by = c("Var1_sorted", "Var2_sorted"), 
-                                           all.x = TRUE)
+        correlations_and_p_values <- dplyr::left_join(variable_pairs_all, 
+                                                      correlations_and_p_values, 
+                                                      by = c("Var1_sorted", "Var2_sorted"))
         
         # Get the order based on original order of variable-pairs
         order <- match( paste0(variable_pairs_all$Var1, 
