@@ -55,6 +55,9 @@
 #'    filter out correlations between identical items. Applies only when correlation
 #'    between experiment itself is tested, i.e., when assays are identical. 
 #'    (By default: \code{filter_self_correlations = FALSE})
+#'    
+#' @param random_sample A single numeric value (from 0 to 1) or NULL for selecting
+#'    the size of random sample of data. (By default: \code{random_sample = NULL})
 #' 
 #' @param verbose A single boolean value for selecting whether to get messages
 #'    about progress of calculation.
@@ -184,6 +187,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            cor_threshold = NULL,
            sort = FALSE,
            filter_self_correlations = FALSE,
+           random_sample = NULL,
            verbose = TRUE,
            test_significance = FALSE,
            show_warnings = TRUE,
@@ -202,6 +206,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           cor_threshold = cor_threshold,
                                           sort = sort,
                                           filter_self_correlations = filter_self_correlations,
+                                          random_sample = random_sample,
                                           verbose = verbose,
                                           test_significance = test_significance,
                                           show_warnings = show_warnings,
@@ -281,6 +286,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                               cor_threshold = NULL,
                                               sort = FALSE,
                                               filter_self_correlations = FALSE,
+                                              random_sample = NULL,
                                               verbose = TRUE,
                                               test_significance = FALSE,
                                               show_warnings = TRUE,
@@ -334,6 +340,12 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         stop("'filter_self_correlations' must be a boolean value.", 
              call. = FALSE)
     }
+    # Check random_sample
+    if( !(is.numeric(random_sample) && 
+          (random_sample>=0 && random_sample<=1)  || 
+          is.null(random_sample) ) ){
+        stop("'random_sample' must be a numeric value [0,1].", call. = FALSE)
+    }
     # Check test_significance
     if( !.is_a_bool(test_significance) ){
         stop("'test_significance' must be a boolean value.", 
@@ -371,8 +383,10 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
       p_adj_method <- NULL
     }
     # Calculate correlations
-    result <- .calculate_association(assay1, assay2, method, p_adj_method, 
-                                     test_significance, show_warnings, paired, 
+    result <- .calculate_association(assay1, assay2, method, 
+                                     p_adj_method, 
+                                     test_significance, random_sample, 
+                                     show_warnings, paired, 
                                      verbose, direction, ...)
     # Disable p_adj_threshold if there is no adjusted p-values
     if( is.null(result$p_adj) ){
@@ -493,6 +507,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                                    method = c("spearman", "categorical", "kendall", "pearson"), 
                                    p_adj_method, 
                                    test_significance, 
+                                   random_sample,
                                    show_warnings, 
                                    paired,
                                    verbose,
@@ -526,6 +541,8 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                     ", p_adj_method: ",
                     ifelse(!is.null(p_adj_method), p_adj_method, "-"),
                     ", paired: ", paired,
+                    ", random_sample: ",
+                    ifelse(!is.null(random_sample), random_sample, "-"),
                     ", show_warnings: ", show_warnings, "\n" ) 
     }
   
@@ -544,6 +561,16 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         .check_if_paired_samples(assay1, assay2)
         variable_pairs <- data.frame( Var1 = seq_len(ncol(assay1)), Var2 = seq_len(ncol(assay2)) )
     } else{
+        if( !is.null(random_sample) ){
+            # Get random samples from the data
+            random_var1 <- sample.int(n = ncol(assay1), 
+                                      size = floor(random_sample*ncol(assay1)), replace = F)
+            random_var2 <- sample.int(n = ncol(assay2), 
+                                      size = floor(random_sample*ncol(assay2)), replace = F)
+            # Subset the data
+            assay1 <- assay1[ , random_var1]
+            assay2 <- assay2[ , random_var2]
+        }
         # Get feature_pairs as indices
         variable_pairs <- expand.grid( seq_len(ncol(assay1)), seq_len(ncol(assay2)) )
     }
@@ -554,7 +581,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         correlations_and_p_values <- .calculate_stats_cor(assay1 = assay1,
                                                           assay2 = assay2,
                                                           method = method,
-                                                          variable_pairs = variable_pairs,
                                                           show_warnings = show_warnings)
     } else{
         correlations_and_p_values <- .calculate_association_table(variable_pairs = variable_pairs,
@@ -569,12 +595,21 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     }
     
     # Get the order based on original order of variable-pairs
-    order <- match( paste0(colnames(assay1)[variable_pairs$Var1], 
-                           colnames(assay2)[variable_pairs$Var2]),
-                    paste0(correlations_and_p_values$Var1, 
+    order <- match( paste0(variable_pairs$Var1, "_", 
+                           variable_pairs$Var2),
+                    paste0(correlations_and_p_values$Var1, "_", 
                            correlations_and_p_values$Var2) )
     # Order the table
     correlations_and_p_values <- correlations_and_p_values[ order, ]
+    # Adjust names
+    correlations_and_p_values$Var1 <- colnames(assay1)[ correlations_and_p_values$Var1 ]
+    correlations_and_p_values$Var2 <- colnames(assay2)[ correlations_and_p_values$Var2 ]
+    
+    # Adjust factors
+    correlations_and_p_values$Var1 <- factor(correlations_and_p_values$Var1,
+                                             levels = unique(correlations_and_p_values$Var1))
+    correlations_and_p_values$Var2 <- factor(correlations_and_p_values$Var2,
+                                             levels = unique(correlations_and_p_values$Var2))
     
     # If there are p_values, adjust them
     if( !is.null(correlations_and_p_values$pval) ){
@@ -708,15 +743,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         # Otherwise just add variable names
         correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
     }
-    # Adjust names
-    correlations_and_p_values$Var1 <- colnames(assay1)[ correlations_and_p_values$Var1 ]
-    correlations_and_p_values$Var2 <- colnames(assay2)[ correlations_and_p_values$Var2 ]
-    
-    # Adjust factors
-    correlations_and_p_values$Var1 <- factor(correlations_and_p_values$Var1,
-                                             levels = unique(correlations_and_p_values$Var1))
-    correlations_and_p_values$Var2 <- factor(correlations_and_p_values$Var2,
-                                             levels = unique(correlations_and_p_values$Var2))
     
     return(correlations_and_p_values)
 }
@@ -729,9 +755,9 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Output: correlation table
 #' @importFrom stats cor 
 #' @importFrom tidyr pivot_longer
-.calculate_stats_cor <- function(assay1, assay2, method, variable_pairs, show_warnings){
+.calculate_stats_cor <- function(assay1, assay2, method, show_warnings){
     # If user does not want warnings, 
-    # suppress warnings that might occur when calculating correlaitons (NAs...)
+    # suppress warnings that might occur when calculating correlations (NAs...)
     # or p-values (ties, and exact p-values cannot be calculated...)
     if( show_warnings ){
       correlations <- stats::cor(assay1, assay2, 
@@ -744,6 +770,10 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     }
     # 
     correlations <- as.data.frame(correlations)
+    # Convert row names and column names into indices, so that they equal to 
+    # other functions
+    rownames(correlations) <- seq_len( nrow(correlations) )
+    colnames(correlations) <- seq_len( ncol(correlations) )
     correlations$ID <- rownames(correlations)
     # melt matrix into long format, so that it match with output of other functions
     correlations <- correlations %>% tidyr::pivot_longer(cols = !ID)
@@ -752,6 +782,10 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     colnames(correlations) <- c("Var1", "Var2", "cor")
     # Convert into data,frame
     correlations <- as.data.frame( correlations )
+    # Convert indices back to numeric
+    correlations$Var1 <- as.numeric(correlations$Var1)
+    correlations$Var2 <- as.numeric(correlations$Var2)
+    
     return(correlations)
 }
 
