@@ -639,7 +639,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 
 # Input: variable pair data.frame
 # Output: variable pair data.frame with two additional columns
-#' @importFrom MatrixGenerics rowMins rowMaxs
+#' @importFrom DelayedMatrixStats rowMins rowMaxs
 .sort_variable_pairs_row_wise <- function(variable_pairs){
     # Convert into matrix
     variable_pairs <- as.matrix(variable_pairs)
