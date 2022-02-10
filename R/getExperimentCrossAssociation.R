@@ -691,7 +691,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # If they are identical, we can make calculation faster
     # row1 vs col2 equals to row2 vs col1
     if( assays_identical ){
-        
         variable_pairs_all <- variable_pairs
         # Sort features row-wise
         variable_pairs_all <- .sort_variable_pairs_row_wise(variable_pairs_all)
