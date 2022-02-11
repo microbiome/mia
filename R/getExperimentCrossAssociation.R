@@ -435,7 +435,11 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
             colnames(x) <- colnames(assay2)[ as.numeric(colnames(x)) ]
             return(x)
         })
-    } else{
+        # If result list includes only one matrix, return only the matrix
+        if( length(result) == 1 ){
+            result <- result[[1]]
+        }
+    } else if( !is.null(result) ){
         # Adjust names
         result$Var1 <- colnames(assay1)[ as.numeric(result$Var1) ]
         result$Var2 <- colnames(assay2)[ as.numeric(result$Var2) ]
@@ -444,10 +448,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         result$Var1 <- factor(result$Var1,levels = unique(result$Var1))
         result$Var2 <- factor(result$Var2, levels = unique(result$Var2))
     }
-    # If result includes only one element, return only the element
-    if( length(result) == 1 ){
-        result <- result[[1]]
-    }
+    
     return(result)
 }
 
