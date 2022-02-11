@@ -348,6 +348,13 @@ test_that("getExperimentCrossAssociation", {
     cor_table <- testExperimentCrossAssociation(tse, show_warnings = FALSE)
     cor_table_ref <- testExperimentCrossAssociation(mae[[1]], show_warnings = FALSE)
     expect_equal(cor_table[ , 3:5], cor_table_ref[ , 3:5])
+    mat <- getExperimentCrossAssociation(tse, mode = "matrix", show_warnings = FALSE)
+    expect_true( is.matrix(mat) )
+    expect_true(nrow(mat) == nrow(tse) && ncol(mat) == nrow(tse))
+    mat <- getExperimentCrossAssociation(tse, mode = "matrix", show_warnings = FALSE,
+                                         cor_threshold = 0.8, filter_self_correlation = TRUE)
+    expect_true(nrow(mat) < nrow(tse) && ncol(mat) < nrow(tse))
+    
     
     # Test user's own function
     expect_true( is.data.frame(getExperimentCrossAssociation(tse, method = "canberra",
@@ -363,5 +370,12 @@ test_that("getExperimentCrossAssociation", {
                                                            show_warnings = FALSE,
                                                            mode = "matrix",
                                                            association_FUN = DelayedMatrixStats::rowSums2) )
+    
+    # Test that output has right columns
+    expect_equal(colnames(getExperimentCrossAssociation(tse, show_warnings = FALSE)), c("Var1", "Var2", "cor"))
+    expect_equal(colnames(getExperimentCrossAssociation(tse, show_warnings = FALSE, 
+                                                        test_significance = TRUE)),
+                 c("Var1", "Var2", "cor", "pval", "p_adj"))
+    
     
 })

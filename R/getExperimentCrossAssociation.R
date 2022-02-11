@@ -415,13 +415,13 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Matrix or table?
     if( mode == "matrix" && !is.null(result) ) {
         # Create matrices from table
-        result <- .association_table_to_matrix(result, verbose)
+        result <- .association_table_to_matrix(result, assay1, assay2, verbose)
         
         # If matrix contains rows or columns that have only NAs, error occur in hclust
-        if( any(rowSums(is.na(result$cor)) == ncol(result$cor)) || 
-            any(colSums(is.na(result$cor)) == nrow(result$cor)) ){
-            message("\nCorrelation matrices cannot be sorted, because correlation matrix ",
-                    "contains rows and/or columns that contain only NAs.")
+        if( (any(rowSums(is.na(result$cor)) == ncol(result$cor)) || 
+            any(colSums(is.na(result$cor)) == nrow(result$cor))) && sort ){
+            message("Correlation matrices cannot be sorted, because correlation matrix ",
+                    "contains rows and/or columns that contain only NAs.\n")
             sort <- FALSE
         }
         # If sort was specified and there are more than 1 features
@@ -429,6 +429,9 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
             # Sort associations
             result <- .association_sort(result, verbose)
         }
+    } else{
+        # If mode is table, ensure that table contains only wanted columns
+        result <- result[ , colnames(result) %in% c("Var1", "Var2", "cor", "pval", "p_adj") ]
     }
     # If result includes only one element, return only the element
     if( length(result) == 1 ){
@@ -920,8 +923,15 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                       ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
                       ", filter_self_correlations: ", 
                       ifelse(filter_self_correlations,
-                             filter_self_correlations, "-\n") )
+                             filter_self_correlations, "-"), "\n" )
     }
+    
+    # Add unique names so that it is possible to know which is which when converting
+    # into matrix and there are equal names
+    unique_names <- expand.grid(make.unique(colnames(assay1)), make.unique(colnames(assay2)))
+    colnames(unique_names) <- c("Var1_uniq", "Var2_uniq")
+    result <- cbind(result, unique_names)
+    
     # Which features have significant correlations?
     if ( !is.null(result$p_adj) && !is.null(p_adj_threshold) ) {
         # Get those feature-pairs that have significant correlations
@@ -1036,11 +1046,38 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Input: Correlation table
 # Output: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 #' @importFrom tidyr pivot_wider
-.association_table_to_matrix <- function(result, verbose){
+#' @importFrom DelayedArray rowSums colSums
+.association_table_to_matrix <- function(result, assay1, assay2, verbose){
     # Give message if verbose == TRUE
     if(verbose){
       message("Converting table into matrices...\n")
     }
+    
+    # Store original names
+    assay1_names_original <- colnames(assay1)
+    assay2_names_original <- colnames(assay2)
+    # Create unique names to identify also equally named variables
+    assay1_names_unique <- make.unique(assay1_names_original)
+    assay2_names_unique <- make.unique(assay2_names_original)
+    # Create unique names for result table
+    assay1_names_unique <- rep(assay1_names_unique, times = ncol(assay2))
+    assay2_names_unique <- rep(assay2_names_unique, each = ncol(assay1))
+    # If the length of unique names is not equal to number of rows in result, 
+    # then thresholds was used. 
+    if(length(assay1_names_unique) != nrow(result) || 
+       length(assay2_names_unique) != nrow(result)  ){
+        # Create df that includes all the different variable pairs
+        df_temp <- data.frame(Var1_uniq = assay1_names_unique,
+                              Var2_uniq = assay2_names_unique)
+        # Add result to variable pairs
+        result <- dplyr::left_join(df_temp, result,  by = c("Var1_uniq", "Var2_uniq"))
+        # Remove additional columns
+        result <- result[ , !colnames(result) %in% c("Var1_uniq", "Var2_uniq") ]
+    }
+    # Assign unique names to result table
+    result$Var1 <- assay1_names_unique
+    result$Var2 <- assay2_names_unique
+    
     # Correlation matrix is done from Var1, Var2, and cor columns
     cor <- result %>%
         # Convert into long format
@@ -1052,6 +1089,13 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     cor$Var1 <- NULL
     # Convert into matrix
     cor <- as.matrix(cor)
+    # Adjust rownames and colnames 
+    rownames(cor) <- assay1_names_original
+    colnames(cor) <- assay2_names_original
+    # Remove empty rows and columns
+    non_empty_rows <- rowSums(is.na(cor)) < ncol(cor)
+    non_empty_cols <- colSums(is.na(cor)) < nrow(cor) 
+    cor <- cor[ non_empty_rows, non_empty_cols, drop = FALSE ]
     # Create a result list
     result_list <- list(cor = cor)
     # If p_values exist, then create a matrix and add to the result list
@@ -1066,8 +1110,12 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         pval$Var1 <- NULL
         # Convert into matrix
         pval <- as.matrix(pval)
-        # Convert into matrix and add it to result list
-        pval <- as.matrix(pval)
+        # Adjust rownames and colnames 
+        rownames(pval) <- assay1_names_original
+        colnames(pval) <- assay2_names_original
+        # Remove empty rows and columns
+        pval <- pval[ non_empty_rows, non_empty_cols, drop = FALSE ]
+        # Add it to result list
         result_list[["pval"]] <- pval
     } 
     # If adjusted p_values exist, then create a matrix and add to the result list
@@ -1082,8 +1130,12 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         p_adj$Var1 <- NULL
         # Convert into matrix
         p_adj <- as.matrix(p_adj)
-        # Convert into matrix and add it to result list
-        p_adj <- as.matrix(p_adj)
+        # Adjust rownames and colnames
+        rownames(p_adj) <- assay1_names_original
+        colnames(p_adj) <- assay2_names_original
+        # Remove empty rows and columns
+        p_adj <- p_adj[ non_empty_rows, non_empty_cols, drop = FALSE ]
+        # Add it to result list
         result_list[["p_adj"]] <- p_adj
     } 
     return(result_list)
