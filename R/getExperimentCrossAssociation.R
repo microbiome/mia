@@ -429,9 +429,20 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
             # Sort associations
             result <- .association_sort(result, verbose)
         }
+        # Adjust names of all matrices
+        result <- lapply(result, FUN = function(x){
+            rownames(x) <- colnames(assay1)[ as.numeric(rownames(x)) ]
+            colnames(x) <- colnames(assay2)[ as.numeric(colnames(x)) ]
+            return(x)
+        })
     } else{
-        # If mode is table, ensure that table contains only wanted columns
-        result <- result[ , colnames(result) %in% c("Var1", "Var2", "cor", "pval", "p_adj") ]
+        # Adjust names
+        result$Var1 <- colnames(assay1)[ as.numeric(result$Var1) ]
+        result$Var2 <- colnames(assay2)[ as.numeric(result$Var2) ]
+
+        # Adjust factors
+        result$Var1 <- factor(result$Var1,levels = unique(result$Var1))
+        result$Var2 <- factor(result$Var2, levels = unique(result$Var2))
     }
     # If result includes only one element, return only the element
     if( length(result) == 1 ){
@@ -590,15 +601,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                            correlations_and_p_values$Var2) )
     # Order the table
     correlations_and_p_values <- correlations_and_p_values[ order, ]
-    # Adjust names
-    correlations_and_p_values$Var1 <- colnames(assay1)[ correlations_and_p_values$Var1 ]
-    correlations_and_p_values$Var2 <- colnames(assay2)[ correlations_and_p_values$Var2 ]
-    
-    # Adjust factors
-    correlations_and_p_values$Var1 <- factor(correlations_and_p_values$Var1,
-                                             levels = unique(correlations_and_p_values$Var1))
-    correlations_and_p_values$Var2 <- factor(correlations_and_p_values$Var2,
-                                             levels = unique(correlations_and_p_values$Var2))
     
     # If there are p_values, adjust them
     if( !is.null(correlations_and_p_values$pval) ){
@@ -926,21 +928,15 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
                              filter_self_correlations, "-"), "\n" )
     }
     
-    # Add unique names so that it is possible to know which is which when converting
-    # into matrix and there are equal names
-    unique_names <- expand.grid(make.unique(colnames(assay1)), make.unique(colnames(assay2)))
-    colnames(unique_names) <- c("Var1_uniq", "Var2_uniq")
-    result <- cbind(result, unique_names)
-    
     # Which features have significant correlations?
     if ( !is.null(result$p_adj) && !is.null(p_adj_threshold) ) {
         # Get those feature-pairs that have significant correlations
-        result <- result[result$p_adj < p_adj_threshold, ]
+        result <- result[result$p_adj < p_adj_threshold & !is.na(result$p_adj), ]
     }
     # Which features have correlation over correlation threshold?
     if ( !is.null(cor_threshold) ) {
         # Get those feature-pairs that have correlations over threshold
-        result <- result[abs(result$cor) > cor_threshold, ]
+        result <- result[abs(result$cor) > cor_threshold & !is.na(result$cor), ]
     }
     
     # If there are no significant correlations
@@ -948,9 +944,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         message("No significant correlations with the given criteria.\n")
         return(NULL)
     }
-    # Adjust levels
-    result$Var1 <- factor(result$Var1)
-    result$Var2 <- factor(result$Var2)
     
     # Filter self correlations if it's specified
     if ( filter_self_correlations ) {
@@ -1053,31 +1046,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
       message("Converting table into matrices...\n")
     }
     
-    # Store original names
-    assay1_names_original <- colnames(assay1)
-    assay2_names_original <- colnames(assay2)
-    # Create unique names to identify also equally named variables
-    assay1_names_unique <- make.unique(assay1_names_original)
-    assay2_names_unique <- make.unique(assay2_names_original)
-    # Create unique names for result table
-    assay1_names_unique <- rep(assay1_names_unique, times = ncol(assay2))
-    assay2_names_unique <- rep(assay2_names_unique, each = ncol(assay1))
-    # If the length of unique names is not equal to number of rows in result, 
-    # then thresholds was used. 
-    if(length(assay1_names_unique) != nrow(result) || 
-       length(assay2_names_unique) != nrow(result)  ){
-        # Create df that includes all the different variable pairs
-        df_temp <- data.frame(Var1_uniq = assay1_names_unique,
-                              Var2_uniq = assay2_names_unique)
-        # Add result to variable pairs
-        result <- dplyr::left_join(df_temp, result,  by = c("Var1_uniq", "Var2_uniq"))
-        # Remove additional columns
-        result <- result[ , !colnames(result) %in% c("Var1_uniq", "Var2_uniq") ]
-    }
-    # Assign unique names to result table
-    result$Var1 <- assay1_names_unique
-    result$Var2 <- assay2_names_unique
-    
     # Correlation matrix is done from Var1, Var2, and cor columns
     cor <- result %>%
         # Convert into long format
@@ -1089,9 +1057,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     cor$Var1 <- NULL
     # Convert into matrix
     cor <- as.matrix(cor)
-    # Adjust rownames and colnames 
-    rownames(cor) <- assay1_names_original
-    colnames(cor) <- assay2_names_original
     # Remove empty rows and columns
     non_empty_rows <- rowSums(is.na(cor)) < ncol(cor)
     non_empty_cols <- colSums(is.na(cor)) < nrow(cor) 
@@ -1110,9 +1075,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         pval$Var1 <- NULL
         # Convert into matrix
         pval <- as.matrix(pval)
-        # Adjust rownames and colnames 
-        rownames(pval) <- assay1_names_original
-        colnames(pval) <- assay2_names_original
         # Remove empty rows and columns
         pval <- pval[ non_empty_rows, non_empty_cols, drop = FALSE ]
         # Add it to result list
@@ -1130,9 +1092,6 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         p_adj$Var1 <- NULL
         # Convert into matrix
         p_adj <- as.matrix(p_adj)
-        # Adjust rownames and colnames
-        rownames(p_adj) <- assay1_names_original
-        colnames(p_adj) <- assay2_names_original
         # Remove empty rows and columns
         p_adj <- p_adj[ non_empty_rows, non_empty_cols, drop = FALSE ]
         # Add it to result list
