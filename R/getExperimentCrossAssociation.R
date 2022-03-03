@@ -227,17 +227,18 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
 setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
     function(x, experiment2 = x, ...){
         ############################## INPUT CHECK #############################
-        # If y is  SE or TreeSE object
+        # If experiment2 is  SE or TreeSE object
         if( class(experiment2) == "SummarizedExperiment" || 
             class(experiment2) == "TreeSummarizedExperiment" ){}
         # If y is  character specifying name of altExp, 
         else if( is.character(experiment2) && experiment2 %in% names(altExps(x)) ){}
         # If y is numeric value specifying altExp
         else if( is.numeric(experiment2) && experiment2 <= length(altExps(x)) ){} 
-        # If y does not match, then give error
+        # If experiment2 does not match, then give error
         else{
-            stop("'y' must be SE or TreeSE object, or numeric or character value specifying", 
-                " experiment in altExps(x) or it must be NULL.", call. = FALSE)
+            stop("'experiment2' must be SE or TreeSE object, or numeric or character",
+                 " value specifying experiment in altExps(x) or it must be NULL.", 
+                 call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
         # Fetch data sets and create a MAE object
