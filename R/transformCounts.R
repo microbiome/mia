@@ -44,7 +44,7 @@
 #' clr = log10(x_r/g(x_r)) = log10 x_r - log10 µ_r}
 #' where \eqn{x_{r}} is a single relative value, g(x_{r}) is geometric mean of
 #' sample-wide relative values, and \eqn{\mu_{r}} is arithmetic mean of 
-#' sample-wide relative values".}
+#' sample-wide relative values.}
 #' 
 #' \item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
 #' clr is that logarithmic transformations lead to undefined values when zeros
@@ -59,7 +59,7 @@
 #' \deqn{rclr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
 #' rclr = log10(x_r/g(x_r > 0))}
 #' where \eqn{x_{r}} is a single relative value, and g(x_{r} > 0) is geometric 
-#' mean of sample-wide relative values that are over 0".}
+#' mean of sample-wide relative values that are over 0.}
 #' 
 #' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 #' extreme data points. It can be utilize for clustering or ordination analysis.
