@@ -49,7 +49,7 @@
 #' 
 #' @param sort A single boolean value for selecting whether to sort features or not
 #'    in result matrices. Used method is hierarchical clustering. 
-#'    Disabled when \code{mode = "table"}. (By default: \code{sort = FALSE})
+#'    (By default: \code{sort = FALSE})
 #' 
 #' @param filter_self_correlations A single boolean value for selecting whether to 
 #'    filter out correlations between identical items. Applies only when correlation
@@ -416,18 +416,9 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     # Matrix or table?
     if( mode == "matrix" && !is.null(result) ) {
         # Create matrices from table
-        result <- .association_table_to_matrix(result, assay1, assay2, verbose)
-        
-        # If matrix contains rows or columns that have only NAs, error occur in hclust
-        if( (any(rowSums(is.na(result$cor)) == ncol(result$cor)) || 
-            any(colSums(is.na(result$cor)) == nrow(result$cor))) && sort ){
-            message("Correlation matrices cannot be sorted, because correlation matrix ",
-                    "contains rows and/or columns that contain only NAs.\n")
-            sort <- FALSE
-        }
-        # If sort was specified and there are more than 1 features
-        if(sort && nrow(result$cor) > 1 && ncol(result$cor) > 1 ){
-            # Sort associations
+        result <- .association_table_to_matrix(result, verbose)
+        # Sort associations if specified
+        if( sort ){
             result <- .association_sort(result, verbose)
         }
         # Adjust names of all matrices
@@ -441,13 +432,26 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
             result <- result[[1]]
         }
     } else if( !is.null(result) ){
+        # Sort associations if specified
+        if( sort ){
+            result <- .association_sort(result, verbose)
+            # Get levels
+            levels1 <- colnames(assay1)[ as.numeric(levels(result$Var1)) ]
+            levels2 <- colnames(assay2)[ as.numeric(levels(result$Var2)) ]
+        }
         # Adjust names
         result$Var1 <- colnames(assay1)[ as.numeric(result$Var1) ]
         result$Var2 <- colnames(assay2)[ as.numeric(result$Var2) ]
-
         # Adjust factors
-        result$Var1 <- factor(result$Var1,levels = unique(result$Var1))
-        result$Var2 <- factor(result$Var2, levels = unique(result$Var2))
+        if( sort ){
+            # If the order is specified by sorting
+            result$Var1 <- factor(result$Var1, levels = levels1)
+            result$Var2 <- factor(result$Var2, levels = levels2)
+        } else{
+            # Otherwise the order is same as in input
+            result$Var1 <- factor(result$Var1, levels = unique(result$Var1))
+            result$Var2 <- factor(result$Var2, levels = unique(result$Var2))
+        }
     }
     
     return(result)
@@ -967,10 +971,35 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     if(verbose){
       message("Sorting results...\n")
     }
-    # Fetch data matrices
-    correlations <- result$cor
-    p_values <- result$pval
-    p_values_adjusted <- result$p_adj
+    
+    # Is the type of result table or matrix?
+    is_dataframe <- is.data.frame(result)
+    # If the type is data.frame, convert result first to matrix
+    if( is_dataframe ){
+        result_mat <- .association_table_to_matrix(result, verbose = FALSE)
+        # Fetch data matrices
+        correlations <- result_mat$cor
+        p_values <- result_mat$pval
+        p_values_adjusted <- result_mat$p_adj
+    } else{
+        # Fetch data matrices
+        correlations <- result$cor
+        p_values <- result$pval
+        p_values_adjusted <- result$p_adj
+    }
+    
+    # If matrix contains rows or columns that have only NAs, error occur in hclust
+    if( (any(rowSums(is.na(correlations)) == ncol(correlations)) || 
+         any(colSums(is.na(correlations)) == nrow(correlations))) ){
+        message("Result cannot be sorted, because it ",
+                "contains variable(s) whose correlation was not possible to calculate ",
+                " since they all were NAs.\n")
+        return(result)
+    }
+    # If there are only one variable, return as it is
+    if( nrow(correlations) == 1 && ncol(result$cor) == 1 ){
+        return(result)
+    }
     
     # Order in visually appealing order
     tmp <- correlations
@@ -1003,36 +1032,47 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
     rownames <- rownames(correlations)[row_index]
     colnames <- colnames(correlations)[col_index]
     
-    # Order the correlation matrix  based on order of hierarchical clustering
-    correlations <- correlations[row_index, col_index]
-    # Add column and rownames
-    colnames(correlations) <- colnames
-    rownames(correlations) <- rownames
-    
-    # Create a result list
-    result_list <- list(cor = correlations)
-    
-    # If p_values is not NULL. order and add to the list
-    if( !is.null(p_values) ){
-        # Sort the matrix
-        p_values <- p_values[row_index, col_index]
+    # If the format of result was data.frame
+    if( is_dataframe ){
+        # Add order as factor levels
+        result$Var1 <- factor(result$Var1, levels = row_index)
+        result$Var2 <- factor(result$Var2, levels = col_index)
+        
+    } else{
+        # Otherwise, the format was matrix
+        # Order the correlation matrix  based on order of hierarchical clustering
+        correlations <- correlations[row_index, col_index]
         # Add column and rownames
-        colnames(p_values) <- colnames
-        rownames(p_values) <- rownames
-        # Add matrix to result list
-        result_list[["pval"]] <- p_values
+        colnames(correlations) <- colnames
+        rownames(correlations) <- rownames
+        
+        # Create a result list
+        result_list <- list(cor = correlations)
+        
+        # If p_values is not NULL. order and add to the list
+        if( !is.null(p_values) ){
+            # Sort the matrix
+            p_values <- p_values[row_index, col_index]
+            # Add column and rownames
+            colnames(p_values) <- colnames
+            rownames(p_values) <- rownames
+            # Add matrix to result list
+            result_list[["pval"]] <- p_values
+        }
+        # If p_values_adjusted is not NULL. order and add to the list
+        if( !is.null(p_values_adjusted) ){
+            # Sort the matrix
+            p_values_adjusted <- p_values_adjusted[row_index, col_index]
+            # Add column and rownames
+            colnames(p_values_adjusted) <- colnames
+            rownames(p_values_adjusted) <- rownames
+            # Add matrix to result list
+            result_list[["p_adj"]] <- p_values_adjusted
+        }
+        result <- result_list
     }
-    # If p_values_adjusted is not NULL. order and add to the list
-    if( !is.null(p_values_adjusted) ){
-        # Sort the matrix
-        p_values_adjusted <- p_values_adjusted[row_index, col_index]
-        # Add column and rownames
-        colnames(p_values_adjusted) <- colnames
-        rownames(p_values_adjusted) <- rownames
-        # Add matrix to result list
-        result_list[["p_adj"]] <- p_values_adjusted
-    }
-    return(result_list)
+    
+    return(result)
 }
 
 ######################### .association_table_to_matrix #########################
@@ -1042,7 +1082,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
 # Output: List of matrices (cor, p-values and adjusted p-values / matrix (cor)
 #' @importFrom tidyr pivot_wider
 #' @importFrom DelayedArray rowSums colSums
-.association_table_to_matrix <- function(result, assay1, assay2, verbose){
+.association_table_to_matrix <- function(result, verbose){
     # Give message if verbose == TRUE
     if(verbose){
       message("Converting table into matrices...\n")
