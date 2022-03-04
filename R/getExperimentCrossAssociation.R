@@ -436,8 +436,11 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
         if( sort ){
             result <- .association_sort(result, verbose)
             # Get levels
-            levels1 <- colnames(assay1)[ as.numeric(levels(result$Var1)) ]
-            levels2 <- colnames(assay2)[ as.numeric(levels(result$Var2)) ]
+            levels1 <- unique( colnames(assay1)[ as.numeric(levels(result$Var1)) ] )
+            levels2 <- unique( colnames(assay2)[ as.numeric(levels(result$Var2)) ] )
+            # Unfactor so that factors do not affect when neames are adjusted
+            result$Var1 <- unfactor(result$Var1)
+            result$Var2 <- unfactor(result$Var2)
         }
         # Adjust names
         result$Var1 <- colnames(assay1)[ as.numeric(result$Var1) ]

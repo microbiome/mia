@@ -377,5 +377,18 @@ test_that("getExperimentCrossAssociation", {
                                                         test_significance = TRUE)),
                  c("Var1", "Var2", "cor", "pval", "p_adj"))
     
-    
+    # Test that the table have same information with different levels
+    tab1 <- getExperimentCrossAssociation(tse, show_warnings = FALSE)
+    tab1_levels1 <- levels(tab1$Var1)
+    tab1_levels2 <- levels(tab1$Var2)
+    tab1$Var1 <- as.character(tab1$Var1)
+    tab1$Var2 <- as.character(tab1$Var2)
+    tab2 <- getExperimentCrossAssociation(tse, show_warnings = FALSE, sort = TRUE)
+    tab2_levels1 <- levels(tab2$Var1)
+    tab2_levels2 <- levels(tab2$Var2)
+    tab2$Var1 <- as.character(tab2$Var1)
+    tab2$Var2 <- as.character(tab2$Var2)
+    expect_equal(tab1, tab2)
+    expect_true( !all(tab1_levels1 == tab2_levels1) )
+    expect_true( !all(tab1_levels2 == tab2_levels2) )
 })
