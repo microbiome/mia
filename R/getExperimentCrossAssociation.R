@@ -71,13 +71,12 @@
 #'
 #' @param ... Additional arguments:
 #'    \itemize{
-#'        \item{\code{symmetric}}{A single boolean value for specifying if 
+#'        \item{\code{symmetric}}{ A single boolean value for specifying if 
 #'        measure is symmetric or not. When \code{symmetric = TRUE}, associations
 #'        are calculated only for unique variable-pairs, and they are assigned to 
 #'        corresponding variable-pair. This decreases the number of calculations in 2-fold 
-#'        meaning faster execution. (By default: \code{symmetric = FALSE})}
-#'        
-#'        \item{\code{association_FUN}}{A function that is used to calculate (dis-)similarity
+#'        meaning faster execution. (By default: \code{symmetric = FALSE}) }
+#'        \item{\code{association_FUN}}{ A function that is used to calculate (dis-)similarity
 #'        between features. Function must take matrix as an input and give numeric
 #'        values as an output. Adjust \code{method} and other parameters correspondingly.
 #'        Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.}
@@ -172,12 +171,14 @@
 NULL
 
 #' @rdname getExperimentCrossAssociation
+#' @aliases getExperimentCrossCorrelation
 #' @export
 setGeneric("getExperimentCrossAssociation", signature = c("x"),
            function(x, ...)
                standardGeneric("getExperimentCrossAssociation"))
 
 #' @rdname getExperimentCrossAssociation
+#' @aliases getExperimentCrossCorrelation
 #' @export
 setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperiment"),
     function(x,
@@ -221,6 +222,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
 )
 
 #' @rdname getExperimentCrossAssociation
+#' @aliases getExperimentCrossCorrelation
 #' @importFrom MultiAssayExperiment MultiAssayExperiment ExperimentList
 #' @importFrom SingleCellExperiment altExps
 #' @export
@@ -263,12 +265,14 @@ setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
 )
 
 #' @rdname getExperimentCrossAssociation
+#' @aliases testExperimentCrossCorrelation
 #' @export
 setGeneric("testExperimentCrossAssociation", signature = c("x"),
            function(x, ...)
                standardGeneric("testExperimentCrossAssociation"))
 
 #' @rdname getExperimentCrossAssociation
+#' @aliases testExperimentCrossCorrelation
 #' @export
 setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
           function(x, ...){
@@ -276,6 +280,38 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
           }
 )
 
+############################# Methods for aliases ##############################
+#' @rdname getExperimentCrossAssociation
+#' @aliases testExperimentCrossAssociation
+#' @export
+setGeneric("testExperimentCrossCorrelation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("testExperimentCrossCorrelation"))
+
+#' @rdname getExperimentCrossAssociation
+#' @aliases testExperimentCrossAssociation
+#' @export
+setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
+          function(x, ...){
+              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
+          }
+)
+
+#' @rdname getExperimentCrossAssociation
+#' @aliases getExperimentCrossAssociation
+#' @export
+setGeneric("getExperimentCrossCorrelation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("getExperimentCrossCorrelation"))
+
+#' @rdname getExperimentCrossAssociation
+#' @aliases getExperimentCrossAssociation
+#' @export
+setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
+          function(x, ...){
+              getExperimentCrossAssociation(x, ...)
+          }
+)
 ############################## MAIN FUNCTIONALITY ##############################
 # This function includes all the main functionality. 
 .get_experiment_cross_association <- function(x,
