@@ -198,7 +198,7 @@ setMethod("runCCA", "SingleCellExperiment",
         rda <- vegan::rda(X = x, Y = variables, scale = scale, ...)
         X <- rda$CCA
     } else {
-        rda <- vegan::rda(X = x, scale = scale)
+        rda <- vegan::rda(X = x, scale = scale, ...)
         X <- rda $CA
     }
     ans <- X$u
