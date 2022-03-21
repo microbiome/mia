@@ -21,7 +21,7 @@ calculateRDA(x, ...)
 
 runRDA(x, ...)
 
-\S4method{calculateCCA}{ANY}(x, formula, variables, scale = TRUE)
+\S4method{calculateCCA}{ANY}(x, formula, variables, scale = TRUE, ...)
 
 \S4method{calculateCCA}{SummarizedExperiment}(
   x,
@@ -33,7 +33,7 @@ runRDA(x, ...)
 
 \S4method{runCCA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "CCA")
 
-\S4method{calculateRDA}{ANY}(x, formula, variables, scale = TRUE)
+\S4method{calculateRDA}{ANY}(x, formula, variables, scale = TRUE, ...)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
@@ -54,7 +54,7 @@ For \code{runCCA} a
 \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 or a derived object.}
 
-\item{...}{additional arguments not used.}
+\item{...}{additional arguments passed to vegan::cca or vegan::rda .}
 
 \item{formula}{If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}

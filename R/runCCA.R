@@ -37,7 +37,7 @@
 #' @param name String specifying the name to be used to store the result in the
 #'   reducedDims of the output.
 #'
-#' @param ... additional arguments not used.
+#' @param ... additional arguments passed to vegan::cca or vegan::rda .
 #'
 #' @return
 #' For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
@@ -99,7 +99,7 @@ setGeneric("runRDA", signature = c("x"),
 }
 
 #' @importFrom stats as.formula
-.calculate_cca <- function(x, formula, variables, scale = TRUE){
+.calculate_cca <- function(x, formula, variables, scale = TRUE, ...){
     .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
@@ -114,13 +114,13 @@ setGeneric("runRDA", signature = c("x"),
         # recast formula in current environment
         form <- as.formula(paste(as.character(formula)[c(2,1,3)],
                                  collapse = " "))
-        cca <- vegan::cca(form, data = variables, scale = scale)
+        cca <- vegan::cca(form, data = variables, scale = scale, ...)
         X <- cca$CCA
     } else if(ncol(variables) > 0L) {
-        cca <- vegan::cca(X = x, Y = variables, scale = scale)
+        cca <- vegan::cca(X = x, Y = variables, scale = scale, ...)
         X <- cca$CCA
     } else {
-        cca <- vegan::cca(X = x, scale = scale)
+        cca <- vegan::cca(X = x, scale = scale, ...)
         X <- cca$CA
     }
     ans <- X$u
