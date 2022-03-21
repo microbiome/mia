@@ -177,7 +177,7 @@ setMethod("runCCA", "SingleCellExperiment",
     }
 )
 
-.calculate_rda <- function(x, formula, variables, scale = TRUE){
+.calculate_rda <- function(x, formula, variables, scale = TRUE, ...){
     .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
@@ -192,10 +192,10 @@ setMethod("runCCA", "SingleCellExperiment",
         # recast formula in current environment
         form <- as.formula(paste(as.character(formula)[c(2,1,3)],
                                  collapse = " "))
-        rda <- vegan::rda(form, data = variables, scale = scale)
+        rda <- vegan::rda(form, data = variables, scale = scale, ...)
         X <- rda$CCA
     } else if(ncol(variables) > 0L) {
-        rda <- vegan::rda(X = x, Y = variables, scale = scale)
+        rda <- vegan::rda(X = x, Y = variables, scale = scale, ...)
         X <- rda$CCA
     } else {
         rda <- vegan::rda(X = x, scale = scale)
