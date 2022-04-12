@@ -64,7 +64,7 @@ connection between individual bacterial species and their relation to each
 other. 
 
 `mia` does not rely on a specific object type to hold taxonomic data, but
-uses specific columns in the `rowData` of a `SummarizedExperiment` object.
+uses specific columns in the `rowData` of a `TreeSummarizedExperiment` object.
 `taxonomyRanks` can be used to construct a `character` vector of available 
 taxonomic levels. This can be used, for example, for subsetting.
 

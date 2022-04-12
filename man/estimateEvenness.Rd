@@ -80,17 +80,17 @@ and Beisel et al. (2003) for further details.
 }
 \examples{
 data(esophagus)
-se <- esophagus
+tse <- esophagus
 
 # Specify index and their output names
 index <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla")
 name  <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 
 # Estimate evenness and give polished names to be used in the output
-se <- estimateEvenness(se, index = index, name = name)
+tse <- estimateEvenness(tse, index = index, name = name)
 
 # Check the output
-head(colData(se))
+head(colData(tse))
 
 }
 \references{
