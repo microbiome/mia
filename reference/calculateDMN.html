@@ -204,29 +204,32 @@ one element for each value of k provided.
 <span class="r-in"><span class="va">pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">lvls</span><span class="op">[</span><span class="va">pheno0</span> <span class="op">+</span> <span class="fl">1</span><span class="op">]</span>, levels<span class="op">=</span><span class="va">lvls</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">colData</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>pheno <span class="op">=</span> <span class="va">pheno</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="op">(</span>assays <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">counts</span><span class="op">)</span>,</span>
-<span class="r-in">                           colData <span class="op">=</span> <span class="va">colData</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">TreeSummarizedExperiment</span><span class="op">(</span>assays <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">counts</span><span class="op">)</span>,</span>
+<span class="r-in">                                colData <span class="op">=</span> <span class="va">colData</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">#</span></span>
-<span class="r-in"><span class="va">dmn</span> <span class="op">&lt;-</span> <span class="fu">calculateDMN</span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">dmn</span> <span class="op">&lt;-</span> <span class="fu">calculateDMN</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">dmn</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39227.39 BIC: 39527.91 AIC: 39292.11 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39227.38 BIC: 39527.91 AIC: 39292.11 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># since this take a bit of resources to calculate for k &gt; 1, the data is</span></span>
 <span class="r-in"><span class="co"># loaded</span></span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">runDMN</span><span class="op">(</span><span class="va">se</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, k <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runDMN</span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, k <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="co"># Convert SE to TreeSE to enable all features of mia and TreeSE object</span></span>
+<span class="r-in"><span class="co"># (Optional step at this point)</span></span>
+<span class="r-in"><span class="va">dmn_tse</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">dmn_se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">dmn_tse</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "DMN"</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># return a list of DMN objects</span></span>
-<span class="r-in"><span class="fu">getDMN</span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">getDMN</span><span class="op">(</span><span class="va">dmn_tse</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 1 </span>
@@ -270,10 +273,10 @@ one element for each value of k provided.
 <span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39336.29 BIC: 42210.96 AIC: 40549.51 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="co"># return, which objects fits best</span></span>
-<span class="r-in"><span class="fu">bestDMNFit</span><span class="op">(</span><span class="va">dmn_se</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">bestDMNFit</span><span class="op">(</span><span class="va">dmn_tse</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
 <span class="r-in"><span class="co"># return the model, which fits best</span></span>
-<span class="r-in"><span class="fu">getBestDMNFit</span><span class="op">(</span><span class="va">dmn_se</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">getBestDMNFit</span><span class="op">(</span><span class="va">dmn_tse</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 4 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>

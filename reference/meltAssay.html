@@ -141,12 +141,12 @@ names are set.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">molten_se</span> <span class="op">&lt;-</span> <span class="fu">meltAssay</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span class="r-in">                       abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span class="r-in">                       add_row_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">                       add_col_data <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span class="r-in">                       <span class="op">)</span></span>
-<span class="r-in"><span class="va">molten_se</span></span>
+<span class="r-in"><span class="va">molten_tse</span> <span class="op">&lt;-</span> <span class="fu">meltAssay</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
+<span class="r-in">                        abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span class="r-in">                        add_row_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span class="r-in">                        add_col_data <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span class="r-in">                        <span class="op">)</span></span>
+<span class="r-in"><span class="va">molten_tse</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 499,616 × 17</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    FeatureID SampleID counts Kingdom Phylum     Class Order Family Genus Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>

@@ -68,7 +68,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 data-toc-skip class="date">2022-04-10</h4>
+            <h4 data-toc-skip class="date">2022-04-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -134,9 +134,10 @@ interest lies in the connection between individual bacterial species and
 their relation to each other.</p>
 <p><code>mia</code> does not rely on a specific object type to hold
 taxonomic data, but uses specific columns in the <code>rowData</code> of
-a <code>SummarizedExperiment</code> object. <code>taxonomyRanks</code>
-can be used to construct a <code>character</code> vector of available
-taxonomic levels. This can be used, for example, for subsetting.</p>
+a <code>TreeSummarizedExperiment</code> object.
+<code>taxonomyRanks</code> can be used to construct a
+<code>character</code> vector of available taxonomic levels. This can be
+used, for example, for subsetting.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># print the available taxonomic ranks</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span></code></pre></div>

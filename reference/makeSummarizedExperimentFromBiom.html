@@ -94,9 +94,11 @@ SummarizedExperiment"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
 <span class="r-in">  <span class="co"># load from object</span></span>
 <span class="r-in">  <span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu">biomformat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomformat/man/read_biom.html" class="external-link">read_biom</a></span><span class="op">(</span><span class="va">rich_dense_file</span><span class="op">)</span></span>
 <span class="r-in">  <span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">makeSummarizedExperimentFromBiom</span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">se</span></span>
+<span class="r-in">  <span class="co"># Convert SE to TreeSE</span></span>
+<span class="r-in">  <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span>
+<span class="r-in">  <span class="va">tse</span></span>
 <span class="r-in"><span class="op">}</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 6 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
@@ -105,6 +107,13 @@ SummarizedExperiment"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(6): Sample1 Sample2 ... Sample5 Sample6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(4): BarcodeSequence LinkerPrimerSequence BODY_SITE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 </code></pre></div>
     </div>
   </div>

@@ -119,8 +119,10 @@ the sample metadata to be imported. The File has to be in <code>desing
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Creates se object from files</span></span>
 <span class="r-in"><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">loadFromMothur</span><span class="op">(</span><span class="va">counts</span>, <span class="va">taxa</span>, <span class="va">meta</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">se</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-in"><span class="co"># Convert SE to TreeSE</span></span>
+<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">tse</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 100 100 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
@@ -128,6 +130,13 @@ the sample metadata to be imported. The File has to be in <code>desing
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(8): OTU Size ... Family Genus</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(100): Sample1 Sample2 ... Sample99 Sample100</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): group sex ... numOtus Group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 </code></pre></div>
     </div>
   </div>
