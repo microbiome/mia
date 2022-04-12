@@ -71,7 +71,7 @@
 #' colData <- DataFrame(pheno = pheno)
 #'
 #' tse <- TreeSummarizedExperiment(assays = list(counts = counts),
-#'                                c olData = colData)
+#'                                 colData = colData)
 #'
 #'
 #' #

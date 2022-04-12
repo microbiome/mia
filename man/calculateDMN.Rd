@@ -152,7 +152,7 @@ pheno <- factor(lvls[pheno0 + 1], levels=lvls)
 colData <- DataFrame(pheno = pheno)
 
 tse <- TreeSummarizedExperiment(assays = list(counts = counts),
-                               c olData = colData)
+                                colData = colData)
 
 
 #
