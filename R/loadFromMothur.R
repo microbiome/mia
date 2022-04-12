@@ -54,7 +54,9 @@
 #' 
 #' # Creates se object from files
 #' se <- loadFromMothur(counts, taxa, meta)
-#' se
+#' # Convert SE to TreeSE
+#' tse <- as(se, "TreeSummarizedExperiment")
+#' tse
 NULL
 
 #' @rdname loadFromMothur
