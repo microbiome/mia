@@ -44,7 +44,12 @@ test_that("getPrevalence", {
                          top=5,
                          abund_values="counts")
     expect_equal(pr, actual)
-    
+    # Test alias
+    alias<- getTopTaxa(GlobalPatterns,
+                       method="prevalence",
+                       top=5,
+                       abund_values="counts")
+    expect_equal(alias, actual)
     # Check that works also when rownames is NULL
     gp_null <- GlobalPatterns
     rownames(gp_null) <- NULL
@@ -93,6 +98,10 @@ test_that("getPrevalentTaxa", {
     pr1 <- which(rownames(GlobalPatterns) %in% pr1)
     pr2 <- getPrevalentTaxa(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
     expect_equal(pr1, pr2)
+    
+    # Test alias
+    alias <- getPrevalentFeatures(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
+    expect_equal(pr1, alias)
     
     pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0.004, prevalence = 0.1, 
                             as_relative=TRUE, rank = "Family")
@@ -196,6 +205,10 @@ test_that("getRareTaxa", {
     pr2 <- getRareTaxa(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
     expect_equal(pr1, pr2)
     
+    # Test lias
+    alias <- getRareFeatures(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
+    expect_equal(pr1, alias)
+    
     pr1 <- getRareTaxa(GlobalPatterns, detection=0.004, prevalence = 0.1, 
                        as_relative=TRUE, rank = "Family")
     pr2 <- getRareTaxa(gp_null, detection=0.004, prevalence = 0.1, 
@@ -243,6 +256,11 @@ test_that("subsetByPrevalentTaxa", {
     pr2 <- subsetByPrevalentTaxa(gp_null, detection=5, prevalence = 0.33, rank = "Phylum") 
     pr2 <- unname(assay(pr2, "counts"))
     expect_equal(pr1, pr2)
+    
+    # Test alias
+    alias <- subsetByPrevalentFeatures(gp_null, detection=5, prevalence = 0.33, rank = "Phylum") 
+    alias <- unname(assay(alias, "counts"))
+    expect_equals(alias, pr2)
     
 })
 
@@ -298,6 +316,11 @@ test_that("subsetByRareTaxa", {
     pr2 <- subsetByRareTaxa(gp_null, detection=5, prevalence = 0.33, rank = "Phylum") 
     pr2 <- unname(assay(pr2, "counts"))
     expect_equal(pr1, pr2)
+    
+    # Test alias
+    alias <- subsetByRareFeatures(gp_null, detection=5, prevalence = 0.33, rank = "Phylum") 
+    alias <- unname(assay(alias, "counts"))
+    expect_equal(alias, pr2)
     
 })
 

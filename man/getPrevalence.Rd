@@ -5,15 +5,24 @@
 \alias{getPrevalence,ANY-method}
 \alias{getPrevalence,SummarizedExperiment-method}
 \alias{getPrevalentTaxa}
+\alias{getPrevalentFeatures}
 \alias{getPrevalentTaxa,ANY-method}
+\alias{getRarePrevalentFeatures}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{getPrevalentFeatures,ANY-method}
 \alias{getRareTaxa}
+\alias{getRareFeatures}
 \alias{getRareTaxa,ANY-method}
 \alias{getRareTaxa,SummarizedExperiment-method}
+\alias{getRareFeatures,ANY-method}
 \alias{subsetByPrevalentTaxa}
+\alias{subsetByPrevalentFeatures}
 \alias{subsetByPrevalentTaxa,SummarizedExperiment-method}
+\alias{subsetByPrevalentFeatures,ANY-method}
 \alias{subsetByRareTaxa}
+\alias{subsetByRareFeatures}
 \alias{subsetByRareTaxa,SummarizedExperiment-method}
+\alias{subsetByRareFeatures,ANY-method}
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
@@ -39,19 +48,35 @@ getPrevalentTaxa(x, ...)
   ...
 )
 
+getPrevalentFeatures(x, ...)
+
+\S4method{getPrevalentFeatures}{ANY}(x, ...)
+
 getRareTaxa(x, ...)
 
 \S4method{getRareTaxa}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
 
 \S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, prevalence = 50/100, include_lowest = FALSE, ...)
 
+getRareFeatures(x, ...)
+
+\S4method{getRareFeatures}{ANY}(x, ...)
+
 subsetByPrevalentTaxa(x, ...)
 
 \S4method{subsetByPrevalentTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
+subsetByPrevalentFeatures(x, ...)
+
+\S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
+
 subsetByRareTaxa(x, ...)
 
 \S4method{subsetByRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
+
+subsetByRareFeatures(x, ...)
+
+\S4method{subsetByRareFeatures}{ANY}(x, ...)
 
 getPrevalentAbundance(x, abund_values = "relabundance", ...)
 
