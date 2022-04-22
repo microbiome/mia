@@ -260,7 +260,7 @@ test_that("subsetByPrevalentTaxa", {
     # Test alias
     alias <- subsetByPrevalentFeatures(gp_null, detection=5, prevalence = 0.33, rank = "Phylum") 
     alias <- unname(assay(alias, "counts"))
-    expect_equals(alias, pr2)
+    expect_equal(alias, pr2)
     
 })
 
