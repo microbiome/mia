@@ -66,14 +66,16 @@
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 #' 
 #' # To scale values when using *RDA functions, use transformFeatures
-#' # Use pseudocount to avoid division by 0 which leads to NAs
-#' tse_family <- agglomerateByRank(GlobalPatterns, "Family")
-#' tse_family <- transformFeatures(tse_family, method = "z", pseudocount = 1)
+#' tse <- GlobalPatterns
+#' tse <- transformFeatures(tse, method = "z")
+#' # Data might include taxa that do not vary. Remove those because after z-transform
+#' # their value is NA
+#' tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 #' # Calculate RDA
-#' tse_family <- runRDA(tse_family, formula = data ~ SampleType, 
-#'                      abund_values = "z", name = "rda_scaled")
+#' tse <- runRDA(tse, formula = data ~ SampleType, 
+#'               abund_values = "z", name = "rda_scaled", na.action = na.omit)
 #' # Plot
-#' plotReducedDim(tse_family,"rda_scaled", colour_by = "SampleType")
+#' plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 NULL
 
 #' @rdname runCCA
