@@ -20,11 +20,6 @@
 #'   the variables to use. Can be missing, which turns the CCA analysis into
 #'   a CA analysis. All variables are used. Please subset, if you want to
 #'   consider only some of them.
-#'
-#' @param scale Logical scalar, should the expression values be standardized? 
-#'   (NOTE: Since *RDA functions use dbRDA, scaling is not done inside vegan::dbRDA
-#'   but before calling it. Because of that, na.action is not taken into account 
-#'   in scaling, and scaling is done for all the values.)
 #' 
 #' @param abund_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
@@ -40,7 +35,10 @@
 #' @param name String specifying the name to be used to store the result in the
 #'   reducedDims of the output.
 #'
-#' @param ... additional arguments passed to vegan::cca or vegan::rda .
+#' @param ... additional arguments passed to vegan::cca or vegan::dbrda .
+#' \itemize{
+#'   \item{\code{scale}}{Logical scalar, should the expression values be standardized?}
+#' }
 #' 
 #' @details
 #'   \*CCA functions utilize \code{vegan:cca} and \*RDA functions \code{vegan:dbRDA}.
@@ -184,17 +182,9 @@ setMethod("runCCA", "SingleCellExperiment",
     }
 )
 
-.calculate_rda <- function(x, formula, variables, scale = TRUE, ...){
+.calculate_rda <- function(x, formula, variables, ...){
     .require_package("vegan")
-    # input check
-    if(!.is_a_bool(scale)){
-        stop("'scale' must be TRUE or FALSE.", call. = FALSE)
-    }
     #
-    # Perform scaling if specified
-    if(scale){
-        x <- .calc_ztransform(x)
-    }
     x <- as.matrix(t(x))
     variables <- as.data.frame(variables)
     if(ncol(variables) > 0L && !missing(formula)){
