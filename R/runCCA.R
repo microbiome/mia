@@ -20,6 +20,8 @@
 #'   the variables to use. Can be missing, which turns the CCA analysis into
 #'   a CA analysis. All variables are used. Please subset, if you want to
 #'   consider only some of them.
+#'   
+#' @param scale a logical scalar, should the expression values be standardized?
 #' 
 #' @param abund_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
@@ -35,10 +37,7 @@
 #' @param name String specifying the name to be used to store the result in the
 #'   reducedDims of the output.
 #'
-#' @param ... additional arguments passed to vegan::cca or vegan::dbrda .
-#' \itemize{
-#'   \item{\code{scale}}{Logical scalar, should the expression values be standardized?}
-#' }
+#' @param ... additional arguments passed to vegan::cca or vegan::dbrda
 #' 
 #' @details
 #'   \*CCA functions utilize \code{vegan:cca} and \*RDA functions \code{vegan:dbRDA}.

@@ -54,10 +54,7 @@ For \code{runCCA} a
 \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 or a derived object.}
 
-\item{...}{additional arguments passed to vegan::cca or vegan::dbrda .
-\itemize{
-\item{\code{scale}}{Logical scalar, should the expression values be standardized?}
-}}
+\item{...}{additional arguments passed to vegan::cca or vegan::dbrda}
 
 \item{formula}{If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -68,6 +65,8 @@ a formula can be supplied. Based on the right-hand side of the given formula
 the variables to use. Can be missing, which turns the CCA analysis into
 a CA analysis. All variables are used. Please subset, if you want to
 consider only some of them.}
+
+\item{scale}{a logical scalar, should the expression values be standardized?}
 
 \item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
