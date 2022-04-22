@@ -66,7 +66,10 @@ the variables to use. Can be missing, which turns the CCA analysis into
 a CA analysis. All variables are used. Please subset, if you want to
 consider only some of them.}
 
-\item{scale}{Logical scalar, should the expression values be standardized?}
+\item{scale}{Logical scalar, should the expression values be standardized?
+(NOTE: Since *RDA functions use dbRDA, scaling is not done inside vegan::dbRDA
+but before calling it. Because of that, na.action is not taken into account
+in scaling, and scaling is done for all the values.)}
 
 \item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -93,6 +96,10 @@ For \code{runCCA} a modified \code{x} with the results stored in
 These functions perform Canonical Correspondance Analysis on data stored
 in a \code{SummarizedExperiment}.
 }
+\details{
+\*CCA functions utilize \code{vegan:cca} and \*RDA functions \code{vegan:dbRDA}.
+By default dbRDA is done with euclidean distances which equals to RDA.
+}
 \examples{
 library(scater)
 data(GlobalPatterns)
@@ -104,5 +111,5 @@ plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 }
 \seealso{
 For more details on the actual implementation see \code{\link[vegan:cca]{cca}}
-and \code{\link[vegan:cca]{rda}}
+and \code{\link[vegan:dbrda]{dbrda}}
 }

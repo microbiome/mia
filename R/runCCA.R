@@ -21,7 +21,10 @@
 #'   a CA analysis. All variables are used. Please subset, if you want to
 #'   consider only some of them.
 #'
-#' @param scale Logical scalar, should the expression values be standardized?
+#' @param scale Logical scalar, should the expression values be standardized? 
+#'   (NOTE: Since *RDA functions use dbRDA, scaling is not done inside vegan::dbRDA
+#'   but before calling it. Because of that, na.action is not taken into account 
+#'   in scaling, and scaling is done for all the values.)
 #' 
 #' @param abund_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
@@ -38,6 +41,10 @@
 #'   reducedDims of the output.
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::rda .
+#' 
+#' @details
+#'   \*CCA functions utilize \code{vegan:cca} and \*RDA functions \code{vegan:dbRDA}.
+#'   By default dbRDA is done with euclidean distances which equals to RDA.
 #'
 #' @return
 #' For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
@@ -49,7 +56,7 @@
 #' @name runCCA
 #' @seealso
 #' For more details on the actual implementation see \code{\link[vegan:cca]{cca}}
-#' and \code{\link[vegan:cca]{rda}}
+#' and \code{\link[vegan:dbrda]{dbrda}}
 #'
 #' @examples
 #' library(scater)
@@ -184,6 +191,10 @@ setMethod("runCCA", "SingleCellExperiment",
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
     }
     #
+    # Perform scaling if specified
+    if(scale){
+        x <- .calc_ztransform(x)
+    }
     x <- as.matrix(t(x))
     variables <- as.data.frame(variables)
     if(ncol(variables) > 0L && !missing(formula)){
@@ -192,13 +203,13 @@ setMethod("runCCA", "SingleCellExperiment",
         # recast formula in current environment
         form <- as.formula(paste(as.character(formula)[c(2,1,3)],
                                  collapse = " "))
-        rda <- vegan::rda(form, data = variables, scale = scale, ...)
+        rda <- vegan::dbrda(form, data = variables, ...)
         X <- rda$CCA
     } else if(ncol(variables) > 0L) {
-        rda <- vegan::rda(X = x, Y = variables, scale = scale, ...)
+        rda <- vegan::dbrda(X = x, Y = variables, ...)
         X <- rda$CCA
     } else {
-        rda <- vegan::rda(X = x, scale = scale, ...)
+        rda <- vegan::dbrda(X = x, ...)
         X <- rda $CA
     }
     ans <- X$u
