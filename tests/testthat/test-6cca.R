@@ -31,7 +31,7 @@ test_that("CCA", {
     expect_equal(actual, "dune")
     #
     mcca <- vegan::cca(form, dune.env, scale = TRUE)
-    mrda <- vegan::rda(form, dune.env, scale = TRUE)
+    mrda <- vegan::rda(form, dune.env, scale = FALSE)
     sce <- runCCA(sce, form)
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
