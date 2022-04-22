@@ -18,7 +18,7 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.20</span>
       </span>
     </div>
 
@@ -77,6 +77,11 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
   <span class="va">...</span>
 <span class="op">)</span>
 
+<span class="fu">getPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="co"># S4 method for ANY</span>
+<span class="fu">getPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+
 <span class="fu">getRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="co"># S4 method for ANY</span>
@@ -85,15 +90,30 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 <span class="co"># S4 method for SummarizedExperiment</span>
 <span class="fu">getRareTaxa</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>, include_lowest <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
 
+<span class="fu">getRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="co"># S4 method for ANY</span>
+<span class="fu">getRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+
 <span class="fu">subsetByPrevalentTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="co"># S4 method for SummarizedExperiment</span>
 <span class="fu">subsetByPrevalentTaxa</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
 
+<span class="fu">subsetByPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="co"># S4 method for ANY</span>
+<span class="fu">subsetByPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+
 <span class="fu">subsetByRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="co"># S4 method for SummarizedExperiment</span>
 <span class="fu">subsetByRareTaxa</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="fu">subsetByRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="co"># S4 method for ANY</span>
+<span class="fu">subsetByRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="fu">getPrevalentAbundance</span><span class="op">(</span><span class="va">x</span>, abund_values <span class="op">=</span> <span class="st">"relabundance"</span>, <span class="va">...</span><span class="op">)</span>
 
