@@ -33,7 +33,7 @@ runRDA(x, ...)
 
 \S4method{runCCA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "CCA")
 
-\S4method{calculateRDA}{ANY}(x, formula, variables, scale = TRUE, ...)
+\S4method{calculateRDA}{ANY}(x, formula, variables, ...)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
@@ -54,7 +54,10 @@ For \code{runCCA} a
 \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 or a derived object.}
 
-\item{...}{additional arguments passed to vegan::cca or vegan::rda .}
+\item{...}{additional arguments passed to vegan::cca or vegan::dbrda .
+\itemize{
+\item{\code{scale}}{Logical scalar, should the expression values be standardized?}
+}}
 
 \item{formula}{If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -65,11 +68,6 @@ a formula can be supplied. Based on the right-hand side of the given formula
 the variables to use. Can be missing, which turns the CCA analysis into
 a CA analysis. All variables are used. Please subset, if you want to
 consider only some of them.}
-
-\item{scale}{Logical scalar, should the expression values be standardized?
-(NOTE: Since *RDA functions use dbRDA, scaling is not done inside vegan::dbRDA
-but before calling it. Because of that, na.action is not taken into account
-in scaling, and scaling is done for all the values.)}
 
 \item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -108,6 +106,16 @@ plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
 GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
+
+# To scale values when using *RDA functions, use transformFeatures
+# Use pseudocount to avoid division by 0 which leads to NAs
+tse_family <- agglomerateByRank(GlobalPatterns, "Family")
+tse_family <- transformFeatures(tse_family, method = "z", pseudocount = 1)
+# Calculate RDA
+tse_family <- runRDA(tse_family, formula = data ~ SampleType, 
+                     abund_values = "z", name = "rda_scaled")
+# Plot
+plotReducedDim(tse_family,"rda_scaled", colour_by = "SampleType")
 }
 \seealso{
 For more details on the actual implementation see \code{\link[vegan:cca]{cca}}
