@@ -37,5 +37,5 @@ test_that("CCA", {
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
     sce <- runRDA(sce, form)
     actual <- reducedDim(sce,"RDA")
-    expect_equal(as.vector(actual), as.vector(mrda$CCA$u))
+    expect_equal(abs( as.vector(actual) ), abs( as.vector(mrda$CCA$u) ))
 })
