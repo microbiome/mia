@@ -67,7 +67,12 @@ test_that("perSampleDominantTaxa", {
         # that is got by perSampleDominantTaxa
         add_dom1 <- unlist(colData(addPerSampleDominantTaxa(tse1))$dominant_taxa)
         expect_equal(unname(add_dom1), unname(dominant_taxa1))
-
+        
+        # Test alias
+        alias <- unlist(colData(addPerSampleDominantFeatures(tse1))$dominant_taxa)
+        expect_equal(unname(add_dom1), unname(alias))
+        alias <- perSampleDominantFeatures(tse1)
+        expect_equal(alias, dominant_taxa1)
     }
 
     # TSE object

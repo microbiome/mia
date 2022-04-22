@@ -55,12 +55,14 @@
 NULL
 
 #' @rdname perSampleDominantTaxa
+#' @aliases perSampleDominantFeatures
 #' @export
 setGeneric("perSampleDominantTaxa",signature = c("x"),
            function(x, abund_values = "counts", rank = NULL, ...)
                standardGeneric("perSampleDominantTaxa"))
 
 #' @rdname perSampleDominantTaxa
+#' @aliases perSampleDominantFeatures
 #' @importFrom IRanges relist
 #' @export
 setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
@@ -98,14 +100,31 @@ setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @rdname perSampleDominantTaxa
+#' @aliases perSampleDominantTaxa
+#' @export
+setGeneric("perSampleDominantFeatures", signature = c("x"),
+        function(x, ...) 
+            standardGeneric("perSampleDominantFeatures"))
 
 #' @rdname perSampleDominantTaxa
+#' @aliases perSampleDominantTaxa
+#' @export
+setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
+        function(x, ...){
+            perSampleDominantTaxa(x, ...)
+        }
+)
+
+#' @rdname perSampleDominantTaxa
+#' @aliases addPerSampleDominantFeatures
 #' @export
 setGeneric("addPerSampleDominantTaxa", signature = c("x"),
            function(x, name = "dominant_taxa", ...)
                standardGeneric("addPerSampleDominantTaxa"))
 
 #' @rdname perSampleDominantTaxa
+#' @aliases addPerSampleDominantFeatures
 #' @export
 setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, name = "dominant_taxa", ...){
@@ -129,4 +148,20 @@ setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
         colData(x)[[name]] <- dom.taxa
         return(x)
     }
+)
+
+#' @rdname perSampleDominantTaxa
+#' @aliases addPerSampleDominantTaxa
+#' @export
+setGeneric("addPerSampleDominantFeatures", signature = c("x"),
+        function(x, ...) 
+            standardGeneric("addPerSampleDominantFeatures"))
+
+#' @rdname perSampleDominantTaxa
+#' @aliases addPerSampleDominantTaxa
+#' @export
+setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
+        function(x, ...){
+            addPerSampleDominantTaxa(x, ...)
+        }
 )
