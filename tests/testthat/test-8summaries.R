@@ -39,3 +39,22 @@ test_that("getUniqueTaxa", {
     expect_equal(getUniqueTaxa(GlobalPatterns, "Phylum")[1:5],
                  exp.phy)
 })
+
+context("summaries")
+
+test_that("summaries", {
+    
+    data(GlobalPatterns)
+    expect_equal( getTopTaxa(GlobalPatterns, 
+                             method = "mean",
+                             top = 5,
+                             abund_values = "counts"), 
+                  getTopFeatures(GlobalPatterns, 
+                                 method = "mean",
+                                 top = 5,
+                                 abund_values = "counts") )
+    expect_equal( getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE),
+                  getUniqueFeatures(GlobalPatterns, "Phylum", sort = TRUE) )
+    expect_equal( countDominantTaxa(GlobalPatterns),
+                  countDominantFeatures(GlobalPatterns))
+})
