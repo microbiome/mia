@@ -211,7 +211,7 @@ setMethod("runCCA", "SingleCellExperiment",
         X <- rda$CCA
     } else {
         rda <- vegan::dbrda(X = x, ...)
-        X <- rda $CA
+        X <- rda$CA
     }
     ans <- X$u
     attr(ans, "rotation") <- X$v
