@@ -145,16 +145,16 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 #' @aliases getTopTaxa
 #' @export
 setGeneric("getTopFeatures", signature = c("x"),
-        function(x, ...) 
-            standardGeneric("getTopFeatures"))
+           function(x, ...) 
+               standardGeneric("getTopFeatures"))
 
 #' @rdname summaries
 #' @aliases getTopTaxa
 #' @export
 setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
-        function(x, ...){
-            getTopTaxa(x, ...)
-            }
+    function(x, ...){
+        getTopTaxa(x, ...)
+    }
 )
 
 #' @rdname summaries
@@ -191,16 +191,16 @@ setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
 #' @aliases getUniqueTaxa
 #' @export
 setGeneric("getUniqueFeatures", signature = c("x"),
-        function(x, ...) 
-            standardGeneric("getUniqueFeatures"))
+           function(x, ...) 
+               standardGeneric("getUniqueFeatures"))
 
 #' @rdname summaries
 #' @aliases getUniqueTaxa
 #' @export
 setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
-        function(x, ...){
-            getUniqueTaxa(x, ...)
-            }
+    function(x, ...){
+        getUniqueTaxa(x, ...)
+    }
 )
 
 
@@ -244,7 +244,6 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
         # Adds dominant taxa to colData
         dominant_taxa <- perSampleDominantTaxa(x, ...)
         data <- colData(x)
-        
         # If the length of dominant taxa is not equal to number of rows, then add rows
         # because there are multiple dominan taxa
         if(length(dominant_taxa) > nrow(data) ){
@@ -269,16 +268,16 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
 #' @aliases countDominantTaxa
 #' @export
 setGeneric("countDominantFeatures", signature = c("x"),
-        function(x, ...) 
-            standardGeneric("countDominantFeatures"))
+           function(x, ...) 
+               standardGeneric("countDominantFeatures"))
 
 #' @rdname summaries
 #' @aliases countDominantTaxa
 #' @export
 setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
-        function(x, ...){
-            countDominantTaxa(x, ...)
-        }
+    function(x, ...){
+        countDominantTaxa(x, ...)
+    }
 )
 
 ################################ HELP FUNCTIONS ################################
@@ -353,6 +352,8 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("summary", signature = c(object = "SummarizedExperiment"),
     function(object, abund_values = "counts"){
+        # check if NA in assay
+        .check_NAs_assay_counts(object, abund_values)
         # check if counts
         .check_fraction_or_negative_values(object, abund_values)
         sample.summary <- .get_summary_col_data(object, abund_values)
@@ -428,3 +429,16 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
     }
     return(names)
 }
+
+# Check NAs in assay, used when specifically when counts are expected
+.check_NAs_assay_counts <- function(x, abund_values){
+    assay.x <- .get_assay(x, abund_values)
+    if(any(is.na(assay.x))) {
+        stop("There are samples with NAs in 'assay'. ",
+             "This function is limited to sequencing data only. ",
+             "Where raw counts do not usually have NAs. ",
+             "Try to supply raw counts",
+             call. = FALSE)
+    }
+}
+
