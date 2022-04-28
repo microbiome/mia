@@ -434,8 +434,8 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 .check_NAs_assay_counts <- function(x, abund_values){
     assay.x <- .get_assay(x, abund_values)
     if(any(is.na(assay.x))) {
-        stop("There are samples with NAs in 'assay'. ",
-             "This function is limited to sequencing data only. ",
+        stop(paste0("There are samples with NAs in 'assay': ", abund_values),
+             " . This function is limited to sequencing data only. ",
              "Where raw counts do not usually have NAs. ",
              "Try to supply raw counts",
              call. = FALSE)
