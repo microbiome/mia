@@ -313,7 +313,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
           }
 )
 ############################## MAIN FUNCTIONALITY ##############################
-# This function includes all the main functionality. 
+# This function includes all the main functionality.
+#' @importFrom S4Vectors unfactor
 .get_experiment_cross_association <- function(x,
                                               experiment1 = 1,
                                               experiment2 = 2,
