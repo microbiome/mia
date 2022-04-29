@@ -33,7 +33,7 @@ runRDA(x, ...)
 
 \S4method{runCCA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "CCA")
 
-\S4method{calculateRDA}{ANY}(x, formula, variables, scale = TRUE, ...)
+\S4method{calculateRDA}{ANY}(x, formula, variables, ...)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
@@ -54,7 +54,7 @@ For \code{runCCA} a
 \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 or a derived object.}
 
-\item{...}{additional arguments passed to vegan::cca or vegan::rda .}
+\item{...}{additional arguments passed to vegan::cca or vegan::dbrda}
 
 \item{formula}{If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -66,7 +66,7 @@ the variables to use. Can be missing, which turns the CCA analysis into
 a CA analysis. All variables are used. Please subset, if you want to
 consider only some of them.}
 
-\item{scale}{Logical scalar, should the expression values be standardized?}
+\item{scale}{a logical scalar, should the expression values be standardized?}
 
 \item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -93,6 +93,10 @@ For \code{runCCA} a modified \code{x} with the results stored in
 These functions perform Canonical Correspondance Analysis on data stored
 in a \code{SummarizedExperiment}.
 }
+\details{
+\*CCA functions utilize \code{vegan:cca} and \*RDA functions \code{vegan:dbRDA}.
+By default dbRDA is done with euclidean distances which equals to RDA.
+}
 \examples{
 library(scater)
 data(GlobalPatterns)
@@ -101,8 +105,20 @@ plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
 GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
+
+# To scale values when using *RDA functions, use transformFeatures
+tse <- GlobalPatterns
+tse <- transformFeatures(tse, method = "z")
+# Data might include taxa that do not vary. Remove those because after z-transform
+# their value is NA
+tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
+# Calculate RDA
+tse <- runRDA(tse, formula = data ~ SampleType, 
+              abund_values = "z", name = "rda_scaled", na.action = na.omit)
+# Plot
+plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 }
 \seealso{
 For more details on the actual implementation see \code{\link[vegan:cca]{cca}}
-and \code{\link[vegan:cca]{rda}}
+and \code{\link[vegan:dbrda]{dbrda}}
 }
