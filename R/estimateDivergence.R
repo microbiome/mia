@@ -1,6 +1,6 @@
 #' Estimate divergence
 #'
-#' This function estimates a divergence within samples. 
+#' Estimate divergence against a given reference sample.
 #' 
 #' @param x a \code{\link{SummarizedExperiment}} object
 #'
@@ -118,12 +118,16 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
                 stop(reference_stop_msg, call. = FALSE)
             }
         }
+
         ################# Input check end #############
         divergence <- .calc_divergence(mat = assay(x, abund_values),
                                        reference = reference, 
                                        FUN = FUN,
                                        method = method, ...)
+
+        divergence <- list(divergence)
         .add_values_to_colData(x, divergence, name)
+
     }
 )
 
@@ -131,18 +135,15 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
 
 .calc_divergence <- function(mat, reference, FUN, method, ...){
     # Calculates median or mean if that is specified
-    if( "median" %in% reference || "mean" %in% reference ){
-      reference <- apply(mat, 1, reference)
+    if (is.character(reference)) {
+        if( "median" %in% reference || "mean" %in% reference ){
+            reference <- apply(mat, 1, reference)
+        } else if( !reference %in% colnames(mat) ) {
+            stop(paste("Reference", reference, "not recognized."))
+        }
     }
-    # Adds the reference to the table to the first column
-    mat <- cbind( matrix(reference, ncol=1), mat)
-    # Transposes the table so that distances are calculated for the samples
-    mat <- t(mat)
-    # Calculates the distance
-    dist <- .calculate_distance(mat, FUN = FUN, method = method)
-    # Takes only reference vs samples distances
-    divergence <- as.matrix(dist)[-1,1]
-    # Creates a list 
-    divergence <- list(divergence)
-    return(divergence)
+
+    # Calculates the distance between reference sample and each column
+    .calculate_reference_distance(mat, reference, FUN, method, ...)
+
 }
