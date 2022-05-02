@@ -95,7 +95,9 @@
         },
         values,
         name)
+
     values <- do.call(cbind, values)
+
     # check for duplicated values
     f <- colnames(colData(x)) %in% colnames(values)
     if(any(f)) {
@@ -108,6 +110,7 @@
     }
     # keep only unique values
     colData(x) <- cbind(colData(x)[!f], values)
+
     x
 }
 
