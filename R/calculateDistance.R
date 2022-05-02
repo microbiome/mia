@@ -77,20 +77,9 @@ setMethod("calculateDistance", signature = c(x = "SummarizedExperiment"),
 
 ################################ HELP FUNCTIONS ################################
 
-#' Distance between all samples against all samples
-#' @param mat matrix of features x samples
-#' @inheritParams calculateDistance
+
 .calculate_distance <- function(mat, FUN = stats::dist, ...){
+    # Distance between all samples against all samples
     do.call(FUN, c(list(mat),list(...)))
 }
 
-#' Distance between all samples against one reference sample
-#' @param mat matrix of features x samples
-#' @param reference reference vector (same dimensionality than with mat)
-#' @param method dissimilarity method for the distance function
-#' @inheritParams calculateDistance
-.calculate_reference_distance <- function(mat, reference, FUN = stats::dist, method, ...){
-    # FIXME: could be be optimzed with sweep / parallelization
-    v <- seq_len(ncol(mat))
-    sapply(v, function (i) {FUN(rbind(mat[,i], reference), method=method, ...)})
-}

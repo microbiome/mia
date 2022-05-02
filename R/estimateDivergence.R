@@ -147,3 +147,12 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
     .calculate_reference_distance(mat, reference, FUN, method, ...)
 
 }
+
+
+
+.calculate_reference_distance <- function(mat, reference, FUN = stats::dist, method, ...){
+    # Distance between all samples against one reference sample
+    # FIXME: could be optimized further with sweep / parallelization
+    v <- seq_len(ncol(mat))
+    sapply(v, function (i) {FUN(rbind(mat[,i], reference), method=method, ...)})
+}
