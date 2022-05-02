@@ -120,20 +120,21 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
         }
 
         ################# Input check end #############
-        divergence <- .calc_divergence(mat = assay(x, abund_values),
+        divergence <- .calc_reference_dist(mat = assay(x, abund_values),
                                        reference = reference, 
                                        FUN = FUN,
                                        method = method, ...)
 
-        divergence <- list(divergence)
-        .add_values_to_colData(x, divergence, name)
+        .add_values_to_colData(x, list(divergence), name)
 
     }
 )
 
 ############################## HELP FUNCTIONS ##############################
 
-.calc_divergence <- function(mat, reference, FUN, method, ...){
+
+.calc_reference_dist <- function(mat, reference, FUN = stats::dist, method, ...){
+
     # Calculates median or mean if that is specified
     if (is.character(reference)) {
         if( "median" %in% reference || "mean" %in% reference ){
@@ -143,7 +144,9 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
         }
     }
 
-    # Calculates the distance between reference sample and each column
-    .calculate_reference_distance(mat, reference, FUN, method, ...)
-
+    # Distance between all samples against one reference sample
+    # FIXME: could be be optimzed with sweep / parallelization
+    v <- seq_len(ncol(mat))
+    sapply(v, function (i) {FUN(rbind(mat[,i], reference), method=method, ...)})
 }
+
