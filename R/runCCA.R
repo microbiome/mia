@@ -40,7 +40,7 @@
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda
 #' 
 #' @details
-#'   \*CCA functions utilize \code{vegan:cca} and \*RDA functions \code{vegan:dbRDA}.
+#'   *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
 #'   By default dbRDA is done with euclidean distances which equals to RDA.
 #'
 #' @return

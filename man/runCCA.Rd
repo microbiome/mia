@@ -94,7 +94,7 @@ These functions perform Canonical Correspondance Analysis on data stored
 in a \code{SummarizedExperiment}.
 }
 \details{
-\*CCA functions utilize \code{vegan:cca} and \*RDA functions \code{vegan:dbRDA}.
+*CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
 By default dbRDA is done with euclidean distances which equals to RDA.
 }
 \examples{
