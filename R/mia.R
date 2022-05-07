@@ -133,7 +133,8 @@ NULL
 #' \url{https://doi.org/10.1038/nature07540}
 "dmn_se"
 
-#' peerj13075/ skin microbiome data
+#' peerj13075
+#' 
 #'
 #' PeerJ data by Potbhare et al. (2022) includes skin microbial profiles of 58 volunteers with multiple factors. 
 #' 16S r-RNA sequencing of V3-V4 regions was done to generate millions of read using illumina platform.
