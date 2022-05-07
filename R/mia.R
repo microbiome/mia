@@ -132,3 +132,29 @@ NULL
 #' A core gut microbiome in obese and lean twins. Nature 457: 480–484. 
 #' \url{https://doi.org/10.1038/nature07540}
 "dmn_se"
+
+#' peerj13075/ skin microbiome data
+#'
+#' PeerJ data by Potbhare et al. (2022) includes skin microbial profiles of 58 volunteers with multiple factors. 
+#' 16S r-RNA sequencing of V3-V4 regions was done to generate millions of read using illumina platform.
+#' A standard bioinformatic and statistical analysis done to explore skin bacterial diversity and its association with age, diet, geographical locations.
+#' The authors investigated significant association of skin microbiota with individual’s geographical location.
+#'
+#' @name mia-datasets
+#' @aliases peerj13075
+#' @keywords data
+#' @usage data(peerj13075)
+#' @author Potbhare, R., et al.
+#' @docType data
+#' @references
+#' Potbhare, R., RaviKumar, A., Munukka, E., Lahti, L., & Ashma, R. (2022). 
+#' Skin microbiota diversity among genetically unrelated individuals of Indian origin. 
+#' PeerJ, 10, e13075.
+#' \url{https://peerj.com/articles/13075/}
+#' Supplemental information includes OTU table and taxonomy table and publicly-accessible from: 
+#' \url{DOI:10.7717/peerj.13075/supp-1}
+#'
+#' \url{DOI:10.7717/peerj.13075/supp-2}
+"peerj13075"
+
+
