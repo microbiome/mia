@@ -75,8 +75,11 @@ setMethod("calculateDistance", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-################################ HELP FUNCTIONS ################################
 
 .calculate_distance <- function(mat, FUN = stats::dist, ...){
+    # Distance between all samples against all samples
+    # Distance between all samples against all samples
     do.call(FUN, c(list(mat),list(...)))
 }
+
+

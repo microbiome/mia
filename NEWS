@@ -32,3 +32,6 @@ Changes in version 1.3.x
 + getExperimentCrossAssociation: user's own function supported, sort in mode == table enabled
 + getExperimentCrossAssociation: added MARGIN & paired options, efficiency of algorithm improved
 + Added *Features aliases for *Taxa functions
++ *RDA functions utilize vegan:dbrda instead of vegan:rda
++ Sped up estimateDivergence by removing unnecessary pairwise comparisons
++ Added new internal function .calculate_reference_distance to calculate distance to a single reference sample
