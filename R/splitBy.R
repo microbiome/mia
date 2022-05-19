@@ -84,26 +84,20 @@ NULL
 
 #' @rdname splitOn
 #' @export
-setGeneric("splitOnRows",
+setGeneric("splitOn",
            signature = "x",
            function(x, ...)
-               standardGeneric("splitOnRows"))
+               standardGeneric("splitOn"))
 
-#' @rdname splitOn
-#' @export
-setGeneric("splitOnCols",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("splitOnCols"))
+
 
 # This function collects f (grouping variable), MARGIN, and 
 # use_names and returns them as a list.
-.norm_args_for_split_by <- function(x, f, MARGIN, use_names = TRUE, ...){
+.norm_args_for_split_by <- function(x, f, MARGIN = NULL, use_names = TRUE, ...){
     # input check
     if(is.null(f)){
         stop("'f' must either be a single non-empty character value or",
-             " vector coercible to factor alongside the specified MARGIN of 'x'.",
-             "dimensions of 'x'",
+             " vector coercible to factor alongside the one of the dimensions of 'x'",
              call. = FALSE)
     }
     # Check f or extract the factor from rowData or colData
@@ -112,29 +106,54 @@ setGeneric("splitOnCols",
             f <- factor(f, unique(f))
         }
         # Check if the length of f matches with one of the dimensions
-        if(!length(f) %in% dim(x)[[MARGIN]]){
+        if(!length(f) %in% dim(x)){
             stop("'f' must either be a single non-empty character value or",
-                 " vector coercible to factor alongside the specified MARGIN of 'x'.",
+                 " vector coercible to factor alongside the on of the ",
+                 "dimensions of 'x'.",
                  call. = FALSE)
         }
+        
     } else {
-        # Search from rowData or colData based on MARGIN
-        dim_name <- switch(MARGIN,
-                           "1" = "rowData",
-                           "2" = "colData")
-        # Specify right function
-        dim_FUN <- switch(MARGIN,
-                           "1" = retrieveFeatureInfo,
-                           "2" = retrieveCellInfo)
-        # Try to get information
-        tmp <- try({dim_FUN(x, f, search = dim_name)},
-                   silent = TRUE)
-        # Give error if it cannot be found from neither
-        if(is(tmp,"try-error")){
-            stop("'f' is not found. . ",
-                 "Please check that 'f' specifies a column from ", dim_name, ".", 
-                 call. = FALSE)
-        } 
+        if( !is.null(MARGIN) ){
+            # Search from rowData or colData based on MARGIN
+            dim_name <- switch(MARGIN,
+                               "1" = "rowData",
+                               "2" = "colData")
+            # Specify right function
+            dim_FUN <- switch(MARGIN,
+                              "1" = retrieveFeatureInfo,
+                              "2" = retrieveCellInfo)
+            # Try to get information
+            tmp <- try({dim_FUN(x, f, search = dim_name)},
+                       silent = TRUE)
+            # Give error if it cannot be found from neither
+            if(is(tmp,"try-error")){
+                stop("'f' is not found. ",
+                     "Please check that 'f' specifies a column from ", dim_name, ".", 
+                     call. = FALSE)
+            } 
+        } else{
+            # Try to get information from rowData
+            tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
+                       silent = TRUE)
+            if(is(tmp,"try-error")){
+                # If it cannot be found from rowData, try to find it from colData
+                tmp <- try({retrieveCellInfo(x, f, search = "colData")},
+                           silent = TRUE)
+                # Give error if it cannot be found from neither
+                if(is(f,"try-error")){
+                    stop(stop("'f' is not found. ",
+                              "Please check that 'f' specifies a column from ",
+                              "rowData or colData.", 
+                              call. = FALSE), call. = FALSE)
+                } 
+                # Margin is columns
+                MARGIN <- 2L
+            } else {
+                # If info can be found from rowData, margin is rows
+                MARGIN <- 1L
+            }
+        }
         # Get values and convert them into factors
         f <- tmp$value
         f <- factor(f, unique(f))
@@ -179,23 +198,23 @@ setGeneric("splitOnCols",
     ans
 }
 
-#' @rdname splitOnRows
+#' @rdname splitOn
 #' @export
-setMethod("splitOnRows", signature = c(x = "SummarizedExperiment"),
+setMethod("splitOn", signature = c(x = "SummarizedExperiment"),
     function(x, f = NULL,  ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f, MARGIN = 1)
+        args <- .norm_args_for_split_by(x, f = f, ...)
         # Split data
         .split_on(x, args, ...)
     }
 )
 
-#' @rdname splitOnRows
+#' @rdname splitOn
 #' @export
-setMethod("splitOnRows", signature = c(x = "SingleCellExperiment"),
+setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
     function(x, f = NULL, ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f, MARGIN = 1)
+        args <- .norm_args_for_split_by(x, f = f, ...)
         # Should alternative experiment be removed? --> yes
         args[["strip_altexp"]] <- TRUE
         # Split data
@@ -203,9 +222,9 @@ setMethod("splitOnRows", signature = c(x = "SingleCellExperiment"),
     }
 )
 
-#' @rdname splitonRows
+#' @rdname splitOn
 #' @export
-setMethod("splitOnRows", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
     function(x, f = NULL, update_rowTree = FALSE,
              ...){
         # Input check
@@ -233,26 +252,34 @@ setMethod("splitOnRows", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname splitOn
 #' @export
-setMethod("splitOnCols", signature = c(x = "SummarizedExperiment"),
-    function(x, f = NULL,  ...){
-        # Get arguments
-        args <- .norm_args_for_split_by(x, f = f, MARGIN = 2)
+setGeneric("splitOnCols",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("splitOnCols"))
+
+#' @rdname splitOn
+#' @export
+setMethod("splitOnCols", signature = c(x = "ANY"),
+    function(x, ...){
         # Split data
-        .split_on(x, args, ...)
+        splitOn(x, MARGIN = 2, ...)
         }
 )
 
 #' @rdname splitOn
 #' @export
-setMethod("splitOnCols", signature = c(x = "SingleCellExperiment"),
-    function(x, f = NULL, ...){
-        # Get arguments
-        args <- .norm_args_for_split_by(x, f = f, MARGIN = 2)
-        # Should alternative experiment be removed? --> yes
-        args[["strip_altexp"]] <- TRUE
+setGeneric("splitOnRows",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("splitOnRows"))
+
+#' @rdname splitOn
+#' @export
+setMethod("splitOnRows", signature = c(x = "ANY"),
+    function(x, ...){
         # Split data
-        .split_on(x, args, ...)
-    }
+        splitOn(x, MARGIN = 1, ...)
+        }
 )
 
 ################################################################################
@@ -260,12 +287,12 @@ setMethod("splitOnCols", signature = c(x = "SingleCellExperiment"),
 
 #' @rdname splitOn
 #' @export
-setGeneric("unsplitBy",
+setGeneric("unsplitOn",
            signature = c("x"),
            function(x, ...)
-               standardGeneric("unsplitBy"))
+               standardGeneric("unsplitOn"))
 
-.list_unsplit_by <- function(ses, update_rowTree, ...){
+.list_unsplit_on <- function(ses, update_rowTree, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
@@ -283,13 +310,21 @@ setGeneric("unsplitBy",
     dims <- vapply(ses, dim, integer(2L))
     # Based on which dimension SE objects share, select MARGIN.
     # If they share rows, then MARGIN is col, and vice versa
-    if(length(unique(dims[1L,])) == 1L){
-        MARGIN <- 2L
-    } else if(length(unique(dims[2L,])) == 1L) {
-        MARGIN <- 1L
-    } else {
-        stop("No dimensions are equal across all elmenents.", call. = FALSE)
+    if( is.null(MARGIN) ){
+        if(length(unique(dims[1L,])) == 1L){
+            MARGIN <- 2L
+        } else if(length(unique(dims[2L,])) == 1L) {
+            MARGIN <- 1L
+        } else {
+            stop("No dimensions are equal across all elmenents.", call. = FALSE)
+        }
+    } else{
+        dim <- ifelse(MARGIN == 1, 2, 1)
+        if( length(unique(dims[dim,])) != 1L ){
+            stop("No dimensions are equal across all elmenents.", call. = FALSE)
+        }
     }
+    
     # Get the class of objects SCE, SE or TreeSE
     class_x <- class(ses[[1L]])
     # Combine assays
@@ -327,28 +362,28 @@ setGeneric("unsplitBy",
 }
 
 
-#' @rdname splitBy
+#' @rdname splitOn
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
-setMethod("unsplitBy", signature = c(x = "list"),
+setMethod("unsplitOn", signature = c(x = "list"),
     function(x, update_rowTree = FALSE, ...){
         # Unsplit list and create SCE, SE, or TreeSE from it
-        .list_unsplit_by(x, update_rowTree, ...)
+        .list_unsplit_on(x, update_rowTree, ...)
     }
 )
-#' @rdname splitBy
+#' @rdname splitOn
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
-setMethod("unsplitBy", signature = c(x = "SimpleList"),
+setMethod("unsplitOn", signature = c(x = "SimpleList"),
     function(x, update_rowTree = FALSE, ...){
-        unsplitBy(as.list(x), update_rowTree, ...)
+        unsplitOn(as.list(x), update_rowTree, ...)
     }
 )
 
-#' @rdname splitBy
+#' @rdname splitOn
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
-setMethod("unsplitBy", signature = c(x = "SingleCellExperiment"),
+setMethod("unsplitOn", signature = c(x = "SingleCellExperiment"),
     function(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...){
         # input check
         if(!.is_a_bool(keep_reducedDims)){
@@ -364,13 +399,13 @@ setMethod("unsplitBy", signature = c(x = "SingleCellExperiment"),
         # Get alternative experiments as a list
         ses <- altExps(x)[ae_names]
         # And unsplit the data
-        .unsplit_by(x, ses, keep_reducedDims, ...)
+        .unsplit_on(x, ses, keep_reducedDims, ...)
     }
 )
    
-#' @rdname splitBy
+#' @rdname splitOn
 #' @export
-setMethod("unsplitBy", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("unsplitOn", signature = c(x = "TreeSummarizedExperiment"),
     function(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, 
              update_rowTree = FALSE, ...){
         # input check
@@ -385,3 +420,36 @@ setMethod("unsplitBy", signature = c(x = "TreeSummarizedExperiment"),
         ans
     }
 )
+
+#' @rdname splitOn
+#' @export
+setGeneric("unsplitOnCols",
+           signature = c("x"),
+           function(x, ...)
+               standardGeneric("unsplitOnCols"))
+
+#' @rdname splitOn
+#' @export
+setMethod("unsplitOnCols", signature = c(x = "ANY"),
+    function(x, ...){
+        # Unsplit data
+        unsplitOn(x, MARGIN = 1, ...)
+    }
+)
+
+#' @rdname splitOn
+#' @export
+setGeneric("unsplitOnRows",
+           signature = c("x"),
+           function(x, ...)
+               standardGeneric("unsplitOnRows"))
+
+#' @rdname splitOn
+#' @export
+setMethod("unsplitOnRows", signature = c(x = "ANY"),
+    function(x, ...){
+        # Unsplit data
+        unsplitOn(x, MARGIN = 2, ...)
+    }
+)
+
