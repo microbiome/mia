@@ -129,9 +129,10 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
             
             # Order rowData based on counts
             rowData <- rowData[, mapping_counts ]
-    }
+            }
     result_list <- list(counts = counts, rowData = rowData)
     return(result_list)
+    }
 }
 
 .map_cols <- function(counts, colData){
