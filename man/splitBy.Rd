@@ -14,11 +14,11 @@
 \usage{
 splitBy(x, ...)
 
-\S4method{splitBy}{SummarizedExperiment}(x, f = NULL, skip_agglomerate = FALSE, ...)
+\S4method{splitBy}{SummarizedExperiment}(x, f = NULL, ...)
 
-\S4method{splitBy}{SingleCellExperiment}(x, f = NULL, skip_agglomerate = FALSE, ...)
+\S4method{splitBy}{SingleCellExperiment}(x, f = NULL, ...)
 
-\S4method{splitBy}{TreeSummarizedExperiment}(x, f = NULL, skip_agglomerate = FALSE, update_rowTree = FALSE, ...)
+\S4method{splitBy}{TreeSummarizedExperiment}(x, f = NULL, update_rowTree = FALSE, ...)
 
 unsplitBy(x, ...)
 
@@ -57,9 +57,6 @@ with the same length as one of the dimensions. Rows take precedence.
 Split by cols is not encouraged, since this is not compatible with
 storing the results in \code{altExps}.}
 
-\item{skip_agglomerate}{\code{TRUE} or \code{FALSE}: Should the agglomerate
-be skipped? (By default: \code{skip_agglomerate = FALSE})}
-
 \item{update_rowTree}{\code{TRUE} or \code{FALSE}: Should the rowTree be updated
 based on splitted data? Option is enabled when \code{x} is a
 \code{TreeSummarizedExperiment} object or a list of such objects.
@@ -74,9 +71,7 @@ breaks the link between the data used to calculate the reduced dims.
 (By default: \code{keep_reducedDims = FALSE})}
 }
 \value{
-For \code{splitBy}: if \code{skip_agglomerate == FALSE} a
-\code{SummarizedExperiment}. Otherwise \code{SummarizedExperiment} objects in
-a \code{SimpleList}.
+For \code{splitBy}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
 
 For \code{unsplitBy}: \code{x}, with \code{rowData} and \code{assay}
 data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -88,13 +83,7 @@ Split \code{SummarizedExperiment} column-wise or row-wise based on grouping vari
 }
 \details{
 \code{splitBy} split data based on grouping variable. Splitting can be done
-column-wise or row-wise. You can specify if you want to agglomerate the data
-or not.
-
-If data is agglomerated the returned value is a \code{SummarizedExperiment}
-object that has values ummed-up based on grouping variable.
-
-If data is not agglomerated, the returned value is a list of
+column-wise or row-wise. The returned value is a list of
 \code{SummarizedExperiment} objects; each element containing members of each
 group.
 }
@@ -102,12 +91,9 @@ group.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 # Split data based on SampleType. 
-se_list <- splitBy(tse, f = "SampleType", skip_agglomerate = TRUE)
+se_list <- splitBy(tse, f = "SampleType")
 
 se_list
-
-# You can also agglomerate (sum-up) data based on grouping variable
-se <- splitBy(tse, f = "SampleType")
 
 # Create arbitrary groups
 colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
@@ -115,14 +101,13 @@ rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
 
 # If variable named equally can be found from both colData and rowData, 
 # row takes precedence
-se_list <- splitBy(tse, f = "group", skip_agglomerate = TRUE)
+se_list <- splitBy(tse, f = "groyup")
 se_list
 
 # List of SE objects is returned. 
 # Each element is named based on their group name. If you don't want to name
 # elements, use use_name = FALSE
-se_list <- splitBy(tse, f = "SampleType", use_names = FALSE,
-                   skip_agglomerate = TRUE)
+se_list <- splitBy(tse, f = "SampleType", use_names = FALSE)
 
 # If you want to combine groups back together, you can use unsplitBy
 unsplitBy(se_list)

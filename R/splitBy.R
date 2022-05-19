@@ -11,9 +11,6 @@
 #'   with the same length as one of the dimensions. Rows take precedence.
 #'   Split by cols is not encouraged, since this is not compatible with 
 #'   storing the results in \code{altExps}.
-#'   
-#' @param skip_agglomerate \code{TRUE} or \code{FALSE}: Should the agglomerate
-#'   be skipped? (By default: \code{skip_agglomerate = FALSE})
 #'
 #' @param keep_reducedDims \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
@@ -37,9 +34,7 @@
 #'   }
 #'
 #' @return
-#' For \code{splitBy}: if \code{skip_agglomerate == FALSE} a
-#' \code{SummarizedExperiment}. Otherwise \code{SummarizedExperiment} objects in
-#' a \code{SimpleList}.
+#' For \code{splitBy}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
 #'
 #' For \code{unsplitBy}: \code{x}, with \code{rowData} and \code{assay}
 #' data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -48,13 +43,7 @@
 #'
 #' @details
 #' \code{splitBy} split data based on grouping variable. Splitting can be done
-#' column-wise or row-wise. You can specify if you want to agglomerate the data
-#' or not.
-#' 
-#' If data is agglomerated the returned value is a \code{SummarizedExperiment}
-#' object that has values ummed-up based on grouping variable.
-#' 
-#' If data is not agglomerated, the returned value is a list of
+#' column-wise or row-wise. The returned value is a list of
 #' \code{SummarizedExperiment} objects; each element containing members of each
 #' group.
 #'
@@ -74,12 +63,9 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' # Split data based on SampleType. 
-#' se_list <- splitBy(tse, f = "SampleType", skip_agglomerate = TRUE)
+#' se_list <- splitBy(tse, f = "SampleType")
 #' 
 #' se_list
-#' 
-#' # You can also agglomerate (sum-up) data based on grouping variable
-#' se <- splitBy(tse, f = "SampleType")
 #' 
 #' # Create arbitrary groups
 #' colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
@@ -87,14 +73,13 @@
 #' 
 #' # If variable named equally can be found from both colData and rowData, 
 #' # row takes precedence
-#' se_list <- splitBy(tse, f = "group", skip_agglomerate = TRUE)
+#' se_list <- splitBy(tse, f = "groyup")
 #' se_list
 #' 
 #' # List of SE objects is returned. 
 #' # Each element is named based on their group name. If you don't want to name
 #' # elements, use use_name = FALSE
-#' se_list <- splitBy(tse, f = "SampleType", use_names = FALSE,
-#'                    skip_agglomerate = TRUE)
+#' se_list <- splitBy(tse, f = "SampleType", use_names = FALSE)
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitBy(se_list)
@@ -108,10 +93,9 @@ setGeneric("splitBy",
            function(x, ...)
                standardGeneric("splitBy"))
 
-# This function collects f (grouping variable), MARGIN, skip_aggglomerate, and 
+# This function collects f (grouping variable), MARGIN, and 
 # use_names and returns them as a list.
-.norm_args_for_split_by <- function(x, f, skip_agglomerate = FALSE,
-                                    use_names = TRUE, ...){
+.norm_args_for_split_by <- function(x, f, use_names = TRUE, ...){
     # input check
     if(is.null(f)){
         stop("'f' must either be a single non-empty character value or",
@@ -128,7 +112,7 @@ setGeneric("splitBy",
         if(!length(f) %in% dim(x)){
             stop("'f' must either be a single non-empty character value or",
                  " vector coercible to factor alongside one of the ",
-                 "dimensions of 'x'",
+                 "dimensions of 'x'.",
                  call. = FALSE)
         }
         # Get the dimension that matches
@@ -142,8 +126,10 @@ setGeneric("splitBy",
             tmp <- try({retrieveCellInfo(x, f, search = "colData")},
                      silent = TRUE)
             # Give error if it cannot be found from neither
-            if(is(f,"try-error")){
-                stop("", call. = FALSE)
+            if(is(tmp,"try-error")){
+                stop("'f' cannot be from rowData nor colData. ",
+                "Please check that 'f' specifies a column from rowData or colData.", 
+                call. = FALSE)
             } 
             # Margin is columns
             MARGIN <- 2L
@@ -155,11 +141,6 @@ setGeneric("splitBy",
         f <- tmp$value
         f <- factor(f, unique(f))
     }
-    # Check skip_agglomerate
-    if( !.is_a_bool(skip_agglomerate) ){
-        stop("'skip_agglomerate' must be TRUE or FALSE.",
-             call. = FALSE)
-    }
     # Check use_names
     if( !.is_a_bool(use_names) ){
         stop("'use_names' must be TRUE or FALSE.",
@@ -168,21 +149,12 @@ setGeneric("splitBy",
     # Create a list from arguments
     list(f = f,
          MARGIN = MARGIN,
-         skip_agglomerate = skip_agglomerate,
          use_names = use_names)
 }
 
 .split_by <- function(x, args, ...){
     # Get grouping variable and its values
     f <- args[["f"]]
-    # If user want to agglomerate data, agglomerate it based on MARGIN and 
-    # and grouping variable
-    if(!args[["skip_agglomerate"]]){
-        merge_FUN <- switch(args[["MARGIN"]],
-                            "1" = mergeRows,
-                            "2" = mergeCols )
-        return(merge_FUN(x, f, ...))
-    }
     # Choose nrow or ncol based on MARGIN
     dim_FUN <- switch(args[["MARGIN"]],
                       "1" = nrow,
@@ -212,10 +184,9 @@ setGeneric("splitBy",
 #' @rdname splitBy
 #' @export
 setMethod("splitBy", signature = c(x = "SummarizedExperiment"),
-    function(x, f = NULL, skip_agglomerate = FALSE, ...){
+    function(x, f = NULL,  ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f, 
-                                        skip_agglomerate = skip_agglomerate)
+        args <- .norm_args_for_split_by(x, f = f)
         # Split data
         .split_by(x, args, ...)
     }
@@ -224,10 +195,9 @@ setMethod("splitBy", signature = c(x = "SummarizedExperiment"),
 #' @rdname splitBy
 #' @export
 setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
-    function(x, f = NULL, skip_agglomerate = FALSE, ...){
+    function(x, f = NULL, ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f,
-                                      skip_agglomerate = skip_agglomerate)
+        args <- .norm_args_for_split_by(x, f = f)
         # Should alternative experiment be removed? --> yes
         args[["strip_altexp"]] <- TRUE
         # Split data
@@ -238,7 +208,7 @@ setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitBy
 #' @export
 setMethod("splitBy", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f = NULL, skip_agglomerate = FALSE, update_rowTree = FALSE,
+    function(x, f = NULL, update_rowTree = FALSE,
              ...){
         # Input check
         # Check update_rowTree
