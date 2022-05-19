@@ -56,50 +56,53 @@
 #' \code{\link[SingleCellExperiment:altExps]{altExps}},
 #' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
 #'
-#' @name splitBy
+#' @name splitOn
 #' @export
 #'
 #' @examples
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' # Split data based on SampleType. 
-#' se_list <- splitBy(tse, f = "SampleType")
+#' se_list <- splitOnCols(tse, f = "SampleType")
 #' 
+#' # List of SE objects is returned. 
 #' se_list
 #' 
 #' # Create arbitrary groups
-#' colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
 #' rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
 #' 
-#' # If variable named equally can be found from both colData and rowData, 
-#' # row takes precedence
-#' se_list <- splitBy(tse, f = "groyup")
-#' se_list
-#' 
-#' # List of SE objects is returned. 
+#' # Split based on rows
 #' # Each element is named based on their group name. If you don't want to name
 #' # elements, use use_name = FALSE
-#' se_list <- splitBy(tse, f = "SampleType", use_names = FALSE)
+#' se_list <- splitOnRows(tse, f = "groyup")
+#' se_list
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
-#' unsplitBy(se_list)
+#' unsplitOn(se_list)
 #' 
 NULL
 
-#' @rdname splitBy
+#' @rdname splitOn
 #' @export
-setGeneric("splitBy",
+setGeneric("splitOnRows",
            signature = "x",
            function(x, ...)
-               standardGeneric("splitBy"))
+               standardGeneric("splitOnRows"))
+
+#' @rdname splitOn
+#' @export
+setGeneric("splitOnCols",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("splitOnCols"))
 
 # This function collects f (grouping variable), MARGIN, and 
 # use_names and returns them as a list.
-.norm_args_for_split_by <- function(x, f, use_names = TRUE, ...){
+.norm_args_for_split_by <- function(x, f, MARGIN, use_names = TRUE, ...){
     # input check
     if(is.null(f)){
         stop("'f' must either be a single non-empty character value or",
-             " vector coercible to factor alongside one of the ",
+             " vector coercible to factor alongside the specified MARGIN of 'x'.",
              "dimensions of 'x'",
              call. = FALSE)
     }
@@ -109,34 +112,29 @@ setGeneric("splitBy",
             f <- factor(f, unique(f))
         }
         # Check if the length of f matches with one of the dimensions
-        if(!length(f) %in% dim(x)){
+        if(!length(f) %in% dim(x)[[MARGIN]]){
             stop("'f' must either be a single non-empty character value or",
-                 " vector coercible to factor alongside one of the ",
-                 "dimensions of 'x'.",
+                 " vector coercible to factor alongside the specified MARGIN of 'x'.",
                  call. = FALSE)
         }
-        # Get the dimension that matches
-        MARGIN <- which(dim(x) %in% length(f))[1L]
     } else {
-        # Try to get information from rowData
-        tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
-                 silent = TRUE)
+        # Search from rowData or colData based on MARGIN
+        dim_name <- switch(MARGIN,
+                           "1" = "rowData",
+                           "2" = "colData")
+        # Specify right function
+        dim_FUN <- switch(MARGIN,
+                           "1" = retrieveFeatureInfo,
+                           "2" = retrieveCellInfo)
+        # Try to get information
+        tmp <- try({dim_FUN(x, f, search = dim_name)},
+                   silent = TRUE)
+        # Give error if it cannot be found from neither
         if(is(tmp,"try-error")){
-            # If it cannot be found from rowData, try to find it from colData
-            tmp <- try({retrieveCellInfo(x, f, search = "colData")},
-                     silent = TRUE)
-            # Give error if it cannot be found from neither
-            if(is(tmp,"try-error")){
-                stop("'f' cannot be from rowData nor colData. ",
-                "Please check that 'f' specifies a column from rowData or colData.", 
-                call. = FALSE)
-            } 
-            # Margin is columns
-            MARGIN <- 2L
-        } else {
-            # If info can be found from rowData, margin is rows
-            MARGIN <- 1L
-        }
+            stop("'f' is not found. . ",
+                 "Please check that 'f' specifies a column from ", dim_name, ".", 
+                 call. = FALSE)
+        } 
         # Get values and convert them into factors
         f <- tmp$value
         f <- factor(f, unique(f))
@@ -152,7 +150,7 @@ setGeneric("splitBy",
          use_names = use_names)
 }
 
-.split_by <- function(x, args, ...){
+.split_on <- function(x, args, ...){
     # Get grouping variable and its values
     f <- args[["f"]]
     # Choose nrow or ncol based on MARGIN
@@ -181,33 +179,33 @@ setGeneric("splitBy",
     ans
 }
 
-#' @rdname splitBy
+#' @rdname splitOnRows
 #' @export
-setMethod("splitBy", signature = c(x = "SummarizedExperiment"),
+setMethod("splitOnRows", signature = c(x = "SummarizedExperiment"),
     function(x, f = NULL,  ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f)
+        args <- .norm_args_for_split_by(x, f = f, MARGIN = 1)
         # Split data
-        .split_by(x, args, ...)
+        .split_on(x, args, ...)
     }
 )
 
-#' @rdname splitBy
+#' @rdname splitOnRows
 #' @export
-setMethod("splitBy", signature = c(x = "SingleCellExperiment"),
+setMethod("splitOnRows", signature = c(x = "SingleCellExperiment"),
     function(x, f = NULL, ...){
         # Get arguments
-        args <- .norm_args_for_split_by(x, f = f)
+        args <- .norm_args_for_split_by(x, f = f, MARGIN = 1)
         # Should alternative experiment be removed? --> yes
         args[["strip_altexp"]] <- TRUE
         # Split data
-        .split_by(x, args, ...)
+        .split_on(x, args, ...)
     }
 )
 
-#' @rdname splitBy
+#' @rdname splitonRows
 #' @export
-setMethod("splitBy", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("splitOnRows", signature = c(x = "TreeSummarizedExperiment"),
     function(x, f = NULL, update_rowTree = FALSE,
              ...){
         # Input check
@@ -233,10 +231,34 @@ setMethod("splitBy", signature = c(x = "TreeSummarizedExperiment"),
     }
 )
 
+#' @rdname splitOn
+#' @export
+setMethod("splitOnCols", signature = c(x = "SummarizedExperiment"),
+    function(x, f = NULL,  ...){
+        # Get arguments
+        args <- .norm_args_for_split_by(x, f = f, MARGIN = 2)
+        # Split data
+        .split_on(x, args, ...)
+        }
+)
+
+#' @rdname splitOn
+#' @export
+setMethod("splitOnCols", signature = c(x = "SingleCellExperiment"),
+    function(x, f = NULL, ...){
+        # Get arguments
+        args <- .norm_args_for_split_by(x, f = f, MARGIN = 2)
+        # Should alternative experiment be removed? --> yes
+        args[["strip_altexp"]] <- TRUE
+        # Split data
+        .split_on(x, args, ...)
+    }
+)
+
 ################################################################################
 # unsplitBy
 
-#' @rdname splitBy
+#' @rdname splitOn
 #' @export
 setGeneric("unsplitBy",
            signature = c("x"),
