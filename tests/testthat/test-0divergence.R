@@ -15,13 +15,13 @@ test_that("divergence estimates", {
   expect_true( "divergence" %in% colnames(colData(tse_divergence)))
   
   # Expect errors when input is wrong
-  expect_error( estimateDivergence(tse, name = 123, reference = "median", 
+  expect_error(estimateDivergence(tse, name = 123, reference = "median", 
                                    FUN = vegan::vegdist, method = "euclidean") )
-  expect_error( estimateDivergence(tse, name = "test", reference = "test", 
+  expect_error(estimateDivergence(tse, name = "test", reference = "test", 
                                    FUN = vegan::vegdist, method = "euclidean") )
-  expect_error( estimateDivergence(tse, name = "test", reference = "median", 
+  expect_error(estimateDivergence(tse, name = "test", reference = "median", 
                                    FUN = "test", method = "euclidean") )
-  expect_error( estimateDivergence(tse, name = "test", reference = "median", 
+  expect_error(estimateDivergence(tse, name = "test", reference = "median", 
                                    FUN = vegan::vegdist, method = "test") )
   expect_error(estimateDivergence(tse, reference = rep(0, nrow(tse)), 
                                   FUN = "test",
@@ -76,7 +76,5 @@ test_that("divergence estimates", {
                        FUN = vegan::vegdist,
                        method = "chao"))$divergence, 6)),
     round(c(0.00000000, 0.10115766, 0.08239422)),6)
-  
-  
 
 })

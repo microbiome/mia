@@ -89,6 +89,7 @@
 NULL
 
 #' @rdname summaries
+#' @aliases getTopFeatures
 #' @export
 setGeneric("getTopTaxa", signature = "x",
            function(x, top= 5L, method = c("mean","sum","median"),
@@ -108,6 +109,8 @@ setGeneric("getTopTaxa", signature = "x",
 #'
 #' @importFrom DelayedMatrixStats rowSums2 rowMeans2 rowMedians
 #' @importFrom utils head
+#' 
+#' @aliases getTopFeatures
 #'
 #' @export
 setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
@@ -139,6 +142,22 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname summaries
+#' @aliases getTopTaxa
+#' @export
+setGeneric("getTopFeatures", signature = c("x"),
+           function(x, ...) 
+               standardGeneric("getTopFeatures"))
+
+#' @rdname summaries
+#' @aliases getTopTaxa
+#' @export
+setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        getTopTaxa(x, ...)
+    }
+)
+
+#' @rdname summaries
 #'
 #' @param rank A single character defining a taxonomic rank. Must be a value of
 #' the output of \code{taxonomyRanks()}.
@@ -147,6 +166,8 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 #' The \code{getUniqueTaxa} returns a vector of unique taxa present at a
 #' particular rank
 #' 
+#' @aliases getUniqueFeatures
+#' 
 #' @export
 setGeneric("getUniqueTaxa",
            signature = c("x"),
@@ -154,6 +175,7 @@ setGeneric("getUniqueTaxa",
                standardGeneric("getUniqueTaxa"))
 
 #' @rdname summaries
+#' @aliases getUniqueFeatures
 #' @export
 setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
@@ -162,6 +184,22 @@ setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
         # Remove NAs and sort if specified
         names <- .remove_NAs_and_sort(names, ... )
         return(names)
+    }
+)
+
+#' @rdname summaries
+#' @aliases getUniqueTaxa
+#' @export
+setGeneric("getUniqueFeatures", signature = c("x"),
+           function(x, ...) 
+               standardGeneric("getUniqueFeatures"))
+
+#' @rdname summaries
+#' @aliases getUniqueTaxa
+#' @export
+setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        getUniqueTaxa(x, ...)
     }
 )
 
@@ -179,6 +217,7 @@ setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
 #' taxa in a tibble. Information includes their absolute and relative
 #' abundances in whole data set.
 #'
+#' @aliases countDominantFeatures
 #'
 #' @return
 #' The \code{countDominantTaxa} returns an overview in a tibble. It contains dominant taxa
@@ -190,6 +229,7 @@ setGeneric("countDominantTaxa",signature = c("x"),
                standardGeneric("countDominantTaxa"))
 
 #' @rdname summaries
+#' @aliases countDominantFeatures
 #' @export
 setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, group = NULL, ...){
@@ -204,7 +244,6 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
         # Adds dominant taxa to colData
         dominant_taxa <- perSampleDominantTaxa(x, ...)
         data <- colData(x)
-        
         # If the length of dominant taxa is not equal to number of rows, then add rows
         # because there are multiple dominan taxa
         if(length(dominant_taxa) > nrow(data) ){
@@ -222,6 +261,22 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
         data$dominant_taxa <- dominant_taxa
         # Gets an overview
         .tally_col_data(data, group, name = "dominant_taxa")
+    }
+)
+
+#' @rdname summaries
+#' @aliases countDominantTaxa
+#' @export
+setGeneric("countDominantFeatures", signature = c("x"),
+           function(x, ...) 
+               standardGeneric("countDominantFeatures"))
+
+#' @rdname summaries
+#' @aliases countDominantTaxa
+#' @export
+setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        countDominantTaxa(x, ...)
     }
 )
 
@@ -297,6 +352,8 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("summary", signature = c(object = "SummarizedExperiment"),
     function(object, abund_values = "counts"){
+        # check if NA in assay
+        .check_NAs_assay_counts(object, abund_values)
         # check if counts
         .check_fraction_or_negative_values(object, abund_values)
         sample.summary <- .get_summary_col_data(object, abund_values)
@@ -372,3 +429,16 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
     }
     return(names)
 }
+
+# Check NAs in assay, used when specifically when counts are expected
+.check_NAs_assay_counts <- function(x, abund_values){
+    assay.x <- .get_assay(x, abund_values)
+    if(any(is.na(assay.x))) {
+        stop(paste0("There are samples with NAs in 'assay': ", abund_values),
+             " . This function is limited to sequencing data only. ",
+             "Where raw counts do not usually have NAs. ",
+             "Try to supply raw counts",
+             call. = FALSE)
+    }
+}
+

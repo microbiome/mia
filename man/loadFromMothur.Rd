@@ -47,7 +47,9 @@ meta <- system.file("extdata", "mothur_example.design", package = "mia")
 
 # Creates se object from files
 se <- loadFromMothur(counts, taxa, meta)
-se
+# Convert SE to TreeSE
+tse <- as(se, "TreeSummarizedExperiment")
+tse
 }
 \references{
 \url{https://mothur.org/}

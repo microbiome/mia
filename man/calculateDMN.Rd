@@ -151,28 +151,31 @@ lvls <- c("Lean", "Obese", "Overwt")
 pheno <- factor(lvls[pheno0 + 1], levels=lvls)
 colData <- DataFrame(pheno = pheno)
 
-se <- SummarizedExperiment(assays = list(counts = counts),
-                           colData = colData)
+tse <- TreeSummarizedExperiment(assays = list(counts = counts),
+                                colData = colData)
 
 
 #
-dmn <- calculateDMN(se)
+dmn <- calculateDMN(tse)
 dmn[[1L]]
 
 # since this take a bit of resources to calculate for k > 1, the data is
 # loaded
 \dontrun{
-se <- runDMN(se, name = "DMN", k = 1:7)
+tse <- runDMN(tse, name = "DMN", k = 1:7)
 }
 data(dmn_se)
-names(metadata(dmn_se))
+# Convert SE to TreeSE to enable all features of mia and TreeSE object
+# (Optional step at this point)
+dmn_tse <- as(dmn_se, "TreeSummarizedExperiment")
+names(metadata(dmn_tse))
 
 # return a list of DMN objects
-getDMN(dmn_se)
+getDMN(dmn_tse)
 # return, which objects fits best
-bestDMNFit(dmn_se, type = "laplace")
+bestDMNFit(dmn_tse, type = "laplace")
 # return the model, which fits best
-getBestDMNFit(dmn_se, type = "laplace")
+getBestDMNFit(dmn_tse, type = "laplace")
 }
 \seealso{
 \code{\link[DirichletMultinomial:DMN-class]{DMN-class}},

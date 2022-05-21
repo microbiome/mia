@@ -154,6 +154,7 @@ NULL
 #' \url{https://peerj.com/articles/13075/}
 #' Supplemental information includes OTU table and taxonomy table and publicly-accessible from: 
 #' \url{DOI:10.7717/peerj.13075/supp-1}
+#'
 #' \url{DOI:10.7717/peerj.13075/supp-2}
 "peerj13075"
 

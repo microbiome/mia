@@ -34,7 +34,9 @@ if(requireNamespace("biomformat")) {
   # load from object
   x1 <- biomformat::read_biom(rich_dense_file)
   se <- makeSummarizedExperimentFromBiom(x1)
-  se
+  # Convert SE to TreeSE
+  tse <- as(se, "TreeSummarizedExperiment")
+  tse
 }
 }
 \seealso{

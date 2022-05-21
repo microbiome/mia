@@ -1,6 +1,6 @@
 #' Estimate divergence
 #'
-#' This function estimates a divergence within samples. 
+#' Estimate divergence against a given reference sample.
 #' 
 #' @param x a \code{\link{SummarizedExperiment}} object
 #'
@@ -118,31 +118,35 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
                 stop(reference_stop_msg, call. = FALSE)
             }
         }
+
         ################# Input check end #############
-        divergence <- .calc_divergence(mat = assay(x, abund_values),
+        divergence <- .calc_reference_dist(mat = assay(x, abund_values),
                                        reference = reference, 
                                        FUN = FUN,
                                        method = method, ...)
-        .add_values_to_colData(x, divergence, name)
+
+        .add_values_to_colData(x, list(divergence), name)
+
     }
 )
 
 ############################## HELP FUNCTIONS ##############################
 
-.calc_divergence <- function(mat, reference, FUN, method, ...){
+
+.calc_reference_dist <- function(mat, reference, FUN = stats::dist, method, ...){
+
     # Calculates median or mean if that is specified
-    if( "median" %in% reference || "mean" %in% reference ){
-      reference <- apply(mat, 1, reference)
+    if (is.character(reference)) {
+        if( "median" %in% reference || "mean" %in% reference ){
+            reference <- apply(mat, 1, reference)
+        } else if( !reference %in% colnames(mat) ) {
+            stop(paste("Reference", reference, "not recognized."))
+        }
     }
-    # Adds the reference to the table to the first column
-    mat <- cbind( matrix(reference, ncol=1), mat)
-    # Transposes the table so that distances are calculated for the samples
-    mat <- t(mat)
-    # Calculates the distance
-    dist <- .calculate_distance(mat, FUN = FUN, method = method)
-    # Takes only reference vs samples distances
-    divergence <- as.matrix(dist)[-1,1]
-    # Creates a list 
-    divergence <- list(divergence)
-    return(divergence)
+
+    # Distance between all samples against one reference sample
+    # FIXME: could be be optimzed with sweep / parallelization
+    v <- seq_len(ncol(mat))
+    sapply(v, function (i) {FUN(rbind(mat[,i], reference), method=method, ...)})
 }
+
