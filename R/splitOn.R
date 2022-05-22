@@ -34,15 +34,15 @@
 #'   }
 #'
 #' @return
-#' For \code{splitBy}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
+#' For \code{splitOn}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
 #'
-#' For \code{unsplitBy}: \code{x}, with \code{rowData} and \code{assay}
+#' For \code{unsplitOn}: \code{x}, with \code{rowData} and \code{assay}
 #' data replaced by the unsplit data. \code{colData} of x is kept as well
 #' and any existing \code{rowTree} is dropped as well, since existing
 #' \code{rowLinks} are not valid anymore.
 #'
 #' @details
-#' \code{splitBy} split data based on grouping variable. Splitting can be done
+#' \code{splitOn} split data based on grouping variable. Splitting can be done
 #' column-wise or row-wise. The returned value is a list of
 #' \code{SummarizedExperiment} objects; each element containing members of each
 #' group.
@@ -100,12 +100,15 @@ setGeneric("splitOn",
 
 # This function collects f (grouping variable), MARGIN, and 
 # use_names and returns them as a list.
-.norm_args_for_split_by <- function(x, f, use_names = TRUE, ...){
+.norm_args_for_split_by <- function(x, f, MARGIN = NULL, use_names = TRUE, ...){
     # input check
     if(is.null(f)){
         stop("'f' must either be a single non-empty character value or",
              " vector coercible to factor alongside the one of the dimensions of 'x'",
              call. = FALSE)
+    }
+    if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
+        stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
     }
     # Check f or extract the factor from rowData or colData
     if( !.is_non_empty_string(f) ){
@@ -118,28 +121,55 @@ setGeneric("splitOn",
                  " vector coercible to factor alongside the on of the ",
                  "dimensions of 'x'.",
                  call. = FALSE)
+        } else if( is.null(MARGIN) && all(length(f) == dim(x)) ){
+            stop("The length of 'f' matches with nrow and ncol. ",
+                 "Please specify 'MARGIN'.", call. = FALSE)
+        } else if(length(f) == dim(x)[[1]] && is.null(MARGIN)  ){
+            MARGIN <- 1L
+        } else if( is.null(MARGIN) ){
+            MARGIN <- 2L
         }
         
     } else {
-        # Try to get information from rowData
-        tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
-                   silent = TRUE)
-        if(is(tmp,"try-error")){
-            # If it cannot be found from rowData, try to find it from colData
-            tmp <- try({retrieveCellInfo(x, f, search = "colData")},
+        if( !is.null(MARGIN) ){
+            # Search from rowData or colData based on MARGIN
+            dim_name <- switch(MARGIN,
+                               "1" = "rowData",
+                               "2" = "colData")
+            # Specify right function
+            dim_FUN <- switch(MARGIN,
+                              "1" = retrieveFeatureInfo,
+                              "2" = retrieveCellInfo)
+            # Try to get information
+            tmp <- try({dim_FUN(x, f, search = dim_name)},
                        silent = TRUE)
             # Give error if it cannot be found from neither
-            if(is(f,"try-error")){
-                stop(stop("'f' is not found. ",
-                          "Please check that 'f' specifies a column from ",
-                          "rowData or colData.", 
-                          call. = FALSE), call. = FALSE)
+            if(is(tmp,"try-error")){
+                stop("'f' is not found. ",
+                     "Please check that 'f' specifies a column from ", dim_name, ".", 
+                     call. = FALSE)
             } 
-            # Margin is columns
-            MARGIN <- 2L
-        } else {
-            # If info can be found from rowData, margin is rows
-            MARGIN <- 1L
+        } else{
+            # Try to get information from rowData
+            tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
+                       silent = TRUE)
+            if(is(tmp,"try-error")){
+                # If it cannot be found from rowData, try to find it from colData
+                tmp <- try({retrieveCellInfo(x, f, search = "colData")},
+                           silent = TRUE)
+                # Give error if it cannot be found from neither
+                if(is(tmp,"try-error")){
+                    stop(stop("'f' is not found. ",
+                              "Please check that 'f' specifies a column from ",
+                              "rowData or colData.", 
+                              call. = FALSE), call. = FALSE)
+                } 
+                # Margin is columns
+                MARGIN <- 2L
+            } else {
+                # If info can be found from rowData, margin is rows
+                MARGIN <- 1L
+            }
         }
         # Get values and convert them into factors
         f <- tmp$value
@@ -247,7 +277,7 @@ setGeneric("unsplitOn",
            function(x, ...)
                standardGeneric("unsplitOn"))
 
-.list_unsplit_on <- function(ses, update_rowTree, ...){
+.list_unsplit_on <- function(ses, update_rowTree, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
@@ -260,19 +290,32 @@ setGeneric("unsplitOn",
         stop("'update_rowTree' must be TRUE or FALSE.",
              call. = FALSE)
     }
+    if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
+        stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
+    }
     # Input check end
     # Get dimensions of each SE in the list
     dims <- vapply(ses, dim, integer(2L))
     # Based on which dimension SE objects share, select MARGIN.
     # If they share rows, then MARGIN is col, and vice versa
-    if(length(unique(dims[1L,])) == 1L){
-        MARGIN <- 2L
-    } else if(length(unique(dims[2L,])) == 1L) {
-        MARGIN <- 1L
-    } else {
-        stop("Dimensions are not equal across all elemennts. ", 
-             "Please check that either number of rows or columns match.", 
-             call. = FALSE)
+    if( is.null(MARGIN) ){
+        if( length(unique(dims[1L,])) == 1 && length(unique(dims[2L,])) == 1 ){
+            stop("The dimensions match with row and column-wise. ",
+                 "Please specify 'MARGIN'.", call. = FALSE)
+        } else if(length(unique(dims[1L,])) == 1L){
+            MARGIN <- 2L
+        } else if(length(unique(dims[2L,])) == 1L) {
+            MARGIN <- 1L
+        } else {
+            stop("The dimensions are not equal across all elements. ", 
+                 "Please check that either number of rows or columns match.", 
+                 call. = FALSE)
+        }
+    } else{
+        dim <- ifelse(MARGIN == 1, 2, 1)
+        if( length(unique(dims[dim,])) != 1L ){
+            stop("The dimensions are not equal across all elements.", call. = FALSE)
+        }
     }
     
     # Get the class of objects SCE, SE or TreeSE
