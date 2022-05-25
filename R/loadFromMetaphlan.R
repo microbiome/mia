@@ -176,7 +176,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # at specific rank
     tables <- split(table, levels)
     # Different ranks in order
-    ranks <- c("Domain", "Kingdom", "Phylum", "Order", "Family", "Genus", "Species")
+    ranks <- c("Domain", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
     # Get the order
     indices <- match(ranks, names(tables))
     # Remove NAs which occurs if rank is not included
@@ -197,8 +197,8 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     lowest_level <- substr(string, start = lowest_level_ind, stop = lowest_level_ind)
     
     # List all ranks and what prefix they correspond
-    ranks <- c(Domain = "d", Kingdom = "k", Phylum = "p", Order = "o", 
-               Family = "f", Genus = "g", Species = "s")
+    ranks <- c(Domain = "d", Kingdom = "k", Phylum = "p", Class = "c",
+               Order = "o", Family = "f", Genus = "g", Species = "s")
     # Convert prefix into full rank name
     lowest_level <- names(ranks[ match(lowest_level, ranks) ])
     return(lowest_level)
