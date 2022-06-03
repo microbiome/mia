@@ -18,7 +18,7 @@
 #' @param na.rm For \code{getTopTaxa} logical argument for calculation method 
 #'              specified to argument \code{method}. Default is TRUE. 
 #'
-#' @param ... Additional arguments:
+#' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{
 #'        \item{\code{sort}}{A single boolean value for selecting 
 #'        whether to sort taxa in alphabetical order or not. Enabled in functions
@@ -58,6 +58,14 @@
 #'                        abund_values = "counts")
 #' top_taxa
 #' 
+#' # Use 'detection' to select detection threshold when using prevalence method
+#' top_taxa <- getTopTaxa(GlobalPatterns,
+#'                        method = "prevalence",
+#'                        top = 5,
+#'                        abund_values = "counts",
+#'                        detection = 100)
+#' top_taxa
+#'                        
 #' # Top taxa os specific rank
 #' getTopTaxa(agglomerateByRank(GlobalPatterns,
 #'                              rank = "Genus",
@@ -92,7 +100,7 @@ NULL
 #' @aliases getTopFeatures
 #' @export
 setGeneric("getTopTaxa", signature = "x",
-           function(x, top= 5L, method = c("mean","sum","median"),
+           function(x, top = 5L, method = c("mean","sum","median"),
                     abund_values = "counts", na.rm = TRUE, ...)
                standardGeneric("getTopTaxa"))
 
@@ -125,7 +133,9 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
         #
         if(method == "prevalence"){
             taxs <- getPrevalence(assay(x, abund_values), sort = TRUE,
-                                  include_lowest = TRUE)
+                                  include_lowest = TRUE, ...)
+            # If there are taxa with prevaöence of 0, remove them
+            taxs <- taxs[ taxs > 0 ]
         } else {
             taxs <- switch(method,
                            mean = rowMeans2(assay(x, abund_values), na.rm = na.rm),
