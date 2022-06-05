@@ -102,35 +102,45 @@ setGeneric("splitOn",
 # use_names and returns them as a list.
 .norm_args_for_split_by <- function(x, f, MARGIN = NULL, use_names = TRUE, ...){
     # input check
+    # Check f
     if(is.null(f)){
         stop("'f' must either be a single non-empty character value or",
              " vector coercible to factor alongside the one of the dimensions of 'x'",
              call. = FALSE)
     }
+    # Check MARGIN
     if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
         stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
     }
-    # Check f or extract the factor from rowData or colData
+    # If f is a vector containing levels
     if( !.is_non_empty_string(f) ){
-        if( length(f) > 1L ){
-            f <- factor(f, unique(f))
-        }
+        # Convert into factors
+        f <- factor(f, unique(f))
         # Check if the length of f matches with one of the dimensions
         if(!length(f) %in% dim(x)){
             stop("'f' must either be a single non-empty character value or",
                  " vector coercible to factor alongside the on of the ",
                  "dimensions of 'x'.",
                  call. = FALSE)
+        # If it matches with both dimensions, give error if MARGIN is not specified
         } else if( is.null(MARGIN) && all(length(f) == dim(x)) ){
             stop("The length of 'f' matches with nrow and ncol. ",
                  "Please specify 'MARGIN'.", call. = FALSE)
+        # If MARGIN is specified but it does not match with length of f
+        } else if( !is.null(MARGIN) && (length(f) !=  dim(x)[[MARGIN]]) ){
+            stop("'f' does not match with ", 
+                 ifelse(MARGIN==1, "nrow", "ncol"), ". Please check 'MARGIN'.",
+                 call. = FALSE)
+        # IF f matches with nrow
         } else if(length(f) == dim(x)[[1]] && is.null(MARGIN)  ){
             MARGIN <- 1L
+        # If f matches with ncol
         } else if( is.null(MARGIN) ){
             MARGIN <- 2L
         }
-        
+    # Else if f is a character specifying column from rowData or colData  
     } else {
+        # If MARGIN is specified
         if( !is.null(MARGIN) ){
             # Search from rowData or colData based on MARGIN
             dim_name <- switch(MARGIN,
@@ -148,7 +158,8 @@ setGeneric("splitOn",
                 stop("'f' is not found. ",
                      "Please check that 'f' specifies a column from ", dim_name, ".", 
                      call. = FALSE)
-            } 
+            }
+        # Else if MARGIN is not specified
         } else{
             # Try to get information from rowData
             tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
