@@ -34,7 +34,7 @@ test_that("splitOn", {
     expect_equal( colnames(list[[1]]), colnames(x) )
     expect_true( length(list) == 10 )
     
-    # TEst that row-wise split is done correctly
+    # Test that row-wise split is done correctly
     list <- splitOn(x, "group", MARGIN = 2)
     expect_equal( rownames(list[[1]]), rownames(x) )
     expect_true( length(list) == 10 )
@@ -55,7 +55,7 @@ test_that("splitOn", {
     # Unsplit
     unsplitted <- unsplitOn(list)
     # Order the data
-    unsplitted <- unsplitted[rownames(x_sub), colnames(x_sub) ]
+    unsplitted <- unsplitted[ rownames(x_sub), colnames(x_sub) ]
     # Convert delayed matrix to normal
     assay(unsplitted) <- as.matrix( assay(unsplitted) )
     expect_equal(assay(x_sub), assay(unsplitted) )
@@ -66,14 +66,15 @@ test_that("splitOn", {
     # Unsplit
     unsplitted <- unsplitOn(list)
     # Order the data
-    unsplitted <- unsplitted[rownames(x_sub), colnames(x_sub) ]
+    unsplitted <- unsplitted[ rownames(x_sub), colnames(x_sub) ]
     # Convert delayed matrix to normal
     assay(unsplitted) <- as.matrix( assay(unsplitted) )
     expect_equal(assay(x_sub), assay(unsplitted) )
+    
     list <- splitOn(x, "SampleType")
     unsplitted <- unsplitOn(list)
     # Order the data
-    unsplitted <- unsplitted[rownames(x), colnames(x) ]
+    unsplitted <- unsplitted[ rownames(x), colnames(x) ]
     # Convert delayed matrix to normal
     assay(unsplitted) <- as.matrix( assay(unsplitted) )
     expect_equal(assay(x), assay(unsplitted) )
@@ -83,7 +84,7 @@ test_that("splitOn", {
     # Unsplit
     unsplitted <- unsplitOn(list)
     # Order the data
-    unsplitted <- unsplitted[rownames(x), colnames(x) ]
+    unsplitted <- unsplitted[ rownames(x), colnames(x) ]
     # Convert delayed matrix to normal
     assay(unsplitted) <- as.matrix( assay(unsplitted) )
     expect_equal(assay(x), assay(unsplitted) )

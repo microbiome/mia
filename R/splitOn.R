@@ -159,9 +159,8 @@ setGeneric("splitOn",
                      "Please check that 'f' specifies a column from ", dim_name, ".", 
                      call. = FALSE)
             }
-            # Get values and convert them into factors
+            # Get values
             f <- tmp$value
-            f <- factor(f, unique(f))
         # Else if MARGIN is not specified
         } else{
             # Try to get information from rowData
@@ -185,16 +184,21 @@ setGeneric("splitOn",
                 # If it was found from rowData
             } else if( !is(tmp_row, "try-error") ){
                 MARGIN <- 1L
-                # Get values and convert them into factors
+                # Get values
                 f <- tmp_row$value
-                f <- factor(f, unique(f))
                 # Otherwise, it was found from colData
             } else{
                 MARGIN <- 2L
-                # Get values and convert them into factors
+                # Get values
                 f <- tmp_col$value
-                f <- factor(f, unique(f))
             }
+        }
+        # Convert values into factors
+        f <- factor(f, unique(f))
+        
+        # If there are NAs, add NA as level
+        if( any(is.na(f)) ){
+            f <- addNA(f)
         }
     }
     # Check use_names
