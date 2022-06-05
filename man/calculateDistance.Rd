@@ -54,10 +54,10 @@ expects a function with a matrix input as its first argument.
 # generate some example data
 mat <- matrix(1:60, nrow = 6)
 df <- DataFrame(n = c(1:6))
-se <- SummarizedExperiment(assays = list(counts = mat),
-                           rowData = df)
+tse <- TreeSummarizedExperiment(assays = list(counts = mat),
+                                rowData = df)
 \dontrun{
-calculateDistance(se)
+calculateDistance(tse)
 }
 
 }

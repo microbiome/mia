@@ -82,12 +82,12 @@ names are set.
 }
 \examples{
 data(GlobalPatterns)
-molten_se <- meltAssay(GlobalPatterns,
-                       abund_values = "counts",
-                       add_row_data = TRUE,
-                       add_col_data = TRUE
-                       )
-molten_se
+molten_tse <- meltAssay(GlobalPatterns,
+                        abund_values = "counts",
+                        add_row_data = TRUE,
+                        add_col_data = TRUE
+                        )
+molten_tse
 }
 \author{
 Sudarshan A. Shetty

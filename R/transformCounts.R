@@ -381,7 +381,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
              call. = FALSE)
     } else if(is.numeric(pseudocount)){
         if (method == "relabundance" && pseudocount > 0){
-            warning("Relative abundances vary in [0, 1]; adding a",
+            warning("Relative abundances vary in [0, 1]; adding a ",
                     "pseudocount > 0 on relabundance will cause ",
                     "non-sensicale results. Recommended to cross-check ",
                     "that the pseudocount choice is correct and intended.",

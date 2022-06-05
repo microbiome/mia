@@ -95,7 +95,9 @@
         },
         values,
         name)
+
     values <- do.call(cbind, values)
+
     # check for duplicated values
     f <- colnames(colData(x)) %in% colnames(values)
     if(any(f)) {
@@ -108,6 +110,16 @@
     }
     # keep only unique values
     colData(x) <- cbind(colData(x)[!f], values)
+
+    x
+}
+
+
+#' @importFrom S4Vectors metadata metadata<-
+.add_values_to_metadata <- function(x, names, values){
+    add_metadata <- as.list(values)
+    names(add_metadata) <- names
+    metadata(x) <- c(metadata(x), add_metadata)
     x
 }
 

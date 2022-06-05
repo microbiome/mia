@@ -2,18 +2,30 @@
 % Please edit documentation in R/dominantTaxa.R
 \name{perSampleDominantTaxa}
 \alias{perSampleDominantTaxa}
+\alias{perSampleDominantFeatures}
 \alias{perSampleDominantTaxa,SummarizedExperiment-method}
+\alias{perSampleDominantFeatures,SummarizedExperiment-method}
 \alias{addPerSampleDominantTaxa}
+\alias{addPerSampleDominantFeatures}
 \alias{addPerSampleDominantTaxa,SummarizedExperiment-method}
+\alias{addPerSampleDominantFeatures,SummarizedExperiment-method}
 \title{Get dominant taxa}
 \usage{
 perSampleDominantTaxa(x, abund_values = "counts", rank = NULL, ...)
 
 \S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, abund_values = "counts", rank = NULL, ...)
 
+perSampleDominantFeatures(x, ...)
+
+\S4method{perSampleDominantFeatures}{SummarizedExperiment}(x, ...)
+
 addPerSampleDominantTaxa(x, name = "dominant_taxa", ...)
 
 \S4method{addPerSampleDominantTaxa}{SummarizedExperiment}(x, name = "dominant_taxa", ...)
+
+addPerSampleDominantFeatures(x, ...)
+
+\S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

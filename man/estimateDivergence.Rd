@@ -54,7 +54,7 @@ passed to the function that is specified by \code{FUN}. By default,
 \code{x} with additional \code{\link{colData}} named \code{*name*}
 }
 \description{
-This function estimates a divergence within samples.
+Estimate divergence against a given reference sample.
 }
 \details{
 Microbiota divergence (heterogeneity / spread) within a given sample

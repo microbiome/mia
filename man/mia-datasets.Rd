@@ -9,6 +9,7 @@
 \alias{dmn_se}
 \alias{dmn_se,}
 \alias{twins}
+\alias{peerj13075}
 \title{mia datasets}
 \format{
 An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
@@ -18,6 +19,8 @@ An object of class \code{TreeSummarizedExperiment} with 553 rows and 280 columns
 An object of class \code{TreeSummarizedExperiment} with 58 rows and 3 columns.
 
 An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
+
+An object of class \code{TreeSummarizedExperiment} with 674 rows and 58 columns.
 }
 \usage{
 data(GlobalPatterns)
@@ -27,6 +30,8 @@ data(enterotype)
 data(esophagus)
 
 data(dmn_se)
+
+data(peerj13075)
 }
 \description{
 These datasets are conversions of the \pkg{phyloseq} datasets
@@ -64,6 +69,11 @@ at the link below.
 This data set from Turnbaugh et al. (2009) was used to introduce
 Dirichlet Multinomial Mixtures (DMM) for microbiota stratification by
 Holmes et al. (2012).
+
+PeerJ data by Potbhare et al. (2022) includes skin microbial profiles of 58 volunteers with multiple factors.
+16S r-RNA sequencing of V3-V4 regions was done to generate millions of read using illumina platform.
+A standard bioinformatic and statistical analysis done to explore skin bacterial diversity and its association with age, diet, geographical locations.
+The authors investigated significant association of skin microbiota with individual’s geographical location.
 }
 \references{
 Caporaso, J. G., et al. (2011).
@@ -100,6 +110,15 @@ PLoS ONE 7(2): e30126. \url{https://doi.org/10.1371/journal.pone.0030126}
 Turnbaugh PJ, Hamady M, Yatsunenko T, Cantarel BL, Duncan A, et al. (2009).
 A core gut microbiome in obese and lean twins. Nature 457: 480–484.
 \url{https://doi.org/10.1038/nature07540}
+
+Potbhare, R., RaviKumar, A., Munukka, E., Lahti, L., & Ashma, R. (2022).
+Skin microbiota diversity among genetically unrelated individuals of Indian origin.
+PeerJ, 10, e13075.
+\url{https://peerj.com/articles/13075/}
+Supplemental information includes OTU table and taxonomy table and publicly-accessible from:
+\url{DOI:10.7717/peerj.13075/supp-1}
+
+\url{DOI:10.7717/peerj.13075/supp-2}
 }
 \author{
 Caporaso, J. G., et al.
@@ -109,5 +128,7 @@ Arumugam, M., Raes, J., et al.
 Pei et al. \email{zhiheng.pei@med.nyu.edu}.
 
 Turnbaugh, PJ et al.
+
+Potbhare, R., et al.
 }
 \keyword{data}

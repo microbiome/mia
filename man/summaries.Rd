@@ -3,11 +3,17 @@
 \name{summaries}
 \alias{summaries}
 \alias{getTopTaxa}
+\alias{getTopFeatures}
 \alias{getTopTaxa,SummarizedExperiment-method}
+\alias{getTopFeatures,SummarizedExperiment-method}
 \alias{getUniqueTaxa}
+\alias{getUniqueFeatures}
 \alias{getUniqueTaxa,SummarizedExperiment-method}
+\alias{getUniqueFeatures,SummarizedExperiment-method}
 \alias{countDominantTaxa}
+\alias{countDominantFeatures}
 \alias{countDominantTaxa,SummarizedExperiment-method}
+\alias{countDominantFeatures,SummarizedExperiment-method}
 \alias{summary,SummarizedExperiment-method}
 \title{Summarizing microbiome data}
 \usage{
@@ -29,13 +35,25 @@ getTopTaxa(
   ...
 )
 
+getTopFeatures(x, ...)
+
+\S4method{getTopFeatures}{SummarizedExperiment}(x, ...)
+
 getUniqueTaxa(x, ...)
 
 \S4method{getUniqueTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
+getUniqueFeatures(x, ...)
+
+\S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
+
 countDominantTaxa(x, group = NULL, ...)
 
 \S4method{countDominantTaxa}{SummarizedExperiment}(x, group = NULL, ...)
+
+countDominantFeatures(x, ...)
+
+\S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
 
 \S4method{summary}{SummarizedExperiment}(object, abund_values = "counts")
 }
@@ -108,6 +126,11 @@ top_taxa <- getTopTaxa(GlobalPatterns,
                        top = 5,
                        abund_values = "counts")
 top_taxa
+
+# Top taxa os specific rank
+getTopTaxa(agglomerateByRank(GlobalPatterns,
+                             rank = "Genus",
+                             na.rm = TRUE))
 
 # Gets the overview of dominant taxa
 dominant_taxa <- countDominantTaxa(GlobalPatterns,
