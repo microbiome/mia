@@ -153,38 +153,49 @@ setGeneric("splitOn",
             # Try to get information
             tmp <- try({dim_FUN(x, f, search = dim_name)},
                        silent = TRUE)
-            # Give error if it cannot be found from neither
+            # Give error if it cannot be found
             if(is(tmp,"try-error")){
                 stop("'f' is not found. ",
                      "Please check that 'f' specifies a column from ", dim_name, ".", 
                      call. = FALSE)
             }
+            # Get values and convert them into factors
+            f <- tmp$value
+            f <- factor(f, unique(f))
         # Else if MARGIN is not specified
         } else{
             # Try to get information from rowData
-            tmp <- try({retrieveFeatureInfo(x, f, search = "rowData")},
-                       silent = TRUE)
-            if(is(tmp,"try-error")){
-                # If it cannot be found from rowData, try to find it from colData
-                tmp <- try({retrieveCellInfo(x, f, search = "colData")},
+            tmp_row <- try({retrieveFeatureInfo(x, f, search = "rowData")},
                            silent = TRUE)
-                # Give error if it cannot be found from neither
-                if(is(tmp,"try-error")){
-                    stop(stop("'f' is not found. ",
-                              "Please check that 'f' specifies a column from ",
-                              "rowData or colData.", 
-                              call. = FALSE), call. = FALSE)
-                } 
-                # Margin is columns
-                MARGIN <- 2L
-            } else {
-                # If info can be found from rowData, margin is rows
+            # Try to get information from colData
+            tmp_col <- try({retrieveCellInfo(x, f, search = "colData")}, 
+                           silent = TRUE)
+            
+            # If it was not found 
+            if( is(tmp_row, "try-error") && is(tmp_col, "try-error") ){
+                stop("'f' is not found. ",
+                     "Please check that 'f' specifies a column from ",
+                     "rowData or colData.", 
+                     call. = FALSE)
+                # If f was found from both
+            } else if( !is(tmp_row, "try-error") && !is(tmp_col, "try-error") ){
+                stop("'f' can be found from both rowData and colData. ",
+                     "Please specify 'MARGIN'.",
+                     call. = FALSE)
+                # If it was found from rowData
+            } else if( !is(tmp_row, "try-error") ){
                 MARGIN <- 1L
+                # Get values and convert them into factors
+                f <- tmp_row$value
+                f <- factor(f, unique(f))
+                # Otherwise, it was found from colData
+            } else{
+                MARGIN <- 2L
+                # Get values and convert them into factors
+                f <- tmp_col$value
+                f <- factor(f, unique(f))
             }
         }
-        # Get values and convert them into factors
-        f <- tmp$value
-        f <- factor(f, unique(f))
     }
     # Check use_names
     if( !.is_a_bool(use_names) ){
@@ -305,6 +316,10 @@ setGeneric("unsplitOn",
         stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
     }
     # Input check end
+    # If list contains only one element, return it
+    if( length(ses) == 1 ){
+        return(ses[[1]])
+    }
     # Get dimensions of each SE in the list
     dims <- vapply(ses, dim, integer(2L))
     # Based on which dimension SE objects share, select MARGIN.
@@ -336,8 +351,11 @@ setGeneric("unsplitOn",
     # Combine rowData if data share columns, and vice versa
     if(MARGIN == 1L){
         rd <- .combine_rowData(ses)
+        # Add rownames since they are missing after using combining
+        rownames(rd) <- unlist(unname(lapply(ses, rownames)))
         rr <- .combine_rowRanges(ses)
         args$rowRanges <- rr
+        args$colData <- colData(ses[[1L]])
     } else {
         args$colData <- .combine_colData(ses)
         args$rowRanges <- rowRanges(ses[[1L]])
@@ -347,6 +365,10 @@ setGeneric("unsplitOn",
     ans <- do.call(class_x, args)
     # Add rowData
     rowData(ans) <- rd
+    # Update rownames
+    rownames(ans) <- rownames(rd)
+    # Update colnames
+    
     if( class_x == "TreeSummarizedExperiment" && update_rowTree ){
         ans <- addTaxonomyTree(ans)
     }

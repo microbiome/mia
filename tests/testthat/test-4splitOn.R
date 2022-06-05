@@ -1,0 +1,90 @@
+context("splitOn")
+test_that("splitOn", {
+    data(GlobalPatterns)
+    x <- GlobalPatterns
+    
+    ################################## splitOn #################################
+    # Test that throughs an error
+    expect_error(splitOn(x, "test"))
+    expect_error(splitOn(x[1:10, 1:10], x$SampleType))
+    set.seed(103)
+    rowData(x)$group <- sample(1:10, nrow(x), replace = TRUE)
+    set.seed(374)
+    colData(x)$group <- sample(1:10, ncol(x), replace = TRUE)
+    expect_error(splitOn(x, "group"))
+    expect_error(splitOn(x, "SampleType", MARGIN = 1))
+    expect_error(splitOn(x, "Phylum", MARGIN = 2))
+    expect_error(splitOn(x, x$SampleType, MARGIN = 1))
+    expect_error(splitOn(x, rowData(x)$Phylum, MARGIN = 2))
+    expect_error(splitOn(x))
+    expect_error(splitOn(assay(x), x$SampleType))
+    expect_error(splitOn(x, "SampleType", use_names = 1))
+    expect_error(splitOn(x, "SampleType", use_names = "TRUE"))
+    expect_error(splitOn(x, "SampleType", update_tree = 1))
+    expect_error(splitOn(x, "SampleType", update_tree = "TRUE"))
+    
+    # Test that names of elemetns are correct
+    list <- splitOn(x, "SampleType")
+    expect_equal(names(list), as.character(unique(x$SampleType)) )
+    list <- splitOn(x, "SampleType", use_names = FALSE)
+    expect_equal(names(list), NULL )
+    
+    # Test that col-wie split is done correctly
+    list <- splitOn(x, "group", MARGIN = 1)
+    expect_equal( colnames(list[[1]]), colnames(x) )
+    expect_true( length(list) == 10 )
+    
+    # TEst that row-wise split is done correctly
+    list <- splitOn(x, "group", MARGIN = 2)
+    expect_equal( rownames(list[[1]]), rownames(x) )
+    expect_true( length(list) == 10 )
+    
+    ################################# unsplitOn ################################
+    # Test that error occurs
+    expect_error( unsplitOn(x) )
+    mod_list <- list
+    mod_list[[1]] <- mod_list[[1]][1:2, 1:2]
+    expect_error( unsplitOn(mod_list) )
+    expect_error(unsplitOn(list, update_tree = 1))
+    expect_error(unsplitOn(list, update_tree = "TRUE"))
+    
+    # Test that works
+    x_sub <- x[1:100, 1:10]
+    # Split
+    list <- splitOn(x_sub, "group", MARGIN = 1)
+    # Unsplit
+    unsplitted <- unsplitOn(list)
+    # Order the data
+    unsplitted <- unsplitted[rownames(x_sub), colnames(x_sub) ]
+    # Convert delayed matrix to normal
+    assay(unsplitted) <- as.matrix( assay(unsplitted) )
+    expect_equal(assay(x_sub), assay(unsplitted) )
+    
+    x_sub <- x[1:100, 1:10]
+    # Split
+    list <- splitOn(x_sub, "group", MARGIN = 2)
+    # Unsplit
+    unsplitted <- unsplitOn(list)
+    # Order the data
+    unsplitted <- unsplitted[rownames(x_sub), colnames(x_sub) ]
+    # Convert delayed matrix to normal
+    assay(unsplitted) <- as.matrix( assay(unsplitted) )
+    expect_equal(assay(x_sub), assay(unsplitted) )
+    list <- splitOn(x, "SampleType")
+    unsplitted <- unsplitOn(list)
+    # Order the data
+    unsplitted <- unsplitted[rownames(x), colnames(x) ]
+    # Convert delayed matrix to normal
+    assay(unsplitted) <- as.matrix( assay(unsplitted) )
+    expect_equal(assay(x), assay(unsplitted) )
+    
+    # Split
+    list <- splitOn(x, "Phylum")
+    # Unsplit
+    unsplitted <- unsplitOn(list)
+    # Order the data
+    unsplitted <- unsplitted[rownames(x), colnames(x) ]
+    # Convert delayed matrix to normal
+    assay(unsplitted) <- as.matrix( assay(unsplitted) )
+    expect_equal(assay(x), assay(unsplitted) )
+})
