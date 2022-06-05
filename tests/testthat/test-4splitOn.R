@@ -20,8 +20,8 @@ test_that("splitOn", {
     expect_error(splitOn(assay(x), x$SampleType))
     expect_error(splitOn(x, "SampleType", use_names = 1))
     expect_error(splitOn(x, "SampleType", use_names = "TRUE"))
-    expect_error(splitOn(x, "SampleType", update_tree = 1))
-    expect_error(splitOn(x, "SampleType", update_tree = "TRUE"))
+    expect_error(splitOn(x, "SampleType", update_rowTree = 1))
+    expect_error(splitOn(x, "SampleType", update_rowTree = "TRUE"))
     
     # Test that names of elemetns are correct
     list <- splitOn(x, "SampleType")
@@ -45,8 +45,8 @@ test_that("splitOn", {
     mod_list <- list
     mod_list[[1]] <- mod_list[[1]][1:2, 1:2]
     expect_error( unsplitOn(mod_list) )
-    expect_error(unsplitOn(list, update_tree = 1))
-    expect_error(unsplitOn(list, update_tree = "TRUE"))
+    expect_error(unsplitOn(list, update_rowTree = 1))
+    expect_error(unsplitOn(list, update_rowTree = "TRUE"))
     
     # Test that works
     x_sub <- x[1:100, 1:10]

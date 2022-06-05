@@ -113,7 +113,7 @@ se_list
 splitOn(tse, f = colData(tse)$group)
 
 # If you want to combine groups back together, you can use unsplitBy
-unsplitOn(se_list)
+unsplitOn(se_list, update_rowTree = TRUE)
 
 }
 \seealso{

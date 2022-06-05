@@ -85,7 +85,7 @@
 #' splitOn(tse, f = colData(tse)$group)
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
-#' unsplitOn(se_list)
+#' unsplitOn(se_list, update_rowTree = TRUE)
 #' 
 NULL
 
@@ -338,6 +338,7 @@ setGeneric("unsplitOn",
                  call. = FALSE)
         }
     } else{
+        # Get correct dimension, it is opposite of MARGIN
         dim <- ifelse(MARGIN == 1, 2, 1)
         if( length(unique(dims[dim,])) != 1L ){
             stop("The dimensions are not equal across all elements.", call. = FALSE)
