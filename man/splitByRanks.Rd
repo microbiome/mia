@@ -47,8 +47,8 @@ breaks the link between the data used to calculate the reduced dims.
 (default: \code{keep_reducedDims = FALSE})}
 }
 \value{
-For \code{splitByRanks}: \code{x}, with objects of \code{x} agglomerated for
-selected ranks as \code{altExps}.
+For \code{splitByRanks}: \code{SummarizedExperiment} objects in a
+\code{SimpleList}.
 
 For \code{unsplitByRanks}: \code{x}, with \code{rowData} and \code{assay}
 data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -97,6 +97,8 @@ x <- unsplitByRanks(GlobalPatterns)
 x
 }
 \seealso{
+\code{\link[=splitOn]{splitOn}}
+\code{\link[=unsplitOn]{unsplitOn}}
 \code{\link[=merge-methods]{mergeRows}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
