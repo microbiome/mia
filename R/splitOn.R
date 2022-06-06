@@ -8,7 +8,8 @@
 #'
 #' @param f A single character value for selecting the grouping variable
 #'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
-#'   with the same length as one of the dimensions. Rows take precedence.
+#'   with the same length as one of the dimensions. If \code{f} matches with both
+#'   dimensions, \code{MARGIN} must be specified. 
 #'   Split by cols is not encouraged, since this is not compatible with 
 #'   storing the results in \code{altExps}.
 #'
@@ -78,15 +79,13 @@
 #' # you must use MARGIN.
 #' se_list <- splitOn(tse, f = "group", use_names = FALSE, MARGIN = 1)
 #' 
-#' # As you can see, the rowData takes precedence if the same variable name can 
-#' # be found from both rowData and colData
-#' se_list
+#' # When column names are shared between elements, you can store the list to altExps
+#' altExps(tse) <- se_list
+#' 
+#' altExps(tse)
 #' 
 #' # If you want to split on columns and update rowTree, you can do
 #' se_list <- splitOn(tse, f = colData(tse)$group, update_rowTree = TRUE)
-#' 
-#' # When column names are shared between elements, you can store the list to altExps
-#' altExps(tse) <- se_list
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitOn(se_list)
