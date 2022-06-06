@@ -1,4 +1,4 @@
-#' Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable
+#' Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable
 #'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -23,7 +23,7 @@
 #'   (By default: \code{update_rowTree = FALSE})
 #'   
 #' @param altExpNames a \code{character} vector specifying the alternative experiments
-#'   to be unsplit. (By default: \code{altExpNames = altExpNames(x)})
+#'   to be unsplit. (By default: \code{altExpNames = names(altExps(x))})
 #'   
 #' @param ... Arguments passed to \code{mergeRows}/\code{mergeCols} function for
 #'   \code{SummarizedExperiment} objects and other functions.
@@ -74,18 +74,22 @@
 #' 
 #' # Split based on rows
 #' # Each element is named based on their group name. If you don't want to name
-#' # elements, use use_name = FALSE
-#' se_list <- splitOn(tse, f = "group")
+#' # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
+#' # you must use MARGIN.
+#' se_list <- splitOn(tse, f = "group", use_names = FALSE, MARGIN = 1)
 #' 
 #' # As you can see, the rowData takes precedence if the same variable name can 
 #' # be found from both rowData and colData
 #' se_list
 #' 
-#' # If you want to split on columns, you can do
-#' splitOn(tse, f = colData(tse)$group)
+#' # If you want to split on columns and update rowTree, you can do
+#' se_list <- splitOn(tse, f = colData(tse)$group, update_rowTree = TRUE)
+#' 
+#' # When column names are shared between elements, you can store the list to altExps
+#' altExps(tse) <- se_list
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
-#' unsplitOn(se_list, update_rowTree = TRUE)
+#' unsplitOn(se_list)
 #' 
 NULL
 
@@ -95,8 +99,6 @@ setGeneric("splitOn",
            signature = "x",
            function(x, ...)
                standardGeneric("splitOn"))
-
-
 
 # This function collects f (grouping variable), MARGIN, and 
 # use_names and returns them as a list.
@@ -212,6 +214,7 @@ setGeneric("splitOn",
          use_names = use_names)
 }
 
+# PErform the split
 .split_on <- function(x, args, ...){
     # Get grouping variable and its values
     f <- args[["f"]]
@@ -237,6 +240,9 @@ setGeneric("splitOn",
     # If user do not want to use names, unname
     if(!args[["use_names"]]){
         ans <- unname(ans)
+    # Otherwise convert NAs to "NA", if there is a level that do not have name
+    } else{
+        names(ans)[ is.na(names(ans)) ] <- "NA"
     }
     ans
 }
@@ -303,7 +309,8 @@ setGeneric("unsplitOn",
            function(x, ...)
                standardGeneric("unsplitOn"))
 
-.list_unsplit_on <- function(ses, update_rowTree, MARGIN = NULL, ...){
+# Perform the unsplit
+.list_unsplit_on <- function(ses, update_rowTree = FALSE, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
@@ -353,7 +360,7 @@ setGeneric("unsplitOn",
     class_x <- class(ses[[1L]])
     # Combine assays
     args <- list(assays = .unsplit_assays(ses, MARGIN = MARGIN))
-    # Combine rowData if data share columns, and vice versa
+    # Combine rowData if data share columns
     if(MARGIN == 1L){
         rd <- .combine_rowData(ses)
         # Add rownames since they are missing after using combining
@@ -361,6 +368,7 @@ setGeneric("unsplitOn",
         rr <- .combine_rowRanges(ses)
         args$rowRanges <- rr
         args$colData <- colData(ses[[1L]])
+    # Combine colData if data share rows
     } else {
         args$colData <- .combine_colData(ses)
         args$rowRanges <- rowRanges(ses[[1L]])
@@ -372,10 +380,15 @@ setGeneric("unsplitOn",
     rowData(ans) <- rd
     # Update rownames
     rownames(ans) <- rownames(rd)
-    # Update colnames
     
-    if( class_x == "TreeSummarizedExperiment" && update_rowTree ){
-        ans <- addTaxonomyTree(ans)
+    # IF the object is TreeSE. add rowTree
+    if( class_x == "TreeSummarizedExperiment" ){
+        # Update or add old tree from the first element of list
+        if( update_rowTree ){
+            ans <- addTaxonomyTree(ans)
+        } else{
+            rowTree(ans) <- rowTree(ses[[1L]])
+        }
     }
     ans
 }
@@ -415,13 +428,13 @@ setMethod("unsplitOn", signature = c(x = "SimpleList"),
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitOn", signature = c(x = "SingleCellExperiment"),
-    function(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...){
+    function(x, altExpNames = names(altExps(x)), keep_reducedDims = FALSE, ...){
         # input check
         if(!.is_a_bool(keep_reducedDims)){
             stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
         }
         # Get alternative experiment names since data is located there
-        ae_names <- altExpNames(x)
+        ae_names <- names(altExps(x))
         # Get only those experiments that user has specified
         ae_names <- ae_names[ae_names %in% altExpNames]
         if(length(ae_names) == 0L){
@@ -430,24 +443,11 @@ setMethod("unsplitOn", signature = c(x = "SingleCellExperiment"),
         # Get alternative experiments as a list
         ses <- altExps(x)[ae_names]
         # And unsplit the data
-        .unsplit_on(x, ses, keep_reducedDims, ...)
-    }
-)
-   
-#' @rdname splitOn
-#' @export
-setMethod("unsplitOn", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, 
-             update_rowTree = FALSE, ...){
-        # input check
-        if(!.is_a_bool(update_rowTree)){
-            stop("'update_rowTree' must be TRUE or FALSE.", call. = FALSE)
+        se <- .list_unsplit_on(ses, ...)
+        # Add reducedDims if specified
+        if( keep_reducedDims ){
+            reducedDims(se) <- reducedDims(x)
         }
-        ans <- callNextMethod()
-        #
-        if( update_rowTree ){
-            ans <- addTaxonomyTree(ans)
-        }
-        ans
+        return(se)
     }
 )

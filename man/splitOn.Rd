@@ -9,8 +9,7 @@
 \alias{unsplitOn,list-method}
 \alias{unsplitOn,SimpleList-method}
 \alias{unsplitOn,SingleCellExperiment-method}
-\alias{unsplitOn,TreeSummarizedExperiment-method}
-\title{Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable}
+\title{Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable}
 \usage{
 splitOn(x, ...)
 
@@ -26,15 +25,7 @@ unsplitOn(x, ...)
 
 \S4method{unsplitOn}{SimpleList}(x, update_rowTree = FALSE, ...)
 
-\S4method{unsplitOn}{SingleCellExperiment}(x, altExpNames = altExpNames(x), keep_reducedDims = FALSE, ...)
-
-\S4method{unsplitOn}{TreeSummarizedExperiment}(
-  x,
-  altExpNames = altExpNames(x),
-  keep_reducedDims = FALSE,
-  update_rowTree = FALSE,
-  ...
-)
+\S4method{unsplitOn}{SingleCellExperiment}(x, altExpNames = names(altExps(x)), keep_reducedDims = FALSE, ...)
 }
 \arguments{
 \item{x}{A
@@ -63,7 +54,7 @@ based on splitted data? Option is enabled when \code{x} is a
 (By default: \code{update_rowTree = FALSE})}
 
 \item{altExpNames}{a \code{character} vector specifying the alternative experiments
-to be unsplit. (By default: \code{altExpNames = altExpNames(x)})}
+to be unsplit. (By default: \code{altExpNames = names(altExps(x))})}
 
 \item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
@@ -79,7 +70,7 @@ and any existing \code{rowTree} is dropped as well, since existing
 \code{rowLinks} are not valid anymore.
 }
 \description{
-Split \code{SummarizedExperiment} column-wise or row-wise based on grouping variable
+Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable
 }
 \details{
 \code{splitOn} split data based on grouping variable. Splitting can be done
@@ -102,18 +93,22 @@ colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
 
 # Split based on rows
 # Each element is named based on their group name. If you don't want to name
-# elements, use use_name = FALSE
-se_list <- splitOn(tse, f = "group")
+# elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
+# you must use MARGIN.
+se_list <- splitOn(tse, f = "group", use_names = FALSE, MARGIN = 1)
 
 # As you can see, the rowData takes precedence if the same variable name can 
 # be found from both rowData and colData
 se_list
 
-# If you want to split on columns, you can do
-splitOn(tse, f = colData(tse)$group)
+# If you want to split on columns and update rowTree, you can do
+se_list <- splitOn(tse, f = colData(tse)$group, update_rowTree = TRUE)
+
+# When column names are shared between elements, you can store the list to altExps
+altExps(tse) <- se_list
 
 # If you want to combine groups back together, you can use unsplitBy
-unsplitOn(se_list, update_rowTree = TRUE)
+unsplitOn(se_list)
 
 }
 \seealso{
