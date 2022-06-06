@@ -34,13 +34,6 @@
 #'     list by their group names.}
 #'   }
 #'
-#' @return
-#' For \code{splitOn}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
-#'
-#' For \code{unsplitOn}: \code{x}, with \code{rowData} and \code{assay}
-#' data replaced by the unsplit data. \code{colData} of x is kept as well
-#' and any existing \code{rowTree} is dropped as well, since existing
-#' \code{rowLinks} are not valid anymore.
 #'
 #' @details
 #' \code{splitOn} split data based on grouping variable. Splitting can be done
@@ -48,6 +41,15 @@
 #' \code{SummarizedExperiment} objects; each element containing members of each
 #' group.
 #'
+#' @return
+#' For \code{splitOn}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
+#'
+#' For \code{unsplitOn}: \code{x}, with \code{rowData} and \code{assay}
+#' data replaced by the unsplit data. \code{colData} of x is kept as well
+#' and any existing \code{rowTree} is dropped as well, since existing
+#' \code{rowLinks} are not valid anymore.
+#' 
+#' @name splitOn
 #' @seealso
 #' \code{\link[=splitByRanks]{splitByRanks}}
 #' \code{\link[=unsplitByRanks]{unsplitByRanks}}
@@ -57,8 +59,9 @@
 #' \code{\link[SingleCellExperiment:altExps]{altExps}},
 #' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
 #'
-#' @name splitOn
-#'
+#' @export
+#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
+#' 
 #' @examples
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns

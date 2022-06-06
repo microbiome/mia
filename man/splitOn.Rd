@@ -119,3 +119,6 @@ unsplitOn(se_list)
 \code{\link[SingleCellExperiment:altExps]{altExps}},
 \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
 }
+\author{
+Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
+}
