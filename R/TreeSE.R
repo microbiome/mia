@@ -40,7 +40,7 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
     rowData <- .check.rowdata(rowData)
     # Check colData
     colData <- .check_coldata(colData)
-    # Mamp rows
+    # Map rows
     counts_rowData <- .map_rows(counts, rowData)
     counts <- counts_rowData$counts
     rowData <- counts_rowData$rowData
@@ -48,7 +48,7 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
     counts_colData <- .map_cols(counts, colData)
     counts <- counts_colData$counts
     colData <- counts_colData$colData
-    
+    # Create assays list
     assays <- SimpleList(counts = counts)
     # Create a TreeSE
     tse <- TreeSummarizedExperiment(assays = assays,
