@@ -30,7 +30,7 @@ NULL
 
 TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTree = NULL, ...){
     ################################ Input check ###############################
-    if(!exists("counts")){
+    if( missing(counts) ){
         stop("'counts' should be provided.", call. = FALSE)
     }
     ############################## Input check end #############################
