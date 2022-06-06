@@ -69,6 +69,7 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
                                     colData = colData,
                                     ...
                                     )
+    tse
     #tse <- .addRowTree(tse, rowTree)
 }
 
@@ -87,11 +88,13 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
 # This function checks rowData
 .check_rowdata <- function(rowData){
     if( !is.null(rowData) ){
+        rownames <- rownames(rowData)
+        # Convert into DataFrame
+        rowData <- DataFrame(rowData)
+        rownames(rowData) <- rownames
         if( is.null(rownames(rowData)) ){
             stop("'rowData' does not have rownames!", call. = FALSE)
         }
-        # Convert into DataFrame
-        rowData <- DataFrame(rowData)
     }
     return(rowData)
 }
@@ -99,11 +102,13 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
 # This function checks colData
 .check_coldata <- function(colData){
     if( !is.null(colData) ){
+        rownames <- rownames(colData)
+        # Convert into DataFrame
+        colData <- DataFrame(colData)
+        rownames(colData) <- rownames
         if( is.null(rownames(colData)) ){
             stop("'colData' do not have rownames!", call. = FALSE)
         }
-        # Convert into DataFrame
-        colData <- DataFrame(colData)
     }
     return(colData)
 }
