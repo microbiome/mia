@@ -58,7 +58,6 @@
 #' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
 #'
 #' @name splitOn
-#' @export
 #'
 #' @examples
 #' data(GlobalPatterns)
@@ -424,7 +423,7 @@ setMethod("unsplitOn", signature = c(x = "SimpleList"),
 )
 
 #' @rdname splitOn
-#' @importFrom SingleCellExperiment altExpNames altExp altExps
+#' @importFrom SingleCellExperiment altExpNames altExp altExps reducedDims<-
 #' @export
 setMethod("unsplitOn", signature = c(x = "SingleCellExperiment"),
     function(x, altExpNames = names(altExps(x)), keep_reducedDims = FALSE, ...){
