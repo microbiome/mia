@@ -30,24 +30,37 @@ NULL
 
 TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTree = NULL, ...){
     ################################ Input check ###############################
-    if(!exists(counts)){
+    if(!exists("counts")){
         stop("'counts' should be provided.", call. = FALSE)
     }
     ############################## Input check end #############################
     # Check counts
     counts <- .check_counts(counts)
     # Check rowData
-    rowData <- .check.rowdata(rowData)
+    rowData <- .check_rowdata(rowData)
     # Check colData
     colData <- .check_coldata(colData)
-    # Map rows
-    counts_rowData <- .map_rows(counts, rowData)
-    counts <- counts_rowData$counts
-    rowData <- counts_rowData$rowData
-    # Map cols
-    counts_colData <- .map_cols(counts, colData)
-    counts <- counts_colData$counts
-    colData <- counts_colData$colData
+    
+    if( !is.null(rowData) ){
+        # Map rows
+        counts_rowData <- .map_rows(counts, rowData)
+        counts <- counts_rowData$counts
+        rowData <- counts_rowData$rowData
+    } else{
+        rowData <- S4Vectors::make_zero_col_DFrame(nrow(counts))
+        rownames(rowData) <- rownames(counts)
+    }
+    
+    if( !is.null(colData) ){
+        # Map cols
+        counts_colData <- .map_cols(counts, colData)
+        counts <- counts_colData$counts
+        colData <- counts_colData$colData
+    } else{
+        colData <- S4Vectors::make_zero_col_DFrame(ncol(counts))
+        rownames(colData) <- colnames(counts)
+    }
+    
     # Create assays list
     assays <- SimpleList(counts = counts)
     # Create a TreeSE
@@ -56,7 +69,7 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
                                     colData = colData,
                                     ...
                                     )
-    tse <- .addRowTree(tse, rowTree)
+    #tse <- .addRowTree(tse, rowTree)
 }
 
 ################################ HELP FUNCTIONS ################################
@@ -101,34 +114,41 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
             # Is there names that do not match
             mapping_counts <- match(rownames(counts), rownames(rowData))
             missing_names_counts <- NULL
-            missing_names_counts <- rownames(counts)[is.na(mapping)]
+            if( any(is.na(mapping_counts))){
+                missing_names_counts <- rownames(counts)[is.na(mapping_counts)]
+            }
+            
             
             if( !is.null(missing_names_counts) ){
-                warning(paste0("'counts' included ", length(missing_names_counts), 
+                warning("'counts' included ", length(missing_names_counts), 
                                " features that are missing from rowData.", "
                                \nPlease check these features for errors:\n",
-                               paste0(missing_names_counts, collapse = " and "))
-                )
+                               paste0(paste0("'", missing_names_counts, "'"), collapse = " and "), call. = FALSE)
+                
             }
             
             # Check rowData
             mapping_rowdata <- match(rownames(rowData), rownames(counts))
             missing_names_rowdata <- NULL
-            missing_names_rowdata <- rownames(rowData)[is.na(mapping_rowdata)]
+            
+            
+            if( any(is.na(mapping_rowdata))){
+                missing_names_rowdata <- rownames(rowData)[is.na(mapping_rowdata)]
+            }
             
             if( !is.null(missing_names_rowdata) ){
-                warning(paste0("'rowData' included ", length(missing_names_rowdata), 
-                               " additional festures that are removed. \nPlease check these samples for errors:\n",
-                               paste0(missing_names_rowdata, collapse = " and "))
-                )
+                warning("'rowData' included ", length(missing_names_rowdata), 
+                        " additional festures that are removed. \nPlease check these features for errors:\n",
+                        paste0(paste0("'", missing_names_rowdata, "'"), collapse = ", "), call. = FALSE)
             }
             
             if( is.null(missing_names_counts) && is.null(missing_names_rowdata) ){
-                warning("'rowData' is ordered based on 'counts'!")
+                warning("'rowData' is ordered based on 'counts'!", call. = FALSE)
             }
             
             # Order rowData based on counts
-            rowData <- rowData[, mapping_counts ]
+            rowData <- rowData[ mapping_counts, ]
+            rownames(rowData) <- rownames(counts)
             }
     result_list <- list(counts = counts, rowData = rowData)
     return(result_list)
@@ -142,34 +162,42 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
             # Is there names that do not match
             mapping_counts <- match(colnames(counts), rownames(colData))
             missing_names_counts <- NULL
-            missing_names_counts <- colnames(counts)[is.na(mapping)]
+            
+            if( any(is.na(mapping_counts))){
+                missing_names_counts <- colnames(counts)[is.na(mapping_counts)]
+            }
+            
             
             if( !is.null(missing_names_counts) ){
-                warning(paste0("'counts' included ", length(missing_names_counts), 
-                               " samples that are missing from colData.", "
-                               \nPlease check these samples for errors:\n",
-                               paste0(missing_names_counts, collapse = " and "))
-                )
+                warning("'counts' included ", length(missing_names_counts), 
+                               " samples that are missing from colData.", 
+                        "\nPlease check these samples for errors:\n",
+                        paste0(paste0("'", missing_names_counts, "'"), collapse = " and "), call. = FALSE)
+                
             }
             
             # Check colData
             mapping_coldata <- match(rownames(colData), colnames(counts))
             missing_names_coldata <- NULL
-            missing_names_coldata <- rownames(colData)[is.na(mapping_coldata)]
+            
+            if( any(is.na(mapping_coldata))){
+                missing_names_coldata <- rownames(colData)[is.na(mapping_coldata)]
+            }
             
             if( !is.null(missing_names_coldata) ){
-                warning(paste0("'colData' included ", length(missing_names_coldata), 
+                warning("'colData' included ", length(missing_names_coldata), 
                                " additional samples that are removed. \nPlease check these samples for errors:\n",
-                               paste0(missing_names_coldata, collapse = " and "))
-                )
+                               paste0(paste0("'", missing_names_coldata, "'"), collapse = ", "), call. = FALSE)
+                
             }
             
             if( is.null(missing_names_counts) && is.null(missing_names_coldata) ){
-                warning("'colData' is ordered based on 'counts'!")
+                warning("'colData' is ordered based on 'counts'!", call. = FALSE)
             }
             
             # Order colData based on counts
-            colData <- colData[, mapping_counts ]
+            colData <- colData[ mapping_counts, ]
+            rownames(colData) <- colnames(counts)
         }
     }
     result_list <- list(counts = counts, colData = colData)
@@ -188,7 +216,7 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
         }
         else if( any(rownames(tse) != rowTree$tip.label) ){
             warning("'rowTree', does not match with rownames of 'counts'. ",
-                    "Use 'rowTree' if you want to add generated tree based on counts...")
+                    "Use 'rowTree' if you want to add generated tree based on counts...", call. = FALSE)
         } else{
             rowTree(tse) <- rowTree
         }
@@ -200,7 +228,7 @@ TreeSE <- function(counts, rowData = NULL, rowTree = NULL, colData = NULL, colTr
     if( !is.null(colTree)  ){
         if( any(rownames(tse) != colTree$tip.label) ){
             warning("'colTree', does not match with colnames of 'counts'. ",
-                    "'colTree is not added.")
+                    "'colTree is not added.", call. = FALSE)
         } else{
             rowTree(tse) <- rowTree
         }
