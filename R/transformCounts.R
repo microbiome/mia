@@ -1,4 +1,4 @@
-#' Transform Counts
+#' Transform counts
 #'
 #' These functions provide a variety of options for transforming abundance data.
 #' By using these functions, transformed table is calculated and stored in \code{assay}. 
@@ -29,7 +29,12 @@
 #' @param threshold A numeric value for setting threshold for pa transformation.
 #'   By default it is 0. (Only used for \code{method = "pa"})
 #'
-#' @param ... additional arguments
+#' @param ... Additional arguments:
+#'     \itemize{
+#'        \item{\code{relative}}{ A single boolean value for specifying whether to
+#'        perform relative transfomration in prior to CLR transformation.
+#'        (By default: \code{relative = FALSE})
+#'    }
 #'
 #' @details
 #' \code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
@@ -206,7 +211,8 @@ setGeneric("transformSamples", signature = c("x"),
                                "rank", "relabundance"),
                     name = method,
                     pseudocount = FALSE,
-                    threshold = 0)
+                    threshold = 0,
+                    ...)
                     standardGeneric("transformSamples"))
 
 #' @rdname transformCounts
@@ -219,7 +225,8 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
                        "rank", "relabundance"),
             name = method,
             pseudocount = FALSE,
-            threshold = 0){
+            threshold = 0,
+            ...){
         # Input check
         # Check abund_values
         .check_assay_present(abund_values, x)
@@ -242,7 +249,11 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
         # Gets the abundance table
         assay <- assay(x, abund_values)
         # Calls help function that does the transformation
-        transformed_table <- .apply_transformation(assay, method, pseudocount, threshold)
+        transformed_table <- .apply_transformation(assay, 
+                                                   method, 
+                                                   pseudocount, 
+                                                   threshold, 
+                                                   ...)
         # Assign transformed table to assays
         assay(x, name, withDimnames=FALSE) <- transformed_table
         x
@@ -259,7 +270,8 @@ setGeneric("transformCounts", signature = c("x"),
                                "rank", "relabundance"),
                     name = method,
                     pseudocount = FALSE,
-                    threshold = 0)
+                    threshold = 0,
+                    ...)
                standardGeneric("transformCounts"))
 
 #' @rdname transformCounts
@@ -272,13 +284,15 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                         "rank", "relabundance"),
              name = method,
              pseudocount = FALSE,
-             threshold = 0){
+             threshold = 0,
+             ...){
         transformSamples(x, 
                        abund_values = abund_values,
                        method = method,
                        name = name,
                        pseudocount = pseudocount,
-                       threshold = threshold)
+                       threshold = threshold,
+                       ...)
     }
 )
 
@@ -405,12 +419,13 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     transformed_table <-
         .get_transformed_table(assay = abund,
                                method = method,
-                               threshold = threshold)
+                               threshold = threshold,
+                               ...)
     return(transformed_table)
 }
 
 # Chooses which transformation function is applied
-.get_transformed_table <- function(assay, method, threshold){
+.get_transformed_table <- function(assay, method, threshold, ...){
     # Function is selected based on the "method" variable
     FUN <- switch(method,
                   relabundance = .calc_rel_abund,
@@ -425,7 +440,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
             list(mat = assay,
-                 threshold = threshold))
+                 threshold = threshold,
+                 ...))
 }
 
 #' @importFrom DelayedMatrixStats colSums2
@@ -471,11 +487,24 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom DelayedMatrixStats colMeans2
-.calc_clr <- function(mat, ...){
-    mat <- .calc_rel_abund(mat)
+.calc_clr <- function(mat, relative = FALSE, ...){
+    # Check relative
+    if( !.is_a_bool(relative) ){
+        stop("'relative' must be a boolean value.", call. = FALSE)
+    }
+    # Gives warning if values seem to be relative and relative is FALSE
+    if( all( mat >= 0 & mat <= 1 ) && !relative ){
+        message("Since all the values in the abundance table are between 0 and 1, ",
+                "it looks like the values are relative. \nIf they are, ",
+                "please use 'relative = TRUE'.")
+    }
+    # Perform relative transformation if specified
+    if( !relative ){
+        mat <- .calc_rel_abund(mat)
+    }
     # If there is negative values, gives an error.
     if (any(mat <= 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero or negative values and ",
+        stop("The abundance table contains zero or negative values and ",
              "clr-transformation is being applied without (suitable) ",
              "pseudocount. \n",
              "Try to add pseudocount (default choice pseudocount = 1 for ",

@@ -197,7 +197,27 @@ test_that("transformCounts", {
         
         # Expect that under 10 values are unequal. Values have only one decimal.
         expect_true( sum(round(test, 1) != round(test2, 1), na.rm = TRUE) < 10 )
-
+        
+        # CLR with relative abundances vs CLR with counts
+        tse <- transformSamples(tse, abund_values = "counts", 
+                                method = "clr", pseudocount = 1, name = "clr1")
+        tse <- transformSamples(tse, abund_values = "counts", 
+                                method = "relabundance")
+        tse <- transformSamples(tse, abund_values = "relabundance", 
+                                method = "clr", relative = TRUE,
+                                name = "clr2",
+                                pseudocount = min(x[x>0]))
+        # Expect equal
+        expect_equal(assay(tse, "clr1"), assay(tse, "clr2"))
+        # Expect errors and messages
+        tse <- transformSamples(tse, abund_values = "pseudocount", 
+                                method = "relabundance")
+        expect_error(transformSamples(tse, abund_values = "relabundance", 
+                                      method = "clr", relative = 1))
+        expect_error(transformSamples(tse, abund_values = "relabundance",
+                                      method = "clr", relative = "TRUE"))
+        expect_message(transformSamples(tse, abund_values = "relabundance", 
+                                        method = "clr"))
         ############################# NAMES ####################################
         # Tests that samples have correct names
         expect_equal(colnames(assays(transformCounts(tse, method = "clr", pseudocount = 1))$clr),
