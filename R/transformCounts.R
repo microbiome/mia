@@ -31,7 +31,7 @@
 #'
 #' @param ... Additional arguments:
 #'     \itemize{
-#'        \item{\code{relative}}{ A single boolean value for specifying whether to
+#'        \item{\code{apply_rel_trans}}{ A single boolean value for specifying whether to
 #'        perform relative transfomration in prior to CLR transformation.
 #'        (By default: \code{relative = FALSE})
 #'    }
@@ -390,8 +390,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Input check
     # Check pseudocount
     if(length(pseudocount) != 1L || 
-       !(pseudocount == FALSE || is.numeric(pseudocount))){
-        stop("'pseudocount' must be FALSE or a single numeric value.",
+       !(.is_a_bool(pseudocount) || is.numeric(pseudocount))){
+        stop("'pseudocount' must be TRUE or FALSE or a single numeric value.",
              call. = FALSE)
     } else if(is.numeric(pseudocount)){
         if (method == "relabundance" && pseudocount > 0){
@@ -487,22 +487,23 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom DelayedMatrixStats colMeans2
-.calc_clr <- function(mat, relative = FALSE, ...){
-    # Check relative
-    if( !.is_a_bool(relative) ){
-        stop("'relative' must be a boolean value.", call. = FALSE)
+.calc_clr <- function(mat, apply_rel_trans = TRUE, ...){
+    # Check apply_rel_trans
+    if( !.is_a_bool(apply_rel_trans) ){
+        stop("'apply_rel_trans' must be a boolean value.", call. = FALSE)
     }
-    # Gives warning if values seem to be relative and relative is FALSE
-    if( all( mat >= 0 & mat <= 1 ) && !relative ){
+    # Gives warning if values seem to be apply_rel_trans and apply_rel_trans is FALSE
+    if( all( mat >= 0 & mat <= 1 ) && !apply_rel_trans ){
         message("Since all the values in the abundance table are between 0 and 1, ",
                 "it looks like the values are relative. \nIf they are, ",
-                "please use 'relative = TRUE'.")
+                "please use 'apply_rel_trans = TRUE'.")
     }
-    # Perform relative transformation if specified
-    if( !relative ){
+    # Perform apply_rel_trans transformation if specified
+    if( apply_rel_trans ){
         mat <- .calc_rel_abund(mat)
+        message("Relative transformation is applied.")
     }
-    # If there is negative values, gives an error.
+    # If there are negative values, gives an error.
     if (any(mat <= 0, na.rm = TRUE)) {
         stop("The abundance table contains zero or negative values and ",
              "clr-transformation is being applied without (suitable) ",
@@ -512,6 +513,19 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
              "assay).",
              call. = FALSE)
     }
+    # IF there are values over 1, give warning
+    if (any(mat > 1, na.rm = TRUE)) {
+        stop("The abundance table contains values that are greater than 1. ",
+             " Try to apply relative transformation with 'apply_rel_trans = TRUE'.",
+             call. = FALSE)
+    }
+    # If values are relative but some taxa are missing and colSums do not sum to 1
+    if( !( all(mat<=1) && all(mat>0) && all( round(colSums2(mat), 3) == 1) ) ){
+        warning("The values in the abundance table are between [0,1[, but ",
+                " all colSums do not sum to 1. Please check the table.", 
+                call. = FALSE)
+    }
+    
     # In every sample, calculates the log of individual entries. After that calculates
     # the sample-specific mean value and subtracts every entries' value with that.
     clog <- log(mat)
@@ -571,9 +585,22 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 .apply_pseudocount <- function(mat, pseudocount){
-    # If "pseudocount" is not FALSE, it is numeric value specified by user. 
+    # IF there are only positive values, pseudocount should not be added
+    only_pos <- all( mat > 0 )
+    if( pseudocount != FALSE && only_pos ) {
+        warning("The abundance table contains only positive values. ",
+                " Pseudocount is not encouraged to apply.", call. = FALSE)
+    } 
+    # IF pseudocount == TRUE, add smallest positive number
+    if( .is_a_bool(pseudocount) && pseudocount ){
+        # Get the smallest positive value
+        pseudocount <- min( mat[ mat > 0 ] )
+        # Give message
+        message("Pseudocount = ", pseudocount, " was added to the abundance table.")
+        mat <- mat + pseudocount
+    # If "pseudocount" is numeric, it is numeric value specified by user. 
     # Then add pseudocount.
-    if(!pseudocount == FALSE){
+    } else if( is.numeric(pseudocount) ){
         mat <- mat + pseudocount
     }
     return(mat)
