@@ -470,17 +470,19 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-#' @importFrom DelayedMatrixStats colMeans2
+#' @importFrom DelayedMatrixStats colSums2 colMeans2
 .calc_clr <- function(mat, ...){
-    mat <- .calc_rel_abund(mat)
+    colsums <- colSums2(mat)
+    if( abs(max(colsums)-min(colsums) < 0.001) ){
+        warning("All the total abundances of samples do not sum-up to a fixed constant. ",
+                "Please consider to apply, e.g., relative transformation.", 
+                call. = FALSE)
+    }
     # If there is negative values, gives an error.
     if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
              "clr-transformation is being applied without (suitable) ",
-             "pseudocount. \n",
-             "Try to add pseudocount (default choice pseudocount = 1 for ",
-             "count assay; or pseudocount = min(x[x>0]) with relabundance ",
-             "assay).",
+             "pseudocount. Try to add pseudocount:",
              call. = FALSE)
     }
     # In every sample, calculates the log of individual entries. After that calculates
@@ -542,9 +544,13 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 .apply_pseudocount <- function(mat, pseudocount){
+    if( all(mat>0) ){
+        warning("The abundance table contains only positive values. ",
+                "A pseudocount is not ecnouraged to apply.", call. = FALSE)
+    }
     # If "pseudocount" is not FALSE, it is numeric value specified by user. 
     # Then add pseudocount.
-    if(!pseudocount == FALSE){
+    if( is.numeric(pseudocount) ){
         mat <- mat + pseudocount
     }
     return(mat)
