@@ -11,7 +11,7 @@
 \alias{ZTransform,SummarizedExperiment-method}
 \alias{relAbundanceCounts}
 \alias{relAbundanceCounts,SummarizedExperiment-method}
-\title{Transform counts}
+\title{Transform Counts}
 \usage{
 transformSamples(
   x,
@@ -19,8 +19,7 @@ transformSamples(
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
-  threshold = 0,
-  ...
+  threshold = 0
 )
 
 \S4method{transformSamples}{SummarizedExperiment}(
@@ -29,8 +28,7 @@ transformSamples(
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
-  threshold = 0,
-  ...
+  threshold = 0
 )
 
 transformCounts(
@@ -39,8 +37,7 @@ transformCounts(
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
-  threshold = 0,
-  ...
+  threshold = 0
 )
 
 \S4method{transformCounts}{SummarizedExperiment}(
@@ -49,8 +46,7 @@ transformCounts(
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = FALSE,
-  threshold = 0,
-  ...
+  threshold = 0
 )
 
 transformFeatures(
@@ -101,6 +97,8 @@ methods \code{method = "clr"}, \code{method = "hellinger"}, or
 
 \item{threshold}{A numeric value for setting threshold for pa transformation.
 By default it is 0. (Only used for \code{method = "pa"})}
+
+\item{...}{additional arguments}
 }
 \value{
 \code{transformCounts}, \code{transformSamples}, \code{transformFeatures},

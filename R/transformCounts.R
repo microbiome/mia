@@ -1,4 +1,4 @@
-#' Transform counts
+#' Transform Counts
 #'
 #' These functions provide a variety of options for transforming abundance data.
 #' By using these functions, transformed table is calculated and stored in \code{assay}. 
@@ -29,12 +29,7 @@
 #' @param threshold A numeric value for setting threshold for pa transformation.
 #'   By default it is 0. (Only used for \code{method = "pa"})
 #'
-#' @param ... Additional arguments:
-#'     \itemize{
-#'        \item{\code{apply_rel_trans}}{ A single boolean value for specifying whether to
-#'        perform relative transfomration in prior to CLR transformation.
-#'        (By default: \code{relative = FALSE})
-#'    }
+#' @param ... additional arguments
 #'
 #' @details
 #' \code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
@@ -211,8 +206,7 @@ setGeneric("transformSamples", signature = c("x"),
                                "rank", "relabundance"),
                     name = method,
                     pseudocount = FALSE,
-                    threshold = 0,
-                    ...)
+                    threshold = 0)
                     standardGeneric("transformSamples"))
 
 #' @rdname transformCounts
@@ -225,8 +219,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
                        "rank", "relabundance"),
             name = method,
             pseudocount = FALSE,
-            threshold = 0,
-            ...){
+            threshold = 0){
         # Input check
         # Check abund_values
         .check_assay_present(abund_values, x)
@@ -249,11 +242,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
         # Gets the abundance table
         assay <- assay(x, abund_values)
         # Calls help function that does the transformation
-        transformed_table <- .apply_transformation(assay, 
-                                                   method, 
-                                                   pseudocount, 
-                                                   threshold, 
-                                                   ...)
+        transformed_table <- .apply_transformation(assay, method, pseudocount, threshold)
         # Assign transformed table to assays
         assay(x, name, withDimnames=FALSE) <- transformed_table
         x
@@ -270,8 +259,7 @@ setGeneric("transformCounts", signature = c("x"),
                                "rank", "relabundance"),
                     name = method,
                     pseudocount = FALSE,
-                    threshold = 0,
-                    ...)
+                    threshold = 0)
                standardGeneric("transformCounts"))
 
 #' @rdname transformCounts
@@ -284,15 +272,13 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                         "rank", "relabundance"),
              name = method,
              pseudocount = FALSE,
-             threshold = 0,
-             ...){
+             threshold = 0){
         transformSamples(x, 
                        abund_values = abund_values,
                        method = method,
                        name = name,
                        pseudocount = pseudocount,
-                       threshold = threshold,
-                       ...)
+                       threshold = threshold)
     }
 )
 
@@ -390,8 +376,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Input check
     # Check pseudocount
     if(length(pseudocount) != 1L || 
-       !(.is_a_bool(pseudocount) || is.numeric(pseudocount))){
-        stop("'pseudocount' must be TRUE or FALSE or a single numeric value.",
+       !(pseudocount == FALSE || is.numeric(pseudocount))){
+        stop("'pseudocount' must be FALSE or a single numeric value.",
              call. = FALSE)
     } else if(is.numeric(pseudocount)){
         if (method == "relabundance" && pseudocount > 0){
@@ -419,13 +405,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     transformed_table <-
         .get_transformed_table(assay = abund,
                                method = method,
-                               threshold = threshold,
-                               ...)
+                               threshold = threshold)
     return(transformed_table)
 }
 
 # Chooses which transformation function is applied
-.get_transformed_table <- function(assay, method, threshold, ...){
+.get_transformed_table <- function(assay, method, threshold){
     # Function is selected based on the "method" variable
     FUN <- switch(method,
                   relabundance = .calc_rel_abund,
@@ -440,8 +425,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
     do.call(FUN,
             list(mat = assay,
-                 threshold = threshold,
-                 ...))
+                 threshold = threshold))
 }
 
 #' @importFrom DelayedMatrixStats colSums2
@@ -487,25 +471,11 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom DelayedMatrixStats colMeans2
-.calc_clr <- function(mat, apply_rel_trans = TRUE, ...){
-    # Check apply_rel_trans
-    if( !.is_a_bool(apply_rel_trans) ){
-        stop("'apply_rel_trans' must be a boolean value.", call. = FALSE)
-    }
-    # Gives warning if values seem to be apply_rel_trans and apply_rel_trans is FALSE
-    if( all( mat >= 0 & mat <= 1 ) && !apply_rel_trans ){
-        message("Since all the values in the abundance table are between 0 and 1, ",
-                "it looks like the values are relative. \nIf they are, ",
-                "please use 'apply_rel_trans = TRUE'.")
-    }
-    # Perform apply_rel_trans transformation if specified
-    if( apply_rel_trans ){
-        mat <- .calc_rel_abund(mat)
-        message("Relative transformation is applied.")
-    }
-    # If there are negative values, gives an error.
+.calc_clr <- function(mat, ...){
+    mat <- .calc_rel_abund(mat)
+    # If there is negative values, gives an error.
     if (any(mat <= 0, na.rm = TRUE)) {
-        stop("The abundance table contains zero or negative values and ",
+        stop("Abundance table contains zero or negative values and ",
              "clr-transformation is being applied without (suitable) ",
              "pseudocount. \n",
              "Try to add pseudocount (default choice pseudocount = 1 for ",
@@ -513,19 +483,6 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
              "assay).",
              call. = FALSE)
     }
-    # IF there are values over 1, give warning
-    if (any(mat > 1, na.rm = TRUE)) {
-        stop("The abundance table contains values that are greater than 1. ",
-             " Try to apply relative transformation with 'apply_rel_trans = TRUE'.",
-             call. = FALSE)
-    }
-    # If values are relative but some taxa are missing and colSums do not sum to 1
-    if( !( all(mat<=1) && all(mat>0) && all( round(colSums2(mat), 3) == 1) ) ){
-        warning("The values in the abundance table are between [0,1[, but ",
-                " all colSums do not sum to 1. Please check the table.", 
-                call. = FALSE)
-    }
-    
     # In every sample, calculates the log of individual entries. After that calculates
     # the sample-specific mean value and subtracts every entries' value with that.
     clog <- log(mat)
@@ -585,22 +542,9 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 .apply_pseudocount <- function(mat, pseudocount){
-    # IF there are only positive values, pseudocount should not be added
-    only_pos <- all( mat > 0 )
-    if( pseudocount != FALSE && only_pos ) {
-        warning("The abundance table contains only positive values. ",
-                " Pseudocount is not encouraged to apply.", call. = FALSE)
-    } 
-    # IF pseudocount == TRUE, add smallest positive number
-    if( .is_a_bool(pseudocount) && pseudocount ){
-        # Get the smallest positive value
-        pseudocount <- min( mat[ mat > 0 ] )
-        # Give message
-        message("Pseudocount = ", pseudocount, " was added to the abundance table.")
-        mat <- mat + pseudocount
-    # If "pseudocount" is numeric, it is numeric value specified by user. 
+    # If "pseudocount" is not FALSE, it is numeric value specified by user. 
     # Then add pseudocount.
-    } else if( is.numeric(pseudocount) ){
+    if(!pseudocount == FALSE){
         mat <- mat + pseudocount
     }
     return(mat)
