@@ -42,59 +42,45 @@ TreeSE <- function(counts, rowData = NULL, colData = NULL,
     # Check counts
     counts <- .check_counts(counts)
     
-    # If rowSata is provided
+    # If rowData is provided
     if( !is.null(rowData) ){
         # Check rowData
         rowData <- .check_rowdata_and_coldata(rowData)
         # Map rows
-        temp_list <- .map_rows(counts, rowData)
-        counts <- temp_list$counts
-        temp_list$counts <- NULL
-        args <- append(args, temp_list)
+        .map_rows(counts, rowData)
     # If the rowData is not provided
     } else{
         rowData <- S4Vectors::make_zero_col_DFrame(nrow(counts))
         rownames(rowData) <- rownames(counts)
-        temp_list <- list(rowData = rowData)
-        args <- append(args, temp_list)
     }
+    temp_list <- list(rowData = rowData)
+    args <- append(args, temp_list)
     
     if( !is.null(rowTree) && !.is_a_bool(rowTree) ){
         .check_rowTree_and_colTree(rowTree, rowNodeLab)
-        temp_list <- .addRowTree(args[["rowData"]], rowTree, rowNodeLab)
-        args <- append(args, temp_list)
-    } else{
-        rowTree <- NULL
-        rowNodeLab <- NULL
-        temp_list <- list(rowTree = rowTree, rowNodeLab = rowNodeLab)
-        args <- append(args, temp_list)
+        .add_row_tree(args[["rowData"]], rowTree, rowNodeLab)
     }
+    temp_list <- list(rowTree = rowTree, rowNodeLab = rowNodeLab)
+    args <- append(args, temp_list)
     
     if( !is.null(colData) ){
         # Check colData
         colData <- .check_rowdata_and_coldata(colData)
         # Map cols
-        temp_list <- .map_cols(counts, colData, colTree, ...)
-        counts <- temp_list$counts
-        temp_list$counts <- NULL
-        args <- append(args, temp_list)
+        .map_cols(counts, colData, colTree, ...)
     } else{
         colData <- S4Vectors::make_zero_col_DFrame(ncol(counts))
         rownames(colData) <- colnames(counts)
-        temp_list <- list(colData = colData)
-        args <- append(args, temp_list)
     }
+    temp_list <- list(colData = colData)
+    args <- append(args, temp_list)
     
     if( !is.null(colTree) ){
         .check_rowTree_and_colTree(colTree, colNodeLab)
-        temp_list <- .add_colTree(args[["colData"]], colTree, colNodeLab)
-        args <- append(args, temp_list)
-    } else{
-        colTree <- NULL
-        colNodeLab <- NULL
-        temp_list <- list(colTree = colTree, colNodeLab = colNodeLab)
-        args <- append(args, temp_list)
+        .add_col_tree(args[["colData"]], colTree, colNodeLab)
     }
+    temp_list <- list(colTree = colTree, colNodeLab = colNodeLab)
+    args <- append(args, temp_list)
     
     # Create assays list
     assays <- SimpleList(counts = counts)
@@ -194,10 +180,10 @@ TreeSE <- function(counts, rowData = NULL, colData = NULL,
         # Give warning if there are features that are in counts but that are missing
         # from rowData
         if( !is.null(missing_names_counts) ){
-            warning("'counts' included ", length(missing_names_counts), 
+            message("'counts' included ", length(missing_names_counts), 
                            " features that are missing from rowData.", "
                            \nPlease check these features for errors:\n",
-                           paste0(paste0("'", missing_names_counts, "'"), collapse = " and "), call. = FALSE)
+                           paste0(paste0("'", missing_names_counts, "'"), collapse = " and "))
             
         }
         
@@ -210,21 +196,18 @@ TreeSE <- function(counts, rowData = NULL, colData = NULL,
         }
         # Give warning if there were additional feature in rowData
         if( !is.null(missing_names_rowdata) ){
-            warning("'rowData' included ", length(missing_names_rowdata), 
-                    " additional festures that are removed. \nPlease check these features for errors:\n",
-                    paste0(paste0("'", missing_names_rowdata, "'"), collapse = ", "), call. = FALSE)
+            message("'rowData' included ", length(missing_names_rowdata), 
+                    " additional features. \nPlease check these features for errors:\n",
+                    paste0(paste0("'", missing_names_rowdata, "'"), collapse = ", "))
         }
         
-        # If there were not additional features
         if( is.null(missing_names_counts) && is.null(missing_names_rowdata) ){
-            warning("'rowData' is ordered based on 'counts'!", call. = FALSE)
+            message("Feature names between 'counts' and 'rowData' are in different order.")
         }
-        # Order rowData based on counts
-        rowData <- rowData[ mapping_counts, ]
-        rownames(rowData) <- rownames(counts)
+        # Give error
+        stop("'rownames' do no not match!", call. = FALSE)
     }
-    result_list <- list(counts = counts, rowData = rowData)
-    return(result_list)
+    return(TRUE)
 }
 
 
@@ -232,27 +215,20 @@ TreeSE <- function(counts, rowData = NULL, colData = NULL,
 .add_row_tree <- function(rowData, rowTree, rowNodeLab){
     # Check if rowNodeLab match
     if( !is.null(rowNodeLab) ){
-        if( length(rowNodeLab) == nrow(rowData) && 
-            length(rowNodeLab) == length(rowTree$tip.label )){
-            warning("'rowNodeLabs' do not match with the number of features ",
-                    "in 'counts' or it is not a vector. ", 
-                    "'rowTree' is not added.", call. = FALSE)
-            rowTree <- NULL
-            rowNodeLab <- NULL
+        if( ! (length(rowNodeLab) == nrow(rowData) && 
+            all(rowNodeLab %in% rowTree$tip.label) )){
+            message("'rowNodeLabs' do not match with the number of features ",
+                    "or labels cannot be found from the 'rowTree'")
+        } else{
+            return(TRUE)
         }
-        # Check node labels if they match
-    } else if( !all(rownames(rowData) %in% rowTree$tip.label) ){
-        warning("Not all features in 'rowTree' are included in 'counts'. ", 
-                "'rowTree' is not added.", call. = FALSE)
-        # Do not add rowTree
-        rowTree <- NULL
-        rowNodeLab <- NULL
+    # Check node labels if they match
+    } else if( !( all(rownames(rowData) %in% rowTree$tip.label) ) ){
+        message("'rowTree' do not include all the features of 'rowData'.")
     } else{
-        # Ensure that the order is correct
-        rowNodeLab <- rowTree$tip.label[match(rownames(rowData) == rowTree$tip.label) ]
+        return(TRUE)
     }
-    result_list <- list(rowTree = rowTree, rowNodeLab = rowNodeLab)
-    return(result_list)
+    stop("'rowTree' does not match with features.", call. = FALSE)
 }
 
 .map_cols <- function(counts, colData, colTree, colNodeLab = NULL, ...){
@@ -268,10 +244,10 @@ TreeSE <- function(counts, rowData = NULL, colData = NULL,
         
         
         if( !is.null(missing_names_counts) ){
-            warning("'counts' included ", length(missing_names_counts), 
+            message("'counts' included ", length(missing_names_counts), 
                            " samples that are missing from colData.", 
                     "\nPlease check these samples for errors:\n",
-                    paste0(paste0("'", missing_names_counts, "'"), collapse = " and "), call. = FALSE)
+                    paste0(paste0("'", missing_names_counts, "'"), collapse = " and "))
             
         }
         
@@ -284,48 +260,35 @@ TreeSE <- function(counts, rowData = NULL, colData = NULL,
         }
         
         if( !is.null(missing_names_coldata) ){
-            warning("'colData' included ", length(missing_names_coldata), 
-                           " additional samples that are removed. \nPlease check these samples for errors:\n",
-                           paste0(paste0("'", missing_names_coldata, "'"), collapse = ", "), call. = FALSE)
+            message("'colData' included ", length(missing_names_coldata), 
+                           " additional samples. \nPlease check these samples for errors:\n",
+                           paste0(paste0("'", missing_names_coldata, "'"), collapse = ", "))
             
         }
-        
-        if( is.null(missing_names_counts) && is.null(missing_names_coldata) ){
-            warning("'colData' is ordered based on 'counts'!", call. = FALSE)
+        if( is.null(missing_names_counts) && is.null(missing_names_colData) ){
+            message("sample names between 'counts' and 'colData' are in different order.")
         }
-        
-        # Order colData based on counts
-        colData <- colData[ mapping_counts, ]
-        rownames(colData) <- colnames(counts)
+        # Give error
+        stop("'colnames' do no not match!", call. = FALSE)
     }
-    result_list <- list(counts = counts, colData = colData)
-    return(result_list)
+    return(TRUE)
 }
 
 .add_col_tree <- function(colData, colTree, colNodeLab){
     # Check if colNodeLab match
     if( !is.null(colNodeLab) ){
         if( length(colNodeLab) == rownames(colData) && 
-            length(colNodeLab) == length(colTree$tip.label )){
-            warning("'colNodeLabs' do not match with the number of samples ",
-                    "in 'counts' or it is not a vector. ", 
-                    "'colTree' is not added.", call. = FALSE)
-            colTree <- NULL
-            colNodeLab <- NULL
+            all(colNodeLab %in% colTree$tip.label )){
+            message("'colNodeLabs' do not match with the number of samples ",
+                    "or labels cannot be found from the 'colTree'.")
         }
     }
     # Check node labels if they match
-    if( !all(rownames(colData) %in% colTree$tip.label) ){
-        warning("Not all samples in 'colTree' are included in 'counts'. ", 
-                "'colTree' is not added.", call. = FALSE)
-        # Do not add colTree
-        colTree <- NULL
-        colNodeLab <- NULL
+    if( !( all(rownames(colData) %in% colTree$tip.label) ) ){
+        message("'colTree' does not include all the samples of 'colData'.")
     } else{
-        # Ensure that the order is correct
-        colNodeLab <- colTree$tip.label[ match(rownames(colData) == colTree$tip.label) ]
+        return(TRUE)
     }
-    result_list <- list(colTree = colTree, colNodeLab = colNodeLab)
-    return(result_list)
+    stop("'colTree' does not match with samples.", call. = FALSE)
 }
 
