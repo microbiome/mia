@@ -21,10 +21,8 @@
 #' @param name A single character value specifying the name of transformed
 #'   abundance table.
 #'
-#' @param pseudocount FALSE or numeric value deciding whether pseudocount is
-#'   added. Numerical value specifies the value of pseudocount. (Only used for 
-#'   methods \code{method = "clr"}, \code{method = "hellinger"}, or
-#'   \code{method = "log10"})
+#' @param pseudocount NULL or numeric value deciding whether pseudocount is
+#'   added. Numerical value specifies the value of pseudocount.
 #'
 #' @param threshold A numeric value for setting threshold for pa transformation.
 #'   By default it is 0. (Only used for \code{method = "pa"})
@@ -203,7 +201,7 @@ setGeneric("transformSamples", signature = c("x"),
                     method = c("clr", "rclr", "hellinger", "log10", "pa", 
                                "rank", "relabundance"),
                     name = method,
-                    pseudocount = FALSE,
+                    pseudocount = NULL,
                     threshold = 0)
                     standardGeneric("transformSamples"))
 
@@ -216,7 +214,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
             method = c("clr", "rclr", "hellinger", "log10", "pa", 
                        "rank", "relabundance"),
             name = method,
-            pseudocount = FALSE,
+            pseudocount = NULL,
             threshold = 0){
         # Input check
         # Check abund_values
@@ -256,7 +254,7 @@ setGeneric("transformCounts", signature = c("x"),
                     method = c("clr", "rclr", "hellinger", "log10", "pa", 
                                "rank", "relabundance"),
                     name = method,
-                    pseudocount = FALSE,
+                    pseudocount = NULL,
                     threshold = 0)
                standardGeneric("transformCounts"))
 
@@ -269,7 +267,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
              method = c("clr", "rclr", "hellinger", "log10", "pa", 
                         "rank", "relabundance"),
              name = method,
-             pseudocount = FALSE,
+             pseudocount = NULL,
              threshold = 0){
         transformSamples(x, 
                        abund_values = abund_values,
@@ -289,7 +287,7 @@ setGeneric("transformFeatures", signature = c("x"),
                     abund_values = "counts",
                     method = c("log10", "pa", "z"),
                     name = method,
-                    pseudocount = FALSE,
+                    pseudocount = NULL,
                     threshold = 0)
                standardGeneric("transformFeatures"))
 
@@ -300,7 +298,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
              abund_values = "counts",
              method = c("log10", "pa", "z"),
              name = method,
-             pseudocount = FALSE,
+             pseudocount = NULL,
              threshold = 0){
         # Input check
         # Check abund_values
@@ -374,22 +372,10 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Input check
     # Check pseudocount
     if(length(pseudocount) != 1L || 
-       !(pseudocount == FALSE || is.numeric(pseudocount))){
-        stop("'pseudocount' must be FALSE or a single numeric value.",
+       !( is.null(pseudocount) || is.numeric(pseudocount))){
+        stop("'pseudocount' must be NULL or a single numeric value.",
              call. = FALSE)
-    } else if(is.numeric(pseudocount)){
-        if(  all(mat >= 0) && all(mat <= 1) && pseudocount > 0 ){
-            warning("The abundance table vary in [0, 1]; adding a ",
-                    "pseudocount > 1 on relabundance will cause ",
-                    "non-sensicale results. Recommended to cross-check ",
-                    "that the pseudocount choice is correct and intended.",
-                    call. = FALSE)
-        }
-        # If pseudocount is 0, do not apply it
-        if( pseudocount == 0 ){
-            pseudocount <- FALSE
-        }
-    }
+    } 
     # Check threshold
     if(!is.numeric(threshold)){
         stop("'threshold' must be a numeric value, and it can be used ",
