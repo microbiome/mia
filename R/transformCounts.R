@@ -378,14 +378,15 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
         stop("'pseudocount' must be FALSE or a single numeric value.",
              call. = FALSE)
     } else if(is.numeric(pseudocount)){
-        if (method == "relabundance" && pseudocount > 0){
-            warning("Relative abundances vary in [0, 1]; adding a ",
-                    "pseudocount > 0 on relabundance will cause ",
+        if(  all(mat >= 0) && all(mat <= 1) && pseudocount > 1){
+            warning("The abundance table vary in [0, 1]; adding a ",
+                    "pseudocount > 1 on relabundance will cause ",
                     "non-sensicale results. Recommended to cross-check ",
                     "that the pseudocount choice is correct and intended.",
                     call. = FALSE)
         }
-        if(pseudocount == 0){
+        # If pseudocount is 0, do not apply it
+        if( pseudocount == 0 ){
             pseudocount <- FALSE
         }
     }
@@ -397,8 +398,10 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     }
     # Input check end
     
-    # apply pseudocount
-    abund <- .apply_pseudocount(assay, pseudocount)
+    # apply pseudocount, if it is numeric
+    if( is.numeric(pseudocount) ){
+        abund <- .apply_pseudocount(assay, pseudocount)
+    }
     # Get transformed table
     transformed_table <-
         .get_transformed_table(assay = abund,
@@ -555,14 +558,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 .apply_pseudocount <- function(mat, pseudocount){
+    # Give warning if pseudocount should not be added
     if( all(mat>0) ){
         warning("The abundance table contains only positive values. ",
-                "A pseudocount is not ecnouraged to apply.", call. = FALSE)
+                "A pseudocount is not encouraged to apply.", call. = FALSE)
     }
-    # If "pseudocount" is not FALSE, it is numeric value specified by user. 
-    # Then add pseudocount.
-    if( is.numeric(pseudocount) ){
-        mat <- mat + pseudocount
-    }
+    # Add pseudocount.
+    mat <- mat + pseudocount
     return(mat)
 }
