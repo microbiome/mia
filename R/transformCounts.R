@@ -386,11 +386,11 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     
     # apply pseudocount, if it is numeric
     if( is.numeric(pseudocount) ){
-        abund <- .apply_pseudocount(assay, pseudocount)
+        assay <- .apply_pseudocount(assay, pseudocount)
     }
     # Get transformed table
     transformed_table <-
-        .get_transformed_table(assay = abund,
+        .get_transformed_table(assay = assay,
                                method = method,
                                threshold = threshold)
     return(transformed_table)
