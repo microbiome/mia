@@ -122,11 +122,11 @@ applies transformation to abundance table. Provided transformation methods inclu
 \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
 skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
 
-\deqn{clr = log_{10}\frac{x_{r}}{g(x_{r})} = log_{10}x_{r} - log_{10}µ_{r}}{%
-clr = log10(x_r/g(x_r)) = log10 x_r - log10 µ_r}
-where \eqn{x_{r}} is a single relative value, g(x_{r}) is geometric mean of
-sample-wide relative values, and \eqn{\mu_{r}} is arithmetic mean of
-sample-wide relative values".}
+\deqn{clr = log_{10}\frac{x{g(x)}} = log_{10}x - log_{10}\mu}{%
+clr = log10(x/g(x)) = log10 x - log10 µ}
+where \eqn{x} is a single value, g(x) is geometric mean of
+sample-wise values, and \eqn{\mu} is arithmetic mean of
+sample-wise values".}
 
 \item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
 clr is that logarithmic transformations lead to undefined values when zeros
@@ -138,10 +138,10 @@ Because of high-dimensionality of data, rclr's geometric mean of
 observed taxa is a good approximation to the true geometric mean.
 (See e.g. Martino et al. 2019.)
 
-\deqn{rclr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
-rclr = log10(x_r/g(x_r > 0))}
-where \eqn{x_{r}} is a single relative value, and g(x_{r} > 0) is geometric
-mean of sample-wide relative values that are over 0".}
+\deqn{rclr = log_{10}\frac{x{g(x > 0)}}}{%
+rclr = log10(x/g(x > 0))}
+where \eqn{x} is a single value, and g(x > 0) is geometric
+mean of sample-wide values that are over 0".}
 
 \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 extreme data points. It can be utilize for clustering or ordination analysis.
@@ -202,7 +202,6 @@ head(assay(x, "clr"))
 x <- transformSamples(x, method="relabundance")
 x <- transformSamples(x, method="clr", abund_values="relabundance", 
                         pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
-x2 <- transformSamples(x, method="clr", abund_values="counts", pseudocount = 1)
 head(assay(x, "clr"))
 
 # Different pseudocounts used by default for counts and relative abundances
@@ -210,7 +209,6 @@ x <- transformSamples(x, method="relabundance")
 mat <- assay(x, "relabundance"); 
 pseudonumber <- min(mat[mat>0])
 x <- transformSamples(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
-x <- transformSamples(x, method="clr", abund_values = "counts", pseudocount=1)
 
 # Name of the stored table can be specified.
 x <- transformSamples(x, method="hellinger", name="test")

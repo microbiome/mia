@@ -40,11 +40,11 @@
 #' \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
 #' skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
 #'
-#' \deqn{clr = log_{10}\frac{x_{r}}{g(x_{r})} = log_{10}x_{r} - log_{10}µ_{r}}{%
-#' clr = log10(x_r/g(x_r)) = log10 x_r - log10 µ_r}
-#' where \eqn{x_{r}} is a single relative value, g(x_{r}) is geometric mean of
-#' sample-wide relative values, and \eqn{\mu_{r}} is arithmetic mean of 
-#' sample-wide relative values".}
+#' \deqn{clr = log_{10}\frac{x{g(x)}} = log_{10}x - log_{10}\mu}{%
+#' clr = log10(x/g(x)) = log10 x - log10 µ}
+#' where \eqn{x} is a single value, g(x) is geometric mean of
+#' sample-wise values, and \eqn{\mu} is arithmetic mean of 
+#' sample-wise values".}
 #' 
 #' \item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
 #' clr is that logarithmic transformations lead to undefined values when zeros
@@ -56,10 +56,10 @@
 #' observed taxa is a good approximation to the true geometric mean.
 #' (See e.g. Martino et al. 2019.)
 #'
-#' \deqn{rclr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
-#' rclr = log10(x_r/g(x_r > 0))}
-#' where \eqn{x_{r}} is a single relative value, and g(x_{r} > 0) is geometric 
-#' mean of sample-wide relative values that are over 0".}
+#' \deqn{rclr = log_{10}\frac{x{g(x > 0)}}}{%
+#' rclr = log10(x/g(x > 0))}
+#' where \eqn{x} is a single value, and g(x > 0) is geometric 
+#' mean of sample-wide values that are over 0".}
 #' 
 #' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 #' extreme data points. It can be utilize for clustering or ordination analysis.
@@ -145,7 +145,6 @@
 #' x <- transformSamples(x, method="relabundance")
 #' x <- transformSamples(x, method="clr", abund_values="relabundance", 
 #'                         pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
-#' x2 <- transformSamples(x, method="clr", abund_values="counts", pseudocount = 1)
 #' head(assay(x, "clr"))
 #'
 #' # Different pseudocounts used by default for counts and relative abundances
@@ -153,7 +152,6 @@
 #' mat <- assay(x, "relabundance"); 
 #' pseudonumber <- min(mat[mat>0])
 #' x <- transformSamples(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
-#' x <- transformSamples(x, method="clr", abund_values = "counts", pseudocount=1)
 #'
 #' # Name of the stored table can be specified.
 #' x <- transformSamples(x, method="hellinger", name="test")
@@ -472,17 +470,21 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom DelayedMatrixStats colSums2 colMeans2
 .calc_clr <- function(mat, ...){
-    colsums <- colSums2(mat)
-    if( abs(max(colsums)-min(colsums) < 0.001) ){
+    # Calculate colSums
+    colsums <- colSums2(mat, na.rm = TRUE)
+    # Check that they are equal; affects the result of CLR. CLR expectcs a fixed
+    # constant, but it can be any number
+    if( abs(max(colsums)-min(colsums)) < 0.001 ){
         warning("All the total abundances of samples do not sum-up to a fixed constant. ",
                 "Please consider to apply, e.g., relative transformation.", 
                 call. = FALSE)
     }
     # If there is negative values, gives an error.
-    if (any(mat <= 0, na.rm = TRUE)) {
+    if(any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
-             "clr-transformation is being applied without (suitable) ",
-             "pseudocount. Try to add pseudocount:",
+             "log10 transformation is being applied without pseudocount.\n",
+             "Try to add pseudocount (default choice pseudocount = 1 for count ",
+             "assay; or pseudocount = min(x[x>0]) for relabundance assay).",
              call. = FALSE)
     }
     # In every sample, calculates the log of individual entries. After that calculates
@@ -493,25 +495,34 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-#' @importFrom DelayedMatrixStats colMeans2
+#' @importFrom DelayedMatrixStats colSums2 colMeans2
 .calc_rclr <- function(mat, ...){
-   # Performs logarithmic transform
-   log_mat <- log(mat)
-   # If there are zeros, they are converted into infinite values. 
-   # They are converted to NAs.
-   log_mat[is.infinite(log_mat)] <- NA
-   # Calculates means for every sample, does not take NAs into account
-   mean_log_mat <- colMeans2(log_mat, na.rm = TRUE)
-   # Calculates exponential values from means, i.e., geometric means
-   geometric_means_of_samples <- exp(mean_log_mat)
-   # Divides all values by their sample-wide geometric means
-   values_divided_by_geom_mean <- t(mat)/geometric_means_of_samples
-   # Does logarithmic transform and transposes the table back to its original form
-   return_mat <- t(log(values_divided_by_geom_mean))
-   # If there were zeros, there are infinite values after logarithmic transform. 
-   # They are converted to zero.
-   return_mat[is.infinite(return_mat)] <- 0
-   return(return_mat)
+    # Calculate colSums
+    colsums <- colSums2(mat, na.rm = TRUE)
+    # Check that they are equal; affects the result of CLR. CLR expectcs a fixed
+    # constant, but it can be any number
+    if( abs(max(colsums)-min(colsums)) < 0.001 ){
+        warning("All the total abundances of samples do not sum-up to a fixed constant. ",
+                "Please consider to apply, e.g., relative transformation.", 
+                call. = FALSE)
+    }
+    # Performs logarithmic transform
+    log_mat <- log(mat)
+    # If there are zeros, they are converted into infinite values. 
+    # They are converted to NAs.
+    log_mat[is.infinite(log_mat)] <- NA
+    # Calculates means for every sample, does not take NAs into account
+    mean_log_mat <- colMeans2(log_mat, na.rm = TRUE)
+    # Calculates exponential values from means, i.e., geometric means
+    geometric_means_of_samples <- exp(mean_log_mat)
+    # Divides all values by their sample-wide geometric means
+    values_divided_by_geom_mean <- t(mat)/geometric_means_of_samples
+    # Does logarithmic transform and transposes the table back to its original form
+    return_mat <- t(log(values_divided_by_geom_mean))
+    # If there were zeros, there are infinite values after logarithmic transform. 
+    # They are converted to zero.
+    return_mat[is.infinite(return_mat)] <- 0
+    return(return_mat)
 }
 
 #' @importFrom DelayedMatrixStats colRanks
