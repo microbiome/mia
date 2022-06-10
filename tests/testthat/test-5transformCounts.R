@@ -32,6 +32,7 @@ test_that("transformCounts", {
 
         # Pseudocount is a string. Should be an error.
         expect_error(mia::transformCounts(tse, method="relabundance", pseudocount = "pseudocount"))
+        expect_error(mia::transformCounts(tse, method="relabundance", pseudocount = FALSE))
 
         # Counts table should not be changed
         expect_equal(assays(mia::transformCounts(tse, method = "pa"))$counts, assays(tse)$counts)

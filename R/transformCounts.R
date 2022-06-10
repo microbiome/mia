@@ -371,8 +371,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .apply_transformation <- function(assay, method, pseudocount, threshold, ...){
     # Input check
     # Check pseudocount
-    if(length(pseudocount) != 1L || 
-       !( is.null(pseudocount) || is.numeric(pseudocount))){
+    if( !( is.null(pseudocount) || 
+           (length(pseudocount) != 1L && is.numeric(pseudocount)) ) ){
         stop("'pseudocount' must be NULL or a single numeric value.",
              call. = FALSE)
     } 
@@ -465,7 +465,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # constant, but it can be any number
     if( abs(max(colsums)-min(colsums)) < 0.001 ){
         warning("All the total abundances of samples do not sum-up to a fixed constant. ",
-                "Please consider to apply, e.g., relative transformation.", 
+                "Please consider to apply, e.g., relative transformation in prior to ",
+                "CLR transformation.",
                 call. = FALSE)
     }
     # If there is negative values, gives an error.
@@ -488,11 +489,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .calc_rclr <- function(mat, ...){
     # Calculate colSums
     colsums <- colSums2(mat, na.rm = TRUE)
-    # Check that they are equal; affects the result of CLR. CLR expectcs a fixed
+    # Check that they are equal; affects the result of CLR. CLR expects a fixed
     # constant, but it can be any number
     if( abs(max(colsums)-min(colsums)) < 0.001 ){
         warning("All the total abundances of samples do not sum-up to a fixed constant. ",
-                "Please consider to apply, e.g., relative transformation.", 
+                "Please consider to apply, e.g., relative transformation in prior to ",
+                "CLR transformation.",
                 call. = FALSE)
     }
     # Performs logarithmic transform
