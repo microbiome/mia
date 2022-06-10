@@ -144,10 +144,8 @@ test_that("transformCounts", {
         pseudonumber <- runif(1, 1, 100)
 
         # Calculates relative abundance table
-        relative <- expect_warning(assay(mia::transformCounts(tse, method = "relabundance", pseudocount = pseudonumber),
-                                         "relabundance"),
-                                   "Relative abundances vary")
-        
+        relative <- assay(mia::transformCounts(tse, method = "relabundance", pseudocount = pseudonumber),
+                                         "relabundance")
         # Tests clr
         expect_equal(
             as.matrix(assays(mia::transformCounts(tse, method = "clr", pseudocount = pseudonumber))$clr),

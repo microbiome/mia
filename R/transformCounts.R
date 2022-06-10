@@ -372,7 +372,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Input check
     # Check pseudocount
     if( !( is.null(pseudocount) || 
-           (length(pseudocount) != 1L && is.numeric(pseudocount)) ) ){
+           (length(pseudocount) == 1L && is.numeric(pseudocount)) ) ){
         stop("'pseudocount' must be NULL or a single numeric value.",
              call. = FALSE)
     } 
