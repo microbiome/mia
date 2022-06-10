@@ -18,7 +18,7 @@ transformSamples(
   abund_values = "counts",
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
-  pseudocount = FALSE,
+  pseudocount = NULL,
   threshold = 0
 )
 
@@ -27,7 +27,7 @@ transformSamples(
   abund_values = "counts",
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
-  pseudocount = FALSE,
+  pseudocount = NULL,
   threshold = 0
 )
 
@@ -36,7 +36,7 @@ transformCounts(
   abund_values = "counts",
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
-  pseudocount = FALSE,
+  pseudocount = NULL,
   threshold = 0
 )
 
@@ -45,7 +45,7 @@ transformCounts(
   abund_values = "counts",
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
-  pseudocount = FALSE,
+  pseudocount = NULL,
   threshold = 0
 )
 
@@ -54,7 +54,7 @@ transformFeatures(
   abund_values = "counts",
   method = c("log10", "pa", "z"),
   name = method,
-  pseudocount = FALSE,
+  pseudocount = NULL,
   threshold = 0
 )
 
@@ -63,7 +63,7 @@ transformFeatures(
   abund_values = "counts",
   method = c("log10", "pa", "z"),
   name = method,
-  pseudocount = FALSE,
+  pseudocount = NULL,
   threshold = 0
 )
 
@@ -90,10 +90,8 @@ method.}
 \item{name}{A single character value specifying the name of transformed
 abundance table.}
 
-\item{pseudocount}{FALSE or numeric value deciding whether pseudocount is
-added. Numerical value specifies the value of pseudocount. (Only used for
-methods \code{method = "clr"}, \code{method = "hellinger"}, or
-\code{method = "log10"})}
+\item{pseudocount}{NULL or numeric value deciding whether pseudocount is
+added. The numeric value specifies the value of pseudocount.}
 
 \item{threshold}{A numeric value for setting threshold for pa transformation.
 By default it is 0. (Only used for \code{method = "pa"})}
@@ -120,7 +118,13 @@ applies transformation to abundance table. Provided transformation methods inclu
 \itemize{
 
 \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
-skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
+skewness of data and for centering it. clr expects that sample-wise sums
+are equal. That is why usually , e.g., relative transformation is applied
+before clr.
+
+If the data contains zeros, pseudocount (commonly the smallest
+positive value of the data) must be added since clr is logarithmic transformation.
+(See e.g. Gloor et al. 2017.)
 
 \deqn{clr = log_{10}\frac{x{g(x)}} = log_{10}x - log_{10}\mu}{%
 clr = log10(x/g(x)) = log10 x - log10 µ}
@@ -192,24 +196,22 @@ where \eqn{x} is a single value, \eqn{\mu} is the mean of the feature, and
 data(esophagus)
 x <- esophagus
 
-# By specifying, it is possible to apply different transformations, e.g. clr transformation.
+# By specifying 'method', it is possible to apply different transformations, 
+# e.g. compositional transformation.
+x <- transformSamples(x, method="relabundance")
+
+# The target of transformation can be specified with "abund_values"
 # Pseudocount can be added by specifying 'pseudocount'.
-x <- transformSamples(x, method="clr", pseudocount=1)
-head(assay(x, "clr"))
 
-# Also, the target of transformation
-# can be specified with "abund_values".
-x <- transformSamples(x, method="relabundance")
-x <- transformSamples(x, method="clr", abund_values="relabundance", 
-                        pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
-head(assay(x, "clr"))
-
-# Different pseudocounts used by default for counts and relative abundances
-x <- transformSamples(x, method="relabundance")
-mat <- assay(x, "relabundance"); 
+# Get pseudocount; here smallest positive value
+mat <- assay(x, "relabundance") 
 pseudonumber <- min(mat[mat>0])
-x <- transformSamples(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
-
+# Perform CLR
+x <- transformSamples(x, abund_values="relabundance", method = "clr", 
+                      pseudocount = pseudonumber
+                      )
+head(assay(x, "clr"))
+.
 # Name of the stored table can be specified.
 x <- transformSamples(x, method="hellinger", name="test")
 head(assay(x, "test"))
