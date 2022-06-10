@@ -459,16 +459,6 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom DelayedMatrixStats colSums2 colMeans2
 .calc_clr <- function(mat, ...){
-    # Calculate colSums
-    colsums <- colSums2(mat, na.rm = TRUE)
-    # Check that they are equal; affects the result of CLR. CLR expectcs a fixed
-    # constant, but it can be any number
-    if( abs(max(colsums)-min(colsums)) < 0.001 ){
-        warning("All the total abundances of samples do not sum-up to a fixed constant. ",
-                "Please consider to apply, e.g., relative transformation in prior to ",
-                "CLR transformation.",
-                call. = FALSE)
-    }
     # If there is negative values, gives an error.
     if(any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
@@ -476,6 +466,16 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
              "Try to add pseudocount (default choice pseudocount = 1 for count ",
              "assay; or pseudocount = min(x[x>0]) for relabundance assay).",
              call. = FALSE)
+    }
+    # Calculate colSums
+    colsums <- colSums2(mat, na.rm = TRUE)
+    # Check that they are equal; affects the result of CLR. CLR expectcs a fixed
+    # constante
+    if( round(max(colsums)-min(colsums), 3) != 0  ){
+        warning("All the total abundances of samples do not sum-up to a fixed constant. ",
+                "Please consider to apply, e.g., relative transformation in prior to ",
+                "CLR transformation.",
+                call. = FALSE)
     }
     # In every sample, calculates the log of individual entries. After that calculates
     # the sample-specific mean value and subtracts every entries' value with that.
@@ -490,8 +490,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Calculate colSums
     colsums <- colSums2(mat, na.rm = TRUE)
     # Check that they are equal; affects the result of CLR. CLR expects a fixed
-    # constant, but it can be any number
-    if( abs(max(colsums)-min(colsums)) < 0.001 ){
+    # constant
+    if( round(max(colsums)-min(colsums), 3) != 0 ){
         warning("All the total abundances of samples do not sum-up to a fixed constant. ",
                 "Please consider to apply, e.g., relative transformation in prior to ",
                 "CLR transformation.",
