@@ -378,7 +378,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
         stop("'pseudocount' must be FALSE or a single numeric value.",
              call. = FALSE)
     } else if(is.numeric(pseudocount)){
-        if(  all(mat >= 0) && all(mat <= 1) && pseudocount > 1){
+        if(  all(mat >= 0) && all(mat <= 1) && pseudocount > ){
             warning("The abundance table vary in [0, 1]; adding a ",
                     "pseudocount > 1 on relabundance will cause ",
                     "non-sensicale results. Recommended to cross-check ",
