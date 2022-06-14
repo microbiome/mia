@@ -30,8 +30,8 @@
 #'   See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
 #'
 #' @return
-#' For \code{splitByRanks}: \code{x}, with objects of \code{x} agglomerated for
-#' selected ranks as \code{altExps}.
+#' For \code{splitByRanks}: \code{SummarizedExperiment} objects in a 
+#' \code{SimpleList}.
 #'
 #' For \code{unsplitByRanks}: \code{x}, with \code{rowData} and \code{assay}
 #' data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -56,6 +56,8 @@
 #' the \code{colData} of the base object is kept. 
 #'
 #' @seealso
+#' \code{\link[=splitOn]{splitOn}}
+#' \code{\link[=unsplitOn]{unsplitOn}}
 #' \code{\link[=merge-methods]{mergeRows}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
@@ -157,8 +159,43 @@ setGeneric("unsplitByRanks",
                standardGeneric("unsplitByRanks"))
 
 
+#' @importFrom SingleCellExperiment reducedDims
+#' @importFrom SummarizedExperiment colData
+.unsplit_by <- function(x, ses, keep_reducedDims, ...){
+    class_x <- class(x)
+    #
+    args <- list(assays = .unsplit_assays(ses),
+                 colData = colData(x))
+    if(keep_reducedDims){
+        args$reducedDims <- reducedDims(x)
+    }
+    rd <- .combine_rowData(ses)
+    rr <- .combine_rowRanges(ses)
+    args$rowRanges <- rr
+    ans <- do.call(class_x, args)
+    rowData(ans) <- rd
+    ans
+}
+
+#' @importFrom SingleCellExperiment altExpNames altExp altExps
+.unsplit_by_ranks <- function(x, ranks, keep_reducedDims, ...){
+    ae_names <- altExpNames(x)
+    ae_names <- ae_names[ae_names %in% ranks]
+    if(length(ae_names) == 0L){
+        stop("No altExp matching 'ranks' in name.", call. = FALSE)
+    }
+    ses <- altExps(x)[ae_names]
+    # remove any empty information on the given ranks
+    for(i in seq_along(ses)){
+        ses[[i]] <-
+            .remove_with_empty_taxonomic_info(ses[[i]], names(ses)[i], NA)
+    }
+    ans <- .unsplit_by(x, ses, keep_reducedDims, ...)
+    rownames(ans) <- getTaxonomyLabels(ans, make_unique = FALSE)
+    ans
+}
+
 #' @rdname splitByRanks
-#' @importFrom SingleCellExperiment altExpNames altExp altExps reducedDims
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
     function(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...){
@@ -167,36 +204,12 @@ setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
           stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
         }
         #
-        class_x <- class(x)
-        ae_names <- altExpNames(x)
-        ae_names <- ae_names[ae_names %in% ranks]
-        if(length(ae_names) == 0L){
-          stop("No altExp matching 'ranks' in name.", call. = FALSE)
-        }
-        ses <- altExps(x)[ae_names]
-        # remove any empty information on the given ranke
-        for(i in seq_along(ses)){
-          ses[[i]] <-
-              .remove_with_empty_taxonomic_info(ses[[i]], names(ses)[i], NA)
-        }
-        #
-        args <- list(assays = .unsplit_assays(ses),
-                   colData = colData(x))
-        if(keep_reducedDims){
-          args$reducedDims <- reducedDims(x)
-        }
-        rd <- .combine_rowData(ses)
-        rr <- .combine_rowRanges(ses)
-        args$rowRanges <- rr
-        ans <- do.call(class_x, args)
-        rowData(ans) <- rd
-        rownames(ans) <- getTaxonomyLabels(ans, make_unique = FALSE)
-        ans
+        .unsplit_by_ranks(x, ranks = ranks, keep_reducedDims = keep_reducedDims,
+                          ...)
     }
 )
 
 #' @rdname splitByRanks
-#' @importFrom SingleCellExperiment altExpNames altExp altExps reducedDims
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
     function(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...){
@@ -217,20 +230,23 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
     assay
 }
 
-#' @importFrom BiocGenerics rbind
-.combine_assays <- function(ses, assay_name){
+#' @importFrom BiocGenerics rbind cbind
+.combine_assays <- function(ses, assay_name, MARGIN = 1L){
+    bind_FUN <- switch(MARGIN, "1" = rbind, "2" = cbind)
     current <- lapply(ses, .get_assay, assay_name)
-    combined <- do.call(rbind, current)
+    combined <- do.call(bind_FUN, current)
     rownames(combined) <- NULL
     colnames(combined) <- NULL
     combined
 }
 
 #' @importFrom SummarizedExperiment assayNames assay
-.unsplit_assays <- function(ses) {
+.unsplit_assays <- function(ses, MARGIN = 1L) {
     assay_names <- unique(unlist(lapply(ses, assayNames)))
-    combined <- lapply(assay_names, .combine_assays,
-                       ses = ses)
+    combined <- lapply(assay_names,
+                       .combine_assays,
+                       ses = ses,
+                       MARGIN = MARGIN)
     names(combined) <- assay_names
     combined
 }

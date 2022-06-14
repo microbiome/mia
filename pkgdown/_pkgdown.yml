@@ -6,6 +6,7 @@ reference:
   - agglomerateByRank
   - mergeRows
   - splitByRanks
+  - splitOn
 - subtitle: Transformation
 - contents:
   - transformCounts
