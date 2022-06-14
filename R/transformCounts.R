@@ -41,13 +41,13 @@
 #' before clr. 
 #' 
 #' If the data contains zeros, pseudocount (commonly the smallest 
-#' positive value of the data) must be added since clr is logarithmic transformation.
+#' positive value of the data) must be added since clr is a logarithmic transformation.
 #'  (See e.g. Gloor et al. 2017.)
 #'
 #' \deqn{clr = log_{10}\frac{x{g(x)}} = log_{10}x - log_{10}\mu}{%
 #' clr = log10(x/g(x)) = log10 x - log10 µ}
-#' where \eqn{x} is a single value, g(x) is geometric mean of
-#' sample-wise values, and \eqn{\mu} is arithmetic mean of 
+#' where \eqn{x} is a single value, g(x) is a geometric mean of
+#' sample-wise values, and \eqn{\mu} is an arithmetic mean of 
 #' sample-wise values".}
 #' 
 #' \item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
@@ -473,8 +473,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     }
     # Calculate colSums
     colsums <- colSums2(mat, na.rm = TRUE)
-    # Check that they are equal; affects the result of CLR. CLR expectcs a fixed
-    # constante
+    # Check that they are equal; affects the result of CLR. CLR expects a fixed
+    # constant
     if( round(max(colsums)-min(colsums), 3) != 0  ){
         warning("All the total abundances of samples do not sum-up to a fixed constant. ",
                 "Please consider to apply, e.g., relative transformation in prior to ",
