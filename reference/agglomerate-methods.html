@@ -19,7 +19,7 @@ taxonomyRanks can be used."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -80,22 +80,32 @@ to certain taxonomic ranks given as <code>rowData</code>. Only available
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object</p></dd>
+
+
 <dt>rank</dt>
 <dd><p>a single character defining a taxonomic rank. Must be a value of
 <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
+
+
 <dt>onRankOnly</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should information only from
 the specified rank be used or from ranks equal and above? See details.
 (default: <code>onRankOnly = FALSE</code>)</p></dd>
+
+
 <dt>na.rm</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should taxa with an empty rank be
 removed? Use it with caution, since empty entries on the selected rank
 will be dropped. This setting can be tweaked by defining
 <code>empty.fields</code> to your needs. (default: <code>na.rm = TRUE</code>)</p></dd>
+
+
 <dt>empty.fields</dt>
 <dd><p>a <code>character</code> value defining, which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
 removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>arguments passed to <code>agglomerateByRank</code> function for
 <code>SummarizedExperiment</code> objects,
@@ -104,22 +114,31 @@ removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
 whether to remove those columns of rowData that include only NAs after
 agglomeration. (By default: <code>remove_empty_ranks = FALSE</code>)</p></li>
 </ul></dd>
+
+
 <dt>altexp</dt>
 <dd><p>String or integer scalar specifying an alternative experiment
 containing the input data.</p></dd>
+
+
 <dt>strip_altexp</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should alternative
 experiments be removed prior to agglomeration? This prevents to many
 nested alternative experiments by default (default:
 <code>strip_altexp = TRUE</code>)</p></dd>
+
+
 <dt>agglomerateTree</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: should
 <code>rowTree()</code> also be agglomerated? (Default:
 <code>agglomerateTree = FALSE</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A taxonomically-agglomerated, optionally-pruned object of the same
+    
+
+<p>A taxonomically-agglomerated, optionally-pruned object of the same
 class as <code>x</code>.</p>
     </div>
     <div id="details">
@@ -244,7 +263,7 @@ transformation.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

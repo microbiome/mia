@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -79,32 +79,49 @@
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>a <code>SummarizedExperiment</code> object</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>the name of the assay used for calculation of the
 sample-wise estimates</p></dd>
+
+
 <dt>name</dt>
 <dd><p>a name for the column of the colData the results should be
 stored in. By defaut, <code>name</code> is <code>"divergence"</code>.</p></dd>
+
+
 <dt>reference</dt>
 <dd><p>a numeric vector that has length equal to number of
 features, or a non-empty character value; either 'median' or 'mean'.
 <code>reference</code> specifies the reference that is used to calculate
 <code>divergence</code>. by default, <code>reference</code> is  <code>"median"</code>.</p></dd>
+
+
 <dt>FUN</dt>
 <dd><p>a <code>function</code> for distance calculation. The function must
 expect the input matrix as its first argument. With rows as samples
 and columns as features. By default, <code>FUN</code> is
 <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegan::vegdist</a></code>.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>a method that is used to calculate the distance. Method is
 passed to the function that is specified by <code>FUN</code>. By default,
 <code>method</code> is <code>"bray"</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>optional arguments</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>x</code> with additional <code>colData</code> named <code>*name*</code></p>
+    
+
+<p><code>x</code> with additional <code>colData</code> named <code>*name*</code></p>
+
+
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -218,7 +235,7 @@ between comparisons.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

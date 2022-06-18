@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -104,6 +104,8 @@
 <code><a href="http://waldronlab.io/MultiAssayExperiment/reference/MultiAssayExperiment-class.html" class="external-link">MultiAssayExperiment</a></code> or
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments:</p><ul><li><p><code>symmetric</code> A single boolean value for specifying if
 measure is symmetric or not. When <code>symmetric = TRUE</code>, associations
@@ -115,10 +117,14 @@ between features. Function must take matrix as an input and give numeric
 values as an output. Adjust <code>method</code> and other parameters correspondingly.
 Supported functions are, for example, <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">stats::dist</a></code> and <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegan::vegdist</a></code>.</p></li>
 </ul></dd>
+
+
 <dt>experiment1</dt>
 <dd><p>A single character or numeric value for selecting the experiment 1
 from <code>experiments(x)</code> of <code>MultiassayExperiment</code> object.
 (By default: <code>experiment1 = 1</code>)</p></dd>
+
+
 <dt>experiment2</dt>
 <dd><p>A single character or numeric value for selecting the experiment 2
 from<code>experiments(x)</code> of <code>MultiAssayExperiment</code> object or
@@ -126,63 +132,94 @@ from<code>experiments(x)</code> of <code>MultiAssayExperiment</code> object or
 <code>experiment2</code> can also be <code>SE</code> object when <code>x</code> is <code>SE</code> object.
 (By default: <code>experiment2 = 2</code> when <code>x</code> is <code>MAE</code> and
 <code>experiment2 = x</code> when <code>x</code> is <code>SE</code>)</p></dd>
+
+
 <dt>abund_values1</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> of
 experiment 1 to be transformed. (By default: <code>abund_values1 = "counts"</code>)</p></dd>
+
+
 <dt>abund_values2</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> of
 experiment 2 to be transformed. (By default: <code>abund_values2 = "counts"</code>)</p></dd>
+
+
 <dt>MARGIN</dt>
 <dd><p>A single numeric value for selecting if association are calculated
 row-wise / for features (1) or column-wise / for samples (2). Must be <code>1</code> or
 <code>2</code>. (By default: <code>MARGIN = 1</code>)</p></dd>
+
+
 <dt>method</dt>
 <dd><p>A single character value for selecting association method
 ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
 (By default: <code>method = "spearman"</code>)</p></dd>
+
+
 <dt>mode</dt>
 <dd><p>A single character value for selecting output format
 Available formats are  'table' and 'matrix'.  (By default: <code>mode = "table"</code>)</p></dd>
+
+
 <dt>p_adj_method</dt>
 <dd><p>A single character value for selecting adjustment method of
 p-values. Passed to <code>p.adjust</code> function.
 (By default: <code>p_adj_method = "fdr"</code>)</p></dd>
+
+
 <dt>p_adj_threshold</dt>
 <dd><p>A single numeric value (from 0 to  1) for selecting
 adjusted p-value threshold for filtering.
 (By default: <code>p_adj_threshold = NULL</code>)</p></dd>
+
+
 <dt>cor_threshold</dt>
 <dd><p>A single numeric absolute value (from 0 to 1) for selecting
 correlation threshold for filtering.
 (By default: <code>cor_threshold = NULL</code>)</p></dd>
+
+
 <dt>sort</dt>
 <dd><p>A single boolean value for selecting whether to sort features or not
 in result matrices. Used method is hierarchical clustering.
 (By default: <code>sort = FALSE</code>)</p></dd>
+
+
 <dt>filter_self_correlations</dt>
 <dd><p>A single boolean value for selecting whether to
 filter out correlations between identical items. Applies only when correlation
 between experiment itself is tested, i.e., when assays are identical.
 (By default: <code>filter_self_correlations = FALSE</code>)</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>A single boolean value for selecting whether to get messages
 about progress of calculation.</p></dd>
+
+
 <dt>test_significance</dt>
 <dd><p>A single boolean value for selecting whether to test
 statistical significance of associations.</p></dd>
+
+
 <dt>show_warnings</dt>
 <dd><p>A single boolean value for selecting whether to show warnings
 that might occur when correlations and p-values are calculated.</p></dd>
+
+
 <dt>paired</dt>
 <dd><p>A single boolean value for specifying if samples are paired or not.
 <code>colnames</code> must match between twp experiments. <code>paired</code> is disabled
 when <code>MARGIN = 1</code>. (By default: <code>paired = FALSE</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>These functions return associations in table or matrix format. In table format,
+    
+
+<p>These functions return associations in table or matrix format. In table format,
 returned value is a data frame that includes  features and associations
 (and p-values) in columns. In matrix format, returned value is a one matrix
 when only associations are calculated. If also significances are tested, then
@@ -203,7 +240,7 @@ associations.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">mae</span> <span class="op">&lt;-</span> <span class="fu">microbiomeDataSets</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/microbiomeDataSets/man/LahtiMLData.html" class="external-link">peerj32</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> snapshotDate(): 2022-05-17</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> snapshotDate(): 2022-06-15</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> loading from cache</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span>
@@ -223,6 +260,7 @@ associations.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   removing 34 colData rownames not in sampleMap 'primary'</span>
 <span class="r-in"><span class="co"># Transform data</span></span>
 <span class="r-in"><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformSamples</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"rclr"</span><span class="op">)</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All the total abundances of samples do not sum-up to a fixed constant. Please consider to apply, e.g., relative transformation in prior to CLR transformation.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Calculate cross-correlations</span></span>
 <span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, method <span class="op">=</span> <span class="st">"pearson"</span><span class="op">)</span></span>
@@ -591,7 +629,7 @@ associations.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

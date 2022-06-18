@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -74,23 +74,34 @@ object.</p>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object containing a tree.</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
 to calculate the overlap.</p></dd>
+
+
 <dt>detection</dt>
 <dd><p>A single numeric value for selecting detection threshold for
 absence/presence of features. Feature that has abundance under threshold in
 either of samples, will be discarded when evaluating overlap between samples.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Optional arguments not used.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>A single character value specifying the name of overlap matrix that
 is stored in reducedDim(x).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>calculateOverlap returns sample-by-sample distance matrix.
+    
+
+<p>calculateOverlap returns sample-by-sample distance matrix.
 runOverlap returns <code>x</code> that includes overlap matrix in its
 reducedDim.</p>
     </div>
@@ -146,7 +157,7 @@ samples have completely different relative abundances.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

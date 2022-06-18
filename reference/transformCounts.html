@@ -22,7 +22,7 @@ relAbundanceCounts is a shortcut for fetching relative abundance table."><!-- ma
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -68,7 +68,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clr"</span>, <span class="st">"rclr"</span>, <span class="st">"hellinger"</span>, <span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"relabundance"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
-  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,
+  pseudocount <span class="op">=</span> <span class="cn">NULL</span>,
   threshold <span class="op">=</span> <span class="fl">0</span>
 <span class="op">)</span>
 
@@ -78,7 +78,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clr"</span>, <span class="st">"rclr"</span>, <span class="st">"hellinger"</span>, <span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"relabundance"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
-  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,
+  pseudocount <span class="op">=</span> <span class="cn">NULL</span>,
   threshold <span class="op">=</span> <span class="fl">0</span>
 <span class="op">)</span>
 
@@ -87,7 +87,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clr"</span>, <span class="st">"rclr"</span>, <span class="st">"hellinger"</span>, <span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"relabundance"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
-  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,
+  pseudocount <span class="op">=</span> <span class="cn">NULL</span>,
   threshold <span class="op">=</span> <span class="fl">0</span>
 <span class="op">)</span>
 
@@ -97,7 +97,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clr"</span>, <span class="st">"rclr"</span>, <span class="st">"hellinger"</span>, <span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"relabundance"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
-  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,
+  pseudocount <span class="op">=</span> <span class="cn">NULL</span>,
   threshold <span class="op">=</span> <span class="fl">0</span>
 <span class="op">)</span>
 
@@ -106,7 +106,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"z"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
-  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,
+  pseudocount <span class="op">=</span> <span class="cn">NULL</span>,
   threshold <span class="op">=</span> <span class="fl">0</span>
 <span class="op">)</span>
 
@@ -116,7 +116,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"z"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
-  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,
+  pseudocount <span class="op">=</span> <span class="cn">NULL</span>,
   threshold <span class="op">=</span> <span class="fl">0</span>
 <span class="op">)</span>
 
@@ -137,30 +137,43 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
 transformed.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>A single character value for selecting the transformation
 method.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>A single character value specifying the name of transformed
 abundance table.</p></dd>
+
+
 <dt>pseudocount</dt>
-<dd><p>FALSE or numeric value deciding whether pseudocount is
-added. Numerical value specifies the value of pseudocount. (Only used for
-methods <code>method = "clr"</code>, <code>method = "hellinger"</code>, or
-<code>method = "log10"</code>)</p></dd>
+<dd><p>NULL or numeric value deciding whether pseudocount is
+added. The numeric value specifies the value of pseudocount.</p></dd>
+
+
 <dt>threshold</dt>
 <dd><p>A numeric value for setting threshold for pa transformation.
 By default it is 0. (Only used for <code>method = "pa"</code>)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>transformCounts</code>, <code>transformSamples</code>, <code>transformFeatures</code>,
+    
+
+<p><code>transformCounts</code>, <code>transformSamples</code>, <code>transformFeatures</code>,
 <code>relAbundanceCounts</code>, and <code>ZTransform</code> return <code>x</code> with additional,
 transformed abundance table named <code>name</code> in the <code>assay</code>.</p>
     </div>
@@ -169,19 +182,23 @@ transformed abundance table named <code>name</code> in the <code>assay</code>.</
     <p><code>transformCounts</code> or <code>transformSamples</code> and <code>transformFeatures</code>
 applies transformation to abundance table. Provided transformation methods include:</p>
 <ul><li><p>'clr' Centered log ratio (clr) transformation can be used for reducing the
-skewness of data and for centering it. (See e.g. Gloor et al. 2017.)$$clr = log_{10}\frac{x_{r}}{g(x_{r})} = log_{10}x_{r} - log_{10}µ_{r}$$
-where \(x_{r}\) is a single relative value, g(x_r) is geometric mean of
-sample-wide relative values, and \(\mu_{r}\) is arithmetic mean of
-sample-wide relative values".</p></li>
+skewness of data and for centering it. clr expects that sample-wise sums
+are equal. That is why usually , e.g., relative transformation is applied
+before clr.If the data contains zeros, pseudocount (commonly the smallest
+positive value of the data) must be added since clr is a logarithmic transformation.
+(See e.g. Gloor et al. 2017.)$$clr = log_{10}\frac{x{g(x)}} = log_{10}x - log_{10}\mu$$
+where \(x\) is a single value, g(x) is a geometric mean of
+sample-wise values, and \(\mu\) is an arithmetic mean of
+sample-wise values".</p></li>
 <li><p>'rclr' rclr or robust clr is similar to regular clr. Problem of regular
 clr is that logarithmic transformations lead to undefined values when zeros
 are present in the data. In rclr, values are divided by geometric mean
 of observed taxa and zero values are not taken into account. Zero values will
 stay as zeroes.Because of high-dimensionality of data, rclr's geometric mean of
 observed taxa is a good approximation to the true geometric mean.
-(See e.g. Martino et al. 2019.)$$rclr = log_{10}\frac{x_{r}}{g(x_{r} &gt; 0)}$$
-where \(x_{r}\) is a single relative value, and g(x_r &gt; 0) is geometric
-mean of sample-wide relative values that are over 0".</p></li>
+(See e.g. Martino et al. 2019.)$$rclr = log_{10}\frac{x{g(x &gt; 0)}}$$
+where \(x\) is a single value, and g(x &gt; 0) is geometric
+mean of sample-wide values that are over 0".</p></li>
 <li><p>'hellinger' Hellinger transformation can be used to reduce the impact of
 extreme data points. It can be utilize for clustering or ordination analysis.
 (See e.g. Legendre &amp; Gallagher 2001.)$$hellinger = \sqrt{\frac{x}{x_{tot}}}$$
@@ -230,24 +247,21 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">esophagus</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># By specifying, it is possible to apply different transformations, e.g. clr transformation.</span></span>
-<span class="r-in"><span class="co"># Pseudocount can be added by specifying 'pseudocount'.</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"clr"</span>, pseudocount<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"clr"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C          D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22  3.2670356  2.0677373  1.0362399</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 -0.6647901  0.1706173 -0.7555196</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12  0.4338222  1.7110624 -0.7555196</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 -0.6647901  0.1706173 -0.0623724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  -0.6647901 -0.9279950 -0.0623724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 -0.6647901 -0.9279950 -0.0623724</span>
+<span class="r-in"><span class="co"># By specifying 'method', it is possible to apply different transformations, </span></span>
+<span class="r-in"><span class="co"># e.g. compositional transformation.</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># Also, the target of transformation</span></span>
-<span class="r-in"><span class="co"># can be specified with "abund_values".</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"relabundance"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"clr"</span>, abund_values<span class="op">=</span><span class="st">"relabundance"</span>, </span>
-<span class="r-in">                        pseudocount <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"relabundance"</span><span class="op">)</span><span class="op">[</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"relabundance"</span><span class="op">)</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"clr"</span>, abund_values<span class="op">=</span><span class="st">"counts"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span class="r-in"><span class="co"># The target of transformation can be specified with "abund_values"</span></span>
+<span class="r-in"><span class="co"># Pseudocount can be added by specifying 'pseudocount'.</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># Get pseudocount; here smallest positive value</span></span>
+<span class="r-in"><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"relabundance"</span><span class="op">)</span> </span>
+<span class="r-in"><span class="va">pseudonumber</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">mat</span><span class="op">[</span><span class="va">mat</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span class="co"># Perform CLR</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, abund_values <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"clr"</span>, </span>
+<span class="r-in">                      pseudocount <span class="op">=</span> <span class="va">pseudonumber</span></span>
+<span class="r-in">                      <span class="op">)</span></span>
+<span class="r-in">                      </span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"clr"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C           D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22  3.4161459  2.0677373  1.10139252</span>
@@ -256,13 +270,6 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 -0.7397308  0.1706173 -0.04661252</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  -0.7397308 -0.9279950 -0.04661252</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 -0.7397308 -0.9279950 -0.04661252</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Different pseudocounts used by default for counts and relative abundances</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"relabundance"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"relabundance"</span><span class="op">)</span>; </span>
-<span class="r-in"><span class="va">pseudonumber</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">mat</span><span class="op">[</span><span class="va">mat</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"clr"</span>, abund_values <span class="op">=</span> <span class="st">"relabundance"</span>, pseudocount<span class="op">=</span><span class="va">pseudonumber</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"clr"</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span>, pseudocount<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Name of the stored table can be specified.</span></span>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"hellinger"</span>, name<span class="op">=</span><span class="st">"test"</span><span class="op">)</span></span>
@@ -277,7 +284,7 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># pa returns presence absence table. With 'threshold', it is possible to set the</span></span>
 <span class="r-in"><span class="co"># threshold to a desired level. By default, it is 0.</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"pa"</span>, threshold<span class="op">=</span><span class="fl">35</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"pa"</span>, threshold <span class="op">=</span> <span class="fl">35</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"pa"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         B C D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 1 0 0</span>
@@ -289,7 +296,7 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># rank returns ranks of taxa. It is calculated column-wise, i.e., per sample</span></span>
 <span class="r-in"><span class="co"># and using the ties.method="first" from the colRanks function</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"rank"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"rank"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"rank"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          B  C  D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 57 55 53</span>
@@ -300,7 +307,7 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10  4  2 23</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># transformCounts is an alias for transformSamples</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"relabundance"</span>, name<span class="op">=</span><span class="st">"test2"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"relabundance"</span>, name <span class="op">=</span> <span class="st">"test2"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"test2"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   B           C          D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 0.246305419 0.074509804 0.02283105</span>
@@ -316,7 +323,7 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
 <span class="r-in">                                                           preserveShape <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </span>
 <span class="r-in">                                                           </span>
 <span class="r-in"><span class="co"># If you want to do the transformation for features, you can do that by using</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformFeatures</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"log10"</span>, name<span class="op">=</span><span class="st">"log10_features"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformFeatures</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"log10"</span>, name <span class="op">=</span> <span class="st">"log10_features"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"log10_features"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 B         C         D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 1.7075702 1.3010300 0.7781513</span>
@@ -340,6 +347,7 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
 <span class="r-in"><span class="co"># For visualization purposes it is sometimes done by applying CLR for samples,</span></span>
 <span class="r-in"><span class="co"># followed by Z transform for taxa</span></span>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">ZTransform</span><span class="op">(</span><span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"clr"</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All the total abundances of samples do not sum-up to a fixed constant. Please consider to apply, e.g., relative transformation in prior to CLR transformation.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Relative abundances can be also calculated with the dedicated</span></span>
 <span class="r-in"><span class="co"># relAbundanceCounts function.</span></span>
@@ -366,7 +374,7 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

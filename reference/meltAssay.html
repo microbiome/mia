@@ -21,7 +21,7 @@ long data.frame which can be used for tidyverse-tools."><!-- mathjax --><script 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -87,9 +87,13 @@ long data.frame which can be used for <code>tidyverse</code>-tools.</p>
     <dl><dt>x</dt>
 <dd><p>A numeric matrix or a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code></p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>a <code>character</code> value to select an
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></code></p></dd>
+
+
 <dt>add_row_data</dt>
 <dd><p><code>NULL</code>, <code>TRUE</code> or a <code>character</code> vector to
 select information from the <code>rowData</code> to add to the molten assay data.
@@ -98,6 +102,8 @@ If <code>add_row_data = NULL</code> no data will be added, if
 <code>add_row_data</code> is a <code>character</code> vector, it will be used to subset
 to given column names in <code>rowData</code>. (default:
 <code>add_row_data = NULL</code>)</p></dd>
+
+
 <dt>add_col_data</dt>
 <dd><p><code>NULL</code>, <code>TRUE</code> or a <code>character</code> vector to
 select information from the <code>colData</code> to add to the molten assay data.
@@ -106,22 +112,31 @@ If <code>add_col_data = NULL</code> no data will be added, if
 <code>add_col_data</code> is a <code>character</code> vector, it will be used to subset
 to given column names in <code>colData</code>. (default:
 <code>add_col_data = NULL</code>)</p></dd>
+
+
 <dt>feature_name</dt>
 <dd><p>a <code>character</code> scalar to use as the output's name
 for the feature identifier. (default: <code>feature_name = "FeatureID"</code>)</p></dd>
+
+
 <dt>sample_name</dt>
 <dd><p>a <code>character</code> scalar to use as the output's name
 for the sample identifier. (default: <code>sample_name = "SampleID"</code>)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>optional arguments:</p><ul><li><p>check_names A boolean value passed to data.frame function's check.name
 argument. Determines if sample names are checked that they are syntactically
 valid variable names and are not duplicated. If they are not, sample names
 are modified. (default: <code>check_names = TRUE</code>)</p></li>
 </ul></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>tibble</code> with the molten data. The assay values are given in a
+    
+
+<p>A <code>tibble</code> with the molten data. The assay values are given in a
 column named like the selected assay <code>abund_values</code>. In addition, a
 column “FeatureID” will contain the rownames, if set, and analogously
 a column “SampleID” with the colnames, if set</p>
@@ -177,7 +192,7 @@ names are set.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

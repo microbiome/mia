@@ -21,7 +21,7 @@ This includes the &amp;#8216;Absolute&amp;#8217;, &amp;#8216;Berger-Parker&amp;#
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -93,19 +93,27 @@ This includes the ‘Absolute’, ‘Berger-Parker’,
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
 to calculate the sample-wise estimates.</p></dd>
+
+
 <dt>index</dt>
 <dd><p>a <code>character</code> vector, specifying the indices to be
 calculated.</p></dd>
+
+
 <dt>ntaxa</dt>
 <dd><p>Optional and only used for the <code>Absolute</code> and
 <code>Relative</code> dominance indices: The n-th position of the dominant taxa
 to consider (default: <code>ntaxa = 1</code>). Disregarded for the indices
 “dbp”,
 “core_abundance”, “Gini”, “dmn”, and “Simpson”.</p></dd>
+
+
 <dt>aggregate</dt>
 <dd><p>Optional and only used for the <code>Absolute</code>, <code>dbp</code>,
 <code>Relative</code>, and <code>dmn</code> dominance indices:
@@ -114,21 +122,32 @@ Aggregate the values for top members selected by <code>ntaxa</code> or not. If
 relative abundance is returned for the single taxa with the indicated rank
 (default: <code>aggregate = TRUE</code>). Disregarded for the indices
 “core_abundance”, “gini”, “dmn”, and “simpson”.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>A name for the column(s) of the colData where the calculated
 Dominance indices should be stored in.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments currently not used.</p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam</a></code>
 object specifying whether calculation of estimates should be parallelized.
 (Currently not used)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>x</code> with additional <code>colData</code> named
+    
+
+<p><code>x</code> with additional <code>colData</code> named
 <code>*name*</code></p>
+
+
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -316,7 +335,7 @@ Measurement of Diversity.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

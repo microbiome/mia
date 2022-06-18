@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -84,12 +84,16 @@
 object or a list of
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 objects.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Arguments passed to <code>mergeRows</code>/<code>mergeCols</code> function for
 <code>SummarizedExperiment</code> objects and other functions.
 See <code><a href="agglomerate-methods.html">mergeRows</a></code> for more details.</p><ul><li><p><code>use_names</code> A single boolean value to select whether to name elements of
 list by their group names.</p></li>
 </ul></dd>
+
+
 <dt>f</dt>
 <dd><p>A single character value for selecting the grouping variable
 from <code>rowData</code> or <code>colData</code> or a <code>factor</code> or <code>vector</code>
@@ -97,24 +101,38 @@ with the same length as one of the dimensions. If <code>f</code> matches with bo
 dimensions, <code>MARGIN</code> must be specified.
 Split by cols is not encouraged, since this is not compatible with
 storing the results in <code>altExps</code>.</p></dd>
+
+
 <dt>update_rowTree</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the rowTree be updated
 based on splitted data? Option is enabled when <code>x</code> is a
 <code>TreeSummarizedExperiment</code> object or a list of such objects.
 (By default: <code>update_rowTree = FALSE</code>)</p></dd>
+
+
 <dt>altExpNames</dt>
 <dd><p>a <code>character</code> vector specifying the alternative experiments
 to be unsplit. (By default: <code>altExpNames = names(altExps(x))</code>)</p></dd>
+
+
 <dt>keep_reducedDims</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (By default: <code>keep_reducedDims = FALSE</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>For <code>splitOn</code>: <code>SummarizedExperiment</code> objects in a <code>SimpleList</code>.
-For <code>unsplitOn</code>: <code>x</code>, with <code>rowData</code> and <code>assay</code>data replaced by the unsplit data. <code>colData</code> of x is kept as well
+    
+
+<p>For <code>splitOn</code>: <code>SummarizedExperiment</code> objects in a <code>SimpleList</code>.</p>
+
+
+<p>For <code>unsplitOn</code>: <code>x</code>, with <code>rowData</code> and <code>assay</code></p>
+
+
+<p>data replaced by the unsplit data. <code>colData</code> of x is kept as well
 and any existing <code>rowTree</code> is dropped as well, since existing
 <code>rowLinks</code> are not valid anymore.</p>
     </div>
@@ -199,6 +217,9 @@ group.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>16909 duplicated rows are removed</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The root is added with label 'ALL'</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Multiple nodes are found to have the same label.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>16909 duplicated rows are removed</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The root is added with label 'ALL'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Multiple nodes are found to have the same label.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># If you want to combine groups back together, you can use unsplitBy</span></span>
 <span class="r-in"><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">se_list</span><span class="op">)</span></span>
@@ -210,7 +231,7 @@ group.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rownames(19216): Class:Thermoprotei Class:Thermoprotei ... Phylum:SR1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Phylum:SR1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(8): Kingdom Phylum ... Species group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... NP3 TS28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 SV1 ... NP3 NP5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(8): X.SampleID Primer ... Description group</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
@@ -234,7 +255,7 @@ group.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

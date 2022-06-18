@@ -19,7 +19,7 @@ sample has same number of total observations/counts/reads."><!-- mathjax --><scr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -86,34 +86,51 @@ sample has same number of total observations/counts/reads.</p>
     <dl><dt>x</dt>
 <dd><p>A
 <code>SummarizedExperiment</code> object.</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>A single character value for selecting the
 <code>SummarizedExperiment</code> <code>assay</code> used for random subsampling.
 Only counts are useful and other transformed data as input will give
 meaningless output.</p></dd>
+
+
 <dt>min_size</dt>
 <dd><p>A single integer value equal to the number of counts being
 simulated this can equal to lowest number of total counts
 found in a sample or a user specified number.</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>A random number seed for reproducibility of sampling.</p></dd>
+
+
 <dt>replace</dt>
 <dd><p>Logical Default is <code>TRUE</code>. The default is with
 replacement (<code>replace=TRUE</code>).
 See <code><a href="https://rdrr.io/pkg/phyloseq/man/rarefy_even_depth.html" class="external-link">phyloseq::rarefy_even_depth</a></code>
 for details on implications of this parameter.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>A single character value specifying the name of transformed
 abundance table.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>Logical Default is <code>TRUE</code>. When <code>TRUE</code> an additional
 message about the random number used is printed.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments not used</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>subsampleCounts</code> return <code>x</code> with subsampled data.</p>
+    
+
+<p><code>subsampleCounts</code> return <code>x</code> with subsampled data.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -191,7 +208,7 @@ Microbiome. 2017 Dec;5(1):1-8.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

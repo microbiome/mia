@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -101,45 +101,64 @@ object containing a tree.</p>
 and not per column. This is implemented to be compatible with other
 distance calculations such as <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> as much as
 possible.</p></dd>
+
+
 <dt>tree</dt>
 <dd><p>if <code>x</code> is a matrix, a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/phylo.html" class="external-link">phylo</a></code> object matching the
 matrix. This means that the phylo object and the columns should relate
 to the same type of features (aka. microorganisms).</p></dd>
+
+
 <dt>...</dt>
 <dd><p>optional arguments not used.</p></dd>
+
+
 <dt>weighted</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should use weighted-Unifrac
 calculation? Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is <code>FALSE</code>, meaning the
 unweighted-Unifrac distance is calculated for all pairs of samples.</p></dd>
+
+
 <dt>normalized</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the output be
 normalized such that values range from 0 to 1 independent of branch length
 values? Default is <code>TRUE</code>. Note that (unweighted) <code>Unifrac</code> is
 always normalized by total branch-length, and so this value is ignored when
 <code>weighted == FALSE</code>.</p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam</a></code>
 object specifying whether the Unifrac calculation should be parallelized.</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></dd>
+
+
 <dt>exprs_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
 (Please use <code>abund_values</code> instead. At some point <code>exprs_values</code>
 will be disabled.)</p></dd>
+
+
 <dt>transposed</dt>
 <dd><p>Logical scalar, is x transposed with cells in rows, i.e.,
 is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: <code>transposed = FALSE</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a sample-by-sample distance matrix, suitable for NMDS, etc.</p>
+    
+
+<p>a sample-by-sample distance matrix, suitable for NMDS, etc.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -218,7 +237,7 @@ Adapted for mia by Felix G.M. Ernst</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

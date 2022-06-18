@@ -22,7 +22,7 @@ Import the QIIME2 artifacts to R."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -81,27 +81,39 @@ encouraged to be provided.</p>
     <dl><dt>featureTableFile</dt>
 <dd><p>a single <code>character</code> value defining the file
 path of the feature table to be imported.</p></dd>
+
+
 <dt>taxonomyTableFile</dt>
 <dd><p>a single <code>character</code> value defining the file
 path of the taxonomy table to be imported. (default:
 <code>taxonomyTableFile = NULL</code>).</p></dd>
+
+
 <dt>sampleMetaFile</dt>
 <dd><p>a single <code>character</code> value defining the file path
 of the sample metadata to be imported. The file has to be in tsv format.
 (default: <code>sampleMetaFile = NULL</code>).</p></dd>
+
+
 <dt>featureNamesAsRefSeq</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the feature
 names of the feature table be regarded as reference sequences? This setting
 will be disregarded, if <code>refSeqFile</code> is not <code>NULL</code>. If the
 feature names do not contain valid DNA characters only, the reference
 sequences will not be set.</p></dd>
+
+
 <dt>refSeqFile</dt>
 <dd><p>a single <code>character</code> value defining the file path of
 the reference sequences for each feature. (default: <code>refSeqFile =
   NULL</code>).</p></dd>
+
+
 <dt>phyTreeFile</dt>
 <dd><p>a single <code>character</code> value defining the file path of
 the phylogenetic tree. (default: <code>phyTreeFile = NULL</code>).</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments:</p><ul><li><p><code>temp</code>: the temporary directory used for decompressing the
 data. (default: <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code>)</p></li>
@@ -109,21 +121,33 @@ data. (default: <code><a href="https://rdrr.io/r/base/tempfile.html" class="exte
 taxonomic prefixes be removed? (default:
 <code>removeTaxaPrefixes = FALSE</code>)</p></li>
 </ul></dd>
+
+
 <dt>file</dt>
 <dd><p>character, path of the input qza file. Only files in format of
 <code>BIOMV210DirFmt</code> (feature table), <code>TSVTaxonomyDirectoryFormat</code> (taxonomic
 table), <code>NewickDirectoryFormat</code> (phylogenetic tree ) and
 <code>DNASequencesDirectoryFormat</code> (representative sequences) are supported
 right now.</p></dd>
+
+
 <dt>temp</dt>
 <dd><p>character, a temporary directory in which the qza file will be
 decompressed to, default <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A
-<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>object
-<code>matrix</code> object for feature table, <code>DataFrame</code> for taxonomic table,
+    
+
+<p>A
+<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code></p>
+
+
+<p>object</p>
+
+
+<p><code>matrix</code> object for feature table, <code>DataFrame</code> for taxonomic table,
 <code><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">ape::phylo</a></code> object for phylogenetic tree,
 <code><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-class.html" class="external-link">Biostrings::DNAStringSet</a></code> for representative sequences of taxa.</p>
     </div>
@@ -234,7 +258,7 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

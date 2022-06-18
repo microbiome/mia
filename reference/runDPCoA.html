@@ -19,7 +19,7 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -92,53 +92,86 @@ Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.
 <p>For <code>runDPCoA</code> a TreeSummarizedExperiment containing the
 expression values as well as a <code>rowTree</code> to calculate <code>y</code> using
 <code><a href="https://rdrr.io/pkg/ape/man/cophenetic.phylo.html" class="external-link">cophenetic.phylo</a></code>.</p></dd>
+
+
 <dt>y</dt>
 <dd><p>a <code>dist</code> or a symmetric <code>matrix</code> compatible with
 <code>ade4:dpcoa</code></p></dd>
+
+
 <dt>...</dt>
 <dd><p>Currently not used.</p></dd>
+
+
 <dt>ncomponents</dt>
 <dd><p>Numeric scalar indicating the number of DPCoA dimensions
 to obtain.</p></dd>
+
+
 <dt>ntop</dt>
 <dd><p>Numeric scalar specifying the number of features with the highest
 variances to use for dimensionality reduction. Alternatively <code>NULL</code>,
 if all features should be used. (default: <code>ntop = NULL</code>)</p></dd>
+
+
 <dt>subset_row</dt>
 <dd><p>Vector specifying the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
 integer vector of row indices or a logical vector.</p></dd>
+
+
 <dt>scale</dt>
 <dd><p>Logical scalar, should the expression values be standardized?</p></dd>
+
+
 <dt>transposed</dt>
 <dd><p>Logical scalar, is x transposed with cells in rows?</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></dd>
+
+
 <dt>exprs_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
 (Please use <code>abund_values</code> instead. At some point <code>exprs_values</code>
 will be disabled.)</p></dd>
+
+
 <dt>dimred</dt>
 <dd><p>String or integer scalar specifying the existing dimensionality
 reduction results to use.</p></dd>
+
+
 <dt>n_dimred</dt>
 <dd><p>Integer scalar or vector specifying the dimensions to use if
 dimred is specified.</p></dd>
+
+
 <dt>altexp</dt>
 <dd><p>String or integer scalar specifying an alternative experiment
 containing the input data.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>String specifying the name to be used to store the result in the
 reducedDims of the output.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>For <code>calculateDPCoA</code> a matrix with samples as rows and CCA dimensions as
-columns
-For <code>runDPCoA</code> a modified <code>x</code> with the results stored in
+    
+
+<p>For <code>calculateDPCoA</code> a matrix with samples as rows and CCA dimensions as
+columns</p>
+
+
+<p>For <code>runDPCoA</code> a modified <code>x</code> with the results stored in
 <code>reducedDim</code> as the given <code>name</code></p>
+
+
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -185,7 +218,7 @@ returned as attributes as well.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

@@ -18,7 +18,7 @@ wrapper functions. They are implemented via the vegan package."><!-- mathjax -->
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -81,29 +81,46 @@ wrapper functions. They are implemented via the <code>vegan</code> package.</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>a <code>SummarizedExperiment</code> object</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>the name of the assay used for calculation of the
 sample-wise estimates</p></dd>
+
+
 <dt>index</dt>
 <dd><p>a <code>character</code> vector, specifying the richness measures
 to be calculated.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>a name for the column(s) of the colData the results should be
 stored in.</p></dd>
+
+
 <dt>detection</dt>
 <dd><p>a numeric value for selecting detection threshold
 for the abundances. The default detection threshold is 0.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional parameters passed to <code>estimateRichness</code></p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam</a></code>
 object specifying whether calculation of estimates should be parallelized.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>x</code> with additional <code>colData</code> named
+    
+
+<p><code>x</code> with additional <code>colData</code> named
 <code>*name*</code></p>
+
+
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -297,7 +314,7 @@ Species richness estimators: how many species can dance on the head of a pin?
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

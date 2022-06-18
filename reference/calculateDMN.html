@@ -19,7 +19,7 @@ package"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -143,46 +143,80 @@ package</p>
 <dd><p>a numeric matrix with samples as rows or a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>optional arguments not used.</p></dd>
+
+
 <dt>k</dt>
 <dd><p>the number of Dirichlet components to fit. See
 <code><a href="https://rdrr.io/pkg/DirichletMultinomial/man/dmn.html" class="external-link">dmn</a></code></p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam</a></code>
 object specifying whether the UniFrac calculation should be parallelized.</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>random number seed. See
 <code><a href="https://rdrr.io/pkg/DirichletMultinomial/man/dmn.html" class="external-link">dmn</a></code></p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></dd>
+
+
 <dt>exprs_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
 (Please use <code>abund_values</code> instead. At some point <code>exprs_values</code>
 will be disabled.)</p></dd>
+
+
 <dt>transposed</dt>
 <dd><p>Logical scalar, is x transposed with samples in rows?</p></dd>
+
+
 <dt>name</dt>
 <dd><p>the name to store the result in
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">metadata</a></code></p></dd>
+
+
 <dt>type</dt>
 <dd><p>the type of measure used for the goodness of fit. One of
 ‘laplace’, ‘AIC’ or ‘BIC’.</p></dd>
+
+
 <dt>variable</dt>
 <dd><p>a variable from <code>colData</code> to use as a grouping variable.
 Must be a character of factor.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>calculateDMN</code> and <code>getDMN</code> return a list of <code>DMN</code> objects,
-one element for each value of k provided.
-<code>bestDMNFit</code> returns the index for the best fit and <code>getBestDMNFit</code>returns a single <code>DMN</code> object.
-<code>calculateDMNgroup</code> returns a
-<code><a href="https://rdrr.io/pkg/DirichletMultinomial/man/DMNGroup-class.html" class="external-link">DMNGroup</a></code> object
-<code>performDMNgroupCV</code> returns a <code>data.frame</code></p>
+    
+
+<p><code>calculateDMN</code> and <code>getDMN</code> return a list of <code>DMN</code> objects,
+one element for each value of k provided.</p>
+
+
+<p><code>bestDMNFit</code> returns the index for the best fit and <code>getBestDMNFit</code></p>
+
+
+<p>returns a single <code>DMN</code> object.</p>
+
+
+<p><code>calculateDMNgroup</code> returns a
+<code><a href="https://rdrr.io/pkg/DirichletMultinomial/man/DMNGroup-class.html" class="external-link">DMNGroup</a></code> object</p>
+
+
+<p><code>performDMNgroupCV</code> returns a <code>data.frame</code></p>
+
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -214,7 +248,7 @@ one element for each value of k provided.
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39227.38 BIC: 39527.91 AIC: 39292.11 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39227.39 BIC: 39527.91 AIC: 39292.11 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># since this take a bit of resources to calculate for k &gt; 1, the data is</span></span>
 <span class="r-in"><span class="co"># loaded</span></span>
@@ -295,7 +329,7 @@ one element for each value of k provided.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

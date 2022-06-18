@@ -18,7 +18,7 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -140,23 +140,35 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object</p></dd>
+
+
 <dt>detection</dt>
 <dd><p>Detection threshold for absence/presence. Either an
 absolute value compared directly to the values of <code>x</code> or a relative
 value between 0 and 1, if <code>as_relative = TRUE</code>.</p></dd>
+
+
 <dt>include_lowest</dt>
 <dd><p>logical scalar: Should the lower boundary of the
 detection and prevalence cutoffs be included? (default: <code>FALSE</code>)</p></dd>
+
+
 <dt>sort</dt>
 <dd><p>logical scalar: Should the result be sorted by prevalence?
 (default: <code>FALSE</code>)</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
 to use for prevalence calculation.</p></dd>
+
+
 <dt>as_relative</dt>
 <dd><p>logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? (default: <code>TRUE</code>)</p></dd>
+
+
 <dt>rank, ...</dt>
 <dd><p>additional arguments</p><ul><li><p>If <code>!is.null(rank)</code> arguments are passed on to
 <code><a href="agglomerate-methods.html">agglomerateByRank</a></code>. See
@@ -167,18 +179,27 @@ parameters passed to <code>getPrevalence</code></p></li>
 <li><p>for <code>getPrevalentAbundance</code> additional parameters passed to
 <code>getPrevalentTaxa</code></p></li>
 </ul></dd>
+
+
 <dt>prevalence</dt>
 <dd><p>Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set <code>include_lowest</code> to <code>TRUE</code>.</p></dd>
+
+
 <dt>other_label</dt>
 <dd><p>A single <code>character</code> valued used as the label for the
 summary of non-prevalent taxa. (default: <code>other_label = "Other"</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>subsetPrevalentTaxa</code> and <code>subsetRareTaxa</code> return subset of <code>x</code>.
-All other functions return a named vectors:</p><ul><li><p><code>getPrevalence</code> returns a <code>numeric</code> vector with the
+    
+
+<p><code>subsetPrevalentTaxa</code> and <code>subsetRareTaxa</code> return subset of <code>x</code>.</p>
+
+
+<p>All other functions return a named vectors:</p><ul><li><p><code>getPrevalence</code> returns a <code>numeric</code> vector with the
 names being set to either the row names of <code>x</code> or the names after
 agglomeration.</p></li>
 <li><p><code>getPrevalentAbundance</code> returns a <code>numeric</code> vector with
@@ -392,7 +413,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

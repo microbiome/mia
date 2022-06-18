@@ -20,7 +20,7 @@ retained as defined by archetype."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -81,33 +81,46 @@ retained as defined by <code>archetype</code>.</p>
     <dl><dt>x</dt>
 <dd><p>a <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code> or
 a <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code></p></dd>
+
+
 <dt>f</dt>
 <dd><p>A factor for merging. Must be the same length as
 <code>nrow(x)/ncol(x)</code>. Rows/Cols corresponding to the same level will be
 merged. If <code>length(levels(f)) == nrow(x)/ncol(x)</code>, <code>x</code> will be
 returned unchanged.</p></dd>
+
+
 <dt>archetype</dt>
 <dd><p>Of each level of <code>f</code>, which element should be regarded
 as the archetype and metadata in the columns or rows kept, while merging?
 This can be single integer value or an integer vector of the same length
 as <code>levels(f)</code>. (Default: <code>archetype = 1L</code>, which means the first
 element encountered per factor level will be kept)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>optional arguments:</p><ul><li><p>passed onto <code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>, except <code>subset_row</code>, <code>subset_col</code></p></li>
 </ul></dd>
+
+
 <dt>mergeTree</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: should to
 <code>rowTree()</code> also be merged? (Default: <code>mergeTree = FALSE</code>)</p></dd>
+
+
 <dt>mergeRefSeq</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: should a consensus sequence
 calculate? If set to <code>FALSE</code>, the result from <code>archetype</code> is
 returned; If set to <code>TRUE</code> the result from
 <code><a href="https://rdrr.io/pkg/DECIPHER/man/ConsensusSequence.html" class="external-link">DECIPHER::ConsensusSequence</a></code> is
 returned. (Default: <code>mergeRefSeq = FALSE</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>an object with the same class <code>x</code> with the specified entries
+    
+
+<p>an object with the same class <code>x</code> with the specified entries
 merged into one entry in all relevant components.</p>
     </div>
     <div id="details">
@@ -202,7 +215,7 @@ argument lets the user select how to preserve row or column data.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

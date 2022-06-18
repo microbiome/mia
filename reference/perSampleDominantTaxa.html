@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -84,24 +84,41 @@ object.</p>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
 to use for identifying dominant taxa.</p></dd>
+
+
 <dt>rank</dt>
 <dd><p>A single character defining a taxonomic rank. Must be a value of
 the output of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed on to <code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> when
 <code>rank</code> is specified.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>A name for the column of the <code>colData</code> where the dominant
 taxa will be stored in when using <code>addPerSampleDominantTaxa</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>perSampleDominantTaxa</code> returns a named character vector <code>x</code>while <code>addPerSampleDominantTaxa</code> returns
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>with additional column in <code>colData</code> named <code>*name*</code>.</p>
+    
+
+<p><code>perSampleDominantTaxa</code> returns a named character vector <code>x</code></p>
+
+
+<p>while <code>addPerSampleDominantTaxa</code> returns
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code></p>
+
+
+<p>with additional column in <code>colData</code> named <code>*name*</code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -184,7 +201,7 @@ additional arguments to deal with missing values or special characters.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

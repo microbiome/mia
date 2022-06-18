@@ -20,7 +20,7 @@ alternative experiments."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -85,29 +85,45 @@ alternative experiments.</p>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object</p></dd>
+
+
 <dt>...</dt>
 <dd><p>arguments passed to <code>agglomerateByRank</code> function for
 <code>SummarizedExperiment</code> objects and other functions.
 See <code><a href="agglomerate-methods.html">agglomerateByRank</a></code> for more details.</p></dd>
+
+
 <dt>ranks</dt>
 <dd><p>a character vector defining taxonomic ranks. Must all be values
 of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
+
+
 <dt>na.rm</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should taxa with an empty rank be
 removed? Use it with caution, since results with NA on the selected rank
 will be dropped. This setting can be tweaked by defining
 <code>empty.fields</code> to your needs. (default: <code>na.rm = TRUE</code>)</p></dd>
+
+
 <dt>keep_reducedDims</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (default: <code>keep_reducedDims = FALSE</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>For <code>splitByRanks</code>: <code>SummarizedExperiment</code> objects in a
-<code>SimpleList</code>.
-For <code>unsplitByRanks</code>: <code>x</code>, with <code>rowData</code> and <code>assay</code>data replaced by the unsplit data. <code>colData</code> of x is kept as well
+    
+
+<p>For <code>splitByRanks</code>: <code>SummarizedExperiment</code> objects in a
+<code>SimpleList</code>.</p>
+
+
+<p>For <code>unsplitByRanks</code>: <code>x</code>, with <code>rowData</code> and <code>assay</code></p>
+
+
+<p>data replaced by the unsplit data. <code>colData</code> of x is kept as well
 and any existing <code>rowTree</code> is dropped as well, since existing
 <code>rowLinks</code> are not valid anymore.</p>
     </div>
@@ -220,7 +236,7 @@ the <code>colData</code> of the base object is kept.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

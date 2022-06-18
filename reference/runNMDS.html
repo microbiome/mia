@@ -18,7 +18,7 @@ data in a SingleCellExperiment object."><!-- mathjax --><script src="https://cdn
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.26</span>
       </span>
     </div>
 
@@ -103,59 +103,92 @@ data in a <code>SingleCellExperiment</code> object.</p>
 where rows are features and columns are cells.
 Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.</p>
 <p>For <code>runNMDS</code> a <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments to pass to <code>FUN</code> and
 <code>nmdsFUN</code>.</p></dd>
+
+
 <dt>FUN</dt>
 <dd><p>a <code>function</code> or <code>character</code> value with a function
 name returning a <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> object</p></dd>
+
+
 <dt>nmdsFUN</dt>
 <dd><p>a <code>character</code> value to choose the scaling
 implementation, either “isoMDS” for
 <code><a href="https://rdrr.io/pkg/MASS/man/isoMDS.html" class="external-link">MASS::isoMDS</a></code> or “monoMDS” for
 <code><a href="https://rdrr.io/pkg/vegan/man/monoMDS.html" class="external-link">vegan::monoMDS</a></code></p></dd>
+
+
 <dt>ncomponents</dt>
 <dd><p>Numeric scalar indicating the number of NMDS dimensions
 to obtain.</p></dd>
+
+
 <dt>ntop</dt>
 <dd><p>Numeric scalar specifying the number of features with the highest
 variances to use for dimensionality reduction.</p></dd>
+
+
 <dt>subset_row</dt>
 <dd><p>Vector specifying the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
 integer vector of row indices or a logical vector.</p></dd>
+
+
 <dt>scale</dt>
 <dd><p>Logical scalar, should the expression values be standardized?</p></dd>
+
+
 <dt>transposed</dt>
 <dd><p>Logical scalar, is x transposed with cells in rows?</p></dd>
+
+
 <dt>keep_dist</dt>
 <dd><p>Logical scalar indicating whether the <code>dist</code> object
 calculated by <code>FUN</code> should be stored as ‘dist’ attribute of
 the matrix returned/stored by <code>calculateNMDS</code>/ <code>runNMDS</code>.</p></dd>
+
+
 <dt>abund_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></dd>
+
+
 <dt>exprs_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
 (Please use <code>abund_values</code> instead. At some point <code>exprs_values</code>
 will be disabled.)</p></dd>
+
+
 <dt>dimred</dt>
 <dd><p>String or integer scalar specifying the existing dimensionality
 reduction results to use.</p></dd>
+
+
 <dt>n_dimred</dt>
 <dd><p>Integer scalar or vector specifying the dimensions to use if
 dimred is specified.</p></dd>
+
+
 <dt>altexp</dt>
 <dd><p>String or integer scalar specifying an alternative experiment
 containing the input data.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>String specifying the name to be used to store the result in the
 reducedDims of the output.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>For <code>calculateNMDS</code>, a matrix is returned containing the MDS
+    
+
+<p>For <code>calculateNMDS</code>, a matrix is returned containing the MDS
 coordinates for each sample (row) and dimension (column).</p>
     </div>
     <div id="details">
@@ -234,7 +267,7 @@ results.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
