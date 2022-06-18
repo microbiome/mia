@@ -21,10 +21,8 @@
 #' @param name A single character value specifying the name of transformed
 #'   abundance table.
 #'
-#' @param pseudocount FALSE or numeric value deciding whether pseudocount is
-#'   added. Numerical value specifies the value of pseudocount. (Only used for 
-#'   methods \code{method = "clr"}, \code{method = "hellinger"}, or
-#'   \code{method = "log10"})
+#' @param pseudocount NULL or numeric value deciding whether pseudocount is
+#'   added. The numeric value specifies the value of pseudocount.
 #'
 #' @param threshold A numeric value for setting threshold for pa transformation.
 #'   By default it is 0. (Only used for \code{method = "pa"})
@@ -38,13 +36,19 @@
 #' \itemize{
 #' 
 #' \item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
-#' skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
+#' skewness of data and for centering it. clr expects that sample-wise sums 
+#' are equal. That is why usually , e.g., relative transformation is applied
+#' before clr. 
+#' 
+#' If the data contains zeros, pseudocount (commonly the smallest 
+#' positive value of the data) must be added since clr is a logarithmic transformation.
+#'  (See e.g. Gloor et al. 2017.)
 #'
-#' \deqn{clr = log_{10}\frac{x_{r}}{g(x_{r})} = log_{10}x_{r} - log_{10}µ_{r}}{%
-#' clr = log10(x_r/g(x_r)) = log10 x_r - log10 µ_r}
-#' where \eqn{x_{r}} is a single relative value, g(x_{r}) is geometric mean of
-#' sample-wide relative values, and \eqn{\mu_{r}} is arithmetic mean of 
-#' sample-wide relative values".}
+#' \deqn{clr = log_{10}\frac{x{g(x)}} = log_{10}x - log_{10}\mu}{%
+#' clr = log10(x/g(x)) = log10 x - log10 µ}
+#' where \eqn{x} is a single value, g(x) is a geometric mean of
+#' sample-wise values, and \eqn{\mu} is an arithmetic mean of 
+#' sample-wise values".}
 #' 
 #' \item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
 #' clr is that logarithmic transformations lead to undefined values when zeros
@@ -56,10 +60,10 @@
 #' observed taxa is a good approximation to the true geometric mean.
 #' (See e.g. Martino et al. 2019.)
 #'
-#' \deqn{rclr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
-#' rclr = log10(x_r/g(x_r > 0))}
-#' where \eqn{x_{r}} is a single relative value, and g(x_{r} > 0) is geometric 
-#' mean of sample-wide relative values that are over 0".}
+#' \deqn{rclr = log_{10}\frac{x{g(x > 0)}}}{%
+#' rclr = log10(x/g(x > 0))}
+#' where \eqn{x} is a single value, and g(x > 0) is geometric 
+#' mean of sample-wide values that are over 0".}
 #' 
 #' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 #' extreme data points. It can be utilize for clustering or ordination analysis.
@@ -134,43 +138,39 @@
 #' data(esophagus)
 #' x <- esophagus
 #'
-#' # By specifying, it is possible to apply different transformations, e.g. clr transformation.
+#' # By specifying 'method', it is possible to apply different transformations, 
+#' # e.g. compositional transformation.
+#' x <- transformSamples(x, method = "relabundance")
+#' 
+#' # The target of transformation can be specified with "abund_values"
 #' # Pseudocount can be added by specifying 'pseudocount'.
-#' x <- transformSamples(x, method="clr", pseudocount=1)
-
-#' head(assay(x, "clr"))
-#'
-#' # Also, the target of transformation
-#' # can be specified with "abund_values".
-#' x <- transformSamples(x, method="relabundance")
-#' x <- transformSamples(x, method="clr", abund_values="relabundance", 
-#'                         pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
-#' x2 <- transformSamples(x, method="clr", abund_values="counts", pseudocount = 1)
-#' head(assay(x, "clr"))
-#'
-#' # Different pseudocounts used by default for counts and relative abundances
-#' x <- transformSamples(x, method="relabundance")
-#' mat <- assay(x, "relabundance"); 
+#' 
+#' # Get pseudocount; here smallest positive value
+#' mat <- assay(x, "relabundance") 
 #' pseudonumber <- min(mat[mat>0])
-#' x <- transformSamples(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
-#' x <- transformSamples(x, method="clr", abund_values = "counts", pseudocount=1)
-#'
+#' # Perform CLR
+#' x <- transformSamples(x, abund_values = "relabundance", method = "clr", 
+#'                       pseudocount = pseudonumber
+#'                       )
+#'                       
+#' head(assay(x, "clr"))
+#' 
 #' # Name of the stored table can be specified.
 #' x <- transformSamples(x, method="hellinger", name="test")
 #' head(assay(x, "test"))
 #'
 #' # pa returns presence absence table. With 'threshold', it is possible to set the
 #' # threshold to a desired level. By default, it is 0.
-#' x <- transformSamples(x, method="pa", threshold=35)
+#' x <- transformSamples(x, method = "pa", threshold = 35)
 #' head(assay(x, "pa"))
 #' 
 #' # rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
 #' # and using the ties.method="first" from the colRanks function
-#' x <- transformSamples(x, method="rank")
+#' x <- transformSamples(x, method = "rank")
 #' head(assay(x, "rank"))
 #' 
 #' # transformCounts is an alias for transformSamples
-#' x <- transformCounts(x, method="relabundance", name="test2")
+#' x <- transformCounts(x, method = "relabundance", name = "test2")
 #' head(assay(x, "test2"))
 #'
 #' # In order to use other ranking variants, modify the chosen assay directly:
@@ -179,7 +179,7 @@
 #'                                                            preserveShape = TRUE)  
 #'                                                            
 #' # If you want to do the transformation for features, you can do that by using
-#' x <- transformFeatures(x, method="log10", name="log10_features", pseudocount = 1)
+#' x <- transformFeatures(x, method = "log10", name = "log10_features", pseudocount = 1)
 #' head(assay(x, "log10_features"))
 #'
 #' # Z-transform can be done for features by using shortcut function
@@ -205,7 +205,7 @@ setGeneric("transformSamples", signature = c("x"),
                     method = c("clr", "rclr", "hellinger", "log10", "pa", 
                                "rank", "relabundance"),
                     name = method,
-                    pseudocount = FALSE,
+                    pseudocount = NULL,
                     threshold = 0)
                     standardGeneric("transformSamples"))
 
@@ -218,7 +218,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
             method = c("clr", "rclr", "hellinger", "log10", "pa", 
                        "rank", "relabundance"),
             name = method,
-            pseudocount = FALSE,
+            pseudocount = NULL,
             threshold = 0){
         # Input check
         # Check abund_values
@@ -258,7 +258,7 @@ setGeneric("transformCounts", signature = c("x"),
                     method = c("clr", "rclr", "hellinger", "log10", "pa", 
                                "rank", "relabundance"),
                     name = method,
-                    pseudocount = FALSE,
+                    pseudocount = NULL,
                     threshold = 0)
                standardGeneric("transformCounts"))
 
@@ -271,7 +271,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
              method = c("clr", "rclr", "hellinger", "log10", "pa", 
                         "rank", "relabundance"),
              name = method,
-             pseudocount = FALSE,
+             pseudocount = NULL,
              threshold = 0){
         transformSamples(x, 
                        abund_values = abund_values,
@@ -291,7 +291,7 @@ setGeneric("transformFeatures", signature = c("x"),
                     abund_values = "counts",
                     method = c("log10", "pa", "z"),
                     name = method,
-                    pseudocount = FALSE,
+                    pseudocount = NULL,
                     threshold = 0)
                standardGeneric("transformFeatures"))
 
@@ -302,7 +302,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
              abund_values = "counts",
              method = c("log10", "pa", "z"),
              name = method,
-             pseudocount = FALSE,
+             pseudocount = NULL,
              threshold = 0){
         # Input check
         # Check abund_values
@@ -375,22 +375,11 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .apply_transformation <- function(assay, method, pseudocount, threshold, ...){
     # Input check
     # Check pseudocount
-    if(length(pseudocount) != 1L || 
-       !(pseudocount == FALSE || is.numeric(pseudocount))){
-        stop("'pseudocount' must be FALSE or a single numeric value.",
+    if( !( is.null(pseudocount) || 
+           (length(pseudocount) == 1L && is.numeric(pseudocount)) ) ){
+        stop("'pseudocount' must be NULL or a single numeric value.",
              call. = FALSE)
-    } else if(is.numeric(pseudocount)){
-        if (method == "relabundance" && pseudocount > 0){
-            warning("Relative abundances vary in [0, 1]; adding a ",
-                    "pseudocount > 0 on relabundance will cause ",
-                    "non-sensicale results. Recommended to cross-check ",
-                    "that the pseudocount choice is correct and intended.",
-                    call. = FALSE)
-        }
-        if(pseudocount == 0){
-            pseudocount <- FALSE
-        }
-    }
+    } 
     # Check threshold
     if(!is.numeric(threshold)){
         stop("'threshold' must be a numeric value, and it can be used ",
@@ -399,11 +388,13 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     }
     # Input check end
     
-    # apply pseudocount
-    abund <- .apply_pseudocount(assay, pseudocount)
+    # apply pseudocount, if it is numeric
+    if( is.numeric(pseudocount) ){
+        assay <- .apply_pseudocount(assay, pseudocount)
+    }
     # Get transformed table
     transformed_table <-
-        .get_transformed_table(assay = abund,
+        .get_transformed_table(assay = assay,
                                method = method,
                                threshold = threshold)
     return(transformed_table)
@@ -470,18 +461,25 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-#' @importFrom DelayedMatrixStats colMeans2
+#' @importFrom DelayedMatrixStats colSums2 colMeans2
 .calc_clr <- function(mat, ...){
-    mat <- .calc_rel_abund(mat)
     # If there is negative values, gives an error.
-    if (any(mat <= 0, na.rm = TRUE)) {
+    if(any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
-             "clr-transformation is being applied without (suitable) ",
-             "pseudocount. \n",
-             "Try to add pseudocount (default choice pseudocount = 1 for ",
-             "count assay; or pseudocount = min(x[x>0]) with relabundance ",
-             "assay).",
+             "log10 transformation is being applied without pseudocount.\n",
+             "Try to add pseudocount (default choice pseudocount = 1 for count ",
+             "assay; or pseudocount = min(x[x>0]) for relabundance assay).",
              call. = FALSE)
+    }
+    # Calculate colSums
+    colsums <- colSums2(mat, na.rm = TRUE)
+    # Check that they are equal; affects the result of CLR. CLR expects a fixed
+    # constant
+    if( round(max(colsums)-min(colsums), 3) != 0  ){
+        warning("All the total abundances of samples do not sum-up to a fixed constant. ",
+                "Please consider to apply, e.g., relative transformation in prior to ",
+                "CLR transformation.",
+                call. = FALSE)
     }
     # In every sample, calculates the log of individual entries. After that calculates
     # the sample-specific mean value and subtracts every entries' value with that.
@@ -491,25 +489,35 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-#' @importFrom DelayedMatrixStats colMeans2
+#' @importFrom DelayedMatrixStats colSums2 colMeans2
 .calc_rclr <- function(mat, ...){
-   # Performs logarithmic transform
-   log_mat <- log(mat)
-   # If there are zeros, they are converted into infinite values. 
-   # They are converted to NAs.
-   log_mat[is.infinite(log_mat)] <- NA
-   # Calculates means for every sample, does not take NAs into account
-   mean_log_mat <- colMeans2(log_mat, na.rm = TRUE)
-   # Calculates exponential values from means, i.e., geometric means
-   geometric_means_of_samples <- exp(mean_log_mat)
-   # Divides all values by their sample-wide geometric means
-   values_divided_by_geom_mean <- t(mat)/geometric_means_of_samples
-   # Does logarithmic transform and transposes the table back to its original form
-   return_mat <- t(log(values_divided_by_geom_mean))
-   # If there were zeros, there are infinite values after logarithmic transform. 
-   # They are converted to zero.
-   return_mat[is.infinite(return_mat)] <- 0
-   return(return_mat)
+    # Calculate colSums
+    colsums <- colSums2(mat, na.rm = TRUE)
+    # Check that they are equal; affects the result of CLR. CLR expects a fixed
+    # constant
+    if( round(max(colsums)-min(colsums), 3) != 0 ){
+        warning("All the total abundances of samples do not sum-up to a fixed constant. ",
+                "Please consider to apply, e.g., relative transformation in prior to ",
+                "CLR transformation.",
+                call. = FALSE)
+    }
+    # Performs logarithmic transform
+    log_mat <- log(mat)
+    # If there are zeros, they are converted into infinite values. 
+    # They are converted to NAs.
+    log_mat[is.infinite(log_mat)] <- NA
+    # Calculates means for every sample, does not take NAs into account
+    mean_log_mat <- colMeans2(log_mat, na.rm = TRUE)
+    # Calculates exponential values from means, i.e., geometric means
+    geometric_means_of_samples <- exp(mean_log_mat)
+    # Divides all values by their sample-wide geometric means
+    values_divided_by_geom_mean <- t(mat)/geometric_means_of_samples
+    # Does logarithmic transform and transposes the table back to its original form
+    return_mat <- t(log(values_divided_by_geom_mean))
+    # If there were zeros, there are infinite values after logarithmic transform. 
+    # They are converted to zero.
+    return_mat[is.infinite(return_mat)] <- 0
+    return(return_mat)
 }
 
 #' @importFrom DelayedMatrixStats colRanks
@@ -542,10 +550,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 .apply_pseudocount <- function(mat, pseudocount){
-    # If "pseudocount" is not FALSE, it is numeric value specified by user. 
-    # Then add pseudocount.
-    if(!pseudocount == FALSE){
-        mat <- mat + pseudocount
+    # Give warning if pseudocount should not be added
+    if( all(mat>0) ){
+        warning("The abundance table contains only positive values. ",
+                "A pseudocount is not encouraged to apply.", call. = FALSE)
     }
+    # Add pseudocount.
+    mat <- mat + pseudocount
     return(mat)
 }
