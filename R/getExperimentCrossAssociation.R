@@ -516,6 +516,15 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              " experiment in experiment(x).",
              call. = FALSE)
     }
+    # Check experiment's class
+    obj <- x[[experiment]]
+    if( !(class(obj) == "TreeSummarizedExperiment" || 
+          class(obj) == "SummarizedExperiment") ){
+        stop("The class of experiment specified by ", 
+             deparse(substitute(experiment)), " must be 'TreeSummarizedExperiment' ",
+             "or 'SummarizedExperiment'.",
+             call. = FALSE)
+    }
 }
 ####################### .cross_association_test_data_type ######################
 # This function tests if values match with chosen method. With numeric methods, 
