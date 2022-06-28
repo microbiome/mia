@@ -206,6 +206,10 @@ setMethod("runCCA", "SingleCellExperiment",
                                  collapse = " "))
         rda <- vegan::dbrda(form, data = variables, ...)
         X <- rda$CCA
+        # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
+        if( is.null(X) ){
+            X <- rda$CA
+        }
     } else if(ncol(variables) > 0L) {
         rda <- vegan::dbrda(X = x, Y = variables, ...)
         X <- rda$CCA
