@@ -11,10 +11,10 @@
 #'    
 #' @param experiment2 A single character or numeric value for selecting the experiment 2
 #'    from\code{experiments(x)} of \code{MultiAssayExperiment} object or 
-#'    \code{altExp(x)} of \code{SummarizedExperiment} object. Alternatively, 
-#'    \code{experiment2} can also be \code{SE} object when \code{x} is \code{SE} object.
+#'    \code{altExp(x)} of \code{TreeSummarizedExperiment} object. Alternatively, 
+#'    \code{experiment2} can also be \code{TreeSE} object when \code{x} is \code{TreeSE} object.
 #'    (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and 
-#'    \code{experiment2 = x} when \code{x} is \code{SE})
+#'    \code{experiment2 = x} when \code{x} is \code{TreeSE})
 #'    
 #' @param abund_values1 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
@@ -23,6 +23,16 @@
 #' @param abund_values2 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
 #'   experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})
+#' 
+#' @param altExp1 A single numeric or character value specifying alternative experiment
+#'   from the altExp of experiment 1. If NULL, then the experiment is itself 
+#'   and altExp option is disabled. 
+#'   (By default: \code{altExp1 = NULL})
+#'   
+#' @param altExp2 A single numeric or character value specifying alternative experiment
+#'   from the altExp of experiment 2. If NULL, then the experiment is itself 
+#'   and altExp option is disabled. 
+#'   (By default: \code{altExp2 = NULL})
 #' 
 #' @param MARGIN A single numeric value for selecting if association are calculated
 #'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -114,14 +124,12 @@
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
-#' # Same can be done with SummarizedExperiment and altExp
-#' # Create TreeSE with altExp
-#' tse <- mae[[1]]
-#' altExp(tse, "exp2") <- mae[[2]]
+#' # Same can be done with altExp option
 #' 
 #' # When mode = matrix, matrix is returned
 #' result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", 
 #'                                         abund_values1 = "rclr", abund_values2 = "counts",
+#'                                         altExp2 = 1, 
 #'                                         method = "pearson", mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
