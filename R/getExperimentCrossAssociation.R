@@ -186,6 +186,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            experiment2 = 2,
            abund_values1 = "counts",
            abund_values2 = "counts",
+           altExp1 = NULL,
+           altExp2 = NULL,
            MARGIN = 1,
            method = c("spearman", "categorical", "kendall", "pearson"),
            mode = "table",
@@ -205,6 +207,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           experiment2 = experiment2,
                                           abund_values1 = abund_values1,
                                           abund_values2 = abund_values2,
+                                          altExp1 = altExp1,
+                                          altExp2 = altExp2,
                                           MARGIN = MARGIN,
                                           method = method,
                                           mode = mode,
@@ -320,6 +324,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               experiment2 = 2,
                                               abund_values1 = "counts",
                                               abund_values2 = "counts",
+                                              altExp1 = NULL,
+                                              altExp2 = NULL,
                                               MARGIN = 1,
                                               method = c("spearman", "categorical", "kendall", "pearson"),
                                               mode = c("table", "matrix"),
@@ -341,6 +347,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Fetch tse objects
     tse1 <- x[[experiment1]]
     tse2 <- x[[experiment2]]
+    # Check and fetch tse objects
+    tse1 <- .check_and_get_altExp(tse1, altExp1)
+    tse2 <- .check_and_get_altExp(tse2, altExp2)
     # Check that experiments have same amount of samples
     if( ncol(tse1) != ncol(tse2) ){
         stop("Samples must match between experiments.",
@@ -523,6 +532,44 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         stop("The class of experiment specified by ", 
              deparse(substitute(experiment)), " must be 'TreeSummarizedExperiment' ",
              "or 'SummarizedExperiment'.",
+             call. = FALSE)
+    }
+}
+############################# .check_and_get_altExp ############################
+# This function checks if altExp is specified. If so, then it returns alternative
+# experiment from altExp.
+
+# Input: (Tree)SE
+# Output: (Tree)SE
+.check_and_get_altExp <- function(tse, altExp){
+    # Get the name of altExp variable and experiment number
+    altExp_name <- deparse(substitute(altExp))
+    exp_num <- substr(altExp_name, nchar(altExp_name), nchar(altExp_name))
+    
+    # If it is not NULL, and the class is SE which does not include altExp
+    if( !is.null(altExp) && class(tse) == "SummarizedExperiment" ){
+        stop("'", deparse(substitute(altExp)), "' is specified for experiment", exp_num, 
+             " which class is 'SummarizedExperiment'. It does not have altExp slot.",
+             call. = FALSE)
+    }
+    # If it is NULL or 0, then return the TreeSE itself
+    else if( is.null(altExp) || (isSingleInteger(altExp) && altExp == 0) ){
+        return(tse)
+    # If altExp is specified but there is no alternative experiments
+    } else if( length(altExp) == 0 ){
+        stop("'", deparse(substitute(altExp)), "' is specified but there are no ",
+             "alternative experiments in altExp of experiment ", exp_num, ".",
+             call. = FALSE)
+    # If it is not NULL, then it should specify alternative experiment from altExp
+    } else if( (isSingleInteger(altExp) && altExp<length(altExps(tse)) && altExp>0) ||
+               (isSingleString(altExp) && altExp %in% altExpNames(tse)) ){
+        # Get altExp and return it
+        tse <- altExp(tse, altExp)
+        return(tse)
+    # Otherwise give error
+    } else{
+        stop("'", deparse(substitute(altExp)), "' must be NULL, or a single numeric or ",
+             "character value specifying altExp of experiment ", exp_num, ".",
              call. = FALSE)
     }
 }
