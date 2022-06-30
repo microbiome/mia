@@ -78,6 +78,7 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
             x[[1]] <- NULL
             # Remove all information but rowData, colData, and assay
             rowdata <- rowData(tse)
+            rowtree <- rowTree(tse)
             colData(tse) <- colData(tse)
             assay <- assay(tse, abund_values)
             assays <- SimpleList(name = assay)
@@ -88,8 +89,10 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
                                             )
             
             for(i in list ){
-                tse <- .merge_TreeSE(i, tse_original = tse, missing_values = missing_values)
+                tse <- .merge_TreeSE(i, tse_original = tse, abund_values = abund_values, 
+                                     missing_values = missing_values)
             }
+            rowTree(tse) <- rowtree
               
         }
 )
@@ -130,21 +133,125 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperime
     )
 }
 
-.merge_TreeSE <- function(tse_original, tse, missing_values){
-    rowdata <- .merge_rowdata(tse_original, tse)
-    coldata <- .merge_coldata(tse_original, tse)
-    assays <- .merge_assays(tse_original, tse)
-}
-
-.merge_rowdata <- function(tse_original, tse){
+.merge_TreeSE <- function(tse_original, tse, abund_values, missing_values){
+    # Merge assay
+    assay <- .merge_assay(tse_original, tse, abund_values, missing_values)
+    # Merge rowData
+    rowdata <- .merge_rowdata(tse_original, tse, assay)
+    # Merge colData
+    coldata <- .merge_coldata(tse_original, tse, assay)
     
 }
 
+.merge_assay <- function(tse_original, tse, abund_values, missing_values){
+    # Take assays
+    assay1 <- assay(tse_original, abund_values)
+    assay2 <- assay(tse, abund_values)
+    
+    # Add rownames to one of the columns
+    assay1$rownames_merge_ID <- rownames(assay1)
+    assay2$rownames_merge_ID <- rownames(assay2)
+    
+    # Combine them by rows
+    assay <- merge(assay1, assay2, by = "rownames_merge_ID", all = TRUE)
+    # Fill missing values
+    assay[ is.na(assay) ] <- missing_values
+    
+    # Add rownames, and remove additional column
+    rownames(assay) <- assay$rownames_merge_ID
+    assay$rownames_merge_ID <- NULL
+    # Convert into matrix
+    assay <- as.matrix(assay)
+    
+    return(assay)
+}
+
+#' @importFrom dplyr coalesce
+.merge_rowdata <- function(tse_original, tse, assay){
+    # Take rowDatas
+    rd1 <- rowData(tse_original)
+    rd2 <- rowData(tse)
+    
+    # Convert column names to lower
+    if( length(colnames(rd1)) > 0 ){
+        colnames(rd1) <- tolower(colnames(rd1))
+    }
+    if( length(colnames(rd2)) > 0 ){
+        colnames(rd2) <- tolower(colnames(rd2))
+    }
+    
+    # Get matching rank indices
+    matching_ranks_ids1 <- match( colnames(rd2), colnames(rd1) )
+    # Get matching rank names
+    matching_ranks1 <- colnames(rd1)[ matching_ranks_ids1 ]
+    # Remove NAs
+    matching_ranks1 <- matching_ranks1[ !is.na(matching_ranks1) ]
+    
+    # Get matching rank indices
+    matching_ranks_ids2 <- match( colnames(rd1), colnames(rd2) )
+    # Get matching rank names
+    matching_ranks2 <- colnames(rd2)[ matching_ranks_ids2 ]
+    # Remove NAs
+    matching_ranks2 <- matching_ranks2[ !is.na(matching_ranks2) ]
+    
+    # Make the matching ranks unique
+    matching_ranks_mod1 <- paste0(matching_ranks1, "_X")
+    colnames(rd1)[ matching_ranks_ids1 ] <- matching_ranks_mod1
+    matching_ranks_mod2 <- paste0(matching_ranks2, "_Y")
+    colnames(rd2)[ matching_ranks_ids2 ] <- matching_ranks_mod2
+    
+    # Add rownames to one of the columns
+    rd1$rownames_merge_ID <- rownames(rd1)
+    rd2$rownames_merge_ID <- rownames(rd2)
+    # Merge rowData
+    rd <- merge(rd1, rd2, by = "rownames_merge_ID", all = TRUE)
+    # Add rownames and remove additional column
+    rownames(rd) <- rd$rownames_merge_ID
+    rd$rownames_merge_ID <- NULL
+    # Convert into DataFrame
+    rd <- DataFrame(rd)
+    
+    # Combine matching ranks
+    for(i in 1:length(matching_ranks1) ){
+        # Get columns
+        x <- matching_ranks_mod1[i]
+        y <- matching_ranks_mod2[i]
+        # Combine information from columns
+        x_and_y_combined <- coalesce( rd[ , x], rd[ , y] )
+        # Remove additional columns
+        rd[ , x] <- NULL
+        rd[ , y] <- NULL
+        # Add column that has combined information
+        rd[ , matching_ranks1[i] ] <- x_and_y_combined
+    }
+    
+    # Get column indices that match with taxonomy ranks
+    ranks_ind <- match( TAXONOMY_RANKS, colnames(rd) )
+    # Remove NAs
+    ranks_ind <- ranks_ind[ !is.na(ranks_ind) ]
+    # Get the data in correct order, take only column that have ranks
+    rd_rank <- rd[ , ranks_ind]
+    # Take other columns
+    rd_other <- rd[ , !ranks_ind]
+    
+    # Get rank names
+    rank_names <- colnames(rd_rank)
+    # Convert names s that they have capital letters
+    new_rank_names <- paste(toupper(substr(rank_names, 1, 1)), 
+                            substr(rank_names, 2, nchar(rank_names)), sep = "")
+    # Add new names to colnames of rd_rank
+    colnames(rd_rank) <- new_rank_names
+    
+    # Combine columns
+    rd <- cbind(rd_rank, rd_other)
+    
+    return(rd)
+}
+
+#' @importFrom dplyr coalesce
 .merge_coldata <- function(tse_original, tse){
     
 }
 
-.merge_assays <- function(tse_original, tse){
-    
-}
+
 
