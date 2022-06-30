@@ -98,23 +98,15 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
                                             colData = col_data
                                             )
             
-            # for( i in 1:length(x) ){
-            #     temp <- x[[i]]
-            #     tse <- .merge_TreeSE(temp, tse_original = tse, abund_values = abund_values, 
-            #                          missing_values = missing_values)
-            # }
-            # tse <- lapply(x, FUN = .merge_TreeSE, 
-            #               tse_original = tse, 
-            #               abund_values = abund_values, 
-            #               missing_values = missing_values)
+            # Lopp through individual TreeSEs and add them to tse
             tse <- bplapply(x, .merge_TreeSE, 
                             tse_original = tse, 
                             abund_values = abund_values, 
                             missing_values = missing_values, 
                             BPPARAM = BPPARAM,
                             ...)
+            # The return value is a list, take the first and only element
             tse <- tse[[1]]
-            
             
             # If rownames match with original, add rowtree
             # Suppress warning that occurs when the length of rownames differ
