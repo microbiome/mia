@@ -234,6 +234,10 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperime
 
 #' @importFrom dplyr coalesce
 .full_join_two_tables <- function(df1, df2){
+    # Ensure that the data is in correct format
+    df1 <- as.data.frame(df1)
+    df2 <- as.data.frame(df2)
+    
     # Get matching variables indices
     matching_variables_ids1 <- match( colnames(df2), colnames(df1) )
     # Get matching variable names
