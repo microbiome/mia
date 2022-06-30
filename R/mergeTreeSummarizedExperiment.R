@@ -76,9 +76,11 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
             # Take first element and remove it from the list
             tse <- x[[1]]
             x[[1]] <- NULL
+            # Get rowTree to include if rownames match with all objects
+            rownames <- rownames(tse)
+            rowtree <- rowTree(tse)
             # Remove all information but rowData, colData, and assay
             rowdata <- rowData(tse)
-            rowtree <- rowTree(tse)
             colData(tse) <- colData(tse)
             assay <- assay(tse, abund_values)
             assays <- SimpleList(name = assay)
@@ -92,8 +94,12 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
                 tse <- .merge_TreeSE(i, tse_original = tse, abund_values = abund_values, 
                                      missing_values = missing_values)
             }
-            rowTree(tse) <- rowtree
-              
+            # IF rownames match with original, add rowtree
+            if( all(rownames(tse) == rownames) ){
+                rowTree(tse) <- rowtree
+            }
+            
+            return(tse)
         }
 )
 
@@ -134,16 +140,17 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperime
 }
 
 .merge_TreeSE <- function(tse_original, tse, abund_values, missing_values){
-    # Merge assay
-    assay <- .merge_assay(tse_original, tse, abund_values, missing_values)
+    
     # Merge rowData
     rowdata <- .merge_rowdata(tse_original, tse, assay)
     # Merge colData
     coldata <- .merge_coldata(tse_original, tse, assay)
+    # Merge assay
+    assay <- .merge_assay(tse_original, tse, abund_values, missing_values, rowdata, coldata)
     
 }
 
-.merge_assay <- function(tse_original, tse, abund_values, missing_values){
+.merge_assay <- function(tse_original, tse, abund_values, missing_values, rd, cd){
     # Take assays
     assay1 <- assay(tse_original, abund_values)
     assay2 <- assay(tse, abund_values)
@@ -162,6 +169,10 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperime
     assay$rownames_merge_ID <- NULL
     # Convert into matrix
     assay <- as.matrix(assay)
+    
+    # Order the assay based on rowData and colData
+    assay <- assay[ match(rownames(rd), rownames(assay)), ]
+    assay <- assay[ , match(rownames(cd), colnames(assay)) ]
     
     return(assay)
 }
@@ -211,18 +222,20 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperime
     # Convert into DataFrame
     rd <- DataFrame(rd)
     
-    # Combine matching ranks
-    for(i in 1:length(matching_ranks1) ){
-        # Get columns
-        x <- matching_ranks_mod1[i]
-        y <- matching_ranks_mod2[i]
-        # Combine information from columns
-        x_and_y_combined <- coalesce( rd[ , x], rd[ , y] )
-        # Remove additional columns
-        rd[ , x] <- NULL
-        rd[ , y] <- NULL
-        # Add column that has combined information
-        rd[ , matching_ranks1[i] ] <- x_and_y_combined
+    # Combine matching ranks if found
+    if( length(matching_ranks1) > 0 ){
+        for(i in 1:length(matching_ranks1) ){
+            # Get columns
+            x <- matching_ranks_mod1[i]
+            y <- matching_ranks_mod2[i]
+            # Combine information from columns
+            x_and_y_combined <- coalesce( rd[ , x], rd[ , y] )
+            # Remove additional columns
+            rd[ , x] <- NULL
+            rd[ , y] <- NULL
+            # Add column that has combined information
+            rd[ , matching_ranks1[i] ] <- x_and_y_combined
+        }
     }
     
     # Get column indices that match with taxonomy ranks
@@ -250,7 +263,58 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperime
 
 #' @importFrom dplyr coalesce
 .merge_coldata <- function(tse_original, tse){
+    # Take colDatas
+    cd1 <- colData(tse_original)
+    cd2 <- colData(tse)
     
+    # Get matching variables indices
+    matching_variables_ids1 <- match( colnames(cd2), colnames(cd1) )
+    # Get matching variable names
+    matching_variables1 <- colnames(cd1)[ matching_variables_ids1 ]
+    # Remove NAs
+    matching_variables1 <- matching_variables1[ !is.na(matching_variables1) ]
+    
+    # Get matching variables indices
+    matching_variables_ids2 <- match( colnames(cd1), colnames(cd2) )
+    # Get matching variable names
+    matching_variables2 <- colnames(cd2)[ matching_variables_ids2 ]
+    # Remove NAs
+    matching_variables2 <- matching_variables2[ !is.na(matching_variables2) ]
+    
+    # Make the matching variables unique
+    matching_variables_mod1 <- paste0(matching_variables1, "_X")
+    colnames(cd1)[ matching_variables_ids1 ] <- matching_variables_mod1
+    matching_variables_mod2 <- paste0(matching_variables2, "_Y")
+    colnames(cd2)[ matching_variables_ids2 ] <- matching_variables_mod2
+    
+    # Add rownames to one of the columns
+    cd1$rownames_merge_ID <- rownames(cd1)
+    cd2$rownames_merge_ID <- rownames(cd2)
+    # Merge colData
+    cd <- merge(cd1, cd2, by = "rownames_merge_ID", all = TRUE)
+    # Add rownames and remove additional column
+    rownames(cd) <- cd$rownames_merge_ID
+    cd$rownames_merge_ID <- NULL
+    # Convert into DataFrame
+    cd <- DataFrame(cd)
+    
+    # Combine matching variables if found
+    if( length(matching_variables1) > 0 ){
+        for(i in 1:length(matching_variables1) ){
+            # Get columns
+            x <- matching_variables_mod1[i]
+            y <- matching_variables_mod2[i]
+            # Combine information from columns
+            x_and_y_combined <- coalesce( cd[ , x], cd[ , y] )
+            # Remove additional columns
+            cd[ , x] <- NULL
+            cd[ , y] <- NULL
+            # Add column that has combined information
+            cd[ , matching_variables1[i] ] <- x_and_y_combined
+        }
+    }
+    
+    return(cd)
 }
 
 
