@@ -56,6 +56,7 @@ setGeneric("mergeTreeSummarizedExperiment", signature = c("x"),
 
 #' @rdname mergeTreeSummarizedExperiment
 #' @export
+#' @importFrom BiocParallel bplapply
 setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
         function(x, abund_values = "counts", missing_values = 0, ..., BPPARAM = SerialParam() ){
             ################## Input check ##################
@@ -97,12 +98,25 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
                                             colData = col_data
                                             )
             
-            for( i in 1:length(x) ){
-                temp <- x[[i]]
-                tse <- .merge_TreeSE(temp, tse_original = tse, abund_values = abund_values, 
-                                     missing_values = missing_values)
-            }
-            # IF rownames match with original, add rowtree
+            # for( i in 1:length(x) ){
+            #     temp <- x[[i]]
+            #     tse <- .merge_TreeSE(temp, tse_original = tse, abund_values = abund_values, 
+            #                          missing_values = missing_values)
+            # }
+            # tse <- lapply(x, FUN = .merge_TreeSE, 
+            #               tse_original = tse, 
+            #               abund_values = abund_values, 
+            #               missing_values = missing_values)
+            tse <- bplapply(x, .merge_TreeSE, 
+                            tse_original = tse, 
+                            abund_values = abund_values, 
+                            missing_values = missing_values, 
+                            BPPARAM = BPPARAM,
+                            ...)
+            tse <- tse[[1]]
+            
+            
+            # If rownames match with original, add rowtree
             # Suppress warning that occurs when the length of rownames differ
             if( all(rownames(tse) %in% rownames) && 
                 all(rownames %in% rownames(tse)) ){
@@ -165,7 +179,7 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
     )
 }
 
-.merge_TreeSE <- function(tse_original, tse, abund_values, missing_values){
+.merge_TreeSE <- function(tse_original, tse, abund_values, missing_values, ...){
     
     # Merge rowData
     rowdata <- .merge_rowdata(tse_original, tse)
