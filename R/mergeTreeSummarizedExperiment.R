@@ -61,16 +61,17 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
             ################## Input check ##################
             # Can the abund_value the found form all the objects
             abund_values_bool <- lapply(x, .assay_cannot_be_found, abund_values = abund_values)
+            abund_values_bool <- unlist(abund_values_bool)
             if( any(abund_values_bool) ){
                 stop("'abund_values' must specify an assay from assays. 'abund_values' ",
                      "cannot be found at least in one TreeSE.",
                      call. = FALSE)
             }
             # Is missing_values one of the allowed ones
-            missing_values_bool <- (is.numeric(missing_values) && missing_values = 0) ||
+            missing_values_bool <- (is.numeric(missing_values) && missing_values == 0) ||
                 .is_a_string(missing_values) || is.na(missing_values)
             # If not then give error
-            if(  missing_values_bool ){
+            if(  !missing_values_bool ){
                 stop("'missing_values' must be 0, NA, or a single character value.",
                      call. = FALSE)
             }
@@ -81,25 +82,32 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
             # Get rowTree to include if rownames match with all objects
             tse <- as(tse, "TreeSummarizedExperiment")
             rownames <- rownames(tse)
-            rowtree <- rowTree(tse)
+            row_tree <- rowTree(tse)
             # Remove all information but rowData, colData, and assay
-            rowdata <- rowData(tse)
-            colData(tse) <- colData(tse)
+            row_data <- rowData(tse)
+            row_data <- DataFrame(row_data)
+            col_data <- colData(tse)
+            col_data <- DataFrame(col_data)
             assay <- assay(tse, abund_values)
+            assay <- as.matrix(assay)
             assays <- SimpleList(name = assay)
             names(assays) <- abund_values
             tse <- TreeSummarizedExperiment(assays = assays,
-                                            rowData = rowdata,
-                                            colData = colData
+                                            rowData = row_data,
+                                            colData = col_data
                                             )
             
-            for(i in list ){
-                tse <- .merge_TreeSE(i, tse_original = tse, abund_values = abund_values, 
+            for( i in 1:length(x) ){
+                temp <- x[[i]]
+                tse <- .merge_TreeSE(temp, tse_original = tse, abund_values = abund_values, 
                                      missing_values = missing_values)
             }
             # IF rownames match with original, add rowtree
-            if( all(rownames(tse) == rownames) ){
-                rowTree(tse) <- rowtree
+            # Suppress warning that occurs when the length of rownames differ
+            if( all(rownames(tse) %in% rownames) && 
+                all(rownames %in% rownames(tse)) ){
+                tse <- tse[rownames, ]
+                rowTree(tse) <- row_tree
             }
             
             return(tse)
@@ -116,7 +124,7 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperime
             # Check y
             class <- class(y)
             if( !(class == "SummarizedExperiment" || 
-                  class = "TreeSummarizedExperiment") ){
+                  class == "TreeSummarizedExperiment") ){
                 stop("'y' must be a 'SummarizedExperiment' object.",
                      call. = FALSE)
             } 
@@ -272,8 +280,10 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
     
     # Make the matching variables unique
     matching_variables_mod1 <- paste0(matching_variables1, "_X")
+    matching_variables_ids1 <- matching_variables_ids1[ !is.na(matching_variables_ids1) ]
     colnames(df1)[ matching_variables_ids1 ] <- matching_variables_mod1
     matching_variables_mod2 <- paste0(matching_variables2, "_Y")
+    matching_variables_ids2 <- matching_variables_ids2[ !is.na(matching_variables_ids2) ]
     colnames(df2)[ matching_variables_ids2 ] <- matching_variables_mod2
     
     # Add rownames to one of the columns
