@@ -44,20 +44,22 @@
 #' 
 NULL
 
-######################### Function for list of TreeSEs #########################
+################################### Generic ####################################
 
 #' @rdname mergeTreeSummarizedExperiment
 #' @export
 setGeneric("mergeTreeSummarizedExperiment", signature = c("x"),
-        function(x, abund_values = "counts", missing_values = 0, ..., BPPARAM = SerialParam() )
+        function(x, ... )
             standardGeneric("mergeTreeSummarizedExperiment"))
+
+###################### Function for SimpleList of TreeSEs ######################
 
 #' @rdname mergeTreeSummarizedExperiment
 #' @export
-setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
+setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
         function(x, abund_values = "counts", missing_values = 0, ..., BPPARAM = SerialParam() ){
             ################## Input check ##################
-            # Can the abund_value tbe found form all the objects
+            # Can the abund_value the found form all the objects
             abund_values_bool <- lapply(x, .assay_cannot_be_found, abund_values = abund_values)
             if( any(abund_values_bool) ){
                 stop("'abund_values' must specify an assay from assays. 'abund_values' ",
@@ -77,6 +79,7 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
             tse <- x[[1]]
             x[[1]] <- NULL
             # Get rowTree to include if rownames match with all objects
+            tse <- as(tse, "TreeSummarizedExperiment")
             rownames <- rownames(tse)
             rowtree <- rowTree(tse)
             # Remove all information but rowData, colData, and assay
@@ -107,20 +110,35 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
 
 #' @rdname mergeTreeSummarizedExperiment
 #' @export
-setGeneric("mergeTreeSummarizedExperiment", signature = c("x", "y"),
-        function(x, y, ... )
-            standardGeneric("mergeTreeSummarizedExperiment"))
-
-#' @rdname mergeTreeSummarizedExperiment
-#' @export
-setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperiment", 
-                                                         y = "SummarizedExperiment"),
-        function(x, y, ...){
+setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperiment"),
+        function(x, y = NULL, ...){
+            ################## Input check ##################
+            # Check y
+            class <- class(y)
+            if( !(class == "SummarizedExperiment" || 
+                  class = "TreeSummarizedExperiment") ){
+                stop("'y' must be a 'SummarizedExperiment' object.",
+                     call. = FALSE)
+            } 
+            ################ Input check end ################
             # Create a list based on TreeSEs
-            list <- list(x, y)
+            list <- SimpleList(x, y)
             # Call the function for list
             mergeTreeSummarizedExperiment(list, ...)
         }
+)
+
+########################### Function for list TreeSEs ##########################
+
+#' @rdname mergeTreeSummarizedExperiment
+#' @export
+setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
+          function(x, ...){
+              # Convert into a list
+              x <- SimpleList(x)
+              # Call the function for list
+              mergeTreeSummarizedExperiment(x, ...)
+          }
 )
 
 ################################ HELP FUNCTIONS ################################
