@@ -9,6 +9,9 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #' to be merged.
 #' 
+#' @param join_method A single character value for selecting the joining method.
+#' Must be 'full', 'inner', 'left', or 'right'.
+#' 
 #' @param missing_values NA, 0, or a single character values specifying the notation
 #' of missing values.
 #' 
@@ -76,7 +79,8 @@ setGeneric("mergeTreeSE", signature = c("x"),
 #' @export
 #' @importFrom BiocParallel bplapply
 setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
-        function(x, abund_values = "counts", missing_values = 0, verbose = TRUE, ... ){
+        function(x, abund_values = "counts", joining_method = "full", 
+                 missing_values = 0, verbose = TRUE, ... ){
             ################## Input check ##################
             # Can the abund_value the found form all the objects
             abund_values_bool <- lapply(x, .assay_cannot_be_found, abund_values = abund_values)
@@ -84,6 +88,18 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
             if( any(abund_values_bool) ){
                 stop("'abund_values' must specify an assay from assays. 'abund_values' ",
                      "cannot be found at least in one TreeSE.",
+                     call. = FALSE)
+            }
+            # Check joining_method
+            if( !(.is_non_empty_string(joining_method) &&
+                joining_method %in% c("full", "inner", "left", "right") ) ){
+                stop("'joining_method' must be 'full', 'inner', 'left', or 'right'.",
+                     call. = FALSE)
+            }
+            # Check if joining_method is not available
+            if( length(x) > 2 && !joining_method %in% c("full", "inner") ){
+                stop("Joining method 'left' and 'right' are not available ",
+                     "when more than two objects are being merged.",
                      call. = FALSE)
             }
             # Is missing_values one of the allowed ones
@@ -111,15 +127,18 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
             # Get rowTree to include if match with result data
             tse <- as(tse, "TreeSummarizedExperiment")
             row_tree <- rowTree(tse)
-            # Remove all information but rowData, colData, and assay
+            # Remove all information but rowData, colData, metadata and assay
             row_data <- rowData(tse)
             col_data <- colData(tse)
             assay <- assay(tse, abund_values)
             assays <- SimpleList(name = assay)
             names(assays) <- abund_values
+            metadata <- metadata(tse)
+            
             tse <- TreeSummarizedExperiment(assays = assays,
                                             rowData = row_data,
-                                            colData = col_data
+                                            colData = col_data,
+                                            metadata = metadata
                                             )
             
             # Lopp through individual TreeSEs and add them to tse
@@ -131,6 +150,7 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
                     }
                     temp <- x[[i]]
                     tse <- .merge_TreeSE(temp, tse_original = tse, abund_values = abund_values,
+                                         joining_method = joining_method,
                                          missing_values = missing_values)
                 }
             }
@@ -195,26 +215,30 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     )
 }
 
-.merge_TreeSE <- function(tse_original, tse, abund_values, missing_values, ...){
+.merge_TreeSE <- function(tse_original, tse, abund_values, joining_method, missing_values, ...){
     
     # Merge rowData
-    rowdata <- .merge_rowdata(tse_original, tse)
+    rowdata <- .merge_rowdata(tse_original, tse, joining_method)
     # Merge colData
-    coldata <- .merge_coldata(tse_original, tse)
+    coldata <- .merge_coldata(tse_original, tse, joining_method)
     # Merge assay
-    assay <- .merge_assay(tse_original, tse, abund_values, missing_values, rowdata, coldata)
+    assay <- .merge_assay(tse_original, tse, abund_values, joining_method, missing_values, rowdata, coldata)
     assays <- SimpleList(name = assay)
     names(assays) <- abund_values
+    # Combine metadata
+    metadata <- c( metadata(tse_original), metadata(tse) )
     
     # Create TreeSE from the data
     tse <- TreeSummarizedExperiment(assays = assays,
                                     rowData = rowdata,
-                                    colData = coldata)
+                                    colData = coldata,
+                                    metadata = metadata)
     return(tse)
     
 }
 
-.merge_assay <- function(tse_original, tse, abund_values, missing_values, rd, cd){
+.merge_assay <- function(tse_original, tse, abund_values, joining_method,
+                         missing_values, rd, cd){
     # Take assays
     assay1 <- assay(tse_original, abund_values)
     assay2 <- assay(tse, abund_values)
@@ -234,7 +258,7 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     return(assay)
 }
 
-.merge_rowdata <- function(tse_original, tse){
+.merge_rowdata <- function(tse_original, tse, joining_method){
     # Take rowDatas
     rd1 <- rowData(tse_original)
     rd2 <- rowData(tse)
@@ -276,7 +300,7 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     return(rd)
 }
 
-.merge_coldata <- function(tse_original, tse){
+.merge_coldata <- function(tse_original, tse, joining_method){
     # Take colDatas
     cd1 <- colData(tse_original)
     cd2 <- colData(tse)
