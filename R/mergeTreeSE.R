@@ -26,7 +26,7 @@
 #' individual objects, there are missing values in \code{assays}. The notation of missing
 #' can be specified with the \code{missing_values} argument. 
 #' 
-#' Compared to \code{cbind} and \code{rbind} \code{mergeTreeSummarizedExperiment} 
+#' Compared to \code{cbind} and \code{rbind} \code{mergeTreeSE} 
 #' allows more freely merging since \code{cbind} and \code{rbind} expect that 
 #' rows and columns are matching, respectively.
 #'
@@ -37,7 +37,7 @@
 #'   \item{\code{\link[TreeSummarizedExperiment::rbind]{rbind}}}
 #' }
 #'
-#' @name mergeTreeSummarizedExperiment
+#' @name mergeTreeSE
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -53,29 +53,29 @@
 #' tse3 <- enterotype[1:100, ]
 #' 
 #' # Merge two TreeSEs
-#' tse <- mergeTreeSummarizedExperiment(tse1, tse2)
+#' tse <- mergeTreeSE(tse1, tse2)
 #' 
 #' # Merge a list of TreeSEs
 #' list <- SimpleList(tse1, tse2, tse3)
-#' tse <- mergeTreeSummarizedExperiment(list, abund_values = "counts", missing_values = 0)
+#' tse <- mergeTreeSE(list, abund_values = "counts", missing_values = 0)
 #' tse
 #' 
 NULL
 
 ################################### Generic ####################################
 
-#' @rdname mergeTreeSummarizedExperiment
+#' @rdname mergeTreeSE
 #' @export
-setGeneric("mergeTreeSummarizedExperiment", signature = c("x"),
+setGeneric("mergeTreeSE", signature = c("x"),
         function(x, ... )
-            standardGeneric("mergeTreeSummarizedExperiment"))
+            standardGeneric("mergeTreeSE"))
 
 ###################### Function for SimpleList of TreeSEs ######################
 
-#' @rdname mergeTreeSummarizedExperiment
+#' @rdname mergeTreeSE
 #' @export
 #' @importFrom BiocParallel bplapply
-setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
+setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
         function(x, abund_values = "counts", missing_values = 0, verbose = TRUE, ... ){
             ################## Input check ##################
             # Can the abund_value the found form all the objects
@@ -146,9 +146,9 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
 
 ########################### Function for two TreeSEs ###########################
 
-#' @rdname mergeTreeSummarizedExperiment
+#' @rdname mergeTreeSE
 #' @export
-setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperiment"),
+setMethod("mergeTreeSE", signature = c(x = "SummarizedExperiment"),
         function(x, y = NULL, ...){
             ################## Input check ##################
             # Check y
@@ -162,20 +162,20 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SummarizedExperime
             # Create a list based on TreeSEs
             list <- SimpleList(x, y)
             # Call the function for list
-            mergeTreeSummarizedExperiment(list, ...)
+            mergeTreeSE(list, ...)
         }
 )
 
 ########################### Function for list TreeSEs ##########################
 
-#' @rdname mergeTreeSummarizedExperiment
+#' @rdname mergeTreeSE
 #' @export
-setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
+setMethod("mergeTreeSE", signature = c(x = "list"),
           function(x, ...){
               # Convert into a list
               x <- SimpleList(x)
               # Call the function for list
-              mergeTreeSummarizedExperiment(x, ...)
+              mergeTreeSE(x, ...)
           }
 )
 

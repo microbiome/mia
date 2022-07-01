@@ -10,28 +10,28 @@ test_that("mergeTreeSE", {
     tse3 <- enterotype[1:50, ]
     
     # Expect errors
-    expect_error( mergeTreeSummarizedExperiment(tse1) )
-    expect_error( mergeTreeSummarizedExperiment(tse1, tse2, missing_values = c(3, 3)) )
-    expect_error( mergeTreeSummarizedExperiment(tse1, tse2, missing_values = TRUE ) )
-    expect_error( mergeTreeSummarizedExperiment(tse1, tse2, missing_values = 36846 ) )
-    expect_error( mergeTreeSummarizedExperiment(tse1, tse2, abund_values = "test")  )
+    expect_error( mergeTreeSE(tse1) )
+    expect_error( mergeTreeSE(tse1, tse2, missing_values = c(3, 3)) )
+    expect_error( mergeTreeSE(tse1, tse2, missing_values = TRUE ) )
+    expect_error( mergeTreeSE(tse1, tse2, missing_values = 36846 ) )
+    expect_error( mergeTreeSE(tse1, tse2, abund_values = "test")  )
     # Calculate relative transform to test abund_values
     tse1 <- transformSamples(tse1, method = "relabundance")
-    expect_error( mergeTreeSummarizedExperiment(tse1, tse2, abund_values = "relabundance")  )
-    expect_error( mergeTreeSummarizedExperiment(tse1, tse2, verbose = "test")  )
-    expect_error( mergeTreeSummarizedExperiment(tse1, tse2, verbose = 1)  )
-    expect_error( mergeTreeSummarizedExperiment(tse1, tse2, tse3)  )
-    expect_error( mergeTreeSummarizedExperiment(tse1)  )
+    expect_error( mergeTreeSE(tse1, tse2, abund_values = "relabundance")  )
+    expect_error( mergeTreeSE(tse1, tse2, verbose = "test")  )
+    expect_error( mergeTreeSE(tse1, tse2, verbose = 1)  )
+    expect_error( mergeTreeSE(tse1, tse2, tse3)  )
+    expect_error( mergeTreeSE(tse1)  )
     
     # Test that data match if there is only one element
-    tse <- mergeTreeSummarizedExperiment(list(tse1), abund_values = "relabundance")
+    tse <- mergeTreeSE(list(tse1), abund_values = "relabundance")
     expect_equal( rowData(tse), rowData(tse1))
     expect_equal( colData(tse), colData(tse1))
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))
     expect_equal( rowTree(tse), rowTree(tse1))
     
     # Test that data match if there is only same elements
-    tse <- mergeTreeSummarizedExperiment(list(tse1, tse1, tse1), abund_values = "relabundance")
+    tse <- mergeTreeSE(list(tse1, tse1, tse1), abund_values = "relabundance")
     # The order of taxa and samples changes
     tse <- tse[ rownames(tse1), colnames(tse1) ]
     expect_equal( rowData(tse), rowData(tse1))
@@ -40,24 +40,24 @@ test_that("mergeTreeSE", {
     expect_equal( rowTree(tse), rowTree(tse1))
     
     # Expect that rowTree is preserved if rownames match
-    tse <- mergeTreeSummarizedExperiment(list(tse1, GlobalPatterns), 
+    tse <- mergeTreeSE(list(tse1, GlobalPatterns), 
                                          abund_values = "counts",
                                          missing_values = NA)
     expect_equal(rowTree(GlobalPatterns), rowTree(tse))
     # Expect some NAs
-    tse <- mergeTreeSummarizedExperiment(list(tse1, tse2), 
+    tse <- mergeTreeSE(list(tse1, tse2), 
                                          abund_values = "counts",
                                          missing_values = NA)
     expect_true( any(is.na(assay(tse))) )
     
     # Test that dimensions match
-    tse <- mergeTreeSummarizedExperiment(tse1, tse2)
+    tse <- mergeTreeSE(tse1, tse2)
     expect_equal( dim(tse), dim(tse1)+dim(tse2) )
     # Expect no NAs in assay
     expect_true( all(!is.na(assay(tse))) )
     
     # Test that dimensions match
-    tse <- mergeTreeSummarizedExperiment(list(tse1, tse2, tse3), missing_values = "MISSING")
+    tse <- mergeTreeSE(list(tse1, tse2, tse3), missing_values = "MISSING")
     expect_equal( dim(tse), dim(tse1)+dim(tse2)+dim(tse3) )
     # Expect some "MISSING"s
     expect_true( any( assay(tse) == "MISSING" ) )
@@ -72,7 +72,7 @@ test_that("mergeTreeSE", {
     expect_true( all(colnames(tse2) %in% colnames(tse)) )
     expect_true( all(colnames(tse3) %in% colnames(tse)) )
     
-    tse <- mergeTreeSummarizedExperiment(list(tse2, tse3, tse1, 
+    tse <- mergeTreeSE(list(tse2, tse3, tse1, 
                                               tse1[1:2, ], tse1[1, ]), 
                                          missing_values = NA)
     # Get assay
