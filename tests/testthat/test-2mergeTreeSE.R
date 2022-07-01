@@ -72,6 +72,9 @@ test_that("mergeTreeSE", {
     expect_true( all(colnames(tse2) %in% colnames(tse)) )
     expect_true( all(colnames(tse3) %in% colnames(tse)) )
     
+    tse <- mergeTreeSummarizedExperiment(list(tse2, tse3, tse1, 
+                                              tse1[1:2, ], tse1[1, ]), 
+                                         missing_values = NA)
     # Get assay
     assay <- assay(tse, "counts")
     assay1 <- assay(tse1, "counts")
@@ -89,7 +92,6 @@ test_that("mergeTreeSE", {
     rownames <- rownames(assay3)
     expect_equal( assay[rownames, colnames], assay3 )
     
-    tse <- mergeTreeSummarizedExperiment(list(tse2, tse3, tse1), missing_values = 0)
     # Get rowData
     row_data <- rowData(tse)
     row_data1 <- rowData(tse1)
