@@ -34,6 +34,8 @@ to be merged.}
 \item{missing_values}{NA, 0, or a single character values specifying the notation
 of missing values.}
 
+\item{verbose}{A single boolean value to choose whether to show messages.}
+
 \item{y}{a \code{\link{SummarizedExperiment}} object}
 }
 \value{
@@ -72,13 +74,10 @@ tse <- mergeTreeSummarizedExperiment(list, abund_values = "counts", missing_valu
 tse
 
 }
-\references{
-
-}
 \seealso{
 \itemize{
-\item{\code{\link[TreeSummarizedExperiment:cbind]{cbind}}}
-\item{\code{\link[TreeSummarizedExperiment:rbind]{rbind}}}
+\item{\code{\link[TreeSummarizedExperiment::cbind]{cbind}}}
+\item{\code{\link[TreeSummarizedExperiment::rbind]{rbind}}}
 }
 }
 \author{

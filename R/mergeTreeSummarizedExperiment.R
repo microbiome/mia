@@ -11,6 +11,9 @@
 #' 
 #' @param missing_values NA, 0, or a single character values specifying the notation
 #' of missing values.
+#' 
+#' @param verbose A single boolean value to choose whether to show messages. 
+#'
 #'
 #' @param ... optional arguments (not used).
 #'
@@ -27,12 +30,11 @@
 #' allows more freely merging since \code{cbind} and \code{rbind} expect that 
 #' rows and columns are matching, respectively.
 #'
-#' @references
 #'
 #' @seealso
 #' \itemize{
-#'   \item{\code{\link[TreeSummarizedExperiment:cbind]{cbind}}}
-#'   \item{\code{\link[TreeSummarizedExperiment:rbind]{rbind}}}
+#'   \item{\code{\link[TreeSummarizedExperiment::cbind]{cbind}}}
+#'   \item{\code{\link[TreeSummarizedExperiment::rbind]{rbind}}}
 #' }
 #'
 #' @name mergeTreeSummarizedExperiment
@@ -85,7 +87,7 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
                      call. = FALSE)
             }
             # Is missing_values one of the allowed ones
-            missing_values_bool <- length(missing_values) == 1 &&
+            missing_values_bool <- length(missing_values) == 1L &&
                 (is.numeric(missing_values) && missing_values == 0) ||
                 .is_a_string(missing_values) || is.na(missing_values)
             # If not then give error
