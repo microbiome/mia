@@ -12,11 +12,6 @@
 #' @param missing_values NA, 0, or a single character values specifying the notation
 #' of missing values.
 #'
-#'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether calculation of estimates should be parallelized.
-#'
 #' @param ... optional arguments (not used).
 #'
 #' @return A single \code{TreeSummarizedExperiment} object.
@@ -39,8 +34,21 @@
 #' 
 #' @examples
 #' data(GlobalPatterns)
-#' tse <- GlobalPatterns
+#' data(esophagus)
+#' data(enterotype)
 #' 
+#' # Take only subsets so that it wont take so long
+#' tse1 <- GlobalPatterns[1:100, ]
+#' tse2 <- esophagus
+#' tse3 <- enterotype[1:100, ]
+#' 
+#' # Merge two TreeSEs
+#' tse <- mergeTreeSummarizedExperiment(tse1, tse2)
+#' 
+#' # Merge a list of TreeSEs
+#' list <- SimpleList(tse1, tse2, tse3)
+#' tse <- mergeTreeSummarizedExperiment(list, abund_values = "counts", missing_values = 0)
+#' tse
 #' 
 NULL
 
@@ -58,7 +66,7 @@ setGeneric("mergeTreeSummarizedExperiment", signature = c("x"),
 #' @export
 #' @importFrom BiocParallel bplapply
 setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
-        function(x, abund_values = "counts", missing_values = 0, ..., BPPARAM = SerialParam() ){
+        function(x, abund_values = "counts", missing_values = 0, verbose = TRUE, ... ){
             ################## Input check ##################
             # Can the abund_value the found form all the objects
             abund_values_bool <- lapply(x, .assay_cannot_be_found, abund_values = abund_values)
@@ -76,21 +84,26 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
                 stop("'missing_values' must be 0, NA, or a single character value.",
                      call. = FALSE)
             }
+            # Check verbose
+            if( !.is_a_bool(verbose) ){
+                stop("'verbose' must be TRUE or FALSE.",
+                     call. = FALSE)
+            }
             ################ Input check end ################
+            # Give message if TRUE
+            if( verbose ){
+                message("Merging...\n1/", length(x))
+            }
             # Take first element and remove it from the list
             tse <- x[[1]]
             x[[1]] <- NULL
-            # Get rowTree to include if rownames match with all objects
+            # Get rowTree to include if match with result data
             tse <- as(tse, "TreeSummarizedExperiment")
-            rownames <- rownames(tse)
             row_tree <- rowTree(tse)
             # Remove all information but rowData, colData, and assay
             row_data <- rowData(tse)
-            row_data <- DataFrame(row_data)
             col_data <- colData(tse)
-            col_data <- DataFrame(col_data)
             assay <- assay(tse, abund_values)
-            assay <- as.matrix(assay)
             assays <- SimpleList(name = assay)
             names(assays) <- abund_values
             tse <- TreeSummarizedExperiment(assays = assays,
@@ -99,20 +112,20 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
                                             )
             
             # Lopp through individual TreeSEs and add them to tse
-            tse <- bplapply(x, .merge_TreeSE, 
-                            tse_original = tse, 
-                            abund_values = abund_values, 
-                            missing_values = missing_values, 
-                            BPPARAM = BPPARAM,
-                            ...)
-            # The return value is a list, take the first and only element
-            tse <- tse[[1]]
+            if( length(x) > 0 ){
+                for( i in 1:length(x) ){
+                    # Give message if TRUE
+                    if( verbose ){
+                        message(i+1, "/", length(x)+1)
+                    }
+                    temp <- x[[i]]
+                    tse <- .merge_TreeSE(temp, tse_original = tse, abund_values = abund_values,
+                                         missing_values = missing_values)
+                }
+            }
             
-            # If rownames match with original, add rowtree
-            # Suppress warning that occurs when the length of rownames differ
-            if( all(rownames(tse) %in% rownames) && 
-                all(rownames %in% rownames(tse)) ){
-                tse <- tse[rownames, ]
+            # If labels mach with data, add tree
+            if( all( rownames(tse) %in% row_tree$tip.label ) ){
                 rowTree(tse) <- row_tree
             }
             
@@ -233,9 +246,9 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "list"),
     # Remove NAs
     ranks_ind <- ranks_ind[ !is.na(ranks_ind) ]
     # Get the data in correct order, take only column that have ranks
-    rd_rank <- rd[ , ranks_ind]
+    rd_rank <- rd[ , ranks_ind, drop = FALSE]
     # Take other columns
-    rd_other <- rd[ , !ranks_ind]
+    rd_other <- rd[ , !ranks_ind, drop = FALSE]
     
     # Get rank names
     rank_names <- colnames(rd_rank)
