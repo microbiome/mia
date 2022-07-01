@@ -85,7 +85,8 @@ setMethod("mergeTreeSummarizedExperiment", signature = c(x = "SimpleList"),
                      call. = FALSE)
             }
             # Is missing_values one of the allowed ones
-            missing_values_bool <- (is.numeric(missing_values) && missing_values == 0) ||
+            missing_values_bool <- length(missing_values) == 1 &&
+                (is.numeric(missing_values) && missing_values == 0) ||
                 .is_a_string(missing_values) || is.na(missing_values)
             # If not then give error
             if(  !missing_values_bool ){
