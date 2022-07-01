@@ -21,11 +21,19 @@
 #' \code{rowData}, \code{assays}, and \code{colData} so that the output includes
 #' each unique row and column ones. If, for example, all rows are not shared with
 #' individual objects, there are missing values in \code{assays}. The notation of missing
-#' can be specified with the \code{missing_values} argument.
+#' can be specified with the \code{missing_values} argument. 
+#' 
+#' Compared to \code{cbind} and \code{rbind} \code{mergeTreeSummarizedExperiment} 
+#' allows more freely merging since \code{cbind} and \code{rbind} expect that 
+#' rows and columns are matching, respectively.
 #'
 #' @references
 #'
 #' @seealso
+#' \itemize{
+#'   \item{\code{\link[TreeSummarizedExperiment:cbind]{cbind}}}
+#'   \item{\code{\link[TreeSummarizedExperiment:rbind]{rbind}}}
+#' }
 #'
 #' @name mergeTreeSummarizedExperiment
 #' @export

@@ -13,8 +13,8 @@ mergeTreeSummarizedExperiment(x, ...)
   x,
   abund_values = "counts",
   missing_values = 0,
-  ...,
-  BPPARAM = SerialParam()
+  verbose = TRUE,
+  ...
 )
 
 \S4method{mergeTreeSummarizedExperiment}{SummarizedExperiment}(x, y = NULL, ...)
@@ -34,10 +34,6 @@ to be merged.}
 \item{missing_values}{NA, 0, or a single character values specifying the notation
 of missing values.}
 
-\item{BPPARAM}{A
-\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.}
-
 \item{y}{a \code{\link{SummarizedExperiment}} object}
 }
 \value{
@@ -52,18 +48,38 @@ This function merges multiple \code{SummarizedExperiment} objects. It combines
 each unique row and column ones. If, for example, all rows are not shared with
 individual objects, there are missing values in \code{assays}. The notation of missing
 can be specified with the \code{missing_values} argument.
+
+Compared to \code{cbind} and \code{rbind} \code{mergeTreeSummarizedExperiment}
+allows more freely merging since \code{cbind} and \code{rbind} expect that
+rows and columns are matching, respectively.
 }
 \examples{
 data(GlobalPatterns)
-tse <- GlobalPatterns
+data(esophagus)
+data(enterotype)
 
+# Take only subsets so that it wont take so long
+tse1 <- GlobalPatterns[1:100, ]
+tse2 <- esophagus
+tse3 <- enterotype[1:100, ]
+
+# Merge two TreeSEs
+tse <- mergeTreeSummarizedExperiment(tse1, tse2)
+
+# Merge a list of TreeSEs
+list <- SimpleList(tse1, tse2, tse3)
+tse <- mergeTreeSummarizedExperiment(list, abund_values = "counts", missing_values = 0)
+tse
 
 }
 \references{
 
 }
 \seealso{
-
+\itemize{
+\item{\code{\link[TreeSummarizedExperiment:cbind]{cbind}}}
+\item{\code{\link[TreeSummarizedExperiment:rbind]{rbind}}}
+}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
