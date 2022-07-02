@@ -155,8 +155,9 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
                 }
             }
             
-            # If labels mach with data, add tree
-            if( all( rownames(tse) %in% row_tree$tip.label ) ){
+            # If labels match with data, add tree
+            if( !is.null( rownames(tse) ) &&
+                all( rownames(tse) %in% row_tree$tip.label ) ){
                 rowTree(tse) <- row_tree
             }
             
@@ -243,8 +244,8 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     assay1 <- assay(tse_original, abund_values)
     assay2 <- assay(tse, abund_values)
     
-    # MErge two assays into one
-    assay <- .full_join_two_tables(assay1, assay2)
+    # Merge two assays into one
+    assay <- .join_two_tables(assay1, assay2, joining_method)
     
     # Fill missing values
     assay[ is.na(assay) ] <- missing_values
@@ -271,10 +272,8 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
         colnames(rd2) <- tolower(colnames(rd2))
     }
     
-    # Merge rowDatas
-    rd <- .full_join_two_tables(rd1, rd2)
-    # Convert into DataFrame
-    rd <- DataFrame(rd)
+    # Merge rowdata
+    rd <- .join_two_tables(rd1, rd2, joining_method)
     
     # Get column indices that match with taxonomy ranks
     ranks_ind <- match( TAXONOMY_RANKS, colnames(rd) )
@@ -304,16 +303,48 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     # Take colDatas
     cd1 <- colData(tse_original)
     cd2 <- colData(tse)
+    
     # Merge coldata
-    cd <- .full_join_two_tables(cd1, cd2)
+    cd <- .join_two_tables(cd1, cd2, joining_method = "full")
     # Convert into DataFrame
     cd <- DataFrame(cd)
     
     return(cd)
 }
 
+.get_names_based_on_join <- function(tse_original, tse, joining_method){
+    # Get feature names based on joining method
+    if( joining_method == "full" ){
+        rownames <- unique( rownames(tse_original), c(tse) )
+    } else if( joining_method == "inner" ){
+        rownames <- intersect( rownames(tse_original), c(tse) )
+    } else if( joining_method == "left" ){
+        rownames <- rownames(tse_original)
+    } else{
+        rownames <- rownames(tse)
+    }
+    # Sample names are always all the samples
+    colnames <- c( colnames(tse_original), colnames(tse) )
+    # Create a list from names
+    names <- list(colnames = colnames, rownames = rownames)
+    return(names)
+}
+
 #' @importFrom dplyr coalesce
-.full_join_two_tables <- function(df1, df2){
+.join_two_tables <- function(df1, df2, joining_method){
+    # Get parameter based on joining_method
+    all.x <- switch(joining_method,
+                    full = TRUE,
+                    inner = FALSE,
+                    left = TRUE,
+                    right = FALSE
+    )
+    all.y <- switch(joining_method,
+                    full = TRUE,
+                    inner = FALSE,
+                    left = FALSE,
+                    right = TRUE
+    )
     # Ensure that the data is in correct format
     df1 <- as.data.frame(df1)
     df2 <- as.data.frame(df2)
@@ -344,7 +375,7 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     df1$rownames_merge_ID <- rownames(df1)
     df2$rownames_merge_ID <- rownames(df2)
     # Merge data frames into one data frame
-    df <- merge(df1, df2, by = "rownames_merge_ID", all = TRUE)
+    df <- merge(df1, df2, by = "rownames_merge_ID", all.x = all.x, all.y = all.y)
     # Add rownames and remove additional column
     rownames(df) <- df$rownames_merge_ID
     df$rownames_merge_ID <- NULL
@@ -366,3 +397,5 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     }
     return(df)
 }
+
+
