@@ -11,7 +11,7 @@ test_that("mergeTreeSE", {
     
     # Expect errors
     expect_error( mergeTreeSE(tse1) )
-    expect_error( mergeTreeSE(tse1, tse2, missing_values = c(3, 3)) )
+    # expect_error( mergeTreeSE(tse1, tse2, missing_values = c(3, 3)) )
     expect_error( mergeTreeSE(tse1, tse2, missing_values = TRUE ) )
     expect_error( mergeTreeSE(tse1, tse2, missing_values = 36846 ) )
     expect_error( mergeTreeSE(tse1, tse2, abund_values = "test")  )
