@@ -91,13 +91,14 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
                      call. = FALSE)
             }
             # Check joining_method
-            if( !(.is_non_empty_string(joining_method) &&
+            if( !(.is_non_empty_character(joining_method) &&
                 joining_method %in% c("full", "inner", "left", "right") ) ){
                 stop("'joining_method' must be 'full', 'inner', 'left', or 'right'.",
                      call. = FALSE)
             }
             # Check if joining_method is not available
-            if( length(x) > 2 && !joining_method %in% c("full", "inner") ){
+            if( length(x) > 2 && length(joining_method) != 1L && 
+                !joining_method %in% c("full", "inner") ){
                 stop("Joining method 'left' and 'right' are not available ",
                      "when more than two objects are being merged.",
                      call. = FALSE)
@@ -119,7 +120,7 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
             ################ Input check end ################
             # Give message if TRUE
             if( verbose ){
-                message("Merging...\n1/", length(x))
+                message("Merging with ", joining_method, " join...\n1/", length(x))
             }
             # Take first element and remove it from the list
             tse <- x[[1]]
