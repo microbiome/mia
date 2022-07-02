@@ -124,12 +124,14 @@
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
-#' # Same can be done with altExp option
-#' 
+#' # Use altExp option to specify alternative experiment from the experiment
+#' altExp(mae[[1]], "Phylum") <- agglomerateByRank(mae[[1]], rank = "Phylum")
+#' # Transform data
+#' altExp(mae[[1]], "Phylum") <- transformSamples(altExp(mae[[1]], "Phylum"), method = "relabundance")
 #' # When mode = matrix, matrix is returned
-#' result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", 
-#'                                         abund_values1 = "rclr", abund_values2 = "counts",
-#'                                         altExp2 = 1, 
+#' result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
+#'                                         abund_values1 = "relabundance", abund_values2 = "counts",
+#'                                         altExp1 = "Phylum", 
 #'                                         method = "pearson", mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
@@ -138,7 +140,7 @@
 #' # filter_self_correlations = TRUE filters self correlations
 #' # With p_adj_threshold it is possible to filter those features that do no have
 #' # any correlations that have p-value under threshold
-#' result <- testExperimentCrossAssociation(tse, experiment2 = tse, method = "pearson",
+#' result <- testExperimentCrossAssociation(mae[[2]], experiment2 = mae[[2]], method = "pearson",
 #'                                          filter_self_correlations = TRUE,
 #'                                          p_adj_threshold = 0.05)
 #' # Show first 5 entries
