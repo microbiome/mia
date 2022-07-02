@@ -240,9 +240,9 @@ test_that("getExperimentCrossAssociation", {
     
     # Test that association is calculated correctly with factor data
     # Create a dummy data
-    assay1 <- matrix(rep(c("A", "B", "B"), 20*30), 
+    assay1 <- matrix(rep(c("A", "B", "B"), 20*30/3), 
                      nrow = 20, ncol = 30)
-    assay2 <- matrix(rep(c("A", "B", "A", "A", "B", "B"), 20*30), 
+    assay2 <- matrix(rep(c("A", "B", "A", "A", "B", "B"), 20*30/6), 
                      nrow = 20, ncol = 30)
     # Reference
     # ref <- c()
