@@ -563,7 +563,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              call. = FALSE)
     }
     # If it is NULL or 0, then return the TreeSE itself
-    else if( is.null(altExp) || (isSingleInteger(altExp) && altExp == 0) ){
+    else if( is.null(altExp) || 
+             (length(altExp)==0 && is.integer(altExp) && altExp == 0) ){
         return(tse)
     # If altExp is specified but there is no alternative experiments
     } else if( length(altExp) == 0 ){
@@ -571,8 +572,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              "alternative experiments in altExp of experiment ", exp_num, ".",
              call. = FALSE)
     # If it is not NULL, then it should specify alternative experiment from altExp
-    } else if( (isSingleInteger(altExp) && altExp<length(altExps(tse)) && altExp>0) ||
-               (isSingleString(altExp) && altExp %in% altExpNames(tse)) ){
+    } else if( (length(altExp)==0 && is.integer(altExp) && altExp<length(altExps(tse)) && altExp>0) ||
+               (is.a_character(altExp) && altExp %in% altExpNames(tse)) ){
         # Get altExp and return it
         tse <- altExp(tse, altExp)
         return(tse)
