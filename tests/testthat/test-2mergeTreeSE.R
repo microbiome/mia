@@ -11,7 +11,11 @@ test_that("mergeTreeSE", {
     
     # Expect errors
     expect_error( mergeTreeSE(tse1) )
-    # expect_error( mergeTreeSE(tse1, tse2, missing_values = c(3, 3)) )
+    expect_error( mergeTreeSE(tse1, tse2, joining_method = 1) )
+    expect_error( mergeTreeSE(tse1, tse2, joining_method = TRUE) )
+    expect_error( mergeTreeSE(tse1, tse2, joining_method = NA) )
+    expect_error( mergeTreeSE(list(tse1, tse2, tse), joining_method = "left") )
+    expect_error( mergeTreeSE(list(tse1, tse2, tse), joining_method = "right") )
     expect_error( mergeTreeSE(tse1, tse2, missing_values = TRUE ) )
     expect_error( mergeTreeSE(tse1, tse2, missing_values = 36846 ) )
     expect_error( mergeTreeSE(tse1, tse2, abund_values = "test")  )
@@ -72,11 +76,12 @@ test_that("mergeTreeSE", {
     expect_true( all(colnames(tse2) %in% colnames(tse)) )
     expect_true( all(colnames(tse3) %in% colnames(tse)) )
     
+    # CHECK FULL JOIN ###################################################
     tse <- mergeTreeSE(list(tse2, tse3, tse1, 
                                               tse1[1:2, ], tse1[1, ]), 
                                          missing_values = NA)
     # Get assay (as.matrix to remove links)
-    assay <- assay(tse, "counts")
+    assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
     assay2 <- as.matrix( assay(tse2, "counts") )
     assay3 <- as.matrix( assay(tse3, "counts") )
@@ -126,6 +131,116 @@ test_that("mergeTreeSE", {
     rownames <- rownames(col_data3)
     expect_equal( col_data[rownames, colnames], col_data3 )
     
+    # CHECK INNER JOIN ##############################################
+    tse <- mergeTreeSE(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
+                       joining_method = "inner")
+    expect_true( all(dim(tse) == c(20, 10)) )
+    # Get assay (as.matrix to remove links)
+    assay <- as.matrix( assay(tse, "counts") )
+    assay1 <- as.matrix( assay(tse1, "counts") )
     
-    # TODO: test joining-method, all different joining methods, metadata
+    # Expect that the data can be found without modifications
+    colnames <- colnames(assay)
+    rownames <- rownames(assay)
+    expect_equal( assay1[rownames, colnames], assay )
+    
+    # Get rowData (as.data.frame to remove links)
+    row_data <- as.data.frame( rowData(tse) )
+    row_data1 <- as.data.frame(rowData(tse1) )
+    
+    # Expect that the data can be found without modifications
+    colnames <- colnames(row_data)
+    rownames <- rownames(row_data)
+    expect_equal( row_data1[rownames, colnames], row_data )
+    
+    # Get colData (as.data.frame to remove links)
+    col_data <- as.data.frame( colData(tse) )
+    col_data1 <- as.data.frame( colData(tse1) )
+    
+    # Expect that the data can be found without modifications
+    colnames <- colnames(col_data)
+    rownames <- rownames(col_data)
+    expect_equal( col_data1[rownames, colnames], col_data )
+    
+    # CHECK LEFT JOIN ##############################################
+    tse <- mergeTreeSE(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
+                       joining_method = "left")
+    expect_true( all(dim(tse) == c(10, 20)) )
+    # Get assay (as.matrix to remove links)
+    assay <- as.matrix( assay(tse, "counts") )
+    assay1 <- as.matrix( assay(tse1, "counts") )
+    
+    # Expect that the data can be found without modifications
+    colnames <- colnames(assay)
+    rownames <- rownames(assay)
+    expect_equal( assay1[rownames, colnames], assay )
+    
+    # Get rowData (as.data.frame to remove links)
+    row_data <- as.data.frame( rowData(tse) )
+    row_data1 <- as.data.frame(rowData(tse1) )
+    
+    # Expect that the data can be found without modifications
+    colnames <- colnames(row_data)
+    rownames <- rownames(row_data)
+    expect_equal( row_data1[rownames, colnames], row_data )
+    
+    # Get colData (as.data.frame to remove links)
+    col_data <- as.data.frame( colData(tse) )
+    col_data1 <- as.data.frame( colData(tse1) )
+    
+    # Expect that the data can be found without modifications
+    colnames <- colnames(col_data)
+    rownames <- rownames(col_data)
+    expect_equal( col_data1[rownames, colnames], col_data )
+    
+    # CHECK RIGHT JOIN ##############################################
+    tse <- mergeTreeSE(list(tse1[10:50, 1:13], tse1[1:10, 7:20]), 
+                       joining_method = "right", missing_values = NA)
+    expect_true( all(dim(tse) == c(10, 20)) )
+    # Get assay (as.matrix to remove links)
+    assay <- as.matrix( assay(tse, "counts") )
+    assay1 <- as.matrix( assay(tse1, "counts") )
+    
+    # Expect that the data can be found without modifications
+    colnames <- colnames(assay)
+    rownames <- rownames(assay)
+    assay1 <- assay1[rownames, colnames]
+    # Add NAs to original
+    na <- is.na(assay)
+    assay1[na] <- NA
+    expect_equal( assay1, assay )
+    
+    # Get rowData (as.data.frame to remove links)
+    row_data <- as.data.frame( rowData(tse) )
+    row_data1 <- as.data.frame(rowData(tse1) )
+    
+    # Expect that the data can be found without modifications
+    colnames <- colnames(row_data)
+    rownames <- rownames(row_data)
+    expect_equal( row_data1[rownames, colnames], row_data )
+    
+    # Get colData (as.data.frame to remove links)
+    col_data <- as.data.frame( colData(tse) )
+    col_data1 <- as.data.frame( colData(tse1) )
+    
+    # Expect that the data can be found without modifications
+    colnames <- colnames(col_data)
+    rownames <- rownames(col_data)
+    expect_equal( col_data1[rownames, colnames], col_data )
+    
+    
+    # Check metadata
+    metadata(tse1) <- list(abc = c("abc", 123))
+    metadata(tse3) <- list(test = 1)
+    metadata(tse) <- list( cd = colData(tse) )
+    tse4 <- mergeTreeSE(list(tse, tse3, tse2, tse1), 
+                        joining_method = "inner")
+    expect_equal( nrow(tse4), 0 )
+    expect_equal( metadata(tse4)[["abc"]], metadata(tse1)[["abc"]] )
+    expect_equal( metadata(tse4)[["test"]], metadata(tse3)[["test"]] )
+    expect_equal( metadata(tse4)[["cd"]], metadata(tse)[["cd"]] )
+    expect_true( all( names(metadata(tse4)) %in% 
+                           c(names(metadata(tse1)), names(metadata(tse3)), 
+                             names(metadata(tse))) ) )
+    expect_equal( length( names(metadata(tse4))), 3) 
 })

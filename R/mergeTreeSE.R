@@ -254,8 +254,8 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     assay <- as.matrix(assay)
     
     # Order the assay based on rowData and colData
-    assay <- assay[ match(rownames(rd), rownames(assay)), ]
-    assay <- assay[ , match(rownames(cd), colnames(assay)) ]
+    assay <- assay[ match(rownames(rd), rownames(assay)), , drop = FALSE ]
+    assay <- assay[ , match(rownames(cd), colnames(assay)), drop = FALSE]
     
     return(assay)
 }
@@ -390,8 +390,8 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
             # Combine information from columns
             x_and_y_combined <- coalesce( df[ , x], df[ , y] )
             # Remove additional columns
-            df[ , x] <- NULL
-            df[ , y] <- NULL
+            df[ , x ] <- NULL
+            df[ , y ] <- NULL
             # Add column that has combined information
             df[ , matching_variables1[i] ] <- x_and_y_combined
         }
