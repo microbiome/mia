@@ -35,7 +35,7 @@ test_that("mergeTreeSE", {
     # The order of taxa and samples changes
     tse <- tse[ rownames(tse1), colnames(tse1) ]
     expect_equal( rowData(tse), rowData(tse1))
-    expect_equal( colData(tse), colData(tse1))
+    expect_equal( as.data.frame( colData(tse) ), as.data.frame( colData(tse1)) )
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))
     expect_equal( rowTree(tse), rowTree(tse1))
     
