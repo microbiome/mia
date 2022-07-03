@@ -225,6 +225,7 @@ result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experim
 # a random sample from data. In a complex biological problems, random sample
 # can describe the data enough. Here our random sample is 30 \% of whole data.
 sample_size <- 0.3
+tse <- mae[[1]]
 tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
 result <- testExperimentCrossAssociation(tse_sub)
                                          

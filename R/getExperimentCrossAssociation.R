@@ -174,6 +174,7 @@
 #' # a random sample from data. In a complex biological problems, random sample
 #' # can describe the data enough. Here our random sample is 30 % of whole data.
 #' sample_size <- 0.3
+#' tse <- mae[[1]]
 #' tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
 #' result <- testExperimentCrossAssociation(tse_sub)
 #'                                          
@@ -573,7 +574,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              call. = FALSE)
     # If it is not NULL, then it should specify alternative experiment from altExp
     } else if( (length(altExp)==0 && is.integer(altExp) && altExp<length(altExps(tse)) && altExp>0) ||
-               (is.a_character(altExp) && altExp %in% altExpNames(tse)) ){
+               (.is_a_string(altExp) && altExp %in% altExpNames(tse)) ){
         # Get altExp and return it
         tse <- altExp(tse, altExp)
         return(tse)
