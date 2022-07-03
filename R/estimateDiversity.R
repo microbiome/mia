@@ -256,13 +256,24 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         # input check
         # If object does not have a tree
         if( ("faith" %in% index) &&
-        (is.null(tree) || is.null(tree$edge.length)) ){
-                stop("Object does not have a tree or the tree does not 
-                    have any branches.
-                    'faith' is not possible to calculate.",
-                call. = FALSE)
+            (is.null(tree) || is.null(tree$edge.length)) ){
+            # If index is a vector of multiple indices, give just warning and remove 
+            # faith from the vector
+            if( length(index) > 1 ){
+                warning("Object does not have a tree or the tree does not ",
+                        "have any branches. \nIt is not possible to calculate 'faith'.",
+                        call. = FALSE)
+                # Remove faith
+                keep <- index != "faith"
+                index <- index[ keep ]
+                name <- name[ keep ]
+            } else{
+                stop("Object does not have a tree or the tree does not ",
+                     "have any branches. \nIt is not possible to calculate 'faith'.",
+                     call. = FALSE)
+            }
         }
-        index<- match.arg(index, several.ok = TRUE)
+        index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                 "same length than 'index'.",
@@ -323,13 +334,25 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         }
         # Check 'abund_values'
         .check_assay_present(abund_values, x)
+        # Check that it is numeric
+        if( !is.numeric(assay(x, abund_values)) ){
+            stop("The abundance matrix specificied by 'abund_values' must be numeric.",
+                 call. = FALSE)
+        }
         # Check 'name'
         if(!.is_non_empty_character(name)){
             stop("'name' must be a non-empty character value.",
                 call. = FALSE)
         }
+        # Get the abundance matrix
+        mat <- assay(x, abund_values)
+        # Check that it is numeric
+        if( !is.numeric(mat) ){
+            stop("The abundance matrix specificied by 'abund_values' must be numeric.",
+                 call. = FALSE)
+        }
         # Calculates Faith index
-        faith <- list(.calc_faith(assay(x, abund_values), tree))
+        faith <- list(.calc_faith(mat, tree))
         # Adds calculated Faith index to colData
         .add_values_to_colData(x, faith, name)
     }
