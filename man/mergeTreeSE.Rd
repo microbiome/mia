@@ -12,6 +12,7 @@ mergeTreeSE(x, ...)
 \S4method{mergeTreeSE}{SimpleList}(
   x,
   abund_values = "counts",
+  joining_method = "full",
   missing_values = 0,
   verbose = TRUE,
   ...
@@ -37,6 +38,9 @@ of missing values.}
 \item{verbose}{A single boolean value to choose whether to show messages.}
 
 \item{y}{a \code{\link{SummarizedExperiment}} object}
+
+\item{join_method}{A single character value for selecting the joining method.
+Must be 'full', 'inner', 'left', or 'right'.}
 }
 \value{
 A single \code{TreeSummarizedExperiment} object.
@@ -76,8 +80,8 @@ tse
 }
 \seealso{
 \itemize{
-\item{\code{\link[TreeSummarizedExperiment::cbind]{cbind}}}
-\item{\code{\link[TreeSummarizedExperiment::rbind]{rbind}}}
+\item{\code{TreeSummarizedExperiment::cbind}}
+\item{\code{TreeSummarizedExperiment::rbind}}
 }
 }
 \author{

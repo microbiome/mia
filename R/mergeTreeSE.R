@@ -36,8 +36,8 @@
 #'
 #' @seealso
 #' \itemize{
-#'   \item{\code{\link[TreeSummarizedExperiment::cbind]{cbind}}}
-#'   \item{\code{\link[TreeSummarizedExperiment::rbind]{rbind}}}
+#'   \item{\code{TreeSummarizedExperiment::cbind}}
+#'   \item{\code{TreeSummarizedExperiment::rbind}}
 #' }
 #'
 #' @name mergeTreeSE
