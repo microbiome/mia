@@ -12,7 +12,7 @@ mergeTreeSE(x, ...)
 \S4method{mergeTreeSE}{SimpleList}(
   x,
   abund_values = "counts",
-  joining_method = "full",
+  join = "full",
   missing_values = 0,
   verbose = TRUE,
   ...
@@ -30,15 +30,17 @@ mergeTreeSE(x, ...)
 
 \item{abund_values}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to be merged.}
+to be merged. (By default: \code{abund_values = "counts"})}
 
-\item{joining_method}{A single character value for selecting the joining method.
-Must be 'full', 'inner', 'left', or 'right'.}
+\item{join}{A single character value for selecting the joining method.
+Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
+when more than two objects are being merged.  (By default: \code{join = "full"})}
 
 \item{missing_values}{NA, 0, or a single character values specifying the notation
-of missing values.}
+of missing values. (By default: \code{missing_values = 0})}
 
-\item{verbose}{A single boolean value to choose whether to show messages.}
+\item{verbose}{A single boolean value to choose whether to show messages.
+(By default: \code{verbose = TRUE})}
 
 \item{y}{a \code{\link{SummarizedExperiment}} object}
 }
@@ -56,8 +58,20 @@ individual objects, there are missing values in \code{assays}. The notation of m
 can be specified with the \code{missing_values} argument.
 
 Compared to \code{cbind} and \code{rbind} \code{mergeTreeSE}
-allows more freely merging since \code{cbind} and \code{rbind} expect that
-rows and columns are matching, respectively.
+allows more freely merging since \code{cbind} and \code{rbind} expect
+that rows and columns are matching, respectively.
+
+You can choose joining methods from 'full', 'inner',
+'left', and 'right'. In all the methods, all the samples are included in the
+result object. However, with different methods, it is possible to choose which
+rows are included.
+
+\itemize{
+\item{\code{full} -- All unique features}
+\item{\code{inner} -- all shared features}
+\item{\code{left} -- all the features of the first object}
+\item{\code{right} -- all the features of the second object}
+}
 }
 \examples{
 data(GlobalPatterns)
@@ -75,6 +89,11 @@ tse <- mergeTreeSE(tse1, tse2)
 # Merge a list of TreeSEs
 list <- SimpleList(tse1, tse2, tse3)
 tse <- mergeTreeSE(list, abund_values = "counts", missing_values = 0)
+tse
+
+# With 'join', it is possible to specify the merging method. Subsets are used
+# here just to show the functionality
+tse <- mergeTreeSE(tse[1:10, 1:10],  tse[5:100, 11:20], join = "left")
 tse
 
 }

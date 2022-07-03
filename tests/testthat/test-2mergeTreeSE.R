@@ -11,11 +11,11 @@ test_that("mergeTreeSE", {
     
     # Expect errors
     expect_error( mergeTreeSE(tse1) )
-    expect_error( mergeTreeSE(tse1, tse2, joining_method = 1) )
-    expect_error( mergeTreeSE(tse1, tse2, joining_method = TRUE) )
-    expect_error( mergeTreeSE(tse1, tse2, joining_method = NA) )
-    expect_error( mergeTreeSE(list(tse1, tse2, tse), joining_method = "left") )
-    expect_error( mergeTreeSE(list(tse1, tse2, tse), joining_method = "right") )
+    expect_error( mergeTreeSE(tse1, tse2, join = 1) )
+    expect_error( mergeTreeSE(tse1, tse2, join = TRUE) )
+    expect_error( mergeTreeSE(tse1, tse2, join = NA) )
+    expect_error( mergeTreeSE(list(tse1, tse2, tse), join = "left") )
+    expect_error( mergeTreeSE(list(tse1, tse2, tse), join = "right") )
     expect_error( mergeTreeSE(tse1, tse2, missing_values = TRUE ) )
     expect_error( mergeTreeSE(tse1, tse2, missing_values = 36846 ) )
     expect_error( mergeTreeSE(tse1, tse2, abund_values = "test")  )
@@ -133,8 +133,9 @@ test_that("mergeTreeSE", {
     
     # CHECK INNER JOIN ##############################################
     tse <- mergeTreeSE(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
-                       joining_method = "inner")
+                       join = "inner")
     expect_true( all(dim(tse) == c(20, 10)) )
+    expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
@@ -164,7 +165,7 @@ test_that("mergeTreeSE", {
     
     # CHECK LEFT JOIN ##############################################
     tse <- mergeTreeSE(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
-                       joining_method = "left")
+                       join = "left")
     expect_true( all(dim(tse) == c(10, 20)) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
@@ -195,7 +196,7 @@ test_that("mergeTreeSE", {
     
     # CHECK RIGHT JOIN ##############################################
     tse <- mergeTreeSE(list(tse1[10:50, 1:13], tse1[1:10, 7:20]), 
-                       joining_method = "right", missing_values = NA)
+                       join = "right", missing_values = NA)
     expect_true( all(dim(tse) == c(10, 20)) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
@@ -234,7 +235,7 @@ test_that("mergeTreeSE", {
     metadata(tse3) <- list(test = 1)
     metadata(tse) <- list( cd = colData(tse) )
     tse4 <- mergeTreeSE(list(tse, tse3, tse2, tse1), 
-                        joining_method = "inner")
+                        join = "inner")
     expect_equal( nrow(tse4), 0 )
     expect_equal( metadata(tse4)[["abc"]], metadata(tse1)[["abc"]] )
     expect_equal( metadata(tse4)[["test"]], metadata(tse3)[["test"]] )

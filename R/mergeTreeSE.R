@@ -7,16 +7,17 @@
 #' 
 #' @param abund_values A single character value for selecting the
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#' to be merged.
+#' to be merged. (By default: \code{abund_values = "counts"})
 #' 
-#' @param joining_method A single character value for selecting the joining method.
-#' Must be 'full', 'inner', 'left', or 'right'.
+#' @param join A single character value for selecting the joining method.
+#' Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
+#' when more than two objects are being merged.  (By default: \code{join = "full"})
 #' 
 #' @param missing_values NA, 0, or a single character values specifying the notation
-#' of missing values.
+#' of missing values. (By default: \code{missing_values = 0})
 #' 
 #' @param verbose A single boolean value to choose whether to show messages. 
-#'
+#' (By default: \code{verbose = TRUE})
 #'
 #' @param ... optional arguments (not used).
 #'
@@ -30,9 +31,20 @@
 #' can be specified with the \code{missing_values} argument. 
 #' 
 #' Compared to \code{cbind} and \code{rbind} \code{mergeTreeSE} 
-#' allows more freely merging since \code{cbind} and \code{rbind} expect that 
-#' rows and columns are matching, respectively.
-#'
+#' allows more freely merging since \code{cbind} and \code{rbind} expect 
+#' that rows and columns are matching, respectively.
+#' 
+#' You can choose joining methods from 'full', 'inner',
+#' 'left', and 'right'. In all the methods, all the samples are included in the 
+#' result object. However, with different methods, it is possible to choose which 
+#' rows are included.
+#' 
+#' \itemize{
+#'   \item{\code{full} -- All unique features}
+#'   \item{\code{inner} -- all shared features}
+#'   \item{\code{left} -- all the features of the first object}
+#'   \item{\code{right} -- all the features of the second object}
+#' }
 #'
 #' @seealso
 #' \itemize{
@@ -63,6 +75,11 @@
 #' tse <- mergeTreeSE(list, abund_values = "counts", missing_values = 0)
 #' tse
 #' 
+#' # With 'join', it is possible to specify the merging method. Subsets are used
+#' # here just to show the functionality
+#' tse <- mergeTreeSE(tse[1:10, 1:10],  tse[5:100, 11:20], join = "left")
+#' tse
+#' 
 NULL
 
 ################################### Generic ####################################
@@ -77,9 +94,8 @@ setGeneric("mergeTreeSE", signature = c("x"),
 
 #' @rdname mergeTreeSE
 #' @export
-#' @importFrom BiocParallel bplapply
 setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
-        function(x, abund_values = "counts", joining_method = "full", 
+        function(x, abund_values = "counts", join = "full", 
                  missing_values = 0, verbose = TRUE, ... ){
             ################## Input check ##################
             # Can the abund_value the found form all the objects
@@ -90,15 +106,15 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
                      "cannot be found at least in one TreeSE.",
                      call. = FALSE)
             }
-            # Check joining_method
-            if( !(.is_non_empty_character(joining_method) &&
-                joining_method %in% c("full", "inner", "left", "right") ) ){
-                stop("'joining_method' must be 'full', 'inner', 'left', or 'right'.",
+            # Check join
+            if( !(.is_a_string(join) &&
+                join %in% c("full", "inner", "left", "right") ) ){
+                stop("'join' must be 'full', 'inner', 'left', or 'right'.",
                      call. = FALSE)
             }
-            # Check if joining_method is not available
-            if( length(x) > 2 && length(joining_method) != 1L && 
-                !joining_method %in% c("full", "inner") ){
+            # Check if join is not available
+            if( length(x) > 2 && length(join) != 1L && 
+                !join %in% c("full", "inner") ){
                 stop("Joining method 'left' and 'right' are not available ",
                      "when more than two objects are being merged.",
                      call. = FALSE)
@@ -120,7 +136,7 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
             ################ Input check end ################
             # Give message if TRUE
             if( verbose ){
-                message("Merging with ", joining_method, " join...\n1/", length(x))
+                message("Merging with ", join, " join...\n1/", length(x))
             }
             # Take first element and remove it from the list
             tse <- x[[1]]
@@ -139,7 +155,8 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
             tse <- TreeSummarizedExperiment(assays = assays,
                                             rowData = row_data,
                                             colData = col_data,
-                                            metadata = metadata
+                                            metadata = metadata,
+                                            rowTree = row_tree
                                             )
             
             # Lopp through individual TreeSEs and add them to tse
@@ -151,17 +168,11 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
                     }
                     temp <- x[[i]]
                     tse <- .merge_TreeSE(temp, tse_original = tse, abund_values = abund_values,
-                                         joining_method = joining_method,
+                                         join = join,
                                          missing_values = missing_values)
                 }
             }
-            
-            # If labels match with data, add tree
-            if( !is.null( rownames(tse) ) &&
-                all( rownames(tse) %in% row_tree$tip.label ) ){
-                rowTree(tse) <- row_tree
-            }
-            
+
             return(tse)
         }
 )
@@ -202,7 +213,12 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
 )
 
 ################################ HELP FUNCTIONS ################################
+############################ .assay_cannot_be_found #############################
+# This function checks that the assay can be found from TreeSE. If it cannot be found
+# --> TRUE, if it can be found --> FALSE
 
+# Input: the name of the assay and TreSE object
+# Output: TRUE or FALSE
 .assay_cannot_be_found <- function(abund_values, tse){
     # Check if the abund_values can be found. If yes, then FALSE. If not, then TRUE
     tryCatch(
@@ -217,36 +233,60 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     )
 }
 
-.merge_TreeSE <- function(tse_original, tse, abund_values, joining_method, missing_values, ...){
-    
+################################ .merge_TreeSE #################################
+# This function merges two TreeSE objects into one.
+
+# Input: Two TreeSEs, the name of the assay, joining method, and the value to
+# denote missing values that might occur when object do not share same features, e.g.
+# Output: A single TreeSE
+.merge_TreeSE <- function(tse_original, tse, abund_values, join, missing_values){
     # Merge rowData
-    rowdata <- .merge_rowdata(tse_original, tse, joining_method)
+    rowdata <- .merge_rowdata(tse_original, tse, join)
     # Merge colData
-    coldata <- .merge_coldata(tse_original, tse, joining_method)
+    coldata <- .merge_coldata(tse_original, tse, join)
     # Merge assay
-    assay <- .merge_assay(tse_original, tse, abund_values, joining_method, missing_values, rowdata, coldata)
+    assay <- .merge_assay(tse_original, tse, abund_values, join, missing_values, rowdata, coldata)
     assays <- SimpleList(name = assay)
     names(assays) <- abund_values
     # Combine metadata
     metadata <- c( metadata(tse_original), metadata(tse) )
+    # Get row trees
+    row_tree1 <- rowTree(tse_original)
+    row_tree2 <- rowTree(tse)
     
     # Create TreeSE from the data
     tse <- TreeSummarizedExperiment(assays = assays,
                                     rowData = rowdata,
                                     colData = coldata,
                                     metadata = metadata)
-    return(tse)
     
+    # If labels of the 1st tree match with data, add tree1
+    if( !is.null( rownames(tse) ) && !is.null( row_tree1 ) &&
+        all( rownames(tse) %in% row_tree1$tip.label ) ){
+        rowTree(tse) <- row_tree1
+    # If labels of the 2nd tree match with data, add tree2
+    } else if( !is.null( rownames(tse) ) && !is.null( row_tree2 ) &&
+               all( rownames(tse) %in% row_tree2$tip.label ) ){
+        rowTree(tse) <- row_tree2
+    }
+    
+    return(tse)
 }
 
-.merge_assay <- function(tse_original, tse, abund_values, joining_method,
+################################ .merge_assay ##################################
+# This function merges assays.
+
+# Input: Two TreeSEs, the name of the assay, joining method, value to denote
+# missing values, merged rowData, and merged colData
+# Output: Merged assay
+.merge_assay <- function(tse_original, tse, abund_values, join,
                          missing_values, rd, cd){
     # Take assays
     assay1 <- assay(tse_original, abund_values)
     assay2 <- assay(tse, abund_values)
     
     # Merge two assays into one
-    assay <- .join_two_tables(assay1, assay2, joining_method)
+    assay <- .join_two_tables(assay1, assay2, join)
     
     # Fill missing values
     assay[ is.na(assay) ] <- missing_values
@@ -260,7 +300,12 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     return(assay)
 }
 
-.merge_rowdata <- function(tse_original, tse, joining_method){
+############################### .merge_rowdata #################################
+# This function merges rowDatas,
+
+# Input: Two TreeSEs and joining method
+# Output: Merged rowData
+.merge_rowdata <- function(tse_original, tse, join){
     # Take rowDatas
     rd1 <- rowData(tse_original)
     rd2 <- rowData(tse)
@@ -274,7 +319,7 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     }
     
     # Merge rowdata
-    rd <- .join_two_tables(rd1, rd2, joining_method)
+    rd <- .join_two_tables(rd1, rd2, join)
     
     # Get column indices that match with taxonomy ranks
     ranks_ind <- match( TAXONOMY_RANKS, colnames(rd) )
@@ -300,47 +345,40 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     return(rd)
 }
 
-.merge_coldata <- function(tse_original, tse, joining_method){
+############################### .merge_coldata #################################
+# This function merges colDatas,
+
+# Input: Two TreeSEs and joining method
+# Output: Merged colData
+.merge_coldata <- function(tse_original, tse, join){
     # Take colDatas
     cd1 <- colData(tse_original)
     cd2 <- colData(tse)
     
     # Merge coldata
-    cd <- .join_two_tables(cd1, cd2, joining_method = "full")
+    cd <- .join_two_tables(cd1, cd2, join = "full")
     # Convert into DataFrame
     cd <- DataFrame(cd)
     
     return(cd)
 }
 
-.get_names_based_on_join <- function(tse_original, tse, joining_method){
-    # Get feature names based on joining method
-    if( joining_method == "full" ){
-        rownames <- unique( rownames(tse_original), c(tse) )
-    } else if( joining_method == "inner" ){
-        rownames <- intersect( rownames(tse_original), c(tse) )
-    } else if( joining_method == "left" ){
-        rownames <- rownames(tse_original)
-    } else{
-        rownames <- rownames(tse)
-    }
-    # Sample names are always all the samples
-    colnames <- c( colnames(tse_original), colnames(tse) )
-    # Create a list from names
-    names <- list(colnames = colnames, rownames = rownames)
-    return(names)
-}
+############################## .join_two_tables ################################
+# This general function is used to merge rowDatas, colDatas, and assays.
+
+# Input: Two tables and joining method
+# Output: One merged table
 
 #' @importFrom dplyr coalesce
-.join_two_tables <- function(df1, df2, joining_method){
-    # Get parameter based on joining_method
-    all.x <- switch(joining_method,
+.join_two_tables <- function(df1, df2, join){
+    # Get parameter based on join
+    all.x <- switch(join,
                     full = TRUE,
                     inner = FALSE,
                     left = TRUE,
                     right = FALSE
     )
-    all.y <- switch(joining_method,
+    all.y <- switch(join,
                     full = TRUE,
                     inner = FALSE,
                     left = FALSE,
@@ -398,5 +436,3 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     }
     return(df)
 }
-
-
