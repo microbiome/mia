@@ -75,11 +75,11 @@ test_that("mergeTreeSE", {
     tse <- mergeTreeSE(list(tse2, tse3, tse1, 
                                               tse1[1:2, ], tse1[1, ]), 
                                          missing_values = NA)
-    # Get assay
+    # Get assay (as.matrix to remove links)
     assay <- assay(tse, "counts")
-    assay1 <- assay(tse1, "counts")
-    assay2 <- assay(tse2, "counts")
-    assay3 <- assay(tse3, "counts")
+    assay1 <- as.matrix( assay(tse1, "counts") )
+    assay2 <- as.matrix( assay(tse2, "counts") )
+    assay3 <- as.matrix( assay(tse3, "counts") )
     
     # Expect that the data can be found without modifications
     colnames <- colnames(assay1)
@@ -92,11 +92,11 @@ test_that("mergeTreeSE", {
     rownames <- rownames(assay3)
     expect_equal( assay[rownames, colnames], assay3 )
     
-    # Get rowData
-    row_data <- rowData(tse)
-    row_data1 <- rowData(tse1)
-    row_data2 <- rowData(tse2)
-    row_data3 <- rowData(tse3)
+    # Get rowData (as.data.frame to remove links)
+    row_data <- as.data.frame( rowData(tse) )
+    row_data1 <- as.data.frame(rowData(tse1) )
+    row_data2 <- as.data.frame(rowData(tse2) )
+    row_data3 <- as.data.frame( rowData(tse3) )
     
     # Expect that the data can be found without modifications
     colnames <- colnames(row_data1)
@@ -109,11 +109,11 @@ test_that("mergeTreeSE", {
     rownames <- rownames(row_data3)
     expect_equal( row_data[rownames, colnames, drop = FALSE], row_data3 )
     
-    # Get colData
-    col_data <- colData(tse)
-    col_data1 <- colData(tse1)
-    col_data2 <- colData(tse2)
-    col_data3 <- colData(tse3)
+    # Get colData (as.data.frame to remove links)
+    col_data <- as.data.frame( colData(tse) )
+    col_data1 <- as.data.frame( colData(tse1) )
+    col_data2 <- as.data.frame( colData(tse2) )
+    col_data3 <- as.data.frame( colData(tse3) )
     
     # Expect that the data can be found without modifications
     colnames <- colnames(col_data1)
@@ -126,4 +126,6 @@ test_that("mergeTreeSE", {
     rownames <- rownames(col_data3)
     expect_equal( col_data[rownames, colnames], col_data3 )
     
+    
+    # TODO: test joining-method, all different joining methods, metadata
 })
