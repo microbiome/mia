@@ -32,15 +32,15 @@ mergeTreeSE(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to be merged.}
 
+\item{joining_method}{A single character value for selecting the joining method.
+Must be 'full', 'inner', 'left', or 'right'.}
+
 \item{missing_values}{NA, 0, or a single character values specifying the notation
 of missing values.}
 
 \item{verbose}{A single boolean value to choose whether to show messages.}
 
 \item{y}{a \code{\link{SummarizedExperiment}} object}
-
-\item{join_method}{A single character value for selecting the joining method.
-Must be 'full', 'inner', 'left', or 'right'.}
 }
 \value{
 A single \code{TreeSummarizedExperiment} object.

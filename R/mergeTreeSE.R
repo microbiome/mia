@@ -9,7 +9,7 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #' to be merged.
 #' 
-#' @param join_method A single character value for selecting the joining method.
+#' @param joining_method A single character value for selecting the joining method.
 #' Must be 'full', 'inner', 'left', or 'right'.
 #' 
 #' @param missing_values NA, 0, or a single character values specifying the notation
