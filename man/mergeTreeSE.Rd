@@ -67,7 +67,7 @@ result object. However, with different methods, it is possible to choose which
 rows are included.
 
 \itemize{
-\item{\code{full} -- All unique features}
+\item{\code{full} -- all unique features}
 \item{\code{inner} -- all shared features}
 \item{\code{left} -- all the features of the first object}
 \item{\code{right} -- all the features of the second object}
