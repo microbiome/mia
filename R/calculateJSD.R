@@ -7,12 +7,17 @@
 #' @param x a numeric matrix or a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
+#'   (Please use \code{assay_name} instead. At some point \code{exprs_values}
+#'   will be disabled.)
+#'   
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
@@ -81,8 +86,9 @@ setMethod("calculateJSD", signature = c(x = "ANY"),
 #'
 #' @export
 setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, abund_values)
+    function(x, assay_name = abund_values, abund_values = exprs_values, 
+             exprs_values = "counts", transposed = FALSE, ...){
+        mat <- assay(x, assay_name)
         if(!transposed){
             mat <- t(mat)
         }

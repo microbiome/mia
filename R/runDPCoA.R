@@ -30,14 +30,19 @@
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
+#'   (Please use \code{assay_name} instead. At some point \code{exprs_values}
 #'   will be disabled.)
 #'
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   will be disabled.)
+#'   
 #' @param dimred String or integer scalar specifying the existing dimensionality
 #'   reduction results to use.
 #'
@@ -136,10 +141,11 @@ setMethod("calculateDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 #' @importFrom ape cophenetic.phylo
 #' @rdname runDPCoA
 setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
-    function(x, ..., abund_values = exprs_values, exprs_values = "counts", dimred = NULL, n_dimred = NULL)
+    function(x, ..., assay_name = abund_values, abund_values = exprs_values, 
+             exprs_values = "counts", dimred = NULL, n_dimred = NULL)
     {
         .require_package("ade4")
-        mat <- assay(x, abund_values)
+        mat <- assay(x, assay_name)
         dist <- cophenetic.phylo(rowTree(x))
         calculateDPCoA(mat, dist, ...)
     }
