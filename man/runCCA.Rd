@@ -27,6 +27,7 @@ runRDA(x, ...)
   x,
   formula,
   ...,
+  assay_name = abund_values,
   abund_values = exprs_values,
   exprs_values = "counts"
 )
@@ -39,6 +40,7 @@ runRDA(x, ...)
   x,
   formula,
   ...,
+  assay_name = abund_values,
   abund_values = exprs_values,
   exprs_values = "counts"
 )
@@ -68,12 +70,17 @@ consider only some of them.}
 
 \item{scale}{a logical scalar, should the expression values be standardized?}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.}
+
+\item{abund_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay_name} instead. At some point \code{abund_values}
+will be disabled.)}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{abund_values} instead. At some point \code{exprs_values}
+(Please use \code{assay_name} instead. At some point \code{exprs_values}
 will be disabled.)}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
@@ -114,7 +121,7 @@ tse <- transformFeatures(tse, method = "z")
 tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 # Calculate RDA
 tse <- runRDA(tse, formula = data ~ SampleType, 
-              abund_values = "z", name = "rda_scaled", na.action = na.omit)
+              assay_name = "z", name = "rda_scaled", na.action = na.omit)
 # Plot
 plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 }

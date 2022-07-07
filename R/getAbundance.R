@@ -85,13 +85,15 @@ setMethod("getAbundanceSample", signature = c(x = "SummarizedExperiment"),
 #' @rdname getAbundance
 #' @export
 setGeneric("getAbundanceFeature", signature = "x",
-           function(x, feature_id, assay_name)
+           function(x, feature_id, 
+                    assay_name = abund_values, abund_values = "counts")
                standardGeneric("getAbundanceFeature"))
 
 #' @rdname getAbundance
 #' @export
 setMethod("getAbundanceFeature", signature = c(x = "SummarizedExperiment"),
-    function(x, feature_id = NULL, assay_name = abund_values, abund_values = "counts") {
+    function(x, feature_id = NULL, 
+             assay_name = abund_values, abund_values = "counts") {
         # check assay
         .check_assay_present(assay_name, x)
         # check if feature_id exists or matches
