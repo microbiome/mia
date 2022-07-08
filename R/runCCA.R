@@ -192,7 +192,7 @@ setMethod("runCCA", "SingleCellExperiment",
         cca <- calculateCCA(y, ...)
         # If samples do not match / there were samples without appropriate metadata
         # and they are now removed
-        if( rownames(cca) != colnames(x) ){
+        if( all(rownames(cca) != colnames(x)) ){
             # Take a subset
             x_sub <- x[ , rownames(cca) ]
             # Add CCA
@@ -270,7 +270,7 @@ setMethod("runRDA", "SingleCellExperiment",
         rda <- calculateRDA(y, ...)
         # If samples do not match / there were samples without appropriate metadata
         # and they are now removed
-        if( rownames(rda) != colnames(x) ){
+        if( all(rownames(rda) != colnames(x)) ){
             # Take a subset
             x_sub <- x[ , rownames(rda) ]
             # Add RDA
