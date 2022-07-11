@@ -1,6 +1,6 @@
 #' Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}
 #'
-#' \code{makeTreeSummarizedExperimentFromPhyloseq} converts \code{phyloseq}
+#' \code{makeTreeSEFromPhyloseq} converts \code{phyloseq}
 #' objects into \code{TreeSummarizedExperiment} objects.
 #'
 #' All data stored in a \code{phyloseq} object is transfered.
@@ -14,7 +14,7 @@
 #'
 #' @export
 #'
-#' @name makeTreeSummarizedExperimentFromPhyloseq
+#' @name makeTreeSEFromPhyloseq
 #' @seealso
 #' \code{\link[=makeSummarizedExperimentFromBiom]{makeSummarizedExperimentFromBiom}}
 #' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
@@ -24,13 +24,13 @@
 #' @examples
 #' if (requireNamespace("phyloseq")) {
 #'     data(GlobalPatterns, package="phyloseq")
-#'     makeTreeSummarizedExperimentFromPhyloseq(GlobalPatterns)
+#'     makeTreeSEFromPhyloseq(GlobalPatterns)
 #'     data(enterotype, package="phyloseq")
-#'     makeTreeSummarizedExperimentFromPhyloseq(enterotype)
+#'     makeTreeSEFromPhyloseq(enterotype)
 #'     data(esophagus, package="phyloseq")
-#'     makeTreeSummarizedExperimentFromPhyloseq(esophagus)
+#'     makeTreeSEFromPhyloseq(esophagus)
 #' }
-makeTreeSummarizedExperimentFromPhyloseq <- function(obj) {
+makeTreeSEFromPhyloseq <- function(obj) {
     # input check
     .require_package("phyloseq")
     if(!is(obj,"phyloseq")){

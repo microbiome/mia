@@ -19,13 +19,13 @@
 #' @param ... additional arguments
 #'
 #' @details
-#' \code{makePhyloseqFromTreeSummarizedExperiment} is used for creating a
+#' \code{makePhyloseqFromTreeSE} is used for creating a
 #' phyloseq object from TreeSummarizedExperiment object.
 #'
 #' @return
 #' An object of class \code{Phyloseq} object.
 #'
-#' @name makePhyloseqFromTreeSummarizedExperiment
+#' @name makePhyloseqFromTreeSE
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -36,7 +36,7 @@
 #' tse <- GlobalPatterns
 #'
 #' # Create a phyloseq object from it
-#' phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
+#' phy <- makePhyloseqFromTreeSE(tse)
 #' phy
 #'
 #' # By default the chosen table is counts, but if there are other tables,
@@ -44,20 +44,20 @@
 #'
 #' # Counts relative abundances table
 #' tse <- transformCounts(tse, method = "relabundance")
-#' phy2 <- makePhyloseqFromTreeSummarizedExperiment(tse, assay_name = "relabundance")
+#' phy2 <- makePhyloseqFromTreeSE(tse, assay_name = "relabundance")
 #' phy2
 NULL
 
-#' @rdname makePhyloseqFromTreeSummarizedExperiment
+#' @rdname makePhyloseqFromTreeSE
 #' @export
-setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
+setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
            function(x, ...)
-               standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
+               standardGeneric("makePhyloseqFromTreeSE"))
 
 
-#' @rdname makePhyloseqFromTreeSummarizedExperiment
+#' @rdname makePhyloseqFromTreeSE
 #' @export
-setMethod("makePhyloseqFromTreeSummarizedExperiment",
+setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "SummarizedExperiment"),
     function(x, assay_name = abund_values, abund_values = "counts"){
         # Input check
@@ -111,9 +111,9 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
     }
 )
 
-#' @rdname makePhyloseqFromTreeSummarizedExperiment
+#' @rdname makePhyloseqFromTreeSE
 #' @export
-setMethod("makePhyloseqFromTreeSummarizedExperiment",
+setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, ...){
         # phyloseq and tree objects require nonduplicated rownames. If there are 
