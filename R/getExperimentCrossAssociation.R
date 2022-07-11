@@ -11,10 +11,10 @@
 #'    
 #' @param experiment2 A single character or numeric value for selecting the experiment 2
 #'    from\code{experiments(x)} of \code{MultiAssayExperiment} object or 
-#'    \code{altExp(x)} of \code{SummarizedExperiment} object. Alternatively, 
-#'    \code{experiment2} can also be \code{SE} object when \code{x} is \code{SE} object.
+#'    \code{altExp(x)} of \code{TreeSummarizedExperiment} object. Alternatively, 
+#'    \code{experiment2} can also be \code{TreeSE} object when \code{x} is \code{TreeSE} object.
 #'    (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and 
-#'    \code{experiment2 = x} when \code{x} is \code{SE})
+#'    \code{experiment2 = x} when \code{x} is \code{TreeSE})
 #'    
 #' @param assay_name1 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
@@ -33,6 +33,16 @@
 #'   assay of experiment 2 to use for calculation.
 #'   (Please use \code{assay_name2} instead. At some point \code{abund_values2}
 #'   will be disabled.)
+#' 
+#' @param altExp1 A single numeric or character value specifying alternative experiment
+#'   from the altExp of experiment 1. If NULL, then the experiment is itself 
+#'   and altExp option is disabled. 
+#'   (By default: \code{altExp1 = NULL})
+#'   
+#' @param altExp2 A single numeric or character value specifying alternative experiment
+#'   from the altExp of experiment 2. If NULL, then the experiment is itself 
+#'   and altExp option is disabled. 
+#'   (By default: \code{altExp2 = NULL})
 #' 
 #' @param MARGIN A single numeric value for selecting if association are calculated
 #'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -124,14 +134,14 @@
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
-#' # Same can be done with SummarizedExperiment and altExp
-#' # Create TreeSE with altExp
-#' tse <- mae[[1]]
-#' altExp(tse, "exp2") <- mae[[2]]
-#' 
+#' # Use altExp option to specify alternative experiment from the experiment
+#' altExp(mae[[1]], "Phylum") <- agglomerateByRank(mae[[1]], rank = "Phylum")
+#' # Transform data
+#' altExp(mae[[1]], "Phylum") <- transformSamples(altExp(mae[[1]], "Phylum"), method = "relabundance")
 #' # When mode = matrix, matrix is returned
-#' result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", 
-#'                                         assay_name1 = "rclr", assay_name2 = "counts",
+#' result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
+#'                                         assay_name1 = "relabundance", assay_name2 = "counts",
+#'                                         altExp1 = "Phylum", 
 #'                                         method = "pearson", mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
@@ -140,7 +150,7 @@
 #' # filter_self_correlations = TRUE filters self correlations
 #' # With p_adj_threshold it is possible to filter those features that do no have
 #' # any correlations that have p-value under threshold
-#' result <- testExperimentCrossAssociation(tse, experiment2 = tse, method = "pearson",
+#' result <- testExperimentCrossAssociation(mae[[2]], experiment2 = mae[[2]], method = "pearson",
 #'                                          filter_self_correlations = TRUE,
 #'                                          p_adj_threshold = 0.05)
 #' # Show first 5 entries
@@ -174,6 +184,7 @@
 #' # a random sample from data. In a complex biological problems, random sample
 #' # can describe the data enough. Here our random sample is 30 % of whole data.
 #' sample_size <- 0.3
+#' tse <- mae[[1]]
 #' tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
 #' result <- testExperimentCrossAssociation(tse_sub)
 #'                                          
@@ -196,6 +207,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            experiment2 = 2,
            assay_name1 = abund_values1, abund_values1 = "counts",
            assay_name2 = abund_values2, abund_values2 = "counts",
+           altExp1 = NULL,
+           altExp2 = NULL,
            MARGIN = 1,
            method = c("spearman", "categorical", "kendall", "pearson"),
            mode = "table",
@@ -215,6 +228,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           experiment2 = experiment2,
                                           assay_name1 = assay_name1,
                                           assay_name2 = assay_name2,
+                                          altExp1 = altExp1,
+                                          altExp2 = altExp2,
                                           MARGIN = MARGIN,
                                           method = method,
                                           mode = mode,
@@ -328,8 +343,10 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 .get_experiment_cross_association <- function(x,
                                               experiment1 = 1,
                                               experiment2 = 2,
-                                              assay_name1 = abund_values1, abund_values1 = "counts",
-                                              assay_name2 = abund_values2, abund_values2 = "counts",
+                                              assay_name1 = "counts",
+                                              assay_name2 = "counts",
+                                              altExp1 = NULL,
+                                              altExp2 = NULL,
                                               MARGIN = 1,
                                               method = c("spearman", "categorical", "kendall", "pearson"),
                                               mode = c("table", "matrix"),
@@ -351,6 +368,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Fetch tse objects
     tse1 <- x[[experiment1]]
     tse2 <- x[[experiment2]]
+    # Check and fetch tse objects
+    tse1 <- .check_and_get_altExp(tse1, altExp1)
+    tse2 <- .check_and_get_altExp(tse2, altExp2)
     # Check that experiments have same amount of samples
     if( ncol(tse1) != ncol(tse2) ){
         stop("Samples must match between experiments.",
@@ -524,6 +544,56 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         stop("'", deparse(substitute(experiment)), "'", 
              " must be numeric or character value specifying", 
              " experiment in experiment(x).",
+             call. = FALSE)
+    }
+    # Check experiment's class
+    obj <- x[[experiment]]
+    if( !(class(obj) == "TreeSummarizedExperiment" || 
+          class(obj) == "SummarizedExperiment") ){
+        stop("The class of experiment specified by ", 
+             deparse(substitute(experiment)), " must be 'TreeSummarizedExperiment' ",
+             "or 'SummarizedExperiment'.",
+             call. = FALSE)
+    }
+}
+############################# .check_and_get_altExp ############################
+# This function checks if altExp is specified. If so, then it returns alternative
+# experiment from altExp.
+
+# Input: (Tree)SE
+# Output: (Tree)SE
+.check_and_get_altExp <- function(tse, altExp){
+    # Get the name of altExp variable and experiment number
+    altExp_name <- deparse(substitute(altExp))
+    exp_num <- substr(altExp_name, nchar(altExp_name), nchar(altExp_name))
+    
+    # If altExp is disabled, give the object itself
+    if( is.null(altExp) ){
+        return(tse)
+    # If it is not NULL, and the class is SE which does not include altExp
+    } else if( !(is(tse, "TreeSummarizedExperiment") ||
+               is(tse, "SingleCellExperiment")) ){
+        stop("'", deparse(substitute(altExp)), "' is specified for experiment", exp_num, 
+             " which class is 'SummarizedExperiment'. It does not have altExp slot.",
+             call. = FALSE)
+    # If altExp is specified but there is no alternative experiments
+    } else if( length(altExp) == 0 ){
+        stop("'", deparse(substitute(altExp)), "' is specified but there are no ",
+             "alternative experiments in altExp of experiment ", exp_num, ".",
+             call. = FALSE)
+    # If it is not NULL, then it should specify alternative experiment from altExp
+    # It should be numeric value specifying integer, or a name of altExp
+    } else if( ( length(altExp) == 1 && 
+                 is.numeric(altExp) && altExp%%1==0 && 
+                 altExp<length(altExps(tse)) && altExp>0) ||
+               (.is_a_string(altExp) && altExp %in% altExpNames(tse)) ){
+        # Get altExp and return it
+        tse <- altExp(tse, altExp)
+        return(tse)
+    # Otherwise give error
+    } else{
+        stop("'", deparse(substitute(altExp)), "' must be NULL, or a single numeric or ",
+             "character value specifying altExp of experiment ", exp_num, ".",
              call. = FALSE)
     }
 }
