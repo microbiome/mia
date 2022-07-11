@@ -11,8 +11,8 @@
 #'
 #' @name makeTreeSEFromBiom
 #' @seealso
-#' \code{\link[=makeTreeSummarizedExperimentFromPhyloseq]{makeTreeSummarizedExperimentFromPhyloseq}}
-#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
+#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
 #' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'
