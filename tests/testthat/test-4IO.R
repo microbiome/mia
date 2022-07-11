@@ -7,7 +7,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_s4_class(me, "SummarizedExperiment")
     # load from object
     x1 <- biomformat::read_biom(rich_dense_file)
-    me2 <- makeSummarizedExperimentFromBiom(x1)
+    me2 <- makeTreeSEFromBiom(x1)
     expect_s4_class(me2, "SummarizedExperiment")
     expect_equal(dim(me), dim(me2))
     expect_equal(rowData(me), rowData(me2))
@@ -16,20 +16,20 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
 test_that("Importing phyloseq objects yield TreeSummarizedExperiment objects", {
     skip_if_not_installed("phyloseq")
     data(GlobalPatterns, package="phyloseq")
-    me <- makeTreeSummarizedExperimentFromPhyloseq(GlobalPatterns)
+    me <- makeTreeSEFromPhyloseq(GlobalPatterns)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(19216,26))
     data(enterotype, package="phyloseq")
-    me <- makeTreeSummarizedExperimentFromPhyloseq(enterotype)
+    me <- makeTreeSEFromPhyloseq(enterotype)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(553,280))
     data(esophagus, package="phyloseq")
-    me <- makeTreeSummarizedExperimentFromPhyloseq(esophagus)
+    me <- makeTreeSEFromPhyloseq(esophagus)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(58,3))
     esophagus2 <- esophagus
     phyloseq::otu_table(esophagus2) <- t(phyloseq::otu_table(esophagus))
-    me2 <- makeTreeSummarizedExperimentFromPhyloseq(esophagus2)
+    me2 <- makeTreeSEFromPhyloseq(esophagus2)
     expect_equal(me, me2)
 })
 
@@ -40,7 +40,7 @@ test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
     dadaF <- dada2::dada(fnF, selfConsist=TRUE)
     dadaR <- dada2::dada(fnR, selfConsist=TRUE)
 
-    me <- makeTreeSummarizedExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
+    me <- makeTreeSEFromDADA2(dadaF, fnF, dadaR, fnR)
     expect_s4_class(me, "TreeSummarizedExperiment")
 })
 
