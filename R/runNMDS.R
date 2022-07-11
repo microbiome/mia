@@ -32,8 +32,7 @@
 #'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{exprs_values}
-#'   will be disabled.)
+#'   (Please use \code{assay_name} instead.)
 #' 
 #' @param abund_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
