@@ -18,7 +18,9 @@ getExperimentCrossAssociation(x, ...)
   x,
   experiment1 = 1,
   experiment2 = 2,
+  assay_name1 = abund_values1,
   abund_values1 = "counts",
+  assay_name2 = abund_values2,
   abund_values2 = "counts",
   MARGIN = 1,
   method = c("spearman", "categorical", "kendall", "pearson"),
@@ -80,13 +82,23 @@ from\code{experiments(x)} of \code{MultiAssayExperiment} object or
 (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and
 \code{experiment2 = x} when \code{x} is \code{SE})}
 
-\item{abund_values1}{A single character value for selecting the
+\item{assay_name1}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
-experiment 1 to be transformed. (By default: \code{abund_values1 = "counts"})}
+experiment 1 to be transformed. (By default: \code{assay_name1 = "counts"})}
 
-\item{abund_values2}{A single character value for selecting the
+\item{abund_values1}{a single \code{character} value for specifying which
+assay of experiment 1 to use for calculation.
+(Please use \code{assay_name1} instead. At some point \code{abund_values1}
+will be disabled.)}
+
+\item{assay_name2}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
-experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})}
+experiment 2 to be transformed. (By default: \code{assay_name2 = "counts"})}
+
+\item{abund_values2}{a single \code{character} value for specifying which
+assay of experiment 2 to use for calculation.
+(Please use \code{assay_name2} instead. At some point \code{abund_values2}
+will be disabled.)}
 
 \item{MARGIN}{A single numeric value for selecting if association are calculated
 row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -170,7 +182,7 @@ altExp(tse, "exp2") <- mae[[2]]
 
 # When mode = matrix, matrix is returned
 result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", 
-                                        abund_values1 = "rclr", abund_values2 = "counts",
+                                        assay_name1 = "rclr", assay_name2 = "counts",
                                         method = "pearson", mode = "matrix")
 # Show first 5 entries
 head(result, 5)
@@ -206,7 +218,7 @@ result <- getExperimentCrossAssociation(mae[[1]], mae[[2]], MARGIN = 2, paired =
 # variable-pairs. Use "symmetric" to choose whether to measure association for only
 # other half of of variable-pairs.
 result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experiment2 = "microbiome", 
-                                        abund_values1 = "counts", abund_values2 = "counts",
+                                        assay_name1 = "counts", assay_name2 = "counts",
                                         symmetric = TRUE)
 
 # For big data sets, calculation might take long. To make calculations quicker, you can take

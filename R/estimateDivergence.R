@@ -2,10 +2,15 @@
 #'
 #' Estimate divergence against a given reference sample.
 #' 
-#' @param x a \code{\link{SummarizedExperiment}} object
+#' @param x a \code{\link{SummarizedExperiment}} object.
 #'
-#' @param abund_values the name of the assay used for calculation of the
-#'   sample-wise estimates
+#' @param assay_name the name of the assay used for calculation of the
+#'   sample-wise estimates.
+#'   
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   will be disabled.)
 #'
 #' @param name a name for the column of the colData the results should be
 #'   stored in. By defaut, \code{name} is \code{"divergence"}.
@@ -79,20 +84,21 @@ NULL
 #' @rdname estimateDivergence
 #' @export
 setGeneric("estimateDivergence",signature = c("x"),
-           function(x, abund_values = "counts", name = "divergence", 
-                    reference = "median", FUN = vegan::vegdist, method = "bray", 
-                    ...)
+           function(x, assay_name = abund_values, abund_values = "counts", 
+                    name = "divergence", reference = "median", 
+                    FUN = vegan::vegdist, method = "bray", ...)
              standardGeneric("estimateDivergence"))
 
 #' @rdname estimateDivergence
 #' @export
 setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
-    function(x, abund_values = "counts", name = "divergence", 
-             reference = "median", FUN = vegan::vegdist, method = "bray", ...){
+    function(x, assay_name = abund_values, abund_values = "counts", 
+             name = "divergence", reference = "median", 
+             FUN = vegan::vegdist, method = "bray", ...){
         
         ################### Input check ###############
-        # Check abund_values
-        .check_assay_present(abund_values, x)
+        # Check assay_name
+        .check_assay_present(assay_name, x)
         # Check name
         if(!.is_non_empty_character(name) || length(name) != 1L){
             stop("'name' must be a non-empty character value.",
@@ -120,7 +126,7 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
         }
 
         ################# Input check end #############
-        divergence <- .calc_reference_dist(mat = assay(x, abund_values),
+        divergence <- .calc_reference_dist(mat = assay(x, assay_name),
                                        reference = reference, 
                                        FUN = FUN,
                                        method = method, ...)

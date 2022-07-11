@@ -23,9 +23,14 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}.
 #'   This is essentially a rowname in \code{assay(x)}.
 #'
-#' @param abund_values a \code{character} value to select an
+#' @param assay_name a \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 #'
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   will be disabled.)
+#'   
 #' @return \code{getAbundanceSample} and \code{getAbundanceFeature} return a
 #'   numeric matrix of the abundance values for all
 #'   \dQuote{SampleIDs}/\dQuote{FeatureIDs}
@@ -40,28 +45,28 @@
 #' data(GlobalPatterns)
 #' getAbundanceSample(GlobalPatterns,
 #'                    sample_id = 'CC1',
-#'                    abund_values = 'counts')
+#'                    assay_name = 'counts')
 #' # getAbundanceFeature
 #' getAbundanceFeature(GlobalPatterns,
 #'                     feature_id = '522457',
-#'                     abund_values = 'counts')
+#'                     assay_name = 'counts')
 NULL
 
 #' @rdname getAbundance
 #' @export
 setGeneric("getAbundanceSample", signature = "x",
-           function(x, sample_id, abund_values = "counts")
+           function(x, sample_id, assay_name = abund_values, abund_values = "counts")
                standardGeneric("getAbundanceSample"))
 
 #' @rdname getAbundance
 #' @export
 setMethod("getAbundanceSample", signature = c(x = "SummarizedExperiment"),
-    function(x, sample_id = NULL, abund_values = "counts") {
+    function(x, sample_id = NULL, assay_name = abund_values, abund_values = "counts") {
         # check assay
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay_name, x)
         # check if sampleid exists or matches
         .check_feature_sample_ids(sample_id, colnames(x))
-        assay <- assay(x, abund_values)
+        assay <- assay(x, assay_name)
         rowSums(assay[,colnames(assay) %in% sample_id,drop=FALSE])
     }
 )
@@ -80,18 +85,20 @@ setMethod("getAbundanceSample", signature = c(x = "SummarizedExperiment"),
 #' @rdname getAbundance
 #' @export
 setGeneric("getAbundanceFeature", signature = "x",
-           function(x, feature_id, abund_values)
+           function(x, feature_id, 
+                    assay_name = abund_values, abund_values = "counts")
                standardGeneric("getAbundanceFeature"))
 
 #' @rdname getAbundance
 #' @export
 setMethod("getAbundanceFeature", signature = c(x = "SummarizedExperiment"),
-    function(x, feature_id = NULL, abund_values = "counts") {
+    function(x, feature_id = NULL, 
+             assay_name = abund_values, abund_values = "counts") {
         # check assay
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay_name, x)
         # check if feature_id exists or matches
         .check_feature_sample_ids(feature_id, rownames(x))
-        assay <- assay(x, abund_values)
+        assay <- assay(x, assay_name)
         colSums(assay[rownames(assay) %in% feature_id,,drop=FALSE])
     }
 )

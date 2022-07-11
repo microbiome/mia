@@ -22,6 +22,7 @@ calculateDPCoA(x, y, ...)
 \S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(
   x,
   ...,
+  assay_name = abund_values,
   abund_values = exprs_values,
   exprs_values = "counts",
   dimred = NULL,
@@ -59,13 +60,17 @@ integer vector of row indices or a logical vector.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.}
+
+\item{abund_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay_name} instead. At some point \code{abund_values}
+will be disabled.)}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{abund_values} instead. At some point \code{exprs_values}
-will be disabled.)}
+(Please use \code{assay_name} instead.)}
 
 \item{dimred}{String or integer scalar specifying the existing dimensionality
 reduction results to use.}
