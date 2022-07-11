@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.27</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.28</span>
       </span>
     </div>
 
@@ -71,6 +71,7 @@ in a <code>SummarizedExperiment</code>.</p>
   <span class="va">x</span>,
   <span class="va">formula</span>,
   <span class="va">...</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="va">exprs_values</span>,
   exprs_values <span class="op">=</span> <span class="st">"counts"</span>
 <span class="op">)</span>
@@ -86,6 +87,7 @@ in a <code>SummarizedExperiment</code>.</p>
   <span class="va">x</span>,
   <span class="va">formula</span>,
   <span class="va">...</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="va">exprs_values</span>,
   exprs_values <span class="op">=</span> <span class="st">"counts"</span>
 <span class="op">)</span>
@@ -127,16 +129,22 @@ consider only some of them.</p></dd>
 <dd><p>a logical scalar, should the expression values be standardized?</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></dd>
+
+
+<dt>abund_values</dt>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+will be disabled.)</p></dd>
 
 
 <dt>exprs_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>abund_values</code> instead. At some point <code>exprs_values</code>
-will be disabled.)</p></dd>
+(Please use <code>assay_name</code> instead.)</p></dd>
 
 
 <dt>altexp</dt>
@@ -193,7 +201,7 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
 <span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span> <span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"z"</span><span class="op">)</span> <span class="op">)</span> <span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="op">]</span></span>
 <span class="r-in"><span class="co"># Calculate RDA</span></span>
 <span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span><span class="va">tse</span>, formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, </span>
-<span class="r-in">              abund_values <span class="op">=</span> <span class="st">"z"</span>, name <span class="op">=</span> <span class="st">"rda_scaled"</span>, na.action <span class="op">=</span> <span class="va">na.omit</span><span class="op">)</span></span>
+<span class="r-in">              assay_name <span class="op">=</span> <span class="st">"z"</span>, name <span class="op">=</span> <span class="st">"rda_scaled"</span>, na.action <span class="op">=</span> <span class="va">na.omit</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># Plot</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"rda_scaled"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="runCCA-3.png" alt="" width="700" height="433"></span>

@@ -18,7 +18,7 @@ data in a SingleCellExperiment object."><!-- mathjax --><script src="https://cdn
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.27</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.28</span>
       </span>
     </div>
 
@@ -75,6 +75,7 @@ data in a <code>SingleCellExperiment</code> object.</p>
 <span class="fu">calculateNMDS</span><span class="op">(</span>
   <span class="va">x</span>,
   <span class="va">...</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="va">exprs_values</span>,
   exprs_values <span class="op">=</span> <span class="st">"counts"</span>,
   FUN <span class="op">=</span> <span class="va">vegdist</span>
@@ -84,6 +85,7 @@ data in a <code>SingleCellExperiment</code> object.</p>
 <span class="fu">calculateNMDS</span><span class="op">(</span>
   <span class="va">x</span>,
   <span class="va">...</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="va">exprs_values</span>,
   exprs_values <span class="op">=</span> <span class="st">"counts"</span>,
   dimred <span class="op">=</span> <span class="cn">NULL</span>,
@@ -152,16 +154,22 @@ calculated by <code>FUN</code> should be stored as ‘dist’ attribute of
 the matrix returned/stored by <code>calculateNMDS</code>/ <code>runNMDS</code>.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></dd>
+
+
+<dt>abund_values</dt>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+will be disabled.)</p></dd>
 
 
 <dt>exprs_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>abund_values</code> instead. At some point <code>exprs_values</code>
-will be disabled.)</p></dd>
+(Please use <code>assay_name</code> instead.)</p></dd>
 
 
 <dt>dimred</dt>

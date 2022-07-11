@@ -18,7 +18,7 @@ functions are available."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.27</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.28</span>
       </span>
     </div>
 
@@ -59,6 +59,7 @@ functions are available.</p>
   <span class="va">x</span>,
   top <span class="op">=</span> <span class="fl">5L</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span><span class="op">)</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   na.rm <span class="op">=</span> <span class="cn">TRUE</span>,
   <span class="va">...</span>
@@ -69,6 +70,7 @@ functions are available.</p>
   <span class="va">x</span>,
   top <span class="op">=</span> <span class="fl">5L</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span>, <span class="st">"prevalence"</span><span class="op">)</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   na.rm <span class="op">=</span> <span class="cn">TRUE</span>,
   <span class="va">...</span>
@@ -100,7 +102,7 @@ functions are available.</p>
 <span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, assay_name <span class="op">=</span> <span class="va">abund_values</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -120,10 +122,17 @@ five taxa.</p></dd>
 median or prevalence. Default is 'mean'.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a <code>character</code> value to select an
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></code>
 By default it expects count data.</p></dd>
+
+
+<dt>abund_values</dt>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+will be disabled.)</p></dd>
 
 
 <dt>na.rm</dt>
@@ -204,7 +213,7 @@ object.</p>
 <span class="r-in"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
 <span class="r-in">                       method <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span class="r-in">                       top <span class="op">=</span> <span class="fl">5</span>,</span>
-<span class="r-in">                       abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
+<span class="r-in">                       assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">top_taxa</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "279599" "360229" "317182"</span>
 <span class="r-in"></span>

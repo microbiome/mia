@@ -19,7 +19,7 @@ from assay(x,name)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.27</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.28</span>
       </span>
     </div>
 
@@ -57,15 +57,35 @@ from <code>assay(x,name)</code>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getAbundanceSample</span><span class="op">(</span><span class="va">x</span>, <span class="va">sample_id</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getAbundanceSample</span><span class="op">(</span>
+  <span class="va">x</span>,
+  <span class="va">sample_id</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
+  abund_values <span class="op">=</span> <span class="st">"counts"</span>
+<span class="op">)</span>
 
 <span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getAbundanceSample</span><span class="op">(</span><span class="va">x</span>, sample_id <span class="op">=</span> <span class="cn">NULL</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
+<span class="fu">getAbundanceSample</span><span class="op">(</span>
+  <span class="va">x</span>,
+  sample_id <span class="op">=</span> <span class="cn">NULL</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
+  abund_values <span class="op">=</span> <span class="st">"counts"</span>
+<span class="op">)</span>
 
-<span class="fu">getAbundanceFeature</span><span class="op">(</span><span class="va">x</span>, <span class="va">feature_id</span>, <span class="va">abund_values</span><span class="op">)</span>
+<span class="fu">getAbundanceFeature</span><span class="op">(</span>
+  <span class="va">x</span>,
+  <span class="va">feature_id</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
+  abund_values <span class="op">=</span> <span class="st">"counts"</span>
+<span class="op">)</span>
 
 <span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getAbundanceFeature</span><span class="op">(</span><span class="va">x</span>, feature_id <span class="op">=</span> <span class="cn">NULL</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></code></pre></div>
+<span class="fu">getAbundanceFeature</span><span class="op">(</span>
+  <span class="va">x</span>,
+  feature_id <span class="op">=</span> <span class="cn">NULL</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
+  abund_values <span class="op">=</span> <span class="st">"counts"</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -82,9 +102,16 @@ abundances of “FeatureID”. This is essentially a column name in
 <code>assay(x)</code>.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a <code>character</code> value to select an
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></code></p></dd>
+
+
+<dt>abund_values</dt>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+will be disabled.)</p></dd>
 
 
 <dt>feature_id</dt>
@@ -122,7 +149,7 @@ for user specified “FeatureID”.</p>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">getAbundanceSample</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
 <span class="r-in">                   sample_id <span class="op">=</span> <span class="st">'CC1'</span>,</span>
-<span class="r-in">                   abund_values <span class="op">=</span> <span class="st">'counts'</span><span class="op">)</span></span>
+<span class="r-in">                   assay_name <span class="op">=</span> <span class="st">'counts'</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 549322 522457    951 244423 586076 246140 143239 244960 255340 144887 141782 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      0      0      0      0      0      0      1      0    194      5     35 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 215972  31759  30678 138353 406058  30405   1126  46043 512519 554594 210741 </span>
@@ -3620,7 +3647,7 @@ for user specified “FeatureID”.</p>
 <span class="r-in"><span class="co"># getAbundanceFeature</span></span>
 <span class="r-in"><span class="fu">getAbundanceFeature</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
 <span class="r-in">                    feature_id <span class="op">=</span> <span class="st">'522457'</span>,</span>
-<span class="r-in">                    abund_values <span class="op">=</span> <span class="st">'counts'</span><span class="op">)</span></span>
+<span class="r-in">                    assay_name <span class="op">=</span> <span class="st">'counts'</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      CL3      CC1      SV1  M31Fcsw  M11Fcsw  M31Plmr  M11Plmr  F21Plmr </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        0        0        0        0        0        0        0        0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  M31Tong  M11Tong LMEpi24M SLEpi20M   AQC1cm   AQC4cm   AQC7cm      NP2 </span>

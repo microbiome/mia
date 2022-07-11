@@ -22,7 +22,7 @@ relAbundanceCounts is a shortcut for fetching relative abundance table."><!-- ma
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.27</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.28</span>
       </span>
     </div>
 
@@ -65,6 +65,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">transformSamples</span><span class="op">(</span>
   <span class="va">x</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clr"</span>, <span class="st">"rclr"</span>, <span class="st">"hellinger"</span>, <span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"relabundance"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
@@ -75,6 +76,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 <span class="co"># S4 method for SummarizedExperiment</span>
 <span class="fu">transformSamples</span><span class="op">(</span>
   <span class="va">x</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clr"</span>, <span class="st">"rclr"</span>, <span class="st">"hellinger"</span>, <span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"relabundance"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
@@ -84,6 +86,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 
 <span class="fu">transformCounts</span><span class="op">(</span>
   <span class="va">x</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clr"</span>, <span class="st">"rclr"</span>, <span class="st">"hellinger"</span>, <span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"relabundance"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
@@ -94,6 +97,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 <span class="co"># S4 method for SummarizedExperiment</span>
 <span class="fu">transformCounts</span><span class="op">(</span>
   <span class="va">x</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clr"</span>, <span class="st">"rclr"</span>, <span class="st">"hellinger"</span>, <span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"relabundance"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
@@ -103,6 +107,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 
 <span class="fu">transformFeatures</span><span class="op">(</span>
   <span class="va">x</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"z"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
@@ -113,6 +118,7 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 <span class="co"># S4 method for SummarizedExperiment</span>
 <span class="fu">transformFeatures</span><span class="op">(</span>
   <span class="va">x</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="st">"pa"</span>, <span class="st">"z"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">method</span>,
@@ -139,10 +145,17 @@ feature-wise, i.e., row-wise. <code>ZTransform</code> is a shortcut for Z-transf
 object.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
 transformed.</p></dd>
+
+
+<dt>abund_values</dt>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+will be disabled.)</p></dd>
 
 
 <dt>method</dt>
@@ -251,14 +264,14 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
 <span class="r-in"><span class="co"># e.g. compositional transformation.</span></span>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># The target of transformation can be specified with "abund_values"</span></span>
+<span class="r-in"><span class="co"># The target of transformation can be specified with "assay_name"</span></span>
 <span class="r-in"><span class="co"># Pseudocount can be added by specifying 'pseudocount'.</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Get pseudocount; here smallest positive value</span></span>
 <span class="r-in"><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"relabundance"</span><span class="op">)</span> </span>
 <span class="r-in"><span class="va">pseudonumber</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">mat</span><span class="op">[</span><span class="va">mat</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># Perform CLR</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, abund_values <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"clr"</span>, </span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"clr"</span>, </span>
 <span class="r-in">                      pseudocount <span class="op">=</span> <span class="va">pseudonumber</span></span>
 <span class="r-in">                      <span class="op">)</span></span>
 <span class="r-in">                      </span>
@@ -346,7 +359,7 @@ mSystems 4: 1. doi: 10.1128/mSystems.00016-19</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># For visualization purposes it is sometimes done by applying CLR for samples,</span></span>
 <span class="r-in"><span class="co"># followed by Z transform for taxa</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">ZTransform</span><span class="op">(</span><span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"clr"</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">ZTransform</span><span class="op">(</span><span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"clr"</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All the total abundances of samples do not sum-up to a fixed constant. Please consider to apply, e.g., relative transformation in prior to CLR transformation.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Relative abundances can be also calculated with the dedicated</span></span>
