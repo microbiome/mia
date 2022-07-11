@@ -64,6 +64,8 @@
   abund_values1 <span class="op">=</span> <span class="st">"counts"</span>,
   assay_name2 <span class="op">=</span> <span class="va">abund_values2</span>,
   abund_values2 <span class="op">=</span> <span class="st">"counts"</span>,
+  altExp1 <span class="op">=</span> <span class="cn">NULL</span>,
+  altExp2 <span class="op">=</span> <span class="cn">NULL</span>,
   MARGIN <span class="op">=</span> <span class="fl">1</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spearman"</span>, <span class="st">"categorical"</span>, <span class="st">"kendall"</span>, <span class="st">"pearson"</span><span class="op">)</span>,
   mode <span class="op">=</span> <span class="st">"table"</span>,
@@ -130,10 +132,10 @@ from <code>experiments(x)</code> of <code>MultiassayExperiment</code> object.
 <dt>experiment2</dt>
 <dd><p>A single character or numeric value for selecting the experiment 2
 from<code>experiments(x)</code> of <code>MultiAssayExperiment</code> object or
-<code>altExp(x)</code> of <code>SummarizedExperiment</code> object. Alternatively,
-<code>experiment2</code> can also be <code>SE</code> object when <code>x</code> is <code>SE</code> object.
+<code>altExp(x)</code> of <code>TreeSummarizedExperiment</code> object. Alternatively,
+<code>experiment2</code> can also be <code>TreeSE</code> object when <code>x</code> is <code>TreeSE</code> object.
 (By default: <code>experiment2 = 2</code> when <code>x</code> is <code>MAE</code> and
-<code>experiment2 = x</code> when <code>x</code> is <code>SE</code>)</p></dd>
+<code>experiment2 = x</code> when <code>x</code> is <code>TreeSE</code>)</p></dd>
 
 
 <dt>assay_name1</dt>
@@ -160,6 +162,20 @@ experiment 2 to be transformed. (By default: <code>assay_name2 = "counts"</code>
 assay of experiment 2 to use for calculation.
 (Please use <code>assay_name2</code> instead. At some point <code>abund_values2</code>
 will be disabled.)</p></dd>
+
+
+<dt>altExp1</dt>
+<dd><p>A single numeric or character value specifying alternative experiment
+from the altExp of experiment 1. If NULL, then the experiment is itself
+and altExp option is disabled.
+(By default: <code>altExp1 = NULL</code>)</p></dd>
+
+
+<dt>altExp2</dt>
+<dd><p>A single numeric or character value specifying alternative experiment
+from the altExp of experiment 2. If NULL, then the experiment is itself
+and altExp option is disabled.
+(By default: <code>altExp2 = NULL</code>)</p></dd>
 
 
 <dt>MARGIN</dt>
@@ -291,62 +307,59 @@ associations.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 61                  Akkermansia Cer(d18:1/16:0).1  0.3621313</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 81 Alcaligenes faecalis et rel. Cer(d18:1/16:0).1  0.4207146</span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># Same can be done with SummarizedExperiment and altExp</span></span>
-<span class="r-in"><span class="co"># Create TreeSE with altExp</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"exp2"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span class="co"># Use altExp option to specify alternative experiment from the experiment</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'rclr' includes negative values.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Agglomeration of it might lead to meaningless values.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Check the assay, and consider doing transformation again manually with agglomerated data.</span>
+<span class="r-in"><span class="co"># Transform data</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformSamples</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># When mode = matrix, matrix is returned</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">tse</span>, experiment2 <span class="op">=</span> <span class="st">"exp2"</span>, </span>
-<span class="r-in">                                        assay_name1 <span class="op">=</span> <span class="st">"rclr"</span>, assay_name2 <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, experiment2 <span class="op">=</span> <span class="fl">2</span>, </span>
+<span class="r-in">                                        assay_name1 <span class="op">=</span> <span class="st">"relabundance"</span>, assay_name2 <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span class="r-in">                                        altExp1 <span class="op">=</span> <span class="st">"Phylum"</span>, </span>
 <span class="r-in">                                        method <span class="op">=</span> <span class="st">"pearson"</span>, mode <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: pearson, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Converting table into matrices...</span>
 <span class="r-in"><span class="co"># Show first 5 entries</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                              Cer(d18:1/16:0).1 Cer(d18:1/16:0).2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinomycetaceae                    -0.4346175       -0.27914197</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aerococcus                           0.1878412       -0.09202468</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aeromonas                           -0.6103623       -0.31022644</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Akkermansia                          0.2896727        0.11671980</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Alcaligenes faecalis et rel.        -0.4207146       -0.24062830</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                              Cer(d18:1/18:0) Cer(d18:1/22:0) Cer(d18:1/22:1)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinomycetaceae                  -0.2758524     -0.02876646      -0.1229453</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aerococcus                         0.1183805     -0.04629116      -0.3003203</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aeromonas                         -0.4308561     -0.42047033      -0.1996324</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Akkermansia                        0.4843707      0.04066146       0.2349292</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Alcaligenes faecalis et rel.      -0.1090653     -0.12865600      -0.1476308</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                              Cer(d18:1/24:1) Cer(d18:1/24:2)  ChoE(16:0)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinomycetaceae                -0.080862828     -0.01536165  0.40845224</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aerococcus                      -0.134338386     -0.15019808 -0.36819203</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aeromonas                       -0.423724629     -0.21991705  0.07319233</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Akkermansia                     -0.004295059     -0.12935653 -0.47690132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Alcaligenes faecalis et rel.    -0.055324897     -0.06863424 -0.06492665</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                               ChoE(16:1) ChoE(18:1)  ChoE(18:2)  ChoE(18:3)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinomycetaceae              0.14803785  0.1798046 -0.53905344  0.12904242</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aerococcus                   -0.41868941 -0.3143796 -0.21930612 -0.30179941</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aeromonas                     0.29088659 -0.3950868 -0.50962070 -0.10170768</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Akkermansia                  -0.42475362 -0.5500420  0.05084084 -0.53884666</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Alcaligenes faecalis et rel.  0.05146109 -0.2861881 -0.19421817 -0.03077602</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                              ChoE(19:4) ChoE(20:3).1 ChoE(20:3).2  ChoE(20:4)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinomycetaceae              0.2087626  0.374403423    0.2336125  0.23169977</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aerococcus                   -0.1361949 -0.217790399   -0.2624069 -0.10291066</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aeromonas                    -0.3762838  0.098044579   -0.3751188 -0.06559238</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Akkermansia                  -0.3362955 -0.477052632   -0.5614239 -0.21956639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Alcaligenes faecalis et rel.  0.1219980  0.003890942   -0.1844285  0.24973500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                              ChoE(20:5).1 ChoE(20:5).2 ChoE(22:6) lysoPC(16:0)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinomycetaceae               0.36496902   0.14881362  0.2607507    0.1768133</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aerococcus                    -0.31101328  -0.15028746 -0.1613812    0.1120500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Aeromonas                      0.04043795  -0.44702658  0.1986826    0.2156646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Akkermansia                   -0.73671064  -0.37529883 -0.2957880   -0.0957678</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Alcaligenes faecalis et rel.   0.01574181   0.04996944  0.3788875    0.0337526</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Cer(d18:1/16:0).1 Cer(d18:1/16:0).2 Cer(d18:1/18:0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria          0.5113449         0.3187325      -0.1765092</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Firmicutes              0.3486415        -0.1948708       0.4155216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Proteobacteria          0.6647672         0.2711662       0.5297273</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Verrucomicrobia         0.3505100         0.2696156       0.4035960</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes          -0.5668939        -0.1045820      -0.5366292</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Cer(d18:1/22:0) Cer(d18:1/22:1) Cer(d18:1/24:1) Cer(d18:1/24:2)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria       0.07762303     -0.16297583     -0.03911191     -0.02122108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Firmicutes          -0.09614179     -0.09146324     -0.15257549     -0.34071026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Proteobacteria       0.46014477      0.14289793      0.45849714      0.32809909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Verrucomicrobia      0.19474812      0.33121034      0.13330146      0.03368024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes       -0.14138805     -0.12198521     -0.06580127      0.11986216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  ChoE(16:0) ChoE(16:1) ChoE(18:1)  ChoE(18:2)  ChoE(18:3)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  -0.03810918 -0.2780034  0.3875799  0.28858664  0.04829341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Firmicutes      -0.81768103 -0.5886763 -0.5411648 -0.04040383 -0.66836368</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Proteobacteria   0.11698264 -0.1274482  0.6083283  0.31908780  0.32891035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Verrucomicrobia -0.46506007 -0.4354364 -0.5725861  0.20912417 -0.52214464</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes    0.69315629  0.6170088  0.4385468 -0.17331356  0.58041994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  ChoE(19:4) ChoE(20:3).1 ChoE(20:3).2 ChoE(20:4) ChoE(20:5).1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria   0.08186681  -0.08226438    0.3054980 -0.3854495   0.05336398</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Firmicutes      -0.41521745  -0.75001339   -0.4831193 -0.4708632  -0.75925201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Proteobacteria   0.42581391   0.19827778    0.5999942  0.2495761   0.17118133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Verrucomicrobia -0.32507134  -0.54025457   -0.6292291 -0.2372183  -0.63614193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes    0.31009468   0.67762230    0.4418422  0.3825489   0.72240503</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 ChoE(20:5).2 ChoE(22:6) lysoPC(16:0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria     0.1623263 -0.5218001  -0.36142247</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Firmicutes        -0.3995477 -0.4696892  -0.09786189</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Proteobacteria     0.5274786 -0.0256453   0.28860476</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Verrucomicrobia   -0.3750671 -0.4102133  -0.32360712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes      0.2964458  0.5372177   0.19345152</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># testExperimentCorrelation returns also significances</span></span>
 <span class="r-in"><span class="co"># filter_self_correlations = TRUE filters self correlations</span></span>
 <span class="r-in"><span class="co"># With p_adj_threshold it is possible to filter those features that do no have</span></span>
 <span class="r-in"><span class="co"># any correlations that have p-value under threshold</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">tse</span>, experiment2 <span class="op">=</span> <span class="va">tse</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span>
+<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, experiment2 <span class="op">=</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span>
 <span class="r-in">                                         filter_self_correlations <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span class="r-in">                                         p_adj_threshold <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
@@ -355,12 +368,12 @@ associations.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> p_adj_threshold: 0.05, cor_threshold: -, filter_self_correlations: TRUE</span>
 <span class="r-in"><span class="co"># Show first 5 entries</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Var1             Var2       cor         pval       p_adj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 152 Aneurinibacillus     Anaerofustis 0.9324205 8.405752e-05 0.001528319</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 156         Bacillus     Anaerofustis 0.9098165 2.592358e-04 0.004320597</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 228     Anaerofustis Aneurinibacillus 0.9324205 8.405752e-05 0.001528319</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 236         Bacillus Aneurinibacillus 0.8898227 5.632994e-04 0.008666145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 308     Anaerofustis         Bacillus 0.9098165 2.592358e-04 0.004320597</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               Var1            Var2       cor         pval       p_adj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65 Cer(d18:1/22:1) Cer(d18:1/22:0) 0.8200772 3.667235e-03 0.022225667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66 Cer(d18:1/24:1) Cer(d18:1/22:0) 0.9448824 3.776767e-05 0.000503569</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67 Cer(d18:1/24:2) Cer(d18:1/22:0) 0.9193520 1.677605e-04 0.001973653</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84 Cer(d18:1/22:0) Cer(d18:1/22:1) 0.8200772 3.667235e-03 0.022225667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86 Cer(d18:1/24:1) Cer(d18:1/22:1) 0.8596709 1.427239e-03 0.011893655</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Also getExperimentCrossAssociation returns significances when </span></span>
 <span class="r-in"><span class="co"># test_signicance = TRUE</span></span>
@@ -598,13 +611,11 @@ associations.</p>
 <span class="r-in"><span class="co"># a random sample from data. In a complex biological problems, random sample</span></span>
 <span class="r-in"><span class="co"># can describe the data enough. Here our random sample is 30 % of whole data.</span></span>
 <span class="r-in"><span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span>
+<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span class="r-in"><span class="va">tse_sub</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">)</span>, <span class="va">sample_size</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">)</span>, <span class="op">]</span></span>
 <span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">tse_sub</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor.test, method: spearman, test_significance: TRUE, p_adj_method: fdr, paired: FALSE, show_warnings: TRUE</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
