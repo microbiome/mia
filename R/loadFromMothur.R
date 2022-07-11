@@ -1,6 +1,6 @@
-#' Import Mothur results as a \code{SummarizedExperiment}
+#' Import Mothur results as a \code{TreeSummarizedExperiment}
 #' 
-#' This method creates a \code{SummarizedExperiment} object from \code{Mothur}
+#' This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
 #' files provided as input. 
 #'
 #' @param sharedFile a single \code{character} value defining the file
@@ -24,7 +24,7 @@
 #' \code{designFile}, are optional, but are highly encouraged to be provided.
 #'
 #' @return  A
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
 #' @name loadFromMothur
@@ -106,9 +106,9 @@ loadFromMothur <- function(sharedFile,
         rownames(sample_meta) <- colnames(feature_tab)
     }
 
-    SummarizedExperiment(assays = S4Vectors::SimpleList(counts = feature_tab),
-                         rowData = taxa_tab,
-                         colData = sample_meta)
+    TreeSummarizedExperiment(assays = S4Vectors::SimpleList(counts = feature_tab),
+                            rowData = taxa_tab,
+                            colData = sample_meta)
 }
 
 # These extra information must be added to colData. Return list of assay and 
