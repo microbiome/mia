@@ -2,6 +2,7 @@
 
 export(IdTaxaToDataFrame)
 export(TAXONOMY_RANKS)
+export(TreeSE)
 export(ZTransform)
 export(addContaminantQC)
 export(addNotContaminantQC)
