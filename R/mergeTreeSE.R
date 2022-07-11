@@ -5,9 +5,9 @@
 #' 
 #' @param y a \code{\link{SummarizedExperiment}} object 
 #' 
-#' @param abund_values A single character value for selecting the
+#' @param assay_name A single character value for selecting the
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#' to be merged. (By default: \code{abund_values = "counts"})
+#' to be merged. (By default: \code{assay_name = "counts"})
 #' 
 #' @param join A single character value for selecting the joining method.
 #' Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
@@ -72,7 +72,7 @@
 #' 
 #' # Merge a list of TreeSEs
 #' list <- SimpleList(tse1, tse2, tse3)
-#' tse <- mergeTreeSE(list, abund_values = "counts", missing_values = 0)
+#' tse <- mergeTreeSE(list, assay_name = "counts", missing_values = 0)
 #' tse
 #' 
 #' # With 'join', it is possible to specify the merging method. Subsets are used
@@ -95,14 +95,14 @@ setGeneric("mergeTreeSE", signature = c("x"),
 #' @rdname mergeTreeSE
 #' @export
 setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
-        function(x, abund_values = "counts", join = "full", 
+        function(x, assay_name = "counts", join = "full", 
                  missing_values = 0, verbose = TRUE, ... ){
             ################## Input check ##################
             # Can the abund_value the found form all the objects
-            abund_values_bool <- lapply(x, .assay_cannot_be_found, abund_values = abund_values)
-            abund_values_bool <- unlist(abund_values_bool)
-            if( any(abund_values_bool) ){
-                stop("'abund_values' must specify an assay from assays. 'abund_values' ",
+            assay_name_bool <- lapply(x, .assay_cannot_be_found, assay_name = assay_name)
+            assay_name_bool <- unlist(assay_name_bool)
+            if( any(assay_name_bool) ){
+                stop("'assay_name' must specify an assay from assays. 'assay_name' ",
                      "cannot be found at least in one TreeSE.",
                      call. = FALSE)
             }
@@ -147,9 +147,9 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
             # Remove all information but rowData, colData, metadata and assay
             row_data <- rowData(tse)
             col_data <- colData(tse)
-            assay <- assay(tse, abund_values)
+            assay <- assay(tse, assay_name)
             assays <- SimpleList(name = assay)
-            names(assays) <- abund_values
+            names(assays) <- assay_name
             metadata <- metadata(tse)
             
             tse <- TreeSummarizedExperiment(assays = assays,
@@ -167,7 +167,7 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
                         message(i+1, "/", length(x)+1)
                     }
                     temp <- x[[i]]
-                    tse <- .merge_TreeSE(temp, tse_original = tse, abund_values = abund_values,
+                    tse <- .merge_TreeSE(temp, tse_original = tse, assay_name = assay_name,
                                          join = join,
                                          missing_values = missing_values)
                 }
@@ -219,11 +219,11 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
 
 # Input: the name of the assay and TreSE object
 # Output: TRUE or FALSE
-.assay_cannot_be_found <- function(abund_values, tse){
-    # Check if the abund_values can be found. If yes, then FALSE. If not, then TRUE
+.assay_cannot_be_found <- function(assay_name, tse){
+    # Check if the assay_name can be found. If yes, then FALSE. If not, then TRUE
     tryCatch(
         {
-            .check_assay_present(abund_values, tse)
+            .check_assay_present(assay_name, tse)
             return(FALSE)
             
         },
@@ -239,15 +239,15 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
 # Input: Two TreeSEs, the name of the assay, joining method, and the value to
 # denote missing values that might occur when object do not share same features, e.g.
 # Output: A single TreeSE
-.merge_TreeSE <- function(tse_original, tse, abund_values, join, missing_values){
+.merge_TreeSE <- function(tse_original, tse, assay_name, join, missing_values){
     # Merge rowData
     rowdata <- .merge_rowdata(tse_original, tse, join)
     # Merge colData
     coldata <- .merge_coldata(tse_original, tse, join)
     # Merge assay
-    assay <- .merge_assay(tse_original, tse, abund_values, join, missing_values, rowdata, coldata)
+    assay <- .merge_assay(tse_original, tse, assay_name, join, missing_values, rowdata, coldata)
     assays <- SimpleList(name = assay)
-    names(assays) <- abund_values
+    names(assays) <- assay_name
     # Combine metadata
     metadata <- c( metadata(tse_original), metadata(tse) )
     # Get row trees
@@ -279,11 +279,11 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
 # Input: Two TreeSEs, the name of the assay, joining method, value to denote
 # missing values, merged rowData, and merged colData
 # Output: Merged assay
-.merge_assay <- function(tse_original, tse, abund_values, join,
+.merge_assay <- function(tse_original, tse, assay_name, join,
                          missing_values, rd, cd){
     # Take assays
-    assay1 <- assay(tse_original, abund_values)
-    assay2 <- assay(tse, abund_values)
+    assay1 <- assay(tse_original, assay_name)
+    assay2 <- assay(tse, assay_name)
     
     # Merge two assays into one
     assay <- .join_two_tables(assay1, assay2, join)

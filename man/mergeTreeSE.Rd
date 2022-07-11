@@ -11,7 +11,7 @@ mergeTreeSE(x, ...)
 
 \S4method{mergeTreeSE}{SimpleList}(
   x,
-  abund_values = "counts",
+  assay_name = "counts",
   join = "full",
   missing_values = 0,
   verbose = TRUE,
@@ -28,9 +28,9 @@ mergeTreeSE(x, ...)
 
 \item{...}{optional arguments (not used).}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay_name}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to be merged. (By default: \code{abund_values = "counts"})}
+to be merged. (By default: \code{assay_name = "counts"})}
 
 \item{join}{A single character value for selecting the joining method.
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
@@ -88,7 +88,7 @@ tse <- mergeTreeSE(tse1, tse2)
 
 # Merge a list of TreeSEs
 list <- SimpleList(tse1, tse2, tse3)
-tse <- mergeTreeSE(list, abund_values = "counts", missing_values = 0)
+tse <- mergeTreeSE(list, assay_name = "counts", missing_values = 0)
 tse
 
 # With 'join', it is possible to specify the merging method. Subsets are used
