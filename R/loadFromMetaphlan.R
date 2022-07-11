@@ -13,9 +13,12 @@
 #'   
 #' @param ... additional arguments:
 #' \itemize{
-#'   \item{\code{abund_values}:} {A single character value for naming 
+#'   \item{\code{assay_name}:} {A single character value for naming 
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} 
-#'   (default: \code{abund_values = "counts"})}
+#'   (default: \code{assay_name = "counts"})}
+#'   \item{\code{abund_values}:} {A single \code{character} value for specifying which
+#'   assay to use for calculation. (Please use \code{assay_name} instead. 
+#'   At some point \code{abund_values} will be disabled.)}
 #'   \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
 #'     taxonomic prefixes be removed? (default:
 #'     \code{removeTaxaPrefixes = FALSE})}
@@ -205,10 +208,12 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 }
 
 # Create SE object that include rowdata and assay, from the metaphlan table
-.create_se_from_metaphlan <- function(table, abund_values = "counts", ...){
-    # Check abund_values
-    if( !.is_non_empty_character(abund_values) ){
-        stop("'abund_values' must be a non-empty character value.",
+.create_se_from_metaphlan <- function(table, 
+                                      assay_name = abund_values, abund_values = "counts", 
+                                      ...){
+    # Check assay_name
+    if( !.is_non_empty_character(assay_name) ){
+        stop("'assay_name' must be a non-empty character value.",
              call. = FALSE)
     }
     # Get those columns that belong to rowData
@@ -222,7 +227,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     
     # Create assays list and add assay with specific name
     assays <- S4Vectors::SimpleList()
-    assays[[abund_values]] <- assay
+    assays[[assay_name]] <- assay
     
     # Create SE
     se <- SummarizedExperiment(assays = assays,

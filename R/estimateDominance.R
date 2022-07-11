@@ -10,10 +10,15 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
 #'
-#' @param abund_values A single character value for selecting the
+#' @param assay_name A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to calculate the sample-wise estimates.
 #'
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   will be disabled.)
+#'   
 #' @param index a \code{character} vector, specifying the indices to be
 #'   calculated.
 #'
@@ -216,7 +221,7 @@ NULL
 #' @export
 setGeneric("estimateDominance",signature = c("x"),
            function(x,
-                    abund_values = "counts",
+                    assay_name = abund_values, abund_values = "counts",
                     index = c("absolute", "dbp", "core_abundance", "gini",
                               "dmn", "relative", "simpson_lambda"),
                     ntaxa = 1,
@@ -231,7 +236,7 @@ setGeneric("estimateDominance",signature = c("x"),
 #' @export
 setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     function(x,
-             abund_values = "counts",
+             assay_name = abund_values, abund_values = "counts",
              index = c("absolute", "dbp", "core_abundance", "gini", "dmn", 
                        "relative", "simpson_lambda"),
              ntaxa = 1,
@@ -241,8 +246,8 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
              BPPARAM = SerialParam()){
 
         # Input check
-        # Check abund_values
-        .check_assay_present(abund_values, x)
+        # Check assay_name
+        .check_assay_present(assay_name, x)
         # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -259,7 +264,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
         # Calculates dominance indices
         dominances <- BiocParallel::bplapply(index,
                                              FUN = .get_dominance_values,
-                                             mat = assay(x,abund_values),
+                                             mat = assay(x,assay_name),
                                              ntaxa = ntaxa,
                                              aggregate = aggregate,
                                              BPPARAM = BPPARAM)

@@ -12,6 +12,7 @@
 \usage{
 \S4method{isContaminant}{SummarizedExperiment}(
   seqtab,
+  assay_name = abund_values,
   abund_values = "counts",
   name = "isContaminant",
   concentration = NULL,
@@ -25,6 +26,7 @@
 
 \S4method{isNotContaminant}{SummarizedExperiment}(
   seqtab,
+  assay_name = abund_values,
   abund_values = "counts",
   name = "isNotContaminant",
   control = NULL,
@@ -45,9 +47,14 @@ addNotContaminantQC(x, name = "isNotContaminant", ...)
 \arguments{
 \item{seqtab, x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay_name}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to use.}
+
+\item{abund_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay_name} instead. At some point \code{abund_values}
+will be disabled.)}
 
 \item{name}{A name for the column of the colData in which the contaminant
 information should be stored.}
