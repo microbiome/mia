@@ -446,6 +446,6 @@ test_that("getExperimentCrossAssociation", {
                                                show_warnings = FALSE))
     expect_equal(getExperimentCrossAssociation(tse, tse, show_warnings = FALSE, 
                                                altExp1 = "Family", altExp2 = NULL),
-                 getExperimentCrossAssociation(altExp(tse, "Phylum"), tse, 
+                 getExperimentCrossAssociation(altExp(tse, "Family"), tse, 
                                                show_warnings = FALSE))
 })

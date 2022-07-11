@@ -567,23 +567,25 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     altExp_name <- deparse(substitute(altExp))
     exp_num <- substr(altExp_name, nchar(altExp_name), nchar(altExp_name))
     
+    # If altExp is disabled, give the object itself
+    if( is.null(altExp) ){
+        return(tse)
     # If it is not NULL, and the class is SE which does not include altExp
-    if( !is.null(altExp) && class(tse) == "SummarizedExperiment" ){
+    } else if( !(is(tse, "TreeSummarizedExperiment") ||
+               is(tse, "SingleCellExperiment")) ){
         stop("'", deparse(substitute(altExp)), "' is specified for experiment", exp_num, 
              " which class is 'SummarizedExperiment'. It does not have altExp slot.",
              call. = FALSE)
-    }
-    # If it is NULL or 0, then return the TreeSE itself
-    else if( is.null(altExp) || 
-             (length(altExp)==0 && is.integer(altExp) && altExp == 0) ){
-        return(tse)
     # If altExp is specified but there is no alternative experiments
     } else if( length(altExp) == 0 ){
         stop("'", deparse(substitute(altExp)), "' is specified but there are no ",
              "alternative experiments in altExp of experiment ", exp_num, ".",
              call. = FALSE)
     # If it is not NULL, then it should specify alternative experiment from altExp
-    } else if( (length(altExp)==0 && is.integer(altExp) && altExp<length(altExps(tse)) && altExp>0) ||
+    # It should be numeric value specifying integer, or a name of altExp
+    } else if( ( length(altExp) == 1 && 
+                 is.numeric(altExp) && altExp%%1==0 && 
+                 altExp<length(altExps(tse)) && altExp>0) ||
                (.is_a_string(altExp) && altExp %in% altExpNames(tse)) ){
         # Get altExp and return it
         tse <- altExp(tse, altExp)
