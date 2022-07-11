@@ -27,9 +27,9 @@
 #' @details
 #' Import Metaphlan results. Input must be in merged Metaphlan format.
 #' Data is imported so that data at the lowest rank is imported as a 
-#' \code{TreeSE} object. Data at higher rank is imported as a
-#' \code{SE} objects which are stored to \code{altExp} of
-#' \code{TreeSE} object.
+#' \code{TreeSummarizedExperiment} object. Data at higher rank is imported as a
+#' \code{SummarizedExperiment} objects which are stored to \code{altExp} of
+#' \code{TreeSummarizedExperiment} object.
 #'
 #' @return  A
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
