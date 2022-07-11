@@ -34,7 +34,14 @@ getPrevalence(x, ...)
 
 \S4method{getPrevalence}{ANY}(x, detection = 0, include_lowest = FALSE, sort = FALSE, ...)
 
-\S4method{getPrevalence}{SummarizedExperiment}(x, abund_values = "counts", as_relative = TRUE, rank = NULL, ...)
+\S4method{getPrevalence}{SummarizedExperiment}(
+  x,
+  assay_name = abund_values,
+  abund_values = "counts",
+  as_relative = TRUE,
+  rank = NULL,
+  ...
+)
 
 getPrevalentTaxa(x, ...)
 
@@ -78,11 +85,26 @@ subsetByRareFeatures(x, ...)
 
 \S4method{subsetByRareFeatures}{ANY}(x, ...)
 
-getPrevalentAbundance(x, abund_values = "relabundance", ...)
+getPrevalentAbundance(
+  x,
+  assay_name = abund_values,
+  abund_values = "relabundance",
+  ...
+)
 
-\S4method{getPrevalentAbundance}{ANY}(x, abund_values = "relabundance", ...)
+\S4method{getPrevalentAbundance}{ANY}(
+  x,
+  assay_name = abund_values,
+  abund_values = "relabundance",
+  ...
+)
 
-\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, abund_values = "counts", ...)
+\S4method{getPrevalentAbundance}{SummarizedExperiment}(
+  x,
+  assay_name = abund_values,
+  abund_values = "counts",
+  ...
+)
 
 agglomerateByPrevalence(x, ...)
 
@@ -108,9 +130,14 @@ detection and prevalence cutoffs be included? (default: \code{FALSE})}
 \item{sort}{logical scalar: Should the result be sorted by prevalence?
 (default: \code{FALSE})}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay_name}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to use for prevalence calculation.}
+
+\item{abund_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay_name} instead. At some point \code{abund_values}
+will be disabled.)}
 
 \item{as_relative}{logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? (default: \code{TRUE})}
@@ -243,7 +270,7 @@ altExp(tse, "rare")
 tse
                          
 data(esophagus)
-getPrevalentAbundance(esophagus, abund_values = "counts")
+getPrevalentAbundance(esophagus, assay_name = "counts")
 
 # data can be aggregated based on prevalent taxonomic results
 agglomerateByPrevalence(tse,

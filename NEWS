@@ -31,4 +31,5 @@ Changes in version 1.3.x
 + added new skin microbiome example data set 'peerj13075'
 + added splitOn and unsplitOn functions
 + CLR transformation: remove internal relative transformation
++ Replace 'abund_values' argument with 'assay_name'
 + getExpCrossCorr: added altExp option

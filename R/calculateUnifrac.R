@@ -21,12 +21,16 @@
 #'   matrix. This means that the phylo object and the columns should relate
 #'   to the same type of features (aka. microorganisms).
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
+#'   (Please use \code{assay_name} instead.)
+#'   
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
 #'
 #' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
@@ -133,8 +137,9 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
 setMethod("calculateUnifrac",
           signature = c(x = "TreeSummarizedExperiment",
                         tree = "missing"),
-    function(x, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, abund_values)
+    function(x, assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts", 
+             transposed = FALSE, ...){
+        mat <- assay(x, assay_name)
         if(!transposed){
             if(is.null(rowTree(x))){
                 stop("'rowTree(x)' must not be NULL", call. = FALSE)

@@ -20,9 +20,14 @@
 #' @param as_relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? (default: \code{TRUE})
 #'
-#' @param abund_values A single character value for selecting the
+#' @param assay_name A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for prevalence calculation.
+#'   
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   will be disabled.)
 #'
 #' @param other_label A single \code{character} valued used as the label for the
 #'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
@@ -160,7 +165,7 @@
 #' tse
 #'                          
 #' data(esophagus)
-#' getPrevalentAbundance(esophagus, abund_values = "counts")
+#' getPrevalentAbundance(esophagus, assay_name = "counts")
 #'
 #' # data can be aggregated based on prevalent taxonomic results
 #' agglomerateByPrevalence(tse,
@@ -235,17 +240,17 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts", as_relative = TRUE,
-             rank = NULL, ...){
+    function(x, assay_name = abund_values, abund_values = "counts", 
+             as_relative = TRUE, rank = NULL, ...){
         # input check
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
 
         # check assay
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay_name, x)
         x <- .agg_for_prevalence(x, rank = rank, ...)
-        mat <- assay(x, abund_values)
+        mat <- assay(x, assay_name)
         if (as_relative) {
             mat <- .calc_rel_abund(mat)
         }
@@ -522,7 +527,7 @@ setMethod("subsetByRareFeatures", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setGeneric("getPrevalentAbundance", signature = "x",
-           function(x, abund_values = "relabundance", ...)
+           function(x, assay_name = abund_values, abund_values = "relabundance", ...)
                standardGeneric("getPrevalentAbundance"))
 
 #' @rdname getPrevalence
@@ -544,11 +549,11 @@ setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts", ...){
+    function(x, assay_name = abund_values, abund_values = "counts", ...){
         # check assay
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay_name, x)
         #
-        getPrevalentAbundance(assay(x,abund_values))
+        getPrevalentAbundance(assay(x,assay_name))
     }
 )
 
