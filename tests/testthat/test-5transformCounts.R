@@ -60,7 +60,7 @@ test_that("transformCounts", {
         df <- DataFrame(n = c(1:6))
         expect_error(relAbundanceCounts(SummarizedExperiment(assays = list(mat = mat),
                                                              rowData = df)),
-                     "'abund_values' must be a valid name of assays")
+                     "'assay_name' must be a valid name of assays")
 
         se <- SummarizedExperiment(assays = list(counts = mat),
                                    rowData = df)
@@ -149,7 +149,7 @@ test_that("transformCounts", {
         relative <- relative + pseudonumber
         # Tests clr
         expect_equal(
-            as.matrix(assays(mia::transformCounts(tse, abund_values = "relabundance",
+            as.matrix(assays(mia::transformCounts(tse, assay_name = "relabundance",
                                                   method = "clr", pseudocount = pseudonumber))$clr),
             apply(as.matrix(relative), 2, FUN=function(x){
                 log(x) - mean(log(x))
@@ -157,7 +157,7 @@ test_that("transformCounts", {
         
         # Tests rclr
         expect_equal(
-            round(as.matrix(assays(mia::transformCounts(tse, abund_values = "relabundance",
+            round(as.matrix(assays(mia::transformCounts(tse, assay_name = "relabundance",
                                                         method = "rclr", 
                                                         pseudocount = pseudonumber))$rclr),4),
             round(apply(as.matrix(relative), 2, FUN=function(x){
@@ -193,8 +193,8 @@ test_that("transformCounts", {
         assay(tse, "test2")[1, ] <- 0
         
         # clr robust transformations
-        test <- assay(transformSamples(tse, method = "rclr", abund_values = "test"), "rclr")
-        test2 <- assay(transformSamples(tse, method = "rclr", abund_values = "test2"), "rclr")
+        test <- assay(transformSamples(tse, method = "rclr", assay_name = "test"), "rclr")
+        test2 <- assay(transformSamples(tse, method = "rclr", assay_name = "test2"), "rclr")
         
         # Removes first rows
         test <- test[-1, ]
@@ -205,31 +205,31 @@ test_that("transformCounts", {
         
         tse <- transformSamples(tse, method = "relabundance")
         # Expect error when counts and zeroes
-        expect_error(transformSamples(tse, abund_values = "counts", 
+        expect_error(transformSamples(tse, assay_name = "counts", 
                                       method = "clr"))
         # Expect error warning when zeroes
         tse <- transformSamples(tse, method = "relabundance")
-        expect_error(transformSamples(tse, abund_values = "relabundance", 
+        expect_error(transformSamples(tse, assay_name = "relabundance", 
                                       method = "clr") ) 
         # Expect no warning when pseudocount is added, colSums are over 1
-        expect_warning(transformSamples(tse, abund_values = "relabundance", 
+        expect_warning(transformSamples(tse, assay_name = "relabundance", 
                                        method = "clr", pseudocount = 1), 
                        regexp = NA)
         # Expect no warning when pseudocount is added, colSums are 1
         tse <- transformSamples(tse, method = "relabundance", pseudocount = 1, 
                                 name = "relabund2")
-        expect_warning(transformSamples(tse, abund_values = "relabund2", 
+        expect_warning(transformSamples(tse, assay_name = "relabund2", 
                                        method = "clr"),
                        regexp = NA)
         # Expect warning when colSums are not equal
-        expect_warning(transformSamples(tse, abund_values = "counts", 
+        expect_warning(transformSamples(tse, assay_name = "counts", 
                                         method = "clr", pseudocount = 1))
-        expect_warning(transformSamples(tse, abund_values = "counts", 
+        expect_warning(transformSamples(tse, assay_name = "counts", 
                                         method = "rclr", pseudocount = 1))
 
         ############################# NAMES ####################################
         # Tests that samples have correct names
-        expect_equal(colnames(assays(transformCounts(tse, abund_values = "relabundance",
+        expect_equal(colnames(assays(transformCounts(tse, assay_name = "relabundance",
                                                      method = "clr", pseudocount = 1))$clr),
                      colnames(assays(tse)$relabundance))
 

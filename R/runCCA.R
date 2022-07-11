@@ -23,14 +23,18 @@
 #'   
 #' @param scale a logical scalar, should the expression values be standardized?
 #' 
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
+#'   (Please use \code{assay_name} instead.)
+#'   
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
-#'
+#'   
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
 #'
@@ -72,7 +76,7 @@
 #' tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 #' # Calculate RDA
 #' tse <- runRDA(tse, formula = data ~ SampleType, 
-#'               abund_values = "z", name = "rda_scaled", na.action = na.omit)
+#'               assay_name = "z", name = "rda_scaled", na.action = na.omit)
 #' # Plot
 #' plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 NULL
@@ -169,9 +173,10 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
 #' @export
 #' @rdname runCCA
 setMethod("calculateCCA", "SummarizedExperiment",
-    function(x, formula, ..., abund_values = exprs_values, exprs_values = "counts")
+    function(x, formula, ..., 
+             assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
     {
-        mat <- assay(x, abund_values)
+        mat <- assay(x, assay_name)
         variables <- .get_variables_from_data_and_formula(x, formula)
         .calculate_cca(mat, formula, variables, ...)
     }
@@ -231,9 +236,10 @@ setMethod("calculateRDA", "ANY", .calculate_rda)
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "SummarizedExperiment",
-    function(x, formula, ..., abund_values = exprs_values, exprs_values = "counts")
+    function(x, formula, ..., 
+             assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
     {
-        mat <- assay(x, abund_values)
+        mat <- assay(x, assay_name)
         variables <- .get_variables_from_data_and_formula(x, formula)
         .calculate_rda(mat, formula, variables, ...)
     }

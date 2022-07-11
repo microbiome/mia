@@ -16,13 +16,23 @@
 #'    (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and 
 #'    \code{experiment2 = x} when \code{x} is \code{SE})
 #'    
-#' @param abund_values1 A single character value for selecting the
+#' @param assay_name1 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
-#'   experiment 1 to be transformed. (By default: \code{abund_values1 = "counts"})
+#'   experiment 1 to be transformed. (By default: \code{assay_name1 = "counts"})
 #'   
-#' @param abund_values2 A single character value for selecting the
+#' @param assay_name2 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
-#'   experiment 2 to be transformed. (By default: \code{abund_values2 = "counts"})
+#'   experiment 2 to be transformed. (By default: \code{assay_name2 = "counts"})
+#'   
+#' @param abund_values1 a single \code{character} value for specifying which
+#'   assay of experiment 1 to use for calculation.
+#'   (Please use \code{assay_name1} instead. At some point \code{abund_values1}
+#'   will be disabled.)
+#'   
+#' @param abund_values2 a single \code{character} value for specifying which
+#'   assay of experiment 2 to use for calculation.
+#'   (Please use \code{assay_name2} instead. At some point \code{abund_values2}
+#'   will be disabled.)
 #' 
 #' @param MARGIN A single numeric value for selecting if association are calculated
 #'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -121,7 +131,7 @@
 #' 
 #' # When mode = matrix, matrix is returned
 #' result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", 
-#'                                         abund_values1 = "rclr", abund_values2 = "counts",
+#'                                         assay_name1 = "rclr", assay_name2 = "counts",
 #'                                         method = "pearson", mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
@@ -157,7 +167,7 @@
 #' # variable-pairs. Use "symmetric" to choose whether to measure association for only
 #' # other half of of variable-pairs.
 #' result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experiment2 = "microbiome", 
-#'                                         abund_values1 = "counts", abund_values2 = "counts",
+#'                                         assay_name1 = "counts", assay_name2 = "counts",
 #'                                         symmetric = TRUE)
 #' 
 #' # For big data sets, calculation might take long. To make calculations quicker, you can take
@@ -184,8 +194,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
     function(x,
            experiment1 = 1,
            experiment2 = 2,
-           abund_values1 = "counts",
-           abund_values2 = "counts",
+           assay_name1 = abund_values1, abund_values1 = "counts",
+           assay_name2 = abund_values2, abund_values2 = "counts",
            MARGIN = 1,
            method = c("spearman", "categorical", "kendall", "pearson"),
            mode = "table",
@@ -203,8 +213,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
         .get_experiment_cross_association(x,
                                           experiment1 = experiment1,
                                           experiment2 = experiment2,
-                                          abund_values1 = abund_values1,
-                                          abund_values2 = abund_values2,
+                                          assay_name1 = assay_name1,
+                                          assay_name2 = assay_name2,
                                           MARGIN = MARGIN,
                                           method = method,
                                           mode = mode,
@@ -318,8 +328,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 .get_experiment_cross_association <- function(x,
                                               experiment1 = 1,
                                               experiment2 = 2,
-                                              abund_values1 = "counts",
-                                              abund_values2 = "counts",
+                                              assay_name1 = abund_values1, abund_values1 = "counts",
+                                              assay_name2 = abund_values2, abund_values2 = "counts",
                                               MARGIN = 1,
                                               method = c("spearman", "categorical", "kendall", "pearson"),
                                               mode = c("table", "matrix"),
@@ -346,9 +356,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         stop("Samples must match between experiments.",
              call. = FALSE)
     }
-    # Check abund_values1 and abund_values2
-    .check_assay_present(abund_values1, tse1)
-    .check_assay_present(abund_values2, tse2)
+    # Check assay_name1 and assay_name2
+    .check_assay_present(assay_name1, tse1)
+    .check_assay_present(assay_name2, tse2)
     # Check MARGIN
     if( !is.numeric(MARGIN) && !MARGIN %in% c(1, 2) ){
       stop("'MARGIN' must be 1 or 2.", call. = FALSE)
@@ -405,8 +415,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     ############################ INPUT CHECK END ###########################
     # Fetch assays to correlate
-    assay1 <- assay(tse1, abund_values1)
-    assay2 <- assay(tse2, abund_values2)
+    assay1 <- assay(tse1, assay_name1)
+    assay2 <- assay(tse2, assay_name2)
     # Transposes tables to right format, if row is specified
     if( MARGIN == 1 ){
       assay1 <- t(assay1)

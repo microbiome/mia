@@ -15,6 +15,7 @@
 \usage{
 transformSamples(
   x,
+  assay_name = abund_values,
   abund_values = "counts",
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
@@ -24,6 +25,7 @@ transformSamples(
 
 \S4method{transformSamples}{SummarizedExperiment}(
   x,
+  assay_name = abund_values,
   abund_values = "counts",
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
@@ -33,6 +35,7 @@ transformSamples(
 
 transformCounts(
   x,
+  assay_name = abund_values,
   abund_values = "counts",
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
@@ -42,6 +45,7 @@ transformCounts(
 
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
+  assay_name = abund_values,
   abund_values = "counts",
   method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
@@ -51,6 +55,7 @@ transformCounts(
 
 transformFeatures(
   x,
+  assay_name = abund_values,
   abund_values = "counts",
   method = c("log10", "pa", "z"),
   name = method,
@@ -60,6 +65,7 @@ transformFeatures(
 
 \S4method{transformFeatures}{SummarizedExperiment}(
   x,
+  assay_name = abund_values,
   abund_values = "counts",
   method = c("log10", "pa", "z"),
   name = method,
@@ -80,9 +86,14 @@ relAbundanceCounts(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay_name}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 transformed.}
+
+\item{abund_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay_name} instead. At some point \code{abund_values}
+will be disabled.)}
 
 \item{method}{A single character value for selecting the transformation
 method.}
@@ -200,14 +211,14 @@ x <- esophagus
 # e.g. compositional transformation.
 x <- transformSamples(x, method = "relabundance")
 
-# The target of transformation can be specified with "abund_values"
+# The target of transformation can be specified with "assay_name"
 # Pseudocount can be added by specifying 'pseudocount'.
 
 # Get pseudocount; here smallest positive value
 mat <- assay(x, "relabundance") 
 pseudonumber <- min(mat[mat>0])
 # Perform CLR
-x <- transformSamples(x, abund_values = "relabundance", method = "clr", 
+x <- transformSamples(x, assay_name = "relabundance", method = "clr", 
                       pseudocount = pseudonumber
                       )
                       
@@ -246,7 +257,7 @@ head(assay(x, "z"))
 
 # For visualization purposes it is sometimes done by applying CLR for samples,
 # followed by Z transform for taxa
-x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
+x <- ZTransform(transformCounts(x, method="clr", assay_name = "counts", pseudocount = 1))
 
 # Relative abundances can be also calculated with the dedicated
 # relAbundanceCounts function.

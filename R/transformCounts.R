@@ -11,10 +11,15 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'    object.
 #'
-#' @param abund_values A single character value for selecting the
+#' @param assay_name A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #'   transformed.
 #'
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   will be disabled.)
+#'   
 #' @param method A single character value for selecting the transformation
 #'   method.
 #'
@@ -142,14 +147,14 @@
 #' # e.g. compositional transformation.
 #' x <- transformSamples(x, method = "relabundance")
 #' 
-#' # The target of transformation can be specified with "abund_values"
+#' # The target of transformation can be specified with "assay_name"
 #' # Pseudocount can be added by specifying 'pseudocount'.
 #' 
 #' # Get pseudocount; here smallest positive value
 #' mat <- assay(x, "relabundance") 
 #' pseudonumber <- min(mat[mat>0])
 #' # Perform CLR
-#' x <- transformSamples(x, abund_values = "relabundance", method = "clr", 
+#' x <- transformSamples(x, assay_name = "relabundance", method = "clr", 
 #'                       pseudocount = pseudonumber
 #'                       )
 #'                       
@@ -188,7 +193,7 @@
 #' 
 #' # For visualization purposes it is sometimes done by applying CLR for samples,
 #' # followed by Z transform for taxa
-#' x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
+#' x <- ZTransform(transformCounts(x, method="clr", assay_name = "counts", pseudocount = 1))
 #'
 #' # Relative abundances can be also calculated with the dedicated
 #' # relAbundanceCounts function.
@@ -201,7 +206,7 @@ NULL
 #' @export
 setGeneric("transformSamples", signature = c("x"),
            function(x,
-                    abund_values = "counts",
+                    assay_name = abund_values, abund_values = "counts",
                     method = c("clr", "rclr", "hellinger", "log10", "pa", 
                                "rank", "relabundance"),
                     name = method,
@@ -214,20 +219,20 @@ setGeneric("transformSamples", signature = c("x"),
 #' @export
 setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
     function(x,
-            abund_values = "counts",
+            assay_name = abund_values, abund_values = "counts",
             method = c("clr", "rclr", "hellinger", "log10", "pa", 
                        "rank", "relabundance"),
             name = method,
             pseudocount = NULL,
             threshold = 0){
         # Input check
-        # Check abund_values
-        .check_assay_present(abund_values, x)
+        # Check assay_name
+        .check_assay_present(assay_name, x)
         # Check name
         if(!.is_non_empty_string(name) ||
-           name == abund_values){
+           name == assay_name){
             stop("'name' must be a non-empty single character value and be ",
-                 "different from `abund_values`.",
+                 "different from `assay_name`.",
                  call. = FALSE)
         }
         # Check method
@@ -240,7 +245,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
         method <- match.arg(method)
 
         # Gets the abundance table
-        assay <- assay(x, abund_values)
+        assay <- assay(x, assay_name)
         # Calls help function that does the transformation
         transformed_table <- .apply_transformation(assay, method, pseudocount, threshold)
         # Assign transformed table to assays
@@ -254,7 +259,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
 #' @export
 setGeneric("transformCounts", signature = c("x"),
            function(x,
-                    abund_values = "counts",
+                    assay_name = abund_values, abund_values = "counts",
                     method = c("clr", "rclr", "hellinger", "log10", "pa", 
                                "rank", "relabundance"),
                     name = method,
@@ -267,14 +272,14 @@ setGeneric("transformCounts", signature = c("x"),
 #' @export
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
-             abund_values = "counts",
+             assay_name = abund_values, abund_values = "counts",
              method = c("clr", "rclr", "hellinger", "log10", "pa", 
                         "rank", "relabundance"),
              name = method,
              pseudocount = NULL,
              threshold = 0){
         transformSamples(x, 
-                       abund_values = abund_values,
+                       assay_name = assay_name,
                        method = method,
                        name = name,
                        pseudocount = pseudocount,
@@ -288,7 +293,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
 #' @export
 setGeneric("transformFeatures", signature = c("x"),
            function(x,
-                    abund_values = "counts",
+                    assay_name = abund_values, abund_values = "counts",
                     method = c("log10", "pa", "z"),
                     name = method,
                     pseudocount = NULL,
@@ -299,19 +304,19 @@ setGeneric("transformFeatures", signature = c("x"),
 #' @export
 setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
     function(x,
-             abund_values = "counts",
+             assay_name = abund_values, abund_values = "counts",
              method = c("log10", "pa", "z"),
              name = method,
              pseudocount = NULL,
              threshold = 0){
         # Input check
-        # Check abund_values
-        .check_assay_present(abund_values, x)
+        # Check assay_name
+        .check_assay_present(assay_name, x)
         # Check name
         if(!.is_non_empty_string(name) ||
-           name == abund_values){
+           name == assay_name){
             stop("'name' must be a non-empty single character value and be ",
-                 "different from `abund_values`.",
+                 "different from `assay_name`.",
                  call. = FALSE)
         }
         # Check method
@@ -324,7 +329,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
         method <- match.arg(method)
       
         # Gets the abundance table, and transposes it
-        assay <- t(assay(x, abund_values))
+        assay <- t(assay(x, assay_name))
         # Calls help function that does the transformation
         transformed_table <- .apply_transformation(assay, method, pseudocount, threshold)
         # Transposes transformed table to right orientation

@@ -8,13 +8,33 @@
 \alias{getAbundanceFeature,SummarizedExperiment-method}
 \title{Get abundance values by \dQuote{SampleID} or \dQuote{FeatureID}}
 \usage{
-getAbundanceSample(x, sample_id, abund_values = "counts")
+getAbundanceSample(
+  x,
+  sample_id,
+  assay_name = abund_values,
+  abund_values = "counts"
+)
 
-\S4method{getAbundanceSample}{SummarizedExperiment}(x, sample_id = NULL, abund_values = "counts")
+\S4method{getAbundanceSample}{SummarizedExperiment}(
+  x,
+  sample_id = NULL,
+  assay_name = abund_values,
+  abund_values = "counts"
+)
 
-getAbundanceFeature(x, feature_id, abund_values)
+getAbundanceFeature(
+  x,
+  feature_id,
+  assay_name = abund_values,
+  abund_values = "counts"
+)
 
-\S4method{getAbundanceFeature}{SummarizedExperiment}(x, feature_id = NULL, abund_values = "counts")
+\S4method{getAbundanceFeature}{SummarizedExperiment}(
+  x,
+  feature_id = NULL,
+  assay_name = abund_values,
+  abund_values = "counts"
+)
 }
 \arguments{
 \item{x}{A
@@ -25,8 +45,13 @@ object.}
 abundances of \dQuote{FeatureID}. This is essentially a column name in
 \code{assay(x)}.}
 
-\item{abund_values}{a \code{character} value to select an
+\item{assay_name}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
+
+\item{abund_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay_name} instead. At some point \code{abund_values}
+will be disabled.)}
 
 \item{feature_id}{A \dQuote{FeatureID} for which user wants to extract the
 abundances from all of \dQuote{SampleID} in
@@ -55,11 +80,11 @@ for user specified \dQuote{FeatureID}.
 data(GlobalPatterns)
 getAbundanceSample(GlobalPatterns,
                    sample_id = 'CC1',
-                   abund_values = 'counts')
+                   assay_name = 'counts')
 # getAbundanceFeature
 getAbundanceFeature(GlobalPatterns,
                     feature_id = '522457',
-                    abund_values = 'counts')
+                    assay_name = 'counts')
 }
 \author{
 Sudarshan A. Shetty

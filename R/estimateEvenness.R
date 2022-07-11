@@ -7,9 +7,14 @@
 #'
 #' @param x a \code{\link{SummarizedExperiment}} object
 #'
-#' @param abund_values A single character value for selecting the
+#' @param assay_name A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
 #'   calculation of the sample-wise estimates.
+#'   
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   will be disabled.)
 #'
 #' @param index a \code{character} vector, specifying the eveness measures to be
 #'   calculated.
@@ -118,7 +123,7 @@ NULL
 #' @rdname estimateEvenness
 #' @export
 setGeneric("estimateEvenness",signature = c("x"),
-           function(x, abund_values = "counts",
+           function(x, assay_name = abund_values, abund_values = "counts",
                     index = c("pielou", "camargo", "simpson_evenness", "evar",
                               "bulla"),
                     name = index, ...)
@@ -127,7 +132,7 @@ setGeneric("estimateEvenness",signature = c("x"),
 #' @rdname estimateEvenness
 #' @export
 setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts",
+    function(x, assay_name = abund_values, abund_values = "counts",
              index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
              name = index, ..., BPPARAM = SerialParam()){
          
@@ -138,11 +143,11 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
                  "same length than 'index'.",
                  call. = FALSE)
         }
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay_name, x)
         #
         vnss <- BiocParallel::bplapply(index,
                                        .get_evenness_values,
-                                       mat = assay(x, abund_values),
+                                       mat = assay(x, assay_name),
                                        BPPARAM = BPPARAM, ...)
         .add_values_to_colData(x, vnss, name)
     }
