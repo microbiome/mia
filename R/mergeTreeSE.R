@@ -99,9 +99,10 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
         function(x, assay_name = "counts", join = "full", 
                  missing_values = NA, verbose = TRUE, ... ){
             ################## Input check ##################
-            # Can the abund_value the found form all the objects
-            assay_name_bool <- lapply(x, .assay_cannot_be_found, assay_name = assay_name)
-            assay_name_bool <- unlist(assay_name_bool)
+            # Check the objects 
+            x <- .check_and_convert_objects(x)
+            # Can the assay_name the found form all the objects
+            assay_name_bool <- .assays_cannot_be_found(assay_name = assay_name, x)
             if( any(assay_name_bool) ){
                 stop("'assay_name' must specify an assay from assays. 'assay_name' ",
                      "cannot be found at least in one TreeSE.",
@@ -143,6 +144,7 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
             tse <- x[[1]]
             x[[1]] <- NULL
             # Get rowTree to include if match with result data
+            class <- class(tse)
             tse <- as(tse, "TreeSummarizedExperiment")
             row_tree <- rowTree(tse)
             # Remove all information but rowData, colData, metadata and assay
@@ -173,6 +175,8 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
                                          missing_values = missing_values)
                 }
             }
+            # Convert into right class
+            tse <- as(tse, class)
 
             return(tse)
         }
@@ -186,9 +190,7 @@ setMethod("mergeTreeSE", signature = c(x = "SummarizedExperiment"),
         function(x, y = NULL, ...){
             ################## Input check ##################
             # Check y
-            class <- class(y)
-            if( !(class == "SummarizedExperiment" || 
-                  class == "TreeSummarizedExperiment") ){
+            if( !(is(y, "SummarizedExperiment")) ){
                 stop("'y' must be a 'SummarizedExperiment' object.",
                      call. = FALSE)
             } 
@@ -214,6 +216,49 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
 )
 
 ################################ HELP FUNCTIONS ################################
+
+############################### .check_objects #################################
+# This function checks that the object are in correct format
+
+# Input: a list of objects
+# Output: A list of SE or TreeSE objects
+.check_and_convert_objects <- function(x){
+    # Check the class of objects
+    classes <- lapply(x, class)
+    # Unlist the list
+    classes <- unlist(classes)
+    # Get the class based on hierarchy SE --> SCE --> TreeSE
+    allowed_classes <- c("TreeSummarizedExperiment", "SingleCellExperiment", "SummarizedExperiment")
+    if( any(classes == allowed_classes[1]) ){
+        class <- allowed_classes[1]
+    } else if( any(classes == allowed_classes[2]) ){
+        class <- allowed_classes[2]
+    } else{
+        class <- allowed_classes[3]
+    }
+    # If there is an object that does not belong to these classes give an error
+    if( !(class %in% allowed_classes) ){
+        stop("Input includes an object that is not 'SummarizedExperiment'.",
+             call. = FALSE)
+    }
+    # Convert objects into same class
+    x <- lapply(x, as, Class = class)
+    return(x)
+}
+
+########################### .assays_cannot_be_found #############################
+# This function checks that the assay can be found from TreeSE objects of a list.
+
+# Input: the name of the assay and a list of TreeSE objects
+# Output: A list of boolean values
+.assays_cannot_be_found <- function(assay_name, x){
+    # Check if the assay_name can be found. If yes, then FALSE. If not, then TRUE
+    list <- lapply(x, .assay_cannot_be_found, assay_name = assay_name)
+    # Unlist the list
+    result <- unlist(list)
+    return(result)
+}
+
 ############################ .assay_cannot_be_found #############################
 # This function checks that the assay can be found from TreeSE. If it cannot be found
 # --> TRUE, if it can be found --> FALSE
