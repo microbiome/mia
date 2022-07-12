@@ -11,7 +11,7 @@
 \alias{calculateRDA,ANY-method}
 \alias{calculateRDA,SummarizedExperiment-method}
 \alias{runRDA,SingleCellExperiment-method}
-\title{Canonical Correspondance Analysis}
+\title{Canonical Correspondence Analysis}
 \usage{
 calculateCCA(x, ...)
 
@@ -96,7 +96,7 @@ For \code{runCCA} a modified \code{x} with the results stored in
 \code{reducedDim} as the given \code{name}
 }
 \description{
-These functions perform Canonical Correspondance Analysis on data stored
+These functions perform Canonical Correspondence Analysis on data stored
 in a \code{SummarizedExperiment}.
 }
 \details{
