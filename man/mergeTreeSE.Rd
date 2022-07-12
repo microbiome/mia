@@ -13,7 +13,7 @@ mergeTreeSE(x, ...)
   x,
   assay_name = "counts",
   join = "full",
-  missing_values = 0,
+  missing_values = NA,
   verbose = TRUE,
   ...
 )
@@ -37,7 +37,7 @@ Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
 when more than two objects are being merged.  (By default: \code{join = "full"})}
 
 \item{missing_values}{NA, 0, or a single character values specifying the notation
-of missing values. (By default: \code{missing_values = 0})}
+of missing values. (By default: \code{missing_values = NA})}
 
 \item{verbose}{A single boolean value to choose whether to show messages.
 (By default: \code{verbose = TRUE})}

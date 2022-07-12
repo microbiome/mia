@@ -15,7 +15,7 @@
 #' when more than two objects are being merged.  (By default: \code{join = "full"})
 #' 
 #' @param missing_values NA, 0, or a single character values specifying the notation
-#' of missing values. (By default: \code{missing_values = 0})
+#' of missing values. (By default: \code{missing_values = NA})
 #' 
 #' @param verbose A single boolean value to choose whether to show messages. 
 #' (By default: \code{verbose = TRUE})
@@ -97,7 +97,7 @@ setGeneric("mergeTreeSE", signature = c("x"),
 #' @export
 setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
         function(x, assay_name = "counts", join = "full", 
-                 missing_values = 0, verbose = TRUE, ... ){
+                 missing_values = NA, verbose = TRUE, ... ){
             ################## Input check ##################
             # Can the abund_value the found form all the objects
             assay_name_bool <- lapply(x, .assay_cannot_be_found, assay_name = assay_name)
