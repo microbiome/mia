@@ -193,7 +193,23 @@ setMethod("runCCA", "SingleCellExperiment",
         } else {
           y <- x
         }
-        reducedDim(x, name) <- calculateCCA(y, ...)
+        # Calculate CCA
+        cca <- calculateCCA(y, ...)
+        # If samples do not match / there were samples without appropriate metadata
+        # and they are now removed
+        if( all(rownames(cca) != colnames(x)) ){
+            # Take a subset
+            x_sub <- x[ , rownames(cca) ]
+            # Add CCA
+            reducedDim(x_sub, name) <- cca
+            # Add subset to altExp
+            altExp(x, name) <- x_sub
+            # Give a message
+            message("After CCA, certain samples are removed. Subsetted object with ",
+                    "results of CCA analysis is stored in altExp.")
+        } else{
+            reducedDim(x, name) <- cca
+        }
         x
     }
 )
@@ -256,7 +272,23 @@ setMethod("runRDA", "SingleCellExperiment",
         } else {
           y <- x
         }
-        reducedDim(x, name) <- calculateRDA(y, ...)
+        # Calculate RDA
+        rda <- calculateRDA(y, ...)
+        # If samples do not match / there were samples without appropriate metadata
+        # and they are now removed
+        if( all(rownames(rda) != colnames(x)) ){
+            # Take a subset
+            x_sub <- x[ , rownames(rda) ]
+            # Add RDA
+            reducedDim(x_sub, name) <- rda
+            # Add subset to altExp
+            altExp(x, name) <- x_sub
+            # Give a message
+            message("After RDA, certain samples are removed. Subsetted object with ",
+                    "results of RDA analysis is stored in altExp.")
+        } else{
+            reducedDim(x, name) <- rda
+        }
         x
     }
 )
