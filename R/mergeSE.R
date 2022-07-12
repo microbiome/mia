@@ -125,8 +125,8 @@ setMethod("mergeSE", signature = c(x = "SimpleList"),
                      call. = FALSE)
             }
             # Check if join is not available
-            if( length(x) > 2 && length(join) != 1L && 
-                !join %in% c("full", "inner") ){
+            if( length(x) > 2 &&
+                join %in% c("left", "right") ){
                 stop("Joining method 'left' and 'right' are not available ",
                      "when more than two objects are being merged.",
                      call. = FALSE)

@@ -97,6 +97,9 @@ rows are included.
 \item{\code{left} -- all the features of the first object}
 \item{\code{right} -- all the features of the second object}
 }
+
+You can also doe e.g., a full join by using a function \code{full_join} which is
+an alias for \code{mergeSE}. Also other joining methods have dplyr-like aliases.
 }
 \examples{
 data(GlobalPatterns)
@@ -121,11 +124,18 @@ tse
 tse <- mergeSE(tse[1:10, 1:10],  tse[5:100, 11:20], join = "left")
 tse
 
+# You can also do a left_join by using alias "left_join"
+tse <- left_join(tse[1:10, 1:10],  tse[5:100, 11:20])
+
 }
 \seealso{
 \itemize{
 \item{\code{TreeSummarizedExperiment::cbind}}
 \item{\code{TreeSummarizedExperiment::rbind}}
+\item{\code{\link[dplyr:full_join]{full_join}}}
+\item{\code{\link[dplyr:inner_join]{inner_join}}}
+\item{\code{\link[dplyr:left_join]{left_join}}}
+\item{\code{\link[dplyr:right_join]{right_join}}}
 }
 }
 \author{
