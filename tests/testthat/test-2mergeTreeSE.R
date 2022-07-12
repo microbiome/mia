@@ -49,13 +49,11 @@ test_that("mergeTreeSE", {
                                          missing_values = NA)
     expect_equal(rowTree(GlobalPatterns), rowTree(tse))
     # Expect some NAs
-    tse <- mergeTreeSE(list(tse1, tse2), 
-                                         assay_name = "counts",
-                                         missing_values = NA)
+    tse <- mergeTreeSE(list(tse1, tse2), assay_name = "counts")
     expect_true( any(is.na(assay(tse))) )
     
     # Test that dimensions match
-    tse <- mergeTreeSE(tse1, tse2)
+    tse <- mergeTreeSE(tse1, tse2, missing_values = 0)
     expect_equal( dim(tse), dim(tse1)+dim(tse2) )
     # Expect no NAs in assay
     expect_true( all(!is.na(assay(tse))) )
@@ -250,4 +248,29 @@ test_that("mergeTreeSE", {
                            c(names(metadata(tse1)), names(metadata(tse3)), 
                              names(metadata(tse))) ) )
     expect_equal( length( names(metadata(tse4))), 3) 
+    
+    # Check correct class
+    tse <- mergeTreeSE(list(as(tse1, "SummarizedExperiment"), 
+                            as(tse1, "SummarizedExperiment"),
+                            as(tse1, "SummarizedExperiment")), 
+                       join = "full")
+    expect_true(class(tse) == "SummarizedExperiment")
+    tse <- mergeTreeSE(list(as(tse1, "SummarizedExperiment"), 
+                            as(tse1, "SingleCellExperiment"),
+                            as(tse1, "TreeSummarizedExperiment")), 
+                       join = "inner")
+    expect_true(class(tse) == "TreeSummarizedExperiment")
+    tse <- mergeTreeSE(list(as(tse1, "SummarizedExperiment"), 
+                            as(tse1, "SingleCellExperiment"),
+                            as(tse1, "SingleCellExperiment")), 
+                       join = "full")
+    expect_true(class(tse) == "SingleCellExperiment")
+    tse <- mergeTreeSE(x = as(tse1, "SummarizedExperiment"), 
+                       y = as(tse1, "SingleCellExperiment"), 
+                       join = "right")
+    expect_true(class(tse) == "SingleCellExperiment")
+    tse <- mergeTreeSE(list(as(tse1, "SummarizedExperiment")), 
+                       join = "left")
+    expect_true(class(tse) == "SummarizedExperiment")
+    
 })

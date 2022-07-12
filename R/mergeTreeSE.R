@@ -100,7 +100,7 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
                  missing_values = NA, verbose = TRUE, ... ){
             ################## Input check ##################
             # Check the objects 
-            x <- .check_and_convert_objects(x)
+            class <- .check_objects_and_give_class(x)
             # Can the assay_name the found form all the objects
             assay_name_bool <- .assays_cannot_be_found(assay_name = assay_name, x)
             if( any(assay_name_bool) ){
@@ -144,7 +144,6 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
             tse <- x[[1]]
             x[[1]] <- NULL
             # Get rowTree to include if match with result data
-            class <- class(tse)
             tse <- as(tse, "TreeSummarizedExperiment")
             row_tree <- rowTree(tse)
             # Remove all information but rowData, colData, metadata and assay
@@ -217,18 +216,24 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
 
 ################################ HELP FUNCTIONS ################################
 
-############################### .check_objects #################################
+######################## .check_objects_and_give_class #########################
 # This function checks that the object are in correct format
 
 # Input: a list of objects
-# Output: A list of SE or TreeSE objects
-.check_and_convert_objects <- function(x){
+# Output: A shared class of objects
+.check_objects_and_give_class <- function(x){
     # Check the class of objects
     classes <- lapply(x, class)
     # Unlist the list
     classes <- unlist(classes)
-    # Get the class based on hierarchy SE --> SCE --> TreeSE
+    # Allowed classes
     allowed_classes <- c("TreeSummarizedExperiment", "SingleCellExperiment", "SummarizedExperiment")
+    # If there is an object that does not belong to these classes give an error
+    if( any(!(classes %in% allowed_classes)) ){
+        stop("Input includes an object that is not 'SummarizedExperiment'.",
+             call. = FALSE)
+    }
+    # Get the class based on hierarchy TreeSE --> SCE --> SE
     if( any(classes == allowed_classes[1]) ){
         class <- allowed_classes[1]
     } else if( any(classes == allowed_classes[2]) ){
@@ -236,14 +241,7 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
     } else{
         class <- allowed_classes[3]
     }
-    # If there is an object that does not belong to these classes give an error
-    if( !(class %in% allowed_classes) ){
-        stop("Input includes an object that is not 'SummarizedExperiment'.",
-             call. = FALSE)
-    }
-    # Convert objects into same class
-    x <- lapply(x, as, Class = class)
-    return(x)
+    return(class)
 }
 
 ########################### .assays_cannot_be_found #############################
@@ -286,6 +284,8 @@ setMethod("mergeTreeSE", signature = c(x = "list"),
 # denote missing values that might occur when object do not share same features, e.g.
 # Output: A single TreeSE
 .merge_TreeSE <- function(tse_original, tse, assay_name, join, missing_values){
+    # Convert object into TreeSE
+    tse <- as(tse, "TreeSummarizedExperiment")
     # Merge rowData
     rowdata <- .merge_rowdata(tse_original, tse, join)
     # Merge colData
