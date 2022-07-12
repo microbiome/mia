@@ -19,6 +19,51 @@ test_that("getExperimentCrossAssociation", {
                                                 sort = FALSE,
                                                 filter_self_correlations = FALSE,
                                                 verbose = TRUE))
+    expect_error(getExperimentCrossAssociation(mae,
+                                               experiment1 = 3,
+                                               experiment2 = 2,
+                                               assay_name1 = "counts",
+                                               assay_name2 = "counts",
+                                               altExp1 = 1,
+                                               altExp2 = NULL,
+                                               method = "spearman",
+                                               mode = "table",
+                                               p_adj_method = "fdr",
+                                               p_adj_threshold = 0.05,
+                                               cor_threshold = NULL,
+                                               sort = FALSE,
+                                               filter_self_correlations = FALSE,
+                                               verbose = TRUE))
+    expect_error(getExperimentCrossAssociation(mae,
+                                               experiment1 = 3,
+                                               experiment2 = 2,
+                                               assay_name1 = "counts",
+                                               assay_name2 = "counts",
+                                               altExp1 = FALSE,
+                                               altExp2 = NULL,
+                                               method = "spearman",
+                                               mode = "table",
+                                               p_adj_method = "fdr",
+                                               p_adj_threshold = 0.05,
+                                               cor_threshold = NULL,
+                                               sort = FALSE,
+                                               filter_self_correlations = FALSE,
+                                               verbose = TRUE))
+    expect_error(getExperimentCrossAssociation(mae,
+                                               experiment1 = 3,
+                                               experiment2 = 2,
+                                               assay_name1 = "counts",
+                                               assay_name2 = "counts",
+                                               altExp2 = "test",
+                                               altExp1 = NULL,
+                                               method = "spearman",
+                                               mode = "table",
+                                               p_adj_method = "fdr",
+                                               p_adj_threshold = 0.05,
+                                               cor_threshold = NULL,
+                                               sort = FALSE,
+                                               filter_self_correlations = FALSE,
+                                               verbose = TRUE))
      expect_error(getExperimentCrossAssociation(mae,
                                                 experiment1 = 1,
                                                 experiment2 = TRUE,
@@ -240,9 +285,9 @@ test_that("getExperimentCrossAssociation", {
     
     # Test that association is calculated correctly with factor data
     # Create a dummy data
-    assay1 <- matrix(rep(c("A", "B", "B"), 20*30), 
+    assay1 <- matrix(rep(c("A", "B", "B"), 20*30/3), 
                      nrow = 20, ncol = 30)
-    assay2 <- matrix(rep(c("A", "B", "A", "A", "B", "B"), 20*30), 
+    assay2 <- matrix(rep(c("A", "B", "A", "A", "B", "B"), 20*30/6), 
                      nrow = 20, ncol = 30)
     # Reference
     # ref <- c()
@@ -391,4 +436,16 @@ test_that("getExperimentCrossAssociation", {
     expect_equal(tab1, tab2)
     expect_true( !all(tab1_levels1 == tab2_levels1) )
     expect_true( !all(tab1_levels2 == tab2_levels2) )
+    
+    # Test altExps
+    altExps(tse) <- splitByRanks(tse)
+    # Test that output has right columns
+    expect_equal(getExperimentCrossAssociation(tse, tse, show_warnings = FALSE, 
+                                               altExp1 = 1, altExp2 = "Phylum"),
+                 getExperimentCrossAssociation(altExps(tse)[[1]], altExp(tse, "Phylum"), 
+                                               show_warnings = FALSE))
+    expect_equal(getExperimentCrossAssociation(tse, tse, show_warnings = FALSE, 
+                                               altExp1 = "Family", altExp2 = NULL),
+                 getExperimentCrossAssociation(altExp(tse, "Family"), tse, 
+                                               show_warnings = FALSE))
 })
