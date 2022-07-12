@@ -5,6 +5,14 @@
 \alias{mergeSE,SimpleList-method}
 \alias{mergeSE,SummarizedExperiment-method}
 \alias{mergeSE,list-method}
+\alias{full_join}
+\alias{full_join,ANY-method}
+\alias{inner_join}
+\alias{inner_join,ANY-method}
+\alias{left_join}
+\alias{left_join,ANY-method}
+\alias{right_join}
+\alias{right_join,ANY-method}
 \title{Merge SE objects into single SE object.}
 \usage{
 mergeSE(x, ...)
@@ -21,6 +29,22 @@ mergeSE(x, ...)
 \S4method{mergeSE}{SummarizedExperiment}(x, y = NULL, ...)
 
 \S4method{mergeSE}{list}(x, ...)
+
+full_join(x, ...)
+
+\S4method{full_join}{ANY}(x, ...)
+
+inner_join(x, ...)
+
+\S4method{inner_join}{ANY}(x, ...)
+
+left_join(x, ...)
+
+\S4method{left_join}{ANY}(x, ...)
+
+right_join(x, ...)
+
+\S4method{right_join}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object or a list of

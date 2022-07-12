@@ -46,11 +46,18 @@
 #'   \item{\code{left} -- all the features of the first object}
 #'   \item{\code{right} -- all the features of the second object}
 #' }
+#' 
+#' You can also doe e.g., a full join by using a function \code{full_join} which is 
+#' an alias for \code{mergeSE}. Also other joining methods have dplyr-like aliases.
 #'
 #' @seealso
 #' \itemize{
 #'   \item{\code{TreeSummarizedExperiment::cbind}}
 #'   \item{\code{TreeSummarizedExperiment::rbind}}
+#'   \item{\code{\link[dplyr:full_join]{full_join}}}
+#'   \item{\code{\link[dplyr:inner_join]{inner_join}}}
+#'   \item{\code{\link[dplyr:left_join]{left_join}}}
+#'   \item{\code{\link[dplyr:right_join]{right_join}}}
 #' }
 #'
 #' @name mergeSE
@@ -80,6 +87,9 @@
 #' # here just to show the functionality
 #' tse <- mergeSE(tse[1:10, 1:10],  tse[5:100, 11:20], join = "left")
 #' tse
+#' 
+#' # You can also do a left_join by using alias "left_join"
+#' tse <- left_join(tse[1:10, 1:10],  tse[5:100, 11:20])
 #' 
 NULL
 
@@ -212,6 +222,70 @@ setMethod("mergeSE", signature = c(x = "list"),
               # Call the function for list
               mergeSE(x, ...)
           }
+)
+
+################################# full_join ####################################
+
+#' @rdname mergeSE
+#' @export
+setGeneric("full_join", signature = c("x"),
+    function(x, ...)
+        standardGeneric("full_join"))
+
+#' @rdname mergeSE
+#' @export
+setMethod("full_join", signature = c(x = "ANY"),
+    function(x, ...){
+        mergeSE(x, join = "full", ...)
+    }
+)
+
+################################# inner_join ###################################
+
+#' @rdname mergeSE
+#' @export
+setGeneric("inner_join", signature = c("x"),
+    function(x, ...)
+        standardGeneric("inner_join"))
+
+#' @rdname mergeSE
+#' @export
+setMethod("inner_join", signature = c(x = "ANY"),
+    function(x, ...){
+        mergeSE(x, join = "inner", ...)
+    }
+)
+
+################################# left_join ####################################
+
+#' @rdname mergeSE
+#' @export
+setGeneric("left_join", signature = c("x"),
+    function(x, ...)
+        standardGeneric("left_join"))
+
+#' @rdname mergeSE
+#' @export
+setMethod("left_join", signature = c(x = "ANY"),
+    function(x, ...){
+        mergeSE(x, join = "left", ...)
+    }
+)
+
+################################# right_join ###################################
+
+#' @rdname mergeSE
+#' @export
+setGeneric("right_join", signature = c("x"),
+    function(x, ...)
+        standardGeneric("right_join"))
+
+#' @rdname mergeSE
+#' @export
+setMethod("right_join", signature = c(x = "ANY"),
+    function(x, ...){
+        mergeSE(x, join = "right", ...)
+    }
 )
 
 ################################ HELP FUNCTIONS ################################
