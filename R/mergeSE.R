@@ -1,4 +1,4 @@
-#' Merge TreeSE objects into single TreeSE object.
+#' Merge SE objects into single SE object.
 #' 
 #' @param x a \code{\link{SummarizedExperiment}} object or a list of 
 #' \code{\link{SummarizedExperiment}} objects.
@@ -22,7 +22,7 @@
 #'
 #' @param ... optional arguments (not used).
 #'
-#' @return A single \code{TreeSummarizedExperiment} object.
+#' @return A single \code{SummarizedExperiment} object.
 #'
 #' @details
 #' This function merges multiple \code{SummarizedExperiment} objects. It combines
@@ -31,7 +31,7 @@
 #' individual objects, there are missing values in \code{assays}. The notation of missing
 #' can be specified with the \code{missing_values} argument. 
 #' 
-#' Compared to \code{cbind} and \code{rbind} \code{mergeTreeSE} 
+#' Compared to \code{cbind} and \code{rbind} \code{mergeSE} 
 #' allows more freely merging since \code{cbind} and \code{rbind} expect 
 #' that rows and columns are matching, respectively.
 #' 
@@ -53,7 +53,7 @@
 #'   \item{\code{TreeSummarizedExperiment::rbind}}
 #' }
 #'
-#' @name mergeTreeSE
+#' @name mergeSE
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -69,33 +69,33 @@
 #' tse3 <- enterotype[1:100, ]
 #' 
 #' # Merge two TreeSEs
-#' tse <- mergeTreeSE(tse1, tse2)
+#' tse <- mergeSE(tse1, tse2)
 #' 
 #' # Merge a list of TreeSEs
 #' list <- SimpleList(tse1, tse2, tse3)
-#' tse <- mergeTreeSE(list, assay_name = "counts", missing_values = 0)
+#' tse <- mergeSE(list, assay_name = "counts", missing_values = 0)
 #' tse
 #' 
 #' # With 'join', it is possible to specify the merging method. Subsets are used
 #' # here just to show the functionality
-#' tse <- mergeTreeSE(tse[1:10, 1:10],  tse[5:100, 11:20], join = "left")
+#' tse <- mergeSE(tse[1:10, 1:10],  tse[5:100, 11:20], join = "left")
 #' tse
 #' 
 NULL
 
 ################################### Generic ####################################
 
-#' @rdname mergeTreeSE
+#' @rdname mergeSE
 #' @export
-setGeneric("mergeTreeSE", signature = c("x"),
+setGeneric("mergeSE", signature = c("x"),
         function(x, ... )
-            standardGeneric("mergeTreeSE"))
+            standardGeneric("mergeSE"))
 
 ###################### Function for SimpleList of TreeSEs ######################
 
-#' @rdname mergeTreeSE
+#' @rdname mergeSE
 #' @export
-setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
+setMethod("mergeSE", signature = c(x = "SimpleList"),
         function(x, assay_name = "counts", join = "full", 
                  missing_values = NA, verbose = TRUE, ... ){
             ################## Input check ##################
@@ -183,9 +183,9 @@ setMethod("mergeTreeSE", signature = c(x = "SimpleList"),
 
 ########################### Function for two TreeSEs ###########################
 
-#' @rdname mergeTreeSE
+#' @rdname mergeSE
 #' @export
-setMethod("mergeTreeSE", signature = c(x = "SummarizedExperiment"),
+setMethod("mergeSE", signature = c(x = "SummarizedExperiment"),
         function(x, y = NULL, ...){
             ################## Input check ##################
             # Check y
@@ -197,20 +197,20 @@ setMethod("mergeTreeSE", signature = c(x = "SummarizedExperiment"),
             # Create a list based on TreeSEs
             list <- SimpleList(x, y)
             # Call the function for list
-            mergeTreeSE(list, ...)
+            mergeSE(list, ...)
         }
 )
 
 ########################### Function for list TreeSEs ##########################
 
-#' @rdname mergeTreeSE
+#' @rdname mergeSE
 #' @export
-setMethod("mergeTreeSE", signature = c(x = "list"),
+setMethod("mergeSE", signature = c(x = "list"),
           function(x, ...){
               # Convert into a list
               x <- SimpleList(x)
               # Call the function for list
-              mergeTreeSE(x, ...)
+              mergeSE(x, ...)
           }
 )
 

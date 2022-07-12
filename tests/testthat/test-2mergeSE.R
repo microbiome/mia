@@ -1,5 +1,5 @@
-context("mergeTreeSE")
-test_that("mergeTreeSE", {
+context("mergeSE")
+test_that("mergeSE", {
     # Load data
     data("GlobalPatterns")
     data("esophagus")
@@ -10,32 +10,32 @@ test_that("mergeTreeSE", {
     tse3 <- enterotype[1:50, ]
     
     # Expect errors
-    expect_error( mergeTreeSE(tse1) )
-    expect_error( mergeTreeSE(tse1, tse2, join = 1) )
-    expect_error( mergeTreeSE(tse1, tse2, join = TRUE) )
-    expect_error( mergeTreeSE(tse1, tse2, join = NA) )
-    expect_error( mergeTreeSE(list(tse1, tse2, tse), join = "left") )
-    expect_error( mergeTreeSE(list(tse1, tse2, tse), join = "right") )
-    expect_error( mergeTreeSE(tse1, tse2, missing_values = TRUE ) )
-    expect_error( mergeTreeSE(tse1, tse2, missing_values = 36846 ) )
-    expect_error( mergeTreeSE(tse1, tse2, assay_name = "test")  )
+    expect_error( mergeSE(tse1) )
+    expect_error( mergeSE(tse1, tse2, join = 1) )
+    expect_error( mergeSE(tse1, tse2, join = TRUE) )
+    expect_error( mergeSE(tse1, tse2, join = NA) )
+    expect_error( mergeSE(list(tse1, tse2, tse), join = "left") )
+    expect_error( mergeSE(list(tse1, tse2, tse), join = "right") )
+    expect_error( mergeSE(tse1, tse2, missing_values = TRUE ) )
+    expect_error( mergeSE(tse1, tse2, missing_values = 36846 ) )
+    expect_error( mergeSE(tse1, tse2, assay_name = "test")  )
     # Calculate relative transform to test assay_name
     tse1 <- transformSamples(tse1, method = "relabundance")
-    expect_error( mergeTreeSE(tse1, tse2, assay_name = "relabundance")  )
-    expect_error( mergeTreeSE(tse1, tse2, verbose = "test")  )
-    expect_error( mergeTreeSE(tse1, tse2, verbose = 1)  )
-    expect_error( mergeTreeSE(tse1, tse2, tse3)  )
-    expect_error( mergeTreeSE(tse1)  )
+    expect_error( mergeSE(tse1, tse2, assay_name = "relabundance")  )
+    expect_error( mergeSE(tse1, tse2, verbose = "test")  )
+    expect_error( mergeSE(tse1, tse2, verbose = 1)  )
+    expect_error( mergeSE(tse1, tse2, tse3)  )
+    expect_error( mergeSE(tse1)  )
     
     # Test that data match if there is only one element
-    tse <- mergeTreeSE(list(tse1), assay_name = "relabundance")
+    tse <- mergeSE(list(tse1), assay_name = "relabundance")
     expect_equal( rowData(tse), rowData(tse1))
     expect_equal( colData(tse), colData(tse1))
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))
     expect_equal( rowTree(tse), rowTree(tse1))
     
     # Test that data match if there is only same elements
-    tse <- mergeTreeSE(list(tse1, tse1, tse1), assay_name = "relabundance")
+    tse <- mergeSE(list(tse1, tse1, tse1), assay_name = "relabundance")
     # The order of taxa and samples changes
     tse <- tse[ rownames(tse1), colnames(tse1) ]
     expect_equal( rowData(tse), rowData(tse1))
@@ -44,22 +44,22 @@ test_that("mergeTreeSE", {
     expect_equal( rowTree(tse), rowTree(tse1))
     
     # Expect that rowTree is preserved if rownames match
-    tse <- mergeTreeSE(list(tse1, GlobalPatterns), 
+    tse <- mergeSE(list(tse1, GlobalPatterns), 
                                          assay_name = "counts",
                                          missing_values = NA)
     expect_equal(rowTree(GlobalPatterns), rowTree(tse))
     # Expect some NAs
-    tse <- mergeTreeSE(list(tse1, tse2), assay_name = "counts")
+    tse <- mergeSE(list(tse1, tse2), assay_name = "counts")
     expect_true( any(is.na(assay(tse))) )
     
     # Test that dimensions match
-    tse <- mergeTreeSE(tse1, tse2, missing_values = 0)
+    tse <- mergeSE(tse1, tse2, missing_values = 0)
     expect_equal( dim(tse), dim(tse1)+dim(tse2) )
     # Expect no NAs in assay
     expect_true( all(!is.na(assay(tse))) )
     
     # Test that dimensions match
-    tse <- mergeTreeSE(list(tse1, tse2, tse3), missing_values = "MISSING")
+    tse <- mergeSE(list(tse1, tse2, tse3), missing_values = "MISSING")
     expect_equal( dim(tse), dim(tse1)+dim(tse2)+dim(tse3) )
     # Expect some "MISSING"s
     expect_true( any( assay(tse) == "MISSING" ) )
@@ -75,7 +75,7 @@ test_that("mergeTreeSE", {
     expect_true( all(colnames(tse3) %in% colnames(tse)) )
     
     # CHECK FULL JOIN ###################################################
-    tse <- mergeTreeSE(list(tse2, tse3, tse1, 
+    tse <- mergeSE(list(tse2, tse3, tse1, 
                                               tse1[1:2, ], tse1[1, ]), 
                                          missing_values = NA)
     # Get assay (as.matrix to remove links)
@@ -130,11 +130,11 @@ test_that("mergeTreeSE", {
     expect_equal( col_data[rownames, colnames], col_data3 )
     
     # CHECK INNER JOIN ##############################################
-    tse <- mergeTreeSE(list(tse1[, 1:5], tse1[, 5:10], tse3[1:20, 6:10]), 
+    tse <- mergeSE(list(tse1[, 1:5], tse1[, 5:10], tse3[1:20, 6:10]), 
                        join = "inner")
     expect_true( nrow(tse) == 0 )
     expect_equal( rowTree(tse), NULL )
-    tse <- mergeTreeSE(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
+    tse <- mergeSE(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
                        join = "inner")
     expect_true( all(dim(tse) == c(20, 10)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
@@ -166,7 +166,7 @@ test_that("mergeTreeSE", {
     expect_equal( col_data1[rownames, colnames], col_data )
     
     # CHECK LEFT JOIN ##############################################
-    tse <- mergeTreeSE(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
+    tse <- mergeSE(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
                        join = "left")
     expect_true( all(dim(tse) == c(10, 20)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
@@ -198,7 +198,7 @@ test_that("mergeTreeSE", {
     expect_equal( col_data1[rownames, colnames], col_data )
     
     # CHECK RIGHT JOIN ##############################################
-    tse <- mergeTreeSE(list(tse1[10:50, 1:13], tse1[1:10, 7:20]), 
+    tse <- mergeSE(list(tse1[10:50, 1:13], tse1[1:10, 7:20]), 
                        join = "right", missing_values = NA)
     expect_true( all(dim(tse) == c(10, 20)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
@@ -238,7 +238,7 @@ test_that("mergeTreeSE", {
     metadata(tse1) <- list(abc = c("abc", 123))
     metadata(tse3) <- list(test = 1)
     metadata(tse) <- list( cd = colData(tse) )
-    tse4 <- mergeTreeSE(list(tse, tse3, tse2, tse1), 
+    tse4 <- mergeSE(list(tse, tse3, tse2, tse1), 
                         join = "inner")
     expect_equal( nrow(tse4), 0 )
     expect_equal( metadata(tse4)[["abc"]], metadata(tse1)[["abc"]] )
@@ -250,26 +250,26 @@ test_that("mergeTreeSE", {
     expect_equal( length( names(metadata(tse4))), 3) 
     
     # Check correct class
-    tse <- mergeTreeSE(list(as(tse1, "SummarizedExperiment"), 
+    tse <- mergeSE(list(as(tse1, "SummarizedExperiment"), 
                             as(tse1, "SummarizedExperiment"),
                             as(tse1, "SummarizedExperiment")), 
                        join = "full")
     expect_true(class(tse) == "SummarizedExperiment")
-    tse <- mergeTreeSE(list(as(tse1, "SummarizedExperiment"), 
+    tse <- mergeSE(list(as(tse1, "SummarizedExperiment"), 
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "TreeSummarizedExperiment")), 
                        join = "inner")
     expect_true(class(tse) == "TreeSummarizedExperiment")
-    tse <- mergeTreeSE(list(as(tse1, "SummarizedExperiment"), 
+    tse <- mergeSE(list(as(tse1, "SummarizedExperiment"), 
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "SingleCellExperiment")), 
                        join = "full")
     expect_true(class(tse) == "SingleCellExperiment")
-    tse <- mergeTreeSE(x = as(tse1, "SummarizedExperiment"), 
+    tse <- mergeSE(x = as(tse1, "SummarizedExperiment"), 
                        y = as(tse1, "SingleCellExperiment"), 
                        join = "right")
     expect_true(class(tse) == "SingleCellExperiment")
-    tse <- mergeTreeSE(list(as(tse1, "SummarizedExperiment")), 
+    tse <- mergeSE(list(as(tse1, "SummarizedExperiment")), 
                        join = "left")
     expect_true(class(tse) == "SummarizedExperiment")
     
