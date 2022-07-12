@@ -3,7 +3,8 @@
 #' @param x a \code{\link{SummarizedExperiment}} object or a list of 
 #' \code{\link{SummarizedExperiment}} objects.
 #' 
-#' @param y a \code{\link{SummarizedExperiment}} object 
+#' @param y a \code{\link{SummarizedExperiment}} object when \code{x} is a
+#' \code{\link{SummarizedExperiment}} object. Disabled when \code{x} is a list.
 #' 
 #' @param assay_name A single character value for selecting the
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}

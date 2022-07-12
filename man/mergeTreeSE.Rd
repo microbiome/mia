@@ -42,7 +42,8 @@ of missing values. (By default: \code{missing_values = 0})}
 \item{verbose}{A single boolean value to choose whether to show messages.
 (By default: \code{verbose = TRUE})}
 
-\item{y}{a \code{\link{SummarizedExperiment}} object}
+\item{y}{a \code{\link{SummarizedExperiment}} object when \code{x} is a
+\code{\link{SummarizedExperiment}} object. Disabled when \code{x} is a list.}
 }
 \value{
 A single \code{TreeSummarizedExperiment} object.
