@@ -161,13 +161,9 @@ sample-wise values.}
 clr is that logarithmic transformations lead to undefined values when zeros
 are present in the data. In rclr, values are divided by geometric mean
 of observed taxa and zero values are not taken into account. Zero values will
-stay as zeroes.
-
-Because of high-dimensionality of data, rclr's geometric mean of
+stay as zeroes. Because of high-dimensionality of data, rclr's geometric mean of
 observed taxa is a good approximation to the true geometric mean.
-(See e.g. Martino et al. 2019.)
-
-where x is a single positive value, and g is geometric mean of sample-wide positive values.
+(For details, see Martino et al. 2019.).
 
 }
 
