@@ -18,7 +18,7 @@ functions are available."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.29</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.30</span>
       </span>
     </div>
 
@@ -217,6 +217,15 @@ object.</p>
 <span class="r-in"><span class="va">top_taxa</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "279599" "360229" "317182"</span>
 <span class="r-in"></span>
+<span class="r-in"><span class="co"># Use 'detection' to select detection threshold when using prevalence method</span></span>
+<span class="r-in"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
+<span class="r-in">                       method <span class="op">=</span> <span class="st">"prevalence"</span>,</span>
+<span class="r-in">                       top <span class="op">=</span> <span class="fl">5</span>,</span>
+<span class="r-in">                       abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span class="r-in">                       detection <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">top_taxa</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "94166"  "317182" "279599"</span>
+<span class="r-in">                       </span>
 <span class="r-in"><span class="co"># Top taxa os specific rank</span></span>
 <span class="r-in"><span class="fu">getTopTaxa</span><span class="op">(</span><span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
 <span class="r-in">                             rank <span class="op">=</span> <span class="st">"Genus"</span>,</span>
