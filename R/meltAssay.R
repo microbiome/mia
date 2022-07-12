@@ -245,7 +245,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
     rd <- rd %>%
         rownames_to_column(feature_name)
     molten_assay %>%
-        left_join(rd, by = feature_name)
+        dplyr::left_join(rd, by = feature_name)
 }
 
 # Combines molten assay and rowData i.e. taxonomy table with
@@ -268,5 +268,5 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
     cd <- cd %>%
         rownames_to_column(sample_name)
     molten_assay %>%
-        left_join(cd, by = sample_name)
+        dplyr::left_join(cd, by = sample_name)
 }
