@@ -64,6 +64,9 @@ makeTreeSEFromDADA2 <- function(...) {
 }
 
 #################### makeTreeSummarizedExperimentFromDADA2 #####################
+#' @param ... See \code{mergePairs} function for
+#'   more details.
+#' @name makeTreeSEFromDADA2
 #' @export
 makeTreeSummarizedExperimentFromDADA2 <- function(...) {
     makeTreeSEFromDADA2(...)

@@ -4,16 +4,13 @@
 \alias{makeTreeSEFromBiom}
 \alias{loadFromBiom}
 \alias{makeTreeSummarizedExperimentFromBiom}
-\alias{makeTreeSummarizedExperimentFromBiom,ANY-method}
 \title{Loading a biom file}
 \usage{
 loadFromBiom(file)
 
 makeTreeSEFromBiom(obj)
 
-makeTreeSummarizedExperimentFromBiom(x, ...)
-
-\S4method{makeTreeSummarizedExperimentFromBiom}{ANY}(x)
+makeTreeSummarizedExperimentFromBiom(obj)
 }
 \arguments{
 \item{file}{biom file location}

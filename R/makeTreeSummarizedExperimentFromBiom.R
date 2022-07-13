@@ -75,15 +75,9 @@ makeTreeSEFromBiom <- function(obj){
 }
 
 ####################### makeTreeSummarizedExperimentFromBiom #######################
+#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
 #' @rdname makeTreeSEFromBiom
 #' @export
-setGeneric("makeTreeSummarizedExperimentFromBiom", signature = c("x"),
-    function(x, ...)
-        standardGeneric("makeTreeSummarizedExperimentFromBiom"))
-
-#' @rdname makeTreeSEFromBiom
-#' @export
-setMethod("makeTreeSummarizedExperimentFromBiom", signature = c(x = "ANY"),
-    function(x){
-        makeTreeSEFromBiom(x)
-    })
+makeTreeSummarizedExperimentFromBiom <- function(obj){
+    makeTreeSEFromBiom(obj)
+}

@@ -2,9 +2,12 @@
 % Please edit documentation in R/makeTreeSummarizedExperimentFromDADA2.R
 \name{makeTreeSEFromDADA2}
 \alias{makeTreeSEFromDADA2}
+\alias{makeTreeSummarizedExperimentFromDADA2}
 \title{Coerce \sQuote{DADA2} results to \code{TreeSummarizedExperiment}}
 \usage{
 makeTreeSEFromDADA2(...)
+
+makeTreeSummarizedExperimentFromDADA2(...)
 }
 \arguments{
 \item{...}{See \code{mergePairs} function for
