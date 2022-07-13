@@ -134,6 +134,14 @@ top_taxa <- getTopTaxa(GlobalPatterns,
                        assay_name = "counts")
 top_taxa
 
+# Use 'detection' to select detection threshold when using prevalence method
+top_taxa <- getTopTaxa(GlobalPatterns,
+                       method = "prevalence",
+                       top = 5,
+                       abund_values = "counts",
+                       detection = 100)
+top_taxa
+                       
 # Top taxa os specific rank
 getTopTaxa(agglomerateByRank(GlobalPatterns,
                              rank = "Genus",

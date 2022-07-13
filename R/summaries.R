@@ -23,7 +23,7 @@
 #' @param na.rm For \code{getTopTaxa} logical argument for calculation method 
 #'              specified to argument \code{method}. Default is TRUE. 
 #'
-#' @param ... Additional arguments:
+#' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{
 #'        \item{\code{sort}}{A single boolean value for selecting 
 #'        whether to sort taxa in alphabetical order or not. Enabled in functions
@@ -63,6 +63,14 @@
 #'                        assay_name = "counts")
 #' top_taxa
 #' 
+#' # Use 'detection' to select detection threshold when using prevalence method
+#' top_taxa <- getTopTaxa(GlobalPatterns,
+#'                        method = "prevalence",
+#'                        top = 5,
+#'                        abund_values = "counts",
+#'                        detection = 100)
+#' top_taxa
+#'                        
 #' # Top taxa os specific rank
 #' getTopTaxa(agglomerateByRank(GlobalPatterns,
 #'                              rank = "Genus",
@@ -132,7 +140,9 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
         #
         if(method == "prevalence"){
             taxs <- getPrevalence(assay(x, assay_name), sort = TRUE,
-                                  include_lowest = TRUE)
+                                  include_lowest = TRUE, ...)
+            # If there are taxa with prevalence of 0, remove them
+            taxs <- taxs[ taxs > 0 ]
         } else {
             taxs <- switch(method,
                            mean = rowMeans2(assay(x, assay_name), na.rm = na.rm),

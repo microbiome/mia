@@ -115,48 +115,57 @@ By default it is 0. (Only used for \code{method = "pa"})}
 transformed abundance table named \code{name} in the \code{\link{assay}}.
 }
 \description{
-These functions provide a variety of options for transforming abundance data.
-By using these functions, transformed table is calculated and stored in \code{assay}.
-\code{transformSamples} does the transformation sample-wise, i.e., column-wise.
-It is alias for \code{transformCounts}. \code{transformFeatures}  does the transformation
-feature-wise, i.e., row-wise. \code{ZTransform} is a shortcut for Z-transformation.
-\code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
+Variety of transformations for abundance data, stored in \code{assay}.
+See details for options.
 }
 \details{
-\code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
-applies transformation to abundance table. Provided transformation methods include:
+These functions provide a variety of options for transforming abundance data.
+The transformed data is calculated and stored in a new \code{assay}.
+
+Available wrapper functions include:
 
 \itemize{
 
-\item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
-skewness of data and for centering it. clr expects that sample-wise sums
-are equal. That is why usually , e.g., relative transformation is applied
-before clr.
+\item{\code{transformSamples}} sample-wise (column-wise) transformation.
+Alias for \code{transformCounts}.
+
+\item{\code{transformFeatures}} feature-wise (row-wise) transformation.
+
+\item{\code{ZTransform}} Shortcut for Z-transformation.
+
+\item{\code{relAbundanceCounts}} Shortcut for fetching relative abundance table.
+
+}
+
+Altogether, \code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
+apply transformations to the abundance table (assay). The available transformation methods include:
+
+\itemize{
+
+\item{'clr'}{ Centered log ratio (clr) transformation aims to remove
+compositionality effect; it is also used to
+skewness and to center data.
 
 If the data contains zeros, pseudocount (commonly the smallest
-positive value of the data) must be added since clr is a logarithmic transformation.
+positive value of the data) must be added since clr is a logarithmic
+transformation that only allows positive values.
 (See e.g. Gloor et al. 2017.)
 
 \deqn{clr = log_{10}\frac{x{g(x)}} = log_{10}x - log_{10}\mu}{%
-clr = log10(x/g(x)) = log10 x - log10 µ}
-where \eqn{x} is a single value, g(x) is a geometric mean of
+clr = log10(x/g(x)) = log10 x - log10 \mu}
+where \eqn{x} is a single value, g(x) is geometric mean of
 sample-wise values, and \eqn{\mu} is an arithmetic mean of
-sample-wise values".}
+sample-wise values.}
 
 \item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
 clr is that logarithmic transformations lead to undefined values when zeros
 are present in the data. In rclr, values are divided by geometric mean
 of observed taxa and zero values are not taken into account. Zero values will
-stay as zeroes.
-
-Because of high-dimensionality of data, rclr's geometric mean of
+stay as zeroes. Because of high-dimensionality of data, rclr's geometric mean of
 observed taxa is a good approximation to the true geometric mean.
-(See e.g. Martino et al. 2019.)
+(For details, see Martino et al. 2019.).
 
-\deqn{rclr = log_{10}\frac{x{g(x > 0)}}}{%
-rclr = log10(x/g(x > 0))}
-where \eqn{x} is a single value, and g(x > 0) is geometric
-mean of sample-wide values that are over 0".}
+}
 
 \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 extreme data points. It can be utilize for clustering or ordination analysis.

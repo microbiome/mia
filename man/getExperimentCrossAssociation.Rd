@@ -22,6 +22,8 @@ getExperimentCrossAssociation(x, ...)
   abund_values1 = "counts",
   assay_name2 = abund_values2,
   abund_values2 = "counts",
+  altExp1 = NULL,
+  altExp2 = NULL,
   MARGIN = 1,
   method = c("spearman", "categorical", "kendall", "pearson"),
   mode = "table",
@@ -77,10 +79,10 @@ from \code{experiments(x)} of \code{MultiassayExperiment} object.
 
 \item{experiment2}{A single character or numeric value for selecting the experiment 2
 from\code{experiments(x)} of \code{MultiAssayExperiment} object or
-\code{altExp(x)} of \code{SummarizedExperiment} object. Alternatively,
-\code{experiment2} can also be \code{SE} object when \code{x} is \code{SE} object.
+\code{altExp(x)} of \code{TreeSummarizedExperiment} object. Alternatively,
+\code{experiment2} can also be \code{TreeSE} object when \code{x} is \code{TreeSE} object.
 (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and
-\code{experiment2 = x} when \code{x} is \code{SE})}
+\code{experiment2 = x} when \code{x} is \code{TreeSE})}
 
 \item{assay_name1}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
@@ -99,6 +101,16 @@ experiment 2 to be transformed. (By default: \code{assay_name2 = "counts"})}
 assay of experiment 2 to use for calculation.
 (Please use \code{assay_name2} instead. At some point \code{abund_values2}
 will be disabled.)}
+
+\item{altExp1}{A single numeric or character value specifying alternative experiment
+from the altExp of experiment 1. If NULL, then the experiment is itself
+and altExp option is disabled.
+(By default: \code{altExp1 = NULL})}
+
+\item{altExp2}{A single numeric or character value specifying alternative experiment
+from the altExp of experiment 2. If NULL, then the experiment is itself
+and altExp option is disabled.
+(By default: \code{altExp2 = NULL})}
 
 \item{MARGIN}{A single numeric value for selecting if association are calculated
 row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -175,14 +187,14 @@ result <- getExperimentCrossAssociation(mae, method = "pearson")
 # Show first 5 entries
 head(result, 5)
 
-# Same can be done with SummarizedExperiment and altExp
-# Create TreeSE with altExp
-tse <- mae[[1]]
-altExp(tse, "exp2") <- mae[[2]]
-
+# Use altExp option to specify alternative experiment from the experiment
+altExp(mae[[1]], "Phylum") <- agglomerateByRank(mae[[1]], rank = "Phylum")
+# Transform data
+altExp(mae[[1]], "Phylum") <- transformSamples(altExp(mae[[1]], "Phylum"), method = "relabundance")
 # When mode = matrix, matrix is returned
-result <- getExperimentCrossAssociation(tse, experiment2 = "exp2", 
-                                        assay_name1 = "rclr", assay_name2 = "counts",
+result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
+                                        assay_name1 = "relabundance", assay_name2 = "counts",
+                                        altExp1 = "Phylum", 
                                         method = "pearson", mode = "matrix")
 # Show first 5 entries
 head(result, 5)
@@ -191,7 +203,7 @@ head(result, 5)
 # filter_self_correlations = TRUE filters self correlations
 # With p_adj_threshold it is possible to filter those features that do no have
 # any correlations that have p-value under threshold
-result <- testExperimentCrossAssociation(tse, experiment2 = tse, method = "pearson",
+result <- testExperimentCrossAssociation(mae[[2]], experiment2 = mae[[2]], method = "pearson",
                                          filter_self_correlations = TRUE,
                                          p_adj_threshold = 0.05)
 # Show first 5 entries
@@ -225,6 +237,7 @@ result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experim
 # a random sample from data. In a complex biological problems, random sample
 # can describe the data enough. Here our random sample is 30 \% of whole data.
 sample_size <- 0.3
+tse <- mae[[1]]
 tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
 result <- testExperimentCrossAssociation(tse_sub)
                                          

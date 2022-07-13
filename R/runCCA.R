@@ -1,6 +1,6 @@
-#' Canonical Correspondance Analysis
+#' Canonical Correspondence Analysis
 #'
-#' These functions perform Canonical Correspondance Analysis on data stored
+#' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
 #'
 #' @param x For \code{calculateCCA} a numeric matrix with columns as samples or
