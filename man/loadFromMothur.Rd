@@ -2,7 +2,7 @@
 % Please edit documentation in R/loadFromMothur.R
 \name{loadFromMothur}
 \alias{loadFromMothur}
-\title{Import Mothur results as a \code{SummarizedExperiment}}
+\title{Import Mothur results as a \code{TreeSummarizedExperiment}}
 \usage{
 loadFromMothur(sharedFile, taxonomyFile = NULL, designFile = NULL)
 }
@@ -23,11 +23,11 @@ the sample metadata to be imported. The File has to be in \code{desing
 }
 \value{
 A
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object
 }
 \description{
-This method creates a \code{SummarizedExperiment} object from \code{Mothur}
+This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
 files provided as input.
 }
 \details{
@@ -59,9 +59,9 @@ tse
 \url{https://mothur.org/wiki/design_file/}
 }
 \seealso{
-\code{\link[=makeTreeSummarizedExperimentFromPhyloseq]{makeTreeSummarizedExperimentFromPhyloseq}}
-\code{\link[=makeSummarizedExperimentFromBiom]{makeSummarizedExperimentFromBiom}}
-\code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+\code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
+\code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
+\code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
 \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 }
 \author{

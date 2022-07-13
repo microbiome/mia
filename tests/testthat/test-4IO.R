@@ -7,7 +7,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_s4_class(me, "SummarizedExperiment")
     # load from object
     x1 <- biomformat::read_biom(rich_dense_file)
-    me2 <- makeSummarizedExperimentFromBiom(x1)
+    me2 <- makeTreeSEFromBiom(x1)
     expect_s4_class(me2, "SummarizedExperiment")
     expect_equal(dim(me), dim(me2))
     expect_equal(rowData(me), rowData(me2))
@@ -16,20 +16,20 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
 test_that("Importing phyloseq objects yield TreeSummarizedExperiment objects", {
     skip_if_not_installed("phyloseq")
     data(GlobalPatterns, package="phyloseq")
-    me <- makeTreeSummarizedExperimentFromPhyloseq(GlobalPatterns)
+    me <- makeTreeSEFromPhyloseq(GlobalPatterns)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(19216,26))
     data(enterotype, package="phyloseq")
-    me <- makeTreeSummarizedExperimentFromPhyloseq(enterotype)
+    me <- makeTreeSEFromPhyloseq(enterotype)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(553,280))
     data(esophagus, package="phyloseq")
-    me <- makeTreeSummarizedExperimentFromPhyloseq(esophagus)
+    me <- makeTreeSEFromPhyloseq(esophagus)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(58,3))
     esophagus2 <- esophagus
     phyloseq::otu_table(esophagus2) <- t(phyloseq::otu_table(esophagus))
-    me2 <- makeTreeSummarizedExperimentFromPhyloseq(esophagus2)
+    me2 <- makeTreeSEFromPhyloseq(esophagus2)
     expect_equal(me, me2)
 })
 
@@ -40,7 +40,7 @@ test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
     dadaF <- dada2::dada(fnF, selfConsist=TRUE)
     dadaR <- dada2::dada(fnR, selfConsist=TRUE)
 
-    me <- makeTreeSummarizedExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
+    me <- makeTreeSEFromDADA2(dadaF, fnF, dadaR, fnR)
     expect_s4_class(me, "TreeSummarizedExperiment")
 })
 
@@ -311,7 +311,7 @@ test_that("dimnames of feature table is identicle with meta data", {
 })
 
 
-test_that("makePhyloseqFromTreeSummarizedExperiment", {
+test_that("makePhyloseqFromTreeSE", {
 
     skip_if_not_installed("phyloseq")
 
@@ -319,7 +319,7 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     data(GlobalPatterns)
     tse <- GlobalPatterns
 
-    phy <- makePhyloseqFromTreeSummarizedExperiment(GlobalPatterns)
+    phy <- makePhyloseqFromTreeSE(GlobalPatterns)
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
@@ -341,8 +341,8 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     # Test with agglomeration that that pruning is done internally
     test1 <- agglomerateByRank(tse, rank = "Phylum")
     test2 <- expect_warning(agglomerateByRank(tse, rank = "Phylum", agglomerateTree = TRUE))
-    test1_phy <- expect_warning(makePhyloseqFromTreeSummarizedExperiment(test1))
-    test2_phy <- makePhyloseqFromTreeSummarizedExperiment(test2)
+    test1_phy <- expect_warning(makePhyloseqFromTreeSE(test1))
+    test2_phy <- makePhyloseqFromTreeSE(test2)
     
     expect_equal(length(phyloseq::phy_tree(test1_phy)$node), 
                  length(ape::keep.tip(rowTree(test1), rowLinks(test1)$nodeLab)$node))
@@ -352,21 +352,21 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     # Check that everything works also with agglomerated data
     for (level in colnames(rowData(tse)) ){
         temp <- agglomerateByRank(tse, rank = level)
-        expect_warning(makePhyloseqFromTreeSummarizedExperiment(temp))
+        expect_warning(makePhyloseqFromTreeSE(temp))
     }
     
     tse2 <- tse
     # Concerts data frame to factors
     rowData(tse2) <- DataFrame(lapply(rowData(tse2), as.factor))
-    phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
-    phy2 <- makePhyloseqFromTreeSummarizedExperiment(tse2)
+    phy <- makePhyloseqFromTreeSE(tse)
+    phy2 <- makePhyloseqFromTreeSE(tse2)
     expect_equal(phyloseq::tax_table(phy2), phyloseq::tax_table(phy))
     
     # TSE object
     data(esophagus)
     tse <- esophagus
 
-    phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
+    phy <- makePhyloseqFromTreeSE(tse)
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
