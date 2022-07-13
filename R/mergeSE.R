@@ -316,9 +316,9 @@ setMethod("right_join", signature = c(x = "ANY"),
         class <- allowed_classes[3]
     }
     # Give a warning if there are multiple different classes
-    if( unique(classes) > 1 ){
+    if( length(unique(classes)) > 1 ){
         warning("The input contains objects with different classes. ",
-                "The output will be '", class, "'.",
+                "The output is '", class, "'.",
                 call. = FALSE)
     }
     return(class)
