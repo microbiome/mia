@@ -73,3 +73,17 @@ makeTreeSEFromBiom <- function(obj){
                             colData = sample_data,
                             rowData = feature_data)
 }
+
+####################### makeTreeSummarizedExperimentFromBiom #######################
+#' @rdname makeTreeSEFromBiom
+#' @export
+setGeneric("makeTreeSummarizedExperimentFromBiom", signature = c("x"),
+    function(x, ...)
+        standardGeneric("makeTreeSummarizedExperimentFromBiom"))
+
+#' @rdname makeTreeSEFromBiom
+#' @export
+setMethod("makeTreeSummarizedExperimentFromBiom", signature = c(x = "ANY"),
+    function(x){
+        makeTreeSEFromBiom(x)
+    })

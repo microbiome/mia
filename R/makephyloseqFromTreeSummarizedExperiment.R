@@ -180,6 +180,20 @@ setMethod("makePhyloseqFromTreeSE",
     }
 )
 
+################### makePhyloseqFromTreeSummarizedExperiment ###################
+#' @rdname makePhyloseqFromTreeSE
+#' @export
+setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
+    function(x, ...)
+        standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
+
+#' @rdname makePhyloseqFromTreeSE
+#' @export
+setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
+        function(x, ...){
+            makePhyloseqFromTreeSE(x, ...)
+    })
+
 ################################ HELP FUNCTIONS ################################
 
 .get_x_with_pruned_tree <- function(x){

@@ -62,3 +62,9 @@ makeTreeSEFromDADA2 <- function(...) {
     rownames(output) <- rName
     output
 }
+
+#################### makeTreeSummarizedExperimentFromDADA2 #####################
+#' @export
+makeTreeSummarizedExperimentFromDADA2 <- function(...) {
+    makeTreeSEFromDADA2(...)
+}

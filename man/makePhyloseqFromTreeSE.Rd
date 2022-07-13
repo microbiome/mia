@@ -4,6 +4,8 @@
 \alias{makePhyloseqFromTreeSE}
 \alias{makePhyloseqFromTreeSE,SummarizedExperiment-method}
 \alias{makePhyloseqFromTreeSE,TreeSummarizedExperiment-method}
+\alias{makePhyloseqFromTreeSummarizedExperiment}
+\alias{makePhyloseqFromTreeSummarizedExperiment,ANY-method}
 \title{Create a phyloseq object from a TreeSummarizedExperiment object}
 \usage{
 makePhyloseqFromTreeSE(x, ...)
@@ -11,6 +13,10 @@ makePhyloseqFromTreeSE(x, ...)
 \S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x, assay_name = abund_values, abund_values = "counts")
 
 \S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, ...)
+
+makePhyloseqFromTreeSummarizedExperiment(x, ...)
+
+\S4method{makePhyloseqFromTreeSummarizedExperiment}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{TreeSummarizedExperiment} object}

@@ -74,3 +74,17 @@ makeTreeSEFromPhyloseq <- function(obj) {
                              rowTree = rowTree,
                              referenceSeq = referenceSeq)
 }
+
+####################### makeTreeSummarizedExperimentFromPhyloseq #######################
+#' @rdname makeTreeSEFromPhyloseq
+#' @export
+setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("obj"),
+    function(obj)
+        standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
+
+#' @rdname makeTreeSEFromPhyloseq
+#' @export
+setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(obj = "ANY"),
+    function(obj){
+        makeTreeSEFromPhyloseq(obj)
+    })
