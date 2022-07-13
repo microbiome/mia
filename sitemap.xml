@@ -76,16 +76,16 @@
     <loc>/reference/loadFromQIIME2.html</loc>
   </url>
   <url>
-    <loc>/reference/makePhyloseqFromTreeSummarizedExperiment.html</loc>
+    <loc>/reference/makePhyloseqFromTreeSE.html</loc>
   </url>
   <url>
-    <loc>/reference/makeSummarizedExperimentFromBiom.html</loc>
+    <loc>/reference/makeTreeSEFromBiom.html</loc>
   </url>
   <url>
-    <loc>/reference/makeTreeSummarizedExperimentFromDADA2.html</loc>
+    <loc>/reference/makeTreeSEFromDADA2.html</loc>
   </url>
   <url>
-    <loc>/reference/makeTreeSummarizedExperimentFromPhyloseq.html</loc>
+    <loc>/reference/makeTreeSEFromPhyloseq.html</loc>
   </url>
   <url>
     <loc>/reference/meltAssay.html</loc>
