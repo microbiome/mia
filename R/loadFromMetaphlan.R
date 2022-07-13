@@ -37,9 +37,9 @@
 #'
 #' @name loadFromMetaphlan
 #' @seealso
-#' \code{\link[=makeTreeSummarizedExperimentFromPhyloseq]{makeTreeSummarizedExperimentFromPhyloseq}}
-#' \code{\link[=makeSummarizedExperimentFromBiom]{makeSummarizedExperimentFromBiom}}
-#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
+#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
+#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
 #' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'

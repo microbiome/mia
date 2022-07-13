@@ -278,12 +278,12 @@ data("esophagus", package = "phyloseq")
 ```
 ```{r}
 esophagus
-esophagus <- makeTreeSummarizedExperimentFromPhyloseq(esophagus)
+esophagus <- makeTreeSEFromPhyloseq(esophagus)
 esophagus
 ```
 
 For more details have a look at the man page, for examples 
-`?makeTreeSummarizedExperimentFromPhyloseq`.
+`?makeTreeSEFromPhyloseq`.
 
 ## General wrapper functions 
 

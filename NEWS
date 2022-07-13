@@ -33,4 +33,6 @@ Changes in version 1.3.x
 + CLR transformation: remove internal relative transformation
 + Replace 'abund_values' argument with 'assay_name'
 + getExpCrossCorr: added altExp option
++ added detection threshold option to getTopTaxa
++ makeSummarizedExperimentFromBiom is now makeTreeSummarizedExperimentFromBiom
 + Added mergeSE function

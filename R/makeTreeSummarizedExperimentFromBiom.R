@@ -2,17 +2,17 @@
 #'
 #' For convenience a few functions are available to convert data from a
 #' \sQuote{biom} file or object into a
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @param file biom file location
 #'
 #' @return An object of class
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
-#' @name makeSummarizedExperimentFromBiom
+#' @name makeTreeSEFromBiom
 #' @seealso
-#' \code{\link[=makeTreeSummarizedExperimentFromPhyloseq]{makeTreeSummarizedExperimentFromPhyloseq}}
-#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
+#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
 #' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'
@@ -26,29 +26,29 @@
 #'
 #'   # load from object
 #'   x1 <- biomformat::read_biom(rich_dense_file)
-#'   se <- makeSummarizedExperimentFromBiom(x1)
+#'   se <- makeTreeSEFromBiom(x1)
 #'   # Convert SE to TreeSE
 #'   tse <- as(se, "TreeSummarizedExperiment")
 #'   tse
 #' }
 NULL
 
-#' @rdname makeSummarizedExperimentFromBiom
+#' @rdname makeTreeSEFromBiom
 #'
 #' @export
 loadFromBiom <- function(file) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    makeSummarizedExperimentFromBiom(biom)
+    makeTreeSEFromBiom(biom)
 }
 
-#' @rdname makeSummarizedExperimentFromBiom
+#' @rdname makeTreeSEFromBiom
 #'
 #' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame
-makeSummarizedExperimentFromBiom <- function(obj){
+makeTreeSEFromBiom <- function(obj){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){
@@ -69,7 +69,15 @@ makeSummarizedExperimentFromBiom <- function(obj){
         rownames(feature_data) <- rownames(counts)
     }
     
-    SummarizedExperiment(assays = list(counts = counts),
-                         colData = sample_data,
-                         rowData = feature_data)
+    TreeSummarizedExperiment(assays = list(counts = counts),
+                            colData = sample_data,
+                            rowData = feature_data)
+}
+
+####################### makeTreeSummarizedExperimentFromBiom #######################
+#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
+#' @rdname makeTreeSEFromBiom
+#' @export
+makeTreeSummarizedExperimentFromBiom <- function(obj){
+    makeTreeSEFromBiom(obj)
 }
