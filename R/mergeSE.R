@@ -85,11 +85,11 @@
 #' 
 #' # With 'join', it is possible to specify the merging method. Subsets are used
 #' # here just to show the functionality
-#' tse_temp <- mergeSE(tse[1:10, 1:10],  tse[5:100, 11:20], join = "left")
+#' tse_temp <- mergeSE(tse[1:10, 1:10], tse[5:100, 11:20], join = "left")
 #' tse_temp
 #' 
 #' # You can also do a left_join by using alias "left_join"
-#' tse_temp <- left_join(tse[1:10, 1:10],  tse[5:100, 11:20])
+#' tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
 #' 
 NULL
 
