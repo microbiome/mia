@@ -391,6 +391,12 @@ setMethod("right_join", signature = c(x = "ANY"),
         stop("Input includes an object that is not 'SummarizedExperiment'.",
              call. = FALSE)
     }
+    # If there are multiple classes, give a warning
+    if( length(unique( unlist(lapply(x, class)) )) > 1 ){
+        warning("The Input consist of multiple classes. ",
+                "The output is '", class, "'.",
+                call. = FALSE)
+    }
     return(class)
 }
 
