@@ -259,19 +259,19 @@ test_that("mergeSE", {
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "TreeSummarizedExperiment")), 
                        join = "inner")
-    expect_true(class(tse) == "TreeSummarizedExperiment")
+    expect_true(class(tse) == "SummarizedExperiment")
     tse <- mergeSE(list(as(tse1, "SummarizedExperiment"), 
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "SingleCellExperiment")), 
                        join = "full")
-    expect_true(class(tse) == "SingleCellExperiment")
-    tse <- mergeSE(x = as(tse1, "SummarizedExperiment"), 
+    expect_true(class(tse) == "SummarizedExperiment")
+    tse <- mergeSE(x = as(tse1, "TreeSummarizedExperiment"), 
                        y = as(tse1, "SingleCellExperiment"), 
                        join = "right")
     expect_true(class(tse) == "SingleCellExperiment")
-    tse <- mergeSE(list(as(tse1, "SummarizedExperiment")), 
+    tse <- mergeSE(list(as(tse1, "TreeSummarizedExperiment")), 
                        join = "left")
-    expect_true(class(tse) == "SummarizedExperiment")
+    expect_true(class(tse) == "TreeSummarizedExperiment")
     
     # Test dplyr-like aliases
     tse_test1 <- mergeSE(x = tse[1:28, 1:3], 
@@ -294,6 +294,5 @@ test_that("mergeSE", {
                          join = "right")
     tse_test2 <- right_join(x = list(tse1[1:28, 1:3], tse1[23, 1:5]) )
     expect_equal(tse_test1, tse_test2)
-    
     
 })

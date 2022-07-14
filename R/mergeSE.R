@@ -296,30 +296,20 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Input: a list of objects
 # Output: A shared class of objects
 .check_objects_and_give_class <- function(x){
-    # Check the class of objects
-    classes <- lapply(x, class)
-    # Unlist the list
-    classes <- unlist(classes)
     # Allowed classes
     allowed_classes <- c("TreeSummarizedExperiment", "SingleCellExperiment", "SummarizedExperiment")
+    
+    # Get the class based on hierarchy TreeSE --> SCE --> SE
+    if( all( unlist( lapply(x, is, class2 = allowed_classes[[1]]) ) ) ){
+        class <- allowed_classes[1]
+    } else if( all( unlist( lapply(x, is, class2 = allowed_classes[[2]]) ) ) ){
+        class <- allowed_classes[2]
+    } else if( all( unlist( lapply(x, is, class2 = allowed_classes[[3]]) ) ) ){
+        class <- allowed_classes[3]
     # If there is an object that does not belong to these classes give an error
-    if( any(!(classes %in% allowed_classes)) ){
+    } else{
         stop("Input includes an object that is not 'SummarizedExperiment'.",
              call. = FALSE)
-    }
-    # Get the class based on hierarchy TreeSE --> SCE --> SE
-    if( any(classes == allowed_classes[1]) ){
-        class <- allowed_classes[1]
-    } else if( any(classes == allowed_classes[2]) ){
-        class <- allowed_classes[2]
-    } else{
-        class <- allowed_classes[3]
-    }
-    # Give a warning if there are multiple different classes
-    if( length(unique(classes)) > 1 ){
-        warning("The input contains objects with different classes. ",
-                "The output is '", class, "'.",
-                call. = FALSE)
     }
     return(class)
 }
