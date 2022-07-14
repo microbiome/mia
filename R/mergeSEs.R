@@ -271,8 +271,17 @@ setMethod("right_join", signature = c(x = "ANY"),
                   SingleCellExperiment = .get_SingleCellExperiment_data,
                   SummarizedExperiment = .get_SummarizedExperiment_data,
                   )
-    # Get the data from the first object
-    tse <- do.call(FUN, args = list(tse = tse, assay_name = assay_name))
+    
+    # Get the data in a list
+    args <- do.call(FUN, args = list(tse = tse, assay_name = assay_name))
+    
+    # Get the function based on class
+    FUN_constructor <- switch(class,
+                              TreeSummarizedExperiment = TreeSummarizedExperiment,
+                              SingleCellExperiment = SingleCellExperiment,
+                              SummarizedExperiment = SummarizedExperiment
+    )
+    tse <- do.call(FUN_constructor, args = args)
     
     # Get the function based on class
     FUN <- switch(class,
@@ -290,61 +299,59 @@ setMethod("right_join", signature = c(x = "ANY"),
             }
             # Get the ith object
             temp <- x[[i]]
-            # Merge it
-            tse <- do.call(FUN, args = list(
+            # Merge data
+            args <- do.call(FUN, args = list(
                 tse_original = tse,
                 tse = temp,
                 join = join,
                 assay_name = assay_name,
                 missing_values = missing_values
                 ))
+            # Create an object
+            tse <- do.call(FUN_constructor, args = args)
         }
     }
     return(tse)
 }
 
 ###################### .get_TreeSummarizedExperiment_data ######################
-# This function gets the desired data from one TreeSE object and creates new 
-# TreeSE based on it
+# This function gets the desired data from one TreeSE and creates a list of 
+# arguments containing the data
 
 # Input; TreeSE
-# Output: TreeSE
+# Output: A list of arguments
 .get_TreeSummarizedExperiment_data <- function(tse, assay_name){
     # Get rowTree and colTree
     row_tree <- rowTree(tse)
     col_tree <- colTree(tse)
-    # Get a SCE object
-    tse <- .get_SingleCellExperiment_data(tse, assay_name)
-    # Convert into TreeSE
-    tse <- as(tse, "TreeSummarizedExperiment")
+    # Get a list of arguments of SCE object
+    args <- .get_SingleCellExperiment_data(tse, assay_name)
     # Add TreeSE-specific slots
-    rowTree(tse) <- row_tree
-    colTree(tse) <- col_tree
-    return(tse)
+    args$rowTree <- row_tree
+    args$colTree <- col_tree
+    return(args)
 }
 
 ######################## .get_SingleCellExperiment_data ########################
-# This function gets the desired data from one SCE object and creates new 
-# SCE based on it
+# This function gets the desired data from one SCE object and creates a list of 
+# arguments containing the data
 
 # Input; SCE
-# Output: SCE
+# Output: A list of arguments
 .get_SingleCellExperiment_data <- function(tse, assay_name){
     # reducedDim is additional slot for SCE compared to SE. 
     # However, merging reducedDims leads to non-meaningful data
-    # Get a SE object
-    tse <- .get_SummarizedExperiment_data(tse, assay_name)
-    # Convert to SingleCellExperiment
-    tse <- as(tse, "SingleCellExperiment")
-    return(tse)
+    # Get th arguments of SE object
+    args <- .get_SummarizedExperiment_data(tse, assay_name)
+    return(args)
 }
 
 ######################## .get_SummarizedExperiment_data ########################
-# This function gets the desired data from one SE object and creates new 
-# SE based on it
+# This function gets the desired data from one SE object and creates a list of 
+# arguments containing the data
 
 # Input; SE
-# Output: SE
+# Output: A list of arguments
 .get_SummarizedExperiment_data <- function(tse, assay_name){
     # Remove all information but rowData, colData, metadata and assay
     row_data <- rowData(tse)
@@ -353,13 +360,13 @@ setMethod("right_join", signature = c(x = "ANY"),
     assays <- SimpleList(name = assay)
     names(assays) <- assay_name
     metadata <- metadata(tse)
-    # Create a SE object
-    tse <- SummarizedExperiment(assays = assays,
-                                rowData = row_data,
-                                colData = col_data,
-                                metadata = metadata
+    # Create a list of arguments
+    args <- list(assays = assays,
+                rowData = row_data,
+                colData = col_data,
+                metadata = metadata
     )
-    return(tse)
+    return(args)
     
 }
 
@@ -421,86 +428,122 @@ setMethod("right_join", signature = c(x = "ANY"),
 }
 
 ###################### .merge_TreeSummarizedExperiments ########################
-# This function merges two TreeSE objects into one.
+# This function merges the data of two TreeSE objects into one set of arguments that
+# can be feed to create a single object.
 
 # Input: Two TreeSEs, the name of the assay, joining method, and the value to
 # denote missing values that might occur when object do not share same features, e.g.
-# Output: A single TreeSE
+# Output: A list of arguments
 .merge_TreeSummarizedExperiments <- function(tse_original, tse, join,  
                                              assay_name, missing_values){
-    # TODO: what is rowTree labels do not match with rownames but they are 
-    # linked with additional rowlinks?
-    # Get row trees
+    # Get row trees and rownode labels of 1st object
     row_tree1 <- rowTree(tse_original)
+    row_node_labs1 <- rowLinks(tse_original)[ , "nodeLab" ]
+    if( !is.null(row_node_labs1) ){
+        names(row_node_labs1) <- rownames(tse_original)
+    }
+    # Get row trees and rownode labels of 2nd object
     row_tree2 <- rowTree(tse)
-    # Get col trees
+    row_node_labs2 <- rowLinks(tse)[ , "nodeLab" ]
+    if( !is.null(row_node_labs2) ){
+        names(row_node_labs2) <- rownames(tse)
+    }
+    
+    # Get col trees and column node labels of 1st object
     col_tree1 <- colTree(tse_original)
+    col_node_labs1 <- colLinks(tse_original)[ , "nodeLab" ]
+    if( !is.null(col_node_labs1) ){
+        names(col_node_labs1) <- colnames(tse_original)
+    }
+    # Get col trees and column node labels of 2nd object
     col_tree2 <- colTree(tse)
-    # Get reference sequences
+    col_node_labs2 <- colLinks(tse)[ , "nodeLab" ]
+    if( !is.null(col_node_labs2) ){
+        names(col_node_labs2) <- colnames(tse)
+    }
+    
+    # Get reference sequences og both objects
     ref_seqs1 <- referenceSeq(tse_original)
     ref_seqs2 <- referenceSeq(tse)
     
-    # Merge data to get a SE
-    tse <- .merge_SingleCellExperiments(tse_original, tse, join,
+    # Merge data to get a list of arguments
+    args <- .merge_SingleCellExperiments(tse_original, tse, join,
                                         assay_name, missing_values)
-    # Convert into TreeSE
-    tse <- as(tse, "TreeSummarizedExperiment")
     
     # rowTree
     # If labels of the 1st tree match with data, add tree1
-    if( !is.null( rownames(tse) ) && !is.null( row_tree1 ) &&
-        all( rownames(tse) %in% row_tree1$tip.label ) ){
-        rowTree(tse) <- row_tree1
+    if( length(rownames(args$rowData)) > 0 && !is.null( row_tree1 ) &&
+        all( rownames(args$rowData) %in% names(row_node_labs1) ) ){
+        args$rowTree <- row_tree1
+        # Get rowlinks into correct order
+        row_node_labs1 <- row_node_labs1[ match(rownames(args$rowData), 
+                                        names(row_node_labs1)) ]
+        args$rowNodeLab <- row_node_labs1
     # If labels of the 2nd tree match with data, add tree2
-    } else if( !is.null( rownames(tse) ) && !is.null( row_tree2 ) &&
-               all( rownames(tse) %in% row_tree2$tip.label ) ){
-        rowTree(tse) <- row_tree2
+    } else if( length(rownames(args$rowData)) > 0 && !is.null( row_tree2 ) &&
+               all( rownames(args$rowData) %in% names(row_node_labs2) ) ){
+        args$rowTree <- row_tree2
+        # Get rowlinks into correct order
+        row_node_labs2 <- row_node_labs2[ match(rownames(args$rowData), 
+                                        names(row_node_labs2)) ]
+        args$rowNodeLab <- row_node_labs2
     }
     # colTree
     # If labels of the 1st tree match with data, add tree1
-    if( !is.null( colnames(tse) ) && !is.null( col_tree1 ) &&
-        all( colnames(tse) %in% col_tree1$tip.label ) ){
-        colTree(tse) <- col_tree1
+    if( length(rownames(args$colData)) > 0 && !is.null( col_tree1 ) &&
+        all( colnames(args$colData) %in% names(col_node_labs1) ) ){
+        args$colTree <- col_tree1
+        # Get column links into correct order
+        col_node_labs1 <- col_node_labs1[ match(rownames(args$colData), 
+                                        names(col_node_labs1)) ]
+        args$colNodeLab <- col_node_labs1
     # If labels of the 2nd tree match with data, add tree2
-    } else if( !is.null( colnames(tse) ) && !is.null( col_tree2 ) &&
-               all( colnames(tse) %in% col_tree2$tip.label ) ){
-        colTree(tse) <- row_tree2
+    } else if( length(rownames(args$colData)) > 0  && !is.null( col_tree2 ) &&
+               all( colnames(args$colData) %in% names(col_node_labs2) ) ){
+        args$colTree <- row_tree2
+        # Get column links into correct order
+        col_node_labs2 <- col_node_labs2[ match(rownames(args$colData), 
+                                        names(col_node_labs2)) ]
+        args$colNodeLab <- col_node_labs2
     }
     # Reference sequences
     # If names of 1st sequences match with data, add refseq1
-    if( !is.null( rownames(tse) ) && !is.null( ref_seqs1 ) &&
-        all( rownames(tse) %in% names(ref_seqs1) ) ){
-        referenceSeq(tse) <- ref_seqs1
+    if( length(rownames(args$rowData)) > 0 && !is.null( ref_seqs1 ) &&
+        all( rownames(args$rowData) %in% names(ref_seqs1) ) ){
+        # Put sequences into correct order
+        ref_seqs1 <- ref_seqs1[ match(rownames(args$rowData), names(ref_seqs1)), ]
+        args$referenceSeq <- ref_seqs1
     # If names of 2nd sequences match with data, add refseq2
-    } else if( !is.null( rownames(tse) ) && !is.null( ref_seqs2 ) &&
-               all( rownames(tse) %in% names(ref_seqs2) ) ){
-        referenceSeq(tse) <- ref_seqs2
+    } else if( length(rownames(args$rowData)) > 0 && !is.null( ref_seqs2 ) &&
+               all( rownames(args$rowData) %in% names(ref_seqs2) ) ){
+        # Put sequences into correct order
+        ref_seqs2 <- ref_seqs2[ match(rownames(args$rowData), names(ref_seqs2)), ]
+        args$referenceSeq <- ref_seqs2
     }
-    return(tse)
+    return(args)
 }
 
 ######################## .merge_SingleCellExperiments ##########################
-# This function merges two SCE objects into one.
-
+# This function merges the data of two SCE objects into one set of arguments that
+# can be feed to create a single object.
 # Input: Two SCEs
 # Output: A single SCE
 .merge_SingleCellExperiments <- function(tse_original, tse, join,  
                                          assay_name, missing_values){
     # reducedDim is additional slot for SCE compared to SE. 
     # However, merging reducedDims leads to non-meaningful data
-    # Merge data to get a SE
-    tse <- .merge_SummarizedExperiments(tse_original, tse, join,
+    # Merge data to get a list of arguments
+    args <- .merge_SummarizedExperiments(tse_original, tse, join,
                                         assay_name, missing_values)
-    # Convert into SCE
-    tse <- as(tse, "SingleCellExperiment")
-    return(tse)
+    return(args)
 }
 
 ######################## .merge_SummarizedExperiments ##########################
-# This function merges two SE objects into one.
+# This function merges the data of two SE objects into one set of arguments that
+# can be feed to create a single object.
 
 # Input: Two SEs
-# Output: A single SE
+# Output: A list of arguments
 .merge_SummarizedExperiments <- function(tse_original, tse, join,  
                                          assay_name, missing_values){
     # Merge rowData
@@ -514,12 +557,12 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Combine metadata
     metadata <- c( metadata(tse_original), metadata(tse) )
     
-    # Create SE from the data
-    tse <- SummarizedExperiment(assays = assays,
-                                rowData = rowdata,
-                                colData = coldata,
-                                metadata = metadata)
-    return(tse)
+    # Create a list of data
+    args <- list(assays = assays,
+                rowData = rowdata,
+                colData = coldata,
+                metadata = metadata)
+    return(args)
 }
 
 ################################ .merge_assay ##################################
