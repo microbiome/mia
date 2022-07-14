@@ -330,14 +330,12 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Input; SCE
 # Output: SCE
 .get_SingleCellExperiment_data <- function(tse, assay_name){
-    # # Get reducedDims
-    # reduced_dims <- reducedDims(tse)
+    # reducedDim is additional slot for SCE compared to SE. 
+    # However, merging reducedDims leads to non-meaningful data
     # Get a SE object
     tse <- .get_SummarizedExperiment_data(tse, assay_name)
     # Convert to SingleCellExperiment
     tse <- as(tse, "SingleCellExperiment")
-    # # Add SCE-specific slots
-    # reducedDims(tse) <- reduced_dims
     return(tse)
 }
 
@@ -434,8 +432,12 @@ setMethod("right_join", signature = c(x = "ANY"),
     row_tree1 <- rowTree(tse_original)
     row_tree2 <- rowTree(tse)
     # Get col trees
-    col_tree1 <- rowTree(tse_original)
-    col_tree2 <- rowTree(tse)
+    col_tree1 <- colTree(tse_original)
+    col_tree2 <- colTree(tse)
+    # Get reference sequences
+    ref_seqs1 <- referenceSeq(tse_original)
+    ref_seqs2 <- referenceSeq(tse)
+    
     # Merge data to get a SE
     tse <- .merge_SingleCellExperiments(tse_original, tse, join,
                                         assay_name, missing_values)
@@ -457,10 +459,20 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( !is.null( colnames(tse) ) && !is.null( col_tree1 ) &&
         all( colnames(tse) %in% col_tree1$tip.label ) ){
         colTree(tse) <- col_tree1
-        # If labels of the 2nd tree match with data, add tree2
+    # If labels of the 2nd tree match with data, add tree2
     } else if( !is.null( colnames(tse) ) && !is.null( col_tree2 ) &&
                all( colnames(tse) %in% col_tree2$tip.label ) ){
         colTree(tse) <- row_tree2
+    }
+    # Reference sequences
+    # If names of 1st sequences match with data, add refseq1
+    if( !is.null( rownames(tse) ) && !is.null( ref_seqs1 ) &&
+        all( rownames(tse) %in% names(ref_seqs1) ) ){
+        referenceSeq(tse) <- ref_seqs1
+    # If names of 2nd sequences match with data, add refseq2
+    } else if( !is.null( rownames(tse) ) && !is.null( ref_seqs2 ) &&
+               all( rownames(tse) %in% names(ref_seqs2) ) ){
+        referenceSeq(tse) <- ref_seqs2
     }
     return(tse)
 }
@@ -472,7 +484,8 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Output: A single SCE
 .merge_SingleCellExperiments <- function(tse_original, tse, join,  
                                          assay_name, missing_values){
-    
+    # reducedDim is additional slot for SCE compared to SE. 
+    # However, merging reducedDims leads to non-meaningful data
     # Merge data to get a SE
     tse <- .merge_SummarizedExperiments(tse_original, tse, join,
                                         assay_name, missing_values)
