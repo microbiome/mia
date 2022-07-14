@@ -428,6 +428,8 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Output: A single TreeSE
 .merge_TreeSummarizedExperiments <- function(tse_original, tse, join,  
                                              assay_name, missing_values){
+    # TODO: what is rowTree labels do not match with rownames but they are 
+    # linked with additional rowlinks?
     # Get row trees
     row_tree1 <- rowTree(tse_original)
     row_tree2 <- rowTree(tse)
