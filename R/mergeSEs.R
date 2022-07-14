@@ -31,7 +31,7 @@
 #' individual objects, there are missing values in \code{assays}. The notation of missing
 #' can be specified with the \code{missing_values} argument. 
 #' 
-#' Compared to \code{cbind} and \code{rbind} \code{mergeSE} 
+#' Compared to \code{cbind} and \code{rbind} \code{mergeSEs} 
 #' allows more freely merging since \code{cbind} and \code{rbind} expect 
 #' that rows and columns are matching, respectively.
 #' 
@@ -48,7 +48,7 @@
 #' }
 #' 
 #' You can also doe e.g., a full join by using a function \code{full_join} which is 
-#' an alias for \code{mergeSE}. Also other joining methods have dplyr-like aliases.
+#' an alias for \code{mergeSEs}. Also other joining methods have dplyr-like aliases.
 #'
 #' @seealso
 #' \itemize{
@@ -60,7 +60,7 @@
 #'   \item{\code{\link[dplyr:right_join]{right_join}}}
 #' }
 #'
-#' @name mergeSE
+#' @name mergeSEs
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -76,16 +76,16 @@
 #' tse3 <- enterotype[1:100, ]
 #' 
 #' # Merge two TreeSEs
-#' tse <- mergeSE(tse1, tse2)
+#' tse <- mergeSEs(tse1, tse2)
 #' 
 #' # Merge a list of TreeSEs
 #' list <- SimpleList(tse1, tse2, tse3)
-#' tse <- mergeSE(list, assay_name = "counts", missing_values = 0)
+#' tse <- mergeSEs(list, assay_name = "counts", missing_values = 0)
 #' tse
 #' 
 #' # With 'join', it is possible to specify the merging method. Subsets are used
 #' # here just to show the functionality
-#' tse_temp <- mergeSE(tse[1:10, 1:10], tse[5:100, 11:20], join = "left")
+#' tse_temp <- mergeSEs(tse[1:10, 1:10], tse[5:100, 11:20], join = "left")
 #' tse_temp
 #' 
 #' # You can also do a left_join by using alias "left_join"
@@ -95,17 +95,17 @@ NULL
 
 ################################### Generic ####################################
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
-setGeneric("mergeSE", signature = c("x"),
+setGeneric("mergeSEs", signature = c("x"),
         function(x, ... )
-            standardGeneric("mergeSE"))
+            standardGeneric("mergeSEs"))
 
 ###################### Function for SimpleList of TreeSEs ######################
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
-setMethod("mergeSE", signature = c(x = "SimpleList"),
+setMethod("mergeSEs", signature = c(x = "SimpleList"),
         function(x, assay_name = "counts", join = "full", 
                  missing_values = NA, verbose = TRUE, ... ){
             ################## Input check ##################
@@ -158,9 +158,9 @@ setMethod("mergeSE", signature = c(x = "SimpleList"),
 
 ########################### Function for two TreeSEs ###########################
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
-setMethod("mergeSE", signature = c(x = "SummarizedExperiment"),
+setMethod("mergeSEs", signature = c(x = "SummarizedExperiment"),
         function(x, y = NULL, ...){
             ################## Input check ##################
             # Check y
@@ -172,84 +172,84 @@ setMethod("mergeSE", signature = c(x = "SummarizedExperiment"),
             # Create a list based on TreeSEs
             list <- SimpleList(x, y)
             # Call the function for list
-            mergeSE(list, ...)
+            mergeSEs(list, ...)
         }
 )
 
 ########################### Function for list TreeSEs ##########################
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
-setMethod("mergeSE", signature = c(x = "list"),
+setMethod("mergeSEs", signature = c(x = "list"),
           function(x, ...){
               # Convert into a list
               x <- SimpleList(x)
               # Call the function for list
-              mergeSE(x, ...)
+              mergeSEs(x, ...)
           }
 )
 
 ################################# full_join ####################################
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
 setGeneric("full_join", signature = c("x"),
     function(x, ...)
         standardGeneric("full_join"))
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
 setMethod("full_join", signature = c(x = "ANY"),
     function(x, ...){
-        mergeSE(x, join = "full", ...)
+        mergeSEs(x, join = "full", ...)
     }
 )
 
 ################################# inner_join ###################################
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
 setGeneric("inner_join", signature = c("x"),
     function(x, ...)
         standardGeneric("inner_join"))
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
 setMethod("inner_join", signature = c(x = "ANY"),
     function(x, ...){
-        mergeSE(x, join = "inner", ...)
+        mergeSEs(x, join = "inner", ...)
     }
 )
 
 ################################# left_join ####################################
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
 setGeneric("left_join", signature = c("x"),
     function(x, ...)
         standardGeneric("left_join"))
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
 setMethod("left_join", signature = c(x = "ANY"),
     function(x, ...){
-        mergeSE(x, join = "left", ...)
+        mergeSEs(x, join = "left", ...)
     }
 )
 
 ################################# right_join ###################################
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
 setGeneric("right_join", signature = c("x"),
     function(x, ...)
         standardGeneric("right_join"))
 
-#' @rdname mergeSE
+#' @rdname mergeSEs
 #' @export
 setMethod("right_join", signature = c(x = "ANY"),
     function(x, ...){
-        mergeSE(x, join = "right", ...)
+        mergeSEs(x, join = "right", ...)
     }
 )
 
