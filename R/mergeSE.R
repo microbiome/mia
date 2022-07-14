@@ -150,43 +150,8 @@ setMethod("mergeSE", signature = c(x = "SimpleList"),
             if( verbose ){
                 message("Merging with ", join, " join...\n1/", length(x))
             }
-            # Take first element and remove it from the list
-            tse <- x[[1]]
-            x[[1]] <- NULL
-            # Get rowTree to include if match with result data
-            tse <- as(tse, "TreeSummarizedExperiment")
-            row_tree <- rowTree(tse)
-            # Remove all information but rowData, colData, metadata and assay
-            row_data <- rowData(tse)
-            col_data <- colData(tse)
-            assay <- assay(tse, assay_name)
-            assays <- SimpleList(name = assay)
-            names(assays) <- assay_name
-            metadata <- metadata(tse)
-            
-            tse <- TreeSummarizedExperiment(assays = assays,
-                                            rowData = row_data,
-                                            colData = col_data,
-                                            metadata = metadata,
-                                            rowTree = row_tree
-                                            )
-            
-            # Lopp through individual TreeSEs and add them to tse
-            if( length(x) > 0 ){
-                for( i in 1:length(x) ){
-                    # Give message if TRUE
-                    if( verbose ){
-                        message(i+1, "/", length(x)+1)
-                    }
-                    temp <- x[[i]]
-                    tse <- .merge_TreeSE(temp, tse_original = tse, assay_name = assay_name,
-                                         join = join,
-                                         missing_values = missing_values)
-                }
-            }
-            # Convert into right class
-            tse <- as(tse, class)
-
+            # Merge objects
+            tse <- .merge_SE(x, class, join, assay_name, missing_values, verbose)
             return(tse)
         }
 )
@@ -290,6 +255,116 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 ################################ HELP FUNCTIONS ################################
 
+################################## .merge_SE ###################################
+# This function merges SE objects into one SE
+
+# Input: A list of SEs
+# Output: SE
+.merge_SE <- function(x, class, join, assay_name, missing_values, verbose){
+    # Take first element and remove it from the list
+    tse <- x[[1]]
+    x[[1]] <- NULL
+    
+    # Get the function based on class
+    FUN <- switch(class,
+                  TreeSummarizedExperiment = .get_TreeSummarizedExperiment_data,
+                  SingleCellExperiment = .get_SingleCellExperiment_data,
+                  SummarizedExperiment = .get_SummarizedExperiment_data,
+                  )
+    # Get the data from the first object
+    tse <- do.call(FUN, args = list(tse = tse, assay_name = assay_name))
+    
+    # Get the function based on class
+    FUN <- switch(class,
+                  TreeSummarizedExperiment = .merge_TreeSummarizedExperiments,
+                  SingleCellExperiment = .merge_SingleCellExperiments,
+                  SummarizedExperiment = .merge_SummarizedExperiments,
+    )
+    
+    # Lopp through individual TreeSEs and add them to tse
+    if( length(x) > 0 ){
+        for( i in 1:length(x) ){
+            # Give message if TRUE
+            if( verbose ){
+                message(i+1, "/", length(x)+1)
+            }
+            # Get the ith object
+            temp <- x[[i]]
+            # Merge it
+            tse <- do.call(FUN, args = list(
+                tse_original = tse,
+                tse = temp,
+                join = join,
+                assay_name = assay_name,
+                missing_values = missing_values
+                ))
+        }
+    }
+    return(tse)
+}
+
+###################### .get_TreeSummarizedExperiment_data ######################
+# This function gets the desired data from one TreeSE object and creates new 
+# TreeSE based on it
+
+# Input; TreeSE
+# Output: TreeSE
+.get_TreeSummarizedExperiment_data <- function(tse, assay_name){
+    # Get rowTree and colTree
+    row_tree <- rowTree(tse)
+    col_tree <- colTree(tse)
+    # Get a SCE object
+    tse <- .get_SingleCellExperiment_data(tse, assay_name)
+    # Convert into TreeSE
+    tse <- as(tse, "TreeSummarizedExperiment")
+    # Add TreeSE-specific slots
+    rowTree(tse) <- row_tree
+    colTree(tse) <- col_tree
+    return(tse)
+}
+
+######################## .get_SingleCellExperiment_data ########################
+# This function gets the desired data from one SCE object and creates new 
+# SCE based on it
+
+# Input; SCE
+# Output: SCE
+.get_SingleCellExperiment_data <- function(tse, assay_name){
+    # # Get reducedDims
+    # reduced_dims <- reducedDims(tse)
+    # Get a SE object
+    tse <- .get_SummarizedExperiment_data(tse, assay_name)
+    # Convert to SingleCellExperiment
+    tse <- as(tse, "SingleCellExperiment")
+    # Add SCE-specific slots
+    reducedDims(tse) <- reduced_dims
+    return(tse)
+}
+
+######################## .get_SummarizedExperiment_data ########################
+# This function gets the desired data from one SE object and creates new 
+# SE based on it
+
+# Input; SE
+# Output: SE
+.get_SummarizedExperiment_data <- function(tse, assay_name){
+    # Remove all information but rowData, colData, metadata and assay
+    row_data <- rowData(tse)
+    col_data <- colData(tse)
+    assay <- assay(tse, assay_name)
+    assays <- SimpleList(name = assay)
+    names(assays) <- assay_name
+    metadata <- metadata(tse)
+    # Create a SE object
+    tse <- SummarizedExperiment(assays = assays,
+                                rowData = row_data,
+                                colData = col_data,
+                                metadata = metadata
+    )
+    return(tse)
+    
+}
+
 ######################## .check_objects_and_give_class #########################
 # This function checks that the object are in correct format
 
@@ -347,15 +422,72 @@ setMethod("right_join", signature = c(x = "ANY"),
     )
 }
 
-################################ .merge_TreeSE #################################
+###################### .merge_TreeSummarizedExperiments ########################
 # This function merges two TreeSE objects into one.
 
 # Input: Two TreeSEs, the name of the assay, joining method, and the value to
 # denote missing values that might occur when object do not share same features, e.g.
 # Output: A single TreeSE
-.merge_TreeSE <- function(tse_original, tse, assay_name, join, missing_values){
-    # Convert object into TreeSE
+.merge_TreeSummarizedExperiments <- function(tse_original, tse, join,  
+                                             assay_name, missing_values){
+    # Get row trees
+    row_tree1 <- rowTree(tse_original)
+    row_tree2 <- rowTree(tse)
+    # Get col trees
+    col_tree1 <- rowTree(tse_original)
+    col_tree2 <- rowTree(tse)
+    # Merge data to get a SE
+    tse <- .merge_SingleCellExperiments(tse_original, tse, join,
+                                        assay_name, missing_values)
+    # Convert into TreeSE
     tse <- as(tse, "TreeSummarizedExperiment")
+    
+    # rowTree
+    # If labels of the 1st tree match with data, add tree1
+    if( !is.null( rownames(tse) ) && !is.null( row_tree1 ) &&
+        all( rownames(tse) %in% row_tree1$tip.label ) ){
+        rowTree(tse) <- row_tree1
+    # If labels of the 2nd tree match with data, add tree2
+    } else if( !is.null( rownames(tse) ) && !is.null( row_tree2 ) &&
+               all( rownames(tse) %in% row_tree2$tip.label ) ){
+        rowTree(tse) <- row_tree2
+    }
+    # colTree
+    # If labels of the 1st tree match with data, add tree1
+    if( !is.null( colnames(tse) ) && !is.null( col_tree1 ) &&
+        all( colnames(tse) %in% col_tree1$tip.label ) ){
+        colTree(tse) <- col_tree1
+        # If labels of the 2nd tree match with data, add tree2
+    } else if( !is.null( colnames(tse) ) && !is.null( col_tree2 ) &&
+               all( colnames(tse) %in% col_tree2$tip.label ) ){
+        colTree(tse) <- row_tree2
+    }
+    return(tse)
+}
+
+######################## .merge_SingleCellExperiments ##########################
+# This function merges two SCE objects into one.
+
+# Input: Two SCEs
+# Output: A single SCE
+.merge_SingleCellExperiments <- function(tse_original, tse, join,  
+                                         assay_name, missing_values){
+    
+    # Merge data to get a SE
+    tse <- .merge_SummarizedExperiments(tse_original, tse, join,
+                                        assay_name, missing_values)
+    # Convert into SCE
+    tse <- as(tse, "SingleCellExperiment")
+    return(tse)
+}
+
+######################## .merge_SummarizedExperiments ##########################
+# This function merges two SE objects into one.
+
+# Input: Two SEs
+# Output: A single SE
+.merge_SummarizedExperiments <- function(tse_original, tse, join,  
+                                         assay_name, missing_values){
     # Merge rowData
     rowdata <- .merge_rowdata(tse_original, tse, join)
     # Merge colData
@@ -366,26 +498,12 @@ setMethod("right_join", signature = c(x = "ANY"),
     names(assays) <- assay_name
     # Combine metadata
     metadata <- c( metadata(tse_original), metadata(tse) )
-    # Get row trees
-    row_tree1 <- rowTree(tse_original)
-    row_tree2 <- rowTree(tse)
     
-    # Create TreeSE from the data
-    tse <- TreeSummarizedExperiment(assays = assays,
-                                    rowData = rowdata,
-                                    colData = coldata,
-                                    metadata = metadata)
-    
-    # If labels of the 1st tree match with data, add tree1
-    if( !is.null( rownames(tse) ) && !is.null( row_tree1 ) &&
-        all( rownames(tse) %in% row_tree1$tip.label ) ){
-        rowTree(tse) <- row_tree1
-    # If labels of the 2nd tree match with data, add tree2
-    } else if( !is.null( rownames(tse) ) && !is.null( row_tree2 ) &&
-               all( rownames(tse) %in% row_tree2$tip.label ) ){
-        rowTree(tse) <- row_tree2
-    }
-    
+    # Create SE from the data
+    tse <- SummarizedExperiment(assays = assays,
+                                rowData = rowdata,
+                                colData = coldata,
+                                metadata = metadata)
     return(tse)
 }
 
