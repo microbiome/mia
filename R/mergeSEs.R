@@ -336,8 +336,8 @@ setMethod("right_join", signature = c(x = "ANY"),
     tse <- .get_SummarizedExperiment_data(tse, assay_name)
     # Convert to SingleCellExperiment
     tse <- as(tse, "SingleCellExperiment")
-    # Add SCE-specific slots
-    reducedDims(tse) <- reduced_dims
+    # # Add SCE-specific slots
+    # reducedDims(tse) <- reduced_dims
     return(tse)
 }
 
