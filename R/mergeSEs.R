@@ -630,23 +630,23 @@ setMethod("right_join", signature = c(x = "ANY"),
     ranks_ind <- match( TAXONOMY_RANKS, colnames(rd) )
     # Remove NAs
     ranks_ind <- ranks_ind[ !is.na(ranks_ind) ]
-    # Get the data in correct order, take only column that have ranks
-    rd_rank <- rd[ , ranks_ind, drop = FALSE]
-    # Take other columns
-    rd_other <- rd[ , !ranks_ind, drop = FALSE]
-    
-    # Get rank names
-    rank_names <- colnames(rd_rank)
-    # Convert names s that they have capital letters
-    new_rank_names <- paste(toupper(substr(rank_names, 1, 1)), 
-                            substr(rank_names, 2, nchar(rank_names)), sep = "")
-    # Add new names to colnames of rd_rank
-    colnames(rd_rank) <- new_rank_names
-    
-    # Combine columns
-    rd <- cbind(rd_rank, rd_other)
-    
-    
+    # If ranks were found
+    if( length(ranks_ind) != 0 ){
+        # Get the data in correct order, take only column that have ranks
+        rd_rank <- rd[ , ranks_ind, drop = FALSE]
+        # Take other columns
+        rd_other <- rd[ , !ranks_ind, drop = FALSE]
+        # Get rank names
+        rank_names <- colnames(rd_rank)
+        # Convert names s that they have capital letters
+        new_rank_names <- paste(toupper(substr(rank_names, 1, 1)), 
+                                substr(rank_names, 2, nchar(rank_names)), sep = "")
+        # Add new names to colnames of rd_rank
+        colnames(rd_rank) <- new_rank_names
+        
+        # Combine columns
+        rd <- cbind(rd_rank, rd_other)
+    }
     return(rd)
 }
 
