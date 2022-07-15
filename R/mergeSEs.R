@@ -153,6 +153,11 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                      call. = FALSE)
             }
             ################ Input check end ################
+            # Give message if TRUE
+            if( verbose ){
+                message("Merging with ", join, " join...")
+                message("1/", length(x), appendLF = FALSE)
+            }
             # Merge objects
             tse <- .merge_SE(x, class, join, assay_name, missing_values, verbose)
             return(tse)
@@ -263,7 +268,6 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: A list of SEs
 # Output: SE
-#' @importFrom utils txtProgressBar
 .merge_SE <- function(x, class, join, assay_name, missing_values, verbose){
     # Take first element and remove it from the list
     tse <- x[[1]]
@@ -296,15 +300,12 @@ setMethod("right_join", signature = c(x = "ANY"),
     
     # Lopp through individual TreeSEs and add them to tse
     if( length(x) > 0 ){
-        # Initialize progressbar if TRUE
-        if( verbose ){
-            pb <- txtProgressBar(min = 0, max = length(x), initial = 0,  style = 3)
-        }
         for( i in 1:length(x) ){
-            # Give information on progress if TRUE
+            # Give message if TRUE
             if( verbose ){
-                setTxtProgressBar(pb, i)
+                message("\r", i+1, "/", length(x)+1, appendLF = FALSE)
             }
+            
             # Get the ith object
             temp <- x[[i]]
             # Merge data
@@ -317,10 +318,6 @@ setMethod("right_join", signature = c(x = "ANY"),
                 ))
             # Create an object
             tse <- do.call(FUN_constructor, args = args)
-        }
-        # Close progress bar if TRUE
-        if( verbose ){
-            close(pb)
         }
     }
     return(tse)
