@@ -122,7 +122,7 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
             assay_name_bool <- .assays_cannot_be_found(assay_name = assay_name, x)
             if( any(assay_name_bool) ){
                 stop("'assay_name' must specify an assay from assays. 'assay_name' ",
-                     "cannot be found at least in one TreeSE.",
+                     "cannot be found at least in one SE object.",
                      call. = FALSE)
             }
             # Check join
