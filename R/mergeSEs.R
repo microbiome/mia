@@ -29,16 +29,18 @@
 #' \code{rowData}, \code{assays}, and \code{colData} so that the output includes
 #' each unique row and column ones. If, for example, all rows are not shared with
 #' individual objects, there are missing values in \code{assays}. The notation of missing
-#' can be specified with the \code{missing_values} argument. 
+#' can be specified with the \code{missing_values} argument. If input consists of
+#' \code{TreeSummarizedExperiment} objects, also \code{rowTree}, \code{colTree}, and
+#' \code{referenceSeq} are preserved if possible.
 #' 
 #' Compared to \code{cbind} and \code{rbind} \code{mergeSEs} 
 #' allows more freely merging since \code{cbind} and \code{rbind} expect 
 #' that rows and columns are matching, respectively.
 #' 
-#' You can choose joining methods from 'full', 'inner',
-#' 'left', and 'right'. In all the methods, all the samples are included in the 
-#' result object. However, with different methods, it is possible to choose which 
-#' rows are included.
+#' You can choose joining methods from \code{'full'}, \code{'inner'},
+#'  \code{'left'}, and  \code{'right'}. In all the methods, all the samples are 
+#'  included in the result object. However, with different methods, it is possible 
+#'  to choose which rows are included.
 #' 
 #' \itemize{
 #'   \item{\code{full} -- all unique features}
@@ -49,6 +51,11 @@
 #' 
 #' You can also doe e.g., a full join by using a function \code{full_join} which is 
 #' an alias for \code{mergeSEs}. Also other joining methods have dplyr-like aliases.
+#' 
+#' The output depends on the input. If the input contains \code{SummarizedExperiment}
+#' object, then the output will be \code{SummarizedExperiment}. When all the input
+#' objects belong to \code{TreeSummarizedExperiment}, the output will be 
+#' \code{TreeSummarizedExperiment}.
 #'
 #' @seealso
 #' \itemize{
@@ -341,7 +348,7 @@ setMethod("right_join", signature = c(x = "ANY"),
 .get_SingleCellExperiment_data <- function(tse, assay_name){
     # reducedDim is additional slot for SCE compared to SE. 
     # However, merging reducedDims leads to non-meaningful data
-    # Get th arguments of SE object
+    # Get the arguments of SE object
     args <- .get_SummarizedExperiment_data(tse, assay_name)
     return(args)
 }
