@@ -263,6 +263,7 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: A list of SEs
 # Output: SE
+#' @importFrom utils txtProgressBar
 .merge_SE <- function(x, class, join, assay_name, missing_values, verbose){
     # Take first element and remove it from the list
     tse <- x[[1]]
