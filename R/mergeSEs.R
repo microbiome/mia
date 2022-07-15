@@ -399,7 +399,7 @@ setMethod("right_join", signature = c(x = "ANY"),
              call. = FALSE)
     }
     # If there are multiple classes, give a warning
-    if( length(unique( unlist(lapply(x, class)) )) > 1 ){
+    if( length(unique( unlist(lapply(x, function(y){ class(y)})) )) > 1 ){
         warning("The Input consist of multiple classes. ",
                 "The output is '", class, "'.",
                 call. = FALSE)
