@@ -22,6 +22,7 @@ mergeSEs(x, ...)
   assay_name = "counts",
   join = "full",
   missing_values = NA,
+  collapse_samples = TRUE,
   verbose = TRUE,
   ...
 )
@@ -62,6 +63,9 @@ when more than two objects are being merged.  (By default: \code{join = "full"})
 
 \item{missing_values}{NA, 0, or a single character values specifying the notation
 of missing values. (By default: \code{missing_values = NA})}
+
+\item{collapse_samples}{A boolean value for selecting whether to collapse identically
+named samples to one. (By default: \code{collapse_samples = TRUE})}
 
 \item{verbose}{A single boolean value to choose whether to show messages.
 (By default: \code{verbose = TRUE})}
@@ -133,6 +137,12 @@ tse_temp
 
 # You can also do a left_join by using alias "left_join"
 tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
+
+# If your objects contain samples that are named equally but are in fact 
+# different samples, you must specify 'collapse_samples' to be FALSE. 
+tse_temp <- inner_join(list(tse[1, 1:10], tse[1, 1:20], tse[1, 1:5]), 
+                       collapse_samples = FALSE)
+tse_temp
 
 }
 \seealso{

@@ -17,6 +17,9 @@
 #' @param missing_values NA, 0, or a single character values specifying the notation
 #' of missing values. (By default: \code{missing_values = NA})
 #' 
+#' @param collapse_samples A boolean value for selecting whether to collapse identically
+#' named samples to one. (By default: \code{collapse_samples = TRUE})
+#' 
 #' @param verbose A single boolean value to choose whether to show messages. 
 #' (By default: \code{verbose = TRUE})
 #'
@@ -98,6 +101,12 @@
 #' # You can also do a left_join by using alias "left_join"
 #' tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
 #' 
+#' # If your objects contain samples that are named equally but are in fact 
+#' # different samples, you must specify 'collapse_samples' to be FALSE. 
+#' tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
+#'                        collapse_samples = FALSE)
+#' tse_temp
+#' 
 NULL
 
 ################################### Generic ####################################
@@ -114,7 +123,8 @@ setGeneric("mergeSEs", signature = c("x"),
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList"),
         function(x, assay_name = "counts", join = "full", 
-                 missing_values = NA, verbose = TRUE, ... ){
+                 missing_values = NA, collapse_samples = TRUE, verbose = TRUE, 
+                 ... ){
             ################## Input check ##################
             # Check the objects 
             class <- .check_objects_and_give_class(x)
@@ -147,6 +157,11 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 stop("'missing_values' must be 0, NA, or a single character value.",
                      call. = FALSE)
             }
+            # Check collapse_samples
+            if( !.is_a_bool(collapse_samples) ){
+                stop("'collapse_samples' must be TRUE or FALSE.",
+                     call. = FALSE)
+            }
             # Check verbose
             if( !.is_a_bool(verbose) ){
                 stop("'verbose' must be TRUE or FALSE.",
@@ -159,7 +174,8 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 message("1/", length(x), appendLF = FALSE)
             }
             # Merge objects
-            tse <- .merge_SE(x, class, join, assay_name, missing_values, verbose)
+            tse <- .merge_SE(x, class, join, assay_name, 
+                             missing_values, collapse_samples, verbose)
             return(tse)
         }
 )
@@ -268,7 +284,8 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: A list of SEs
 # Output: SE
-.merge_SE <- function(x, class, join, assay_name, missing_values, verbose){
+.merge_SE <- function(x, class, join, assay_name, 
+                      missing_values, collapse_samples, verbose){
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
@@ -298,6 +315,8 @@ setMethod("right_join", signature = c(x = "ANY"),
                   SummarizedExperiment = .merge_SummarizedExperiments,
     )
     
+    # Initialize a variable that stores how many samples there are
+    number_of_samples <- ncol(tse)
     # Lopp through individual TreeSEs and add them to tse
     if( length(x) > 0 ){
         for( i in 1:length(x) ){
@@ -308,6 +327,12 @@ setMethod("right_join", signature = c(x = "ANY"),
             
             # Get the ith object
             temp <- x[[i]]
+            # Add column number to number of samples
+            number_of_samples <- number_of_samples + ncol(temp)
+            # Modify names if specified
+            if( !collapse_samples ){
+                temp <- .get_unique_sample_names(tse, temp, i+1)
+            }
             # Merge data
             args <- do.call(FUN, args = list(
                 tse_original = tse,
@@ -319,6 +344,18 @@ setMethod("right_join", signature = c(x = "ANY"),
             # Create an object
             tse <- do.call(FUN_constructor, args = args)
         }
+        # Add new line to, so that possible warning message has new line
+        if( verbose ){
+            message("")
+        }
+    }
+    # If number of samples do not match with the object, there have been samples
+    # with equal names that are now collapsed into one
+    if( number_of_samples != ncol(tse) ){
+        warning("The input included samples that were named equally. ",
+                "They are now collapsed into one sample. To disable this function, ",
+                "please specify 'collapse_samples = FALSE'.",
+                call. = FALSE)
     }
     return(tse)
 }
@@ -440,6 +477,20 @@ setMethod("right_join", signature = c(x = "ANY"),
             return(TRUE)
         }
     )
+}
+
+.get_unique_sample_names <- function(tse1, tse2, iteration){
+    # Get indices of those sample names that match
+    ind <-  colnames(tse2) %in% colnames(tse1)
+    # Get duplicated sample names
+    duplicated_colnames <-  colnames(tse2)[ind]
+    if( length(duplicated_colnames) > 0 ) {
+        # Add the number of object to duplicated sample names
+        duplicated_colnames <- paste0(duplicated_colnames, "_", iteration)
+        # Add new sample names to the tse object
+        colnames(tse2)[ind] <- duplicated_colnames
+    }
+    return(tse2)
 }
 
 ###################### .merge_TreeSummarizedExperiments ########################
