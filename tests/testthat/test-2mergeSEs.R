@@ -14,6 +14,10 @@ test_that("mergeSEs", {
     expect_error( mergeSEs(tse1, tse2, join = 1) )
     expect_error( mergeSEs(tse1, tse2, join = TRUE) )
     expect_error( mergeSEs(tse1, tse2, join = NA) )
+    expect_error( mergeSEs(tse1, tse2, collapse_samples = NA) )
+    expect_error( mergeSEs(tse1, tse2, collapse_samples = 1) )
+    expect_error( mergeSEs(tse1, tse2, collapse_samples = "test") )
+    expect_error( mergeSEs(tse1, tse2, collapse_samples = NULL) )
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "left") )
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "right") )
     expect_error( mergeSEs(tse1, tse2, missing_values = TRUE ) )
@@ -135,7 +139,7 @@ test_that("mergeSEs", {
     expect_true( nrow(tse) == 0 )
     expect_equal( rowTree(tse), NULL )
     tse <- mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
-                       join = "inner")
+                       join = "inner", collapse_samples = TRUE)
     expect_true( all(dim(tse) == c(20, 10)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
@@ -167,7 +171,7 @@ test_that("mergeSEs", {
     
     # CHECK LEFT JOIN ##############################################
     tse <- mergeSEs(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
-                       join = "left")
+                       join = "left", collapse_samples = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
@@ -199,7 +203,8 @@ test_that("mergeSEs", {
     
     # CHECK RIGHT JOIN ##############################################
     tse <- mergeSEs(list(tse1[10:50, 1:13], tse1[1:10, 7:20]), 
-                       join = "right", missing_values = NA)
+                    join = "right", missing_values = NA, 
+                    collapse_samples = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
@@ -255,19 +260,28 @@ test_that("mergeSEs", {
                             as(tse1, "SummarizedExperiment")), 
                        join = "full")
     expect_true(class(tse) == "SummarizedExperiment")
+    suppressWarnings(
     tse <- mergeSEs(list(as(tse1, "SummarizedExperiment"), 
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "TreeSummarizedExperiment")), 
                        join = "inner")
+    )
     expect_true(class(tse) == "SummarizedExperiment")
+    suppressWarnings(
     tse <- mergeSEs(list(as(tse1, "SummarizedExperiment"), 
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "SingleCellExperiment")), 
                        join = "full")
+    )
     expect_true(class(tse) == "SummarizedExperiment")
+    suppressWarnings(
     tse <- mergeSEs(x = as(tse1, "TreeSummarizedExperiment"), 
                        y = as(tse1, "SingleCellExperiment"), 
                        join = "right")
+    )
+    expect_warning(mergeSEs(x = as(tse1, "TreeSummarizedExperiment"), 
+                            y = as(tse1, "SingleCellExperiment"), 
+                            join = "right"))
     expect_true(class(tse) == "SingleCellExperiment")
     tse <- mergeSEs(list(as(tse1, "TreeSummarizedExperiment")), 
                        join = "left")
@@ -295,4 +309,21 @@ test_that("mergeSEs", {
     tse_test2 <- right_join(x = list(tse1[1:28, 1:3], tse1[23, 1:5]) )
     expect_equal(tse_test1, tse_test2)
     
+    # Test collapse_samples
+    tse_test <- mergeSEs(x = tse[1:28, 1:3], 
+                         y = tse[23, 1:5], 
+                         join = "full")
+    expect_equal( dim(tse_test), c(28, 8))
+    tse_test <- mergeSEs(x = list(tse[1:28, 1:3], tse[23, 1:5], tse[1, 1:10]),
+                         join = "full")
+    expect_equal( dim(tse_test), c(28, 18))
+    expect_true( (all( c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", "_2", "_3")), 
+                         paste0(rep(colnames(tse[, 4:5]), each=2), c("", "_3")), 
+                         colnames(tse[, 6:10]) ) %in% 
+                          colnames(tse_test) ) &&
+                     all( colnames(tse_test) %in% 
+                     c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", "_2", "_3")), 
+                        paste0(rep(colnames(tse[, 4:5]), each=2), c("", "_3")), 
+                        colnames(tse[, 6:10]) ) ) )
+                 )
 })

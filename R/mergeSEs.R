@@ -18,7 +18,7 @@
 #' of missing values. (By default: \code{missing_values = NA})
 #' 
 #' @param collapse_samples A boolean value for selecting whether to collapse identically
-#' named samples to one. (By default: \code{collapse_samples = TRUE})
+#' named samples to one. (By default: \code{collapse_samples = FALSE})
 #' 
 #' @param verbose A single boolean value to choose whether to show messages. 
 #' (By default: \code{verbose = TRUE})
@@ -123,7 +123,7 @@ setGeneric("mergeSEs", signature = c("x"),
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList"),
         function(x, assay_name = "counts", join = "full", 
-                 missing_values = NA, collapse_samples = TRUE, verbose = TRUE, 
+                 missing_values = NA, collapse_samples = FALSE, verbose = TRUE, 
                  ... ){
             ################## Input check ##################
             # Check the objects 
@@ -348,14 +348,6 @@ setMethod("right_join", signature = c(x = "ANY"),
         if( verbose ){
             message("")
         }
-    }
-    # If number of samples do not match with the object, there have been samples
-    # with equal names that are now collapsed into one
-    if( number_of_samples != ncol(tse) ){
-        warning("The input included samples that were named equally. ",
-                "They are now collapsed into one sample. To disable this function, ",
-                "please specify 'collapse_samples = FALSE'.",
-                call. = FALSE)
     }
     return(tse)
 }
