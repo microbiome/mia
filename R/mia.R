@@ -196,5 +196,3 @@ NULL
 #' \url{https://doi.org/10.3390/ijerph18084049}
 #' 
 "HintikkaXOData"
-
-
