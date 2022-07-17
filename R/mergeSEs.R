@@ -30,7 +30,15 @@
 #' @details
 #' This function merges multiple \code{SummarizedExperiment} objects. It combines
 #' \code{rowData}, \code{assays}, and \code{colData} so that the output includes
-#' each unique row and column ones. If, for example, all rows are not shared with
+#' each unique row and column ones. The merging is done based on \code{rownames} and
+#' \code{colnames}. Equally named rows are interpreted as equal. Further
+#' matching based on \code{rowData} is not done. For samples, collapsing 
+#' is disabled by default meaning that equally named samples that are stored 
+#' in different objects are interpreted as unique. Collapsing can be enabled 
+#' with \code{collapse_samples = TRUE} when equally named samples describe the same
+#' sample. 
+#' 
+#' If, for example, all rows are not shared with
 #' individual objects, there are missing values in \code{assays}. The notation of missing
 #' can be specified with the \code{missing_values} argument. If input consists of
 #' \code{TreeSummarizedExperiment} objects, also \code{rowTree}, \code{colTree}, and
@@ -101,10 +109,10 @@
 #' # You can also do a left_join by using alias "left_join"
 #' tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
 #' 
-#' # If your objects contain samples that are named equally but are in fact 
-#' # different samples, you must specify 'collapse_samples' to be FALSE. 
+#' # If your objects contain samples that describe one and same sample,
+#' # you can collapse equally named samples to one by specifying 'collapse_samples'
 #' tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
-#'                        collapse_samples = FALSE)
+#'                        collapse_samples = TRUE)
 #' tse_temp
 #' 
 NULL
