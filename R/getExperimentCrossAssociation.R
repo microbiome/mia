@@ -121,7 +121,8 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
-#' mae <- microbiomeDataSets::peerj32()
+#' data("HintikkaXOData")
+#' mae <- HintikkaXOData
 #' 
 #' # Subset so that less observations / quicker to run, just for example
 #' mae[[1]] <- mae[[1]][1:20, 1:10]
