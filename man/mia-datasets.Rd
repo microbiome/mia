@@ -10,6 +10,7 @@
 \alias{dmn_se,}
 \alias{twins}
 \alias{peerj13075}
+\alias{HintikkaXOData}
 \title{mia datasets}
 \format{
 An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
@@ -21,6 +22,8 @@ An object of class \code{TreeSummarizedExperiment} with 58 rows and 3 columns.
 An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
 
 An object of class \code{TreeSummarizedExperiment} with 674 rows and 58 columns.
+
+An object of class \code{MultiAssayExperiment} of length 3.
 }
 \usage{
 data(GlobalPatterns)
@@ -32,6 +35,8 @@ data(esophagus)
 data(dmn_se)
 
 data(peerj13075)
+
+data(HintikkaXOData)
 }
 \description{
 These datasets are conversions of the \pkg{phyloseq} datasets
@@ -74,6 +79,30 @@ PeerJ data by Potbhare et al. (2022) includes skin microbial profiles of 58 volu
 16S r-RNA sequencing of V3-V4 regions was done to generate millions of read using illumina platform.
 A standard bioinformatic and statistical analysis done to explore skin bacterial diversity and its association with age, diet, geographical locations.
 The authors investigated significant association of skin microbiota with individual’s geographical location.
+
+The HintikkaXO dataset contains high-throughput profiling data from 40 rat
+samples, including 39 biomarkers, 38 metabolites (NMR), and 12706 OTUs from
+318 species, measured from Cecum. This is diet comparison study with High/Low
+fat diet and xylo-oligosaccaride supplementation. Column metadata is common
+for all experiments (microbiota, metabolites, biomarkers) and includes the
+following fields:
+}
+\details{
+\itemize{
+\item{Sample: Sample ID (character)}
+\item{Rat: Rat ID (factor)}
+\item{Site: Site of measurement ("Cecum"); single value}
+\item{Diet: Diet group (factor; combination of the Fat and XOS fields)}
+\item{Fat: Fat in Diet (factor; Low/High)}
+\item{XOS: XOS Diet Supplement (numeric; 0/1)}
+}
+
+Row metadata of the microbiota data contains taxonomic information on the
+Phylum, Class, Order, Family, Genus, Species, and OTU levels.
+
+Biomarker data contains 39 biomarkers.
+
+Metabolite data contains 38 NMR metabolites.
 }
 \references{
 Caporaso, J. G., et al. (2011).
@@ -118,6 +147,12 @@ PeerJ, 10, e13075.
 Supplemental information includes OTU table and taxonomy table and publicly-accessible from:
 \url{DOI:10.7717/peerj.13075/supp-1}
 \url{DOI:10.7717/peerj.13075/supp-2}
+
+Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic
+steatosis and adipose tissue inflammation: associating taxonomic and
+metabolomic patterns in fecal microbiotas with biclustering. International
+Journal of Environmental Research and Public Health 18(8):4049
+\url{https://doi.org/10.3390/ijerph18084049}
 }
 \author{
 Caporaso, J. G., et al.
@@ -129,5 +164,7 @@ Pei et al. \email{zhiheng.pei@med.nyu.edu}.
 Turnbaugh, PJ et al.
 
 Potbhare, R., et al.
+
+Leo Lahti
 }
 \keyword{data}
