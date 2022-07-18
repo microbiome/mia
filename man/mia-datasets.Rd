@@ -13,17 +13,17 @@
 \alias{HintikkaXOData}
 \title{mia datasets}
 \format{
-An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
+\code{TreeSummarizedExperiment}
 
-An object of class \code{TreeSummarizedExperiment} with 553 rows and 280 columns.
+\code{TreeSummarizedExperiment}
 
-An object of class \code{TreeSummarizedExperiment} with 58 rows and 3 columns.
+\code{TreeSummarizedExperiment}
 
-An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
+\code{SummarizedExperiment}
 
-An object of class \code{TreeSummarizedExperiment} with 674 rows and 58 columns.
+\code{TreeSummarizedExperiment}
 
-An object of class \code{MultiAssayExperiment} of length 3.
+\code{MultiAssayExperiment}
 }
 \usage{
 data(GlobalPatterns)

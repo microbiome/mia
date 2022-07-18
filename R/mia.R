@@ -47,6 +47,7 @@ NULL
 #' @name mia-datasets
 #' @aliases GlobalPatterns
 #' @keywords data
+#' @format \code{TreeSummarizedExperiment}
 #' @usage data(GlobalPatterns)
 #' @author Caporaso, J. G., et al.
 #' @docType data
@@ -69,6 +70,7 @@ NULL
 #' @name mia-datasets
 #' @aliases enterotype
 #' @keywords data
+#' @format \code{TreeSummarizedExperiment}
 #' @usage data(enterotype)
 #' @author Arumugam, M., Raes, J., et al.
 #' @docType data
@@ -94,6 +96,7 @@ NULL
 #' @name mia-datasets
 #' @aliases esophagus
 #' @keywords data
+#' @format \code{TreeSummarizedExperiment}
 #' @usage data(esophagus)
 #' @author Pei et al. \email{zhiheng.pei@@med.nyu.edu}.
 #' @docType data
@@ -121,6 +124,7 @@ NULL
 #' @name mia-datasets
 #' @aliases dmn_se, twins
 #' @keywords data
+#' @format \code{SummarizedExperiment}
 #' @usage data(dmn_se)
 #' @author Turnbaugh, PJ et al.
 #' @references
@@ -144,6 +148,7 @@ NULL
 #' @name mia-datasets
 #' @aliases peerj13075
 #' @keywords data
+#' @format \code{TreeSummarizedExperiment}
 #' @usage data(peerj13075)
 #' @author Potbhare, R., et al.
 #' @docType data
@@ -185,6 +190,7 @@ NULL
 #' @name mia-datasets
 #' @aliases HintikkaXOData
 #' @keywords data
+#' @format \code{MultiAssayExperiment}
 #' @usage data(HintikkaXOData)
 #' @author Leo Lahti
 #' @docType data
