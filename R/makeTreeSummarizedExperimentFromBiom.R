@@ -63,8 +63,8 @@ makeTreeSEFromBiom <- function(obj){
     if( is.null(sample_data) ){
         sample_data <- S4Vectors::make_zero_col_DFrame(ncol(counts))
         rownames(sample_data) <- colnames(counts)
-    # Otherwise convert it into correct format
-    } else{
+    # Otherwise convert it into correct format if it is a list
+    } else if( is(sample_data, "list") ){
         # Get the maximum length of list
         max_length <- max( lengths(sample_data) )
         # Get the column names from the taxa info that has all the columns that occurs
@@ -80,15 +80,13 @@ makeTreeSEFromBiom <- function(obj){
         sample_data <- do.call(rbind, sample_data)
         # Add correct colnames
         colnames(sample_data) <- colnames
-        # Convert into DataFrame
-        sample_data <- DataFrame(sample_data)
     }
     # rowData is initialized with empty tables with rownames if it is NULL
     if( is.null(feature_data) ){
         feature_data <- S4Vectors::make_zero_col_DFrame(nrow(counts))
         rownames(feature_data) <- rownames(counts)
-    # Otherwise convert it into correct format
-    } else{
+    # Otherwise convert it into correct format if it is a list
+    } else if( is(feature_data, "list") ){
         # Feature data is a list of taxa info
         # Get the maximum length of list
         max_length <- max( lengths(feature_data) )
@@ -108,9 +106,10 @@ makeTreeSEFromBiom <- function(obj){
         feature_data <- do.call(rbind, feature_data)
         # Add correct colnames
         colnames(feature_data) <- colnames
-        # Convert into DataFrame
-        feature_data <- DataFrame(feature_data)
     }
+    # Convert into DataFrame
+    sample_data <- DataFrame(sample_data)
+    feature_data <- DataFrame(feature_data)
     
     TreeSummarizedExperiment(assays = list(counts = counts),
                             colData = sample_data,
