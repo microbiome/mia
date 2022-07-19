@@ -502,77 +502,75 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Output: A list of arguments
 .merge_TreeSummarizedExperiments <- function(tse_original, tse, join,  
                                              assay_name, missing_values){
-    # Get row trees and rownode labels of 1st object
-    row_tree1 <- rowTree(tse_original)
-    row_node_labs1 <- rowLinks(tse_original)[ , "nodeLab" ]
-    if( !is.null(row_node_labs1) ){
-        names(row_node_labs1) <- rownames(tse_original)
-    }
-    # Get row trees and rownode labels of 2nd object
-    row_tree2 <- rowTree(tse)
-    row_node_labs2 <- rowLinks(tse)[ , "nodeLab" ]
-    if( !is.null(row_node_labs2) ){
-        names(row_node_labs2) <- rownames(tse)
-    }
-    
-    # Get col trees and column node labels of 1st object
-    col_tree1 <- colTree(tse_original)
-    col_node_labs1 <- colLinks(tse_original)[ , "nodeLab" ]
-    if( !is.null(col_node_labs1) ){
-        names(col_node_labs1) <- colnames(tse_original)
-    }
-    # Get col trees and column node labels of 2nd object
-    col_tree2 <- colTree(tse)
-    col_node_labs2 <- colLinks(tse)[ , "nodeLab" ]
-    if( !is.null(col_node_labs2) ){
-        names(col_node_labs2) <- colnames(tse)
-    }
-    
-    # Get reference sequences og both objects
-    ref_seqs1 <- referenceSeq(tse_original)
-    ref_seqs2 <- referenceSeq(tse)
-    
     # Merge data to get a list of arguments
     args <- .merge_SingleCellExperiments(tse_original, tse, join,
                                         assay_name, missing_values)
     
-    # rowTree
-    # If labels of the 1st tree match with data, add tree1
-    if( length(rownames(args$rowData)) > 0 && !is.null( row_tree1 ) &&
-        all( rownames(args$rowData) %in% names(row_node_labs1) ) ){
-        args$rowTree <- row_tree1
-        # Get rowlinks into correct order
-        row_node_labs1 <- row_node_labs1[ match(rownames(args$rowData), 
-                                        names(row_node_labs1)) ]
-        args$rowNodeLab <- row_node_labs1
-    # If labels of the 2nd tree match with data, add tree2
-    } else if( length(rownames(args$rowData)) > 0 && !is.null( row_tree2 ) &&
-               all( rownames(args$rowData) %in% names(row_node_labs2) ) ){
-        args$rowTree <- row_tree2
-        # Get rowlinks into correct order
-        row_node_labs2 <- row_node_labs2[ match(rownames(args$rowData), 
-                                        names(row_node_labs2)) ]
-        args$rowNodeLab <- row_node_labs2
+    # Check if 1st rowTree matches with data
+    tree_args <- .check_if_tree_matches_with_data(
+        rowTree(tse_original),
+        rowLinks(tse_original),
+        rowLinks(tse),
+        rownames(tse_original),
+        rownames(tse),
+        rownames(args$rowData)
+        )
+    # If it is not NULL, then add arguments
+    if( !is.null(tree_args) ){
+        args$rowTree <- tree_args$tree
+        args$rowNodeLab <- tree_args$node_labs
+    # Otherwise test the 2nd tree
+    } else{
+        # Get tree args
+        tree_args <- .check_if_tree_matches_with_data(
+            rowTree(tse),
+            rowLinks(tse_original),
+            rowLinks(tse),
+            rownames(tse_original),
+            rownames(tse),
+            rownames(args$rowData)
+        )
+        # If not NULL, then add
+        if( !is.null(tree_args) ){
+            args$rowTree <- tree_args$tree
+            args$rowNodeLab <- tree_args$node_labs
+        }
     }
-    # colTree
-    # If labels of the 1st tree match with data, add tree1
-    if( length(rownames(args$colData)) > 0 && !is.null( col_tree1 ) &&
-        all( colnames(args$colData) %in% names(col_node_labs1) ) ){
-        args$colTree <- col_tree1
-        # Get column links into correct order
-        col_node_labs1 <- col_node_labs1[ match(rownames(args$colData), 
-                                        names(col_node_labs1)) ]
-        args$colNodeLab <- col_node_labs1
-    # If labels of the 2nd tree match with data, add tree2
-    } else if( length(rownames(args$colData)) > 0  && !is.null( col_tree2 ) &&
-               all( colnames(args$colData) %in% names(col_node_labs2) ) ){
-        args$colTree <- row_tree2
-        # Get column links into correct order
-        col_node_labs2 <- col_node_labs2[ match(rownames(args$colData), 
-                                        names(col_node_labs2)) ]
-        args$colNodeLab <- col_node_labs2
+    
+    # Check if 1st colTree matches with data
+    tree_args <- .check_if_tree_matches_with_data(
+        colTree(tse_original),
+        colLinks(tse_original),
+        colLinks(tse),
+        colnames(tse_original),
+        colnames(tse),
+        rownames(args$colData)
+    )
+    # If it is not NULL, then add arguments
+    if( !is.null(tree_args) ){
+        args$colTree <- tree_args$tree
+        args$colNodeLab <- tree_args$node_labs
+        # Otherwise test the 2nd tree
+    } else{
+        # Get tree args
+        tree_args <- .check_if_tree_matches_with_data(
+            colTree(tse),
+            colLinks(tse_original),
+            colLinks(tse),
+            colnames(tse_original),
+            colnames(tse),
+            rownames(args$colData)
+        )
+        # If not NULL, then add
+        if( !is.null(tree_args) ){
+            args$colTree <- tree_args$tree
+            args$colNodeLab <- tree_args$node_labs
+        }
     }
+    
     # Reference sequences
+    ref_seqs1 <- referenceSeq(tse_original)
+    ref_seqs2 <- referenceSeq(tse)
     # If names of 1st sequences match with data, add refseq1
     if( length(rownames(args$rowData)) > 0 && !is.null( ref_seqs1 ) &&
         all( rownames(args$rowData) %in% names(ref_seqs1) ) ){
@@ -589,6 +587,38 @@ setMethod("right_join", signature = c(x = "ANY"),
     return(args)
 }
 
+.check_if_tree_matches_with_data <- function(tree, 
+                                             links1, links2, 
+                                             names_original1, names_original2,
+                                             names_final){
+    # Get labels of tree
+    tree_labels <- c( tree$tip.label, tree$node.label )
+    # Get links
+    node_labs <- c(links1[ , "nodeLab" ], links2[ , "nodeLab" ])
+    # Otherwise, if links are NULL, Links are names
+    if( is.null(node_labs) ){
+        node_labs <- c(names_original1, names_original2)
+    }
+    # Add names
+    names(node_labs) <- c(names_original1, names_original2)
+    
+    # Check if tree matches with data
+    if( length(names_final) > 0 && !is.null( tree ) && !is.null(node_labs) &&
+        all( node_labs %in% tree_labels ) ){
+        # Create a list that combines arguments
+        tree_arguments <- list()
+        # Add tree
+        tree_arguments$tree <- tree
+        # Put links into correct order
+        node_labs <- node_labs[ match(names_final, names(node_labs)) ]
+        # Add links
+        tree_arguments$node_labs <- node_labs
+    # If the tree does not match, give NULL
+    } else{
+        tree_arguments <- NULL
+    }
+    return(tree_arguments)
+}
 ######################## .merge_SingleCellExperiments ##########################
 # This function merges the data of two SCE objects into one set of arguments that
 # can be feed to create a single object.
