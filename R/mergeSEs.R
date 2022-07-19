@@ -369,12 +369,16 @@ setMethod("right_join", signature = c(x = "ANY"),
 .get_TreeSummarizedExperiment_data <- function(tse, assay_name){
     # Get rowTree and colTree
     row_tree <- rowTree(tse)
+    row_links <- rowLinks(tse)
     col_tree <- colTree(tse)
+    col_links <- colLinks(tse)
     # Get a list of arguments of SCE object
     args <- .get_SingleCellExperiment_data(tse, assay_name)
     # Add TreeSE-specific slots
     args$rowTree <- row_tree
+    args$rowNodeLab <- row_links[ , "nodeLab"]
     args$colTree <- col_tree
+    args$colNodeLab <- col_links[ , "nodeLab"]
     return(args)
 }
 
@@ -446,7 +450,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     return(class)
 }
 
-########################### .assays_cannot_be_found #############################
+########################### .assays_cannot_be_found ############################
 # This function checks that the assay can be found from TreeSE objects of a list.
 
 # Input: the name of the assay and a list of TreeSE objects
@@ -479,6 +483,11 @@ setMethod("right_join", signature = c(x = "ANY"),
     )
 }
 
+########################### .get_unique_sample_names ###########################
+# This function convert colnames unique
+
+# Input: TreeSEs
+# Output: One TreeSE with unique sample names compared to other TreeSE
 .get_unique_sample_names <- function(tse1, tse2, iteration){
     # Get indices of those sample names that match
     ind <-  colnames(tse2) %in% colnames(tse1)
@@ -587,20 +596,37 @@ setMethod("right_join", signature = c(x = "ANY"),
     return(args)
 }
 
+####################### .check_if_tree_matches_with_data #######################
+# This function check if rowTree or colTree matches with the data
+
+# Input: rowTree, rowLinks of both objects, rownames of both objects, 
+# rownames of final object
+# Output: rowTree and rowLinks as a list if tree matches. Otherwise NULL.
 .check_if_tree_matches_with_data <- function(tree, 
                                              links1, links2, 
                                              names_original1, names_original2,
                                              names_final){
     # Get labels of tree
     tree_labels <- c( tree$tip.label, tree$node.label )
-    # Get links
-    node_labs <- c(links1[ , "nodeLab" ], links2[ , "nodeLab" ])
+    # Get links1
+    node_labs1 <- links1[ , "nodeLab" ]
     # Otherwise, if links are NULL, Links are names
-    if( is.null(node_labs) ){
-        node_labs <- c(names_original1, names_original2)
+    if( is.null(node_labs1) ){
+        node_labs1 <- names_original1
     }
     # Add names
-    names(node_labs) <- c(names_original1, names_original2)
+    names(node_labs1) <- names_original1
+    # Get links2
+    node_labs2 <- links2[ , "nodeLab" ]
+    # Otherwise, if links are NULL, Links are names
+    if( is.null(node_labs2) ){
+        node_labs2 <- names_original2
+    }
+    # Add names
+    names(node_labs2) <- names_original2
+    
+    # Combine node labels
+    node_labs <- c(node_labs1, node_labs2)
     
     # Check if tree matches with data
     if( length(names_final) > 0 && !is.null( tree ) && !is.null(node_labs) &&
@@ -619,6 +645,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     }
     return(tree_arguments)
 }
+
 ######################## .merge_SingleCellExperiments ##########################
 # This function merges the data of two SCE objects into one set of arguments that
 # can be feed to create a single object.

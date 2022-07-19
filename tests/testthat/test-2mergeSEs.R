@@ -79,9 +79,8 @@ test_that("mergeSEs", {
     expect_true( all(colnames(tse3) %in% colnames(tse)) )
     
     # CHECK FULL JOIN ###################################################
-    tse <- mergeSEs(list(tse2, tse3, tse1, 
-                                              tse1[1:2, ], tse1[1, ]), 
-                                         missing_values = NA)
+    tse <- mergeSEs(list(tse2, tse3, tse1, tse1[1:2, ], tse1[1, ]), 
+                    missing_values = NA)
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
