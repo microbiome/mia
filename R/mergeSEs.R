@@ -400,7 +400,7 @@ setMethod("right_join", signature = c(x = "ANY"),
 # This function gets the desired data from one SE object and creates a list of 
 # arguments containing the data
 
-# Input; SE
+# Input: SE
 # Output: A list of arguments
 .get_SummarizedExperiment_data <- function(tse, assay_name){
     # Remove all information but rowData, colData, metadata and assay
