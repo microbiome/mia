@@ -5,7 +5,9 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @param file biom file location
-#'
+#' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
+#' taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})
+#' 
 #' @return An object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
@@ -22,7 +24,7 @@
 #'   # load from file
 #'   rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
 #'                                  package = "biomformat")
-#'   se <- loadFromBiom(rich_dense_file)
+#'   se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE)
 #'
 #'   # load from object
 #'   x1 <- biomformat::read_biom(rich_dense_file)
@@ -36,10 +38,10 @@ NULL
 #' @rdname makeTreeSEFromBiom
 #'
 #' @export
-loadFromBiom <- function(file) {
+loadFromBiom <- function(file, removeTaxaPrefixes = FALSE) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    makeTreeSEFromBiom(biom)
+    makeTreeSEFromBiom(biom, removeTaxaPrefixes)
 }
 
 #' @rdname makeTreeSEFromBiom
@@ -48,7 +50,7 @@ loadFromBiom <- function(file) {
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame
-makeTreeSEFromBiom <- function(obj){
+makeTreeSEFromBiom <- function(obj, removeTaxaPrefixes = FALSE, ...){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){
@@ -94,7 +96,7 @@ makeTreeSEFromBiom <- function(obj){
         # in the data
         colnames <- names( head( feature_data[ lengths(feature_data) == 
                                                    max_length ], 1)[[1]] )
-        # Convert the list so that all invidual taxa info have the max length
+        # Convert the list so that all individual taxa info have the max length
         # of the list objects. All vectors are appended with NAs, if they do not
         # have all the levels. E.g., if only Kingdom level is found, all lower
         # ranks are now NA
@@ -107,6 +109,18 @@ makeTreeSEFromBiom <- function(obj){
         # Add correct colnames
         colnames(feature_data) <- colnames
     }
+    
+    # Remove prefixes if specified and rowData includes info
+    if(removeTaxaPrefixes && ncol(feature_data) > 0){
+        # Patterns for superkingdom, domain, kingdom, phylum, class, order, family,
+        # genus, species
+        patterns <- "sk__|([dkpcofgs]+)__"
+        feature_data <- apply(feature_data, 2,
+                              gsub,
+                              pattern = patterns,
+                              replacement = "")
+    }
+    
     # Convert into DataFrame
     sample_data <- DataFrame(sample_data)
     feature_data <- DataFrame(feature_data)
@@ -120,6 +134,6 @@ makeTreeSEFromBiom <- function(obj){
 #' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
 #' @rdname makeTreeSEFromBiom
 #' @export
-makeTreeSummarizedExperimentFromBiom <- function(obj){
-    makeTreeSEFromBiom(obj)
+makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
+    makeTreeSEFromBiom(obj, ...)
 }
