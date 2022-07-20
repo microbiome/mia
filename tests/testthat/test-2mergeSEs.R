@@ -325,4 +325,8 @@ test_that("mergeSEs", {
                         paste0(rep(colnames(tse[, 4:5]), each=2), c("", "_3")), 
                         colnames(tse[, 6:10]) ) ) )
                  )
+    # Test that tree is added after agglomeration
+    agg_tse1 <- suppressWarnings( aggTSE(tse1, rowLevel = c(6,4,2)) )
+    tse <- mergeSEs(tse1, agg_tse1)
+    expect_equal(rowTree(tse), rowTree(tse1))
 })
