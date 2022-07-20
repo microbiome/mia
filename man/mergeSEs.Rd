@@ -83,7 +83,10 @@ Merge SE objects into single SE object.
 This function merges multiple \code{SummarizedExperiment} objects. It combines
 \code{rowData}, \code{assays}, and \code{colData} so that the output includes
 each unique row and column ones. The merging is done based on \code{rownames} and
-\code{colnames}. Equally named rows are interpreted as equal. Further
+\code{colnames}. \code{rowTree} and \code{colTree} are preserved if linkage
+between rows/cols and the tree is found.
+
+Equally named rows are interpreted as equal. Further
 matching based on \code{rowData} is not done. For samples, collapsing
 is disabled by default meaning that equally named samples that are stored
 in different objects are interpreted as unique. Collapsing can be enabled
