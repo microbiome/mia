@@ -398,6 +398,12 @@ setMethod("right_join", signature = c(x = "ANY"),
     links <- trees_and_links$links
     names <- ifelse(MARGIN == "row", rownames(tse), colnames(tse) )
     
+    if( !all(names %in% links[["names"]]) ){
+        warning(MARGIN, "Tree(s) does not match with the data so it is discarded.",
+                call. = FALSE)
+        return(tse)
+    }
+    
     tree_labs <- lapply(trees, FUN = function(x){
         labs <- c( x$tip.label, x$node.label )
         return(labs)
@@ -405,28 +411,13 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Make names unique
     names(tree_labs) <- names(trees) <- make.unique(names(trees))
     
-    do.call(rbind, links)
+    # Get links
+    # Remove duplicates
+    links <- links[ !duplicated(links[["names"]]), ]
+    node_labs <- links[["nodeLab"]]
+    # Get corresponding row/col
+    names(node_labs) <- links[["names"]]
     
-    
-    # Get links1
-    node_labs1 <- links1[ , "nodeLab" ]
-    # Otherwise, if links are NULL, Links are names
-    if( is.null(node_labs1) ){
-        node_labs1 <- names_original1
-    }
-    # Add names
-    names(node_labs1) <- names_original1
-    # Get links2
-    node_labs2 <- links2[ , "nodeLab" ]
-    # Otherwise, if links are NULL, Links are names
-    if( is.null(node_labs2) ){
-        node_labs2 <- names_original2
-    }
-    # Add names
-    names(node_labs2) <- names_original2
-    
-    # Unlist node_labs to have one large vector
-    node_labs <- unlist(node_labs)
     # Check whether nodes can be found from trees
     result <- lapply(tree_labs, FUN = function(x){
         c( node_labs %in% x )
@@ -435,20 +426,18 @@ setMethod("right_join", signature = c(x = "ANY"),
     result <- as.data.frame(result)
     rownames(result) <- node_labs
     
-    # If there are rows that cannot be linked with trees
+    # If there are rows/cols that cannot be linked with trees
     if( any( rowSums(result) == 0 ) ){
-        args <- list()
-        args$tree <- NULL
-        args$links <- NULL
-        return(args)
+        warning(MARGIN, "Tree(s) does not match with the data so it is discarded.",
+                call. = FALSE)
+        return(tse)
     }
     
-    how_many_rows_can_be_found <- colSums(result)
-    
+    tree_names <- NULL
     for( i in seq_len(ncol(result)) ){
         combinations <- combn(result, i, simplify = FALSE)
         res <- lapply(combinations, FUN = function(x){
-            all( rowSums(x) == ncol(x) )
+            all( rowSums(x) > 0 )
         })
         res <- unlist(res)
         if( any(res) ){
@@ -459,7 +448,7 @@ setMethod("right_join", signature = c(x = "ANY"),
             break
         }
     }
-    
+    trees <- trees[tree_names]
     result <- result[ , tree_names, drop = FALSE ]
     whichTree <- apply(result, 1, FUN = function(x){
         names(result)[x == TRUE]
@@ -491,32 +480,52 @@ setMethod("right_join", signature = c(x = "ANY"),
         whichTree = rowLinks[["whichTree"]]
     )
     
+    if(MARGIN == "row" ){
+        tse@rowTree <- trees
+        tse@rowLinks <- rowLinks
+    } else{
+        tse@colTree <- trees
+        tse@colLinks <- rowLinks
+    }
+    
+    tse
 }
 
 .get_TreeSE_args <- function(tse, tse_args){
     
     if( !is.null(tse@rowTree) ){
+        rowLinks <- DataFrame(rowLinks(tse))
+        rowLinks$names <- rownames(tse)
         rowTrees <- list(
             trees = tse@rowTree,
-            links = rowLinks(tse)
+            links = rowLinks
         )
-        if( !is.null(tse_args$rowTrees) ){
+        if( is.null(tse_args$rowTrees) ){
             tse_args$rowTrees <- rowTrees
         }
         else{
-            tse_args$rowTrees <- c( tse_args$rowTrees, rowTrees ) 
+            tse_args$rowTrees <- list( 
+                trees = c(tse_args$rowTrees$trees, rowTrees$trees),
+                links = rbind(tse_args$rowTrees$links, rowTrees$links)
+                ) 
         }
     }
     if( !is.null(tse@colTree) ){
+        colLinks <- DataFrame(colLinks(tse))
+        colLinks$names <- colnames(tse)
+        
         colTrees <- list(
             trees = tse@colTree,
-            links = colLinks(tse)
+            links = colLinks
         )
-        if( !is.null(tse_args$colTrees) ){
+        if( is.null(tse_args$colTrees) ){
             tse_args$colTrees <- colTrees
         }
         else{
-            tse_args$colTrees <- c( tse_args$colTrees, colTrees ) 
+            tse_args$colTrees <- list( 
+                trees = c(tse_args$colTrees$trees, colTrees$trees),
+                links = rbind(tse_args$colTrees$links, colTrees$links)
+            ) 
         }
     }
     if( !is.null(referenceSeq(tse)) ){
