@@ -370,30 +370,74 @@ setMethod("right_join", signature = c(x = "ANY"),
                 tse_args <- .get_TreeSE_args(temp, tse_args)
             }
         }
+        # Add new line to, so that possible warning message has new line
+        if( verbose ){
+            message("")
+        }
         rowTrees <- tse_args$rowTrees
         colTrees <- tse_args$colTrees
         refSeqs <- tse_args$refSeqs
         # If class is TreeSE, get trees and links
         if( !is.null(rowTrees) ){
-            tse <- .check_and_add_trees(tse, rowTrees, "row")
+            tse <- .check_and_add_trees(tse, rowTrees, "row", verbose)
         }
         # If class is TreeSE, get trees and links
         if( !is.null(colTrees) ){
-            tse <- .check_and_add_trees(tse, colTrees, "col")
+            tse <- .check_and_add_trees(tse, colTrees, "col", verbose)
         }
         # If class is TreeSE, get trees and links
         if( !is.null(refSeqs) ){
-            tse <- .check_and_add_trees(tse, colTrees, "col")
-        }
-        # Add new line to, so that possible warning message has new line
-        if( verbose ){
-            message("")
+            tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
         }
     }
     return(tse)
 }
 
-.check_and_add_trees <- function(tse, trees_and_links, MARGIN){
+.check_and_add_refSeqs <- function(tse, refSeqs, verbose){
+    if( verbose ){
+        message("Adding referenceSeqs...")
+    }
+    # Should it be an error if refseqs in and DNAStringSetList format
+    all_same <- sum((unlist(lapply(refSeqs, is, class = "DNAStringSetList")))) ==
+        length(refSeqs) || sum((unlist(lapply(refSeqs, is, class = "DNAStringSetList")))) == 0
+    if( !all_same ){
+        warning("referenceSeqs do not match with the data so they are discarded.",
+                call. = FALSE)
+        return(tse)
+    }
+    
+    max_numrow <- max(unlist(lapply(refSeqs, FUN = function(x){
+        if( is(x, "DNAStringSetList") ){
+            return(length(x))
+        } else{
+            return(1)
+        }
+    }
+    )))
+    
+    rows_that_have_seqs <- lapply(refSeqs, FUN = function(x){
+        if( is(x, "DNAStringSetList") ){
+            x <- x[[1]]
+        }
+        names(x)
+    })
+    rows_that_have_seqs <- unlist(rows_that_have_seqs)
+    if( !all(rownames(tse) %in% rows_that_have_seqs) ){
+        warning("referenceSeqs do not match with the data so they are discarded.",
+                call. = FALSE)
+        return(tse)
+    }
+    
+    for(i in seq_len(max_numrow) ){
+        
+    }
+    
+}
+
+.check_and_add_trees <- function(tse, trees_and_links, MARGIN, verbose){
+    if( verbose ){
+        message("Adding ", MARGIN, "Tree(s)...")
+    }
     trees <- trees_and_links$trees
     links <- trees_and_links$links
     names <- ifelse(MARGIN == "row", rownames(tse), colnames(tse) )
@@ -532,7 +576,7 @@ setMethod("right_join", signature = c(x = "ANY"),
         refSeqs <- list(
             referenceSeq(tse)
         )
-        if( !is.null(tse_args$refSeqs) ){
+        if( is.null(tse_args$refSeqs) ){
             tse_args$refSeqs <- refSeqs
         }
         else{
