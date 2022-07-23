@@ -397,14 +397,14 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( verbose ){
         message("Adding referenceSeqs...")
     }
-    # Should it be an error if refseqs in and DNAStringSetList format
-    all_same <- sum((unlist(lapply(refSeqs, is, class = "DNAStringSetList")))) ==
-        length(refSeqs) || sum((unlist(lapply(refSeqs, is, class = "DNAStringSetList")))) == 0
-    if( !all_same ){
-        warning("referenceSeqs do not match with the data so they are discarded.",
-                call. = FALSE)
-        return(tse)
-    }
+    # # Should it be an error if refseqs in and DNAStringSetList format
+    # all_same <- sum((unlist(lapply(refSeqs, is, class = "DNAStringSetList")))) ==
+    #     length(refSeqs) || sum((unlist(lapply(refSeqs, is, class = "DNAStringSetList")))) == 0
+    # if( !all_same ){
+    #     warning("referenceSeqs do not match with the data so they are discarded.",
+    #             call. = FALSE)
+    #     return(tse)
+    # }
     
     rows_that_have_seqs <- lapply(refSeqs, FUN = function(x){
         names(x[[1]])
@@ -1179,12 +1179,19 @@ setMethod("right_join", signature = c(x = "ANY"),
                     left = FALSE,
                     right = TRUE
     )
+    
+    FUN <- switch(join,
+                    full = dplyr::full_join,
+                    inner = dplyr::inner_join,
+                    left = dplyr::left_join,
+                    right = dplyr::right_join
+    )
     # Ensure that the data is in correct format
     df1 <- as.data.frame(df1)
     df2 <- as.data.frame(df2)
     # Order tables in alphabetical order
-    df1 <- df1[ , order(colnames(df1)) ]
-    df2 <- df2[ , order(colnames(df2)) ]
+    df1 <- df1[ , order(colnames(df1)), drop = FALSE ]
+    df2 <- df2[ , order(colnames(df2)), drop = FALSE ]
     
     # Get matching variables indices
     matching_variables_ids1 <- match( colnames(df2), colnames(df1) )
@@ -1212,7 +1219,8 @@ setMethod("right_join", signature = c(x = "ANY"),
     df1$rownames_merge_ID <- rownames(df1)
     df2$rownames_merge_ID <- rownames(df2)
     # Merge data frames into one data frame
-    df <- merge(df1, df2, by = "rownames_merge_ID", all.x = all.x, all.y = all.y)
+    # df <- merge(df1, df2, by = "rownames_merge_ID", all.x = all.x, all.y = all.y)
+    df <- FUN(x = df1, y = df2, by = "rownames_merge_ID")
     # Add rownames and remove additional column
     rownames(df) <- df$rownames_merge_ID
     df$rownames_merge_ID <- NULL
