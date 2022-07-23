@@ -358,26 +358,26 @@ setMethod("right_join", signature = c(x = "ANY"),
                 tse_args <- .get_TreeSE_args(temp, tse_args)
             }
         }
-        # Add new line to, so that possible warning message has new line
-        if( verbose ){
-            message("")
-        }
-        # Get the data
-        rowTrees <- tse_args$rowTrees
-        colTrees <- tse_args$colTrees
-        refSeqs <- tse_args$refSeqs
-        # If data includes rowTrees, add them
-        if( !is.null(rowTrees) ){
-            tse <- .check_and_add_trees(tse, rowTrees, "row", verbose)
-        }
-        # If data includes colTrees, add them
-        if( !is.null(colTrees) ){
-            tse <- .check_and_add_trees(tse, colTrees, "col", verbose)
-        }
-        # If data includes reference sequences, add them
-        if( !is.null(refSeqs) ){
-            tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
-        }
+    }
+    # Add new line to, so that possible warning or  message has new line
+    if( verbose ){
+        message("")
+    }
+    # Get the data
+    rowTrees <- tse_args$rowTrees
+    colTrees <- tse_args$colTrees
+    refSeqs <- tse_args$refSeqs
+    # If data includes rowTrees, add them
+    if( !is.null(rowTrees) ){
+        tse <- .check_and_add_trees(tse, rowTrees, "row", verbose)
+    }
+    # If data includes colTrees, add them
+    if( !is.null(colTrees) ){
+        tse <- .check_and_add_trees(tse, colTrees, "col", verbose)
+    }
+    # If data includes reference sequences, add them
+    if( !is.null(refSeqs) ){
+        tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
     }
     return(tse)
 }
@@ -914,9 +914,6 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Ensure that the data is in correct format
     df1 <- as.data.frame(df1)
     df2 <- as.data.frame(df2)
-    # Order tables in alphabetical order
-    df1 <- df1[ , order(colnames(df1)), drop = FALSE ]
-    df2 <- df2[ , order(colnames(df2)), drop = FALSE ]
     
     # Get matching variables indices
     matching_variables_ids1 <- match( colnames(df2), colnames(df1) )
