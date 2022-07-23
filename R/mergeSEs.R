@@ -406,20 +406,8 @@ setMethod("right_join", signature = c(x = "ANY"),
         return(tse)
     }
     
-    max_numrow <- max(unlist(lapply(refSeqs, FUN = function(x){
-        if( is(x, "DNAStringSetList") ){
-            return(length(x))
-        } else{
-            return(1)
-        }
-    }
-    )))
-    
     rows_that_have_seqs <- lapply(refSeqs, FUN = function(x){
-        if( is(x, "DNAStringSetList") ){
-            x <- x[[1]]
-        }
-        names(x)
+        names(x[[1]])
     })
     rows_that_have_seqs <- unlist(rows_that_have_seqs)
     if( !all(rownames(tse) %in% rows_that_have_seqs) ){
@@ -428,10 +416,29 @@ setMethod("right_join", signature = c(x = "ANY"),
         return(tse)
     }
     
-    for(i in seq_len(max_numrow) ){
-        
-    }
+    max_numrow <- max(lengths(refSeqs))
     
+    result_list <- list()
+    for(i in seq_len(max_numrow) ){
+        temp_seqs <- lapply(refSeqs, FUN = function(x){
+            if(i > length(x) ){
+                return(x[[length(x)]])
+            } else{
+                return(x[[i]])
+            }
+        })
+        temp_seqs <- do.call(c, temp_seqs)
+        temp_seqs <- temp_seqs[ match(rownames(tse), names(temp_seqs)), ]
+        result_list <- c(result_list, temp_seqs)
+    }
+    # Create a DNAStrinSetList
+    if(length(result_list) > 1){
+        result <- do.call(DNAStringSetList, result_list)
+    } else{
+        result <- result_list[[1]]
+    }
+    referenceSeq(tse) <- result
+    return(tse)
 }
 
 .check_and_add_trees <- function(tse, trees_and_links, MARGIN, verbose){
@@ -573,8 +580,12 @@ setMethod("right_join", signature = c(x = "ANY"),
         }
     }
     if( !is.null(referenceSeq(tse)) ){
+        refSeq <- referenceSeq(tse)
+        if( is(refSeq, "DNAStringSet") ){
+            refSeq <- DNAStringSetList(refSeq)
+        }
         refSeqs <- list(
-            referenceSeq(tse)
+            refSeq
         )
         if( is.null(tse_args$refSeqs) ){
             tse_args$refSeqs <- refSeqs
