@@ -45,7 +45,8 @@
 #' individual objects, there are missing values in \code{assays}. The notation of missing
 #' can be specified with the \code{missing_values} argument. If input consists of
 #' \code{TreeSummarizedExperiment} objects, also \code{rowTree}, \code{colTree}, and
-#' \code{referenceSeq} are preserved if possible.
+#' \code{referenceSeq} are preserved if possible. The data is preserved if 
+#' all the rows or columns can be found from it.
 #' 
 #' Compared to \code{cbind} and \code{rbind} \code{mergeSEs} 
 #' allows more freely merging since \code{cbind} and \code{rbind} expect 
@@ -364,8 +365,7 @@ setMethod("right_join", signature = c(x = "ANY"),
             # Create an object
             tse <- do.call(FUN_constructor, args = args)
             
-            # If class is TreeSE, get trees and links
-            # If class is TreeSE, get trees and links
+            # If class is TreeSE, get trees and links, and reference sequences
             if( class == "TreeSummarizedExperiment" ){
                 tse_args <- .get_TreeSE_args(temp, tse_args)
             }
@@ -374,6 +374,7 @@ setMethod("right_join", signature = c(x = "ANY"),
         if( verbose ){
             message("")
         }
+        # Get the data
         rowTrees <- tse_args$rowTrees
         colTrees <- tse_args$colTrees
         refSeqs <- tse_args$refSeqs
@@ -393,7 +394,14 @@ setMethod("right_join", signature = c(x = "ANY"),
     return(tse)
 }
 
+############################ .check_and_add_refSeqs ############################
+# This function check if reference sequences can be added, and adds them if it
+# is possible
+
+# Input: reference sequences and TreeSE
+# Output: TreeSE
 .check_and_add_refSeqs <- function(tse, refSeqs, verbose){
+    # Give message if wanted
     if( verbose ){
         message("Adding referenceSeqs...")
     }
@@ -406,55 +414,78 @@ setMethod("right_join", signature = c(x = "ANY"),
     #     return(tse)
     # }
     
+    # Get the rownames that are included in reference sequences
     rows_that_have_seqs <- lapply(refSeqs, FUN = function(x){
         names(x[[1]])
     })
     rows_that_have_seqs <- unlist(rows_that_have_seqs)
+    # Check that all the rownames are included
     if( !all(rownames(tse) %in% rows_that_have_seqs) ){
         warning("referenceSeqs do not match with the data so they are discarded.",
                 call. = FALSE)
         return(tse)
     }
-    
+    # Get the maximum number of DNA sets that individual TreeSE had / max number of 
+    # sets that individual rownames set had.
     max_numrow <- max(lengths(refSeqs))
     
+    # Initialize a list
     result_list <- list()
+    # Loop from 1 to max number of DNA sets
     for(i in seq_len(max_numrow) ){
+        # Loop over DNA set list. Each element is found from unique TreeSE
         temp_seqs <- lapply(refSeqs, FUN = function(x){
-            if(i > length(x) ){
+            # If the ith element cannot be found, give the last
+            if( i > length(x) ){
                 return(x[[length(x)]])
             } else{
+                # Otherwise give the ith element
                 return(x[[i]])
             }
         })
+        # Combine the list that includes DNA sets from unique TreeSEs.
         temp_seqs <- do.call(c, temp_seqs)
+        # Get only those taxa that are included in TreeSE
         temp_seqs <- temp_seqs[ match(rownames(tse), names(temp_seqs)), ]
+        # Add combined ssequences into a list
         result_list <- c(result_list, temp_seqs)
     }
-    # Create a DNAStrinSetList
+    # Create a DNAStrinSetList if there are more than one element
     if(length(result_list) > 1){
         result <- do.call(DNAStringSetList, result_list)
     } else{
+        # Otherwise, give the only DNA set as it is
         result <- result_list[[1]]
     }
+    # Add it to the correct slot
     referenceSeq(tse) <- result
     return(tse)
 }
 
+############################# .check_and_add_trees #############################
+# This function check if tree can be added, and adds it if it can
+
+# Input: tree data and TreeSE
+# Output: TreeSE
 .check_and_add_trees <- function(tse, trees_and_links, MARGIN, verbose){
+    # Give a message if verbose is specified
     if( verbose ){
         message("Adding ", MARGIN, "Tree(s)...")
     }
+    # Get trees
     trees <- trees_and_links$trees
+    # Get links
     links <- trees_and_links$links
+    # Based on margin, get rownames or colnames of the TreeSE object; to check
+    # if the data matches with trees
     names <- ifelse(MARGIN == "row", rownames(tse), colnames(tse) )
-    
+    # All rownames/colnames should be included in trees
     if( !all(names %in% links[["names"]]) ){
         warning(MARGIN, "Tree(s) does not match with the data so it is discarded.",
                 call. = FALSE)
         return(tse)
     }
-    
+    # Get all the tree labels
     tree_labs <- lapply(trees, FUN = function(x){
         labs <- c( x$tip.label, x$node.label )
         return(labs)
@@ -463,13 +494,14 @@ setMethod("right_join", signature = c(x = "ANY"),
     names(tree_labs) <- names(trees) <- make.unique(names(trees))
     
     # Get links
-    # Remove duplicates
+    # Remove duplicates (some rownames might be included in multiple trees)
     links <- links[ !duplicated(links[["names"]]), ]
+    # Get node labels
     node_labs <- links[["nodeLab"]]
     # Get corresponding row/col
     names(node_labs) <- links[["names"]]
     
-    # Check whether nodes can be found from trees
+    # Check which trees include which node labs
     result <- lapply(tree_labs, FUN = function(x){
         c( node_labs %in% x )
     })
@@ -477,120 +509,153 @@ setMethod("right_join", signature = c(x = "ANY"),
     result <- as.data.frame(result)
     rownames(result) <- node_labs
     
-    # If there are rows/cols that cannot be linked with trees
-    if( any( rowSums(result) == 0 ) ){
-        warning(MARGIN, "Tree(s) does not match with the data so it is discarded.",
-                call. = FALSE)
-        return(tse)
-    }
-    
-    tree_names <- NULL
+    # Loop from 1 to number of trees
     for( i in seq_len(ncol(result)) ){
+        # Create al the combinations from trees, each combination has i trees. 
         combinations <- combn(result, i, simplify = FALSE)
+        # Does this combination have all the node labels (rows or columns) 
         res <- lapply(combinations, FUN = function(x){
             all( rowSums(x) > 0 )
         })
+        # Unlist the list of boolean values
         res <- unlist(res)
+        # If combination that includes all the rows/cols was found
         if( any(res) ){
-            # Take the first combination that have all the rows
+            # Take the first combination that have all the rows/cols
             combinations <- combinations[[which(res)[[1]]]]
-            # Take the tree name
+            # Take the names of trees
             tree_names <- colnames(combinations)
+            # Break so that for loop is not continued anymore
             break
         }
     }
+    # Get the trees that are included in the final combination
     trees <- trees[tree_names]
+    # Subset the table that included if row/col is found from each tree
+    # Take only those trees that are included in the final object
     result <- result[ , tree_names, drop = FALSE ]
+    # Take information as a vector. Get name of the tree where each row/col is found
     whichTree <- apply(result, 1, FUN = function(x){
         names(result)[x == TRUE]
-    }
+        }
     )
-    
-    rowLinks <- data.frame(
+    # Create a link data frame
+    links <- data.frame(
         nodeLab = node_labs,
         whichTree = whichTree
     )
-    
-    temp <- apply(rowLinks, 1, FUN = function(x){
-        temp <- c()
+    # Loop over each row
+    temp <- apply(links, 1, FUN = function(x){
+        # Get the number of node
         nodeNum <- convertNode(trees[[x[["whichTree"]]]], x[["nodeLab"]])
+        # Get the alias
         nodeLab_alias <- paste0("alias_", nodeNum)
+        # GEt the information that tells if the node is a leaf
         isLeaf <- isLeaf(trees[[x[["whichTree"]]]], x[["nodeLab"]])
-        
-        return(c(nodeNum = nodeNum, nodeLab_alias = nodeLab_alias, isLeaf = isLeaf))
+        # Combine all as a vector
+        return( c(nodeNum, nodeLab_alias, isLeaf) )
     })
+    # Transpose table
     temp <- t(temp)
+    # Add colnames
     colnames(temp) = c("nodeNum", "nodeLab_alias", "isLeaf")
-    rowLinks <- cbind(rowLinks, temp)
-    rowLinks <- rowLinks[ , c("nodeLab", "nodeNum", "nodeLab_alias", "isLeaf", "whichTree")]
-    rowLinks <- LinkDataFrame(
-        nodeLab = rowLinks[["nodeLab"]],
-        nodeNum = as.integer(rowLinks[["nodeNum"]]),
-        nodeLab_alias = rowLinks[["nodeLab_alias"]],
-        isLeaf = as.logical(rowLinks[["isLeaf"]]),
-        whichTree = rowLinks[["whichTree"]]
+    # Add them to links data frame
+    links <- cbind(links, temp)
+    # Create a LinkDataFrame based on the link data
+    links <- LinkDataFrame(
+        nodeLab = links[["nodeLab"]],
+        nodeNum = as.integer(links[["nodeNum"]]),
+        nodeLab_alias = links[["nodeLab_alias"]],
+        isLeaf = as.logical(links[["isLeaf"]]),
+        whichTree = links[["whichTree"]]
     )
-    
+    # Add the data in correct slot based on MARGIN
     if(MARGIN == "row" ){
         tse@rowTree <- trees
-        tse@rowLinks <- rowLinks
+        tse@rowLinks <- links
     } else{
         tse@colTree <- trees
-        tse@colLinks <- rowLinks
+        tse@colLinks <- links
     }
-    
-    tse
+    return(tse)
 }
 
+############################### .get_TreeSE_args ###############################
+# This function fetches TreeSummarizedExperiment specific data: rowTree, colTree,
+# and referenceSeq
+
+# Input: TreeSE and argument list
+# Output: An argument list
 .get_TreeSE_args <- function(tse, tse_args){
-    
+    # If rowTree slot is not NULL
     if( !is.null(tse@rowTree) ){
+        # Get rowLinks, convert them to basic DataFrame, 
+        # so that additional column can be added
         rowLinks <- DataFrame(rowLinks(tse))
+        # Add rownames as one of the columns
         rowLinks$names <- rownames(tse)
+        # Get the tree data as a list. Tree is as a list, and links as DF
         rowTrees <- list(
             trees = tse@rowTree,
             links = rowLinks
         )
+        # If there is no data yet / if rowTree arguments are NULL
         if( is.null(tse_args$rowTrees) ){
+            # Replace NULL with tree data
             tse_args$rowTrees <- rowTrees
-        }
-        else{
+        } else{
+            # If tree data already exist, add trees to a list, and add 
+            # links by adding rows
             tse_args$rowTrees <- list( 
                 trees = c(tse_args$rowTrees$trees, rowTrees$trees),
                 links = rbind(tse_args$rowTrees$links, rowTrees$links)
                 ) 
         }
     }
+    # If colTree slot is not NULL
     if( !is.null(tse@colTree) ){
+        # Get colLinks, convert them to basic DataFrame, 
+        # so that additional column can be added
         colLinks <- DataFrame(colLinks(tse))
+        # Add colnames as one of the columns
         colLinks$names <- colnames(tse)
-        
+        # Get the tree data as a list. Tree is as a list, and links as DF
         colTrees <- list(
             trees = tse@colTree,
             links = colLinks
         )
+        # If there is no data yet / if colTree arguments are NULL
         if( is.null(tse_args$colTrees) ){
+            # Replace NULL with tree data
             tse_args$colTrees <- colTrees
-        }
-        else{
+        } else{
+            # If tree data already exist, add trees to a list, and add 
+            # links by adding rows
             tse_args$colTrees <- list( 
                 trees = c(tse_args$colTrees$trees, colTrees$trees),
                 links = rbind(tse_args$colTrees$links, colTrees$links)
             ) 
         }
     }
+    # If reference sequences exist
     if( !is.null(referenceSeq(tse)) ){
+        # Get the data
         refSeq <- referenceSeq(tse)
+        # Check if it is a individual set
         if( is(refSeq, "DNAStringSet") ){
+            # Convert individual set to a list, so that all refseqs are in same 
+            # format
             refSeq <- DNAStringSetList(refSeq)
         }
+        # Add data to a list
         refSeqs <- list(
             refSeq
         )
+        # If there is no data yet, replace the NULL
         if( is.null(tse_args$refSeqs) ){
             tse_args$refSeqs <- refSeqs
-        }
-        else{
+        } else{
+            # otherwise add data to a list
             tse_args$refSeqs <- c( tse_args$refSeqs, refSeqs ) 
         }
     }
