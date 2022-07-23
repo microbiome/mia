@@ -97,7 +97,8 @@ If, for example, all rows are not shared with
 individual objects, there are missing values in \code{assays}. The notation of missing
 can be specified with the \code{missing_values} argument. If input consists of
 \code{TreeSummarizedExperiment} objects, also \code{rowTree}, \code{colTree}, and
-\code{referenceSeq} are preserved if possible.
+\code{referenceSeq} are preserved if possible. The data is preserved if
+all the rows or columns can be found from it.
 
 Compared to \code{cbind} and \code{rbind} \code{mergeSEs}
 allows more freely merging since \code{cbind} and \code{rbind} expect
