@@ -458,9 +458,13 @@ setMethod("right_join", signature = c(x = "ANY"),
     links <- trees_and_links$links
     # Based on margin, get rownames or colnames of the TreeSE object; to check
     # if the data matches with trees
-    names <- ifelse(MARGIN == "row", rownames(tse), colnames(tse) )
+    if(MARGIN == "row"){
+        names <- rownames(tse)
+    } else{
+        names <- colnames(tse)
+    }
     # All rownames/colnames should be included in trees
-    if( !all(names %in% links[["names"]]) ){
+    if( !all(names %in% links[["names"]]) || is.null(names) ){
         warning(MARGIN, "Tree(s) does not match with the data so it is discarded.",
                 call. = FALSE)
         return(tse)
@@ -470,28 +474,17 @@ setMethod("right_join", signature = c(x = "ANY"),
         labs <- c( x$tip.label, x$node.label )
         return(labs)
     })
-    # Make names unique
-    names(tree_labs) <- names(trees) <- make.unique(names(trees))
     
-    # Get links
-    # Remove duplicates (some rownames might be included in multiple trees)
-    links <- links[ !duplicated(links[["names"]]), ]
-    # Get node labels
-    node_labs <- links[["nodeLab"]]
-    # Get corresponding row/col
-    names(node_labs) <- links[["names"]]
-    
-    # Check which trees include which node labs
+    # Loop thorugh tree labs, check which trees include which node labs
     result <- lapply(tree_labs, FUN = function(x){
-        c( node_labs %in% x )
+        c( links[["nodeLab"]] %in% x )
     })
     # Create a data.frame
     result <- as.data.frame(result)
-    rownames(result) <- node_labs
     
     # Loop from 1 to number of trees
     for( i in seq_len(ncol(result)) ){
-        # Create al the combinations from trees, each combination has i trees. 
+        # Create all possible combinations from trees, each combination has i trees. 
         combinations <- combn(result, i, simplify = FALSE)
         # Does this combination have all the node labels (rows or columns) 
         res <- lapply(combinations, FUN = function(x){
@@ -511,42 +504,76 @@ setMethod("right_join", signature = c(x = "ANY"),
     }
     # Get the trees that are included in the final combination
     trees <- trees[tree_names]
-    # Subset the table that included if row/col is found from each tree
-    # Take only those trees that are included in the final object
-    result <- result[ , tree_names, drop = FALSE ]
-    # Take information as a vector. Get name of the tree where each row/col is found
+    # Subset result by taking only those trees that are included in final object
+    result <- result[ , tree_names]
+    # In which tree this node label is found (each row represent each node label)
     whichTree <- apply(result, 1, FUN = function(x){
-        names(result)[x == TRUE]
+        names(result)[x == TRUE][[1]]
         }
     )
-    # Create a link data frame
-    links <- data.frame(
-        nodeLab = node_labs,
-        whichTree = whichTree
-    )
-    # Loop over each row
-    temp <- apply(links, 1, FUN = function(x){
-        # Get the number of node
-        nodeNum <- convertNode(trees[[x[["whichTree"]]]], x[["nodeLab"]])
-        # Get the alias
-        nodeLab_alias <- paste0("alias_", nodeNum)
-        # GEt the information that tells if the node is a leaf
-        isLeaf <- isLeaf(trees[[x[["whichTree"]]]], x[["nodeLab"]])
-        # Combine all as a vector
-        return( c(nodeNum, nodeLab_alias, isLeaf) )
-    })
-    # Transpose table
-    temp <- t(temp)
-    # Add colnames
-    colnames(temp) = c("nodeNum", "nodeLab_alias", "isLeaf")
-    # Add them to links data frame
-    links <- cbind(links, temp)
+    whichTree <- unlist(whichTree)
+    # Update links
+    links[["whichTree_updated"]] <- whichTree
+    
+    # # Put links to wider format
+    # links <- as.data.frame(links) %>% 
+    #     tidyr::pivot_wider(names_from = whichTree, 
+    #                        values_from = nodeLab, 
+    #                        values_fill = NA)
+    # 
+    # # Columns named by trees tells which what is the label name of row/col in
+    # # certain tree. If not found, it is NA. 
+    # # Collapse data so that all these columns are now back in one column.
+    # # whichTree tells in which tree the row/col is found, and nodeLab the 
+    # # corresponding label.
+    # links2 <- links %>% 
+    #     tidyr::pivot_longer(cols = tree_names, 
+    #                         names_to = "whichTree", 
+    #                         values_to = "nodeLab")
+    # # If the row/col was not found from certain tree, the nodeLab is NA. 
+    # # Remove those.
+    # links <- links[ !is.na(links[["nodeLab"]]), ]
+    # # Remove duplicates
+    # links <- links[ !duplicated(links[["names"]]), ]
+    # Ensure that data is in correct order
+    links <- links[ match(links[["names"]], names), ]
+    
+    # # Subset the table that included if row/col is found from each tree
+    # # Take only those trees that are included in the final object
+    # result <- result[ , tree_names, drop = FALSE ]
+    # # Take information as a vector. Get name of the tree where each row/col is found
+    # whichTree <- apply(result, 1, FUN = function(x){
+    #     names(result)[x == TRUE]
+    #     }
+    # )
+    # # Create a link data frame
+    # links <- data.frame(
+    #     nodeLab = nodeLab,
+    #     whichTree = whichTree
+    # )
+    # # Loop over each row
+    # temp <- apply(links, 1, FUN = function(x){
+    #     # Get the number of node
+    #     nodeNum <- convertNode(trees[[x[["whichTree"]]]], x[["nodeLab"]])
+    #     # Get the alias
+    #     nodeLab_alias <- paste0("alias_", nodeNum)
+    #     # GEt the information that tells if the node is a leaf
+    #     isLeaf <- isLeaf(trees[[x[["whichTree"]]]], x[["nodeLab"]])
+    #     # Combine all as a vector
+    #     return( c(nodeNum, nodeLab_alias, isLeaf) )
+    # })
+    # # Transpose table
+    # temp <- t(temp)
+    # # Add colnames
+    # colnames(temp) = c("nodeNum", "nodeLab_alias", "isLeaf")
+    # # Add them to links data frame
+    # links <- cbind(links, temp)
     # Create a LinkDataFrame based on the link data
     links <- LinkDataFrame(
         nodeLab = links[["nodeLab"]],
-        nodeNum = as.integer(links[["nodeNum"]]),
+        nodeNum = links[["nodeNum"]],
         nodeLab_alias = links[["nodeLab_alias"]],
-        isLeaf = as.logical(links[["isLeaf"]]),
+        isLeaf = links[["isLeaf"]],
         whichTree = links[["whichTree"]]
     )
     # Add the data in correct slot based on MARGIN
@@ -569,52 +596,92 @@ setMethod("right_join", signature = c(x = "ANY"),
 .get_TreeSE_args <- function(tse, tse_args){
     # If rowTree slot is not NULL
     if( !is.null(tse@rowTree) ){
+        # Get trees that will be added
+        trees_add <- tse@rowTree
         # Get rowLinks, convert them to basic DataFrame, 
         # so that additional column can be added
-        rowLinks <- DataFrame(rowLinks(tse))
+        links <- DataFrame(rowLinks(tse))
         # Add rownames as one of the columns
-        rowLinks$names <- rownames(tse)
-        # Get the tree data as a list. Tree is as a list, and links as DF
-        rowTrees <- list(
-            trees = tse@rowTree,
-            links = rowLinks
-        )
+        links$names <- rownames(tse)
+        
         # If there is no data yet / if rowTree arguments are NULL
         if( is.null(tse_args$rowTrees) ){
+            # Get the tree data as a list. Tree is as a list, and links as DF
+            rowTrees <- list(
+                trees = trees_add,
+                links = links
+            )
             # Replace NULL with tree data
             tse_args$rowTrees <- rowTrees
         } else{
-            # If tree data already exist, add trees to a list, and add 
-            # links by adding rows
+            # If tree data already exist
+            # How many trees there already are
+            tree_num_before <- length(tse_args$rowTrees$tree)
+            # Get unique names
+            unique_names <- make.unique( 
+                names( c(tse_args$rowTrees$tree, trees_add) )
+            )
+            # Update the names of current data
+            names(tse_args$rowTrees$tree) <- unique_names[ tree_num_before ]
+            # Get unique names of trees that will be added
+            unique_names_add <- unique_names[ -seq_len(tree_num_before) ]
+            # Get corresponding current names
+            names_add <- names(trees_add)
+            # Update tree names from links
+            links[ , "whichTree" ] <- 
+                unique_names_add[ match( links[ , "whichTree" ], names_add ) ]
+            # Update tree names
+            names(trees_add) <- unique_names_add
+            # Add data to a list
             tse_args$rowTrees <- list( 
-                trees = c(tse_args$rowTrees$trees, rowTrees$trees),
-                links = rbind(tse_args$rowTrees$links, rowTrees$links)
-                ) 
+                trees = c(tse_args$rowTrees$trees, trees_add),
+                links = rbind(tse_args$rowTrees$links, links)
+                )
         }
     }
     # If colTree slot is not NULL
     if( !is.null(tse@colTree) ){
+        # Get trees that will be added
+        trees_add <- tse@rowTree
         # Get colLinks, convert them to basic DataFrame, 
         # so that additional column can be added
-        colLinks <- DataFrame(colLinks(tse))
+        links <- DataFrame(colLinks(tse))
         # Add colnames as one of the columns
-        colLinks$names <- colnames(tse)
-        # Get the tree data as a list. Tree is as a list, and links as DF
-        colTrees <- list(
-            trees = tse@colTree,
-            links = colLinks
-        )
+        links$names <- colnames(tse)
+        
         # If there is no data yet / if colTree arguments are NULL
         if( is.null(tse_args$colTrees) ){
+            # Get the tree data as a list. Tree is as a list, and links as DF
+            colTrees <- list(
+                trees = trees_add,
+                links = links
+            )
             # Replace NULL with tree data
             tse_args$colTrees <- colTrees
         } else{
-            # If tree data already exist, add trees to a list, and add 
-            # links by adding rows
-            tse_args$colTrees <- list( 
-                trees = c(tse_args$colTrees$trees, colTrees$trees),
-                links = rbind(tse_args$colTrees$links, colTrees$links)
-            ) 
+            # If tree data already exist
+            # How many trees there already are
+            tree_num_before <- length(tse_args$colTrees$tree)
+            # Get unique names
+            unique_names <- make.unique( 
+                names( c(tse_args$colTrees$tree, trees_add) )
+            )
+            # Update the names of current data
+            names(tse_args$colTrees$tree) <- unique_names[ tree_num_before ]
+            # Get unique names of trees that will be added
+            unique_names_add <- unique_names[ -seq_len(tree_num_before) ]
+            # Get corresponding current names
+            names_add <- names(trees_add)
+            # Update tree names from links
+            links[ , "whichTree" ] <- 
+                unique_names_add[ match( links[ , "whichTree" ], names_add ) ]
+            # Update tree names
+            names(trees_add) <- unique_names_add
+            # Add data to a list
+            tse_args$rowTrees <- list( 
+                trees = c(tse_args$colTrees$trees, trees_add),
+                links = rbind(tse_args$colTrees$links, links)
+            )
         }
     }
     # If reference sequences exist
