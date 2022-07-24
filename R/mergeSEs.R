@@ -400,7 +400,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     })
     rows_that_have_seqs <- unlist(rows_that_have_seqs)
     # Check that all the rownames are included
-    if( !all(rownames(tse) %in% rows_that_have_seqs) ){
+    if( !all(rownames(tse) %in% rows_that_have_seqs) || is.null(rownames(tse)) ){
         warning("referenceSeqs do not match with the data so they are discarded.",
                 call. = FALSE)
         return(tse)
@@ -463,109 +463,64 @@ setMethod("right_join", signature = c(x = "ANY"),
     } else{
         names <- colnames(tse)
     }
-    # All rownames/colnames should be included in trees
+    # All rownames/colnames should be included in trees/links
     if( !all(names %in% links[["names"]]) || is.null(names) ){
         warning(MARGIN, "Tree(s) does not match with the data so it is discarded.",
                 call. = FALSE)
         return(tse)
     }
     
-    # From the links, for each tree, get row/cols that are linked with tree 
-    tree_labs <- split(links[["nodeLab"]], f = links$whichTree)
-    
-    # Loop thorugh tree labs, check which trees include which node labs
-    result <- lapply(tree_labs, FUN = function(x){
-        c( links[["nodeLab"]] %in% x )
-    })
-    # Create a data.frame
-    result <- as.data.frame(result)
-    
-    # Loop from 1 to number of trees
-    for( i in seq_len(ncol(result)) ){
-        # Create all possible combinations from trees, each combination has i trees. 
-        combinations <- combn(result, i, simplify = FALSE)
-        # Does this combination have all the node labels (rows or columns) 
-        res <- lapply(combinations, FUN = function(x){
-            all( rowSums(x) > 0 )
+    # If there are multiple trees, select non-duplicated trees, best fitting 
+    # combination of trees. Get minimum number of trees that represent the data
+    # based on link data.
+    if( length(trees) > 1 ){
+        # From the links, for each tree, get row/cols that are linked with tree 
+        tree_labs <- split(links[["nodeLab"]], f = links$whichTree)
+        
+        # Loop thorugh tree labs, check which trees include which node labs
+        result <- lapply(tree_labs, FUN = function(x){
+            c( links[["nodeLab"]] %in% x )
         })
-        # Unlist the list of boolean values
-        res <- unlist(res)
-        # If combination that includes all the rows/cols was found
-        if( any(res) ){
-            # Take the first combination that have all the rows/cols
-            combinations <- combinations[[which(res)[[1]]]]
-            # Take the names of trees
-            tree_names <- colnames(combinations)
-            # Break so that for loop is not continued anymore
-            break
+        # Create a data.frame
+        result <- as.data.frame(result)
+        
+        # Loop from 1 to number of trees
+        for( i in seq_len(ncol(result)) ){
+            # Create all possible combinations from trees, each combination has i trees. 
+            combinations <- combn(result, i, simplify = FALSE)
+            # Does this combination have all the node labels (rows or columns) 
+            res <- lapply(combinations, FUN = function(x){
+                all( rowSums(x) > 0 )
+            })
+            # Unlist the list of boolean values
+            res <- unlist(res)
+            # If combination that includes all the rows/cols was found
+            if( any(res) ){
+                # Take the first combination that have all the rows/cols
+                combinations <- combinations[[which(res)[[1]]]]
+                # Take the names of trees
+                tree_names <- colnames(combinations)
+                # Break so that for loop is not continued anymore
+                break
+            }
         }
+        # Get the trees that are included in the final combination
+        trees <- trees[tree_names]
+        # Subset result by taking only those trees that are included in final object
+        result <- result[ , tree_names, drop = FALSE]
+        # In which tree this node label is found (each row represent each node label)
+        whichTree <- apply(result, 1, FUN = function(x){
+            names(result)[x == TRUE][[1]]
+            }
+        )
+        whichTree <- unlist(whichTree)
+        # Update links
+        links[["whichTree"]] <- whichTree
+        # Remove duplicates
+        links <- links[ !duplicated(links[["names"]]), ]
+        # Ensure that links are in correct order
+        links <- links[ match(links[["names"]], names), ]
     }
-    # Get the trees that are included in the final combination
-    trees <- trees[tree_names]
-    # Subset result by taking only those trees that are included in final object
-    result <- result[ , tree_names]
-    # In which tree this node label is found (each row represent each node label)
-    whichTree <- apply(result, 1, FUN = function(x){
-        names(result)[x == TRUE][[1]]
-        }
-    )
-    whichTree <- unlist(whichTree)
-    # Update links
-    links[["whichTree"]] <- whichTree
-    
-    # # Put links to wider format
-    # links <- as.data.frame(links) %>% 
-    #     tidyr::pivot_wider(names_from = whichTree, 
-    #                        values_from = nodeLab, 
-    #                        values_fill = NA)
-    # 
-    # # Columns named by trees tells which what is the label name of row/col in
-    # # certain tree. If not found, it is NA. 
-    # # Collapse data so that all these columns are now back in one column.
-    # # whichTree tells in which tree the row/col is found, and nodeLab the 
-    # # corresponding label.
-    # links2 <- links %>% 
-    #     tidyr::pivot_longer(cols = tree_names, 
-    #                         names_to = "whichTree", 
-    #                         values_to = "nodeLab")
-    # # If the row/col was not found from certain tree, the nodeLab is NA. 
-    # # Remove those.
-    # links <- links[ !is.na(links[["nodeLab"]]), ]
-    # Remove duplicates
-    links <- links[ !duplicated(links[["names"]]), ]
-    # Ensure that data is in correct order
-    links <- links[ match(links[["names"]], names), ]
-    
-    # # Subset the table that included if row/col is found from each tree
-    # # Take only those trees that are included in the final object
-    # result <- result[ , tree_names, drop = FALSE ]
-    # # Take information as a vector. Get name of the tree where each row/col is found
-    # whichTree <- apply(result, 1, FUN = function(x){
-    #     names(result)[x == TRUE]
-    #     }
-    # )
-    # # Create a link data frame
-    # links <- data.frame(
-    #     nodeLab = nodeLab,
-    #     whichTree = whichTree
-    # )
-    # # Loop over each row
-    # temp <- apply(links, 1, FUN = function(x){
-    #     # Get the number of node
-    #     nodeNum <- convertNode(trees[[x[["whichTree"]]]], x[["nodeLab"]])
-    #     # Get the alias
-    #     nodeLab_alias <- paste0("alias_", nodeNum)
-    #     # GEt the information that tells if the node is a leaf
-    #     isLeaf <- isLeaf(trees[[x[["whichTree"]]]], x[["nodeLab"]])
-    #     # Combine all as a vector
-    #     return( c(nodeNum, nodeLab_alias, isLeaf) )
-    # })
-    # # Transpose table
-    # temp <- t(temp)
-    # # Add colnames
-    # colnames(temp) = c("nodeNum", "nodeLab_alias", "isLeaf")
-    # # Add them to links data frame
-    # links <- cbind(links, temp)
     
     # Create a LinkDataFrame based on the link data
     links <- LinkDataFrame(
