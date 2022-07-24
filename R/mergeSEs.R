@@ -393,14 +393,6 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( verbose ){
         message("Adding referenceSeqs...")
     }
-    # # Should it be an error if refseqs in and DNAStringSetList format
-    # all_same <- sum((unlist(lapply(refSeqs, is, class = "DNAStringSetList")))) ==
-    #     length(refSeqs) || sum((unlist(lapply(refSeqs, is, class = "DNAStringSetList")))) == 0
-    # if( !all_same ){
-    #     warning("referenceSeqs do not match with the data so they are discarded.",
-    #             call. = FALSE)
-    #     return(tse)
-    # }
     
     # Get the rownames that are included in reference sequences
     rows_that_have_seqs <- lapply(refSeqs, FUN = function(x){
@@ -891,26 +883,20 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 #' @importFrom dplyr coalesce
 .join_two_tables <- function(df1, df2, join){
-    # # Get parameter based on join
-    # all.x <- switch(join,
-    #                 full = TRUE,
-    #                 inner = FALSE,
-    #                 left = TRUE,
-    #                 right = FALSE
-    # )
-    # all.y <- switch(join,
-    #                 full = TRUE,
-    #                 inner = FALSE,
-    #                 left = FALSE,
-    #                 right = TRUE
-    # )
-    # Get function based on join
-    FUN <- switch(join,
-                    full = dplyr::full_join,
-                    inner = dplyr::inner_join,
-                    left = dplyr::left_join,
-                    right = dplyr::right_join
+    # Get parameter based on join
+    all.x <- switch(join,
+                    full = TRUE,
+                    inner = FALSE,
+                    left = TRUE,
+                    right = FALSE
     )
+    all.y <- switch(join,
+                    full = TRUE,
+                    inner = FALSE,
+                    left = FALSE,
+                    right = TRUE
+    )
+    
     # Ensure that the data is in correct format
     df1 <- as.data.frame(df1)
     df2 <- as.data.frame(df2)
@@ -941,9 +927,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     df1$rownames_merge_ID <- rownames(df1)
     df2$rownames_merge_ID <- rownames(df2)
     # Merge data frames into one data frame
-    # df <- merge(df1, df2, by = "rownames_merge_ID", all.x = all.x, all.y = all.y)
-    # SHOULD WE USE MERGE OR LEFT_JOIN? IS EITHER FASTER, IF DID NOT FIND SIGNIFICANT DDIFFERENCES
-    df <- FUN(x = df1, y = df2, by = "rownames_merge_ID")
+    df <- merge(df1, df2, by = "rownames_merge_ID", all.x = all.x, all.y = all.y)
     # Add rownames and remove additional column
     rownames(df) <- df$rownames_merge_ID
     df$rownames_merge_ID <- NULL
