@@ -766,8 +766,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: feature/sample_pairs, and assays
 # Output: correlation table with variable names in Var1 and Var2, and correlation 
 # values in cor. Additionally, table can also include pval for p-values.
-
-#' @importFrom dplyr left_join
 .calculate_association_table <- function(variable_pairs,
                                          FUN_, 
                                          test_significance, 

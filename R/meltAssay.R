@@ -233,7 +233,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom rlang sym
 #' @importFrom tibble rownames_to_column
-#' @importFrom dplyr rename left_join
+#' @importFrom dplyr rename
 .add_row_data_to_molten_assay <- function(molten_assay, x, add_row_data,
                                           feature_name) {
     rd <- SummarizedExperiment::rowData(x)[,add_row_data,drop=FALSE] %>%
@@ -252,7 +252,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SummarizedExperiment colData
 #' @importFrom rlang sym
 #' @importFrom tibble rownames_to_column
-#' @importFrom dplyr rename left_join
+#' @importFrom dplyr rename
 .add_col_data_to_molten_assay <- function(molten_assay, x, add_col_data,
                                           sample_name, check_names = FALSE) {
     cd <- SummarizedExperiment::colData(x)[,add_col_data,drop=FALSE] %>%
