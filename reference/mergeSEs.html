@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
       </span>
     </div>
 
@@ -61,6 +61,7 @@
   assay_name <span class="op">=</span> <span class="st">"counts"</span>,
   join <span class="op">=</span> <span class="st">"full"</span>,
   missing_values <span class="op">=</span> <span class="cn">NA</span>,
+  collapse_samples <span class="op">=</span> <span class="cn">FALSE</span>,
   verbose <span class="op">=</span> <span class="cn">TRUE</span>,
   <span class="va">...</span>
 <span class="op">)</span>
@@ -120,6 +121,11 @@ when more than two objects are being merged.  (By default: <code>join = "full"</
 of missing values. (By default: <code>missing_values = NA</code>)</p></dd>
 
 
+<dt>collapse_samples</dt>
+<dd><p>A boolean value for selecting whether to collapse identically
+named samples to one. (By default: <code>collapse_samples = FALSE</code>)</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>A single boolean value to choose whether to show messages.
 (By default: <code>verbose = TRUE</code>)</p></dd>
@@ -140,11 +146,21 @@ of missing values. (By default: <code>missing_values = NA</code>)</p></dd>
     <h2>Details</h2>
     <p>This function merges multiple <code>SummarizedExperiment</code> objects. It combines
 <code>rowData</code>, <code>assays</code>, and <code>colData</code> so that the output includes
-each unique row and column ones. If, for example, all rows are not shared with
+each unique row and column ones. The merging is done based on <code>rownames</code> and
+<code>colnames</code>. <code>rowTree</code> and <code>colTree</code> are preserved if linkage
+between rows/cols and the tree is found.</p>
+<p>Equally named rows are interpreted as equal. Further
+matching based on <code>rowData</code> is not done. For samples, collapsing
+is disabled by default meaning that equally named samples that are stored
+in different objects are interpreted as unique. Collapsing can be enabled
+with <code>collapse_samples = TRUE</code> when equally named samples describe the same
+sample.</p>
+<p>If, for example, all rows are not shared with
 individual objects, there are missing values in <code>assays</code>. The notation of missing
 can be specified with the <code>missing_values</code> argument. If input consists of
 <code>TreeSummarizedExperiment</code> objects, also <code>rowTree</code>, <code>colTree</code>, and
-<code>referenceSeq</code> are preserved if possible.</p>
+<code>referenceSeq</code> are preserved if possible. The data is preserved if
+all the rows or columns can be found from it.</p>
 <p>Compared to <code>cbind</code> and <code>rbind</code> <code>mergeSEs</code>
 allows more freely merging since <code>cbind</code> and <code>rbind</code> expect
 that rows and columns are matching, respectively.</p>
@@ -194,15 +210,20 @@ objects belong to <code>TreeSummarizedExperiment</code>, the output will be
 <span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">mergeSEs</span><span class="op">(</span><span class="va">tse1</span>, <span class="va">tse2</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Merging with full join...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 1/2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2/2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2/2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding rowTree(s)...</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Merge a list of TreeSEs</span></span>
 <span class="r-in"><span class="va">list</span> <span class="op">&lt;-</span> <span class="fu">SimpleList</span><span class="op">(</span><span class="va">tse1</span>, <span class="va">tse2</span>, <span class="va">tse3</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">mergeSEs</span><span class="op">(</span><span class="va">list</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span>, missing_values <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Merging with full join...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 1/3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2/3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 3/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding rowTree(s)...</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>rowTree(s) does not match with the data so it is discarded.</span>
 <span class="r-in"><span class="va">tse</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 258 309 </span>
@@ -225,7 +246,8 @@ objects belong to <code>TreeSummarizedExperiment</code>, the output will be
 <span class="r-in"><span class="va">tse_temp</span> <span class="op">&lt;-</span> <span class="fu">mergeSEs</span><span class="op">(</span><span class="va">tse</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, <span class="va">tse</span><span class="op">[</span><span class="fl">5</span><span class="op">:</span><span class="fl">100</span>, <span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>, join <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Merging with left join...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 1/2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2/2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2/2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="va">tse_temp</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 10 20 </span>
@@ -247,7 +269,34 @@ objects belong to <code>TreeSummarizedExperiment</code>, the output will be
 <span class="r-in"><span class="va">tse_temp</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">tse</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, <span class="va">tse</span><span class="op">[</span><span class="fl">5</span><span class="op">:</span><span class="fl">100</span>, <span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Merging with left join...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 1/2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2/2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2/2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># If your objects contain samples that describe one and same sample,</span></span>
+<span class="r-in"><span class="co"># you can collapse equally named samples to one by specifying 'collapse_samples'</span></span>
+<span class="r-in"><span class="va">tse_temp</span> <span class="op">&lt;-</span> <span class="fu">inner_join</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">tse</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">tse</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">tse</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, </span>
+<span class="r-in">                       collapse_samples <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Merging with inner join...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span class="va">tse_temp</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): -1 100679 101071 1029 104332</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(1): AM.AD.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(16): X.SampleID Primer ... Age ClinicalStatus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
