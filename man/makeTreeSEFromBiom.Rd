@@ -19,6 +19,8 @@ makeTreeSummarizedExperimentFromBiom(obj, ...)
 taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})}
 
 \item{obj}{object of type \code{\link[biomformat:read_biom]{biom}}}
+
+\item{...}{optional arguments (not used).}
 }
 \value{
 An object of class

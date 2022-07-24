@@ -5,8 +5,11 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @param file biom file location
+#' 
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})
+#' 
+#' @param ... optional arguments (not used).
 #' 
 #' @return An object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
