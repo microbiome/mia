@@ -469,11 +469,9 @@ setMethod("right_join", signature = c(x = "ANY"),
                 call. = FALSE)
         return(tse)
     }
-    # Get all the tree labels
-    tree_labs <- lapply(trees, FUN = function(x){
-        labs <- c( x$tip.label, x$node.label )
-        return(labs)
-    })
+    
+    # From the links, for each tree, get row/cols that are linked with tree 
+    tree_labs <- split(links[["nodeLab"]], f = links$whichTree)
     
     # Loop thorugh tree labs, check which trees include which node labs
     result <- lapply(tree_labs, FUN = function(x){
@@ -513,7 +511,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     )
     whichTree <- unlist(whichTree)
     # Update links
-    links[["whichTree_updated"]] <- whichTree
+    links[["whichTree"]] <- whichTree
     
     # # Put links to wider format
     # links <- as.data.frame(links) %>% 
@@ -533,8 +531,8 @@ setMethod("right_join", signature = c(x = "ANY"),
     # # If the row/col was not found from certain tree, the nodeLab is NA. 
     # # Remove those.
     # links <- links[ !is.na(links[["nodeLab"]]), ]
-    # # Remove duplicates
-    # links <- links[ !duplicated(links[["names"]]), ]
+    # Remove duplicates
+    links <- links[ !duplicated(links[["names"]]), ]
     # Ensure that data is in correct order
     links <- links[ match(links[["names"]], names), ]
     
@@ -568,6 +566,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     # colnames(temp) = c("nodeNum", "nodeLab_alias", "isLeaf")
     # # Add them to links data frame
     # links <- cbind(links, temp)
+    
     # Create a LinkDataFrame based on the link data
     links <- LinkDataFrame(
         nodeLab = links[["nodeLab"]],
