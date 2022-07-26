@@ -31,7 +31,13 @@ Holmes et al. (2012).
 PeerJ data by Potbhare et al. (2022) includes skin microbial profiles of 58 volunteers with multiple factors.
 16S r-RNA sequencing of V3-V4 regions was done to generate millions of read using illumina platform.
 A standard bioinformatic and statistical analysis done to explore skin bacterial diversity and its association with age, diet, geographical locations.
-The authors investigated significant association of skin microbiota with individual’s geographical location."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+The authors investigated significant association of skin microbiota with individual’s geographical location.
+The HintikkaXO dataset contains high-throughput profiling data from 40 rat
+samples, including 39 biomarkers, 38 metabolites (NMR), and 12706 OTUs from
+318 species, measured from Cecum. This is diet comparison study with High/Low
+fat diet and xylo-oligosaccaride supplementation. Column metadata is common
+for all experiments (microbiota, metabolites, biomarkers) and includes the
+following fields:"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -49,7 +55,7 @@ The authors investigated significant association of skin microbiota with individ
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
       </span>
     </div>
 
@@ -114,6 +120,12 @@ Holmes et al. (2012).</p>
 16S r-RNA sequencing of V3-V4 regions was done to generate millions of read using illumina platform.
 A standard bioinformatic and statistical analysis done to explore skin bacterial diversity and its association with age, diet, geographical locations.
 The authors investigated significant association of skin microbiota with individual’s geographical location.</p>
+<p>The HintikkaXO dataset contains high-throughput profiling data from 40 rat
+samples, including 39 biomarkers, 38 metabolites (NMR), and 12706 OTUs from
+318 species, measured from Cecum. This is diet comparison study with High/Low
+fat diet and xylo-oligosaccaride supplementation. Column metadata is common
+for all experiments (microbiota, metabolites, biomarkers) and includes the
+following fields:</p>
     </div>
 
     <div id="ref-usage">
@@ -125,16 +137,33 @@ The authors investigated significant association of skin microbiota with individ
 
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">peerj13075</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">peerj13075</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">HintikkaXOData</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="format">
     <h2>Format</h2>
-    <p>An object of class <code>TreeSummarizedExperiment</code> with 19216 rows and 26 columns.</p>
-<p>An object of class <code>TreeSummarizedExperiment</code> with 553 rows and 280 columns.</p>
-<p>An object of class <code>TreeSummarizedExperiment</code> with 58 rows and 3 columns.</p>
-<p>An object of class <code>SummarizedExperiment</code> with 130 rows and 278 columns.</p>
-<p>An object of class <code>TreeSummarizedExperiment</code> with 674 rows and 58 columns.</p>
+    <p><code>TreeSummarizedExperiment</code></p>
+<p><code>TreeSummarizedExperiment</code></p>
+<p><code>TreeSummarizedExperiment</code></p>
+<p><code>SummarizedExperiment</code></p>
+<p><code>TreeSummarizedExperiment</code></p>
+<p><code>MultiAssayExperiment</code></p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    
+<ul><li><p>Sample: Sample ID (character)</p></li>
+<li><p>Rat: Rat ID (factor)</p></li>
+<li><p>Site: Site of measurement ("Cecum"); single value</p></li>
+<li><p>Diet: Diet group (factor; combination of the Fat and XOS fields)</p></li>
+<li><p>Fat: Fat in Diet (factor; Low/High)</p></li>
+<li><p>XOS: XOS Diet Supplement (numeric; 0/1)</p></li>
+</ul><p>Row metadata of the microbiota data contains taxonomic information on the
+Phylum, Class, Order, Family, Genus, Species, and OTU levels.</p>
+<p>Biomarker data contains 39 biomarkers.</p>
+<p>Metabolite data contains 38 NMR metabolites.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -172,6 +201,11 @@ PeerJ, 10, e13075.
 Supplemental information includes OTU table and taxonomy table and publicly-accessible from:
 <a href="DOI:10.7717/peerj.13075/supp-1">DOI:10.7717/peerj.13075/supp-1</a>
 <a href="DOI:10.7717/peerj.13075/supp-2">DOI:10.7717/peerj.13075/supp-2</a></p>
+<p>Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic
+steatosis and adipose tissue inflammation: associating taxonomic and
+metabolomic patterns in fecal microbiotas with biclustering. International
+Journal of Environmental Research and Public Health 18(8):4049
+<a href="https://doi.org/10.3390/ijerph18084049" class="external-link">https://doi.org/10.3390/ijerph18084049</a></p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -180,6 +214,7 @@ Supplemental information includes OTU table and taxonomy table and publicly-acce
 <p>Pei et al. <a href="mailto:zhiheng.pei@med.nyu.edu">zhiheng.pei@med.nyu.edu</a>.</p>
 <p>Turnbaugh, PJ et al.</p>
 <p>Potbhare, R., et al.</p>
+<p>Leo Lahti</p>
     </div>
 
   </div>
