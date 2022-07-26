@@ -6,16 +6,21 @@
 \alias{makeTreeSummarizedExperimentFromBiom}
 \title{Loading a biom file}
 \usage{
-loadFromBiom(file)
+loadFromBiom(file, removeTaxaPrefixes = FALSE)
 
-makeTreeSEFromBiom(obj)
+makeTreeSEFromBiom(obj, removeTaxaPrefixes = FALSE, ...)
 
-makeTreeSummarizedExperimentFromBiom(obj)
+makeTreeSummarizedExperimentFromBiom(obj, ...)
 }
 \arguments{
 \item{file}{biom file location}
 
+\item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
+taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})}
+
 \item{obj}{object of type \code{\link[biomformat:read_biom]{biom}}}
+
+\item{...}{optional arguments (not used).}
 }
 \value{
 An object of class
@@ -32,7 +37,7 @@ if(requireNamespace("biomformat")) {
   # load from file
   rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
                                  package = "biomformat")
-  se <- loadFromBiom(rich_dense_file)
+  se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE)
 
   # load from object
   x1 <- biomformat::read_biom(rich_dense_file)
