@@ -81,9 +81,15 @@ test_that("agglomerate", {
     expect_warning(agglomerateByRank(se1, rank = "Phylum"))
     expect_warning(agglomerateByRank(se1, rank = "Order"))
 
-    # checking reference consensus sequence generation
+    # Load data from miaTime package
+    if( !require("miaTime") ){
+        BiocManager::install(version='devel')
+        BiocManager::install("miaTime")
+        library("miaTime")
+    }
     data("SilvermanAGutData")
     se <- SilvermanAGutData
+    # checking reference consensus sequence generation
     actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
     expect_equal(as.character(referenceSeq(actual)[[1]]),
                  paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
