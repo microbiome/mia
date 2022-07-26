@@ -10,6 +10,7 @@
 \alias{dmn_se,}
 \alias{twins}
 \alias{peerj13075}
+\alias{SilvermanAGutData}
 \title{mia datasets}
 \format{
 An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
@@ -21,6 +22,8 @@ An object of class \code{TreeSummarizedExperiment} with 58 rows and 3 columns.
 An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
 
 An object of class \code{TreeSummarizedExperiment} with 674 rows and 58 columns.
+
+\code{TreeSummarizedExperiment}
 }
 \usage{
 data(GlobalPatterns)
@@ -32,6 +35,8 @@ data(esophagus)
 data(dmn_se)
 
 data(peerj13075)
+
+data(SilvermanAGutData)
 }
 \description{
 These datasets are conversions of the \pkg{phyloseq} datasets
@@ -74,6 +79,27 @@ PeerJ data by Potbhare et al. (2022) includes skin microbial profiles of 58 volu
 16S r-RNA sequencing of V3-V4 regions was done to generate millions of read using illumina platform.
 A standard bioinformatic and statistical analysis done to explore skin bacterial diversity and its association with age, diet, geographical locations.
 The authors investigated significant association of skin microbiota with individual’s geographical location.
+
+The SilvermanAGutData dataset contains 16S rRNA gene based high-throughput
+profiling of 4 in vitro artificial gut models. The sampling was done hourly
+and daily to capture sub-daily dynamics of microbial community originating
+from human feces. The data consists of 413 taxa from 639 samples.
+The data set can be used to investigate longitudinal dynamics of microbial
+community in a controlled environment.
+}
+\details{
+Column metadata includes the days of sampling, vessel identifier, sampling
+frequency pre-post challenge with Bacteroides ovatus.
+
+The row metadata of the microbiome data contains taxonomic information on
+the Kingdom, Phylum, Class, Order, Family and Genus and Species level.
+
+The row tree consists of a phylogenetic tree build using sequence
+information of 413 taxa.
+
+As reference sequences the ASV are provided.
+
+All data are downloaded from ExperimentHub and cached for local re-use
 }
 \references{
 Caporaso, J. G., et al. (2011).
@@ -118,6 +144,10 @@ PeerJ, 10, e13075.
 Supplemental information includes OTU table and taxonomy table and publicly-accessible from:
 \url{DOI:10.7717/peerj.13075/supp-1}
 \url{DOI:10.7717/peerj.13075/supp-2}
+
+Silveman J.D et al. (2018): Dynamic linear models guide design and analysis
+of microbiota studies within artificial human guts.
+Microbiome 6:202 \url{https://doi.org/10.1186/s40168-018-0584-3}
 }
 \author{
 Caporaso, J. G., et al.
@@ -129,5 +159,7 @@ Pei et al. \email{zhiheng.pei@med.nyu.edu}.
 Turnbaugh, PJ et al.
 
 Potbhare, R., et al.
+
+Sudarshan A. Shetty and Felix G.M. Ernst
 }
 \keyword{data}

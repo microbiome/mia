@@ -82,7 +82,8 @@ test_that("agglomerate", {
     expect_warning(agglomerateByRank(se1, rank = "Order"))
 
     # checking reference consensus sequence generation
-    se <- microbiomeDataSets::SilvermanAGutData()
+    data("SilvermanAGutData")
+    se <- SilvermanAGutData
     actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
     expect_equal(as.character(referenceSeq(actual)[[1]]),
                  paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",

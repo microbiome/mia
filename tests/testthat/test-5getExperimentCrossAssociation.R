@@ -4,7 +4,8 @@ context("getExperimentCrossAssociation")
 test_that("getExperimentCrossAssociation", {
     
     # Get data
-    mae <- microbiomeDataSets::peerj32()
+    data(HintikkaXOData)
+    mae <- HintikkaXOData
     ############################### Test input ###############################
     expect_error(getExperimentCrossAssociation(mae,
                                                 experiment1 = 3,
