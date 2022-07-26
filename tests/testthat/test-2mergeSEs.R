@@ -14,6 +14,10 @@ test_that("mergeSEs", {
     expect_error( mergeSEs(tse1, tse2, join = 1) )
     expect_error( mergeSEs(tse1, tse2, join = TRUE) )
     expect_error( mergeSEs(tse1, tse2, join = NA) )
+    expect_error( mergeSEs(tse1, tse2, collapse_samples = NA) )
+    expect_error( mergeSEs(tse1, tse2, collapse_samples = 1) )
+    expect_error( mergeSEs(tse1, tse2, collapse_samples = "test") )
+    expect_error( mergeSEs(tse1, tse2, collapse_samples = NULL) )
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "left") )
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "right") )
     expect_error( mergeSEs(tse1, tse2, missing_values = TRUE ) )
@@ -59,7 +63,9 @@ test_that("mergeSEs", {
     expect_true( all(!is.na(assay(tse))) )
     
     # Test that dimensions match
-    tse <- mergeSEs(list(tse1, tse2, tse3), missing_values = "MISSING")
+    tse <- suppressWarnings( 
+        mergeSEs(list(tse1, tse2, tse3), missing_values = "MISSING")
+    )
     expect_equal( dim(tse), dim(tse1)+dim(tse2)+dim(tse3) )
     # Expect some "MISSING"s
     expect_true( any( assay(tse) == "MISSING" ) )
@@ -75,9 +81,10 @@ test_that("mergeSEs", {
     expect_true( all(colnames(tse3) %in% colnames(tse)) )
     
     # CHECK FULL JOIN ###################################################
-    tse <- mergeSEs(list(tse2, tse3, tse1, 
-                                              tse1[1:2, ], tse1[1, ]), 
-                                         missing_values = NA)
+    tse <- suppressWarnings( 
+        mergeSEs(list(tse2, tse3, tse1, tse1[1:2, ], tse1[1, ]), 
+                    missing_values = NA)
+    )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
@@ -130,12 +137,14 @@ test_that("mergeSEs", {
     expect_equal( col_data[rownames, colnames], col_data3 )
     
     # CHECK INNER JOIN ##############################################
-    tse <- mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse3[1:20, 6:10]), 
+    tse <- suppressWarnings( 
+        mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse3[1:20, 6:10]), 
                        join = "inner")
+    )
     expect_true( nrow(tse) == 0 )
     expect_equal( rowTree(tse), NULL )
     tse <- mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
-                       join = "inner")
+                       join = "inner", collapse_samples = TRUE)
     expect_true( all(dim(tse) == c(20, 10)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
@@ -167,7 +176,7 @@ test_that("mergeSEs", {
     
     # CHECK LEFT JOIN ##############################################
     tse <- mergeSEs(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
-                       join = "left")
+                       join = "left", collapse_samples = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
@@ -199,7 +208,8 @@ test_that("mergeSEs", {
     
     # CHECK RIGHT JOIN ##############################################
     tse <- mergeSEs(list(tse1[10:50, 1:13], tse1[1:10, 7:20]), 
-                       join = "right", missing_values = NA)
+                    join = "right", missing_values = NA, 
+                    collapse_samples = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
@@ -238,8 +248,10 @@ test_that("mergeSEs", {
     metadata(tse1) <- list(abc = c("abc", 123))
     metadata(tse3) <- list(test = 1)
     metadata(tse) <- list( cd = colData(tse) )
-    tse4 <- mergeSEs(list(tse, tse3, tse2, tse1), 
+    tse4 <- suppressWarnings( 
+        mergeSEs(list(tse, tse3, tse2, tse1), 
                         join = "inner")
+    )
     expect_equal( nrow(tse4), 0 )
     expect_equal( metadata(tse4)[["abc"]], metadata(tse1)[["abc"]] )
     expect_equal( metadata(tse4)[["test"]], metadata(tse3)[["test"]] )
@@ -255,19 +267,28 @@ test_that("mergeSEs", {
                             as(tse1, "SummarizedExperiment")), 
                        join = "full")
     expect_true(class(tse) == "SummarizedExperiment")
+    suppressWarnings(
     tse <- mergeSEs(list(as(tse1, "SummarizedExperiment"), 
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "TreeSummarizedExperiment")), 
                        join = "inner")
+    )
     expect_true(class(tse) == "SummarizedExperiment")
+    suppressWarnings(
     tse <- mergeSEs(list(as(tse1, "SummarizedExperiment"), 
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "SingleCellExperiment")), 
                        join = "full")
+    )
     expect_true(class(tse) == "SummarizedExperiment")
+    suppressWarnings(
     tse <- mergeSEs(x = as(tse1, "TreeSummarizedExperiment"), 
                        y = as(tse1, "SingleCellExperiment"), 
                        join = "right")
+    )
+    expect_warning(mergeSEs(x = as(tse1, "TreeSummarizedExperiment"), 
+                            y = as(tse1, "SingleCellExperiment"), 
+                            join = "right"))
     expect_true(class(tse) == "SingleCellExperiment")
     tse <- mergeSEs(list(as(tse1, "TreeSummarizedExperiment")), 
                        join = "left")
@@ -286,13 +307,38 @@ test_that("mergeSEs", {
     tse_test2 <- left_join(x = tse[1:28, 1:3], 
                            y = tse1[23, 1:5])
     expect_equal(tse_test1, tse_test2)
-    tse_test1 <- mergeSEs(x = list(tse1[1:28, 1:3], tse1[23, 1:5], tse1[2:4, ]), 
+    tse_test1 <- suppressWarnings( 
+        mergeSEs(x = list(tse1[1:28, 1:3], tse1[23, 1:5], tse1[2:4, ]), 
                          join = "inner")
-    tse_test2 <- inner_join(x = list(tse1[1:28, 1:3], tse1[23, 1:5], tse1[2:4, ]) )
+    )
+    tse_test2 <- suppressWarnings( 
+        inner_join(x = list(tse1[1:28, 1:3], tse1[23, 1:5], tse1[2:4, ]) )
+    )
     expect_equal(tse_test1, tse_test2)
     tse_test1 <- mergeSEs(x = list(tse1[1:28, 1:3], tse1[23, 1:5]), 
                          join = "right")
     tse_test2 <- right_join(x = list(tse1[1:28, 1:3], tse1[23, 1:5]) )
     expect_equal(tse_test1, tse_test2)
     
+    # Test collapse_samples
+    tse_test <- mergeSEs(x = tse[1:28, 1:3], 
+                         y = tse[23, 1:5], 
+                         join = "full")
+    expect_equal( dim(tse_test), c(28, 8))
+    tse_test <- mergeSEs(x = list(tse[1:28, 1:3], tse[23, 1:5], tse[1, 1:10]),
+                         join = "full")
+    expect_equal( dim(tse_test), c(28, 18))
+    expect_true( (all( c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", "_2", "_3")), 
+                         paste0(rep(colnames(tse[, 4:5]), each=2), c("", "_3")), 
+                         colnames(tse[, 6:10]) ) %in% 
+                          colnames(tse_test) ) &&
+                     all( colnames(tse_test) %in% 
+                     c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", "_2", "_3")), 
+                        paste0(rep(colnames(tse[, 4:5]), each=2), c("", "_3")), 
+                        colnames(tse[, 6:10]) ) ) )
+                 )
+    # Test that tree is added after agglomeration
+    agg_tse1 <- suppressWarnings( aggTSE(tse1, rowLevel = c(6,4,2)) )
+    tse <- mergeSEs(tse1, agg_tse1)
+    expect_equal(rowTree(tse), rowTree(tse1))
 })
