@@ -121,7 +121,8 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
-#' mae <- microbiomeDataSets::peerj32()
+#' data("HintikkaXOData")
+#' mae <- HintikkaXOData
 #' 
 #' # Subset so that less observations / quicker to run, just for example
 #' mae[[1]] <- mae[[1]][1:20, 1:10]
@@ -130,7 +131,7 @@
 #' mae[[1]] <- transformSamples(mae[[1]], method = "rclr")
 #' 
 #' # Calculate cross-correlations
-#' result <- getExperimentCrossAssociation(mae, method = "pearson")
+#' result <- getExperimentCrossAssociation(mae, method = "pearson", assay_name2 = "nmr")
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
@@ -140,7 +141,7 @@
 #' altExp(mae[[1]], "Phylum") <- transformSamples(altExp(mae[[1]], "Phylum"), method = "relabundance")
 #' # When mode = matrix, matrix is returned
 #' result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
-#'                                         assay_name1 = "relabundance", assay_name2 = "counts",
+#'                                         assay_name1 = "relabundance", assay_name2 = "nmr",
 #'                                         altExp1 = "Phylum", 
 #'                                         method = "pearson", mode = "matrix")
 #' # Show first 5 entries
@@ -150,7 +151,7 @@
 #' # filter_self_correlations = TRUE filters self correlations
 #' # With p_adj_threshold it is possible to filter those features that do no have
 #' # any correlations that have p-value under threshold
-#' result <- testExperimentCrossAssociation(mae[[2]], experiment2 = mae[[2]], method = "pearson",
+#' result <- testExperimentCrossAssociation(mae[[1]], experiment2 = mae[[1]], method = "pearson",
 #'                                          filter_self_correlations = TRUE,
 #'                                          p_adj_threshold = 0.05)
 #' # Show first 5 entries
@@ -160,6 +161,7 @@
 #' # test_signicance = TRUE
 #' # Warnings can be suppressed by using show_warnings = FALSE
 #' result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
+#'                                         assay_name2 = "nmr",
 #'                                         mode = "matrix", test_significance = TRUE,
 #'                                         show_warnings = FALSE)
 #'                                         
@@ -168,7 +170,7 @@
 #' 
 #' # Calculate Bray-Curtis dissimilarity between samples. If dataset includes
 #' # paired samples, you can use paired = TRUE.
-#' result <- getExperimentCrossAssociation(mae[[1]], mae[[2]], MARGIN = 2, paired = FALSE,
+#' result <- getExperimentCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
 #'                                         association_FUN = vegan::vegdist, method = "bray")
 #'                                         
 #' 
@@ -176,7 +178,7 @@
 #' # it is possible to speed-up calculations by calculating association only for unique
 #' # variable-pairs. Use "symmetric" to choose whether to measure association for only
 #' # other half of of variable-pairs.
-#' result <- getExperimentCrossAssociation(mae, experiment1 = "microbiome", experiment2 = "microbiome", 
+#' result <- getExperimentCrossAssociation(mae, experiment1 = "microbiota", experiment2 = "microbiota", 
 #'                                         assay_name1 = "counts", assay_name2 = "counts",
 #'                                         symmetric = TRUE)
 #' 

@@ -47,6 +47,7 @@ NULL
 #' @name mia-datasets
 #' @aliases GlobalPatterns
 #' @keywords data
+#' @format \code{TreeSummarizedExperiment}
 #' @usage data(GlobalPatterns)
 #' @author Caporaso, J. G., et al.
 #' @docType data
@@ -69,6 +70,7 @@ NULL
 #' @name mia-datasets
 #' @aliases enterotype
 #' @keywords data
+#' @format \code{TreeSummarizedExperiment}
 #' @usage data(enterotype)
 #' @author Arumugam, M., Raes, J., et al.
 #' @docType data
@@ -94,6 +96,7 @@ NULL
 #' @name mia-datasets
 #' @aliases esophagus
 #' @keywords data
+#' @format \code{TreeSummarizedExperiment}
 #' @usage data(esophagus)
 #' @author Pei et al. \email{zhiheng.pei@@med.nyu.edu}.
 #' @docType data
@@ -121,6 +124,7 @@ NULL
 #' @name mia-datasets
 #' @aliases dmn_se, twins
 #' @keywords data
+#' @format \code{SummarizedExperiment}
 #' @usage data(dmn_se)
 #' @author Turnbaugh, PJ et al.
 #' @references
@@ -144,6 +148,7 @@ NULL
 #' @name mia-datasets
 #' @aliases peerj13075
 #' @keywords data
+#' @format \code{TreeSummarizedExperiment}
 #' @usage data(peerj13075)
 #' @author Potbhare, R., et al.
 #' @docType data
@@ -157,4 +162,43 @@ NULL
 #' \url{DOI:10.7717/peerj.13075/supp-2}
 "peerj13075"
 
-
+#' Multiomics dataset from a rat experiment studying effect of fat and prebiotics in diet
+#' 
+#' The HintikkaXO dataset contains high-throughput profiling data from 40 rat 
+#' samples, including 39 biomarkers, 38 metabolites (NMR), and 12706 OTUs from 
+#' 318 species, measured from Cecum. This is diet comparison study with High/Low 
+#' fat diet and xylo-oligosaccaride supplementation. Column metadata is common 
+#' for all experiments (microbiota, metabolites, biomarkers) and includes the 
+#' following fields:
+#' 
+#' \itemize{
+#'   \item{Sample: Sample ID (character)}
+#'   \item{Rat: Rat ID (factor)}
+#'   \item{Site: Site of measurement ("Cecum"); single value}
+#'   \item{Diet: Diet group (factor; combination of the Fat and XOS fields)}
+#'   \item{Fat: Fat in Diet (factor; Low/High)}
+#'   \item{XOS: XOS Diet Supplement (numeric; 0/1)}
+#' }
+#' 
+#' Row metadata of the microbiota data contains taxonomic information on the 
+#' Phylum, Class, Order, Family, Genus, Species, and OTU levels.
+#' 
+#' Biomarker data contains 39 biomarkers.
+#' 
+#' Metabolite data contains 38 NMR metabolites.
+#' 
+#' @name mia-datasets
+#' @aliases HintikkaXOData
+#' @keywords data
+#' @format \code{MultiAssayExperiment}
+#' @usage data(HintikkaXOData)
+#' @author Leo Lahti
+#' @docType data
+#' @references
+#' Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic 
+#' steatosis and adipose tissue inflammation: associating taxonomic and 
+#' metabolomic patterns in fecal microbiotas with biclustering. International 
+#' Journal of Environmental Research and Public Health 18(8):4049 
+#' \url{https://doi.org/10.3390/ijerph18084049}
+#' 
+"HintikkaXOData"
