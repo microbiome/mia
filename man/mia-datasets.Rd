@@ -10,6 +10,7 @@
 \alias{dmn_se,}
 \alias{twins}
 \alias{peerj13075}
+\alias{HintikkaXOData}
 \alias{SilvermanAGutData}
 \title{mia datasets}
 \format{
@@ -23,7 +24,9 @@ An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
 
 An object of class \code{TreeSummarizedExperiment} with 674 rows and 58 columns.
 
-\code{TreeSummarizedExperiment}
+An object of class \code{MultiAssayExperiment} of length 3.
+
+An object of class \code{TreeSummarizedExperiment} with 413 rows and 639 columns.
 }
 \usage{
 data(GlobalPatterns)
@@ -35,6 +38,8 @@ data(esophagus)
 data(dmn_se)
 
 data(peerj13075)
+
+data(HintikkaXOData)
 
 data(SilvermanAGutData)
 }
@@ -80,6 +85,13 @@ PeerJ data by Potbhare et al. (2022) includes skin microbial profiles of 58 volu
 A standard bioinformatic and statistical analysis done to explore skin bacterial diversity and its association with age, diet, geographical locations.
 The authors investigated significant association of skin microbiota with individual’s geographical location.
 
+The HintikkaXO dataset contains high-throughput profiling data from 40 rat
+samples, including 39 biomarkers, 38 metabolites (NMR), and 12706 OTUs from
+318 species, measured from Cecum. This is diet comparison study with High/Low
+fat diet and xylo-oligosaccaride supplementation. Column metadata is common
+for all experiments (microbiota, metabolites, biomarkers) and includes the
+following fields:
+
 The SilvermanAGutData dataset contains 16S rRNA gene based high-throughput
 profiling of 4 in vitro artificial gut models. The sampling was done hourly
 and daily to capture sub-daily dynamics of microbial community originating
@@ -88,6 +100,22 @@ The data set can be used to investigate longitudinal dynamics of microbial
 community in a controlled environment.
 }
 \details{
+\itemize{
+\item{Sample: Sample ID (character)}
+\item{Rat: Rat ID (factor)}
+\item{Site: Site of measurement ("Cecum"); single value}
+\item{Diet: Diet group (factor; combination of the Fat and XOS fields)}
+\item{Fat: Fat in Diet (factor; Low/High)}
+\item{XOS: XOS Diet Supplement (numeric; 0/1)}
+}
+
+Row metadata of the microbiota data contains taxonomic information on the
+Phylum, Class, Order, Family, Genus, Species, and OTU levels.
+
+Biomarker data contains 39 biomarkers.
+
+Metabolite data contains 38 NMR metabolites.
+
 Column metadata includes the days of sampling, vessel identifier, sampling
 frequency pre-post challenge with Bacteroides ovatus.
 
@@ -145,6 +173,12 @@ Supplemental information includes OTU table and taxonomy table and publicly-acce
 \url{DOI:10.7717/peerj.13075/supp-1}
 \url{DOI:10.7717/peerj.13075/supp-2}
 
+Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic
+steatosis and adipose tissue inflammation: associating taxonomic and
+metabolomic patterns in fecal microbiotas with biclustering. International
+Journal of Environmental Research and Public Health 18(8):4049
+\url{https://doi.org/10.3390/ijerph18084049}
+
 Silveman J.D et al. (2018): Dynamic linear models guide design and analysis
 of microbiota studies within artificial human guts.
 Microbiome 6:202 \url{https://doi.org/10.1186/s40168-018-0584-3}
@@ -159,6 +193,8 @@ Pei et al. \email{zhiheng.pei@med.nyu.edu}.
 Turnbaugh, PJ et al.
 
 Potbhare, R., et al.
+
+Leo Lahti
 
 Sudarshan A. Shetty and Felix G.M. Ernst
 }
