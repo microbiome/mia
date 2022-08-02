@@ -201,8 +201,11 @@
 #' # It is also possible to choose variables from colData and calculate association
 #' # between assay and sample metadata or between variables of sample metadata
 #' mae[[1]] <- estimateDiversity(mae[[1]])
+#' # coldata_variable works similarly to assay_name. Instead of fetching an assay
+#' # named assay_name from assay slot, it fetches a column named coldata_variable
+#' # from colData.
 #' result <- getExperimentCrossAssociation(mae[[1]], assay_name1 = "counts", 
-#'                                         coldata_variable1 = c("shannon", "coverage"))
+#'                                         coldata_variable2 = c("shannon", "coverage"))
 #'                                         
 NULL
 
@@ -1106,47 +1109,45 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                          show_warnings,
                                          test_significance,
                                          ...){
-  # Get features
-  feature1 <- assay1[ , feature_pair[1]]
-  feature2 <- assay2[ , feature_pair[2]]
-  # Create a matrix 
-  feature_mat <- rbind(feature1, feature2)
+    # Get features
+    feature1 <- assay1[ , feature_pair[1]]
+    feature2 <- assay2[ , feature_pair[2]]
+    # Create a matrix 
+    feature_mat <- rbind(feature1, feature2)
   
-  # If user does not want warnings, 
-  # suppress warnings that might occur when calculating correlations (NAs...)
-  # or p-values (ties, and exact p-values cannot be calculated...)
-  # Use try-catch to catch errors that might occur.
-  if( show_warnings ){
-      temp <- tryCatch({
+    # If user does not want warnings, 
+    # suppress warnings that might occur when calculating correlations (NAs...)
+    # or p-values (ties, and exact p-values cannot be calculated...)
+    # Use try-catch to catch errors that might occur.
+    if( show_warnings ){
+        temp <- tryCatch({
           do.call(association_FUN, args = c(list(feature_mat), list(...)))
-      },
-      error = function(cond) {
-          stop(paste0("Error occurred during calculation. Check, e.g., that ",
-                      "'association_FUN' fulfills requirements. 'association_FUN' ",
-                      "threw a following error:\n",  cond),
-              call. = FALSE)
-      }
-      )
-  } else {
-      temp <- tryCatch({
-          suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
-      },
-      error = function(cond) {
-          stop(paste0("Error occurred during calculation. Check, e.g., that ",
-                      "'association_FUN' fulfills requirements. 'association_FUN' ",
-                      "threw a following error:\n",  cond),
-              call. = FALSE)
-      }
-      )
-  }
+        },
+        error = function(cond) {
+            stop(paste0("Error occurred during calculation. Check, e.g., that ",
+                "'association_FUN' fulfills requirements. 'association_FUN' ",
+                "threw a following error:\n",  cond),
+                call. = FALSE)
+        })
+    } else {
+        temp <- tryCatch({
+            suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
+        },
+        error = function(cond) {
+            stop(paste0("Error occurred during calculation. Check, e.g., that ",
+                    "'association_FUN' fulfills requirements. 'association_FUN' ",
+                    "threw a following error:\n",  cond),
+                 call. = FALSE)
+        })
+    }
   
-  # If temp's length is not 1, then function does not return single numeric value for each pair
-  if( length(temp) != 1 ){
-      stop(paste0("Error occurred during calculation. Check that ", 
-                      "'association_FUN' fulfills requirements."), 
-           call. = FALSE)
-  } 
-  return(temp)
+    # If temp's length is not 1, then function does not return single numeric value for each pair
+    if( length(temp) != 1 ){
+        stop(paste0("Error occurred during calculation. Check that ", 
+            "'association_FUN' fulfills requirements."), 
+            call. = FALSE)
+    } 
+    return(temp)
 }
 
 ############################## .association_filter #############################

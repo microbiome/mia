@@ -256,8 +256,11 @@ result <- testExperimentCrossAssociation(tse_sub)
 # It is also possible to choose variables from colData and calculate association
 # between assay and sample metadata or between variables of sample metadata
 mae[[1]] <- estimateDiversity(mae[[1]])
+# coldata_variable works similarly to assay_name. Instead of fetching an assay
+# named assay_name from assay slot, it fetches a column named coldata_variable
+# from colData.
 result <- getExperimentCrossAssociation(mae[[1]], assay_name1 = "counts", 
-                                        coldata_variable1 = c("shannon", "coverage"))
+                                        coldata_variable2 = c("shannon", "coverage"))
                                         
 }
 \author{
