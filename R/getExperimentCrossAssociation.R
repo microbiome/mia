@@ -254,42 +254,74 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
 #' @importFrom SingleCellExperiment altExps
 #' @export
 setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
-    function(x, experiment2 = x, ...){
+    function(x, y = x, experiment2 = y, ...){
         ############################## INPUT CHECK #############################
-        # If experiment2 is  SE or TreeSE object
-        if( class(experiment2) == "SummarizedExperiment" || 
-            class(experiment2) == "TreeSummarizedExperiment" ){}
+        # 
+        from_coldata <- FALSE
+        # If y is  SE or TreeSE object
+        if( is(y, "SummarizedExperiment") ){}
         # If y is  character specifying name of altExp, 
-        else if( is.character(experiment2) && experiment2 %in% names(altExps(x)) ){}
+        else if( is.character(y) && y %in% names(altExps(x)) ){}
         # If y is numeric value specifying altExp
-        else if( is.numeric(experiment2) && experiment2 <= length(altExps(x)) ){} 
-        # If experiment2 does not match, then give error
+        else if( is.numeric(y) && y <= length(altExps(x)) ){} 
+        # If y is  character specifying name of colData 
+        else if( is.character(y) && any(y %in% colnames(colData(x))) ){ 
+            from_coldata <- TRUE
+        }
+        # If y does not match, then give error
         else{
-            stop("'experiment2' must be SE or TreeSE object, or numeric or character",
-                 " value specifying experiment in altExps(x) or it must be NULL.", 
+            stop("'y' must be SE object, or numeric or character",
+                 " value specifying experiment in altExps(x) or character value ",
+                 " specifying column(s) from 'colData(x)' or it must be NULL.", 
                  call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
         # Fetch data sets and create a MAE object
         exp1 <- x
-        # If experiment2 is character or numeric, it specifies altExp
-        if ( is.character(experiment2) || is.numeric(experiment2) ){
-            exp2 <- altExps(x)[[experiment2]]
-            experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
-            exp2_num <- 2
-        } else {
-            exp2 <- experiment2
-            experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
-            exp2_num <- 2
+        args <- list()
+        if( from_coldata ){
+            exp2 <- .get_coldata_as_assay(exp1, y, ...)
+            args <- c(args, list(assay_name2 = "variables",
+                                 second_variables_from_coldata = TRUE))
+        } else{
+            # If y is character or numeric, it specifies altExp
+            if ( is.character(y) || is.numeric(y) ){
+                exp2 <- altExps(x)[[y]]
+            } else {
+                exp2 <- y
+            }
         }
+        
+        experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
+        exp2_num <- 2
         x <- MultiAssayExperiment(experiments = experiments)
+        args <- c(args, list(x = x, experiment1 = 1, experiment2 = exp2_num, ...) )
+        do.call(.get_experiment_cross_association, args = args)
         # Call method with MAE object as an input
-        .get_experiment_cross_association(x = x,
-                                          experiment1 = 1,
-                                          experiment2 = exp2_num,
-                                          ...)
+        # .get_experiment_cross_association(x = x,
+        #                                   experiment1 = 1,
+        #                                   experiment2 = exp2_num,
+        #                                   ...)
     }
 )
+
+.get_coldata_as_assay <- function(x, y, ...){
+    coldata <- colData(x)[ , y, drop = FALSE]
+    classes <- unlist( lapply(coldata, class) )
+    if( length(unique(classes)) > 1 ){
+        stop("More thaan 1 unqieu class")
+    }
+    if( any( classes == "factor") ){
+        unfactor <- coldata[, classes == "factor", drop = FALSE]
+        unfactor <- lapply(unfactor, unfactor)
+        coldata[, classes == "factor"] <- as.data.frame(unfactor)
+    }
+    coldata <- as.matrix(coldata)
+    coldata <- t(coldata)
+    assays <- SimpleList(variables = coldata)
+    tse <- TreeSummarizedExperiment(assays)
+    return(tse)
+}
 
 #' @rdname getExperimentCrossAssociation
 #' @aliases testExperimentCrossCorrelation
@@ -606,21 +638,28 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 # Input: assay and method
 # Output: assay
-.cross_association_test_data_type <- function(assay, method){
+.cross_association_test_data_type <- function(assay, method, 
+                                              second_variables_from_coldata){
     # Different available methods
     numeric_methods <- c("kendall", "pearson","spearman")
     categorical_methods <- c("categorical")
+    # Get message
+    if( second_variables_from_coldata ){
+        message <- "Variables of colData"
+    } else{
+        message <- "Assay, specified by 'assay_name',"
+    }
     # Check if method match with values, otherwise give an error.
     # For numeric methods, expect only numeric values. For categorical methods, 
     # expect only factors/characters.
     if (method %in% numeric_methods && !is.numeric(assay)) {
         # If there are no numeric values, give an error
-        stop("Assay, specified by 'abund_values', of 'experiment' does not ",
+        stop(message, " of 'experiment' does not ",
              "include numeric values. Choose categorical method for 'method'.",
              call. = FALSE)
     } else if (method %in% categorical_methods && !is.character(assay)) {
         # If there are no factor values, give an error
-        stop("Assay, specified by 'abund_values', of 'experiment' does not ",
+        stop(message, " specified by 'assay_name', of 'experiment' does not ",
              "include factor values. Choose numeric method for 'method'.",
              call. = FALSE)
     }
@@ -653,6 +692,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                    verbose,
                                    MARGIN,
                                    association_FUN = NULL, 
+                                   second_variables_from_coldata = FALSE,
                                    ...){
     # Check method if association_FUN is not NULL
     if( is.null(association_FUN) ){
@@ -662,8 +702,11 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                 ifelse(test_significance, "stats::cor.test", "stats::cor"))
         
         # Test if data is in right format
-        .cross_association_test_data_type(assay1, method)
-        .cross_association_test_data_type(assay2, method)
+        .cross_association_test_data_type(assay1, method, 
+                                          second_variables_from_coldata = FALSE)
+        .cross_association_test_data_type(assay2, method, 
+                                          second_variables_from_coldata = 
+                                              second_variables_from_coldata)
     } else{
         # Get name of function
         function_name <- deparse(substitute(association_FUN))

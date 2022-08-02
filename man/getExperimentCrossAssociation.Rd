@@ -40,7 +40,7 @@ getExperimentCrossAssociation(x, ...)
   ...
 )
 
-\S4method{getExperimentCrossAssociation}{SummarizedExperiment}(x, experiment2 = x, ...)
+\S4method{getExperimentCrossAssociation}{SummarizedExperiment}(x, y = x, experiment2 = y, ...)
 
 testExperimentCrossAssociation(x, ...)
 
