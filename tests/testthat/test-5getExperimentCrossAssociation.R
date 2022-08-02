@@ -261,6 +261,51 @@ test_that("getExperimentCrossAssociation", {
                                                 sort = TRUE,
                                                 filter_self_correlations = TRUE,
                                                 verbose = 1))
+     expect_error(getExperimentCrossAssociation(mae,
+                                                experiment1 = 3,
+                                                experiment2 = 2,
+                                                assay_name1 = "counts",
+                                                assay_name2 = "counts",
+                                                coldata_variable1 = FALSE,
+                                                coldata_variable2 = NULL,
+                                                method = "spearman",
+                                                mode = "table",
+                                                p_adj_method = "fdr",
+                                                p_adj_threshold = 0.05,
+                                                cor_threshold = NULL,
+                                                sort = FALSE,
+                                                filter_self_correlations = FALSE,
+                                                verbose = TRUE))
+     expect_error(getExperimentCrossAssociation(mae,
+                                                experiment1 = 3,
+                                                experiment2 = 2,
+                                                assay_name1 = "counts",
+                                                assay_name2 = "counts",
+                                                coldata_variable1 = NULL,
+                                                coldata_variable2 = 1,
+                                                method = "spearman",
+                                                mode = "table",
+                                                p_adj_method = "fdr",
+                                                p_adj_threshold = 0.05,
+                                                cor_threshold = NULL,
+                                                sort = FALSE,
+                                                filter_self_correlations = FALSE,
+                                                verbose = TRUE))
+     expect_error(getExperimentCrossAssociation(mae,
+                                                experiment1 = 3,
+                                                experiment2 = 2,
+                                                assay_name1 = "counts",
+                                                assay_name2 = "counts",
+                                                coldata_variable1 = "test",
+                                                coldata_variable2 = NULL,
+                                                method = "spearman",
+                                                mode = "table",
+                                                p_adj_method = "fdr",
+                                                p_adj_threshold = 0.05,
+                                                cor_threshold = NULL,
+                                                sort = FALSE,
+                                                filter_self_correlations = FALSE,
+                                                verbose = TRUE))
      ############################# Test input end #############################
      # Test that association is calculated correctly with numeric data
      # Result from
@@ -448,4 +493,25 @@ test_that("getExperimentCrossAssociation", {
                                                altExp1 = "Family", altExp2 = NULL),
                  getExperimentCrossAssociation(altExp(tse, "Family"), tse, 
                                                show_warnings = FALSE))
+    
+    # Test coldata_variable
+    # Check that all the correct names are included
+    indices <- c("shannon", "gini_simpson")
+    tse <- estimateDiversity(tse, index = indices)
+    res <- getExperimentCrossAssociation(tse, tse, 
+                                         assay_name1 = "counts", 
+                                         coldata_variable2 = indices)
+    unique_var1 <- unfactor(unique(res$Var1))
+    unique_var2 <- unfactor(unique(res$Var2))
+    rownames <- rownames(tse)
+    
+    expect_true( all(rownames %in% unique_var1) && all(unique_var1 %in% rownames) &&
+        all(indices %in% unique_var2) && all(unique_var2 %in% indices) )
+    # Check tha assay_name is disabled
+    res2 <- getExperimentCrossAssociation(tse, 
+                                            assay_name1 = "counts", 
+                                            assay_name2 = "counts",
+                                            coldata_variable2 = indices)
+    expect_equal(res, res2)
+    
 })
