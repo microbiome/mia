@@ -24,6 +24,8 @@ getExperimentCrossAssociation(x, ...)
   abund_values2 = "counts",
   altExp1 = NULL,
   altExp2 = NULL,
+  coldata_variable1 = NULL,
+  coldata_variable2 = NULL,
   MARGIN = 1,
   method = c("spearman", "categorical", "kendall", "pearson"),
   mode = "table",
@@ -40,7 +42,7 @@ getExperimentCrossAssociation(x, ...)
   ...
 )
 
-\S4method{getExperimentCrossAssociation}{SummarizedExperiment}(x, y = x, experiment2 = y, ...)
+\S4method{getExperimentCrossAssociation}{SummarizedExperiment}(x, experiment2 = x, ...)
 
 testExperimentCrossAssociation(x, ...)
 
@@ -111,6 +113,14 @@ and altExp option is disabled.
 from the altExp of experiment 2. If NULL, then the experiment is itself
 and altExp option is disabled.
 (By default: \code{altExp2 = NULL})}
+
+\item{coldata_variable1}{A character value specifying column(s) from colData
+of experiment 1. If coldata_variable1 is used, assay_name1 is disabled.
+(By default: \code{coldata_variable1 = NULL})}
+
+\item{coldata_variable2}{A character value specifying column(s) from colData
+of experiment 2. If coldata_variable2 is used, assay_name2 is disabled.
+(By default: \code{coldata_variable2 = NULL})}
 
 \item{MARGIN}{A single numeric value for selecting if association are calculated
 row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -242,7 +252,12 @@ sample_size <- 0.3
 tse <- mae[[1]]
 tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
 result <- testExperimentCrossAssociation(tse_sub)
-                                         
+
+# It is also possible to choose variables from colData and calculate association
+# between assay and sample metadata or between variables of sample metadata
+mae[[1]] <- estimateDiversity(mae[[1]])
+result <- getExperimentCrossAssociation(mae[[1]], assay_name1 = "counts", 
+                                        coldata_variable1 = c("shannon", "coverage"))
                                         
 }
 \author{
