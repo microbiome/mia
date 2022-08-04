@@ -657,11 +657,13 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 .check_and_subset_colData_variables <- function(tse, variables){
     # Get variable name
     variable_name <- deparse(substitute(variables))
+    var_num <- substr(variable_name, 
+                      start = nchar(variable_name), stop = nchar(variable_name))
     # Check that variables can be found
     if( !(is.character(variables) &&
           all( variables %in% colnames(colData(tse))) ) ){
         stop("'", variable_name, "' must be a character value specifying ",
-             "column(s) from colData.",
+             "column(s) from colData of experiment ", var_num, ".",
              call. = FALSE)
     }
     # Get coldata
