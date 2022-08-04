@@ -266,8 +266,8 @@ test_that("getExperimentCrossAssociation", {
                                                 experiment2 = 2,
                                                 assay_name1 = "counts",
                                                 assay_name2 = "counts",
-                                                coldata_variable1 = FALSE,
-                                                coldata_variable2 = NULL,
+                                                colData_variable1 = FALSE,
+                                                colData_variable2 = NULL,
                                                 method = "spearman",
                                                 mode = "table",
                                                 p_adj_method = "fdr",
@@ -281,8 +281,8 @@ test_that("getExperimentCrossAssociation", {
                                                 experiment2 = 2,
                                                 assay_name1 = "counts",
                                                 assay_name2 = "counts",
-                                                coldata_variable1 = NULL,
-                                                coldata_variable2 = 1,
+                                                colData_variable1 = NULL,
+                                                colData_variable2 = 1,
                                                 method = "spearman",
                                                 mode = "table",
                                                 p_adj_method = "fdr",
@@ -296,8 +296,8 @@ test_that("getExperimentCrossAssociation", {
                                                 experiment2 = 2,
                                                 assay_name1 = "counts",
                                                 assay_name2 = "counts",
-                                                coldata_variable1 = "test",
-                                                coldata_variable2 = NULL,
+                                                colData_variable1 = "test",
+                                                colData_variable2 = NULL,
                                                 method = "spearman",
                                                 mode = "table",
                                                 p_adj_method = "fdr",
@@ -494,13 +494,13 @@ test_that("getExperimentCrossAssociation", {
                  getExperimentCrossAssociation(altExp(tse, "Family"), tse, 
                                                show_warnings = FALSE))
     
-    # Test coldata_variable
+    # Test colData_variable
     # Check that all the correct names are included
     indices <- c("shannon", "gini_simpson")
     tse <- estimateDiversity(tse, index = indices)
     res <- getExperimentCrossAssociation(tse, tse, 
                                          assay_name1 = "counts", 
-                                         coldata_variable2 = indices)
+                                         colData_variable2 = indices)
     unique_var1 <- unfactor(unique(res$Var1))
     unique_var2 <- unfactor(unique(res$Var2))
     rownames <- rownames(tse)
@@ -511,7 +511,7 @@ test_that("getExperimentCrossAssociation", {
     res2 <- getExperimentCrossAssociation(tse, 
                                             assay_name1 = "counts", 
                                             assay_name2 = "counts",
-                                            coldata_variable2 = indices)
+                                            colData_variable2 = indices)
     expect_equal(res, res2)
     
 })

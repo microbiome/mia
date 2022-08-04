@@ -44,13 +44,13 @@
 #'   and altExp option is disabled. 
 #'   (By default: \code{altExp2 = NULL})
 #'   
-#' @param coldata_variable1 A character value specifying column(s) from colData
-#'   of experiment 1. If coldata_variable1 is used, assay_name1 is disabled.
-#'   (By default: \code{coldata_variable1 = NULL})
+#' @param colData_variable1 A character value specifying column(s) from colData
+#'   of experiment 1. If colData_variable1 is used, assay_name1 is disabled.
+#'   (By default: \code{colData_variable1 = NULL})
 #'   
-#' @param coldata_variable2 A character value specifying column(s) from colData
-#'   of experiment 2. If coldata_variable2 is used, assay_name2 is disabled.
-#'   (By default: \code{coldata_variable2 = NULL})
+#' @param colData_variable2 A character value specifying column(s) from colData
+#'   of experiment 2. If colData_variable2 is used, assay_name2 is disabled.
+#'   (By default: \code{colData_variable2 = NULL})
 #' 
 #' @param MARGIN A single numeric value for selecting if association are calculated
 #'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -201,11 +201,11 @@
 #' # It is also possible to choose variables from colData and calculate association
 #' # between assay and sample metadata or between variables of sample metadata
 #' mae[[1]] <- estimateDiversity(mae[[1]])
-#' # coldata_variable works similarly to assay_name. Instead of fetching an assay
-#' # named assay_name from assay slot, it fetches a column named coldata_variable
+#' # colData_variable works similarly to assay_name. Instead of fetching an assay
+#' # named assay_name from assay slot, it fetches a column named colData_variable
 #' # from colData.
 #' result <- getExperimentCrossAssociation(mae[[1]], assay_name1 = "counts", 
-#'                                         coldata_variable2 = c("shannon", "coverage"))
+#'                                         colData_variable2 = c("shannon", "coverage"))
 #'                                         
 NULL
 
@@ -227,8 +227,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            assay_name2 = abund_values2, abund_values2 = "counts",
            altExp1 = NULL,
            altExp2 = NULL,
-           coldata_variable1 = NULL,
-           coldata_variable2 = NULL,
+           colData_variable1 = NULL,
+           colData_variable2 = NULL,
            MARGIN = 1,
            method = c("spearman", "categorical", "kendall", "pearson"),
            mode = "table",
@@ -250,8 +250,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           assay_name2 = assay_name2,
                                           altExp1 = altExp1,
                                           altExp2 = altExp2,
-                                          coldata_variable1 = coldata_variable1,
-                                          coldata_variable2 = coldata_variable2,
+                                          colData_variable1 = colData_variable1,
+                                          colData_variable2 = colData_variable2,
                                           MARGIN = MARGIN,
                                           method = method,
                                           mode = mode,
@@ -369,8 +369,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               assay_name2 = "counts",
                                               altExp1 = NULL,
                                               altExp2 = NULL,
-                                              coldata_variable1 = NULL,
-                                              coldata_variable2 = NULL,
+                                              colData_variable1 = NULL,
+                                              colData_variable2 = NULL,
                                               MARGIN = 1,
                                               method = c("spearman", "categorical", "kendall", "pearson"),
                                               mode = c("table", "matrix"),
@@ -402,13 +402,13 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     # If variables from coldata are specified check them. Otherwise,
     # check assay_name1
-    if( !is.null(coldata_variable1) ){
-        tse1 <- .check_and_subset_coldata_variables(tse1, coldata_variable1)
+    if( !is.null(colData_variable1) ){
+        tse1 <- .check_and_subset_colData_variables(tse1, colData_variable1)
     } else{
         .check_assay_present(assay_name1, tse1)
     }
-    if( !is.null(coldata_variable2) ){
-        tse2 <- .check_and_subset_coldata_variables(tse2, coldata_variable2)
+    if( !is.null(colData_variable2) ){
+        tse2 <- .check_and_subset_colData_variables(tse2, colData_variable2)
     } else{
         .check_assay_present(assay_name2, tse2)
     }
@@ -469,14 +469,14 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     ############################ INPUT CHECK END ###########################
     # Fetch assays to correlate, if variables from coldata are specified, take 
     # coldata, otherwise take assay
-    if( !is.null(coldata_variable1) ){
+    if( !is.null(colData_variable1) ){
         assay1 <- colData(tse1)
         assay1 <- as.matrix(assay1)
         assay1 <- t(assay1)
     } else{
         assay1 <- assay(tse1, assay_name1)
     }
-    if( !is.null(coldata_variable2) ){
+    if( !is.null(colData_variable2) ){
         assay2 <- colData(tse2)
         assay2 <- as.matrix(assay2)
         assay2 <- t(assay2)
@@ -504,7 +504,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                      verbose, MARGIN,
                                      assay_name1, assay_name2,
                                      altExp1, altExp2,
-                                     coldata_variable1, coldata_variable2,
+                                     colData_variable1, colData_variable2,
                                      ...)
     # Disable p_adj_threshold if there is no adjusted p-values
     if( is.null(result$p_adj) ){
@@ -648,13 +648,13 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              call. = FALSE)
     }
 }
-###################### .check_and_subset_coldata_variables #####################
+###################### .check_and_subset_colData_variables #####################
 # This function checks if columns can be found from colData. Additionally, 
 # integers are converted into numeric and factors to character.
 
 # Input: (Tree)SE and character
 # Output: (Tree)SE
-.check_and_subset_coldata_variables <- function(tse, variables){
+.check_and_subset_colData_variables <- function(tse, variables){
     # Get variable name
     variable_name <- deparse(substitute(variables))
     # Check that variables can be found
@@ -700,12 +700,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: assay and method
 # Output: assay
 .cross_association_test_data_type <- function(assay, method, 
-                                              coldata_variable){
+                                              colData_variable){
     # Different available methods
     numeric_methods <- c("kendall", "pearson","spearman")
     categorical_methods <- c("categorical")
     # Get message
-    if( !is.null(coldata_variable) ){
+    if( !is.null(colData_variable) ){
         message <- "Variables of colData"
     } else{
         message <- "Assay, specified by 'assay_name',"
@@ -754,7 +754,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                    MARGIN,
                                    assay_name1, assay_name2,
                                    altExp1, altExp2,
-                                   coldata_variable1, coldata_variable2,
+                                   colData_variable1, colData_variable2,
                                    association_FUN = NULL,
                                    ...){
     # Check method if association_FUN is not NULL
@@ -766,9 +766,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         
         # Test if data is in right format
         .cross_association_test_data_type(assay1, method, 
-                                          coldata_variable1)
+                                          colData_variable1)
         .cross_association_test_data_type(assay2, method, 
-                                          coldata_variable2)
+                                          colData_variable2)
     } else{
         # Get name of function
         function_name <- deparse(substitute(association_FUN))
@@ -782,14 +782,14 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
             "Calculating correlations...\n",
             "altExp1: ", ifelse(!is.null(altExp1), altExp1, "-"), 
             ", altExp2: ", ifelse(!is.null(altExp2), altExp2, "-"),
-            ifelse(!is.null(coldata_variable1), 
-                paste0(", assay_name1: -, coldata_variable1: ", 
-                       paste(coldata_variable1, collapse = " + ")), 
-                paste0(", assay_name1: ", assay_name1, ", coldata_variable1: -")),
-            ifelse(!is.null(coldata_variable2), 
-                paste0(", assay_name2: -, coldata_variable2: ", 
-                       paste(coldata_variable2, collapse = " + ")), 
-                paste0(", assay_name2: ", assay_name2, ", coldata_variable2: -")),
+            ifelse(!is.null(colData_variable1), 
+                paste0(", assay_name1: -, colData_variable1: ", 
+                       paste(colData_variable1, collapse = " + ")), 
+                paste0(", assay_name1: ", assay_name1, ", colData_variable1: -")),
+            ifelse(!is.null(colData_variable2), 
+                paste0(", assay_name2: -, colData_variable2: ", 
+                       paste(colData_variable2, collapse = " + ")), 
+                paste0(", assay_name2: ", assay_name2, ", colData_variable2: -")),
             "\nMARGIN: ", MARGIN, 
             ", function: ", function_name, 
             ", method: ", method,
