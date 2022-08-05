@@ -219,23 +219,15 @@ setMethod("runCCA", "SingleCellExperiment",
     #
     x <- as.matrix(t(x))
     variables <- as.data.frame(variables)
-    if(ncol(variables) > 0L && !missing(formula)){
-        dep_var_name <- .get_dependent_var_name(formula)
-        assign(dep_var_name, x)
-        # recast formula in current environment
-        form <- as.formula(paste(as.character(formula)[c(2,1,3)],
-                                 collapse = " "))
-        rda <- vegan::dbrda(form, data = variables, ...)
-        X <- rda$CCA
-        # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
-        if( is.null(X) ){
-            X <- rda$CA
-        }
-    } else if(ncol(variables) > 0L) {
-        rda <- vegan::dbrda(X = x, Y = variables, ...)
-        X <- rda$CCA
-    } else {
-        rda <- vegan::dbrda(X = x, ...)
+    dep_var_name <- .get_dependent_var_name(formula)
+    assign(dep_var_name, x)
+    # recast formula in current environment
+    form <- as.formula(paste(as.character(formula)[c(2,1,3)],
+                             collapse = " "))
+    rda <- vegan::dbrda(form, data = variables, ...)
+    X <- rda$CCA
+    # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
+    if( is.null(X) ){
         X <- rda$CA
     }
     ans <- X$u
@@ -255,6 +247,9 @@ setMethod("calculateRDA", "SummarizedExperiment",
     function(x, formula, ..., 
              assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
     {
+        if( missing(formula) ){
+            stop("Please provide 'formula'", call. = FALSE)
+        }
         mat <- assay(x, assay_name)
         variables <- .get_variables_from_data_and_formula(x, formula)
         .calculate_rda(mat, formula, variables, ...)
