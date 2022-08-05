@@ -26,6 +26,7 @@ runRDA(x, ...)
 \S4method{calculateCCA}{SummarizedExperiment}(
   x,
   formula,
+  variables,
   ...,
   assay_name = abund_values,
   abund_values = exprs_values,
@@ -39,6 +40,7 @@ runRDA(x, ...)
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
   formula,
+  variables,
   ...,
   assay_name = abund_values,
   abund_values = exprs_values,
@@ -66,7 +68,8 @@ a formula can be supplied. Based on the right-hand side of the given formula
 \item{variables}{a \code{data.frame} or an object coercible to one containing
 the variables to use. Can be missing, which turns the CCA analysis into
 a CA analysis. All variables are used. Please subset, if you want to
-consider only some of them.}
+consider only some of them. When \code{x} is a \code{SummarizedExperiment},
+\code{variables} can be used to specify variables from \code{colData}.}
 
 \item{scale}{a logical scalar, should the expression values be standardized?}
 
