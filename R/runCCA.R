@@ -19,7 +19,8 @@
 #' @param variables a \code{data.frame} or an object coercible to one containing
 #'   the variables to use. Can be missing, which turns the CCA analysis into
 #'   a CA analysis. All variables are used. Please subset, if you want to
-#'   consider only some of them.
+#'   consider only some of them. When \code{x} is a \code{SummarizedExperiment},
+#'   \code{variables} can be used to specify variables from \code{colData}.
 #'   
 #' @param scale a logical scalar, should the expression values be standardized?
 #' 
@@ -170,14 +171,37 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
     colData(x)[,terms,drop=FALSE]
 }
 
+.get_formula_from_data_and_variables <- function(x, variables){
+    if( all(!is.character(variables)) ){
+        stop("'variables' should be a character specifying variables from ",
+             "colData(x).", 
+             call. = FALSE)
+    }
+    if(!all(variables %in% colnames(colData(x)))){
+        stop("All variables must be ",
+             "present in colData(x).", call. = FALSE)
+    }
+    formula <- as.formula(paste0("data ~ ", 
+                                 paste(variables, collapse = " + ")))
+    message("Formula used for calculation: ", 
+            paste(as.character(formula)[c(2,1,3)], collapse = " "))
+    formula
+}
+
 #' @export
 #' @rdname runCCA
 setMethod("calculateCCA", "SummarizedExperiment",
-    function(x, formula, ..., 
+    function(x, formula, variables, ..., 
              assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
     {
         mat <- assay(x, assay_name)
-        variables <- .get_variables_from_data_and_formula(x, formula)
+        # If formula is missing but variables are not
+        if( missing(formula) && !missing(variables) ){
+            formula <- .get_formula_from_data_and_variables(x, variables)
+            variables <- colData(x)[ , variables, drop = FALSE]
+        } else{
+            variables <- .get_variables_from_data_and_formula(x, formula)
+        }
         .calculate_cca(mat, formula, variables, ...)
     }
 )
@@ -244,14 +268,20 @@ setMethod("calculateRDA", "ANY", .calculate_rda)
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "SummarizedExperiment",
-    function(x, formula, ..., 
+    function(x, formula, variables, ..., 
              assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
     {
-        if( missing(formula) ){
-            stop("Please provide 'formula'", call. = FALSE)
-        }
         mat <- assay(x, assay_name)
-        variables <- .get_variables_from_data_and_formula(x, formula)
+        # If formula is missing but variables are not
+        if( missing(formula) && missing(variables)){
+            stop("Please provide 'formula' or 'variables'.", call. = FALSE)
+        }
+        else if( missing(formula) && !missing(variables) ){
+            formula <- .get_formula_from_data_and_variables(x, variables)
+            variables <- colData(x)[ , variables, drop = FALSE]
+        } else{
+            variables <- .get_variables_from_data_and_formula(x, formula)
+        }
         .calculate_rda(mat, formula, variables, ...)
     }
 )
