@@ -1,15 +1,16 @@
-#' Estimate diversity measures
+#' Estimate (alpha) diversity measures
 #'
-#' Several functions for calculating diversity indices are available via
-#' wrapper functions. Some of them are implemented via the \code{vegan} package.
+#' Several functions for calculating (alpha) diversity indices, including 
+#' the \code{vegan} package options and some others.
 #'
 #' The available indices include the \sQuote{Coverage}, 
 #' \sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha},
 #' \sQuote{Gini-Simpson}, 
 #' \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon} 
-#' diversity indices. See details for more information and references.
+#' indices. See details for more information and references.
 #'
-#' @param x a \code{\link{SummarizedExperiment}} object
+#' @param x a \code{\link{SummarizedExperiment}} object or \code{\link{TreeSummarizedExperiment}}.
+#' The latter is recommended for microbiome data sets and tree-based alpha diversity indices.
 #' 
 #' @param tree A phylogenetic tree that is used to calculate 'faith' index.
 #'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
@@ -27,7 +28,8 @@
 #'   to be calculated.
 #'
 #' @param name a name for the column(s) of the colData the results should be
-#'   stored in.
+#'   stored in. By default this will use the original names of the calculated
+#'   indices.
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -51,7 +53,7 @@
 #'
 #' @details
 #'
-#' Diversity is a joint quantity that combines elements or community richness
+#' Alpha diversity is a joint quantity that combines elements or community richness
 #' and evenness. Diversity increases, in general, when species richness or
 #' evenness increase.
 #'
@@ -65,7 +67,8 @@
 #' 
 #' \item{'faith' }{Faith's phylogenetic alpha diversity index measures how
 #' long the taxonomic distance is between taxa that are present in the sample.
-#' Larger values represent higher diversity. (Faith 1992)}
+#' Larger values represent higher diversity. Using this index requires
+#' rowTree. (Faith 1992)}
 #' 
 #' \item{'fisher' }{Fisher's alpha; as implemented in
 #' \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
@@ -266,7 +269,9 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             # faith from the vector
             if( length(index) > 1 ){
                 warning("Object does not have a tree or the tree does not ",
-                        "have any branches. \nIt is not possible to calculate 'faith'.",
+                        "have any branches. \nThe 'faith' alpha diversity index.",
+                        "cannot be calculated without rowTree. Therefore it is excluded",
+                        "from the results. You can consider adding rowTree to include this index.",            
                         call. = FALSE)
                 # Remove faith
                 keep <- index != "faith"
