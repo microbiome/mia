@@ -24,7 +24,9 @@ Currently following things are implemented:
 
 # Contribution
 
-Feel free to contribute.
+Contributions are welcome in the form of feedback, issues, pull
+requests etc, see [contributor guidelines](CONTRIBUTING.md).
+
 
 ## Technical aspects
 

@@ -7,7 +7,7 @@
 \alias{estimateFaith}
 \alias{estimateFaith,SummarizedExperiment,phylo-method}
 \alias{estimateFaith,TreeSummarizedExperiment,missing-method}
-\title{Estimate diversity measures}
+\title{Estimate (alpha) diversity measures}
 \usage{
 estimateDiversity(
   x,
@@ -69,7 +69,8 @@ estimateFaith(
 )
 }
 \arguments{
-\item{x}{a \code{\link{SummarizedExperiment}} object}
+\item{x}{a \code{\link{SummarizedExperiment}} object or \code{\link{TreeSummarizedExperiment}}.
+The latter is recommended for microbiome data sets and tree-based alpha diversity indices.}
 
 \item{assay_name}{the name of the assay used for
 calculation of the sample-wise estimates.}
@@ -83,7 +84,8 @@ will be disabled.)}
 to be calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be
-stored in.}
+stored in. By default this will use the original names of the calculated
+indices.}
 
 \item{...}{optional arguments:
 \itemize{
@@ -111,17 +113,17 @@ used by default.}
 \code{x} with additional \code{\link{colData}} named \code{*name*}
 }
 \description{
-Several functions for calculating diversity indices are available via
-wrapper functions. Some of them are implemented via the \code{vegan} package.
+Several functions for calculating (alpha) diversity indices, including
+the \code{vegan} package options and some others.
 }
 \details{
 The available indices include the \sQuote{Coverage},
 \sQuote{Faith's phylogenetic diversity}, \sQuote{Fisher alpha},
 \sQuote{Gini-Simpson},
 \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon}
-diversity indices. See details for more information and references.
+indices. See details for more information and references.
 
-Diversity is a joint quantity that combines elements or community richness
+Alpha diversity is a joint quantity that combines elements or community richness
 and evenness. Diversity increases, in general, when species richness or
 evenness increase.
 
@@ -135,7 +137,8 @@ argument.}
 
 \item{'faith' }{Faith's phylogenetic alpha diversity index measures how
 long the taxonomic distance is between taxa that are present in the sample.
-Larger values represent higher diversity. (Faith 1992)}
+Larger values represent higher diversity. Using this index requires
+rowTree. (Faith 1992)}
 
 \item{'fisher' }{Fisher's alpha; as implemented in
 \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
