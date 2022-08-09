@@ -410,7 +410,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
         tree <- rowTree(x, tree_name)
         if( is.null(tree) || is.null(tree$edge.length)){
             stop("rowTree(x, tree_name) is NULL or the tree does not have any branches. ",
-            "Faith's diversity cannot be calculated.",
+            "'faith' alpha diversity index cannot be calculated.",
                 call. = FALSE)
         }
         # Get node labs
