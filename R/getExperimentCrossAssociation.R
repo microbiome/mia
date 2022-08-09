@@ -678,13 +678,14 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         classes[classes == "factor"] <- "character"
     }
     # IF there are integers, convert them into numeric
-    if( any( classes == "integer") ){
-        as_numeric <- coldata[ , classes == "integer", drop = FALSE]
+    int_or_double <- classes == "integer" | classes == "double"
+    if( any( int_or_double ) ){
+        as_numeric <- coldata[ , int_or_double, drop = FALSE]
         as_numeric <- lapply(as_numeric, as.numeric)
-        coldata[ , classes == "integer"] <- as.data.frame(as_numeric)
-        classes[classes == "integer"] <- "numeric"
+        coldata[ , int_or_double] <- as.data.frame(as_numeric)
+        classes[int_or_double] <- "numeric"
     }
-    # Ceck that all the variables have the same class
+    # Check that all the variables have the same class
     if( length(unique(classes)) > 1 ){
         stop(" Variables specified by '", variable_name, "' do not share a same class.", 
              call. = FALSE)
