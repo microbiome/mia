@@ -286,6 +286,8 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         if( "faith" %in% index ){
             # Get the name of "faith" index
             faith_name <- name[index %in% "faith"]
+            # Store original names
+            name_original <- name
             # And delete it from name
             name <- name[!index %in% "faith"]
 
@@ -313,14 +315,18 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             # if there is no rowTree and other indices were also calculated. Otherwise, 
             # run estimateFaith. (If there is no rowTree --> error)
             if( (is.null(tree) || is.null(tree$edge.length)) &&
-                length(index) > 1 ){
+                length(index) >= 1 ){
                 warning("Object does not have a tree called 'tree_name' or the tree does not ",
                         "have any branches. \nThe 'faith' alpha diversity index. ",
                         "cannot be calculated without rowTree. Therefore it is excluded ",
-                        "from the results. You can consider adding rowTree to include this index.",            
+                        "from the results. \nYou can consider adding rowTree to include this index.",            
                         call. = FALSE)
             } else{
                 x <- estimateFaith(x, name = faith_name, tree_name = tree_name, ...)
+                # Ensure that indices are in correct order
+                colnames <- colnames(colData(x))
+                colnames <- c(colnames[ !colnames %in% name_original ], name_original)
+                colData(x) <- colData(x)[ , colnames]
             }
         }
         return(x)
