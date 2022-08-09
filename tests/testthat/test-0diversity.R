@@ -127,5 +127,11 @@ test_that("diversity estimates", {
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith")))
     expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
                                    tree_name = "test"))
+    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                   tree_name = TRUE))
+    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                   tree_name = 1))
     
-})
+    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                   tree_name = c("phylo", "phylo.1")))
+    })
