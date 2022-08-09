@@ -270,7 +270,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             ..., BPPARAM = SerialParam()){
         # input check
         # Check tree_name
-        if( !.is_non_empty_character(tree_name) ){
+        if( !.is_non_empty_string(tree_name) ){
             stop("'tree_name' must be a character specifying a rowTree of 'x'.",
                  call. = FALSE)
         }
