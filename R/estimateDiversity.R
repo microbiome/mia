@@ -30,6 +30,15 @@
 #' @param name a name for the column(s) of the colData the results should be
 #'   stored in. By default this will use the original names of the calculated
 #'   indices.
+#'   
+#' @param tree_name a single \code{character} value for specifying which
+#'   rowTree will be used to calculate faith index. 
+#'   (By default: \code{tree_name = "phylo"})
+#'   
+#' @param node_lab NULL or a character vector specifying the links between rows and 
+#'   node labels of \code{tree}. If a certain row is not linked with the tree, missing 
+#'   instance should be noted as NA. When NULL, all the rownames should be found from
+#'   the tree. (By default: \code{node_lab = NULL})
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -257,32 +266,15 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     function(x, assay_name = abund_values, abund_values = "counts",
             index = c("coverage", "faith", "fisher", "gini_simpson", 
                     "inverse_simpson", "log_modulo_skewness", "shannon"),
-                    name = index, ..., BPPARAM = SerialParam()){
-        
-        # Gets the tree 
-        tree <- rowTree(x)
+            name = index, tree_name = "phylo", 
+            ..., BPPARAM = SerialParam()){
         # input check
-        # If object does not have a tree
-        if( ("faith" %in% index) &&
-            (is.null(tree) || is.null(tree$edge.length)) ){
-            # If index is a vector of multiple indices, give just warning and remove 
-            # faith from the vector
-            if( length(index) > 1 ){
-                warning("Object does not have a tree or the tree does not ",
-                        "have any branches. \nThe 'faith' alpha diversity index.",
-                        "cannot be calculated without rowTree. Therefore it is excluded",
-                        "from the results. You can consider adding rowTree to include this index.",            
-                        call. = FALSE)
-                # Remove faith
-                keep <- index != "faith"
-                index <- index[ keep ]
-                name <- name[ keep ]
-            } else{
-                stop("Object does not have a tree or the tree does not ",
-                     "have any branches. \nIt is not possible to calculate 'faith'.",
-                     call. = FALSE)
-            }
+        # Check tree_name
+        if( !.is_non_empty_string(tree_name) ){
+            stop("'tree_name' must be a character specifying a rowTree of 'x'.",
+                 call. = FALSE)
         }
+        # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
@@ -294,6 +286,8 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         if( "faith" %in% index ){
             # Get the name of "faith" index
             faith_name <- name[index %in% "faith"]
+            # Store original names
+            name_original <- name
             # And delete it from name
             name <- name[!index %in% "faith"]
 
@@ -315,8 +309,25 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         }
         # If 'faith' was one of the indices, 'calc_faith' is TRUE
         if( calc_faith ){
-            # Calculates faith
-            x <- estimateFaith(x, tree = tree, name = faith_name, ...)
+            # Get tree to check whether faith can be calculated
+            tree <- rowTree(x, tree_name)
+            # Check if faith can be calculated. Give warning and do not run estimateFaith
+            # if there is no rowTree and other indices were also calculated. Otherwise, 
+            # run estimateFaith. (If there is no rowTree --> error)
+            if( (is.null(tree) || is.null(tree$edge.length)) &&
+                length(index) >= 1 ){
+                warning("Object does not have a tree called 'tree_name' or the tree does not ",
+                        "have any branches. \nThe Faith's alpha diversity index. ",
+                        "cannot be calculated without rowTree. Therefore it is excluded ",
+                        "from the results. \nYou can consider adding rowTree to include this index.",            
+                        call. = FALSE)
+            } else{
+                x <- estimateFaith(x, name = faith_name, tree_name = tree_name, ...)
+                # Ensure that indices are in correct order
+                colnames <- colnames(colData(x))
+                colnames <- c(colnames[ !colnames %in% name_original ], name_original)
+                colData(x) <- colData(x)[ , colnames]
+            }
         }
         return(x)
     }
@@ -334,13 +345,13 @@ setGeneric("estimateFaith",signature = c("x", "tree"),
 #' @export
 setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
     function(x, tree, assay_name = abund_values, abund_values = "counts",
-            name = "faith", ...){
+            name = "faith", node_lab = NULL, ...){
         # Input check
         # Check 'tree'
         # IF there is no rowTree gives an error
         if( is.null(tree) || is.null(tree$edge.length) ){
             stop("'tree' is NULL or it does not have any branches.",
-                "'faith' is not possible to calculate.",
+                "The Faith's alpha diversity index is not possible to calculate.",
                 call. = FALSE)
         }
         # Check 'assay_name'
@@ -355,12 +366,28 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
             stop("'name' must be a non-empty character value.",
                 call. = FALSE)
         }
+        # Check that node_lab is NULL or it specifies links between rownames and 
+        # node labs
+        if( !( is.null(node_lab) || 
+               is.character(node_lab) && length(node_lab) == nrow(x) ) ){
+            stop("'node_lab' must be NULL or a vector specifying links between ",
+                 "rownames and node labs of 'tree'.",
+                 call. = FALSE)
+        }
         # Get the abundance matrix
         mat <- assay(x, assay_name)
         # Check that it is numeric
         if( !is.numeric(mat) ){
             stop("The abundance matrix specificied by 'assay_name' must be numeric.",
                  call. = FALSE)
+        }
+        # Subset and rename rows of the assay to correspond node_labs
+        if( !is.null(node_lab) ){
+            # Subset 
+            mat <- mat[ !is.na(node_lab), ]
+            node_lab <- node_lab[ !is.na(node_lab) ]
+            # Rename
+            rownames(mat) <- node_lab
         }
         # Calculates Faith index
         faith <- list(.calc_faith(mat, tree))
@@ -373,15 +400,31 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
 #' @export
 setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
     function(x, assay_name = abund_values, abund_values = "counts",
-            name = "faith", ...){
+            name = "faith", tree_name = "phylo", ...){
+        # Check tree_name
+        if( !.is_non_empty_character(tree_name) ){
+            stop("'tree_name' must be a character specifying a rowTree of 'x'.",
+                 call. = FALSE)
+        }
         # Gets the tree
-        tree <- rowTree(x)
-        if(is.null(tree)){
-            stop("rowTree(x) is NULL. Faith's diversity cannot be calculated.",
+        tree <- rowTree(x, tree_name)
+        if( is.null(tree) || is.null(tree$edge.length)){
+            stop("rowTree(x, tree_name) is NULL or the tree does not have any branches. ",
+            "The Faith's alpha diversity index cannot be calculated.",
                 call. = FALSE)
         }
+        # Get node labs
+        node_lab <- rowLinks(x)[ , "nodeLab" ]
+        node_lab[ rowLinks(x)[, "whichTree"] != tree_name ] <- NA
+        # Give a warning, data will be subsetted
+        if( any(is.na(node_lab)) ){
+            warning("The rowTree named 'tree_name' does not include all the ",
+                    "rows which is why 'x' is subsetted when the Faith's alpha ",
+                    "diversity index is calculated.",
+                    call. = FALSE)
+        }
         # Calculates the Faith index
-        estimateFaith(x, tree, name = name, ...)
+        estimateFaith(x, tree, name = name, node_lab = node_lab, ...)
     }
 )
 

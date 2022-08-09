@@ -37,6 +37,7 @@ estimateDiversity(
   index = c("coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
+  tree_name = "phylo",
   ...,
   BPPARAM = SerialParam()
 )
@@ -52,19 +53,20 @@ estimateFaith(
 
 \S4method{estimateFaith}{SummarizedExperiment,phylo}(
   x,
-  tree = "missing",
+  tree,
   assay_name = abund_values,
   abund_values = "counts",
   name = "faith",
+  node_lab = NULL,
   ...
 )
 
 \S4method{estimateFaith}{TreeSummarizedExperiment,missing}(
   x,
-  tree = "missing",
   assay_name = abund_values,
   abund_values = "counts",
   name = "faith",
+  tree_name = "phylo",
   ...
 )
 }
@@ -105,9 +107,18 @@ By default, \code{num_of_classes} is 50.}
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether calculation of estimates should be parallelized.}
 
+\item{tree_name}{a single \code{character} value for specifying which
+rowTree will be used to calculate faith index.
+(By default: \code{tree_name = "phylo"})}
+
 \item{tree}{A phylogenetic tree that is used to calculate 'faith' index.
 If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is
 used by default.}
+
+\item{node_lab}{NULL or a character vector specifying the links between rows and
+node labels of \code{tree}. If a certain row is not linked with the tree, missing
+instance should be noted as NA. When NULL, all the rownames should be found from
+the tree. (By default: \code{node_lab = NULL})}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}
