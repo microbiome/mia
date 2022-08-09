@@ -317,7 +317,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             if( (is.null(tree) || is.null(tree$edge.length)) &&
                 length(index) >= 1 ){
                 warning("Object does not have a tree called 'tree_name' or the tree does not ",
-                        "have any branches. \nThe 'faith' alpha diversity index. ",
+                        "have any branches. \nThe Faith's alpha diversity index. ",
                         "cannot be calculated without rowTree. Therefore it is excluded ",
                         "from the results. \nYou can consider adding rowTree to include this index.",            
                         call. = FALSE)
@@ -351,7 +351,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         # IF there is no rowTree gives an error
         if( is.null(tree) || is.null(tree$edge.length) ){
             stop("'tree' is NULL or it does not have any branches.",
-                "'faith' is not possible to calculate.",
+                "The Faith's alpha diversity index is not possible to calculate.",
                 call. = FALSE)
         }
         # Check 'assay_name'
@@ -410,7 +410,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
         tree <- rowTree(x, tree_name)
         if( is.null(tree) || is.null(tree$edge.length)){
             stop("rowTree(x, tree_name) is NULL or the tree does not have any branches. ",
-            "'faith' alpha diversity index cannot be calculated.",
+            "The Faith's alpha diversity index cannot be calculated.",
                 call. = FALSE)
         }
         # Get node labs
@@ -419,7 +419,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
         # Give a warning, data will be subsetted
         if( any(is.na(node_lab)) ){
             warning("The rowTree named 'tree_name' does not include all the ",
-                    "rows which is why 'x' is subsetted when 'faith' alpha ",
+                    "rows which is why 'x' is subsetted when the Faith's alpha ",
                     "diversity index is calculated.",
                     call. = FALSE)
         }
