@@ -686,7 +686,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     # Ceck that all the variables have the same class
     if( length(unique(classes)) > 1 ){
-        stop("More thaan 1 unqieu class")
+        stop(" Variables specified by '", variable_name, "' do not share a same class.", 
+             call. = FALSE)
     }
     # Replace the colData with new, subsetted colData
     coldata <- DataFrame(coldata)
