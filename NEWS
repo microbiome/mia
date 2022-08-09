@@ -48,3 +48,5 @@ Changes in version 1.3.x
 Changes in version 1.5.x 
 + Added HintikkaXOData
 + Added sample metadata option to getExperimentCrossAssociation
++ estimateFaith: add support for multiple rowTrees
+
