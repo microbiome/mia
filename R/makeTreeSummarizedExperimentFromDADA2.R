@@ -7,7 +7,7 @@
 #'   more details.
 #'
 #' @details
-#' A count matrix is contructed via \code{makeSequenceTable(mergePairs(...))}
+#' A count matrix is constructed via \code{makeSequenceTable(mergePairs(...))}
 #' and rownames are dynamically created as \code{ASV(N)} with \code{N} from
 #' 1 to \code{nrow} of the count tables. The colnames and rownames from the
 #' output of \code{makeSequenceTable} are stored as \code{colnames} and in the
