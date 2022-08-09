@@ -262,20 +262,20 @@ test_that("mergeSEs", {
     expect_equal( length( names(metadata(tse4))), 3) 
     
     # Check correct class
-    tse <- mergeSEs(list(as(tse1, "SummarizedExperiment"), 
-                            as(tse1, "SummarizedExperiment"),
-                            as(tse1, "SummarizedExperiment")), 
+    se1 <- as(tse1, "SummarizedExperiment")
+    rownames(se1) <- rownames(tse1)
+    tse <- mergeSEs(list(se1, se1, se1), 
                        join = "full")
     expect_true(class(tse) == "SummarizedExperiment")
     suppressWarnings(
-    tse <- mergeSEs(list(as(tse1, "SummarizedExperiment"), 
+    tse <- mergeSEs(list(se1, 
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "TreeSummarizedExperiment")), 
                        join = "inner")
     )
     expect_true(class(tse) == "SummarizedExperiment")
     suppressWarnings(
-    tse <- mergeSEs(list(as(tse1, "SummarizedExperiment"), 
+    tse <- mergeSEs(list(se1, 
                             as(tse1, "SingleCellExperiment"),
                             as(tse1, "SingleCellExperiment")), 
                        join = "full")
