@@ -18,7 +18,7 @@ the vegan package options and some others."><!-- mathjax --><script src="https:/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.7</span>
       </span>
     </div>
 
@@ -85,6 +85,7 @@ the <code>vegan</code> package options and some others.</p>
   index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"coverage"</span>, <span class="st">"faith"</span>, <span class="st">"fisher"</span>, <span class="st">"gini_simpson"</span>, <span class="st">"inverse_simpson"</span>,
     <span class="st">"log_modulo_skewness"</span>, <span class="st">"shannon"</span><span class="op">)</span>,
   name <span class="op">=</span> <span class="va">index</span>,
+  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,
   <span class="va">...</span>,
   BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span>
@@ -101,20 +102,21 @@ the <code>vegan</code> package options and some others.</p>
 <span class="co"># S4 method for SummarizedExperiment,phylo</span>
 <span class="fu">estimateFaith</span><span class="op">(</span>
   <span class="va">x</span>,
-  tree <span class="op">=</span> <span class="st">"missing"</span>,
+  <span class="va">tree</span>,
   assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   name <span class="op">=</span> <span class="st">"faith"</span>,
+  node_lab <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">...</span>
 <span class="op">)</span>
 
 <span class="co"># S4 method for TreeSummarizedExperiment,missing</span>
 <span class="fu">estimateFaith</span><span class="op">(</span>
   <span class="va">x</span>,
-  tree <span class="op">=</span> <span class="st">"missing"</span>,
   assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   name <span class="op">=</span> <span class="st">"faith"</span>,
+  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -169,10 +171,23 @@ By default, <code>num_of_classes</code> is 50.</p></li>
 object specifying whether calculation of estimates should be parallelized.</p></dd>
 
 
+<dt>tree_name</dt>
+<dd><p>a single <code>character</code> value for specifying which
+rowTree will be used to calculate faith index.
+(By default: <code>tree_name = "phylo"</code>)</p></dd>
+
+
 <dt>tree</dt>
 <dd><p>A phylogenetic tree that is used to calculate 'faith' index.
 If <code>x</code> is a <code>TreeSummarizedExperiment</code>, <code>rowTree(x)</code> is
 used by default.</p></dd>
+
+
+<dt>node_lab</dt>
+<dd><p>NULL or a character vector specifying the links between rows and
+node labels of <code>tree</code>. If a certain row is not linked with the tree, missing
+instance should be noted as NA. When NULL, all the rownames should be found from
+the tree. (By default: <code>node_lab = NULL</code>)</p></dd>
 
 </dl></div>
     <div id="value">

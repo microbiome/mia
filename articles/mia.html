@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.7</span>
       </span>
     </div>
 
@@ -421,9 +421,9 @@ by setting <code>index = "shannon"</code> for example.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimateDiversity.html">estimateDiversity</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">8</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">## [1] "coverage"            "fisher"              "gini_simpson"       </span>
-<span class="co">## [4] "inverse_simpson"     "log_modulo_skewness" "shannon"            </span>
-<span class="co">## [7] "faith"</span></code></pre>
+<pre><code><span class="co">## [1] "coverage"            "faith"               "fisher"             </span>
+<span class="co">## [4] "gini_simpson"        "inverse_simpson"     "log_modulo_skewness"</span>
+<span class="co">## [7] "shannon"</span></code></pre>
 <p>Beta diversity indices are used to describe inter-sample connections.
 Technically they are calculated as <code>dist</code> object and reduced
 dimensions can be extracted using <code>cmdscale</code>. This is wrapped
@@ -557,8 +557,8 @@ long format will be returned.</p>
 <span class="co">## <span style="color: #949494;"># … with 499,606 more rows, and 14 more variables: X.SampleID &lt;fct&gt;,</span></span>
 <span class="co">## <span style="color: #949494;">#   Primer &lt;fct&gt;, Final_Barcode &lt;fct&gt;, Barcode_truncated_plus_T &lt;fct&gt;,</span></span>
 <span class="co">## <span style="color: #949494;">#   Barcode_full_length &lt;fct&gt;, SampleType &lt;fct&gt;, Description &lt;fct&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   coverage &lt;int&gt;, fisher &lt;dbl&gt;, gini_simpson &lt;dbl&gt;, inverse_simpson &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   log_modulo_skewness &lt;dbl&gt;, shannon &lt;dbl&gt;, faith &lt;dbl&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #949494;">#   coverage &lt;int&gt;, faith &lt;dbl&gt;, fisher &lt;dbl&gt;, gini_simpson &lt;dbl&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   inverse_simpson &lt;dbl&gt;, log_modulo_skewness &lt;dbl&gt;, shannon &lt;dbl&gt;</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -589,7 +589,7 @@ long format will be returned.</p>
 <span class="co">## other attached packages:</span>
 <span class="co">##  [1] phyloseq_1.41.0                scater_1.25.2                 </span>
 <span class="co">##  [3] ggplot2_3.3.6                  scuttle_1.7.2                 </span>
-<span class="co">##  [5] mia_1.5.6                      MultiAssayExperiment_1.23.4   </span>
+<span class="co">##  [5] mia_1.5.7                      MultiAssayExperiment_1.23.4   </span>
 <span class="co">##  [7] TreeSummarizedExperiment_2.1.4 Biostrings_2.65.1             </span>
 <span class="co">##  [9] XVector_0.37.0                 SingleCellExperiment_1.19.0   </span>
 <span class="co">## [11] SummarizedExperiment_1.27.1    Biobase_2.57.1                </span>
