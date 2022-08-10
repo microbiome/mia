@@ -721,6 +721,18 @@ setMethod("right_join", signature = c(x = "ANY"),
         stop("Input includes an object that has either no columns or/and no rows.",
              call. = FALSE)
     }
+    # Check if there are no colnames
+    if( any(unlist( lapply(x, FUN = function(y){is.null(colnames(y))}) )) ){
+        stop("Input includes object(s) whose colnames is NULL. Please add ",
+             "colnames.",
+             call. = FALSE)
+    }
+    # Check if there are no rownames
+    if( any(unlist( lapply(x, FUN = function(y){is.null(rownames(y))}) )) ){
+        stop("Input includes object(s) whose rownames is NULL. Please add ",
+             "rownames.",
+             call. = FALSE)
+    }
     return(class)
 }
 
