@@ -198,7 +198,7 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
              "present in colData(x).", call. = FALSE)
     }
     # Create a formula based on variables
-    formula <- as.formula(paste0("data ~ ", 
+    formula <- as.formula(paste0("x ~ ", 
                                  paste(variables, collapse = " + ")))
     formula
 }
