@@ -49,5 +49,5 @@ Changes in version 1.5.x
 + Added HintikkaXOData
 + Added sample metadata option to getExperimentCrossAssociation
 + estimateFaith: add support for multiple rowTrees
-+ calculateRDA/CCA: added variable argument
++ calculateRDA/CCA: added variable argument & replaced altexp argument with altExp
 

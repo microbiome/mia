@@ -45,7 +45,7 @@
 #'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
 #'   
-#' @param altexp String or integer scalar specifying an alternative experiment
+#' @param altExp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
 #'
 #' @param name String specifying the name to be used to store the result in the
@@ -212,10 +212,13 @@ setMethod("calculateCCA", "SummarizedExperiment",
         mat <- assay(x, assay_name)
         # If formula is missing but variables are not
         if( !missing(variables) && missing(formula)){
-            # If variables are not missing
+            # Create a formula based on variables
             formula <- .get_formula_from_data_and_variables(x, variables)
+            # Get the data from colData
             variables <- colData(x)[ , variables, drop = FALSE]
         } else{
+            # Otherwise if formula is provided, get variables based on formula
+            # (If formula is not provided variables is just empty data.frame)
             variables <- .get_variables_from_data_and_formula(x, formula)
         }
         .calculate_cca(mat, formula, variables, ...)
@@ -226,10 +229,10 @@ setMethod("calculateCCA", "SummarizedExperiment",
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runCCA", "SingleCellExperiment",
-    function(x, ..., altexp = NULL, name = "CCA")
+    function(x, ..., altExp = NULL, name = "CCA")
     {
-        if (!is.null(altexp)) {
-          y <- altExp(x, altexp)
+        if (!is.null(altExp)) {
+          y <- altExp(x, altExp)
         } else {
           y <- x
         }
@@ -257,23 +260,31 @@ setMethod("runCCA", "SingleCellExperiment",
 .calculate_rda <- function(x, formula, variables, ...){
     .require_package("vegan")
     #
+    # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))
-    # If formula is missing
+    # If formula is missing (vega:dbrda requires formula)
     if( missing(formula) ){
         formula <- x ~ 1  
     }
+    # Get the dependent variable
     dep_var_name <- .get_dependent_var_name(formula)
+    # Dependent variable is the assay x. It does not matter what is the left-side
+    # of the formula; it is always the assay
     assign(dep_var_name, x)
     # recast formula in current environment
     form <- as.formula(paste(as.character(formula)[c(2,1,3)],
                              collapse = " "))
-    # If variables are not provided, formula is 'x ~ 1'. 
+    # If variables are provided
     if( !missing(variables) ){
+        # Convert into data.frame
         variables <- as.data.frame(variables)
+        # Calculate RDA with variables
         rda <- vegan::dbrda(formula = form, data = variables, ...)
     } else{
+        # Otherwise calculate RDA without variables
         rda <- vegan::dbrda(formula = form, ...)
     }
+    # Get CCA
     X <- rda$CCA
     # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
     if( is.null(X) ){
@@ -296,16 +307,20 @@ setMethod("calculateRDA", "SummarizedExperiment",
     function(x, formula, variables, ..., 
              assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
     {
+        # Check assay_name and get assay
         .check_assay_present(assay_name, x)
         mat <- assay(x, assay_name)
         # If formula is provided, it takes the precedence
         if( !missing(formula) ){
+            # Get variables from colData that are specified by formula
             variables <- .get_variables_from_data_and_formula(x, formula)
         } else if( !missing(variables) ){
-            # If variables are provided, create a formula based on them
+            # If variables are provided, create a formula based on variables
             formula <- .get_formula_from_data_and_variables(x, variables)
+            # Get the data from colData
             variables <- colData(x)[ , variables, drop = FALSE]
         }
+        # Calculate RDA
         .calculate_rda(mat, formula, variables, ...)
     }
 )
@@ -314,10 +329,10 @@ setMethod("calculateRDA", "SummarizedExperiment",
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runRDA", "SingleCellExperiment",
-    function(x, ..., altexp = NULL, name = "RDA")
+    function(x, ..., altExp = NULL, name = "RDA")
     {
-        if (!is.null(altexp)) {
-          y <- altExp(x, altexp)
+        if (!is.null(altExp)) {
+          y <- altExp(x, altExp)
         } else {
           y <- x
         }

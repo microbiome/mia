@@ -33,7 +33,7 @@ runRDA(x, ...)
   exprs_values = "counts"
 )
 
-\S4method{runCCA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "CCA")
+\S4method{runCCA}{SingleCellExperiment}(x, ..., altExp = NULL, name = "CCA")
 
 \S4method{calculateRDA}{ANY}(x, formula, variables, ...)
 
@@ -47,7 +47,7 @@ runRDA(x, ...)
   exprs_values = "counts"
 )
 
-\S4method{runRDA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "RDA")
+\S4method{runRDA}{SingleCellExperiment}(x, ..., altExp = NULL, name = "RDA")
 }
 \arguments{
 \item{x}{For \code{calculate*} a
@@ -94,7 +94,7 @@ will be disabled.)}
 assay to use for calculation.
 (Please use \code{assay_name} instead.)}
 
-\item{altexp}{String or integer scalar specifying an alternative experiment
+\item{altExp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
 \item{name}{String specifying the name to be used to store the result in the
