@@ -116,7 +116,13 @@ setGeneric("runRDA", signature = c("x"),
 }
 
 .get_dependent_var_name <- function(formula){
-    rownames(attr(terms(formula), "factors"))[1]
+    # Get dependent variable from factors
+    dep_var <- rownames(attr(terms(formula), "factors"))[1]
+    # If it is NULL, get it from the formula
+    if( is.null(dep_var) ){
+        dep_var <- as.character(formula)[2]
+    }
+    return(dep_var)
 }
 
 #' @importFrom stats as.formula
@@ -242,13 +248,19 @@ setMethod("runCCA", "SingleCellExperiment",
     .require_package("vegan")
     #
     x <- as.matrix(t(x))
-    variables <- as.data.frame(variables)
     dep_var_name <- .get_dependent_var_name(formula)
     assign(dep_var_name, x)
     # recast formula in current environment
     form <- as.formula(paste(as.character(formula)[c(2,1,3)],
                              collapse = " "))
-    rda <- vegan::dbrda(form, data = variables, ...)
+    
+    if( !missing(variables) ){
+        variables <- as.data.frame(variables)
+        rda <- vegan::dbrda(formula = form, data = variables, ...)
+    } else{
+        rda <- vegan::dbrda(formula = form, ...)
+    }
+    
     X <- rda$CCA
     # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
     if( is.null(X) ){
@@ -272,15 +284,15 @@ setMethod("calculateRDA", "SummarizedExperiment",
              assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
     {
         mat <- assay(x, assay_name)
-        # If formula is missing but variables are not
-        if( missing(formula) && missing(variables)){
-            stop("Please provide 'formula' or 'variables'.", call. = FALSE)
-        }
-        else if( missing(formula) && !missing(variables) ){
+        # If formula is provided, it takes the precedence
+        if( !missing(formula) ){
+            variables <- .get_variables_from_data_and_formula(x, formula)
+        } else if( !missing(variables) ){
+            # If variables are provided, create a formula based on them
             formula <- .get_formula_from_data_and_variables(x, variables)
             variables <- colData(x)[ , variables, drop = FALSE]
         } else{
-            variables <- .get_variables_from_data_and_formula(x, formula)
+          formula <- mat ~ 1  
         }
         .calculate_rda(mat, formula, variables, ...)
     }
