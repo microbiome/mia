@@ -514,4 +514,9 @@ test_that("getExperimentCrossAssociation", {
                                             colData_variable2 = indices)
     expect_equal(res, res2)
     
+    colData(tse)[, "test"] <- rep("a")
+    expect_error(
+        getExperimentCrossAssociation(tse, 
+        colData_variable2 = c("shannon", "test")))
+    
 })
