@@ -45,10 +45,10 @@ test_that("CCA", {
     #
     sce <- runRDA(sce)
     test <- reducedDim(sce,"RDA")
-    test <- attr(test, "rda")$CA$u
-    res <- vegan::rda(t(assay(sce)))$CA$u
-    colnames(test) <- paste0("PC", seq_len(ncol(test)))
-    expect_equal(abs(test), abs(res))
+    # Test that eigenvalues match
+    test <- attr(test, "rda")$CA$eig
+    res <- vegan::rda(t(assay(sce)))$CA$eig
+    expect_equal(unname(test), unname(res))
     data("GlobalPatterns")
     expect_error(calculateRDA(GlobalPatterns, variables = c("Primer", "test")))
     res1 <- calculateRDA(GlobalPatterns, variables = c("Primer", "SampleType"))
