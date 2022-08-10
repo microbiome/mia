@@ -15,15 +15,19 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   a formula can be supplied. Based on the right-hand side of the given formula
 #'   \code{colData} is subset to \code{variables}.
+#'   
+#'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
+#'   into a CA analysis and dbRDA into PCoA/MDS.
 #'
 #' @param variables When \code{x} is a \code{SummarizedExperiment},
 #'   \code{variables} can be used to specify variables from \code{colData}. 
 #'   
 #'   When \code{x} is a matrix, \code{variables} is a \code{data.frame} or 
 #'   an object coercible to one containing the variables to use. 
-#'   
-#'   Can be missing, which turns the CCA analysis into a CA analysis. 
+#'    
 #'   All variables are used. Please subset, if you want to consider only some of them. 
+#'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
+#'   into a CA analysis and dbRDA into PCoA/MDS.
 #'   
 #' @param scale a logical scalar, should the expression values be standardized?
 #'   \code{scale} is disabled when using \code{*RDA} functions. Please scale before

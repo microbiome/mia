@@ -42,4 +42,10 @@ test_that("CCA", {
     actual <- reducedDim(sce,"rda_bray")
     rda_bray <- vegan::dbrda(form, dune.env, distance = "bray")
     expect_equal(abs( as.vector(actual) ), abs( as.vector(rda_bray$CCA$u) ))
+    #
+    sce <- runRDA(sce)
+    test <- reducedDim(sce,"RDA")
+    test <- attr(test, "rda")
+    expect_equal(test, vegan::rda(t(assay(sce))))
+    
 })
