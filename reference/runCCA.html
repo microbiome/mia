@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
       </span>
     </div>
 
@@ -70,6 +70,7 @@ in a <code>SummarizedExperiment</code>.</p>
 <span class="fu">calculateCCA</span><span class="op">(</span>
   <span class="va">x</span>,
   <span class="va">formula</span>,
+  <span class="va">variables</span>,
   <span class="va">...</span>,
   assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="va">exprs_values</span>,
@@ -77,7 +78,7 @@ in a <code>SummarizedExperiment</code>.</p>
 <span class="op">)</span>
 
 <span class="co"># S4 method for SingleCellExperiment</span>
-<span class="fu">runCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"CCA"</span><span class="op">)</span>
+<span class="fu">runCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altExp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"CCA"</span><span class="op">)</span>
 
 <span class="co"># S4 method for ANY</span>
 <span class="fu">calculateRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, <span class="va">...</span><span class="op">)</span>
@@ -86,6 +87,7 @@ in a <code>SummarizedExperiment</code>.</p>
 <span class="fu">calculateRDA</span><span class="op">(</span>
   <span class="va">x</span>,
   <span class="va">formula</span>,
+  <span class="va">variables</span>,
   <span class="va">...</span>,
   assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="va">exprs_values</span>,
@@ -93,16 +95,16 @@ in a <code>SummarizedExperiment</code>.</p>
 <span class="op">)</span>
 
 <span class="co"># S4 method for SingleCellExperiment</span>
-<span class="fu">runRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"RDA"</span><span class="op">)</span></code></pre></div>
+<span class="fu">runRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altExp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"RDA"</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>For <code>calculateCCA</code> a numeric matrix with columns as samples or
-a
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>.</p>
-<p>For <code>runCCA</code> a
+<dd><p>For <code>calculate*</code> a
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+or a numeric matrix with columns as samples</p>
+<p>For <code>run*</code> a
 <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></code>
 or a derived object.</p></dd>
 
@@ -115,18 +117,25 @@ or a derived object.</p></dd>
 <dd><p>If <code>x</code> is a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 a formula can be supplied. Based on the right-hand side of the given formula
-<code>colData</code> is subset to <code>variables</code>.</p></dd>
+<code>colData</code> is subset to <code>variables</code>.</p>
+<p><code>variables</code> and <code>formula</code> can be missing, which turns the CCA analysis
+into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
 
 
 <dt>variables</dt>
-<dd><p>a <code>data.frame</code> or an object coercible to one containing
-the variables to use. Can be missing, which turns the CCA analysis into
-a CA analysis. All variables are used. Please subset, if you want to
-consider only some of them.</p></dd>
+<dd><p>When <code>x</code> is a <code>SummarizedExperiment</code>,
+<code>variables</code> can be used to specify variables from <code>colData</code>.</p>
+<p>When <code>x</code> is a matrix, <code>variables</code> is a <code>data.frame</code> or
+an object coercible to one containing the variables to use.</p>
+<p>All variables are used. Please subset, if you want to consider only some of them.
+<code>variables</code> and <code>formula</code> can be missing, which turns the CCA analysis
+into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
 
 
 <dt>scale</dt>
-<dd><p>a logical scalar, should the expression values be standardized?</p></dd>
+<dd><p>a logical scalar, should the expression values be standardized?
+<code>scale</code> is disabled when using <code>*RDA</code> functions. Please scale before
+performing RDA (Check examples.)</p></dd>
 
 
 <dt>assay_name</dt>
@@ -147,7 +156,7 @@ assay to use for calculation.
 (Please use <code>assay_name</code> instead.)</p></dd>
 
 
-<dt>altexp</dt>
+<dt>altExp</dt>
 <dd><p>String or integer scalar specifying an alternative experiment
 containing the input data.</p></dd>
 
