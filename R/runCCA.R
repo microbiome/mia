@@ -211,12 +211,12 @@ setMethod("calculateCCA", "SummarizedExperiment",
     {
         mat <- assay(x, assay_name)
         # If formula is missing but variables are not
-        if( !missing(formula) ){
-            variables <- .get_variables_from_data_and_formula(x, formula)
-        } else if( !missing(variables) ){
+        if( !missing(variables) && missing(formula)){
             # If variables are not missing
             formula <- .get_formula_from_data_and_variables(x, variables)
             variables <- colData(x)[ , variables, drop = FALSE]
+        } else{
+            variables <- .get_variables_from_data_and_formula(x, formula)
         }
         .calculate_cca(mat, formula, variables, ...)
     }
