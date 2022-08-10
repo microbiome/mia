@@ -3,11 +3,11 @@
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
 #'
-#' @param x For \code{calculateCCA} a numeric matrix with columns as samples or
-#'   a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
+#' @param x For \code{calculate*} a 
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} 
+#'   or a numeric matrix with columns as samples 
 #'
-#'   For \code{runCCA} a
+#'   For \code{run*} a
 #'   \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 #'   or a derived object.
 #'
@@ -16,13 +16,18 @@
 #'   a formula can be supplied. Based on the right-hand side of the given formula
 #'   \code{colData} is subset to \code{variables}.
 #'
-#' @param variables a \code{data.frame} or an object coercible to one containing
-#'   the variables to use. Can be missing, which turns the CCA analysis into
-#'   a CA analysis. All variables are used. Please subset, if you want to
-#'   consider only some of them. When \code{x} is a \code{SummarizedExperiment},
-#'   \code{variables} can be used to specify variables from \code{colData}.
+#' @param variables When \code{x} is a \code{SummarizedExperiment},
+#'   \code{variables} can be used to specify variables from \code{colData}. 
+#'   
+#'   When \code{x} is a matrix, \code{variables} is a \code{data.frame} or 
+#'   an object coercible to one containing the variables to use. 
+#'   
+#'   Can be missing, which turns the CCA analysis into a CA analysis. 
+#'   All variables are used. Please subset, if you want to consider only some of them. 
 #'   
 #' @param scale a logical scalar, should the expression values be standardized?
+#'   \code{scale} is disabled when using \code{*RDA} functions. Please scale before
+#'   performing RDA (Check examples.) 
 #' 
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
@@ -178,6 +183,7 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
 }
 
 .get_formula_from_data_and_variables <- function(x, variables){
+    # Check that variables specify columns from colData
     if( all(!is.character(variables)) ){
         stop("'variables' should be a character specifying variables from ",
              "colData(x).", 
@@ -187,10 +193,9 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
         stop("All variables must be ",
              "present in colData(x).", call. = FALSE)
     }
+    # Create a formula based on variables
     formula <- as.formula(paste0("data ~ ", 
                                  paste(variables, collapse = " + ")))
-    message("Formula used for calculation: ", 
-            paste(as.character(formula)[c(2,1,3)], collapse = " "))
     formula
 }
 
@@ -202,11 +207,12 @@ setMethod("calculateCCA", "SummarizedExperiment",
     {
         mat <- assay(x, assay_name)
         # If formula is missing but variables are not
-        if( missing(formula) && !missing(variables) ){
+        if( !missing(formula) ){
+            variables <- .get_variables_from_data_and_formula(x, formula)
+        } else if( !missing(variables) ){
+            # If variables are not missing
             formula <- .get_formula_from_data_and_variables(x, variables)
             variables <- colData(x)[ , variables, drop = FALSE]
-        } else{
-            variables <- .get_variables_from_data_and_formula(x, formula)
         }
         .calculate_cca(mat, formula, variables, ...)
     }
@@ -248,19 +254,22 @@ setMethod("runCCA", "SingleCellExperiment",
     .require_package("vegan")
     #
     x <- as.matrix(t(x))
+    # If formula is missing
+    if( missing(formula) ){
+        formula <- x ~ 1  
+    }
     dep_var_name <- .get_dependent_var_name(formula)
     assign(dep_var_name, x)
     # recast formula in current environment
     form <- as.formula(paste(as.character(formula)[c(2,1,3)],
                              collapse = " "))
-    
+    # If variables are not provided, formula is 'x ~ 1'. 
     if( !missing(variables) ){
         variables <- as.data.frame(variables)
         rda <- vegan::dbrda(formula = form, data = variables, ...)
     } else{
         rda <- vegan::dbrda(formula = form, ...)
     }
-    
     X <- rda$CCA
     # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
     if( is.null(X) ){
@@ -283,6 +292,7 @@ setMethod("calculateRDA", "SummarizedExperiment",
     function(x, formula, variables, ..., 
              assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
     {
+        .check_assay_present(assay_name, x)
         mat <- assay(x, assay_name)
         # If formula is provided, it takes the precedence
         if( !missing(formula) ){
@@ -291,8 +301,6 @@ setMethod("calculateRDA", "SummarizedExperiment",
             # If variables are provided, create a formula based on them
             formula <- .get_formula_from_data_and_variables(x, variables)
             variables <- colData(x)[ , variables, drop = FALSE]
-        } else{
-          formula <- mat ~ 1  
         }
         .calculate_rda(mat, formula, variables, ...)
     }

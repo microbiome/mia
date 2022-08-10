@@ -50,11 +50,11 @@ runRDA(x, ...)
 \S4method{runRDA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "RDA")
 }
 \arguments{
-\item{x}{For \code{calculateCCA} a numeric matrix with columns as samples or
-a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
+\item{x}{For \code{calculate*} a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+or a numeric matrix with columns as samples
 
-For \code{runCCA} a
+For \code{run*} a
 \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 or a derived object.}
 
@@ -65,13 +65,18 @@ or a derived object.}
 a formula can be supplied. Based on the right-hand side of the given formula
 \code{colData} is subset to \code{variables}.}
 
-\item{variables}{a \code{data.frame} or an object coercible to one containing
-the variables to use. Can be missing, which turns the CCA analysis into
-a CA analysis. All variables are used. Please subset, if you want to
-consider only some of them. When \code{x} is a \code{SummarizedExperiment},
-\code{variables} can be used to specify variables from \code{colData}.}
+\item{variables}{When \code{x} is a \code{SummarizedExperiment},
+\code{variables} can be used to specify variables from \code{colData}.
 
-\item{scale}{a logical scalar, should the expression values be standardized?}
+When \code{x} is a matrix, \code{variables} is a \code{data.frame} or
+an object coercible to one containing the variables to use.
+
+Can be missing, which turns the CCA analysis into a CA analysis.
+All variables are used. Please subset, if you want to consider only some of them.}
+
+\item{scale}{a logical scalar, should the expression values be standardized?
+\code{scale} is disabled when using \code{*RDA} functions. Please scale before
+performing RDA (Check examples.)}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.}
