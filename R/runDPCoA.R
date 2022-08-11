@@ -42,6 +42,10 @@
 #'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
 #'   
+#' @param tree_name a single \code{character} value for specifying which
+#'   rowTree will be used in calculation. 
+#'   (By default: \code{tree_name = "phylo"})
+#'   
 #' @param dimred String or integer scalar specifying the existing dimensionality
 #'   reduction results to use.
 #'
@@ -161,7 +165,7 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
             warning("Not all rows were present in the rowTree specified by 'tree_name'.",
                     "'x' is subsetted.", call. = FALSE)
             # Subset the data
-            x <- x[ whichTree ]
+            x <- x[ whichTree, ]
         }
         dist <- cophenetic.phylo(tree)
         calculateDPCoA(mat, dist, ...)

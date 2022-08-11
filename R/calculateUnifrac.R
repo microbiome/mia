@@ -33,6 +33,11 @@
 #'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
 #'
+#' @param tree_name a single \code{character} value for specifying which
+#'   tree will be used in calculation. 
+#'   (By default: \code{tree_name = "phylo"})
+#'   
+#'   
 #' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
 #'   calculation? Weighted-Unifrac takes into account the relative abundance of
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
@@ -138,19 +143,45 @@ setMethod("calculateUnifrac",
           signature = c(x = "TreeSummarizedExperiment",
                         tree = "missing"),
     function(x, assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts", 
-             transposed = FALSE, ...){
+             tree_name = "phylo", transposed = FALSE, ...){
+        # Check assay_name and get assay
+        .check_assay_present(assay_name, x)
         mat <- assay(x, assay_name)
         if(!transposed){
-            if(is.null(rowTree(x))){
-                stop("'rowTree(x)' must not be NULL", call. = FALSE)
+            # Check tree_name
+            if( !(.is_a_string(tree_name) && tree_name %in% names(x@rowTree)) ){
+                stop("'tree_name' must specify a rowTree from 'x'.",
+                     call. = FALSE)
+            }
+            # Get tree
+            tree <- rowTree(x, tree_name)
+            # Select only those features that are in the rowTree
+            whichTree <- rowLinks(x)[, "whichTree"] == tree_name
+            if( any(!whichTree) ){
+                warning("Not all rows were present in the rowTree specified by 'tree_name'.",
+                        "'x' is subsetted.", call. = FALSE)
+                # Subset the data
+                x <- x[ whichTree, ]
             }
             mat <- t(mat)
-            tree <- .norm_tree_to_be_rooted(rowTree(x), rownames(x))
+            tree <- .norm_tree_to_be_rooted(tree, rownames(x))
         } else {
-            if(is.null(colTree(x))){
-                stop("'colTree(x)' must not be NULL", call. = FALSE)
+            # Check tree_name
+            if( !(.is_a_string(tree_name) && tree_name %in% names(x@colTree)) ){
+                stop("'tree_name' must specify a colTree from 'x'.",
+                     call. = FALSE)
             }
-            tree <- .norm_tree_to_be_rooted(colTree(x), colnames(x))
+            # Get tree
+            tree <- colTree(x, tree_name)
+            # Select only those samples that are in the colTree
+            whichTree <- colLinks(x)[, "whichTree"] == tree_name
+            if( any(!whichTree) ){
+                warning("Not all columns were present in the colTree specified by 'tree_name'.",
+                        "'x' is subsetted.", call. = FALSE)
+                # Subset the data
+                x <- x[ , whichTree ]
+            }
+            tree <- .norm_tree_to_be_rooted(tree, colnames(x))
         }
         calculateUnifrac(mat, tree = tree, ...)
     }
