@@ -141,11 +141,29 @@ setMethod("calculateDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 #' @rdname runDPCoA
 setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
     function(x, ..., assay_name = abund_values, abund_values = exprs_values, 
-             exprs_values = "counts", dimred = NULL, n_dimred = NULL)
+             exprs_values = "counts", tree_name = "phylo", dimred = NULL, n_dimred = NULL)
     {
         .require_package("ade4")
+        # Check assay_name
+        .check_assay_present(assay_name, x)
+        # Check tree_name
+        if( !(.is_a_string(tree_name) && tree_name %in% names(x@rowTree)) ){
+            stop("'tree_name' must specify a rowTree from 'x'.",
+                 call. = FALSE)
+        }
+        #
+        # Get assay and tree
         mat <- assay(x, assay_name)
-        dist <- cophenetic.phylo(rowTree(x))
+        tree <- rowTree(x, tree_name)
+        # Select only those features that are in the rowTree
+        whichTree <- rowLinks(x)[, "whichTree"] == tree_name
+        if( any(!whichTree) ){
+            warning("Not all rows were present in the rowTree specified by 'tree_name'.",
+                    "'x' is subsetted.", call. = FALSE)
+            # Subset the data
+            x <- x[ whichTree ]
+        }
+        dist <- cophenetic.phylo(tree)
         calculateDPCoA(mat, dist, ...)
     }
 )
