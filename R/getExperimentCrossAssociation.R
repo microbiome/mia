@@ -492,6 +492,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         paired <- FALSE
     }
     
+    # Check that assays match
+    .check_that_assays_match(assay1, assay2, MARGIN)
+    
     # If significance is not calculated, p_adj_method is NULL
     if( !test_significance ){
         p_adj_method <- NULL
@@ -731,13 +734,23 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     return(assay)
 }
 
+########################### .check_that_assays_match ###########################
+# If correlations between features are analyzed, samples should match, and vice versa
+.check_that_assays_match <- function(assay1, assay2, MARGIN){
+    names <- ifelse(MARGIN == 2, "Features", "Samples")
+    if( any(rownames(assay1) != rownames(assay2)) ){
+        stop(names, " must match between experiments.",
+             call. = FALSE)
+    }
+}
+
 ########################### .check_if_paired_samples ###########################
 # Check if samples are paired
 .check_if_paired_samples <- function(assay1, assay2){
-  if( !all(colnames(assay1) == colnames(assay2)) ){
-    stop("Experiments are not paired or samples are in wrong order.", 
-         "Check that colnames match between experiments.", call. = FALSE)
-  }
+    if( !all(colnames(assay1) == colnames(assay2)) ){
+        stop("Experiments are not paired or samples are in wrong order.", 
+            "Check that colnames match between experiments.", call. = FALSE)
+    }
 }
 
 ############################# .calculate_association ###########################
