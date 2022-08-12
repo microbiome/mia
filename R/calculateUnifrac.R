@@ -20,6 +20,11 @@
 #'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
 #'   matrix. This means that the phylo object and the columns should relate
 #'   to the same type of features (aka. microorganisms).
+#'   
+#' @param nodeLab if \code{x} is a matrix, 
+#'   a \code{character} vector specifying links between rows/columns and nodes of \code{tree}.
+#'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the 
+#'   node labs must be present in \code{tree}.
 #'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
@@ -146,13 +151,17 @@ setMethod("calculateUnifrac",
             }
             mat <- t(mat)
             tree <- .norm_tree_to_be_rooted(rowTree(x), rownames(x))
+            # Get links
+            links <- rowLinks(x)$nodeLab
         } else {
             if(is.null(colTree(x))){
                 stop("'colTree(x)' must not be NULL", call. = FALSE)
             }
             tree <- .norm_tree_to_be_rooted(colTree(x), colnames(x))
+            # Get links
+            links <- colLinks(x)$nodeLab
         }
-        calculateUnifrac(mat, tree = tree, ...)
+        calculateUnifrac(mat, tree = tree, nodeLab = links, ...)
     }
 )
 
@@ -193,7 +202,7 @@ setMethod("calculateUniFrac",
 #'
 #' @export
 runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
-                       BPPARAM = SerialParam()){
+                       nodeLab = NULL, BPPARAM = SerialParam()){
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)
@@ -212,10 +221,33 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     if(!.is_a_bool(normalized)){
         stop("'normalized' must be TRUE or FALSE.", call. = FALSE)
     }
-    # check that matrix and tree are compatible
-    if(length(tree$tip.label) != nrow(x) && length(tree$tip.label) > 0L) {
-        stop("Incompatible tree and abundance table!")
+    # nodeLab should be NULL or character vector specifying links between 
+    # rows and tree labels
+    if( !(is.null(nodeLab) ||
+        (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
+        all(nodeLab %in% c(tree$tip.label, tree$node.label)))) ){
+        stop("'nodeLab' must be NULL or character specifying links between ",
+             "matrix and tree labels.", call. = FALSE)
     }
+    # check that matrix and tree are compatible
+    if( is.null(nodeLab) && 
+        !all(rownames(x) %in% c(tree$tip.label, tree$node.label)) ) {
+        stop("Incompatible tree and abundance table! Please try to provide ",
+             "nodeLab.", call. = FALSE)
+    }
+    # Merge rows, so that rows that are assigned to same tree node are agglomerated
+    # together
+    # Create temporary SE object
+    temp <- SummarizedExperiment(assays = SimpleList(counts = x))
+    # If nodeLabs were provided, merge based on those. Otherwise merge based on
+    # rownames
+    if( !is.null(nodeLab) ){
+        temp = .merge_rows(temp, f = nodeLab)
+    } else{
+        temp = .merge_rows(temp, f = rownames(x))
+    }
+    # Get the merged assay
+    x <- assay(temp, "counts")
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     if(is.null(colnames(x)) || is.null(rownames(x))){
         stop("colnames and rownames must not be NULL", call. = FALSE)
@@ -247,7 +279,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # This matrix doesn't include the tips, so must use node#-ntip to index into
     # it
     ## to suppress the warning if the number of node edges is uneven, we add the
-    ## first not again
+    ## first node again
     node.desc <- tree$edge[order(tree$edge[,1]),][,2]
     if(length(node.desc) %% 2 == 1){
       node.desc <- c(node.desc,node.desc[1])
@@ -259,7 +291,8 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     edge_array <- matrix(0, nrow = ntip+tree$Nnode, ncol = ncol(x),
                          dimnames = list(NULL, sample_names = colnames(x)))
     # Load the tip counts in directly
-    edge_array[seq_len(ntip),] <- x
+    x_tip <- x[ rownames(x) %in% tree$tip.label, ]
+    edge_array[seq_len(ntip),] <- x_tip
     # Get a list of internal nodes ordered by increasing depth
     ord.node <- order(node.depth(tree))[(ntip+1):(ntip+tree$Nnode)]
     # Loop over internal nodes, summing their descendants to get that nodes

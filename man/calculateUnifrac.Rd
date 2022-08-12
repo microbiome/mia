@@ -37,6 +37,7 @@ runUnifrac(
   tree,
   weighted = FALSE,
   normalized = TRUE,
+  nodeLab = NULL,
   BPPARAM = SerialParam()
 )
 }
@@ -88,6 +89,11 @@ assay to use for calculation.
 \item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
 is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: \code{transposed = FALSE})}
+
+\item{nodeLab}{if \code{x} is a matrix,
+a \code{character} vector specifying links between rows/columns and nodes of \code{tree}.
+The length must equal the number of rows/columns of \code{x}. Furthermore, all the
+node labs must be present in \code{tree}.}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.
