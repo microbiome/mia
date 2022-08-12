@@ -25,6 +25,7 @@ calculateDPCoA(x, y, ...)
   assay_name = abund_values,
   abund_values = exprs_values,
   exprs_values = "counts",
+  tree_name = "phylo",
   dimred = NULL,
   n_dimred = NULL
 )
@@ -71,6 +72,10 @@ will be disabled.)}
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
 (Please use \code{assay_name} instead.)}
+
+\item{tree_name}{a single \code{character} value for specifying which
+rowTree will be used in calculation.
+(By default: \code{tree_name = "phylo"})}
 
 \item{dimred}{String or integer scalar specifying the existing dimensionality
 reduction results to use.}
