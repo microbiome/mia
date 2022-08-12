@@ -121,7 +121,7 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 #' @export
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
-             BPPARAM = SerialParam()){
+             BPPARAM = SerialParam(), ...){
         if(is(x,"SummarizedExperiment")){
            stop("When providing a 'tree', please provide a matrix-like as 'x'",
                 " and not a 'SummarizedExperiment' object. Please consider ",
@@ -130,7 +130,7 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
         }
         .calculate_distance(x, FUN = runUnifrac, tree = tree,
                             weighted = weighted, normalized = normalized,
-                            BPPARAM = BPPARAM)
+                            BPPARAM = BPPARAM, ...)
     }
 )
 

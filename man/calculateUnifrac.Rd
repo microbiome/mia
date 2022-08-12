@@ -16,7 +16,8 @@ calculateUnifrac(x, tree, ...)
   tree,
   weighted = FALSE,
   normalized = TRUE,
-  BPPARAM = SerialParam()
+  BPPARAM = SerialParam(),
+  ...
 )
 
 \S4method{calculateUnifrac}{TreeSummarizedExperiment,missing}(
