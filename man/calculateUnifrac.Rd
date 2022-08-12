@@ -39,7 +39,8 @@ runUnifrac(
   weighted = FALSE,
   normalized = TRUE,
   nodeLab = NULL,
-  BPPARAM = SerialParam()
+  BPPARAM = SerialParam(),
+  ...
 )
 }
 \arguments{

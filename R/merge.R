@@ -144,6 +144,9 @@ setGeneric("mergeCols",
                         BPPARAM = SerialParam(), 
                         ...){
     # input check
+    if( !.is_a_bool(average) ){
+        stop("'average' must be TRUE or FALSE.", call. = FALSE)
+    }
     f <- .norm_f(nrow(x), f)
     if(length(levels(f)) == nrow(x)){
         return(x)

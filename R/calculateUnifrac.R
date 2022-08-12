@@ -202,7 +202,7 @@ setMethod("calculateUniFrac",
 #'
 #' @export
 runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
-                       nodeLab = NULL, BPPARAM = SerialParam()){
+                       nodeLab = NULL, BPPARAM = SerialParam(), ...){
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)
@@ -221,6 +221,9 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     if(!.is_a_bool(normalized)){
         stop("'normalized' must be TRUE or FALSE.", call. = FALSE)
     }
+    if(is.null(colnames(x)) || is.null(rownames(x))){
+        stop("colnames and rownames must not be NULL", call. = FALSE)
+    }
     # nodeLab should be NULL or character vector specifying links between 
     # rows and tree labels
     if( !(is.null(nodeLab) ||
@@ -237,21 +240,13 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     }
     # Merge rows, so that rows that are assigned to same tree node are agglomerated
     # together
-    # Create temporary SE object
-    temp <- SummarizedExperiment(assays = SimpleList(counts = x))
     # If nodeLabs were provided, merge based on those. Otherwise merge based on
     # rownames
-    if( !is.null(nodeLab) ){
-        temp = .merge_rows(temp, f = nodeLab)
-    } else{
-        temp = .merge_rows(temp, f = rownames(x))
-    }
-    # Get the merged assay
-    x <- assay(temp, "counts")
+    if( is.null(nodeLab) ){
+        nodeLab <- rownames(x)
+    } 
+    x <- .merge_assay_by_rows(x, nodeLab, ...)
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
-    if(is.null(colnames(x)) || is.null(rownames(x))){
-        stop("colnames and rownames must not be NULL", call. = FALSE)
-    }
     #
     old <- getAutoBPPARAM()
     setAutoBPPARAM(BPPARAM)
@@ -282,7 +277,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     ## first node again
     node.desc <- tree$edge[order(tree$edge[,1]),][,2]
     if(length(node.desc) %% 2 == 1){
-      node.desc <- c(node.desc,node.desc[1])
+        node.desc <- c(node.desc,node.desc[1])
     }
     node.desc <- matrix(node.desc, byrow = TRUE, ncol = 2)
     # Define the edge_array object
@@ -367,6 +362,17 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     UnifracMat[matIndices] <- unlist(distlist)
     #
     stats::as.dist(UnifracMat)
+}
+
+.merge_assay_by_rows <- function(x, nodeLab, average = FALSE, ...){
+    if( !.is_a_bool(average) ){
+        stop("'average' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # Merge assay based on nodeLabs
+    x <- scuttle::sumCountsAcrossFeatures(x, ids = nodeLab, 
+                                          subset.row = NULL, subset.col = NULL, 
+                                          average = average)
+    return(x)
 }
 
 unifrac_unweighted <- function(i, tree, samplesums, edge_occ){
