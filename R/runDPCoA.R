@@ -108,6 +108,11 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
         stop("'y' must be symmetric.", call. = FALSE)
     }
     #
+    # Get NAs. ade4:dpcoa lead to an error if there are any NAs
+    if( any( is.na(x) ) ){
+        stop("'x' includes NAs. Please try to convert them into numeric values.",
+             call. = FALSE)
+    }
     if(!transposed) {
         if(is.null(ntop)){
             ntop <- nrow(x)
