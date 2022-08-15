@@ -80,4 +80,12 @@ test_that("merge", {
     }
     lapply(list(xtse),FUN_check_x)
     lapply(list(xtse),FUN_check_x,archetype=2)
+    # Check multiple rowTrees
+    data("esophagus")
+    data("GlobalPatterns")
+    tse <- mergeSEs(esophagus, GlobalPatterns)
+    merged <- mergeRows(tse, f = rowData(tse)$Family, mergeTree = TRUE)
+    merged2 <- mergeRows(tse, f = rowData(tse)$Family, mergeTree = FALSE)
+    expect_equal( rowLinks(merged)$whichTree, 
+                  rowLinks(merged2)$whichTree )
 })

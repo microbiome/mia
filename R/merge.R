@@ -292,7 +292,6 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
                                 whichColTree = i
                 )
             }
-            
         }
     }
     return(x)
