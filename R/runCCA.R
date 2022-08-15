@@ -176,6 +176,10 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
     if(missing(formula)){
         return(NULL)
     }
+    # Check that formula is formula
+    if( inherits(formula, "formula") ){
+        stop("'formula' must be a formula.", call. = FALSE)
+    }
     terms <- rownames(attr(terms(formula),"factors"))
     terms <- terms[terms != as.character(formula)[2L]]
     terms <- .remove_special_functions_from_terms(terms)
@@ -262,7 +266,7 @@ setMethod("runCCA", "SingleCellExperiment",
     #
     # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))
-    # If formula is missing (vega:dbrda requires formula)
+    # If formula is missing (vegan:dbrda requires formula)
     if( missing(formula) ){
         formula <- x ~ 1  
     }
@@ -331,6 +335,16 @@ setMethod("calculateRDA", "SummarizedExperiment",
 setMethod("runRDA", "SingleCellExperiment",
     function(x, ..., altExp = NULL, name = "RDA")
     {
+        # Input check
+        if( !( is.null(altExp) ||
+               ( length(altExp) == 1 && 
+                 is.numeric(altExp) && altExp%%1==0 && 
+                 altExp<length(altExps(x)) && altExp>0) ||
+               (.is_a_string(altExp) && altExp %in% altExpNames(x)) ) ){
+            stop("'altExp' must be NULL, integer or character specifying an ",
+                 "alternative experiment from 'x'.", call. = FALSE)
+        }
+        #
         if (!is.null(altExp)) {
           y <- altExp(x, altExp)
         } else {

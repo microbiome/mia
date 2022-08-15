@@ -103,8 +103,8 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
              "of DPCoA dimensions.", call. = FALSE)
     }
     # Check ntop
-    if( !.is_an_integer(ntop)  ){
-        stop("'ntop' must be a single integer value specifying the number ",
+    if( !(is.null(ntop) || .is_an_integer(ntop))  ){
+        stop("'ntop' must be NULL or a single integer value specifying the number ",
              "of features with the highest variance.", call. = FALSE)
     }
     # Check subset_row
@@ -194,7 +194,7 @@ runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
     if( !( is.null(altexp) ||
         ( length(altexp) == 1 && 
           is.numeric(altexp) && altexp%%1==0 && 
-          altExp<length(altexps(tse)) && altexp>0) ||
+          altExp<length(altExps(tse)) && altexp>0) ||
         (.is_a_string(altexp) && altExp %in% altExpNames(tse)) ) ){
         stop("'altexp' must be NULL, integer or character specifying an ",
         "alternative experiment from 'x'.", call. = FALSE)
