@@ -45,12 +45,6 @@
 #' @param tree_name a single \code{character} value for specifying which
 #'   rowTree will be used in calculation. 
 #'   (By default: \code{tree_name = "phylo"})
-#'   
-#' @param dimred String or integer scalar specifying the existing dimensionality
-#'   reduction results to use.
-#'
-#' @param n_dimred Integer scalar or vector specifying the dimensions to use if
-#'   dimred is specified.
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -99,10 +93,21 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
 
 .calculate_dpcoa <- function(x, y, ncomponents = 2, ntop = NULL,
                              subset_row = NULL, scale = FALSE,
-                             transposed = FALSE)
+                             transposed = FALSE, ...)
 {
     .require_package("ade4")
     # input check
+    # Check ncomponents
+    if( !.is_an_integer(ncomponents)  ){
+        stop("'ncomponents' must be a single integer value specifying the number ",
+             "of DPCoA dimensions.", call. = FALSE)
+    }
+    # Check ntop
+    if( !.is_an_integer(ntop)  ){
+        stop("'ntop' must be a single integer value specifying the number ",
+             "of features with the highest variance.", call. = FALSE)
+    }
+    # Check subset_row
     y <- as.matrix(y)
     if(length(unique(dim(y))) != 1L){
         stop("'y' must be symmetric.", call. = FALSE)
@@ -152,7 +157,7 @@ setMethod("calculateDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 #' @rdname runDPCoA
 setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
     function(x, ..., assay_name = abund_values, abund_values = exprs_values, 
-             exprs_values = "counts", tree_name = "phylo", dimred = NULL, n_dimred = NULL)
+             exprs_values = "counts", tree_name = "phylo")
     {
         .require_package("ade4")
         # Check assay_name
@@ -184,6 +189,21 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
 #' @rdname runDPCoA
 #' @importFrom SingleCellExperiment reducedDim<-
 runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
+    # Input check
+    # Check altexp
+    if( !( is.null(altexp) ||
+        ( length(altexp) == 1 && 
+          is.numeric(altexp) && altexp%%1==0 && 
+          altExp<length(altexps(tse)) && altexp>0) ||
+        (.is_a_string(altexp) && altExp %in% altExpNames(tse)) ) ){
+        stop("'altexp' must be NULL, integer or character specifying an ",
+        "alternative experiment from 'x'.", call. = FALSE)
+    }
+    # Check name
+    if( !.is_a_string(name) ){
+        stop("'name' must be a single character value specifying a name of ",
+             "reducedDim whre the result will be stored.", call. = FALSE)
+    }
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {
