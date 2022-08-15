@@ -115,7 +115,9 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
         x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
                                  scale = scale)
     }
-    y <- y[colnames(x),colnames(x)]
+    y <- y[rownames(y) %in% colnames(x),
+           colnames(y) %in% colnames(x),
+           drop = FALSE]
     if(nrow(y) != ncol(x)){
         stop("x and y must have corresponding dimensions.", call. = FALSE)
     }
@@ -156,11 +158,10 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
                  call. = FALSE)
         }
         #
-        # Get assay and tree
-        mat <- assay(x, assay_name)
+        # Get tree
         tree <- rowTree(x, tree_name)
         # Select only those features that are in the rowTree
-        whichTree <- rowLinks(x)[, "whichTree"] == tree_name
+        whichTree <- rowLinks(x)[ , "whichTree"] == tree_name
         if( any(!whichTree) ){
             warning("Not all rows were present in the rowTree specified by 'tree_name'.",
                     "'x' is subsetted.", call. = FALSE)
@@ -168,6 +169,8 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
             x <- x[ whichTree, ]
         }
         dist <- cophenetic.phylo(tree)
+        # Get assay
+        mat <- assay(x, assay_name)
         calculateDPCoA(mat, dist, ...)
     }
 )

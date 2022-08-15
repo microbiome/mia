@@ -11,4 +11,10 @@ test_that("runDPCoA", {
                  c("dim","dimnames","eig","sample_red","feature_weights",
                    "sample_weights" ))
     expect_equal(dim(attr(red,"sample_red")),c(58,2))
+    
+    # Check multiple rowTrees
+    data("esophagus")
+    data("GlobalPatterns")
+    tse <- mergeSEs(esophagus, GlobalPatterns)
+    expect_warning(res <- calculateDPCoA(tse))
 })
