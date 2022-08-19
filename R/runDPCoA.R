@@ -97,7 +97,6 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
 {
     .require_package("ade4")
     # input check
-    # Check subset_row
     y <- as.matrix(y)
     if(length(unique(dim(y))) != 1L){
         stop("'y' must be symmetric.", call. = FALSE)
