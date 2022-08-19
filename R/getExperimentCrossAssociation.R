@@ -617,36 +617,16 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Get the name of altExp variable and experiment number
     altExp_name <- deparse(substitute(altExp))
     exp_num <- substr(altExp_name, nchar(altExp_name), nchar(altExp_name))
+    tse_name <- paste0("experiment ", exp_num)
     
-    # If altExp is disabled, give the object itself
-    if( is.null(altExp) ){
-        return(tse)
-    # If it is not NULL, and the class is SE which does not include altExp
-    } else if( !(is(tse, "TreeSummarizedExperiment") ||
-               is(tse, "SingleCellExperiment")) ){
-        stop("'", altExp_name, "' is specified for experiment", exp_num, 
-             " which class is 'SummarizedExperiment'. It does not have altExp slot.",
-             call. = FALSE)
-    # If altExp is specified but there is no alternative experiments
-    } else if( length(altExps(tse)) == 0 ){
-        stop("'", altExp_name, "' is specified but there are no ",
-             "alternative experiments in altExp of experiment ", exp_num, ".",
-             call. = FALSE)
-    # If it is not NULL, then it should specify alternative experiment from altExp
-    # It should be numeric value specifying integer, or a name of altExp
-    } else if( ( length(altExp) == 1 && 
-                 is.numeric(altExp) && altExp%%1==0 && 
-                 altExp<length(altExps(tse)) && altExp>0) ||
-               (.is_a_string(altExp) && altExp %in% altExpNames(tse)) ){
+    # If altExp is specified, check and get it. Otherwise return the original object
+    if( !is.null(altExp) ){
+        # Check altExp
+        .check_altExp_present(altExp, tse, altExp_name, tse_name)
         # Get altExp and return it
         tse <- altExp(tse, altExp)
-        return(tse)
-    # Otherwise give error
-    } else{
-        stop("'", altExp_name, "' must be NULL, or a single numeric or ",
-             "character value specifying altExp of experiment ", exp_num, ".",
-             call. = FALSE)
     }
+    return(tse)
 }
 ###################### .check_and_subset_colData_variables #####################
 # This function checks if columns can be found from colData. Additionally, 

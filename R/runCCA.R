@@ -336,18 +336,14 @@ setMethod("runRDA", "SingleCellExperiment",
     function(x, ..., altExp = NULL, name = "RDA")
     {
         # Input check
-        if( !( is.null(altExp) ||
-               ( .is_an_integer(altExp) && 
-                 altExp<length(altExps(x)) && altExp>0) ||
-               (.is_a_string(altExp) && altExp %in% altExpNames(x)) ) ){
-            stop("'altExp' must be NULL, integer or character specifying an ",
-                 "alternative experiment from 'x'.", call. = FALSE)
-        }
-        #
-        if (!is.null(altExp)) {
-          y <- altExp(x, altExp)
+        # Check and get altExp if it is not NULL
+        if( !is.null(altExp) ){
+            # Check altExp
+            .check_altExp_present(altExp, x)
+            # Get altExp
+            y <- altExp(x, altExp)
         } else {
-          y <- x
+            y <- x
         }
         # Calculate RDA
         rda <- calculateRDA(y, ...)
