@@ -189,21 +189,6 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
 #' @rdname runDPCoA
 #' @importFrom SingleCellExperiment reducedDim<-
 runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
-    # Input check
-    # Check altexp
-    if( !( is.null(altexp) ||
-        ( length(altexp) == 1 && 
-          is.numeric(altexp) && altexp%%1==0 && 
-          altExp<length(altExps(tse)) && altexp>0) ||
-        (.is_a_string(altexp) && altExp %in% altExpNames(tse)) ) ){
-        stop("'altexp' must be NULL, integer or character specifying an ",
-        "alternative experiment from 'x'.", call. = FALSE)
-    }
-    # Check name
-    if( !.is_a_string(name) ){
-        stop("'name' must be a single character value specifying a name of ",
-             "reducedDim whre the result will be stored.", call. = FALSE)
-    }
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {

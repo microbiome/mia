@@ -39,10 +39,6 @@
   abs(x - round(x)) <= tol && !is.infinite(x)
 }
 
-.is_an_integer <- function(x){
-    is.numeric(x) && length(x) == 1L && x%%1==0
-}
-
 .is_numeric_string <- function(x){
   x <- as.character(x)
   suppressWarnings({x <- as.numeric(x)})
