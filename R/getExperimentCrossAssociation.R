@@ -624,12 +624,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # If it is not NULL, and the class is SE which does not include altExp
     } else if( !(is(tse, "TreeSummarizedExperiment") ||
                is(tse, "SingleCellExperiment")) ){
-        stop("'", altExp_name, "' is specified for experiment", exp_num, 
+        stop("'", deparse(substitute(altExp)), "' is specified for experiment", exp_num, 
              " which class is 'SummarizedExperiment'. It does not have altExp slot.",
              call. = FALSE)
     # If altExp is specified but there is no alternative experiments
     } else if( length(altExps(tse)) == 0 ){
-        stop("'", altExp_name, "' is specified but there are no ",
+        stop("'", deparse(substitute(altExp)), "' is specified but there are no ",
              "alternative experiments in altExp of experiment ", exp_num, ".",
              call. = FALSE)
     # If it is not NULL, then it should specify alternative experiment from altExp
@@ -643,7 +643,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         return(tse)
     # Otherwise give error
     } else{
-        stop("'", altExp_name, "' must be NULL, or a single numeric or ",
+        stop("'", deparse(substitute(altExp)), "' must be NULL, or a single numeric or ",
              "character value specifying altExp of experiment ", exp_num, ".",
              call. = FALSE)
     }
