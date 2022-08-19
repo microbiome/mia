@@ -37,7 +37,6 @@
 #'   tree will be used in calculation. 
 #'   (By default: \code{tree_name = "phylo"})
 #'   
-#'   
 #' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
 #'   calculation? Weighted-Unifrac takes into account the relative abundance of
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
