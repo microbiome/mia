@@ -178,7 +178,7 @@ setGeneric("mergeCols",
         " with agglomerated data.",
                 call. = FALSE)
     }
-    if( !all( assay >= 0 | is.na(assay) ) ){
+    if( any(assay < 0) ){
         warning(paste0("'",assay_name,"'", " includes negative values."),
                 "\nAgglomeration of it might lead to meaningless values.",
                 "\nCheck the assay, and consider doing transformation again manually", 
