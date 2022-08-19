@@ -176,6 +176,10 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
     if(missing(formula)){
         return(NULL)
     }
+    # Check that formula is formula
+    if( inherits(formula, "formula") ){
+        stop("'formula' must be a formula.", call. = FALSE)
+    }
     terms <- rownames(attr(terms(formula),"factors"))
     terms <- terms[terms != as.character(formula)[2L]]
     terms <- .remove_special_functions_from_terms(terms)
