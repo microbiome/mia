@@ -342,8 +342,4 @@ test_that("mergeSEs", {
     tse <- mergeSEs(tse1, agg_tse1)
     expect_equal(rowTree(tse), rowTree(tse1))
     
-    # Check that rownames match with node labels (These datasets have node labs
-    # that are named by rownames.)
-    tse <- mergeSEs(GlobalPatterns, esophagus)
-    expect_equal( rownames(tse), rowLinks(tse)$nodeLab )
 })
