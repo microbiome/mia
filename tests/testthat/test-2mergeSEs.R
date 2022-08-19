@@ -341,5 +341,4 @@ test_that("mergeSEs", {
     agg_tse1 <- suppressWarnings( aggTSE(tse1, rowLevel = c(6,4,2)) )
     tse <- mergeSEs(tse1, agg_tse1)
     expect_equal(rowTree(tse), rowTree(tse1))
-    
 })
