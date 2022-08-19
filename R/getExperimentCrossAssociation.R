@@ -614,7 +614,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: (Tree)SE
 # Output: (Tree)SE
 .check_and_get_altExp <- function(tse, altExp){
-    # Get the name of altExp variable and experiment number
+    # Get the variable names
     altExp_name <- deparse(substitute(altExp))
     exp_num <- substr(altExp_name, nchar(altExp_name), nchar(altExp_name))
     tse_name <- paste0("experiment ", exp_num)
