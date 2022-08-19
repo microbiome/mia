@@ -628,7 +628,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              " which class is 'SummarizedExperiment'. It does not have altExp slot.",
              call. = FALSE)
     # If altExp is specified but there is no alternative experiments
-    } else if( length(altExp) == 0 ){
+    } else if( length(altExps(tse)) == 0 ){
         stop("'", altExp_name, "' is specified but there are no ",
              "alternative experiments in altExp of experiment ", exp_num, ".",
              call. = FALSE)
