@@ -34,6 +34,10 @@
   is.character(x) && length(x) == 1L
 }
 
+.is_an_integer <- function(x){
+    is.numeric(x) && length(x) == 1L && x%%1==0
+}
+
 .are_whole_numbers <- function(x){
   tol <- 100 * .Machine$double.eps
   abs(x - round(x)) <= tol && !is.infinite(x)
