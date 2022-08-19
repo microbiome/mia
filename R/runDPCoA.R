@@ -114,6 +114,11 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
         stop("'y' must be symmetric.", call. = FALSE)
     }
     #
+    # Get NAs. ade4:dpcoa lead to an error if there are any NAs
+    if( any( is.na(x) ) ){
+        stop("'x' includes NAs. Please try to convert them into numeric values.",
+             call. = FALSE)
+    }
     if(!transposed) {
         if(is.null(ntop)){
             ntop <- nrow(x)
@@ -121,7 +126,9 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
         x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
                                  scale = scale)
     }
-    y <- y[colnames(x),colnames(x)]
+    y <- y[rownames(y) %in% colnames(x),
+           colnames(y) %in% colnames(x),
+           drop = FALSE]
     if(nrow(y) != ncol(x)){
         stop("x and y must have corresponding dimensions.", call. = FALSE)
     }
