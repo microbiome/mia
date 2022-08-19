@@ -262,7 +262,7 @@ setMethod("runCCA", "SingleCellExperiment",
     #
     # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))
-    # If formula is missing (vegan:dbrda requires formula)
+    # If formula is missing (vega:dbrda requires formula)
     if( missing(formula) ){
         formula <- x ~ 1  
     }
