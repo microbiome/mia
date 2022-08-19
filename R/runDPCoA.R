@@ -97,16 +97,6 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
 {
     .require_package("ade4")
     # input check
-    # Check ncomponents
-    if( !.is_an_integer(ncomponents)  ){
-        stop("'ncomponents' must be a single integer value specifying the number ",
-             "of DPCoA dimensions.", call. = FALSE)
-    }
-    # Check ntop
-    if( !(is.null(ntop) || .is_an_integer(ntop))  ){
-        stop("'ntop' must be NULL or a single integer value specifying the number ",
-             "of features with the highest variance.", call. = FALSE)
-    }
     # Check subset_row
     y <- as.matrix(y)
     if(length(unique(dim(y))) != 1L){
