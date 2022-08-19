@@ -331,16 +331,6 @@ setMethod("calculateRDA", "SummarizedExperiment",
 setMethod("runRDA", "SingleCellExperiment",
     function(x, ..., altExp = NULL, name = "RDA")
     {
-        # Input check
-        if( !( is.null(altExp) ||
-               ( length(altExp) == 1 && 
-                 is.numeric(altExp) && altExp%%1==0 && 
-                 altExp<length(altExps(x)) && altExp>0) ||
-               (.is_a_string(altExp) && altExp %in% altExpNames(x)) ) ){
-            stop("'altExp' must be NULL, integer or character specifying an ",
-                 "alternative experiment from 'x'.", call. = FALSE)
-        }
-        #
         if (!is.null(altExp)) {
           y <- altExp(x, altExp)
         } else {
