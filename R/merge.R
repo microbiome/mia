@@ -258,7 +258,7 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
 
 # Merge trees, MARGIN specifies if trees are rowTrees or colTrees
 .merge_trees <- function(x, mergeTree, MARGIN){
-    # GEt rowtrees or colTrees based on MARGIN
+    # Get rowtrees or colTrees based on MARGIN
     if( MARGIN == 1 ){
         trees <- x@rowTree
         links <- rowLinks(x)
