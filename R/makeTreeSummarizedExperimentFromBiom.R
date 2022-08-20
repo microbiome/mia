@@ -128,9 +128,21 @@ makeTreeSEFromBiom <- function(obj, removeTaxaPrefixes = FALSE, ...){
     sample_data <- DataFrame(sample_data)
     feature_data <- DataFrame(feature_data)
     
-    TreeSummarizedExperiment(assays = list(counts = counts),
+    tse <- TreeSummarizedExperiment(assays = list(counts = counts),
                             colData = sample_data,
                             rowData = feature_data)
+    # Check if data contains colnames and rownames
+    if( is.null(colnames(tse)) ){
+        warning("Output does not include colnames. You can add them with ",
+                "'colnames() <-'.",
+                call. = FALSE)
+    }
+    if( is.null(rownames(tse)) ){
+        warning("Output does not include rownames. You can add them with ",
+                "'rownames() <-'.",
+                call. = FALSE)
+    }
+    return(tse)
 }
 
 ####################### makeTreeSummarizedExperimentFromBiom #######################

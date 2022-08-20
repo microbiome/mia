@@ -42,4 +42,18 @@ test_that("CCA", {
     actual <- reducedDim(sce,"rda_bray")
     rda_bray <- vegan::dbrda(form, dune.env, distance = "bray")
     expect_equal(abs( as.vector(actual) ), abs( as.vector(rda_bray$CCA$u) ))
+    #
+    sce <- runRDA(sce)
+    test <- reducedDim(sce,"RDA")
+    # Test that eigenvalues match
+    test <- attr(test, "rda")$CA$eig
+    res <- vegan::rda(t(assay(sce)))$CA$eig
+    expect_equal(unname(test), unname(res))
+    data("GlobalPatterns")
+    expect_error(calculateRDA(GlobalPatterns, variables = c("Primer", "test")))
+    res1 <- calculateRDA(GlobalPatterns, variables = c("Primer", "SampleType"))
+    res1 <- attr(res1, "rda")$CCA
+    res2 <- calculateRDA(GlobalPatterns, formula = data ~ Primer + SampleType)
+    res2 <- attr(res2, "rda")$CCA
+    expect_equal(res1, res2)
 })

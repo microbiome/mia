@@ -24,11 +24,12 @@ getExperimentCrossAssociation(x, ...)
   abund_values2 = "counts",
   altExp1 = NULL,
   altExp2 = NULL,
+  colData_variable1 = NULL,
+  colData_variable2 = NULL,
   MARGIN = 1,
   method = c("spearman", "categorical", "kendall", "pearson"),
   mode = "table",
-  p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel",
-    "none"),
+  p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel", "none"),
   p_adj_threshold = NULL,
   cor_threshold = NULL,
   sort = FALSE,
@@ -111,6 +112,14 @@ and altExp option is disabled.
 from the altExp of experiment 2. If NULL, then the experiment is itself
 and altExp option is disabled.
 (By default: \code{altExp2 = NULL})}
+
+\item{colData_variable1}{A character value specifying column(s) from colData
+of experiment 1. If colData_variable1 is used, assay_name1 is disabled.
+(By default: \code{colData_variable1 = NULL})}
+
+\item{colData_variable2}{A character value specifying column(s) from colData
+of experiment 2. If colData_variable2 is used, assay_name2 is disabled.
+(By default: \code{colData_variable2 = NULL})}
 
 \item{MARGIN}{A single numeric value for selecting if association are calculated
 row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -242,7 +251,15 @@ sample_size <- 0.3
 tse <- mae[[1]]
 tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
 result <- testExperimentCrossAssociation(tse_sub)
-                                         
+
+# It is also possible to choose variables from colData and calculate association
+# between assay and sample metadata or between variables of sample metadata
+mae[[1]] <- estimateDiversity(mae[[1]])
+# colData_variable works similarly to assay_name. Instead of fetching an assay
+# named assay_name from assay slot, it fetches a column named colData_variable
+# from colData.
+result <- getExperimentCrossAssociation(mae[[1]], assay_name1 = "counts", 
+                                        colData_variable2 = c("shannon", "coverage"))
                                         
 }
 \author{

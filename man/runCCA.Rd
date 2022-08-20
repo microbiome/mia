@@ -26,33 +26,35 @@ runRDA(x, ...)
 \S4method{calculateCCA}{SummarizedExperiment}(
   x,
   formula,
+  variables,
   ...,
   assay_name = abund_values,
   abund_values = exprs_values,
   exprs_values = "counts"
 )
 
-\S4method{runCCA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "CCA")
+\S4method{runCCA}{SingleCellExperiment}(x, ..., altExp = NULL, name = "CCA")
 
 \S4method{calculateRDA}{ANY}(x, formula, variables, ...)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
   formula,
+  variables,
   ...,
   assay_name = abund_values,
   abund_values = exprs_values,
   exprs_values = "counts"
 )
 
-\S4method{runRDA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "RDA")
+\S4method{runRDA}{SingleCellExperiment}(x, ..., altExp = NULL, name = "RDA")
 }
 \arguments{
-\item{x}{For \code{calculateCCA} a numeric matrix with columns as samples or
-a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
+\item{x}{For \code{calculate*} a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+or a numeric matrix with columns as samples
 
-For \code{runCCA} a
+For \code{run*} a
 \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 or a derived object.}
 
@@ -61,14 +63,24 @@ or a derived object.}
 \item{formula}{If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 a formula can be supplied. Based on the right-hand side of the given formula
-\code{colData} is subset to \code{variables}.}
+\code{colData} is subset to \code{variables}.
 
-\item{variables}{a \code{data.frame} or an object coercible to one containing
-the variables to use. Can be missing, which turns the CCA analysis into
-a CA analysis. All variables are used. Please subset, if you want to
-consider only some of them.}
+\code{variables} and \code{formula} can be missing, which turns the CCA analysis
+into a CA analysis and dbRDA into PCoA/MDS.}
 
-\item{scale}{a logical scalar, should the expression values be standardized?}
+\item{variables}{When \code{x} is a \code{SummarizedExperiment},
+\code{variables} can be used to specify variables from \code{colData}.
+
+When \code{x} is a matrix, \code{variables} is a \code{data.frame} or
+an object coercible to one containing the variables to use.
+
+All variables are used. Please subset, if you want to consider only some of them.
+\code{variables} and \code{formula} can be missing, which turns the CCA analysis
+into a CA analysis and dbRDA into PCoA/MDS.}
+
+\item{scale}{a logical scalar, should the expression values be standardized?
+\code{scale} is disabled when using \code{*RDA} functions. Please scale before
+performing RDA (Check examples.)}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -82,7 +94,7 @@ will be disabled.)}
 assay to use for calculation.
 (Please use \code{assay_name} instead.)}
 
-\item{altexp}{String or integer scalar specifying an alternative experiment
+\item{altExp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
 \item{name}{String specifying the name to be used to store the result in the

@@ -43,6 +43,14 @@
 #'   from the altExp of experiment 2. If NULL, then the experiment is itself 
 #'   and altExp option is disabled. 
 #'   (By default: \code{altExp2 = NULL})
+#'   
+#' @param colData_variable1 A character value specifying column(s) from colData
+#'   of experiment 1. If colData_variable1 is used, assay_name1 is disabled.
+#'   (By default: \code{colData_variable1 = NULL})
+#'   
+#' @param colData_variable2 A character value specifying column(s) from colData
+#'   of experiment 2. If colData_variable2 is used, assay_name2 is disabled.
+#'   (By default: \code{colData_variable2 = NULL})
 #' 
 #' @param MARGIN A single numeric value for selecting if association are calculated
 #'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -189,7 +197,15 @@
 #' tse <- mae[[1]]
 #' tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
 #' result <- testExperimentCrossAssociation(tse_sub)
-#'                                          
+#' 
+#' # It is also possible to choose variables from colData and calculate association
+#' # between assay and sample metadata or between variables of sample metadata
+#' mae[[1]] <- estimateDiversity(mae[[1]])
+#' # colData_variable works similarly to assay_name. Instead of fetching an assay
+#' # named assay_name from assay slot, it fetches a column named colData_variable
+#' # from colData.
+#' result <- getExperimentCrossAssociation(mae[[1]], assay_name1 = "counts", 
+#'                                         colData_variable2 = c("shannon", "coverage"))
 #'                                         
 NULL
 
@@ -211,6 +227,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            assay_name2 = abund_values2, abund_values2 = "counts",
            altExp1 = NULL,
            altExp2 = NULL,
+           colData_variable1 = NULL,
+           colData_variable2 = NULL,
            MARGIN = 1,
            method = c("spearman", "categorical", "kendall", "pearson"),
            mode = "table",
@@ -232,6 +250,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           assay_name2 = assay_name2,
                                           altExp1 = altExp1,
                                           altExp2 = altExp2,
+                                          colData_variable1 = colData_variable1,
+                                          colData_variable2 = colData_variable2,
                                           MARGIN = MARGIN,
                                           method = method,
                                           mode = mode,
@@ -256,32 +276,32 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
 setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
     function(x, experiment2 = x, ...){
         ############################## INPUT CHECK #############################
-        # If experiment2 is  SE or TreeSE object
-        if( class(experiment2) == "SummarizedExperiment" || 
-            class(experiment2) == "TreeSummarizedExperiment" ){}
+        # If y is  SE or TreeSE object
+        if( is(experiment2, "SummarizedExperiment") ){}
         # If y is  character specifying name of altExp, 
         else if( is.character(experiment2) && experiment2 %in% names(altExps(x)) ){}
         # If y is numeric value specifying altExp
         else if( is.numeric(experiment2) && experiment2 <= length(altExps(x)) ){} 
-        # If experiment2 does not match, then give error
+        # If y does not match, then give error
         else{
-            stop("'experiment2' must be SE or TreeSE object, or numeric or character",
-                 " value specifying experiment in altExps(x) or it must be NULL.", 
+            stop("'experiment2' must be SE object, or numeric or character",
+                 " value specifying experiment in altExps(x) or character value ",
+                 " specifying column(s) from 'colData(x)' or it must be NULL.", 
                  call. = FALSE)
         }
         ############################ INPUT CHECK END ###########################
         # Fetch data sets and create a MAE object
         exp1 <- x
-        # If experiment2 is character or numeric, it specifies altExp
+        args <- list()
+        # If y is character or numeric, it specifies altExp
         if ( is.character(experiment2) || is.numeric(experiment2) ){
             exp2 <- altExps(x)[[experiment2]]
-            experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
-            exp2_num <- 2
         } else {
             exp2 <- experiment2
-            experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
-            exp2_num <- 2
         }
+        # Create a MAE
+        experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
+        exp2_num <- 2
         x <- MultiAssayExperiment(experiments = experiments)
         # Call method with MAE object as an input
         .get_experiment_cross_association(x = x,
@@ -349,6 +369,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               assay_name2 = "counts",
                                               altExp1 = NULL,
                                               altExp2 = NULL,
+                                              colData_variable1 = NULL,
+                                              colData_variable2 = NULL,
                                               MARGIN = 1,
                                               method = c("spearman", "categorical", "kendall", "pearson"),
                                               mode = c("table", "matrix"),
@@ -378,9 +400,18 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         stop("Samples must match between experiments.",
              call. = FALSE)
     }
-    # Check assay_name1 and assay_name2
-    .check_assay_present(assay_name1, tse1)
-    .check_assay_present(assay_name2, tse2)
+    # If variables from coldata are specified check them. Otherwise,
+    # check assay_name1
+    if( !is.null(colData_variable1) ){
+        tse1 <- .check_and_subset_colData_variables(tse1, colData_variable1)
+    } else{
+        .check_assay_present(assay_name1, tse1)
+    }
+    if( !is.null(colData_variable2) ){
+        tse2 <- .check_and_subset_colData_variables(tse2, colData_variable2)
+    } else{
+        .check_assay_present(assay_name2, tse2)
+    }
     # Check MARGIN
     if( !is.numeric(MARGIN) && !MARGIN %in% c(1, 2) ){
       stop("'MARGIN' must be 1 or 2.", call. = FALSE)
@@ -436,38 +467,56 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
            call. = FALSE)
     }
     ############################ INPUT CHECK END ###########################
-    # Fetch assays to correlate
-    assay1 <- assay(tse1, assay_name1)
-    assay2 <- assay(tse2, assay_name2)
+    # Fetch assays to correlate, if variables from coldata are specified, take 
+    # coldata, otherwise take assay
+    if( !is.null(colData_variable1) ){
+        assay1 <- colData(tse1)
+        assay1 <- as.matrix(assay1)
+        assay1 <- t(assay1)
+    } else{
+        assay1 <- assay(tse1, assay_name1)
+    }
+    if( !is.null(colData_variable2) ){
+        assay2 <- colData(tse2)
+        assay2 <- as.matrix(assay2)
+        assay2 <- t(assay2)
+    } else{
+        assay2 <- assay(tse2, assay_name2)
+    }
+    
     # Transposes tables to right format, if row is specified
     if( MARGIN == 1 ){
-      assay1 <- t(assay1)
-      assay2 <- t(assay2)
-      # Disable paired
-      paired <- FALSE
+        assay1 <- t(assay1)
+        assay2 <- t(assay2)
+        # Disable paired
+        paired <- FALSE
     }
     
     # If significance is not calculated, p_adj_method is NULL
     if( !test_significance ){
-      p_adj_method <- NULL
+        p_adj_method <- NULL
     }
     # Calculate correlations
     result <- .calculate_association(assay1, assay2, method, 
                                      p_adj_method, 
                                      test_significance, 
                                      show_warnings, paired, 
-                                     verbose, MARGIN, ...)
+                                     verbose, MARGIN,
+                                     assay_name1, assay_name2,
+                                     altExp1, altExp2,
+                                     colData_variable1, colData_variable2,
+                                     ...)
     # Disable p_adj_threshold if there is no adjusted p-values
     if( is.null(result$p_adj) ){
-      p_adj_threshold <- NULL
+        p_adj_threshold <- NULL
     }
     # Disable cor_threshold if there is no correlations
     if( is.null(result$cor) ){
-      cor_threshold <- NULL
+        cor_threshold <- NULL
     }
     # Disable filter_self_correlation if assays are not the same
     if( !identical(assay1, assay2) ){
-      filter_self_correlations <- FALSE
+        filter_self_correlations <- FALSE
     }
     # Do filtering
     if( !is.null(p_adj_threshold) || 
@@ -599,6 +648,54 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              call. = FALSE)
     }
 }
+###################### .check_and_subset_colData_variables #####################
+# This function checks if columns can be found from colData. Additionally, 
+# integers are converted into numeric and factors to character.
+
+# Input: (Tree)SE and character
+# Output: (Tree)SE
+.check_and_subset_colData_variables <- function(tse, variables){
+    # Get variable name
+    variable_name <- deparse(substitute(variables))
+    var_num <- substr(variable_name, 
+                      start = nchar(variable_name), stop = nchar(variable_name))
+    # Check that variables can be found
+    if( !(is.character(variables) &&
+          all( variables %in% colnames(colData(tse))) ) ){
+        stop("'", variable_name, "' must be a character value specifying ",
+             "column(s) from colData of experiment ", var_num, ".",
+             call. = FALSE)
+    }
+    # Get coldata
+    coldata <- colData(tse)[ , variables, drop = FALSE]
+    # Get the classes of variables
+    classes <- unlist( lapply(coldata, class) )
+    # IF there are factors, convert them into character
+    if( any( classes == "factor") ){
+        unfactor <- coldata[ , classes == "factor", drop = FALSE]
+        unfactor <- lapply(unfactor, unfactor)
+        coldata[ , classes == "factor"] <- as.data.frame(unfactor)
+        classes[classes == "factor"] <- "character"
+    }
+    # IF there are integers, convert them into numeric
+    int_or_double <- classes == "integer" | classes == "double"
+    if( any( int_or_double ) ){
+        as_numeric <- coldata[ , int_or_double, drop = FALSE]
+        as_numeric <- lapply(as_numeric, as.numeric)
+        coldata[ , int_or_double] <- as.data.frame(as_numeric)
+        classes[int_or_double] <- "numeric"
+    }
+    # Check that all the variables have the same class
+    if( length(unique(classes)) > 1 ){
+        stop(" Variables specified by '", variable_name, "' do not share a same class.", 
+             call. = FALSE)
+    }
+    # Replace the colData with new, subsetted colData
+    coldata <- DataFrame(coldata)
+    colData(tse) <- coldata
+    return(tse)
+}
+
 ####################### .cross_association_test_data_type ######################
 # This function tests if values match with chosen method. With numeric methods, 
 # numeric values are expected, and with categorical method factor or character 
@@ -606,22 +703,29 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 # Input: assay and method
 # Output: assay
-.cross_association_test_data_type <- function(assay, method){
+.cross_association_test_data_type <- function(assay, method, 
+                                              colData_variable){
     # Different available methods
     numeric_methods <- c("kendall", "pearson","spearman")
     categorical_methods <- c("categorical")
+    # Get message
+    if( !is.null(colData_variable) ){
+        message <- "Variables of colData"
+    } else{
+        message <- "Assay, specified by 'assay_name',"
+    }
     # Check if method match with values, otherwise give an error.
     # For numeric methods, expect only numeric values. For categorical methods, 
     # expect only factors/characters.
     if (method %in% numeric_methods && !is.numeric(assay)) {
         # If there are no numeric values, give an error
-        stop("Assay, specified by 'abund_values', of 'experiment' does not ",
+        stop(message, " of 'experiment' does not ",
              "include numeric values. Choose categorical method for 'method'.",
              call. = FALSE)
     } else if (method %in% categorical_methods && !is.character(assay)) {
         # If there are no factor values, give an error
-        stop("Assay, specified by 'abund_values', of 'experiment' does not ",
-             "include factor values. Choose numeric method for 'method'.",
+        stop(message, " specified by 'assay_name', of 'experiment' does not ",
+             "include factor or character values. Choose numeric method for 'method'.",
              call. = FALSE)
     }
     return(assay)
@@ -652,7 +756,10 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                    paired,
                                    verbose,
                                    MARGIN,
-                                   association_FUN = NULL, 
+                                   assay_name1, assay_name2,
+                                   altExp1, altExp2,
+                                   colData_variable1, colData_variable2,
+                                   association_FUN = NULL,
                                    ...){
     # Check method if association_FUN is not NULL
     if( is.null(association_FUN) ){
@@ -662,8 +769,10 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                 ifelse(test_significance, "stats::cor.test", "stats::cor"))
         
         # Test if data is in right format
-        .cross_association_test_data_type(assay1, method)
-        .cross_association_test_data_type(assay2, method)
+        .cross_association_test_data_type(assay1, method, 
+                                          colData_variable1)
+        .cross_association_test_data_type(assay2, method, 
+                                          colData_variable2)
     } else{
         # Get name of function
         function_name <- deparse(substitute(association_FUN))
@@ -673,15 +782,27 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     
     # Message details of calculation
     if(verbose){
-        message( "Calculating correlations...\n",
-                    "MARGIN: ", MARGIN, 
-                    ", function: ", function_name, 
-                    ", method: ", method,
-                    ", test_significance: ", test_significance,
-                    ", p_adj_method: ",
-                    ifelse(!is.null(p_adj_method), p_adj_method, "-"),
-                    ", paired: ", paired,
-                    ", show_warnings: ", show_warnings, "\n" ) 
+        message( 
+            "Calculating correlations...\n",
+            "altExp1: ", ifelse(!is.null(altExp1), altExp1, "-"), 
+            ", altExp2: ", ifelse(!is.null(altExp2), altExp2, "-"),
+            ifelse(!is.null(colData_variable1), 
+                paste0(", assay_name1: -, colData_variable1: ", 
+                       paste(colData_variable1, collapse = " + ")), 
+                paste0(", assay_name1: ", assay_name1, ", colData_variable1: -")),
+            ifelse(!is.null(colData_variable2), 
+                paste0(", assay_name2: -, colData_variable2: ", 
+                       paste(colData_variable2, collapse = " + ")), 
+                paste0(", assay_name2: ", assay_name2, ", colData_variable2: -")),
+            "\nMARGIN: ", MARGIN, 
+            ", function: ", function_name, 
+            ", method: ", method,
+            ", test_significance: ", test_significance,
+            ", p_adj_method: ",
+            ifelse(!is.null(p_adj_method), p_adj_method, "-"),
+            ", paired: ", paired,
+            ", show_warnings: ", show_warnings, "\n" 
+            ) 
     }
   
     # If association_FUN is provided by user, use appropriate function.
@@ -729,6 +850,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                            correlations_and_p_values$Var2) )
     # Order the table
     correlations_and_p_values <- correlations_and_p_values[ order, ]
+    # Remove rownames / make them to be in increasing order
+    rownames(correlations_and_p_values) <- NULL
     
     # If there are p_values, adjust them
     if( !is.null(correlations_and_p_values$pval) ){
@@ -990,47 +1113,45 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                          show_warnings,
                                          test_significance,
                                          ...){
-  # Get features
-  feature1 <- assay1[ , feature_pair[1]]
-  feature2 <- assay2[ , feature_pair[2]]
-  # Create a matrix 
-  feature_mat <- rbind(feature1, feature2)
+    # Get features
+    feature1 <- assay1[ , feature_pair[1]]
+    feature2 <- assay2[ , feature_pair[2]]
+    # Create a matrix 
+    feature_mat <- rbind(feature1, feature2)
   
-  # If user does not want warnings, 
-  # suppress warnings that might occur when calculating correlations (NAs...)
-  # or p-values (ties, and exact p-values cannot be calculated...)
-  # Use try-catch to catch errors that might occur.
-  if( show_warnings ){
-      temp <- tryCatch({
+    # If user does not want warnings, 
+    # suppress warnings that might occur when calculating correlations (NAs...)
+    # or p-values (ties, and exact p-values cannot be calculated...)
+    # Use try-catch to catch errors that might occur.
+    if( show_warnings ){
+        temp <- tryCatch({
           do.call(association_FUN, args = c(list(feature_mat), list(...)))
-      },
-      error = function(cond) {
-          stop(paste0("Error occurred during calculation. Check, e.g., that ",
-                      "'association_FUN' fulfills requirements. 'association_FUN' ",
-                      "threw a following error:\n",  cond),
-              call. = FALSE)
-      }
-      )
-  } else {
-      temp <- tryCatch({
-          suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
-      },
-      error = function(cond) {
-          stop(paste0("Error occurred during calculation. Check, e.g., that ",
-                      "'association_FUN' fulfills requirements. 'association_FUN' ",
-                      "threw a following error:\n",  cond),
-              call. = FALSE)
-      }
-      )
-  }
+        },
+        error = function(cond) {
+            stop(paste0("Error occurred during calculation. Check, e.g., that ",
+                "'association_FUN' fulfills requirements. 'association_FUN' ",
+                "threw a following error:\n",  cond),
+                call. = FALSE)
+        })
+    } else {
+        temp <- tryCatch({
+            suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
+        },
+        error = function(cond) {
+            stop(paste0("Error occurred during calculation. Check, e.g., that ",
+                    "'association_FUN' fulfills requirements. 'association_FUN' ",
+                    "threw a following error:\n",  cond),
+                 call. = FALSE)
+        })
+    }
   
-  # If temp's length is not 1, then function does not return single numeric value for each pair
-  if( length(temp) != 1 ){
-      stop(paste0("Error occurred during calculation. Check that ", 
-                      "'association_FUN' fulfills requirements."), 
-           call. = FALSE)
-  } 
-  return(temp)
+    # If temp's length is not 1, then function does not return single numeric value for each pair
+    if( length(temp) != 1 ){
+        stop(paste0("Error occurred during calculation. Check that ", 
+            "'association_FUN' fulfills requirements."), 
+            call. = FALSE)
+    } 
+    return(temp)
 }
 
 ############################## .association_filter #############################
