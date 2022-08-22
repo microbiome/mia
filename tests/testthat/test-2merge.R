@@ -88,4 +88,7 @@ test_that("merge", {
     merged2 <- mergeRows(tse, f = rowData(tse)$Family, mergeTree = FALSE)
     expect_equal( rowLinks(merged)$whichTree, 
                   rowLinks(merged2)$whichTree )
+    expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
+    expect_true( rowTree(merged, "phylo")$Nnode < rowTree(merged2, "phylo")$Nnode )
+    expect_true( rowTree(merged, "phylo.1")$Nnode < rowTree(merged2, "phylo.1")$Nnode )
 })
