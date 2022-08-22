@@ -617,7 +617,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Get the variable names
     altExp_name <- deparse(substitute(altExp))
     exp_num <- substr(altExp_name, nchar(altExp_name), nchar(altExp_name))
-    tse_name <- paste0("experiment", exp_num)
+    tse_name <- paste0("experiment ", exp_num)
     
     # If altExp is specified, check and get it. Otherwise return the original object
     if( !is.null(altExp) ){
