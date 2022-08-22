@@ -92,7 +92,8 @@ test_that("merge", {
                                        rep("C", nrow(GlobalPatterns)-round(nrow(GlobalPatterns)/3)*3) )
     # Merge
     tse <- mergeSEs(esophagus, GlobalPatterns)
-    # Reorder data
+    # Reorder data since mergeSEs does not order the data based on original order
+    # (trees are pruned differently --> first instance represent specific branch)
     tse <- tse[c(rownames(esophagus), rownames(GlobalPatterns)), ]
     # Only esophagus has these groups --> the merge should contain only esophagus
     merged <- mergeRows(tse, f = rowData(tse)$group2, mergeTree = TRUE)
