@@ -177,7 +177,7 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
         return(NULL)
     }
     # Check that formula is formula
-    if( inherits(formula, "formula") ){
+    if( !inherits(formula, "formula") ){
         stop("'formula' must be a formula.", call. = FALSE)
     }
     terms <- rownames(attr(terms(formula),"factors"))
