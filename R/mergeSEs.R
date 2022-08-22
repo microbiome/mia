@@ -519,7 +519,7 @@ setMethod("right_join", signature = c(x = "ANY"),
         # Remove duplicates
         links <- links[ !duplicated(links[["names"]]), ]
         # Ensure that links are in correct order
-        links <- links[ match(links[["names"]], names), ]
+        links <- links[ match(names, links[["names"]]), ]
     }
     
     # Create a LinkDataFrame based on the link data
