@@ -145,10 +145,7 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
         # Check assay_name
         .check_assay_present(assay_name, x)
         # Check tree_name
-        if( !(.is_a_string(tree_name) && tree_name %in% names(x@rowTree)) ){
-            stop("'tree_name' must specify a rowTree from 'x'.",
-                 call. = FALSE)
-        }
+        .check_rowTree_present(tree_name, x)
         #
         # Get tree
         tree <- rowTree(x, tree_name)

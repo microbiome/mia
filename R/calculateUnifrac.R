@@ -148,10 +148,7 @@ setMethod("calculateUnifrac",
         mat <- assay(x, assay_name)
         if(!transposed){
             # Check tree_name
-            if( !(.is_a_string(tree_name) && tree_name %in% names(x@rowTree)) ){
-                stop("'tree_name' must specify a rowTree from 'x'.",
-                     call. = FALSE)
-            }
+            .check_rowTree_present(tree_name, x)
             # Get tree
             tree <- rowTree(x, tree_name)
             # Select only those features that are in the rowTree
@@ -166,10 +163,7 @@ setMethod("calculateUnifrac",
             tree <- .norm_tree_to_be_rooted(tree, rownames(x))
         } else {
             # Check tree_name
-            if( !(.is_a_string(tree_name) && tree_name %in% names(x@colTree)) ){
-                stop("'tree_name' must specify a colTree from 'x'.",
-                     call. = FALSE)
-            }
+            .check_colTree_present(tree_name, x)
             # Get tree
             tree <- colTree(x, tree_name)
             # Select only those samples that are in the colTree
