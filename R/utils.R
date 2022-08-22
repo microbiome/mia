@@ -77,8 +77,8 @@
 }
 
 .check_rowTree_present <- function(tree_name, x,
-                                   name = .get_name_in_parent(assay_name) ){
-    if( !.is_non_empty_string(assay_name) ){
+                                   name = .get_name_in_parent(tree_name) ){
+    if( !.is_non_empty_string(tree_name) ){
         stop("'", name, "' must be a single non-empty character value.",
              call. = FALSE)
     }
@@ -89,8 +89,8 @@
 }
 
 .check_colTree_present <- function(tree_name, x,
-                                   name = .get_name_in_parent(assay_name) ){
-    if( !.is_non_empty_string(assay_name) ){
+                                   name = .get_name_in_parent(tree_name) ){
+    if( !.is_non_empty_string(tree_name) ){
         stop("'", name, "' must be a single non-empty character value.",
              call. = FALSE)
     }
