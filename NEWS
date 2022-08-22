@@ -50,4 +50,5 @@ Changes in version 1.5.x
 + Added sample metadata option to getExperimentCrossAssociation
 + estimateFaith: add support for multiple rowTrees
 + calculateRDA/CCA: added variable argument & replaced altexp argument with altExp
-
++ mergeSEs: bugfix; links between trees and rows/cols were wrong
++ calculateDPCoA, calculateUnifrac & merge: add support for multiple trees
