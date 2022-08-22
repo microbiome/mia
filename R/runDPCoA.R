@@ -100,12 +100,12 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
     .require_package("ade4")
     # input check
     # Check ncomponents
-    if( !.is_an_integer(ncomponents)  ){
+    if( !(.is_an_integer(ncomponents) && ncomponents > 0) ){
         stop("'ncomponents' must be a single integer value specifying the number ",
              "of DPCoA dimensions.", call. = FALSE)
     }
     # Check ntop
-    if( !(is.null(ntop) || .is_an_integer(ntop))  ){
+    if( !(is.null(ntop) || (.is_an_integer(ntop) && ntop > 0))  ){
         stop("'ntop' must be NULL or a single integer value specifying the number ",
              "of features with the highest variance.", call. = FALSE)
     }
@@ -126,9 +126,7 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
         x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
                                  scale = scale)
     }
-    y <- y[rownames(y) %in% colnames(x),
-           colnames(y) %in% colnames(x),
-           drop = FALSE]
+    y <- y[colnames(x),mcolnames(x), drop = FALSE]
     if(nrow(y) != ncol(x)){
         stop("x and y must have corresponding dimensions.", call. = FALSE)
     }
