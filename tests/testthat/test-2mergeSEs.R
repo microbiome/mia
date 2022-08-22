@@ -346,4 +346,20 @@ test_that("mergeSEs", {
     # that are named by rownames.)
     tse <- mergeSEs(GlobalPatterns, esophagus)
     expect_equal( rownames(tse), rowLinks(tse)$nodeLab )
+    
+    # Check that rowData includes all the information
+    data("esophagus")
+    data("GlobalPatterns")
+    # Add arbitrary groups
+    rowData(esophagus)$group <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
+                                  rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
+    rowData(esophagus)$group2 <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
+                                   rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
+    rowData(GlobalPatterns)$group <- c(rep(c("C", "D", "E"), each = nrow(GlobalPatterns)/3), 
+                                       rep("C", nrow(GlobalPatterns)-round(nrow(GlobalPatterns)/3)*3) )
+    tse <- mergeSEs(esophagus, GlobalPatterns)
+    rd_esophagus <- rowData(tse)[rownames(esophagus), ]
+    rd_gb <- rowData(tse)[rownames(GlobalPatterns), ]
+    expect_equal(rowData(esophagus), rd_esophagus[, colnames(rowData(esophagus))])
+    expect_equal(rowData(GlobalPatterns), rd_gb[, colnames(rowData(GlobalPatterns))])
 })

@@ -875,7 +875,7 @@ setMethod("right_join", signature = c(x = "ANY"),
         # Get the data in correct order, take only column that have ranks
         rd_rank <- rd[ , ranks_ind, drop = FALSE]
         # Take other columns
-        rd_other <- rd[ , !ranks_ind, drop = FALSE]
+        rd_other <- rd[ , -ranks_ind, drop = FALSE]
         # Get rank names
         rank_names <- colnames(rd_rank)
         # Convert names s that they have capital letters

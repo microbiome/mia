@@ -83,9 +83,28 @@ test_that("merge", {
     # Check multiple rowTrees
     data("esophagus")
     data("GlobalPatterns")
+    # Add arbitrary groups
+    rowData(esophagus)$group <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
+                                  rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
+    rowData(esophagus)$group2 <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
+                                  rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
+    rowData(GlobalPatterns)$group <- c(rep(c("C", "D", "E"), each = nrow(GlobalPatterns)/3), 
+                                       rep("C", nrow(GlobalPatterns)-round(nrow(GlobalPatterns)/3)*3) )
+    # Merge
     tse <- mergeSEs(esophagus, GlobalPatterns)
-    merged <- mergeRows(tse, f = rowData(tse)$Family, mergeTree = TRUE)
-    merged2 <- mergeRows(tse, f = rowData(tse)$Family, mergeTree = FALSE)
+    # Only esophagus has these groups --> the merge should contain only esophagus
+    merged <- mergeRows(tse, f = rowData(tse)$group2, mergeTree = TRUE)
+    merged2 <- mergeRows(tse, f = rowData(tse)$group2, mergeTree = FALSE)
+    merged3 <- mergeRows(esophagus, f = rowData(tse)$group2, mergeTree = TRUE)
+    expect_equal( rowLinks(merged)$whichTree, 
+                  rowLinks(merged2)$whichTree )
+    expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
+    expect_equal(rowTree(tse), rowTree(merged2))
+    expect_equal(rowTree(merged), rowTree(merged3))
+    
+    # Both datasets have group variable
+    merged <- mergeRows(tse, f = rowData(tse)$group, mergeTree = TRUE)
+    merged2 <- mergeRows(tse, f = rowData(tse)$group, mergeTree = FALSE)
     expect_equal( rowLinks(merged)$whichTree, 
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
