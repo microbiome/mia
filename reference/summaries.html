@@ -18,7 +18,7 @@ functions are available."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -55,54 +55,54 @@ functions are available.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getTopTaxa</span><span class="op">(</span>
-  <span class="va">x</span>,
-  top <span class="op">=</span> <span class="fl">5L</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span><span class="op">)</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>,
-  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getTopTaxa</span><span class="op">(</span>
-  <span class="va">x</span>,
-  top <span class="op">=</span> <span class="fl">5L</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span>, <span class="st">"prevalence"</span><span class="op">)</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>,
-  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, assay_name <span class="op">=</span> <span class="va">abund_values</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getTopTaxa</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  top <span class="op">=</span> <span class="fl">5L</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span><span class="op">)</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getTopTaxa</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  top <span class="op">=</span> <span class="fl">5L</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span>, <span class="st">"prevalence"</span><span class="op">)</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, assay_name <span class="op">=</span> <span class="va">abund_values</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -209,34 +209,34 @@ object.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span class="r-in">                       method <span class="op">=</span> <span class="st">"mean"</span>,</span>
-<span class="r-in">                       top <span class="op">=</span> <span class="fl">5</span>,</span>
-<span class="r-in">                       assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">top_taxa</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>                       method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
+<span class="r-in"><span>                       top <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>                       assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">top_taxa</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "279599" "360229" "317182"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Use 'detection' to select detection threshold when using prevalence method</span></span>
-<span class="r-in"><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span class="r-in">                       method <span class="op">=</span> <span class="st">"prevalence"</span>,</span>
-<span class="r-in">                       top <span class="op">=</span> <span class="fl">5</span>,</span>
-<span class="r-in">                       abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span class="r-in">                       detection <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">top_taxa</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Use 'detection' to select detection threshold when using prevalence method</span></span></span>
+<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>                       method <span class="op">=</span> <span class="st">"prevalence"</span>,</span></span>
+<span class="r-in"><span>                       top <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>                       abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
+<span class="r-in"><span>                       detection <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">top_taxa</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "94166"  "317182" "279599"</span>
-<span class="r-in">                       </span>
-<span class="r-in"><span class="co"># Top taxa os specific rank</span></span>
-<span class="r-in"><span class="fu">getTopTaxa</span><span class="op">(</span><span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span class="r-in">                             rank <span class="op">=</span> <span class="st">"Genus"</span>,</span>
-<span class="r-in">                             na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span>                       </span></span>
+<span class="r-in"><span><span class="co"># Top taxa os specific rank</span></span></span>
+<span class="r-in"><span><span class="fu">getTopTaxa</span><span class="op">(</span><span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>                             rank <span class="op">=</span> <span class="st">"Genus"</span>,</span></span>
+<span class="r-in"><span>                             na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Bacteroides"      "Dolichospermum"   "Faecalibacterium" "Neisseria"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Haemophilus"     </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Gets the overview of dominant taxa</span></span>
-<span class="r-in"><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span class="r-in">                                   rank <span class="op">=</span> <span class="st">"Genus"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dominant_taxa</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Gets the overview of dominant taxa</span></span></span>
+<span class="r-in"><span><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>                                   rank <span class="op">=</span> <span class="st">"Genus"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dominant_taxa</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    dominant_taxa                  n rel.freq rel.freq.pct</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
@@ -257,15 +257,15 @@ object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> Genus:Prochlorococcus          1      3.8 4%          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> Genus:Veillonella              1      3.8 4%          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> Order:Chromatiales             1      3.8 4%          </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># With group, it is possible to group observations based on specified groups</span></span>
-<span class="r-in"><span class="co"># Gets the overview of dominant taxa</span></span>
-<span class="r-in"><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span class="r-in">                                   rank <span class="op">=</span> <span class="st">"Genus"</span>,</span>
-<span class="r-in">                                   group <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
-<span class="r-in">                                   na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">dominant_taxa</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># With group, it is possible to group observations based on specified groups</span></span></span>
+<span class="r-in"><span><span class="co"># Gets the overview of dominant taxa</span></span></span>
+<span class="r-in"><span><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>                                   rank <span class="op">=</span> <span class="st">"Genus"</span>,</span></span>
+<span class="r-in"><span>                                   group <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
+<span class="r-in"><span>                                   na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">dominant_taxa</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   SampleType [9]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    SampleType         dominant_taxa                n rel.freq rel.freq.pct</span>
@@ -290,9 +290,9 @@ object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span> Soil               MC18                         1     33.3 33%         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span> Tongue             Neisseria                    1     50   50%         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span> Tongue             Veillonella                  1     50   50%         </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Get an overview of sample and taxa counts</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get an overview of sample and taxa counts</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $samples</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   total_counts min_counts max_counts median_counts mean_counts stdev_counts</span>
@@ -305,12 +305,12 @@ object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> <span style="text-decoration: underline;">19</span>216       <span style="text-decoration: underline;">2</span>134          <span style="text-decoration: underline;">4</span>022.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Get unique taxa at a particular taxonomic rank</span></span>
-<span class="r-in"><span class="co"># sort = TRUE means that output is sorted in alphabetical order</span></span>
-<span class="r-in"><span class="co"># With na.rm = TRUE, it is possible to remove NAs</span></span>
-<span class="r-in"><span class="co"># sort and na.rm can also be used in function getTopTaxa</span></span>
-<span class="r-in"><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="st">"Phylum"</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get unique taxa at a particular taxonomic rank</span></span></span>
+<span class="r-in"><span><span class="co"># sort = TRUE means that output is sorted in alphabetical order</span></span></span>
+<span class="r-in"><span><span class="co"># With na.rm = TRUE, it is possible to remove NAs</span></span></span>
+<span class="r-in"><span><span class="co"># sort and na.rm can also be used in function getTopTaxa</span></span></span>
+<span class="r-in"><span><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="st">"Phylum"</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "ABY1_OD1"         "AC1"              "AD3"              "Acidobacteria"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "Actinobacteria"   "Armatimonadetes"  "BRC1"             "Bacteroidetes"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "CCM11b"           "Caldiserica"      "Caldithrix"       "Chlamydiae"      </span>
@@ -328,7 +328,7 @@ object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [57] "Tenericutes"      "Thermi"           "Thermotogae"      "Verrucomicrobia" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [61] "WPS-2"            "WS1"              "WS2"              "WS3"             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [65] "ZB2"              "ZB3"              NA                </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -343,7 +343,7 @@ object.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -19,7 +19,7 @@ from assay(x,name)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -57,35 +57,35 @@ from <code>assay(x,name)</code>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getAbundanceSample</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">sample_id</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getAbundanceSample</span><span class="op">(</span>
-  <span class="va">x</span>,
-  sample_id <span class="op">=</span> <span class="cn">NULL</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>
-<span class="op">)</span>
-
-<span class="fu">getAbundanceFeature</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">feature_id</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getAbundanceFeature</span><span class="op">(</span>
-  <span class="va">x</span>,
-  feature_id <span class="op">=</span> <span class="cn">NULL</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getAbundanceSample</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">sample_id</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getAbundanceSample</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  sample_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getAbundanceFeature</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">feature_id</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getAbundanceFeature</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  feature_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -145,11 +145,11 @@ for user specified “FeatureID”.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># getAbundanceSample</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">getAbundanceSample</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span class="r-in">                   sample_id <span class="op">=</span> <span class="st">'CC1'</span>,</span>
-<span class="r-in">                   assay_name <span class="op">=</span> <span class="st">'counts'</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># getAbundanceSample</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">getAbundanceSample</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>                   sample_id <span class="op">=</span> <span class="st">'CC1'</span>,</span></span>
+<span class="r-in"><span>                   assay_name <span class="op">=</span> <span class="st">'counts'</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 549322 522457    951 244423 586076 246140 143239 244960 255340 144887 141782 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      0      0      0      0      0      0      1      0    194      5     35 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 215972  31759  30678 138353 406058  30405   1126  46043 512519 554594 210741 </span>
@@ -3644,10 +3644,10 @@ for user specified “FeatureID”.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      0      0      0      0      0      0      0      0      0      0      0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 246195  92501 484439 579616 546622 278222 463590 535321 200359 271582 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      0      0      0      0      0      0      0      0      0      0 </span>
-<span class="r-in"><span class="co"># getAbundanceFeature</span></span>
-<span class="r-in"><span class="fu">getAbundanceFeature</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span class="r-in">                    feature_id <span class="op">=</span> <span class="st">'522457'</span>,</span>
-<span class="r-in">                    assay_name <span class="op">=</span> <span class="st">'counts'</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># getAbundanceFeature</span></span></span>
+<span class="r-in"><span><span class="fu">getAbundanceFeature</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>                    feature_id <span class="op">=</span> <span class="st">'522457'</span>,</span></span>
+<span class="r-in"><span>                    assay_name <span class="op">=</span> <span class="st">'counts'</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      CL3      CC1      SV1  M31Fcsw  M11Fcsw  M31Plmr  M11Plmr  F21Plmr </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        0        0        0        0        0        0        0        0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  M31Tong  M11Tong LMEpi24M SLEpi20M   AQC1cm   AQC4cm   AQC7cm      NP2 </span>
@@ -3670,7 +3670,7 @@ for user specified “FeatureID”.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

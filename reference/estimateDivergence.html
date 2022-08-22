@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -53,28 +53,28 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">estimateDivergence</span><span class="op">(</span>
-  <span class="va">x</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>,
-  name <span class="op">=</span> <span class="st">"divergence"</span>,
-  reference <span class="op">=</span> <span class="st">"median"</span>,
-  FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,
-  method <span class="op">=</span> <span class="st">"bray"</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">estimateDivergence</span><span class="op">(</span>
-  <span class="va">x</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>,
-  name <span class="op">=</span> <span class="st">"divergence"</span>,
-  reference <span class="op">=</span> <span class="st">"median"</span>,
-  FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,
-  method <span class="op">=</span> <span class="st">"bray"</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">estimateDivergence</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"divergence"</span>,</span>
+<span>  reference <span class="op">=</span> <span class="st">"median"</span>,</span>
+<span>  FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"bray"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">estimateDivergence</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"divergence"</span>,</span>
+<span>  reference <span class="op">=</span> <span class="st">"median"</span>,</span>
+<span>  FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"bray"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -156,26 +156,26 @@ between comparisons.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># By default, reference is median of all samples. The name of column where results</span></span>
-<span class="r-in"><span class="co"># is "divergence" by default, but it can be specified. </span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">estimateDivergence</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The method that are used to calculate distance in divergence and </span></span>
-<span class="r-in"><span class="co"># reference can be specified. Here, euclidean distance and dist function from </span></span>
-<span class="r-in"><span class="co"># stats package are used. Reference is the first sample.</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">estimateDivergence</span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"divergence_first_sample"</span>, </span>
-<span class="r-in">                          reference <span class="op">=</span> <span class="fu">assays</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, </span>
-<span class="r-in">                          FUN <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span>, method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Reference can also be median or mean of all samples. </span></span>
-<span class="r-in"><span class="co"># By default, divergence is calculated by using median. Here, mean is used.</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">estimateDivergence</span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"divergence_average"</span>, reference <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># All three divergence results are stored in colData.</span></span>
-<span class="r-in"><span class="fu">colData</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># By default, reference is median of all samples. The name of column where results</span></span></span>
+<span class="r-in"><span><span class="co"># is "divergence" by default, but it can be specified. </span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">estimateDivergence</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The method that are used to calculate distance in divergence and </span></span></span>
+<span class="r-in"><span><span class="co"># reference can be specified. Here, euclidean distance and dist function from </span></span></span>
+<span class="r-in"><span><span class="co"># stats package are used. Reference is the first sample.</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">estimateDivergence</span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"divergence_first_sample"</span>, </span></span>
+<span class="r-in"><span>                          reference <span class="op">=</span> <span class="fu">assays</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, </span></span>
+<span class="r-in"><span>                          FUN <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span>, method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Reference can also be median or mean of all samples. </span></span></span>
+<span class="r-in"><span><span class="co"># By default, divergence is calculated by using median. Here, mean is used.</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">estimateDivergence</span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"divergence_average"</span>, reference <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># All three divergence results are stored in colData.</span></span></span>
+<span class="r-in"><span><span class="fu">colData</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 26 rows and 10 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         X.SampleID   Primer Final_Barcode Barcode_truncated_plus_T</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;factor&gt; &lt;factor&gt;      &lt;factor&gt;                 &lt;factor&gt;</span>
@@ -229,7 +229,7 @@ between comparisons.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even1                    225268           0.809229</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even2                    194434           0.808371</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Even3                    204304           0.814546</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -244,7 +244,7 @@ between comparisons.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

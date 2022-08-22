@@ -21,7 +21,7 @@ long data.frame which can be used for tidyverse-tools."><!-- mathjax --><script 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -60,28 +60,28 @@ long data.frame which can be used for <code>tidyverse</code>-tools.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">meltAssay</span><span class="op">(</span>
-  <span class="va">x</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>,
-  add_row_data <span class="op">=</span> <span class="cn">NULL</span>,
-  add_col_data <span class="op">=</span> <span class="cn">NULL</span>,
-  feature_name <span class="op">=</span> <span class="st">"FeatureID"</span>,
-  sample_name <span class="op">=</span> <span class="st">"SampleID"</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">meltAssay</span><span class="op">(</span>
-  <span class="va">x</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>,
-  add_row_data <span class="op">=</span> <span class="cn">NULL</span>,
-  add_col_data <span class="op">=</span> <span class="cn">NULL</span>,
-  feature_name <span class="op">=</span> <span class="st">"FeatureID"</span>,
-  sample_name <span class="op">=</span> <span class="st">"SampleID"</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">meltAssay</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  add_row_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  add_col_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  feature_name <span class="op">=</span> <span class="st">"FeatureID"</span>,</span>
+<span>  sample_name <span class="op">=</span> <span class="st">"SampleID"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">meltAssay</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  add_row_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  add_col_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  feature_name <span class="op">=</span> <span class="st">"FeatureID"</span>,</span>
+<span>  sample_name <span class="op">=</span> <span class="st">"SampleID"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -164,13 +164,13 @@ names are set.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">molten_tse</span> <span class="op">&lt;-</span> <span class="fu">meltAssay</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span class="r-in">                        assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span class="r-in">                        add_row_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">                        add_col_data <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span class="r-in">                        <span class="op">)</span></span>
-<span class="r-in"><span class="va">molten_tse</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">molten_tse</span> <span class="op">&lt;-</span> <span class="fu">meltAssay</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span>                        assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
+<span class="r-in"><span>                        add_row_data <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                        add_col_data <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>                        <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">molten_tse</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 499,616 × 17</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    FeatureID SampleID counts Kingdom Phylum     Class Order Family Genus Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
@@ -187,6 +187,7 @@ names are set.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 499,606 more rows, and 7 more variables: X.SampleID &lt;fct&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Primer &lt;fct&gt;, Final_Barcode &lt;fct&gt;, Barcode_truncated_plus_T &lt;fct&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Barcode_full_length &lt;fct&gt;, SampleType &lt;fct&gt;, Description &lt;fct&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</span></span>
 </code></pre></div>
     </div>
   </div>
@@ -201,7 +202,7 @@ names are set.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

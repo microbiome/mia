@@ -19,7 +19,7 @@ from assay is added to the phyloseq object."><!-- mathjax --><script src="https:
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -57,18 +57,18 @@ from <code>assay</code> is added to the phyloseq object.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, assay_name <span class="op">=</span> <span class="va">abund_values</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>
-
-<span class="co"># S4 method for TreeSummarizedExperiment</span>
-<span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY</span>
-<span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, assay_name <span class="op">=</span> <span class="va">abund_values</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -113,26 +113,26 @@ phyloseq object from TreeSummarizedExperiment object.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Get tse object</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Create a phyloseq object from it</span></span>
-<span class="r-in"><span class="va">phy</span> <span class="op">&lt;-</span> <span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">phy</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Get tse object</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create a phyloseq object from it</span></span></span>
+<span class="r-in"><span><span class="va">phy</span> <span class="op">&lt;-</span> <span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">phy</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phyloseq-class experiment-level object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> otu_table()   OTU Table:         [ 19216 taxa and 26 samples ]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> sample_data() Sample Data:       [ 26 samples by 7 sample variables ]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># By default the chosen table is counts, but if there are other tables,</span></span>
-<span class="r-in"><span class="co"># they can be chosen with assay_name.</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Counts relative abundances table</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformCounts</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">phy2</span> <span class="op">&lt;-</span> <span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">tse</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">phy2</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># By default the chosen table is counts, but if there are other tables,</span></span></span>
+<span class="r-in"><span><span class="co"># they can be chosen with assay_name.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Counts relative abundances table</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformCounts</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">phy2</span> <span class="op">&lt;-</span> <span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">tse</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">phy2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phyloseq-class experiment-level object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> otu_table()   OTU Table:         [ 19216 taxa and 26 samples ]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> sample_data() Sample Data:       [ 26 samples by 7 sample variables ]</span>
@@ -152,7 +152,7 @@ phyloseq object from TreeSummarizedExperiment object.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

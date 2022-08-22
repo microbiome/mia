@@ -18,7 +18,7 @@ mergePairs function from the dada2 package."><!-- mathjax --><script src="https:
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -55,9 +55,9 @@ mergePairs function from the dada2 package."><!-- mathjax --><script src="https:
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">makeTreeSEFromDADA2</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
-
-<span class="fu">makeTreeSummarizedExperimentFromDADA2</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makeTreeSEFromDADA2</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">makeTreeSummarizedExperimentFromDADA2</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -94,15 +94,15 @@ respectively.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"dada2"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="va">fnF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sam1F.fastq.gz"</span>, package<span class="op">=</span><span class="st">"dada2"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">fnR</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sam1R.fastq.gz"</span>, package<span class="op">=</span><span class="st">"dada2"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">dadaF</span> <span class="op">&lt;-</span> <span class="fu">dada2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dada2/man/dada.html" class="external-link">dada</a></span><span class="op">(</span><span class="va">fnF</span>, selfConsist<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">dadaR</span> <span class="op">&lt;-</span> <span class="fu">dada2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dada2/man/dada.html" class="external-link">dada</a></span><span class="op">(</span><span class="va">fnR</span>, selfConsist<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in">  <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">makeTreeSEFromDADA2</span><span class="op">(</span><span class="va">dadaF</span>, <span class="va">fnF</span>, <span class="va">dadaR</span>, <span class="va">fnR</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">tse</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"dada2"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">fnF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sam1F.fastq.gz"</span>, package<span class="op">=</span><span class="st">"dada2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">fnR</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sam1R.fastq.gz"</span>, package<span class="op">=</span><span class="st">"dada2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">dadaF</span> <span class="op">&lt;-</span> <span class="fu">dada2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dada2/man/dada.html" class="external-link">dada</a></span><span class="op">(</span><span class="va">fnF</span>, selfConsist<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">dadaR</span> <span class="op">&lt;-</span> <span class="fu">dada2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dada2/man/dada.html" class="external-link">dada</a></span><span class="op">(</span><span class="va">fnR</span>, selfConsist<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">makeTreeSEFromDADA2</span><span class="op">(</span><span class="va">dadaF</span>, <span class="va">fnF</span>, <span class="va">dadaR</span>, <span class="va">fnR</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">tse</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: dada2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initializing error rates to maximum possible estimate.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> selfConsist step 1 .</span>
@@ -146,7 +146,7 @@ respectively.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

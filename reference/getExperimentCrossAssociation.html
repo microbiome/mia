@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -53,53 +53,53 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for MultiAssayExperiment</span>
-<span class="fu">getExperimentCrossAssociation</span><span class="op">(</span>
-  <span class="va">x</span>,
-  experiment1 <span class="op">=</span> <span class="fl">1</span>,
-  experiment2 <span class="op">=</span> <span class="fl">2</span>,
-  assay_name1 <span class="op">=</span> <span class="va">abund_values1</span>,
-  abund_values1 <span class="op">=</span> <span class="st">"counts"</span>,
-  assay_name2 <span class="op">=</span> <span class="va">abund_values2</span>,
-  abund_values2 <span class="op">=</span> <span class="st">"counts"</span>,
-  altExp1 <span class="op">=</span> <span class="cn">NULL</span>,
-  altExp2 <span class="op">=</span> <span class="cn">NULL</span>,
-  colData_variable1 <span class="op">=</span> <span class="cn">NULL</span>,
-  colData_variable2 <span class="op">=</span> <span class="cn">NULL</span>,
-  MARGIN <span class="op">=</span> <span class="fl">1</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spearman"</span>, <span class="st">"categorical"</span>, <span class="st">"kendall"</span>, <span class="st">"pearson"</span><span class="op">)</span>,
-  mode <span class="op">=</span> <span class="st">"table"</span>,
-  p_adj_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fdr"</span>, <span class="st">"BH"</span>, <span class="st">"bonferroni"</span>, <span class="st">"BY"</span>, <span class="st">"hochberg"</span>, <span class="st">"holm"</span>, <span class="st">"hommel"</span>, <span class="st">"none"</span><span class="op">)</span>,
-  p_adj_threshold <span class="op">=</span> <span class="cn">NULL</span>,
-  cor_threshold <span class="op">=</span> <span class="cn">NULL</span>,
-  sort <span class="op">=</span> <span class="cn">FALSE</span>,
-  filter_self_correlations <span class="op">=</span> <span class="cn">FALSE</span>,
-  verbose <span class="op">=</span> <span class="cn">TRUE</span>,
-  test_significance <span class="op">=</span> <span class="cn">FALSE</span>,
-  show_warnings <span class="op">=</span> <span class="cn">TRUE</span>,
-  paired <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, experiment2 <span class="op">=</span> <span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY</span>
-<span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">testExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY</span>
-<span class="fu">testExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">getExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY</span>
-<span class="fu">getExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for MultiAssayExperiment</span></span>
+<span><span class="fu">getExperimentCrossAssociation</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  experiment1 <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  experiment2 <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  assay_name1 <span class="op">=</span> <span class="va">abund_values1</span>,</span>
+<span>  abund_values1 <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name2 <span class="op">=</span> <span class="va">abund_values2</span>,</span>
+<span>  abund_values2 <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  altExp1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  altExp2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colData_variable1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colData_variable2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  MARGIN <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spearman"</span>, <span class="st">"categorical"</span>, <span class="st">"kendall"</span>, <span class="st">"pearson"</span><span class="op">)</span>,</span>
+<span>  mode <span class="op">=</span> <span class="st">"table"</span>,</span>
+<span>  p_adj_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fdr"</span>, <span class="st">"BH"</span>, <span class="st">"bonferroni"</span>, <span class="st">"BY"</span>, <span class="st">"hochberg"</span>, <span class="st">"holm"</span>, <span class="st">"hommel"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  p_adj_threshold <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cor_threshold <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sort <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  filter_self_correlations <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  test_significance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_warnings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  paired <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, experiment2 <span class="op">=</span> <span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">testExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">testExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">getExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -284,54 +284,54 @@ associations.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"HintikkaXOData"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mae</span> <span class="op">&lt;-</span> <span class="va">HintikkaXOData</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Subset so that less observations / quicker to run, just for example</span></span>
-<span class="r-in"><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"HintikkaXOData"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mae</span> <span class="op">&lt;-</span> <span class="va">HintikkaXOData</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Subset so that less observations / quicker to run, just for example</span></span></span>
+<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> harmonizing input:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   removing 30 sampleMap rows with 'colname' not in colnames of experiments</span>
-<span class="r-in"><span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> harmonizing input:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   removing 30 sampleMap rows with 'colname' not in colnames of experiments</span>
-<span class="r-in"><span class="co"># Transform data</span></span>
-<span class="r-in"><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformSamples</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"rclr"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># Transform data</span></span></span>
+<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformSamples</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"rclr"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All the total abundances of samples do not sum-up to a fixed constant. Please consider to apply, e.g., relative transformation in prior to CLR transformation.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Calculate cross-correlations</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, method <span class="op">=</span> <span class="st">"pearson"</span>, assay_name2 <span class="op">=</span> <span class="st">"nmr"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Calculate cross-correlations</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, method <span class="op">=</span> <span class="st">"pearson"</span>, assay_name2 <span class="op">=</span> <span class="st">"nmr"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altExp1: -, altExp2: -, assay_name1: counts, colData_variable1: -, assay_name2: nmr, colData_variable2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: pearson, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-in"><span class="co"># Show first 5 entries</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># Show first 5 entries</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    Var1     Var2        cor</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  GAYR01026362.62.2014 Butyrate         NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  CVJT01000011.50.2173 Butyrate -0.1539492</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3       KF625183.1.1786 Butyrate         NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 AYSG01000002.292.2076 Butyrate -0.1767417</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 CCPS01000022.154.1916 Butyrate  0.4373067</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Use altExp option to specify alternative experiment from the experiment</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Use altExp option to specify alternative experiment from the experiment</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'rclr' includes negative values.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Agglomeration of it might lead to meaningless values.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Check the assay, and consider doing transformation again manually with agglomerated data.</span>
-<span class="r-in"><span class="co"># Transform data</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformSamples</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># When mode = matrix, matrix is returned</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, experiment2 <span class="op">=</span> <span class="fl">2</span>, </span>
-<span class="r-in">                                        assay_name1 <span class="op">=</span> <span class="st">"relabundance"</span>, assay_name2 <span class="op">=</span> <span class="st">"nmr"</span>,</span>
-<span class="r-in">                                        altExp1 <span class="op">=</span> <span class="st">"Phylum"</span>, </span>
-<span class="r-in">                                        method <span class="op">=</span> <span class="st">"pearson"</span>, mode <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># Transform data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformSamples</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># When mode = matrix, matrix is returned</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, experiment2 <span class="op">=</span> <span class="fl">2</span>, </span></span>
+<span class="r-in"><span>                                        assay_name1 <span class="op">=</span> <span class="st">"relabundance"</span>, assay_name2 <span class="op">=</span> <span class="st">"nmr"</span>,</span></span>
+<span class="r-in"><span>                                        altExp1 <span class="op">=</span> <span class="st">"Phylum"</span>, </span></span>
+<span class="r-in"><span>                                        method <span class="op">=</span> <span class="st">"pearson"</span>, mode <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altExp1: Phylum, altExp2: -, assay_name1: relabundance, colData_variable1: -, assay_name2: nmr, colData_variable2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: pearson, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Converting table into matrices...</span>
-<span class="r-in"><span class="co"># Show first 5 entries</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># Show first 5 entries</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       Butyrate    Acetate Propionate   Valerate Isovalerate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D_1__Proteobacteria  0.2126789 -0.6345497 -0.7073503 -0.3731159  0.01672613</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D_1__Firmicutes     -0.2126789  0.6345497  0.7073503  0.3731159 -0.01672613</span>
@@ -344,14 +344,14 @@ associations.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       Glutamate    Ethanol   Tryptophan   Aspartate     Alanine</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D_1__Proteobacteria  0.03341937  0.3118914  0.005711173 -0.09035227  0.01673503</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D_1__Firmicutes     -0.03341937 -0.3118914 -0.005711173  0.09035227 -0.01673503</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># testExperimentCorrelation returns also significances</span></span>
-<span class="r-in"><span class="co"># filter_self_correlations = TRUE filters self correlations</span></span>
-<span class="r-in"><span class="co"># With p_adj_threshold it is possible to filter those features that do no have</span></span>
-<span class="r-in"><span class="co"># any correlations that have p-value under threshold</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, experiment2 <span class="op">=</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span>
-<span class="r-in">                                         filter_self_correlations <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">                                         p_adj_threshold <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># testExperimentCorrelation returns also significances</span></span></span>
+<span class="r-in"><span><span class="co"># filter_self_correlations = TRUE filters self correlations</span></span></span>
+<span class="r-in"><span><span class="co"># With p_adj_threshold it is possible to filter those features that do no have</span></span></span>
+<span class="r-in"><span><span class="co"># any correlations that have p-value under threshold</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, experiment2 <span class="op">=</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span></span>
+<span class="r-in"><span>                                         filter_self_correlations <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                                         p_adj_threshold <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altExp1: -, altExp2: -, assay_name1: counts, colData_variable1: -, assay_name2: counts, colData_variable2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor.test, method: pearson, test_significance: TRUE, p_adj_method: fdr, paired: FALSE, show_warnings: TRUE</span>
@@ -657,8 +657,8 @@ associations.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Filtering results...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> p_adj_threshold: 0.05, cor_threshold: -, filter_self_correlations: TRUE</span>
-<span class="r-in"><span class="co"># Show first 5 entries</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># Show first 5 entries</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       Var1                   Var2       cor        pval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 94  LG042641.312212.313771  CCPS01000022.154.1916 0.8005191 0.005403200</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 195        AB559692.1.1569        KY646024.1.1591 1.0000000 0.000000000</span>
@@ -671,39 +671,39 @@ associations.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 265 0.03377000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 278 0.02309142</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 290 0.00000000</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Also getExperimentCrossAssociation returns significances when </span></span>
-<span class="r-in"><span class="co"># test_signicance = TRUE</span></span>
-<span class="r-in"><span class="co"># Warnings can be suppressed by using show_warnings = FALSE</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, experiment2 <span class="op">=</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span>
-<span class="r-in">                                        assay_name2 <span class="op">=</span> <span class="st">"nmr"</span>,</span>
-<span class="r-in">                                        mode <span class="op">=</span> <span class="st">"matrix"</span>, test_significance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">                                        show_warnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Also getExperimentCrossAssociation returns significances when </span></span></span>
+<span class="r-in"><span><span class="co"># test_signicance = TRUE</span></span></span>
+<span class="r-in"><span><span class="co"># Warnings can be suppressed by using show_warnings = FALSE</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, experiment2 <span class="op">=</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span></span>
+<span class="r-in"><span>                                        assay_name2 <span class="op">=</span> <span class="st">"nmr"</span>,</span></span>
+<span class="r-in"><span>                                        mode <span class="op">=</span> <span class="st">"matrix"</span>, test_significance <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                                        show_warnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altExp1: -, altExp2: -, assay_name1: counts, colData_variable1: -, assay_name2: nmr, colData_variable2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor.test, method: pearson, test_significance: TRUE, p_adj_method: fdr, paired: FALSE, show_warnings: FALSE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Converting table into matrices...</span>
-<span class="r-in">                                        </span>
-<span class="r-in"><span class="co"># Returned value is a list of matrices</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span class="r-in"><span>                                        </span></span>
+<span class="r-in"><span><span class="co"># Returned value is a list of matrices</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cor"   "pval"  "p_adj"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Calculate Bray-Curtis dissimilarity between samples. If dataset includes</span></span>
-<span class="r-in"><span class="co"># paired samples, you can use paired = TRUE.</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, MARGIN <span class="op">=</span> <span class="fl">2</span>, paired <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span class="r-in">                                        association_FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, method <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Calculate Bray-Curtis dissimilarity between samples. If dataset includes</span></span></span>
+<span class="r-in"><span><span class="co"># paired samples, you can use paired = TRUE.</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, MARGIN <span class="op">=</span> <span class="fl">2</span>, paired <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                                        association_FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, method <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altExp1: -, altExp2: -, assay_name1: counts, colData_variable1: -, assay_name2: counts, colData_variable2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 2, function: vegan::vegdist, method: bray, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
-<span class="r-in">                                        </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># If experiments are equal and measure is symmetric (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),</span></span>
-<span class="r-in"><span class="co"># it is possible to speed-up calculations by calculating association only for unique</span></span>
-<span class="r-in"><span class="co"># variable-pairs. Use "symmetric" to choose whether to measure association for only</span></span>
-<span class="r-in"><span class="co"># other half of of variable-pairs.</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, experiment1 <span class="op">=</span> <span class="st">"microbiota"</span>, experiment2 <span class="op">=</span> <span class="st">"microbiota"</span>, </span>
-<span class="r-in">                                        assay_name1 <span class="op">=</span> <span class="st">"counts"</span>, assay_name2 <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span class="r-in">                                        symmetric <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span>                                        </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># If experiments are equal and measure is symmetric (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),</span></span></span>
+<span class="r-in"><span><span class="co"># it is possible to speed-up calculations by calculating association only for unique</span></span></span>
+<span class="r-in"><span><span class="co"># variable-pairs. Use "symmetric" to choose whether to measure association for only</span></span></span>
+<span class="r-in"><span><span class="co"># other half of of variable-pairs.</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, experiment1 <span class="op">=</span> <span class="st">"microbiota"</span>, experiment2 <span class="op">=</span> <span class="st">"microbiota"</span>, </span></span>
+<span class="r-in"><span>                                        assay_name1 <span class="op">=</span> <span class="st">"counts"</span>, assay_name2 <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
+<span class="r-in"><span>                                        symmetric <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altExp1: -, altExp2: -, assay_name1: counts, colData_variable1: -, assay_name2: counts, colData_variable2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: spearman, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
@@ -1007,37 +1007,21 @@ associations.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># For big data sets, calculation might take long. To make calculations quicker, you can take</span></span>
-<span class="r-in"><span class="co"># a random sample from data. In a complex biological problems, random sample</span></span>
-<span class="r-in"><span class="co"># can describe the data enough. Here our random sample is 30 % of whole data.</span></span>
-<span class="r-in"><span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">tse_sub</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">)</span>, <span class="va">sample_size</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">)</span>, <span class="op">]</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">tse_sub</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># For big data sets, calculation might take long. To make calculations quicker, you can take</span></span></span>
+<span class="r-in"><span><span class="co"># a random sample from data. In a complex biological problems, random sample</span></span></span>
+<span class="r-in"><span><span class="co"># can describe the data enough. Here our random sample is 30 % of whole data.</span></span></span>
+<span class="r-in"><span><span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">tse_sub</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">)</span>, <span class="va">sample_size</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">)</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">tse_sub</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altExp1: -, altExp2: -, assay_name1: counts, colData_variable1: -, assay_name2: counts, colData_variable2: -</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor.test, method: spearman, test_significance: TRUE, p_adj_method: fdr, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
@@ -1047,21 +1031,41 @@ associations.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># It is also possible to choose variables from colData and calculate association</span></span>
-<span class="r-in"><span class="co"># between assay and sample metadata or between variables of sample metadata</span></span>
-<span class="r-in"><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimateDiversity.html">estimateDiversity</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># It is also possible to choose variables from colData and calculate association</span></span></span>
+<span class="r-in"><span><span class="co"># between assay and sample metadata or between variables of sample metadata</span></span></span>
+<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimateDiversity.html">estimateDiversity</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Object does not have a tree called 'tree_name' or the tree does not have any branches. </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> The Faith's alpha diversity index. cannot be calculated without rowTree. Therefore it is excluded from the results. </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> You can consider adding rowTree to include this index.</span>
-<span class="r-in"><span class="co"># colData_variable works similarly to assay_name. Instead of fetching an assay</span></span>
-<span class="r-in"><span class="co"># named assay_name from assay slot, it fetches a column named colData_variable</span></span>
-<span class="r-in"><span class="co"># from colData.</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, assay_name1 <span class="op">=</span> <span class="st">"counts"</span>, </span>
-<span class="r-in">                                        colData_variable2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"shannon"</span>, <span class="st">"coverage"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># colData_variable works similarly to assay_name. Instead of fetching an assay</span></span></span>
+<span class="r-in"><span><span class="co"># named assay_name from assay slot, it fetches a column named colData_variable</span></span></span>
+<span class="r-in"><span><span class="co"># from colData.</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, assay_name1 <span class="op">=</span> <span class="st">"counts"</span>, </span></span>
+<span class="r-in"><span>                                        colData_variable2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"shannon"</span>, <span class="st">"coverage"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> altExp1: -, altExp2: -, assay_name1: counts, colData_variable1: -, assay_name2: -, colData_variable2: shannon + coverage</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: spearman, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
@@ -1085,7 +1089,7 @@ associations.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
-<span class="r-in">                                        </span>
+<span class="r-in"><span>                                        </span></span>
 </code></pre></div>
     </div>
   </div>
@@ -1100,7 +1104,7 @@ associations.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

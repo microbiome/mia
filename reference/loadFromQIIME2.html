@@ -22,7 +22,7 @@ Import the QIIME2 artifacts to R."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -63,17 +63,17 @@ encouraged to be provided.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">loadFromQIIME2</span><span class="op">(</span>
-  <span class="va">featureTableFile</span>,
-  taxonomyTableFile <span class="op">=</span> <span class="cn">NULL</span>,
-  sampleMetaFile <span class="op">=</span> <span class="cn">NULL</span>,
-  featureNamesAsRefSeq <span class="op">=</span> <span class="cn">TRUE</span>,
-  refSeqFile <span class="op">=</span> <span class="cn">NULL</span>,
-  phyTreeFile <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">readQZA</span><span class="op">(</span><span class="va">file</span>, temp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">loadFromQIIME2</span><span class="op">(</span></span>
+<span>  <span class="va">featureTableFile</span>,</span>
+<span>  taxonomyTableFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sampleMetaFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  featureNamesAsRefSeq <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  refSeqFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  phyTreeFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">readQZA</span><span class="op">(</span><span class="va">file</span>, temp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -180,20 +180,20 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">featureTableFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"table.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">taxonomyTableFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"taxonomy.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sampleMetaFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample-metadata.tsv"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">phyTreeFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"tree.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">refSeqFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"refseq.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">loadFromQIIME2</span><span class="op">(</span></span>
-<span class="r-in">  featureTableFile <span class="op">=</span> <span class="va">featureTableFile</span>,</span>
-<span class="r-in">  taxonomyTableFile <span class="op">=</span> <span class="va">taxonomyTableFile</span>,</span>
-<span class="r-in">  sampleMetaFile <span class="op">=</span> <span class="va">sampleMetaFile</span>,</span>
-<span class="r-in">  refSeqFile <span class="op">=</span> <span class="va">refSeqFile</span>,</span>
-<span class="r-in">  phyTreeFile <span class="op">=</span> <span class="va">phyTreeFile</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">tse</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">featureTableFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"table.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">taxonomyTableFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"taxonomy.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sampleMetaFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample-metadata.tsv"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">phyTreeFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"tree.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">refSeqFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"refseq.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">loadFromQIIME2</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  featureTableFile <span class="op">=</span> <span class="va">featureTableFile</span>,</span></span>
+<span class="r-in"><span>  taxonomyTableFile <span class="op">=</span> <span class="va">taxonomyTableFile</span>,</span></span>
+<span class="r-in"><span>  sampleMetaFile <span class="op">=</span> <span class="va">sampleMetaFile</span>,</span></span>
+<span class="r-in"><span>  refSeqFile <span class="op">=</span> <span class="va">refSeqFile</span>,</span></span>
+<span class="r-in"><span>  phyTreeFile <span class="op">=</span> <span class="va">phyTreeFile</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">tse</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 770 34 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
@@ -213,25 +213,25 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> referenceSeq: a DNAStringSet (770 sequences)</span>
-<span class="r-in"><span class="co"># Read individual files</span></span>
-<span class="r-in"><span class="va">featureTableFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"table.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">taxonomyTableFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"taxonomy.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sampleMetaFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample-metadata.tsv"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">assay</span> <span class="op">&lt;-</span> <span class="fu">readQZA</span><span class="op">(</span><span class="va">featureTableFile</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="fu">readQZA</span><span class="op">(</span><span class="va">taxonomyTableFile</span>, removeTaxaPrefixes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">coldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">sampleMetaFile</span>, header <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, comment.char <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Assign rownames </span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">coldata</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">coldata</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">coldata</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Order coldata based on assay</span></span>
-<span class="r-in"><span class="va">coldata</span> <span class="op">&lt;-</span> <span class="va">coldata</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">assay</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">coldata</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Create SE from individual files</span></span>
-<span class="r-in"><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="op">(</span>assays <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">assay</span><span class="op">)</span>, rowData <span class="op">=</span> <span class="va">rowdata</span>, colData <span class="op">=</span> <span class="va">coldata</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">se</span></span>
+<span class="r-in"><span><span class="co"># Read individual files</span></span></span>
+<span class="r-in"><span><span class="va">featureTableFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"table.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">taxonomyTableFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"taxonomy.qza"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sampleMetaFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample-metadata.tsv"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">assay</span> <span class="op">&lt;-</span> <span class="fu">readQZA</span><span class="op">(</span><span class="va">featureTableFile</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="fu">readQZA</span><span class="op">(</span><span class="va">taxonomyTableFile</span>, removeTaxaPrefixes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">coldata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">sampleMetaFile</span>, header <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, comment.char <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Assign rownames </span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">coldata</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">coldata</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">coldata</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Order coldata based on assay</span></span></span>
+<span class="r-in"><span><span class="va">coldata</span> <span class="op">&lt;-</span> <span class="va">coldata</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">assay</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">coldata</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create SE from individual files</span></span></span>
+<span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="op">(</span>assays <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">assay</span><span class="op">)</span>, rowData <span class="op">=</span> <span class="va">rowdata</span>, colData <span class="op">=</span> <span class="va">coldata</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">se</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 770 34 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
@@ -243,7 +243,7 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(34): L1S105 L1S140 ... L6S68 L6S93</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(8): barcode.sequence body.site ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   reported.antibiotic.usage days.since.experiment.start</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -258,7 +258,7 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

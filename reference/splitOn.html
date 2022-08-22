@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -53,27 +53,27 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SingleCellExperiment</span>
-<span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for TreeSummarizedExperiment</span>
-<span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for list</span>
-<span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SimpleList</span>
-<span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SingleCellExperiment</span>
-<span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, altExpNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>, keep_reducedDims <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SingleCellExperiment</span></span>
+<span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for list</span></span>
+<span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SimpleList</span></span>
+<span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SingleCellExperiment</span></span>
+<span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, altExpNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>, keep_reducedDims <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -160,36 +160,36 @@ group.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span>
-<span class="r-in"><span class="co"># Split data based on SampleType. </span></span>
-<span class="r-in"><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># List of SE objects is returned. </span></span>
-<span class="r-in"><span class="va">se_list</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
+<span class="r-in"><span><span class="co"># Split data based on SampleType. </span></span></span>
+<span class="r-in"><span><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># List of SE objects is returned. </span></span></span>
+<span class="r-in"><span><span class="va">se_list</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of length 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> names(9): Soil Feces Skin Tongue ... Ocean Sediment (estuary) Mock</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Create arbitrary groups</span></span>
-<span class="r-in"><span class="fu">rowData</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">colData</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Split based on rows</span></span>
-<span class="r-in"><span class="co"># Each element is named based on their group name. If you don't want to name</span></span>
-<span class="r-in"><span class="co"># elements, use use_name = FALSE. Since "group" can be found from rowdata and colData</span></span>
-<span class="r-in"><span class="co"># you must use MARGIN.</span></span>
-<span class="r-in"><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="st">"group"</span>, use_names <span class="op">=</span> <span class="cn">FALSE</span>, MARGIN <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># When column names are shared between elements, you can store the list to altExps</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">se_list</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create arbitrary groups</span></span></span>
+<span class="r-in"><span><span class="fu">rowData</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">colData</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Split based on rows</span></span></span>
+<span class="r-in"><span><span class="co"># Each element is named based on their group name. If you don't want to name</span></span></span>
+<span class="r-in"><span><span class="co"># elements, use use_name = FALSE. Since "group" can be found from rowdata and colData</span></span></span>
+<span class="r-in"><span><span class="co"># you must use MARGIN.</span></span></span>
+<span class="r-in"><span><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="st">"group"</span>, use_names <span class="op">=</span> <span class="cn">FALSE</span>, MARGIN <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># When column names are shared between elements, you can store the list to altExps</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">se_list</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'names(value)' is NULL, replacing with 'unnamed'</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of length 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> names(10): unnamed1 unnamed2 unnamed3 unnamed4 ... unnamed8 unnamed9 unnamed10</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># If you want to split on columns and update rowTree, you can do</span></span>
-<span class="r-in"><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">group</span>, update_rowTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># If you want to split on columns and update rowTree, you can do</span></span></span>
+<span class="r-in"><span><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">group</span>, update_rowTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>16909 duplicated rows are removed</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The root is added with label 'ALL'</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Multiple nodes are found to have the same label.</span>
@@ -217,9 +217,12 @@ group.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>16909 duplicated rows are removed</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The root is added with label 'ALL'</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Multiple nodes are found to have the same label.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># If you want to combine groups back together, you can use unsplitBy</span></span>
-<span class="r-in"><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">se_list</span><span class="op">)</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>16909 duplicated rows are removed</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The root is added with label 'ALL'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Multiple nodes are found to have the same label.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># If you want to combine groups back together, you can use unsplitBy</span></span></span>
+<span class="r-in"><span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">se_list</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Multiple nodes are found to have the same label.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 19216 26 </span>
@@ -228,7 +231,7 @@ group.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rownames(19216): Class:Thermoprotei Class:Thermoprotei ... Phylum:SR1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Phylum:SR1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(8): Kingdom Phylum ... Species group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 SV1 ... NP2 TRRsed1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 M31Tong ... TRRsed1 TRRsed2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(8): X.SampleID Primer ... Description group</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
@@ -237,7 +240,7 @@ group.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (1645 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -252,7 +255,7 @@ group.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

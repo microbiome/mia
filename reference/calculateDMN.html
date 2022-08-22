@@ -19,7 +19,7 @@ package"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -57,87 +57,87 @@ package</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">calculateDMN</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY</span>
-<span class="fu">calculateDMN</span><span class="op">(</span>
-  <span class="va">x</span>,
-  k <span class="op">=</span> <span class="fl">1</span>,
-  BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span>,
-  seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">integer.max</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">calculateDMN</span><span class="op">(</span>
-  <span class="va">x</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="va">exprs_values</span>,
-  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,
-  transposed <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">runDMN</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">getDMN</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getDMN</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span><span class="op">)</span>
-
-<span class="fu">bestDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">bestDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu">getBestDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">getBestDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu">calculateDMNgroup</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY</span>
-<span class="fu">calculateDMNgroup</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">variable</span>,
-  k <span class="op">=</span> <span class="fl">1</span>,
-  seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">integer.max</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">calculateDMNgroup</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">variable</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="va">exprs_values</span>,
-  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,
-  transposed <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">performDMNgroupCV</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY</span>
-<span class="fu">performDMNgroupCV</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">variable</span>,
-  k <span class="op">=</span> <span class="fl">1</span>,
-  seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">integer.max</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">performDMNgroupCV</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">variable</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="va">exprs_values</span>,
-  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,
-  transposed <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculateDMN</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">calculateDMN</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  k <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">integer.max</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">calculateDMN</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="va">exprs_values</span>,</span>
+<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">runDMN</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getDMN</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getDMN</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">bestDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">bestDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getBestDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getBestDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">calculateDMNgroup</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">calculateDMNgroup</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">variable</span>,</span>
+<span>  k <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">integer.max</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">calculateDMNgroup</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">variable</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="va">exprs_values</span>,</span>
+<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">performDMNgroupCV</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">performDMNgroupCV</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">variable</span>,</span>
+<span>  k <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">integer.max</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">performDMNgroupCV</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">variable</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="va">exprs_values</span>,</span>
+<span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -239,40 +239,40 @@ one element for each value of k provided.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"DirichletMultinomial"</span>, <span class="st">"extdata"</span>, <span class="st">"Twins.csv"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">fl</span>, row.names<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"DirichletMultinomial"</span>, <span class="st">"extdata"</span>, <span class="st">"TwinStudy.t"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pheno0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scan.html" class="external-link">scan</a></span><span class="op">(</span><span class="va">fl</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">lvls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lean"</span>, <span class="st">"Obese"</span>, <span class="st">"Overwt"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">lvls</span><span class="op">[</span><span class="va">pheno0</span> <span class="op">+</span> <span class="fl">1</span><span class="op">]</span>, levels<span class="op">=</span><span class="va">lvls</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">colData</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>pheno <span class="op">=</span> <span class="va">pheno</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">TreeSummarizedExperiment</span><span class="op">(</span>assays <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">counts</span><span class="op">)</span>,</span>
-<span class="r-in">                                colData <span class="op">=</span> <span class="va">colData</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#</span></span>
-<span class="r-in"><span class="va">dmn</span> <span class="op">&lt;-</span> <span class="fu">calculateDMN</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dmn</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"DirichletMultinomial"</span>, <span class="st">"extdata"</span>, <span class="st">"Twins.csv"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">fl</span>, row.names<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"DirichletMultinomial"</span>, <span class="st">"extdata"</span>, <span class="st">"TwinStudy.t"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pheno0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scan.html" class="external-link">scan</a></span><span class="op">(</span><span class="va">fl</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">lvls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lean"</span>, <span class="st">"Obese"</span>, <span class="st">"Overwt"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">lvls</span><span class="op">[</span><span class="va">pheno0</span> <span class="op">+</span> <span class="fl">1</span><span class="op">]</span>, levels<span class="op">=</span><span class="va">lvls</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">colData</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>pheno <span class="op">=</span> <span class="va">pheno</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">TreeSummarizedExperiment</span><span class="op">(</span>assays <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">counts</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                colData <span class="op">=</span> <span class="va">colData</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="va">dmn</span> <span class="op">&lt;-</span> <span class="fu">calculateDMN</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dmn</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39227.39 BIC: 39527.91 AIC: 39292.11 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># since this take a bit of resources to calculate for k &gt; 1, the data is</span></span>
-<span class="r-in"><span class="co"># loaded</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runDMN</span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, k <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Convert SE to TreeSE to enable all features of mia and TreeSE object</span></span>
-<span class="r-in"><span class="co"># (Optional step at this point)</span></span>
-<span class="r-in"><span class="va">dmn_tse</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">dmn_se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">dmn_tse</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39227.38 BIC: 39527.91 AIC: 39292.11 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># since this take a bit of resources to calculate for k &gt; 1, the data is</span></span></span>
+<span class="r-in"><span><span class="co"># loaded</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runDMN</span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, k <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Convert SE to TreeSE to enable all features of mia and TreeSE object</span></span></span>
+<span class="r-in"><span><span class="co"># (Optional step at this point)</span></span></span>
+<span class="r-in"><span><span class="va">dmn_tse</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">dmn_se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">dmn_tse</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "DMN"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># return a list of DMN objects</span></span>
-<span class="r-in"><span class="fu">getDMN</span><span class="op">(</span><span class="va">dmn_tse</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># return a list of DMN objects</span></span></span>
+<span class="r-in"><span><span class="fu">getDMN</span><span class="op">(</span><span class="va">dmn_tse</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 1 </span>
@@ -315,11 +315,11 @@ one element for each value of k provided.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39336.29 BIC: 42210.96 AIC: 40549.51 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="co"># return, which objects fits best</span></span>
-<span class="r-in"><span class="fu">bestDMNFit</span><span class="op">(</span><span class="va">dmn_tse</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># return, which objects fits best</span></span></span>
+<span class="r-in"><span><span class="fu">bestDMNFit</span><span class="op">(</span><span class="va">dmn_tse</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
-<span class="r-in"><span class="co"># return the model, which fits best</span></span>
-<span class="r-in"><span class="fu">getBestDMNFit</span><span class="op">(</span><span class="va">dmn_tse</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># return the model, which fits best</span></span></span>
+<span class="r-in"><span><span class="fu">getBestDMNFit</span><span class="op">(</span><span class="va">dmn_tse</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 4 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
@@ -338,7 +338,7 @@ one element for each value of k provided.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

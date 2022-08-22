@@ -20,7 +20,7 @@ retained as defined by archetype."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.10</span>
       </span>
     </div>
 
@@ -59,21 +59,21 @@ retained as defined by <code>archetype</code>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for TreeSummarizedExperiment</span>
-<span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, mergeRefSeq <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for TreeSummarizedExperiment</span>
-<span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, mergeRefSeq <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -142,8 +142,8 @@ argument lets the user select how to preserve row or column data.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">esophagus</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">esophagus</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 58 3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
@@ -159,16 +159,16 @@ argument lets the user select how to preserve row or column data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (58 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rowTree</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># get a factor for merging</span></span>
-<span class="r-in"><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/regmatches.html" class="external-link">regmatches</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span>,</span>
-<span class="r-in">                       <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">regexpr</a></span><span class="op">(</span><span class="st">"^[0-9]*_[0-9]*"</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu">mergeRows</span><span class="op">(</span><span class="va">esophagus</span>,<span class="va">f</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rowTree</span><span class="op">(</span><span class="va">merged</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rowTree</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># get a factor for merging</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/regmatches.html" class="external-link">regmatches</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                       <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">regexpr</a></span><span class="op">(</span><span class="st">"^[0-9]*_[0-9]*"</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu">mergeRows</span><span class="op">(</span><span class="va">esophagus</span>,<span class="va">f</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rowTree</span><span class="op">(</span><span class="va">merged</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="merge-methods-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="co">#</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">GlobalPatterns</span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">GlobalPatterns</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 19216 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
@@ -184,8 +184,8 @@ argument lets the user select how to preserve row or column data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
-<span class="r-in"><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu">mergeCols</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="fu">colData</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">merged</span></span>
+<span class="r-in"><span><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu">mergeCols</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="fu">colData</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">merged</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 19216 9 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
@@ -215,7 +215,7 @@ argument lets the user select how to preserve row or column data.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
