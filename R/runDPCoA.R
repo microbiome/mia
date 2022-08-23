@@ -126,7 +126,7 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
         x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
                                  scale = scale)
     }
-    y <- y[colnames(x),mcolnames(x), drop = FALSE]
+    y <- y[colnames(x), colnames(x), drop = FALSE]
     if(nrow(y) != ncol(x)){
         stop("x and y must have corresponding dimensions.", call. = FALSE)
     }
