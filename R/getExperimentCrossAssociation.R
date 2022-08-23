@@ -599,11 +599,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     # Check experiment's class
     obj <- x[[experiment]]
-    if( !(class(obj) == "TreeSummarizedExperiment" || 
-          class(obj) == "SummarizedExperiment") ){
+    if( !(is("SummarizedExperiment")) ){
         stop("The class of experiment specified by ", 
-             deparse(substitute(experiment)), " must be 'TreeSummarizedExperiment' ",
-             "or 'SummarizedExperiment'.",
+             deparse(substitute(experiment)), " must be 'SummarizedExperiment'.",
              call. = FALSE)
     }
 }
