@@ -83,7 +83,7 @@ test_that("agglomerate", {
 
     # Load data from miaTime package
     if( !require("miaTime") ){
-        BiocManager::install("devtools")
+        if( !require("devtools") ) BiocManager::install("devtools")
         devtools::install_github("microbiome/miaTime")
         library("miaTime")
     }
