@@ -27,7 +27,7 @@ getExperimentCrossAssociation(x, ...)
   colData_variable1 = NULL,
   colData_variable2 = NULL,
   MARGIN = 1,
-  method = c("spearman", "categorical", "kendall", "pearson"),
+  method = c("kendall", "spearman", "categorical", "pearson"),
   mode = "table",
   p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel", "none"),
   p_adj_threshold = NULL,
@@ -127,7 +127,7 @@ row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} o
 
 \item{method}{A single character value for selecting association method
 ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
-(By default: \code{method = "spearman"})}
+(By default: \code{method = "kendall"})}
 
 \item{mode}{A single character value for selecting output format
 Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})}

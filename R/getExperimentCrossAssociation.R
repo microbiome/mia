@@ -58,7 +58,7 @@
 #'   
 #' @param method A single character value for selecting association method 
 #'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
-#'     (By default: \code{method = "spearman"})
+#'     (By default: \code{method = "kendall"})
 #' 
 #' @param mode A single character value for selecting output format 
 #'    Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})
@@ -230,7 +230,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            colData_variable1 = NULL,
            colData_variable2 = NULL,
            MARGIN = 1,
-           method = c("spearman", "categorical", "kendall", "pearson"),
+           method = c("kendall", "spearman", "categorical", "pearson"),
            mode = "table",
            p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                             "holm", "hommel", "none"),
@@ -372,7 +372,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               colData_variable1 = NULL,
                                               colData_variable2 = NULL,
                                               MARGIN = 1,
-                                              method = c("spearman", "categorical", "kendall", "pearson"),
+                                              method = c("kendall", "spearman", "categorical", "pearson"),
                                               mode = c("table", "matrix"),
                                               p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                                                                "holm", "hommel", "none"),
@@ -760,12 +760,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: Assays that share samples but that have different features and different parameters.
 # Output: Correlation table including correlation values (and p-values and adjusted p-values)
 #' @importFrom stats p.adjust
-.calculate_association <- function(assay1, 
-                                   assay2, 
-                                   method = c("spearman", "categorical", "kendall", "pearson"), 
-                                   p_adj_method, 
-                                   test_significance, 
-                                   show_warnings, 
+.calculate_association <- function(assay1,
+                                   assay2,
+                                   method = c("kendall", "spearman", "categorical", "pearson"),
+                                   p_adj_method,
+                                   test_significance,
+                                   show_warnings,
                                    paired,
                                    verbose,
                                    MARGIN,
