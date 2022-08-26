@@ -42,11 +42,9 @@
 #'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
 #'   
-#' @param dimred String or integer scalar specifying the existing dimensionality
-#'   reduction results to use.
-#'
-#' @param n_dimred Integer scalar or vector specifying the dimensions to use if
-#'   dimred is specified.
+#' @param tree_name a single \code{character} value for specifying which
+#'   rowTree will be used in calculation. 
+#'   (By default: \code{tree_name = "phylo"})
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -95,7 +93,7 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
 
 .calculate_dpcoa <- function(x, y, ncomponents = 2, ntop = NULL,
                              subset_row = NULL, scale = FALSE,
-                             transposed = FALSE)
+                             transposed = FALSE, ...)
 {
     .require_package("ade4")
     # input check
@@ -156,11 +154,27 @@ setMethod("calculateDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 #' @rdname runDPCoA
 setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
     function(x, ..., assay_name = abund_values, abund_values = exprs_values, 
-             exprs_values = "counts", dimred = NULL, n_dimred = NULL)
+             exprs_values = "counts", tree_name = "phylo")
     {
         .require_package("ade4")
+        # Check assay_name
+        .check_assay_present(assay_name, x)
+        # Check tree_name
+        .check_rowTree_present(tree_name, x)
+        #
+        # Get tree
+        tree <- rowTree(x, tree_name)
+        # Select only those features that are in the rowTree
+        whichTree <- rowLinks(x)[ , "whichTree"] == tree_name
+        if( any(!whichTree) ){
+            warning("Not all rows were present in the rowTree specified by 'tree_name'.",
+                    "'x' is subsetted.", call. = FALSE)
+            # Subset the data
+            x <- x[ whichTree, ]
+        }
+        dist <- cophenetic.phylo(tree)
+        # Get assay
         mat <- assay(x, assay_name)
-        dist <- cophenetic.phylo(rowTree(x))
         calculateDPCoA(mat, dist, ...)
     }
 )
