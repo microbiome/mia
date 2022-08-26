@@ -152,15 +152,19 @@ setMethod("calculateUnifrac",
             mat <- t(mat)
             tree <- .norm_tree_to_be_rooted(rowTree(x), rownames(x))
             # Get links
-            links <- rowLinks(x)$nodeLab
+            links <- rowLinks(x)
         } else {
             if(is.null(colTree(x))){
                 stop("'colTree(x)' must not be NULL", call. = FALSE)
             }
             tree <- .norm_tree_to_be_rooted(colTree(x), colnames(x))
             # Get links
-            links <- colLinks(x)$nodeLab
+            links <- colLinks(x)
         }
+        # Remove those links (make them NA) that are not included in this tree
+        links[ links$whichTree != tree_name, ] <- NA
+        # Take only nodeLabs
+        links <- links[ , "nodeLab" ]
         calculateUnifrac(mat, tree = tree, nodeLab = links, ...)
     }
 )
@@ -244,7 +248,8 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # rownames
     if( is.null(nodeLab) ){
         nodeLab <- rownames(x)
-    } 
+    }
+    # Aggregate and rename rows of matrix so that each row represent specific node
     x <- .merge_assay_by_rows(x, nodeLab, ...)
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     #
@@ -364,6 +369,8 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     stats::as.dist(UnifracMat)
 }
 
+# Aggregate matrix based on nodeLabs. At the same time, rename rows based on nodeLab
+# --> each row represent specific node of tree
 .merge_assay_by_rows <- function(x, nodeLab, average = FALSE, ...){
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
