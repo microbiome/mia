@@ -51,4 +51,4 @@ Changes in version 1.5.x
 + estimateFaith: add support for multiple rowTrees
 + calculateRDA/CCA: added variable argument & replaced altexp argument with altExp
 + getExpCrossCorr: bugfix; samples should match when correlations between features are calculated
-
++ getExpCrossCorr: Kendall's tau is the default method

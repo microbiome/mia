@@ -50,10 +50,11 @@ test_that("CCA", {
     res <- vegan::rda(t(assay(sce)))$CA$eig
     expect_equal(unname(test), unname(res))
     data("GlobalPatterns")
+    GlobalPatterns <- estimateDiversity(GlobalPatterns, index = "shannon")
     expect_error(calculateRDA(GlobalPatterns, variables = c("Primer", "test")))
-    res1 <- calculateRDA(GlobalPatterns, variables = c("Primer", "SampleType"))
+    res1 <- calculateRDA(GlobalPatterns, variables = c("shannon", "SampleType"))
     res1 <- attr(res1, "rda")$CCA
-    res2 <- calculateRDA(GlobalPatterns, formula = data ~ Primer + SampleType)
+    res2 <- calculateRDA(GlobalPatterns, formula = data ~ shannon + SampleType)
     res2 <- attr(res2, "rda")$CCA
     expect_equal(res1, res2)
 })
