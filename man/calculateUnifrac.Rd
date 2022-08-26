@@ -24,6 +24,7 @@ calculateUnifrac(x, tree, ...)
   assay_name = abund_values,
   abund_values = exprs_values,
   exprs_values = "counts",
+  tree_name = "phylo",
   transposed = FALSE,
   ...
 )
@@ -84,6 +85,10 @@ will be disabled.)}
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
 (Please use \code{assay_name} instead.)}
+
+\item{tree_name}{a single \code{character} value for specifying which
+tree will be used in calculation.
+(By default: \code{tree_name = "phylo"})}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
 is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).

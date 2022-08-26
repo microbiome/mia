@@ -519,7 +519,7 @@ setMethod("right_join", signature = c(x = "ANY"),
         # Remove duplicates
         links <- links[ !duplicated(links[["names"]]), ]
         # Ensure that links are in correct order
-        links <- links[ match(links[["names"]], names), ]
+        links <- links[ match(names, links[["names"]]), ]
     }
     
     # Create a LinkDataFrame based on the link data
@@ -875,7 +875,7 @@ setMethod("right_join", signature = c(x = "ANY"),
         # Get the data in correct order, take only column that have ranks
         rd_rank <- rd[ , ranks_ind, drop = FALSE]
         # Take other columns
-        rd_other <- rd[ , !ranks_ind, drop = FALSE]
+        rd_other <- rd[ , -ranks_ind, drop = FALSE]
         # Get rank names
         rank_names <- colnames(rd_rank)
         # Convert names s that they have capital letters

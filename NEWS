@@ -52,3 +52,5 @@ Changes in version 1.5.x
 + calculateRDA/CCA: added variable argument & replaced altexp argument with altExp
 + getExpCrossCorr: bugfix; samples should match when correlations between features are calculated
 + getExpCrossCorr: Kendall's tau is the default method
++ mergeSEs: bugfix; links between trees and rows/cols were wrong & rowData did not include all info
++ calculateDPCoA, calculateUnifrac & merge: add support for multiple trees
