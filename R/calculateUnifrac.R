@@ -165,13 +165,9 @@ setMethod("calculateUnifrac",
                 x <- x[ whichTree, ]
             }
             mat <- t(mat)
-<<<<<<< HEAD
-            tree <- .norm_tree_to_be_rooted(rowTree(x), rownames(x))
+            tree <- .norm_tree_to_be_rooted(tree, rownames(x))
             # Get links
             links <- rowLinks(x)
-=======
-            tree <- .norm_tree_to_be_rooted(tree, rownames(x))
->>>>>>> origin/master
         } else {
             # Check tree_name
             .check_colTree_present(tree_name, x)
@@ -185,13 +181,9 @@ setMethod("calculateUnifrac",
                 # Subset the data
                 x <- x[ , whichTree ]
             }
-<<<<<<< HEAD
-            tree <- .norm_tree_to_be_rooted(colTree(x), colnames(x))
+            tree <- .norm_tree_to_be_rooted(tree, colnames(x))
             # Get links
             links <- colLinks(x)
-=======
-            tree <- .norm_tree_to_be_rooted(tree, colnames(x))
->>>>>>> origin/master
         }
         # Remove those links (make them NA) that are not included in this tree
         links[ links$whichTree != tree_name, ] <- NA
