@@ -115,6 +115,11 @@
 #' \code{getExperimentCrossAssociation} calculates only associations by default.
 #' \code{testExperimentCrossAssociation} calculates also significance of 
 #' associations.
+#' 
+#' We recommend the non-parametric Kendall's tau as the default method for association 
+#' analysis. Kendall's tau has desirable statistical properties and robustness at lower 
+#' sample sizes. Spearman rank correlation can provide faster solutions when 
+#' running times are critical.
 #'
 #' @return 
 #' These functions return associations in table or matrix format. In table format,
