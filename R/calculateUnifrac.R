@@ -163,6 +163,7 @@ setMethod("calculateUnifrac",
                         "'x' is subsetted.", call. = FALSE)
                 # Subset the data
                 x <- x[ whichTree, ]
+                mat <- mat[ whichTree, ]
             }
             mat <- t(mat)
             tree <- .norm_tree_to_be_rooted(tree, rownames(x))
@@ -180,6 +181,7 @@ setMethod("calculateUnifrac",
                         "'x' is subsetted.", call. = FALSE)
                 # Subset the data
                 x <- x[ , whichTree ]
+                mat <- mat[ , whichTree ]
             }
             tree <- .norm_tree_to_be_rooted(tree, colnames(x))
             # Get links
@@ -256,7 +258,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # rows and tree labels
     if( !(is.null(nodeLab) ||
         (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
-        all(nodeLab %in% c(tree$tip.label, tree$node.label)))) ){
+        all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label, tree$node.label)))) ){
         stop("'nodeLab' must be NULL or character specifying links between ",
              "matrix and tree labels.", call. = FALSE)
     }
@@ -264,17 +266,17 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     if( is.null(nodeLab) && 
         !all(rownames(x) %in% c(tree$tip.label, tree$node.label)) ) {
         stop("Incompatible tree and abundance table! Please try to provide ",
-             "nodeLab.", call. = FALSE)
+             "'nodeLab'.", call. = FALSE)
     }
     # Merge rows, so that rows that are assigned to same tree node are agglomerated
-    # together
-    # If nodeLabs were provided, merge based on those. Otherwise merge based on
-    # rownames
+    # together. If nodeLabs were provided, merge based on those. Otherwise merge
+    # based on rownames
     if( is.null(nodeLab) ){
         nodeLab <- rownames(x)
     }
-    # Aggregate and rename rows of matrix so that each row represent specific node
+    # Merge assay
     x <- .merge_assay_by_rows(x, nodeLab, ...)
+    # Modify tree
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     #
     old <- getAutoBPPARAM()
@@ -403,6 +405,10 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     x <- scuttle::sumCountsAcrossFeatures(x, ids = nodeLab, 
                                           subset.row = NULL, subset.col = NULL, 
                                           average = average)
+    # Remove NAs from nodeLab
+    nodeLab <- nodeLab[ !is.na(nodeLab) ]
+    # Get the original order back
+    x <- x[ nodeLab, ]
     return(x)
 }
 
