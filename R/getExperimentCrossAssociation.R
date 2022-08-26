@@ -58,7 +58,7 @@
 #'   
 #' @param method A single character value for selecting association method 
 #'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
-#'     (By default: \code{method = "spearman"})
+#'     (By default: \code{method = "kendall"})
 #' 
 #' @param mode A single character value for selecting output format 
 #'    Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})
@@ -115,6 +115,11 @@
 #' \code{getExperimentCrossAssociation} calculates only associations by default.
 #' \code{testExperimentCrossAssociation} calculates also significance of 
 #' associations.
+#' 
+#' We recommend the non-parametric Kendall's tau as the default method for association 
+#' analysis. Kendall's tau has desirable statistical properties and robustness at lower 
+#' sample sizes. Spearman rank correlation can provide faster solutions when 
+#' running times are critical.
 #'
 #' @return 
 #' These functions return associations in table or matrix format. In table format,
@@ -230,7 +235,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            colData_variable1 = NULL,
            colData_variable2 = NULL,
            MARGIN = 1,
-           method = c("spearman", "categorical", "kendall", "pearson"),
+           method = c("kendall", "spearman", "categorical", "pearson"),
            mode = "table",
            p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                             "holm", "hommel", "none"),
@@ -372,7 +377,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               colData_variable1 = NULL,
                                               colData_variable2 = NULL,
                                               MARGIN = 1,
-                                              method = c("spearman", "categorical", "kendall", "pearson"),
+                                              method = c("kendall", "spearman", "categorical", "pearson"),
                                               mode = c("table", "matrix"),
                                               p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                                                                "holm", "hommel", "none"),
@@ -491,6 +496,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         # Disable paired
         paired <- FALSE
     }
+    
+    # Check that assays match
+    .check_that_assays_match(assay1, assay2, MARGIN)
     
     # If significance is not calculated, p_adj_method is NULL
     if( !test_significance ){
@@ -731,13 +739,23 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     return(assay)
 }
 
+########################### .check_that_assays_match ###########################
+# If correlations between features are analyzed, samples should match, and vice versa
+.check_that_assays_match <- function(assay1, assay2, MARGIN){
+    names <- ifelse(MARGIN == 2, "Features", "Samples")
+    if( any(rownames(assay1) != rownames(assay2)) ){
+        stop(names, " must match between experiments.",
+             call. = FALSE)
+    }
+}
+
 ########################### .check_if_paired_samples ###########################
 # Check if samples are paired
 .check_if_paired_samples <- function(assay1, assay2){
-  if( !all(colnames(assay1) == colnames(assay2)) ){
-    stop("Experiments are not paired or samples are in wrong order.", 
-         "Check that colnames match between experiments.", call. = FALSE)
-  }
+    if( !all(colnames(assay1) == colnames(assay2)) ){
+        stop("Experiments are not paired or samples are in wrong order.", 
+            "Check that colnames match between experiments.", call. = FALSE)
+    }
 }
 
 ############################# .calculate_association ###########################
@@ -747,12 +765,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: Assays that share samples but that have different features and different parameters.
 # Output: Correlation table including correlation values (and p-values and adjusted p-values)
 #' @importFrom stats p.adjust
-.calculate_association <- function(assay1, 
-                                   assay2, 
-                                   method = c("spearman", "categorical", "kendall", "pearson"), 
-                                   p_adj_method, 
-                                   test_significance, 
-                                   show_warnings, 
+.calculate_association <- function(assay1,
+                                   assay2,
+                                   method = c("kendall", "spearman", "categorical", "pearson"),
+                                   p_adj_method,
+                                   test_significance,
+                                   show_warnings,
                                    paired,
                                    verbose,
                                    MARGIN,

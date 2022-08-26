@@ -81,7 +81,7 @@ plot(rowTree(esophagus))
 # get a factor for merging
 f <- factor(regmatches(rownames(esophagus),
                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-merged <- mergeRows(esophagus,f)
+merged <- mergeRows(esophagus,f, mergeTree = TRUE)
 plot(rowTree(merged))
 #
 data(GlobalPatterns)
