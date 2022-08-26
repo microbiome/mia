@@ -607,7 +607,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     # Check experiment's class
     obj <- x[[experiment]]
-    if( !(is("SummarizedExperiment")) ){
+    if( !(is(obj, "SummarizedExperiment")) ){
         stop("The class of experiment specified by ", 
              deparse(substitute(experiment)), " must be 'SummarizedExperiment'.",
              call. = FALSE)
