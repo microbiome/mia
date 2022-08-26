@@ -246,7 +246,7 @@
     #
     if(length(unique(lengths(taxa_split))) != 1L){
       stop("Internal error. Something went wrong while splitting taxonomic levels.",
-           "Please check that 'sep' is correct.")
+           "Please check that 'sep' is correct.", call. = FALSE)
     }
     taxa_tab <- DataFrame(as.matrix(taxa_split))
     colnames(taxa_tab) <- all_ranks
