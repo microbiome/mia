@@ -150,10 +150,12 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 
 # Check that metaphlan file contains correct information
 .check_metaphlan <- function(data){
+    # Getting column indices for rowdata and assay
+    col_idx <- unlist(lapply(data, is.character))
     # Get rowdata columns
-    rowdata_columns <- data[ , 1:2]
+    rowdata_columns <- data[ , col_idx, drop=FALSE]
     # Get columns that go to assay
-    assay_columns <- data[ , 3:ncol(data)]
+    assay_columns <- data[ , !col_idx]
     # Initialize result 
     result <- TRUE
     
@@ -161,7 +163,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # rest of the columns represents abundances in samples.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
     if( any(colnames(rowdata_columns) %in% "clade_name") && 
-        any(grepl("id", colnames(rowdata_columns))) && 
+        #any(grepl("id", colnames(rowdata_columns))) && 
         is.numeric(unlist(assay_columns)) ){
         result <- FALSE
     }
@@ -216,10 +218,12 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
         stop("'assay_name' must be a non-empty character value.",
              call. = FALSE)
     }
+    # Getting column indices for rowdata and assay
+    col_idx <- unlist(lapply(table, is.character))
     # Get those columns that belong to rowData
-    rowdata <- table[, 1:2, drop = FALSE]
+    rowdata <- table[, col_idx, drop = FALSE]
     # Get those columns that belong to assay
-    assay <- table[, 3:ncol(table), drop = FALSE]
+    assay <- table[, !col_idx, drop = FALSE]
     # Parse taxonomic levels
     taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
     # Add parsed taxonomy level information to rowdata
