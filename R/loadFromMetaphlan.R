@@ -155,20 +155,16 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # Get rowdata column indices
     col_rowdata_idx <- col_idx[col_idx==TRUE]
     # Getting column indices of numeric columns
-    col_idx <- sapply(x[,!col_idx], is.numeric)
-    # Get assay column indices
-    col_assay_idx <- col_idx[col_idx==TRUE]
+    col_assay_idx <- sapply(x[,!col_idx], is.numeric)
     # Initialize result 
     result <- TRUE
     
-    # Check presence of other data than numeric and character
+    # Check if all assay data is numeric and error if other data type present
     # Check rowdata exist
-    # Check assay abundance data exist
     # Check rowdata column names that they contain right information.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
-    if( sum(col_idx==FALSE)==0 && 
-        sum(col_rowdata_idx)!=0 && 
-        sum(col_assay_idx)!=0 &&
+    if( all(col_assay_idx) && 
+        any(col_rowdata_idx) && 
         any(names(col_rowdata_idx) %in% "clade_name") ){
         result <- FALSE
     }
@@ -226,9 +222,9 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # Getting column indices for rowdata and assay
     col_idx <- sapply(table, is.character)
     # Get those columns that belong to rowData
-    rowdata <- table[, col_idx, drop = FALSE]
+    rowdata <- table[, which(col_idx), drop = FALSE]
     # Get those columns that belong to assay
-    assay <- table[, !col_idx, drop = FALSE]
+    assay <- table[, which(!col_idx), drop = FALSE]
     # Parse taxonomic levels
     taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
     # Add parsed taxonomy level information to rowdata
