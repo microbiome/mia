@@ -176,10 +176,6 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
     if(missing(formula)){
         return(NULL)
     }
-    # Check that formula is formula
-    if( !inherits(formula, "formula") ){
-        stop("'formula' must be a formula.", call. = FALSE)
-    }
     terms <- rownames(attr(terms(formula),"factors"))
     terms <- terms[terms != as.character(formula)[2L]]
     terms <- .remove_special_functions_from_terms(terms)
@@ -266,7 +262,7 @@ setMethod("runCCA", "SingleCellExperiment",
     #
     # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))
-    # If formula is missing (vegan:dbrda requires formula)
+    # If formula is missing (vega:dbrda requires formula)
     if( missing(formula) ){
         formula <- x ~ 1  
     }
@@ -335,15 +331,10 @@ setMethod("calculateRDA", "SummarizedExperiment",
 setMethod("runRDA", "SingleCellExperiment",
     function(x, ..., altExp = NULL, name = "RDA")
     {
-        # Input check
-        # Check and get altExp if it is not NULL
-        if( !is.null(altExp) ){
-            # Check altExp
-            .check_altExp_present(altExp, x)
-            # Get altExp
-            y <- altExp(x, altExp)
+        if (!is.null(altExp)) {
+          y <- altExp(x, altExp)
         } else {
-            y <- x
+          y <- x
         }
         # Calculate RDA
         rda <- calculateRDA(y, ...)
