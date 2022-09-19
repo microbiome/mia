@@ -150,20 +150,26 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 
 # Check that metaphlan file contains correct information
 .check_metaphlan <- function(x){
-    # Getting column indices for rowdata and assay
+    # Getting column indices of character columns
     col_idx <- sapply(x, is.character)
-    # Get rowdata columns
-    rowdata_columns <- x[ , col_idx, drop=FALSE]
-    # Get columns that go to assay
-    assay_columns <- x[ , !col_idx, drop=FALSE]
+    # Get rowdata column indices
+    col_rowdata_idx <- col_idx[col_idx==TRUE]
+    # Getting column indices of numeric columns
+    col_idx <- sapply(x[,!col_idx], is.numeric)
+    # Get assay column indices
+    col_assay_idx <- col_idx[col_idx==TRUE]
     # Initialize result 
     result <- TRUE
     
-    # Check rowdata column names that they contain right information, and check that 
-    # rest of the columns represents abundances in samples.
+    # Check presence of other data than numeric and character
+    # Check rowdata exist
+    # Check assay abundance data exist
+    # Check rowdata column names that they contain right information.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
-    if( any(colnames(rowdata_columns) %in% "clade_name") && 
-        is.numeric(unlist(assay_columns)) ){
+    if( sum(col_idx==FALSE)==0 && 
+        sum(col_rowdata_idx)!=0 && 
+        sum(col_assay_idx)!=0 &&
+        any(names(col_rowdata_idx) %in% "clade_name") ){
         result <- FALSE
     }
     return(result)
