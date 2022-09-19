@@ -149,13 +149,13 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 }
 
 # Check that metaphlan file contains correct information
-.check_metaphlan <- function(data){
+.check_metaphlan <- function(x){
     # Getting column indices for rowdata and assay
-    col_idx <- unlist(lapply(data, is.character))
+    col_idx <- sapply(x, is.character)
     # Get rowdata columns
-    rowdata_columns <- data[ , col_idx, drop=FALSE]
+    rowdata_columns <- x[ , col_idx, drop=FALSE]
     # Get columns that go to assay
-    assay_columns <- data[ , !col_idx]
+    assay_columns <- x[ , !col_idx, drop=FALSE]
     # Initialize result 
     result <- TRUE
     
@@ -163,7 +163,6 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # rest of the columns represents abundances in samples.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
     if( any(colnames(rowdata_columns) %in% "clade_name") && 
-        #any(grepl("id", colnames(rowdata_columns))) && 
         is.numeric(unlist(assay_columns)) ){
         result <- FALSE
     }
@@ -219,7 +218,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
              call. = FALSE)
     }
     # Getting column indices for rowdata and assay
-    col_idx <- unlist(lapply(table, is.character))
+    col_idx <- sapply(table, is.character)
     # Get those columns that belong to rowData
     rowdata <- table[, col_idx, drop = FALSE]
     # Get those columns that belong to assay
