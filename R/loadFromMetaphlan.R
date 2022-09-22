@@ -153,8 +153,8 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # retrieving field types present in the data 
     col_types <- sapply(x, class)
     if(any(!(col_types %in% c("character", "numeric")))) {
-      warning("File contains other than character and numeric fileds.")
-      }
+        warning("The input data should not contain other than character and numeric fields.")
+    }
     # Initialize result 
     result <- TRUE
     
