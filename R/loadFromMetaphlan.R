@@ -150,22 +150,20 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 
 # Check that metaphlan file contains correct information
 .check_metaphlan <- function(x){
-    # Getting column indices of character columns
-    col_idx <- sapply(x, is.character)
-    # Get rowdata column indices
-    col_rowdata_idx <- col_idx[col_idx==TRUE]
-    # Getting column indices of numeric columns
-    col_assay_idx <- sapply(x[,!col_idx], is.numeric)
+    # retrieving field types present in the data 
+    col_types <- sapply(x, class)
+    if(any(!(col_types %in% c("character", "numeric")))) {
+      warning("File contains other than character and numeric fileds.")
+      }
     # Initialize result 
     result <- TRUE
     
-    # Check if all assay data is numeric and error if other data type present
-    # Check rowdata exist
-    # Check rowdata column names that they contain right information.
+    # Check presence of character fields to be used for rowData
+    # and similarly numeric fields for abundance assay data.  
+    # Check rowData column names that they contain right information.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
-    if( all(col_assay_idx) && 
-        any(col_rowdata_idx) && 
-        any(names(col_rowdata_idx) %in% "clade_name") ){
+    if( all(c("character", "numeric") %in% col_types) &&
+        any(colnames(x) %in% "clade_name")){
         result <- FALSE
     }
     return(result)
@@ -219,12 +217,12 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
         stop("'assay_name' must be a non-empty character value.",
              call. = FALSE)
     }
-    # Getting column indices for rowdata and assay
-    col_idx <- sapply(table, is.character)
-    # Get those columns that belong to rowData
-    rowdata <- table[, which(col_idx), drop = FALSE]
+    # Getting column indices for numeric data
+    col_idx <- which(sapply(table, is.numeric))
     # Get those columns that belong to assay
-    assay <- table[, which(!col_idx), drop = FALSE]
+    assay <- table[, col_idx, drop = FALSE]
+    # Get those columns that belong to rowData
+    rowdata <- table[, -col_idx, drop = FALSE]
     # Parse taxonomic levels
     taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
     # Add parsed taxonomy level information to rowdata
