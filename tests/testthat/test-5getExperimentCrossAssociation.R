@@ -41,8 +41,8 @@ test_that("getExperimentCrossAssociation", {
                                                experiment2 = 2,
                                                assay_name1 = "counts",
                                                assay_name2 = "counts",
-                                               altExp1 = 1,
-                                               altExp2 = NULL,
+                                               altexp1 = 1,
+                                               altexp2 = NULL,
                                                method = "spearman",
                                                mode = "table",
                                                p_adj_method = "fdr",
@@ -56,8 +56,8 @@ test_that("getExperimentCrossAssociation", {
                                                experiment2 = 2,
                                                assay_name1 = "counts",
                                                assay_name2 = "counts",
-                                               altExp1 = FALSE,
-                                               altExp2 = NULL,
+                                               altexp1 = FALSE,
+                                               altexp2 = NULL,
                                                method = "spearman",
                                                mode = "table",
                                                p_adj_method = "fdr",
@@ -71,8 +71,8 @@ test_that("getExperimentCrossAssociation", {
                                                experiment2 = 2,
                                                assay_name1 = "counts",
                                                assay_name2 = "counts",
-                                               altExp2 = "test",
-                                               altExp1 = NULL,
+                                               altexp2 = "test",
+                                               altexp1 = NULL,
                                                method = "spearman",
                                                mode = "table",
                                                p_adj_method = "fdr",
@@ -499,15 +499,15 @@ test_that("getExperimentCrossAssociation", {
     expect_true( !all(tab1_levels1 == tab2_levels1) )
     expect_true( !all(tab1_levels2 == tab2_levels2) )
     
-    # Test altExps
+    # Test altexps
     altExps(tse) <- splitByRanks(tse)
     # Test that output has right columns
     expect_equal(getExperimentCrossAssociation(tse, tse, show_warnings = FALSE, 
-                                               altExp1 = 1, altExp2 = "Phylum"),
+                                               altexp1 = 1, altexp2 = "Phylum"),
                  getExperimentCrossAssociation(altExps(tse)[[1]], altExp(tse, "Phylum"), 
                                                show_warnings = FALSE))
     expect_equal(getExperimentCrossAssociation(tse, tse, show_warnings = FALSE, 
-                                               altExp1 = "Family", altExp2 = NULL),
+                                               altexp1 = "Family", altexp2 = NULL),
                  getExperimentCrossAssociation(altExp(tse, "Family"), tse, 
                                                show_warnings = FALSE))
     }
