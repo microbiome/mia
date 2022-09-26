@@ -76,6 +76,30 @@
     }
 }
 
+.check_rowTree_present <- function(tree_name, x,
+                                   name = .get_name_in_parent(tree_name) ){
+    if( !.is_non_empty_string(tree_name) ){
+        stop("'", name, "' must be a single non-empty character value.",
+             call. = FALSE)
+    }
+    if( !(tree_name %in% names(x@rowTree)) ){
+        stop("'", name, "' must specify a tree from 'x@rowTree'.",
+             call. = FALSE)
+    }
+}
+
+.check_colTree_present <- function(tree_name, x,
+                                   name = .get_name_in_parent(tree_name) ){
+    if( !.is_non_empty_string(tree_name) ){
+        stop("'", name, "' must be a single non-empty character value.",
+             call. = FALSE)
+    }
+    if( !(tree_name %in% names(x@colTree)) ){
+        stop("'", name, "' must specify a tree from 'x@colTree'.",
+             call. = FALSE)
+    }
+}
+
 ################################################################################
 # internal wrappers for getter/setter
 
@@ -222,7 +246,7 @@
     #
     if(length(unique(lengths(taxa_split))) != 1L){
       stop("Internal error. Something went wrong while splitting taxonomic levels.",
-           "Please check that 'sep' is correct.")
+           "Please check that 'sep' is correct.", call. = FALSE)
     }
     taxa_tab <- DataFrame(as.matrix(taxa_split))
     colnames(taxa_tab) <- all_ranks

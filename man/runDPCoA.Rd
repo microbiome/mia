@@ -16,7 +16,8 @@ calculateDPCoA(x, y, ...)
   ntop = NULL,
   subset_row = NULL,
   scale = FALSE,
-  transposed = FALSE
+  transposed = FALSE,
+  ...
 )
 
 \S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(
@@ -25,8 +26,7 @@ calculateDPCoA(x, y, ...)
   assay_name = abund_values,
   abund_values = exprs_values,
   exprs_values = "counts",
-  dimred = NULL,
-  n_dimred = NULL
+  tree_name = "phylo"
 )
 
 runDPCoA(x, ..., altexp = NULL, name = "DPCoA")
@@ -72,11 +72,9 @@ will be disabled.)}
 assay to use for calculation.
 (Please use \code{assay_name} instead.)}
 
-\item{dimred}{String or integer scalar specifying the existing dimensionality
-reduction results to use.}
-
-\item{n_dimred}{Integer scalar or vector specifying the dimensions to use if
-dimred is specified.}
+\item{tree_name}{a single \code{character} value for specifying which
+rowTree will be used in calculation.
+(By default: \code{tree_name = "phylo"})}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
