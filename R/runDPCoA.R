@@ -196,7 +196,7 @@ runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
     # Check name
     if( !.is_a_string(name) ){
         stop("'name' must be a single character value specifying a name of ",
-             "reducedDim whre the result will be stored.", call. = FALSE)
+             "reducedDim where the result will be stored.", call. = FALSE)
     }
     reducedDim(x, name) <- calculateDPCoA(y, ...)
     x
