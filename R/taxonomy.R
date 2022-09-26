@@ -260,7 +260,7 @@ setGeneric("getTaxonomyLabels",
 #' @export
 setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"),
-             with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE){
+             with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE, ...){
         # input check
         if(nrow(x) == 0L){
             stop("No data available in `x` ('x' has nrow(x) == 0L.)",
@@ -293,7 +293,6 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         ans <- .get_taxonomic_label(x[!dup,],
                                     empty.fields = empty.fields,
                                     with_rank = with_rank,
-                                    make_unique = make_unique,
                                     resolve_loops = resolve_loops)
         if(any(dup)){
             ans <- ans[m]
@@ -351,14 +350,8 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 
 .get_taxonomic_label <- function(x,
                                  empty.fields = c(NA, "", " ", "\t", "-", "_"),
-                                 with_rank = FALSE, make_unique = TRUE,
+                                 with_rank = FALSE,
                                  resolve_loops = FALSE){
-    if( !.is_a_bool(make_unique) ){
-        stop("'make_unique', must be a single boolean value to select whether to ",
-             "make rownames unique.", 
-             call. = FALSE)
-    }
-    #
     rd <- rowData(x)
     tax_cols <- .get_tax_cols_from_se(x)
     tax_ranks_selected <- .get_tax_ranks_selected(x, rd, tax_cols, empty.fields)
@@ -382,10 +375,6 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     ans <- unlist(ans, use.names = FALSE)
     if(with_rank || !all_same_rank){
         ans <- .add_taxonomic_type(rd, ans, tax_cols_selected)
-    }
-    # Make rownames unique if selected
-    if( make_unique ){
-        ans <- make.unique(ans)
     }
     ans
 }
