@@ -81,8 +81,15 @@ test_that("agglomerate", {
     expect_warning(agglomerateByRank(se1, rank = "Phylum"))
     expect_warning(agglomerateByRank(se1, rank = "Order"))
 
+    # Load data from miaTime package
+    if( !require("miaTime") ){
+        if( !require("devtools") ) BiocManager::install("devtools")
+        devtools::install_github("microbiome/miaTime")
+        library("miaTime")
+    }
+    data("SilvermanAGutData")
+    se <- SilvermanAGutData
     # checking reference consensus sequence generation
-    se <- microbiomeDataSets::SilvermanAGutData()
     actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
     expect_equal(as.character(referenceSeq(actual)[[1]]),
                  paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
