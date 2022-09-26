@@ -186,7 +186,7 @@ NULL
 #' @aliases HintikkaXOData
 #' @keywords data
 #' @usage data(HintikkaXOData)
-#' @author Leo Lahti
+#' @author Leo Lahti et al.
 #' @docType data
 #' @references
 #' Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic 

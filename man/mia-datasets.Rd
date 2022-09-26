@@ -165,6 +165,6 @@ Turnbaugh, PJ et al.
 
 Potbhare, R., et al.
 
-Leo Lahti
+Leo Lahti et al.
 }
 \keyword{data}
