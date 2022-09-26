@@ -3,8 +3,25 @@ context("getExperimentCrossAssociation")
 
 test_that("getExperimentCrossAssociation", {
     
-    # Get data
-    mae <- microbiomeDataSets::peerj32()
+    # Try 5 times to fetch the data
+    for(i in seq_len(5) ){
+        mae <- tryCatch(
+            {
+                # Try to fetch the data 
+                microbiomeDataSets::peerj32()
+            },
+            error = function(cond) {
+                # If it was not possible to fetch the data, give FALSE
+                return(NULL)
+            }
+        )
+        # Break if mae has the data
+        if( !is.null(mae) ){
+            break
+        }
+    }
+    # Run tests if the data fetch was successful
+    if( !is.null(mae) ){
     ############################### Test input ###############################
     expect_error(getExperimentCrossAssociation(mae,
                                                 experiment1 = 3,
@@ -493,6 +510,7 @@ test_that("getExperimentCrossAssociation", {
                                                altExp1 = "Family", altExp2 = NULL),
                  getExperimentCrossAssociation(altExp(tse, "Family"), tse, 
                                                show_warnings = FALSE))
+    }
     
     # Test colData_variable
     # Check that all the correct names are included
