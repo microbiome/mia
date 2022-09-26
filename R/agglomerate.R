@@ -36,6 +36,8 @@
 #'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
 #'        whether to remove those columns of rowData that include only NAs after
 #'        agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
+#'        \item{\code{make_unique}}{A single boolean value for selecting 
+#'        whether to make rownames unique. (By default: \code{make_unique = TRUE})}
 #'    }
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
@@ -186,7 +188,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             }
         }
         # adjust rownames
-        rownames(x) <- .get_taxonomic_label(x, empty.fields)
+        rownames(x) <- .get_taxonomic_label(x, empty.fields, ...)
         # Remove those columns from rowData that include only NAs
         x <- .remove_NA_cols_from_rowdata(x, ...)
         x <- .add_values_to_metadata(x, "agglomerated_by_rank", rank)

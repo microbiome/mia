@@ -353,6 +353,12 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
                                  empty.fields = c(NA, "", " ", "\t", "-", "_"),
                                  with_rank = FALSE, make_unique = TRUE,
                                  resolve_loops = FALSE){
+    if( !.is_a_bool(make_unique) ){
+        stop("'make_unique', must be a single boolean value to select whether to ",
+             "make rownames unique.", 
+             call. = FALSE)
+    }
+    #
     rd <- rowData(x)
     tax_cols <- .get_tax_cols_from_se(x)
     tax_ranks_selected <- .get_tax_ranks_selected(x, rd, tax_cols, empty.fields)
@@ -376,6 +382,10 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     ans <- unlist(ans, use.names = FALSE)
     if(with_rank || !all_same_rank){
         ans <- .add_taxonomic_type(rd, ans, tax_cols_selected)
+    }
+    # Make rownames unique if selected
+    if( make_unique ){
+        ans <- make.unique(ans)
     }
     ans
 }
