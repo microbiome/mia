@@ -99,7 +99,7 @@
              call. = FALSE)
     }
     # altexp must specify altExp
-    if( !( ( .is_an_integer(altexp) && altExp<length(altExps(tse)) && altexp>0) ||
+    if( !( ( .is_an_integer(altexp) && altexp<length(altExps(tse)) && altexp>0) ||
            (.is_a_string(altexp) && altexp %in% altExpNames(tse)) ) ){
         stop("'", altExpName, "' must be integer or character specifying an ",
              "alternative experiment from ", tse_name, ".", call. = FALSE)
