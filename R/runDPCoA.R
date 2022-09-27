@@ -184,9 +184,9 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
 #' @importFrom SingleCellExperiment reducedDim<-
 runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
     # Input check
-    # Check and get altExp if it is not NULL
+    # Check and get altExp if altexp is not NULL
     if( !is.null(altexp) ){
-        # Check altExp
+        # Check altexp
         .check_altExp_present(altexp, x)
         # Get altExp
         y <- altExp(x, altexp)

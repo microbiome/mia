@@ -614,23 +614,23 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
 }
 ############################# .check_and_get_altExp ############################
-# This function checks if altExp is specified. If so, then it returns alternative
+# This function checks if altexp is specified. If so, then it returns alternative
 # experiment from altExp.
 
 # Input: (Tree)SE
 # Output: (Tree)SE
-.check_and_get_altExp <- function(tse, altExp){
+.check_and_get_altExp <- function(tse, altexp){
     # Get the variable names
-    altExp_name <- deparse(substitute(altExp))
+    altExp_name <- deparse(substitute(altexp))
     exp_num <- substr(altExp_name, nchar(altExp_name), nchar(altExp_name))
     tse_name <- paste0("experiment ", exp_num)
     
-    # If altExp is specified, check and get it. Otherwise return the original object
-    if( !is.null(altExp) ){
-        # Check altExp
-        .check_altExp_present(altExp, tse, altExp_name, tse_name)
+    # If altexp is specified, check and get it. Otherwise return the original object
+    if( !is.null(altexp) ){
+        # Check altexp
+        .check_altExp_present(altexp, tse, altExp_name, tse_name)
         # Get altExp and return it
-        tse <- altExp(tse, altExp)
+        tse <- altExp(tse, altexp)
     }
     return(tse)
 }
