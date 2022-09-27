@@ -33,32 +33,31 @@ test_that("runDPCoA", {
         runDPCoA(esophagus, assay_name = "counts", tree_name = 1, ncomponents = 2, ntop = NULL,
                  subset_row = NULL, scale = FALSE, transposed = FALSE)
     )
-    # Uncomment after these are fixed
-    # expect_error(
-    #     runDPCoA(esophagus, assay_name = "counts", tree_name = "phylo", ncomponents = TRUE, ntop = NULL,
-    #              subset_row = NULL, scale = FALSE, transposed = FALSE)
-    # )
-    # expect_error(
-    #     runDPCoA(esophagus, assay_name = "counts", tree_name = "phylo", ncomponents = "test", ntop = NULL,
-    #              subset_row = NULL, scale = FALSE, transposed = FALSE)
-    # )
-    # expect_error(
-    #     runDPCoA(esophagus, assay_name = "counts", tree_name = "phylo", ncomponents = "test", ntop = "test",
-    #              subset_row = NULL, scale = FALSE, transposed = FALSE)
-    # )
-    # expect_error(
-    #     runDPCoA(esophagus, assay_name = "counts", tree_name = "phylo", ncomponents = 1.3, ntop = "test",
-    #              subset_row = NULL, scale = FALSE, transposed = FALSE)
-    # )
-    # expect_error(
-    #     runDPCoA(esophagus, name = c("test", "test2"), assay_name = "counts", 
-    #              tree_name = "phylo", ncomponents = 1.3, ntop = "test",
-    #              subset_row = NULL, scale = FALSE, transposed = FALSE)
-    # )
-    # expect_error(
-    #     runDPCoA(esophagus, name = 1, assay_name = "counts", tree_name = "phylo", ncomponents = 1.3, ntop = "test",
-    #              subset_row = NULL, scale = FALSE, transposed = FALSE)
-    # )
+    expect_error(
+        runDPCoA(esophagus, assay_name = "counts", tree_name = "phylo", ncomponents = TRUE, ntop = NULL,
+                 subset_row = NULL, scale = FALSE, transposed = FALSE)
+    )
+    expect_error(
+        runDPCoA(esophagus, assay_name = "counts", tree_name = "phylo", ncomponents = "test", ntop = NULL,
+                 subset_row = NULL, scale = FALSE, transposed = FALSE)
+    )
+    expect_error(
+        runDPCoA(esophagus, assay_name = "counts", tree_name = "phylo", ncomponents = "test", ntop = "test",
+                 subset_row = NULL, scale = FALSE, transposed = FALSE)
+    )
+    expect_error(
+        runDPCoA(esophagus, assay_name = "counts", tree_name = "phylo", ncomponents = 1.3, ntop = "test",
+                 subset_row = NULL, scale = FALSE, transposed = FALSE)
+    )
+    expect_error(
+        runDPCoA(esophagus, name = c("test", "test2"), assay_name = "counts",
+                 tree_name = "phylo", ncomponents = 1.3, ntop = "test",
+                 subset_row = NULL, scale = FALSE, transposed = FALSE)
+    )
+    expect_error(
+        runDPCoA(esophagus, name = 1, assay_name = "counts", tree_name = "phylo", ncomponents = 1.3, ntop = "test",
+                 subset_row = NULL, scale = FALSE, transposed = FALSE)
+    )
     
     data("GlobalPatterns")
     tse <- mergeSEs(esophagus, GlobalPatterns)

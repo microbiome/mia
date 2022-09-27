@@ -97,11 +97,26 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
 {
     .require_package("ade4")
     # input check
+    # Check ncomponents
+    if( !(.is_an_integer(ncomponents) && ncomponents > 0) ){
+        stop("'ncomponents' must be a single integer value specifying the number ",
+             "of DPCoA dimensions.", call. = FALSE)
+    }
+    # Check ntop
+    if( !(is.null(ntop) || (.is_an_integer(ntop) && ntop > 0))  ){
+        stop("'ntop' must be NULL or a single integer value specifying the number ",
+             "of features with the highest variance.", call. = FALSE)
+    }
     y <- as.matrix(y)
     if(length(unique(dim(y))) != 1L){
         stop("'y' must be symmetric.", call. = FALSE)
     }
     #
+    # Get NAs. ade4:dpcoa lead to an error if there are any NAs
+    if( any( is.na(x) ) ){
+        stop("'x' includes NAs. Please try to convert them into numeric values.",
+             call. = FALSE)
+    }
     if(!transposed) {
         if(is.null(ntop)){
             ntop <- nrow(x)
@@ -109,7 +124,7 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
         x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
                                  scale = scale)
     }
-    y <- y[colnames(x),colnames(x)]
+    y <- y[colnames(x), colnames(x), drop = FALSE]
     if(nrow(y) != ncol(x)){
         stop("x and y must have corresponding dimensions.", call. = FALSE)
     }
@@ -168,10 +183,20 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
 #' @rdname runDPCoA
 #' @importFrom SingleCellExperiment reducedDim<-
 runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
-    if (!is.null(altexp)) {
+    # Input check
+    # Check and get altExp if it is not NULL
+    if( !is.null(altexp) ){
+        # Check altExp
+        .check_altExp_present(altexp, x)
+        # Get altExp
         y <- altExp(x, altexp)
     } else {
         y <- x
+    }
+    # Check name
+    if( !.is_a_string(name) ){
+        stop("'name' must be a single character value specifying a name of ",
+             "reducedDim where the result will be stored.", call. = FALSE)
     }
     reducedDim(x, name) <- calculateDPCoA(y, ...)
     x
