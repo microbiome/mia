@@ -3,7 +3,7 @@ context("summary")
 test_that("summary", {
     
     data(GlobalPatterns)
-    sumdf <- summary(GlobalPatterns)
+    sumdf <- summary(GlobalPatterns, assay_name="counts")
     samples.sum <- sumdf$samples
     
     # check samples

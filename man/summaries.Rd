@@ -57,7 +57,7 @@ countDominantFeatures(x, ...)
 
 \S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
 
-\S4method{summary}{SummarizedExperiment}(object, assay_name = abund_values, abund_values = "counts")
+\S4method{summary}{SummarizedExperiment}(object, assay_name = NULL, abund_values = NULL)
 }
 \arguments{
 \item{x}{A
@@ -162,7 +162,7 @@ dominant_taxa <- countDominantTaxa(GlobalPatterns,
 dominant_taxa
 
 # Get an overview of sample and taxa counts
-summary(GlobalPatterns)
+summary(GlobalPatterns, assay_name= "counts")
 
 # Get unique taxa at a particular taxonomic rank
 # sort = TRUE means that output is sorted in alphabetical order

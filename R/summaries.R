@@ -91,7 +91,7 @@
 #' dominant_taxa
 #'
 #' # Get an overview of sample and taxa counts
-#' summary(GlobalPatterns)
+#' summary(GlobalPatterns, assay_name= "counts")
 #'
 #' # Get unique taxa at a particular taxonomic rank
 #' # sort = TRUE means that output is sorted in alphabetical order
@@ -368,7 +368,13 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
 #'
 #' @export
 setMethod("summary", signature = c(object = "SummarizedExperiment"),
-    function(object, assay_name = abund_values, abund_values = "counts"){
+    function(object, assay_name = NULL, abund_values = NULL){
+        # Specify assay names for user
+        message("Following assays detected: ", call. = FALSE)
+        print(assayNames(object))
+        # Check if assay name is specified
+        .check_abund_assay(object,
+                           assay_name = assay_name)
         # check if NA in assay
         .check_NAs_assay_counts(object, assay_name)
         # check if counts
@@ -459,3 +465,14 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
     }
 }
 
+# Check is assay names are specified for summary function
+.check_abund_assay <- function(object, assay_name = NULL){
+    if(is.null(assay_name) || is.na(assay_name)){
+        stop("Please specify the assay name in the assay_name argument",
+             call. = FALSE)
+    }
+    if(!assay_name %in% assayNames(object)){
+        stop("Specified assay name '", assay_name, "' not detected",
+             call. = FALSE) 
+    }
+}
