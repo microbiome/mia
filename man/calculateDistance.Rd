@@ -2,13 +2,10 @@
 % Please edit documentation in R/calculateDistance.R
 \name{calculateDistance}
 \alias{calculateDistance}
-\alias{calculateDistance,ANY-method}
 \alias{calculateDistance,SummarizedExperiment-method}
 \title{Calculate sample distances with \code{vegan}}
 \usage{
 calculateDistance(x, FUN = stats::dist, ...)
-
-\S4method{calculateDistance}{ANY}(x, FUN = stats::dist, ...)
 
 \S4method{calculateDistance}{SummarizedExperiment}(
   x,

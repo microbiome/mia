@@ -57,18 +57,6 @@ setGeneric("calculateDistance", signature = c("x"),
 
 #' @rdname calculateDistance
 #' @export
-setMethod("calculateDistance", signature = c(x = "ANY"),
-    function(x, FUN = stats::dist, ...){
-        .Deprecated( msg = paste0("'calculateDistance' is deprecated. \n",
-                                  "Instead, use directly the function that is ",
-                                  "specified by 'FUN' argument. \n",
-                                  "See help('Deprecated')") )
-        .calculate_distance(mat = x, FUN = stats::dist, ...)
-    }
-)
-
-#' @rdname calculateDistance
-#' @export
 setMethod("calculateDistance", signature = c(x = "SummarizedExperiment"),
     function(x, FUN = stats::dist, assay_name = abund_values, abund_values = exprs_values, 
              exprs_values = "counts", transposed = FALSE,
