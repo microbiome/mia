@@ -50,6 +50,8 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \item{\code{remove_empty_ranks}}{A single boolean value for selecting
 whether to remove those columns of rowData that include only NAs after
 agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
+\item{\code{make_unique}}{A single boolean value for selecting
+whether to make rownames unique. (By default: \code{make_unique = TRUE})}
 }}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment

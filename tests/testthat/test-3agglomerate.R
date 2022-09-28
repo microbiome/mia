@@ -114,7 +114,11 @@ test_that("agglomerate", {
     x <- agglomerateByRank(se, rank = "Class", remove_empty_ranks = TRUE)
     rd2 <- rowData(x)
     expect_equal(rd1, rd2)
-    
+    # Test that make_unique work
+    uniq <- agglomerateByRank(se, rank = "Species")
+    not_uniq <- agglomerateByRank(se, rank = "Species", make_unique = FALSE)
+    expect_true( !any( duplicated(rownames(uniq)) ) )
+    expect_true( any( duplicated(rownames(not_uniq)) ) )
 })
 
 
