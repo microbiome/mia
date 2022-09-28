@@ -54,3 +54,4 @@ Changes in version 1.5.x
 + getExpCrossCorr: Kendall's tau is the default method
 + mergeSEs: bugfix; links between trees and rows/cols were wrong & rowData did not include all info
 + calculateDPCoA, calculateUnifrac & merge: add support for multiple trees
++ altExp parameter to altexp

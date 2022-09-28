@@ -34,15 +34,15 @@
 #'   (Please use \code{assay_name2} instead. At some point \code{abund_values2}
 #'   will be disabled.)
 #' 
-#' @param altExp1 A single numeric or character value specifying alternative experiment
+#' @param altexp1 A single numeric or character value specifying alternative experiment
 #'   from the altExp of experiment 1. If NULL, then the experiment is itself 
 #'   and altExp option is disabled. 
-#'   (By default: \code{altExp1 = NULL})
+#'   (By default: \code{altexp1 = NULL})
 #'   
-#' @param altExp2 A single numeric or character value specifying alternative experiment
+#' @param altexp2 A single numeric or character value specifying alternative experiment
 #'   from the altExp of experiment 2. If NULL, then the experiment is itself 
 #'   and altExp option is disabled. 
-#'   (By default: \code{altExp2 = NULL})
+#'   (By default: \code{altexp2 = NULL})
 #'   
 #' @param colData_variable1 A character value specifying column(s) from colData
 #'   of experiment 1. If colData_variable1 is used, assay_name1 is disabled.
@@ -155,7 +155,7 @@
 #' # When mode = matrix, matrix is returned
 #' result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
 #'                                         assay_name1 = "relabundance", assay_name2 = "nmr",
-#'                                         altExp1 = "Phylum", 
+#'                                         altexp1 = "Phylum", 
 #'                                         method = "pearson", mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
@@ -230,8 +230,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            experiment2 = 2,
            assay_name1 = abund_values1, abund_values1 = "counts",
            assay_name2 = abund_values2, abund_values2 = "counts",
-           altExp1 = NULL,
-           altExp2 = NULL,
+           altexp1 = NULL,
+           altexp2 = NULL,
            colData_variable1 = NULL,
            colData_variable2 = NULL,
            MARGIN = 1,
@@ -253,8 +253,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           experiment2 = experiment2,
                                           assay_name1 = assay_name1,
                                           assay_name2 = assay_name2,
-                                          altExp1 = altExp1,
-                                          altExp2 = altExp2,
+                                          altexp1 = altexp1,
+                                          altexp2 = altexp2,
                                           colData_variable1 = colData_variable1,
                                           colData_variable2 = colData_variable2,
                                           MARGIN = MARGIN,
@@ -372,8 +372,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               experiment2 = 2,
                                               assay_name1 = "counts",
                                               assay_name2 = "counts",
-                                              altExp1 = NULL,
-                                              altExp2 = NULL,
+                                              altexp1 = NULL,
+                                              altexp2 = NULL,
                                               colData_variable1 = NULL,
                                               colData_variable2 = NULL,
                                               MARGIN = 1,
@@ -398,8 +398,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     tse1 <- x[[experiment1]]
     tse2 <- x[[experiment2]]
     # Check and fetch tse objects
-    tse1 <- .check_and_get_altExp(tse1, altExp1)
-    tse2 <- .check_and_get_altExp(tse2, altExp2)
+    tse1 <- .check_and_get_altExp(tse1, altexp1)
+    tse2 <- .check_and_get_altExp(tse2, altexp2)
     # Check that experiments have same amount of samples
     if( ncol(tse1) != ncol(tse2) ){
         stop("Samples must match between experiments.",
@@ -511,7 +511,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                      show_warnings, paired, 
                                      verbose, MARGIN,
                                      assay_name1, assay_name2,
-                                     altExp1, altExp2,
+                                     altexp1, altexp2,
                                      colData_variable1, colData_variable2,
                                      ...)
     # Disable p_adj_threshold if there is no adjusted p-values
@@ -607,54 +607,32 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     # Check experiment's class
     obj <- x[[experiment]]
-    if( !(class(obj) == "TreeSummarizedExperiment" || 
-          class(obj) == "SummarizedExperiment") ){
+    if( !(is(obj, "SummarizedExperiment")) ){
         stop("The class of experiment specified by ", 
-             deparse(substitute(experiment)), " must be 'TreeSummarizedExperiment' ",
-             "or 'SummarizedExperiment'.",
+             deparse(substitute(experiment)), " must be 'SummarizedExperiment'.",
              call. = FALSE)
     }
 }
 ############################# .check_and_get_altExp ############################
-# This function checks if altExp is specified. If so, then it returns alternative
+# This function checks if altexp is specified. If so, then it returns alternative
 # experiment from altExp.
 
 # Input: (Tree)SE
 # Output: (Tree)SE
-.check_and_get_altExp <- function(tse, altExp){
-    # Get the name of altExp variable and experiment number
-    altExp_name <- deparse(substitute(altExp))
+.check_and_get_altExp <- function(tse, altexp){
+    # Get the variable names
+    altExp_name <- deparse(substitute(altexp))
     exp_num <- substr(altExp_name, nchar(altExp_name), nchar(altExp_name))
+    tse_name <- paste0("experiment ", exp_num)
     
-    # If altExp is disabled, give the object itself
-    if( is.null(altExp) ){
-        return(tse)
-    # If it is not NULL, and the class is SE which does not include altExp
-    } else if( !(is(tse, "TreeSummarizedExperiment") ||
-               is(tse, "SingleCellExperiment")) ){
-        stop("'", deparse(substitute(altExp)), "' is specified for experiment", exp_num, 
-             " which class is 'SummarizedExperiment'. It does not have altExp slot.",
-             call. = FALSE)
-    # If altExp is specified but there is no alternative experiments
-    } else if( length(altExp) == 0 ){
-        stop("'", deparse(substitute(altExp)), "' is specified but there are no ",
-             "alternative experiments in altExp of experiment ", exp_num, ".",
-             call. = FALSE)
-    # If it is not NULL, then it should specify alternative experiment from altExp
-    # It should be numeric value specifying integer, or a name of altExp
-    } else if( ( length(altExp) == 1 && 
-                 is.numeric(altExp) && altExp%%1==0 && 
-                 altExp<length(altExps(tse)) && altExp>0) ||
-               (.is_a_string(altExp) && altExp %in% altExpNames(tse)) ){
+    # If altexp is specified, check and get it. Otherwise return the original object
+    if( !is.null(altexp) ){
+        # Check altexp
+        .check_altExp_present(altexp, tse, altExp_name, tse_name)
         # Get altExp and return it
-        tse <- altExp(tse, altExp)
-        return(tse)
-    # Otherwise give error
-    } else{
-        stop("'", deparse(substitute(altExp)), "' must be NULL, or a single numeric or ",
-             "character value specifying altExp of experiment ", exp_num, ".",
-             call. = FALSE)
+        tse <- altExp(tse, altexp)
     }
+    return(tse)
 }
 ###################### .check_and_subset_colData_variables #####################
 # This function checks if columns can be found from colData. Additionally, 
@@ -775,7 +753,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                    verbose,
                                    MARGIN,
                                    assay_name1, assay_name2,
-                                   altExp1, altExp2,
+                                   altexp1, altexp2,
                                    colData_variable1, colData_variable2,
                                    association_FUN = NULL,
                                    ...){
@@ -802,8 +780,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     if(verbose){
         message( 
             "Calculating correlations...\n",
-            "altExp1: ", ifelse(!is.null(altExp1), altExp1, "-"), 
-            ", altExp2: ", ifelse(!is.null(altExp2), altExp2, "-"),
+            "altexp1: ", ifelse(!is.null(altexp1), altexp1, "-"), 
+            ", altexp2: ", ifelse(!is.null(altexp2), altexp2, "-"),
             ifelse(!is.null(colData_variable1), 
                 paste0(", assay_name1: -, colData_variable1: ", 
                        paste(colData_variable1, collapse = " + ")), 
