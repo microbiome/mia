@@ -80,8 +80,8 @@
     }
 }
 
-.check_altExp_present <- function(altExp, tse, 
-                                  altExp_name = .get_name_in_parent(altExp),
+.check_altExp_present <- function(altexp, tse, 
+                                  altExpName = .get_name_in_parent(altexp),
                                   tse_name = paste0("'", .get_name_in_parent(tse), "'") ){
     # Get class of object
     class <- as.character( class(tse) )
@@ -89,19 +89,19 @@
     if( !(is(tse, "TreeSummarizedExperiment") ||
           is(tse, "SingleCellExperiment")) ){
         stop("The class of ", tse_name, " is '", class, "' which does not have ",
-             "an altExp slot. Please try '", altExp_name, " = NULL'.", 
+             "an altExp slot. Please try '", altExpName, " = NULL'.", 
              call. = FALSE)
     }
     # If the object does not contain any altExps
     if( length(altExps(tse)) == 0 ){
         stop("altExps() of ", tse_name, " is empty. ",
-             "Please try '", altExp_name, " = NULL'.",
+             "Please try '", altExpName, " = NULL'.",
              call. = FALSE)
     }
-    # altExp must specify altExp
-    if( !( ( .is_an_integer(altExp) && altExp<length(altExps(tse)) && altExp>0) ||
-           (.is_a_string(altExp) && altExp %in% altExpNames(tse)) ) ){
-        stop("'", altExp_name, "' must be integer or character specifying an ",
+    # altexp must specify altExp
+    if( !( ( .is_an_integer(altexp) && altexp<length(altExps(tse)) && altexp>0) ||
+           (.is_a_string(altexp) && altexp %in% altExpNames(tse)) ) ){
+        stop("'", altExpName, "' must be integer or character specifying an ",
              "alternative experiment from ", tse_name, ".", call. = FALSE)
     }
 }
