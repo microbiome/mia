@@ -55,3 +55,4 @@ Changes in version 1.5.x
 + mergeSEs: bugfix; links between trees and rows/cols were wrong & rowData did not include all info
 + calculateDPCoA, calculateUnifrac & merge: add support for multiple trees
 + altExp parameter to altexp
++ agglomerateByRank: make rownames unique by default

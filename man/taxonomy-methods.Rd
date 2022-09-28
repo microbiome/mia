@@ -54,7 +54,8 @@ getTaxonomyLabels(x, ...)
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   with_rank = FALSE,
   make_unique = TRUE,
-  resolve_loops = FALSE
+  resolve_loops = FALSE,
+  ...
 )
 
 taxonomyTree(x, ...)
