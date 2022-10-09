@@ -8,13 +8,17 @@
 #'
 #' @param assay_name A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   included in the phyloseq object that is created. By default, it is counts
-#'   table.
+#'   included in the phyloseq object that is created. 
+#'   (By default: \code{assay_name = "counts"})
 #'   
 #' @param abund_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
+#'   
+#' @param tree_name a single \code{character} value for specifying which
+#'   tree will be included in the phyloseq object that is created, 
+#'   (By default: \code{tree_name = "phylo"})
 #'
 #' @param ... additional arguments
 #'
@@ -59,7 +63,7 @@ setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
 #' @export
 setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts"){
+    function(x, assay_name = abund_values, abund_values = "counts", tree_name = "phylo"){
         # Input check
         .require_package("phyloseq")
         # Check that tse do not have zero rows
@@ -137,7 +141,12 @@ setMethod("makePhyloseqFromTreeSE",
 
         # If rowTree has information, stores it to phy_tree and converts is to
         # phyloseq's phy_tree.
-        if(!( length(rowTree(x)) == 0 || is.null(rowTree(x)) )){
+        if( length(x@rowTree) > 0 ){
+            # Check tree_name
+            .check_rowTree_present(tree_name, x)
+            # Get rowTree
+            
+            
             # If rowTree exists, checks if the rowTree match with rownames:
             # tips labels are found from rownames
             if( any(!( rowTree(x)$tip) %in% rownames(x)) ){
