@@ -56,3 +56,5 @@ Changes in version 1.5.x
 + calculateDPCoA, calculateUnifrac & merge: add support for multiple trees
 + altExp parameter to altexp
 + agglomerateByRank: make rownames unique by default
++ removed calculateDistance and calculateUniFrac alias
+

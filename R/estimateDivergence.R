@@ -49,7 +49,6 @@
 #'   \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
 #'   \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 #'   \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
-#'   \item{\code{\link[mia:calculateDistance]{calculateDistance}}}
 #' }
 #' 
 #' @name estimateDivergence

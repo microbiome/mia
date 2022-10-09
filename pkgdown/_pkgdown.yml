@@ -32,7 +32,6 @@ reference:
 - contents:
   - calculateUnifrac
   - calculateJSD
-  - calculateDistance
   - runNMDS
   - runCCA
   - calculateOverlap
