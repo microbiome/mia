@@ -34,6 +34,10 @@
   is.character(x) && length(x) == 1L
 }
 
+.is_an_integer <- function(x){
+    is.numeric(x) && length(x) == 1L && x%%1==0
+}
+
 .are_whole_numbers <- function(x){
   tol <- 100 * .Machine$double.eps
   abs(x - round(x)) <= tol && !is.infinite(x)
@@ -73,6 +77,32 @@
     }
     if(!(assay_name %in% names(assays(x)))){
         stop("'",name,"' must be a valid name of assays(x)", call. = FALSE)
+    }
+}
+
+.check_altExp_present <- function(altexp, tse, 
+                                  altExpName = .get_name_in_parent(altexp),
+                                  tse_name = paste0("'", .get_name_in_parent(tse), "'") ){
+    # Get class of object
+    class <- as.character( class(tse) )
+    # If the object does not have altExp slot
+    if( !(is(tse, "TreeSummarizedExperiment") ||
+          is(tse, "SingleCellExperiment")) ){
+        stop("The class of ", tse_name, " is '", class, "' which does not have ",
+             "an altExp slot. Please try '", altExpName, " = NULL'.", 
+             call. = FALSE)
+    }
+    # If the object does not contain any altExps
+    if( length(altExps(tse)) == 0 ){
+        stop("altExps() of ", tse_name, " is empty. ",
+             "Please try '", altExpName, " = NULL'.",
+             call. = FALSE)
+    }
+    # altexp must specify altExp
+    if( !( ( .is_an_integer(altexp) && altexp<length(altExps(tse)) && altexp>0) ||
+           (.is_a_string(altexp) && altexp %in% altExpNames(tse)) ) ){
+        stop("'", altExpName, "' must be integer or character specifying an ",
+             "alternative experiment from ", tse_name, ".", call. = FALSE)
     }
 }
 

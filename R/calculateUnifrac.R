@@ -195,26 +195,6 @@ setMethod("calculateUnifrac",
     }
 )
 
-#' @rdname calculateUnifrac
-#' @export
-setGeneric("calculateUniFrac", signature = c("x"),
-           function(x, ... )
-             standardGeneric("calculateUniFrac"))
-
-#' @rdname calculateUnifrac
-#' @export
-setMethod("calculateUniFrac",
-          signature = c(x = "ANY"),
-    function(x, ...){
-        .Deprecated( msg = paste0("The name of the function 'calculateUniFrac' is",
-                                  " changed to 'calculateUnifrac'. \nPlease use the new",
-                                  " name instead.\n",
-                                  "See help('Deprecated')") )
-        calculateUnifrac(x, ...)
-    }
-)
-
-
 ################################################################################
 # Fast Unifrac for R.
 # Adapted from The ISME Journal (2010) 4, 17-27; doi:10.1038/ismej.2009.97

@@ -37,7 +37,7 @@
 #'
 #' @seealso
 #'   \code{\link[mia:calculateJSD]{calculateJSD}}
-#'   \code{\link[mia:calculateUniFrac]{calculateUniFrac}}
+#'   \code{\link[mia:calculateUnifrac]{calculateUnifrac}}
 #' 
 #' 
 #' @name calculateOverlap
