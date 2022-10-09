@@ -240,7 +240,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
         (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
         all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label, tree$node.label)))) ){
         stop("'nodeLab' must be NULL or character specifying links between ",
-             "matrix and tree labels.", call. = FALSE)
+             "abundance table and tree labels.", call. = FALSE)
     }
     # check that matrix and tree are compatible
     if( is.null(nodeLab) && 
