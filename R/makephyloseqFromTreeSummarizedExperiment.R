@@ -63,7 +63,7 @@ setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
 #' @export
 setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts", tree_name = "phylo"){
+    function(x, assay_name = abund_values, abund_values = "counts"){
         # Input check
         .require_package("phyloseq")
         # Check that tse do not have zero rows
@@ -119,7 +119,18 @@ setMethod("makePhyloseqFromTreeSE",
 #' @export
 setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ...){
+    function(x, tree_name = "phylo", ...){
+        # If rowTrees exist, check tree_name
+        if( length(x@rowTree) > 0 ){
+            .check_rowTree_present(tree_name, x)
+            # Subset the data based on the tree
+            x <- x[ rowLinks(x)$whichTree == tree_name, ]
+            add_phy_tree <- TRUE
+        } else{
+            add_phy_tree <- FALSE
+        }
+        #
+        
         # phyloseq and tree objects require nonduplicated rownames. If there are 
         # duplicated rownames, they are converted so that they are unique
         if( any(duplicated(rownames(x))) ){
@@ -138,23 +149,9 @@ setMethod("makePhyloseqFromTreeSE",
             # Adds otu_table to the list
             args[["otu_table"]] <- obj
         }
-
-        # If rowTree has information, stores it to phy_tree and converts is to
-        # phyloseq's phy_tree.
-        if( length(x@rowTree) > 0 ){
-            # Check tree_name
-            .check_rowTree_present(tree_name, x)
-            # Get rowTree
-            
-            
-            # If rowTree exists, checks if the rowTree match with rownames:
-            # tips labels are found from rownames
-            if( any(!( rowTree(x)$tip) %in% rownames(x)) ){
-                # If rowtree do not match, tree is pruned
-                x <- .get_x_with_pruned_tree(x)
-            }
-            phy_tree <- rowTree(x)
-            phy_tree <- phyloseq::phy_tree(phy_tree)
+        
+        if( add_phy_tree ){
+            phy_tree <- .get_rowTree_for_phyloseq(x, tree_name)
             # If the object is a phyloseq object, adds phy_tree to it
             if(is(obj,"phyloseq")){
                 phyloseq::phy_tree(obj) <- phy_tree
@@ -163,7 +160,7 @@ setMethod("makePhyloseqFromTreeSE",
                 args[["phy_tree"]] <- phy_tree
             }
         }
-
+        
         # If referenceSeq has information, stores it to refseq and converts is
         # to phyloseq's refseq.
         if(!( length(referenceSeq(x)) == 0 || is.null(referenceSeq(x)) )){
@@ -205,17 +202,32 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
 
 ################################ HELP FUNCTIONS ################################
 
-.get_x_with_pruned_tree <- function(x){
+.get_x_with_pruned_tree <- function(x, tree_name){
+    # Get rowLinks
+    row_links <- rowLinks(x)
+    
     # Gets node labels
-    node_labs <- rowLinks(x)$nodeLab
-    # Gets the corresponding rownames
-    node_labs_rownames <- rownames(rowLinks(x))
+    node_labs <- row_links[ , "nodeLab"]
+    
     # Prunes the tree
     tree_pruned <- ape::keep.tip(rowTree(x), node_labs)
     # Replace tip labels with corresponding rownames
-    tree_pruned$tip.label <- node_labs_rownames
+    tree_pruned$tip.label <- rownames(x)
     # Assigns the pruned tree back to TSE object
     rowTree(x) <- tree_pruned
-    warning("rowTree is pruned to match rownames.")
+    warning("rowTree is pruned to match rownames.", call. = FALSE)
     return(x)
+}
+
+.get_rowTree_for_phyloseq <- function(x, tree_name){
+    # Check if the rowTree's tips match with rownames:
+    # tips labels are found from rownames
+    if( any(!( rowTree(x, tree_name)$tip) %in% rownames(x)) ){
+        # If rowtree do not match, tree is pruned
+        x <- .get_x_with_pruned_tree(x, tree_name)
+    }
+    phy_tree <- rowTree(x, tree_name)
+    phy_tree <- phyloseq::phy_tree(phy_tree)
+        
+    return(phy_tree)
 }
