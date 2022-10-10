@@ -381,5 +381,5 @@ test_that("makePhyloseqFromTreeSE", {
     tse_compare <- tse[ rownames(GlobalPatterns), ]
     pseq_compare <- makePhyloseqFromTreeSE(tse_compare)
     
-    expect_equal(otu_table(pseq), otu_table(pseq_compare))
+    expect_equal(phyloseq::otu_table(pseq), phyloseq::otu_table(pseq_compare))
 })
