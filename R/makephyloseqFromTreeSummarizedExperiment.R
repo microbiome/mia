@@ -63,7 +63,7 @@ setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
 #' @export
 setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts"){
+    function(x, assay_name = abund_values, abund_values = "counts", ...){
         # Input check
         .require_package("phyloseq")
         # Check that tse do not have zero rows
@@ -150,6 +150,7 @@ setMethod("makePhyloseqFromTreeSE",
             args[["otu_table"]] <- obj
         }
         
+        # Add phylogenetic tree
         if( add_phy_tree ){
             phy_tree <- .get_rowTree_for_phyloseq(x, tree_name)
             # If the object is a phyloseq object, adds phy_tree to it
@@ -163,15 +164,20 @@ setMethod("makePhyloseqFromTreeSE",
         
         # If referenceSeq has information, stores it to refseq and converts is
         # to phyloseq's refseq.
-        if(!( length(referenceSeq(x)) == 0 || is.null(referenceSeq(x)) )){
-            refseq <- referenceSeq(x)
-            refseq <- phyloseq::refseq(refseq)
-            # If the object is a phyloseq object, adds refseq to it
-            if(is(obj,"phyloseq")){
-                obj <- phyloseq::merge_phyloseq(obj, refseq)
-            } else{
-                # Adds to the list
-                args[["refseq"]] <- refseq
+        if( !is.null(referenceSeq(x)) ){
+            # Get referenceSeqs
+            refseq <- .get_referenceSeq_for_phyloseq(x, ...)
+            # IF refSeq passed the test, add it
+            if( !is.null(refseq) ){
+                # Convert it to phyloseq object
+                refseq <- phyloseq::refseq(refseq)
+                # If the object is a phyloseq object, adds refseq to it
+                if(is(obj,"phyloseq")){
+                    obj <- phyloseq::merge_phyloseq(obj, refseq)
+                } else{
+                    # Adds to the list
+                    args[["refseq"]] <- refseq
+                }
             }
         }
         
@@ -201,7 +207,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
     })
 
 ################################ HELP FUNCTIONS ################################
-
+# If tips do not match with rownames, prune the tree
 .get_x_with_pruned_tree <- function(x, tree_name){
     # Get rowLinks
     row_links <- rowLinks(x)
@@ -219,6 +225,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
     return(x)
 }
 
+# In phyloseq, tips and rownames must match
 .get_rowTree_for_phyloseq <- function(x, tree_name){
     # Check if the rowTree's tips match with rownames:
     # tips labels are found from rownames
@@ -226,8 +233,42 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
         # If rowtree do not match, tree is pruned
         x <- .get_x_with_pruned_tree(x, tree_name)
     }
+    # Get rowTree
     phy_tree <- rowTree(x, tree_name)
+    # Convert rowTree to phyloseq object
     phy_tree <- phyloseq::phy_tree(phy_tree)
         
     return(phy_tree)
+}
+
+.get_referenceSeq_for_phyloseq <- function(x, referenceSeq = 1, ...){
+    # Get reference seqs
+    refSeqs <- referenceSeq(x)
+    # Is referenceSeq a list / does it contain multiple DNA sets
+    is_list <- is(refSeqs, "DNAStringSetList")
+    
+    # Take only one set, if it is a list
+    if( is_list ){
+        # Check referenceSeq
+        if( !( (.is_non_empty_string(referenceSeq) && referenceSeq %in% names(refSeqs)) ||
+            (.is_an_integer(referenceSeq) && (referenceSeq>0 && referenceSeq<=length(refSeqs))) )
+            ){
+            stop("'referenceSeq' must be a non-empty single character value or an integer ",
+                 "specifying the DNAStringSet from DNAStringSetList.",
+                 call. = FALSE)
+        }
+        # Get specified referenceSeq
+        refSeqs <- refSeqs[[referenceSeq]]
+        warning("Use 'referenceSeq' to specify DNA set from DNAStringSetList. ",
+                "Current choice is '", referenceSeq, "'.", 
+                call. = FALSE)
+    }
+    # Check if all rownames have referenceSeqs
+    if( !(all(rownames(x) %in% names(refSeqs)) &&
+        all(names(refSeqs) %in% rownames(x) )) ){
+        warning("referenceSeq does not match with rownames so they are discarded.",
+                call. = FALSE)
+        refSeqs <- NULL
+    }
+    return(refSeqs)
 }
