@@ -55,6 +55,7 @@ test_that("Unifrac beta diversity", {
     data("GlobalPatterns")
     tse <- GlobalPatterns
     # Compare to phyloseq function
+    .require_package("phyloseq")
     # Convert data into phyloseq
     pseq <- makePhyloseqFromTreeSE(tse)
     # Calculate unifrac
