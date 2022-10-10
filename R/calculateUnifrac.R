@@ -222,7 +222,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     x <- try(t(x), silent = TRUE)
     if(is(x,"try-error")){
         stop("The input to 'runUnifrac' must be a matrix-like object: ", 
-             as.character(x))
+             as.character(x), call. = FALSE)
     }
     # input check
     if(!.is_a_bool(weighted)){
@@ -448,13 +448,13 @@ unifrac_weighted_norm <- function(i, mat, tree, samplesums, edge_array,
     if( !is.rooted(tree) ){
         randoroot <- sample(names, 1)
         warning("Randomly assigning root as -- ", randoroot, " -- in the",
-                " phylogenetic tree in the data you provided.")
+                " phylogenetic tree in the data you provided.", call. = FALSE)
         tree <- root(phy = tree, outgroup = randoroot,
                      resolve.root = TRUE, interactive = FALSE)
         if( !is.rooted(tree) ){
             stop("Problem automatically rooting tree. Make sure your tree ",
                  "is rooted before attempting Unifrac calculation. See ",
-                 "?ape::root")
+                 "?ape::root", call. = FALSE)
         }
     }
     tree
