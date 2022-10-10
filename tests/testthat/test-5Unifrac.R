@@ -87,7 +87,7 @@ test_that("Unifrac beta diversity", {
         # Test the funcction with agglomerated data
         tse <- agglomerateByRank(tse, rank = "Phylum")
         # Convert data into phyloseq
-        pseq <- makePhyloseqFromTreeSE(tse)
+        suppressWarnings( pseq <- makePhyloseqFromTreeSE(tse) )
         # Convert back to TreeSE (pseq has pruned tree)
         tse <- makeTreeSEFromPhyloseq(pseq)
         # Calculate unifrac
