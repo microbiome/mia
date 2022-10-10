@@ -68,7 +68,7 @@ test_that("Unifrac beta diversity", {
         expect_equal(unifrac_tse, unifrac_pseq)
         
         # Test with merged object with multiple trees
-        tse <- mergeSEs(GlobalPatterns, esophagus)
+        tse <- mergeSEs(GlobalPatterns, esophagus, missing_values = 0)
         
         # Convert data into phyloseq
         pseq <- makePhyloseqFromTreeSE(tse)
