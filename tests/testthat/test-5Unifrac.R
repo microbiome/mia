@@ -94,4 +94,6 @@ test_that("Unifrac beta diversity", {
     unifrac_tse <- as.matrix(calculateUnifrac(tse, normalized = TRUE))
     unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, normalized = TRUE))
     expect_equal(unifrac_tse, unifrac_pseq)
+    # Detach phyloseq package
+    unloadNamespace("phyloseq")
 })
