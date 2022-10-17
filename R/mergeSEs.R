@@ -733,6 +733,18 @@ setMethod("right_join", signature = c(x = "ANY"),
              "rownames.",
              call. = FALSE)
     }
+    # Check if there are no duplicated rownames inside an object
+    if( all(unlist( lapply(x, FUN = function(y){length(unique(rownames(y)))!=nrow(y)})))){
+        stop("Input includes object(s) whose rownames include duplicates. Please make ",
+             "them unique.",
+             call. = FALSE)
+    }
+    # Check if there are no duplicated rownames inside an object
+    if( all(unlist( lapply(x, FUN = function(y){length(unique(colnames(y)))!=ncol(y)})))){
+        stop("Input includes object(s) whose colnames include duplicates. Please make ",
+             "them unique.",
+             call. = FALSE)
+    }
     return(class)
 }
 
