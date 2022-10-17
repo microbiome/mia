@@ -728,55 +728,64 @@ setMethod("right_join", signature = c(x = "ANY"),
     allowed_classes <- c("TreeSummarizedExperiment", "SingleCellExperiment", "SummarizedExperiment")
     
     # Get the class based on hierarchy TreeSE --> SCE --> SE
-    if( all( unlist( lapply(x, is, class2 = allowed_classes[[1]]) ) ) ){
+    # and check that objects are in correct format
+    classes <- lapply(x, .check_object_for_merge)
+    classes <- unlist(classes)
+    # Get the shared class that is highest in hierarchy
+    if( all( classes == allowed_classes[[1]] ) ){
         class <- allowed_classes[1]
-    } else if( all( unlist( lapply(x, is, class2 = allowed_classes[[2]]) ) ) ){
+    } else if( all( classes == allowed_classes[[2]] ) ){
         class <- allowed_classes[2]
-    } else if( all( unlist( lapply(x, is, class2 = allowed_classes[[3]]) ) ) ){
+    } else {
         class <- allowed_classes[3]
-    # If there is an object that does not belong to these classes give an error
-    } else{
-        stop("Input includes an object that is not 'SummarizedExperiment'.",
-             call. = FALSE)
     }
+    
     # If there are multiple classes, give a warning
-    if( length(unique( unlist(lapply(x, function(y){ class(y)})) )) > 1 ){
+    if( length(unique( classes )) > 1 ){
         warning("The Input consist of multiple classes. ",
                 "The output is '", class, "'.",
                 call. = FALSE)
     }
-    # Check that there are no object with no dimensions
-    if( any(unlist(lapply(x, FUN = function(y){ nrow(y) == 0 || ncol(y) == 0}))) ){
-        stop("Input includes an object that has either no columns or/and no rows.",
-             call. = FALSE)
-    }
-    # Check if there are no colnames
-    if( any(unlist( lapply(x, FUN = function(y){is.null(colnames(y))}) )) ){
-        stop("Input includes object(s) whose colnames is NULL. Please add ",
-             "colnames.",
-             call. = FALSE)
-    }
-    # Check if there are no rownames
-    if( any(unlist( lapply(x, FUN = function(y){is.null(rownames(y))}) )) ){
-        stop("Input includes object(s) whose rownames is NULL. Please add ",
-             "rownames.",
-             call. = FALSE)
-    }
-    # Check if there are no duplicated rownames inside an object
-    if( all(unlist( lapply(x, FUN = function(y){length(unique(rownames(y)))!=nrow(y)})))){
-        stop("Input includes object(s) whose rownames include duplicates. Please make ",
-             "them unique.",
-             call. = FALSE)
-    }
-    # Check if there are no duplicated rownames inside an object
-    if( all(unlist( lapply(x, FUN = function(y){length(unique(colnames(y)))!=ncol(y)})))){
-        stop("Input includes object(s) whose colnames include duplicates. Please make ",
-             "them unique.",
-             call. = FALSE)
-    }
     return(class)
 }
 
+########################### .check_object_for_merge ############################
+# This function checks an object that it is in correct format. Additionally, it
+# returns its class
+
+# Input: (Tree)SE
+# Output: Class of (Tree)SE
+.check_object_for_merge <- function(x){
+    # Check that the class matches with supported ones
+    if( !is(x, "SummarizedExperiment") ){
+        stop("Input includes an object that is not 'SummarizedExperiment'.",
+             call. = FALSE)
+    }
+    # Check that there are no object with no dimensions
+    if( ncol(x) == 0 || nrow(x) == 0 ){
+        stop("Input includes an object that has either no columns or/and no rows.",
+             call. = FALSE)
+    }
+    # Check that object has row/colnames
+    if( is.null(rownames(x)) || is.null(colnames(x)) ){
+        stop("Input includes object(s) whose rownames and/or colnames is NULL. ",
+             "Please add them.",
+             call. = FALSE)
+    }
+    # Check if the col/rownames are duplicated
+    if( any(duplicated(rownames(x))) || any(duplicated(colnames(x))) ){
+        stop("Input includes object(s) whose rownames and/or colnames include ",
+             "duplicates. Please make them unique.",
+             call. = FALSE)
+    }
+    
+    # Allowed classes
+    allowed_classes <- c("TreeSummarizedExperiment", "SingleCellExperiment", "SummarizedExperiment")
+    # Check class
+    class <- class(x)
+    return(class)
+    
+}
 ########################### .assays_cannot_be_found ############################
 # This function checks that the assay can be found from TreeSE objects of a list.
 
