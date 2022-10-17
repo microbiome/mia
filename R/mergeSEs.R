@@ -942,9 +942,15 @@ setMethod("right_join", signature = c(x = "ANY"),
                     right = TRUE
     )
     
+    # Get rownames
+    rownames1 <- rownames(df1)
+    rownames2 <- rownames(df2)
     # Ensure that the data is in correct format
     df1 <- as.data.frame(df1)
     df2 <- as.data.frame(df2)
+    # Add rownames to columns
+    df1$rownames <- rownames1
+    df2$rownames <- rownames2
     
     # Get matching variables indices
     matching_variables_ids1 <- match( colnames(df2), colnames(df1) )
@@ -992,5 +998,12 @@ setMethod("right_join", signature = c(x = "ANY"),
             df[ , matching_variables1[i] ] <- x_and_y_combined
         }
     }
+    
+    # Convert into DataFrame to enable equally named rows
+    df <- DataFrame(df)
+    # Add original rownames and remove the column
+    rownames(df) <- df$rownames
+    df$rownames <- NULL
+    
     return(df)
 }
