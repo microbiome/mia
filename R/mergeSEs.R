@@ -300,6 +300,8 @@ setMethod("right_join", signature = c(x = "ANY"),
 #' @importFrom SingleCellExperiment SingleCellExperiment
 .merge_SEs <- function(x, class, join, assay_name, 
                       missing_values, collapse_samples, verbose){
+    # Add rowData info to rownames
+    x <- lapply(x, FUN = .add_rowdata_to_rownames)
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
@@ -379,7 +381,34 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( !is.null(refSeqs) ){
         tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
     }
+    # Adjust rownames
+    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
+    rownames(tse) <- rowData(tse)[[rownames_name]]
+    rowData(tse)[[rownames_name]] <- NULL
     return(tse)
+}
+
+########################### .add_rowdata_to_rownames ###########################
+# This function adds taxonomy information to rownames to enable more specific match
+# between rows
+
+# Input: (Tree)SE
+# Output: (Tree)SE with rownames that include all taxonomy information
+.add_rowdata_to_rownames <- function(x){
+    # Add rownames to rowData
+    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
+    rowData(x)[[rownames_name]] <- rownames(x)
+    # Get rowData
+    rd <- rowData(x)
+    # Get taxonomy_info
+    taxonomy_info <- rd[ , match( c(tolower(TAXONOMY_RANKS), rownames_name), 
+                                  tolower(colnames(rd)), nomatch = 0 ), 
+                         drop = FALSE]
+    # Combine taxonomy info
+    rownames <- apply(taxonomy_info, 1, paste0, collapse = "_")
+    # Add new rownames
+    rownames(x) <- rownames
+    return(x)
 }
 
 ############################ .check_and_add_refSeqs ############################
@@ -845,10 +874,11 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Merge two assays into one
     assay <- .join_two_tables(assay1, assay2, join)
     
-    # Fill missing values
-    assay[ is.na(assay) ] <- missing_values
     # Convert into matrix
     assay <- as.matrix(assay)
+    
+    # Fill missing values
+    assay[ is.na(assay) ] <- missing_values
     
     # Order the assay based on rowData and colData
     assay <- assay[ match(rownames(rd), rownames(assay)), , drop = FALSE ]
@@ -942,15 +972,9 @@ setMethod("right_join", signature = c(x = "ANY"),
                     right = TRUE
     )
     
-    # Get rownames
-    rownames1 <- rownames(df1)
-    rownames2 <- rownames(df2)
     # Ensure that the data is in correct format
     df1 <- as.data.frame(df1)
     df2 <- as.data.frame(df2)
-    # Add rownames to columns
-    df1$rownames <- rownames1
-    df2$rownames <- rownames2
     
     # Get matching variables indices
     matching_variables_ids1 <- match( colnames(df2), colnames(df1) )
@@ -998,12 +1022,5 @@ setMethod("right_join", signature = c(x = "ANY"),
             df[ , matching_variables1[i] ] <- x_and_y_combined
         }
     }
-    
-    # Convert into DataFrame to enable equally named rows
-    df <- DataFrame(df)
-    # Add original rownames and remove the column
-    rownames(df) <- df$rownames
-    df$rownames <- NULL
-    
     return(df)
 }
