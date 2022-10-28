@@ -512,22 +512,19 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
         }
         # Reference sample
         reference_name <- rownames(mat)[reference]
-        # Get the order of samples
-        col_index <- seq_len(nrow(mat))
+        # Get the original order of samples
+        sample_order <- rownames(mat)
         
+        # Calculate ALR matrix
         mat <- vegan::decostand(mat, method = method, reference = reference, MARGIN = MARGIN)
-        # Reference sample as NAs
+        
+        # Reference sample as NAs or with symbols that are specified by user
         reference_sample <- matrix(reference_values, nrow = 1, ncol = ncol(mat),  
                                    dimnames = list(reference_name, colnames(mat)) )
-        # Mat index
-        mat_index <- col_index[-reference]
-        
         # Add reference sample
         mat <- rbind(mat, reference_sample)
-        
         # Preserve the original order
-        mat <- mat[ match(col_index, c(mat_index, reference)), ]
-        
+        mat <- mat[ sample_order, ]
     } else{
         mat <- vegan::decostand(mat, method = method)
     }
