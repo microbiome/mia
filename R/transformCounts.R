@@ -348,7 +348,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
         # Gets the abundance table, and transposes it
         assay <- t(assay(x, assay_name))
         # Calls help function that does the transformation
-        transformed_table <- .apply_transformation(assay, method, pseudocount, threshold, ...)
+        transformed_table <- .apply_transformation(assay, method, pseudocount, threshold)
         # Transposes transformed table to right orientation
         transformed_table <- t(transformed_table)
         # Assign transformed table to assays
@@ -489,7 +489,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom DelayedMatrixStats colSums2 colMeans2
-.calc_clr <- function(mat, method, reference = 1, MARGIN = 1, ...){
+.calc_clr <- function(mat, method, reference = 1, MARGIN = 1, reference_values = NA, ...){
     # Calculate colSums
     colsums <- colSums2(mat, na.rm = TRUE)
     # Check that they are equal; affects the result of CLR. CLR expects a fixed
@@ -504,6 +504,12 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     mat <- t(mat)
     
     if( method == "alr" ){
+        # Check reference_values
+        if( length(reference_values) != 1 ){
+            stop("'reference_values' must be a single value specifying the values of ",
+                 "the reference sample.",
+                 call. = FALSE)
+        }
         # Reference sample
         reference_name <- rownames(mat)[reference]
         # Get the order of samples
@@ -511,7 +517,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
         
         mat <- vegan::decostand(mat, method = method, reference = reference, MARGIN = MARGIN)
         # Reference sample as NAs
-        reference_sample <- matrix(NA, nrow = 1, ncol = ncol(mat),  
+        reference_sample <- matrix(reference_values, nrow = 1, ncol = ncol(mat),  
                                    dimnames = list(reference_name, colnames(mat)) )
         # Mat index
         mat_index <- col_index[-reference]
