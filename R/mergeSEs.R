@@ -732,9 +732,9 @@ setMethod("right_join", signature = c(x = "ANY"),
     classes <- lapply(x, .check_object_for_merge)
     classes <- unlist(classes)
     # Get the shared class that is highest in hierarchy
-    if( all( classes == allowed_classes[[1]] ) ){
+    if( all( classes %in% allowed_classes[1] ) ){
         class <- allowed_classes[1]
-    } else if( all( classes == allowed_classes[[2]] ) ){
+    } else if( all( classes %in% allowed_classes[1:2] ) ){
         class <- allowed_classes[2]
     } else {
         class <- allowed_classes[3]
@@ -778,10 +778,7 @@ setMethod("right_join", signature = c(x = "ANY"),
              "duplicates. Please make them unique.",
              call. = FALSE)
     }
-    
-    # Allowed classes
-    allowed_classes <- c("TreeSummarizedExperiment", "SingleCellExperiment", "SummarizedExperiment")
-    # Check class
+    # Get class
     class <- class(x)
     return(class)
     
