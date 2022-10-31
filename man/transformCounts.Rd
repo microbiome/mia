@@ -17,40 +17,44 @@ transformSamples(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("alr", "clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = NULL,
-  threshold = 0
+  threshold = 0,
+  ...
 )
 
 \S4method{transformSamples}{SummarizedExperiment}(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("alr", "clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = NULL,
-  threshold = 0
+  threshold = 0,
+  ...
 )
 
 transformCounts(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("alr", "clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = NULL,
-  threshold = 0
+  threshold = 0,
+  ...
 )
 
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("alr", "clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
   name = method,
   pseudocount = NULL,
-  threshold = 0
+  threshold = 0,
+  ...
 )
 
 transformFeatures(
