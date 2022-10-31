@@ -148,21 +148,33 @@ test_that("transformCounts", {
         relative <- assay(tse, "relabundance")
         relative <- relative + pseudonumber
         # Tests clr
-        expect_equal(
-            as.matrix(assays(mia::transformCounts(tse, assay_name = "relabundance",
-                                                  method = "clr", pseudocount = pseudonumber))$clr),
-            apply(as.matrix(relative), 2, FUN=function(x){
-                log(x) - mean(log(x))
-            }))
+        # Calc CLRs
+        mat <- assays(mia::transformCounts(tse, assay_name = "relabundance",
+                                           method = "clr", pseudocount = pseudonumber))$clr
+        mat_comp <- apply(as.matrix(relative), 2, FUN=function(x){
+            log(x) - mean(log(x))
+        })
+        # Remove atributes since vegan adds additional ones
+        attributes(mat) <- NULL
+        attributes(mat_comp) <- NULL
+        # Compare
+        expect_equal( mat, mat_comp )
         
         # Tests rclr
-        expect_equal(
-            round(as.matrix(assays(mia::transformCounts(tse, assay_name = "relabundance",
-                                                        method = "rclr", 
-                                                        pseudocount = pseudonumber))$rclr),4),
-            round(apply(as.matrix(relative), 2, FUN=function(x){
-                log(x) - mean(log(x))
-            })),4)
+        # Calc RCLRs
+        mat <- assays(mia::transformCounts(tse, assay_name = "relabundance",
+                                           method = "rclr", pseudocount = pseudonumber))$rclr
+        mat_comp <- apply(as.matrix(relative), 2, FUN=function(x){
+            log(x) - mean(log(x))
+        })
+        # Remove atributes since vegan adds additional ones
+        attributes(mat) <- NULL
+        attributes(mat_comp) <- NULL
+        # Round
+        mat <- round(mat, 4)
+        mat_comp <- round(mat_comp, 4)
+        # Compare
+        expect_equal( mat, mat_comp )
         
         # Expect that error occurs
         expect_error(mia::transformCounts(tse, method = "clr"))

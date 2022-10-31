@@ -434,8 +434,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                   clr = .calc_clr,
                   rank = .calc_rank,
                   z = .calc_ztransform,
-                  rclr = .calc_clr,
-                  alr = .calc_clr
+                  rclr = .calc_rclr,
+                  alr = .calc_alr
                   )
 
     # Does the function call, arguments are "assay" abundance table and "pseudocount"
@@ -488,8 +488,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-#' @importFrom DelayedMatrixStats colSums2 colMeans2
-.calc_clr <- function(mat, method, reference = 1, MARGIN = 1, reference_values = NA, ...){
+#' @importFrom DelayedMatrixStats colSums2
+.calc_clr <- function(mat, ...){
     # Calculate colSums
     colsums <- colSums2(mat, na.rm = TRUE)
     # Check that they are equal; affects the result of CLR. CLR expects a fixed
@@ -500,35 +500,50 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                 "CLR transformation.",
                 call. = FALSE)
     }
-    # Utilize function from vegan (check vegan documentation!!!!!!!!!!!) there ar erelative abundance....
-    mat <- t(mat)
-    
-    if( method == "alr" ){
-        # Check reference_values
-        if( length(reference_values) != 1 ){
-            stop("'reference_values' must be a single value specifying the values of ",
-                 "the reference sample.",
-                 call. = FALSE)
-        }
-        # Reference sample
-        reference_name <- rownames(mat)[reference]
-        # Get the original order of samples
-        sample_order <- rownames(mat)
-        
-        # Calculate ALR matrix
-        mat <- vegan::decostand(mat, method = method, reference = reference, MARGIN = MARGIN)
-        
-        # Reference sample as NAs or with symbols that are specified by user
-        reference_sample <- matrix(reference_values, nrow = 1, ncol = ncol(mat),  
-                                   dimnames = list(reference_name, colnames(mat)) )
-        # Add reference sample
-        mat <- rbind(mat, reference_sample)
-        # Preserve the original order
-        mat <- mat[ sample_order, ]
-    } else{
-        mat <- vegan::decostand(mat, method = method)
+    # Calculate CLR
+    mat <- vegan::decostand(mat, method = "clr", MARGIN = 2)
+    return(mat)
+}
+
+#' @importFrom DelayedMatrixStats colSums2
+.calc_rclr <- function(mat, ...){
+    # Calculate colSums
+    colsums <- colSums2(mat, na.rm = TRUE)
+    # Check that they are equal; affects the result of CLR. CLR expects a fixed
+    # constant
+    if( round(max(colsums)-min(colsums), 3) != 0  ){
+        warning("All the total abundances of samples do not sum-up to a fixed constant.\n",
+                "Please consider to apply, e.g., relative transformation in prior to ",
+                "CLR transformation.",
+                call. = FALSE)
     }
-    mat <- t(mat)
+    # Calculate CLR
+    mat <- vegan::decostand(mat, method = "rclr", MARGIN = 2)
+    return(mat)
+}
+
+.calc_alr <- function(mat, reference = 1, reference_values = NA, ...){
+    # Check reference_values
+    if( length(reference_values) != 1 ){
+        stop("'reference_values' must be a single value specifying the values of ",
+             "the reference sample.",
+             call. = FALSE)
+    }
+    # Reference sample
+    reference_name <- colnames(mat)[reference]
+    # Get the original order of samples
+    sample_order <- colnames(mat)
+    
+    # Calculate ALR matrix
+    mat <- vegan::decostand(mat, method = "alr", reference = reference, MARGIN = 2)
+    
+    # Reference sample as NAs or with symbols that are specified by user
+    reference_sample <- matrix(reference_values, nrow = nrow(mat), ncol = 1,  
+                               dimnames = list(rownames(mat), reference_name) )
+    # Add reference sample
+    mat <- cbind(mat, reference_sample)
+    # Preserve the original order
+    mat <- mat[ , sample_order ]
     return(mat)
 }
 
