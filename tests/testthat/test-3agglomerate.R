@@ -82,9 +82,9 @@ test_that("agglomerate", {
     expect_warning(agglomerateByRank(se1, rank = "Order"))
 
     # Load data from miaTime package
-    if( !require("miaTime") ){
+    if( !require("miaTime", quietly = TRUE) ){
         if( !require("devtools") ) BiocManager::install("devtools")
-        devtools::install_github("microbiome/miaTime")
+        devtools::install_github("microbiome/miaTime", dependencies = TRUE)
         library("miaTime")
     }
     data("SilvermanAGutData")
