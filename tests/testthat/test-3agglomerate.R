@@ -82,11 +82,7 @@ test_that("agglomerate", {
     expect_warning(agglomerateByRank(se1, rank = "Order"))
 
     # Load data from miaTime package
-    if( !require("miaTime", quietly = TRUE) ){
-        if( !require("devtools") ) BiocManager::install("devtools")
-        devtools::install_github("microbiome/miaTime", dependencies = FALSE, upgrade = "never")
-        library("miaTime")
-    }
+    skip_if_not(requireNamespace("miaTime", quietly = TRUE))
     data("SilvermanAGutData")
     se <- SilvermanAGutData
     # checking reference consensus sequence generation
