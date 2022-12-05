@@ -119,10 +119,10 @@
 #'                        collapse_samples = TRUE)
 #' tse_temp
 #' 
-#' # Merge multiple assays
+#' # Merge all available assays
 #' tse <- relAbundanceCounts(tse)
 #' ts1 <- relAbundanceCounts(tse1)
-#' tse_temp <- mergeSEs(tse, tse1, assay_name = c("counts", "relabundance"))
+#' tse_temp <- mergeSEs(tse, tse1, assay_name = assayNames(tse))
 #' 
 NULL
 
