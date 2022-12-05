@@ -379,4 +379,19 @@ test_that("mergeSEs", {
                                                        colnames(colData(tse3)))
                                                     ))+2)
     
+    # Check that multiple assays are supported
+    tse1 <- relAbundanceCounts(tse1)
+    tse2 <- relAbundanceCounts(tse2)
+    tse3 <- relAbundanceCounts(tse3)
+    
+    tse_temp <- expect_warning( mergeSEs(list(tse1, tse2, tse3),
+                                         assay_name = c("counts", 
+                                                        "relabundance"), 
+                                         join = "inner"))
+    expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
+    tse_temp <- expect_warning(mergeSEs(list(tse1, tse2),
+                                        assay_name = c("counts", "relabundance", "test"),
+                                        join = "left"))
+    expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
+                              
 })
