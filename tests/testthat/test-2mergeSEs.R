@@ -362,4 +362,21 @@ test_that("mergeSEs", {
     rd_gb <- rowData(tse)[rownames(GlobalPatterns), ]
     expect_equal(rowData(esophagus), rd_esophagus[, colnames(rowData(esophagus))])
     expect_equal(rowData(GlobalPatterns), rd_gb[, colnames(rowData(GlobalPatterns))])
+    
+    # Check that variables with different class are not combined
+    tse1 <- esophagus
+    tse2 <- GlobalPatterns
+    tse3 <- GlobalPatterns[1:50, 1:10]
+    # Create variables with different class
+    colData(tse1)$group <- sample(c(1, 2, 3), ncol(tse1), replace = TRUE)
+    colData(tse2)$group <- sample(c("Group1", "Group2", "Group3"), ncol(tse2), 
+                                  replace = TRUE)
+    colData(tse3)$group <- as.factor(sample(c("Group1", "Group2", "Group3"),
+                                            ncol(tse3), replace = TRUE))
+    tse <- expect_warning(mergeSEs(list(tse1, tse2, tse3)))
+    expect_true(ncol(colData(tse)) == length(unique(c( colnames(colData(tse1)),
+                                                       colnames(colData(tse2)),
+                                                       colnames(colData(tse3)))
+                                                    ))+2)
+    
 })

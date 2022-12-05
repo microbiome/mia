@@ -949,12 +949,16 @@ setMethod("right_join", signature = c(x = "ANY"),
     matching_variables2 <- matching_variables2[ !is.na(matching_variables2) ]
     
     # Make the matching variables unique
-    matching_variables_mod1 <- paste0(matching_variables1, "_X")
-    matching_variables_ids1 <- matching_variables_ids1[ !is.na(matching_variables_ids1) ]
-    colnames(df1)[ matching_variables_ids1 ] <- matching_variables_mod1
-    matching_variables_mod2 <- paste0(matching_variables2, "_Y")
-    matching_variables_ids2 <- matching_variables_ids2[ !is.na(matching_variables_ids2) ]
-    colnames(df2)[ matching_variables_ids2 ] <- matching_variables_mod2
+    if( length(matching_variables1) > 0 ){
+        matching_variables_mod1 <- paste0(matching_variables1, "_X")
+        matching_variables_ids1 <-
+            matching_variables_ids1[ !is.na(matching_variables_ids1) ]
+        colnames(df1)[ matching_variables_ids1 ] <- matching_variables_mod1
+        matching_variables_mod2 <- paste0(matching_variables2, "_Y")
+        matching_variables_ids2 <-
+            matching_variables_ids2[ !is.na(matching_variables_ids2) ]
+        colnames(df2)[ matching_variables_ids2 ] <- matching_variables_mod2
+    }
     
     # Add rownames to one of the columns
     df1$rownames_merge_ID <- rownames(df1)
@@ -964,9 +968,39 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Add rownames and remove additional column
     rownames(df) <- df$rownames_merge_ID
     df$rownames_merge_ID <- NULL
-    
+   
     # Combine matching variables if found
     if( length(matching_variables1) > 0 ){
+        # Get the class of each variable
+        class1 <- unlist(lapply(matching_variables_mod1, FUN = function(x){class(df[,x])}))
+        class2 <- unlist(lapply(matching_variables_mod2, FUN = function(x){class(df[,x])}))
+        # If there are mismatches in classes, variables are not matching
+        mismatch <- class1!=class2
+        if( any( mismatch) ){
+            # Loop through mismatches
+            for( i in which(mismatch) ){
+                # Givve warning that variables are renamed
+                warning("Datasets include equally named variables called '", 
+                        matching_variables1[i], "' but their class differ. \n",
+                        "In the output, variables are not combined and they are ",
+                        "renamed based on their class.",
+                        call. = FALSE)
+                # Name variables based on their class
+                colnames(df)[ colnames(df) == matching_variables_mod1[i] ] <- 
+                    paste0(matching_variables1[i], "_", class1[i])
+                colnames(df)[ colnames(df) == matching_variables_mod2[i] ] <- 
+                    paste0(matching_variables2[i], "_", class2[i])
+                # Remove variable from matching list
+                matching_variables1 <- matching_variables1[-i]
+                matching_variables2 <- matching_variables2[-i]
+                matching_variables_mod1 <- matching_variables_mod1[-i]
+                matching_variables_mod2 <- matching_variables_mod2[-i]
+            }
+        }
+    }
+    # If there are still matching variables
+    if( length(matching_variables1) > 0 ){
+        # Loop over matching variables
         for(i in 1:length(matching_variables1) ){
             # Get columns
             x <- matching_variables_mod1[i]
