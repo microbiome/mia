@@ -82,7 +82,7 @@ test_that("agglomerate", {
     expect_warning(agglomerateByRank(se1, rank = "Order"))
 
     # Load data from miaTime package
-    skip_if_not(requireNamespace("miaTime", quietly = TRUE))
+    skip_if_not(require("miaTime", quietly = TRUE))
     data("SilvermanAGutData")
     se <- SilvermanAGutData
     # checking reference consensus sequence generation
