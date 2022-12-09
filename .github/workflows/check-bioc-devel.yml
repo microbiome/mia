@@ -173,7 +173,7 @@ jobs:
           BiocManager::install("stan-dev/rstantools")  
           BiocManager::install("cran/reldist")
           BiocManager::install("cran/densEstBayes")
-
+          
           # For loading data in test-3agglomerate.R
           remotes::install_github("microbiome/miaTime")
 
