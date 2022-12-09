@@ -145,8 +145,8 @@ Skin microbiota diversity among genetically unrelated individuals of Indian orig
 PeerJ, 10, e13075.
 \url{https://peerj.com/articles/13075/}
 Supplemental information includes OTU table and taxonomy table and publicly-accessible from:
-\url{DOI:10.7717/peerj.13075/supp-1}
-\url{DOI:10.7717/peerj.13075/supp-2}
+\url{https://www.doi.org/10.7717/peerj.13075/supp-1}
+\url{https://www.doi.org/10.7717/peerj.13075/supp-2}
 
 Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic
 steatosis and adipose tissue inflammation: associating taxonomic and
