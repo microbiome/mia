@@ -10,9 +10,14 @@
 \usage{
 makePhyloseqFromTreeSE(x, ...)
 
-\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x, assay_name = abund_values, abund_values = "counts")
+\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(
+  x,
+  assay_name = abund_values,
+  abund_values = "counts",
+  ...
+)
 
-\S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, ...)
+\S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, tree_name = "phylo", ...)
 
 makePhyloseqFromTreeSummarizedExperiment(x, ...)
 
@@ -25,13 +30,17 @@ makePhyloseqFromTreeSummarizedExperiment(x, ...)
 
 \item{assay_name}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-included in the phyloseq object that is created. By default, it is counts
-table.}
+included in the phyloseq object that is created.
+(By default: \code{assay_name = "counts"})}
 
 \item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.
 (Please use \code{assay_name} instead. At some point \code{abund_values}
 will be disabled.)}
+
+\item{tree_name}{a single \code{character} value for specifying which
+tree will be included in the phyloseq object that is created,
+(By default: \code{tree_name = "phylo"})}
 }
 \value{
 An object of class \code{Phyloseq} object.
