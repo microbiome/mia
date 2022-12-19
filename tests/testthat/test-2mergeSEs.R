@@ -393,5 +393,18 @@ test_that("mergeSEs", {
                                         assay_name = c("counts", "relabundance", "test"),
                                         join = "left"))
     expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
-                              
+    
+    # Test that reference sequences stay the same
+    # Load data from miaTime package
+    skip_if_not(require("miaTime", quietly = TRUE))
+    data("SilvermanAGutData")
+    tse <- SilvermanAGutData
+    tse1 <- tse
+    rownames(tse1) <- paste0("Taxon", 1:nrow(tse))
+    # Merge
+    tse2 <- mergeSEs(tse1, tse)
+    # Test refseqs
+    ref1 <- referenceSeq(tse)
+    ref2 <- referenceSeq(tse2)[rownames(tse), ]
+    expect_equal(ref1, ref2)
 })
