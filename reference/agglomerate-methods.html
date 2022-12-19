@@ -245,6 +245,36 @@ transformation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:MVP-15            Bacteria         MVP-15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Proteobacteria    Bacteria Proteobacteria</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># If assay contains NAs, you might want to consider replacing them since summing-up</span></span></span>
+<span class="r-in"><span><span class="co"># NAs lead to NA</span></span></span>
+<span class="r-in"><span><span class="va">x5</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
+<span class="r-in"><span><span class="co"># Replace first value with NA</span></span></span>
+<span class="r-in"><span><span class="fu">assay</span><span class="op">(</span><span class="va">x5</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
+<span class="r-in"><span><span class="va">x6</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x5</span>, <span class="st">"Kingdom"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span> <span class="fu">assay</span><span class="op">(</span><span class="va">x6</span><span class="op">)</span> <span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             CL3     CC1    SV1 M31Fcsw M11Fcsw M31Plmr M11Plmr F21Plmr M31Tong</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Archaea      NA    1248  28811      33      57      42     112     140     303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteria 862815 1134209 668698 1543418 2076419  718901  433782  186157 2000099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          M11Tong LMEpi24M SLEpi20M  AQC1cm  AQC4cm  AQC7cm    NP2     NP3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Archaea       30      131      145    4459   24692   28051   1826   43197</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteria  100157  2117461  1217167 1163289 2332489 1671242 521808 1435768</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              NP5 TRRsed1 TRRsed2 TRRsed3   TS28    TS29   Even1  Even2   Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Archaea    33996     843    8418   14250   1598    1690     150     23      91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteria 1618758   57845  484708  265454 935868 1209381 1215987 971050 1078150</span>
+<span class="r-in"><span><span class="co"># Replace NAs with 0. It is justified when we are summing-up counts</span></span></span>
+<span class="r-in"><span><span class="fu">assay</span><span class="op">(</span><span class="va">x5</span><span class="op">)</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x5</span><span class="op">)</span><span class="op">)</span> <span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span><span class="va">x6</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x5</span>, <span class="st">"Kingdom"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span> <span class="fu">assay</span><span class="op">(</span><span class="va">x6</span><span class="op">)</span> <span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             CL3     CC1    SV1 M31Fcsw M11Fcsw M31Plmr M11Plmr F21Plmr M31Tong</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Archaea    1262    1248  28811      33      57      42     112     140     303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteria 862815 1134209 668698 1543418 2076419  718901  433782  186157 2000099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          M11Tong LMEpi24M SLEpi20M  AQC1cm  AQC4cm  AQC7cm    NP2     NP3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Archaea       30      131      145    4459   24692   28051   1826   43197</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteria  100157  2117461  1217167 1163289 2332489 1671242 521808 1435768</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              NP5 TRRsed1 TRRsed2 TRRsed3   TS28    TS29   Even1  Even2   Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Archaea    33996     843    8418   14250   1598    1690     150     23      91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteria 1618758   57845  484708  265454 935868 1209381 1215987 971050 1078150</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Look at enterotype dataset...</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## print the available taxonomic ranks. Shows only 1 rank available</span></span></span>
