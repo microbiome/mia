@@ -1,4 +1,4 @@
-# mia - Microbiome analysis
+# mia - Microbiome analysis <img src="man/figures/mia_logo.png" align="right" width="120" />
 
 <!-- badges: start -->
 
