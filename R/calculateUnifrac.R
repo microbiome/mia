@@ -148,8 +148,9 @@ setMethod("calculateUnifrac",
                         tree = "missing"),
     function(x, assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts", 
              tree_name = "phylo", transposed = FALSE, ...){
-        # Check assay_name
+        # Check assay_name and get assay
         .check_assay_present(assay_name, x)
+        mat <- assay(x, assay_name)
         if(!transposed){
             # Check tree_name
             .check_rowTree_present(tree_name, x)
@@ -162,6 +163,7 @@ setMethod("calculateUnifrac",
                         "'x' is subsetted.", call. = FALSE)
                 # Subset the data
                 x <- x[ whichTree, ]
+                mat <- mat[ whichTree, ]
             }
             mat <- t(mat)
             tree <- .norm_tree_to_be_rooted(tree, rownames(x))
@@ -179,13 +181,12 @@ setMethod("calculateUnifrac",
                         "'x' is subsetted.", call. = FALSE)
                 # Subset the data
                 x <- x[ , whichTree ]
+                mat <- mat[ , whichTree ]
             }
             tree <- .norm_tree_to_be_rooted(tree, colnames(x))
             # Get links
             links <- colLinks(x)
         }
-        # Get assay
-        mat <- assay(x, assay_name)
         # Remove those links (make them NA) that are not included in this tree
         links[ links$whichTree != tree_name, ] <- NA
         # Take only nodeLabs
