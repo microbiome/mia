@@ -211,10 +211,8 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
 .get_x_with_pruned_tree <- function(x, tree_name){
     # Get rowLinks
     row_links <- rowLinks(x)
-    
     # Gets node labels
     node_labs <- row_links[ , "nodeLab"]
-    
     # Prunes the tree
     tree_pruned <- ape::keep.tip(rowTree(x), node_labs)
     # Replace tip labels with corresponding rownames
