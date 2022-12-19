@@ -84,7 +84,7 @@ test_that("Unifrac beta diversity", {
     unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, weighted = TRUE, normalized = FALSE))
     expect_equal(unifrac_tse, unifrac_pseq)
     
-    # Test the funcction with agglomerated data
+    # Test the function with agglomerated data
     tse <- agglomerateByRank(tse, rank = "Phylum")
     # Convert data into phyloseq
     suppressWarnings( pseq <- makePhyloseqFromTreeSE(tse) )
@@ -94,6 +94,7 @@ test_that("Unifrac beta diversity", {
     unifrac_tse <- as.matrix(calculateUnifrac(tse, normalized = TRUE))
     unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, normalized = TRUE))
     expect_equal(unifrac_tse, unifrac_pseq)
+    
     # Detach phyloseq package
     unloadNamespace("phyloseq")
 })
