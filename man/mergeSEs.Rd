@@ -53,7 +53,7 @@ right_join(x, ...)
 
 \item{...}{optional arguments (not used).}
 
-\item{assay_name}{A single character value for selecting the
+\item{assay_name}{A character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to be merged. (By default: \code{assay_name = "counts"})}
 
@@ -155,6 +155,11 @@ tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
 tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
                        collapse_samples = TRUE)
 tse_temp
+
+# Merge all available assays
+tse <- relAbundanceCounts(tse)
+ts1 <- relAbundanceCounts(tse1)
+tse_temp <- mergeSEs(tse, tse1, assay_name = assayNames(tse))
 
 }
 \seealso{
