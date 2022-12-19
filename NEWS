@@ -61,3 +61,5 @@ Changes in version 1.5.x
 Changes in version 1.7.x
 + makePhyloseqFromTreeSE: added option for choosing a tree from multiple rowTrees
 + mergeSEs: match rows based on all available taxonomy level data on rowData
++ mergeSEs: fix bug related to equally named variables that are different class
++ mergeSEs: option for merging multiple assays
