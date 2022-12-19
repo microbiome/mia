@@ -58,3 +58,6 @@ Changes in version 1.5.x
 + agglomerateByRank: make rownames unique by default
 + removed calculateDistance and calculateUniFrac alias
 
+Changes in version 1.7.x
++ makePhyloseqFromTreeSE: added option for choosing a tree from multiple rowTrees
++ mergeSEs: match rows based on all available taxonomy level data on rowData

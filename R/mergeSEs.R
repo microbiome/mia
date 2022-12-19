@@ -305,6 +305,8 @@ setMethod("right_join", signature = c(x = "ANY"),
 #' @importFrom SingleCellExperiment SingleCellExperiment
 .merge_SEs <- function(x, class, join, assay_name, 
                       missing_values, collapse_samples, verbose){
+    # Add rowData info to rownames
+    x <- lapply(x, FUN = .add_rowdata_to_rownames)
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
@@ -384,7 +386,34 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( !is.null(refSeqs) ){
         tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
     }
+    # Adjust rownames
+    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
+    rownames(tse) <- rowData(tse)[[rownames_name]]
+    rowData(tse)[[rownames_name]] <- NULL
     return(tse)
+}
+
+########################### .add_rowdata_to_rownames ###########################
+# This function adds taxonomy information to rownames to enable more specific match
+# between rows
+
+# Input: (Tree)SE
+# Output: (Tree)SE with rownames that include all taxonomy information
+.add_rowdata_to_rownames <- function(x){
+    # Add rownames to rowData
+    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
+    rowData(x)[[rownames_name]] <- rownames(x)
+    # Get rowData
+    rd <- rowData(x)
+    # Get taxonomy_info
+    taxonomy_info <- rd[ , match( c(tolower(TAXONOMY_RANKS), rownames_name), 
+                                  tolower(colnames(rd)), nomatch = 0 ), 
+                         drop = FALSE]
+    # Combine taxonomy info
+    rownames <- apply(taxonomy_info, 1, paste0, collapse = "_")
+    # Add new rownames
+    rownames(x) <- rownames
+    return(x)
 }
 
 ############################ .check_and_add_refSeqs ############################
@@ -702,43 +731,61 @@ setMethod("right_join", signature = c(x = "ANY"),
     allowed_classes <- c("TreeSummarizedExperiment", "SingleCellExperiment", "SummarizedExperiment")
     
     # Get the class based on hierarchy TreeSE --> SCE --> SE
-    if( all( unlist( lapply(x, is, class2 = allowed_classes[[1]]) ) ) ){
+    # and check that objects are in correct format
+    classes <- lapply(x, .check_object_for_merge)
+    classes <- unlist(classes)
+    # Get the shared class that is highest in hierarchy
+    if( all( classes %in% allowed_classes[1] ) ){
         class <- allowed_classes[1]
-    } else if( all( unlist( lapply(x, is, class2 = allowed_classes[[2]]) ) ) ){
+    } else if( all( classes %in% allowed_classes[1:2] ) ){
         class <- allowed_classes[2]
-    } else if( all( unlist( lapply(x, is, class2 = allowed_classes[[3]]) ) ) ){
+    } else {
         class <- allowed_classes[3]
-    # If there is an object that does not belong to these classes give an error
-    } else{
-        stop("Input includes an object that is not 'SummarizedExperiment'.",
-             call. = FALSE)
     }
+    
     # If there are multiple classes, give a warning
-    if( length(unique( unlist(lapply(x, function(y){ class(y)})) )) > 1 ){
+    if( length(unique( classes )) > 1 ){
         warning("The Input consist of multiple classes. ",
                 "The output is '", class, "'.",
                 call. = FALSE)
     }
-    # Check that there are no object with no dimensions
-    if( any(unlist(lapply(x, FUN = function(y){ nrow(y) == 0 || ncol(y) == 0}))) ){
-        stop("Input includes an object that has either no columns or/and no rows.",
-             call. = FALSE)
-    }
-    # Check if there are no colnames
-    if( any(unlist( lapply(x, FUN = function(y){is.null(colnames(y))}) )) ){
-        stop("Input includes object(s) whose colnames is NULL. Please add ",
-             "colnames.",
-             call. = FALSE)
-    }
-    # Check if there are no rownames
-    if( any(unlist( lapply(x, FUN = function(y){is.null(rownames(y))}) )) ){
-        stop("Input includes object(s) whose rownames is NULL. Please add ",
-             "rownames.",
-             call. = FALSE)
-    }
     return(class)
 }
 
+########################### .check_object_for_merge ############################
+# This function checks an object that it is in correct format. Additionally, it
+# returns its class
+
+# Input: (Tree)SE
+# Output: Class of (Tree)SE
+.check_object_for_merge <- function(x){
+    # Check that the class matches with supported ones
+    if( !is(x, "SummarizedExperiment") ){
+        stop("Input includes an object that is not 'SummarizedExperiment'.",
+             call. = FALSE)
+    }
+    # Check that there are no object with no dimensions
+    if( ncol(x) == 0 || nrow(x) == 0 ){
+        stop("Input includes an object that has either no columns or/and no rows.",
+             call. = FALSE)
+    }
+    # Check that object has row/colnames
+    if( is.null(rownames(x)) || is.null(colnames(x)) ){
+        stop("Input includes object(s) whose rownames and/or colnames is NULL. ",
+             "Please add them.",
+             call. = FALSE)
+    }
+    # Check if the col/rownames are duplicated
+    if( any(duplicated(rownames(x))) || any(duplicated(colnames(x))) ){
+        stop("Input includes object(s) whose rownames and/or colnames include ",
+             "duplicates. Please make them unique.",
+             call. = FALSE)
+    }
+    # Get class
+    class <- class(x)
+    return(class)
+    
+}
 ########################### .assays_cannot_be_found ############################
 # This function checks that the assay(s) can be found from TreeSE objects of a list.
 
@@ -858,10 +905,11 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Merge two assays into one
     assay <- .join_two_tables(assay1, assay2, join)
     
-    # Fill missing values
-    assay[ is.na(assay) ] <- missing_values
     # Convert into matrix
     assay <- as.matrix(assay)
+    
+    # Fill missing values
+    assay[ is.na(assay) ] <- missing_values
     
     # Order the assay based on rowData and colData
     assay <- assay[ match(rownames(rd), rownames(assay)), , drop = FALSE ]

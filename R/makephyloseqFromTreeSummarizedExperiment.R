@@ -8,13 +8,17 @@
 #'
 #' @param assay_name A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   included in the phyloseq object that is created. By default, it is counts
-#'   table.
+#'   included in the phyloseq object that is created. 
+#'   (By default: \code{assay_name = "counts"})
 #'   
 #' @param abund_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
+#'   
+#' @param tree_name a single \code{character} value for specifying which
+#'   tree will be included in the phyloseq object that is created, 
+#'   (By default: \code{tree_name = "phylo"})
 #'
 #' @param ... additional arguments
 #'
@@ -59,7 +63,7 @@ setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
 #' @export
 setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts"){
+    function(x, assay_name = abund_values, abund_values = "counts", ...){
         # Input check
         .require_package("phyloseq")
         # Check that tse do not have zero rows
@@ -115,7 +119,18 @@ setMethod("makePhyloseqFromTreeSE",
 #' @export
 setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ...){
+    function(x, tree_name = "phylo", ...){
+        # If rowTrees exist, check tree_name
+        if( length(x@rowTree) > 0 ){
+            .check_rowTree_present(tree_name, x)
+            # Subset the data based on the tree
+            x <- x[ rowLinks(x)$whichTree == tree_name, ]
+            add_phy_tree <- TRUE
+        } else{
+            add_phy_tree <- FALSE
+        }
+        #
+        
         # phyloseq and tree objects require nonduplicated rownames. If there are 
         # duplicated rownames, they are converted so that they are unique
         if( any(duplicated(rownames(x))) ){
@@ -134,18 +149,10 @@ setMethod("makePhyloseqFromTreeSE",
             # Adds otu_table to the list
             args[["otu_table"]] <- obj
         }
-
-        # If rowTree has information, stores it to phy_tree and converts is to
-        # phyloseq's phy_tree.
-        if(!( length(rowTree(x)) == 0 || is.null(rowTree(x)) )){
-            # If rowTree exists, checks if the rowTree match with rownames:
-            # tips labels are found from rownames
-            if( any(!( rowTree(x)$tip) %in% rownames(x)) ){
-                # If rowtree do not match, tree is pruned
-                x <- .get_x_with_pruned_tree(x)
-            }
-            phy_tree <- rowTree(x)
-            phy_tree <- phyloseq::phy_tree(phy_tree)
+        
+        # Add phylogenetic tree
+        if( add_phy_tree ){
+            phy_tree <- .get_rowTree_for_phyloseq(x, tree_name)
             # If the object is a phyloseq object, adds phy_tree to it
             if(is(obj,"phyloseq")){
                 phyloseq::phy_tree(obj) <- phy_tree
@@ -154,18 +161,23 @@ setMethod("makePhyloseqFromTreeSE",
                 args[["phy_tree"]] <- phy_tree
             }
         }
-
+        
         # If referenceSeq has information, stores it to refseq and converts is
         # to phyloseq's refseq.
-        if(!( length(referenceSeq(x)) == 0 || is.null(referenceSeq(x)) )){
-            refseq <- referenceSeq(x)
-            refseq <- phyloseq::refseq(refseq)
-            # If the object is a phyloseq object, adds refseq to it
-            if(is(obj,"phyloseq")){
-                obj <- phyloseq::merge_phyloseq(obj, refseq)
-            } else{
-                # Adds to the list
-                args[["refseq"]] <- refseq
+        if( !is.null(referenceSeq(x)) ){
+            # Get referenceSeqs
+            refseq <- .get_referenceSeq_for_phyloseq(x, ...)
+            # IF refSeq passed the test, add it
+            if( !is.null(refseq) ){
+                # Convert it to phyloseq object
+                refseq <- phyloseq::refseq(refseq)
+                # If the object is a phyloseq object, adds refseq to it
+                if(is(obj,"phyloseq")){
+                    obj <- phyloseq::merge_phyloseq(obj, refseq)
+                } else{
+                    # Adds to the list
+                    args[["refseq"]] <- refseq
+                }
             }
         }
         
@@ -195,18 +207,66 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
     })
 
 ################################ HELP FUNCTIONS ################################
-
-.get_x_with_pruned_tree <- function(x){
+# If tips do not match with rownames, prune the tree
+.get_x_with_pruned_tree <- function(x, tree_name){
+    # Get rowLinks
+    row_links <- rowLinks(x)
     # Gets node labels
-    node_labs <- rowLinks(x)$nodeLab
-    # Gets the corresponding rownames
-    node_labs_rownames <- rownames(rowLinks(x))
+    node_labs <- row_links[ , "nodeLab"]
     # Prunes the tree
     tree_pruned <- ape::keep.tip(rowTree(x), node_labs)
     # Replace tip labels with corresponding rownames
-    tree_pruned$tip.label <- node_labs_rownames
+    tree_pruned$tip.label <- rownames(x)
     # Assigns the pruned tree back to TSE object
     rowTree(x) <- tree_pruned
-    warning("rowTree is pruned to match rownames.")
+    warning("rowTree is pruned to match rownames.", call. = FALSE)
     return(x)
+}
+
+# In phyloseq, tips and rownames must match
+.get_rowTree_for_phyloseq <- function(x, tree_name){
+    # Check if the rowTree's tips match with rownames:
+    # tips labels are found from rownames
+    if( any(!( rowTree(x, tree_name)$tip) %in% rownames(x)) ){
+        # If rowtree do not match, tree is pruned
+        x <- .get_x_with_pruned_tree(x, tree_name)
+    }
+    # Get rowTree
+    phy_tree <- rowTree(x, tree_name)
+    # Convert rowTree to phyloseq object
+    phy_tree <- phyloseq::phy_tree(phy_tree)
+        
+    return(phy_tree)
+}
+
+.get_referenceSeq_for_phyloseq <- function(x, referenceSeq = 1, ...){
+    # Get reference seqs
+    refSeqs <- referenceSeq(x)
+    # Is referenceSeq a list / does it contain multiple DNA sets
+    is_list <- is(refSeqs, "DNAStringSetList")
+    
+    # Take only one set, if it is a list
+    if( is_list ){
+        # Check referenceSeq
+        if( !( (.is_non_empty_string(referenceSeq) && referenceSeq %in% names(refSeqs)) ||
+            (.is_an_integer(referenceSeq) && (referenceSeq>0 && referenceSeq<=length(refSeqs))) )
+            ){
+            stop("'referenceSeq' must be a non-empty single character value or an integer ",
+                 "specifying the DNAStringSet from DNAStringSetList.",
+                 call. = FALSE)
+        }
+        # Get specified referenceSeq
+        refSeqs <- refSeqs[[referenceSeq]]
+        warning("Use 'referenceSeq' to specify DNA set from DNAStringSetList. ",
+                "Current choice is '", referenceSeq, "'.", 
+                call. = FALSE)
+    }
+    # Check if all rownames have referenceSeqs
+    if( !(all(rownames(x) %in% names(refSeqs)) &&
+        all(names(refSeqs) %in% rownames(x) )) ){
+        warning("referenceSeq does not match with rownames so they are discarded.",
+                call. = FALSE)
+        refSeqs <- NULL
+    }
+    return(refSeqs)
 }
