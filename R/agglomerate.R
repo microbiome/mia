@@ -110,7 +110,19 @@
 #' # use 'remove_empty_ranks' to remove columns that include only NAs
 #' x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
 #' head(rowData(x4))
-#'
+#' 
+#' # If assay contains NAs, you might want to consider replacing them since summing-up
+#' # NAs lead to NA
+#' x5 <- GlobalPatterns
+#' # Replace first value with NA
+#' assay(x5)[1,1] <- NA
+#' x6 <- agglomerateByRank(x5, "Kingdom")
+#' head( assay(x6) )
+#' # Replace NAs with 0. It is justified when we are summing-up counts
+#' assay(x5)[ is.na(assay(x5)) ] <- 0
+#' x6 <- agglomerateByRank(x5, "Kingdom")
+#' head( assay(x6) )
+#' 
 #' ## Look at enterotype dataset...
 #' data(enterotype)
 #' ## print the available taxonomic ranks. Shows only 1 rank available
