@@ -374,4 +374,12 @@ test_that("makePhyloseqFromTreeSE", {
     # Test that rowTree is in phy_tree
     expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
     
+    # Test that merging objects lead to correct phyloseq
+    tse <- mergeSEs(GlobalPatterns, esophagus, missing_values = 0)
+    pseq <- makePhyloseqFromTreeSE(tse)
+    
+    tse_compare <- tse[ rownames(GlobalPatterns), ]
+    pseq_compare <- makePhyloseqFromTreeSE(tse_compare)
+    
+    expect_equal(phyloseq::otu_table(pseq), phyloseq::otu_table(pseq_compare))
 })
