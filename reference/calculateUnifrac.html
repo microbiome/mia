@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.4</span>
       </span>
     </div>
 
@@ -65,7 +65,8 @@ object.</p>
 <span>  <span class="va">tree</span>,</span>
 <span>  weighted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  normalized <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span></span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment,missing</span></span>
@@ -84,7 +85,9 @@ object.</p>
 <span>  <span class="va">tree</span>,</span>
 <span>  weighted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  normalized <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span></span>
+<span>  nodeLab <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -161,6 +164,13 @@ tree will be used in calculation.
 <dd><p>Logical scalar, is x transposed with cells in rows, i.e.,
 is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: <code>transposed = FALSE</code>)</p></dd>
+
+
+<dt>nodeLab</dt>
+<dd><p>if <code>x</code> is a matrix,
+a <code>character</code> vector specifying links between rows/columns and nodes of <code>tree</code>.
+The length must equal the number of rows/columns of <code>x</code>. Furthermore, all the
+node labs must be present in <code>tree</code>.</p></dd>
 
 </dl></div>
     <div id="value">
