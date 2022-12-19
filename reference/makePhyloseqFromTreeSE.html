@@ -19,7 +19,7 @@ from assay is added to the phyloseq object."><!-- mathjax --><script src="https:
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
       </span>
     </div>
 
@@ -60,10 +60,15 @@ from <code>assay</code> is added to the phyloseq object.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, assay_name <span class="op">=</span> <span class="va">abund_values</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
+<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, tree_name <span class="op">=</span> <span class="st">"phylo"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -84,8 +89,8 @@ from <code>assay</code> is added to the phyloseq object.</p>
 <dt>assay_name</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
-included in the phyloseq object that is created. By default, it is counts
-table.</p></dd>
+included in the phyloseq object that is created.
+(By default: <code>assay_name = "counts"</code>)</p></dd>
 
 
 <dt>abund_values</dt>
@@ -93,6 +98,12 @@ table.</p></dd>
 assay to use for calculation.
 (Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
 will be disabled.)</p></dd>
+
+
+<dt>tree_name</dt>
+<dd><p>a single <code>character</code> value for specifying which
+tree will be included in the phyloseq object that is created,
+(By default: <code>tree_name = "phylo"</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -152,7 +163,7 @@ phyloseq object from TreeSummarizedExperiment object.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
