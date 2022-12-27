@@ -111,8 +111,10 @@ added. The numeric value specifies the value of pseudocount.}
 \item{threshold}{A numeric value for setting threshold for pa transformation.
 By default it is 0. (Only used for \code{method = "pa"})}
 
-\item{...}{additional arguments passed on to \code{vegan::decostand}:
+\item{...}{additional arguments passed on to \code{vegan:decostand}:
 \itemize{
+\item{\code{reference}:} {A single character or numeric value to specify a sample
+when calculating ALR. (default: \code{reference = 1})}
 \item{\code{reference_values}:} {A single value which will be used to fill
 reference sample's column in returned assay.
 (default: \code{refernce_values = NA})}

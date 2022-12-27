@@ -299,6 +299,35 @@ test_that("transformCounts", {
         expect_error(mia::transformSamples(tse, method = "z"))
         expect_error(mia::transformCounts(tse, method = "z"))
         
+        # Test that transformations are equal to ones directly from vegan
+        # clr
+        tse <- transformSamples(tse, method = "relabundance")
+        tse <- transformSamples(tse, assay_name = "relabundance", method = "clr",
+                                pseudocount = 4)
+        actual <- assay(tse, "clr")
+        compare <- vegan::decostand(assay(tse, "relabundance"), method = "clr",
+                                    pseudocount = 4, MARGIN = 2)
+        expect_equal(actual, compare)
+        # rclr
+        tse <- transformSamples(tse, assay_name = "relabundance", method = "rclr")
+        actual <- assay(tse, "rclr")
+        compare <- vegan::decostand(assay(tse, "relabundance"), method = "rclr",
+                                    MARGIN = 2)
+        expect_equal(actual, compare)
+        # alr
+        tse <- transformSamples(tse, assay_name = "relabundance", method = "alr",
+                                pseudocount = 4, reference = 2)
+        actual <- assay(tse, "alr")
+        compare <- vegan::decostand(assay(tse, "relabundance"), method = "alr",
+                                    pseudocount = 4, reference = 2, MARGIN = 2)
+        # Compare attributes separately because their dimensions differ
+        attr1 <- attributes(actual)[c("parameters", "decostand")]
+        actual <- actual[, -2]
+        attributes(actual) <- NULL
+        attr2 <- attributes(compare)[c("parameters", "decostand")]
+        attributes(compare) <- NULL
+        expect_equal(actual, compare)
+        expect_equal(attr1, attr2)
     }
 
     # TSE object

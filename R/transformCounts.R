@@ -401,7 +401,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     # Input check end
     
     # apply pseudocount, if it is numeric
-    if( is.numeric(pseudocount) ){
+    # in clr and alr, the pseudocount is handled in vegan::decostand
+    if( is.numeric(pseudocount) && !method %in% c("clr", "rclr", "alr") ){
         assay <- .apply_pseudocount(assay, pseudocount)
     }
     # Get transformed table
@@ -409,12 +410,13 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
         .get_transformed_table(assay = assay,
                                method = method,
                                threshold = threshold,
+                               pseudocount = pseudocount,
                                ...)
     return(transformed_table)
 }
 
 # Chooses which transformation function is applied
-.get_transformed_table <- function(assay, method, threshold, ...){
+.get_transformed_table <- function(assay, method, threshold, pseudocount, ...){
     # Function is selected based on the "method" variable
     FUN <- switch(method,
                   relabundance = .calc_rel_abund,
@@ -433,6 +435,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
             list(mat = assay,
                  threshold = threshold,
                  method = method,
+                 pseudocount = pseudocount,
                  ...))
 }
 
@@ -479,7 +482,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom DelayedMatrixStats colSums2
-.calc_clr <- function(mat, method = "clr", ...){
+.calc_clr <- function(mat, method = "clr", pseudocount = NULL, ...){
     # Calculate colSums
     colsums <- colSums2(mat, na.rm = TRUE)
     # Check that they are equal; affects the result of CLR. CLR expects a fixed
@@ -491,11 +494,22 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                 call. = FALSE)
     }
     # Calculate CLR
-    mat <- vegan::decostand(mat, method = method, MARGIN = 2)
+    if( method == "clr" ){
+        mat <- vegan::decostand(mat, method = method, pseudocount = pseudocount,
+                                MARGIN = 2)
+    } else{
+        if( !is.null(pseudocount) ){
+            warning("'pseudocount' is not taken into account when 'rclr' is applied.",
+                    call. = FALSE)
+        }
+        mat <- vegan::decostand(mat, method = method, MARGIN = 2)
+    }
+    
     return(mat)
 }
 
-.calc_alr <- function(mat, reference = 1, reference_values = NA, ...){
+.calc_alr <- function(mat, reference = 1, reference_values = NA,
+                      pseudocount = 0, ...){
     # Reference is checked in decostand
     # Check reference_values
     if( length(reference_values) != 1 ){
@@ -508,7 +522,9 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     
     # Calculate ALR matrix
     mat <- vegan::decostand(mat, method = "alr", reference = reference,
-                            MARGIN = 2)
+                            pseudocount = pseudocount, MARGIN = 2)
+    # Store attributes
+    attributes <- attributes(mat)
     
     # Get the name of reference sample
     reference_name = setdiff(orig_colnames, colnames(mat))
@@ -519,6 +535,9 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     mat <- cbind(mat, reference_sample)
     # Preserve the original order
     mat <- mat[ , orig_colnames ]
+    # Add those attributes that were related to calculation
+    attributes(mat) <- c(attributes(mat),
+                         attributes[ !names(attributes) %in% c("dim", "dimnames") ])
     return(mat)
 }
 
