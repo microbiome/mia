@@ -30,10 +30,8 @@
 #'   
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
-#'   \item{\code{reference}:} {A single character or numeric value to specify a sample
-#'   when calculating ALR. (default: \code{reference = 1})}
 #'   \item{\code{reference_values}:} {A single value which will be used to fill 
-#'   reference sample's column in returned assay. 
+#'   reference sample's column in returned assay when calculating alr. 
 #'   (default: \code{refernce_values = NA})}
 #' }
 #' @details
