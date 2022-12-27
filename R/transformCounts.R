@@ -27,9 +27,15 @@
 #'
 #' @param threshold A numeric value for setting threshold for pa transformation.
 #'   By default it is 0. (Only used for \code{method = "pa"})
-#'
-#' @param ... additional arguments
-#'
+#'   
+#' @param ... additional arguments passed on to \code{vegan:decostand}:
+#' \itemize{
+#'   \item{\code{reference}:} {A single character or numeric value to specify a sample
+#'   when calculating ALR. (default: \code{reference = 1})}
+#'   \item{\code{reference_values}:} {A single value which will be used to fill 
+#'   reference sample's column in returned assay. 
+#'   (default: \code{refernce_values = NA})}
+#' }
 #' @details
 #'
 #' These functions provide a variety of options for transforming abundance data.
@@ -54,31 +60,15 @@
 #' apply transformations to the abundance table (assay). The available transformation methods include:
 #'
 #' \itemize{
-#'
-#' \item{'clr'}{ Centered log ratio (clr) transformation aims to remove
-#' compositionality effect; it is also used to
-#' skewness and to center data.  
 #' 
-#' If the data contains zeros, pseudocount (commonly the smallest 
-#' positive value of the data) must be added since clr is a logarithmic
-#' transformation that only allows positive values.
-#' (See e.g. Gloor et al. 2017.)
+#' \item{'alr'}{ Additive log ratio (clr) transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.}
 #'
-#' \deqn{clr = log_{10}\frac{x{g(x)}} = log_{10}x - log_{10}\mu}{%
-#' clr = log10(x/g(x)) = log10 x - log10 \mu}
-#' where \eqn{x} is a single value, g(x) is geometric mean of
-#' sample-wise values, and \eqn{\mu} is an arithmetic mean of 
-#' sample-wise values.}
+#' \item{'clr'}{ Centered log ratio (clr) transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.}
 #'
-#' \item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
-#' clr is that logarithmic transformations lead to undefined values when zeros
-#' are present in the data. In rclr, values are divided by geometric mean
-#' of observed taxa and zero values are not taken into account. Zero values will
-#' stay as zeroes. Because of high-dimensionality of data, rclr's geometric mean of 
-#' observed taxa is a good approximation to the true geometric mean.
-#' (For details, see Martino et al. 2019.).
-#'
-#' }
+#' \item{'rclr'}{ Robust clr transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
 #' \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 #' extreme data points. It can be utilize for clustering or ordination analysis.
@@ -434,7 +424,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                   clr = .calc_clr,
                   rank = .calc_rank,
                   z = .calc_ztransform,
-                  rclr = .calc_rclr,
+                  rclr = .calc_clr,
                   alr = .calc_alr
                   )
 
@@ -489,7 +479,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom DelayedMatrixStats colSums2
-.calc_clr <- function(mat, ...){
+.calc_clr <- function(mat, method = "clr", ...){
     # Calculate colSums
     colsums <- colSums2(mat, na.rm = TRUE)
     # Check that they are equal; affects the result of CLR. CLR expects a fixed
@@ -501,49 +491,34 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
                 call. = FALSE)
     }
     # Calculate CLR
-    mat <- vegan::decostand(mat, method = "clr", MARGIN = 2)
-    return(mat)
-}
-
-#' @importFrom DelayedMatrixStats colSums2
-.calc_rclr <- function(mat, ...){
-    # Calculate colSums
-    colsums <- colSums2(mat, na.rm = TRUE)
-    # Check that they are equal; affects the result of CLR. CLR expects a fixed
-    # constant
-    if( round(max(colsums)-min(colsums), 3) != 0  ){
-        warning("All the total abundances of samples do not sum-up to a fixed constant.\n",
-                "Please consider to apply, e.g., relative transformation in prior to ",
-                "CLR transformation.",
-                call. = FALSE)
-    }
-    # Calculate CLR
-    mat <- vegan::decostand(mat, method = "rclr", MARGIN = 2)
+    mat <- vegan::decostand(mat, method = method, MARGIN = 2)
     return(mat)
 }
 
 .calc_alr <- function(mat, reference = 1, reference_values = NA, ...){
+    # Reference is checked in decostand
     # Check reference_values
     if( length(reference_values) != 1 ){
         stop("'reference_values' must be a single value specifying the values of ",
              "the reference sample.",
              call. = FALSE)
     }
-    # Reference sample
-    reference_name <- colnames(mat)[reference]
     # Get the original order of samples
-    sample_order <- colnames(mat)
+    orig_colnames <- colnames(mat)
     
     # Calculate ALR matrix
-    mat <- vegan::decostand(mat, method = "alr", reference = reference, MARGIN = 2)
+    mat <- vegan::decostand(mat, method = "alr", reference = reference,
+                            MARGIN = 2)
     
+    # Get the name of reference sample
+    reference_name = setdiff(orig_colnames, colnames(mat))
     # Reference sample as NAs or with symbols that are specified by user
     reference_sample <- matrix(reference_values, nrow = nrow(mat), ncol = 1,  
                                dimnames = list(rownames(mat), reference_name) )
     # Add reference sample
     mat <- cbind(mat, reference_sample)
     # Preserve the original order
-    mat <- mat[ , sample_order ]
+    mat <- mat[ , orig_colnames ]
     return(mat)
 }
 

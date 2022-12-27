@@ -111,7 +111,12 @@ added. The numeric value specifies the value of pseudocount.}
 \item{threshold}{A numeric value for setting threshold for pa transformation.
 By default it is 0. (Only used for \code{method = "pa"})}
 
-\item{...}{additional arguments}
+\item{...}{additional arguments passed on to \code{vegan::decostand}:
+\itemize{
+\item{\code{reference_values}:} {A single value which will be used to fill
+reference sample's column in returned assay.
+(default: \code{refernce_values = NA})}
+}}
 }
 \value{
 \code{transformCounts}, \code{transformSamples}, \code{transformFeatures},
@@ -146,30 +151,14 @@ apply transformations to the abundance table (assay). The available transformati
 
 \itemize{
 
-\item{'clr'}{ Centered log ratio (clr) transformation aims to remove
-compositionality effect; it is also used to
-skewness and to center data.
+\item{'alr'}{ Additive log ratio (clr) transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-If the data contains zeros, pseudocount (commonly the smallest
-positive value of the data) must be added since clr is a logarithmic
-transformation that only allows positive values.
-(See e.g. Gloor et al. 2017.)
+\item{'clr'}{ Centered log ratio (clr) transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\deqn{clr = log_{10}\frac{x{g(x)}} = log_{10}x - log_{10}\mu}{%
-clr = log10(x/g(x)) = log10 x - log10 \mu}
-where \eqn{x} is a single value, g(x) is geometric mean of
-sample-wise values, and \eqn{\mu} is an arithmetic mean of
-sample-wise values.}
-
-\item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
-clr is that logarithmic transformations lead to undefined values when zeros
-are present in the data. In rclr, values are divided by geometric mean
-of observed taxa and zero values are not taken into account. Zero values will
-stay as zeroes. Because of high-dimensionality of data, rclr's geometric mean of
-observed taxa is a good approximation to the true geometric mean.
-(For details, see Martino et al. 2019.).
-
-}
+\item{'rclr'}{ Robust clr transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
 \item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
 extreme data points. It can be utilize for clustering or ordination analysis.
