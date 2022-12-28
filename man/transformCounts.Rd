@@ -17,7 +17,8 @@ transformSamples(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
   name = method,
   pseudocount = NULL,
   threshold = 0,
@@ -28,7 +29,8 @@ transformSamples(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
   name = method,
   pseudocount = NULL,
   threshold = 0,
@@ -39,7 +41,9 @@ transformCounts(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "max",
+    "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize",
+    "total", "z"),
   name = method,
   pseudocount = NULL,
   threshold = 0,
@@ -61,7 +65,7 @@ transformFeatures(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("log10", "pa", "z"),
+  method = c("log", "log10", "max", "pa", "range", "standardize", "z"),
   name = method,
   pseudocount = NULL,
   threshold = 0
@@ -71,7 +75,7 @@ transformFeatures(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("log10", "pa", "z"),
+  method = c("log", "log10", "max", "pa", "range", "standardize", "z"),
   name = method,
   pseudocount = NULL,
   threshold = 0
@@ -154,54 +158,53 @@ apply transformations to the abundance table (assay). The available transformati
 \item{'alr'}{ Additive log ratio (alr) transformation, please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
+\item{'chi.square'}{ Chi square transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
+
 \item{'clr'}{ Centered log ratio (clr) transformation, please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
-\item{'rclr'}{ Robust clr transformation, please refer to
+\item{'frequency'}{ Frequency transformation, please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
-\item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
-extreme data points. It can be utilize for clustering or ordination analysis.
-(See e.g. Legendre & Gallagher 2001.)
+\item{'hellinger'}{ Hellinger transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\deqn{hellinger = \sqrt{\frac{x}{x_{tot}}}}{%
-hellinger = sqrt(x/x_tot)}
-where \eqn{x} is a single value and \eqn{x_{tot}} is the sum of
-all values}
+\item{'log'}{ Logartihmic transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
 \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
-
 \deqn{log10 = \log_{10} x}{%
 log10 = log10(x)}
 where \eqn{x} is a single value of data.}
+
+\item{'Normalize'}{ Normalize transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
 \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
 than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent).
 By default, threshold is 0.}
 
-\item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant
-taxa get lower value and more abundant taxa bigger value. The implementation is
-based on the colRanks function with ties.method="first".}
+\item{'rank'}{ Rank transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\item {'relabundance'}{ Transforms abundances to relative. Generally, all microbiome
-data are compositional. That is, e.g., because all measuring instruments have their capacity limits.
-To make results comparable with other results, values must be relative. (See e.g. Gloor et al. 2017.)
+\item{'rclr'}{ Robust clr transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\deqn{relabundance = \frac{x}{x_{tot}}}{%
-relabundance = x/x_tot}
-where \eqn{x} is a single value and \eqn{x_{tot}} is the sum of
-all values.}
+\item{'relabundance'}{ Relative transformation (alias for 'total'), please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\item{'z'}{ Z-transformation, Z score transformation, or Z-standardization normalizes
-the data by shifting (to mean \eqn{\mu}) and scaling (to standard deviation \eqn{\sigma}).
-Z-transformation can be done with function \code{ZTransform}. It is done per rows (features / taxa),
-unlike most other transformations. This is often preceded by log10p or clr transformation.
-In other words, single value is standardized with respect of feature's values.
+\item{'rrank'}{ Relative rank transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\deqn{z = \frac{x - \mu}{\sigma}}{%
-z = (x - µ)/σ}
-where \eqn{x} is a single value, \eqn{\mu} is the mean of the feature, and
-\eqn{\sigma} is the standard deviation of the feature.}
+\item{'standardize'}{ Z transformation (alias for 'z'), please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
+
+\item{'total'}{ Relative transformation (alias for 'relabundance'), please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
+
+\item{'z'}{ Z transformation (alias for 'standardize'), please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
 }
 }
