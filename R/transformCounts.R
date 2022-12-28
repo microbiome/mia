@@ -82,7 +82,7 @@
 #' log10 = log10(x)}
 #' where \eqn{x} is a single value of data.}
 #' 
-#' \item{'Normalize'}{ Normalize transformation, please refer to 
+#' \item{'normalize'}{ Normalize transformation, please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
 #' \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
@@ -481,7 +481,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     colsums <- colSums2(mat, na.rm = TRUE)
     # Check that they are equal; affects the result of CLR. CLR expects a fixed
     # constant
-    if( round(max(colsums)-min(colsums), 3) != 0  ){
+    if( all.equal(max(colsums), min(colsums), tolerance = 0.01) ){
         warning("All the total abundances of samples do not sum-up to a fixed constant.\n",
                 "Please consider to apply, e.g., relative transformation in prior to ",
                 "CLR transformation.",
