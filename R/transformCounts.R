@@ -32,7 +32,7 @@
 #' \itemize{
 #'   \item{\code{reference_values}:} {A single value which will be used to fill 
 #'   reference sample's column in returned assay when calculating alr. 
-#'   (default: \code{refernce_values = NA})}
+#'   (default: \code{reference_values = NA})}
 #' }
 #' @details
 #'
@@ -59,7 +59,7 @@
 #'
 #' \itemize{
 #' 
-#' \item{'alr'}{ Additive log ratio (clr) transformation, please refer to 
+#' \item{'alr'}{ Additive log ratio (alr) transformation, please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #'
 #' \item{'clr'}{ Centered log ratio (clr) transformation, please refer to 

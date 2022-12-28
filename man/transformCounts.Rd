@@ -113,11 +113,9 @@ By default it is 0. (Only used for \code{method = "pa"})}
 
 \item{...}{additional arguments passed on to \code{vegan:decostand}:
 \itemize{
-\item{\code{reference}:} {A single character or numeric value to specify a sample
-when calculating ALR. (default: \code{reference = 1})}
 \item{\code{reference_values}:} {A single value which will be used to fill
-reference sample's column in returned assay.
-(default: \code{refernce_values = NA})}
+reference sample's column in returned assay when calculating alr.
+(default: \code{reference_values = NA})}
 }}
 }
 \value{
@@ -153,7 +151,7 @@ apply transformations to the abundance table (assay). The available transformati
 
 \itemize{
 
-\item{'alr'}{ Additive log ratio (clr) transformation, please refer to
+\item{'alr'}{ Additive log ratio (alr) transformation, please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
 \item{'clr'}{ Centered log ratio (clr) transformation, please refer to
