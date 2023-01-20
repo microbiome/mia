@@ -42,9 +42,10 @@
 #' Available wrapper functions include:
 #'
 #' \itemize{
-#'
+#' \item{\code{transformCounts}} sample-wise (column-wise) or feature-wise
+#' (row-wise) transformation based on specified \code{MARGIN}.
+#' 
 #' \item{\code{transformSamples}} sample-wise (column-wise) transformation.
-#' Alias for \code{transformCounts}.
 #' 
 #' \item{\code{transformFeatures}} feature-wise (row-wise) transformation.
 #'
@@ -54,9 +55,9 @@
 #'
 #' }
 #' 
-#' Altogether, \code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
-#' apply transformations to the abundance table (assay).
-#' The available transformation methods include:
+#' Altogether, \code{transformCounts}, \code{transformSamples} and
+#' \code{transformFeatures} apply transformations to the abundance table
+#' (assay). The available transformation methods include:
 #'
 #' \itemize{
 #' 
@@ -75,20 +76,22 @@
 #' \item{'hellinger'}{ Hellinger transformation, please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
-#' \item{'log'}{ Logartihmic transformation, please refer to 
+#' \item{'log'}{ Logarithmic transformation, please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
-#' \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
+#' \item{'log10'}{ log10 transformation can be used for reducing the skewness
+#' of the data.
 #' \deqn{log10 = \log_{10} x}{%
 #' log10 = log10(x)}
 #' where \eqn{x} is a single value of data.}
 #' 
-#' \item{'log2'}{ log2 transformation can be used for reducing the skewness of the data.
+#' \item{'log2'}{ log2 transformation can be used for reducing the skewness of
+#' the data.
 #' \deqn{log2 = \log_{2} x}{%
 #' log2 = log2(x)}
 #' where \eqn{x} is a single value of data.}
 #' 
-#' \item{'normalize'}{ Normalize transformation, please refer to 
+#' \item{'normalize'}{ Make margin sum of squares equal to one. Please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
 #' \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
@@ -101,20 +104,23 @@
 #' \item{'rclr'}{ Robust clr transformation, please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
-#' \item{'relabundance'}{ Relative transformation (alias for 'total'), please refer to 
+#' \item{'relabundance'}{ Relative transformation (alias for 'total'
+#' when MARGIN = 2), please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
 #' \item{'rrank'}{ Relative rank transformation, please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
-#' \item{'standardize'}{ Z transformation (alias for 'z'), please refer to 
+#' \item{'standardize'}{ Scale 'x' to zero mean and unit variance (alias for
+#' 'z' when MARGIN = 1), please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
-#' \item{'total'}{ Relative transformation (alias for 'relabundance'), please refer to 
+#' \item{'total'}{ Divide by margin total (alias for
+#' 'relabundance' when MARGIN = 2), please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
-#' \item{'z'}{ Z transformation (alias for 'standardize'), please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item{'z'}{ Z transformation (alias for 'standardize' when MARGIN = 1),
+#' please refer to \code{\link[vegan:decostand]{decostand}} for details.}
 #'
 #' }
 #'
@@ -196,7 +202,9 @@ NULL
 setGeneric("transformSamples", signature = c("x"),
            function(x,
                     assay_name = abund_values, abund_values = "counts",
-                    method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
+                    method = c("alr", "clr", "frequency", "log", "log10",
+                               "log2", "max", "pa", "range", "rclr",
+                               "relabundance", "standardize"),
                     name = method,
                     ...
                     )
@@ -208,8 +216,9 @@ setGeneric("transformSamples", signature = c("x"),
 setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
     function(x,
             assay_name = abund_values, abund_values = "counts",
-            method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
-            name = method,
+            method =  c("alr", "clr", "frequency", "log", "log10", "log2",
+                        "max", "pa", "range", "rclr", "relabundance",
+                        "standardize"),
             ...
             ){
         # Input check
@@ -235,7 +244,11 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
 setGeneric("transformCounts", signature = c("x"),
            function(x,
                     assay_name = abund_values, abund_values = "counts",
-                    method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize", "total", "z"),
+                    method = c("alr", "chi.square", "clr", "frequency",
+                               "hellinger", "log", "log10", "log2", "max",
+                               "normalize", "pa", "range", "rank", "rclr",
+                               "relabundance", "rrank", "standardize", "total",
+                               "z"),
                     name = method,
                     ...)
                standardGeneric("transformCounts"))
@@ -246,7 +259,10 @@ setGeneric("transformCounts", signature = c("x"),
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
              assay_name = abund_values, abund_values = "counts",
-             method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize", "total", "z"),
+             method = c("alr", "chi.square", "clr", "frequency", "hellinger",
+                        "log", "log10", "log2", "max", "normalize", "pa",
+                        "range", "rank", "rclr", "relabundance", "rrank",
+                        "standardize", "total", "z"),
              name = method,
              ...){
         # Input check
@@ -293,7 +309,9 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
 setGeneric("transformFeatures", signature = c("x"),
            function(x,
                     assay_name = abund_values, abund_values = "counts",
-                    method = c("log", "log10", "log2", "max", "pa", "range", "standardize", "z"),
+                    method = c("alr", "chi.square", "hellinger", "log", "log10",
+                               "log2", "normalize", "pa", "range", "rank",
+                                "rrank", "total", "z"),
                     name = method,
                     ...)
                standardGeneric("transformFeatures"))
@@ -303,7 +321,9 @@ setGeneric("transformFeatures", signature = c("x"),
 setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
     function(x,
              assay_name = abund_values, abund_values = "counts",
-             method = c("log", "log10", "log2", "max", "pa", "range", "standardize", "z"),
+             method = c("alr", "chi.square", "hellinger", "log", "log10",
+                        "log2", "normalize", "pa", "range", "rank",
+                        "rrank", "total", "z"),
              name = method,
              ...){
         # Input check
