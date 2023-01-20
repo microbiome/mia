@@ -230,7 +230,6 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
             stop("'method' must be a non-empty single character value.",
                  call. = FALSE)
         }
-        method <- match.arg(method)
         # Input check end
         
         # Call general transformation function with MARGIN specified
@@ -325,7 +324,6 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
           stop("'method' must be a non-empty single character value.",
                call. = FALSE)
         }
-        method <- match.arg(method)
         # Input check end
 
         # Call general transformation function with MARGIN specified
@@ -432,8 +430,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 # Help function for transformSamples and transformFeatures, takes abundance table
 # as input and returns transformed table. This function utilizes vegan's
 # transformation functions.
-.apply_transformation_from_vegan <- function(mat, method, ref_vals = NA,
-                                             ...){
+.apply_transformation_from_vegan <- function(mat, method, ref_vals = NA, ...){
     # Input check
     # Check ref_vals
     if( length(ref_vals) != 1 ){
@@ -457,24 +454,17 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     }
     # If method is ALR, vegan drops one column/sample, because it is used
     # as a reference. To work with TreeSE, reference sample must be added back.
-    # Get the original order of samples
-    orig_colnames <- colnames(mat)
+    # Get the original order of samples/features
+    orig_dimnames <- dimnames(mat)
     # Call vegan::decostand and apply transformation
     transformed_table <- vegan::decostand(mat, method = method, ...)
-    print(transformed_table)
     # Add reference sample back if ALR
     if( method %in% c("alr") ){
         transformed_table <- .adjust_alr_table(
-            mat, orig_colnames = orig_colnames,
+            mat = transformed_table, orig_dimnames = orig_dimnames,
             ref_vals = ref_vals)
     }
     return(transformed_table)
-}
-
-#' @importFrom DelayedMatrixStats colSums2
-.calc_rel_abund <- function(mat, ...){
-    mat <- sweep(mat, 2, colSums2(mat, na.rm = TRUE), "/")
-    return(mat)
 }
 
 .calc_log10 <- function(mat, pseudocount, ...){
@@ -501,18 +491,37 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
-.adjust_alr_table <- function(mat, orig_colnames, ref_vals, ...){
+.adjust_alr_table <- function(mat, orig_dimnames, ref_vals){
     # Store attributes
     attributes <- attributes(mat)
-    # Get the name of reference sample
-    reference_name = setdiff(orig_colnames, colnames(mat))
+    # Get original and current sample/feature names and dimensions of reference
+    # based on what dimensions misses names
+    MARGIN <- ifelse(length(orig_dimnames[[1]]) == nrow(mat), 2, 1)
+    orig_names <- if(MARGIN == 1){orig_dimnames[[1]]} else {orig_dimnames[[2]]}
+    current_names <- if(MARGIN == 1){rownames(mat)} else {colnames(mat)}
+    nrow <- ifelse(MARGIN == 1, 1, nrow(mat))
+    ncol <- ifelse(MARGIN == 1, ncol(mat), 1)
+    # Get the name of reference sample/feature and names of other dimension
+    reference_name <- setdiff(orig_names, current_names)
+    var_names <- if(MARGIN == 1){colnames(mat)} else {rownames(mat)}
+    if(MARGIN == 1){
+        ref_dimnames <- list(reference_name, var_names)
+    } else {
+        ref_dimnames <- list(var_names, reference_name)
+        }
     # Reference sample as NAs or with symbols that are specified by user
-    reference_sample <- matrix(ref_vals, nrow = nrow(mat), ncol = 1,  
-                               dimnames = list(rownames(mat), reference_name) )
-    # Add reference sample
-    mat <- cbind(mat, reference_sample)
-    # Preserve the original order
-    mat <- mat[ , orig_colnames ]
+    reference_sample <- matrix(ref_vals, nrow = nrow, ncol = ncol,  
+                               dimnames = ref_dimnames)
+    # Add reference sample/feature
+    if(MARGIN == 1){
+        mat <- rbind(mat, reference_sample)
+        # Preserve the original order
+        mat <- mat[orig_names, ]
+    } else {
+        mat <- cbind(mat, reference_sample)
+        # Preserve the original order
+        mat <- mat[, orig_names]
+    }
     # Add those attributes that were related to calculation
     attributes(mat) <- c(attributes(mat),
                          attributes[ !names(attributes) %in%
