@@ -20,8 +20,6 @@ transformSamples(
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
   name = method,
-  pseudocount = NULL,
-  threshold = 0,
   ...
 )
 
@@ -32,8 +30,6 @@ transformSamples(
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
   name = method,
-  pseudocount = NULL,
-  threshold = 0,
   ...
 )
 
@@ -45,8 +41,6 @@ transformCounts(
     "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize",
     "total", "z"),
   name = method,
-  pseudocount = NULL,
-  threshold = 0,
   ...
 )
 
@@ -54,10 +48,10 @@ transformCounts(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "max",
+    "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize",
+    "total", "z"),
   name = method,
-  pseudocount = NULL,
-  threshold = 0,
   ...
 )
 
@@ -67,8 +61,7 @@ transformFeatures(
   abund_values = "counts",
   method = c("log", "log10", "max", "pa", "range", "standardize", "z"),
   name = method,
-  pseudocount = NULL,
-  threshold = 0
+  ...
 )
 
 \S4method{transformFeatures}{SummarizedExperiment}(
@@ -77,8 +70,7 @@ transformFeatures(
   abund_values = "counts",
   method = c("log", "log10", "max", "pa", "range", "standardize", "z"),
   name = method,
-  pseudocount = NULL,
-  threshold = 0
+  ...
 )
 
 ZTransform(x, ...)
@@ -109,18 +101,18 @@ method.}
 \item{name}{A single character value specifying the name of transformed
 abundance table.}
 
-\item{pseudocount}{NULL or numeric value deciding whether pseudocount is
-added. The numeric value specifies the value of pseudocount.}
-
-\item{threshold}{A numeric value for setting threshold for pa transformation.
-By default it is 0. (Only used for \code{method = "pa"})}
-
 \item{...}{additional arguments passed on to \code{vegan:decostand}:
 \itemize{
 \item{\code{reference_values}:} {A single value which will be used to fill
 reference sample's column in returned assay when calculating alr.
 (default: \code{reference_values = NA})}
 }}
+
+\item{pseudocount}{NULL or numeric value deciding whether pseudocount is
+added. The numeric value specifies the value of pseudocount.}
+
+\item{threshold}{A numeric value for setting threshold for pa transformation.
+By default it is 0. (Only used for \code{method = "pa"})}
 }
 \value{
 \code{transformCounts}, \code{transformSamples}, \code{transformFeatures},
@@ -151,7 +143,8 @@ Alias for \code{transformCounts}.
 }
 
 Altogether, \code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
-apply transformations to the abundance table (assay). The available transformation methods include:
+apply transformations to the abundance table (assay).
+The available transformation methods include:
 
 \itemize{
 
@@ -178,7 +171,7 @@ apply transformations to the abundance table (assay). The available transformati
 log10 = log10(x)}
 where \eqn{x} is a single value of data.}
 
-\item{'Normalize'}{ Normalize transformation, please refer to
+\item{'normalize'}{ Normalize transformation, please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
 \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
