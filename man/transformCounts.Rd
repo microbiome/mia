@@ -18,7 +18,8 @@ transformSamples(
   assay_name = abund_values,
   abund_values = "counts",
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
+    "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize",
+    "total"),
   name = method,
   ...
 )
@@ -28,7 +29,8 @@ transformSamples(
   assay_name = abund_values,
   abund_values = "counts",
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
+    "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize",
+    "total"),
   name = method,
   ...
 )
@@ -37,9 +39,9 @@ transformCounts(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "max",
-    "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize",
-    "total", "z"),
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
+    "standardize", "total", "z"),
   name = method,
   ...
 )
@@ -48,9 +50,9 @@ transformCounts(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "max",
-    "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize",
-    "total", "z"),
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
+    "standardize", "total", "z"),
   name = method,
   ...
 )
@@ -59,7 +61,7 @@ transformFeatures(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("log", "log10", "max", "pa", "range", "standardize", "z"),
+  method = c("log", "log10", "log2", "max", "pa", "range", "standardize", "z"),
   name = method,
   ...
 )
@@ -68,14 +70,14 @@ transformFeatures(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("log", "log10", "max", "pa", "range", "standardize", "z"),
+  method = c("log", "log10", "log2", "max", "pa", "range", "standardize", "z"),
   name = method,
   ...
 )
 
-ZTransform(x, ...)
+ZTransform(x, MARGIN = 1, ...)
 
-\S4method{ZTransform}{SummarizedExperiment}(x, ...)
+\S4method{ZTransform}{SummarizedExperiment}(x, MARGIN = 1, ...)
 
 relAbundanceCounts(x, ...)
 
@@ -103,9 +105,9 @@ abundance table.}
 
 \item{...}{additional arguments passed on to \code{vegan:decostand}:
 \itemize{
-\item{\code{reference_values}:} {A single value which will be used to fill
+\item{\code{ref_vals}:} {A single value which will be used to fill
 reference sample's column in returned assay when calculating alr.
-(default: \code{reference_values = NA})}
+(default: \code{ref_vals = NA})}
 }}
 
 \item{pseudocount}{NULL or numeric value deciding whether pseudocount is
@@ -169,6 +171,11 @@ The available transformation methods include:
 \item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
 \deqn{log10 = \log_{10} x}{%
 log10 = log10(x)}
+where \eqn{x} is a single value of data.}
+
+\item{'log2'}{ log2 transformation can be used for reducing the skewness of the data.
+\deqn{log2 = \log_{2} x}{%
+log2 = log2(x)}
 where \eqn{x} is a single value of data.}
 
 \item{'normalize'}{ Normalize transformation, please refer to
@@ -261,19 +268,6 @@ x <- ZTransform(transformCounts(x, method="clr", assay_name = "counts", pseudoco
 # relAbundanceCounts function.
 x <- relAbundanceCounts(x)
 head(assay(x, "relabundance"))
-}
-\references{
-Gloor GB, Macklaim JM, Pawlowsky-Glahn V & Egozcue JJ (2017)
-Microbiome Datasets Are Compositional: And This Is Not Optional.
-Frontiers in Microbiology 8: 2224. doi: 10.3389/fmicb.2017.02224
-
-Legendre P & Gallagher ED (2001)
-Ecologically meaningful transformations for ordination of species data.
-Oecologia 129: 271-280.
-
-Martino C, Morton JT, Marotz CA, Thompson LR, Tripathi A, Knight R & Zengler K
-(2019) A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
-mSystems 4: 1. doi: 10.1128/mSystems.00016-19
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

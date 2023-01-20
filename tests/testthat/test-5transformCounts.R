@@ -96,7 +96,16 @@ test_that("transformCounts", {
                      t(apply(as.matrix(t(assay(tse, "counts"))), 2, FUN=function(x){
                          log10(x+1)
                      })))
-
+        
+        ########################### LOG2 ######################################
+        # Calculates log2 transformation with pseudocount. Should be equal.
+        tmp <- mia::transformCounts(tse, method = "log2", pseudocount = 5)	
+        ass <- assays(tmp)$log2
+        expect_equal(as.matrix(ass),
+                     apply(as.matrix(assay(tse, "counts")), 2, FUN=function(x){
+                         log2(x+5)
+                     }))
+        
         ########################## PA ##########################################
         # Calculates pa transformation. Should be equal.
         actual <- assay(mia::transformCounts(tse, method = "pa"),"pa")
@@ -328,6 +337,19 @@ test_that("transformCounts", {
         attributes(compare) <- NULL
         expect_equal(actual, compare)
         expect_equal(attr1, attr2)
+        # hellinger
+        tse <- transformSamples(tse, assay_name = "counts", method = "hellinger",
+                                pseudocount = 2, reference = 2)
+        actual <- assay(tse, "hellinger")
+        compare <- vegan::decostand(assay(tse, "counts"), method = "hellinger",
+                                    pseudocount = 4, MARGIN = 2)
+        expect_equal(actual, compare)
+        # chi.squared
+        tse <- transformCounts(tse, assay_name = "counts", method = "chi.square")
+        actual <- assay(tse, "hellinger")
+        compare <- vegan::decostand(assay(tse, "counts"), method = "chi.square",
+                                    MARGIN = 1)
+        expect_equal(actual, compare)
     }
 
     # TSE object

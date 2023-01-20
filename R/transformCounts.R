@@ -118,21 +118,6 @@
 #'
 #' }
 #'
-#'
-#' @references
-#' Gloor GB, Macklaim JM, Pawlowsky-Glahn V & Egozcue JJ (2017)
-#' Microbiome Datasets Are Compositional: And This Is Not Optional.
-#' Frontiers in Microbiology 8: 2224. doi: 10.3389/fmicb.2017.02224
-#' 
-#' Legendre P & Gallagher ED (2001)
-#' Ecologically meaningful transformations for ordination of species data.
-#' Oecologia 129: 271-280.
-#'
-#' Martino C, Morton JT, Marotz CA, Thompson LR, Tripathi A, Knight R & Zengler K
-#' (2019) A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
-#' mSystems 4: 1. doi: 10.1128/mSystems.00016-19
-#'
-#'
 #' @return
 #' \code{transformCounts}, \code{transformSamples}, \code{transformFeatures}, 
 #' \code{relAbundanceCounts}, and \code{ZTransform} return \code{x} with additional, 
@@ -372,7 +357,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 )
 
 ###########################HELP FUNCTIONS####################################
-
+##############################.apply_transformation#############################
 # Help function for transformSamples and transformFeatures, takes abundance table
 # as input and returns transformed table. This function utilizes mia's
 # transformation functions.
@@ -432,8 +417,9 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(transformed_table)
 }
 
-# Help function for transformSamples and transformFeatures, takes abundance table
-# as input and returns transformed table. This function utilizes vegan's
+########################.apply_transformation_from_vegan########################
+# Help function for transformSamples and transformFeatures, takes abundance
+# table as input and returns transformed table. This function utilizes vegan's
 # transformation functions.
 .apply_transformation_from_vegan <- function(mat, method, ref_vals = NA, ...){
     # Input check
@@ -472,9 +458,11 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(transformed_table)
 }
 
+####################################.calc_log###################################
+# This function applies log transformation to abundance table.
 .calc_log <- function(mat, pseudocount, ...){
-    # If abundance table contains zeros, gives an error, because it is not possible
-    # to calculate log from zeros. If there is no zeros, calculates log.
+    # If abundance table contains zeros, gives an error, because it is not
+    # possible to calculate log from zeros. If there is no zeros, calculates log.
     if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
             method, " transformation is being applied without pseudocount.\n",
@@ -482,17 +470,19 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
             "assay; or pseudocount = min(x[x>0]) for relabundance assay).",
             call. = FALSE)
     }
+    # Calculate log2 or log10 abundances
     if(method == "log2"){
         mat <- log2(mat)
     } else{
         mat <- log10(mat)
     }
-    
     # Add parameter to attributes
     attr(mat, "parameters") <- list("pseudocount" = pseudocount)
     return(mat)
 }
 
+####################################.calc_pa####################################
+# This function applies present/absent transformation to abundance table
 .calc_pa <- function(mat, threshold, ...){
     # If value is over zero, gets value 1. If value is zero, gets value 0.
     mat <- (mat > threshold) - 0L
@@ -501,6 +491,10 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
+###############################.adjust_alr_table################################
+# vegan::decostand returns ALR transformed abundance table without reference
+# sample. Because in TreeSE all assays must have same row and column names,
+# the reference sample is assigned back to transformed abundance table.
 .adjust_alr_table <- function(mat, orig_dimnames, ref_vals){
     # Store attributes
     attributes <- attributes(mat)
@@ -539,6 +533,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
+###############################.apply_pseudocount###############################
+# This function applies pseudocount to abundance table.
 .apply_pseudocount <- function(mat, pseudocount){
     # Give warning if pseudocount should not be added
     if( all(mat>0) ){
