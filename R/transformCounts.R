@@ -501,6 +501,13 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(mat)
 }
 
+#################################.calc_rel_abund################################
+# This function is for other functions to use internally.
+.calc_rel_abund <- function(mat, ...){
+    mat <- .apply_transformation_from_vegan(
+        mat, method = "relabundance", MARGIN = 2)
+    return(mat)
+}
 ####################################.calc_pa####################################
 # This function applies present/absent transformation to abundance table
 .calc_pa <- function(mat, threshold, ...){
