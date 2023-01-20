@@ -453,6 +453,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     
     # Adjust method if mia-specific alias was used
     method <- ifelse(method == "relabundance", "total", method)
+    method <- ifelse(method == "z", "standardize", method)
     # If method is CLR give warning if samples do not up to constant
     # (CLR is accurate only when samples sum-up to fixed constant, like 1)
     colsums <- colSums2(mat, na.rm = TRUE)
@@ -508,6 +509,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
         mat, method = "relabundance", MARGIN = 2)
     return(mat)
 }
+
 ####################################.calc_pa####################################
 # This function applies present/absent transformation to abundance table
 .calc_pa <- function(mat, threshold, ...){
