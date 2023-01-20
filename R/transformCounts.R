@@ -417,7 +417,8 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     }
     # Function is selected based on the "method" variable
     FUN <- switch(method,
-                  log10 = .calc_log10,
+                  log10 = .calc_log,
+                  log2 = .calc_log,
                   pa = .calc_pa,
     )
     # Get transformed table
