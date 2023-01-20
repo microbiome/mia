@@ -83,6 +83,11 @@
 #' log10 = log10(x)}
 #' where \eqn{x} is a single value of data.}
 #' 
+#' \item{'log2'}{ log2 transformation can be used for reducing the skewness of the data.
+#' \deqn{log2 = \log_{2} x}{%
+#' log2 = log2(x)}
+#' where \eqn{x} is a single value of data.}
+#' 
 #' \item{'normalize'}{ Normalize transformation, please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
@@ -206,7 +211,7 @@ NULL
 setGeneric("transformSamples", signature = c("x"),
            function(x,
                     assay_name = abund_values, abund_values = "counts",
-                    method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
+                    method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
                     name = method,
                     ...
                     )
@@ -218,7 +223,7 @@ setGeneric("transformSamples", signature = c("x"),
 setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
     function(x,
             assay_name = abund_values, abund_values = "counts",
-            method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
+            method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "standardize", "total"),
             name = method,
             ...
             ){
@@ -245,7 +250,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
 setGeneric("transformCounts", signature = c("x"),
            function(x,
                     assay_name = abund_values, abund_values = "counts",
-                    method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize", "total", "z"),
+                    method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize", "total", "z"),
                     name = method,
                     ...)
                standardGeneric("transformCounts"))
@@ -256,7 +261,7 @@ setGeneric("transformCounts", signature = c("x"),
 setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
     function(x,
              assay_name = abund_values, abund_values = "counts",
-             method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize", "total", "z"),
+             method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10", "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank", "standardize", "total", "z"),
              name = method,
              ...){
         # Input check
@@ -303,7 +308,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
 setGeneric("transformFeatures", signature = c("x"),
            function(x,
                     assay_name = abund_values, abund_values = "counts",
-                    method = c("log", "log10", "max", "pa", "range", "standardize", "z"),
+                    method = c("log", "log10", "log2", "max", "pa", "range", "standardize", "z"),
                     name = method,
                     ...)
                standardGeneric("transformFeatures"))
@@ -313,7 +318,7 @@ setGeneric("transformFeatures", signature = c("x"),
 setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
     function(x,
              assay_name = abund_values, abund_values = "counts",
-             method = c("log", "log10", "max", "pa", "range", "standardize", "z"),
+             method = c("log", "log10", "log2", "max", "pa", "range", "standardize", "z"),
              name = method,
              ...){
         # Input check
@@ -467,17 +472,22 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     return(transformed_table)
 }
 
-.calc_log10 <- function(mat, pseudocount, ...){
+.calc_log <- function(mat, pseudocount, ...){
     # If abundance table contains zeros, gives an error, because it is not possible
     # to calculate log from zeros. If there is no zeros, calculates log.
     if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
-            "log10 transformation is being applied without pseudocount.\n",
+            method, " transformation is being applied without pseudocount.\n",
             "Try to add pseudocount (default choice pseudocount = 1 for count ",
             "assay; or pseudocount = min(x[x>0]) for relabundance assay).",
             call. = FALSE)
     }
-    mat <- log10(mat)
+    if(method == "log2"){
+        mat <- log2(mat)
+    } else{
+        mat <- log10(mat)
+    }
+    
     # Add parameter to attributes
     attr(mat, "parameters") <- list("pseudocount" = pseudocount)
     return(mat)
