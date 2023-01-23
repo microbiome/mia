@@ -482,7 +482,7 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 
 ####################################.calc_log###################################
 # This function applies log transformation to abundance table.
-.calc_log <- function(mat, pseudocount, ...){
+.calc_log <- function(mat, method, pseudocount, ...){
     # If abundance table contains zeros, gives an error, because it is not
     # possible to calculate log from zeros. If there is no zeros, calculates log.
     if (any(mat <= 0, na.rm = TRUE)) {
