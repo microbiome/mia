@@ -112,9 +112,6 @@ reference sample's column in returned assay when calculating alr.
 
 \item{pseudocount}{NULL or numeric value deciding whether pseudocount is
 added. The numeric value specifies the value of pseudocount.}
-
-\item{threshold}{A numeric value for setting threshold for pa transformation.
-By default it is 0. (Only used for \code{method = "pa"})}
 }
 \value{
 \code{transformCounts}, \code{transformSamples}, \code{transformFeatures},
@@ -184,9 +181,8 @@ where \eqn{x} is a single value of data.}
 \item{'normalize'}{ Make margin sum of squares equal to one. Please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
-\item{'pa'}{ Transforms table to presence/absence table. All abundances higher
-than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent).
-By default, threshold is 0.}
+\item{'pa'}{ Transforms table to presence/absence table. Please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
 \item{'rank'}{ Rank transformation, please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
@@ -239,18 +235,17 @@ head(assay(x, "clr"))
 x <- transformSamples(x, method="hellinger", name="test")
 head(assay(x, "test"))
 
-# pa returns presence absence table. With 'threshold', it is possible to set the
-# threshold to a desired level. By default, it is 0.
-x <- transformSamples(x, method = "pa", threshold = 35)
+# pa returns presence absence table.
+x <- transformSamples(x, method = "pa")
 head(assay(x, "pa"))
 
-# rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
-# and using the ties.method="first" from the colRanks function
+# rank returns ranks of taxa.
 x <- transformSamples(x, method = "rank")
 head(assay(x, "rank"))
 
-# transformCounts is an alias for transformSamples
-x <- transformCounts(x, method = "relabundance", name = "test2")
+# In transformCounts, you can specify MARGIN. Below values are divided by
+# row-wise total abundance.
+x <- transformCounts(x, method = "relabundance", MARGIN = 1, name = "test2")
 head(assay(x, "test2"))
 
 # In order to use other ranking variants, modify the chosen assay directly:

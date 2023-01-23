@@ -24,9 +24,6 @@
 #'
 #' @param pseudocount NULL or numeric value deciding whether pseudocount is
 #'   added. The numeric value specifies the value of pseudocount.
-#'
-#' @param threshold A numeric value for setting threshold for pa transformation.
-#'   By default it is 0. (Only used for \code{method = "pa"})
 #'   
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
@@ -94,9 +91,8 @@
 #' \item{'normalize'}{ Make margin sum of squares equal to one. Please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
 #' 
-#' \item{'pa'}{ Transforms table to presence/absence table. All abundances higher
-#' than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent). 
-#' By default, threshold is 0.}
+#' \item{'pa'}{ Transforms table to presence/absence table. Please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.}
 #'
 #' \item{'rank'}{ Rank transformation, please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.}
@@ -159,18 +155,17 @@
 #' x <- transformSamples(x, method="hellinger", name="test")
 #' head(assay(x, "test"))
 #'
-#' # pa returns presence absence table. With 'threshold', it is possible to set the
-#' # threshold to a desired level. By default, it is 0.
-#' x <- transformSamples(x, method = "pa", threshold = 35)
+#' # pa returns presence absence table.
+#' x <- transformSamples(x, method = "pa")
 #' head(assay(x, "pa"))
 #' 
-#' # rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
-#' # and using the ties.method="first" from the colRanks function
+#' # rank returns ranks of taxa.
 #' x <- transformSamples(x, method = "rank")
 #' head(assay(x, "rank"))
 #' 
-#' # transformCounts is an alias for transformSamples
-#' x <- transformCounts(x, method = "relabundance", name = "test2")
+#' # In transformCounts, you can specify MARGIN. Below values are divided by
+#' # row-wise total abundance.
+#' x <- transformCounts(x, method = "relabundance", MARGIN = 1, name = "test2")
 #' head(assay(x, "test2"))
 #'
 #' # In order to use other ranking variants, modify the chosen assay directly:
@@ -289,7 +284,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
         assay <- assay(x, assay_name)
         # Calls help function that does the transformation
         # Help function is different for mia and vegan transformations
-        if( method %in% c("log10", "pa") ){
+        if( method %in% c("log10", "log2") ){
             transformed_table <- .apply_transformation(
                 assay, method,  ...)
         } else{
@@ -382,19 +377,13 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 # as input and returns transformed table. This function utilizes mia's
 # transformation functions.
 .apply_transformation <- function(assay, method, pseudocount = 0,
-                                  threshold = 0, MARGIN = 2, ...){
+                                  MARGIN = 2, ...){
     # Input check
     # Check pseudocount
     if( !( (length(pseudocount) == 1L && is.numeric(pseudocount)) ) ){
         stop("'pseudocount' must be NULL or a single numeric value.",
              call. = FALSE)
     } 
-    # Check threshold
-    if(!is.numeric(threshold)){
-        stop("'threshold' must be a numeric value, and it can be used ",
-             "only with transformation method 'pa'.",
-             call. = FALSE)
-    }
     # Check that MARGIN is 1 or 2
     if( !(length(pseudocount) == 1L && is.numeric(MARGIN) &&
           (MARGIN == 1 || MARGIN == 2)) ){
@@ -407,24 +396,14 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
     if( MARGIN == 1 ){
         assay <- t(assay)
     }
-    # apply pseudocount, if it is not 0 and method is certain
-    if( pseudocount != 0 && method %in% c("log10") ){
-        assay <- .apply_pseudocount(assay, pseudocount)
-    } else if ( is.numeric(pseudocount) ){
-        warning("'pseudocount' is disabled for method '", method, "'.",
-                call. = FALSE)
-        pseudocount <- NULL
-    }
     # Function is selected based on the "method" variable
     FUN <- switch(method,
                   log10 = .calc_log,
                   log2 = .calc_log,
-                  pa = .calc_pa,
     )
     # Get transformed table
     transformed_table <- do.call(FUN,
             list(mat = assay,
-                 threshold = threshold,
                  method = method,
                  pseudocount = pseudocount,
                  ...))
@@ -483,6 +462,10 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 ####################################.calc_log###################################
 # This function applies log transformation to abundance table.
 .calc_log <- function(mat, method, pseudocount, ...){
+    # apply pseudocount, if it is not 0
+    if( pseudocount != 0 ){
+        assay <- .apply_pseudocount(assay, pseudocount)
+    }
     # If abundance table contains zeros, gives an error, because it is not
     # possible to calculate log from zeros. If there is no zeros, calculates log.
     if (any(mat <= 0, na.rm = TRUE)) {
@@ -508,16 +491,6 @@ setMethod("relAbundanceCounts",signature = c(x = "SummarizedExperiment"),
 .calc_rel_abund <- function(mat, ...){
     mat <- .apply_transformation_from_vegan(
         mat, method = "relabundance", MARGIN = 2)
-    return(mat)
-}
-
-####################################.calc_pa####################################
-# This function applies present/absent transformation to abundance table
-.calc_pa <- function(mat, threshold, ...){
-    # If value is over zero, gets value 1. If value is zero, gets value 0.
-    mat <- (mat > threshold) - 0L
-    # Add parameter to attributes
-    attr(mat, "parameters") <- list("threshold" = threshold)
     return(mat)
 }
 

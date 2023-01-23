@@ -114,9 +114,9 @@ test_that("transformCounts", {
         expect_equal(type(actual),"integer")
 
         # Calculates pa transformation. Should be equal.
-        actual <- assay(mia::transformCounts(tse, method = "pa", threshold = 12.5),"pa")
+        actual <- assay(mia::transformCounts(tse, method = "pa"),"pa")
         expect_equal(as.vector(actual),
-                     as.integer(as.matrix(assay(tse, "counts")) > 12.5))
+                     as.integer(as.matrix(assay(tse, "counts")) > 0))
         expect_equal(type(actual),"integer")
         
         # Tests that transformCounts and transfromSamples give same result
