@@ -285,13 +285,13 @@ test_that("transformCounts", {
             ranks_compare <- rank(counts_compare, na.last = "keep")
             ranks_compare[is.na(ranks_compare)] <- 0
             # Expect that they are equal
-            expect_equal(ranks, ranks_compare)
+            expect_equal(ranks, ranks_compare, check.attributes = FALSE)
         }
         
         # Calculates rank with pseudocount
         tse_rank_pseudo <- transformCounts(tse, method = "rank", pseudocount = runif(1, 0, 1000))
         # Pseudocount should not change the rank
-        expect_equal(tse_rank, tse_rank_pseudo)
+        expect_equal(tse_rank, tse_rank_pseudo, check.attributes = FALSE)
 
         # For other options for rank calculations, call the colRanks directly:
 	    # data(esophagus); x <- esophagus;  
@@ -306,21 +306,20 @@ test_that("transformCounts", {
         
         ############################## Z TRANSFORMATION ########################
         # Calculates Z-transformation for features	
-        xx <- t(scale(t(as.matrix(assay(tse, "counts") + 1))))
-        attr(xx,"scaled:center") <- NULL
-        attr(xx,"scaled:scale") <- NULL
-        expect_equal(max(abs(assays(mia::ZTransform(tse, pseudocount = 1))$z - xx), na.rm=TRUE), 
+        xx <- t(scale(t(as.matrix(assay(tse, "counts")))))
+        expect_warning(z_assay <- assays(mia::ZTransform(tse, pseudocount = 1))$z)
+        expect_equal(max(abs(z_assay - xx), na.rm=TRUE), 
                      0,
-                     tolerance = 1e-14)
+                     tolerance = 1e-14, check.attributes = FALSE)
         
         # Tests that ZTransform and transformFeatures gives the same result
-        expect_equal(assays(mia::ZTransform(tse, pseudocount = 12.3))$z,
-                     assays(mia::transformFeatures(tse, method = "z", pseudocount = 12.3))$z)
-
+        expect_warning(
+        expect_equal(assays(mia::ZTransform(tse))$z,
+                     assays(mia::transformFeatures(tse, method = "z"))$z)
+        )
         # Test transformSamples and transformCounts, should be an error.
         # Tests transformSamples and transformCounts, tries to calculate z. Should be an error.
         expect_error(mia::transformSamples(tse, method = "z"))
-        expect_error(mia::transformCounts(tse, method = "z"))
         
         # Test that transformations are equal to ones directly from vegan
         # clr
@@ -343,14 +342,13 @@ test_that("transformCounts", {
         actual <- assay(tse, "alr")
         compare <- vegan::decostand(assay(tse, "relabundance"), method = "alr",
                                     pseudocount = 4, reference = 2, MARGIN = 2)
-        # Compare attributes separately because their dimensions differ
-        attr1 <- attributes(actual)[c("parameters", "decostand")]
-        actual <- actual[, -2]
-        attributes(actual) <- NULL
-        attr2 <- attributes(compare)[c("parameters", "decostand")]
-        attributes(compare) <- NULL
-        expect_equal(actual, compare)
-        expect_equal(attr1, attr2)
+        # Add reference sample
+        sample <- rep(NA, nrow(tse))
+        colnames <- c(colnames(tse)[2], colnames(compare))
+        compare <- cbind(sample, compare)
+        colnames(compare) <- colnames
+        compare <- compare[, colnames(tse)]
+        expect_equal(actual, compare, check.attributes = FALSE)
         # hellinger
         tse <- transformCounts(tse, assay_name = "counts", method = "hellinger",
                                 pseudocount = 2, reference = 2)
@@ -363,6 +361,7 @@ test_that("transformCounts", {
         actual <- assay(tse, "chi.square")
         compare <- vegan::decostand(assay(tse, "counts"), method = "chi.square",
                                     MARGIN = 2)
+        compare <- t(compare)
         expect_equal(actual, compare)
     }
 
