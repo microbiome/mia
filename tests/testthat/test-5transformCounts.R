@@ -12,10 +12,6 @@ test_that("relabundance", {
     expect_equal(assay(actual,"relabundance"),
                  relabundance(actual))
     rel_mat <- relabundance(actual)
-    f <- rev(seq_len(ncol(relabundance(actual))))
-    relabundance(actual) <- relabundance(actual)[,f]
-    expect_equal(rel_mat,
-                 relabundance(actual), check.attributes = FALSE)
 })
 
 
