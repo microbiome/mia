@@ -40,6 +40,7 @@ transformCounts(
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
+  MARGIN = 2,
   name = method,
   ...
 )
@@ -51,6 +52,7 @@ transformCounts(
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
+  MARGIN = 2,
   name = method,
   ...
 )

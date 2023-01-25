@@ -15,7 +15,7 @@ test_that("relabundance", {
     f <- rev(seq_len(ncol(relabundance(actual))))
     relabundance(actual) <- relabundance(actual)[,f]
     expect_equal(rel_mat,
-                 relabundance(actual)[,f])
+                 relabundance(actual), check.attributes = FALSE)
 })
 
 
@@ -31,27 +31,30 @@ test_that("transformCounts", {
         expect_error(mia::transformCounts(tse, method="relabundance", name = c("123", "456")))
 
         # Pseudocount is a string. Should be an error.
-        expect_error(mia::transformCounts(tse, method="relabundance", pseudocount = "pseudocount"))
-        expect_error(mia::transformCounts(tse, method="relabundance", pseudocount = FALSE))
+        expect_error(mia::transformCounts(tse, method="log10", pseudocount = "pseudocount"))
+        expect_error(mia::transformCounts(tse, method="log2", pseudocount = FALSE))
 
         # Counts table should not be changed
-        expect_equal(assays(mia::transformCounts(tse, method = "pa"))$counts, assays(tse)$counts)
+        expect_equal(assays(mia::transformCounts(tse, method = "pa"))$counts, assays(tse)$counts,
+                     check.attributes = FALSE)
 
         ############################# RELATIVE ABUNDANCE #######################
         # Calculates relative abundances. Should be equal.
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance),
                      apply(as.matrix(assay(tse,"counts")), 2, FUN=function(x){
                          x/sum(x)
-                     }))
+                     }), check.attributes = FALSE)
         # Tests that transformCounts and transformSamples give same result
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance),
                      as.matrix(assays(mia::transformSamples(tse, 
                                                             method = "relabundance",
-                                                            name = "rel"))$rel))
+                                                            name = "rel"))$rel),
+                     check.attributes = FALSE)
         
         # Tests that transformCounts and relAbundanceCounts give same result
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance),
-                     as.matrix(assays(mia::relAbundanceCounts(tse))$rel))
+                     as.matrix(assays(mia::relAbundanceCounts(tse))$rel),
+                     check.attributes = FALSE)
         
         # Tests transformFeatures, tries to calculate relative abundances. Should be an error.
         expect_error(mia::transformFeatures(tse, method = "relabundance"))
@@ -71,7 +74,7 @@ test_that("transformCounts", {
         expect_named(assays(actual), c("counts", "relabundance"))
 
         expect_equal(assay(actual,"relabundance")[,1],
-                     seq.int(1,6)/21)
+                     seq.int(1,6)/21, check.attributes = FALSE)
 
         ########################### LOG10 ######################################
         # Calculates log10 transformation with pseudocount. Should be equal.
@@ -80,13 +83,14 @@ test_that("transformCounts", {
         expect_equal(as.matrix(ass),
                      apply(as.matrix(assay(tse, "counts")), 2, FUN=function(x){
                          log10(x+1)
-                     }))
+                     }), check.attributes = FALSE)
         # Tests that transformCounts and transformSamples give same result #error
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "log10",
                                                            pseudocount = 1))$log10),
                      as.matrix(assays(mia::transformSamples(tse, method = "log10",
                                                             name = "log",
-                                                            pseudocount = 1))$log))
+                                                            pseudocount = 1))$log),
+                     check.attributes = FALSE)
         
         # Tests transformFeatures, calculates log10 transformation with pseudocount.
         # Should be equal.
@@ -95,7 +99,7 @@ test_that("transformCounts", {
         expect_equal(as.matrix(ass),
                      t(apply(as.matrix(t(assay(tse, "counts"))), 2, FUN=function(x){
                          log10(x+1)
-                     })))
+                     })), check.attributes = FALSE)
         
         ########################### LOG2 ######################################
         # Calculates log2 transformation with pseudocount. Should be equal.
@@ -104,30 +108,28 @@ test_that("transformCounts", {
         expect_equal(as.matrix(ass),
                      apply(as.matrix(assay(tse, "counts")), 2, FUN=function(x){
                          log2(x+5)
-                     }))
+                     }), check.attributes = FALSE)
         
         ########################## PA ##########################################
         # Calculates pa transformation. Should be equal.
         actual <- assay(mia::transformCounts(tse, method = "pa"),"pa")
         expect_equal(as.vector(actual),
-                     as.integer(as.matrix(assay(tse, "counts")) > 0))
-        expect_equal(type(actual),"integer")
-
-        # Calculates pa transformation. Should be equal.
-        actual <- assay(mia::transformCounts(tse, method = "pa"),"pa")
-        expect_equal(as.vector(actual),
-                     as.integer(as.matrix(assay(tse, "counts")) > 0))
-        expect_equal(type(actual),"integer")
+                     as.integer(as.matrix(assay(tse, "counts")) > 0),
+                     check.attributes = FALSE)
+        expect_equal(type(actual),"double")
+        expect_true(all(actual == 1 | actual == 0))
         
         # Tests that transformCounts and transfromSamples give same result
-        expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "pa"))$pa),
-                     as.matrix(assays(mia::transformSamples(tse, method = "pa"))$pa))
+        expect_equal(assays(mia::transformCounts(tse, method = "pa"))$pa,
+                     assays(mia::transformSamples(tse, method = "pa"))$pa,
+                     check.attributes = FALSE)
         
         # Tests transformFeatures, calculates pa transformation. Should be equal.
         actual <- assay(mia::transformFeatures(tse, method = "pa"),"pa")
         expect_equal(as.vector(actual),
                      as.integer(t(as.matrix(t(assay(tse, "counts"))) > 0)))
-        expect_equal(type(actual),"integer")
+        expect_equal(type(actual),"double")
+        expect_true(all(actual == 1 | actual == 0))
         
         ######################## HELLINGER #####################################
         # Calculates Hellinger transformation. Should be equal.
@@ -137,7 +139,7 @@ test_that("transformCounts", {
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "hellinger", name = "test_123"))$test_123),
                      apply(as.matrix(relative), 2, FUN=function(x){
                          sqrt(x)
-                     }))
+                     }), check.attributes = FALSE)
         
         # Tests that transformCounts and transfromSamples give same result
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "hellinger"))$hellinger),
@@ -171,32 +173,41 @@ test_that("transformCounts", {
         
         # Tests rclr
         # Calc RCLRs
-        mat <- assays(mia::transformCounts(tse, assay_name = "relabundance",
-                                           method = "rclr", pseudocount = pseudonumber))$rclr
-        mat_comp <- apply(as.matrix(relative), 2, FUN=function(x){
-            log(x) - mean(log(x))
+        assay <- assay(tse, "counts")
+        suppressWarnings(
+        mat <- assays(mia::transformCounts(tse, assay_name = "counts",
+                                           method = "rclr"))$rclr
+        )
+        suppressWarnings(
+        mat_comp <- apply(as.matrix(assay), 2, FUN=function(x){
+            temp <- log(x)
+            temp[is.infinite(temp)] <- NA
+            temp <- log(x) - mean(temp, na.rm = TRUE)
+            temp[is.infinite(temp)] <- 0
+            return(temp)
         })
-        # Remove atributes since vegan adds additional ones
-        attributes(mat) <- NULL
-        attributes(mat_comp) <- NULL
+        )
         # Round
         mat <- round(mat, 4)
         mat_comp <- round(mat_comp, 4)
         # Compare
-        expect_equal( mat, mat_comp )
+        expect_equal(mat, mat_comp, check.attributes = FALSE)
         
         # Expect that error occurs
-        expect_error(mia::transformCounts(tse, method = "clr"))
+        expect_warning(
+            expect_error(mia::transformCounts(tse, method = "clr"))
+        )
         # Expect that error does not occur
-        expect_warning( 
-            expect_error(mia::transformSamples(tse, method = "rclr"), NA) )
+        expect_warning(mia::transformSamples(tse, method = "rclr")) 
         
         # Tests that transformCounts and transfromSamples give same result
         expect_equal(as.matrix(assays(mia::transformCounts(tse, method = "relabundance"))$relabundance),
                      as.matrix(assays(mia::transformSamples(tse, method = "relabundance"))$relabundance))
         
         # Tests transformCounts, tries to calculate clr. Should be an error, because of zeros.
+        expect_warning(
         expect_error(mia::transformCounts(tse, method = "clr"))
+        )
         # Tests transformSamples, tries to calculate rclr. Should not be an error.
         expect_warning( expect_error(mia::transformSamples(tse, method = "rclr"), NA) )
         # Tests transformFeatures, tries to calculate clr. Should be an error.
@@ -226,8 +237,10 @@ test_that("transformCounts", {
         
         tse <- transformSamples(tse, method = "relabundance")
         # Expect error when counts and zeroes
+        expect_warning(
         expect_error(transformSamples(tse, assay_name = "counts", 
                                       method = "clr"))
+        )
         # Expect error warning when zeroes
         tse <- transformSamples(tse, method = "relabundance")
         expect_error(transformSamples(tse, assay_name = "relabundance", 
@@ -239,14 +252,13 @@ test_that("transformCounts", {
         # Expect no warning when pseudocount is added, colSums are 1
         tse <- transformSamples(tse, method = "relabundance", pseudocount = 1, 
                                 name = "relabund2")
-        expect_warning(transformSamples(tse, assay_name = "relabund2", 
-                                       method = "clr"),
-                       regexp = NA)
+        expect_error(transformSamples(tse, assay_name = "relabund2", 
+                                       method = "clr"))
         # Expect warning when colSums are not equal
         expect_warning(transformSamples(tse, assay_name = "counts", 
                                         method = "clr", pseudocount = 1))
         expect_warning(transformSamples(tse, assay_name = "counts", 
-                                        method = "rclr", pseudocount = 1))
+                                        method = "rclr"))
 
         ############################# NAMES ####################################
         # Tests that samples have correct names
@@ -269,7 +281,9 @@ test_that("transformCounts", {
             ranks <- assay(tse_rank, "rank")[,i]
             # Gets columns from 'counts' table, and calculates ranks
             counts_compare <- assay(tse_rank, "counts")[,i]
-            ranks_compare <- rank(counts_compare, na.last = "keep", ties.method = "first")
+            counts_compare[counts_compare == 0] <- NA
+            ranks_compare <- rank(counts_compare, na.last = "keep")
+            ranks_compare[is.na(ranks_compare)] <- 0
             # Expect that they are equal
             expect_equal(ranks, ranks_compare)
         }
@@ -338,7 +352,7 @@ test_that("transformCounts", {
         expect_equal(actual, compare)
         expect_equal(attr1, attr2)
         # hellinger
-        tse <- transformSamples(tse, assay_name = "counts", method = "hellinger",
+        tse <- transformCounts(tse, assay_name = "counts", method = "hellinger",
                                 pseudocount = 2, reference = 2)
         actual <- assay(tse, "hellinger")
         compare <- vegan::decostand(assay(tse, "counts"), method = "hellinger",
@@ -346,9 +360,9 @@ test_that("transformCounts", {
         expect_equal(actual, compare)
         # chi.squared
         tse <- transformCounts(tse, assay_name = "counts", method = "chi.square")
-        actual <- assay(tse, "hellinger")
+        actual <- assay(tse, "chi.square")
         compare <- vegan::decostand(assay(tse, "counts"), method = "chi.square",
-                                    MARGIN = 1)
+                                    MARGIN = 2)
         expect_equal(actual, compare)
     }
 
