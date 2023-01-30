@@ -18,6 +18,10 @@
 #'   
 #' @param method A single character value for selecting the transformation
 #'   method.
+#' 
+#' @param MARGIN A single character value for specifying whether the
+#'   transformation is applied sample (column) or feature (row) wise.
+#'   (By default: \code{MARGIN = "samples"})
 #'
 #' @param name A single character value specifying the name of transformed
 #'   abundance table.
