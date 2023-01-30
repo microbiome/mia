@@ -17,8 +17,8 @@ transformSamples(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "clr", "frequency", "log", "log10", "log2", "max", "pa", "range",
-    "rclr", "relabundance", "standardize"),
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
   ...
 )
@@ -27,8 +27,8 @@ transformSamples(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "clr", "frequency", "log", "log10", "log2", "max", "pa", "range",
-    "rclr", "relabundance", "standardize"),
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
   ...
 )
@@ -40,7 +40,7 @@ transformCounts(
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
-  MARGIN = 2,
+  MARGIN = "samples",
   name = method,
   ...
 )
@@ -52,7 +52,7 @@ transformCounts(
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
-  MARGIN = 2,
+  MARGIN = "samples",
   name = method,
   ...
 )
@@ -61,8 +61,8 @@ transformFeatures(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "chi.square", "hellinger", "log", "log10", "log2", "normalize", "pa",
-    "range", "rank", "rrank", "total", "z"),
+  method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
+    "z"),
   name = method,
   ...
 )
@@ -71,15 +71,15 @@ transformFeatures(
   x,
   assay_name = abund_values,
   abund_values = "counts",
-  method = c("alr", "chi.square", "hellinger", "log", "log10", "log2", "normalize", "pa",
-    "range", "rank", "rrank", "total", "z"),
+  method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
+    "z"),
   name = method,
   ...
 )
 
-ZTransform(x, MARGIN = 1, ...)
+ZTransform(x, MARGIN = "features", ...)
 
-\S4method{ZTransform}{SummarizedExperiment}(x, MARGIN = 1, ...)
+\S4method{ZTransform}{SummarizedExperiment}(x, MARGIN = "features", ...)
 
 relAbundanceCounts(x, ...)
 
@@ -110,10 +110,15 @@ abundance table.}
 \item{\code{ref_vals}:} {A single value which will be used to fill
 reference sample's column in returned assay when calculating alr.
 (default: \code{ref_vals = NA})}
+\item{\code{pseudocount}:} {NULL or numeric value deciding whether
+pseudocount is added. The numeric value specifies the value of pseudocount.
+Recommended default choices for counts and relative abundance assay
+pseudocount = 1 and pseudocount = min(x\link{x>0}), respectively.}
 }}
 
-\item{pseudocount}{NULL or numeric value deciding whether pseudocount is
-added. The numeric value specifies the value of pseudocount.}
+\item{MARGIN}{A single character value for specifying whether the
+transformation is applied sample (column) or feature (row) wise.
+(By default: \code{MARGIN = "samples"})}
 }
 \value{
 \code{transformCounts}, \code{transformSamples}, \code{transformFeatures},
@@ -192,22 +197,20 @@ where \eqn{x} is a single value of data.}
 \item{'rclr'}{ Robust clr transformation, please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
-\item{'relabundance'}{ Relative transformation (alias for 'total'
-when MARGIN = 2), please refer to
+\item{'relabundance'}{ Relative transformation (alias for 'total'), please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
 \item{'rrank'}{ Relative rank transformation, please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
 \item{'standardize'}{ Scale 'x' to zero mean and unit variance (alias for
-'z' when MARGIN = 1), please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
+'z'), please refer to \code{\link[vegan:decostand]{decostand}} for details.}
 
 \item{'total'}{ Divide by margin total (alias for
-'relabundance' when MARGIN = 2), please refer to
+'relabundance'), please refer to
 \code{\link[vegan:decostand]{decostand}} for details.}
 
-\item{'z'}{ Z transformation (alias for 'standardize' when MARGIN = 1),
+\item{'z'}{ Z transformation (alias for 'standardize'),
 please refer to \code{\link[vegan:decostand]{decostand}} for details.}
 
 }
