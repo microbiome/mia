@@ -34,7 +34,7 @@
 #'   \item{\code{pseudocount}:} {NULL or numeric value deciding whether
 #'   pseudocount is added. The numeric value specifies the value of pseudocount.
 #'   Recommended default choices for counts and relative abundance assay
-#'   pseudocount = 1 and pseudocount = min(x[x>0]), respectively.}
+#'   \code{pseudocount = 1} and \code{pseudocount = min(x[x>0])}, respectively.}
 #' }
 #' @details
 #'
