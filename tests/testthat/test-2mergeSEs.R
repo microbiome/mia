@@ -44,7 +44,10 @@ test_that("mergeSEs", {
     tse <- tse[ rownames(tse1), colnames(tse1) ]
     expect_equal( rowData(tse), rowData(tse1))
     expect_equal( as.data.frame( colData(tse) ), as.data.frame( colData(tse1)) )
-    expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))
+    # Disable attribute testing, since they might differ (e.g., vegan adds
+    # calculation details to attributes)
+    expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"),
+                  check.attributes = FALSE)
     expect_equal( rowTree(tse), rowTree(tse1))
     
     # Expect that rowTree is preserved if rownames match
