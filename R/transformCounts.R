@@ -426,7 +426,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     # Input check end
     
     # Adjust MARGIN for vegan. It requires MARGIN in numeric format
-    MARGIN <- ifelse(MARGIN %in% c("samples", "columns", "col"), 2, 1)
+    MARGIN <- ifelse(MARGIN %in% c("samples", "columns", "col", 2), 2, 1)
     # Adjust method if mia-specific alias was used
     method <- ifelse(method == "relabundance", "total", method)
     method <- ifelse(method == "z", "standardize", method)
