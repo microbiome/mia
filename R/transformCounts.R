@@ -168,7 +168,7 @@
 #' 
 #' # In transformCounts, you can specify MARGIN. Below values are divided by
 #' # row-wise total abundance.
-#' x <- transformCounts(x, method = "relabundance", MARGIN = 1, name = "test2")
+#' x <- transformCounts(x, method = "relabundance", MARGIN = "samples", name = "test2")
 #' head(assay(x, "test2"))
 #'
 #' # In order to use other ranking variants, modify the chosen assay directly:
