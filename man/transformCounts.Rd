@@ -221,7 +221,7 @@ x <- esophagus
 
 # By specifying 'method', it is possible to apply different transformations, 
 # e.g. compositional transformation.
-x <- transformSamples(x, method = "relabundance")
+x <- transformCounts(x, method = "relabundance")
 
 # The target of transformation can be specified with "assay_name"
 # Pseudocount can be added by specifying 'pseudocount'.
@@ -230,37 +230,33 @@ x <- transformSamples(x, method = "relabundance")
 mat <- assay(x, "relabundance") 
 pseudonumber <- min(mat[mat>0])
 # Perform CLR
-x <- transformSamples(x, assay_name = "relabundance", method = "clr", 
-                      pseudocount = pseudonumber
-                      )
+x <- transformCounts(x, assay_name = "relabundance", method = "clr", 
+                     pseudocount = pseudonumber
+                     )
                       
 head(assay(x, "clr"))
 
+# With MARGIN, you can specify the if transformation is done for samples or
+# for features. Here Z-transformation is done feature-wise.
+x <- transformCounts(x, method = "z", MARGIN = "features")
+head(assay(x, "z"))
+
 # Name of the stored table can be specified.
-x <- transformSamples(x, method="hellinger", name="test")
+x <- transformCounts(x, method="hellinger", name="test")
 head(assay(x, "test"))
 
 # pa returns presence absence table.
-x <- transformSamples(x, method = "pa")
+x <- transformCounts(x, method = "pa")
 head(assay(x, "pa"))
 
 # rank returns ranks of taxa.
-x <- transformSamples(x, method = "rank")
+x <- transformCounts(x, method = "rank")
 head(assay(x, "rank"))
-
-# In transformCounts, you can specify MARGIN. Below values are divided by
-# row-wise total abundance.
-x <- transformCounts(x, method = "relabundance", MARGIN = "samples", name = "test2")
-head(assay(x, "test2"))
 
 # In order to use other ranking variants, modify the chosen assay directly:
 assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"), 
                                                            ties.method="average", 
                                                            preserveShape = TRUE)  
-                                                           
-# If you want to do the transformation for features, you can do that by using
-x <- transformFeatures(x, method = "log10", name = "log10_features", pseudocount = 1)
-head(assay(x, "log10_features"))
 
 # Z-transform can be done for features by using shortcut function
 x <- ZTransform(x)
