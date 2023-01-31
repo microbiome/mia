@@ -454,8 +454,8 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
             ref_vals = ref_vals)
     }
     # If table is transposed (like in chi.square), transpose back
-    if(rownames(transformed_table) == colnames(mat) && 
-       colnames(transformed_table) == rownames(mat)){
+    if(all(rownames(transformed_table) == colnames(mat)) && 
+       all(colnames(transformed_table) == rownames(mat))){
         transformed_table <- t(transformed_table)
     }
     return(transformed_table)
