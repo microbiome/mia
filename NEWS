@@ -65,3 +65,5 @@ Changes in version 1.7.x
 + mergeSEs: fix bug related to equally named variables that are different class
 + mergeSEs: option for merging multiple assays
 + calculateUnifrac: option for specifying the tree from TreeSE
++ transformCounts: utilize vegan package
+
