@@ -51,7 +51,7 @@ test_that("transformCounts", {
                      apply(as.matrix(assay(tse, "counts")), 2, FUN=function(x){
                          log10(x+1)
                      }), check.attributes = FALSE)
-        # Tests transformFeatures, calculates log10 transformation with pseudocount.
+        # Tests transformCounts(MARGIN = "features"), , calculates log10 transformation with pseudocount.
         # Should be equal.
         tmp <- mia::transformCounts(tse, MARGIN = "features", method = "log10", pseudocount = 1)
         ass <- assays(tmp)$log10
@@ -78,7 +78,7 @@ test_that("transformCounts", {
         expect_equal(type(actual),"double")
         expect_true(all(actual == 1 | actual == 0))
         
-        # Tests transformFeatures, calculates pa transformation. Should be equal.
+        # Tests transformCounts(MARGIN = "features"), , calculates pa transformation. Should be equal.
         actual <- assay(mia::transformCounts(tse, MARGIN = "features", method = "pa"),"pa")
         expect_equal(as.vector(actual),
                      as.integer(t(as.matrix(t(assay(tse, "counts"))) > 0)))
@@ -239,7 +239,7 @@ test_that("transformCounts", {
         expect_equal(max(abs(z_assay - xx), na.rm=TRUE), 0,
                      tolerance = 1e-14, check.attributes = FALSE)
         
-        # Tests that ZTransform and transformFeatures gives the same result
+        # Tests that ZTransform and transformCounts(MARGIN = "features"),  gives the same result
         expect_warning(
         expect_equal(assays(mia::ZTransform(tse))$z,
                      assays(mia::transformCounts(tse, MARGIN = "features", method = "z"))$z)
