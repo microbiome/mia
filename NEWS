@@ -66,4 +66,5 @@ Changes in version 1.7.x
 + mergeSEs: option for merging multiple assays
 + calculateUnifrac: option for specifying the tree from TreeSE
 + transformCounts: utilize vegan package
++ Deprecate transformSamples, *Features, relabundance
 
