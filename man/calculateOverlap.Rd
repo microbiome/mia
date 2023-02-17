@@ -9,16 +9,16 @@
 \usage{
 calculateOverlap(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   detection = 0,
   ...
 )
 
 \S4method{calculateOverlap}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   detection = 0,
   ...
 )
@@ -32,13 +32,13 @@ runOverlap(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object containing a tree.}
 
-\item{assay_name}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to calculate the overlap.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{detection}{A single numeric value for selecting detection threshold for
@@ -73,11 +73,11 @@ samples have completely different relative abundances.
 data(esophagus)
 tse <- esophagus
 tse <- transformSamples(tse, method = "relabundance")
-overlap <- calculateOverlap(tse, assay_name = "relabundance")
+overlap <- calculateOverlap(tse, assay.type = "relabundance")
 overlap
 
 # Store result to reducedDim
-tse <- runOverlap(tse, assay_name = "relabundance", name = "overlap_between_samples")
+tse <- runOverlap(tse, assay.type = "relabundance", name = "overlap_between_samples")
 head(reducedDims(tse)$overlap_between_samples)
 
 }

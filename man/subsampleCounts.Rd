@@ -8,8 +8,8 @@
 \usage{
 subsampleCounts(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   min_size = min(colSums2(assay(x))),
   seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
@@ -20,8 +20,8 @@ subsampleCounts(
 
 \S4method{subsampleCounts}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   min_size = min(colSums2(assay(x))),
   seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
@@ -34,14 +34,14 @@ subsampleCounts(
 \item{x}{A
 \code{SummarizedExperiment} object.}
 
-\item{assay_name}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{SummarizedExperiment} \code{assay} used for random subsampling.
 Only counts are useful and other transformed data as input will give
 meaningless output.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{min_size}{A single integer value equal to the number of counts being

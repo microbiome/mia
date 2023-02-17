@@ -8,8 +8,8 @@ object into a long data.frame}
 \usage{
 meltAssay(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   add_row_data = NULL,
   add_col_data = NULL,
   feature_name = "FeatureID",
@@ -19,8 +19,8 @@ meltAssay(
 
 \S4method{meltAssay}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   add_row_data = NULL,
   add_col_data = NULL,
   feature_name = "FeatureID",
@@ -32,12 +32,12 @@ meltAssay(
 \item{x}{A numeric matrix or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
 
-\item{assay_name}{a \code{character} value to select an
+\item{assay.type}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{add_row_data}{\code{NULL}, \code{TRUE} or a \code{character} vector to
@@ -72,7 +72,7 @@ are modified. (default: \code{check_names = TRUE})}
 }
 \value{
 A \code{tibble} with the molten data. The assay values are given in a
-column named like the selected assay \code{assay_name}. In addition, a
+column named like the selected assay \code{assay.type}. In addition, a
 column \dQuote{FeatureID} will contain the rownames, if set, and analogously
 a column \dQuote{SampleID} with the colnames, if set
 }
@@ -90,7 +90,7 @@ names are set.
 \examples{
 data(GlobalPatterns)
 molten_tse <- meltAssay(GlobalPatterns,
-                        assay_name = "counts",
+                        assay.type = "counts",
                         add_row_data = TRUE,
                         add_col_data = TRUE
                         )

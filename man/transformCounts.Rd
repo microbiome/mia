@@ -15,8 +15,8 @@
 \usage{
 transformSamples(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
@@ -25,8 +25,8 @@ transformSamples(
 
 \S4method{transformSamples}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
@@ -35,8 +35,8 @@ transformSamples(
 
 transformCounts(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
@@ -47,8 +47,8 @@ transformCounts(
 
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
@@ -59,8 +59,8 @@ transformCounts(
 
 transformFeatures(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
     "z"),
   name = method,
@@ -69,8 +69,8 @@ transformFeatures(
 
 \S4method{transformFeatures}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
     "z"),
   name = method,
@@ -90,13 +90,13 @@ relAbundanceCounts(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay_name}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 transformed.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{method}{A single character value for selecting the transformation
@@ -223,14 +223,14 @@ x <- esophagus
 # e.g. compositional transformation.
 x <- transformCounts(x, method = "relabundance")
 
-# The target of transformation can be specified with "assay_name"
+# The target of transformation can be specified with "assay.type"
 # Pseudocount can be added by specifying 'pseudocount'.
 
 # Get pseudocount; here smallest positive value
 mat <- assay(x, "relabundance") 
 pseudonumber <- min(mat[mat>0])
 # Perform CLR
-x <- transformCounts(x, assay_name = "relabundance", method = "clr", 
+x <- transformCounts(x, assay.type = "relabundance", method = "clr", 
                      pseudocount = pseudonumber
                      )
                       
@@ -264,7 +264,7 @@ head(assay(x, "z"))
 
 # For visualization purposes it is sometimes done by applying CLR for samples,
 # followed by Z transform for taxa
-x <- ZTransform(transformCounts(x, method="clr", assay_name = "counts", pseudocount = 1))
+x <- ZTransform(transformCounts(x, method="clr", assay.type = "counts", pseudocount = 1))
 
 # Relative abundances can be also calculated with the dedicated
 # relAbundanceCounts function.

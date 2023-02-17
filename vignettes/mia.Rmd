@@ -291,9 +291,9 @@ For more details have a look at the man page, for examples
 column-wise assay data subsetting.
 
 ```{r}
-abund <- getAbundanceSample(tse, "CC1", assay_name = "counts")
+abund <- getAbundanceSample(tse, "CC1", assay.type = "counts")
 all(abund == assay(tse, "counts")[,"CC1"])
-abund <- getAbundanceFeature(tse, "522457", assay_name = "counts")
+abund <- getAbundanceFeature(tse, "522457", assay.type = "counts")
 all(abund == assay(tse, "counts")["522457",])
 ```
 
@@ -306,7 +306,7 @@ data("esophagus", package = "mia")
 top_taxa <- getTopTaxa(esophagus,
                        method = "mean",
                        top = 5,
-                       assay_name = "counts")
+                       assay.type = "counts")
 top_taxa
 ```
 
@@ -317,7 +317,7 @@ To generate tidy data as used and required in most of the tidyverse,
 
 ```{r}
 molten_data <- meltAssay(tse,
-                         assay_name = "counts",
+                         assay.type = "counts",
                          add_row_data = TRUE,
                          add_col_data = TRUE
 )

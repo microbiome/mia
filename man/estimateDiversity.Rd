@@ -11,8 +11,8 @@
 \usage{
 estimateDiversity(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
@@ -21,8 +21,8 @@ estimateDiversity(
 
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
@@ -32,8 +32,8 @@ estimateDiversity(
 
 \S4method{estimateDiversity}{TreeSummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
@@ -45,8 +45,8 @@ estimateDiversity(
 estimateFaith(
   x,
   tree = "missing",
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   name = "faith",
   ...
 )
@@ -54,8 +54,8 @@ estimateFaith(
 \S4method{estimateFaith}{SummarizedExperiment,phylo}(
   x,
   tree,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   name = "faith",
   node_lab = NULL,
   ...
@@ -63,8 +63,8 @@ estimateFaith(
 
 \S4method{estimateFaith}{TreeSummarizedExperiment,missing}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   name = "faith",
   tree_name = "phylo",
   ...
@@ -74,12 +74,12 @@ estimateFaith(
 \item{x}{a \code{\link{SummarizedExperiment}} object or \code{\link{TreeSummarizedExperiment}}.
 The latter is recommended for microbiome data sets and tree-based alpha diversity indices.}
 
-\item{assay_name}{the name of the assay used for
+\item{assay.type}{the name of the assay used for
 calculation of the sample-wise estimates.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{index}{a \code{character} vector, specifying the diversity measures

@@ -36,12 +36,12 @@ test_that("meltAssay", {
     molten_assay <- meltAssay(se,
                               add_row_data = TRUE,
                               add_col_data = c("X.SampleID", "Primer"),
-                              assay_name = "counts")
+                              assay.type = "counts")
     expect_s3_class(molten_assay, c("tbl_df","tbl","data.frame"))
     expect_equal(colnames(molten_assay)[c(1:4,11)], c("FeatureID","SampleID","counts","Kingdom","X.SampleID"))
     expect_equal(is.numeric(molten_assay$counts), TRUE)
 
-    only_assay <- meltAssay(se, assay_name = "counts")
+    only_assay <- meltAssay(se, assay.type = "counts")
     expect_equal(colnames(only_assay)[1:3], c("FeatureID","SampleID","counts"))
     expect_equal(is.numeric(only_assay$counts), TRUE)
 
@@ -77,8 +77,8 @@ test_that("meltAssay", {
     x4 <- se
     # Change names to 1, 2, 3... format
     colnames(x4) <- seq_along(colnames(x4))
-    melted <- meltAssay(x4, assay_name = "counts", add_col_data = TRUE)
-    melted2 <- meltAssay(x4, assay_name = "counts", add_col_data = TRUE, 
+    melted <- meltAssay(x4, assay.type = "counts", add_col_data = TRUE)
+    melted2 <- meltAssay(x4, assay.type = "counts", add_col_data = TRUE, 
                          check_names = TRUE)
     # There should not be any NAs
     expect_true(any(!(is.na(melted))))
@@ -102,20 +102,20 @@ test_that("getAbundanceFeature/getAbundanceSample", {
     data(GlobalPatterns)
     expect_error(getAbundanceFeature(GlobalPatterns,
                                      feature_id="x522457",
-                                     assay_name="counts"),
+                                     assay.type="counts"),
         "Please provide a valid 'feature_id'", fixed=TRUE)
     feature_ab <- getAbundanceFeature(GlobalPatterns,
                                       feature_id = "522457",
-                                      assay_name = "counts")
+                                      assay.type = "counts")
     expect_equal(names(feature_ab)[1], "CL3")
     #
     expect_error(getAbundanceSample(GlobalPatterns,
                                     sample_id= "bogus",
-                                    assay_name="counts"),
+                                    assay.type="counts"),
                  "Please provide a valid 'sample_id'")
     sam_ab <- getAbundanceSample(GlobalPatterns,
                                  sample_id = "CC1",
-                                 assay_name = "counts")
+                                 assay.type = "counts")
     expect_equal(names(sam_ab)[1], "549322")
 })
 
@@ -128,7 +128,7 @@ test_that("getTopTaxa", {
     expect_error(mia:::.check_max_taxa(GlobalPatterns),
                  'argument "top" is missing')
     expect_error(mia:::.check_max_taxa(GlobalPatterns, 5L),
-                 'argument "assay_name" is missing')
+                 'argument "assay.type" is missing')
     expect_null(mia:::.check_max_taxa(GlobalPatterns, 5L, "counts"))
     expect_error(mia:::.check_max_taxa(GlobalPatterns, 100000000, "counts"),
                  "'top' must be <= nrow(x)",fixed=TRUE)
@@ -138,11 +138,11 @@ test_that("getTopTaxa", {
     sum.taxa <- c("549656", "331820", "279599", "360229", "317182")
     median.taxa <- c("549656", "331820", "317182", "94166",  "279599")
     top_mean <- getTopTaxa(GlobalPatterns, method="mean", top=5,
-                           assay_name="counts")
+                           assay.type="counts")
     top_sum <- getTopTaxa(GlobalPatterns, method="sum", top=5,
-                          assay_name="counts")
+                          assay.type="counts")
     top_median <- getTopTaxa(GlobalPatterns, method="median", top=5,
-                             assay_name="counts")
+                             assay.type="counts")
     expect_equal(top_mean, mean.taxa)
     expect_equal(top_sum, sum.taxa)
     expect_equal(top_median, median.taxa)

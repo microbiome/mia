@@ -59,7 +59,7 @@ test_that("transformCounts", {
         df <- DataFrame(n = c(1:6))
         expect_error(relAbundanceCounts(SummarizedExperiment(assays = list(mat = mat),
                                                              rowData = df)),
-                     "'assay_name' must be a valid name of assays")
+                     "'assay.type' must be a valid name of assays")
 
         se <- SummarizedExperiment(assays = list(counts = mat),
                                    rowData = df)
@@ -156,7 +156,7 @@ test_that("transformCounts", {
         relative <- relative + pseudonumber
         # Tests clr
         # Calc CLRs
-        mat <- assays(mia::transformCounts(tse, assay_name = "relabundance",
+        mat <- assays(mia::transformCounts(tse, assay.type = "relabundance",
                                            method = "clr", pseudocount = pseudonumber))$clr
         mat_comp <- apply(as.matrix(relative), 2, FUN=function(x){
             log(x) - mean(log(x))
@@ -171,7 +171,7 @@ test_that("transformCounts", {
         # Calc RCLRs
         assay <- assay(tse, "counts")
         suppressWarnings(
-        mat <- assays(mia::transformCounts(tse, assay_name = "counts",
+        mat <- assays(mia::transformCounts(tse, assay.type = "counts",
                                            method = "rclr"))$rclr
         )
         suppressWarnings(
@@ -221,8 +221,8 @@ test_that("transformCounts", {
         assay(tse, "test2")[1, ] <- 0
         
         # clr robust transformations
-        test <- assay(transformSamples(tse, method = "rclr", assay_name = "test"), "rclr")
-        test2 <- assay(transformSamples(tse, method = "rclr", assay_name = "test2"), "rclr")
+        test <- assay(transformSamples(tse, method = "rclr", assay.type = "test"), "rclr")
+        test2 <- assay(transformSamples(tse, method = "rclr", assay.type = "test2"), "rclr")
         
         # Removes first rows
         test <- test[-1, ]
@@ -234,31 +234,31 @@ test_that("transformCounts", {
         tse <- transformSamples(tse, method = "relabundance")
         # Expect error when counts and zeroes
         expect_warning(
-        expect_error(transformSamples(tse, assay_name = "counts", 
+        expect_error(transformSamples(tse, assay.type = "counts", 
                                       method = "clr"))
         )
         # Expect error warning when zeroes
         tse <- transformSamples(tse, method = "relabundance")
-        expect_error(transformSamples(tse, assay_name = "relabundance", 
+        expect_error(transformSamples(tse, assay.type = "relabundance", 
                                       method = "clr") ) 
         # Expect no warning when pseudocount is added, colSums are over 1
-        expect_warning(transformSamples(tse, assay_name = "relabundance", 
+        expect_warning(transformSamples(tse, assay.type = "relabundance", 
                                        method = "clr", pseudocount = 1), 
                        regexp = NA)
         # Expect no warning when pseudocount is added, colSums are 1
         tse <- transformSamples(tse, method = "relabundance", pseudocount = 1, 
                                 name = "relabund2")
-        expect_error(transformSamples(tse, assay_name = "relabund2", 
+        expect_error(transformSamples(tse, assay.type = "relabund2", 
                                        method = "clr"))
         # Expect warning when colSums are not equal
-        expect_warning(transformSamples(tse, assay_name = "counts", 
+        expect_warning(transformSamples(tse, assay.type = "counts", 
                                         method = "clr", pseudocount = 1))
-        expect_warning(transformSamples(tse, assay_name = "counts", 
+        expect_warning(transformSamples(tse, assay.type = "counts", 
                                         method = "rclr"))
 
         ############################# NAMES ####################################
         # Tests that samples have correct names
-        expect_equal(colnames(assays(transformCounts(tse, assay_name = "relabundance",
+        expect_equal(colnames(assays(transformCounts(tse, assay.type = "relabundance",
                                                      method = "clr", pseudocount = 1))$clr),
                      colnames(assays(tse)$relabundance))
 
@@ -320,20 +320,20 @@ test_that("transformCounts", {
         # Test that transformations are equal to ones directly from vegan
         # clr
         tse <- transformSamples(tse, method = "relabundance")
-        tse <- transformSamples(tse, assay_name = "relabundance", method = "clr",
+        tse <- transformSamples(tse, assay.type = "relabundance", method = "clr",
                                 pseudocount = 4)
         actual <- assay(tse, "clr")
         compare <- vegan::decostand(assay(tse, "relabundance"), method = "clr",
                                     pseudocount = 4, MARGIN = 2)
         expect_equal(actual, compare)
         # rclr
-        tse <- transformSamples(tse, assay_name = "relabundance", method = "rclr")
+        tse <- transformSamples(tse, assay.type = "relabundance", method = "rclr")
         actual <- assay(tse, "rclr")
         compare <- vegan::decostand(assay(tse, "relabundance"), method = "rclr",
                                     MARGIN = 2)
         expect_equal(actual, compare)
         # alr
-        tse <- transformSamples(tse, assay_name = "relabundance", method = "alr",
+        tse <- transformSamples(tse, assay.type = "relabundance", method = "alr",
                                 pseudocount = 4, reference = 2)
         actual <- assay(tse, "alr")
         compare <- vegan::decostand(assay(tse, "relabundance"), method = "alr",
@@ -346,14 +346,14 @@ test_that("transformCounts", {
         compare <- compare[, colnames(tse)]
         expect_equal(actual, compare, check.attributes = FALSE)
         # hellinger
-        tse <- transformCounts(tse, assay_name = "counts", method = "hellinger",
+        tse <- transformCounts(tse, assay.type = "counts", method = "hellinger",
                                 pseudocount = 2, reference = 2)
         actual <- assay(tse, "hellinger")
         compare <- vegan::decostand(assay(tse, "counts"), method = "hellinger",
                                     pseudocount = 4, MARGIN = 2)
         expect_equal(actual, compare)
         # chi.squared
-        tse <- transformCounts(tse, assay_name = "counts", method = "chi.square")
+        tse <- transformCounts(tse, assay.type = "counts", method = "chi.square")
         actual <- assay(tse, "chi.square")
         compare <- vegan::decostand(assay(tse, "counts"), method = "chi.square",
                                     MARGIN = 2)

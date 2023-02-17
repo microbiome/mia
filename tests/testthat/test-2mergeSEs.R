@@ -22,24 +22,24 @@ test_that("mergeSEs", {
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "right") )
     expect_error( mergeSEs(tse1, tse2, missing_values = TRUE ) )
     expect_error( mergeSEs(tse1, tse2, missing_values = 36846 ) )
-    expect_error( mergeSEs(tse1, tse2, assay_name = "test")  )
-    # Calculate relative transform to test assay_name
+    expect_error( mergeSEs(tse1, tse2, assay.type = "test")  )
+    # Calculate relative transform to test assay.type
     tse1 <- transformSamples(tse1, method = "relabundance")
-    expect_error( mergeSEs(tse1, tse2, assay_name = "relabundance")  )
+    expect_error( mergeSEs(tse1, tse2, assay.type = "relabundance")  )
     expect_error( mergeSEs(tse1, tse2, verbose = "test")  )
     expect_error( mergeSEs(tse1, tse2, verbose = 1)  )
     expect_error( mergeSEs(tse1, tse2, tse3)  )
     expect_error( mergeSEs(tse1)  )
     
     # Test that data match if there is only one element
-    tse <- mergeSEs(list(tse1), assay_name = "relabundance")
+    tse <- mergeSEs(list(tse1), assay.type = "relabundance")
     expect_equal( rowData(tse), rowData(tse1))
     expect_equal( colData(tse), colData(tse1))
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))
     expect_equal( rowTree(tse), rowTree(tse1))
     
     # Test that data match if there is only same elements
-    tse <- mergeSEs(list(tse1, tse1, tse1), assay_name = "relabundance")
+    tse <- mergeSEs(list(tse1, tse1, tse1), assay.type = "relabundance")
     # The order of taxa and samples changes
     tse <- tse[ rownames(tse1), colnames(tse1) ]
     expect_equal( rowData(tse), rowData(tse1))
@@ -52,11 +52,11 @@ test_that("mergeSEs", {
     
     # Expect that rowTree is preserved if rownames match
     tse <- mergeSEs(list(tse1, GlobalPatterns), 
-                                         assay_name = "counts",
+                                         assay.type = "counts",
                                          missing_values = NA)
     expect_equal(rowTree(GlobalPatterns), rowTree(tse))
     # Expect some NAs
-    tse <- mergeSEs(list(tse1, tse2), assay_name = "counts")
+    tse <- mergeSEs(list(tse1, tse2), assay.type = "counts")
     expect_true( any(is.na(assay(tse))) )
     
     # Test that dimensions match
@@ -388,12 +388,12 @@ test_that("mergeSEs", {
     tse3 <- relAbundanceCounts(tse3)
     
     tse_temp <- expect_warning( mergeSEs(list(tse1, tse2, tse3),
-                                         assay_name = c("counts", 
+                                         assay.type = c("counts", 
                                                         "relabundance"), 
                                          join = "inner"))
     expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
     tse_temp <- expect_warning(mergeSEs(list(tse1, tse2),
-                                        assay_name = c("counts", "relabundance", "test"),
+                                        assay.type = c("counts", "relabundance", "test"),
                                         join = "left"))
     expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
     

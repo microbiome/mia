@@ -16,12 +16,12 @@
 #'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
 #'   used by default.
 #'
-#' @param assay_name the name of the assay used for
+#' @param assay.type the name of the assay used for
 #'   calculation of the sample-wise estimates.
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param index a \code{character} vector, specifying the diversity measures
@@ -225,7 +225,7 @@ NULL
 #' @rdname estimateDiversity
 #' @export
 setGeneric("estimateDiversity",signature = c("x"),
-        function(x, assay_name = abund_values, abund_values = "counts",
+        function(x, assay.type = assay_name, assay_name = "counts",
                 index = c("coverage", "fisher", "gini_simpson", 
                         "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ...)
@@ -234,7 +234,7 @@ setGeneric("estimateDiversity",signature = c("x"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts",
+    function(x, assay.type = assay_name, assay_name = "counts",
             index = c("coverage", "fisher", "gini_simpson", 
                     "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ..., BPPARAM = SerialParam()){
@@ -247,13 +247,13 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
                 "same length than 'index'.",
                 call. = FALSE)
         }
-        .check_assay_present(assay_name, x)
+        .check_assay_present(assay.type, x)
         .require_package("vegan")
 
         dvrsts <- BiocParallel::bplapply(index,
                                         .get_diversity_values,
                                         x = x,
-                                        mat = assay(x, assay_name),
+                                        mat = assay(x, assay.type),
                                         BPPARAM = BPPARAM,
                                         ...)
         .add_values_to_colData(x, dvrsts, name)
@@ -263,7 +263,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts",
+    function(x, assay.type = assay_name, assay_name = "counts",
             index = c("coverage", "faith", "fisher", "gini_simpson", 
                     "inverse_simpson", "log_modulo_skewness", "shannon"),
             name = index, tree_name = "phylo", 
@@ -337,14 +337,14 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
 #' @export
 setGeneric("estimateFaith",signature = c("x", "tree"),
             function(x, tree = "missing", 
-                    assay_name = abund_values, abund_values = "counts",
+                    assay.type = assay_name, assay_name = "counts",
                     name = "faith", ...)
             standardGeneric("estimateFaith"))
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
-    function(x, tree, assay_name = abund_values, abund_values = "counts",
+    function(x, tree, assay.type = assay_name, assay_name = "counts",
             name = "faith", node_lab = NULL, ...){
         # Input check
         # Check 'tree'
@@ -354,11 +354,11 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                 "The Faith's alpha diversity index is not possible to calculate.",
                 call. = FALSE)
         }
-        # Check 'assay_name'
-        .check_assay_present(assay_name, x)
+        # Check 'assay.type'
+        .check_assay_present(assay.type, x)
         # Check that it is numeric
-        if( !is.numeric(assay(x, assay_name)) ){
-            stop("The abundance matrix specificied by 'assay_name' must be numeric.",
+        if( !is.numeric(assay(x, assay.type)) ){
+            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
                  call. = FALSE)
         }
         # Check 'name'
@@ -375,10 +375,10 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                  call. = FALSE)
         }
         # Get the abundance matrix
-        mat <- assay(x, assay_name)
+        mat <- assay(x, assay.type)
         # Check that it is numeric
         if( !is.numeric(mat) ){
-            stop("The abundance matrix specificied by 'assay_name' must be numeric.",
+            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
                  call. = FALSE)
         }
         # Subset and rename rows of the assay to correspond node_labs
@@ -399,7 +399,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
-    function(x, assay_name = abund_values, abund_values = "counts",
+    function(x, assay.type = assay_name, assay_name = "counts",
             name = "faith", tree_name = "phylo", ...){
         # Check tree_name
         if( !.is_non_empty_character(tree_name) ){

@@ -26,16 +26,16 @@
 #'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the 
 #'   node labs must be present in \code{tree}.
 #'
-#' @param assay_name a single \code{character} value for specifying which
+#' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead.)
+#'   (Please use \code{assay.type} instead.)
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param tree_name a single \code{character} value for specifying which
@@ -146,11 +146,11 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
 setMethod("calculateUnifrac",
           signature = c(x = "TreeSummarizedExperiment",
                         tree = "missing"),
-    function(x, assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts", 
+    function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
              tree_name = "phylo", transposed = FALSE, ...){
-        # Check assay_name and get assay
-        .check_assay_present(assay_name, x)
-        mat <- assay(x, assay_name)
+        # Check assay.type and get assay
+        .check_assay_present(assay.type, x)
+        mat <- assay(x, assay.type)
         if(!transposed){
             # Check tree_name
             .check_rowTree_present(tree_name, x)

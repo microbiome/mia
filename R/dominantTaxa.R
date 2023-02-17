@@ -8,13 +8,13 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'
-#' @param assay_name A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for identifying dominant taxa.
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param rank A single character defining a taxonomic rank. Must be a value of
@@ -63,7 +63,7 @@ NULL
 #' @aliases perSampleDominantFeatures
 #' @export
 setGeneric("perSampleDominantTaxa",signature = c("x"),
-           function(x, assay_name = abund_values, abund_values = "counts", 
+           function(x, assay.type = assay_name, assay_name = "counts", 
                     rank = NULL, ...)
                standardGeneric("perSampleDominantTaxa"))
 
@@ -72,11 +72,11 @@ setGeneric("perSampleDominantTaxa",signature = c("x"),
 #' @importFrom IRanges relist
 #' @export
 setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts", 
+    function(x, assay.type = assay_name, assay_name = "counts", 
              rank = NULL, ...){
         # Input check
-        # Check assay_name
-        .check_assay_present(assay_name, x)
+        # Check assay.type
+        .check_assay_present(assay.type, x)
         # rank check
         if(!is.null(rank)){
             if(!.is_a_string(rank)){
@@ -89,10 +89,10 @@ setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
         # taxonomic rank that is specified by user.
         if (!is.null(rank)) {
             x <- agglomerateByRank(x, rank, ...)
-            mat <- assay(x, assay_name)
+            mat <- assay(x, assay.type)
         } # Otherwise, if "rank" is NULL, abundances are stored without ranking
         else {
-            mat <- assay(x, assay_name)
+            mat <- assay(x, assay.type)
         }
         # apply() function finds the indices of taxa's that has the highest
         # abundance.
