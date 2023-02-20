@@ -6,21 +6,30 @@
 \alias{makeTreeSummarizedExperimentFromBiom}
 \title{Loading a biom file}
 \usage{
-loadFromBiom(file, removeTaxaPrefixes = FALSE)
+loadFromBiom(file, ...)
 
-makeTreeSEFromBiom(obj, removeTaxaPrefixes = FALSE, ...)
+makeTreeSEFromBiom(
+  obj,
+  removeTaxaPrefixes = FALSE,
+  rankFromPrefix = FALSE,
+  ...
+)
 
 makeTreeSummarizedExperimentFromBiom(obj, ...)
 }
 \arguments{
 \item{file}{biom file location}
 
-\item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
-taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})}
+\item{...}{optional arguments (not used).}
 
 \item{obj}{object of type \code{\link[biomformat:read_biom]{biom}}}
 
-\item{...}{optional arguments (not used).}
+\item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
+taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})}
+
+\item{rankFromPrefix}{\code{TRUE} or \code{FALSE}: If file does not have
+taxonomic ranks on feature table, should they be scraped from prefixes?
+(default \code{rankFromPrefix = FALSE})}
 }
 \value{
 An object of class
@@ -37,7 +46,7 @@ if(requireNamespace("biomformat")) {
   # load from file
   rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
                                  package = "biomformat")
-  se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE)
+  se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE, rankFromPrefix = TRUE)
 
   # load from object
   x1 <- biomformat::read_biom(rich_dense_file)
