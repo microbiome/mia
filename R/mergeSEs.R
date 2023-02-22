@@ -843,15 +843,14 @@ setMethod("right_join", signature = c(x = "ANY"),
         names2 <- colnames(tse2)
     }
     # Get unique values
-    names <- make.unique(c(names1, names2))
-    names1 <- names[1:length(names1)]
-    names2 <- names[(length(names1)+1):length(names)]
+    while(any(names1 %in% paste0(names2, ".", iteration))){
+        iterations <- iteration + 1
+    }
+    names2 <- paste0(names2, ".", iteration)
     # Assign names back
     if( MARGIN == "row" ){
-        rownames(tse1) <- names1
         rownames(tse2) <- names2
     } else{
-        colnames(tse1) <- names1
         colnames(tse2) <- names2
     }
     return(tse2)
