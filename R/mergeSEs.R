@@ -306,7 +306,8 @@ setMethod("right_join", signature = c(x = "ANY"),
 .merge_SEs <- function(x, class, join, assay_name, 
                       missing_values, collapse_samples, verbose){
     # Add rowData info to rownames
-    x <- lapply(x, FUN = .add_rowdata_to_rownames)
+    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
+    x <- lapply(x, FUN = .add_rowdata_to_rownames, colname = rownames_name)
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
@@ -387,7 +388,6 @@ setMethod("right_join", signature = c(x = "ANY"),
         tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
     }
     # Adjust rownames
-    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
     rownames(tse) <- rowData(tse)[[rownames_name]]
     rowData(tse)[[rownames_name]] <- NULL
     return(tse)
@@ -399,10 +399,9 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: (Tree)SE
 # Output: (Tree)SE with rownames that include all taxonomy information
-.add_rowdata_to_rownames <- function(x){
+.add_rowdata_to_rownames <- function(x, colname){
     # Add rownames to rowData
-    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
-    rowData(x)[[rownames_name]] <- rownames(x)
+    rowData(x)[[colname]] <- rownames(x)
     # Get rowData
     rd <- rowData(x)
     # Get taxonomy_info
