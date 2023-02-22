@@ -307,7 +307,8 @@ setMethod("right_join", signature = c(x = "ANY"),
                       missing_values, collapse_samples, verbose){
     # Add rowData info to rownames
     rownames_name <- "rownames_that_will_be_used_to_adjust_names"
-    x <- lapply(x, FUN = .add_rowdata_to_rownames, colname = rownames_name)
+    x <- lapply(x, FUN = .add_rowdata_to_rownames,
+                rownames_name = rownames_name)
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
@@ -397,11 +398,11 @@ setMethod("right_join", signature = c(x = "ANY"),
 # This function adds taxonomy information to rownames to enable more specific match
 # between rows
 
-# Input: (Tree)SE
+# Input: (Tree)SE, name of the column that is being added to rowData
 # Output: (Tree)SE with rownames that include all taxonomy information
-.add_rowdata_to_rownames <- function(x, colname){
+.add_rowdata_to_rownames <- function(x, rownames_name, ...){
     # Add rownames to rowData
-    rowData(x)[[colname]] <- rownames(x)
+    rowData(x)[[rownames_name]] <- rownames(x)
     # Get rowData
     rd <- rowData(x)
     # Get taxonomy_info
@@ -498,62 +499,32 @@ setMethod("right_join", signature = c(x = "ANY"),
     }
     # All rownames/colnames should be included in trees/links
     if( !all(names %in% links[["names"]]) || is.null(names) ){
-        warning(MARGIN, "Tree(s) does not match with the data so it is discarded.",
-                call. = FALSE)
+        warning(MARGIN, "Tree(s) does not match with the data so it ", 
+                "is discarded.", call. = FALSE)
         return(tse)
     }
     
-    # If there are multiple trees, select non-duplicated trees, best fitting 
-    # combination of trees. Get minimum number of trees that represent the data
-    # based on link data.
+    # If there are multiple trees, select non-duplicated trees; the largest
+    # take the precedence, remove duplicated rowlinks --> each row is presented
+    # in the set only once --> remove trees that do not have any values anymore.
     if( length(trees) > 1 ){
-        # From the links, for each tree, get row/cols that are linked with tree 
-        tree_labs <- split(links[["nodeLab"]], f = links$whichTree)
-        
-        # Loop thorugh tree labs, check which trees include which node labs
-        result <- lapply(tree_labs, FUN = function(x){
-            c( links[["nodeLab"]] %in% x )
-        })
-        # Create a data.frame
-        result <- as.data.frame(result)
-        
-        # Loop from 1 to number of trees
-        for( i in seq_len(ncol(result)) ){
-            # Create all possible combinations from trees, each combination has i trees. 
-            combinations <- combn(result, i, simplify = FALSE)
-            # Does this combination have all the node labels (rows or columns) 
-            res <- lapply(combinations, FUN = function(x){
-                all( rowSums(x) > 0 )
-            })
-            # Unlist the list of boolean values
-            res <- unlist(res)
-            # If combination that includes all the rows/cols was found
-            if( any(res) ){
-                # Take the first combination that have all the rows/cols
-                combinations <- combinations[[which(res)[[1]]]]
-                # Take the names of trees
-                tree_names <- colnames(combinations)
-                # Break so that for loop is not continued anymore
-                break
-            }
-        }
-        # Get the trees that are included in the final combination
-        trees <- trees[tree_names]
-        # Subset result by taking only those trees that are included in final object
-        result <- result[ , tree_names, drop = FALSE]
-        # In which tree this node label is found (each row represent each node label)
-        whichTree <- apply(result, 1, FUN = function(x){
-            names(result)[x == TRUE][[1]]
-            }
-        )
-        whichTree <- unlist(whichTree)
-        # Update links
-        links[["whichTree"]] <- whichTree
-        # Remove duplicates
-        links <- links[ !duplicated(links[["names"]]), ]
-        # Ensure that links are in correct order
-        links <- links[ match(names, links[["names"]]), ]
+        # Sort trees --> trees with highest number of taxa first
+        max_trees <- table(links$whichTree)
+        max_trees <- names(max_trees)[order(max_trees, decreasing = TRUE)]
+        # Order the link data frame, take largest trees first
+        links$whichTree <- factor(links$whichTree, levels = max_trees)
+        links <- links[order(links$whichTree), ]
+        # Remove factorization
+        links$whichTree <- unfactor(links$whichTree)
+        # Remove duplicated links
+        links <- links[!duplicated(links$names), ]
+        # Subset trees
+        trees <- trees[unique(links$whichTree)]
     }
+    
+    # Order the data to match created TreeSE
+    links <- links[match(links$names, rownames(tse)), ]
+    trees <- trees[unique(links$whichTree)]
     
     # Create a LinkDataFrame based on the link data
     links <- LinkDataFrame(
