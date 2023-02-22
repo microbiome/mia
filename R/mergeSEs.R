@@ -20,6 +20,15 @@
 #' @param collapse_samples A boolean value for selecting whether to collapse identically
 #' named samples to one. (By default: \code{collapse_samples = FALSE})
 #' 
+#' @param collapse_features A boolean value for selecting whether to collapse identically
+#' named features to one. Since all taxonomy information is taken into account,
+#' this concerns rownames-level (usually strain level) comparison. Often
+#' OTU or ASV level is just an arbitrary number series from sequencing machine
+#' meaning that the OTU information is not comparable between studies. With this
+#' option, it is possible to specify whether these strains are combined if their
+#' taxonomy information along with OTU number matches.
+#' (By default: \code{collapse_features = TRUE})
+#' 
 #' @param verbose A single boolean value to choose whether to show messages. 
 #' (By default: \code{verbose = TRUE})
 #'
@@ -140,7 +149,8 @@ setGeneric("mergeSEs", signature = c("x"),
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList"),
         function(x, assay_name = "counts", join = "full", 
-                 missing_values = NA, collapse_samples = FALSE, verbose = TRUE, 
+                 missing_values = NA, collapse_samples = FALSE,
+                 collapse_features = TRUE, verbose = TRUE, 
                  ... ){
             ################## Input check ##################
             # Check the objects 
@@ -179,6 +189,11 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 stop("'collapse_samples' must be TRUE or FALSE.",
                      call. = FALSE)
             }
+            # Check collapse_samples
+            if( !.is_a_bool(collapse_features) ){
+                stop("'collapse_features' must be TRUE or FALSE.",
+                     call. = FALSE)
+            }
             # Check verbose
             if( !.is_a_bool(verbose) ){
                 stop("'verbose' must be TRUE or FALSE.",
@@ -191,8 +206,9 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 message("1/", length(x), appendLF = FALSE)
             }
             # Merge objects
-            tse <- .merge_SEs(x, class, join, assay_name, 
-                             missing_values, collapse_samples, verbose)
+            tse <- .merge_SEs(
+                x, class, join, assay_name, missing_values, collapse_samples,
+                collapse_features, verbose)
             return(tse)
         }
 )
@@ -303,8 +319,9 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Output: SE
 
 #' @importFrom SingleCellExperiment SingleCellExperiment
-.merge_SEs <- function(x, class, join, assay_name, 
-                      missing_values, collapse_samples, verbose){
+.merge_SEs <- function(
+        x, class, join, assay_name, missing_values, collapse_samples,
+        collapse_features, verbose){
     # Add rowData info to rownames
     rownames_name <- "rownames_that_will_be_used_to_adjust_names"
     x <- lapply(x, FUN = .add_rowdata_to_rownames,
@@ -349,7 +366,10 @@ setMethod("right_join", signature = c(x = "ANY"),
 
             # Modify names if specified
             if( !collapse_samples ){
-                temp <- .get_unique_sample_names(tse, temp, i+1)
+                temp <- .get_unique_names(tse, temp, "col", i+1)
+            }
+            if( !collapse_features ){
+                temp <- .get_unique_names(tse, temp, "row", i+1)
             }
             # Merge data
             args <- .merge_SummarizedExperiments(
@@ -808,21 +828,35 @@ setMethod("right_join", signature = c(x = "ANY"),
     )
 }
 
-########################### .get_unique_sample_names ###########################
+########################### ..get_unique_names ###########################
 # This function convert colnames unique
 
-# Input: TreeSEs
+# Input: TreeSEs and MARGIN
 # Output: One TreeSE with unique sample names compared to other TreeSE
-.get_unique_sample_names <- function(tse1, tse2, iteration){
+.get_unique_names <- function(tse1, tse2, MARGIN, iteration){
+    # Based on MARGIN, get right names
+    if( MARGIN == "row" ){
+        names1 <- rownames(tse1)
+        names2 <- rownames(tse2)
+    } else{
+        names1 <- colnames(tse1)
+        names2 <- colnames(tse2)
+    }
     # Get indices of those sample names that match
-    ind <-  colnames(tse2) %in% colnames(tse1)
+    ind <-  names2 %in% names1
     # Get duplicated sample names
-    duplicated_colnames <-  colnames(tse2)[ind]
-    if( length(duplicated_colnames) > 0 ) {
+    duplicated_names <-  names2[ind]
+    if( length(duplicated_names) > 0 ) {
         # Add the number of object to duplicated sample names
-        duplicated_colnames <- paste0(duplicated_colnames, "_", iteration)
+        duplicated_names <- paste0(duplicated_names, "_", iteration)
         # Add new sample names to the tse object
-        colnames(tse2)[ind] <- duplicated_colnames
+        names2[ind] <- duplicated_names
+    }
+    # Assign names back
+    if( MARGIN == "row" ){
+        rownames(tse2) <- names2
+    } else{
+        colnames(tse2) <- names2
     }
     return(tse2)
 }
