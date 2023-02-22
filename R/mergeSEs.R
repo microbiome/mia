@@ -481,7 +481,7 @@ setMethod("right_join", signature = c(x = "ANY"),
         temp_seqs <- do.call(c, temp_seqs)
         # Get only those taxa that are included in TreeSE
         temp_seqs <- temp_seqs[ match(rownames(tse), names(temp_seqs)), ]
-        # Add combined ssequences into a list
+        # Add combined sequences into a list
         result_list <- c(result_list, temp_seqs)
     }
     # Create a DNAStrinSetList if there are more than one element
@@ -842,20 +842,16 @@ setMethod("right_join", signature = c(x = "ANY"),
         names1 <- colnames(tse1)
         names2 <- colnames(tse2)
     }
-    # Get indices of those sample names that match
-    ind <-  names2 %in% names1
-    # Get duplicated sample names
-    duplicated_names <-  names2[ind]
-    if( length(duplicated_names) > 0 ) {
-        # Add the number of object to duplicated sample names
-        duplicated_names <- paste0(duplicated_names, "_", iteration)
-        # Add new sample names to the tse object
-        names2[ind] <- duplicated_names
-    }
+    # Get unique values
+    names <- make.unique(c(names1, names2))
+    names1 <- names[1:length(names1)]
+    names2 <- names[(length(names1)+1):length(names)]
     # Assign names back
     if( MARGIN == "row" ){
+        rownames(tse1) <- names1
         rownames(tse2) <- names2
     } else{
+        colnames(tse1) <- names1
         colnames(tse2) <- names2
     }
     return(tse2)
