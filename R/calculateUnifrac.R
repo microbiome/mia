@@ -279,6 +279,10 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # Begin by building the edge descendants matrix (edge-by-sample)
     # `edge_array`
     #
+    
+    # Remove those tips that are not present in the data
+    tree <- ape::drop.tip(
+        tree, tree$tip.label[!tree$tip.label %in% rownames(x)])
     # Create a list of descendants, starting from the first internal node (root)
     ntip <- length(tree$tip.label)
     # Create a matrix that maps each internal node to its 2 descendants
