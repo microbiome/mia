@@ -303,14 +303,14 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
 .order_based_on_trees <- function(x){
     # Get rowlinks and unique trees
     links <- DataFrame(rowLinks(x))
-    uniq_trees <- unique(links$whichTree)
+    uniq_trees <- sort(unique(links$whichTree))
     # Get row index to the data
     links$row_i <- seq_len(nrow(x))
     # Calculate, how many rows each tree has, and add it to data
     freq <- as.data.frame(table(links$whichTree))
     links <- merge(links, freq, all.x = TRUE, all.y = FALSE,
                    by.x = "whichTree", by.y = "Var1")
-    # FActorize the names of trees
+    # Factorize the names of trees
     links$whichTree <- factor(links$whichTree, level = uniq_trees)
     # Order the data back to its original order based on row indices
     links <- links[order(links$row_i), ]
