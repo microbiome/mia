@@ -259,7 +259,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # Modify tree
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     # Remove those tips that are not present in the data
-    if( !tree$tip.label %in% rownames(x) ){
+    if( any(!tree$tip.label %in% rownames(x)) ){
         tree <- ape::drop.tip(
             tree, tree$tip.label[!tree$tip.label %in% rownames(x)])
         warning("The tree is pruned so that tips that cannot be found from ", 
