@@ -23,6 +23,7 @@ mergeSEs(x, ...)
   join = "full",
   missing_values = NA,
   collapse_samples = FALSE,
+  collapse_features = TRUE,
   verbose = TRUE,
   ...
 )
@@ -66,6 +67,15 @@ of missing values. (By default: \code{missing_values = NA})}
 
 \item{collapse_samples}{A boolean value for selecting whether to collapse identically
 named samples to one. (By default: \code{collapse_samples = FALSE})}
+
+\item{collapse_features}{A boolean value for selecting whether to collapse identically
+named features to one. Since all taxonomy information is taken into account,
+this concerns rownames-level (usually strain level) comparison. Often
+OTU or ASV level is just an arbitrary number series from sequencing machine
+meaning that the OTU information is not comparable between studies. With this
+option, it is possible to specify whether these strains are combined if their
+taxonomy information along with OTU number matches.
+(By default: \code{collapse_features = TRUE})}
 
 \item{verbose}{A single boolean value to choose whether to show messages.
 (By default: \code{verbose = TRUE})}

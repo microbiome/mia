@@ -20,6 +20,15 @@
 #' @param collapse_samples A boolean value for selecting whether to collapse identically
 #' named samples to one. (By default: \code{collapse_samples = FALSE})
 #' 
+#' @param collapse_features A boolean value for selecting whether to collapse identically
+#' named features to one. Since all taxonomy information is taken into account,
+#' this concerns rownames-level (usually strain level) comparison. Often
+#' OTU or ASV level is just an arbitrary number series from sequencing machine
+#' meaning that the OTU information is not comparable between studies. With this
+#' option, it is possible to specify whether these strains are combined if their
+#' taxonomy information along with OTU number matches.
+#' (By default: \code{collapse_features = TRUE})
+#' 
 #' @param verbose A single boolean value to choose whether to show messages. 
 #' (By default: \code{verbose = TRUE})
 #'
@@ -140,7 +149,8 @@ setGeneric("mergeSEs", signature = c("x"),
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList"),
         function(x, assay_name = "counts", join = "full", 
-                 missing_values = NA, collapse_samples = FALSE, verbose = TRUE, 
+                 missing_values = NA, collapse_samples = FALSE,
+                 collapse_features = TRUE, verbose = TRUE, 
                  ... ){
             ################## Input check ##################
             # Check the objects 
@@ -179,6 +189,11 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 stop("'collapse_samples' must be TRUE or FALSE.",
                      call. = FALSE)
             }
+            # Check collapse_samples
+            if( !.is_a_bool(collapse_features) ){
+                stop("'collapse_features' must be TRUE or FALSE.",
+                     call. = FALSE)
+            }
             # Check verbose
             if( !.is_a_bool(verbose) ){
                 stop("'verbose' must be TRUE or FALSE.",
@@ -191,8 +206,9 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 message("1/", length(x), appendLF = FALSE)
             }
             # Merge objects
-            tse <- .merge_SEs(x, class, join, assay_name, 
-                             missing_values, collapse_samples, verbose)
+            tse <- .merge_SEs(
+                x, class, join, assay_name, missing_values, collapse_samples,
+                collapse_features, verbose)
             return(tse)
         }
 )
@@ -303,10 +319,13 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Output: SE
 
 #' @importFrom SingleCellExperiment SingleCellExperiment
-.merge_SEs <- function(x, class, join, assay_name, 
-                      missing_values, collapse_samples, verbose){
+.merge_SEs <- function(
+        x, class, join, assay_name, missing_values, collapse_samples,
+        collapse_features, verbose){
     # Add rowData info to rownames
-    x <- lapply(x, FUN = .add_rowdata_to_rownames)
+    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
+    x <- lapply(x, FUN = .add_rowdata_to_rownames,
+                rownames_name = rownames_name)
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
@@ -347,7 +366,10 @@ setMethod("right_join", signature = c(x = "ANY"),
 
             # Modify names if specified
             if( !collapse_samples ){
-                temp <- .get_unique_sample_names(tse, temp, i+1)
+                temp <- .get_unique_names(tse, temp, "col")
+            }
+            if( !collapse_features ){
+                temp <- .get_unique_names(tse, temp, "row")
             }
             # Merge data
             args <- .merge_SummarizedExperiments(
@@ -387,7 +409,6 @@ setMethod("right_join", signature = c(x = "ANY"),
         tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
     }
     # Adjust rownames
-    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
     rownames(tse) <- rowData(tse)[[rownames_name]]
     rowData(tse)[[rownames_name]] <- NULL
     return(tse)
@@ -397,11 +418,10 @@ setMethod("right_join", signature = c(x = "ANY"),
 # This function adds taxonomy information to rownames to enable more specific match
 # between rows
 
-# Input: (Tree)SE
+# Input: (Tree)SE, name of the column that is being added to rowData
 # Output: (Tree)SE with rownames that include all taxonomy information
-.add_rowdata_to_rownames <- function(x){
+.add_rowdata_to_rownames <- function(x, rownames_name, ...){
     # Add rownames to rowData
-    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
     rowData(x)[[rownames_name]] <- rownames(x)
     # Get rowData
     rd <- rowData(x)
@@ -461,7 +481,7 @@ setMethod("right_join", signature = c(x = "ANY"),
         temp_seqs <- do.call(c, temp_seqs)
         # Get only those taxa that are included in TreeSE
         temp_seqs <- temp_seqs[ match(rownames(tse), names(temp_seqs)), ]
-        # Add combined ssequences into a list
+        # Add combined sequences into a list
         result_list <- c(result_list, temp_seqs)
     }
     # Create a DNAStrinSetList if there are more than one element
@@ -499,62 +519,32 @@ setMethod("right_join", signature = c(x = "ANY"),
     }
     # All rownames/colnames should be included in trees/links
     if( !all(names %in% links[["names"]]) || is.null(names) ){
-        warning(MARGIN, "Tree(s) does not match with the data so it is discarded.",
-                call. = FALSE)
+        warning(MARGIN, "Tree(s) does not match with the data so it ", 
+                "is discarded.", call. = FALSE)
         return(tse)
     }
     
-    # If there are multiple trees, select non-duplicated trees, best fitting 
-    # combination of trees. Get minimum number of trees that represent the data
-    # based on link data.
+    # If there are multiple trees, select non-duplicated trees; the largest
+    # take the precedence, remove duplicated rowlinks --> each row is presented
+    # in the set only once --> remove trees that do not have any values anymore.
     if( length(trees) > 1 ){
-        # From the links, for each tree, get row/cols that are linked with tree 
-        tree_labs <- split(links[["nodeLab"]], f = links$whichTree)
-        
-        # Loop thorugh tree labs, check which trees include which node labs
-        result <- lapply(tree_labs, FUN = function(x){
-            c( links[["nodeLab"]] %in% x )
-        })
-        # Create a data.frame
-        result <- as.data.frame(result)
-        
-        # Loop from 1 to number of trees
-        for( i in seq_len(ncol(result)) ){
-            # Create all possible combinations from trees, each combination has i trees. 
-            combinations <- combn(result, i, simplify = FALSE)
-            # Does this combination have all the node labels (rows or columns) 
-            res <- lapply(combinations, FUN = function(x){
-                all( rowSums(x) > 0 )
-            })
-            # Unlist the list of boolean values
-            res <- unlist(res)
-            # If combination that includes all the rows/cols was found
-            if( any(res) ){
-                # Take the first combination that have all the rows/cols
-                combinations <- combinations[[which(res)[[1]]]]
-                # Take the names of trees
-                tree_names <- colnames(combinations)
-                # Break so that for loop is not continued anymore
-                break
-            }
-        }
-        # Get the trees that are included in the final combination
-        trees <- trees[tree_names]
-        # Subset result by taking only those trees that are included in final object
-        result <- result[ , tree_names, drop = FALSE]
-        # In which tree this node label is found (each row represent each node label)
-        whichTree <- apply(result, 1, FUN = function(x){
-            names(result)[x == TRUE][[1]]
-            }
-        )
-        whichTree <- unlist(whichTree)
-        # Update links
-        links[["whichTree"]] <- whichTree
-        # Remove duplicates
-        links <- links[ !duplicated(links[["names"]]), ]
-        # Ensure that links are in correct order
-        links <- links[ match(names, links[["names"]]), ]
+        # Sort trees --> trees with highest number of taxa first
+        max_trees <- table(links$whichTree)
+        max_trees <- names(max_trees)[order(max_trees, decreasing = TRUE)]
+        # Order the link data frame, take largest trees first
+        links$whichTree <- factor(links$whichTree, levels = max_trees)
+        links <- links[order(links$whichTree), ]
+        # Remove factorization
+        links$whichTree <- unfactor(links$whichTree)
+        # Remove duplicated links
+        links <- links[!duplicated(links$names), ]
+        # Subset trees
+        trees <- trees[unique(links$whichTree)]
     }
+    
+    # Order the data to match created TreeSE
+    links <- links[rownames(tse), ]
+    trees <- trees[unique(links$whichTree)]
     
     # Create a LinkDataFrame based on the link data
     links <- LinkDataFrame(
@@ -838,21 +828,36 @@ setMethod("right_join", signature = c(x = "ANY"),
     )
 }
 
-########################### .get_unique_sample_names ###########################
+########################### ..get_unique_names ###########################
 # This function convert colnames unique
 
-# Input: TreeSEs
+# Input: TreeSEs and MARGIN
 # Output: One TreeSE with unique sample names compared to other TreeSE
-.get_unique_sample_names <- function(tse1, tse2, iteration){
-    # Get indices of those sample names that match
-    ind <-  colnames(tse2) %in% colnames(tse1)
-    # Get duplicated sample names
-    duplicated_colnames <-  colnames(tse2)[ind]
-    if( length(duplicated_colnames) > 0 ) {
-        # Add the number of object to duplicated sample names
-        duplicated_colnames <- paste0(duplicated_colnames, "_", iteration)
-        # Add new sample names to the tse object
-        colnames(tse2)[ind] <- duplicated_colnames
+.get_unique_names <- function(tse1, tse2, MARGIN, suffix=2){
+    # Based on MARGIN, get right names
+    if( MARGIN == "row" ){
+        names1 <- rownames(tse1)
+        names2 <- rownames(tse2)
+    } else{
+        names1 <- colnames(tse1)
+        names2 <- colnames(tse2)
+    }
+    # If there are duplicated names
+    if( any(names2 %in% names1) ){
+        # Get duplicated names
+        ind <- names2 %in% names1
+        temp_names2 <- names2[ind]
+        # Get unique suffix
+        while( any(paste0(names2, ".", suffix) %in% names1) ){
+            suffix <- suffix + 1
+        }
+        temp_names2 <- paste0(temp_names2, ".", suffix)
+        # Assign names back
+        if( MARGIN == "row" ){
+            rownames(tse2)[ind] <- temp_names2
+        } else{
+            colnames(tse2)[ind] <- temp_names2
+        }
     }
     return(tse2)
 }
