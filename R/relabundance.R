@@ -1,5 +1,7 @@
 #' Getter / setter for relative abundance data
-#'
+#' 
+#' This function will be deprecated. Please use \code{assay(x, "relabundance")}
+#' instead.
 #' \code{relabundance} is a getter/setter for relative abundance stored in the
 #' assay slot \sQuote{relabundance} of a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -25,7 +27,7 @@
 #' # Calculates relative abundances
 #' GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
 #' # Fetches calculated relative abundances
-#' head(relabundance(GlobalPatterns))
+#' # head(relabundance(GlobalPatterns))
 NULL
 
 #' @rdname relabundance
@@ -40,6 +42,8 @@ setGeneric("relabundance<-", signature = c("x"),
 #' @export
 setMethod("relabundance",signature = c(x = "SummarizedExperiment"),
     function(x){
+        .Deprecated(msg = paste0("'relabundance' is deprecated\n",
+                                 "Use 'assay(x, 'relabundance')' instead."))
         assays(x)[["relabundance"]]
     }
 )
@@ -49,6 +53,8 @@ setMethod("relabundance",signature = c(x = "SummarizedExperiment"),
 #' @export
 setReplaceMethod("relabundance", signature = c(x = "SummarizedExperiment"),
     function(x, value){
+        .Deprecated(msg = paste0("'relabundance' is deprecated\n",
+                                 "Use 'assay(x, 'relabundance')' instead."))
         assays(x)[["relabundance"]] <- value
         x
     }

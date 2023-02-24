@@ -139,9 +139,11 @@ Available wrapper functions include:
 \item{\code{transformCounts}} sample-wise (column-wise) or feature-wise
 (row-wise) transformation based on specified \code{MARGIN}.
 
-\item{\code{transformSamples}} sample-wise (column-wise) transformation.
+\item{\code{transformSamples}} (deprecated)
+sample-wise (column-wise) transformation.
 
-\item{\code{transformFeatures}} feature-wise (row-wise) transformation.
+\item{\code{transformFeatures}} (deprecated)
+feature-wise (row-wise) transformation.
 
 \item{\code{ZTransform}} Shortcut for Z-transformation.
 

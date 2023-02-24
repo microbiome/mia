@@ -24,7 +24,7 @@ test_that("mergeSEs", {
     expect_error( mergeSEs(tse1, tse2, missing_values = 36846 ) )
     expect_error( mergeSEs(tse1, tse2, assay_name = "test")  )
     # Calculate relative transform to test assay_name
-    tse1 <- transformSamples(tse1, method = "relabundance")
+    tse1 <- transformCounts(tse1, method = "relabundance")
     expect_error( mergeSEs(tse1, tse2, assay_name = "relabundance")  )
     expect_error( mergeSEs(tse1, tse2, verbose = "test")  )
     expect_error( mergeSEs(tse1, tse2, verbose = 1)  )

@@ -48,7 +48,7 @@
 #' @examples
 #' data(esophagus)
 #' tse <- esophagus
-#' tse <- transformSamples(tse, method = "relabundance")
+#' tse <- transformCounts(tse, method = "relabundance")
 #' overlap <- calculateOverlap(tse, assay_name = "relabundance")
 #' overlap
 #' 

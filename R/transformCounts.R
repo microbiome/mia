@@ -47,9 +47,12 @@
 #' \item{\code{transformCounts}} sample-wise (column-wise) or feature-wise
 #' (row-wise) transformation based on specified \code{MARGIN}.
 #' 
-#' \item{\code{transformSamples}} sample-wise (column-wise) transformation.
+#' \item{\code{transformSamples}} (deprecated)
+#' sample-wise (column-wise) transformation.
 #' 
-#' \item{\code{transformFeatures}} feature-wise (row-wise) transformation.
+#' \item{\code{transformFeatures}} (deprecated)
+#' feature-wise (row-wise) transformation.
+#' 
 #'
 #' \item{\code{ZTransform}} Shortcut for Z-transformation.
 #' 
@@ -217,6 +220,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
                         "total"),
             ...
             ){
+        .Deprecated("transformCounts")
         # Input check
         # Check method
         # If method is not single string, user has not specified transform method,
@@ -330,6 +334,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
                         "pa", "range", "standardize", "z"),
              name = method,
              ...){
+        .Deprecated("transformCounts")
         # Input check
         # Check method
         # If method is not single string, user has not specified transform method,
