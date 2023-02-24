@@ -366,10 +366,10 @@ setMethod("right_join", signature = c(x = "ANY"),
 
             # Modify names if specified
             if( !collapse_samples ){
-                temp <- .get_unique_names(tse, temp, "col", i+1)
+                temp <- .get_unique_names(tse, temp, "col")
             }
             if( !collapse_features ){
-                temp <- .get_unique_names(tse, temp, "row", i+1)
+                temp <- .get_unique_names(tse, temp, "row")
             }
             # Merge data
             args <- .merge_SummarizedExperiments(
@@ -833,7 +833,7 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: TreeSEs and MARGIN
 # Output: One TreeSE with unique sample names compared to other TreeSE
-.get_unique_names <- function(tse1, tse2, MARGIN, iteration){
+.get_unique_names <- function(tse1, tse2, MARGIN, suffix=2){
     # Based on MARGIN, get right names
     if( MARGIN == "row" ){
         names1 <- rownames(tse1)
@@ -842,16 +842,22 @@ setMethod("right_join", signature = c(x = "ANY"),
         names1 <- colnames(tse1)
         names2 <- colnames(tse2)
     }
-    # Get unique values
-    while(any(names1 %in% paste0(names2, ".", iteration))){
-        iterations <- iteration + 1
-    }
-    names2 <- paste0(names2, ".", iteration)
-    # Assign names back
-    if( MARGIN == "row" ){
-        rownames(tse2) <- names2
-    } else{
-        colnames(tse2) <- names2
+    # If there are duplicated names
+    if( any(names2 %in% names1) ){
+        # Get duplicated names
+        ind <- names2 %in% names1
+        temp_names2 <- names2[ind]
+        # Get unique suffix
+        while( any(paste0(names2, ".", suffix) %in% names1) ){
+            suffix <- suffix + 1
+        }
+        temp_names2 <- paste0(temp_names2, ".", suffix)
+        # Assign names back
+        if( MARGIN == "row" ){
+            rownames(tse2)[ind] <- temp_names2
+        } else{
+            colnames(tse2)[ind] <- temp_names2
+        }
     }
     return(tse2)
 }

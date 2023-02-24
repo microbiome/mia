@@ -331,13 +331,13 @@ test_that("mergeSEs", {
     tse_test <- mergeSEs(x = list(tse[1:28, 1:3], tse[23, 1:5], tse[1, 1:10]),
                          join = "full")
     expect_equal( dim(tse_test), c(28, 18))
-    expect_true( (all( c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", "_2", "_3")), 
-                         paste0(rep(colnames(tse[, 4:5]), each=2), c("", "_3")), 
+    expect_true( (all( c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", ".2", ".3")), 
+                         paste0(rep(colnames(tse[, 4:5]), each=2), c("", ".3")), 
                          colnames(tse[, 6:10]) ) %in% 
                           colnames(tse_test) ) &&
                      all( colnames(tse_test) %in% 
-                     c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", "_2", "_3")), 
-                        paste0(rep(colnames(tse[, 4:5]), each=2), c("", "_3")), 
+                     c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", ".2", ".3")), 
+                        paste0(rep(colnames(tse[, 4:5]), each=2), c("", ".3")), 
                         colnames(tse[, 6:10]) ) ) )
                  )
     # Test that tree is added after agglomeration
