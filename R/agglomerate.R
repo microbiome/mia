@@ -233,18 +233,34 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ..., agglomerateTree = FALSE){
-        # input check
-        if(!.is_a_bool(agglomerateTree)){
-            stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
-        x <- callNextMethod(x, ...)
-        if(agglomerateTree){
-            x <- addTaxonomyTree(x)
-        }
-        x
-    }
+          function(x, ..., agglomerateTree = FALSE){
+              # input check
+              if(!.is_a_bool(agglomerateTree)){
+                  stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
+              }
+              # If there are multipe rowTrees, it might be that multiple
+              # trees are preserved after agglomeration even though the dataset
+              # could be presented with one tree. --> order the data so that
+              # the taxa are searched from one tree first.
+              if( length(x@rowTree) > 1 ){
+                  x <- .order_based_on_trees(x)
+              }
+              # Agglomerate data
+              x <- callNextMethod(x, ...)
+              # Agglomerate also tree, if the data includes only one
+              # rowTree --> otherwise it is not possible to agglomerate
+              # since all rownames are not found from individual tree.
+              if(agglomerateTree){
+                  if( length(x@rowTree) > 1 ){
+                      warning("The dataset includes multiple tree after ",
+                              "agglomeration. Agglomeration of tree is not ",
+                              "possible.", call. = FALSE)
+                  } else{
+                      x <- addTaxonomyTree(x)
+                  }
+              }
+              x
+          }
 )
 
 ################################ HELP FUNCTIONS ################################
@@ -279,5 +295,28 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
         # Assign it back to SE
         rowData(x) <- rd
     }
+    return(x)
+}
+
+# Order the data so that taxa from tree1 comes first, then taxa
+# from tree2...
+.order_based_on_trees <- function(x){
+    # Get rowlinks and unique trees
+    links <- DataFrame(rowLinks(x))
+    uniq_trees <- sort(unique(links$whichTree))
+    # Get row index to the data
+    links$row_i <- seq_len(nrow(x))
+    # Calculate, how many rows each tree has, and add it to data
+    freq <- as.data.frame(table(links$whichTree))
+    links <- merge(links, freq, all.x = TRUE, all.y = FALSE,
+                   by.x = "whichTree", by.y = "Var1")
+    # Factorize the names of trees
+    links$whichTree <- factor(links$whichTree, levels = uniq_trees)
+    # Order the data back to its original order based on row indices
+    links <- links[order(links$row_i), ]
+    # Get the order based on size of tree and name
+    order <- order(links$whichTree)
+    # Order the data
+    x <- x[order, ]
     return(x)
 }
