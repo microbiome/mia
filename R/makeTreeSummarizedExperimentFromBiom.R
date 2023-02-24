@@ -9,6 +9,10 @@
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})
 #' 
+#' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
+#' taxonomic ranks on feature table, should they be scraped from prefixes?
+#' (default \code{rankFromPrefix = FALSE})
+#' 
 #' @param ... optional arguments (not used).
 #' 
 #' @return An object of class
@@ -27,7 +31,7 @@
 #'   # load from file
 #'   rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
 #'                                  package = "biomformat")
-#'   se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE)
+#'   se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE, rankFromPrefix = TRUE)
 #'
 #'   # load from object
 #'   x1 <- biomformat::read_biom(rich_dense_file)
@@ -41,10 +45,10 @@ NULL
 #' @rdname makeTreeSEFromBiom
 #'
 #' @export
-loadFromBiom <- function(file, removeTaxaPrefixes = FALSE) {
+loadFromBiom <- function(file, ...) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    makeTreeSEFromBiom(biom, removeTaxaPrefixes)
+    makeTreeSEFromBiom(biom, ...)
 }
 
 #' @rdname makeTreeSEFromBiom
@@ -53,11 +57,18 @@ loadFromBiom <- function(file, removeTaxaPrefixes = FALSE) {
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame
-makeTreeSEFromBiom <- function(obj, removeTaxaPrefixes = FALSE, ...){
+makeTreeSEFromBiom <- function(
+        obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE, ...){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){
-        stop("'obj' must be a 'biom' object")
+        stop("'obj' must be a 'biom' object", call. = FALSE)
+    }
+    if( !.is_a_bool(removeTaxaPrefixes) ){
+        stop("'removeTaxaPrefixes' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(rankFromPrefix) ){
+        stop("'rankFromPrefix' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     counts <- as(biomformat::biom_data(obj), "matrix")
@@ -113,6 +124,17 @@ makeTreeSEFromBiom <- function(obj, removeTaxaPrefixes = FALSE, ...){
         colnames(feature_data) <- colnames
     }
     
+    # Replace taxonomy ranks with ranks found based on prefixes
+    if( rankFromPrefix && all(
+        unlist(lapply(colnames(feature_data),
+                      function(x) !x %in% TAXONOMY_RANKS)))){
+        # Find ranks
+        ranks <- lapply(colnames(feature_data),
+                        .replace_colnames_based_on_prefix, x=feature_data)
+        # Replace old ranks with found ranks
+        colnames(feature_data) <- ranks
+    }
+    
     # Remove prefixes if specified and rowData includes info
     if(removeTaxaPrefixes && ncol(feature_data) > 0){
         # Patterns for superkingdom, domain, kingdom, phylum, class, order, family,
@@ -151,4 +173,37 @@ makeTreeSEFromBiom <- function(obj, removeTaxaPrefixes = FALSE, ...){
 #' @export
 makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
     makeTreeSEFromBiom(obj, ...)
+}
+
+################################ HELP FUNCTIONS ################################
+# Find taxonomy rank based on prefixes. If found, return
+# corresponding rank. Otherwise, return the original
+# rank that is fed to function.
+.replace_colnames_based_on_prefix <- function(colname, x){
+    # Get column
+    col = x[ , colname]
+    # List prefixes
+    prefixes <- c(
+        "d__",
+        "k__",
+        "p__",
+        "c__",
+        "o__",
+        "f__",
+        "g__",
+        "s__"
+    )
+    # Find which prefix is found from each column value, if none.
+    found_rank <- lapply(
+        prefixes, FUN = function(pref){all(grepl(pattern=pref, col))})
+    found_rank <- unlist(found_rank)
+    # If only one prefix was found (like it should be), get the corresponding
+    # rank name.
+    if( sum(found_rank) ){
+        colname <- TAXONOMY_RANKS[found_rank]
+        # Make it capitalized
+        colname <- paste0(toupper(substr(colname, 1, 1)),
+                          substr(colname, 2, nchar(colname)))
+    }
+    return(colname)    
 }
