@@ -47,7 +47,6 @@ NULL
 #' @name mia-datasets
 #' @aliases GlobalPatterns
 #' @keywords data
-#' @format \code{TreeSummarizedExperiment}
 #' @usage data(GlobalPatterns)
 #' @author Caporaso, J. G., et al.
 #' @docType data
@@ -70,7 +69,6 @@ NULL
 #' @name mia-datasets
 #' @aliases enterotype
 #' @keywords data
-#' @format \code{TreeSummarizedExperiment}
 #' @usage data(enterotype)
 #' @author Arumugam, M., Raes, J., et al.
 #' @docType data
@@ -96,7 +94,6 @@ NULL
 #' @name mia-datasets
 #' @aliases esophagus
 #' @keywords data
-#' @format \code{TreeSummarizedExperiment}
 #' @usage data(esophagus)
 #' @author Pei et al. \email{zhiheng.pei@@med.nyu.edu}.
 #' @docType data
@@ -124,7 +121,6 @@ NULL
 #' @name mia-datasets
 #' @aliases dmn_se, twins
 #' @keywords data
-#' @format \code{SummarizedExperiment}
 #' @usage data(dmn_se)
 #' @author Turnbaugh, PJ et al.
 #' @references
@@ -148,7 +144,6 @@ NULL
 #' @name mia-datasets
 #' @aliases peerj13075
 #' @keywords data
-#' @format \code{TreeSummarizedExperiment}
 #' @usage data(peerj13075)
 #' @author Potbhare, R., et al.
 #' @docType data
@@ -158,8 +153,8 @@ NULL
 #' PeerJ, 10, e13075.
 #' \url{https://peerj.com/articles/13075/}
 #' Supplemental information includes OTU table and taxonomy table and publicly-accessible from: 
-#' \url{DOI:10.7717/peerj.13075/supp-1}
-#' \url{DOI:10.7717/peerj.13075/supp-2}
+#' \url{https://www.doi.org/10.7717/peerj.13075/supp-1}
+#' \url{https://www.doi.org/10.7717/peerj.13075/supp-2}
 "peerj13075"
 
 #' Multiomics dataset from a rat experiment studying effect of fat and prebiotics in diet
@@ -190,9 +185,8 @@ NULL
 #' @name mia-datasets
 #' @aliases HintikkaXOData
 #' @keywords data
-#' @format \code{MultiAssayExperiment}
 #' @usage data(HintikkaXOData)
-#' @author Leo Lahti
+#' @author Leo Lahti et al.
 #' @docType data
 #' @references
 #' Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic 

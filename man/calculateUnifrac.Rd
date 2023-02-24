@@ -4,8 +4,6 @@
 \alias{calculateUnifrac}
 \alias{calculateUnifrac,ANY,phylo-method}
 \alias{calculateUnifrac,TreeSummarizedExperiment,missing-method}
-\alias{calculateUniFrac}
-\alias{calculateUniFrac,ANY-method}
 \alias{runUnifrac}
 \title{Calculate weighted or unweighted (Fast) Unifrac distance}
 \usage{
@@ -16,7 +14,8 @@ calculateUnifrac(x, tree, ...)
   tree,
   weighted = FALSE,
   normalized = TRUE,
-  BPPARAM = SerialParam()
+  BPPARAM = SerialParam(),
+  ...
 )
 
 \S4method{calculateUnifrac}{TreeSummarizedExperiment,missing}(
@@ -29,16 +28,14 @@ calculateUnifrac(x, tree, ...)
   ...
 )
 
-calculateUniFrac(x, ...)
-
-\S4method{calculateUniFrac}{ANY}(x, ...)
-
 runUnifrac(
   x,
   tree,
   weighted = FALSE,
   normalized = TRUE,
-  BPPARAM = SerialParam()
+  nodeLab = NULL,
+  BPPARAM = SerialParam(),
+  ...
 )
 }
 \arguments{
@@ -93,6 +90,11 @@ tree will be used in calculation.
 \item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
 is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: \code{transposed = FALSE})}
+
+\item{nodeLab}{if \code{x} is a matrix,
+a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
+The length must equal the number of rows/columns of \code{x}. Furthermore, all the
+node labs must be present in \code{tree}.}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.

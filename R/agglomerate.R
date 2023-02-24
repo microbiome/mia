@@ -36,6 +36,8 @@
 #'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
 #'        whether to remove those columns of rowData that include only NAs after
 #'        agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
+#'        \item{\code{make_unique}}{A single boolean value for selecting 
+#'        whether to make rownames unique. (By default: \code{make_unique = TRUE})}
 #'    }
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
@@ -108,7 +110,19 @@
 #' # use 'remove_empty_ranks' to remove columns that include only NAs
 #' x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
 #' head(rowData(x4))
-#'
+#' 
+#' # If assay contains NAs, you might want to consider replacing them since summing-up
+#' # NAs lead to NA
+#' x5 <- GlobalPatterns
+#' # Replace first value with NA
+#' assay(x5)[1,1] <- NA
+#' x6 <- agglomerateByRank(x5, "Kingdom")
+#' head( assay(x6) )
+#' # Replace NAs with 0. It is justified when we are summing-up counts
+#' assay(x5)[ is.na(assay(x5)) ] <- 0
+#' x6 <- agglomerateByRank(x5, "Kingdom")
+#' head( assay(x6) )
+#' 
 #' ## Look at enterotype dataset...
 #' data(enterotype)
 #' ## print the available taxonomic ranks. Shows only 1 rank available
@@ -186,7 +200,8 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             }
         }
         # adjust rownames
-        rownames(x) <- .get_taxonomic_label(x, empty.fields)
+        rownames(x) <- getTaxonomyLabels(x, empty.fields, ...,
+                                        with_rank = FALSE, resolve_loops = FALSE)
         # Remove those columns from rowData that include only NAs
         x <- .remove_NA_cols_from_rowdata(x, ...)
         x <- .add_values_to_metadata(x, "agglomerated_by_rank", rank)

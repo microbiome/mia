@@ -20,6 +20,11 @@
 #'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
 #'   matrix. This means that the phylo object and the columns should relate
 #'   to the same type of features (aka. microorganisms).
+#'   
+#' @param nodeLab if \code{x} is a matrix, 
+#'   a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
+#'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the 
+#'   node labs must be present in \code{tree}.
 #'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
@@ -120,7 +125,7 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 #' @export
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
     function(x, tree, weighted = FALSE, normalized = TRUE,
-             BPPARAM = SerialParam()){
+             BPPARAM = SerialParam(), ...){
         if(is(x,"SummarizedExperiment")){
            stop("When providing a 'tree', please provide a matrix-like as 'x'",
                 " and not a 'SummarizedExperiment' object. Please consider ",
@@ -129,7 +134,7 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
         }
         .calculate_distance(x, FUN = runUnifrac, tree = tree,
                             weighted = weighted, normalized = normalized,
-                            BPPARAM = BPPARAM)
+                            BPPARAM = BPPARAM, ...)
     }
 )
 
@@ -158,9 +163,12 @@ setMethod("calculateUnifrac",
                         "'x' is subsetted.", call. = FALSE)
                 # Subset the data
                 x <- x[ whichTree, ]
+                mat <- mat[ whichTree, ]
             }
             mat <- t(mat)
             tree <- .norm_tree_to_be_rooted(tree, rownames(x))
+            # Get links
+            links <- rowLinks(x)
         } else {
             # Check tree_name
             .check_colTree_present(tree_name, x)
@@ -173,32 +181,19 @@ setMethod("calculateUnifrac",
                         "'x' is subsetted.", call. = FALSE)
                 # Subset the data
                 x <- x[ , whichTree ]
+                mat <- mat[ , whichTree ]
             }
             tree <- .norm_tree_to_be_rooted(tree, colnames(x))
+            # Get links
+            links <- colLinks(x)
         }
-        calculateUnifrac(mat, tree = tree, ...)
+        # Remove those links (make them NA) that are not included in this tree
+        links[ links$whichTree != tree_name, ] <- NA
+        # Take only nodeLabs
+        links <- links[ , "nodeLab" ]
+        calculateUnifrac(mat, tree = tree, nodeLab = links, ...)
     }
 )
-
-#' @rdname calculateUnifrac
-#' @export
-setGeneric("calculateUniFrac", signature = c("x"),
-           function(x, ... )
-             standardGeneric("calculateUniFrac"))
-
-#' @rdname calculateUnifrac
-#' @export
-setMethod("calculateUniFrac",
-          signature = c(x = "ANY"),
-    function(x, ...){
-        .Deprecated( msg = paste0("The name of the function 'calculateUniFrac' is",
-                                  " changed to 'calculateUnifrac'. \nPlease use the new",
-                                  " name instead.\n",
-                                  "See help('Deprecated')") )
-        calculateUnifrac(x, ...)
-    }
-)
-
 
 ################################################################################
 # Fast Unifrac for R.
@@ -217,7 +212,7 @@ setMethod("calculateUniFrac",
 #'
 #' @export
 runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
-                       BPPARAM = SerialParam()){
+                       nodeLab = NULL, BPPARAM = SerialParam(), ...){
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)
@@ -227,7 +222,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     x <- try(t(x), silent = TRUE)
     if(is(x,"try-error")){
         stop("The input to 'runUnifrac' must be a matrix-like object: ", 
-             as.character(x))
+             as.character(x), call. = FALSE)
     }
     # input check
     if(!.is_a_bool(weighted)){
@@ -236,13 +231,39 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     if(!.is_a_bool(normalized)){
         stop("'normalized' must be TRUE or FALSE.", call. = FALSE)
     }
-    # check that matrix and tree are compatible
-    if(length(tree$tip.label) != nrow(x) && length(tree$tip.label) > 0L) {
-        stop("Incompatible tree and abundance table!")
-    }
-    tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     if(is.null(colnames(x)) || is.null(rownames(x))){
         stop("colnames and rownames must not be NULL", call. = FALSE)
+    }
+    # nodeLab should be NULL or character vector specifying links between 
+    # rows and tree labels
+    if( !(is.null(nodeLab) ||
+        (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
+        all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label)))) ){
+        stop("'nodeLab' must be NULL or character specifying links between ",
+             "abundance table and tree labels.", call. = FALSE)
+    }
+    # check that matrix and tree are compatible
+    if( is.null(nodeLab) && 
+        !all(rownames(x) %in% c(tree$tip.label)) ) {
+        stop("Incompatible tree and abundance table! Please try to provide ",
+             "'nodeLab'.", call. = FALSE)
+    }
+    # Merge rows, so that rows that are assigned to same tree node are agglomerated
+    # together. If nodeLabs were provided, merge based on those. Otherwise merge
+    # based on rownames
+    if( is.null(nodeLab) ){
+        nodeLab <- rownames(x)
+    }
+    # Merge assay
+    x <- .merge_assay_by_rows(x, nodeLab, ...)
+    # Modify tree
+    tree <- .norm_tree_to_be_rooted(tree, rownames(x))
+    # Remove those tips that are not present in the data
+    if( any(!tree$tip.label %in% rownames(x)) ){
+        tree <- ape::drop.tip(
+            tree, tree$tip.label[!tree$tip.label %in% rownames(x)])
+        warning("The tree is pruned so that tips that cannot be found from ", 
+                "the abundance matrix are removed.", call. = FALSE)
     }
     #
     old <- getAutoBPPARAM()
@@ -271,10 +292,10 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # This matrix doesn't include the tips, so must use node#-ntip to index into
     # it
     ## to suppress the warning if the number of node edges is uneven, we add the
-    ## first not again
+    ## first node again
     node.desc <- tree$edge[order(tree$edge[,1]),][,2]
     if(length(node.desc) %% 2 == 1){
-      node.desc <- c(node.desc,node.desc[1])
+        node.desc <- c(node.desc,node.desc[1])
     }
     node.desc <- matrix(node.desc, byrow = TRUE, ncol = 2)
     # Define the edge_array object
@@ -283,7 +304,8 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     edge_array <- matrix(0, nrow = ntip+tree$Nnode, ncol = ncol(x),
                          dimnames = list(NULL, sample_names = colnames(x)))
     # Load the tip counts in directly
-    edge_array[seq_len(ntip),] <- x
+    x_tip <- x[ rownames(x) %in% tree$tip.label, ]
+    edge_array[seq_len(ntip),] <- x_tip
     # Get a list of internal nodes ordered by increasing depth
     ord.node <- order(node.depth(tree))[(ntip+1):(ntip+tree$Nnode)]
     # Loop over internal nodes, summing their descendants to get that nodes
@@ -360,6 +382,23 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     stats::as.dist(UnifracMat)
 }
 
+# Aggregate matrix based on nodeLabs. At the same time, rename rows based on nodeLab
+# --> each row represent specific node of tree
+.merge_assay_by_rows <- function(x, nodeLab, average = FALSE, ...){
+    if( !.is_a_bool(average) ){
+        stop("'average' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # Merge assay based on nodeLabs
+    x <- scuttle::sumCountsAcrossFeatures(x, ids = nodeLab, 
+                                          subset.row = NULL, subset.col = NULL, 
+                                          average = average)
+    # Remove NAs from nodeLab
+    nodeLab <- nodeLab[ !is.na(nodeLab) ]
+    # Get the original order back
+    x <- x[ nodeLab, ]
+    return(x)
+}
+
 unifrac_unweighted <- function(i, tree, samplesums, edge_occ){
     A  <- i[1]
     B  <- i[2]
@@ -416,13 +455,13 @@ unifrac_weighted_norm <- function(i, mat, tree, samplesums, edge_array,
     if( !is.rooted(tree) ){
         randoroot <- sample(names, 1)
         warning("Randomly assigning root as -- ", randoroot, " -- in the",
-                " phylogenetic tree in the data you provided.")
+                " phylogenetic tree in the data you provided.", call. = FALSE)
         tree <- root(phy = tree, outgroup = randoroot,
                      resolve.root = TRUE, interactive = FALSE)
         if( !is.rooted(tree) ){
             stop("Problem automatically rooting tree. Make sure your tree ",
                  "is rooted before attempting Unifrac calculation. See ",
-                 "?ape::root")
+                 "?ape::root", call. = FALSE)
         }
     }
     tree

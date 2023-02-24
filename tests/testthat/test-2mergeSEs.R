@@ -44,7 +44,10 @@ test_that("mergeSEs", {
     tse <- tse[ rownames(tse1), colnames(tse1) ]
     expect_equal( rowData(tse), rowData(tse1))
     expect_equal( as.data.frame( colData(tse) ), as.data.frame( colData(tse1)) )
-    expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))
+    # Disable attribute testing, since they might differ (e.g., vegan adds
+    # calculation details to attributes)
+    expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"),
+                  check.attributes = FALSE)
     expect_equal( rowTree(tse), rowTree(tse1))
     
     # Expect that rowTree is preserved if rownames match
@@ -362,4 +365,49 @@ test_that("mergeSEs", {
     rd_gb <- rowData(tse)[rownames(GlobalPatterns), ]
     expect_equal(rowData(esophagus), rd_esophagus[, colnames(rowData(esophagus))])
     expect_equal(rowData(GlobalPatterns), rd_gb[, colnames(rowData(GlobalPatterns))])
+    
+    # Check that variables with different class are not combined
+    tse1 <- esophagus
+    tse2 <- GlobalPatterns
+    tse3 <- GlobalPatterns[1:50, 1:10]
+    # Create variables with different class
+    colData(tse1)$group <- sample(c(1, 2, 3), ncol(tse1), replace = TRUE)
+    colData(tse2)$group <- sample(c("Group1", "Group2", "Group3"), ncol(tse2), 
+                                  replace = TRUE)
+    colData(tse3)$group <- as.factor(sample(c("Group1", "Group2", "Group3"),
+                                            ncol(tse3), replace = TRUE))
+    tse <- expect_warning(mergeSEs(list(tse1, tse2, tse3)))
+    expect_true(ncol(colData(tse)) == length(unique(c( colnames(colData(tse1)),
+                                                       colnames(colData(tse2)),
+                                                       colnames(colData(tse3)))
+                                                    ))+2)
+    
+    # Check that multiple assays are supported
+    tse1 <- relAbundanceCounts(tse1)
+    tse2 <- relAbundanceCounts(tse2)
+    tse3 <- relAbundanceCounts(tse3)
+    
+    tse_temp <- expect_warning( mergeSEs(list(tse1, tse2, tse3),
+                                         assay_name = c("counts", 
+                                                        "relabundance"), 
+                                         join = "inner"))
+    expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
+    tse_temp <- expect_warning(mergeSEs(list(tse1, tse2),
+                                        assay_name = c("counts", "relabundance", "test"),
+                                        join = "left"))
+    expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
+    
+    # Test that reference sequences stay the same
+    # Load data from miaTime package
+    skip_if_not(require("miaTime", quietly = TRUE))
+    data("SilvermanAGutData")
+    tse <- SilvermanAGutData
+    tse1 <- tse
+    rownames(tse1) <- paste0("Taxon", 1:nrow(tse))
+    # Merge
+    tse2 <- mergeSEs(tse1, tse)
+    # Test refseqs
+    ref1 <- referenceSeq(tse)
+    ref2 <- referenceSeq(tse2)[rownames(tse), ]
+    expect_equal(ref1, ref2)
 })

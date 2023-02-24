@@ -3,8 +3,25 @@ context("getExperimentCrossAssociation")
 
 test_that("getExperimentCrossAssociation", {
     
-    # Get data
-    mae <- microbiomeDataSets::peerj32()
+    # Try 5 times to fetch the data
+    for(i in seq_len(5) ){
+        mae <- tryCatch(
+            {
+                # Try to fetch the data 
+                microbiomeDataSets::peerj32()
+            },
+            error = function(cond) {
+                # If it was not possible to fetch the data, give FALSE
+                return(NULL)
+            }
+        )
+        # Break if mae has the data
+        if( !is.null(mae) ){
+            break
+        }
+    }
+    # Run tests if the data fetch was successful
+    if( !is.null(mae) ){
     ############################### Test input ###############################
     expect_error(getExperimentCrossAssociation(mae,
                                                 experiment1 = 3,
@@ -24,8 +41,8 @@ test_that("getExperimentCrossAssociation", {
                                                experiment2 = 2,
                                                assay_name1 = "counts",
                                                assay_name2 = "counts",
-                                               altExp1 = 1,
-                                               altExp2 = NULL,
+                                               altexp1 = 1,
+                                               altexp2 = NULL,
                                                method = "spearman",
                                                mode = "table",
                                                p_adj_method = "fdr",
@@ -39,8 +56,8 @@ test_that("getExperimentCrossAssociation", {
                                                experiment2 = 2,
                                                assay_name1 = "counts",
                                                assay_name2 = "counts",
-                                               altExp1 = FALSE,
-                                               altExp2 = NULL,
+                                               altexp1 = FALSE,
+                                               altexp2 = NULL,
                                                method = "spearman",
                                                mode = "table",
                                                p_adj_method = "fdr",
@@ -54,8 +71,8 @@ test_that("getExperimentCrossAssociation", {
                                                experiment2 = 2,
                                                assay_name1 = "counts",
                                                assay_name2 = "counts",
-                                               altExp2 = "test",
-                                               altExp1 = NULL,
+                                               altexp2 = "test",
+                                               altexp1 = NULL,
                                                method = "spearman",
                                                mode = "table",
                                                p_adj_method = "fdr",
@@ -482,17 +499,18 @@ test_that("getExperimentCrossAssociation", {
     expect_true( !all(tab1_levels1 == tab2_levels1) )
     expect_true( !all(tab1_levels2 == tab2_levels2) )
     
-    # Test altExps
+    # Test altexps
     altExps(tse) <- splitByRanks(tse)
     # Test that output has right columns
     expect_equal(getExperimentCrossAssociation(tse, tse, show_warnings = FALSE, 
-                                               altExp1 = 1, altExp2 = "Phylum"),
+                                               altexp1 = 1, altexp2 = "Phylum"),
                  getExperimentCrossAssociation(altExps(tse)[[1]], altExp(tse, "Phylum"), 
                                                show_warnings = FALSE))
     expect_equal(getExperimentCrossAssociation(tse, tse, show_warnings = FALSE, 
-                                               altExp1 = "Family", altExp2 = NULL),
+                                               altexp1 = "Family", altexp2 = NULL),
                  getExperimentCrossAssociation(altExp(tse, "Family"), tse, 
                                                show_warnings = FALSE))
+    }
     
     # Test colData_variable
     # Check that all the correct names are included

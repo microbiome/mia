@@ -13,17 +13,17 @@
 \alias{HintikkaXOData}
 \title{mia datasets}
 \format{
-\code{TreeSummarizedExperiment}
+An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
 
-\code{TreeSummarizedExperiment}
+An object of class \code{TreeSummarizedExperiment} with 553 rows and 280 columns.
 
-\code{TreeSummarizedExperiment}
+An object of class \code{TreeSummarizedExperiment} with 58 rows and 3 columns.
 
-\code{SummarizedExperiment}
+An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
 
-\code{TreeSummarizedExperiment}
+An object of class \code{TreeSummarizedExperiment} with 674 rows and 58 columns.
 
-\code{MultiAssayExperiment}
+An object of class \code{MultiAssayExperiment} of length 3.
 }
 \usage{
 data(GlobalPatterns)
@@ -145,8 +145,8 @@ Skin microbiota diversity among genetically unrelated individuals of Indian orig
 PeerJ, 10, e13075.
 \url{https://peerj.com/articles/13075/}
 Supplemental information includes OTU table and taxonomy table and publicly-accessible from:
-\url{DOI:10.7717/peerj.13075/supp-1}
-\url{DOI:10.7717/peerj.13075/supp-2}
+\url{https://www.doi.org/10.7717/peerj.13075/supp-1}
+\url{https://www.doi.org/10.7717/peerj.13075/supp-2}
 
 Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic
 steatosis and adipose tissue inflammation: associating taxonomic and
@@ -165,6 +165,6 @@ Turnbaugh, PJ et al.
 
 Potbhare, R., et al.
 
-Leo Lahti
+Leo Lahti et al.
 }
 \keyword{data}

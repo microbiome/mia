@@ -22,8 +22,8 @@ getExperimentCrossAssociation(x, ...)
   abund_values1 = "counts",
   assay_name2 = abund_values2,
   abund_values2 = "counts",
-  altExp1 = NULL,
-  altExp2 = NULL,
+  altexp1 = NULL,
+  altexp2 = NULL,
   colData_variable1 = NULL,
   colData_variable2 = NULL,
   MARGIN = 1,
@@ -103,15 +103,15 @@ assay of experiment 2 to use for calculation.
 (Please use \code{assay_name2} instead. At some point \code{abund_values2}
 will be disabled.)}
 
-\item{altExp1}{A single numeric or character value specifying alternative experiment
+\item{altexp1}{A single numeric or character value specifying alternative experiment
 from the altExp of experiment 1. If NULL, then the experiment is itself
 and altExp option is disabled.
-(By default: \code{altExp1 = NULL})}
+(By default: \code{altexp1 = NULL})}
 
-\item{altExp2}{A single numeric or character value specifying alternative experiment
+\item{altexp2}{A single numeric or character value specifying alternative experiment
 from the altExp of experiment 2. If NULL, then the experiment is itself
 and altExp option is disabled.
-(By default: \code{altExp2 = NULL})}
+(By default: \code{altexp2 = NULL})}
 
 \item{colData_variable1}{A character value specifying column(s) from colData
 of experiment 1. If colData_variable1 is used, assay_name1 is disabled.
@@ -209,7 +209,7 @@ altExp(mae[[1]], "Phylum") <- transformSamples(altExp(mae[[1]], "Phylum"), metho
 # When mode = matrix, matrix is returned
 result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
                                         assay_name1 = "relabundance", assay_name2 = "nmr",
-                                        altExp1 = "Phylum", 
+                                        altexp1 = "Phylum", 
                                         method = "pearson", mode = "matrix")
 # Show first 5 entries
 head(result, 5)

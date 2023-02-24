@@ -45,7 +45,7 @@
 #'   (Please use \code{assay_name} instead. At some point \code{abund_values}
 #'   will be disabled.)
 #'   
-#' @param altExp String or integer scalar specifying an alternative experiment
+#' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
 #'
 #' @param name String specifying the name to be used to store the result in the
@@ -229,10 +229,10 @@ setMethod("calculateCCA", "SummarizedExperiment",
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runCCA", "SingleCellExperiment",
-    function(x, ..., altExp = NULL, name = "CCA")
+    function(x, ..., altexp = NULL, name = "CCA")
     {
-        if (!is.null(altExp)) {
-          y <- altExp(x, altExp)
+        if (!is.null(altexp)) {
+          y <- altExp(x, altexp)
         } else {
           y <- x
         }
@@ -329,10 +329,10 @@ setMethod("calculateRDA", "SummarizedExperiment",
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runRDA", "SingleCellExperiment",
-    function(x, ..., altExp = NULL, name = "RDA")
+    function(x, ..., altexp = NULL, name = "RDA")
     {
-        if (!is.null(altExp)) {
-          y <- altExp(x, altExp)
+        if (!is.null(altexp)) {
+          y <- altExp(x, altexp)
         } else {
           y <- x
         }

@@ -50,6 +50,8 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \item{\code{remove_empty_ranks}}{A single boolean value for selecting
 whether to remove those columns of rowData that include only NAs after
 agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
+\item{\code{make_unique}}{A single boolean value for selecting
+whether to make rownames unique. (By default: \code{make_unique = TRUE})}
 }}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
@@ -127,6 +129,18 @@ print(rownames(x3[1:3,]))
 # use 'remove_empty_ranks' to remove columns that include only NAs
 x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
 head(rowData(x4))
+
+# If assay contains NAs, you might want to consider replacing them since summing-up
+# NAs lead to NA
+x5 <- GlobalPatterns
+# Replace first value with NA
+assay(x5)[1,1] <- NA
+x6 <- agglomerateByRank(x5, "Kingdom")
+head( assay(x6) )
+# Replace NAs with 0. It is justified when we are summing-up counts
+assay(x5)[ is.na(assay(x5)) ] <- 0
+x6 <- agglomerateByRank(x5, "Kingdom")
+head( assay(x6) )
 
 ## Look at enterotype dataset...
 data(enterotype)

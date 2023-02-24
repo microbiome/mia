@@ -54,3 +54,16 @@ Changes in version 1.5.x
 + getExpCrossCorr: Kendall's tau is the default method
 + mergeSEs: bugfix; links between trees and rows/cols were wrong & rowData did not include all info
 + calculateDPCoA, calculateUnifrac & merge: add support for multiple trees
++ altExp parameter to altexp
++ agglomerateByRank: make rownames unique by default
++ removed calculateDistance and calculateUniFrac alias
++ calculateUnifrac bugfix
+
+Changes in version 1.7.x
++ makePhyloseqFromTreeSE: added option for choosing a tree from multiple rowTrees
++ mergeSEs: match rows based on all available taxonomy level data on rowData
++ mergeSEs: fix bug related to equally named variables that are different class
++ mergeSEs: option for merging multiple assays
++ calculateUnifrac: option for specifying the tree from TreeSE
++ transformCounts: utilize vegan package
+
