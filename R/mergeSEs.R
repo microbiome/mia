@@ -543,7 +543,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     }
     
     # Order the data to match created TreeSE
-    links <- links[match(links$names, rownames(tse)), ]
+    links <- links[rownames(tse), ]
     trees <- trees[unique(links$whichTree)]
     
     # Create a LinkDataFrame based on the link data
