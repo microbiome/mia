@@ -311,7 +311,7 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
     links <- merge(links, freq, all.x = TRUE, all.y = FALSE,
                    by.x = "whichTree", by.y = "Var1")
     # Factorize the names of trees
-    links$whichTree <- factor(links$whichTree, level = uniq_trees)
+    links$whichTree <- factor(links$whichTree, levels = uniq_trees)
     # Order the data back to its original order based on row indices
     links <- links[order(links$row_i), ]
     # Get the order based on size of tree and name
