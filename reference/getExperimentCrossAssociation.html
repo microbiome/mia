@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.6</span>
       </span>
     </div>
 
@@ -299,7 +299,7 @@ running times are critical.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> harmonizing input:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   removing 30 sampleMap rows with 'colname' not in colnames of experiments</span>
 <span class="r-in"><span><span class="co"># Transform data</span></span></span>
-<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformSamples</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"rclr"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformCounts</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"rclr"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All the total abundances of samples do not sum-up to a fixed constant.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Please consider to apply, e.g., relative transformation in prior to CLR transformation.</span>
 <span class="r-in"><span></span></span>
@@ -324,7 +324,7 @@ running times are critical.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Agglomeration of it might lead to meaningless values.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Check the assay, and consider doing transformation again manually with agglomerated data.</span>
 <span class="r-in"><span><span class="co"># Transform data</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformSamples</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformCounts.html">transformCounts</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># When mode = matrix, matrix is returned</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, experiment2 <span class="op">=</span> <span class="fl">2</span>, </span></span>
 <span class="r-in"><span>                                        assay_name1 <span class="op">=</span> <span class="st">"relabundance"</span>, assay_name2 <span class="op">=</span> <span class="st">"nmr"</span>,</span></span>
