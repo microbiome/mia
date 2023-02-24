@@ -92,7 +92,7 @@ is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: \code{transposed = FALSE})}
 
 \item{nodeLab}{if \code{x} is a matrix,
-a \code{character} vector specifying links between rows/columns and nodes of \code{tree}.
+a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
 The length must equal the number of rows/columns of \code{x}. Furthermore, all the
 node labs must be present in \code{tree}.}
 }
