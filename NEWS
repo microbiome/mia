@@ -66,4 +66,8 @@ Changes in version 1.7.x
 + mergeSEs: option for merging multiple assays
 + calculateUnifrac: option for specifying the tree from TreeSE
 + transformCounts: utilize vegan package
-
++ calculateUnifrac: subset tree based on data
++ agglomerateByRank: take into account multiple trees
++ loadFromBiom: name columns of rowData based on prefixes
++ Deprecate transformSamples and transformFeatures
++ mergeSEs: faster tree merging
