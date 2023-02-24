@@ -22,7 +22,7 @@
 #'   to the same type of features (aka. microorganisms).
 #'   
 #' @param nodeLab if \code{x} is a matrix, 
-#'   a \code{character} vector specifying links between rows/columns and nodes of \code{tree}.
+#'   a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
 #'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the 
 #'   node labs must be present in \code{tree}.
 #'
@@ -238,13 +238,13 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # rows and tree labels
     if( !(is.null(nodeLab) ||
         (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
-        all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label, tree$node.label)))) ){
+        all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label)))) ){
         stop("'nodeLab' must be NULL or character specifying links between ",
              "abundance table and tree labels.", call. = FALSE)
     }
     # check that matrix and tree are compatible
     if( is.null(nodeLab) && 
-        !all(rownames(x) %in% c(tree$tip.label, tree$node.label)) ) {
+        !all(rownames(x) %in% c(tree$tip.label)) ) {
         stop("Incompatible tree and abundance table! Please try to provide ",
              "'nodeLab'.", call. = FALSE)
     }
@@ -258,6 +258,13 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     x <- .merge_assay_by_rows(x, nodeLab, ...)
     # Modify tree
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
+    # Remove those tips that are not present in the data
+    if( any(!tree$tip.label %in% rownames(x)) ){
+        tree <- ape::drop.tip(
+            tree, tree$tip.label[!tree$tip.label %in% rownames(x)])
+        warning("The tree is pruned so that tips that cannot be found from ", 
+                "the abundance matrix are removed.", call. = FALSE)
+    }
     #
     old <- getAutoBPPARAM()
     setAutoBPPARAM(BPPARAM)
