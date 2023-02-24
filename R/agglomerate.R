@@ -233,7 +233,7 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, ..., agglomerateTree = FALSE, combine_trees = TRUE){
+          function(x, ..., agglomerateTree = FALSE){
               # input check
               if(!.is_a_bool(agglomerateTree)){
                   stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)

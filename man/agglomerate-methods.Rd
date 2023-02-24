@@ -19,7 +19,7 @@
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
-\S4method{agglomerateByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE, combine_trees = TRUE)
+\S4method{agglomerateByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
 }
 \arguments{
 \item{x}{a
