@@ -187,7 +187,18 @@ test_that("transformCounts", {
         tse <- transformCounts(
             tse, assay_name = "counts", method = "clr", pseudocount = 1)
         tse <- transformCounts(tse, assay_name = "counts", method = "rclr")
-
+        
+        # Test that CLR with counts equal to CLR with relabundance
+        assay(tse, "pseudo") <- assay(tse, "counts") + 1
+        tse <- transformCounts(
+            tse, assay_name = "counts", method = "relabundance")
+        tse <- transformCounts(
+            tse, assay_name = "pseudo", method = "clr", name = "clr1")
+        tse <- transformCounts(
+            tse, assay_name = "counts", method = "clr", name = "clr2",
+            pseudocount =1)
+        expect_equal(assay(tse, "clr1"), assay(tse, "clr2"),
+                     check.attributes = FALSE)
         ############################# NAMES ####################################
         # Tests that samples have correct names
         expect_equal(colnames(assays(transformCounts(tse, assay_name = "relabundance",
