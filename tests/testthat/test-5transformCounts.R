@@ -141,16 +141,12 @@ test_that("transformCounts", {
         expect_equal(mat, mat_comp, check.attributes = FALSE)
         
         # Expect that error occurs
-        expect_warning(
             expect_error(mia::transformCounts(tse, method = "clr"))
-        )
         # Expect that error does not occur
-        expect_warning(mia::transformCounts(tse, method = "rclr")) 
+        tse <- mia::transformCounts(tse, method = "rclr")
         
         # Tests transformCounts, tries to calculate clr. Should be an error, because of zeros.
-        expect_warning(
         expect_error(mia::transformCounts(tse, method = "clr"))
-        )
         
         # Tests that clr robust gives values that are approximately same if only 
         # one value per sample are changed to zero
@@ -174,27 +170,35 @@ test_that("transformCounts", {
         
         tse <- transformCounts(tse, method = "relabundance")
         # Expect error when counts and zeroes
-        expect_warning(
-        expect_error(transformCounts(tse, assay_name = "counts", 
-                                      method = "clr"))
-        )
+        expect_error(
+            transformCounts(tse, assay_name = "counts", method = "clr"))
         # Expect error warning when zeroes
         tse <- transformCounts(tse, method = "relabundance")
         expect_error(transformCounts(tse, assay_name = "relabundance", 
                                      method = "clr") ) 
         # Expect no warning when pseudocount is added, colSums are over 1
-        expect_warning(transformCounts(tse, assay_name = "relabundance", 
-                                       method = "clr", pseudocount = 1), 
-                       regexp = NA)
+        tse <- transformCounts(
+            tse, assay_name = "relabundance", method = "clr", pseudocount = 1)
         # Expect no warning when pseudocount is added, colSums are 1
         tse <- transformCounts(tse, method = "relabundance", pseudocount = 1, 
                                 name = "relabund2")
         expect_error(transformCounts(tse, assay_name = "relabund2", method = "clr"))
         # Expect warning when colSums are not equal
-        expect_warning(transformCounts(tse, assay_name = "counts", 
-                                       method = "clr", pseudocount = 1))
-        expect_warning(transformCounts(tse, assay_name = "counts", method = "rclr"))
-
+        tse <- transformCounts(
+            tse, assay_name = "counts", method = "clr", pseudocount = 1)
+        tse <- transformCounts(tse, assay_name = "counts", method = "rclr")
+        
+        # Test that CLR with counts equal to CLR with relabundance
+        assay(tse, "pseudo") <- assay(tse, "counts") + 1
+        tse <- transformCounts(
+            tse, assay_name = "counts", method = "relabundance")
+        tse <- transformCounts(
+            tse, assay_name = "pseudo", method = "clr", name = "clr1")
+        tse <- transformCounts(
+            tse, assay_name = "counts", method = "clr", name = "clr2",
+            pseudocount =1)
+        expect_equal(assay(tse, "clr1"), assay(tse, "clr2"),
+                     check.attributes = FALSE)
         ############################# NAMES ####################################
         # Tests that samples have correct names
         expect_equal(colnames(assays(transformCounts(tse, assay_name = "relabundance",

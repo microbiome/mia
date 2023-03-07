@@ -435,16 +435,6 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     # Adjust method if mia-specific alias was used
     method <- ifelse(method == "relabundance", "total", method)
     method <- ifelse(method == "z", "standardize", method)
-    # If method is CLR give warning if samples do not up to constant
-    # (CLR is accurate only when samples sum-up to fixed constant, like 1)
-    colsums <- colSums2(mat, na.rm = TRUE)
-    if( method %in% c("clr", "rclr") &&
-        abs(max(colsums) - min(colsums)) > 0.01 ){
-        warning("All the total abundances of samples do not sum-up ",
-                "to a fixed constant.\nPlease consider to apply, e.g., ",
-                "relative transformation in prior to CLR transformation.",
-                call. = FALSE)
-    }
     # If method is ALR, vegan drops one column/sample, because it is used
     # as a reference. To work with TreeSE, reference sample must be added back.
     # Get the original order of samples/features
