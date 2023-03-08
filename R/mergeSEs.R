@@ -148,17 +148,9 @@ setGeneric("mergeSEs", signature = c("x"),
 #' @rdname mergeSEs
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList"),
-<<<<<<< HEAD
-        function(x, assay.type = "counts", join = "full", 
-                 missing_values = NA, collapse_samples = FALSE, verbose = TRUE, 
-||||||| 4e31380
-        function(x, assay_name = "counts", join = "full", 
-                 missing_values = NA, collapse_samples = FALSE, verbose = TRUE, 
-=======
         function(x, assay_name = "counts", join = "full", 
                  missing_values = NA, collapse_samples = FALSE,
                  collapse_features = TRUE, verbose = TRUE, 
->>>>>>> 0b0c1ee603288a7f767341432f961960776d6152
                  ... ){
             ################## Input check ##################
             # Check the objects 
@@ -214,17 +206,9 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 message("1/", length(x), appendLF = FALSE)
             }
             # Merge objects
-<<<<<<< HEAD
-            tse <- .merge_SEs(x, class, join, assay.type, 
-                             missing_values, collapse_samples, verbose)
-||||||| 4e31380
-            tse <- .merge_SEs(x, class, join, assay_name, 
-                             missing_values, collapse_samples, verbose)
-=======
             tse <- .merge_SEs(
                 x, class, join, assay_name, missing_values, collapse_samples,
                 collapse_features, verbose)
->>>>>>> 0b0c1ee603288a7f767341432f961960776d6152
             return(tse)
         }
 )
@@ -335,17 +319,10 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Output: SE
 
 #' @importFrom SingleCellExperiment SingleCellExperiment
-<<<<<<< HEAD
-.merge_SEs <- function(x, class, join, assay.type, 
-                      missing_values, collapse_samples, verbose){
-||||||| 4e31380
-.merge_SEs <- function(x, class, join, assay_name, 
-                      missing_values, collapse_samples, verbose){
-=======
 .merge_SEs <- function(
         x, class, join, assay_name, missing_values, collapse_samples,
         collapse_features, verbose){
->>>>>>> 0b0c1ee603288a7f767341432f961960776d6152
+
     # Add rowData info to rownames
     rownames_name <- "rownames_that_will_be_used_to_adjust_names"
     x <- lapply(x, FUN = .add_rowdata_to_rownames,
