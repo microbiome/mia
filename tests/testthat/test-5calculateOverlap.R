@@ -12,8 +12,9 @@ test_that("calculateOverlap", {
     expect_error(calculateOverlap(tse, detection = TRUE))
     
     # Calculate overlap
-    tse <- transformSamples(tse, method = "relabundance")
-    result <- calculateOverlap(tse, assay.type = "relabundance", detection = 0.15)
+    tse <- transformCounts(tse, method = "relabundance")
+    result <- calculateOverlap(tse, assay_name = "relabundance", detection = 0.15)
+
     # Test output
     expect_true(class(result) == "dist")
     # Test values

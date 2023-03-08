@@ -75,7 +75,7 @@ test_that("agglomerate", {
     expect_equal(length(rowTree(actual)$tip.label),
                  496)
     # Test that warning occurs when assay contian binary or negative values
-    se1 <- transformSamples(se, method = "pa")
+    se1 <- transformCounts(se, method = "pa")
     se2 <- se1
     assay(se2, "pa")[1, 1] <- -1
     expect_warning(agglomerateByRank(se1, rank = "Phylum"))

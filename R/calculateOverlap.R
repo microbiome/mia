@@ -48,8 +48,8 @@
 #' @examples
 #' data(esophagus)
 #' tse <- esophagus
-#' tse <- transformSamples(tse, method = "relabundance")
-#' overlap <- calculateOverlap(tse, assay.type = "relabundance")
+#' tse <- transformCounts(tse, method = "relabundance")
+#' overlap <- calculateOverlap(tse, assay_name = "relabundance")
 #' overlap
 #' 
 #' # Store result to reducedDim
