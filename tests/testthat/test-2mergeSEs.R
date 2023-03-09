@@ -1,9 +1,9 @@
 context("mergeSEs")
 test_that("mergeSEs", {
     # Load data
-    data("GlobalPatterns")
-    data("esophagus")
-    data("enterotype")
+    data("GlobalPatterns", package="mia")
+    data("esophagus", package="mia")
+    data("enterotype", package="mia")
     
     tse1 <- GlobalPatterns[1:50, ]
     tse2 <- esophagus[1:50, ]
@@ -22,17 +22,18 @@ test_that("mergeSEs", {
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "right") )
     expect_error( mergeSEs(tse1, tse2, missing_values = TRUE ) )
     expect_error( mergeSEs(tse1, tse2, missing_values = 36846 ) )
-    expect_error( mergeSEs(tse1, tse2, assay_name = "test")  )
-    # Calculate relative transform to test assay_name
+    expect_error( mergeSEs(tse1, tse2, assay.type = "test")  )
+    # Calculate relative transform to test assay.type
     tse1 <- transformCounts(tse1, method = "relabundance")
-    expect_error( mergeSEs(tse1, tse2, assay_name = "relabundance")  )
+    expect_error( mergeSEs(tse1, tse2, assay.type = "relabundance")  )
     expect_error( mergeSEs(tse1, tse2, verbose = "test")  )
     expect_error( mergeSEs(tse1, tse2, verbose = 1)  )
     expect_error( mergeSEs(tse1, tse2, tse3)  )
     expect_error( mergeSEs(tse1)  )
     
     # Test that data match if there is only one element
-    tse <- mergeSEs(list(tse1), assay.type = "relabundance")
+    #tse <- mergeSEs(list(tse1), assay.type = "relabundance")
+    tse <- mergeSEs(list(tse1), assay.type = "relabundance")    
     expect_equal( rowData(tse), rowData(tse1))
     expect_equal( colData(tse), colData(tse1))
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))

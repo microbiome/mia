@@ -225,7 +225,7 @@ NULL
 #' @rdname estimateDiversity
 #' @export
 setGeneric("estimateDiversity",signature = c("x"),
-        function(x, assay.type = assay_name, assay_name = "counts",
+        function(x, assay.type = "counts", assay_name = NULL,
                 index = c("coverage", "fisher", "gini_simpson", 
                         "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ...)
@@ -234,10 +234,14 @@ setGeneric("estimateDiversity",signature = c("x"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts",
+    function(x, assay.type = "counts", assay_name = NULL,
             index = c("coverage", "fisher", "gini_simpson", 
                     "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ..., BPPARAM = SerialParam()){
+
+        if (!is.null(assay_name)) {
+            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+        }
 
         # input check
         index<- match.arg(index, several.ok = TRUE)
@@ -263,7 +267,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts",
+    function(x, assay.type = "counts", assay_name = NULL,
             index = c("coverage", "faith", "fisher", "gini_simpson", 
                     "inverse_simpson", "log_modulo_skewness", "shannon"),
             name = index, tree_name = "phylo", 
@@ -274,6 +278,9 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             stop("'tree_name' must be a character specifying a rowTree of 'x'.",
                  call. = FALSE)
         }
+        if (!is.null(assay_name)) {
+            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+        }	
         # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -337,14 +344,14 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
 #' @export
 setGeneric("estimateFaith",signature = c("x", "tree"),
             function(x, tree = "missing", 
-                    assay.type = assay_name, assay_name = "counts",
+                    assay.type = "counts", assay_name = NULL,
                     name = "faith", ...)
             standardGeneric("estimateFaith"))
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
-    function(x, tree, assay.type = assay_name, assay_name = "counts",
+    function(x, tree, assay.type = "counts", assay_name = NULL,
             name = "faith", node_lab = NULL, ...){
         # Input check
         # Check 'tree'
@@ -399,7 +406,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
-    function(x, assay.type = assay_name, assay_name = "counts",
+    function(x, assay.type = "counts", assay_name = NULL,
             name = "faith", tree_name = "phylo", ...){
         # Check tree_name
         if( !.is_non_empty_character(tree_name) ){

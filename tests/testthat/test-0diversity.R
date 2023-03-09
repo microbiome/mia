@@ -2,7 +2,7 @@ context("diversity estimates")
 test_that("diversity estimates", {
 
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
-    data(esophagus)
+    data(esophagus, package="mia")
 
     tse <- esophagus
     tse <- relAbundanceCounts(tse)
@@ -118,12 +118,11 @@ test_that("diversity estimates", {
     expect_error(estimateDiversity(tse, index = "faith", tree_name = "test"))
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree_name = "test"))
     
-    data("GlobalPatterns")
-    data("esophagus")
-    tse <- mergeSEs(GlobalPatterns, esophagus, 
-                    join = "full", assay.type = "counts")
+    data("GlobalPatterns", package="mia")
+    data("esophagus", package="mia")
+    tse <- mergeSEs(GlobalPatterns, esophagus,  join = "full", assay.type = "counts")
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), 
-                                     tree_name = "phylo.1"))
+                                     tree_name = "phylo.1", assay.type="counts"))
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith")))
     expect_error(estimateDiversity(tse, index = c("faith"), 
                                    tree_name = "test"))

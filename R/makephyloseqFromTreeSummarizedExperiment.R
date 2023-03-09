@@ -63,7 +63,7 @@ setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
 #' @export
 setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", ...){
+    function(x, assay.type = "counts", assay_name = NULL, ...){
         # Input check
         .require_package("phyloseq")
         # Check that tse do not have zero rows
@@ -72,6 +72,11 @@ setMethod("makePhyloseqFromTreeSE",
                  to a phyloseq object.",
                  call. = FALSE)
         }
+
+        if (!is.null(assay_name)) {
+            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+        }
+	
         # Check assay.type
         .check_assay_present(assay.type, x)
         

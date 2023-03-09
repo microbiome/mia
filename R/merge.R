@@ -151,6 +151,7 @@ setGeneric("mergeCols",
     if(length(levels(f)) == nrow(x)){
         return(x)
     }
+
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)

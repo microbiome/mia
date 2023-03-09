@@ -363,10 +363,10 @@ test_that("makePhyloseqFromTreeSE", {
     expect_equal(phyloseq::tax_table(phy2), phyloseq::tax_table(phy))
     
     # TSE object
-    data(esophagus)
+    data(esophagus, package="mia")
     tse <- esophagus
 
-    phy <- makePhyloseqFromTreeSE(tse)
+    phy <- makePhyloseqFromTreeSE(tse, assay.type="counts")
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
@@ -375,11 +375,11 @@ test_that("makePhyloseqFromTreeSE", {
     expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
     
     # Test that merging objects lead to correct phyloseq
-    tse <- mergeSEs(GlobalPatterns, esophagus, missing_values = 0)
-    pseq <- makePhyloseqFromTreeSE(tse)
+    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
+    pseq <- makePhyloseqFromTreeSE(tse, assay.type="counts")
     
     tse_compare <- tse[ rownames(GlobalPatterns), ]
-    pseq_compare <- makePhyloseqFromTreeSE(tse_compare)
+    pseq_compare <- makePhyloseqFromTreeSE(tse_compare, assay.type="counts")
     
     expect_equal(phyloseq::otu_table(pseq), phyloseq::otu_table(pseq_compare))
 })

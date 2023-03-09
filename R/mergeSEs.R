@@ -129,8 +129,8 @@
 #' tse_temp
 #' 
 #' # Merge all available assays
-#' tse <- relAbundanceCounts(tse)
-#' ts1 <- relAbundanceCounts(tse1)
+#' tse <- transformSamples(tse, method="relabundance")
+#' ts1 <- transformSamples(tse1, method="relabundance")
 #' tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 #' 
 NULL
@@ -148,13 +148,21 @@ setGeneric("mergeSEs", signature = c("x"),
 #' @rdname mergeSEs
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList"),
-        function(x, assay_name = "counts", join = "full", 
+        function(x, assay.type="counts", assay_name = NULL, join = "full", 
                  missing_values = NA, collapse_samples = FALSE,
                  collapse_features = TRUE, verbose = TRUE, 
                  ... ){
             ################## Input check ##################
             # Check the objects 
             class <- .check_objects_and_give_class(x)
+	    if (!is.null(assay_name) & is.null(assay.type)) {
+                .Deprecated(new="assay.type", old="assay_name", msg="The argument assay_name is deprecated and replace with assay.type")
+		assay.type <- assay_name
+            } else if (!is.null(assay_name) & !is.null(assay.type)) {
+                warning("The assay.type argument is used and assay_name is ignored")
+            } else {
+	        # See next step
+            }
             # CHeck which assays can be found, and if any --> FALSE
             assay.type <- .assays_cannot_be_found(assay.type = assay.type, x)
             if( .is_a_bool(assay.type) && assay.type == FALSE ){
@@ -162,6 +170,7 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                      "cannot be found at least in one SE object.",
                      call. = FALSE)
             }
+
             # Check join
             if( !(.is_a_string(join) &&
                 join %in% c("full", "inner", "left", "right") ) ){
@@ -199,6 +208,7 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 stop("'verbose' must be TRUE or FALSE.",
                      call. = FALSE)
             }
+
             ################ Input check end ################
             # Give message if TRUE
             if( verbose ){
@@ -207,7 +217,7 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
             }
             # Merge objects
             tse <- .merge_SEs(
-                x, class, join, assay_name, missing_values, collapse_samples,
+                x, class, join, assay.type, missing_values, collapse_samples,
                 collapse_features, verbose)
             return(tse)
         }
@@ -320,7 +330,7 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 #' @importFrom SingleCellExperiment SingleCellExperiment
 .merge_SEs <- function(
-        x, class, join, assay_name, missing_values, collapse_samples,
+        x, class, join, assay.type, missing_values, collapse_samples,
         collapse_features, verbose){
 
     # Add rowData info to rownames
@@ -330,7 +340,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
-    
+
     # Initialize a list for TreeSE-specific slots
     tse_args <- list(
         rowTrees = NULL,
@@ -341,10 +351,10 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( class == "TreeSummarizedExperiment" ){
         tse_args <- .get_TreeSE_args(tse, tse_args)
     }
-    
+
     # Get the data in a list
     args <- .get_SummarizedExperiment_data(tse = tse, assay.type = assay.type)
-    
+
     # Get the function based on class
     FUN_constructor <- switch(class,
                               TreeSummarizedExperiment = TreeSummarizedExperiment,
@@ -353,8 +363,8 @@ setMethod("right_join", signature = c(x = "ANY"),
     )
     # Create an object
     tse <- do.call(FUN_constructor, args = args)
-    
-    # Lopp through individual TreeSEs and add them to tse
+
+    # Loop through individual TreeSEs and add them to tse
     if( length(x) > 0 ){
         for( i in 1:length(x) ){
             # Give message if TRUE
