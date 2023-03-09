@@ -38,31 +38,16 @@
 #' }
 #' @details
 #'
-#' These functions provide a variety of options for transforming abundance data.
-#' The transformed data is calculated and stored in a new \code{assay}.
+#' These \code{transformCount} function provides a variety of options for transforming abundance data.
+#' The transformed data is calculated and stored in a new \code{assay}. The previously available
+#' wrappers transformSamples, transformFeatures
+#' ZTransform, and relAbundanceCounts have been deprecated.
 #'
-#' Available wrapper functions include:
-#'
-#' \itemize{
-#' \item{\code{transformCounts}} sample-wise (column-wise) or feature-wise
-#' (row-wise) transformation based on specified \code{MARGIN}.
+#' The \code{transformCounts} provides sample-wise (column-wise) or feature-wise
+#' (row-wise) transformation to the abundance table
+#' (assay) based on specified \code{MARGIN}.
 #' 
-#' \item{\code{transformSamples}} (deprecated)
-#' sample-wise (column-wise) transformation.
-#' 
-#' \item{\code{transformFeatures}} (deprecated)
-#' feature-wise (row-wise) transformation.
-#' 
-#'
-#' \item{\code{ZTransform}} Shortcut for Z-transformation.
-#' 
-#' \item{\code{relAbundanceCounts}} Shortcut for fetching relative abundance table.
-#'
-#' }
-#' 
-#' Altogether, \code{transformCounts}, \code{transformSamples} and
-#' \code{transformFeatures} apply transformations to the abundance table
-#' (assay). The available transformation methods include:
+#' The available transformation methods include:
 #'
 #' \itemize{
 #' 
@@ -127,9 +112,8 @@
 #' }
 #'
 #' @return
-#' \code{transformCounts}, \code{transformSamples}, \code{transformFeatures}, 
-#' \code{relAbundanceCounts}, and \code{ZTransform} return \code{x} with additional, 
-#' transformed abundance table named \code{name} in the \code{\link{assay}}.
+#' \code{transformCounts} returns the input object \code{x}, with a new 
+#' transformed abundance table named \code{name} added in the \code{\link{assay}}.
 #'
 #' @name transformCounts
 #' @export
@@ -137,7 +121,7 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
-#' data(esophagus)
+#' data(esophagus, package="mia")
 #' x <- esophagus
 #'
 #' # By specifying 'method', it is possible to apply different transformations, 
@@ -362,6 +346,7 @@ setGeneric("ZTransform", signature = c("x"),
 #' @export
 setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
           function(x, ...){
+	    .Deprecated("transformCounts")
             transformCounts(x, method = "z", MARGIN = "features", ...)
           }
 )
@@ -379,6 +364,7 @@ setGeneric("relAbundanceCounts", signature = c("x"),
 #' @export
 setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
+	.Deprecated("transformCounts")    
         transformCounts(x, method = "relabundance", MARGIN = "samples", ...)
     }
 )
