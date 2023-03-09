@@ -20,6 +20,7 @@ mergeSEs(x, ...)
 \S4method{mergeSEs}{SimpleList}(
   x,
   assay.type = "counts",
+  assay_name = NULL,
   join = "full",
   missing_values = NA,
   collapse_samples = FALSE,
@@ -167,8 +168,8 @@ tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]),
 tse_temp
 
 # Merge all available assays
-tse <- relAbundanceCounts(tse)
-ts1 <- relAbundanceCounts(tse1)
+tse <- transformSamples(tse, method="relabundance")
+ts1 <- transformSamples(tse1, method="relabundance")
 tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 
 }

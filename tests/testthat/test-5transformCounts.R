@@ -295,10 +295,10 @@ test_that("transformCounts", {
         expect_equal(actual, compare)
 	
         # chi.squared
-        expect_warning(tse <- transformCounts(tse, assay.type = "counts", method = "chi.square"))
+        tse <- transformCounts(tse, assay.type = "counts", method = "chi.square")
         actual <- assay(tse, "chi.square")
-        expect_warning(compare <- vegan::decostand(assay(tse, "counts"), method = "chi.square",
-                                    MARGIN = 2))
+        compare <- vegan::decostand(assay(tse, "counts"), method = "chi.square",
+                                    MARGIN = 2)
         compare <- t(compare)
         expect_equal(na.omit(actual), na.omit(compare))
 

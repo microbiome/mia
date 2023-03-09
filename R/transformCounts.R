@@ -179,18 +179,6 @@
 #'                                                            ties.method="average", 
 #'                                                            preserveShape = TRUE)  
 #' 
-#' # Z-transform can be done for features by using shortcut function
-#' x <- ZTransform(x)
-#' head(assay(x, "z"))
-#' 
-#' # For visualization purposes it is sometimes done by applying CLR for samples,
-#' # followed by Z transform for taxa
-#' x <- ZTransform(transformCounts(x, method="clr", assay.type = "counts", pseudocount = 1))
-#'
-#' # Relative abundances can be also calculated with the dedicated
-#' # relAbundanceCounts function.
-#' x <- relAbundanceCounts(x)
-#' head(assay(x, "relabundance"))
 NULL
 
 #' @rdname transformCounts

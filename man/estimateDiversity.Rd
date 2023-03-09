@@ -11,8 +11,8 @@
 \usage{
 estimateDiversity(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
@@ -21,8 +21,8 @@ estimateDiversity(
 
 \S4method{estimateDiversity}{SummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
@@ -32,8 +32,8 @@ estimateDiversity(
 
 \S4method{estimateDiversity}{TreeSummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   index = c("coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
@@ -45,8 +45,8 @@ estimateDiversity(
 estimateFaith(
   x,
   tree = "missing",
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   name = "faith",
   ...
 )
@@ -54,8 +54,8 @@ estimateFaith(
 \S4method{estimateFaith}{SummarizedExperiment,phylo}(
   x,
   tree,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   name = "faith",
   node_lab = NULL,
   ...
@@ -63,8 +63,8 @@ estimateFaith(
 
 \S4method{estimateFaith}{TreeSummarizedExperiment,missing}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   name = "faith",
   tree_name = "phylo",
   ...

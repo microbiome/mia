@@ -10,7 +10,7 @@
 \usage{
 makePhyloseqFromTreeSE(x, ...)
 
-\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
+\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
 
 \S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, tree_name = "phylo", ...)
 

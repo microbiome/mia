@@ -15,8 +15,8 @@
 \usage{
 transformSamples(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
@@ -25,8 +25,8 @@ transformSamples(
 
 \S4method{transformSamples}{SummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
@@ -35,32 +35,34 @@ transformSamples(
 
 transformCounts(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
+  pseudocount = 0,
   ...
 )
 
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
     "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
+  pseudocount = 0,
   ...
 )
 
 transformFeatures(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
     "z"),
   name = method,
@@ -69,8 +71,8 @@ transformFeatures(
 
 \S4method{transformFeatures}{SummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
     "z"),
   name = method,
