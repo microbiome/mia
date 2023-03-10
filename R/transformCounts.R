@@ -244,9 +244,10 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
              ...){
         # Input check
 
-        #if (!is.null(assay_name)) {
-        #    .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
-        #}
+        if (!is.null(assay_name)) {
+            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+	    assay.type <- assay_name
+        }
 	
         # Check assay.type
         .check_assay_present(assay.type, x)
