@@ -7,8 +7,8 @@
 \usage{
 estimateRichness(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("ace", "chao1", "hill", "observed"),
   name = index,
   detection = 0,
@@ -18,8 +18,8 @@ estimateRichness(
 
 \S4method{estimateRichness}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("ace", "chao1", "hill", "observed"),
   name = index,
   detection = 0,
@@ -30,12 +30,12 @@ estimateRichness(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
-\item{assay_name}{the name of the assay used for calculation of the
+\item{assay.type}{the name of the assay used for calculation of the
 sample-wise estimates.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{index}{a \code{character} vector, specifying the richness measures

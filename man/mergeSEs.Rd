@@ -19,7 +19,8 @@ mergeSEs(x, ...)
 
 \S4method{mergeSEs}{SimpleList}(
   x,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   join = "full",
   missing_values = NA,
   collapse_samples = FALSE,
@@ -54,9 +55,11 @@ right_join(x, ...)
 
 \item{...}{optional arguments (not used).}
 
-\item{assay_name}{A character value for selecting the
+\item{assay.type}{A character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to be merged. (By default: \code{assay_name = "counts"})}
+to be merged. (By default: \code{assay.type = "counts"})}
+
+\item{assay_name}{(Deprecated) alias for \code{assay.type}.}
 
 \item{join}{A single character value for selecting the joining method.
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
@@ -149,7 +152,7 @@ tse <- mergeSEs(tse1, tse2)
 
 # Merge a list of TreeSEs
 list <- SimpleList(tse1, tse2, tse3)
-tse <- mergeSEs(list, assay_name = "counts", missing_values = 0)
+tse <- mergeSEs(list, assay.type = "counts", missing_values = 0)
 tse
 
 # With 'join', it is possible to specify the merging method. Subsets are used
@@ -167,9 +170,9 @@ tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]),
 tse_temp
 
 # Merge all available assays
-tse <- relAbundanceCounts(tse)
-ts1 <- relAbundanceCounts(tse1)
-tse_temp <- mergeSEs(tse, tse1, assay_name = assayNames(tse))
+tse <- transformCounts(tse, method="relabundance")
+ts1 <- transformCounts(tse1, method="relabundance")
+tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 
 }
 \seealso{

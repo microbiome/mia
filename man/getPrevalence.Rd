@@ -36,8 +36,8 @@ getPrevalence(x, ...)
 
 \S4method{getPrevalence}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   as_relative = TRUE,
   rank = NULL,
   ...
@@ -87,24 +87,19 @@ subsetByRareFeatures(x, ...)
 
 getPrevalentAbundance(
   x,
-  assay_name = abund_values,
-  abund_values = "relabundance",
+  assay.type = assay_name,
+  assay_name = "relabundance",
   ...
 )
 
 \S4method{getPrevalentAbundance}{ANY}(
   x,
-  assay_name = abund_values,
-  abund_values = "relabundance",
+  assay.type = assay_name,
+  assay_name = "relabundance",
   ...
 )
 
-\S4method{getPrevalentAbundance}{SummarizedExperiment}(
-  x,
-  assay_name = abund_values,
-  abund_values = "counts",
-  ...
-)
+\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
 
 agglomerateByPrevalence(x, ...)
 
@@ -130,13 +125,13 @@ detection and prevalence cutoffs be included? (default: \code{FALSE})}
 \item{sort}{logical scalar: Should the result be sorted by prevalence?
 (default: \code{FALSE})}
 
-\item{assay_name}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to use for prevalence calculation.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{as_relative}{logical scalar: Should the detection threshold be applied
@@ -270,7 +265,7 @@ altExp(tse, "rare")
 tse
                          
 data(esophagus)
-getPrevalentAbundance(esophagus, assay_name = "counts")
+getPrevalentAbundance(esophagus, assay.type = "counts")
 
 # data can be aggregated based on prevalent taxonomic results
 agglomerateByPrevalence(tse,

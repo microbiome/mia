@@ -7,8 +7,8 @@
 \usage{
 estimateDominance(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
     "simpson_lambda"),
   ntaxa = 1,
@@ -20,8 +20,8 @@ estimateDominance(
 
 \S4method{estimateDominance}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
     "simpson_lambda"),
   ntaxa = 1,
@@ -36,13 +36,13 @@ estimateDominance(
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object}
 
-\item{assay_name}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to calculate the sample-wise estimates.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{index}{a \code{character} vector, specifying the indices to be

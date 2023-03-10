@@ -8,16 +8,16 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'
-#' @param assay_name a single \code{character} value for specifying which
+#' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead.)
+#'   (Please use \code{assay.type} instead.)
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param k the number of Dirichlet components to fit. See
@@ -141,9 +141,9 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts", 
+    function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
              transposed = FALSE, ...){
-        mat <- assay(x, assay_name)
+        mat <- assay(x, assay.type)
         if(!transposed){
             mat <- t(mat)
         }
@@ -276,9 +276,9 @@ setMethod("calculateDMNgroup", signature = c(x = "ANY"), .calculate_DMNgroup)
 #' @export
 setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
     function(x, variable, 
-             assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts", 
+             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
              transposed = FALSE, ...){
-        mat <- assay(x, assay_name)
+        mat <- assay(x, assay.type)
         if(!transposed){
             mat <- t(mat)
         }
@@ -327,9 +327,9 @@ setMethod("performDMNgroupCV", signature = c(x = "ANY"), .perform_DMNgroup_cv)
 #' @export
 setMethod("performDMNgroupCV", signature = c(x = "SummarizedExperiment"),
     function(x, variable, 
-             assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts", 
+             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
              transposed = FALSE, ...){
-        mat <- assay(x, assay_name)
+        mat <- assay(x, assay.type)
         if(!transposed){
             mat <- t(mat)
         }

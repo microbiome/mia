@@ -8,13 +8,13 @@
 #' @param seqtab,x
 #'   a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'
-#' @param assay_name A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use.
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param name A name for the column of the colData in which the contaminant
@@ -89,7 +89,7 @@ NULL
 #' @export
 setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
     function(seqtab,
-             assay_name = abund_values, abund_values = "counts",
+             assay.type = assay_name, assay_name = "counts",
              name = "isContaminant",
              concentration = NULL,
              control = NULL,
@@ -99,7 +99,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
              detailed = TRUE,
              ...){
         # input check
-        .check_assay_present(assay_name, seqtab)
+        .check_assay_present(assay.type, seqtab)
         if(!.is_a_string(name)){
             stop("'name' must be single character value.",call. = FALSE)
         }
@@ -136,7 +136,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
                                       search = "colData")$value
             batch <- factor(batch, sort(unique(batch)))
         }
-        mat <- assay(seqtab,assay_name)
+        mat <- assay(seqtab,assay.type)
         contaminant <- isContaminant(t(mat),
                                      conc = concentration,
                                      neg = control,
@@ -162,7 +162,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
 #' @export
 setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
     function(seqtab,
-             assay_name = abund_values, abund_values = "counts",
+             assay.type = assay_name, assay_name = "counts",
              name = "isNotContaminant",
              control = NULL,
              threshold = 0.5,
@@ -170,7 +170,7 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
              detailed = FALSE,
              ...){
         # input check
-        .check_assay_present(assay_name, seqtab)
+        .check_assay_present(assay.type, seqtab)
         if(!.is_a_string(name)){
             stop("'name' must be single character value.",call. = FALSE)
         }
@@ -193,7 +193,7 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
                      call. = FALSE)
             }
         }
-        mat <- assay(seqtab,assay_name)
+        mat <- assay(seqtab,assay.type)
         not_contaminant <- isNotContaminant(t(mat),
                                             neg = control,
                                             threshold = threshold,

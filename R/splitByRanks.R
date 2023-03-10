@@ -220,9 +220,9 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @importFrom SummarizedExperiment assayNames assay
 #' @importFrom DelayedArray DelayedArray
-.get_assay <- function(se, assay_name){
-    if (assay_name %in% assayNames(se)) {
-        assay <- DelayedArray(assay(se, assay_name))
+.get_assay <- function(se, assay.type){
+    if (assay.type %in% assayNames(se)) {
+        assay <- DelayedArray(assay(se, assay.type))
     } else {
         dim <- dim(se)
         assay <- DelayedArray(matrix(NA_real_,dim[[1L]],dim[[2L]]))
@@ -231,9 +231,9 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 #' @importFrom BiocGenerics rbind cbind
-.combine_assays <- function(ses, assay_name, MARGIN = 1L){
+.combine_assays <- function(ses, assay.type, MARGIN = 1L){
     bind_FUN <- switch(MARGIN, "1" = rbind, "2" = cbind)
-    current <- lapply(ses, .get_assay, assay_name)
+    current <- lapply(ses, .get_assay, assay.type)
     combined <- do.call(bind_FUN, current)
     rownames(combined) <- NULL
     colnames(combined) <- NULL
@@ -242,12 +242,12 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @importFrom SummarizedExperiment assayNames assay
 .unsplit_assays <- function(ses, MARGIN = 1L) {
-    assay_names <- unique(unlist(lapply(ses, assayNames)))
-    combined <- lapply(assay_names,
+    assay.types <- unique(unlist(lapply(ses, assayNames)))
+    combined <- lapply(assay.types,
                        .combine_assays,
                        ses = ses,
                        MARGIN = MARGIN)
-    names(combined) <- assay_names
+    names(combined) <- assay.types
     combined
 }
 

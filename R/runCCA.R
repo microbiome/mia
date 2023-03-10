@@ -33,16 +33,16 @@
 #'   \code{scale} is disabled when using \code{*RDA} functions. Please scale before
 #'   performing RDA (Check examples.) 
 #' 
-#' @param assay_name a single \code{character} value for specifying which
+#' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead.)
+#'   (Please use \code{assay.type} instead.)
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param altexp String or integer scalar specifying an alternative experiment
@@ -86,7 +86,7 @@
 #' tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 #' # Calculate RDA
 #' tse <- runRDA(tse, formula = data ~ SampleType, 
-#'               assay_name = "z", name = "rda_scaled", na.action = na.omit)
+#'               assay.type = "z", name = "rda_scaled", na.action = na.omit)
 #' # Plot
 #' plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 NULL
@@ -207,9 +207,9 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
 #' @rdname runCCA
 setMethod("calculateCCA", "SummarizedExperiment",
     function(x, formula, variables, ..., 
-             assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
+             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts")
     {
-        mat <- assay(x, assay_name)
+        mat <- assay(x, assay.type)
         # If formula is missing but variables are not
         if( !missing(variables) && missing(formula)){
             # Create a formula based on variables
@@ -305,11 +305,11 @@ setMethod("calculateRDA", "ANY", .calculate_rda)
 #' @rdname runCCA
 setMethod("calculateRDA", "SummarizedExperiment",
     function(x, formula, variables, ..., 
-             assay_name = abund_values, abund_values = exprs_values, exprs_values = "counts")
+             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts")
     {
-        # Check assay_name and get assay
-        .check_assay_present(assay_name, x)
-        mat <- assay(x, assay_name)
+        # Check assay.type and get assay
+        .check_assay_present(assay.type, x)
+        mat <- assay(x, assay.type)
         # If formula is provided, it takes the precedence
         if( !missing(formula) ){
             # Get variables from colData that are specified by formula

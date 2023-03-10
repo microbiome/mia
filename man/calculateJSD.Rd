@@ -11,8 +11,8 @@
 
 \S4method{calculateJSD}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts",
   transposed = FALSE,
   ...
@@ -26,17 +26,17 @@ runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x))
 
 \item{...}{optional arguments not used.}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead.)}
+(Please use \code{assay.type} instead.)}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 

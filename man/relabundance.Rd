@@ -39,7 +39,7 @@ object. This is a shortcut function for \code{assay(x,"relabundance")}.
 \examples{
 data(GlobalPatterns)
 # Calculates relative abundances
-GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
+GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
 # Fetches calculated relative abundances
 # head(relabundance(GlobalPatterns))
 }

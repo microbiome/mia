@@ -25,7 +25,7 @@
 #' @examples
 #' data(GlobalPatterns)
 #' # Calculates relative abundances
-#' GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
+#' GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
 #' # Fetches calculated relative abundances
 #' # head(relabundance(GlobalPatterns))
 NULL

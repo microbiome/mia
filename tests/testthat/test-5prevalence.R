@@ -11,8 +11,8 @@ test_that("getPrevalence", {
                  "'sort' must be TRUE or FALSE")
     expect_error(getPrevalence(GlobalPatterns, as_relative="test"),
                  "'as_relative' must be TRUE or FALSE")
-    expect_error(getPrevalence(GlobalPatterns, assay_name="test"),
-                 "'assay_name' must be a valid name")
+    expect_error(getPrevalence(GlobalPatterns, assay.type="test"),
+                 "'assay.type' must be a valid name")
     # Output should be always a frequency between 0 to 1
     pr <- getPrevalence(GlobalPatterns, detection=0.1/100, as_relative=TRUE)
     expect_true(min(pr) >= 0 && max(pr) <= 1)
@@ -30,9 +30,9 @@ test_that("getPrevalence", {
     expect_true(all(pr1 == pr2))
 
     # Different ways to use relative abundance should yield the same output
-    pr2 <- getPrevalence(GlobalPatterns, as_relative=TRUE, assay_name = "counts")
-    GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
-    pr1 <- getPrevalence(GlobalPatterns, as_relative=FALSE, assay_name = "relabundance")
+    pr2 <- getPrevalence(GlobalPatterns, as_relative=TRUE, assay.type = "counts")
+    GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
+    pr1 <- getPrevalence(GlobalPatterns, as_relative=FALSE, assay.type = "relabundance")
     expect_true(all(pr1 == pr2))
 
     # Sorting should put the top values first
@@ -42,13 +42,13 @@ test_that("getPrevalence", {
     actual <- getTopTaxa(GlobalPatterns,
                          method="prevalence",
                          top=5,
-                         assay_name="counts")
+                         assay.type="counts")
     expect_equal(pr, actual)
     # Test alias
     alias<- getTopTaxa(GlobalPatterns,
                        method="prevalence",
                        top=5,
-                       assay_name="counts")
+                       assay.type="counts")
     expect_equal(alias, actual)
     # Check that works also when rownames is NULL
     gp_null <- GlobalPatterns

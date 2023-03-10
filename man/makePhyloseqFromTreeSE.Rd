@@ -10,12 +10,7 @@
 \usage{
 makePhyloseqFromTreeSE(x, ...)
 
-\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(
-  x,
-  assay_name = abund_values,
-  abund_values = "counts",
-  ...
-)
+\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
 
 \S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, tree_name = "phylo", ...)
 
@@ -28,14 +23,14 @@ makePhyloseqFromTreeSummarizedExperiment(x, ...)
 
 \item{...}{additional arguments}
 
-\item{assay_name}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 included in the phyloseq object that is created.
-(By default: \code{assay_name = "counts"})}
+(By default: \code{assay.type = "counts"})}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{tree_name}{a single \code{character} value for specifying which
@@ -47,7 +42,7 @@ An object of class \code{Phyloseq} object.
 }
 \description{
 This function creates a phyloseq object from a TreeSummarizedExperiment
-object. By using \code{assay_name}, it is possible to specify which table
+object. By using \code{assay.type}, it is possible to specify which table
 from \code{assay} is added to the phyloseq object.
 }
 \details{
@@ -64,11 +59,11 @@ phy <- makePhyloseqFromTreeSE(tse)
 phy
 
 # By default the chosen table is counts, but if there are other tables,
-# they can be chosen with assay_name.
+# they can be chosen with assay.type.
 
 # Counts relative abundances table
 tse <- transformCounts(tse, method = "relabundance")
-phy2 <- makePhyloseqFromTreeSE(tse, assay_name = "relabundance")
+phy2 <- makePhyloseqFromTreeSE(tse, assay.type = "relabundance")
 phy2
 }
 \author{

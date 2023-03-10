@@ -48,11 +48,11 @@ test_that("summaries", {
     expect_equal( getTopTaxa(GlobalPatterns, 
                              method = "mean",
                              top = 5,
-                             assay_name = "counts"), 
+                             assay.type = "counts"), 
                   getTopFeatures(GlobalPatterns, 
                                  method = "mean",
                                  top = 5,
-                                 assay_name = "counts") )
+                                 assay.type = "counts") )
     expect_equal( getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE),
                   getUniqueFeatures(GlobalPatterns, "Phylum", sort = TRUE) )
     expect_equal( countDominantTaxa(GlobalPatterns),

@@ -11,29 +11,29 @@
 getAbundanceSample(
   x,
   sample_id,
-  assay_name = abund_values,
-  abund_values = "counts"
+  assay.type = assay_name,
+  assay_name = "counts"
 )
 
 \S4method{getAbundanceSample}{SummarizedExperiment}(
   x,
   sample_id = NULL,
-  assay_name = abund_values,
-  abund_values = "counts"
+  assay.type = assay_name,
+  assay_name = "counts"
 )
 
 getAbundanceFeature(
   x,
   feature_id,
-  assay_name = abund_values,
-  abund_values = "counts"
+  assay.type = assay_name,
+  assay_name = "counts"
 )
 
 \S4method{getAbundanceFeature}{SummarizedExperiment}(
   x,
   feature_id = NULL,
-  assay_name = abund_values,
-  abund_values = "counts"
+  assay.type = assay_name,
+  assay_name = "counts"
 )
 }
 \arguments{
@@ -45,12 +45,12 @@ object.}
 abundances of \dQuote{FeatureID}. This is essentially a column name in
 \code{assay(x)}.}
 
-\item{assay_name}{a \code{character} value to select an
+\item{assay.type}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{feature_id}{A \dQuote{FeatureID} for which user wants to extract the
@@ -80,11 +80,11 @@ for user specified \dQuote{FeatureID}.
 data(GlobalPatterns)
 getAbundanceSample(GlobalPatterns,
                    sample_id = 'CC1',
-                   assay_name = 'counts')
+                   assay.type = 'counts')
 # getAbundanceFeature
 getAbundanceFeature(GlobalPatterns,
                     feature_id = '522457',
-                    assay_name = 'counts')
+                    assay.type = 'counts')
 }
 \author{
 Sudarshan A. Shetty

@@ -6,9 +6,11 @@
 #' @param y a \code{\link{SummarizedExperiment}} object when \code{x} is a
 #' \code{\link{SummarizedExperiment}} object. Disabled when \code{x} is a list.
 #' 
-#' @param assay_name A character value for selecting the
+#' @param assay.type A character value for selecting the
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#' to be merged. (By default: \code{assay_name = "counts"})
+#' to be merged. (By default: \code{assay.type = "counts"})
+#'
+#' @param assay_name (Deprecated) alias for \code{assay.type}. 
 #' 
 #' @param join A single character value for selecting the joining method.
 #' Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
@@ -111,7 +113,7 @@
 #' 
 #' # Merge a list of TreeSEs
 #' list <- SimpleList(tse1, tse2, tse3)
-#' tse <- mergeSEs(list, assay_name = "counts", missing_values = 0)
+#' tse <- mergeSEs(list, assay.type = "counts", missing_values = 0)
 #' tse
 #' 
 #' # With 'join', it is possible to specify the merging method. Subsets are used
@@ -129,11 +131,13 @@
 #' tse_temp
 #' 
 #' # Merge all available assays
-#' tse <- relAbundanceCounts(tse)
-#' ts1 <- relAbundanceCounts(tse1)
-#' tse_temp <- mergeSEs(tse, tse1, assay_name = assayNames(tse))
+#' tse <- transformCounts(tse, method="relabundance")
+#' ts1 <- transformCounts(tse1, method="relabundance")
+#' tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 #' 
 NULL
+
+
 
 ################################### Generic ####################################
 
@@ -148,20 +152,29 @@ setGeneric("mergeSEs", signature = c("x"),
 #' @rdname mergeSEs
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList"),
-        function(x, assay_name = "counts", join = "full", 
+        function(x, assay.type="counts", assay_name = NULL, join = "full", 
                  missing_values = NA, collapse_samples = FALSE,
                  collapse_features = TRUE, verbose = TRUE, 
                  ... ){
             ################## Input check ##################
             # Check the objects 
             class <- .check_objects_and_give_class(x)
+	    if (!is.null(assay_name) & is.null(assay.type)) {
+                .Deprecated(new="assay.type", old="assay_name", msg="The argument assay_name is deprecated and replace with assay.type")
+		assay.type <- assay_name
+            } else if (!is.null(assay_name) & !is.null(assay.type)) {
+                warning("The assay.type argument is used and assay_name is ignored")
+            } else {
+	        # See next step
+            }
             # CHeck which assays can be found, and if any --> FALSE
-            assay_name <- .assays_cannot_be_found(assay_name = assay_name, x)
-            if( .is_a_bool(assay_name) && assay_name == FALSE ){
-                stop("'assay_name' must specify an assay from assays. 'assay_name' ",
+            assay.type <- .assays_cannot_be_found(assay.type = assay.type, x)
+            if( .is_a_bool(assay.type) && assay.type == FALSE ){
+                stop("'assay.type' must specify an assay from assays. 'assay.type' ",
                      "cannot be found at least in one SE object.",
                      call. = FALSE)
             }
+
             # Check join
             if( !(.is_a_string(join) &&
                 join %in% c("full", "inner", "left", "right") ) ){
@@ -199,6 +212,7 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 stop("'verbose' must be TRUE or FALSE.",
                      call. = FALSE)
             }
+
             ################ Input check end ################
             # Give message if TRUE
             if( verbose ){
@@ -207,7 +221,7 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
             }
             # Merge objects
             tse <- .merge_SEs(
-                x, class, join, assay_name, missing_values, collapse_samples,
+                x, class, join, assay.type, missing_values, collapse_samples,
                 collapse_features, verbose)
             return(tse)
         }
@@ -320,8 +334,9 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 #' @importFrom SingleCellExperiment SingleCellExperiment
 .merge_SEs <- function(
-        x, class, join, assay_name, missing_values, collapse_samples,
+        x, class, join, assay.type, missing_values, collapse_samples,
         collapse_features, verbose){
+
     # Add rowData info to rownames
     rownames_name <- "rownames_that_will_be_used_to_adjust_names"
     x <- lapply(x, FUN = .add_rowdata_to_rownames,
@@ -329,7 +344,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
-    
+
     # Initialize a list for TreeSE-specific slots
     tse_args <- list(
         rowTrees = NULL,
@@ -340,10 +355,10 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( class == "TreeSummarizedExperiment" ){
         tse_args <- .get_TreeSE_args(tse, tse_args)
     }
-    
+
     # Get the data in a list
-    args <- .get_SummarizedExperiment_data(tse = tse, assay_name = assay_name)
-    
+    args <- .get_SummarizedExperiment_data(tse = tse, assay.type = assay.type)
+
     # Get the function based on class
     FUN_constructor <- switch(class,
                               TreeSummarizedExperiment = TreeSummarizedExperiment,
@@ -352,8 +367,8 @@ setMethod("right_join", signature = c(x = "ANY"),
     )
     # Create an object
     tse <- do.call(FUN_constructor, args = args)
-    
-    # Lopp through individual TreeSEs and add them to tse
+
+    # Loop through individual TreeSEs and add them to tse
     if( length(x) > 0 ){
         for( i in 1:length(x) ){
             # Give message if TRUE
@@ -376,7 +391,7 @@ setMethod("right_join", signature = c(x = "ANY"),
                 tse1 = tse,
                 tse2 = temp,
                 join = join,
-                assay_name = assay_name,
+                assay.type = assay.type,
                 missing_values = missing_values
                 )
             # Create an object
@@ -695,11 +710,11 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: SE
 # Output: A list of arguments
-.get_SummarizedExperiment_data <- function(tse, assay_name){
+.get_SummarizedExperiment_data <- function(tse, assay.type){
     # Remove all information but rowData, colData, metadata and assay
     row_data <- rowData(tse)
     col_data <- colData(tse)
-    assays <- assays(tse)[ assay_name ]
+    assays <- assays(tse)[ assay.type ]
     metadata <- metadata(tse)
     # Create a list of arguments
     args <- list(assays = assays,
@@ -780,17 +795,17 @@ setMethod("right_join", signature = c(x = "ANY"),
 # This function checks that the assay(s) can be found from TreeSE objects of a list.
 
 # Input: the name of the assay and a list of TreeSE objects
-# Output: A list of assay_names that can be found or FALSE if any
-.assays_cannot_be_found <- function(assay_name, x){
+# Output: A list of assay.types that can be found or FALSE if any
+.assays_cannot_be_found <- function(assay.type, x){
     # Loop through objects
     assays <- lapply(x, FUN = function(tse){
-        # Check if the assay_names can be found. If yes, then TRUE. If not, then FALSE
-        temp <- lapply(assay_name, .assay_cannot_be_found, tse = tse)
+        # Check if the assay.types can be found. If yes, then TRUE. If not, then FALSE
+        temp <- lapply(assay.type, .assay_cannot_be_found, tse = tse)
         # Unlist and return
         return( unlist(temp) )
     })
     # Create a data.frame from the result
-    assays <- as.data.frame(assays, row.names = assay_name)
+    assays <- as.data.frame(assays, row.names = assay.type)
     colnames(assays) <- paste0("tse", seq_len(length(assays)))
     # Which assays can be found from all the objects?
     assays <- rownames(assays)[ rowSums(assays) == ncol(assays) ]
@@ -799,10 +814,10 @@ setMethod("right_join", signature = c(x = "ANY"),
         assays <- FALSE
     }
     # Give warning if assays were dropped
-    if( length(assays) < length(assay_name) ){
+    if( length(assays) < length(assay.type) ){
         warning("The following assay(s) was not found from all the objects ", 
                 "so it is dropped from the output: ",
-                paste0("'", setdiff(assay_name, assays), sep = "'", collapse = ", "),
+                paste0("'", setdiff(assay.type, assays), sep = "'", collapse = ", "),
                 call. = FALSE)
     }
     return(assays)
@@ -814,11 +829,11 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: the name of the assay and TreSE object
 # Output: TRUE or FALSE
-.assay_cannot_be_found <- function(assay_name, tse){
-    # Check if the assay_name can be found. If yes, then TRUE. If not, then FALSE
+.assay_cannot_be_found <- function(assay.type, tse){
+    # Check if the assay.type can be found. If yes, then TRUE. If not, then FALSE
     tryCatch(
         {
-            .check_assay_present(assay_name, tse)
+            .check_assay_present(assay.type, tse)
             return(TRUE)
             
         },
@@ -872,18 +887,18 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Input: Two SEs
 # Output: A list of arguments
 .merge_SummarizedExperiments <- function(tse1, tse2, join,  
-                                         assay_name, missing_values){
+                                         assay.type, missing_values){
     # Merge rowData
     rowdata <- .merge_rowdata(tse1, tse2, join)
     # Merge colData
     coldata <- .merge_coldata(tse1, tse2, join)
     # Merge assays
-    assays <- lapply(assay_name, .merge_assay,
+    assays <- lapply(assay.type, .merge_assay,
                     tse1 = tse1, tse2 = tse2,
                     join = join, missing_values = missing_values,
                     rd = rowdata, cd = coldata)
     assays <- SimpleList(assays)
-    names(assays) <- assay_name
+    names(assays) <- assay.type
     # Combine metadata
     metadata <- c( metadata(tse1), metadata(tse2) )
     
@@ -901,11 +916,11 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Input: Two TreeSEs, the name of the assay, joining method, value to denote
 # missing values, merged rowData, and merged colData
 # Output: Merged assay
-.merge_assay <- function(tse1, tse2, assay_name, join,
+.merge_assay <- function(tse1, tse2, assay.type, join,
                          missing_values, rd, cd){
     # Take assays
-    assay1 <- assay(tse1, assay_name)
-    assay2 <- assay(tse2, assay_name)
+    assay1 <- assay(tse1, assay.type)
+    assay2 <- assay(tse2, assay.type)
     
     # Merge two assays into one
     assay <- .join_two_tables(assay1, assay2, join)
