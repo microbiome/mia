@@ -25,7 +25,7 @@
 #'
 #' @param name A single character value specifying the name of transformed
 #'   abundance table.
-#'   
+#'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
 #'   \item{\code{ref_vals}:} {A single value which will be used to fill 
@@ -224,7 +224,7 @@ setGeneric("transformCounts", signature = c("x"),
                                "z"),
                     MARGIN = "samples",
                     name = method,
-                    pseudocount = 0,		    
+                    # pseudocount = 0,		    
                     ...)
                standardGeneric("transformCounts"))
 
@@ -240,7 +240,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                         "standardize", "total", "z"),
              MARGIN = "samples",
              name = method,
-	     pseudocount=0,
+	     # pseudocount=0,
              ...){
         # Input check
 
@@ -282,10 +282,12 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
         # Help function is different for mia and vegan transformations
         if( method %in% c("log10", "log2") ){
             transformed_table <- .apply_transformation(
-                assay, method, MARGIN, pseudocount=pseudocount, ...)
+                #assay, method, MARGIN, pseudocount=pseudocount, ...)
+                assay, method, MARGIN, ...)		
         } else{
             transformed_table <- .apply_transformation_from_vegan(
-                assay, method, MARGIN, pseudocount=pseudocount, ...)
+                # assay, method, MARGIN, pseudocount=pseudocount, ...)
+                assay, method, MARGIN, ...)		
         }
         # Assign transformed table to assays
         assay(x, name, withDimnames=FALSE) <- transformed_table
@@ -375,6 +377,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 # as input and returns transformed table. This function utilizes mia's
 # transformation functions.
 .apply_transformation <- function(assay, method, MARGIN, pseudocount=0, ...){
+
     # Transpose if MARGIN is row
     if( MARGIN %in% c("features", "row") ){
         assay <- t(assay)
@@ -383,7 +386,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     # Function is selected based on the "method" variable
     FUN <- switch(method,
                   log10 = .calc_log,
-                  log2 = .calc_log,
+                   log2 = .calc_log,
     )
 
     # Get transformed table
@@ -408,7 +411,8 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 # Help function for transformSamples and transformFeatures, takes abundance
 # table as input and returns transformed table. This function utilizes vegan's
 # transformation functions.
-.apply_transformation_from_vegan <- function(mat, method, MARGIN, ref_vals = NA, pseudocount=0, ...){
+# .apply_transformation_from_vegan <- function(mat, method, MARGIN, ref_vals = NA, pseudocount=0, ...){
+.apply_transformation_from_vegan <- function(mat, method, MARGIN, ref_vals = NA, ...){
     # Input check
     # Check ref_vals
     if( length(ref_vals) != 1 ){
@@ -434,7 +438,8 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     # FIXME: for clarity it would be best to use pseudocount=0 when calling vegan and
     # add pseudocount in mia instead. This would be more explicit (also potentially confusing with vegan)
     if (method %in% c("clr", "alr", "ilr")) {
-        transformed_table <- vegan::decostand(mat, method = method, MARGIN = MARGIN, pseudocount=pseudocount, ...)
+        #transformed_table <- vegan::decostand(mat, method = method, MARGIN = MARGIN, pseudocount=pseudocount, ...)
+        transformed_table <- vegan::decostand(mat, method = method, MARGIN = MARGIN, ...)	
     } else {
         transformed_table <- vegan::decostand(mat, method = method, MARGIN = MARGIN, ...)
     }
@@ -460,6 +465,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 .calc_log <- function(mat, method, pseudocount = 0, ...){
     # Input check
     # Check pseudocount
+
     if( !( (length(pseudocount) == 1L && is.numeric(pseudocount)) ) ){
         stop("'pseudocount' must be NULL or a single numeric value.",
              call. = FALSE)

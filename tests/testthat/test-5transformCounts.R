@@ -27,16 +27,17 @@ test_that("transformCounts", {
         
         mat <- matrix(1:60, nrow = 6)
         df <- DataFrame(n = c(1:6))
-        expect_error(relAbundanceCounts(SummarizedExperiment(assays = list(mat = mat),
-                                                             rowData = df)),
-                     "'assay.type' must be a valid name of assays")
+        expect_error(transformCounts(
+            SummarizedExperiment(assays = list(mat = mat),
+            rowData = df), method="relabundance"),
+            "'assay.type' must be a valid name of assays")
 
         se <- SummarizedExperiment(assays = list(counts = mat),
                                    rowData = df)
-        expect_error(relAbundanceCounts(se, name = FALSE),
+        expect_error(transformCounts(se, name = FALSE, method="relabundance"),
                      "'name' must be a non-empty single character value")
 
-        actual <- relAbundanceCounts(se)
+        actual <- transformCounts(se, method="relabundance")
         expect_named(assays(actual), c("counts", "relabundance"))
 
         expect_equal(assay(actual,"relabundance")[,1],

@@ -9,6 +9,8 @@
 #' @param assay.type A character value for selecting the
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #' to be merged. (By default: \code{assay.type = "counts"})
+#'
+#' @param assay_name (Deprecated) alias for \code{assay.type}. 
 #' 
 #' @param join A single character value for selecting the joining method.
 #' Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
@@ -129,8 +131,8 @@
 #' tse_temp
 #' 
 #' # Merge all available assays
-#' tse <- transformSamples(tse, method="relabundance")
-#' ts1 <- transformSamples(tse1, method="relabundance")
+#' tse <- transformCounts(tse, method="relabundance")
+#' ts1 <- transformCounts(tse1, method="relabundance")
 #' tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 #' 
 NULL

@@ -59,6 +59,8 @@ right_join(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to be merged. (By default: \code{assay.type = "counts"})}
 
+\item{assay_name}{(Deprecated) alias for \code{assay.type}.}
+
 \item{join}{A single character value for selecting the joining method.
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
 when more than two objects are being merged.  (By default: \code{join = "full"})}
@@ -168,8 +170,8 @@ tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]),
 tse_temp
 
 # Merge all available assays
-tse <- transformSamples(tse, method="relabundance")
-ts1 <- transformSamples(tse1, method="relabundance")
+tse <- transformCounts(tse, method="relabundance")
+ts1 <- transformCounts(tse1, method="relabundance")
 tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 
 }

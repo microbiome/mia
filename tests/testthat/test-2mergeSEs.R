@@ -384,9 +384,9 @@ test_that("mergeSEs", {
                                                     ))+2)
     
     # Check that multiple assays are supported
-    tse1 <- relAbundanceCounts(tse1)
-    tse2 <- relAbundanceCounts(tse2)
-    tse3 <- relAbundanceCounts(tse3)
+    tse1 <- transformCounts(tse1, method="relabundance")
+    tse2 <- transformCounts(tse2, method="relabundance")
+    tse3 <- transformCounts(tse3, method="relabundance")    
     
     tse_temp <- expect_warning( mergeSEs(list(tse1, tse2, tse3),
                                          assay.type = c("counts", 

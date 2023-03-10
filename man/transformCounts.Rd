@@ -42,7 +42,6 @@ transformCounts(
     "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
-  pseudocount = 0,
   ...
 )
 
@@ -55,7 +54,6 @@ transformCounts(
     "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
-  pseudocount = 0,
   ...
 )
 
@@ -123,39 +121,24 @@ transformation is applied sample (column) or feature (row) wise.
 (By default: \code{MARGIN = "samples"})}
 }
 \value{
-\code{transformCounts}, \code{transformSamples}, \code{transformFeatures},
-\code{relAbundanceCounts}, and \code{ZTransform} return \code{x} with additional,
-transformed abundance table named \code{name} in the \code{\link{assay}}.
+\code{transformCounts} returns the input object \code{x}, with a new
+transformed abundance table named \code{name} added in the \code{\link{assay}}.
 }
 \description{
 Variety of transformations for abundance data, stored in \code{assay}.
 See details for options.
 }
 \details{
-These functions provide a variety of options for transforming abundance data.
-The transformed data is calculated and stored in a new \code{assay}.
+These \code{transformCount} function provides a variety of options for transforming abundance data.
+The transformed data is calculated and stored in a new \code{assay}. The previously available
+wrappers transformSamples, transformFeatures
+ZTransform, and relAbundanceCounts have been deprecated.
 
-Available wrapper functions include:
+The \code{transformCounts} provides sample-wise (column-wise) or feature-wise
+(row-wise) transformation to the abundance table
+(assay) based on specified \code{MARGIN}.
 
-\itemize{
-\item{\code{transformCounts}} sample-wise (column-wise) or feature-wise
-(row-wise) transformation based on specified \code{MARGIN}.
-
-\item{\code{transformSamples}} (deprecated)
-sample-wise (column-wise) transformation.
-
-\item{\code{transformFeatures}} (deprecated)
-feature-wise (row-wise) transformation.
-
-\item{\code{ZTransform}} Shortcut for Z-transformation.
-
-\item{\code{relAbundanceCounts}} Shortcut for fetching relative abundance table.
-
-}
-
-Altogether, \code{transformCounts}, \code{transformSamples} and
-\code{transformFeatures} apply transformations to the abundance table
-(assay). The available transformation methods include:
+The available transformation methods include:
 
 \itemize{
 
@@ -220,7 +203,7 @@ please refer to \code{\link[vegan:decostand]{decostand}} for details.}
 }
 }
 \examples{
-data(esophagus)
+data(esophagus, package="mia")
 x <- esophagus
 
 # By specifying 'method', it is possible to apply different transformations, 
@@ -262,18 +245,6 @@ assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"),
                                                            ties.method="average", 
                                                            preserveShape = TRUE)  
 
-# Z-transform can be done for features by using shortcut function
-x <- ZTransform(x)
-head(assay(x, "z"))
-
-# For visualization purposes it is sometimes done by applying CLR for samples,
-# followed by Z transform for taxa
-x <- ZTransform(transformCounts(x, method="clr", assay.type = "counts", pseudocount = 1))
-
-# Relative abundances can be also calculated with the dedicated
-# relAbundanceCounts function.
-x <- relAbundanceCounts(x)
-head(assay(x, "relabundance"))
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
