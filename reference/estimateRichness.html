@@ -18,7 +18,7 @@ wrapper functions. They are implemented via the vegan package."><!-- mathjax -->
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -57,8 +57,8 @@ wrapper functions. They are implemented via the <code>vegan</code> package.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">estimateRichness</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ace"</span>, <span class="st">"chao1"</span>, <span class="st">"hill"</span>, <span class="st">"observed"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">index</span>,</span>
 <span>  detection <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -69,8 +69,8 @@ wrapper functions. They are implemented via the <code>vegan</code> package.</p>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">estimateRichness</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ace"</span>, <span class="st">"chao1"</span>, <span class="st">"hill"</span>, <span class="st">"observed"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">index</span>,</span>
 <span>  detection <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -85,15 +85,15 @@ wrapper functions. They are implemented via the <code>vegan</code> package.</p>
 <dd><p>a <code>SummarizedExperiment</code> object.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>the name of the assay used for calculation of the
 sample-wise estimates.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 

@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -59,8 +59,8 @@ object.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculateOverlap</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  detection <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -68,8 +68,8 @@ object.</p>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">calculateOverlap</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  detection <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -88,16 +88,16 @@ object.</p>
 object containing a tree.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
 to calculate the overlap.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
@@ -155,7 +155,7 @@ samples have completely different relative abundances.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D 0.9038734 0.8390008</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Store result to reducedDim</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runOverlap</span><span class="op">(</span><span class="va">tse</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span>, name <span class="op">=</span> <span class="st">"overlap_between_samples"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runOverlap</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, name <span class="op">=</span> <span class="st">"overlap_between_samples"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">overlap_between_samples</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           B         C         D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> B 0.0000000 0.8811552 0.9038734</span>

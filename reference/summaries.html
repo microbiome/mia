@@ -18,7 +18,7 @@ functions are available."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -59,8 +59,8 @@ functions are available.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  top <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span><span class="op">)</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -70,8 +70,8 @@ functions are available.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  top <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span>, <span class="st">"prevalence"</span><span class="op">)</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -102,7 +102,7 @@ functions are available.</p>
 <span><span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, assay_name <span class="op">=</span> <span class="va">abund_values</span>, abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, assay.type <span class="op">=</span> <span class="va">assay_name</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -122,16 +122,16 @@ five taxa.</p></dd>
 median or prevalence. Default is 'mean'.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>a <code>character</code> value to select an
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></code>
 By default it expects count data.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
@@ -213,7 +213,7 @@ object.</p>
 <span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
 <span class="r-in"><span>                       method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
 <span class="r-in"><span>                       top <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                       assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                       assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">top_taxa</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "279599" "360229" "317182"</span>
 <span class="r-in"><span></span></span>
@@ -221,7 +221,7 @@ object.</p>
 <span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
 <span class="r-in"><span>                       method <span class="op">=</span> <span class="st">"prevalence"</span>,</span></span>
 <span class="r-in"><span>                       top <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                       abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
+<span class="r-in"><span>                       assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
 <span class="r-in"><span>                       detection <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">top_taxa</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "94166"  "317182" "279599"</span>

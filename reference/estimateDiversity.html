@@ -18,7 +18,7 @@ the vegan package options and some others."><!-- mathjax --><script src="https:/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -57,8 +57,8 @@ the <code>vegan</code> package options and some others.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">estimateDiversity</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"coverage"</span>, <span class="st">"fisher"</span>, <span class="st">"gini_simpson"</span>, <span class="st">"inverse_simpson"</span>,</span>
 <span>    <span class="st">"log_modulo_skewness"</span>, <span class="st">"shannon"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">index</span>,</span>
@@ -68,8 +68,8 @@ the <code>vegan</code> package options and some others.</p>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">estimateDiversity</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"coverage"</span>, <span class="st">"fisher"</span>, <span class="st">"gini_simpson"</span>, <span class="st">"inverse_simpson"</span>,</span>
 <span>    <span class="st">"log_modulo_skewness"</span>, <span class="st">"shannon"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">index</span>,</span>
@@ -80,8 +80,8 @@ the <code>vegan</code> package options and some others.</p>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
 <span><span class="fu">estimateDiversity</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"coverage"</span>, <span class="st">"faith"</span>, <span class="st">"fisher"</span>, <span class="st">"gini_simpson"</span>, <span class="st">"inverse_simpson"</span>,</span>
 <span>    <span class="st">"log_modulo_skewness"</span>, <span class="st">"shannon"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">index</span>,</span>
@@ -93,8 +93,8 @@ the <code>vegan</code> package options and some others.</p>
 <span><span class="fu">estimateFaith</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  tree <span class="op">=</span> <span class="st">"missing"</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"faith"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -103,8 +103,8 @@ the <code>vegan</code> package options and some others.</p>
 <span><span class="fu">estimateFaith</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">tree</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"faith"</span>,</span>
 <span>  node_lab <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -113,8 +113,8 @@ the <code>vegan</code> package options and some others.</p>
 <span><span class="co"># S4 method for TreeSummarizedExperiment,missing</span></span>
 <span><span class="fu">estimateFaith</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"faith"</span>,</span>
 <span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -128,15 +128,15 @@ the <code>vegan</code> package options and some others.</p>
 The latter is recommended for microbiome data sets and tree-based alpha diversity indices.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>the name of the assay used for
 calculation of the sample-wise estimates.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 

@@ -19,7 +19,7 @@ package"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -71,8 +71,8 @@ package</p>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">calculateDMN</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="va">exprs_values</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
 <span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -110,8 +110,8 @@ package</p>
 <span><span class="fu">calculateDMNgroup</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">variable</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="va">exprs_values</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
 <span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -132,8 +132,8 @@ package</p>
 <span><span class="fu">performDMNgroupCV</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">variable</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="va">exprs_values</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
 <span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -168,22 +168,22 @@ object specifying whether the UniFrac calculation should be parallelized.</p></d
 <code><a href="https://rdrr.io/pkg/DirichletMultinomial/man/dmn.html" class="external-link">dmn</a></code></p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
 <dt>exprs_values</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead.)</p></dd>
+(Please use <code>assay.type</code> instead.)</p></dd>
 
 
 <dt>transposed</dt>
@@ -257,7 +257,7 @@ one element for each value of k provided.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39227.38 BIC: 39527.91 AIC: 39292.11 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 39227.39 BIC: 39527.91 AIC: 39292.11 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># since this take a bit of resources to calculate for k &gt; 1, the data is</span></span></span>
 <span class="r-in"><span><span class="co"># loaded</span></span></span>

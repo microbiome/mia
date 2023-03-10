@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -68,7 +68,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 data-toc-skip class="date">2023-03-07</h4>
+            <h4 data-toc-skip class="date">2023-03-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -506,11 +506,11 @@ objects are available.</p>
 <p><code>getAbundanceFeature</code> and <code>getAbundanceSample</code>
 are wrappers on row-wise or column-wise assay data subsetting.</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceSample</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"CC1"</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceSample</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"CC1"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">[</span>,<span class="st">"CC1"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceFeature</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"522457"</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">abund</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getAbundance.html">getAbundanceFeature</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"522457"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">abund</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"counts"</span><span class="op">)</span><span class="op">[</span><span class="st">"522457"</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
 </div>
@@ -524,7 +524,7 @@ abundant feature IDs.</p>
 <span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaries.html">getTopTaxa</a></span><span class="op">(</span><span class="va">esophagus</span>,</span>
 <span>                       method <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                       top <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>                       assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
+<span>                       assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
 <span><span class="va">top_taxa</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "59_2_6"  "59_7_6"  "59_8_22" "59_5_19" "65_6_2"</span></span></code></pre>
 </div>
@@ -536,7 +536,7 @@ abundant feature IDs.</p>
 long format will be returned.</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">molten_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/meltAssay.html">meltAssay</a></span><span class="op">(</span><span class="va">tse</span>,</span>
-<span>                         assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>                         assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>                         add_row_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                         add_col_data <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
@@ -592,7 +592,7 @@ long format will be returned.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] phyloseq_1.43.0                scater_1.27.6                 </span></span>
 <span><span class="co">##  [3] ggplot2_3.4.1                  scuttle_1.9.4                 </span></span>
-<span><span class="co">##  [5] mia_1.7.8                      MultiAssayExperiment_1.25.7   </span></span>
+<span><span class="co">##  [5] mia_1.7.9                      MultiAssayExperiment_1.25.7   </span></span>
 <span><span class="co">##  [7] TreeSummarizedExperiment_2.1.4 Biostrings_2.67.0             </span></span>
 <span><span class="co">##  [9] XVector_0.39.0                 SingleCellExperiment_1.21.0   </span></span>
 <span><span class="co">## [11] SummarizedExperiment_1.29.1    Biobase_2.59.0                </span></span>
@@ -647,7 +647,7 @@ long format will be returned.</p>
 <span><span class="co">##  [85] bookdown_0.33               xfun_0.37                  </span></span>
 <span><span class="co">##  [87] stringi_1.7.12              lazyeval_0.2.2             </span></span>
 <span><span class="co">##  [89] yaml_2.3.7                  evaluate_0.20              </span></span>
-<span><span class="co">##  [91] codetools_0.2-19            tibble_3.1.8               </span></span>
+<span><span class="co">##  [91] codetools_0.2-19            tibble_3.2.0               </span></span>
 <span><span class="co">##  [93] BiocManager_1.30.20         cli_3.6.0                  </span></span>
 <span><span class="co">##  [95] systemfonts_1.0.4           munsell_0.5.0              </span></span>
 <span><span class="co">##  [97] jquerylib_0.1.4             Rcpp_1.0.10                </span></span>

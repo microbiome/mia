@@ -18,7 +18,7 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -63,8 +63,8 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">getPrevalence</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -124,26 +124,21 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 <span></span>
 <span><span class="fu">getPrevalentAbundance</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"relabundance"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"relabundance"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY</span></span>
 <span><span class="fu">getPrevalentAbundance</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"relabundance"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"relabundance"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">getPrevalentAbundance</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">getPrevalentAbundance</span><span class="op">(</span><span class="va">x</span>, assay.type <span class="op">=</span> <span class="va">assay_name</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -180,16 +175,16 @@ detection and prevalence cutoffs be included? (default: <code>FALSE</code>)</p><
 (default: <code>FALSE</code>)</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
 to use for prevalence calculation.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
@@ -403,7 +398,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span>                         </span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">getPrevalentAbundance</span><span class="op">(</span><span class="va">esophagus</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">getPrevalentAbundance</span><span class="op">(</span><span class="va">esophagus</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         B         C         D </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.9605911 0.8980392 0.9086758 </span>
 <span class="r-in"><span></span></span>

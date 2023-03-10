@@ -18,7 +18,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -57,8 +57,8 @@ See details for options.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">transformSamples</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>,</span>
 <span>    <span class="st">"log2"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>, <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>, <span class="st">"total"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
@@ -68,8 +68,8 @@ See details for options.</p>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">transformSamples</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>,</span>
 <span>    <span class="st">"log2"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>, <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>, <span class="st">"total"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
@@ -78,8 +78,8 @@ See details for options.</p>
 <span></span>
 <span><span class="fu">transformCounts</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>,</span>
 <span>    <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>, <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>,</span>
 <span>    <span class="st">"standardize"</span>, <span class="st">"total"</span>, <span class="st">"z"</span><span class="op">)</span>,</span>
@@ -91,8 +91,8 @@ See details for options.</p>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">transformCounts</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>,</span>
 <span>    <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>, <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>,</span>
 <span>    <span class="st">"standardize"</span>, <span class="st">"total"</span>, <span class="st">"z"</span><span class="op">)</span>,</span>
@@ -103,8 +103,8 @@ See details for options.</p>
 <span></span>
 <span><span class="fu">transformFeatures</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"frequency"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>, <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"standardize"</span>,</span>
 <span>    <span class="st">"z"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
@@ -114,8 +114,8 @@ See details for options.</p>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">transformFeatures</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"frequency"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>, <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"standardize"</span>,</span>
 <span>    <span class="st">"z"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
@@ -141,16 +141,16 @@ See details for options.</p>
 object.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
 transformed.</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
@@ -185,26 +185,19 @@ transformation is applied sample (column) or feature (row) wise.
     <h2>Value</h2>
     
 
-<p><code>transformCounts</code>, <code>transformSamples</code>, <code>transformFeatures</code>,
-<code>relAbundanceCounts</code>, and <code>ZTransform</code> return <code>x</code> with additional,
-transformed abundance table named <code>name</code> in the <code>assay</code>.</p>
+<p><code>transformCounts</code> returns the input object <code>x</code>, with a new
+transformed abundance table named <code>name</code> added in the <code>assay</code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>These functions provide a variety of options for transforming abundance data.
-The transformed data is calculated and stored in a new <code>assay</code>.</p>
-<p>Available wrapper functions include:</p>
-<ul><li><p><code>transformCounts</code> sample-wise (column-wise) or feature-wise
-(row-wise) transformation based on specified <code>MARGIN</code>.</p></li>
-<li><p><code>transformSamples</code> (deprecated)
-sample-wise (column-wise) transformation.</p></li>
-<li><p><code>transformFeatures</code> (deprecated)
-feature-wise (row-wise) transformation.</p></li>
-<li><p><code>ZTransform</code> Shortcut for Z-transformation.</p></li>
-<li><p><code>relAbundanceCounts</code> Shortcut for fetching relative abundance table.</p></li>
-</ul><p>Altogether, <code>transformCounts</code>, <code>transformSamples</code> and
-<code>transformFeatures</code> apply transformations to the abundance table
-(assay). The available transformation methods include:</p>
+    <p>These <code>transformCount</code> function provides a variety of options for transforming abundance data.
+The transformed data is calculated and stored in a new <code>assay</code>. The previously available
+wrappers transformSamples, transformFeatures
+ZTransform, and relAbundanceCounts have been deprecated.</p>
+<p>The <code>transformCounts</code> provides sample-wise (column-wise) or feature-wise
+(row-wise) transformation to the abundance table
+(assay) based on specified <code>MARGIN</code>.</p>
+<p>The available transformation methods include:</p>
 <ul><li><p>'alr' Additive log ratio (alr) transformation, please refer to
 <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
 <li><p>'chi.square' Chi square transformation, please refer to
@@ -252,21 +245,21 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span>, package<span class="op">=</span><span class="st">"mia"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">esophagus</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># By specifying 'method', it is possible to apply different transformations, </span></span></span>
 <span class="r-in"><span><span class="co"># e.g. compositional transformation.</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># The target of transformation can be specified with "assay_name"</span></span></span>
+<span class="r-in"><span><span class="co"># The target of transformation can be specified with "assay.type"</span></span></span>
 <span class="r-in"><span><span class="co"># Pseudocount can be added by specifying 'pseudocount'.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get pseudocount; here smallest positive value</span></span></span>
 <span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"relabundance"</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="va">pseudonumber</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">mat</span><span class="op">[</span><span class="va">mat</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Perform CLR</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"clr"</span>, </span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"clr"</span>, </span></span>
 <span class="r-in"><span>                     pseudocount <span class="op">=</span> <span class="va">pseudonumber</span></span></span>
 <span class="r-in"><span>                     <span class="op">)</span></span></span>
 <span class="r-in"><span>                      </span></span>
@@ -331,36 +324,6 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-in"><span>                                                           ties.method<span class="op">=</span><span class="st">"average"</span>, </span></span>
 <span class="r-in"><span>                                                           preserveShape <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Z-transform can be done for features by using shortcut function</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">ZTransform</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>result contains NaN, perhaps due to impossible mathematical</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>                  operation</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"z"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C          D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22  1.1000638 -0.2460669 -0.8539969</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 -0.5773503  1.1547005 -0.5773503</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12 -0.4285714  1.1428571 -0.7142857</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 -1.0000000  1.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  -0.5773503 -0.5773503  1.1547005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 -0.5773503 -0.5773503  1.1547005</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># For visualization purposes it is sometimes done by applying CLR for samples,</span></span></span>
-<span class="r-in"><span><span class="co"># followed by Z transform for taxa</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">ZTransform</span><span class="op">(</span><span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, method<span class="op">=</span><span class="st">"clr"</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>result contains NaN, perhaps due to impossible mathematical</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>                  operation</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Relative abundances can be also calculated with the dedicated</span></span></span>
-<span class="r-in"><span><span class="co"># relAbundanceCounts function.</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">relAbundanceCounts</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">x</span>, <span class="st">"relabundance"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   B           C          D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 0.246305419 0.074509804 0.02283105</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 0.000000000 0.007843137 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12 0.009852217 0.050980392 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 0.000000000 0.007843137 0.00456621</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  0.000000000 0.000000000 0.00456621</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 0.000000000 0.000000000 0.00456621</span>
 </code></pre></div>
     </div>
   </div>
