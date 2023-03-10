@@ -71,5 +71,5 @@ Changes in version 1.7.x
 + calculateUnifrac: subset tree based on data
 + agglomerateByRank: take into account multiple trees
 + loadFromBiom: name columns of rowData based on prefixes
-+ Deprecate transformSamples, *Features, relabundance
++ Deprecate transformSamples, *Features, relabundance, ZTransform, relAbundanceCounts
 + mergeSEs: faster tree merging
