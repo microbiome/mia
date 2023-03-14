@@ -510,7 +510,6 @@ test_that("getExperimentCrossAssociation", {
                                                altexp1 = "Family", altexp2 = NULL),
                  getExperimentCrossAssociation(altExp(tse, "Family"), tse, 
                                                show_warnings = FALSE))
-    }
     
     # Test colData_variable
     # Check that all the correct names are included
@@ -525,7 +524,7 @@ test_that("getExperimentCrossAssociation", {
     
     expect_true( all(rownames %in% unique_var1) && all(unique_var1 %in% rownames) &&
         all(indices %in% unique_var2) && all(unique_var2 %in% indices) )
-    # Check tha assay.type is disabled
+    # Check that assay.type is disabled
     res2 <- getExperimentCrossAssociation(tse, 
                                             assay.type1 = "counts", 
                                             assay.type2 = "counts",
@@ -536,5 +535,6 @@ test_that("getExperimentCrossAssociation", {
     expect_error(
         getExperimentCrossAssociation(tse, 
         colData_variable2 = c("shannon", "test")))
-    
+  
+}  
 })

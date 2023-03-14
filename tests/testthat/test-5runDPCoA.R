@@ -1,5 +1,6 @@
 context("runDPCoA")
 test_that("runDPCoA", {
+    skip_if_not(require("ade4", quietly = TRUE))
     data(esophagus)
     #
     esophagus <- runDPCoA(esophagus)

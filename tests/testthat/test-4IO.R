@@ -1,6 +1,6 @@
 
 test_that("Importing biom files yield SummarizedExperiment objects", {
-    skip_if_not_installed("biomformat")
+    skip_if_not(require("biomformat", quietly = TRUE))
     rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
                                    package = "biomformat")
     me <- loadFromBiom(rich_dense_file)
@@ -123,6 +123,7 @@ sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 
 test_that("make TSE worked properly while no sample or taxa data", {
+    skip_if_not(require("biomformat", quietly = TRUE))
     ## no sample data or taxa data
     expect_silent(tse <- loadFromQIIME2(featureTableFile))
     expect_s4_class(tse, "TreeSummarizedExperiment")
@@ -130,6 +131,7 @@ test_that("make TSE worked properly while no sample or taxa data", {
 })
 
 test_that("reference sequences of TSE", {
+    skip_if_not(require("biomformat", quietly = TRUE))
     # 1. fasta file of refseq
     tse <- loadFromQIIME2(
         featureTableFile,
@@ -263,6 +265,7 @@ test_that('read qza file', {
 })
 
 test_that("Confidence of taxa is numberic", {
+    skip_if_not(require("biomformat", quietly = TRUE))
     tse <- loadFromQIIME2(
         featureTableFile,
         taxonomyTableFile = taxonomyTableFile
@@ -271,6 +274,7 @@ test_that("Confidence of taxa is numberic", {
 })
 
 test_that("dimnames of feature table is identicle with meta data", {
+   skip_if_not(require("biomformat", quietly = TRUE))
    feature_tab <- readQZA(featureTableFile)
    
    sample_meta <- .read_q2sample_meta(sampleMetaFile)
