@@ -323,12 +323,16 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             # run estimateFaith. (If there is no rowTree --> error)
             if( (is.null(tree) || is.null(tree$edge.length)) &&
                 length(index) >= 1 ){
-                warning("Object does not have a tree called 'tree_name' or the tree does not ",
-                        "have any branches. \nThe Faith's alpha diversity index. ",
-                        "cannot be calculated without rowTree. Therefore it is excluded ",
-                        "from the results. \nYou can consider adding rowTree to include this index.",            
+                warning("Faith diversity has been excluded from the results ",
+                        "since it cannot be calculated without rowTree. ",
+                        "This requires a rowTree in the input argument x. ",
+                        "Make sure that 'rowTree(x)' is not empty, or ",
+                        "make sure to specify 'tree_name' in the input ",
+                        "arguments. Warning is also provided if the tree does ",
+                        "not have any branches. You can consider adding ",
+                        "rowTree to include this index.", 
                         call. = FALSE)
-            } else{
+            } else {
                 x <- estimateFaith(x, name = faith_name, tree_name = tree_name, ...)
                 # Ensure that indices are in correct order
                 colnames <- colnames(colData(x))
