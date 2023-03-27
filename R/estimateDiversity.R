@@ -533,23 +533,31 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 
     # Assign NA to all samples
     faiths <- rep(NA,length(samples))
-
-    # If there is one taxon present, then faith is the age of taxon
-    f <- lengths(present) == 1
-    faiths[f] <- tree$ages[which(tree$edge[, 2] == which(tree$tip.label == present[f]))]
-
+    
     # If all the taxa are present, then faith is the sum of all edges of taxa
     faiths[lengths(absent) == 0] <- sum(tree$edge.length)
 
-    # If there are taxa that are not present,
-    f <- lengths(absent) > 0
-    # absent taxa are dropped
-    trees <- lapply(absent[f], ape::drop.tip, phy = tree)
-    # and faith is calculated based on the subset tree
-    faiths[f] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
-
-    # IF there are no taxa present, then faith is 0
+    # If there are taxa that are not present:
+    
+    # 1 If there are no taxa present, then faith is 0
     faiths[lengths(present) == 0] <- 0
+    
+    # 2 If there is only one taxon present, then faith is the age of taxon
+    # could be calculated similarly to other samples with different number of
+    # absent taxa, but this allows vectorization.
+    # --> Find taxon from labels --> get its tip label index. The edge df
+    # tells edges between two indices. Find the edge between root and certain
+    # taxon; get its index. --> Find the length of that edge.
+    ind <- lengths(present) == 1
+    faiths[ind] <- tree$edge.length[
+        which(tree$edge[, 2] == which(tree$tip.label == present[ind]))]
+    
+    # 3 If several taxa is not present
+    ind <- lengths(absent) > 0
+    # absent taxa are dropped
+    trees <- lapply(absent[ind], ape::drop.tip, phy = tree)
+    # and faith is calculated based on the subset tree
+    faiths[ind] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
 
     return(faiths)
 }
