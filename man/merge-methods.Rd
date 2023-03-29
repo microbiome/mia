@@ -75,7 +75,7 @@ argument lets the user select how to preserve row or column data.
 For merge data of assays the function from \code{scuttle} are used.
 }
 \examples{
-data(esophagus)
+data(esophagus, package="mia")
 esophagus
 plot(rowTree(esophagus))
 # get a factor for merging
@@ -84,7 +84,7 @@ f <- factor(regmatches(rownames(esophagus),
 merged <- mergeRows(esophagus,f, mergeTree = TRUE)
 plot(rowTree(merged))
 #
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 GlobalPatterns
 merged <- mergeCols(GlobalPatterns,colData(GlobalPatterns)$SampleType)
 merged

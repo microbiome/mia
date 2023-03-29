@@ -73,3 +73,4 @@ Changes in version 1.7.x
 + loadFromBiom: name columns of rowData based on prefixes
 + Deprecate transformSamples, *Features, relabundance, ZTransform, relAbundanceCounts
 + mergeSEs: faster tree merging
++ Faith's index: fix bug that occurred when only one taxon is present

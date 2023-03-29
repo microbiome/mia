@@ -52,7 +52,7 @@ test_that("Unifrac beta diversity", {
                          BPPARAM = SerialParam())
     )
     
-    data("GlobalPatterns")
+    data("GlobalPatterns", package="mia")
     tse <- GlobalPatterns
     # Compare to phyloseq function
     .require_package("phyloseq")

@@ -85,7 +85,7 @@ together, and those families are returned. See \code{agglomerateByRank()} for
 additional arguments to deal with missing values or special characters.
 }
 \examples{
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 x <- GlobalPatterns
 
 # Finds the dominant taxa.

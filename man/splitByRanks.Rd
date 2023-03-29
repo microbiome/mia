@@ -82,7 +82,7 @@ changes to \code{rowData} of the base object are not returned, whereas only
 the \code{colData} of the base object is kept.
 }
 \examples{
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 # print the available taxonomic ranks
 taxonomyRanks(GlobalPatterns)
 

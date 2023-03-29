@@ -320,7 +320,7 @@ test_that("makePhyloseqFromTreeSE", {
     skip_if_not_installed("phyloseq")
 
     # TSE object
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
 
     phy <- makePhyloseqFromTreeSE(GlobalPatterns)

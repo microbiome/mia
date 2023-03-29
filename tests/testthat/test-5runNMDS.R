@@ -13,7 +13,7 @@ test_that("runNMDS", {
     expect_equal(dim(actual),c(10,2))
     expect_true(sum(actual2 - actual) < 0.00001)
     #
-    data(esophagus)
+    data(esophagus, package="mia")
     esophagus <- runNMDS(esophagus, distFUN = vegan::vegdist, name = "BC")
     esophagus <- runNMDS(esophagus, distFUN = vegan::vegdist, name = "euclidean",
                          method = "euclidean")

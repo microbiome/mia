@@ -37,7 +37,7 @@ assay slot \sQuote{relabundance} of a
 object. This is a shortcut function for \code{assay(x,"relabundance")}.
 }
 \examples{
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 # Calculates relative abundances
 GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
 # Fetches calculated relative abundances

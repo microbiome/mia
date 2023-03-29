@@ -88,7 +88,7 @@ If the \code{colData} contains a column \dQuote{SampleID} or the
 names are set.
 }
 \examples{
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 molten_tse <- meltAssay(GlobalPatterns,
                         assay.type = "counts",
                         add_row_data = TRUE,

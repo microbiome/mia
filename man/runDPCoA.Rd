@@ -101,7 +101,7 @@ for samples are returned as well as \code{sample_red} attribute.
 returned as attributes as well.
 }
 \examples{
-data(esophagus)
+data(esophagus, package="mia")
 dpcoa <- calculateDPCoA(esophagus)
 head(dpcoa)
 

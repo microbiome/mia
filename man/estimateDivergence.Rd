@@ -73,7 +73,7 @@ Subsampling or bootstrapping can be applied to equalize sample sizes
 between comparisons.
 }
 \examples{
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 tse <- GlobalPatterns
 
 # By default, reference is median of all samples. The name of column where results

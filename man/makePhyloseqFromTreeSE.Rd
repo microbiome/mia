@@ -51,7 +51,7 @@ phyloseq object from TreeSummarizedExperiment object.
 }
 \examples{
 # Get tse object
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 tse <- GlobalPatterns
 
 # Create a phyloseq object from it

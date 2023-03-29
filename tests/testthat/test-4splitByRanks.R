@@ -1,6 +1,6 @@
 context("splitByRanks")
 test_that("splitByRanks", {
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     x <- GlobalPatterns
 
     # splitByRanks
