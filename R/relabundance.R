@@ -30,7 +30,7 @@
 #' # head(relabundance(GlobalPatterns))
 NULL
 
-#' @rdname these functions are documented in a separate help file with the name "relabundance". 
+#' @rdname these functions are documented in a separate help file with the name relabundance. 
 setGeneric("relabundance", signature = c("x"),
            function(x, ...) standardGeneric("relabundance"))
 #' @rdname relabundance
@@ -50,7 +50,7 @@ setMethod("relabundance",signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname indicates that these functions are documented in a separate help file with the name "relabundance".
+#' @rdname indicates that these functions are documented in a separate help file with the name relabundance.
 #' @importFrom SummarizedExperiment assays<-
 #' @export
 setReplaceMethod("relabundance", signature = c(x = "SummarizedExperiment"),
