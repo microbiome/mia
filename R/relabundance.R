@@ -30,12 +30,14 @@
 #' # head(relabundance(GlobalPatterns))
 NULL
 
-#' @rdname relabundance
+#' @rdname these functions are documented in a separate help file with the name "relabundance". 
 setGeneric("relabundance", signature = c("x"),
            function(x, ...) standardGeneric("relabundance"))
 #' @rdname relabundance
 setGeneric("relabundance<-", signature = c("x"),
            function(x, value) standardGeneric("relabundance<-"))
+           
+#' @setGeneric function is used to define the generic functions and their signatures
 
 #' @rdname relabundance
 #' @importFrom SummarizedExperiment assays
@@ -48,7 +50,7 @@ setMethod("relabundance",signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname relabundance
+#' @rdname indicates that these functions are documented in a separate help file with the name "relabundance".
 #' @importFrom SummarizedExperiment assays<-
 #' @export
 setReplaceMethod("relabundance", signature = c(x = "SummarizedExperiment"),
