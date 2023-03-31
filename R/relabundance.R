@@ -1,6 +1,6 @@
 #' Getter / setter for relative abundance data
 #'
-#' This function is being deprecated.
+#' This function is being deprecated and will be removed in future releases.
 #' Please use \code{assay(x, "relabundance")} instead, which provides a more
 #' flexible and robust way to access and modify relative abundance data stored
 #' in the assay slot of a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
