@@ -1,22 +1,16 @@
 #' Getter / setter for relative abundance data
-#' 
-#' This function will be deprecated. Please use \code{assay(x, "relabundance")}
-#' instead.
-#' \code{relabundance} is a getter/setter for relative abundance stored in the
-#' assay slot \sQuote{relabundance} of a
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' object. This is a shortcut function for \code{assay(x,"relabundance")}.
 #'
-#' @param x a
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   object
-#' @param value a \code{matrix} to store as the the \sQuote{relabundance} assay
+#' This function is being deprecated.
+#' Please use \code{assay(x, "relabundance")} instead, which provides a more
+#' flexible and robust way to access and modify relative abundance data stored
+#' in the assay slot of a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
+#'
+#' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object
+#' @param value a matrix to store as the \sQuote{relabundance} assay
 #' @param ... optional arguments not used currently.
 #'
 #' @return
-#' For \code{relabundance} the matrix stored with the name
-#' \dQuote{relabundance}.
-#'
+#' For \code{relabundance}, the matrix stored with the name \dQuote{relabundance}.
 #'
 #' @name relabundance
 #'
@@ -27,12 +21,13 @@
 #' # Calculates relative abundances
 #' GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
 #' # Fetches calculated relative abundances
-#' # head(relabundance(GlobalPatterns))
+#' # head(assay(GlobalPatterns, "relabundance"))
 NULL
 
 #' @rdname relabundance
 setGeneric("relabundance", signature = c("x"),
-           function(x, ...) standardGeneric("relabundance"))
+           function(x, value) standardGeneric("relabundance"))
+
 #' @rdname relabundance
 setGeneric("relabundance<-", signature = c("x"),
            function(x, value) standardGeneric("relabundance<-"))
@@ -40,7 +35,7 @@ setGeneric("relabundance<-", signature = c("x"),
 #' @rdname relabundance
 #' @importFrom SummarizedExperiment assays
 #' @export
-setMethod("relabundance",signature = c(x = "SummarizedExperiment"),
+setMethod("relabundance", signature = c(x = "SummarizedExperiment"),
     function(x){
         .Deprecated(msg = paste0("'relabundance' is deprecated\n",
                                  "Use 'assay(x, 'relabundance')' instead."))
@@ -59,4 +54,3 @@ setReplaceMethod("relabundance", signature = c(x = "SummarizedExperiment"),
         x
     }
 )
-
