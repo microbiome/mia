@@ -2,7 +2,7 @@ context("summary")
 
 test_that("summary", {
     
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     sumdf <- summary(GlobalPatterns)
     samples.sum <- sumdf$samples
     
@@ -32,7 +32,7 @@ context("getUniqueTaxa")
 
 test_that("getUniqueTaxa", {
     
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     exp.phy <- c("Crenarchaeota","Euryarchaeota",
                  "Actinobacteria","Spirochaetes","MVP-15")
     
@@ -44,7 +44,7 @@ context("summaries")
 
 test_that("summaries", {
     
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_equal( getTopTaxa(GlobalPatterns, 
                              method = "mean",
                              top = 5,

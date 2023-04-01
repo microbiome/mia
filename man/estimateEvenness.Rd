@@ -86,7 +86,7 @@ simpson, smith-wilson, and bulla. Also see Magurran & McGill (2011)
 and Beisel et al. (2003) for further details.
 }
 \examples{
-data(esophagus)
+data(esophagus, package="mia")
 tse <- esophagus
 
 # Specify index and their output names

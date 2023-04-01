@@ -45,7 +45,7 @@ subset data with two or more dimension. Therefore, these functions will be
 removed in Bioconductor release 3.15 (April, 2022).
 }
 \examples{
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 subsetSamples(GlobalPatterns, colData(GlobalPatterns)$SampleType == "Soil")
 # Vector that is used to specify subset must not include NAs 
 subsetFeatures(GlobalPatterns, rowData(GlobalPatterns)$Phylum == "Actinobacteria" & 

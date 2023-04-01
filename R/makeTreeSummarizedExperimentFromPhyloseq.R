@@ -3,7 +3,7 @@
 #' \code{makeTreeSEFromPhyloseq} converts \code{phyloseq}
 #' objects into \code{TreeSummarizedExperiment} objects.
 #'
-#' All data stored in a \code{phyloseq} object is transfered.
+#' All data stored in a \code{phyloseq} object is transferred.
 #'
 #' @param obj a \code{phyloseq} object
 #'

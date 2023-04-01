@@ -49,7 +49,7 @@ test_that("CCA", {
     test <- attr(test, "rda")$CA$eig
     res <- vegan::rda(t(assay(sce)))$CA$eig
     expect_equal(unname(test), unname(res))
-    data("GlobalPatterns")
+    data("GlobalPatterns", package="mia")
     GlobalPatterns <- estimateDiversity(GlobalPatterns, index = "shannon")
     expect_error(calculateRDA(GlobalPatterns, variables = c("Primer", "test")))
     res1 <- calculateRDA(GlobalPatterns, variables = c("shannon", "SampleType"))

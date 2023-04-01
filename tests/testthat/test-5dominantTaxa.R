@@ -76,7 +76,7 @@ test_that("perSampleDominantTaxa", {
     }
 
     # TSE object
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     test_perSampleDominantTaxa(GlobalPatterns)
 
 
@@ -128,7 +128,7 @@ test_that("perSampleDominantTaxa", {
         }
 
         # TSE object
-        data(GlobalPatterns)
+        data(GlobalPatterns, package="mia")
         test_countDominantTaxa(GlobalPatterns)
 
     })

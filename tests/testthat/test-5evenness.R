@@ -35,7 +35,7 @@ test_that("estimateEvenness", {
     }
 
     # TSE object
-    data(esophagus)
+    data(esophagus, package="mia")
     tse <- esophagus 
     test_internal_estimateEvenness(tse)
     

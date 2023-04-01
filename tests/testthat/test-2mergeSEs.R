@@ -352,8 +352,8 @@ test_that("mergeSEs", {
     expect_equal( rownames(tse), rowLinks(tse)$nodeLab )
     
     # Check that rowData includes all the information
-    data("esophagus")
-    data("GlobalPatterns")
+    data("esophagus", package="mia")
+    data("GlobalPatterns", package="mia")
     # Add arbitrary groups
     rowData(esophagus)$group <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
                                   rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )

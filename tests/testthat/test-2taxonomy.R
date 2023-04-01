@@ -70,7 +70,7 @@ test_that("taxonomy", {
                    "Family:n","Family:o_1","Phylum:c","Family:o_2"))
 
     # addTaxonomyTree
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_warning(GlobalPatterns <- addTaxonomyTree(GlobalPatterns))
     expect_equal(dim(GlobalPatterns),c(19216,26))
     expect_equal(rowTree(GlobalPatterns)$Nnode, 1089)

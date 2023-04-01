@@ -70,7 +70,7 @@ all the abundances of features are equal between two samples, and 0 means that
 samples have completely different relative abundances.
 }
 \examples{
-data(esophagus)
+data(esophagus, package="mia")
 tse <- esophagus
 tse <- transformCounts(tse, method = "relabundance")
 overlap <- calculateOverlap(tse, assay_name = "relabundance")
