@@ -1,9 +1,9 @@
 context("mergeSEs")
 test_that("mergeSEs", {
     # Load data
-    data("GlobalPatterns", package="mia")
-    data("esophagus", package="mia")
-    data("enterotype", package="mia")
+    data(GlobalPatterns, package="mia")
+    data(esophagus, package="mia")
+    data(enterotype, package="mia")
     
     tse1 <- GlobalPatterns[1:50, ]
     tse2 <- esophagus[1:50, ]
@@ -352,8 +352,8 @@ test_that("mergeSEs", {
     expect_equal( rownames(tse), rowLinks(tse)$nodeLab )
     
     # Check that rowData includes all the information
-    data("esophagus", package="mia")
-    data("GlobalPatterns", package="mia")
+    data(esophagus, package="mia")
+    data(GlobalPatterns, package="mia")
     # Add arbitrary groups
     rowData(esophagus)$group <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
                                   rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
@@ -401,7 +401,7 @@ test_that("mergeSEs", {
     # Test that reference sequences stay the same
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
-    data("SilvermanAGutData")
+    data(SilvermanAGutData)
     tse <- SilvermanAGutData
     tse1 <- tse
     rownames(tse1) <- paste0("Taxon", 1:nrow(tse))

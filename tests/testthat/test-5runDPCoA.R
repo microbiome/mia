@@ -60,7 +60,7 @@ test_that("runDPCoA", {
                  subset_row = NULL, scale = FALSE, transposed = FALSE)
     )
     
-    data("GlobalPatterns", package="mia")
+    data(GlobalPatterns, package="mia")
     tse <- mergeSEs(esophagus, GlobalPatterns)
     # expect_warning(runDPCoA(tse))
     # expect_warning(runDPCoA(tse, tree_name = "phylo.1"))

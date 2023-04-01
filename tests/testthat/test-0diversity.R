@@ -118,8 +118,8 @@ test_that("diversity estimates", {
     expect_error(estimateDiversity(tse, index = "faith", tree_name = "test"))
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree_name = "test"))
     
-    data("GlobalPatterns", package="mia")
-    data("esophagus", package="mia")
+    data(GlobalPatterns, package="mia")
+    data(esophagus, package="mia")
     tse <- mergeSEs(GlobalPatterns, esophagus,  join = "full", assay.type = "counts")
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), 
                                      tree_name = "phylo.1", assay.type="counts"))

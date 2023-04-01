@@ -83,7 +83,7 @@ test_that("agglomerate", {
 
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
-    data("SilvermanAGutData")
+    data(SilvermanAGutData)
     se <- SilvermanAGutData
     # checking reference consensus sequence generation
     actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
