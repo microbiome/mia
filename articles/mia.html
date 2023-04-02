@@ -68,7 +68,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 data-toc-skip class="date">2023-04-01</h4>
+            <h4 data-toc-skip class="date">2023-04-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -473,7 +473,7 @@ functions are available.</p>
 <code>QIIME2</code> output, <code>DADA2</code> objects <span class="citation">(Callahan et al. 2016)</span> or <code>phyloseq</code>
 objects are available.</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"esophagus"</span>, package <span class="op">=</span> <span class="st">"phyloseq"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span>, package <span class="op">=</span> <span class="st">"phyloseq"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">esophagus</span></span></code></pre></div>
 <pre><code><span><span class="co">## phyloseq-class experiment-level object</span></span>
@@ -520,7 +520,7 @@ are wrappers on row-wise or column-wise assay data subsetting.</p>
 <p><code>getTopTaxa</code> returns a vector of the most <code>top</code>
 abundant feature IDs.</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"esophagus"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
 <span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaries.html">getTopTaxa</a></span><span class="op">(</span><span class="va">esophagus</span>,</span>
 <span>                       method <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                       top <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -594,7 +594,7 @@ long format will be returned.</p>
 <span><span class="co">##  [1] phyloseq_1.43.0                scater_1.27.8                 </span></span>
 <span><span class="co">##  [3] ggplot2_3.4.1                  scuttle_1.9.4                 </span></span>
 <span><span class="co">##  [5] mia_1.7.11                     MultiAssayExperiment_1.25.7   </span></span>
-<span><span class="co">##  [7] TreeSummarizedExperiment_2.1.4 Biostrings_2.67.0             </span></span>
+<span><span class="co">##  [7] TreeSummarizedExperiment_2.1.4 Biostrings_2.67.2             </span></span>
 <span><span class="co">##  [9] XVector_0.39.0                 SingleCellExperiment_1.21.1   </span></span>
 <span><span class="co">## [11] SummarizedExperiment_1.29.1    Biobase_2.59.0                </span></span>
 <span><span class="co">## [13] GenomicRanges_1.51.4           GenomeInfoDb_1.35.16          </span></span>
