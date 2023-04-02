@@ -134,7 +134,7 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
-#' data("HintikkaXOData")
+#' data(HintikkaXOData)
 #' mae <- HintikkaXOData
 #' 
 #' # Subset so that less observations / quicker to run, just for example

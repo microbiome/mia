@@ -66,7 +66,7 @@
 #' # When samples in TreeSE are less than specified min_size, they will be removed.
 #' # If after subsampling features are not present in any of the samples, 
 #' # they will be removed.
-#' data("GlobalPatterns")
+#' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' tse.subsampled <- subsampleCounts(tse, 
 #'                                   min_size = 60000, 
