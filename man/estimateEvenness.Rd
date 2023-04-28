@@ -36,7 +36,7 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{index}{a \code{character} vector, specifying the eveness measures to be
+\item{index}{a \code{character} vector, specifying the evenness measures to be
 calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be
@@ -86,7 +86,7 @@ simpson, smith-wilson, and bulla. Also see Magurran & McGill (2011)
 and Beisel et al. (2003) for further details.
 }
 \examples{
-data(esophagus, package="mia")
+data(esophagus)
 tse <- esophagus
 
 # Specify index and their output names

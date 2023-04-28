@@ -127,7 +127,7 @@ features in
 object.
 }
 \examples{
-data(GlobalPatterns, package="mia")
+data(GlobalPatterns)
 top_taxa <- getTopTaxa(GlobalPatterns,
                        method = "mean",
                        top = 5,

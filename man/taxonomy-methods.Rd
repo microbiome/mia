@@ -170,7 +170,7 @@ assigned confidence information are returned as \code{metatdata} and can
 be accessed using \code{metadata(df)$confidence}.
 }
 \examples{
-data(GlobalPatterns, package="mia")
+data(GlobalPatterns)
 GlobalPatterns
 taxonomyRanks(GlobalPatterns)
 
