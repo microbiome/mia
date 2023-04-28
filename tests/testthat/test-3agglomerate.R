@@ -54,12 +54,12 @@ test_that("agglomerate", {
 
     # Only one rank available in the object -
     # the same dimensionality is retained
-    data(enterotype)
+    data(enterotype, package="mia")
     expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
                  nrow(agglomerateByRank(enterotype,"Genus")))
 
     # agglomeration in all its forms
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     se <- GlobalPatterns
     actual <- agglomerateByRank(se, rank = "Family")
     expect_equal(dim(actual),c(603,26))
@@ -83,7 +83,7 @@ test_that("agglomerate", {
 
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
-    data("SilvermanAGutData")
+    data(SilvermanAGutData)
     se <- SilvermanAGutData
     # checking reference consensus sequence generation
     actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)

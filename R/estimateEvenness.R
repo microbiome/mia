@@ -16,7 +16,7 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
-#' @param index a \code{character} vector, specifying the eveness measures to be
+#' @param index a \code{character} vector, specifying the evenness measures to be
 #'   calculated.
 #'
 #' @param name a name for the column(s) of the colData the results should be

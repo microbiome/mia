@@ -1,6 +1,6 @@
 context("decontam")
 test_that("decontam", {
-    data(esophagus)
+    data(esophagus, package="mia")
     # setup of some mock data
     colData(esophagus)$concentration <- c(1,2,3)
     colData(esophagus)$control <- c(FALSE,FALSE,TRUE)

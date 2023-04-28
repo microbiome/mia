@@ -9,7 +9,7 @@ test_that("meltAssay", {
                  'argument "add_col_data" is missing')
     expect_error(mia:::.norm_add_col_data(TRUE),
                  'argument "x" is missing')
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     x <- GlobalPatterns
     actual <- mia:::.norm_add_row_data(TRUE, x, "FeatureID")
     expect_equal(actual, colnames(rowData(x)))
@@ -99,7 +99,7 @@ test_that("getAbundanceFeature/getAbundanceSample", {
                  'argument "names" is missing')
     expect_null(mia:::.check_feature_sample_ids("test","test"))
     #
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(getAbundanceFeature(GlobalPatterns,
                                      feature_id="x522457",
                                      assay.type="counts"),
@@ -133,7 +133,7 @@ test_that("getTopTaxa", {
     expect_error(mia:::.check_max_taxa(GlobalPatterns, 100000000, "counts"),
                  "'top' must be <= nrow(x)",fixed=TRUE)
     #
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     mean.taxa <- c("549656", "331820", "279599", "360229", "317182")
     sum.taxa <- c("549656", "331820", "279599", "360229", "317182")
     median.taxa <- c("549656", "331820", "317182", "94166",  "279599")

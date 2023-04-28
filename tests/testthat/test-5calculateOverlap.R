@@ -4,7 +4,7 @@ context("calculateOverlap")
 test_that("calculateOverlap", {
     
     # Get data
-    data("esophagus", package="mia")
+    data(esophagus, package="mia")
     tse <- esophagus
     # Test input
     expect_error(calculateOverlap(tse, assay.type = "relabundance", detection = 0.15))

@@ -2,7 +2,7 @@ context("prevalence")
 
 test_that("getPrevalence", {
 
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(getPrevalence(GlobalPatterns, detection="test"),
                  "'detection' must be a single numeric value or coercible to one")
     expect_error(getPrevalence(GlobalPatterns, include_lowest="test"),
@@ -67,7 +67,7 @@ test_that("getPrevalence", {
 
 test_that("getPrevalentTaxa", {
 
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(getPrevalentTaxa(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
     # Results compatible with getPrevalence
@@ -113,7 +113,7 @@ test_that("getPrevalentTaxa", {
 
 test_that("getRareTaxa", {
 
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(getRareTaxa(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
 
@@ -218,7 +218,7 @@ test_that("getRareTaxa", {
 })
 
 test_that("subsetByPrevalentTaxa", {
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(subsetByPrevalentTaxa(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
     # Expect TSE object
@@ -265,7 +265,7 @@ test_that("subsetByPrevalentTaxa", {
 })
 
 test_that("subsetByRareTaxa", {
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(subsetByRareTaxa(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
     # Expect TSE object
@@ -326,7 +326,7 @@ test_that("subsetByRareTaxa", {
 
 test_that("agglomerateByPrevalence", {
 
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(agglomerateByPrevalence(GlobalPatterns, other_label=TRUE),
                  "'other_label' must be a single character value")
     actual <- agglomerateByPrevalence(GlobalPatterns)

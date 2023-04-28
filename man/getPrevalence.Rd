@@ -203,7 +203,7 @@ given detection threshold for the selected taxonomic rank.
 \code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
 }
 \examples{
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 tse <- GlobalPatterns
 # Get prevalence estimates for individual ASV/OTU
 prevalence.frequency <- getPrevalence(tse,
@@ -264,7 +264,7 @@ altExp(tse, "rare")
 # Names of both experiments, prevalent and rare, can be found from slot altExpNames
 tse
                          
-data(esophagus)
+data(esophagus, package="mia")
 getPrevalentAbundance(esophagus, assay.type = "counts")
 
 # data can be aggregated based on prevalent taxonomic results

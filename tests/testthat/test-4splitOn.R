@@ -1,6 +1,6 @@
 context("splitOn")
 test_that("splitOn", {
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     x <- GlobalPatterns
     
     ################################## splitOn #################################

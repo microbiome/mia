@@ -186,7 +186,7 @@ allow logarithmization.}
 }
 }
 \examples{
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 tse <- GlobalPatterns
 
 # All index names as known by the function

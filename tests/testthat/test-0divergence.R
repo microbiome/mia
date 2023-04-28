@@ -3,7 +3,7 @@ test_that("divergence estimates", {
   
   skip_if_not(requireNamespace("vegan", quietly = TRUE))
   
-  data("esophagus")
+  data(esophagus, package="mia")
   tse <- esophagus
   
   tse_divergence <- estimateDivergence(tse)

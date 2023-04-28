@@ -88,7 +88,7 @@ when values are summed. In those cases, consider doing agglomeration first and t
 transformation.
 }
 \examples{
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 # print the available taxonomic ranks
 colnames(rowData(GlobalPatterns))
 taxonomyRanks(GlobalPatterns)
@@ -143,7 +143,7 @@ x6 <- agglomerateByRank(x5, "Kingdom")
 head( assay(x6) )
 
 ## Look at enterotype dataset...
-data(enterotype)
+data(enterotype, package="mia")
 ## print the available taxonomic ranks. Shows only 1 rank available
 ## not useful for agglomerateByRank
 taxonomyRanks(enterotype)
