@@ -162,7 +162,7 @@ dominant_taxa <- countDominantTaxa(GlobalPatterns,
 dominant_taxa
 
 # Get an overview of sample and taxa counts
-summary(GlobalPatterns)
+summary(GlobalPatterns, assay_name= "counts")
 
 # Get unique taxa at a particular taxonomic rank
 # sort = TRUE means that output is sorted in alphabetical order

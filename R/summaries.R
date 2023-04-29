@@ -91,7 +91,7 @@
 #' dominant_taxa
 #'
 #' # Get an overview of sample and taxa counts
-#' summary(GlobalPatterns)
+#' summary(GlobalPatterns, assay_name= "counts")
 #'
 #' # Get unique taxa at a particular taxonomic rank
 #' # sort = TRUE means that output is sorted in alphabetical order
@@ -369,6 +369,15 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("summary", signature = c(object = "SummarizedExperiment"),
     function(object, assay.type = assay_name, assay_name = "counts"){
+
+        # Specify assay names for user
+        message("Following assays detected: ", call. = FALSE)
+        message(assayNames(object))
+        # Check if assay name is specified
+        #.check_abund_assay(object,
+        #                   assay_name = assay_name)
+        .check_assay_present(assay.type = assay.type, object)
+
         # check if NA in assay
         .check_NAs_assay_counts(object, assay.type)
         # check if counts
