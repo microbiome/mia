@@ -57,13 +57,7 @@ countDominantFeatures(x, ...)
 
 \S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
 
-<<<<<<< HEAD
 \S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
-||||||| ebe3299
-\S4method{summary}{SummarizedExperiment}(object, assay_name = abund_values, abund_values = "counts")
-=======
-\S4method{summary}{SummarizedExperiment}(object, assay_name = NULL, abund_values = NULL)
->>>>>>> 754cf30af8bf452d87c257086e575dd9739a9da6
 }
 \arguments{
 \item{x}{A

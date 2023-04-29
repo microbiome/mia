@@ -2,16 +2,8 @@ context("summary")
 
 test_that("summary", {
     
-<<<<<<< HEAD
     data(GlobalPatterns, package="mia")
-    sumdf <- summary(GlobalPatterns)
-||||||| ebe3299
-    data(GlobalPatterns)
-    sumdf <- summary(GlobalPatterns)
-=======
-    data(GlobalPatterns)
-    sumdf <- summary(GlobalPatterns, assay_name="counts")
->>>>>>> 754cf30af8bf452d87c257086e575dd9739a9da6
+    sumdf <- summary(GlobalPatterns, assay.type="counts")
     samples.sum <- sumdf$samples
     
     # check samples
