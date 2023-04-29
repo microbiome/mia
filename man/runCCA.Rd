@@ -117,7 +117,7 @@ By default dbRDA is done with euclidean distances which equals to RDA.
 }
 \examples{
 library(scater)
-data(GlobalPatterns, package="mia")
+data(GlobalPatterns)
 GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 

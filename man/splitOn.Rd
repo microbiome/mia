@@ -80,7 +80,7 @@ column-wise or row-wise. The returned value is a list of
 group.
 }
 \examples{
-data(GlobalPatterns, package="mia")
+data(GlobalPatterns)
 tse <- GlobalPatterns
 # Split data based on SampleType. 
 se_list <- splitOn(tse, f = "SampleType")

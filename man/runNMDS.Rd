@@ -132,7 +132,7 @@ tse <- TreeSummarizedExperiment(assays = list(counts = mat),
 calculateNMDS(tse)
 
 #
-data(esophagus, package="mia")
+data(esophagus)
 esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
 esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
                      method = "euclidean")

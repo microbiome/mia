@@ -133,7 +133,7 @@ corresponding index in the \pkg{vegan} package is "richness".}
 }
 }
 \examples{
-data(esophagus, package="mia")
+data(esophagus)
 
 # Calculates all richness indices by default
 esophagus <- estimateRichness(esophagus)
