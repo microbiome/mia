@@ -337,13 +337,12 @@ setMethod("right_join", signature = c(x = "ANY"),
         x, class, join, assay.type, missing_values, collapse_samples,
         collapse_features, verbose){
 
-    # Add rowData info to rownames
-    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
-    x <- lapply(x, FUN = .add_rowdata_to_rownames,
-                rownames_name = rownames_name)
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
+    # Add rowData info to rownames
+    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
+    tse <- .add_rowdata_to_rownames(tse, rownames_name = rownames_name)
 
     # Initialize a list for TreeSE-specific slots
     tse_args <- list(
@@ -378,6 +377,8 @@ setMethod("right_join", signature = c(x = "ANY"),
             
             # Get the ith object
             temp <- x[[i]]
+            # Add rownames to rowData so that full matches are found
+            temp <- .add_rowdata_to_rownames(temp, rownames_name = rownames_name)
 
             # Modify names if specified
             if( !collapse_samples ){
@@ -533,7 +534,8 @@ setMethod("right_join", signature = c(x = "ANY"),
         names <- colnames(tse)
     }
     # All rownames/colnames should be included in trees/links
-    if( !all(names %in% links[["names"]]) || is.null(names) ){
+    if( !all(names %in% links[["names"]]) ||
+        is.null(names) || length(names) == 0 ){
         warning(MARGIN, "Tree(s) does not match with the data so it ", 
                 "is discarded.", call. = FALSE)
         return(tse)
@@ -926,7 +928,10 @@ setMethod("right_join", signature = c(x = "ANY"),
     assay <- .join_two_tables(assay1, assay2, join)
     
     # Convert into matrix
+    colnames <- colnames(assay)
     assay <- as.matrix(assay)
+    colnames(assay) <- colnames
+    ############# colnames are changed from col.name to col_name
     
     # Fill missing values
     assay[ is.na(assay) ] <- missing_values
@@ -934,7 +939,6 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Order the assay based on rowData and colData
     assay <- assay[ match(rownames(rd), rownames(assay)), , drop = FALSE ]
     assay <- assay[ , match(rownames(cd), colnames(assay)), drop = FALSE]
-    
     return(assay)
 }
 
@@ -1023,89 +1027,92 @@ setMethod("right_join", signature = c(x = "ANY"),
                     right = TRUE
     )
     
-    # Ensure that the data is in correct format
+    # Ensure that the data is always data.frame
     df1 <- as.data.frame(df1)
     df2 <- as.data.frame(df2)
     
-    # Get matching variables indices
-    matching_variables_ids1 <- match( colnames(df2), colnames(df1) )
-    # Get matching variable names
-    matching_variables1 <- colnames(df1)[ matching_variables_ids1 ]
-    # Remove NAs
-    matching_variables1 <- matching_variables1[ !is.na(matching_variables1) ]
-    
-    # Get matching variables indices
-    matching_variables_ids2 <- match( colnames(df1), colnames(df2) )
-    # Get matching variable names
-    matching_variables2 <- colnames(df2)[ matching_variables_ids2 ]
-    # Remove NAs
-    matching_variables2 <- matching_variables2[ !is.na(matching_variables2) ]
-    
-    # Make the matching variables unique
-    if( length(matching_variables1) > 0 ){
-        matching_variables_mod1 <- paste0(matching_variables1, "_X")
-        matching_variables_ids1 <-
-            matching_variables_ids1[ !is.na(matching_variables_ids1) ]
-        colnames(df1)[ matching_variables_ids1 ] <- matching_variables_mod1
-        matching_variables_mod2 <- paste0(matching_variables2, "_Y")
-        matching_variables_ids2 <-
-            matching_variables_ids2[ !is.na(matching_variables_ids2) ]
-        colnames(df2)[ matching_variables_ids2 ] <- matching_variables_mod2
+    # STEP 1: Check whether variables can be merged; if their classes are equal.
+    # Adjust colnames if their classes differ
+    if( ncol(df1) > 0 && ncol(df2) > 0 ){
+        # Get classes of variables of df1
+        c1 <- lapply(df1, FUN = function(x){c(class(x), !all(is.na(x)))})
+        colnames1 <- names(c1)
+        c1 <- data.frame(t(data.frame(c1)))
+        # Get classes of variables of df2
+        c2 <- lapply(df2, FUN = function(x){c(class(x), !all(is.na(x)))})
+        colnames2 <- names(c2)
+        c2 <- data.frame(t(data.frame(c2)))
+        # Rename columns and convert columns to correct class
+        colnames(c1) <- colnames(c2) <- c("class", "not_na")
+        class(c1$class) <- class(c2$class) <- "character"
+        class(c1$not_na) <- class(c2$not_na) <- "logical"
+        # Add original colnames to one column
+        c1$rownames <- colnames1
+        c2$rownames <- colnames2
+        # Merge class information into one df
+        classes <- merge(c1, c2, by="rownames", all=TRUE)
+        # Add info whether certain variable was found from df1/df2
+        classes$found1 <- !is.na(classes$class.x)
+        classes$found2 <- !is.na(classes$class.y)
+        classes$found_both <- classes$found1 & classes$found2
+        # Add information whether the classes of equally named variables match
+        # Take into account if other df has only NA values in column --> class
+        # of that variable can be wrong --> use known class
+        classes$no_match <- FALSE
+        classes[classes$found_both, "no_match"] <- 
+            classes[classes$found_both, "class.x"] != classes[
+                classes$found_both, "class.y"] & classes$not_na.x[
+                    classes$found_both] & classes$not_na.y[classes$found_both]
+        # Add new colnames to columns. If equally named variables' classes differ
+        # add also class information to colnames
+        classes$colnames1 <- classes$rownames
+        classes$colnames2 <- classes$rownames
+        classes[classes$no_match, "colnames1"] <-
+            paste0(classes[classes$no_match, "colnames1"], "_",
+                   classes[classes$no_match, "class.x"])
+        classes[classes$no_match, "colnames2"] <-
+            paste0(classes[classes$no_match, "colnames2"], "_",
+                   classes[classes$no_match, "class.y"])
+        # Give warning if there were missmatch between equally named variables and
+        # their classes
+        if( any(classes$no_match) ){
+            warning("Datasets include equally named variables called '",
+                    "'but their class differ. In the output, variables are not ",
+                    "combined and they are renamed based on their class.",
+                    "Please check the following columns:\n",
+                    paste0("'", paste(
+                        classes[classes$no_match, "rownames"], collapse = "', '"),
+                        "'"),
+                    call. = FALSE)
+        }
+        # Add new column names to df1
+        colnames <- classes[classes$found1, "rownames"]
+        colnames <- classes[classes$found1, "colnames1"][
+            match(colnames(df1), colnames)]
+        colnames(df1) <- colnames
+        # Add new column names to df2
+        colnames <- classes[classes$found2, "rownames"]
+        colnames <- classes[classes$found2, "colnames2"][
+            match(colnames(df2), colnames)]
+        colnames(df2) <- colnames
     }
-    
     # Add rownames to one of the columns
     df1$rownames_merge_ID <- rownames(df1)
     df2$rownames_merge_ID <- rownames(df2)
-    # Merge data frames into one data frame
-    df <- merge(df1, df2, by = "rownames_merge_ID", all.x = all.x, all.y = all.y)
-    # Add rownames and remove additional column
+    
+    # STEP 2: merge
+    # Finally merge data frames into one data frame
+    df <- merge(df1, df2, all.x = all.x, all.y = all.y)
+    
+    # STEP 3: polish
+    # Get column names because they can be changed when class is changed
+    colnames <- colnames(df)
+    # Convert to DF because there can be equally named columns (DataFrame does
+    # allow those)
+    df <- DataFrame(df)
+    colnames(df) <- colnames
+    # Add original rownames and remove additional column
     rownames(df) <- df$rownames_merge_ID
     df$rownames_merge_ID <- NULL
-   
-    # Combine matching variables if found
-    if( length(matching_variables1) > 0 ){
-        # Get the class of each variable
-        class1 <- unlist(lapply(matching_variables_mod1, FUN = function(x){class(df[,x])}))
-        class2 <- unlist(lapply(matching_variables_mod2, FUN = function(x){class(df[,x])}))
-        # If there are mismatches in classes, variables are not matching
-        mismatch <- class1!=class2
-        if( any( mismatch) ){
-            # Loop through mismatches
-            for( i in which(mismatch) ){
-                # Givve warning that variables are renamed
-                warning("Datasets include equally named variables called '", 
-                        matching_variables1[i], "' but their class differ. \n",
-                        "In the output, variables are not combined and they are ",
-                        "renamed based on their class.",
-                        call. = FALSE)
-                # Name variables based on their class
-                colnames(df)[ colnames(df) == matching_variables_mod1[i] ] <- 
-                    paste0(matching_variables1[i], "_", class1[i])
-                colnames(df)[ colnames(df) == matching_variables_mod2[i] ] <- 
-                    paste0(matching_variables2[i], "_", class2[i])
-                # Remove variable from matching list
-                matching_variables1 <- matching_variables1[-i]
-                matching_variables2 <- matching_variables2[-i]
-                matching_variables_mod1 <- matching_variables_mod1[-i]
-                matching_variables_mod2 <- matching_variables_mod2[-i]
-            }
-        }
-    }
-    # If there are still matching variables
-    if( length(matching_variables1) > 0 ){
-        # Loop over matching variables
-        for(i in 1:length(matching_variables1) ){
-            # Get columns
-            x <- matching_variables_mod1[i]
-            y <- matching_variables_mod2[i]
-            # Combine information from columns
-            x_and_y_combined <- coalesce( df[ , x], df[ , y] )
-            # Remove additional columns
-            df[ , x ] <- NULL
-            df[ , y ] <- NULL
-            # Add column that has combined information
-            df[ , matching_variables1[i] ] <- x_and_y_combined
-        }
-    }
     return(df)
 }
