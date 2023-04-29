@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
       </span>
     </div>
 
@@ -193,7 +193,7 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package<span class="op">=</span><span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu">runCCA</span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"CCA"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="runCCA-1.png" alt="" width="700" height="433"></span>
