@@ -377,6 +377,7 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
         #.check_abund_assay(object,
         #                   assay_name = assay_name)
         .check_assay_present(assay.type = assay.type, object)
+
         # check if NA in assay
         .check_NAs_assay_counts(object, assay.type)
         # check if counts
