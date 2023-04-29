@@ -244,7 +244,7 @@ altExp(tse,"Genus") <- runMDS(altExp(tse,"Genus"),
                               method = "bray",
                               name = "BrayCurtis", 
                               ncomponents = 5, 
-                              exprs_values = "counts", 
+                              assay.type = "counts", 
                               keep_dist = TRUE)
 ```
 

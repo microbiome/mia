@@ -138,9 +138,9 @@ objects belong to \code{TreeSummarizedExperiment}, the output will be
 \code{TreeSummarizedExperiment}.
 }
 \examples{
-data(GlobalPatterns, package="mia")
-data(esophagus, package="mia")
-data(enterotype, package="mia")
+data(GlobalPatterns)
+data(esophagus)
+data(enterotype)
 
 # Take only subsets so that it wont take so long
 tse1 <- GlobalPatterns[1:100, ]

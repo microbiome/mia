@@ -77,7 +77,7 @@ for user specified \dQuote{FeatureID}.
 }
 \examples{
 # getAbundanceSample
-data(GlobalPatterns, package="mia")
+data(GlobalPatterns)
 getAbundanceSample(GlobalPatterns,
                    sample_id = 'CC1',
                    assay.type = 'counts')

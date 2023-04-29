@@ -39,7 +39,7 @@ assay to use for calculation.
 will be disabled.)}
 
 \item{name}{a name for the column of the colData the results should be
-stored in. By defaut, \code{name} is \code{"divergence"}.}
+stored in. By default, \code{name} is \code{"divergence"}.}
 
 \item{reference}{a numeric vector that has length equal to number of
 features, or a non-empty character value; either 'median' or 'mean'.
@@ -73,7 +73,7 @@ Subsampling or bootstrapping can be applied to equalize sample sizes
 between comparisons.
 }
 \examples{
-data(GlobalPatterns, package="mia")
+data(GlobalPatterns)
 tse <- GlobalPatterns
 
 # By default, reference is median of all samples. The name of column where results

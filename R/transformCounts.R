@@ -248,10 +248,10 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
             .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
 	    assay.type <- assay_name
         }
-	
+
         # Check assay.type
         .check_assay_present(assay.type, x)
-	
+
         # Check name
         if(!.is_non_empty_string(name) ||
            name == assay.type){
@@ -318,7 +318,9 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
                         "pa", "range", "standardize", "z"),
              name = method,
              ...){
+
         .Deprecated("transformCounts")
+
         # Input check
         # Check method
         # If method is not single string, user has not specified transform method,
