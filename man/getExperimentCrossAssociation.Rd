@@ -188,7 +188,7 @@ sample sizes. Spearman rank correlation can provide faster solutions when
 running times are critical.
 }
 \examples{
-data("HintikkaXOData")
+data(HintikkaXOData)
 mae <- HintikkaXOData
 
 # Subset so that less observations / quicker to run, just for example

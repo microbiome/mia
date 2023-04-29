@@ -244,7 +244,7 @@ altExp(tse,"Genus") <- runMDS(altExp(tse,"Genus"),
                               method = "bray",
                               name = "BrayCurtis", 
                               ncomponents = 5, 
-                              exprs_values = "counts", 
+                              assay.type = "counts", 
                               keep_dist = TRUE)
 ```
 
@@ -274,7 +274,7 @@ Functions to load data from `biom` files, `QIIME2` output, `DADA2` objects
 [@dada2] or `phyloseq` objects are available. 
 
 ```{r, message=FALSE, warning=FALSE}
-data("esophagus", package = "phyloseq")
+data(esophagus, package = "phyloseq")
 ```
 ```{r}
 esophagus
@@ -302,7 +302,7 @@ all(abund == assay(tse, "counts")["522457",])
 `getTopTaxa` returns a vector of the most `top` abundant feature IDs.
 
 ```{r}
-data("esophagus", package = "mia")
+data(esophagus, package = "mia")
 top_taxa <- getTopTaxa(esophagus,
                        method = "mean",
                        top = 5,

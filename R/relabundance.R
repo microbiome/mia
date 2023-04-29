@@ -24,14 +24,25 @@
 #' # head(assay(GlobalPatterns, "relabundance"))
 NULL
 
+#' Define a generic function for relabundance
+#' The generic function will dispatch to different methods depending on the
+#' class of its argument
 #' @rdname relabundance
 setGeneric("relabundance", signature = c("x"),
-           function(x, value) standardGeneric("relabundance"))
+           function(x, ...) standardGeneric("relabundance"))
+           
+#' Define a generic replacement function for relabundance
+#' The generic function will dispatch to different methods depending on the
+#' class of its argument
 
 #' @rdname relabundance
 setGeneric("relabundance<-", signature = c("x"),
            function(x, value) standardGeneric("relabundance<-"))
+           
 
+#' Define a method for relabundance for SummarizedExperiment objects
+#' This method retrieves the relabundance data from the assay slot of the object
+#' and issues a deprecation warning
 #' @rdname relabundance
 #' @importFrom SummarizedExperiment assays
 #' @export
@@ -42,7 +53,9 @@ setMethod("relabundance", signature = c(x = "SummarizedExperiment"),
         assays(x)[["relabundance"]]
     }
 )
-
+#' Define a replacement method for relabundance for SummarizedExperiment objects
+#' This method sets the relabundance data in the assay slot of the object to the
+#' provided value and issues a deprecation warning
 #' @rdname relabundance
 #' @importFrom SummarizedExperiment assays<-
 #' @export

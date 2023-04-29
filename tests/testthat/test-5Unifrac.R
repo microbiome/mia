@@ -1,5 +1,6 @@
 context("Unifrac beta diversity")
 test_that("Unifrac beta diversity", {
+    skip_if_not(require("phyloseq", quietly = TRUE))
     
     data(esophagus, package="mia")
     tse <- esophagus
@@ -51,7 +52,7 @@ test_that("Unifrac beta diversity", {
                          BPPARAM = SerialParam())
     )
     
-    data("GlobalPatterns")
+    data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
     # Compare to phyloseq function
     .require_package("phyloseq")

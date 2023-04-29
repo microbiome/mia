@@ -84,8 +84,8 @@ test_that("merge", {
     lapply(list(xtse),FUN_check_x)
     lapply(list(xtse),FUN_check_x,archetype=2)
     # Check multiple rowTrees
-    data("esophagus", package="mia")
-    data("GlobalPatterns", package="mia")
+    data(esophagus, package="mia")
+    data(GlobalPatterns, package="mia")
     # Add arbitrary groups
     rowData(esophagus)$group <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
                                   rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )

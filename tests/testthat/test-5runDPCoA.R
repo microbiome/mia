@@ -1,6 +1,7 @@
 context("runDPCoA")
 test_that("runDPCoA", {
-    data(esophagus)
+    skip_if_not(require("ade4", quietly = TRUE))
+    data(esophagus, package="mia")
     #
     esophagus <- runDPCoA(esophagus)
     expect_named(reducedDims(esophagus),"DPCoA")
@@ -59,7 +60,7 @@ test_that("runDPCoA", {
                  subset_row = NULL, scale = FALSE, transposed = FALSE)
     )
     
-    data("GlobalPatterns")
+    data(GlobalPatterns, package="mia")
     tse <- mergeSEs(esophagus, GlobalPatterns)
     # expect_warning(runDPCoA(tse))
     # expect_warning(runDPCoA(tse, tree_name = "phylo.1"))
