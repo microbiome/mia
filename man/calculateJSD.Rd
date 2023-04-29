@@ -57,7 +57,7 @@ This function calculates the Jensen-Shannon Divergence (JSD) in a
 object.
 }
 \examples{
-data(enterotype, package="mia")
+data(enterotype)
 library(scater)
 
 

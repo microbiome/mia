@@ -109,7 +109,7 @@ Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
 \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
 }
 \examples{
-data(esophagus, package="mia")
+data(esophagus)
 library(scater)
 calculateUnifrac(esophagus, weighted = FALSE)
 calculateUnifrac(esophagus, weighted = TRUE)

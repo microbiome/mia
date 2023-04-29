@@ -23,7 +23,7 @@ An object of class \code{TreeSummarizedExperiment}
 objects into \code{TreeSummarizedExperiment} objects.
 }
 \details{
-All data stored in a \code{phyloseq} object is transfered.
+All data stored in a \code{phyloseq} object is transferred.
 }
 \examples{
 if (requireNamespace("phyloseq")) {

@@ -1,6 +1,12 @@
 Package: mia
 Type: Package
+<<<<<<< HEAD
 Version: 1.9.0
+||||||| ac1d252
+Version: 1.7.11
+=======
+Version: 1.9.1
+>>>>>>> fd0019387dd878e9b6f1f8fbfe6d9765feb4ba01
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut"),
              email = "felix.gm.ernst@outlook.com",

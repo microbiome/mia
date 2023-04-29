@@ -177,7 +177,7 @@ correlated with the simpler variant implemented here.}
 }
 }
 \examples{
-data(esophagus, package="mia")
+data(esophagus)
 
 # Calculates Simpson's lambda (can be used as a dominance index)
 esophagus <- estimateDominance(esophagus, index="simpson_lambda")
