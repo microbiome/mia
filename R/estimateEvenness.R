@@ -7,16 +7,16 @@
 #'
 #' @param x a \code{\link{SummarizedExperiment}} object
 #'
-#' @param assay_name A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
 #'   calculation of the sample-wise estimates.
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
-#' @param index a \code{character} vector, specifying the eveness measures to be
+#' @param index a \code{character} vector, specifying the evenness measures to be
 #'   calculated.
 #'
 #' @param name a name for the column(s) of the colData the results should be
@@ -123,7 +123,7 @@ NULL
 #' @rdname estimateEvenness
 #' @export
 setGeneric("estimateEvenness",signature = c("x"),
-           function(x, assay_name = abund_values, abund_values = "counts",
+           function(x, assay.type = assay_name, assay_name = "counts",
                     index = c("pielou", "camargo", "simpson_evenness", "evar",
                               "bulla"),
                     name = index, ...)
@@ -132,7 +132,7 @@ setGeneric("estimateEvenness",signature = c("x"),
 #' @rdname estimateEvenness
 #' @export
 setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts",
+    function(x, assay.type = assay_name, assay_name = "counts",
              index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
              name = index, ..., BPPARAM = SerialParam()){
          
@@ -143,11 +143,11 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
                  "same length than 'index'.",
                  call. = FALSE)
         }
-        .check_assay_present(assay_name, x)
+        .check_assay_present(assay.type, x)
         #
         vnss <- BiocParallel::bplapply(index,
                                        .get_evenness_values,
-                                       mat = assay(x, assay_name),
+                                       mat = assay(x, assay.type),
                                        BPPARAM = BPPARAM, ...)
         .add_values_to_colData(x, vnss, name)
     }

@@ -1,9 +1,9 @@
 context("mergeSEs")
 test_that("mergeSEs", {
     # Load data
-    data("GlobalPatterns")
-    data("esophagus")
-    data("enterotype")
+    data(GlobalPatterns, package="mia")
+    data(esophagus, package="mia")
+    data(enterotype, package="mia")
     
     tse1 <- GlobalPatterns[1:50, ]
     tse2 <- esophagus[1:50, ]
@@ -22,24 +22,25 @@ test_that("mergeSEs", {
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "right") )
     expect_error( mergeSEs(tse1, tse2, missing_values = TRUE ) )
     expect_error( mergeSEs(tse1, tse2, missing_values = 36846 ) )
-    expect_error( mergeSEs(tse1, tse2, assay_name = "test")  )
-    # Calculate relative transform to test assay_name
-    tse1 <- transformSamples(tse1, method = "relabundance")
-    expect_error( mergeSEs(tse1, tse2, assay_name = "relabundance")  )
+    expect_error( mergeSEs(tse1, tse2, assay.type = "test")  )
+    # Calculate relative transform to test assay.type
+    tse1 <- transformCounts(tse1, method = "relabundance")
+    expect_error( mergeSEs(tse1, tse2, assay.type = "relabundance")  )
     expect_error( mergeSEs(tse1, tse2, verbose = "test")  )
     expect_error( mergeSEs(tse1, tse2, verbose = 1)  )
     expect_error( mergeSEs(tse1, tse2, tse3)  )
     expect_error( mergeSEs(tse1)  )
     
     # Test that data match if there is only one element
-    tse <- mergeSEs(list(tse1), assay_name = "relabundance")
+    #tse <- mergeSEs(list(tse1), assay.type = "relabundance")
+    tse <- mergeSEs(list(tse1), assay.type = "relabundance")    
     expect_equal( rowData(tse), rowData(tse1))
     expect_equal( colData(tse), colData(tse1))
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))
     expect_equal( rowTree(tse), rowTree(tse1))
     
     # Test that data match if there is only same elements
-    tse <- mergeSEs(list(tse1, tse1, tse1), assay_name = "relabundance")
+    tse <- mergeSEs(list(tse1, tse1, tse1), assay.type = "relabundance")
     # The order of taxa and samples changes
     tse <- tse[ rownames(tse1), colnames(tse1) ]
     expect_equal( rowData(tse), rowData(tse1))
@@ -52,11 +53,11 @@ test_that("mergeSEs", {
     
     # Expect that rowTree is preserved if rownames match
     tse <- mergeSEs(list(tse1, GlobalPatterns), 
-                                         assay_name = "counts",
+                                         assay.type = "counts",
                                          missing_values = NA)
     expect_equal(rowTree(GlobalPatterns), rowTree(tse))
     # Expect some NAs
-    tse <- mergeSEs(list(tse1, tse2), assay_name = "counts")
+    tse <- mergeSEs(list(tse1, tse2), assay.type = "counts")
     expect_true( any(is.na(assay(tse))) )
     
     # Test that dimensions match
@@ -331,13 +332,13 @@ test_that("mergeSEs", {
     tse_test <- mergeSEs(x = list(tse[1:28, 1:3], tse[23, 1:5], tse[1, 1:10]),
                          join = "full")
     expect_equal( dim(tse_test), c(28, 18))
-    expect_true( (all( c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", "_2", "_3")), 
-                         paste0(rep(colnames(tse[, 4:5]), each=2), c("", "_3")), 
+    expect_true( (all( c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", ".2", ".3")), 
+                         paste0(rep(colnames(tse[, 4:5]), each=2), c("", ".3")), 
                          colnames(tse[, 6:10]) ) %in% 
                           colnames(tse_test) ) &&
                      all( colnames(tse_test) %in% 
-                     c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", "_2", "_3")), 
-                        paste0(rep(colnames(tse[, 4:5]), each=2), c("", "_3")), 
+                     c( paste0(rep(colnames(tse[, 1:3]), each=3), c("", ".2", ".3")), 
+                        paste0(rep(colnames(tse[, 4:5]), each=2), c("", ".3")), 
                         colnames(tse[, 6:10]) ) ) )
                  )
     # Test that tree is added after agglomeration
@@ -351,8 +352,8 @@ test_that("mergeSEs", {
     expect_equal( rownames(tse), rowLinks(tse)$nodeLab )
     
     # Check that rowData includes all the information
-    data("esophagus")
-    data("GlobalPatterns")
+    data(esophagus, package="mia")
+    data(GlobalPatterns, package="mia")
     # Add arbitrary groups
     rowData(esophagus)$group <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
                                   rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
@@ -383,24 +384,24 @@ test_that("mergeSEs", {
                                                     ))+2)
     
     # Check that multiple assays are supported
-    tse1 <- relAbundanceCounts(tse1)
-    tse2 <- relAbundanceCounts(tse2)
-    tse3 <- relAbundanceCounts(tse3)
+    tse1 <- transformCounts(tse1, method="relabundance")
+    tse2 <- transformCounts(tse2, method="relabundance")
+    tse3 <- transformCounts(tse3, method="relabundance")    
     
     tse_temp <- expect_warning( mergeSEs(list(tse1, tse2, tse3),
-                                         assay_name = c("counts", 
+                                         assay.type = c("counts", 
                                                         "relabundance"), 
                                          join = "inner"))
     expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
     tse_temp <- expect_warning(mergeSEs(list(tse1, tse2),
-                                        assay_name = c("counts", "relabundance", "test"),
+                                        assay.type = c("counts", "relabundance", "test"),
                                         join = "left"))
     expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
     
     # Test that reference sequences stay the same
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
-    data("SilvermanAGutData")
+    data(SilvermanAGutData)
     tse <- SilvermanAGutData
     tse1 <- tse
     rownames(tse1) <- paste0("Taxon", 1:nrow(tse))

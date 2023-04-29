@@ -18,10 +18,10 @@ getExperimentCrossAssociation(x, ...)
   x,
   experiment1 = 1,
   experiment2 = 2,
-  assay_name1 = abund_values1,
-  abund_values1 = "counts",
-  assay_name2 = abund_values2,
-  abund_values2 = "counts",
+  assay.type1 = assay_name1,
+  assay_name1 = "counts",
+  assay.type2 = assay_name2,
+  assay_name2 = "counts",
   altexp1 = NULL,
   altexp2 = NULL,
   colData_variable1 = NULL,
@@ -85,22 +85,22 @@ from\code{experiments(x)} of \code{MultiAssayExperiment} object or
 (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and
 \code{experiment2 = x} when \code{x} is \code{TreeSE})}
 
-\item{assay_name1}{A single character value for selecting the
+\item{assay.type1}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
-experiment 1 to be transformed. (By default: \code{assay_name1 = "counts"})}
+experiment 1 to be transformed. (By default: \code{assay.type1 = "counts"})}
 
-\item{abund_values1}{a single \code{character} value for specifying which
+\item{assay_name1}{a single \code{character} value for specifying which
 assay of experiment 1 to use for calculation.
-(Please use \code{assay_name1} instead. At some point \code{abund_values1}
+(Please use \code{assay.type1} instead. At some point \code{assay_name1}
 will be disabled.)}
 
-\item{assay_name2}{A single character value for selecting the
+\item{assay.type2}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
-experiment 2 to be transformed. (By default: \code{assay_name2 = "counts"})}
+experiment 2 to be transformed. (By default: \code{assay.type2 = "counts"})}
 
-\item{abund_values2}{a single \code{character} value for specifying which
+\item{assay_name2}{a single \code{character} value for specifying which
 assay of experiment 2 to use for calculation.
-(Please use \code{assay_name2} instead. At some point \code{abund_values2}
+(Please use \code{assay.type2} instead. At some point \code{assay_name2}
 will be disabled.)}
 
 \item{altexp1}{A single numeric or character value specifying alternative experiment
@@ -114,11 +114,11 @@ and altExp option is disabled.
 (By default: \code{altexp2 = NULL})}
 
 \item{colData_variable1}{A character value specifying column(s) from colData
-of experiment 1. If colData_variable1 is used, assay_name1 is disabled.
+of experiment 1. If colData_variable1 is used, assay.type1 is disabled.
 (By default: \code{colData_variable1 = NULL})}
 
 \item{colData_variable2}{A character value specifying column(s) from colData
-of experiment 2. If colData_variable2 is used, assay_name2 is disabled.
+of experiment 2. If colData_variable2 is used, assay.type2 is disabled.
 (By default: \code{colData_variable2 = NULL})}
 
 \item{MARGIN}{A single numeric value for selecting if association are calculated
@@ -188,27 +188,27 @@ sample sizes. Spearman rank correlation can provide faster solutions when
 running times are critical.
 }
 \examples{
-data("HintikkaXOData")
+data(HintikkaXOData)
 mae <- HintikkaXOData
 
 # Subset so that less observations / quicker to run, just for example
 mae[[1]] <- mae[[1]][1:20, 1:10]
 mae[[2]] <- mae[[2]][1:20, 1:10]
 # Transform data
-mae[[1]] <- transformSamples(mae[[1]], method = "rclr")
+mae[[1]] <- transformCounts(mae[[1]], method = "rclr")
 
 # Calculate cross-correlations
-result <- getExperimentCrossAssociation(mae, method = "pearson", assay_name2 = "nmr")
+result <- getExperimentCrossAssociation(mae, method = "pearson", assay.type2 = "nmr")
 # Show first 5 entries
 head(result, 5)
 
 # Use altExp option to specify alternative experiment from the experiment
 altExp(mae[[1]], "Phylum") <- agglomerateByRank(mae[[1]], rank = "Phylum")
 # Transform data
-altExp(mae[[1]], "Phylum") <- transformSamples(altExp(mae[[1]], "Phylum"), method = "relabundance")
+altExp(mae[[1]], "Phylum") <- transformCounts(altExp(mae[[1]], "Phylum"), method = "relabundance")
 # When mode = matrix, matrix is returned
 result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
-                                        assay_name1 = "relabundance", assay_name2 = "nmr",
+                                        assay.type1 = "relabundance", assay.type2 = "nmr",
                                         altexp1 = "Phylum", 
                                         method = "pearson", mode = "matrix")
 # Show first 5 entries
@@ -228,7 +228,7 @@ head(result, 5)
 # test_signicance = TRUE
 # Warnings can be suppressed by using show_warnings = FALSE
 result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
-                                        assay_name2 = "nmr",
+                                        assay.type2 = "nmr",
                                         mode = "matrix", test_significance = TRUE,
                                         show_warnings = FALSE)
                                         
@@ -246,7 +246,7 @@ result <- getExperimentCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired =
 # variable-pairs. Use "symmetric" to choose whether to measure association for only
 # other half of of variable-pairs.
 result <- getExperimentCrossAssociation(mae, experiment1 = "microbiota", experiment2 = "microbiota", 
-                                        assay_name1 = "counts", assay_name2 = "counts",
+                                        assay.type1 = "counts", assay.type2 = "counts",
                                         symmetric = TRUE)
 
 # For big data sets, calculation might take long. To make calculations quicker, you can take
@@ -260,10 +260,10 @@ result <- testExperimentCrossAssociation(tse_sub)
 # It is also possible to choose variables from colData and calculate association
 # between assay and sample metadata or between variables of sample metadata
 mae[[1]] <- estimateDiversity(mae[[1]])
-# colData_variable works similarly to assay_name. Instead of fetching an assay
-# named assay_name from assay slot, it fetches a column named colData_variable
+# colData_variable works similarly to assay.type. Instead of fetching an assay
+# named assay.type from assay slot, it fetches a column named colData_variable
 # from colData.
-result <- getExperimentCrossAssociation(mae[[1]], assay_name1 = "counts", 
+result <- getExperimentCrossAssociation(mae[[1]], assay.type1 = "counts", 
                                         colData_variable2 = c("shannon", "coverage"))
                                         
 }

@@ -2,8 +2,8 @@ context("summary")
 
 test_that("summary", {
     
-    data(GlobalPatterns)
-    sumdf <- summary(GlobalPatterns, assay_name="counts")
+    data(GlobalPatterns, package="mia")
+    sumdf <- summary(GlobalPatterns, assay.type="counts")
     samples.sum <- sumdf$samples
     
     # check samples
@@ -32,7 +32,7 @@ context("getUniqueTaxa")
 
 test_that("getUniqueTaxa", {
     
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     exp.phy <- c("Crenarchaeota","Euryarchaeota",
                  "Actinobacteria","Spirochaetes","MVP-15")
     
@@ -44,15 +44,15 @@ context("summaries")
 
 test_that("summaries", {
     
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_equal( getTopTaxa(GlobalPatterns, 
                              method = "mean",
                              top = 5,
-                             assay_name = "counts"), 
+                             assay.type = "counts"), 
                   getTopFeatures(GlobalPatterns, 
                                  method = "mean",
                                  top = 5,
-                                 assay_name = "counts") )
+                                 assay.type = "counts") )
     expect_equal( getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE),
                   getUniqueFeatures(GlobalPatterns, "Phylum", sort = TRUE) )
     expect_equal( countDominantTaxa(GlobalPatterns),

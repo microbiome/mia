@@ -12,12 +12,12 @@
 #' @param method Specify the method to determine top taxa. Either sum, mean,
 #'   median or prevalence. Default is 'mean'.
 #'
-#' @param assay_name A \code{character} value to select an
+#' @param assay.type A \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}} 
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param na.rm For \code{getTopTaxa} logical argument for calculation method 
@@ -60,14 +60,14 @@
 #' top_taxa <- getTopTaxa(GlobalPatterns,
 #'                        method = "mean",
 #'                        top = 5,
-#'                        assay_name = "counts")
+#'                        assay.type = "counts")
 #' top_taxa
 #' 
 #' # Use 'detection' to select detection threshold when using prevalence method
 #' top_taxa <- getTopTaxa(GlobalPatterns,
 #'                        method = "prevalence",
 #'                        top = 5,
-#'                        abund_values = "counts",
+#'                        assay_name = "counts",
 #'                        detection = 100)
 #' top_taxa
 #'                        
@@ -106,15 +106,15 @@ NULL
 #' @export
 setGeneric("getTopTaxa", signature = "x",
            function(x, top= 5L, method = c("mean","sum","median"),
-                    assay_name = abund_values, abund_values = "counts", 
+                    assay.type = assay_name, assay_name = "counts", 
                     na.rm = TRUE, ...)
                standardGeneric("getTopTaxa"))
 
-.check_max_taxa <- function(x, top, assay_name){
+.check_max_taxa <- function(x, top, assay.type){
     if(!is.numeric(top) || as.integer(top) != top){
         stop("'top' must be integer value", call. = FALSE)
     }
-    if(top > nrow(assay(x,assay_name))){
+    if(top > nrow(assay(x,assay.type))){
         stop("'top' must be <= nrow(x)", call. = FALSE)
     }
 }
@@ -129,25 +129,25 @@ setGeneric("getTopTaxa", signature = "x",
 #' @export
 setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, top = 5L, method = c("mean","sum","median","prevalence"),
-             assay_name = abund_values, abund_values = "counts", 
+             assay.type = assay_name, assay_name = "counts", 
              na.rm = TRUE, ...){
         # input check
         method <- match.arg(method, c("mean","sum","median","prevalence"))
         # check max taxa
-        .check_max_taxa(x, top, assay_name)
+        .check_max_taxa(x, top, assay.type)
         # check assay
-        .check_assay_present(assay_name, x)
+        .check_assay_present(assay.type, x)
         #
         if(method == "prevalence"){
-            taxs <- getPrevalence(assay(x, assay_name), sort = TRUE,
+            taxs <- getPrevalence(assay(x, assay.type), sort = TRUE,
                                   include_lowest = TRUE, ...)
             # If there are taxa with prevalence of 0, remove them
             taxs <- taxs[ taxs > 0 ]
         } else {
             taxs <- switch(method,
-                           mean = rowMeans2(assay(x, assay_name), na.rm = na.rm),
-                           sum = rowSums2(assay(x, assay_name), na.rm = na.rm),
-                           median = rowMedians(assay(x, assay_name)), na.rm = na.rm)
+                           mean = rowMeans2(assay(x, assay.type), na.rm = na.rm),
+                           sum = rowSums2(assay(x, assay.type), na.rm = na.rm),
+                           median = rowMedians(assay(x, assay.type)), na.rm = na.rm)
             names(taxs) <- rownames(assay(x))
             taxs <- sort(taxs,decreasing = TRUE)
         }
@@ -346,7 +346,7 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
 #' @param object A
 #'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'
-#' @param assay_name a \code{character} value to select an
+#' @param assay.type a \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 #'   By default it expects count data.
 #'
@@ -368,19 +368,21 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
 #'
 #' @export
 setMethod("summary", signature = c(object = "SummarizedExperiment"),
-    function(object, assay_name = NULL, abund_values = NULL){
+    function(object, assay.type = assay_name, assay_name = "counts"){
+
         # Specify assay names for user
         message("Following assays detected: ", call. = FALSE)
-        print(assayNames(object))
+        message(assayNames(object))
         # Check if assay name is specified
-        .check_abund_assay(object,
-                           assay_name = assay_name)
+        #.check_abund_assay(object,
+        #                   assay_name = assay_name)
+        .check_assay_present(assay.type = assay.type, object)
         # check if NA in assay
-        .check_NAs_assay_counts(object, assay_name)
+        .check_NAs_assay_counts(object, assay.type)
         # check if counts
-        .check_fraction_or_negative_values(object, assay_name)
-        sample.summary <- .get_summary_col_data(object, assay_name)
-        feature.summary <- .get_summary_row_data(object, assay_name)
+        .check_fraction_or_negative_values(object, assay.type)
+        sample.summary <- .get_summary_col_data(object, assay.type)
+        feature.summary <- .get_summary_row_data(object, assay.type)
         return(list("samples" = sample.summary, "features" = feature.summary))
     }
 )
@@ -390,9 +392,9 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 #' @importFrom DelayedMatrixStats colSums2
 #' @importFrom stats sd median
 #' @importFrom tibble tibble
-.get_summary_col_data <- function(x, assay_name){
+.get_summary_col_data <- function(x, assay.type){
     # should check and extract assay
-    assay.x <- .get_assay(x, assay_name)
+    assay.x <- .get_assay(x, assay.type)
     summary_col_data <- tibble(total_counts = sum(colSums2(assay.x)),
                                min_counts = min(colSums2(assay.x)),
                                max_counts = max(colSums2(assay.x)),
@@ -404,10 +406,10 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 
 #' @importFrom DelayedMatrixStats colSums2
 #' @importFrom tibble tibble
-.get_summary_row_data <- function(x, assay_name){
+.get_summary_row_data <- function(x, assay.type){
     # Should check and extract assay
     # Internal from splitByRanks
-    assay.x <- .get_assay(x, assay_name)
+    assay.x <- .get_assay(x, assay.type)
     summary_row_data <- tibble(total = nrow(assay.x),
                                singletons = .get_singletons(assay.x),
                                per_sample_avg = mean(colSums2(assay.x != 0)))
@@ -423,8 +425,8 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 
 # Check if values in assay are fractions or or negative values
 #' @importFrom DelayedMatrixStats colSums2
-.check_fraction_or_negative_values <- function(x, assay_name){
-    assay.x <- .get_assay(x, assay_name)
+.check_fraction_or_negative_values <- function(x, assay.type){
+    assay.x <- .get_assay(x, assay.type)
     if(any(colSums2(assay.x) < 1) | any(colSums2(assay.x) < 0)){
         stop("There are samples that sum to 1 or less counts. ",
              "Try to supply raw counts",
@@ -454,10 +456,10 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 }
 
 # Check NAs in assay, used when specifically when counts are expected
-.check_NAs_assay_counts <- function(x, assay_name){
-    assay.x <- .get_assay(x, assay_name)
+.check_NAs_assay_counts <- function(x, assay.type){
+    assay.x <- .get_assay(x, assay.type)
     if(any(is.na(assay.x))) {
-        stop(paste0("There are samples with NAs in 'assay': ", assay_name),
+        stop(paste0("There are samples with NAs in 'assay': ", assay.type),
              " . This function is limited to sequencing data only. ",
              "Where raw counts do not usually have NAs. ",
              "Try to supply raw counts",
@@ -465,14 +467,3 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
     }
 }
 
-# Check is assay names are specified for summary function
-.check_abund_assay <- function(object, assay_name = NULL){
-    if(is.null(assay_name) || is.na(assay_name)){
-        stop("Please specify the assay name in the assay_name argument",
-             call. = FALSE)
-    }
-    if(!assay_name %in% assayNames(object)){
-        stop("Specified assay name '", assay_name, "' not detected",
-             call. = FALSE) 
-    }
-}

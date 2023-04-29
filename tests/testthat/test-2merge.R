@@ -31,17 +31,20 @@ test_that("merge", {
     expect_equal(actual, c(1,2))
     actual <- mia:::.norm_archetype(f, c(1))
     expect_equal(actual, c(1,1))
+    
     # .get_element_pos
     expect_error(mia:::.get_element_pos(),
                  'argument "archetype" is missing')
     expect_error(mia:::.get_element_pos(f),
                  'argument "archetype" is missing')
+		 
     actual <- mia:::.get_element_pos(f, archetype = mia:::.norm_archetype(f, 1))
     expect_equal(actual,c(a = 1, b = 4))
     actual <- mia:::.get_element_pos(f, archetype = mia:::.norm_archetype(f, 2))
     expect_equal(actual,c(a = 2, b = 5))
     actual <- mia:::.get_element_pos(f, archetype = c(2,1))
     expect_equal(actual,c(a = 2, b = 4))
+
     # .merge_rows
     mat <- matrix(1:60, nrow = 6)
     gr <- GRanges("chr1",rep("1-6",6))
@@ -81,8 +84,8 @@ test_that("merge", {
     lapply(list(xtse),FUN_check_x)
     lapply(list(xtse),FUN_check_x,archetype=2)
     # Check multiple rowTrees
-    data("esophagus")
-    data("GlobalPatterns")
+    data(esophagus, package="mia")
+    data(GlobalPatterns, package="mia")
     # Add arbitrary groups
     rowData(esophagus)$group <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
                                   rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
@@ -91,12 +94,12 @@ test_that("merge", {
     rowData(GlobalPatterns)$group <- c(rep(c("C", "D", "E"), each = nrow(GlobalPatterns)/3), 
                                        rep("C", nrow(GlobalPatterns)-round(nrow(GlobalPatterns)/3)*3) )
     # Merge
-    tse <- mergeSEs(esophagus, GlobalPatterns)
+    tse <- mergeSEs(esophagus, GlobalPatterns, assay.type="counts")
     # Reorder data since mergeSEs does not order the data based on original order
     # (trees are pruned differently --> first instance represent specific branch)
     tse <- tse[c(rownames(esophagus), rownames(GlobalPatterns)), ]
     # Only esophagus has these groups --> the merge should contain only esophagus
-    merged <- mergeRows(tse, f = rowData(tse)$group2, mergeTree = TRUE)
+    merged  <- mergeRows(tse, f=rowData(tse)$group2, mergeTree=TRUE)
     merged2 <- mergeRows(tse, f = rowData(tse)$group2, mergeTree = FALSE)
     merged3 <- mergeRows(esophagus, f = rowData(esophagus)$group2, mergeTree = TRUE)
     expect_equal( rowLinks(merged)$whichTree, 

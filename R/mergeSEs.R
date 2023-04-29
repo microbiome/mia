@@ -6,9 +6,11 @@
 #' @param y a \code{\link{SummarizedExperiment}} object when \code{x} is a
 #' \code{\link{SummarizedExperiment}} object. Disabled when \code{x} is a list.
 #' 
-#' @param assay_name A character value for selecting the
+#' @param assay.type A character value for selecting the
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#' to be merged. (By default: \code{assay_name = "counts"})
+#' to be merged. (By default: \code{assay.type = "counts"})
+#'
+#' @param assay_name (Deprecated) alias for \code{assay.type}. 
 #' 
 #' @param join A single character value for selecting the joining method.
 #' Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
@@ -19,6 +21,15 @@
 #' 
 #' @param collapse_samples A boolean value for selecting whether to collapse identically
 #' named samples to one. (By default: \code{collapse_samples = FALSE})
+#' 
+#' @param collapse_features A boolean value for selecting whether to collapse identically
+#' named features to one. Since all taxonomy information is taken into account,
+#' this concerns rownames-level (usually strain level) comparison. Often
+#' OTU or ASV level is just an arbitrary number series from sequencing machine
+#' meaning that the OTU information is not comparable between studies. With this
+#' option, it is possible to specify whether these strains are combined if their
+#' taxonomy information along with OTU number matches.
+#' (By default: \code{collapse_features = TRUE})
 #' 
 #' @param verbose A single boolean value to choose whether to show messages. 
 #' (By default: \code{verbose = TRUE})
@@ -102,7 +113,7 @@
 #' 
 #' # Merge a list of TreeSEs
 #' list <- SimpleList(tse1, tse2, tse3)
-#' tse <- mergeSEs(list, assay_name = "counts", missing_values = 0)
+#' tse <- mergeSEs(list, assay.type = "counts", missing_values = 0)
 #' tse
 #' 
 #' # With 'join', it is possible to specify the merging method. Subsets are used
@@ -120,11 +131,13 @@
 #' tse_temp
 #' 
 #' # Merge all available assays
-#' tse <- relAbundanceCounts(tse)
-#' ts1 <- relAbundanceCounts(tse1)
-#' tse_temp <- mergeSEs(tse, tse1, assay_name = assayNames(tse))
+#' tse <- transformCounts(tse, method="relabundance")
+#' ts1 <- transformCounts(tse1, method="relabundance")
+#' tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 #' 
 NULL
+
+
 
 ################################### Generic ####################################
 
@@ -139,19 +152,29 @@ setGeneric("mergeSEs", signature = c("x"),
 #' @rdname mergeSEs
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList"),
-        function(x, assay_name = "counts", join = "full", 
-                 missing_values = NA, collapse_samples = FALSE, verbose = TRUE, 
+        function(x, assay.type="counts", assay_name = NULL, join = "full", 
+                 missing_values = NA, collapse_samples = FALSE,
+                 collapse_features = TRUE, verbose = TRUE, 
                  ... ){
             ################## Input check ##################
             # Check the objects 
             class <- .check_objects_and_give_class(x)
+	    if (!is.null(assay_name) & is.null(assay.type)) {
+                .Deprecated(new="assay.type", old="assay_name", msg="The argument assay_name is deprecated and replace with assay.type")
+		assay.type <- assay_name
+            } else if (!is.null(assay_name) & !is.null(assay.type)) {
+                warning("The assay.type argument is used and assay_name is ignored")
+            } else {
+	        # See next step
+            }
             # CHeck which assays can be found, and if any --> FALSE
-            assay_name <- .assays_cannot_be_found(assay_name = assay_name, x)
-            if( .is_a_bool(assay_name) && assay_name == FALSE ){
-                stop("'assay_name' must specify an assay from assays. 'assay_name' ",
+            assay.type <- .assays_cannot_be_found(assay.type = assay.type, x)
+            if( .is_a_bool(assay.type) && assay.type == FALSE ){
+                stop("'assay.type' must specify an assay from assays. 'assay.type' ",
                      "cannot be found at least in one SE object.",
                      call. = FALSE)
             }
+
             # Check join
             if( !(.is_a_string(join) &&
                 join %in% c("full", "inner", "left", "right") ) ){
@@ -179,11 +202,17 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 stop("'collapse_samples' must be TRUE or FALSE.",
                      call. = FALSE)
             }
+            # Check collapse_samples
+            if( !.is_a_bool(collapse_features) ){
+                stop("'collapse_features' must be TRUE or FALSE.",
+                     call. = FALSE)
+            }
             # Check verbose
             if( !.is_a_bool(verbose) ){
                 stop("'verbose' must be TRUE or FALSE.",
                      call. = FALSE)
             }
+
             ################ Input check end ################
             # Give message if TRUE
             if( verbose ){
@@ -191,8 +220,9 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                 message("1/", length(x), appendLF = FALSE)
             }
             # Merge objects
-            tse <- .merge_SEs(x, class, join, assay_name, 
-                             missing_values, collapse_samples, verbose)
+            tse <- .merge_SEs(
+                x, class, join, assay.type, missing_values, collapse_samples,
+                collapse_features, verbose)
             return(tse)
         }
 )
@@ -303,14 +333,17 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Output: SE
 
 #' @importFrom SingleCellExperiment SingleCellExperiment
-.merge_SEs <- function(x, class, join, assay_name, 
-                      missing_values, collapse_samples, verbose){
-    # Add rowData info to rownames
-    x <- lapply(x, FUN = .add_rowdata_to_rownames)
+.merge_SEs <- function(
+        x, class, join, assay.type, missing_values, collapse_samples,
+        collapse_features, verbose){
+
     # Take first element and remove it from the list
     tse <- x[[1]]
     x[[1]] <- NULL
-    
+    # Add rowData info to rownames
+    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
+    tse <- .add_rowdata_to_rownames(tse, rownames_name = rownames_name)
+
     # Initialize a list for TreeSE-specific slots
     tse_args <- list(
         rowTrees = NULL,
@@ -321,10 +354,10 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( class == "TreeSummarizedExperiment" ){
         tse_args <- .get_TreeSE_args(tse, tse_args)
     }
-    
+
     # Get the data in a list
-    args <- .get_SummarizedExperiment_data(tse = tse, assay_name = assay_name)
-    
+    args <- .get_SummarizedExperiment_data(tse = tse, assay.type = assay.type)
+
     # Get the function based on class
     FUN_constructor <- switch(class,
                               TreeSummarizedExperiment = TreeSummarizedExperiment,
@@ -333,8 +366,8 @@ setMethod("right_join", signature = c(x = "ANY"),
     )
     # Create an object
     tse <- do.call(FUN_constructor, args = args)
-    
-    # Lopp through individual TreeSEs and add them to tse
+
+    # Loop through individual TreeSEs and add them to tse
     if( length(x) > 0 ){
         for( i in 1:length(x) ){
             # Give message if TRUE
@@ -344,17 +377,22 @@ setMethod("right_join", signature = c(x = "ANY"),
             
             # Get the ith object
             temp <- x[[i]]
+            # Add rownames to rowData so that full matches are found
+            temp <- .add_rowdata_to_rownames(temp, rownames_name = rownames_name)
 
             # Modify names if specified
             if( !collapse_samples ){
-                temp <- .get_unique_sample_names(tse, temp, i+1)
+                temp <- .get_unique_names(tse, temp, "col")
+            }
+            if( !collapse_features ){
+                temp <- .get_unique_names(tse, temp, "row")
             }
             # Merge data
             args <- .merge_SummarizedExperiments(
                 tse1 = tse,
                 tse2 = temp,
                 join = join,
-                assay_name = assay_name,
+                assay.type = assay.type,
                 missing_values = missing_values
                 )
             # Create an object
@@ -387,7 +425,6 @@ setMethod("right_join", signature = c(x = "ANY"),
         tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
     }
     # Adjust rownames
-    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
     rownames(tse) <- rowData(tse)[[rownames_name]]
     rowData(tse)[[rownames_name]] <- NULL
     return(tse)
@@ -397,11 +434,10 @@ setMethod("right_join", signature = c(x = "ANY"),
 # This function adds taxonomy information to rownames to enable more specific match
 # between rows
 
-# Input: (Tree)SE
+# Input: (Tree)SE, name of the column that is being added to rowData
 # Output: (Tree)SE with rownames that include all taxonomy information
-.add_rowdata_to_rownames <- function(x){
+.add_rowdata_to_rownames <- function(x, rownames_name, ...){
     # Add rownames to rowData
-    rownames_name <- "rownames_that_will_be_used_to_adjust_names"
     rowData(x)[[rownames_name]] <- rownames(x)
     # Get rowData
     rd <- rowData(x)
@@ -461,7 +497,7 @@ setMethod("right_join", signature = c(x = "ANY"),
         temp_seqs <- do.call(c, temp_seqs)
         # Get only those taxa that are included in TreeSE
         temp_seqs <- temp_seqs[ match(rownames(tse), names(temp_seqs)), ]
-        # Add combined ssequences into a list
+        # Add combined sequences into a list
         result_list <- c(result_list, temp_seqs)
     }
     # Create a DNAStrinSetList if there are more than one element
@@ -498,63 +534,34 @@ setMethod("right_join", signature = c(x = "ANY"),
         names <- colnames(tse)
     }
     # All rownames/colnames should be included in trees/links
-    if( !all(names %in% links[["names"]]) || is.null(names) ){
-        warning(MARGIN, "Tree(s) does not match with the data so it is discarded.",
-                call. = FALSE)
+    if( !all(names %in% links[["names"]]) ||
+        is.null(names) || length(names) == 0 ){
+        warning(MARGIN, "Tree(s) does not match with the data so it ", 
+                "is discarded.", call. = FALSE)
         return(tse)
     }
     
-    # If there are multiple trees, select non-duplicated trees, best fitting 
-    # combination of trees. Get minimum number of trees that represent the data
-    # based on link data.
+    # If there are multiple trees, select non-duplicated trees; the largest
+    # take the precedence, remove duplicated rowlinks --> each row is presented
+    # in the set only once --> remove trees that do not have any values anymore.
     if( length(trees) > 1 ){
-        # From the links, for each tree, get row/cols that are linked with tree 
-        tree_labs <- split(links[["nodeLab"]], f = links$whichTree)
-        
-        # Loop thorugh tree labs, check which trees include which node labs
-        result <- lapply(tree_labs, FUN = function(x){
-            c( links[["nodeLab"]] %in% x )
-        })
-        # Create a data.frame
-        result <- as.data.frame(result)
-        
-        # Loop from 1 to number of trees
-        for( i in seq_len(ncol(result)) ){
-            # Create all possible combinations from trees, each combination has i trees. 
-            combinations <- combn(result, i, simplify = FALSE)
-            # Does this combination have all the node labels (rows or columns) 
-            res <- lapply(combinations, FUN = function(x){
-                all( rowSums(x) > 0 )
-            })
-            # Unlist the list of boolean values
-            res <- unlist(res)
-            # If combination that includes all the rows/cols was found
-            if( any(res) ){
-                # Take the first combination that have all the rows/cols
-                combinations <- combinations[[which(res)[[1]]]]
-                # Take the names of trees
-                tree_names <- colnames(combinations)
-                # Break so that for loop is not continued anymore
-                break
-            }
-        }
-        # Get the trees that are included in the final combination
-        trees <- trees[tree_names]
-        # Subset result by taking only those trees that are included in final object
-        result <- result[ , tree_names, drop = FALSE]
-        # In which tree this node label is found (each row represent each node label)
-        whichTree <- apply(result, 1, FUN = function(x){
-            names(result)[x == TRUE][[1]]
-            }
-        )
-        whichTree <- unlist(whichTree)
-        # Update links
-        links[["whichTree"]] <- whichTree
-        # Remove duplicates
-        links <- links[ !duplicated(links[["names"]]), ]
-        # Ensure that links are in correct order
-        links <- links[ match(names, links[["names"]]), ]
+        # Sort trees --> trees with highest number of taxa first
+        max_trees <- table(links$whichTree)
+        max_trees <- names(max_trees)[order(max_trees, decreasing = TRUE)]
+        # Order the link data frame, take largest trees first
+        links$whichTree <- factor(links$whichTree, levels = max_trees)
+        links <- links[order(links$whichTree), ]
+        # Remove factorization
+        links$whichTree <- unfactor(links$whichTree)
+        # Remove duplicated links
+        links <- links[!duplicated(links$names), ]
+        # Subset trees
+        trees <- trees[unique(links$whichTree)]
     }
+    
+    # Order the data to match created TreeSE
+    links <- links[rownames(tse), ]
+    trees <- trees[unique(links$whichTree)]
     
     # Create a LinkDataFrame based on the link data
     links <- LinkDataFrame(
@@ -705,11 +712,11 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: SE
 # Output: A list of arguments
-.get_SummarizedExperiment_data <- function(tse, assay_name){
+.get_SummarizedExperiment_data <- function(tse, assay.type){
     # Remove all information but rowData, colData, metadata and assay
     row_data <- rowData(tse)
     col_data <- colData(tse)
-    assays <- assays(tse)[ assay_name ]
+    assays <- assays(tse)[ assay.type ]
     metadata <- metadata(tse)
     # Create a list of arguments
     args <- list(assays = assays,
@@ -790,17 +797,17 @@ setMethod("right_join", signature = c(x = "ANY"),
 # This function checks that the assay(s) can be found from TreeSE objects of a list.
 
 # Input: the name of the assay and a list of TreeSE objects
-# Output: A list of assay_names that can be found or FALSE if any
-.assays_cannot_be_found <- function(assay_name, x){
+# Output: A list of assay.types that can be found or FALSE if any
+.assays_cannot_be_found <- function(assay.type, x){
     # Loop through objects
     assays <- lapply(x, FUN = function(tse){
-        # Check if the assay_names can be found. If yes, then TRUE. If not, then FALSE
-        temp <- lapply(assay_name, .assay_cannot_be_found, tse = tse)
+        # Check if the assay.types can be found. If yes, then TRUE. If not, then FALSE
+        temp <- lapply(assay.type, .assay_cannot_be_found, tse = tse)
         # Unlist and return
         return( unlist(temp) )
     })
     # Create a data.frame from the result
-    assays <- as.data.frame(assays, row.names = assay_name)
+    assays <- as.data.frame(assays, row.names = assay.type)
     colnames(assays) <- paste0("tse", seq_len(length(assays)))
     # Which assays can be found from all the objects?
     assays <- rownames(assays)[ rowSums(assays) == ncol(assays) ]
@@ -809,10 +816,10 @@ setMethod("right_join", signature = c(x = "ANY"),
         assays <- FALSE
     }
     # Give warning if assays were dropped
-    if( length(assays) < length(assay_name) ){
+    if( length(assays) < length(assay.type) ){
         warning("The following assay(s) was not found from all the objects ", 
                 "so it is dropped from the output: ",
-                paste0("'", setdiff(assay_name, assays), sep = "'", collapse = ", "),
+                paste0("'", setdiff(assay.type, assays), sep = "'", collapse = ", "),
                 call. = FALSE)
     }
     return(assays)
@@ -824,11 +831,11 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: the name of the assay and TreSE object
 # Output: TRUE or FALSE
-.assay_cannot_be_found <- function(assay_name, tse){
-    # Check if the assay_name can be found. If yes, then TRUE. If not, then FALSE
+.assay_cannot_be_found <- function(assay.type, tse){
+    # Check if the assay.type can be found. If yes, then TRUE. If not, then FALSE
     tryCatch(
         {
-            .check_assay_present(assay_name, tse)
+            .check_assay_present(assay.type, tse)
             return(TRUE)
             
         },
@@ -838,21 +845,36 @@ setMethod("right_join", signature = c(x = "ANY"),
     )
 }
 
-########################### .get_unique_sample_names ###########################
+########################### ..get_unique_names ###########################
 # This function convert colnames unique
 
-# Input: TreeSEs
+# Input: TreeSEs and MARGIN
 # Output: One TreeSE with unique sample names compared to other TreeSE
-.get_unique_sample_names <- function(tse1, tse2, iteration){
-    # Get indices of those sample names that match
-    ind <-  colnames(tse2) %in% colnames(tse1)
-    # Get duplicated sample names
-    duplicated_colnames <-  colnames(tse2)[ind]
-    if( length(duplicated_colnames) > 0 ) {
-        # Add the number of object to duplicated sample names
-        duplicated_colnames <- paste0(duplicated_colnames, "_", iteration)
-        # Add new sample names to the tse object
-        colnames(tse2)[ind] <- duplicated_colnames
+.get_unique_names <- function(tse1, tse2, MARGIN, suffix=2){
+    # Based on MARGIN, get right names
+    if( MARGIN == "row" ){
+        names1 <- rownames(tse1)
+        names2 <- rownames(tse2)
+    } else{
+        names1 <- colnames(tse1)
+        names2 <- colnames(tse2)
+    }
+    # If there are duplicated names
+    if( any(names2 %in% names1) ){
+        # Get duplicated names
+        ind <- names2 %in% names1
+        temp_names2 <- names2[ind]
+        # Get unique suffix
+        while( any(paste0(names2, ".", suffix) %in% names1) ){
+            suffix <- suffix + 1
+        }
+        temp_names2 <- paste0(temp_names2, ".", suffix)
+        # Assign names back
+        if( MARGIN == "row" ){
+            rownames(tse2)[ind] <- temp_names2
+        } else{
+            colnames(tse2)[ind] <- temp_names2
+        }
     }
     return(tse2)
 }
@@ -867,18 +889,18 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Input: Two SEs
 # Output: A list of arguments
 .merge_SummarizedExperiments <- function(tse1, tse2, join,  
-                                         assay_name, missing_values){
+                                         assay.type, missing_values){
     # Merge rowData
     rowdata <- .merge_rowdata(tse1, tse2, join)
     # Merge colData
     coldata <- .merge_coldata(tse1, tse2, join)
     # Merge assays
-    assays <- lapply(assay_name, .merge_assay,
+    assays <- lapply(assay.type, .merge_assay,
                     tse1 = tse1, tse2 = tse2,
                     join = join, missing_values = missing_values,
                     rd = rowdata, cd = coldata)
     assays <- SimpleList(assays)
-    names(assays) <- assay_name
+    names(assays) <- assay.type
     # Combine metadata
     metadata <- c( metadata(tse1), metadata(tse2) )
     
@@ -896,17 +918,20 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Input: Two TreeSEs, the name of the assay, joining method, value to denote
 # missing values, merged rowData, and merged colData
 # Output: Merged assay
-.merge_assay <- function(tse1, tse2, assay_name, join,
+.merge_assay <- function(tse1, tse2, assay.type, join,
                          missing_values, rd, cd){
     # Take assays
-    assay1 <- assay(tse1, assay_name)
-    assay2 <- assay(tse2, assay_name)
+    assay1 <- assay(tse1, assay.type)
+    assay2 <- assay(tse2, assay.type)
     
     # Merge two assays into one
     assay <- .join_two_tables(assay1, assay2, join)
     
     # Convert into matrix
+    colnames <- colnames(assay)
     assay <- as.matrix(assay)
+    colnames(assay) <- colnames
+    ############# colnames are changed from col.name to col_name
     
     # Fill missing values
     assay[ is.na(assay) ] <- missing_values
@@ -914,7 +939,6 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Order the assay based on rowData and colData
     assay <- assay[ match(rownames(rd), rownames(assay)), , drop = FALSE ]
     assay <- assay[ , match(rownames(cd), colnames(assay)), drop = FALSE]
-    
     return(assay)
 }
 
@@ -1003,89 +1027,92 @@ setMethod("right_join", signature = c(x = "ANY"),
                     right = TRUE
     )
     
-    # Ensure that the data is in correct format
+    # Ensure that the data is always data.frame
     df1 <- as.data.frame(df1)
     df2 <- as.data.frame(df2)
     
-    # Get matching variables indices
-    matching_variables_ids1 <- match( colnames(df2), colnames(df1) )
-    # Get matching variable names
-    matching_variables1 <- colnames(df1)[ matching_variables_ids1 ]
-    # Remove NAs
-    matching_variables1 <- matching_variables1[ !is.na(matching_variables1) ]
-    
-    # Get matching variables indices
-    matching_variables_ids2 <- match( colnames(df1), colnames(df2) )
-    # Get matching variable names
-    matching_variables2 <- colnames(df2)[ matching_variables_ids2 ]
-    # Remove NAs
-    matching_variables2 <- matching_variables2[ !is.na(matching_variables2) ]
-    
-    # Make the matching variables unique
-    if( length(matching_variables1) > 0 ){
-        matching_variables_mod1 <- paste0(matching_variables1, "_X")
-        matching_variables_ids1 <-
-            matching_variables_ids1[ !is.na(matching_variables_ids1) ]
-        colnames(df1)[ matching_variables_ids1 ] <- matching_variables_mod1
-        matching_variables_mod2 <- paste0(matching_variables2, "_Y")
-        matching_variables_ids2 <-
-            matching_variables_ids2[ !is.na(matching_variables_ids2) ]
-        colnames(df2)[ matching_variables_ids2 ] <- matching_variables_mod2
+    # STEP 1: Check whether variables can be merged; if their classes are equal.
+    # Adjust colnames if their classes differ
+    if( ncol(df1) > 0 && ncol(df2) > 0 ){
+        # Get classes of variables of df1
+        c1 <- lapply(df1, FUN = function(x){c(class(x), !all(is.na(x)))})
+        colnames1 <- names(c1)
+        c1 <- data.frame(t(data.frame(c1)))
+        # Get classes of variables of df2
+        c2 <- lapply(df2, FUN = function(x){c(class(x), !all(is.na(x)))})
+        colnames2 <- names(c2)
+        c2 <- data.frame(t(data.frame(c2)))
+        # Rename columns and convert columns to correct class
+        colnames(c1) <- colnames(c2) <- c("class", "not_na")
+        class(c1$class) <- class(c2$class) <- "character"
+        class(c1$not_na) <- class(c2$not_na) <- "logical"
+        # Add original colnames to one column
+        c1$rownames <- colnames1
+        c2$rownames <- colnames2
+        # Merge class information into one df
+        classes <- merge(c1, c2, by="rownames", all=TRUE)
+        # Add info whether certain variable was found from df1/df2
+        classes$found1 <- !is.na(classes$class.x)
+        classes$found2 <- !is.na(classes$class.y)
+        classes$found_both <- classes$found1 & classes$found2
+        # Add information whether the classes of equally named variables match
+        # Take into account if other df has only NA values in column --> class
+        # of that variable can be wrong --> use known class
+        classes$no_match <- FALSE
+        classes[classes$found_both, "no_match"] <- 
+            classes[classes$found_both, "class.x"] != classes[
+                classes$found_both, "class.y"] & classes$not_na.x[
+                    classes$found_both] & classes$not_na.y[classes$found_both]
+        # Add new colnames to columns. If equally named variables' classes differ
+        # add also class information to colnames
+        classes$colnames1 <- classes$rownames
+        classes$colnames2 <- classes$rownames
+        classes[classes$no_match, "colnames1"] <-
+            paste0(classes[classes$no_match, "colnames1"], "_",
+                   classes[classes$no_match, "class.x"])
+        classes[classes$no_match, "colnames2"] <-
+            paste0(classes[classes$no_match, "colnames2"], "_",
+                   classes[classes$no_match, "class.y"])
+        # Give warning if there were missmatch between equally named variables and
+        # their classes
+        if( any(classes$no_match) ){
+            warning("Datasets include equally named variables called '",
+                    "'but their class differ. In the output, variables are not ",
+                    "combined and they are renamed based on their class.",
+                    "Please check the following columns:\n",
+                    paste0("'", paste(
+                        classes[classes$no_match, "rownames"], collapse = "', '"),
+                        "'"),
+                    call. = FALSE)
+        }
+        # Add new column names to df1
+        colnames <- classes[classes$found1, "rownames"]
+        colnames <- classes[classes$found1, "colnames1"][
+            match(colnames(df1), colnames)]
+        colnames(df1) <- colnames
+        # Add new column names to df2
+        colnames <- classes[classes$found2, "rownames"]
+        colnames <- classes[classes$found2, "colnames2"][
+            match(colnames(df2), colnames)]
+        colnames(df2) <- colnames
     }
-    
     # Add rownames to one of the columns
     df1$rownames_merge_ID <- rownames(df1)
     df2$rownames_merge_ID <- rownames(df2)
-    # Merge data frames into one data frame
-    df <- merge(df1, df2, by = "rownames_merge_ID", all.x = all.x, all.y = all.y)
-    # Add rownames and remove additional column
+    
+    # STEP 2: merge
+    # Finally merge data frames into one data frame
+    df <- merge(df1, df2, all.x = all.x, all.y = all.y)
+    
+    # STEP 3: polish
+    # Get column names because they can be changed when class is changed
+    colnames <- colnames(df)
+    # Convert to DF because there can be equally named columns (DataFrame does
+    # allow those)
+    df <- DataFrame(df)
+    colnames(df) <- colnames
+    # Add original rownames and remove additional column
     rownames(df) <- df$rownames_merge_ID
     df$rownames_merge_ID <- NULL
-   
-    # Combine matching variables if found
-    if( length(matching_variables1) > 0 ){
-        # Get the class of each variable
-        class1 <- unlist(lapply(matching_variables_mod1, FUN = function(x){class(df[,x])}))
-        class2 <- unlist(lapply(matching_variables_mod2, FUN = function(x){class(df[,x])}))
-        # If there are mismatches in classes, variables are not matching
-        mismatch <- class1!=class2
-        if( any( mismatch) ){
-            # Loop through mismatches
-            for( i in which(mismatch) ){
-                # Givve warning that variables are renamed
-                warning("Datasets include equally named variables called '", 
-                        matching_variables1[i], "' but their class differ. \n",
-                        "In the output, variables are not combined and they are ",
-                        "renamed based on their class.",
-                        call. = FALSE)
-                # Name variables based on their class
-                colnames(df)[ colnames(df) == matching_variables_mod1[i] ] <- 
-                    paste0(matching_variables1[i], "_", class1[i])
-                colnames(df)[ colnames(df) == matching_variables_mod2[i] ] <- 
-                    paste0(matching_variables2[i], "_", class2[i])
-                # Remove variable from matching list
-                matching_variables1 <- matching_variables1[-i]
-                matching_variables2 <- matching_variables2[-i]
-                matching_variables_mod1 <- matching_variables_mod1[-i]
-                matching_variables_mod2 <- matching_variables_mod2[-i]
-            }
-        }
-    }
-    # If there are still matching variables
-    if( length(matching_variables1) > 0 ){
-        # Loop over matching variables
-        for(i in 1:length(matching_variables1) ){
-            # Get columns
-            x <- matching_variables_mod1[i]
-            y <- matching_variables_mod2[i]
-            # Combine information from columns
-            x_and_y_combined <- coalesce( df[ , x], df[ , y] )
-            # Remove additional columns
-            df[ , x ] <- NULL
-            df[ , y ] <- NULL
-            # Add column that has combined information
-            df[ , matching_variables1[i] ] <- x_and_y_combined
-        }
-    }
     return(df)
 }

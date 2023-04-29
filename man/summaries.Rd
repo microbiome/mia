@@ -21,8 +21,8 @@ getTopTaxa(
   x,
   top = 5L,
   method = c("mean", "sum", "median"),
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   na.rm = TRUE,
   ...
 )
@@ -31,8 +31,8 @@ getTopTaxa(
   x,
   top = 5L,
   method = c("mean", "sum", "median", "prevalence"),
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   na.rm = TRUE,
   ...
 )
@@ -57,7 +57,7 @@ countDominantFeatures(x, ...)
 
 \S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
 
-\S4method{summary}{SummarizedExperiment}(object, assay_name = NULL, abund_values = NULL)
+\S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
 \arguments{
 \item{x}{A
@@ -69,13 +69,13 @@ five taxa.}
 \item{method}{Specify the method to determine top taxa. Either sum, mean,
 median or prevalence. Default is 'mean'.}
 
-\item{assay_name}{a \code{character} value to select an
+\item{assay.type}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 By default it expects count data.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{na.rm}{For \code{getTopTaxa} logical argument for calculation method
@@ -131,14 +131,14 @@ data(GlobalPatterns)
 top_taxa <- getTopTaxa(GlobalPatterns,
                        method = "mean",
                        top = 5,
-                       assay_name = "counts")
+                       assay.type = "counts")
 top_taxa
 
 # Use 'detection' to select detection threshold when using prevalence method
 top_taxa <- getTopTaxa(GlobalPatterns,
                        method = "prevalence",
                        top = 5,
-                       abund_values = "counts",
+                       assay_name = "counts",
                        detection = 100)
 top_taxa
                        

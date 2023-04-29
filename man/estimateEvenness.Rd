@@ -7,8 +7,8 @@
 \usage{
 estimateEvenness(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("pielou", "camargo", "simpson_evenness", "evar", "bulla"),
   name = index,
   ...
@@ -16,8 +16,8 @@ estimateEvenness(
 
 \S4method{estimateEvenness}{SummarizedExperiment}(
   x,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
   name = index,
   ...,
@@ -27,16 +27,16 @@ estimateEvenness(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
 
-\item{assay_name}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
 calculation of the sample-wise estimates.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{index}{a \code{character} vector, specifying the eveness measures to be
+\item{index}{a \code{character} vector, specifying the evenness measures to be
 calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be

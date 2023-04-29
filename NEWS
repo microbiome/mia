@@ -60,10 +60,17 @@ Changes in version 1.5.x
 + calculateUnifrac bugfix
 
 Changes in version 1.7.x
++ Deprecated assay_name arguments, replaced with assay.type
++ Removed abund_values argument
 + makePhyloseqFromTreeSE: added option for choosing a tree from multiple rowTrees
 + mergeSEs: match rows based on all available taxonomy level data on rowData
 + mergeSEs: fix bug related to equally named variables that are different class
 + mergeSEs: option for merging multiple assays
 + calculateUnifrac: option for specifying the tree from TreeSE
 + transformCounts: utilize vegan package
-
++ calculateUnifrac: subset tree based on data
++ agglomerateByRank: take into account multiple trees
++ loadFromBiom: name columns of rowData based on prefixes
++ Deprecate transformSamples, *Features, relabundance, ZTransform, relAbundanceCounts
++ mergeSEs: faster tree merging
++ Faith's index: fix bug that occurred when only one taxon is present

@@ -14,14 +14,14 @@
 #' @param x A
 #'   \code{SummarizedExperiment} object.
 #'
-#' @param assay_name A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{SummarizedExperiment} \code{assay} used for random subsampling. 
 #'   Only counts are useful and other transformed data as input will give 
 #'   meaningless output.
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param min_size A single integer value equal to the number of counts being 
@@ -66,7 +66,7 @@
 #' # When samples in TreeSE are less than specified min_size, they will be removed.
 #' # If after subsampling features are not present in any of the samples, 
 #' # they will be removed.
-#' data("GlobalPatterns")
+#' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' tse.subsampled <- subsampleCounts(tse, 
 #'                                   min_size = 60000, 
@@ -82,7 +82,7 @@ NULL
 #' @aliases rarifyCounts
 #' @export
 setGeneric("subsampleCounts", signature = c("x"),
-           function(x, assay_name = abund_values, abund_values = "counts", 
+           function(x, assay.type = assay_name, assay_name = "counts", 
                     min_size = min(colSums2(assay(x))),
                     seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
                     name = "subsampled", verbose = TRUE, ...)
@@ -94,7 +94,7 @@ setGeneric("subsampleCounts", signature = c("x"),
 #' @aliases rarifyCounts
 #' @export
 setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts", 
+    function(x, assay.type = assay_name, assay_name = "counts", 
              min_size = min(colSums2(assay(x))),
        seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
        name = "subsampled", verbose = TRUE, ...){
@@ -103,8 +103,8 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
                 "and have unintended consequences. Therefore, make sure ",
                 "this normalization is appropriate for your data.",
               call. = FALSE)
-        .check_assay_present(assay_name, x)
-        if(any(assay(x, assay_name) %% 1 != 0)){
+        .check_assay_present(assay.type, x)
+        if(any(assay(x, assay.type) %% 1 != 0)){
             warning("assay contains non-integer values. Only counts table ",
                     "is applicable...")
         }
@@ -125,9 +125,9 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         } 
         # Check name
         if(!.is_non_empty_string(name) ||
-           name == assay_name){
+           name == assay.type){
             stop("'name' must be a non-empty single character value and be ",
-                 "different from `assay_name`.",
+                 "different from `assay.type`.",
                  call. = FALSE)
         }
         set.seed(seed)
@@ -142,8 +142,8 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
             stop("min_size needs to be a positive integer value.")
         }
         # get samples with less than min number of reads
-        if(min(colSums2(assay(x, assay_name))) < min_size){
-            rmsams <- colnames(x)[colSums2(assay(x, assay_name)) < min_size]
+        if(min(colSums2(assay(x, assay.type))) < min_size){
+            rmsams <- colnames(x)[colSums2(assay(x, assay.type)) < min_size]
             # Return NULL, if no samples were found after subsampling
             if( !any(!colnames(x) %in% rmsams) ){
                 stop("No samples were found after subsampling.",
@@ -158,7 +158,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         } else {
             newtse <- x
         }
-        newassay <- apply(assay(newtse, assay_name), 2, 
+        newassay <- apply(assay(newtse, assay.type), 2, 
                           .subsample_assay,
                           min_size=min_size, replace=replace)
         rownames(newassay) <- rownames(newtse)

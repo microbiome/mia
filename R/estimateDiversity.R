@@ -16,12 +16,12 @@
 #'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
 #'   used by default.
 #'
-#' @param assay_name the name of the assay used for
+#' @param assay.type the name of the assay used for
 #'   calculation of the sample-wise estimates.
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param index a \code{character} vector, specifying the diversity measures
@@ -225,7 +225,7 @@ NULL
 #' @rdname estimateDiversity
 #' @export
 setGeneric("estimateDiversity",signature = c("x"),
-        function(x, assay_name = abund_values, abund_values = "counts",
+        function(x, assay.type = "counts", assay_name = NULL,
                 index = c("coverage", "fisher", "gini_simpson", 
                         "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ...)
@@ -234,10 +234,14 @@ setGeneric("estimateDiversity",signature = c("x"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts",
+    function(x, assay.type = "counts", assay_name = NULL,
             index = c("coverage", "fisher", "gini_simpson", 
                     "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ..., BPPARAM = SerialParam()){
+
+        if (!is.null(assay_name)) {
+            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+        }
 
         # input check
         index<- match.arg(index, several.ok = TRUE)
@@ -247,13 +251,13 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
                 "same length than 'index'.",
                 call. = FALSE)
         }
-        .check_assay_present(assay_name, x)
+        .check_assay_present(assay.type, x)
         .require_package("vegan")
 
         dvrsts <- BiocParallel::bplapply(index,
                                         .get_diversity_values,
                                         x = x,
-                                        mat = assay(x, assay_name),
+                                        mat = assay(x, assay.type),
                                         BPPARAM = BPPARAM,
                                         ...)
         .add_values_to_colData(x, dvrsts, name)
@@ -263,7 +267,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts",
+    function(x, assay.type = "counts", assay_name = NULL,
             index = c("coverage", "faith", "fisher", "gini_simpson", 
                     "inverse_simpson", "log_modulo_skewness", "shannon"),
             name = index, tree_name = "phylo", 
@@ -274,6 +278,9 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             stop("'tree_name' must be a character specifying a rowTree of 'x'.",
                  call. = FALSE)
         }
+        if (!is.null(assay_name)) {
+            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+        }	
         # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -316,12 +323,16 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             # run estimateFaith. (If there is no rowTree --> error)
             if( (is.null(tree) || is.null(tree$edge.length)) &&
                 length(index) >= 1 ){
-                warning("Object does not have a tree called 'tree_name' or the tree does not ",
-                        "have any branches. \nThe Faith's alpha diversity index. ",
-                        "cannot be calculated without rowTree. Therefore it is excluded ",
-                        "from the results. \nYou can consider adding rowTree to include this index.",            
+                warning("Faith diversity has been excluded from the results ",
+                        "since it cannot be calculated without rowTree. ",
+                        "This requires a rowTree in the input argument x. ",
+                        "Make sure that 'rowTree(x)' is not empty, or ",
+                        "make sure to specify 'tree_name' in the input ",
+                        "arguments. Warning is also provided if the tree does ",
+                        "not have any branches. You can consider adding ",
+                        "rowTree to include this index.", 
                         call. = FALSE)
-            } else{
+            } else {
                 x <- estimateFaith(x, name = faith_name, tree_name = tree_name, ...)
                 # Ensure that indices are in correct order
                 colnames <- colnames(colData(x))
@@ -337,14 +348,14 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
 #' @export
 setGeneric("estimateFaith",signature = c("x", "tree"),
             function(x, tree = "missing", 
-                    assay_name = abund_values, abund_values = "counts",
+                    assay.type = "counts", assay_name = NULL,
                     name = "faith", ...)
             standardGeneric("estimateFaith"))
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
-    function(x, tree, assay_name = abund_values, abund_values = "counts",
+    function(x, tree, assay.type = "counts", assay_name = NULL,
             name = "faith", node_lab = NULL, ...){
         # Input check
         # Check 'tree'
@@ -354,11 +365,11 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                 "The Faith's alpha diversity index is not possible to calculate.",
                 call. = FALSE)
         }
-        # Check 'assay_name'
-        .check_assay_present(assay_name, x)
+        # Check 'assay.type'
+        .check_assay_present(assay.type, x)
         # Check that it is numeric
-        if( !is.numeric(assay(x, assay_name)) ){
-            stop("The abundance matrix specificied by 'assay_name' must be numeric.",
+        if( !is.numeric(assay(x, assay.type)) ){
+            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
                  call. = FALSE)
         }
         # Check 'name'
@@ -375,10 +386,10 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                  call. = FALSE)
         }
         # Get the abundance matrix
-        mat <- assay(x, assay_name)
+        mat <- assay(x, assay.type)
         # Check that it is numeric
         if( !is.numeric(mat) ){
-            stop("The abundance matrix specificied by 'assay_name' must be numeric.",
+            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
                  call. = FALSE)
         }
         # Subset and rename rows of the assay to correspond node_labs
@@ -399,7 +410,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
-    function(x, assay_name = abund_values, abund_values = "counts",
+    function(x, assay.type = "counts", assay_name = NULL,
             name = "faith", tree_name = "phylo", ...){
         # Check tree_name
         if( !.is_non_empty_character(tree_name) ){
@@ -522,23 +533,31 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 
     # Assign NA to all samples
     faiths <- rep(NA,length(samples))
-
-    # If there is one taxon present, then faith is the age of taxon
-    f <- lengths(present) == 1
-    faiths[f] <- tree$ages[which(tree$edge[, 2] == which(tree$tip.label == present[f]))]
-
+    
     # If all the taxa are present, then faith is the sum of all edges of taxa
     faiths[lengths(absent) == 0] <- sum(tree$edge.length)
 
-    # If there are taxa that are not present,
-    f <- lengths(absent) > 0
-    # absent taxa are dropped
-    trees <- lapply(absent[f], ape::drop.tip, phy = tree)
-    # and faith is calculated based on the subset tree
-    faiths[f] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
-
-    # IF there are no taxa present, then faith is 0
+    # If there are taxa that are not present:
+    
+    # 1 If there are no taxa present, then faith is 0
     faiths[lengths(present) == 0] <- 0
+    
+    # 2 If there is only one taxon present, then faith is the age of taxon
+    # could be calculated similarly to other samples with different number of
+    # absent taxa, but this allows vectorization.
+    # --> Find taxon from labels --> get its tip label index. The edge df
+    # tells edges between two indices. Find the edge between root and certain
+    # taxon; get its index. --> Find the length of that edge.
+    ind <- lengths(present) == 1
+    faiths[ind] <- tree$edge.length[
+        which(tree$edge[, 2] == which(tree$tip.label == present[ind]))]
+    
+    # 3 If several taxa is not present
+    ind <- lengths(absent) > 0
+    # absent taxa are dropped
+    trees <- lapply(absent[ind], ape::drop.tip, phy = tree)
+    # and faith is calculated based on the subset tree
+    faiths[ind] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
 
     return(faiths)
 }

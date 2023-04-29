@@ -29,6 +29,8 @@ For \code{relabundance} the matrix stored with the name
 \dQuote{relabundance}.
 }
 \description{
+This function will be deprecated. Please use \code{assay(x, "relabundance")}
+instead.
 \code{relabundance} is a getter/setter for relative abundance stored in the
 assay slot \sQuote{relabundance} of a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -37,7 +39,7 @@ object. This is a shortcut function for \code{assay(x,"relabundance")}.
 \examples{
 data(GlobalPatterns)
 # Calculates relative abundances
-GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
+GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
 # Fetches calculated relative abundances
-head(relabundance(GlobalPatterns))
+# head(relabundance(GlobalPatterns))
 }

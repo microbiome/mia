@@ -1,7 +1,7 @@
 context("subsampleCounts")
 test_that("subsampleCounts", {
     
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     
     expect_warning(tse.subsampled <- subsampleCounts(GlobalPatterns, 
                                                      min_size = 60000, 

@@ -16,22 +16,22 @@
 #'    (By default: \code{experiment2 = 2} when \code{x} is \code{MAE} and 
 #'    \code{experiment2 = x} when \code{x} is \code{TreeSE})
 #'    
-#' @param assay_name1 A single character value for selecting the
+#' @param assay.type1 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
-#'   experiment 1 to be transformed. (By default: \code{assay_name1 = "counts"})
+#'   experiment 1 to be transformed. (By default: \code{assay.type1 = "counts"})
 #'   
-#' @param assay_name2 A single character value for selecting the
+#' @param assay.type2 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
-#'   experiment 2 to be transformed. (By default: \code{assay_name2 = "counts"})
+#'   experiment 2 to be transformed. (By default: \code{assay.type2 = "counts"})
 #'   
-#' @param abund_values1 a single \code{character} value for specifying which
+#' @param assay_name1 a single \code{character} value for specifying which
 #'   assay of experiment 1 to use for calculation.
-#'   (Please use \code{assay_name1} instead. At some point \code{abund_values1}
+#'   (Please use \code{assay.type1} instead. At some point \code{assay_name1}
 #'   will be disabled.)
 #'   
-#' @param abund_values2 a single \code{character} value for specifying which
+#' @param assay_name2 a single \code{character} value for specifying which
 #'   assay of experiment 2 to use for calculation.
-#'   (Please use \code{assay_name2} instead. At some point \code{abund_values2}
+#'   (Please use \code{assay.type2} instead. At some point \code{assay_name2}
 #'   will be disabled.)
 #' 
 #' @param altexp1 A single numeric or character value specifying alternative experiment
@@ -45,11 +45,11 @@
 #'   (By default: \code{altexp2 = NULL})
 #'   
 #' @param colData_variable1 A character value specifying column(s) from colData
-#'   of experiment 1. If colData_variable1 is used, assay_name1 is disabled.
+#'   of experiment 1. If colData_variable1 is used, assay.type1 is disabled.
 #'   (By default: \code{colData_variable1 = NULL})
 #'   
 #' @param colData_variable2 A character value specifying column(s) from colData
-#'   of experiment 2. If colData_variable2 is used, assay_name2 is disabled.
+#'   of experiment 2. If colData_variable2 is used, assay.type2 is disabled.
 #'   (By default: \code{colData_variable2 = NULL})
 #' 
 #' @param MARGIN A single numeric value for selecting if association are calculated
@@ -134,27 +134,27 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
-#' data("HintikkaXOData")
+#' data(HintikkaXOData)
 #' mae <- HintikkaXOData
 #' 
 #' # Subset so that less observations / quicker to run, just for example
 #' mae[[1]] <- mae[[1]][1:20, 1:10]
 #' mae[[2]] <- mae[[2]][1:20, 1:10]
 #' # Transform data
-#' mae[[1]] <- transformSamples(mae[[1]], method = "rclr")
+#' mae[[1]] <- transformCounts(mae[[1]], method = "rclr")
 #' 
 #' # Calculate cross-correlations
-#' result <- getExperimentCrossAssociation(mae, method = "pearson", assay_name2 = "nmr")
+#' result <- getExperimentCrossAssociation(mae, method = "pearson", assay.type2 = "nmr")
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
 #' # Use altExp option to specify alternative experiment from the experiment
 #' altExp(mae[[1]], "Phylum") <- agglomerateByRank(mae[[1]], rank = "Phylum")
 #' # Transform data
-#' altExp(mae[[1]], "Phylum") <- transformSamples(altExp(mae[[1]], "Phylum"), method = "relabundance")
+#' altExp(mae[[1]], "Phylum") <- transformCounts(altExp(mae[[1]], "Phylum"), method = "relabundance")
 #' # When mode = matrix, matrix is returned
 #' result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
-#'                                         assay_name1 = "relabundance", assay_name2 = "nmr",
+#'                                         assay.type1 = "relabundance", assay.type2 = "nmr",
 #'                                         altexp1 = "Phylum", 
 #'                                         method = "pearson", mode = "matrix")
 #' # Show first 5 entries
@@ -174,7 +174,7 @@
 #' # test_signicance = TRUE
 #' # Warnings can be suppressed by using show_warnings = FALSE
 #' result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
-#'                                         assay_name2 = "nmr",
+#'                                         assay.type2 = "nmr",
 #'                                         mode = "matrix", test_significance = TRUE,
 #'                                         show_warnings = FALSE)
 #'                                         
@@ -192,7 +192,7 @@
 #' # variable-pairs. Use "symmetric" to choose whether to measure association for only
 #' # other half of of variable-pairs.
 #' result <- getExperimentCrossAssociation(mae, experiment1 = "microbiota", experiment2 = "microbiota", 
-#'                                         assay_name1 = "counts", assay_name2 = "counts",
+#'                                         assay.type1 = "counts", assay.type2 = "counts",
 #'                                         symmetric = TRUE)
 #' 
 #' # For big data sets, calculation might take long. To make calculations quicker, you can take
@@ -206,10 +206,10 @@
 #' # It is also possible to choose variables from colData and calculate association
 #' # between assay and sample metadata or between variables of sample metadata
 #' mae[[1]] <- estimateDiversity(mae[[1]])
-#' # colData_variable works similarly to assay_name. Instead of fetching an assay
-#' # named assay_name from assay slot, it fetches a column named colData_variable
+#' # colData_variable works similarly to assay.type. Instead of fetching an assay
+#' # named assay.type from assay slot, it fetches a column named colData_variable
 #' # from colData.
-#' result <- getExperimentCrossAssociation(mae[[1]], assay_name1 = "counts", 
+#' result <- getExperimentCrossAssociation(mae[[1]], assay.type1 = "counts", 
 #'                                         colData_variable2 = c("shannon", "coverage"))
 #'                                         
 NULL
@@ -228,8 +228,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
     function(x,
            experiment1 = 1,
            experiment2 = 2,
-           assay_name1 = abund_values1, abund_values1 = "counts",
-           assay_name2 = abund_values2, abund_values2 = "counts",
+           assay.type1 = assay_name1, assay_name1 = "counts",
+           assay.type2 = assay_name2, assay_name2 = "counts",
            altexp1 = NULL,
            altexp2 = NULL,
            colData_variable1 = NULL,
@@ -251,8 +251,8 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
         .get_experiment_cross_association(x,
                                           experiment1 = experiment1,
                                           experiment2 = experiment2,
-                                          assay_name1 = assay_name1,
-                                          assay_name2 = assay_name2,
+                                          assay.type1 = assay.type1,
+                                          assay.type2 = assay.type2,
                                           altexp1 = altexp1,
                                           altexp2 = altexp2,
                                           colData_variable1 = colData_variable1,
@@ -370,8 +370,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 .get_experiment_cross_association <- function(x,
                                               experiment1 = 1,
                                               experiment2 = 2,
-                                              assay_name1 = "counts",
-                                              assay_name2 = "counts",
+                                              assay.type1 = "counts",
+                                              assay.type2 = "counts",
                                               altexp1 = NULL,
                                               altexp2 = NULL,
                                               colData_variable1 = NULL,
@@ -406,16 +406,16 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              call. = FALSE)
     }
     # If variables from coldata are specified check them. Otherwise,
-    # check assay_name1
+    # check assay.type1
     if( !is.null(colData_variable1) ){
         tse1 <- .check_and_subset_colData_variables(tse1, colData_variable1)
     } else{
-        .check_assay_present(assay_name1, tse1)
+        .check_assay_present(assay.type1, tse1)
     }
     if( !is.null(colData_variable2) ){
         tse2 <- .check_and_subset_colData_variables(tse2, colData_variable2)
     } else{
-        .check_assay_present(assay_name2, tse2)
+        .check_assay_present(assay.type2, tse2)
     }
     # Check MARGIN
     if( !is.numeric(MARGIN) && !MARGIN %in% c(1, 2) ){
@@ -479,14 +479,14 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         assay1 <- as.matrix(assay1)
         assay1 <- t(assay1)
     } else{
-        assay1 <- assay(tse1, assay_name1)
+        assay1 <- assay(tse1, assay.type1)
     }
     if( !is.null(colData_variable2) ){
         assay2 <- colData(tse2)
         assay2 <- as.matrix(assay2)
         assay2 <- t(assay2)
     } else{
-        assay2 <- assay(tse2, assay_name2)
+        assay2 <- assay(tse2, assay.type2)
     }
     
     # Transposes tables to right format, if row is specified
@@ -510,7 +510,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                      test_significance, 
                                      show_warnings, paired, 
                                      verbose, MARGIN,
-                                     assay_name1, assay_name2,
+                                     assay.type1, assay.type2,
                                      altexp1, altexp2,
                                      colData_variable1, colData_variable2,
                                      ...)
@@ -698,7 +698,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     if( !is.null(colData_variable) ){
         message <- "Variables of colData"
     } else{
-        message <- "Assay, specified by 'assay_name',"
+        message <- "Assay, specified by 'assay.type',"
     }
     # Check if method match with values, otherwise give an error.
     # For numeric methods, expect only numeric values. For categorical methods, 
@@ -710,7 +710,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              call. = FALSE)
     } else if (method %in% categorical_methods && !is.character(assay)) {
         # If there are no factor values, give an error
-        stop(message, " specified by 'assay_name', of 'experiment' does not ",
+        stop(message, " specified by 'assay.type', of 'experiment' does not ",
              "include factor or character values. Choose numeric method for 'method'.",
              call. = FALSE)
     }
@@ -752,7 +752,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                    paired,
                                    verbose,
                                    MARGIN,
-                                   assay_name1, assay_name2,
+                                   assay.type1, assay.type2,
                                    altexp1, altexp2,
                                    colData_variable1, colData_variable2,
                                    association_FUN = NULL,
@@ -783,13 +783,13 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
             "altexp1: ", ifelse(!is.null(altexp1), altexp1, "-"), 
             ", altexp2: ", ifelse(!is.null(altexp2), altexp2, "-"),
             ifelse(!is.null(colData_variable1), 
-                paste0(", assay_name1: -, colData_variable1: ", 
+                paste0(", assay.type1: -, colData_variable1: ", 
                        paste(colData_variable1, collapse = " + ")), 
-                paste0(", assay_name1: ", assay_name1, ", colData_variable1: -")),
+                paste0(", assay.type1: ", assay.type1, ", colData_variable1: -")),
             ifelse(!is.null(colData_variable2), 
-                paste0(", assay_name2: -, colData_variable2: ", 
+                paste0(", assay.type2: -, colData_variable2: ", 
                        paste(colData_variable2, collapse = " + ")), 
-                paste0(", assay_name2: ", assay_name2, ", colData_variable2: -")),
+                paste0(", assay.type2: ", assay.type2, ", colData_variable2: -")),
             "\nMARGIN: ", MARGIN, 
             ", function: ", function_name, 
             ", method: ", method,

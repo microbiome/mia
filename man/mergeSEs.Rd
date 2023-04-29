@@ -19,10 +19,12 @@ mergeSEs(x, ...)
 
 \S4method{mergeSEs}{SimpleList}(
   x,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   join = "full",
   missing_values = NA,
   collapse_samples = FALSE,
+  collapse_features = TRUE,
   verbose = TRUE,
   ...
 )
@@ -53,9 +55,11 @@ right_join(x, ...)
 
 \item{...}{optional arguments (not used).}
 
-\item{assay_name}{A character value for selecting the
+\item{assay.type}{A character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to be merged. (By default: \code{assay_name = "counts"})}
+to be merged. (By default: \code{assay.type = "counts"})}
+
+\item{assay_name}{(Deprecated) alias for \code{assay.type}.}
 
 \item{join}{A single character value for selecting the joining method.
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
@@ -66,6 +70,15 @@ of missing values. (By default: \code{missing_values = NA})}
 
 \item{collapse_samples}{A boolean value for selecting whether to collapse identically
 named samples to one. (By default: \code{collapse_samples = FALSE})}
+
+\item{collapse_features}{A boolean value for selecting whether to collapse identically
+named features to one. Since all taxonomy information is taken into account,
+this concerns rownames-level (usually strain level) comparison. Often
+OTU or ASV level is just an arbitrary number series from sequencing machine
+meaning that the OTU information is not comparable between studies. With this
+option, it is possible to specify whether these strains are combined if their
+taxonomy information along with OTU number matches.
+(By default: \code{collapse_features = TRUE})}
 
 \item{verbose}{A single boolean value to choose whether to show messages.
 (By default: \code{verbose = TRUE})}
@@ -139,7 +152,7 @@ tse <- mergeSEs(tse1, tse2)
 
 # Merge a list of TreeSEs
 list <- SimpleList(tse1, tse2, tse3)
-tse <- mergeSEs(list, assay_name = "counts", missing_values = 0)
+tse <- mergeSEs(list, assay.type = "counts", missing_values = 0)
 tse
 
 # With 'join', it is possible to specify the merging method. Subsets are used
@@ -157,9 +170,9 @@ tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]),
 tse_temp
 
 # Merge all available assays
-tse <- relAbundanceCounts(tse)
-ts1 <- relAbundanceCounts(tse1)
-tse_temp <- mergeSEs(tse, tse1, assay_name = assayNames(tse))
+tse <- transformCounts(tse, method="relabundance")
+ts1 <- transformCounts(tse1, method="relabundance")
+tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 
 }
 \seealso{

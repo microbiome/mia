@@ -8,13 +8,13 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object containing a tree.
 #'   
-#' @param assay_name A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to calculate the overlap.
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param detection A single numeric value for selecting detection threshold for 
@@ -48,12 +48,12 @@
 #' @examples
 #' data(esophagus)
 #' tse <- esophagus
-#' tse <- transformSamples(tse, method = "relabundance")
+#' tse <- transformCounts(tse, method = "relabundance")
 #' overlap <- calculateOverlap(tse, assay_name = "relabundance")
 #' overlap
 #' 
 #' # Store result to reducedDim
-#' tse <- runOverlap(tse, assay_name = "relabundance", name = "overlap_between_samples")
+#' tse <- runOverlap(tse, assay.type = "relabundance", name = "overlap_between_samples")
 #' head(reducedDims(tse)$overlap_between_samples)
 #' 
 NULL
@@ -62,18 +62,18 @@ NULL
 #' @rdname calculateOverlap
 #' @export
 setGeneric("calculateOverlap", signature = c("x"),
-           function(x, assay_name = abund_values, abund_values = "counts", 
+           function(x, assay.type = assay_name, assay_name = "counts", 
                     detection = 0, ...)
              standardGeneric("calculateOverlap"))
 
 #' @rdname calculateOverlap
 #' @export
 setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
-    function(x, assay_name = abund_values, abund_values = "counts", 
+    function(x, assay.type = assay_name, assay_name = "counts", 
              detection = 0, ...){
         ############################# INPUT CHECK ##############################
-        # Check assay_name
-        .check_assay_present(assay_name, x)
+        # Check assay.type
+        .check_assay_present(assay.type, x)
         # Check detection
         if (!.is_numeric_string(detection)) {
           stop("'detection' must be a single numeric value or coercible to ",
@@ -83,7 +83,7 @@ setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
         detection <- as.numeric(detection)
         ########################### INPUT CHECK END ############################
         # Get assay
-        assay <- assay(x, assay_name)
+        assay <- assay(x, assay.type)
         
         # All the sample pairs
         sample_pairs <- as.matrix(expand.grid(colnames(x), colnames(x)))

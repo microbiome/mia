@@ -17,12 +17,12 @@ path of the phylogenetic tree.
 
 \item{...}{additional arguments:
 \itemize{
-\item{\code{assay_name}:} {A single character value for naming
+\item{\code{assay.type}:} {A single character value for naming
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-(default: \code{assay_name = "counts"})}
-\item{\code{abund_values}:} {A single \code{character} value for specifying which
-assay to use for calculation. (Please use \code{assay_name} instead.
-At some point \code{abund_values} will be disabled.)}
+(default: \code{assay.type = "counts"})}
+\item{\code{assay_name}:} {A single \code{character} value for specifying which
+assay to use for calculation. (Please use \code{assay.type} instead.
+At some point \code{assay_name} will be disabled.)}
 \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
 \code{removeTaxaPrefixes = FALSE})}

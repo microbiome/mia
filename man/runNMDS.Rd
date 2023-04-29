@@ -27,8 +27,8 @@ calculateNMDS(x, ...)
 \S4method{calculateNMDS}{SummarizedExperiment}(
   x,
   ...,
-  assay_name = abund_values,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts",
   FUN = vegdist
 )
@@ -36,8 +36,8 @@ calculateNMDS(x, ...)
 \S4method{calculateNMDS}{SingleCellExperiment}(
   x,
   ...,
-  assay_name = abund_values,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts",
   dimred = NULL,
   n_dimred = NULL,
@@ -84,17 +84,17 @@ integer vector of row indices or a logical vector.}
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
 the matrix returned/stored by \code{calculateNMDS}/ \code{runNMDS}.}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead.)}
+(Please use \code{assay.type} instead.)}
 
 \item{dimred}{String or integer scalar specifying the existing dimensionality
 reduction results to use.}

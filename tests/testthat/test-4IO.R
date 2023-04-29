@@ -1,6 +1,6 @@
 
 test_that("Importing biom files yield SummarizedExperiment objects", {
-    skip_if_not_installed("biomformat")
+    skip_if_not(require("biomformat", quietly = TRUE))
     rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
                                    package = "biomformat")
     me <- loadFromBiom(rich_dense_file)
@@ -123,6 +123,7 @@ sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 
 test_that("make TSE worked properly while no sample or taxa data", {
+    skip_if_not(require("biomformat", quietly = TRUE))
     ## no sample data or taxa data
     expect_silent(tse <- loadFromQIIME2(featureTableFile))
     expect_s4_class(tse, "TreeSummarizedExperiment")
@@ -130,6 +131,7 @@ test_that("make TSE worked properly while no sample or taxa data", {
 })
 
 test_that("reference sequences of TSE", {
+    skip_if_not(require("biomformat", quietly = TRUE))
     # 1. fasta file of refseq
     tse <- loadFromQIIME2(
         featureTableFile,
@@ -263,6 +265,7 @@ test_that('read qza file', {
 })
 
 test_that("Confidence of taxa is numberic", {
+    skip_if_not(require("biomformat", quietly = TRUE))
     tse <- loadFromQIIME2(
         featureTableFile,
         taxonomyTableFile = taxonomyTableFile
@@ -271,6 +274,7 @@ test_that("Confidence of taxa is numberic", {
 })
 
 test_that("dimnames of feature table is identicle with meta data", {
+   skip_if_not(require("biomformat", quietly = TRUE))
    feature_tab <- readQZA(featureTableFile)
    
    sample_meta <- .read_q2sample_meta(sampleMetaFile)
@@ -316,7 +320,7 @@ test_that("makePhyloseqFromTreeSE", {
     skip_if_not_installed("phyloseq")
 
     # TSE object
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
 
     phy <- makePhyloseqFromTreeSE(GlobalPatterns)
@@ -363,10 +367,10 @@ test_that("makePhyloseqFromTreeSE", {
     expect_equal(phyloseq::tax_table(phy2), phyloseq::tax_table(phy))
     
     # TSE object
-    data(esophagus)
+    data(esophagus, package="mia")
     tse <- esophagus
 
-    phy <- makePhyloseqFromTreeSE(tse)
+    phy <- makePhyloseqFromTreeSE(tse, assay.type="counts")
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
@@ -375,11 +379,11 @@ test_that("makePhyloseqFromTreeSE", {
     expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
     
     # Test that merging objects lead to correct phyloseq
-    tse <- mergeSEs(GlobalPatterns, esophagus, missing_values = 0)
-    pseq <- makePhyloseqFromTreeSE(tse)
+    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
+    pseq <- makePhyloseqFromTreeSE(tse, assay.type="counts")
     
     tse_compare <- tse[ rownames(GlobalPatterns), ]
-    pseq_compare <- makePhyloseqFromTreeSE(tse_compare)
+    pseq_compare <- makePhyloseqFromTreeSE(tse_compare, assay.type="counts")
     
     expect_equal(phyloseq::otu_table(pseq), phyloseq::otu_table(pseq_compare))
 })

@@ -28,8 +28,8 @@ runRDA(x, ...)
   formula,
   variables,
   ...,
-  assay_name = abund_values,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts"
 )
 
@@ -42,8 +42,8 @@ runRDA(x, ...)
   formula,
   variables,
   ...,
-  assay_name = abund_values,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts"
 )
 
@@ -82,17 +82,17 @@ into a CA analysis and dbRDA into PCoA/MDS.}
 \code{scale} is disabled when using \code{*RDA} functions. Please scale before
 performing RDA (Check examples.)}
 
-\item{assay_name}{a single \code{character} value for specifying which
+\item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead.)}
+(Please use \code{assay.type} instead.)}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -124,15 +124,15 @@ plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
-# To scale values when using *RDA functions, use transformFeatures
+# To scale values when using *RDA functions, use transformCounts(MARGIN = "features", 
 tse <- GlobalPatterns
-tse <- transformFeatures(tse, method = "z")
+tse <- transformCounts(tse, MARGIN = "features", method = "z")
 # Data might include taxa that do not vary. Remove those because after z-transform
 # their value is NA
 tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 # Calculate RDA
 tse <- runRDA(tse, formula = data ~ SampleType, 
-              assay_name = "z", name = "rda_scaled", na.action = na.omit)
+              assay.type = "z", name = "rda_scaled", na.action = na.omit)
 # Plot
 plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 }

@@ -27,16 +27,16 @@
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
-#' @param assay_name a single \code{character} value for specifying which
+#' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead.)
+#'   (Please use \code{assay.type} instead.)
 #' 
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param FUN a \code{function} or \code{character} value with a function
@@ -186,19 +186,19 @@ setMethod("calculateNMDS", "ANY", .calculate_nmds)
 #' @importFrom SummarizedExperiment assay
 #' @export
 setMethod("calculateNMDS", "SummarizedExperiment",
-    function(x, ..., assay_name = abund_values, abund_values = exprs_values, 
+    function(x, ..., assay.type = assay_name, assay_name = exprs_values, 
              exprs_values = "counts", FUN = vegdist) {
-        .calculate_nmds(assay(x, assay_name), FUN = FUN, ...)
+        .calculate_nmds(assay(x, assay.type), FUN = FUN, ...)
     }
 )
 
 #' @rdname runNMDS
 #' @export
 setMethod("calculateNMDS", "SingleCellExperiment",
-    function(x, ..., assay_name = abund_values, abund_values = exprs_values, 
+    function(x, ..., assay.type = assay_name, assay_name = exprs_values, 
              exprs_values = "counts", dimred = NULL, n_dimred = NULL,
              FUN = vegdist){
-        mat <- .get_mat_from_sce(x, exprs_values = assay_name,
+        mat <- .get_mat_from_sce(x, exprs_values = assay.type,
                                  dimred = dimred, n_dimred = n_dimred)
         calculateNMDS(mat, transposed = !is.null(dimred), FUN = FUN,...)
     }
