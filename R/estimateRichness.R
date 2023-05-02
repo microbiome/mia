@@ -7,11 +7,16 @@
 #' \sQuote{Observed} richness measures.
 #' See details for more information and references.
 #'
-#' @param x a \code{\link{SummarizedExperiment}} object
+#' @param x a \code{\link{SummarizedExperiment}} object.
 #'
-#' @param abund_values the name of the assay used for calculation of the
-#'   sample-wise estimates
-#'
+#' @param assay.type the name of the assay used for calculation of the
+#'   sample-wise estimates.
+#'   
+#' @param assay_name a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
+#'   will be disabled.)
+#'   
 #' @param index a \code{character} vector, specifying the richness measures
 #'   to be calculated.
 #'
@@ -195,7 +200,7 @@ NULL
 #' @rdname estimateRichness
 #' @export
 setGeneric("estimateRichness",signature = c("x"),
-        function(x, abund_values = "counts",
+        function(x, assay.type = assay_name, assay_name = "counts",
                   index = c("ace", "chao1", "hill", "observed"),
                   name = index,
                   detection = 0,
@@ -207,7 +212,7 @@ setGeneric("estimateRichness",signature = c("x"),
 #' @export
 setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
     function(x,
-            abund_values = "counts",
+            assay.type = assay_name, assay_name = "counts",
             index = c("ace", "chao1", "hill", "observed"),
             name = index,
             detection = 0,
@@ -215,8 +220,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
             BPPARAM = SerialParam()){
 
         # Input check
-        # Check abund_values
-        .check_assay_present(abund_values, x)
+        # Check assay.type
+        .check_assay_present(assay.type, x)
         # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -227,7 +232,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
         # Calculates richness indices
         richness <- BiocParallel::bplapply(index,
                                             FUN = .get_richness_values,
-                                            mat = assay(x, abund_values),
+                                            mat = assay(x, assay.type),
                                             detection = detection,
                                             BPPARAM = BPPARAM)
         # Add richness indices to colData

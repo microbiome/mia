@@ -1,9 +1,9 @@
-# mia - Microbiome analysis
+# mia - Microbiome analysis <img src="man/figures/mia_logo.png" align="right" width="120" />
 
 <!-- badges: start -->
 
 [![R-CMD-check-bioc-devel](https://github.com/microbiome/mia/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/mia/actions)
-[![R-CMD-check-bioc](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml/badge.svg)](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml)
+<!--[![R-CMD-check-bioc](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml/badge.svg)](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml)-->
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/mia/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/mia?branch=master)
 
@@ -24,7 +24,9 @@ Currently following things are implemented:
 
 # Contribution
 
-Feel free to contribute.
+Contributions are welcome in the form of feedback, issues, pull
+requests etc, see [contributor guidelines](CONTRIBUTING.md).
+
 
 ## Technical aspects
 

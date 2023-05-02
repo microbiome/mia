@@ -32,6 +32,13 @@
 #'   \code{SummarizedExperiment} objects,
 #'   \code{\link[=merge-methods]{mergeRows}} and
 #'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+#'   \itemize{
+#'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
+#'        whether to remove those columns of rowData that include only NAs after
+#'        agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
+#'        \item{\code{make_unique}}{A single boolean value for selecting 
+#'        whether to make rownames unique. (By default: \code{make_unique = TRUE})}
+#'    }
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -83,9 +90,9 @@
 #'  # If assay contains binary or negative values, summing might lead to meaningless
 #'  # values, and you will get a warning. In these cases, you might want to do 
 #'  # agglomeration again at chosen taxonomic level.
-#'  tse <- transformSamples(GlobalPatterns, method = "pa")
+#'  tse <- transformCounts(GlobalPatterns, method = "pa")
 #'  tse <- agglomerateByRank(tse, rank = "Genus")
-#'  tse <- transformSamples(tse, method = "pa")
+#'  tse <- transformCounts(tse, method = "pa")
 #'
 #' # removing empty labels by setting na.rm = TRUE
 #' sum(is.na(rowData(GlobalPatterns)$Family))
@@ -99,7 +106,23 @@
 #' # To add them, use getTaxonomyLabels function.
 #' rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
 #' print(rownames(x3[1:3,]))
-#'
+#' 
+#' # use 'remove_empty_ranks' to remove columns that include only NAs
+#' x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
+#' head(rowData(x4))
+#' 
+#' # If assay contains NAs, you might want to consider replacing them since summing-up
+#' # NAs lead to NA
+#' x5 <- GlobalPatterns
+#' # Replace first value with NA
+#' assay(x5)[1,1] <- NA
+#' x6 <- agglomerateByRank(x5, "Kingdom")
+#' head( assay(x6) )
+#' # Replace NAs with 0. It is justified when we are summing-up counts
+#' assay(x5)[ is.na(assay(x5)) ] <- 0
+#' x6 <- agglomerateByRank(x5, "Kingdom")
+#' head( assay(x6) )
+#' 
 #' ## Look at enterotype dataset...
 #' data(enterotype)
 #' ## print the available taxonomic ranks. Shows only 1 rank available
@@ -112,17 +135,6 @@ setGeneric("agglomerateByRank",
             function(x, ...)
                 standardGeneric("agglomerateByRank"))
 
-.remove_with_empty_taxonomic_info <-
-    function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
-{
-    tax <- as.character(rowData(x)[,column])
-    f <- !(tax %in% empty.fields)
-    if(any(!f)){
-        x <- x[f, , drop=FALSE]
-    }
-    x
-}
-
 #' @rdname agglomerate-methods
 #' @aliases agglomerateByRank
 #'
@@ -133,6 +145,10 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
         empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
+        if(nrow(x) == 0L){
+            stop("No data available in `x` ('x' has nrow(x) == 0L.)",
+                 call. = FALSE)
+        }
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
                 call. = FALSE)
@@ -142,9 +158,6 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         }
         if(!.is_a_bool(na.rm)){
             stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if(nrow(x) == 0L){
-            stop("'x' has nrow(x) == 0L.",call. = FALSE)
         }
         if(ncol(rowData(x)) == 0L){
             stop("taxonomyData needs to be populated.", call. = FALSE)
@@ -161,7 +174,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         # tree will be pruned later, if agglomerateTree = TRUE
         if( na.rm ){
             x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
-                                                empty.fields)
+                                                   empty.fields)
         }
         # If rank is the only rank that is available and this data is unique,
         # then the data is already 'aggregated' and no further operations
@@ -187,7 +200,11 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             }
         }
         # adjust rownames
-        rownames(x) <- .get_taxonomic_label(x, empty.fields)
+        rownames(x) <- getTaxonomyLabels(x, empty.fields, ...,
+                                        with_rank = FALSE, resolve_loops = FALSE)
+        # Remove those columns from rowData that include only NAs
+        x <- .remove_NA_cols_from_rowdata(x, ...)
+        x <- .add_values_to_metadata(x, "agglomerated_by_rank", rank)
         x
     }
 )
@@ -216,16 +233,90 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ..., agglomerateTree = FALSE){
-        # input check
-        if(!.is_a_bool(agglomerateTree)){
-            stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
-        x <- callNextMethod(x, ...)
-        if(agglomerateTree){
-            x <- addTaxonomyTree(x)
+          function(x, ..., agglomerateTree = FALSE){
+              # input check
+              if(!.is_a_bool(agglomerateTree)){
+                  stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
+              }
+              # If there are multipe rowTrees, it might be that multiple
+              # trees are preserved after agglomeration even though the dataset
+              # could be presented with one tree. --> order the data so that
+              # the taxa are searched from one tree first.
+              if( length(x@rowTree) > 1 ){
+                  x <- .order_based_on_trees(x)
+              }
+              # Agglomerate data
+              x <- callNextMethod(x, ...)
+              # Agglomerate also tree, if the data includes only one
+              # rowTree --> otherwise it is not possible to agglomerate
+              # since all rownames are not found from individual tree.
+              if(agglomerateTree){
+                  if( length(x@rowTree) > 1 ){
+                      warning("The dataset includes multiple tree after ",
+                              "agglomeration. Agglomeration of tree is not ",
+                              "possible.", call. = FALSE)
+                  } else{
+                      x <- addTaxonomyTree(x)
+                  }
+              }
+              x
+          }
+)
+
+################################ HELP FUNCTIONS ################################
+
+.remove_with_empty_taxonomic_info <-
+    function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
+    {
+        tax <- as.character(rowData(x)[,column])
+        f <- !(tax %in% empty.fields)
+        if(any(!f)){
+            x <- x[f, , drop=FALSE]
         }
         x
     }
-)
+
+# This function removes empty columns from rowdata. (Those that include only
+# NA values)
+.remove_NA_cols_from_rowdata <- function(x, remove_empty_ranks = FALSE, ...){
+    # Check remove_empty_ranks
+    if( !.is_a_bool(remove_empty_ranks) ){
+        stop("'remove_empty_ranks' must be a boolean value.", 
+             call. = FALSE)
+    }
+    # If user wants to remove those columns
+    if( remove_empty_ranks ){
+        # Get rowData
+        rd <- rowData(x)
+        # Does teh column include data?
+        columns_including_data <- apply(rd, 2, function(x){!all(is.na(x))})
+        # Subset data so that it includes only columns that include data
+        rd <- rd[, columns_including_data]
+        # Assign it back to SE
+        rowData(x) <- rd
+    }
+    return(x)
+}
+
+# Order the data so that taxa from tree1 comes first, then taxa
+# from tree2...
+.order_based_on_trees <- function(x){
+    # Get rowlinks and unique trees
+    links <- DataFrame(rowLinks(x))
+    uniq_trees <- sort(unique(links$whichTree))
+    # Get row index to the data
+    links$row_i <- seq_len(nrow(x))
+    # Calculate, how many rows each tree has, and add it to data
+    freq <- as.data.frame(table(links$whichTree))
+    links <- merge(links, freq, all.x = TRUE, all.y = FALSE,
+                   by.x = "whichTree", by.y = "Var1")
+    # Factorize the names of trees
+    links$whichTree <- factor(links$whichTree, levels = uniq_trees)
+    # Order the data back to its original order based on row indices
+    links <- links[order(links$row_i), ]
+    # Get the order based on size of tree and name
+    order <- order(links$whichTree)
+    # Order the data
+    x <- x[order, ]
+    return(x)
+}

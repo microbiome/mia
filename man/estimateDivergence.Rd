@@ -7,7 +7,8 @@
 \usage{
 estimateDivergence(
   x,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   name = "divergence",
   reference = "median",
   FUN = vegan::vegdist,
@@ -17,7 +18,8 @@ estimateDivergence(
 
 \S4method{estimateDivergence}{SummarizedExperiment}(
   x,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   name = "divergence",
   reference = "median",
   FUN = vegan::vegdist,
@@ -26,13 +28,18 @@ estimateDivergence(
 )
 }
 \arguments{
-\item{x}{a \code{\link{SummarizedExperiment}} object}
+\item{x}{a \code{\link{SummarizedExperiment}} object.}
 
-\item{abund_values}{the name of the assay used for calculation of the
-sample-wise estimates}
+\item{assay.type}{the name of the assay used for calculation of the
+sample-wise estimates.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{name}{a name for the column of the colData the results should be
-stored in. By defaut, \code{name} is \code{"divergence"}.}
+stored in. By default, \code{name} is \code{"divergence"}.}
 
 \item{reference}{a numeric vector that has length equal to number of
 features, or a non-empty character value; either 'median' or 'mean'.
@@ -54,7 +61,7 @@ passed to the function that is specified by \code{FUN}. By default,
 \code{x} with additional \code{\link{colData}} named \code{*name*}
 }
 \description{
-This function estimates a divergence within samples.
+Estimate divergence against a given reference sample.
 }
 \details{
 Microbiota divergence (heterogeneity / spread) within a given sample
@@ -94,7 +101,6 @@ colData(tse)
 \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
 \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
-\item{\code{\link[mia:calculateDistance]{calculateDistance}}}
 }
 }
 \author{

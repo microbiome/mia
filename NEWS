@@ -1,7 +1,7 @@
-Changes in version 0.99.0 (2021-03-19)
+Changes in version 0.99.0
 + Submitted to Bioconductor
 
-Changes in version 1.1.x (2021-06-04)
+Changes in version 1.1.x
 + split transformCounts into transformSamples and transformFeatures
 + added log_modulo_skewness as a diversity index
 + added functions for summarizing dominant taxa information
@@ -16,6 +16,61 @@ Changes in version 1.1.x (2021-06-04)
 + added getExperimentCrossCorrelation for calculatting cross-correlation between features
 + added calculateOverlap
 + getUniqueTaxa & getTopTaxa: added option for alphabetical order
+
+Changes in version 1.3.x 
 + name change: testForExperimentCrossCorrelation to testExperimentCrossCorrelation
 + getExperimentCrossCorrelation: Filtering disabled by default, option to suppress warnings
-+ bugfix: taxonomyTree gave error when taxa were agglomerated at highest level (taxa name mismatch)
++ bugfix: taxonomyTree gave error if taxa were agglomerated at highest level (taxa name mismatch)
++ bugfix: subsampleCounts errors if no samples are found after subsampling
++ added loadFromMetaphlan
++ renamed calculateUniFrac to calculateUnifrac 
++ added na.rm option to getTopTaxa function   
++ bugfix: makeTreeSEFromPseq -- orientation of assay is taken into account
++ bugfix: getExperimentCrossCorrelation's "matrix"" mode works with features named equally
++ bugfix: getExperimentCrossCorrelation's calculates correlations correctly with features named equally
++ getExperimentCrossCorrelation name changed to getExperimentCrossAssociation
++ getExperimentCrossAssociation: user's own function supported, sort in mode == table enabled
++ getExperimentCrossAssociation: added MARGIN & paired options, efficiency of algorithm improved
++ Added *Features aliases for *Taxa functions
++ *RDA functions utilize vegan:dbrda instead of vegan:rda
++ Sped up estimateDivergence by removing unnecessary pairwise comparisons
++ Added new internal function .calculate_reference_distance to calculate distance to a single reference sample
++ added new skin microbiome example data set 'peerj13075'
++ added splitOn and unsplitOn functions
++ CLR transformation: remove internal relative transformation
++ Replace 'abund_values' argument with 'assay_name'
++ getExpCrossCorr: added altExp option
++ added detection threshold option to getTopTaxa
++ makeSummarizedExperimentFromBiom is now makeTreeSummarizedExperimentFromBiom
++ Added mergeSE function
++ bugfix: loadFromBiom
+
+Changes in version 1.5.x 
++ Added HintikkaXOData
++ Added sample metadata option to getExperimentCrossAssociation
++ estimateFaith: add support for multiple rowTrees
++ calculateRDA/CCA: added variable argument & replaced altexp argument with altExp
++ getExpCrossCorr: bugfix; samples should match when correlations between features are calculated
++ getExpCrossCorr: Kendall's tau is the default method
++ mergeSEs: bugfix; links between trees and rows/cols were wrong & rowData did not include all info
++ calculateDPCoA, calculateUnifrac & merge: add support for multiple trees
++ altExp parameter to altexp
++ agglomerateByRank: make rownames unique by default
++ removed calculateDistance and calculateUniFrac alias
++ calculateUnifrac bugfix
+
+Changes in version 1.7.x
++ Deprecated assay_name arguments, replaced with assay.type
++ Removed abund_values argument
++ makePhyloseqFromTreeSE: added option for choosing a tree from multiple rowTrees
++ mergeSEs: match rows based on all available taxonomy level data on rowData
++ mergeSEs: fix bug related to equally named variables that are different class
++ mergeSEs: option for merging multiple assays
++ calculateUnifrac: option for specifying the tree from TreeSE
++ transformCounts: utilize vegan package
++ calculateUnifrac: subset tree based on data
++ agglomerateByRank: take into account multiple trees
++ loadFromBiom: name columns of rowData based on prefixes
++ Deprecate transformSamples, *Features, relabundance, ZTransform, relAbundanceCounts
++ mergeSEs: faster tree merging
++ Faith's index: fix bug that occurred when only one taxon is present

@@ -5,15 +5,24 @@
 \alias{getPrevalence,ANY-method}
 \alias{getPrevalence,SummarizedExperiment-method}
 \alias{getPrevalentTaxa}
+\alias{getPrevalentFeatures}
 \alias{getPrevalentTaxa,ANY-method}
+\alias{getRarePrevalentFeatures}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{getPrevalentFeatures,ANY-method}
 \alias{getRareTaxa}
+\alias{getRareFeatures}
 \alias{getRareTaxa,ANY-method}
 \alias{getRareTaxa,SummarizedExperiment-method}
+\alias{getRareFeatures,ANY-method}
 \alias{subsetByPrevalentTaxa}
+\alias{subsetByPrevalentFeatures}
 \alias{subsetByPrevalentTaxa,SummarizedExperiment-method}
+\alias{subsetByPrevalentFeatures,ANY-method}
 \alias{subsetByRareTaxa}
+\alias{subsetByRareFeatures}
 \alias{subsetByRareTaxa,SummarizedExperiment-method}
+\alias{subsetByRareFeatures,ANY-method}
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
@@ -25,7 +34,14 @@ getPrevalence(x, ...)
 
 \S4method{getPrevalence}{ANY}(x, detection = 0, include_lowest = FALSE, sort = FALSE, ...)
 
-\S4method{getPrevalence}{SummarizedExperiment}(x, abund_values = "counts", as_relative = TRUE, rank = NULL, ...)
+\S4method{getPrevalence}{SummarizedExperiment}(
+  x,
+  assay.type = assay_name,
+  assay_name = "counts",
+  as_relative = TRUE,
+  rank = NULL,
+  ...
+)
 
 getPrevalentTaxa(x, ...)
 
@@ -39,25 +55,51 @@ getPrevalentTaxa(x, ...)
   ...
 )
 
+getPrevalentFeatures(x, ...)
+
+\S4method{getPrevalentFeatures}{ANY}(x, ...)
+
 getRareTaxa(x, ...)
 
 \S4method{getRareTaxa}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
 
 \S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, prevalence = 50/100, include_lowest = FALSE, ...)
 
+getRareFeatures(x, ...)
+
+\S4method{getRareFeatures}{ANY}(x, ...)
+
 subsetByPrevalentTaxa(x, ...)
 
 \S4method{subsetByPrevalentTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
+
+subsetByPrevalentFeatures(x, ...)
+
+\S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
 
 subsetByRareTaxa(x, ...)
 
 \S4method{subsetByRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
-getPrevalentAbundance(x, abund_values = "relabundance", ...)
+subsetByRareFeatures(x, ...)
 
-\S4method{getPrevalentAbundance}{ANY}(x, abund_values = "relabundance", ...)
+\S4method{subsetByRareFeatures}{ANY}(x, ...)
 
-\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, abund_values = "counts", ...)
+getPrevalentAbundance(
+  x,
+  assay.type = assay_name,
+  assay_name = "relabundance",
+  ...
+)
+
+\S4method{getPrevalentAbundance}{ANY}(
+  x,
+  assay.type = assay_name,
+  assay_name = "relabundance",
+  ...
+)
+
+\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
 
 agglomerateByPrevalence(x, ...)
 
@@ -83,9 +125,14 @@ detection and prevalence cutoffs be included? (default: \code{FALSE})}
 \item{sort}{logical scalar: Should the result be sorted by prevalence?
 (default: \code{FALSE})}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to use for prevalence calculation.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{as_relative}{logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? (default: \code{TRUE})}
@@ -218,7 +265,7 @@ altExp(tse, "rare")
 tse
                          
 data(esophagus)
-getPrevalentAbundance(esophagus, abund_values = "counts")
+getPrevalentAbundance(esophagus, assay.type = "counts")
 
 # data can be aggregated based on prevalent taxonomic results
 agglomerateByPrevalence(tse,

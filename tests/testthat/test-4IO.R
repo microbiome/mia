@@ -1,13 +1,13 @@
 
 test_that("Importing biom files yield SummarizedExperiment objects", {
-    skip_if_not_installed("biomformat")
+    skip_if_not(require("biomformat", quietly = TRUE))
     rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
                                    package = "biomformat")
     me <- loadFromBiom(rich_dense_file)
     expect_s4_class(me, "SummarizedExperiment")
     # load from object
     x1 <- biomformat::read_biom(rich_dense_file)
-    me2 <- makeSummarizedExperimentFromBiom(x1)
+    me2 <- makeTreeSEFromBiom(x1)
     expect_s4_class(me2, "SummarizedExperiment")
     expect_equal(dim(me), dim(me2))
     expect_equal(rowData(me), rowData(me2))
@@ -16,17 +16,21 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
 test_that("Importing phyloseq objects yield TreeSummarizedExperiment objects", {
     skip_if_not_installed("phyloseq")
     data(GlobalPatterns, package="phyloseq")
-    me <- makeTreeSummarizedExperimentFromPhyloseq(GlobalPatterns)
+    me <- makeTreeSEFromPhyloseq(GlobalPatterns)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(19216,26))
     data(enterotype, package="phyloseq")
-    me <- makeTreeSummarizedExperimentFromPhyloseq(enterotype)
+    me <- makeTreeSEFromPhyloseq(enterotype)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(553,280))
     data(esophagus, package="phyloseq")
-    me <- makeTreeSummarizedExperimentFromPhyloseq(esophagus)
+    me <- makeTreeSEFromPhyloseq(esophagus)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(58,3))
+    esophagus2 <- esophagus
+    phyloseq::otu_table(esophagus2) <- t(phyloseq::otu_table(esophagus))
+    me2 <- makeTreeSEFromPhyloseq(esophagus2)
+    expect_equal(me, me2)
 })
 
 test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
@@ -36,7 +40,7 @@ test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
     dadaF <- dada2::dada(fnF, selfConsist=TRUE)
     dadaR <- dada2::dada(fnR, selfConsist=TRUE)
 
-    me <- makeTreeSummarizedExperimentFromDADA2(dadaF, fnF, dadaR, fnR)
+    me <- makeTreeSEFromDADA2(dadaF, fnF, dadaR, fnR)
     expect_s4_class(me, "TreeSummarizedExperiment")
 })
 
@@ -119,6 +123,7 @@ sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 
 test_that("make TSE worked properly while no sample or taxa data", {
+    skip_if_not(require("biomformat", quietly = TRUE))
     ## no sample data or taxa data
     expect_silent(tse <- loadFromQIIME2(featureTableFile))
     expect_s4_class(tse, "TreeSummarizedExperiment")
@@ -126,6 +131,7 @@ test_that("make TSE worked properly while no sample or taxa data", {
 })
 
 test_that("reference sequences of TSE", {
+    skip_if_not(require("biomformat", quietly = TRUE))
     # 1. fasta file of refseq
     tse <- loadFromQIIME2(
         featureTableFile,
@@ -210,7 +216,7 @@ test_that("reference sequences of TSE", {
 })
 
 
-test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
+test_that("`.parse_taxonomy` work with any combination of taxonomic ranks", {
     test_taxa <- matrix(
         c("a", "k__Bacteria; c__Bacteroidia; s__", 0.88,
           "b", "k__Bacteria; c__Clostridia; s__", 0.9),
@@ -218,7 +224,7 @@ test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
         byrow = TRUE,
         dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
     )
-    expect_silent(mia:::.parse_q2taxonomy(test_taxa))
+    expect_silent(mia:::.parse_taxonomy(test_taxa))
 
     # at certain rank (e.g. species): some taxa can not be determined which
     # species it assigned to (NA)
@@ -229,7 +235,7 @@ test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
         byrow = TRUE,
         dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
     )
-    expect_true(is.na(mia:::.parse_q2taxonomy(test_taxa)[2,"Species"]))
+    expect_true(is.na(mia:::.parse_taxonomy(test_taxa)[2,"Species"]))
 
     # if the expexted order is not present it will return a correct result
     test_taxa <- matrix(
@@ -239,8 +245,8 @@ test_that("`.parse_q2taxonomy` work with any combination of taxonomic ranks", {
         byrow = TRUE,
         dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
     )
-    expect_equal(mia:::.parse_q2taxonomy(test_taxa)[,"Species"],c("s__test",NA))
-    expect_equal(mia:::.parse_q2taxonomy(test_taxa, removeTaxaPrefixes = TRUE)[,"Species"],
+    expect_equal(mia:::.parse_taxonomy(test_taxa)[,"Species"],c("s__test",NA))
+    expect_equal(mia:::.parse_taxonomy(test_taxa, removeTaxaPrefixes = TRUE)[,"Species"],
                  c("test",NA))
 })
 
@@ -259,6 +265,7 @@ test_that('read qza file', {
 })
 
 test_that("Confidence of taxa is numberic", {
+    skip_if_not(require("biomformat", quietly = TRUE))
     tse <- loadFromQIIME2(
         featureTableFile,
         taxonomyTableFile = taxonomyTableFile
@@ -267,6 +274,7 @@ test_that("Confidence of taxa is numberic", {
 })
 
 test_that("dimnames of feature table is identicle with meta data", {
+   skip_if_not(require("biomformat", quietly = TRUE))
    feature_tab <- readQZA(featureTableFile)
    
    sample_meta <- .read_q2sample_meta(sampleMetaFile)
@@ -281,9 +289,9 @@ test_that("dimnames of feature table is identicle with meta data", {
    expect_identical(colnames(new_feature_tab), rownames(sample_meta))
    
    # sample_meta or feature meta is NULL
-   sample_meta2 <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+   sample_meta2 <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
    rownames(sample_meta2) <- colnames(feature_tab)
-   taxa_meta2 <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+   taxa_meta2 <- S4Vectors::make_zero_col_DFrame(nrow(feature_tab))
    rownames(taxa_meta2) <- rownames(feature_tab)
    expect_silent(.set_feature_tab_dimnames(feature_tab, sample_meta2, taxa_meta))
    
@@ -307,15 +315,15 @@ test_that("dimnames of feature table is identicle with meta data", {
 })
 
 
-test_that("makePhyloseqFromTreeSummarizedExperiment", {
+test_that("makePhyloseqFromTreeSE", {
 
     skip_if_not_installed("phyloseq")
 
     # TSE object
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
 
-    phy <- makePhyloseqFromTreeSummarizedExperiment(GlobalPatterns)
+    phy <- makePhyloseqFromTreeSE(GlobalPatterns)
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
@@ -337,8 +345,8 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     # Test with agglomeration that that pruning is done internally
     test1 <- agglomerateByRank(tse, rank = "Phylum")
     test2 <- expect_warning(agglomerateByRank(tse, rank = "Phylum", agglomerateTree = TRUE))
-    test1_phy <- expect_warning(makePhyloseqFromTreeSummarizedExperiment(test1))
-    test2_phy <- makePhyloseqFromTreeSummarizedExperiment(test2)
+    test1_phy <- expect_warning(makePhyloseqFromTreeSE(test1))
+    test2_phy <- makePhyloseqFromTreeSE(test2)
     
     expect_equal(length(phyloseq::phy_tree(test1_phy)$node), 
                  length(ape::keep.tip(rowTree(test1), rowLinks(test1)$nodeLab)$node))
@@ -348,21 +356,21 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     # Check that everything works also with agglomerated data
     for (level in colnames(rowData(tse)) ){
         temp <- agglomerateByRank(tse, rank = level)
-        expect_warning(makePhyloseqFromTreeSummarizedExperiment(temp))
+        expect_warning(makePhyloseqFromTreeSE(temp))
     }
     
     tse2 <- tse
     # Concerts data frame to factors
     rowData(tse2) <- DataFrame(lapply(rowData(tse2), as.factor))
-    phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
-    phy2 <- makePhyloseqFromTreeSummarizedExperiment(tse2)
+    phy <- makePhyloseqFromTreeSE(tse)
+    phy2 <- makePhyloseqFromTreeSE(tse2)
     expect_equal(phyloseq::tax_table(phy2), phyloseq::tax_table(phy))
     
     # TSE object
-    data(esophagus)
+    data(esophagus, package="mia")
     tse <- esophagus
 
-    phy <- makePhyloseqFromTreeSummarizedExperiment(tse)
+    phy <- makePhyloseqFromTreeSE(tse, assay.type="counts")
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
@@ -370,4 +378,12 @@ test_that("makePhyloseqFromTreeSummarizedExperiment", {
     # Test that rowTree is in phy_tree
     expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
     
+    # Test that merging objects lead to correct phyloseq
+    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
+    pseq <- makePhyloseqFromTreeSE(tse, assay.type="counts")
+    
+    tse_compare <- tse[ rownames(GlobalPatterns), ]
+    pseq_compare <- makePhyloseqFromTreeSE(tse_compare, assay.type="counts")
+    
+    expect_equal(phyloseq::otu_table(pseq), phyloseq::otu_table(pseq_compare))
 })

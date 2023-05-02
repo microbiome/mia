@@ -7,16 +7,22 @@
 #' @details
 #' Although the subsampling approach is highly debated in microbiome research, 
 #' we include the \code{subsampleCounts} function because there may be some 
-#' instances where it can be used. Note that the output of \code{subsampleCounts} 
-#' is not the same as input.
+#' instances where it can be useful.
+#' Note that the output of \code{subsampleCounts} is not the equivalent as the 
+#' input and any result have to be verified with the original dataset.
 #'
 #' @param x A
 #'   \code{SummarizedExperiment} object.
 #'
-#' @param abund_values A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{SummarizedExperiment} \code{assay} used for random subsampling. 
 #'   Only counts are useful and other transformed data as input will give 
 #'   meaningless output.
+#'   
+#' @param assay_name a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
+#'   will be disabled.)
 #'   
 #' @param min_size A single integer value equal to the number of counts being 
 #'   simulated this can equal to lowest number of total counts 
@@ -60,7 +66,7 @@
 #' # When samples in TreeSE are less than specified min_size, they will be removed.
 #' # If after subsampling features are not present in any of the samples, 
 #' # they will be removed.
-#' data("GlobalPatterns")
+#' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' tse.subsampled <- subsampleCounts(tse, 
 #'                                   min_size = 60000, 
@@ -76,7 +82,8 @@ NULL
 #' @aliases rarifyCounts
 #' @export
 setGeneric("subsampleCounts", signature = c("x"),
-           function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
+           function(x, assay.type = assay_name, assay_name = "counts", 
+                    min_size = min(colSums2(assay(x))),
                     seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
                     name = "subsampled", verbose = TRUE, ...)
                standardGeneric("subsampleCounts"))
@@ -87,17 +94,18 @@ setGeneric("subsampleCounts", signature = c("x"),
 #' @aliases rarifyCounts
 #' @export
 setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts", min_size = min(colSums2(assay(x))),
+    function(x, assay.type = assay_name, assay_name = "counts", 
+             min_size = min(colSums2(assay(x))),
        seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
        name = "subsampled", verbose = TRUE, ...){
     
-        warning("Subsampling/Rarefying may undermine downstream analyses",
-                "and have unintended consequences. Therefore, make sure",
+        warning("Subsampling/Rarefying may undermine downstream analyses ",
+                "and have unintended consequences. Therefore, make sure ",
                 "this normalization is appropriate for your data.",
               call. = FALSE)
-        .check_assay_present(abund_values, x)
-        if(any(assay(x, abund_values) %% 1 != 0)){
-            warning("assay contains non-integer values. Only counts table",
+        .check_assay_present(assay.type, x)
+        if(any(assay(x, assay.type) %% 1 != 0)){
+            warning("assay contains non-integer values. Only counts table ",
                     "is applicable...")
         }
         if(!is.logical(verbose)){
@@ -117,9 +125,9 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         } 
         # Check name
         if(!.is_non_empty_string(name) ||
-           name == abund_values){
+           name == assay.type){
             stop("'name' must be a non-empty single character value and be ",
-                 "different from `abund_values`.",
+                 "different from `assay.type`.",
                  call. = FALSE)
         }
         set.seed(seed)
@@ -134,8 +142,13 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
             stop("min_size needs to be a positive integer value.")
         }
         # get samples with less than min number of reads
-        if(min(colSums2(assay(x, abund_values))) < min_size){
-            rmsams <- colnames(x)[colSums2(assay(x, abund_values)) < min_size]
+        if(min(colSums2(assay(x, assay.type))) < min_size){
+            rmsams <- colnames(x)[colSums2(assay(x, assay.type)) < min_size]
+            # Return NULL, if no samples were found after subsampling
+            if( !any(!colnames(x) %in% rmsams) ){
+                stop("No samples were found after subsampling.",
+                     call. = FALSE)
+            }
             if(verbose){
                 message(length(rmsams), " samples removed ",
                         "because they contained fewer reads than `min_size`.")
@@ -145,7 +158,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         } else {
             newtse <- x
         }
-        newassay <- apply(assay(newtse, abund_values), 2, 
+        newassay <- apply(assay(newtse, assay.type), 2, 
                           .subsample_assay,
                           min_size=min_size, replace=replace)
         rownames(newassay) <- rownames(newtse)
@@ -156,6 +169,9 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         newassay <- newassay[rowSums2(newassay)>0,]
         newtse <- newtse[rownames(newassay),]
         assay(newtse, name, withDimnames=FALSE) <- newassay
+        newtse <- .add_values_to_metadata(newtse, 
+                                          "subsampleCounts_min_size",
+                                          min_size)
         return(newtse)
     }
 )

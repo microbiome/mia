@@ -7,11 +7,16 @@
 #'
 #' @param x a \code{\link{SummarizedExperiment}} object
 #'
-#' @param abund_values A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
 #'   calculation of the sample-wise estimates.
+#'   
+#' @param assay_name a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
+#'   will be disabled.)
 #'
-#' @param index a \code{character} vector, specifying the eveness measures to be
+#' @param index a \code{character} vector, specifying the evenness measures to be
 #'   calculated.
 #'
 #' @param name a name for the column(s) of the colData the results should be
@@ -101,24 +106,24 @@
 #'
 #' @examples
 #' data(esophagus)
-#' se <- esophagus
+#' tse <- esophagus
 #'
 #' # Specify index and their output names
 #' index <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla")
 #' name  <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 #'
 #' # Estimate evenness and give polished names to be used in the output
-#' se <- estimateEvenness(se, index = index, name = name)
+#' tse <- estimateEvenness(tse, index = index, name = name)
 #'
 #' # Check the output
-#' head(colData(se))
+#' head(colData(tse))
 #'
 NULL
 
 #' @rdname estimateEvenness
 #' @export
 setGeneric("estimateEvenness",signature = c("x"),
-           function(x, abund_values = "counts",
+           function(x, assay.type = assay_name, assay_name = "counts",
                     index = c("pielou", "camargo", "simpson_evenness", "evar",
                               "bulla"),
                     name = index, ...)
@@ -127,7 +132,7 @@ setGeneric("estimateEvenness",signature = c("x"),
 #' @rdname estimateEvenness
 #' @export
 setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts",
+    function(x, assay.type = assay_name, assay_name = "counts",
              index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
              name = index, ..., BPPARAM = SerialParam()){
          
@@ -138,11 +143,11 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
                  "same length than 'index'.",
                  call. = FALSE)
         }
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay.type, x)
         #
         vnss <- BiocParallel::bplapply(index,
                                        .get_evenness_values,
-                                       mat = assay(x, abund_values),
+                                       mat = assay(x, assay.type),
                                        BPPARAM = BPPARAM, ...)
         .add_values_to_colData(x, vnss, name)
     }

@@ -27,7 +27,8 @@ calculateNMDS(x, ...)
 \S4method{calculateNMDS}{SummarizedExperiment}(
   x,
   ...,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts",
   FUN = vegdist
 )
@@ -35,7 +36,8 @@ calculateNMDS(x, ...)
 \S4method{calculateNMDS}{SingleCellExperiment}(
   x,
   ...,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts",
   dimred = NULL,
   n_dimred = NULL,
@@ -82,13 +84,17 @@ integer vector of row indices or a logical vector.}
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
 the matrix returned/stored by \code{calculateNMDS}/ \code{runNMDS}.}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{abund_values} instead. At some point \code{exprs_values}
-will be disabled.)}
+(Please use \code{assay.type} instead.)}
 
 \item{dimred}{String or integer scalar specifying the existing dimensionality
 reduction results to use.}
@@ -120,10 +126,10 @@ the arguments of \code{FUN} and \code{nmdsFUN} do not collide.
 # generate some example data
 mat <- matrix(1:60, nrow = 6)
 df <- DataFrame(n = c(1:6))
-se <- SummarizedExperiment(assays = list(counts = mat),
-                           rowData = df)
+tse <- TreeSummarizedExperiment(assays = list(counts = mat),
+                                rowData = df)
 #
-calculateNMDS(se)
+calculateNMDS(tse)
 
 #
 data(esophagus)

@@ -2,27 +2,56 @@
 % Please edit documentation in R/dominantTaxa.R
 \name{perSampleDominantTaxa}
 \alias{perSampleDominantTaxa}
+\alias{perSampleDominantFeatures}
 \alias{perSampleDominantTaxa,SummarizedExperiment-method}
+\alias{perSampleDominantFeatures,SummarizedExperiment-method}
 \alias{addPerSampleDominantTaxa}
+\alias{addPerSampleDominantFeatures}
 \alias{addPerSampleDominantTaxa,SummarizedExperiment-method}
+\alias{addPerSampleDominantFeatures,SummarizedExperiment-method}
 \title{Get dominant taxa}
 \usage{
-perSampleDominantTaxa(x, abund_values = "counts", rank = NULL, ...)
+perSampleDominantTaxa(
+  x,
+  assay.type = assay_name,
+  assay_name = "counts",
+  rank = NULL,
+  ...
+)
 
-\S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, abund_values = "counts", rank = NULL, ...)
+\S4method{perSampleDominantTaxa}{SummarizedExperiment}(
+  x,
+  assay.type = assay_name,
+  assay_name = "counts",
+  rank = NULL,
+  ...
+)
+
+perSampleDominantFeatures(x, ...)
+
+\S4method{perSampleDominantFeatures}{SummarizedExperiment}(x, ...)
 
 addPerSampleDominantTaxa(x, name = "dominant_taxa", ...)
 
 \S4method{addPerSampleDominantTaxa}{SummarizedExperiment}(x, name = "dominant_taxa", ...)
+
+addPerSampleDominantFeatures(x, ...)
+
+\S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to use for identifying dominant taxa.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomyRanks()}.}

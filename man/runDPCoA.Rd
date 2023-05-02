@@ -16,16 +16,17 @@ calculateDPCoA(x, y, ...)
   ntop = NULL,
   subset_row = NULL,
   scale = FALSE,
-  transposed = FALSE
+  transposed = FALSE,
+  ...
 )
 
 \S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(
   x,
   ...,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts",
-  dimred = NULL,
-  n_dimred = NULL
+  tree_name = "phylo"
 )
 
 runDPCoA(x, ..., altexp = NULL, name = "DPCoA")
@@ -59,19 +60,21 @@ integer vector of row indices or a logical vector.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{abund_values} instead. At some point \code{exprs_values}
-will be disabled.)}
+(Please use \code{assay.type} instead.)}
 
-\item{dimred}{String or integer scalar specifying the existing dimensionality
-reduction results to use.}
-
-\item{n_dimred}{Integer scalar or vector specifying the dimensions to use if
-dimred is specified.}
+\item{tree_name}{a single \code{character} value for specifying which
+rowTree will be used in calculation.
+(By default: \code{tree_name = "phylo"})}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}

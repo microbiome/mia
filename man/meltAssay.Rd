@@ -8,7 +8,8 @@ object into a long data.frame}
 \usage{
 meltAssay(
   x,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   add_row_data = NULL,
   add_col_data = NULL,
   feature_name = "FeatureID",
@@ -18,7 +19,8 @@ meltAssay(
 
 \S4method{meltAssay}{SummarizedExperiment}(
   x,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   add_row_data = NULL,
   add_col_data = NULL,
   feature_name = "FeatureID",
@@ -30,8 +32,13 @@ meltAssay(
 \item{x}{A numeric matrix or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
 
-\item{abund_values}{a \code{character} value to select an
+\item{assay.type}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{add_row_data}{\code{NULL}, \code{TRUE} or a \code{character} vector to
 select information from the \code{rowData} to add to the molten assay data.
@@ -65,7 +72,7 @@ are modified. (default: \code{check_names = TRUE})}
 }
 \value{
 A \code{tibble} with the molten data. The assay values are given in a
-column named like the selected assay \code{abund_values}. In addition, a
+column named like the selected assay \code{assay.type}. In addition, a
 column \dQuote{FeatureID} will contain the rownames, if set, and analogously
 a column \dQuote{SampleID} with the colnames, if set
 }
@@ -82,12 +89,12 @@ names are set.
 }
 \examples{
 data(GlobalPatterns)
-molten_se <- meltAssay(GlobalPatterns,
-                       abund_values = "counts",
-                       add_row_data = TRUE,
-                       add_col_data = TRUE
-                       )
-molten_se
+molten_tse <- meltAssay(GlobalPatterns,
+                        assay.type = "counts",
+                        add_row_data = TRUE,
+                        add_col_data = TRUE
+                        )
+molten_tse
 }
 \author{
 Sudarshan A. Shetty

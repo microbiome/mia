@@ -54,12 +54,12 @@ test_that("agglomerate", {
 
     # Only one rank available in the object -
     # the same dimensionality is retained
-    data(enterotype)
+    data(enterotype, package="mia")
     expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
                  nrow(agglomerateByRank(enterotype,"Genus")))
 
     # agglomeration in all its forms
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     se <- GlobalPatterns
     actual <- agglomerateByRank(se, rank = "Family")
     expect_equal(dim(actual),c(603,26))
@@ -75,14 +75,17 @@ test_that("agglomerate", {
     expect_equal(length(rowTree(actual)$tip.label),
                  496)
     # Test that warning occurs when assay contian binary or negative values
-    se1 <- transformSamples(se, method = "pa")
+    se1 <- transformCounts(se, method = "pa")
     se2 <- se1
     assay(se2, "pa")[1, 1] <- -1
     expect_warning(agglomerateByRank(se1, rank = "Phylum"))
     expect_warning(agglomerateByRank(se1, rank = "Order"))
 
+    # Load data from miaTime package
+    skip_if_not(require("miaTime", quietly = TRUE))
+    data(SilvermanAGutData)
+    se <- SilvermanAGutData
     # checking reference consensus sequence generation
-    se <- microbiomeDataSets::SilvermanAGutData()
     actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
     expect_equal(as.character(referenceSeq(actual)[[1]]),
                  paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
@@ -97,6 +100,21 @@ test_that("agglomerate", {
                         "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
                         "RWDWTNDBRVRRAMHHCMRDKKSSRARGSSVSYYHNYBRRVHNDNNHYKRMVV",
                         "YKVRDNNNSRAARSBDKGGKK"))
+    # Test that remove_empty_ranks work
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = NULL))
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = 1))
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = c(TRUE, TRUE)))
+    x <- agglomerateByRank(se, rank = "Class")
+    rd1 <- rowData(x)[, 1:3]
+    x <- agglomerateByRank(se, rank = "Class", remove_empty_ranks = TRUE)
+    rd2 <- rowData(x)
+    expect_equal(rd1, rd2)
+    # Test that make_unique work
+    uniq <- agglomerateByRank(se, rank = "Species")
+    not_uniq <- agglomerateByRank(se, rank = "Species", make_unique = FALSE)
+    expect_true( !any( duplicated(rownames(uniq)) ) )
+    expect_true( any( duplicated(rownames(not_uniq)) ) )
 })
 
 

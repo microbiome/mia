@@ -20,9 +20,14 @@
 #' @param as_relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? (default: \code{TRUE})
 #'
-#' @param abund_values A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for prevalence calculation.
+#'   
+#' @param assay_name a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
+#'   will be disabled.)
 #'
 #' @param other_label A single \code{character} valued used as the label for the
 #'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
@@ -160,7 +165,7 @@
 #' tse
 #'                          
 #' data(esophagus)
-#' getPrevalentAbundance(esophagus, abund_values = "counts")
+#' getPrevalentAbundance(esophagus, assay.type = "counts")
 #'
 #' # data can be aggregated based on prevalent taxonomic results
 #' agglomerateByPrevalence(tse,
@@ -235,17 +240,17 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts", as_relative = TRUE,
-             rank = NULL, ...){
+    function(x, assay.type = assay_name, assay_name = "counts", 
+             as_relative = TRUE, rank = NULL, ...){
         # input check
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
 
         # check assay
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay.type, x)
         x <- .agg_for_prevalence(x, rank = rank, ...)
-        mat <- assay(x, abund_values)
+        mat <- assay(x, assay.type)
         if (as_relative) {
             mat <- .calc_rel_abund(mat)
         }
@@ -263,6 +268,8 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
 #' \code{getPrevalentTaxa} returns taxa that are more prevalent with the
 #' given detection threshold for the selected taxonomic rank.
 #'
+#' @aliases getPrevalentFeatures
+#' 
 #' @export
 setGeneric("getPrevalentTaxa", signature = "x",
            function(x, ...)
@@ -331,6 +338,7 @@ setGeneric("getPrevalentTaxa", signature = "x",
 }
 
 #' @rdname getPrevalence
+#' @aliases getRarePrevalentFeatures
 #' @export
 setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
     function(x, prevalence = 50/100, include_lowest = FALSE, ...){
@@ -340,6 +348,7 @@ setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
 )
 
 #' @rdname getPrevalence
+#' @aliases getPrevalentFeatures
 #' @export
 setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, prevalence = 50/100, 
@@ -349,13 +358,31 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @rdname getPrevalence
+#' @aliases getPrevalentTaxa
+#' @export
+setGeneric("getPrevalentFeatures", signature = c("x"),
+        function(x, ...) 
+            standardGeneric("getPrevalentFeatures"))
+
+#' @rdname getPrevalence
+#' @aliases getPrevalentTaxa
+#' @export
+setMethod("getPrevalentFeatures", signature = c(x = "ANY"),
+        function(x, ...){
+            getPrevalentTaxa(x, ...)
+        }
+)
+
 ############################# getRareTaxa ######################################
 
 #' @rdname getPrevalence
 #'
 #' @details
 #' \code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
-#'
+#' 
+#' @aliases getRareFeatures
+#' 
 #' @export
 setGeneric("getRareTaxa", signature = "x",
            function(x, ...)
@@ -387,6 +414,7 @@ setGeneric("getRareTaxa", signature = "x",
 }
 
 #' @rdname getPrevalence
+#' @aliases getRareFeatures
 #' @export
 setMethod("getRareTaxa", signature = c(x = "ANY"),
     function(x, prevalence = 50/100, include_lowest = FALSE, ...){
@@ -396,6 +424,7 @@ setMethod("getRareTaxa", signature = c(x = "ANY"),
 )
 
 #' @rdname getPrevalence
+#' @aliases getRareFeatures
 #' @export
 setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, prevalence = 50/100, 
@@ -405,15 +434,33 @@ setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @rdname getPrevalence
+#' @aliases getRareTaxa
+#' @export
+setGeneric("getRareFeatures", signature = c("x"),
+           function(x, ...) 
+               standardGeneric("getRareFeatures"))
+
+#' @rdname getPrevalence
+#' @aliases getRareTaxa
+#' @export
+setMethod("getRareFeatures", signature = c(x = "ANY"),
+        function(x, ...){
+            getRareTaxa(x, ...)
+        }
+)
+
 ############################# subsetByPrevalentTaxa ############################
 
 #' @rdname getPrevalence
+#' @aliases subsetByPrevalentFeatures
 #' @export
 setGeneric("subsetByPrevalentTaxa", signature = "x",
            function(x, ...)
                standardGeneric("subsetByPrevalentTaxa"))
 
 #' @rdname getPrevalence
+#' @aliases subsetByPrevalentFeatures
 #' @export
 setMethod("subsetByPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
@@ -423,15 +470,33 @@ setMethod("subsetByPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @rdname getPrevalence
+#' @aliases subsetByPrevalentTaxa
+#' @export
+setGeneric("subsetByPrevalentFeatures", signature = c("x"),
+        function(x, ...) 
+            standardGeneric("subsetByPrevalentFeatures"))
+
+#' @rdname getPrevalence
+#' @aliases subsetByPrevalentTaxa
+#' @export
+setMethod("subsetByPrevalentFeatures", signature = c(x = "ANY"),
+        function(x, ...){
+            subsetByPrevalentTaxa(x, ...)
+        }
+)
+
 ############################# subsetByRareTaxa #################################
 
 #' @rdname getPrevalence
+#' @aliases subsetByRareFeatures
 #' @export
 setGeneric("subsetByRareTaxa", signature = "x",
            function(x, ...)
                standardGeneric("subsetByRareTaxa"))
 
 #' @rdname getPrevalence
+#' @aliases subsetByRareFeatures
 #' @export
 setMethod("subsetByRareTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
@@ -441,12 +506,28 @@ setMethod("subsetByRareTaxa", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @rdname getPrevalence
+#' @aliases subsetByRareTaxa
+#' @export
+setGeneric("subsetByRareFeatures", signature = c("x"),
+        function(x, ...) 
+            standardGeneric("subsetByRareFeatures"))
+
+#' @rdname getPrevalence
+#' @aliases subsetByRareTaxa
+#' @export
+setMethod("subsetByRareFeatures", signature = c(x = "ANY"),
+        function(x, ...){
+            subsetByRareTaxa(x, ...)
+        }
+)
+
 ############################# getPrevalentAbundance ############################
 
 #' @rdname getPrevalence
 #' @export
 setGeneric("getPrevalentAbundance", signature = "x",
-           function(x, abund_values = "relabundance", ...)
+           function(x, assay.type = assay_name, assay_name = "relabundance", ...)
                standardGeneric("getPrevalentAbundance"))
 
 #' @rdname getPrevalence
@@ -468,11 +549,11 @@ setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts", ...){
+    function(x, assay.type = assay_name, assay_name = "counts", ...){
         # check assay
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay.type, x)
         #
-        getPrevalentAbundance(assay(x,abund_values))
+        getPrevalentAbundance(assay(x,assay.type))
     }
 )
 

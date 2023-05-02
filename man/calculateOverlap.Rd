@@ -7,9 +7,21 @@
 \alias{runOverlap,SummarizedExperiment-method}
 \title{Estimate overlap}
 \usage{
-calculateOverlap(x, abund_values = "counts", detection = 0, ...)
+calculateOverlap(
+  x,
+  assay.type = assay_name,
+  assay_name = "counts",
+  detection = 0,
+  ...
+)
 
-\S4method{calculateOverlap}{SummarizedExperiment}(x, abund_values = "counts", detection = 0, ...)
+\S4method{calculateOverlap}{SummarizedExperiment}(
+  x,
+  assay.type = assay_name,
+  assay_name = "counts",
+  detection = 0,
+  ...
+)
 
 runOverlap(x, ...)
 
@@ -20,9 +32,14 @@ runOverlap(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object containing a tree.}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to calculate the overlap.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{detection}{A single numeric value for selecting detection threshold for
 absence/presence of features. Feature that has abundance under threshold in
@@ -55,18 +72,18 @@ samples have completely different relative abundances.
 \examples{
 data(esophagus)
 tse <- esophagus
-tse <- transformSamples(tse, method = "relabundance")
-overlap <- calculateOverlap(tse, abund_values = "relabundance")
+tse <- transformCounts(tse, method = "relabundance")
+overlap <- calculateOverlap(tse, assay_name = "relabundance")
 overlap
 
 # Store result to reducedDim
-tse <- runOverlap(tse, abund_values = "relabundance", name = "overlap_between_samples")
+tse <- runOverlap(tse, assay.type = "relabundance", name = "overlap_between_samples")
 head(reducedDims(tse)$overlap_between_samples)
 
 }
 \seealso{
 \code{\link[mia:calculateJSD]{calculateJSD}}
-\code{\link[mia:calculateUniFrac]{calculateUniFrac}}
+\code{\link[mia:calculateUnifrac]{calculateUnifrac}}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

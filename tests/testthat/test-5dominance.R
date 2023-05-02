@@ -89,7 +89,7 @@ test_that("estimateDominance", {
     }
 
     # TSE object
-    data(esophagus)
+    data(esophagus, package="mia")
     tse <- esophagus
     test_internal_estimateDominance(tse)
 

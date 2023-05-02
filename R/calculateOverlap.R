@@ -8,9 +8,14 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object containing a tree.
 #'   
-#' @param abund_values A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to calculate the overlap.
+#'   
+#' @param assay_name a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
+#'   will be disabled.)
 #'   
 #' @param detection A single numeric value for selecting detection threshold for 
 #'   absence/presence of features. Feature that has abundance under threshold in
@@ -32,7 +37,7 @@
 #'
 #' @seealso
 #'   \code{\link[mia:calculateJSD]{calculateJSD}}
-#'   \code{\link[mia:calculateUniFrac]{calculateUniFrac}}
+#'   \code{\link[mia:calculateUnifrac]{calculateUnifrac}}
 #' 
 #' 
 #' @name calculateOverlap
@@ -43,12 +48,12 @@
 #' @examples
 #' data(esophagus)
 #' tse <- esophagus
-#' tse <- transformSamples(tse, method = "relabundance")
-#' overlap <- calculateOverlap(tse, abund_values = "relabundance")
+#' tse <- transformCounts(tse, method = "relabundance")
+#' overlap <- calculateOverlap(tse, assay_name = "relabundance")
 #' overlap
 #' 
 #' # Store result to reducedDim
-#' tse <- runOverlap(tse, abund_values = "relabundance", name = "overlap_between_samples")
+#' tse <- runOverlap(tse, assay.type = "relabundance", name = "overlap_between_samples")
 #' head(reducedDims(tse)$overlap_between_samples)
 #' 
 NULL
@@ -57,16 +62,18 @@ NULL
 #' @rdname calculateOverlap
 #' @export
 setGeneric("calculateOverlap", signature = c("x"),
-           function(x, abund_values = "counts", detection = 0, ...)
+           function(x, assay.type = assay_name, assay_name = "counts", 
+                    detection = 0, ...)
              standardGeneric("calculateOverlap"))
 
 #' @rdname calculateOverlap
 #' @export
 setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = "counts", detection = 0, ...){
+    function(x, assay.type = assay_name, assay_name = "counts", 
+             detection = 0, ...){
         ############################# INPUT CHECK ##############################
-        # Check abund_values
-        .check_assay_present(abund_values, x)
+        # Check assay.type
+        .check_assay_present(assay.type, x)
         # Check detection
         if (!.is_numeric_string(detection)) {
           stop("'detection' must be a single numeric value or coercible to ",
@@ -76,7 +83,7 @@ setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
         detection <- as.numeric(detection)
         ########################### INPUT CHECK END ############################
         # Get assay
-        assay <- assay(x, abund_values)
+        assay <- assay(x, assay.type)
         
         # All the sample pairs
         sample_pairs <- as.matrix(expand.grid(colnames(x), colnames(x)))
@@ -114,6 +121,7 @@ setGeneric("runOverlap", signature = c("x"),
 #' is stored in reducedDim(x).
 #'   
 #' @export
+#' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runOverlap", signature = c(x = "SummarizedExperiment"),
     function(x, name = "overlap", ...){
         # Check name
@@ -126,7 +134,7 @@ setMethod("runOverlap", signature = c(x = "SummarizedExperiment"),
         # Convert it into matrix so that nrow equals number of samples
         mat <- as.matrix(mat)
         # Store it to reducedDim
-        reducedDims(x)[[name]] <- mat
+        reducedDim(x, name) <- mat
         return(x)
     }
 )

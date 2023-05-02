@@ -8,12 +8,16 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{abund_values} instead. At some point \code{exprs_values}
+#'   (Please use \code{assay.type} instead.)
+#'   
+#' @param assay_name a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param k the number of Dirichlet components to fit. See
@@ -70,28 +74,31 @@
 #' pheno <- factor(lvls[pheno0 + 1], levels=lvls)
 #' colData <- DataFrame(pheno = pheno)
 #'
-#' se <- SummarizedExperiment(assays = list(counts = counts),
-#'                            colData = colData)
+#' tse <- TreeSummarizedExperiment(assays = list(counts = counts),
+#'                                 colData = colData)
 #'
 #'
 #' #
-#' dmn <- calculateDMN(se)
+#' dmn <- calculateDMN(tse)
 #' dmn[[1L]]
 #'
 #' # since this take a bit of resources to calculate for k > 1, the data is
 #' # loaded
 #' \dontrun{
-#' se <- runDMN(se, name = "DMN", k = 1:7)
+#' tse <- runDMN(tse, name = "DMN", k = 1:7)
 #' }
 #' data(dmn_se)
-#' names(metadata(dmn_se))
+#' # Convert SE to TreeSE to enable all features of mia and TreeSE object
+#' # (Optional step at this point)
+#' dmn_tse <- as(dmn_se, "TreeSummarizedExperiment")
+#' names(metadata(dmn_tse))
 #'
 #' # return a list of DMN objects
-#' getDMN(dmn_se)
+#' getDMN(dmn_tse)
 #' # return, which objects fits best
-#' bestDMNFit(dmn_se, type = "laplace")
+#' bestDMNFit(dmn_tse, type = "laplace")
 #' # return the model, which fits best
-#' getBestDMNFit(dmn_se, type = "laplace")
+#' getBestDMNFit(dmn_tse, type = "laplace")
 NULL
 
 #' @rdname calculateDMN
@@ -134,8 +141,9 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
-    function(x, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, abund_values)
+    function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
+             transposed = FALSE, ...){
+        mat <- assay(x, assay.type)
         if(!transposed){
             mat <- t(mat)
         }
@@ -267,8 +275,10 @@ setMethod("calculateDMNgroup", signature = c(x = "ANY"), .calculate_DMNgroup)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
-    function(x, variable, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, abund_values)
+    function(x, variable, 
+             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
+             transposed = FALSE, ...){
+        mat <- assay(x, assay.type)
         if(!transposed){
             mat <- t(mat)
         }
@@ -316,8 +326,10 @@ setMethod("performDMNgroupCV", signature = c(x = "ANY"), .perform_DMNgroup_cv)
 #' @rdname calculateDMN
 #' @export
 setMethod("performDMNgroupCV", signature = c(x = "SummarizedExperiment"),
-    function(x, variable, abund_values = exprs_values, exprs_values = "counts", transposed = FALSE, ...){
-        mat <- assay(x, abund_values)
+    function(x, variable, 
+             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
+             transposed = FALSE, ...){
+        mat <- assay(x, assay.type)
         if(!transposed){
             mat <- t(mat)
         }

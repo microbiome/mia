@@ -62,7 +62,7 @@
 #' # get a factor for merging
 #' f <- factor(regmatches(rownames(esophagus),
 #'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-#' merged <- mergeRows(esophagus,f)
+#' merged <- mergeRows(esophagus,f, mergeTree = TRUE)
 #' plot(rowTree(merged))
 #' #
 #' data(GlobalPatterns)
@@ -139,12 +139,19 @@ setGeneric("mergeCols",
 
 #' @importFrom S4Vectors SimpleList
 #' @importFrom scuttle sumCountsAcrossFeatures
-.merge_rows <- function(x, f, archetype = 1L, ...){
+.merge_rows <- function(x, f, archetype = 1L, 
+                        average = FALSE,
+                        BPPARAM = SerialParam(), 
+                        ...){
     # input check
+    if( !.is_a_bool(average) ){
+        stop("'average' must be TRUE or FALSE.", call. = FALSE)
+    }
     f <- .norm_f(nrow(x), f)
     if(length(levels(f)) == nrow(x)){
         return(x)
     }
+
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)
@@ -154,7 +161,8 @@ setGeneric("mergeCols",
                                            ids = f, 
                                            subset.row = NULL, 
                                            subset.col = NULL,
-                                           ...))
+                                           average = average,
+                                           BPPARAM = BPPARAM))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]
@@ -165,17 +173,17 @@ setGeneric("mergeCols",
 }
 
 #' @importFrom scuttle sumCountsAcrossFeatures
-.check_assays_for_merge <- function(assay_name, assay){
+.check_assays_for_merge <- function(assay.type, assay){
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
-        warning(paste0("'",assay_name,"'", " includes binary values."),
+        warning(paste0("'",assay.type,"'", " includes binary values."),
         "\nAgglomeration of it might lead to meaningless values.", 
         "\nCheck the assay, and consider doing transformation again manually", 
         " with agglomerated data.",
                 call. = FALSE)
     }
-    if( any(assay < 0) ){
-        warning(paste0("'",assay_name,"'", " includes negative values."),
+    if( !all( assay >= 0 | is.na(assay) ) ){
+        warning(paste0("'",assay.type,"'", " includes negative values."),
                 "\nAgglomeration of it might lead to meaningless values.",
                 "\nCheck the assay, and consider doing transformation again manually", 
                 " with agglomerated data.",
@@ -252,6 +260,47 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
     list(newTree = newTree, newAlias = newAlias)
 }
 
+# Merge trees, MARGIN specifies if trees are rowTrees or colTrees
+.merge_trees <- function(x, mergeTree, MARGIN){
+    # Get rowtrees or colTrees based on MARGIN
+    if( MARGIN == 1 ){
+        trees <- x@rowTree
+        links <- rowLinks(x)
+    } else{
+        trees <- x@colTree
+        links <- colLinks(x)
+    }
+    # If trees exist and mergeTree is TRUE
+    if(!is.null(trees) && mergeTree){
+        # Loop over trees and replace them one by one
+        for( i in seq_len(length(trees)) ){
+            # Get tree
+            tree <- trees[[i]]
+            # Get the name of the tree
+            tree_name <- names(trees)[[i]]
+            # Subset links by taking only those rows that are included in tree
+            links_sub <- links[ links$whichTree == tree_name, , drop = FALSE ]
+            # Merge tree
+            tmp <- .merge_tree(tree, links_sub)
+            # Based on MARGIN, replace ith rowTree or colTree
+            if( MARGIN == 1 ){
+                x <- changeTree(x = x,
+                                rowTree = tmp$newTree,
+                                rowNodeLab = tmp$newAlias,
+                                whichRowTree = i
+                )
+            } else{
+                x <- changeTree(x = x,
+                                colTree = tmp$newTree,
+                                colNodeLab = tmp$newAlias,
+                                whichColTree = i
+                )
+            }
+        }
+    }
+    return(x)
+}
+
 #' @importFrom Biostrings DNAStringSetList
 .merge_refseq_list <- function(sequences_list, f, names, ...){
     threshold <- list(...)[["threshold"]]
@@ -297,14 +346,7 @@ setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
         #
         x <- callNextMethod(x, f, archetype = 1L, ...)
         # optionally merge rowTree
-        tree <- rowTree(x)
-        if(!is.null(tree) && mergeTree){
-            tmp <- .merge_tree(tree, rowLinks(x))
-            #
-            x <- changeTree(x = x,
-                            rowTree = tmp$newTree,
-                            rowNodeLab = tmp$newAlias)
-        }
+        x <- .merge_trees(x, mergeTree, 1)
         # optionally merge referenceSeq
         if(!is.null(refSeq)){
             referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
@@ -325,14 +367,7 @@ setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
         #
         x <- callNextMethod(x, f, archetype = 1L, ...)
         # optionally merge colTree
-        tree <- colTree(x)
-        if(!is.null(tree) && mergeTree){
-            tmp <- .merge_tree(tree, colLinks(x))
-            #
-            x <- changeTree(x = x,
-                            colTree = tmp$newTree,
-                            colNodeLab = tmp$newAlias)
-        }
-        x
+        x <- .merge_trees(x, mergeTree, 2)
+        return(x)
     }
 )

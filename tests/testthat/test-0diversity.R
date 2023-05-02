@@ -2,12 +2,14 @@ context("diversity estimates")
 test_that("diversity estimates", {
 
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
-    data(esophagus)
+    data(esophagus, package="mia")
 
     tse <- esophagus
-    tse <- relAbundanceCounts(tse)
-
-    tse_idx <- estimateDiversity(tse, threshold = 0.473)
+    tse <- transformCounts(tse, method="relabundance")    
+    indices <- c("coverage", "fisher", "gini_simpson", "faith",
+                 "inverse_simpson", "log_modulo_skewness",
+                 "shannon")
+    tse_idx <- estimateDiversity(tse, index = indices, threshold = 0.473)
 
     # Checks that the type of output is the same as the type of input.
     expect_true(typeof(tse_idx) == typeof(tse))
@@ -16,9 +18,7 @@ test_that("diversity estimates", {
     # colData.
     # Check that the order of indices is right / the same as the order
     # in the input vector.
-    expect_named(colData(tse_idx), c("coverage", "fisher", "gini_simpson",
-                                     "inverse_simpson", "log_modulo_skewness",
-                                     "shannon", "faith"))
+    expect_named(colData(tse_idx), indices)
 
     lambda <- unname(colSums(assays(tse_idx)$relabundance^2))
     ginisimpson <- 1 - lambda
@@ -114,6 +114,24 @@ test_that("diversity estimates", {
     # se_tree should include "faith"
     expect_equal(colnames(colData(se_tree)), c(colnames(colData(se)), "faith"))
     
+    # Expect error
+    expect_error(estimateDiversity(tse, index = "faith", tree_name = "test"))
+    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree_name = "test"))
     
+    data(GlobalPatterns, package="mia")
+    data(esophagus, package="mia")
+    tse <- mergeSEs(GlobalPatterns, esophagus,  join = "full", assay.type = "counts")
+    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                     tree_name = "phylo.1", assay.type="counts"))
+    expect_warning(estimateDiversity(tse, index = c("shannon", "faith")))
+    expect_error(estimateDiversity(tse, index = c("faith"), 
+                                   tree_name = "test"))
+    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                   tree_name = TRUE))
+    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                   tree_name = 1))
     
-})
+    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                   tree_name = c("phylo", "phylo.1")))
+    
+    })

@@ -14,8 +14,13 @@
 #' @param x A numeric matrix or a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   
-#' @param abund_values a \code{character} value to select an
+#' @param assay.type a \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
+#'   
+#' @param assay_name a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
+#'   will be disabled.)
 #'
 #' @param add_col_data \code{NULL}, \code{TRUE} or a \code{character} vector to
 #'   select information from the \code{colData} to add to the molten assay data.
@@ -48,7 +53,7 @@
 #' }
 #'
 #' @return A \code{tibble} with the molten data. The assay values are given in a
-#' column named like the selected assay \code{abund_values}. In addition, a
+#' column named like the selected assay \code{assay.type}. In addition, a
 #' column \dQuote{FeatureID} will contain the rownames, if set, and analogously
 #' a column \dQuote{SampleID} with the colnames, if set
 #'
@@ -59,12 +64,12 @@
 #'
 #' @examples
 #' data(GlobalPatterns)
-#' molten_se <- meltAssay(GlobalPatterns,
-#'                        abund_values = "counts",
-#'                        add_row_data = TRUE,
-#'                        add_col_data = TRUE
-#'                        )
-#' molten_se
+#' molten_tse <- meltAssay(GlobalPatterns,
+#'                         assay.type = "counts",
+#'                         add_row_data = TRUE,
+#'                         add_col_data = TRUE
+#'                         )
+#' molten_tse
 NULL
 
 #' @rdname meltAssay
@@ -72,7 +77,7 @@ NULL
 setGeneric("meltAssay",
            signature = "x",
            function(x,
-                    abund_values = "counts",
+                    assay.type = assay_name, assay_name = "counts",
                     add_row_data = NULL,
                     add_col_data = NULL,
                     feature_name = "FeatureID",
@@ -164,14 +169,14 @@ setGeneric("meltAssay",
 #' @export
 setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
-             abund_values = "counts", 
+             assay.type = assay_name, assay_name = "counts", 
              add_row_data = NULL,
              add_col_data = NULL,
              feature_name = "FeatureID",
              sample_name = "SampleID",
              ...) {
         # input check
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay.type, x)
         if(!.is_a_string(feature_name)){
             stop("'feature_name' must be a single non-empty character value.",
                  call. = FALSE)
@@ -190,7 +195,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
         # check selected colnames
         add_row_data <- .norm_add_row_data(add_row_data, x, feature_name)
         add_col_data <- .norm_add_col_data(add_col_data, x, sample_name)
-        molten_assay <- .melt_assay(x, abund_values, feature_name, sample_name, ...)
+        molten_assay <- .melt_assay(x, assay.type, feature_name, sample_name, ...)
         if(!is.null(add_row_data)){
             molten_assay <-
                 .add_row_data_to_molten_assay(molten_assay, x, add_row_data,
@@ -210,8 +215,8 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang sym
-.melt_assay <- function(x, abund_values, feature_name, sample_name, check_names = FALSE) {
-    mat <- assay(x, abund_values) %>%
+.melt_assay <- function(x, assay.type, feature_name, sample_name, check_names = FALSE) {
+    mat <- assay(x, assay.type) %>%
         as.matrix() 
     rownames(mat) <- rownames(x)
     colnames(mat) <- colnames(x)
@@ -220,7 +225,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
         rownames_to_column(feature_name) %>%
         # SampleID is unique sample id
         pivot_longer(!sym(feature_name),
-                     values_to = abund_values,
+                     values_to = assay.type,
                      names_to = sample_name)
 }
 
@@ -228,7 +233,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom rlang sym
 #' @importFrom tibble rownames_to_column
-#' @importFrom dplyr rename left_join
+#' @importFrom dplyr rename
 .add_row_data_to_molten_assay <- function(molten_assay, x, add_row_data,
                                           feature_name) {
     rd <- SummarizedExperiment::rowData(x)[,add_row_data,drop=FALSE] %>%
@@ -240,14 +245,14 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
     rd <- rd %>%
         rownames_to_column(feature_name)
     molten_assay %>%
-        left_join(rd, by = feature_name)
+        dplyr::left_join(rd, by = feature_name)
 }
 
 # Combines molten assay and rowData i.e. taxonomy table with
 #' @importFrom SummarizedExperiment colData
 #' @importFrom rlang sym
 #' @importFrom tibble rownames_to_column
-#' @importFrom dplyr rename left_join
+#' @importFrom dplyr rename
 .add_col_data_to_molten_assay <- function(molten_assay, x, add_col_data,
                                           sample_name, check_names = FALSE) {
     cd <- SummarizedExperiment::colData(x)[,add_col_data,drop=FALSE] %>%
@@ -263,5 +268,5 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
     cd <- cd %>%
         rownames_to_column(sample_name)
     molten_assay %>%
-        left_join(cd, by = sample_name)
+        dplyr::left_join(cd, by = sample_name)
 }

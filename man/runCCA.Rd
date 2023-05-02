@@ -11,7 +11,7 @@
 \alias{calculateRDA,ANY-method}
 \alias{calculateRDA,SummarizedExperiment-method}
 \alias{runRDA,SingleCellExperiment-method}
-\title{Canonical Correspondance Analysis}
+\title{Canonical Correspondence Analysis}
 \usage{
 calculateCCA(x, ...)
 
@@ -21,60 +21,78 @@ calculateRDA(x, ...)
 
 runRDA(x, ...)
 
-\S4method{calculateCCA}{ANY}(x, formula, variables, scale = TRUE)
+\S4method{calculateCCA}{ANY}(x, formula, variables, scale = TRUE, ...)
 
 \S4method{calculateCCA}{SummarizedExperiment}(
   x,
   formula,
+  variables,
   ...,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts"
 )
 
 \S4method{runCCA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "CCA")
 
-\S4method{calculateRDA}{ANY}(x, formula, variables, scale = TRUE)
+\S4method{calculateRDA}{ANY}(x, formula, variables, ...)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
   formula,
+  variables,
   ...,
-  abund_values = exprs_values,
+  assay.type = assay_name,
+  assay_name = exprs_values,
   exprs_values = "counts"
 )
 
 \S4method{runRDA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "RDA")
 }
 \arguments{
-\item{x}{For \code{calculateCCA} a numeric matrix with columns as samples or
-a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
+\item{x}{For \code{calculate*} a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+or a numeric matrix with columns as samples
 
-For \code{runCCA} a
+For \code{run*} a
 \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 or a derived object.}
 
-\item{...}{additional arguments not used.}
+\item{...}{additional arguments passed to vegan::cca or vegan::dbrda}
 
 \item{formula}{If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 a formula can be supplied. Based on the right-hand side of the given formula
-\code{colData} is subset to \code{variables}.}
+\code{colData} is subset to \code{variables}.
 
-\item{variables}{a \code{data.frame} or an object coercible to one containing
-the variables to use. Can be missing, which turns the CCA analysis into
-a CA analysis. All variables are used. Please subset, if you want to
-consider only some of them.}
+\code{variables} and \code{formula} can be missing, which turns the CCA analysis
+into a CA analysis and dbRDA into PCoA/MDS.}
 
-\item{scale}{Logical scalar, should the expression values be standardized?}
+\item{variables}{When \code{x} is a \code{SummarizedExperiment},
+\code{variables} can be used to specify variables from \code{colData}.
 
-\item{abund_values}{a single \code{character} value for specifying which
+When \code{x} is a matrix, \code{variables} is a \code{data.frame} or
+an object coercible to one containing the variables to use.
+
+All variables are used. Please subset, if you want to consider only some of them.
+\code{variables} and \code{formula} can be missing, which turns the CCA analysis
+into a CA analysis and dbRDA into PCoA/MDS.}
+
+\item{scale}{a logical scalar, should the expression values be standardized?
+\code{scale} is disabled when using \code{*RDA} functions. Please scale before
+performing RDA (Check examples.)}
+
+\item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{abund_values} instead. At some point \code{exprs_values}
-will be disabled.)}
+(Please use \code{assay.type} instead.)}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -90,8 +108,12 @@ For \code{runCCA} a modified \code{x} with the results stored in
 \code{reducedDim} as the given \code{name}
 }
 \description{
-These functions perform Canonical Correspondance Analysis on data stored
+These functions perform Canonical Correspondence Analysis on data stored
 in a \code{SummarizedExperiment}.
+}
+\details{
+*CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
+By default dbRDA is done with euclidean distances which equals to RDA.
 }
 \examples{
 library(scater)
@@ -101,8 +123,20 @@ plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
 GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
+
+# To scale values when using *RDA functions, use transformCounts(MARGIN = "features", 
+tse <- GlobalPatterns
+tse <- transformCounts(tse, MARGIN = "features", method = "z")
+# Data might include taxa that do not vary. Remove those because after z-transform
+# their value is NA
+tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
+# Calculate RDA
+tse <- runRDA(tse, formula = data ~ SampleType, 
+              assay.type = "z", name = "rda_scaled", na.action = na.omit)
+# Plot
+plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 }
 \seealso{
 For more details on the actual implementation see \code{\link[vegan:cca]{cca}}
-and \code{\link[vegan:cca]{rda}}
+and \code{\link[vegan:dbrda]{dbrda}}
 }

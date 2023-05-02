@@ -7,7 +7,8 @@
 \usage{
 estimateEvenness(
   x,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("pielou", "camargo", "simpson_evenness", "evar", "bulla"),
   name = index,
   ...
@@ -15,7 +16,8 @@ estimateEvenness(
 
 \S4method{estimateEvenness}{SummarizedExperiment}(
   x,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
   name = index,
   ...,
@@ -25,11 +27,16 @@ estimateEvenness(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
 calculation of the sample-wise estimates.}
 
-\item{index}{a \code{character} vector, specifying the eveness measures to be
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
+
+\item{index}{a \code{character} vector, specifying the evenness measures to be
 calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be
@@ -80,17 +87,17 @@ and Beisel et al. (2003) for further details.
 }
 \examples{
 data(esophagus)
-se <- esophagus
+tse <- esophagus
 
 # Specify index and their output names
 index <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla")
 name  <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 
 # Estimate evenness and give polished names to be used in the output
-se <- estimateEvenness(se, index = index, name = name)
+tse <- estimateEvenness(tse, index = index, name = name)
 
 # Check the output
-head(colData(se))
+head(colData(tse))
 
 }
 \references{

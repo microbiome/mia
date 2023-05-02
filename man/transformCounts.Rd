@@ -15,61 +15,71 @@
 \usage{
 transformSamples(
   x,
-  abund_values = "counts",
-  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  assay.type = "counts",
+  assay_name = NULL,
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
-  pseudocount = FALSE,
-  threshold = 0
+  ...
 )
 
 \S4method{transformSamples}{SummarizedExperiment}(
   x,
-  abund_values = "counts",
-  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  assay.type = "counts",
+  assay_name = NULL,
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
-  pseudocount = FALSE,
-  threshold = 0
+  ...
 )
 
 transformCounts(
   x,
-  abund_values = "counts",
-  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  assay.type = "counts",
+  assay_name = NULL,
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
+    "standardize", "total", "z"),
+  MARGIN = "samples",
   name = method,
-  pseudocount = FALSE,
-  threshold = 0
+  ...
 )
 
 \S4method{transformCounts}{SummarizedExperiment}(
   x,
-  abund_values = "counts",
-  method = c("clr", "rclr", "hellinger", "log10", "pa", "rank", "relabundance"),
+  assay.type = "counts",
+  assay_name = NULL,
+  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
+    "log2", "max", "normalize", "pa", "range", "rank", "rclr", "relabundance", "rrank",
+    "standardize", "total", "z"),
+  MARGIN = "samples",
   name = method,
-  pseudocount = FALSE,
-  threshold = 0
+  ...
 )
 
 transformFeatures(
   x,
-  abund_values = "counts",
-  method = c("log10", "pa", "z"),
+  assay.type = "counts",
+  assay_name = NULL,
+  method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
+    "z"),
   name = method,
-  pseudocount = FALSE,
-  threshold = 0
+  ...
 )
 
 \S4method{transformFeatures}{SummarizedExperiment}(
   x,
-  abund_values = "counts",
-  method = c("log10", "pa", "z"),
+  assay.type = "counts",
+  assay_name = NULL,
+  method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
+    "z"),
   name = method,
-  pseudocount = FALSE,
-  threshold = 0
+  ...
 )
 
-ZTransform(x, ...)
+ZTransform(x, MARGIN = "features", ...)
 
-\S4method{ZTransform}{SummarizedExperiment}(x, ...)
+\S4method{ZTransform}{SummarizedExperiment}(x, MARGIN = "features", ...)
 
 relAbundanceCounts(x, ...)
 
@@ -80,9 +90,14 @@ relAbundanceCounts(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 transformed.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{method}{A single character value for selecting the transformation
 method.}
@@ -90,180 +105,146 @@ method.}
 \item{name}{A single character value specifying the name of transformed
 abundance table.}
 
-\item{pseudocount}{FALSE or numeric value deciding whether pseudocount is
-added. Numerical value specifies the value of pseudocount. (Only used for
-methods \code{method = "clr"}, \code{method = "hellinger"}, or
-\code{method = "log10"})}
+\item{...}{additional arguments passed on to \code{vegan:decostand}:
+\itemize{
+\item{\code{ref_vals}:} {A single value which will be used to fill
+reference sample's column in returned assay when calculating alr.
+(default: \code{ref_vals = NA})}
+\item{\code{pseudocount}:} {NULL or numeric value deciding whether
+pseudocount is added. The numeric value specifies the value of pseudocount.
+Recommended default choices for counts and relative abundance assay
+\code{pseudocount = 1} and \code{pseudocount = min(x[x>0])}, respectively.}
+}}
 
-\item{threshold}{A numeric value for setting threshold for pa transformation.
-By default it is 0. (Only used for \code{method = "pa"})}
-
-\item{...}{additional arguments}
+\item{MARGIN}{A single character value for specifying whether the
+transformation is applied sample (column) or feature (row) wise.
+(By default: \code{MARGIN = "samples"})}
 }
 \value{
-\code{transformCounts}, \code{transformSamples}, \code{transformFeatures},
-\code{relAbundanceCounts}, and \code{ZTransform} return \code{x} with additional,
-transformed abundance table named \code{name} in the \code{\link{assay}}.
+\code{transformCounts} returns the input object \code{x}, with a new
+transformed abundance table named \code{name} added in the \code{\link{assay}}.
 }
 \description{
-These functions provide a variety of options for transforming abundance data.
-By using these functions, transformed table is calculated and stored in \code{assay}.
-\code{transformSamples} does the transformation sample-wise, i.e., column-wise.
-It is alias for \code{transformCounts}. \code{transformFeatures}  does the transformation
-feature-wise, i.e., row-wise. \code{ZTransform} is a shortcut for Z-transformation.
-\code{relAbundanceCounts} is a shortcut for fetching relative abundance table.
+Variety of transformations for abundance data, stored in \code{assay}.
+See details for options.
 }
 \details{
-\code{transformCounts} or \code{transformSamples} and \code{transformFeatures}
-applies transformation to abundance table. Provided transformation methods include:
+These \code{transformCount} function provides a variety of options for transforming abundance data.
+The transformed data is calculated and stored in a new \code{assay}. The previously available
+wrappers transformSamples, transformFeatures
+ZTransform, and relAbundanceCounts have been deprecated.
+
+The \code{transformCounts} provides sample-wise (column-wise) or feature-wise
+(row-wise) transformation to the abundance table
+(assay) based on specified \code{MARGIN}.
+
+The available transformation methods include:
 
 \itemize{
 
-\item{'clr'}{ Centered log ratio (clr) transformation can be used for reducing the
-skewness of data and for centering it. (See e.g. Gloor et al. 2017.)
+\item{'alr'}{ Additive log ratio (alr) transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\deqn{clr = log_{10}\frac{x_{r}}{g(x_{r})} = log_{10}x_{r} - log_{10}µ_{r}}{%
-clr = log10(x_r/g(x_r)) = log10 x_r - log10 µ_r}
-where \eqn{x_{r}} is a single relative value, g(x_{r}) is geometric mean of
-sample-wide relative values, and \eqn{\mu_{r}} is arithmetic mean of
-sample-wide relative values".}
+\item{'chi.square'}{ Chi square transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\item{'rclr'}{ rclr or robust clr is similar to regular clr. Problem of regular
-clr is that logarithmic transformations lead to undefined values when zeros
-are present in the data. In rclr, values are divided by geometric mean
-of observed taxa and zero values are not taken into account. Zero values will
-stay as zeroes.
+\item{'clr'}{ Centered log ratio (clr) transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-Because of high-dimensionality of data, rclr's geometric mean of
-observed taxa is a good approximation to the true geometric mean.
-(See e.g. Martino et al. 2019.)
+\item{'frequency'}{ Frequency transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\deqn{rclr = log_{10}\frac{x_{r}}{g(x_{r} > 0)}}{%
-rclr = log10(x_r/g(x_r > 0))}
-where \eqn{x_{r}} is a single relative value, and g(x_{r} > 0) is geometric
-mean of sample-wide relative values that are over 0".}
+\item{'hellinger'}{ Hellinger transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\item{'hellinger'}{ Hellinger transformation can be used to reduce the impact of
-extreme data points. It can be utilize for clustering or ordination analysis.
-(See e.g. Legendre & Gallagher 2001.)
+\item{'log'}{ Logarithmic transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\deqn{hellinger = \sqrt{\frac{x}{x_{tot}}}}{%
-hellinger = sqrt(x/x_tot)}
-where \eqn{x} is a single value and \eqn{x_{tot}} is the sum of
-all values}
-
-\item{'log10'}{ log10 transformation can be used for reducing the skewness of the data.
-
+\item{'log10'}{ log10 transformation can be used for reducing the skewness
+of the data.
 \deqn{log10 = \log_{10} x}{%
 log10 = log10(x)}
 where \eqn{x} is a single value of data.}
 
-\item{'pa'}{ Transforms table to presence/absence table. All abundances higher
-than \eqn{\epsilon} are transformed to 1 (present), otherwise 0 (absent).
-By default, threshold is 0.}
+\item{'log2'}{ log2 transformation can be used for reducing the skewness of
+the data.
+\deqn{log2 = \log_{2} x}{%
+log2 = log2(x)}
+where \eqn{x} is a single value of data.}
 
-\item{'rank'}{ Rank returns ranks of taxa. For each sample, the least abundant
-taxa get lower value and more abundant taxa bigger value. The implementation is
-based on the colRanks function with ties.method="first".}
+\item{'normalize'}{ Make margin sum of squares equal to one. Please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\item {'relabundance'}{ Transforms abundances to relative. Generally, all microbiome
-data are compositional. That is, e.g., because all measuring instruments have their capacity limits.
-To make results comparable with other results, values must be relative. (See e.g. Gloor et al. 2017.)
+\item{'pa'}{ Transforms table to presence/absence table. Please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\deqn{relabundance = \frac{x}{x_{tot}}}{%
-relabundance = x/x_tot}
-where \eqn{x} is a single value and \eqn{x_{tot}} is the sum of
-all values.}
+\item{'rank'}{ Rank transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\item{'z'}{ Z-transformation, Z score transformation, or Z-standardization normalizes
-the data by shifting (to mean \eqn{\mu}) and scaling (to standard deviation \eqn{\sigma}).
-Z-transformation can be done with function \code{ZTransform}. It is done per rows (features / taxa),
-unlike most other transformations. This is often preceded by log10p or clr transformation.
-In other words, single value is standardized with respect of feature's values.
+\item{'rclr'}{ Robust clr transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
 
-\deqn{z = \frac{x - \mu}{\sigma}}{%
-z = (x - µ)/σ}
-where \eqn{x} is a single value, \eqn{\mu} is the mean of the feature, and
-\eqn{\sigma} is the standard deviation of the feature.}
+\item{'relabundance'}{ Relative transformation (alias for 'total'), please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
+
+\item{'rrank'}{ Relative rank transformation, please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
+
+\item{'standardize'}{ Scale 'x' to zero mean and unit variance (alias for
+'z'), please refer to \code{\link[vegan:decostand]{decostand}} for details.}
+
+\item{'total'}{ Divide by margin total (alias for
+'relabundance'), please refer to
+\code{\link[vegan:decostand]{decostand}} for details.}
+
+\item{'z'}{ Z transformation (alias for 'standardize'),
+please refer to \code{\link[vegan:decostand]{decostand}} for details.}
 
 }
 }
 \examples{
-data(esophagus)
+data(esophagus, package="mia")
 x <- esophagus
 
-# By specifying, it is possible to apply different transformations, e.g. clr transformation.
+# By specifying 'method', it is possible to apply different transformations, 
+# e.g. compositional transformation.
+x <- transformCounts(x, method = "relabundance")
+
+# The target of transformation can be specified with "assay.type"
 # Pseudocount can be added by specifying 'pseudocount'.
-x <- transformSamples(x, method="clr", pseudocount=1)
-head(assay(x, "clr"))
 
-# Also, the target of transformation
-# can be specified with "abund_values".
-x <- transformSamples(x, method="relabundance")
-x <- transformSamples(x, method="clr", abund_values="relabundance", 
-                        pseudocount = min(assay(x, "relabundance")[assay(x, "relabundance")>0]))
-x2 <- transformSamples(x, method="clr", abund_values="counts", pseudocount = 1)
-head(assay(x, "clr"))
-
-# Different pseudocounts used by default for counts and relative abundances
-x <- transformSamples(x, method="relabundance")
-mat <- assay(x, "relabundance"); 
+# Get pseudocount; here smallest positive value
+mat <- assay(x, "relabundance") 
 pseudonumber <- min(mat[mat>0])
-x <- transformSamples(x, method="clr", abund_values = "relabundance", pseudocount=pseudonumber)
-x <- transformSamples(x, method="clr", abund_values = "counts", pseudocount=1)
+# Perform CLR
+x <- transformCounts(x, assay.type = "relabundance", method = "clr", 
+                     pseudocount = pseudonumber
+                     )
+                      
+head(assay(x, "clr"))
+
+# With MARGIN, you can specify the if transformation is done for samples or
+# for features. Here Z-transformation is done feature-wise.
+x <- transformCounts(x, method = "z", MARGIN = "features")
+head(assay(x, "z"))
 
 # Name of the stored table can be specified.
-x <- transformSamples(x, method="hellinger", name="test")
+x <- transformCounts(x, method="hellinger", name="test")
 head(assay(x, "test"))
 
-# pa returns presence absence table. With 'threshold', it is possible to set the
-# threshold to a desired level. By default, it is 0.
-x <- transformSamples(x, method="pa", threshold=35)
+# pa returns presence absence table.
+x <- transformCounts(x, method = "pa")
 head(assay(x, "pa"))
 
-# rank returns ranks of taxa. It is calculated column-wise, i.e., per sample
-# and using the ties.method="first" from the colRanks function
-x <- transformSamples(x, method="rank")
+# rank returns ranks of taxa.
+x <- transformCounts(x, method = "rank")
 head(assay(x, "rank"))
-
-# transformCounts is an alias for transformSamples
-x <- transformCounts(x, method="relabundance", name="test2")
-head(assay(x, "test2"))
 
 # In order to use other ranking variants, modify the chosen assay directly:
 assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"), 
                                                            ties.method="average", 
                                                            preserveShape = TRUE)  
-                                                           
-# If you want to do the transformation for features, you can do that by using
-x <- transformFeatures(x, method="log10", name="log10_features", pseudocount = 1)
-head(assay(x, "log10_features"))
 
-# Z-transform can be done for features by using shortcut function
-x <- ZTransform(x)
-head(assay(x, "z"))
-
-# For visualization purposes it is sometimes done by applying CLR for samples,
-# followed by Z transform for taxa
-x <- ZTransform(transformCounts(x, method="clr", abund_values = "counts", pseudocount = 1))
-
-# Relative abundances can be also calculated with the dedicated
-# relAbundanceCounts function.
-x <- relAbundanceCounts(x)
-head(assay(x, "relabundance"))
-}
-\references{
-Gloor GB, Macklaim JM, Pawlowsky-Glahn V & Egozcue JJ (2017)
-Microbiome Datasets Are Compositional: And This Is Not Optional.
-Frontiers in Microbiology 8: 2224. doi: 10.3389/fmicb.2017.02224
-
-Legendre P & Gallagher ED (2001)
-Ecologically meaningful transformations for ordination of species data.
-Oecologia 129: 271-280.
-
-Martino C, Morton JT, Marotz CA, Thompson LR, Tripathi A, Knight R & Zengler K
-(2019) A Novel Sparse Compositional Technique Reveals Microbial Perturbations.
-mSystems 4: 1. doi: 10.1128/mSystems.00016-19
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

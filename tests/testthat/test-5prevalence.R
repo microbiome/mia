@@ -2,7 +2,7 @@ context("prevalence")
 
 test_that("getPrevalence", {
 
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(getPrevalence(GlobalPatterns, detection="test"),
                  "'detection' must be a single numeric value or coercible to one")
     expect_error(getPrevalence(GlobalPatterns, include_lowest="test"),
@@ -11,8 +11,8 @@ test_that("getPrevalence", {
                  "'sort' must be TRUE or FALSE")
     expect_error(getPrevalence(GlobalPatterns, as_relative="test"),
                  "'as_relative' must be TRUE or FALSE")
-    expect_error(getPrevalence(GlobalPatterns, abund_values="test"),
-                 "'abund_values' must be a valid name")
+    expect_error(getPrevalence(GlobalPatterns, assay.type="test"),
+                 "'assay.type' must be a valid name")
     # Output should be always a frequency between 0 to 1
     pr <- getPrevalence(GlobalPatterns, detection=0.1/100, as_relative=TRUE)
     expect_true(min(pr) >= 0 && max(pr) <= 1)
@@ -30,9 +30,9 @@ test_that("getPrevalence", {
     expect_true(all(pr1 == pr2))
 
     # Different ways to use relative abundance should yield the same output
-    pr2 <- getPrevalence(GlobalPatterns, as_relative=TRUE, abund_values = "counts")
-    GlobalPatterns <- relAbundanceCounts(GlobalPatterns)
-    pr1 <- getPrevalence(GlobalPatterns, as_relative=FALSE, abund_values = "relabundance")
+    pr2 <- getPrevalence(GlobalPatterns, as_relative=TRUE, assay.type = "counts")
+    GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
+    pr1 <- getPrevalence(GlobalPatterns, as_relative=FALSE, assay.type = "relabundance")
     expect_true(all(pr1 == pr2))
 
     # Sorting should put the top values first
@@ -42,9 +42,14 @@ test_that("getPrevalence", {
     actual <- getTopTaxa(GlobalPatterns,
                          method="prevalence",
                          top=5,
-                         abund_values="counts")
+                         assay.type="counts")
     expect_equal(pr, actual)
-    
+    # Test alias
+    alias<- getTopTaxa(GlobalPatterns,
+                       method="prevalence",
+                       top=5,
+                       assay.type="counts")
+    expect_equal(alias, actual)
     # Check that works also when rownames is NULL
     gp_null <- GlobalPatterns
     rownames(gp_null) <- NULL
@@ -62,7 +67,7 @@ test_that("getPrevalence", {
 
 test_that("getPrevalentTaxa", {
 
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(getPrevalentTaxa(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
     # Results compatible with getPrevalence
@@ -94,6 +99,10 @@ test_that("getPrevalentTaxa", {
     pr2 <- getPrevalentTaxa(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
     expect_equal(pr1, pr2)
     
+    # Test alias
+    alias <- getPrevalentFeatures(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
+    expect_equal(pr1, alias)
+    
     pr1 <- getPrevalentTaxa(GlobalPatterns, detection=0.004, prevalence = 0.1, 
                             as_relative=TRUE, rank = "Family")
     pr2 <- getPrevalentTaxa(gp_null, detection=0.004, prevalence = 0.1, 
@@ -104,7 +113,7 @@ test_that("getPrevalentTaxa", {
 
 test_that("getRareTaxa", {
 
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(getRareTaxa(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
 
@@ -196,6 +205,10 @@ test_that("getRareTaxa", {
     pr2 <- getRareTaxa(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
     expect_equal(pr1, pr2)
     
+    # Test lias
+    alias <- getRareFeatures(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
+    expect_equal(pr1, alias)
+    
     pr1 <- getRareTaxa(GlobalPatterns, detection=0.004, prevalence = 0.1, 
                        as_relative=TRUE, rank = "Family")
     pr2 <- getRareTaxa(gp_null, detection=0.004, prevalence = 0.1, 
@@ -205,7 +218,7 @@ test_that("getRareTaxa", {
 })
 
 test_that("subsetByPrevalentTaxa", {
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(subsetByPrevalentTaxa(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
     # Expect TSE object
@@ -244,10 +257,15 @@ test_that("subsetByPrevalentTaxa", {
     pr2 <- unname(assay(pr2, "counts"))
     expect_equal(pr1, pr2)
     
+    # Test alias
+    alias <- subsetByPrevalentFeatures(gp_null, detection=5, prevalence = 0.33, rank = "Phylum") 
+    alias <- unname(assay(alias, "counts"))
+    expect_equal(alias, pr2)
+    
 })
 
 test_that("subsetByRareTaxa", {
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(subsetByRareTaxa(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
     # Expect TSE object
@@ -299,11 +317,16 @@ test_that("subsetByRareTaxa", {
     pr2 <- unname(assay(pr2, "counts"))
     expect_equal(pr1, pr2)
     
+    # Test alias
+    alias <- subsetByRareFeatures(gp_null, detection=5, prevalence = 0.33, rank = "Phylum") 
+    alias <- unname(assay(alias, "counts"))
+    expect_equal(alias, pr2)
+    
 })
 
 test_that("agglomerateByPrevalence", {
 
-    data(GlobalPatterns)
+    data(GlobalPatterns, package="mia")
     expect_error(agglomerateByPrevalence(GlobalPatterns, other_label=TRUE),
                  "'other_label' must be a single character value")
     actual <- agglomerateByPrevalence(GlobalPatterns)

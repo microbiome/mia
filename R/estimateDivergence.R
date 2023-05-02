@@ -1,14 +1,19 @@
 #' Estimate divergence
 #'
-#' This function estimates a divergence within samples. 
+#' Estimate divergence against a given reference sample.
 #' 
-#' @param x a \code{\link{SummarizedExperiment}} object
+#' @param x a \code{\link{SummarizedExperiment}} object.
 #'
-#' @param abund_values the name of the assay used for calculation of the
-#'   sample-wise estimates
+#' @param assay.type the name of the assay used for calculation of the
+#'   sample-wise estimates.
+#'   
+#' @param assay_name a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
+#'   will be disabled.)
 #'
 #' @param name a name for the column of the colData the results should be
-#'   stored in. By defaut, \code{name} is \code{"divergence"}.
+#'   stored in. By default, \code{name} is \code{"divergence"}.
 #'   
 #' @param reference a numeric vector that has length equal to number of
 #'   features, or a non-empty character value; either 'median' or 'mean'.
@@ -44,7 +49,6 @@
 #'   \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
 #'   \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 #'   \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
-#'   \item{\code{\link[mia:calculateDistance]{calculateDistance}}}
 #' }
 #' 
 #' @name estimateDivergence
@@ -79,20 +83,21 @@ NULL
 #' @rdname estimateDivergence
 #' @export
 setGeneric("estimateDivergence",signature = c("x"),
-           function(x, abund_values = "counts", name = "divergence", 
-                    reference = "median", FUN = vegan::vegdist, method = "bray", 
-                    ...)
+           function(x, assay.type = assay_name, assay_name = "counts", 
+                    name = "divergence", reference = "median", 
+                    FUN = vegan::vegdist, method = "bray", ...)
              standardGeneric("estimateDivergence"))
 
 #' @rdname estimateDivergence
 #' @export
 setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
-    function(x, abund_values = "counts", name = "divergence", 
-             reference = "median", FUN = vegan::vegdist, method = "bray", ...){
+    function(x, assay.type = assay_name, assay_name = "counts", 
+             name = "divergence", reference = "median", 
+             FUN = vegan::vegdist, method = "bray", ...){
         
         ################### Input check ###############
-        # Check abund_values
-        .check_assay_present(abund_values, x)
+        # Check assay.type
+        .check_assay_present(assay.type, x)
         # Check name
         if(!.is_non_empty_character(name) || length(name) != 1L){
             stop("'name' must be a non-empty character value.",
@@ -118,31 +123,35 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
                 stop(reference_stop_msg, call. = FALSE)
             }
         }
+
         ################# Input check end #############
-        divergence <- .calc_divergence(mat = assay(x, abund_values),
+        divergence <- .calc_reference_dist(mat = assay(x, assay.type),
                                        reference = reference, 
                                        FUN = FUN,
                                        method = method, ...)
-        .add_values_to_colData(x, divergence, name)
+
+        .add_values_to_colData(x, list(divergence), name)
+
     }
 )
 
 ############################## HELP FUNCTIONS ##############################
 
-.calc_divergence <- function(mat, reference, FUN, method, ...){
+
+.calc_reference_dist <- function(mat, reference, FUN = stats::dist, method, ...){
+
     # Calculates median or mean if that is specified
-    if( "median" %in% reference || "mean" %in% reference ){
-      reference <- apply(mat, 1, reference)
+    if (is.character(reference)) {
+        if( "median" %in% reference || "mean" %in% reference ){
+            reference <- apply(mat, 1, reference)
+        } else if( !reference %in% colnames(mat) ) {
+            stop(paste("Reference", reference, "not recognized."))
+        }
     }
-    # Adds the reference to the table to the first column
-    mat <- cbind( matrix(reference, ncol=1), mat)
-    # Transposes the table so that distances are calculated for the samples
-    mat <- t(mat)
-    # Calculates the distance
-    dist <- .calculate_distance(mat, FUN = FUN, method = method)
-    # Takes only reference vs samples distances
-    divergence <- as.matrix(dist)[-1,1]
-    # Creates a list 
-    divergence <- list(divergence)
-    return(divergence)
+
+    # Distance between all samples against one reference sample
+    # FIXME: could be be optimzed with sweep / parallelization
+    v <- seq_len(ncol(mat))
+    sapply(v, function (i) {FUN(rbind(mat[,i], reference), method=method, ...)})
 }
+

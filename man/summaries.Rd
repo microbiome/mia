@@ -3,11 +3,17 @@
 \name{summaries}
 \alias{summaries}
 \alias{getTopTaxa}
+\alias{getTopFeatures}
 \alias{getTopTaxa,SummarizedExperiment-method}
+\alias{getTopFeatures,SummarizedExperiment-method}
 \alias{getUniqueTaxa}
+\alias{getUniqueFeatures}
 \alias{getUniqueTaxa,SummarizedExperiment-method}
+\alias{getUniqueFeatures,SummarizedExperiment-method}
 \alias{countDominantTaxa}
+\alias{countDominantFeatures}
 \alias{countDominantTaxa,SummarizedExperiment-method}
+\alias{countDominantFeatures,SummarizedExperiment-method}
 \alias{summary,SummarizedExperiment-method}
 \title{Summarizing microbiome data}
 \usage{
@@ -15,7 +21,9 @@ getTopTaxa(
   x,
   top = 5L,
   method = c("mean", "sum", "median"),
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
+  na.rm = TRUE,
   ...
 )
 
@@ -23,19 +31,33 @@ getTopTaxa(
   x,
   top = 5L,
   method = c("mean", "sum", "median", "prevalence"),
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
+  na.rm = TRUE,
   ...
 )
+
+getTopFeatures(x, ...)
+
+\S4method{getTopFeatures}{SummarizedExperiment}(x, ...)
 
 getUniqueTaxa(x, ...)
 
 \S4method{getUniqueTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
+getUniqueFeatures(x, ...)
+
+\S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
+
 countDominantTaxa(x, group = NULL, ...)
 
 \S4method{countDominantTaxa}{SummarizedExperiment}(x, group = NULL, ...)
 
-\S4method{summary}{SummarizedExperiment}(object, abund_values = "counts")
+countDominantFeatures(x, ...)
+
+\S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
+
+\S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
 \arguments{
 \item{x}{A
@@ -47,9 +69,17 @@ five taxa.}
 \item{method}{Specify the method to determine top taxa. Either sum, mean,
 median or prevalence. Default is 'mean'.}
 
-\item{abund_values}{a \code{character} value to select an
+\item{assay.type}{a \code{character} value to select an
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
 By default it expects count data.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
+
+\item{na.rm}{For \code{getTopTaxa} logical argument for calculation method
+specified to argument \code{method}. Default is TRUE.}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified for \code{countDominantTaxa}.}
@@ -101,8 +131,21 @@ data(GlobalPatterns)
 top_taxa <- getTopTaxa(GlobalPatterns,
                        method = "mean",
                        top = 5,
-                       abund_values = "counts")
+                       assay.type = "counts")
 top_taxa
+
+# Use 'detection' to select detection threshold when using prevalence method
+top_taxa <- getTopTaxa(GlobalPatterns,
+                       method = "prevalence",
+                       top = 5,
+                       assay_name = "counts",
+                       detection = 100)
+top_taxa
+                       
+# Top taxa os specific rank
+getTopTaxa(agglomerateByRank(GlobalPatterns,
+                             rank = "Genus",
+                             na.rm = TRUE))
 
 # Gets the overview of dominant taxa
 dominant_taxa <- countDominantTaxa(GlobalPatterns,
@@ -119,7 +162,7 @@ dominant_taxa <- countDominantTaxa(GlobalPatterns,
 dominant_taxa
 
 # Get an overview of sample and taxa counts
-summary(GlobalPatterns)
+summary(GlobalPatterns, assay_name= "counts")
 
 # Get unique taxa at a particular taxonomic rank
 # sort = TRUE means that output is sorted in alphabetical order

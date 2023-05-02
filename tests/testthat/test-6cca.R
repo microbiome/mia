@@ -31,11 +31,30 @@ test_that("CCA", {
     expect_equal(actual, "dune")
     #
     mcca <- vegan::cca(form, dune.env, scale = TRUE)
-    mrda <- vegan::rda(form, dune.env, scale = TRUE)
+    mrda <- vegan::rda(form, dune.env, scale = FALSE)
     sce <- runCCA(sce, form)
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
     sce <- runRDA(sce, form)
     actual <- reducedDim(sce,"RDA")
-    expect_equal(as.vector(actual), as.vector(mrda$CCA$u))
+    expect_equal(abs( as.vector(actual) ), abs( as.vector(mrda$CCA$u) ))
+    sce <- runRDA(sce, form, distance = "bray", name = "rda_bray")
+    actual <- reducedDim(sce,"rda_bray")
+    rda_bray <- vegan::dbrda(form, dune.env, distance = "bray")
+    expect_equal(abs( as.vector(actual) ), abs( as.vector(rda_bray$CCA$u) ))
+    #
+    sce <- runRDA(sce)
+    test <- reducedDim(sce,"RDA")
+    # Test that eigenvalues match
+    test <- attr(test, "rda")$CA$eig
+    res <- vegan::rda(t(assay(sce)))$CA$eig
+    expect_equal(unname(test), unname(res))
+    data(GlobalPatterns, package="mia")
+    GlobalPatterns <- estimateDiversity(GlobalPatterns, index = "shannon")
+    expect_error(calculateRDA(GlobalPatterns, variables = c("Primer", "test")))
+    res1 <- calculateRDA(GlobalPatterns, variables = c("shannon", "SampleType"))
+    res1 <- attr(res1, "rda")$CCA
+    res2 <- calculateRDA(GlobalPatterns, formula = data ~ shannon + SampleType)
+    res2 <- attr(res2, "rda")$CCA
+    expect_equal(res1, res2)
 })

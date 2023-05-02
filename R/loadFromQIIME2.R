@@ -52,9 +52,9 @@
 #'
 #' @name loadFromQIIME2
 #' @seealso
-#' \code{\link[=makeTreeSummarizedExperimentFromPhyloseq]{makeTreeSummarizedExperimentFromPhyloseq}}
-#' \code{\link[=makeSummarizedExperimentFromBiom]{makeSummarizedExperimentFromBiom}}
-#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
+#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
+#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
 #' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'
 #' @export
@@ -83,6 +83,7 @@
 #'
 #' tse
 
+#' @importFrom S4Vectors make_zero_col_DFrame
 loadFromQIIME2 <- function(featureTableFile,
                            taxonomyTableFile = NULL,
                            sampleMetaFile = NULL,
@@ -123,14 +124,14 @@ loadFromQIIME2 <- function(featureTableFile,
         taxa_tab <- readQZA(taxonomyTableFile, ...)
         taxa_tab <- .subset_taxa_in_feature(taxa_tab, feature_tab)
     } else {
-        taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+        taxa_tab <- S4Vectors::make_zero_col_DFrame(nrow(feature_tab))
         rownames(taxa_tab) <- rownames(feature_tab)
     }
 
     if (!is.null(sampleMetaFile)) {
         sample_meta <- .read_q2sample_meta(sampleMetaFile)
     } else {
-        sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+        sample_meta <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
         rownames(sample_meta) <- colnames(feature_tab)
     }
 
@@ -266,7 +267,22 @@ readQZA <- function(file, temp = tempdir(), ...) {
 #' @noRd
 .read_q2taxa <- function(file, ...) {
     taxa_tab <- utils::read.table(file, sep = '\t', header = TRUE)
-    taxa_tab <- .parse_q2taxonomy(taxa_tab, ...)
+    
+    confidence <- NULL
+    featureID <- NULL
+    # make sure confidence in numeric
+    if ("Confidence" %in% colnames(taxa_tab)) {
+        confidence <- as.numeric(taxa_tab[,"Confidence"])
+    }
+    if("Feature.ID" %in% names(taxa_tab)) {
+        featureID <- taxa_tab[,"Feature.ID"]
+    }
+    
+    taxa_tab <- .parse_taxonomy(taxa_tab, sep = "; |;", column_name = "Taxon", ...)
+    
+    rownames(taxa_tab) <- featureID
+    taxa_tab$Confidence <- confidence
+    
     taxa_tab
 }
 
@@ -296,65 +312,6 @@ readQZA <- function(file, temp = tempdir(), ...) {
 .subset_taxa_in_feature <- function(taxa_tab, feature_tab) {
     idx <- match( rownames(feature_tab), rownames(taxa_tab) )
     taxa_tab <- taxa_tab[idx, , drop = FALSE]
-
-    taxa_tab
-}
-
-#' Parse QIIME2 taxa in different taxonomic levels
-#' @param taxa_tab `data.frame` object.
-#' @param sep character string containing a regular expression, separator
-#'  between different taxonomic levels, defaults to one compatible with both
-#'  GreenGenes and SILVA `; |;"`.
-#' @return  a `data.frame`.
-#' @keywords internal
-#' @importFrom IRanges CharacterList IntegerList
-#' @importFrom S4Vectors DataFrame
-#' @noRd
-.parse_q2taxonomy <- function(taxa_tab, sep = "; |;",
-                              removeTaxaPrefixes = FALSE, ...) {
-    if(!.is_a_bool(removeTaxaPrefixes)){
-        stop("'removeTaxaPrefixes' must be TRUE or FALSE.", call. = FALSE)
-    }
-
-    confidence <- NULL
-    featureID <- NULL
-    # make sure confidence in numeric
-    if ("Confidence" %in% colnames(taxa_tab)) {
-        confidence <- as.numeric(taxa_tab[,"Confidence"])
-    }
-    if("Feature.ID" %in% names(taxa_tab)) {
-        featureID <- taxa_tab[,"Feature.ID"]
-    }
-
-    #  work with any combination of taxonomic ranks available
-    all_ranks <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
-    all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__")
-
-    # split the taxa strings
-    taxa_split <- CharacterList(strsplit(taxa_tab[,"Taxon"],sep))
-    # extract present prefixes
-    taxa_prefixes <- lapply(taxa_split, substr, 1L, 3L)
-    # match them to the order given by present_prefixes
-    taxa_prefixes_match <- lapply(taxa_prefixes, match, x = all_prefixes)
-    taxa_prefixes_match <- IntegerList(taxa_prefixes_match)
-    # get the taxa values
-    if(removeTaxaPrefixes){
-        taxa_split <- lapply(taxa_split,
-                             gsub,
-                             pattern = "([kpcofgs]+)__",
-                             replacement = "")
-        taxa_split <- CharacterList(taxa_split)
-    }
-    # extract by order matches
-    taxa_split <- taxa_split[taxa_prefixes_match]
-    #
-    if(length(unique(lengths(taxa_split))) != 1L){
-        stop("Internal error. Something went wrong")
-    }
-    taxa_tab <- DataFrame(as.matrix(taxa_split))
-    colnames(taxa_tab) <- all_ranks
-    rownames(taxa_tab) <- featureID
-    taxa_tab$Confidence <- confidence
 
     taxa_tab
 }

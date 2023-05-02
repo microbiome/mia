@@ -1,6 +1,6 @@
-#' Import Mothur results as a \code{SummarizedExperiment}
+#' Import Mothur results as a \code{TreeSummarizedExperiment}
 #' 
-#' This method creates a \code{SummarizedExperiment} object from \code{Mothur}
+#' This method creates a \code{TreeSummarizedExperiment} object from \code{Mothur}
 #' files provided as input. 
 #'
 #' @param sharedFile a single \code{character} value defining the file
@@ -24,14 +24,14 @@
 #' \code{designFile}, are optional, but are highly encouraged to be provided.
 #'
 #' @return  A
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
 #' @name loadFromMothur
 #' @seealso
-#' \code{\link[=makeTreeSummarizedExperimentFromPhyloseq]{makeTreeSummarizedExperimentFromPhyloseq}}
-#' \code{\link[=makeSummarizedExperimentFromBiom]{makeSummarizedExperimentFromBiom}}
-#' \code{\link[=makeTreeSummarizedExperimentFromDADA2]{makeTreeSummarizedExperimentFromDADA2}}
+#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
+#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
+#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
 #' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -54,11 +54,14 @@
 #' 
 #' # Creates se object from files
 #' se <- loadFromMothur(counts, taxa, meta)
-#' se
+#' # Convert SE to TreeSE
+#' tse <- as(se, "TreeSummarizedExperiment")
+#' tse
 NULL
 
 #' @rdname loadFromMothur
 #' @importFrom SummarizedExperiment SummarizedExperiment
+#' @importFrom S4Vectors make_zero_col_DFrame
 #' @export
 loadFromMothur <- function(sharedFile,
                            taxonomyFile = NULL,
@@ -90,7 +93,7 @@ loadFromMothur <- function(sharedFile,
     if (!is.null(taxonomyFile)) {
         taxa_tab <- .read_mothur_taxonomy(taxonomyFile, feature_tab)
     } else {
-        taxa_tab <- S4Vectors:::make_zero_col_DataFrame(nrow(feature_tab))
+        taxa_tab <- S4Vectors::make_zero_col_DFrame(nrow(feature_tab))
         rownames(taxa_tab) <- rownames(feature_tab)
     }
     
@@ -99,13 +102,13 @@ loadFromMothur <- function(sharedFile,
     if (!is.null(designFile) && !is.null(data_to_colData)) {
         sample_meta <- .read_mothur_sample_meta(designFile, data_to_colData)
     } else {
-        sample_meta <- S4Vectors:::make_zero_col_DataFrame(ncol(feature_tab))
+        sample_meta <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
         rownames(sample_meta) <- colnames(feature_tab)
     }
 
-    SummarizedExperiment(assays = S4Vectors::SimpleList(counts = feature_tab),
-                         rowData = taxa_tab,
-                         colData = sample_meta)
+    TreeSummarizedExperiment(assays = S4Vectors::SimpleList(counts = feature_tab),
+                            rowData = taxa_tab,
+                            colData = sample_meta)
 }
 
 # These extra information must be added to colData. Return list of assay and 

@@ -27,6 +27,14 @@
 #' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 #'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
 #'
+#' \code{mapTaxonomy} maps the given features (taxonomic groups; \code{taxa})
+#'   to the specified taxonomic level (\code{to} argument) in \code{rowData}
+#'   of the \code{SummarizedExperiment} data object
+#'   (i.e. \code{rowData(x)[,taxonomyRanks(x)]}). If the argument \code{to} is
+#'   not provided, then all matching taxonomy rows in \code{rowData} will be
+#'   returned. This function allows handy conversions between different
+#    taxonomic levels.
+#'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
@@ -252,8 +260,12 @@ setGeneric("getTaxonomyLabels",
 #' @export
 setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"),
-             with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE){
+             with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE, ...){
         # input check
+        if(nrow(x) == 0L){
+            stop("No data available in `x` ('x' has nrow(x) == 0L.)",
+                 call. = FALSE)
+        }
         if(ncol(rowData(x)) == 0L){
             stop("rowData needs to be populated.", call. = FALSE)
         }
@@ -281,7 +293,6 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         ans <- .get_taxonomic_label(x[!dup,],
                                     empty.fields = empty.fields,
                                     with_rank = with_rank,
-                                    make_unique = make_unique,
                                     resolve_loops = resolve_loops)
         if(any(dup)){
             ans <- ans[m]
@@ -339,7 +350,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 
 .get_taxonomic_label <- function(x,
                                  empty.fields = c(NA, "", " ", "\t", "-", "_"),
-                                 with_rank = FALSE, make_unique = TRUE,
+                                 with_rank = FALSE,
                                  resolve_loops = FALSE){
     rd <- rowData(x)
     tax_cols <- .get_tax_cols_from_se(x)
@@ -378,6 +389,13 @@ setGeneric("taxonomyTree",
 #' @export
 setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
+        # Input check
+        # If there is no rowData it is not possible to create rowTree
+        if( ncol(rowData(x)) == 0L ){
+            stop("'x' does not have rowData. Tree cannot be created.", 
+                 call. = FALSE)
+        }
+        #
         # Converted to data.frame so that drop = FALSE is enabled
         td <- data.frame(rowData(x)[,taxonomyRanks(x)])
         # Remove empty taxonomic levels

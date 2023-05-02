@@ -8,9 +8,14 @@
 #' @param seqtab,x
 #'   a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'
-#' @param abund_values A single character value for selecting the
+#' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use.
+#'
+#' @param assay_name a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
+#'   will be disabled.)
 #'
 #' @param name A name for the column of the colData in which the contaminant
 #'   information should be stored.
@@ -84,7 +89,7 @@ NULL
 #' @export
 setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
     function(seqtab,
-             abund_values = "counts",
+             assay.type = assay_name, assay_name = "counts",
              name = "isContaminant",
              concentration = NULL,
              control = NULL,
@@ -94,7 +99,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
              detailed = TRUE,
              ...){
         # input check
-        .check_assay_present(abund_values, seqtab)
+        .check_assay_present(assay.type, seqtab)
         if(!.is_a_string(name)){
             stop("'name' must be single character value.",call. = FALSE)
         }
@@ -131,7 +136,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
                                       search = "colData")$value
             batch <- factor(batch, sort(unique(batch)))
         }
-        mat <- assay(seqtab,abund_values)
+        mat <- assay(seqtab,assay.type)
         contaminant <- isContaminant(t(mat),
                                      conc = concentration,
                                      neg = control,
@@ -143,6 +148,12 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
         if(is.data.frame(contaminant)){
             contaminant <- DataFrame(contaminant)
         }
+        attr(contaminant, "metadata") <- list(conc = concentration,
+                                              neg = control,
+                                              batch = batch,
+                                              threshold = threshold,
+                                              normalize = normalize,
+                                              detailed =  detailed)
         contaminant
     }
 )
@@ -151,7 +162,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
 #' @export
 setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
     function(seqtab,
-             abund_values = "counts",
+             assay.type = assay_name, assay_name = "counts",
              name = "isNotContaminant",
              control = NULL,
              threshold = 0.5,
@@ -159,7 +170,7 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
              detailed = FALSE,
              ...){
         # input check
-        .check_assay_present(abund_values, seqtab)
+        .check_assay_present(assay.type, seqtab)
         if(!.is_a_string(name)){
             stop("'name' must be single character value.",call. = FALSE)
         }
@@ -182,7 +193,7 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
                      call. = FALSE)
             }
         }
-        mat <- assay(seqtab,abund_values)
+        mat <- assay(seqtab,assay.type)
         not_contaminant <- isNotContaminant(t(mat),
                                             neg = control,
                                             threshold = threshold,
@@ -192,6 +203,10 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
         if(is.data.frame(not_contaminant)){
             not_contaminant <- DataFrame(not_contaminant)
         }
+        attr(not_contaminant, "metadata") <- list(neg = control,
+                                                  threshold = threshold,
+                                                  normalize = normalize,
+                                                  detailed =  detailed)
         not_contaminant
     }
 )
@@ -207,7 +222,13 @@ setGeneric("addContaminantQC", signature = c("x"),
 setMethod("addContaminantQC", signature = c("SummarizedExperiment"),
     function(x, name = "isContaminant", ...){
         contaminant <- isContaminant(x, ...)
+        # save metadata
+        add_metadata <- attr(contaminant, "metadata")
+        attr(contaminant, "metadata") <- NULL
+        names(add_metadata) <- paste0("decontam_",names(add_metadata))
+        #
         rowData(x)[[name]] <- contaminant
+        metadata(x) <- c(metadata(x),add_metadata)
         x
     }
 )
@@ -223,7 +244,13 @@ setGeneric("addNotContaminantQC", signature = c("x"),
 setMethod("addNotContaminantQC", signature = c("SummarizedExperiment"),
     function(x, name = "isNotContaminant", ...){
         not_contaminant <- isNotContaminant(x, ...)
+        # save metadata
+        add_metadata <- attr(not_contaminant, "metadata")
+        attr(not_contaminant, "metadata") <- NULL
+        names(add_metadata) <- paste0("decontam_not_",names(add_metadata))
+        #
         rowData(x)[[name]] <- not_contaminant
+        metadata(x) <- c(metadata(x),add_metadata)
         x
     }
 )

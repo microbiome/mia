@@ -45,7 +45,14 @@ removed if \code{na.rm = TRUE} before agglomeration.}
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects,
 \code{\link[=merge-methods]{mergeRows}} and
-\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.}
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+\itemize{
+\item{\code{remove_empty_ranks}}{A single boolean value for selecting
+whether to remove those columns of rowData that include only NAs after
+agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
+\item{\code{make_unique}}{A single boolean value for selecting
+whether to make rownames unique. (By default: \code{make_unique = TRUE})}
+}}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -102,9 +109,9 @@ rowTree(x2) # ... tree
  # If assay contains binary or negative values, summing might lead to meaningless
  # values, and you will get a warning. In these cases, you might want to do 
  # agglomeration again at chosen taxonomic level.
- tse <- transformSamples(GlobalPatterns, method = "pa")
+ tse <- transformCounts(GlobalPatterns, method = "pa")
  tse <- agglomerateByRank(tse, rank = "Genus")
- tse <- transformSamples(tse, method = "pa")
+ tse <- transformCounts(tse, method = "pa")
 
 # removing empty labels by setting na.rm = TRUE
 sum(is.na(rowData(GlobalPatterns)$Family))
@@ -118,6 +125,22 @@ print(rownames(x3[1:3,]))
 # To add them, use getTaxonomyLabels function.
 rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
 print(rownames(x3[1:3,]))
+
+# use 'remove_empty_ranks' to remove columns that include only NAs
+x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
+head(rowData(x4))
+
+# If assay contains NAs, you might want to consider replacing them since summing-up
+# NAs lead to NA
+x5 <- GlobalPatterns
+# Replace first value with NA
+assay(x5)[1,1] <- NA
+x6 <- agglomerateByRank(x5, "Kingdom")
+head( assay(x6) )
+# Replace NAs with 0. It is justified when we are summing-up counts
+assay(x5)[ is.na(assay(x5)) ] <- 0
+x6 <- agglomerateByRank(x5, "Kingdom")
+head( assay(x6) )
 
 ## Look at enterotype dataset...
 data(enterotype)

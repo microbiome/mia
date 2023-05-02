@@ -8,7 +8,8 @@
 \usage{
 subsampleCounts(
   x,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   min_size = min(colSums2(assay(x))),
   seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
@@ -19,7 +20,8 @@ subsampleCounts(
 
 \S4method{subsampleCounts}{SummarizedExperiment}(
   x,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   min_size = min(colSums2(assay(x))),
   seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
@@ -32,10 +34,15 @@ subsampleCounts(
 \item{x}{A
 \code{SummarizedExperiment} object.}
 
-\item{abund_values}{A single character value for selecting the
+\item{assay.type}{A single character value for selecting the
 \code{SummarizedExperiment} \code{assay} used for random subsampling.
 Only counts are useful and other transformed data as input will give
 meaningless output.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{min_size}{A single integer value equal to the number of counts being
 simulated this can equal to lowest number of total counts
@@ -67,14 +74,15 @@ sample has same number of total observations/counts/reads.
 \details{
 Although the subsampling approach is highly debated in microbiome research,
 we include the \code{subsampleCounts} function because there may be some
-instances where it can be used. Note that the output of \code{subsampleCounts}
-is not the same as input.
+instances where it can be useful.
+Note that the output of \code{subsampleCounts} is not the equivalent as the
+input and any result have to be verified with the original dataset.
 }
 \examples{
 # When samples in TreeSE are less than specified min_size, they will be removed.
 # If after subsampling features are not present in any of the samples, 
 # they will be removed.
-data("GlobalPatterns")
+data(GlobalPatterns)
 tse <- GlobalPatterns
 tse.subsampled <- subsampleCounts(tse, 
                                   min_size = 60000, 
