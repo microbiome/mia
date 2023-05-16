@@ -184,14 +184,14 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
     col = x[ , colname]
     # List prefixes
     prefixes <- c(
-        "d__",
-        "k__",
-        "p__",
-        "c__",
-        "o__",
-        "f__",
-        "g__",
-        "s__"
+        "^d__",
+        "^k__",
+        "^p__",
+        "^c__",
+        "^o__",
+        "^f__",
+        "^g__",
+        "^s__"
     )
     # Find which prefix is found from each column value, if none.
     found_rank <- lapply(
