@@ -74,3 +74,6 @@ Changes in version 1.7.x
 + Deprecate transformSamples, *Features, relabundance, ZTransform, relAbundanceCounts
 + mergeSEs: faster tree merging
 + Faith's index: fix bug that occurred when only one taxon is present
+
+Changes in version 1.9.x
++ loadFromMetaphlan: Bugfix, not all files include ID column.
