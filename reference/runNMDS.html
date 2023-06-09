@@ -18,7 +18,7 @@ data in a SingleCellExperiment object."><!-- mathjax --><script src="https://cdn
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.3</span>
       </span>
     </div>
 
@@ -228,6 +228,7 @@ results.</p></div>
 <span class="r-in"><span>                                rowData <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">#</span></span></span>
 <span class="r-in"><span><span class="fu">calculateNMDS</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>useNames = NA is deprecated. Instead, specify either useNames = TRUE or useNames = TRUE.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 0.383462 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 0.161655</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 0.113278</span>
@@ -250,11 +251,13 @@ results.</p></div>
 <span class="r-in"><span><span class="co">#</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">runNMDS</span><span class="op">(</span><span class="va">esophagus</span>, FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, name <span class="op">=</span> <span class="st">"BC"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>useNames = NA is deprecated. Instead, specify either useNames = TRUE or useNames = TRUE.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 0.000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> final  value 0.000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
 <span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">runNMDS</span><span class="op">(</span><span class="va">esophagus</span>, FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, name <span class="op">=</span> <span class="st">"euclidean"</span>,</span></span>
 <span class="r-in"><span>                     method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>useNames = NA is deprecated. Instead, specify either useNames = TRUE or useNames = TRUE.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 0.000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> final  value 0.000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
