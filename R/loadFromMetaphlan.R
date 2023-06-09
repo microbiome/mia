@@ -131,7 +131,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # Read the table. Catch error and give more informative message
     table <- tryCatch(
         {
-            read.table(file, header = TRUE, comment.char = "#")
+            read.table(file, header = TRUE, comment.char = "#", check.names = FALSE)
         },
         error = function(condition){
             stop("Error while reading ", file,
@@ -151,9 +151,11 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 # Check that metaphlan file contains correct information
 .check_metaphlan <- function(data){
     # Get rowdata columns
-    rowdata_columns <- data[ , 1:2]
+    rowdata_col <- c("clade_name", "_id")
+    rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
+    rowdata_columns <- data[ , rowdata_id, drop = FALSE]
     # Get columns that go to assay
-    assay_columns <- data[ , 3:ncol(data)]
+    assay_columns <- data[ , -rowdata_id, drop = FALSE]
     # Initialize result 
     result <- TRUE
     
@@ -161,7 +163,6 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # rest of the columns represents abundances in samples.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
     if( any(colnames(rowdata_columns) %in% "clade_name") && 
-        any(grepl("id", colnames(rowdata_columns))) && 
         is.numeric(unlist(assay_columns)) ){
         result <- FALSE
     }
@@ -216,10 +217,13 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
         stop("'assay.type' must be a non-empty character value.",
              call. = FALSE)
     }
+    # Get rowdata columns
+    rowdata_col <- c("clade_name", "_id")
+    rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(table)))
     # Get those columns that belong to rowData
-    rowdata <- table[, 1:2, drop = FALSE]
+    rowdata <- table[, rowdata_id, drop = FALSE]
     # Get those columns that belong to assay
-    assay <- table[, 3:ncol(table), drop = FALSE]
+    assay <- table[, -rowdata_id, drop = FALSE]
     # Parse taxonomic levels
     taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
     # Add parsed taxonomy level information to rowdata
