@@ -10,7 +10,12 @@
 #' @param BLUSPARAM A 
 #'   \code{\link[https://rdrr.io/github/LTLA/bluster/man/BlusterParam-class.html]{BlusterParam}}
 #'   object.
-#'
+#'   
+#' @param altExp A single character value indicating which alternate
+#'   experiment to use for the clustering (if any). If the clustering is done
+#'   on the main experiment, set \code{altExp = NULL}. This is the default 
+#'   choice.
+#'   
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for identifying dominant taxa.
@@ -20,16 +25,29 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'  
-#'  @param MARGIN A single numeric value for selecting if the clustering is done
-#'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
-#'   \code{2}. (By default: \code{MARGIN = 1}) 
+#'  @param MARGIN A character parameter for selecting if the clustering is done
+#'   row-wise / for features ("features") or column-wise / for samples 
+#'   ("samples"). Must be \code{1} or  \code{2}. 
+#'   (By default: \code{MARGIN = "features"}) 
 #'   
 #' @param full A logical scalar indicating whether the clustering statistics 
-#'   from both steps should be put in metadata
+#'   should be put in metadata.
+#'   
+#' @param name A single character value indicating the name of the clustering 
+#'   info in the metadata.
 #'   
 #' @details
+#' This is a wrapper for the 
+#' \link[https://bioconductor.org/packages/release/bioc/html/bluster.html]{bluster} 
+#' package.
+#' 
+#' It returns a \code{SummarizedExperiment} object with clustering information 
+#' named \code{clusters} stored in \code{colData} or \code{rowData}. 
+#' 
 #' When setting \code{full=TRUE}, the clustering information will be stored in
 #' the metadata of the object.
+#' 
+#' By default, clustering is done on the features.
 #'
 #' @author Basil Courbayre
 #'
@@ -39,46 +57,67 @@
 #'
 #' # Cluster on rows using Kmeans
 #' tse <- cluster(tse, KmeansParam(centers = 3))
-#'
+#' 
+#' # Clustering done on the samples using Hclust
+#' tse <- cluster(tse, 
+#'                MARGIN="samples", 
+#'                HclustParam(metric = "bray", dist.fun = vegan::vegdist)
+#' 
+#' # Getting the clusters
+#' colData(tse)$clusters
+#' 
 NULL
 
 #' @rdname cluster
 #' @export
 setGeneric("cluster", signature = c("x"),
-           function(x, BLUSPARAM, assay.type = assay_name, assay_name = "counts", 
-                    MARGIN=1, full = FALSE)
+           function(x, BLUSPARAM, altExp=NULL,
+                    assay.type = assay_name, assay_name = "counts", 
+                    MARGIN="features", full = FALSE, name="clusters")
                standardGeneric("cluster"))
 
 #' @rdname cluster
 #' @export
 #' @importFrom bluster clusterRows
 setMethod("cluster", signature = c(x = "SummarizedExperiment"),
-    function(x, BLUSPARAM, assay.type = assay_name, assay_name = "counts", 
-             MARGIN=1, full = FALSE) {
+          function(x, BLUSPARAM, altExp=NULL,  
+                   assay.type = assay_name, assay_name = "counts", 
+                   MARGIN="features", full = FALSE, name="clusters",) {
         # Checking parameters
-        .check_assay_present(assay.type, x)
         .check_margin(MARGIN)
-        
-        assay <- assay(x, assay.type)
+        se <- .check_and_get_altExp(x, altExp)
+        if (full) {
+            .check_name(se, name)
+        }
+        .check_assay_present(assay.type, se)
+        assay <- assay(se, assay.type)
         
         # Transpose if clustering on the columns
-        if( MARGIN != 1 ){
+        if( MARGIN != "features" ){
             assay <- t(assay)
         }
         
         result <- clusterRows(assay, BLUSPARAM, full)
         
+        # Getting the clusters and setting metadata
         if (full) {
             clusters <- result$clusters
-            metadata(x)[["clusters"]] <- result$objects
+            metadata(se)[["clusters"]] <- result$objects
         } else {
             clusters <- result
         }
         
-        if (MARGIN == 1) {
-            rowData(x)$clusters <- clusters
+        # Setting clusters in the object
+        if (MARGIN == "features") {
+            rowData(se)$clusters <- clusters
         } else {
-            colData(x)$clusters <- clusters
+            colData(se)$clusters <- clusters
+        }
+        
+        if (!is.null(altExp) && any(dim(se) != dim(x))) {
+            altExp(x, altExp) <- se
+        } else {
+            x <- se
         }
         
         x
@@ -86,7 +125,13 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
 )
 
 .check_margin <- function(MARGIN) {
-    if( !is.numeric(MARGIN) && !MARGIN %in% c(1, 2) ){
-        stop("'MARGIN' must be 1 or 2.", call. = FALSE)
+    if( !.is_non_empty_string(MARGIN) && !MARGIN %in% c("features", "samples") ){
+        stop("'MARGIN' must be 'features' or 'samples'.", call. = FALSE)
+    }
+}
+
+.check_name <- function(x, name) {
+    if (name %in% names(metadata(x))) {
+        stop("'name' must be unexisting in the metadata of the object.", call. = FALSE)
     }
 }
