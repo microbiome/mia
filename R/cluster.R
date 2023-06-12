@@ -15,6 +15,8 @@
 #'   experiment to use for the clustering (if any). If the clustering is done
 #'   on the main experiment, set \code{altexp = NULL}. This is the default 
 #'   choice.
+#' @param data_name A single character value indicating the name of the 
+#'   \code{rowData} (or \code{colData}) where the data will be stored.
 #'   
 #' @details
 #' This is a wrapper for the \code{clusterRows} function from the 
@@ -56,20 +58,21 @@ NULL
 #' @rdname cluster
 #' @export
 setGeneric("cluster", signature = c("x"),
-           function(x, BLUSPARAM, altexp=NULL,
-                    assay.type = assay_name, assay_name = "counts", 
-                    MARGIN="features", full = FALSE, name="clusters")
+           function(x, BLUSPARAM, altexp=NULL, assay.type = assay_name, 
+                    assay_name = "counts", MARGIN="features", full = FALSE, 
+                    name="clusters", data_name="clusters")
                standardGeneric("cluster"))
 
 #' @rdname cluster
 #' @export
 #' @importFrom bluster clusterRows
 setMethod("cluster", signature = c(x = "SummarizedExperiment"),
-          function(x, BLUSPARAM, altexp=NULL,  
-                   assay.type = assay_name, assay_name = "counts", 
-                   MARGIN="features", full = FALSE, name="clusters") {
+          function(x, BLUSPARAM, altexp=NULL, assay.type = assay_name, 
+                   assay_name = "counts", MARGIN="features", full = FALSE, 
+                   name="clusters", data_name="clusters") {
         # Checking parameters
         .check_margin(MARGIN)
+        .check_data_name(x, data_name, MARGIN)
         se <- .check_and_get_altExp(x, altexp)
         if (full) {
             .check_name(se, name)
@@ -87,16 +90,16 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
         # Getting the clusters and setting metadata
         if (full) {
             clusters <- result$clusters
-            metadata(se)[["clusters"]] <- result$objects
+            metadata(se)[[name]] <- result$objects
         } else {
             clusters <- result
         }
         
         # Setting clusters in the object
         if (MARGIN %in% c("rows", "features")) {
-            rowData(se)$clusters <- clusters
+            rowData(se)[[data_name]] <- clusters
         } else {
-            colData(se)$clusters <- clusters
+            colData(se)[[data_name]] <- clusters
         }
         
         if (!is.null(altexp) && any(dim(se) != dim(x))) {
@@ -120,5 +123,19 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
 .check_name <- function(x, name) {
     if (name %in% names(metadata(x))) {
         stop("The 'name' must not exist in the metadata of the object.", call. = FALSE)
+    }
+}
+
+.check_data_name <- function(x, data_name, MARGIN) {
+    if (MARGIN %in% c("rows", "features")) {
+        if (data_name %in% names(rowData(x))) {
+            stop("The 'data_name' parameter must not exist in the names of the rowData of the object.", 
+                 call. = FALSE)
+        }
+    } else {
+        if (data_name %in% names(colData(x))) {
+            stop("The 'data_name' parameter must not exist in the names of the colData of the object.", 
+                 call. = FALSE)
+        }
     }
 }

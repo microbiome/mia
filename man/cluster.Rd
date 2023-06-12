@@ -13,7 +13,8 @@ cluster(
   assay_name = "counts",
   MARGIN = "features",
   full = FALSE,
-  name = "clusters"
+  name = "clusters",
+  data_name = "clusters"
 )
 
 \S4method{cluster}{SummarizedExperiment}(
@@ -24,7 +25,8 @@ cluster(
   assay_name = "counts",
   MARGIN = "features",
   full = FALSE,
-  name = "clusters"
+  name = "clusters",
+  data_name = "clusters"
 )
 }
 \arguments{
@@ -55,6 +57,9 @@ transformation is applied sample (column) or feature (row) wise.
 
 \item{name}{the name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
+
+\item{data_name}{A single character value indicating the name of the
+\code{rowData} (or \code{colData}) where the data will be stored.}
 }
 \value{
 \code{cluster} returns an object of the same type as the \code{x} parameter
