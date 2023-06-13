@@ -15,7 +15,7 @@
 #'   experiment to use for the clustering (if any). If the clustering is done
 #'   on the main experiment, set \code{altexp = NULL}. This is the default 
 #'   choice.
-#' @param data_name A single character value indicating the name of the 
+#' @param data.name A single character value indicating the name of the 
 #'   \code{rowData} (or \code{colData}) where the data will be stored.
 #'   
 #' @details
@@ -39,8 +39,8 @@
 #' @author Basil Courbayre
 #'
 #' @examples
-#' data(GlobalPatterns)
-#' x <- GlobalPatterns
+#' data(GlobalPatterns, package = "mia")
+#' tse <- GlobalPatterns
 #'
 #' # Cluster on rows using Kmeans
 #' tse <- cluster(tse, KmeansParam(centers = 3))
@@ -48,7 +48,7 @@
 #' # Clustering done on the samples using Hclust
 #' tse <- cluster(tse, 
 #'                MARGIN="samples", 
-#'                HclustParam(metric = "bray", dist.fun = vegan::vegdist)
+#'                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 #' 
 #' # Getting the clusters
 #' colData(tse)$clusters
@@ -60,7 +60,7 @@ NULL
 setGeneric("cluster", signature = c("x"),
            function(x, BLUSPARAM, altexp=NULL, assay.type = assay_name, 
                     assay_name = "counts", MARGIN="features", full = FALSE, 
-                    name="clusters", data_name="clusters")
+                    name="clusters", data.name="clusters")
                standardGeneric("cluster"))
 
 #' @rdname cluster
@@ -69,24 +69,23 @@ setGeneric("cluster", signature = c("x"),
 setMethod("cluster", signature = c(x = "SummarizedExperiment"),
           function(x, BLUSPARAM, altexp=NULL, assay.type = assay_name, 
                    assay_name = "counts", MARGIN="features", full = FALSE, 
-                   name="clusters", data_name="clusters") {
+                   name="clusters", data.name="clusters") {
         # Checking parameters
         .check_margin(MARGIN)
-        .check_data_name(x, data_name, MARGIN)
+        .check_data_name(x, data.name, MARGIN)
         se <- .check_and_get_altExp(x, altexp)
         if (full) {
             .check_name(se, name)
         }
         .check_assay_present(assay.type, se)
-        assay <- assay(se, assay.type)
+        mat <- assay(se, assay.type)
         
         # Transpose if clustering on the columns
-        if(MARGIN %in% c("cols", "samples")){
-            assay <- t(assay)
+        if(.is_margin_col_like(MARGIN)){
+            mat <- t(mat)
         }
         
-        result <- clusterRows(assay, BLUSPARAM, full)
-        
+        result <- clusterRows(mat, BLUSPARAM, full)
         # Getting the clusters and setting metadata
         if (full) {
             clusters <- result$clusters
@@ -96,10 +95,10 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
         }
         
         # Setting clusters in the object
-        if (MARGIN %in% c("rows", "features")) {
-            rowData(se)[[data_name]] <- clusters
+        if (.is_margin_row_like(MARGIN)) {
+            rowData(se)[[data.name]] <- clusters
         } else {
-            colData(se)[[data_name]] <- clusters
+            colData(se)[[data.name]] <- clusters
         }
         
         if (!is.null(altexp) && any(dim(se) != dim(x))) {
@@ -113,11 +112,29 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
 )
 
 .check_margin <- function(MARGIN) {
-    if( !.is_non_empty_string(MARGIN) 
-        && !MARGIN %in% c("features", "samples", "rows", "cols") ){
-        stop("'MARGIN' must be either 'features', 'samples', 'rows', or 'cols'.",
+    if (.is_non_empty_string(MARGIN)) {
+        MARGIN <- tolower(MARGIN)
+    }
+    if (length(MARGIN) != 1 
+        || !(MARGIN %in% c(1, 2, "features", "samples", "rows", "cols"))) {
+        stop("'MARGIN' must equal to either 1, 2, 'features', 'samples', 'rows', or 'cols'.",
              call. = FALSE)
     }
+}
+
+.is_margin_row_like <- function(MARGIN) {
+    if (.is_non_empty_string(MARGIN)) {
+        MARGIN <- tolower(MARGIN)
+    }
+    MARGIN %in% c(1, "rows", "features")
+}
+
+
+.is_margin_col_like <- function(MARGIN) {
+    if (.is_non_empty_string(MARGIN)) {
+        MARGIN <- tolower(MARGIN)
+    }
+    MARGIN %in% c(2, "cols", "samples")
 }
 
 .check_name <- function(x, name) {
@@ -126,15 +143,15 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
     }
 }
 
-.check_data_name <- function(x, data_name, MARGIN) {
+.check_data_name <- function(x, data.name, MARGIN) {
     if (MARGIN %in% c("rows", "features")) {
-        if (data_name %in% names(rowData(x))) {
-            stop("The 'data_name' parameter must not exist in the names of the rowData of the object.", 
+        if (data.name %in% names(rowData(x))) {
+            stop("The 'data.name' parameter must not exist in the names of the rowData of the object.", 
                  call. = FALSE)
         }
     } else {
-        if (data_name %in% names(colData(x))) {
-            stop("The 'data_name' parameter must not exist in the names of the colData of the object.", 
+        if (data.name %in% names(colData(x))) {
+            stop("The 'data.name' parameter must not exist in the names of the colData of the object.", 
                  call. = FALSE)
         }
     }

@@ -14,7 +14,7 @@ cluster(
   MARGIN = "features",
   full = FALSE,
   name = "clusters",
-  data_name = "clusters"
+  data.name = "clusters"
 )
 
 \S4method{cluster}{SummarizedExperiment}(
@@ -26,7 +26,7 @@ cluster(
   MARGIN = "features",
   full = FALSE,
   name = "clusters",
-  data_name = "clusters"
+  data.name = "clusters"
 )
 }
 \arguments{
@@ -58,7 +58,7 @@ transformation is applied sample (column) or feature (row) wise.
 \item{name}{the name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
-\item{data_name}{A single character value indicating the name of the
+\item{data.name}{A single character value indicating the name of the
 \code{rowData} (or \code{colData}) where the data will be stored.}
 }
 \value{
@@ -81,8 +81,8 @@ the metadata of the object.
 By default, clustering is done on the features.
 }
 \examples{
-data(GlobalPatterns)
-x <- GlobalPatterns
+data(GlobalPatterns, package = "mia")
+tse <- GlobalPatterns
 
 # Cluster on rows using Kmeans
 tse <- cluster(tse, KmeansParam(centers = 3))
@@ -90,7 +90,7 @@ tse <- cluster(tse, KmeansParam(centers = 3))
 # Clustering done on the samples using Hclust
 tse <- cluster(tse, 
                MARGIN="samples", 
-               HclustParam(metric = "bray", dist.fun = vegan::vegdist)
+               HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 
 # Getting the clusters
 colData(tse)$clusters
