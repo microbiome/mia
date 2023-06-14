@@ -71,9 +71,9 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
                    name="clusters", data.name="clusters", ...) {
         # Checking parameters
         MARGIN <- .check_margin(MARGIN)
-        .check_data_name(x, data.name, MARGIN)
         altexp <- .get_altExp(...)
         se <- .check_and_get_altExp(x, altexp)
+        .check_data_name(se, data.name, MARGIN)
         .check_assay_present(assay.type, se)
         
         if (full) {
