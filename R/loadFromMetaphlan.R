@@ -110,6 +110,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     }
     
     # Load sample meta data if it is provided, otherwise initialize empty table
+    # Parameter name to colData? Can also be DF? Is added to all altExp?
     if (!is.null(sample_meta)) {
         coldata <- read.table(file = sample_meta, header = TRUE, sep = "\t")
         colData(tse) <- coldata
@@ -234,8 +235,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     assays[[assay.type]] <- assay
     
     # Create SE
-    se <- SummarizedExperiment(assays = assays,
-                                rowData = rowdata)
+    se <- TreeSummarizedExperiment(assays = assays, rowData = rowdata)
     # Add taxonomy labels
     rownames(se) <- getTaxonomyLabels(se)
     return(se)
