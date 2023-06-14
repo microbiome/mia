@@ -8,25 +8,25 @@
 cluster(
   x,
   BLUSPARAM,
-  altexp = NULL,
   assay.type = assay_name,
   assay_name = "counts",
   MARGIN = "features",
   full = FALSE,
   name = "clusters",
-  data.name = "clusters"
+  data.name = "clusters",
+  ...
 )
 
 \S4method{cluster}{SummarizedExperiment}(
   x,
   BLUSPARAM,
-  altexp = NULL,
   assay.type = assay_name,
   assay_name = "counts",
   MARGIN = "features",
   full = FALSE,
   name = "clusters",
-  data.name = "clusters"
+  data.name = "clusters",
+  ...
 )
 }
 \arguments{
@@ -35,11 +35,6 @@ cluster(
 object.}
 
 \item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
-
-\item{altexp}{A single character value indicating which alternate
-experiment to use for the clustering (if any). If the clustering is done
-on the main experiment, set \code{altexp = NULL}. This is the default
-choice.}
 
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -60,6 +55,8 @@ transformation is applied sample (column) or feature (row) wise.
 
 \item{data.name}{A single character value indicating the name of the
 \code{rowData} (or \code{colData}) where the data will be stored.}
+
+\item{...}{Additional parameters to use altExps for example}
 }
 \value{
 \code{cluster} returns an object of the same type as the \code{x} parameter
@@ -81,6 +78,7 @@ the metadata of the object.
 By default, clustering is done on the features.
 }
 \examples{
+library(bluster)
 data(GlobalPatterns, package = "mia")
 tse <- GlobalPatterns
 
