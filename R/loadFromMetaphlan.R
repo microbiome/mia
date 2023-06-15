@@ -26,6 +26,7 @@
 #'
 #' @details
 #' Import Metaphlan results. Input must be in merged Metaphlan format.
+#' (See the Metaphlan documentation and \code{merge_metaphlan_tables} method.)
 #' Data is imported so that data at the lowest rank is imported as a 
 #' \code{TreeSummarizedExperiment} object. Data at higher rank is imported as a
 #' \code{SummarizedExperiment} objects which are stored to \code{altExp} of
@@ -111,6 +112,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     
     # Load sample meta data if it is provided, otherwise initialize empty table
     # Parameter name to colData? Can also be DF? Is added to all altExp?
+    # REmove read table completely (can cause errores easily....)
     if (!is.null(sample_meta)) {
         coldata <- read.table(file = sample_meta, header = TRUE, sep = "\t")
         colData(tse) <- coldata
