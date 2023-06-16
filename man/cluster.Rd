@@ -13,7 +13,7 @@ cluster(
   MARGIN = "features",
   full = FALSE,
   name = "clusters",
-  data.name = "clusters",
+  clust.col = "clusters",
   ...
 )
 
@@ -25,7 +25,7 @@ cluster(
   MARGIN = "features",
   full = FALSE,
   name = "clusters",
-  data.name = "clusters",
+  clust.col = "clusters",
   ...
 )
 }
@@ -53,7 +53,7 @@ transformation is applied sample (column) or feature (row) wise.
 \item{name}{the name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
-\item{data.name}{A single character value indicating the name of the
+\item{clust.col}{A single character value indicating the name of the
 \code{rowData} (or \code{colData}) where the data will be stored.}
 
 \item{...}{Additional parameters to use altExps for example}
@@ -72,7 +72,7 @@ This is a wrapper for the \code{clusterRows} function from the
 \link[https://bioconductor.org/packages/release/bioc/html/bluster.html]{bluster}
 package.
 
-When setting \code{full=TRUE}, the clustering information will be stored in
+When setting \code{full = TRUE}, the clustering information will be stored in
 the metadata of the object.
 
 By default, clustering is done on the features.
@@ -87,7 +87,7 @@ tse <- cluster(tse, KmeansParam(centers = 3))
 
 # Clustering done on the samples using Hclust
 tse <- cluster(tse, 
-               MARGIN="samples", 
+               MARGIN = "samples", 
                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 
 # Getting the clusters

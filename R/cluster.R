@@ -7,7 +7,7 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'   
-#' @param data.name A single character value indicating the name of the 
+#' @param clust.col A single character value indicating the name of the 
 #'   \code{rowData} (or \code{colData}) where the data will be stored.
 #'   
 #' @param ... Additional parameters to use altExps for example
@@ -21,7 +21,7 @@
 #' \link[https://bioconductor.org/packages/release/bioc/html/bluster.html]{bluster} 
 #' package.
 #'
-#' When setting \code{full=TRUE}, the clustering information will be stored in
+#' When setting \code{full = TRUE}, the clustering information will be stored in
 #' the metadata of the object.
 #' 
 #' By default, clustering is done on the features.
@@ -46,7 +46,7 @@
 #' 
 #' # Clustering done on the samples using Hclust
 #' tse <- cluster(tse, 
-#'                MARGIN="samples", 
+#'                MARGIN = "samples", 
 #'                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 #' 
 #' # Getting the clusters
@@ -58,8 +58,8 @@ NULL
 #' @export
 setGeneric("cluster", signature = c("x"),
            function(x, BLUSPARAM, assay.type = assay_name, 
-                    assay_name = "counts", MARGIN="features", full = FALSE, 
-                    name="clusters", data.name="clusters", ...)
+                    assay_name = "counts", MARGIN = "features", full = FALSE, 
+                    name = "clusters", clust.col = "clusters", ...)
                standardGeneric("cluster"))
 
 #' @rdname cluster
@@ -67,13 +67,16 @@ setGeneric("cluster", signature = c("x"),
 #' @importFrom bluster clusterRows
 setMethod("cluster", signature = c(x = "SummarizedExperiment"),
           function(x, BLUSPARAM, assay.type = assay_name, 
-                   assay_name = "counts", MARGIN="features", full = FALSE, 
-                   name="clusters", data.name="clusters", ...) {
+                   assay_name = "counts", MARGIN = "features", full = FALSE, 
+                   name = "clusters", clust.col = "clusters", ...) {
         # Checking parameters
         MARGIN <- .check_margin(MARGIN)
-        altexp <- .get_altExp(...)
-        se <- .check_and_get_altExp(x, altexp)
-        .check_data_name(se, data.name, MARGIN)
+        se_altexp <- .get_altExp(x, ...)
+        se <- se_altexp$se
+        # If there wasn't an altExp in the SE (or if the name was wrong), altexp 
+        # is set to NULL, if it exists altexp contains the name of the altExp
+        altexp <- se_altexp$altexp
+        .check_data_name(se, clust.col, MARGIN)
         .check_assay_present(assay.type, se)
         
         if (full) {
@@ -97,12 +100,13 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
         
         # Setting clusters in the object
         if (MARGIN == 1) {
-            rowData(se)[[data.name]] <- clusters
+            rowData(se)[[clust.col]] <- clusters
         } else {
-            colData(se)[[data.name]] <- clusters
+            colData(se)[[clust.col]] <- clusters
         }
         
-        if (!is.null(altexp) && any(dim(se) != dim(x))) {
+        # If there was an altexp, update it in the mainExp
+        if (!is.null(altexp)) {
             altExp(x, altexp) <- se
         } else {
             x <- se
@@ -112,13 +116,15 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-.get_altExp <- function(...) {
+.get_altExp <- function(x, ...) {
     altexppos <- which(...names() == "altexp")
     if (length(altexppos) == 0) {
-        NULL
+        altexp <- NULL
     } else {
-        ...elt(altexppos)
+        altexp <- ...elt(altexppos)
     }
+    se <- .check_and_get_altExp(x, altexp)
+    list(se = se, altexp = altexp)
 }
 
 .check_margin <- function(MARGIN) {
@@ -133,6 +139,7 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
     }
     MARGIN <- ifelse(MARGIN %in% c("samples", "columns", "col", 2, "cols"), 
                      2, 1)
+    MARGIN
 }
 
 .check_name <- function(x, name) {
@@ -141,15 +148,15 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
     }
 }
 
-.check_data_name <- function(x, data.name, MARGIN) {
+.check_data_name <- function(x, clust.col, MARGIN) {
     if (MARGIN == 1) {
-        if (data.name %in% names(rowData(x))) {
-            stop("The 'data.name' parameter must not exist in the names of the rowData of the object.", 
+        if (clust.col %in% names(rowData(x))) {
+            stop("The 'clust.col' parameter must not exist in the names of the rowData of the object.", 
                  call. = FALSE)
         }
     } else {
-        if (data.name %in% names(colData(x))) {
-            stop("The 'data.name' parameter must not exist in the names of the colData of the object.", 
+        if (clust.col %in% names(colData(x))) {
+            stop("The 'clust.col' parameter must not exist in the names of the colData of the object.", 
                  call. = FALSE)
         }
     }

@@ -19,17 +19,17 @@ test_that("subsampleCounts", {
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
                    full = T,
-                   data.name = "customdataname")
+                   clust.col = "customdataname")
     altExp(tse, "test") <- tse[1:1000,]
     # Checking wrong name
     expect_error(cluster(tse, 
                          KmeansParam(centers = 3), 
                          name = "custommetadata",
                          full = T))
-    # Checking wrong data.name
+    # Checking wrong clust.col
     expect_error(cluster(tse, 
                          KmeansParam(centers = 3), 
-                         data.name = "customdataname"))
+                         clust.col = "customdataname"))
     # Checking wrong altexp
     expect_error(cluster(tse, 
                          KmeansParam(centers = 3), 
@@ -42,12 +42,12 @@ test_that("subsampleCounts", {
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
                    full = T,
-                   data.name = "customdataname")
+                   clust.col = "customdataname")
     tse <- cluster(tse, 
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
                    full = T,
-                   data.name = "customdataname",
+                   clust.col = "customdataname",
                    altexp = "test")
     # Checking custom metadata/dataname in main/altExp
     expect_true("custommetadata" %in% names(metadata(tse)))
@@ -62,12 +62,12 @@ test_that("subsampleCounts", {
                          full = T))
     expect_error(cluster(tse, 
                          KmeansParam(centers = 3), 
-                         data.name = "customdataname"))
+                         clust.col = "customdataname"))
     expect_error(cluster(tse, 
                          KmeansParam(centers = 3), 
                          name = "custommetadata",
                          full = T,
-                         data.name = "customdataname",
+                         clust.col = "customdataname",
                          altexp = "test"))
     # Checking working MARGIN
     tse <- GlobalPatterns
