@@ -253,6 +253,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # If the coldata is character specifying the path
     if( .is_non_empty_character(coldata) ){
         coldata <- read.table(file = coldata, header = TRUE, sep = "\t")
+        rownames(coldata) <- coldata[, 1]
     }
     # Ensure that the coldata is DF
     coldata <- DataFrame(coldata)
