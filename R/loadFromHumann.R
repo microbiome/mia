@@ -54,11 +54,11 @@
 #' microbial communities with bioBakery 3 eLife 10:e65088.
 #' 
 #' @examples
-#' \dontrun{
-#' 
-#' tse <- loadFromHumann("pathabundance.tsv")
-#' 
-#' }
+#' # File path
+#' file_path <- system.file("extdata", "humann_output.tsv", package = "mia")
+#' # Import data
+#' tse <- loadFromHumann(file_path)
+#' tse
 #' 
 NULL
 

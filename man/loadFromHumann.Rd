@@ -43,11 +43,11 @@ Usually the workflow includes also taxonomy data from Metaphlan. See
 \link[=loadFromMetaphlan]{loadFromMetaphlan} to load the data to \code{TreeSE}.
 }
 \examples{
-\dontrun{
-
-tse <- loadFromHumann("pathabundance.tsv")
-
-}
+# File path
+file_path <- system.file("extdata", "humann_output.tsv", package = "mia")
+# Import data
+tse <- loadFromHumann(file_path)
+tse
 
 }
 \references{

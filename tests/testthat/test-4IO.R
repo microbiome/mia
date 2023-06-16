@@ -387,3 +387,14 @@ test_that("makePhyloseqFromTreeSE", {
     
     expect_equal(phyloseq::otu_table(pseq), phyloseq::otu_table(pseq_compare))
 })
+
+test_that("Import HUMAnN file", {
+    file_path <- system.file("extdata", "humann_output.tsv", package = "mia")
+    tse <- loadFromHumann(file_path)
+    #
+    expect_true( length(taxonomyRanks(tse)) == 7 )
+    expect_true( length(taxonomyRanks(tse)) == 9 )
+    expect_true( colnames(tse) == 2 )
+    expect_true( rownames(tse) == 12 )
+    expect_true( all(!is.na(assay(tse))) )
+})
