@@ -3,10 +3,16 @@
 #' @param file a single \code{character} value defining the file
 #'   path of the Metaphlan file. The file must be in merged Metaphlan format.
 #'
-#' @param sample_meta a single \code{character} value defining the file
+#' @param colData a DataFrame-like object that includes sample names in
+#'   rownames, or a single \code{character} value defining the file
+#'   path of the sample metadata file. The file must be in \code{tsv} format
+#'   (default: \code{colData = NULL}).
+#' 
+#' @param sample_meta a DataFrame-like object that includes sample names in
+#'   rownames, or a single \code{character} value defining the file
 #'   path of the sample metadata file. The file must be in \code{tsv} format
 #'   (default: \code{sample_meta = NULL}).
-#'   
+#' 
 #' @param phy_tree a single \code{character} value defining the file
 #'   path of the phylogenetic tree.
 #'   (default: \code{phy_tree = NULL}).
@@ -38,6 +44,7 @@
 #'
 #' @name loadFromMetaphlan
 #' @seealso
+#' \code{\link[=loadFromHumann]{loadFromHumann}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 #' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
@@ -71,7 +78,8 @@
 #' 
 NULL
 
-loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
+loadFromMetaphlan <- function(
+        file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL, ...){
     ################################ Input check ################################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
@@ -80,10 +88,10 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
-    if(!is.null(sample_meta) &&
-       !(.is_non_empty_string(sample_meta) || is.data.frame(sample_meta) ||
-         is.matrix(sample_meta) || is(sample_meta, "DataFrame")) ){
-        stop("'sample_meta' must be a single character value, DataFrame or NULL.",
+    if(!is.null(colData) &&
+       !(.is_non_empty_string(colData) || is.data.frame(colData) ||
+         is.matrix(colData) || is(colData, "DataFrame")) ){
+        stop("'colData' must be a single character value, DataFrame or NULL.",
              call. = FALSE)
     }
     if(!is.null(phy_tree) && !.is_non_empty_string(phy_tree)){
@@ -114,8 +122,8 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     }
     
     # Load sample meta data if it is provided
-    if( !is.null(sample_meta) ) {
-        tse <- .add_coldata(tse, sample_meta)
+    if( !is.null(colData) ) {
+        tse <- .add_coldata(tse, colData)
     }
     
     
@@ -249,6 +257,8 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     return(se)
 }
 
+# This function can be used to add colData to TreeSE. It checks that sample
+# names match (full or partial) and adds the metadata to altExps also.
 .add_coldata <- function(tse, coldata){
     # If the coldata is character specifying the path
     if( .is_non_empty_character(coldata) ){
@@ -279,7 +289,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # colnames should be found if data sets are matching. (More samples in
     # metadata is allowed.)
     if( !all(colnames(tse) %in% sample_names) ){
-        warning("The sample names in 'sample_meta' do not match with the ",
+        warning("The sample names in 'colData' do not match with the ",
                 "data. The sample metadata is not added.", call. = FALSE
                 )
         return(tse)
@@ -291,7 +301,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     # Give warning if partial match was used
     if( !all(rownames(coldata) %in% colnames(tse)) ){
         warning("Partial match was used to match sample names between ",
-                "'sample_meta' and the data. Please check that they are correct.",
+                "'colData' and the data. Please check that they are correct.",
                 call. = FALSE
         )
         # Replace colnames with names from sample metadata. They are without

@@ -1,30 +1,33 @@
-#' Import HumanN results to \code{TreeSummarizedExperiment}
+#' Import HUMAnN results to \code{TreeSummarizedExperiment}
 #
 #' @param file a single \code{character} value defining the file
-#' path of the HumanN file. The file must be in merged HumanN format.
+#' path of the HUMAnN file. The file must be in merged HUMAnN format.
 #'
-#' @param sample_meta a tabular object or a single \code{character} value
-#' defining the file path of the sample metadata file. The file must be in
-#' \code{tsv} format (default: \code{sample_meta = NULL}).
+#' @param colData a DataFrame-like object that includes sample names in
+#' rownames, or a single \code{character} value defining the file
+#' path of the sample metadata file. The file must be in \code{tsv} format
+#' (default: \code{colData = NULL}).
 #' 
 #' @param ... additional arguments:
 #' \itemize{
 #'   \item{\code{assay.type}:} {A single character value for naming 
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{assay}} 
 #'   (default: \code{assay.type = "counts"})}
-#'   \item{\code{assay_name}:} {A single \code{character} value for specifying which
-#'   assay to use for calculation. (Please use \code{assay.type} instead. 
-#'   At some point \code{assay_name} will be disabled.)}
 #'   \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
 #'     taxonomic prefixes be removed? (default:
 #'     \code{removeTaxaPrefixes = FALSE})}
 #' }
 #'
 #' @details
-#' Import HumanN results of pathways or gene families. Input must be in merged
-#' HumanN format. (See the HumanN documentation and {humann_join_tables} method.)
+#' Import HUMAnN (version 3.0) results of pathways or gene families. Input must
+#' be in merged HUMAnN format. (See the HUMAnN documentation and
+#' \code{humann_join_tables} method.)
 #' 
-#' Usually thw workflow includes also taxonomy data from Metaphlan. See
+#' The function parses gene/pathway information along with taxonomy information
+#' from the input file. This information is stored to \code{rowData}. Abundances
+#' are stored to \code{assays}.
+#' 
+#' Usually the workflow includes also taxonomy data from Metaphlan. See
 #' \link[=loadFromMetaphlan]{loadFromMetaphlan} to load the data to \code{TreeSE}.
 #'
 #' @return  A
@@ -44,12 +47,12 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #' 
 #' @references
-#' Beghini F, McIver LJ, Blanco-Míguez A, Dubois L, Asnicar F, Maharjan S, Mailyan A, 
-#' Manghi P, Scholz M, Thomas AM, Valles-Colomer M, Weingart G, Zhang Y, Zolfo M, 
-#' Huttenhower C, Franzosa EA, & Segata N (2021) Integrating taxonomic, functional, 
-#' and strain-level profiling of diverse microbial communities with bioBakery 3.
-#' Elife 10:e65088. doi: 10.7554/eLife.65088
-#'
+#' Beghini F, McIver LJ, Blanco-Míguez A, Dubois L, Asnicar F, Maharjan S,
+#' Mailyan A, Manghi P, Scholz M, Thomas AM, Valles-Colomer M, Weingart G,
+#' Zhang Y, Zolfo M, Huttenhower C, Franzosa EA, & Segata N (2021)
+#' Integrating taxonomic, functional, and strain-level profiling of diverse
+#' microbial communities with bioBakery 3 eLife 10:e65088.
+#' 
 #' @examples
 #' \dontrun{
 #' 
@@ -59,8 +62,8 @@
 #' 
 NULL
 
-loadFromHumann <- function(file, sample_meta = NULL, ...){
-    ################################ Input check ################################
+loadFromHumann <- function(file, colData = NULL, ...){
+    ################################ Input check ###############################
     if(!mia:::.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
              call. = FALSE)
@@ -68,10 +71,10 @@ loadFromHumann <- function(file, sample_meta = NULL, ...){
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
-    if(!is.null(sample_meta) &&
-       !(.is_non_empty_string(sample_meta) || is.data.frame(sample_meta) ||
-         is.matrix(sample_meta) || is(sample_meta, "DataFrame")) ){
-        stop("'sample_meta' must be a single character value, DataFrame or NULL.",
+    if(!is.null(colData) &&
+       !(.is_non_empty_string(colData) || is.data.frame(colData) ||
+         is.matrix(colData) || is(colData, "DataFrame")) ){
+        stop("'colData' must be a single character value, DataFrame or NULL.",
              call. = FALSE)
     }
     ############################## Input check end #############################
@@ -80,8 +83,8 @@ loadFromHumann <- function(file, sample_meta = NULL, ...){
     # Create TreeSE from the data
     tse <- .create_tse_from_humann(data, ...)
     # Add colData if provided
-    if( !is.null(sample_meta) ){
-        tse <- .add_coldata(tse, sample_meta)
+    if( !is.null(colData) ){
+        tse <- .add_coldata(tse, colData)
     }
     return(tse)
 }
@@ -110,7 +113,7 @@ loadFromHumann <- function(file, sample_meta = NULL, ...){
     # Check that file is in right format
     if( .check_humann(table) ){
         stop("Error while reading ", file,
-             "\nPlease check that the file is in merged humann file format.",
+             "\nPlease check that the file is in merged HUMAnN file format.",
              call. = FALSE)
     }
     return(table)
