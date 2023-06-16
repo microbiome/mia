@@ -80,8 +80,10 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
-    if(!is.null(sample_meta) && !.is_non_empty_string(sample_meta)){
-        stop("'sample_meta' must be a single character value or NULL.",
+    if(!is.null(sample_meta) &&
+       !(.is_non_empty_string(sample_meta) || is.data.frame(sample_meta) ||
+         is.matrix(sample_meta) || is(sample_meta, "DataFrame")) ){
+        stop("'sample_meta' must be a single character value, DataFrame or NULL.",
              call. = FALSE)
     }
     if(!is.null(phy_tree) && !.is_non_empty_string(phy_tree)){
@@ -93,6 +95,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     data <- .read_metaphlan(file, ...)
     # Parse data into separate tables, which include data at certain taxonomy rank
     tables <- .parse_metaphlan(data, ...)
+
     # Create multiple SE objects at different rank from the data
     se_objects <- lapply(tables, .create_se_from_metaphlan, ...)
     
@@ -110,13 +113,11 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
         }
     }
     
-    # Load sample meta data if it is provided, otherwise initialize empty table
-    # Parameter name to colData? Can also be DF? Is added to all altExp?
-    # REmove read table completely (can cause errores easily....)
-    if (!is.null(sample_meta)) {
-        coldata <- read.table(file = sample_meta, header = TRUE, sep = "\t")
-        colData(tse) <- coldata
+    # Load sample meta data if it is provided
+    if( !is.null(sample_meta) ) {
+        tse <- .add_coldata(tse, sample_meta)
     }
+    
     
     # Load tree if it is provided
     if (!is.null(phy_tree)) {
@@ -212,8 +213,8 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 }
 
 # Create SE object that include rowdata and assay, from the metaphlan table
-.create_se_from_metaphlan <- function(table, 
-                                      assay.type = assay_name, assay_name = "counts", 
+.create_se_from_metaphlan <- function(table,
+                                      assay.type = assay_name, assay_name = "counts",
                                       ...){
     # Check assay.type
     if( !.is_non_empty_character(assay.type) ){
@@ -231,14 +232,87 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
     # Add parsed taxonomy level information to rowdata
     rowdata <- cbind(taxonomy, rowdata)
+    # Ensure that rowData is DataFrame
+    rowdata <- DataFrame(rowdata, check.names = FALSE)
     
+    # Ensure that assay is matrix
+    assay <- as.matrix(assay)
     # Create assays list and add assay with specific name
     assays <- S4Vectors::SimpleList()
     assays[[assay.type]] <- assay
     
-    # Create SE
-    se <- TreeSummarizedExperiment(assays = assays, rowData = rowdata)
+    # Create TreeSE
+    se <- TreeSummarizedExperiment(
+        assays = assays, rowData = rowdata)
     # Add taxonomy labels
     rownames(se) <- getTaxonomyLabels(se)
     return(se)
+}
+
+.add_coldata <- function(tse, coldata){
+    # If the coldata is character specifying the path
+    if( .is_non_empty_character(coldata) ){
+        coldata <- read.table(file = coldata, header = TRUE, sep = "\t")
+    }
+    # Ensure that the coldata is DF
+    coldata <- DataFrame(coldata)
+
+    # Usually when metaphlan sample names are created, the workflow adds file
+    # name as a suffix. Because of that sample names do not match anymore
+    # necessarily. Try partial match if full match is not found.
+    if( all(rownames(coldata) %in% colnames(tse)) ){
+        sample_names <- rownames(coldata)
+    } else{
+        sample_names <- sapply(rownames(coldata), function(x){
+            x <- colnames(tse)[grep(x, colnames(tse))]
+            if( length(x) != 1 ){
+                x <- NULL
+            }
+            return(x)
+        })
+        sample_names <- unlist(sample_names)
+    }
+
+    # Check if all samples were found. (In partial match certain sample name
+    # is missing if one matching name was not found.). In this part, all
+    # colnames should be found if data sets are matching. (More samples in
+    # metadata is allowed.)
+    if( !all(colnames(tse) %in% sample_names) ){
+        warning("The sample names in 'sample_meta' do not match with the ",
+                "data. The sample metadata is not added.", call. = FALSE
+                )
+        return(tse)
+    }
+
+    # Reorder sample metadata based on the data
+    coldata <- coldata[match(colnames(tse), sample_names), ]
+
+    # Give warning if partial match was used
+    if( !all(rownames(coldata) %in% colnames(tse)) ){
+        warning("Partial match was used to match sample names between ",
+                "'sample_meta' and the data. Please check that they are correct.",
+                call. = FALSE
+        )
+        # Replace colnames with names from sample metadata. They are without
+        # additional suffix.
+        coldata[["colnames_data"]] <- colnames(tse)
+        coldata[["colnames_metadata"]] <- rownames(coldata)
+        colnames(tse) <- rownames(coldata)
+    }
+
+    # Add sample metadata
+    colData(tse) <- coldata
+    # If there are altExps, add the metadata also there
+    if( length(altExps(tse)) ){
+        altexps <- altExps(tse)
+        altexps <- lapply(altexps, function(x){
+            colnames(x) <- rownames(coldata)
+            colData(x) <- coldata
+            return(x)
+            })
+        altexps <- SimpleList(altexps)
+        altExps(tse) <- altexps
+        
+    }
+    return(tse)
 }
