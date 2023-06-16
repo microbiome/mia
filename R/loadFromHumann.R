@@ -34,7 +34,7 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name loadFromMetaphlan
+#' @name loadFromHumann
 #' @seealso
 #' \code{\link[=loadFromMetaphlan]{loadFromMetaphlan}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
