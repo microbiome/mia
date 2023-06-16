@@ -59,7 +59,7 @@
 #' 
 NULL
 
-loadFromHumann <- function(file, colData = NULL, ...){
+loadFromHumann <- function(file, sample_meta = NULL, ...){
     ################################ Input check ################################
     if(!mia:::.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
@@ -68,15 +68,21 @@ loadFromHumann <- function(file, colData = NULL, ...){
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
-    if(!is.null(colData) && !mia:::.is_non_empty_string(colData)){
-        stop("'colData' must be a single character value or NULL.",
+    if(!is.null(sample_meta) &&
+       !(.is_non_empty_string(sample_meta) || is.data.frame(sample_meta) ||
+         is.matrix(sample_meta) || is(sample_meta, "DataFrame")) ){
+        stop("'sample_meta' must be a single character value, DataFrame or NULL.",
              call. = FALSE)
     }
     ############################## Input check end #############################
     # Read metaphlan data
     data <- .read_humann(file)
     # Create TreeSE from the data
-    tse <- .create_tse_from_humann(data, colData = colData, ...)
+    tse <- .create_tse_from_humann(data, ...)
+    # Add colData if provided
+    if( !is.null(sample_meta) ){
+        tse <- .add_coldata(tse, sample_meta)
+    }
     return(tse)
 }
 
@@ -173,20 +179,8 @@ loadFromHumann <- function(file, colData = NULL, ...){
     assay <- as.matrix(assay)
     assays <- SimpleList(counts = assay)
     names(assays) <- assay.type
-    
-    # If coldata was provided, get it
-    if( is.character(colData) ){
-        colData <- read.table(file = colData, header = TRUE, sep = "\t")
-        colData(tse) <- colData
-    } else if( is.null(colData) ) {
-        # If NULL, initialize DF
-        colData <- DataFrame(row.names = colnames(assay))
-    }
-    # Ensure that the class is DF
-    colData <- DataFrame(colData)
-    
+
     # Create TreeSE
-    tse <- TreeSummarizedExperiment(
-        assays = assays, rowData = rowdata, colData = colData)
+    tse <- TreeSummarizedExperiment(assays = assays, rowData = rowdata)
     return(tse)
 }
