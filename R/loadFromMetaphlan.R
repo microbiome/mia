@@ -139,7 +139,12 @@ loadFromMetaphlan <- function(
 ################################ HELP FUNCTIONS ################################
 
 # Read Metaphlan file, catch error if it occurs
-.read_metaphlan <- function(file, ...){
+.read_metaphlan <- function(file, remove.suffix = FALSE, ...){
+    ################################ Input check ###############################
+    if(!.is_a_bool(remove.suffix)){
+        stop("'remove.suffix' must be TRUE or FALSE.", call. = FALSE)
+    }
+    ############################## Input check end #############################
     # Read the table. Catch error and give more informative message
     table <- tryCatch(
         {
@@ -156,6 +161,10 @@ loadFromMetaphlan <- function(
         stop("Error while reading ", file,
              "\nPlease check that the file is in merged Metaphlan file format.",
              call. = FALSE)
+    }
+    # Remove possible suffix from the colnames if user has specified
+    if( remove.suffix ){
+        table <- .remove_suffix(table, c("clade_name", "_id"))
     }
     return(table)
 }
@@ -296,7 +305,8 @@ loadFromMetaphlan <- function(
     }
 
     # Reorder sample metadata based on the data
-    coldata <- coldata[match(colnames(tse), sample_names), ]
+    sample_names <- sample_names[match(colnames(tse), sample_names)]
+    coldata <- coldata[names(sample_names), ]
 
     # Give warning if partial match was used
     if( !all(rownames(coldata) %in% colnames(tse)) ){
@@ -326,4 +336,34 @@ loadFromMetaphlan <- function(
         
     }
     return(tse)
+}
+
+# In humann/metaphlan pipeline, suffix is added to colnames. The suffix comes
+# from file names. This can cause problems when, e.g., taxonomy and pathway
+# information is combined. Because their suffixes differ, the sample names
+# differ. The purpose of the function is to remove those file names.
+.remove_suffix <- function( data, rowdata_col = c("clade_name", "_id") ){
+    # Get rowdata columns
+    rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
+    # Get sample names
+    sample_names <- colnames(data)[-rowdata_id]
+    # Get the possible suffixes, i.e., words that are divided by underscores
+    # based on first sample name.
+    suffix <- strsplit(sample_names[[1]], "_")[[1]]
+    # Loop over these suffixes. From the end, add words one by one. Store those
+    # suffixes that match with all sample names. The result is suffix that is
+    # the longest.
+    shared <- NULL
+    for( i in length(suffix):1 ){
+        pattern <- paste0("_", paste(suffix[i:length(suffix)], collapse="_"))
+        if( all(grepl(pattern, sample_names)) ){
+            shared <- pattern
+        }
+    }
+    # Remove suffix from sample names
+    if( !is.null(shared) ){
+        sample_names <- gsub(shared, "", sample_names)
+        colnames(data)[-rowdata_id] <- sample_names
+    }
+    return(data)
 }

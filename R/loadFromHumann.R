@@ -79,7 +79,7 @@ loadFromHumann <- function(file, colData = NULL, ...){
     }
     ############################## Input check end #############################
     # Read metaphlan data
-    data <- .read_humann(file)
+    data <- .read_humann(file, ...)
     # Create TreeSE from the data
     tse <- .create_tse_from_humann(data, ...)
     # Add colData if provided
@@ -92,7 +92,12 @@ loadFromHumann <- function(file, colData = NULL, ...){
 ################################ HELP FUNCTIONS ################################
 
 # Read Humann file, catch error if it occurs
-.read_humann <- function(file){
+.read_humann <- function(file, remove.suffix = FALSE, ...){
+    ################################ Input check ###############################
+    if(!.is_a_bool(remove.suffix)){
+        stop("'remove.suffix' must be TRUE or FALSE.", call. = FALSE)
+    }
+    ############################## Input check end #############################
     # Read the table. Catch error and give more informative message
     table <- tryCatch(
         {
@@ -100,14 +105,18 @@ loadFromHumann <- function(file, colData = NULL, ...){
         },
         error = function(condition){
             stop("Error while reading ", file,
-                 "\nPlease check that the file is in merged Metaphlan file format.",
-                 call. = FALSE)
+                 "\nPlease check that the file is in merged HUMAnN file ",
+                 "format.", call. = FALSE)
         }
     )
     # In the first column name, there is "# " prefix. Remove it
     colnames(table)[1] <- gsub("# ", "", colnames(table)[1])
     # Replace spaces with underscore
     colnames(table)[1] <- gsub(" ", "_", colnames(table)[1])
+    # Remove possible suffix from the colnames if user has specified
+    if( remove.suffix ){
+        table <- .remove_suffix(table, c("Pathway", "Gene_Family"))
+    }
     # Add rownames
     rownames(table) <- table[, 1] 
     # Check that file is in right format
@@ -130,8 +139,8 @@ loadFromHumann <- function(file, colData = NULL, ...){
     # Initialize result 
     result <- TRUE
     
-    # Check rowdata column names that they contain right information, and check that 
-    # rest of the columns represents abundances in samples.
+    # Check rowdata column names that they contain right information, and check
+    # that rest of the columns represents abundances in samples.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
     if( any(colnames(rowdata_columns) %in% c("Pathway", "Gene_Family")) && 
         is.numeric(unlist(assay_columns)) ){
