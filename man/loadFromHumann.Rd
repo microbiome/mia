@@ -38,8 +38,9 @@ Import HUMAnN results to \code{TreeSummarizedExperiment}
 \details{
 Import HUMAnN (currently version 3.0 supported) results of functional
 predictions based on metagenome composition (e.g. pathways or gene families).
-The input must be in merged HUMAnN format. (See the HUMAnN documentation and
-\code{humann_join_tables} method.)
+The input must be in merged HUMAnN format. (See
+\href{https://github.com/biobakery/humann#humann_join_tables}{the HUMAnN
+documentation and \code{humann_join_tables} method.})
 
 The function parses gene/pathway information along with taxonomy information
 from the input file. This information is stored to \code{rowData}. Abundances
