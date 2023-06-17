@@ -66,7 +66,7 @@
 #' Manghi P, Scholz M, Thomas AM, Valles-Colomer M, Weingart G, Zhang Y, Zolfo M, 
 #' Huttenhower C, Franzosa EA, & Segata N (2021) Integrating taxonomic, functional, 
 #' and strain-level profiling of diverse microbial communities with bioBakery 3.
-#' Elife 10:e65088. doi: 10.7554/eLife.65088
+#' \emph{eLife}. 10:e65088. doi: 10.7554/eLife.65088
 #'
 #' @examples
 #' # (Data is from tutorial

@@ -62,7 +62,7 @@ Beghini F, McIver LJ, Blanco-Míguez A, Dubois L, Asnicar F, Maharjan S,
 Mailyan A, Manghi P, Scholz M, Thomas AM, Valles-Colomer M, Weingart G,
 Zhang Y, Zolfo M, Huttenhower C, Franzosa EA, & Segata N (2021)
 Integrating taxonomic, functional, and strain-level profiling of diverse
-microbial communities with bioBakery 3 eLife 10:e65088.
+microbial communities with bioBakery 3. \emph{eLife}. 10:e65088.
 }
 \seealso{
 \code{\link[=loadFromMetaphlan]{loadFromMetaphlan}}
