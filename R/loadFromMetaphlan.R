@@ -289,6 +289,7 @@ loadFromMetaphlan <- function(
     # necessarily. Try partial match if full match is not found.
     if( all(rownames(coldata) %in% colnames(tse)) ){
         sample_names <- rownames(coldata)
+        names(sample_names) <- sample_names
     } else{
         sample_names <- sapply(rownames(coldata), function(x){
             x <- colnames(tse)[grep(x, colnames(tse))]
