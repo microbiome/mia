@@ -20,6 +20,11 @@ path of the sample metadata file. The file must be in \code{tsv} format
 \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
 \code{removeTaxaPrefixes = FALSE})}
+\item{\code{remove.suffix}:} {\code{TRUE} or \code{FALSE}: Should
+suffixes of sample names be removed? HUMAnN pipeline adds suffixes
+to sample names. Suffixes are formed from file names. By selecting
+\code{remove.suffix = TRUE}, you can remove pattern from end of sample
+names that is shared by all. (default: \code{remove.suffix = FALSE})}
 }}
 }
 \value{

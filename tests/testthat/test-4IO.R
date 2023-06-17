@@ -406,4 +406,9 @@ test_that("Import HUMAnN file", {
     tse2 <- loadFromHumann(file_path, remove.suffix=TRUE)
     # There is no suffix, should be equal
     expect_equal(tse, tse2)
+    #
+    cd <- colData(tse)
+    tse2 <- loadFromHumann(file_path, colData = cd)
+    # colData should not change the result
+    expect_equal(tse, tse2)
 })
