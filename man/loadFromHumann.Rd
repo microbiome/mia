@@ -36,8 +36,9 @@ object
 Import HUMAnN results to \code{TreeSummarizedExperiment}
 }
 \details{
-Import HUMAnN (version 3.0) results of pathways or gene families. Input must
-be in merged HUMAnN format. (See the HUMAnN documentation and
+Import HUMAnN (currently version 3.0 supported) results of functional
+predictions based on metagenome composition (e.g. pathways or gene families).
+The input must be in merged HUMAnN format. (See the HUMAnN documentation and
 \code{humann_join_tables} method.)
 
 The function parses gene/pathway information along with taxonomy information
