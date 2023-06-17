@@ -393,8 +393,17 @@ test_that("Import HUMAnN file", {
     tse <- loadFromHumann(file_path)
     #
     expect_true( length(taxonomyRanks(tse)) == 7 )
-    expect_true( length(taxonomyRanks(tse)) == 9 )
-    expect_true( colnames(tse) == 2 )
-    expect_true( rownames(tse) == 12 )
+    expect_true( ncol(rowData(tse)) == 9 )
+    expect_true( ncol(tse) == 3 )
+    expect_true( nrow(tse) == 12 )
     expect_true( all(!is.na(assay(tse))) )
+    #
+    expect_error(loadFromHumann("test"))
+    expect_error(loadFromHumann(file_path, remove.suffix="test"))
+    expect_error(loadFromHumann(file_path, remove.suffix=1))
+    expect_error(loadFromHumann(file_path, remove.suffix=c(FALSE, TRUE)))
+    #
+    tse2 <- loadFromHumann(file_path, remove.suffix=TRUE)
+    # There is no suffix, should be equal
+    expect_equal(tse, tse2)
 })
