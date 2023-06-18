@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
       </span>
     </div>
 
@@ -60,8 +60,16 @@
 path of the Metaphlan file. The file must be in merged Metaphlan format.</p></dd>
 
 
+<dt>colData</dt>
+<dd><p>a DataFrame-like object that includes sample names in
+rownames, or a single <code>character</code> value defining the file
+path of the sample metadata file. The file must be in <code>tsv</code> format
+(default: <code>colData = NULL</code>).</p></dd>
+
+
 <dt>sample_meta</dt>
-<dd><p>a single <code>character</code> value defining the file
+<dd><p>a DataFrame-like object that includes sample names in
+rownames, or a single <code>character</code> value defining the file
 path of the sample metadata file. The file must be in <code>tsv</code> format
 (default: <code>sample_meta = NULL</code>).</p></dd>
 
@@ -82,6 +90,11 @@ At some point <code>assay_name</code> will be disabled.)</p></li>
 <li><p><code>removeTaxaPrefixes</code>: <code>TRUE</code> or <code>FALSE</code>: Should
 taxonomic prefixes be removed? (default:
 <code>removeTaxaPrefixes = FALSE</code>)</p></li>
+<li><p><code>remove.suffix</code>: <code>TRUE</code> or <code>FALSE</code>: Should
+suffixes of sample names be removed? Metaphlan pipeline adds suffixes
+to sample names. Suffixes are formed from file names. By selecting
+<code>remove.suffix = TRUE</code>, you can remove pattern from end of sample
+names that is shared by all. (default: <code>remove.suffix = FALSE</code>)</p></li>
 </ul></dd>
 
 </dl></div>
@@ -98,6 +111,9 @@ taxonomic prefixes be removed? (default:
     <div id="details">
     <h2>Details</h2>
     <p>Import Metaphlan results. Input must be in merged Metaphlan format.
+(See
+<a href="https://github.com/biobakery/MetaPhlAn/wiki/MetaPhlAn-4#merging-tables" class="external-link">
+the Metaphlan documentation and <code>merge_metaphlan_tables</code> method.</a>)
 Data is imported so that data at the lowest rank is imported as a
 <code>TreeSummarizedExperiment</code> object. Data at higher rank is imported as a
 <code>SummarizedExperiment</code> objects which are stored to <code>altExp</code> of
@@ -109,11 +125,12 @@ Data is imported so that data at the lowest rank is imported as a
 Manghi P, Scholz M, Thomas AM, Valles-Colomer M, Weingart G, Zhang Y, Zolfo M,
 Huttenhower C, Franzosa EA, &amp; Segata N (2021) Integrating taxonomic, functional,
 and strain-level profiling of diverse microbial communities with bioBakery 3.
-Elife 10:e65088. doi: 10.7554/eLife.65088</p>
+<em>eLife</em>. 10:e65088. doi: 10.7554/eLife.65088</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="makeTreeSEFromPhyloseq.html">makeTreeSEFromPhyloseq</a></code>
+    <div class="dont-index"><p><code><a href="loadFromHumann.html">loadFromHumann</a></code>
+<code><a href="makeTreeSEFromPhyloseq.html">makeTreeSEFromPhyloseq</a></code>
 <code><a href="makeTreeSEFromBiom.html">makeTreeSEFromBiom</a></code>
 <code><a href="makeTreeSEFromDADA2.html">makeTreeSEFromDADA2</a></code>
 <code><a href="loadFromQIIME2.html">loadFromQIIME2</a></code>
@@ -159,7 +176,7 @@ Elife 10:e65088. doi: 10.7554/eLife.65088</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> names(6): Kingdom Phylum Class Order Family Genus</span>
 <span class="r-in"><span><span class="co"># Higher rank data is in SE format, for example, Phylum rank</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"Phylum"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 4 6 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
@@ -170,6 +187,13 @@ Elife 10:e65088. doi: 10.7554/eLife.65088</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SRS014476-Supragingival_plaque_profile ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SRS014464-Anterior_nares_profile SRS014459-Stool_profile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
