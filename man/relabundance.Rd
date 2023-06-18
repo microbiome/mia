@@ -16,30 +16,25 @@ relabundance(x) <- value
 \S4method{relabundance}{SummarizedExperiment}(x) <- value
 }
 \arguments{
-\item{x}{a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object}
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object}
 
 \item{...}{optional arguments not used currently.}
 
-\item{value}{a \code{matrix} to store as the the \sQuote{relabundance} assay}
+\item{value}{a matrix to store as the \sQuote{relabundance} assay}
 }
 \value{
-For \code{relabundance} the matrix stored with the name
-\dQuote{relabundance}.
+For \code{relabundance}, the matrix stored with the name \dQuote{relabundance}.
 }
 \description{
-This function will be deprecated. Please use \code{assay(x, "relabundance")}
-instead.
-\code{relabundance} is a getter/setter for relative abundance stored in the
-assay slot \sQuote{relabundance} of a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object. This is a shortcut function for \code{assay(x,"relabundance")}.
+This function is being deprecated and will be removed in future releases.
+Please use \code{assay(x, "relabundance")} instead, which provides a more
+flexible and robust way to access and modify relative abundance data stored
+in the assay slot of a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 }
 \examples{
 data(GlobalPatterns)
 # Calculates relative abundances
 GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
 # Fetches calculated relative abundances
-# head(relabundance(GlobalPatterns))
+# head(assay(GlobalPatterns, "relabundance"))
 }
