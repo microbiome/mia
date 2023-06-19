@@ -1,0 +1,13 @@
+# Gene Family	sample1	sample2	sample3
+UNMAPPED	647	20	20
+UniRef50_unknown	180	374	43
+UniRef50_unknown|g__Bacteroides.s__Bacteroides_fragilis	150	264	5
+UniRef50_A6L0N6: Conserved protein found in conjugate transposon	67	42	6
+UniRef50_A6L0N6: Conserved protein found in conjugate transposon|g__Bacteroides.s__Bacteroides_fragilis	57	34	4
+UniRef50_A6L0N6: Conserved protein found in conjugate transposon|g__Bacteroides.s__Bacteroides_finegoldii	5	3	3
+UniRef50_A6L0N6: Conserved protein found in conjugate transposon|g__Bacteroides.s__Bacteroides_stercoris	4	54	34
+UniRef50_A6L0N6: Conserved protein found in conjugate transposon|unclassified	1	2	53
+UniRef50_O83668: Fructose-bisphosphate aldolase	60	20	56
+UniRef50_O83668: Fructose-bisphosphate aldolase|g__Bacteroides.s__Bacteroides_vulgatus	31	24	34
+UniRef50_O83668: Fructose-bisphosphate aldolase|g__Bacteroides.s__Bacteroides_thetaiotaomicron	22	54	23
+UniRef50_O83668: Fructose-bisphosphate aldolase|g__Bacteroides.s__Bacteroides_stercoris	7	9	45
