@@ -19,6 +19,7 @@ reference:
   - loadFromQIIME2
   - loadFromMothur
   - loadFromMetaphlan
+  - loadFromHumann
   - makePhyloseqFromTreeSummarizedExperiment
 - title: Taxonomic data
   contents:

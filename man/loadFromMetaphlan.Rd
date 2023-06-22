@@ -7,7 +7,13 @@
 \item{file}{a single \code{character} value defining the file
 path of the Metaphlan file. The file must be in merged Metaphlan format.}
 
-\item{sample_meta}{a single \code{character} value defining the file
+\item{colData}{a DataFrame-like object that includes sample names in
+rownames, or a single \code{character} value defining the file
+path of the sample metadata file. The file must be in \code{tsv} format
+(default: \code{colData = NULL}).}
+
+\item{sample_meta}{a DataFrame-like object that includes sample names in
+rownames, or a single \code{character} value defining the file
 path of the sample metadata file. The file must be in \code{tsv} format
 (default: \code{sample_meta = NULL}).}
 
@@ -26,6 +32,11 @@ At some point \code{assay_name} will be disabled.)}
 \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
 \code{removeTaxaPrefixes = FALSE})}
+\item{\code{remove.suffix}:} {\code{TRUE} or \code{FALSE}: Should
+suffixes of sample names be removed? Metaphlan pipeline adds suffixes
+to sample names. Suffixes are formed from file names. By selecting
+\code{remove.suffix = TRUE}, you can remove pattern from end of sample
+names that is shared by all. (default: \code{remove.suffix = FALSE})}
 }}
 }
 \value{
@@ -38,6 +49,9 @@ Import Metaphlan results to \code{TreeSummarizedExperiment}
 }
 \details{
 Import Metaphlan results. Input must be in merged Metaphlan format.
+(See
+\href{https://github.com/biobakery/MetaPhlAn/wiki/MetaPhlAn-4#merging-tables}{
+the Metaphlan documentation and \code{merge_metaphlan_tables} method.})
 Data is imported so that data at the lowest rank is imported as a
 \code{TreeSummarizedExperiment} object. Data at higher rank is imported as a
 \code{SummarizedExperiment} objects which are stored to \code{altExp} of
@@ -64,9 +78,10 @@ Beghini F, McIver LJ, Blanco-Míguez A, Dubois L, Asnicar F, Maharjan S, Mailyan
 Manghi P, Scholz M, Thomas AM, Valles-Colomer M, Weingart G, Zhang Y, Zolfo M,
 Huttenhower C, Franzosa EA, & Segata N (2021) Integrating taxonomic, functional,
 and strain-level profiling of diverse microbial communities with bioBakery 3.
-Elife 10:e65088. doi: 10.7554/eLife.65088
+\emph{eLife}. 10:e65088. doi: 10.7554/eLife.65088
 }
 \seealso{
+\code{\link[=loadFromHumann]{loadFromHumann}}
 \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}

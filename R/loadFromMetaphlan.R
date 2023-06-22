@@ -3,10 +3,16 @@
 #' @param file a single \code{character} value defining the file
 #'   path of the Metaphlan file. The file must be in merged Metaphlan format.
 #'
-#' @param sample_meta a single \code{character} value defining the file
+#' @param colData a DataFrame-like object that includes sample names in
+#'   rownames, or a single \code{character} value defining the file
+#'   path of the sample metadata file. The file must be in \code{tsv} format
+#'   (default: \code{colData = NULL}).
+#' 
+#' @param sample_meta a DataFrame-like object that includes sample names in
+#'   rownames, or a single \code{character} value defining the file
 #'   path of the sample metadata file. The file must be in \code{tsv} format
 #'   (default: \code{sample_meta = NULL}).
-#'   
+#' 
 #' @param phy_tree a single \code{character} value defining the file
 #'   path of the phylogenetic tree.
 #'   (default: \code{phy_tree = NULL}).
@@ -22,10 +28,18 @@
 #'   \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
 #'     taxonomic prefixes be removed? (default:
 #'     \code{removeTaxaPrefixes = FALSE})}
+#'   \item{\code{remove.suffix}:} {\code{TRUE} or \code{FALSE}: Should
+#'     suffixes of sample names be removed? Metaphlan pipeline adds suffixes
+#'     to sample names. Suffixes are formed from file names. By selecting
+#'     \code{remove.suffix = TRUE}, you can remove pattern from end of sample
+#'     names that is shared by all. (default: \code{remove.suffix = FALSE})}
 #' }
 #'
 #' @details
 #' Import Metaphlan results. Input must be in merged Metaphlan format.
+#' (See
+#' \href{https://github.com/biobakery/MetaPhlAn/wiki/MetaPhlAn-4#merging-tables}{
+#' the Metaphlan documentation and \code{merge_metaphlan_tables} method.})
 #' Data is imported so that data at the lowest rank is imported as a 
 #' \code{TreeSummarizedExperiment} object. Data at higher rank is imported as a
 #' \code{SummarizedExperiment} objects which are stored to \code{altExp} of
@@ -37,6 +51,7 @@
 #'
 #' @name loadFromMetaphlan
 #' @seealso
+#' \code{\link[=loadFromHumann]{loadFromHumann}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 #' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
@@ -51,7 +66,7 @@
 #' Manghi P, Scholz M, Thomas AM, Valles-Colomer M, Weingart G, Zhang Y, Zolfo M, 
 #' Huttenhower C, Franzosa EA, & Segata N (2021) Integrating taxonomic, functional, 
 #' and strain-level profiling of diverse microbial communities with bioBakery 3.
-#' Elife 10:e65088. doi: 10.7554/eLife.65088
+#' \emph{eLife}. 10:e65088. doi: 10.7554/eLife.65088
 #'
 #' @examples
 #' # (Data is from tutorial
@@ -70,7 +85,8 @@
 #' 
 NULL
 
-loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
+loadFromMetaphlan <- function(
+        file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL, ...){
     ################################ Input check ################################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
@@ -79,8 +95,10 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
-    if(!is.null(sample_meta) && !.is_non_empty_string(sample_meta)){
-        stop("'sample_meta' must be a single character value or NULL.",
+    if(!is.null(colData) &&
+       !(.is_non_empty_string(colData) || is.data.frame(colData) ||
+         is.matrix(colData) || is(colData, "DataFrame")) ){
+        stop("'colData' must be a single character value, DataFrame or NULL.",
              call. = FALSE)
     }
     if(!is.null(phy_tree) && !.is_non_empty_string(phy_tree)){
@@ -92,6 +110,7 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     data <- .read_metaphlan(file, ...)
     # Parse data into separate tables, which include data at certain taxonomy rank
     tables <- .parse_metaphlan(data, ...)
+
     # Create multiple SE objects at different rank from the data
     se_objects <- lapply(tables, .create_se_from_metaphlan, ...)
     
@@ -109,11 +128,11 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
         }
     }
     
-    # Load sample meta data if it is provided, otherwise initialize empty table
-    if (!is.null(sample_meta)) {
-        coldata <- read.table(file = sample_meta, header = TRUE, sep = "\t")
-        colData(tse) <- coldata
+    # Load sample meta data if it is provided
+    if( !is.null(colData) ) {
+        tse <- .add_coldata(tse, colData)
     }
+    
     
     # Load tree if it is provided
     if (!is.null(phy_tree)) {
@@ -127,7 +146,12 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 ################################ HELP FUNCTIONS ################################
 
 # Read Metaphlan file, catch error if it occurs
-.read_metaphlan <- function(file, ...){
+.read_metaphlan <- function(file, remove.suffix = FALSE, ...){
+    ################################ Input check ###############################
+    if(!.is_a_bool(remove.suffix)){
+        stop("'remove.suffix' must be TRUE or FALSE.", call. = FALSE)
+    }
+    ############################## Input check end #############################
     # Read the table. Catch error and give more informative message
     table <- tryCatch(
         {
@@ -144,6 +168,10 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
         stop("Error while reading ", file,
              "\nPlease check that the file is in merged Metaphlan file format.",
              call. = FALSE)
+    }
+    # Remove possible suffix from the colnames if user has specified
+    if( remove.suffix ){
+        table <- .remove_suffix(table, c("clade_name", "_id"))
     }
     return(table)
 }
@@ -209,8 +237,8 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
 }
 
 # Create SE object that include rowdata and assay, from the metaphlan table
-.create_se_from_metaphlan <- function(table, 
-                                      assay.type = assay_name, assay_name = "counts", 
+.create_se_from_metaphlan <- function(table,
+                                      assay.type = assay_name, assay_name = "counts",
                                       ...){
     # Check assay.type
     if( !.is_non_empty_character(assay.type) ){
@@ -228,15 +256,122 @@ loadFromMetaphlan <- function(file, sample_meta = NULL, phy_tree = NULL, ...){
     taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = "clade_name", ...)
     # Add parsed taxonomy level information to rowdata
     rowdata <- cbind(taxonomy, rowdata)
+    # Ensure that rowData is DataFrame
+    rowdata <- DataFrame(rowdata, check.names = FALSE)
     
+    # Ensure that assay is matrix
+    assay <- as.matrix(assay)
     # Create assays list and add assay with specific name
     assays <- S4Vectors::SimpleList()
     assays[[assay.type]] <- assay
     
-    # Create SE
-    se <- SummarizedExperiment(assays = assays,
-                                rowData = rowdata)
+    # Create TreeSE
+    se <- TreeSummarizedExperiment(
+        assays = assays, rowData = rowdata)
     # Add taxonomy labels
     rownames(se) <- getTaxonomyLabels(se)
     return(se)
+}
+
+# This function can be used to add colData to TreeSE. It checks that sample
+# names match (full or partial) and adds the metadata to altExps also.
+.add_coldata <- function(tse, coldata){
+    # If the coldata is character specifying the path
+    if( .is_non_empty_character(coldata) ){
+        coldata <- read.table(file = coldata, header = TRUE, sep = "\t")
+        rownames(coldata) <- coldata[, 1]
+    }
+    # Ensure that the coldata is DF
+    coldata <- DataFrame(coldata)
+
+    # Usually when metaphlan sample names are created, the workflow adds file
+    # name as a suffix. Because of that sample names do not match anymore
+    # necessarily. Try partial match if full match is not found.
+    if( all(rownames(coldata) %in% colnames(tse)) ){
+        sample_names <- rownames(coldata)
+        names(sample_names) <- sample_names
+    } else{
+        sample_names <- sapply(rownames(coldata), function(x){
+            x <- colnames(tse)[grep(x, colnames(tse))]
+            if( length(x) != 1 ){
+                x <- NULL
+            }
+            return(x)
+        })
+        sample_names <- unlist(sample_names)
+    }
+
+    # Check if all samples were found. (In partial match certain sample name
+    # is missing if one matching name was not found.). In this part, all
+    # colnames should be found if data sets are matching. (More samples in
+    # metadata is allowed.)
+    if( !all(colnames(tse) %in% sample_names) ){
+        warning("The sample names in 'colData' do not match with the ",
+                "data. The sample metadata is not added.", call. = FALSE
+                )
+        return(tse)
+    }
+
+    # Reorder sample metadata based on the data
+    sample_names <- sample_names[match(colnames(tse), sample_names)]
+    coldata <- coldata[names(sample_names), ]
+
+    # Give warning if partial match was used
+    if( !all(rownames(coldata) %in% colnames(tse)) ){
+        warning("Partial match was used to match sample names between ",
+                "'colData' and the data. Please check that they are correct.",
+                call. = FALSE
+        )
+        # Replace colnames with names from sample metadata. They are without
+        # additional suffix.
+        coldata[["colnames_data"]] <- colnames(tse)
+        coldata[["colnames_metadata"]] <- rownames(coldata)
+        colnames(tse) <- rownames(coldata)
+    }
+
+    # Add sample metadata
+    colData(tse) <- coldata
+    # If there are altExps, add the metadata also there
+    if( length(altExps(tse)) ){
+        altexps <- altExps(tse)
+        altexps <- lapply(altexps, function(x){
+            colnames(x) <- rownames(coldata)
+            colData(x) <- coldata
+            return(x)
+            })
+        altexps <- SimpleList(altexps)
+        altExps(tse) <- altexps
+        
+    }
+    return(tse)
+}
+
+# In humann/metaphlan pipeline, suffix is added to colnames. The suffix comes
+# from file names. This can cause problems when, e.g., taxonomy and pathway
+# information is combined. Because their suffixes differ, the sample names
+# differ. The purpose of the function is to remove those file names.
+.remove_suffix <- function( data, rowdata_col = c("clade_name", "_id") ){
+    # Get rowdata columns
+    rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
+    # Get sample names
+    sample_names <- colnames(data)[-rowdata_id]
+    # Get the possible suffixes, i.e., words that are divided by underscores
+    # based on first sample name.
+    suffix <- strsplit(sample_names[[1]], "_")[[1]]
+    # Loop over these suffixes. From the end, add words one by one. Store those
+    # suffixes that match with all sample names. The result is suffix that is
+    # the longest.
+    shared <- NULL
+    for( i in length(suffix):1 ){
+        pattern <- paste0("_", paste(suffix[i:length(suffix)], collapse="_"))
+        if( all(grepl(pattern, sample_names)) ){
+            shared <- pattern
+        }
+    }
+    # Remove suffix from sample names
+    if( !is.null(shared) ){
+        sample_names <- gsub(shared, "", sample_names)
+        colnames(data)[-rowdata_id] <- sample_names
+    }
+    return(data)
 }
