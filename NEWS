@@ -77,3 +77,4 @@ Changes in version 1.7.x
 
 Changes in version 1.9.x
 + loadFromMetaphlan: Bugfix, not all files include ID column.
++ cluster: added wrapper for bluster's clusterRows function
