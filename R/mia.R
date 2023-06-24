@@ -196,3 +196,29 @@ NULL
 #' \url{https://doi.org/10.3390/ijerph18084049}
 #' 
 "HintikkaXOData"
+
+#' Tengeler2020
+#' 
+#'
+#' Tengeler data by Tengeler et al. (2022) includes gut microbiota profiles of 27 persons with ADHD. 
+#' A standard bioinformatic and statistical analysis done to  demonstrate that altered microbial composition could be a driver of altered brain structure and function and concomitant changes in the animals’ behavior.
+#' They investigated this by colonizing young, male, germ-free C57BL/6JOlaHsd mice with microbiota from individuals with and without ADHD.
+#'
+#' @name mia-datasets
+#' @aliases Tengeler2020
+#' @keywords data
+#' @usage data(Tengeler2020)
+#' @author A.C. Tengeler, et al.
+#' @docType data
+#' @references
+#' Tengeler, A.C., Dam, S.A., Wiesmann, M. et al. 
+#' Gut microbiota from persons with attention-deficit/hyperactivity disorder affects the brain in mice. 
+#' Microbiome 8, 44 (2020). 
+#' \url{https://rdcu.be/dfgtC}
+#' \url{https://doi.org/10.1186/s40168-020-00816-x}
+#' Supplemental information includes Home-cage activity, methods, results and imaging parameters and publicly-accessible from: 
+#' \url{https://static-content.springer.com/esm/art%3A10.1186%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM1_ESM.docx}
+#' \url{https://static-content.springer.com/esm/art%3A10.1186%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM2_ESM.docx}
+#' \url{https://static-content.springer.com/esm/art%3A10.1186%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM3_ESM.docx}
+#' 
+"Tengeler2020"
