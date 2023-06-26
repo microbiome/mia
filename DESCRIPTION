@@ -22,7 +22,8 @@ Authors@R:
       person(given = "Héctor", family = "Corrada Bravo", role = c("ctb")),
       person(given = "Jayaram", family = "Kancherla", role=c("ctb")),
       person(given = "Domenick", family = "Braccia",
-             email = "dbraccia@umd.edu", role=c("ctb")))
+             email = "dbraccia@umd.edu", role=c("ctb"))),
+      person(given = "Basil", family = "Courbayre", role=c("ctb"))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
