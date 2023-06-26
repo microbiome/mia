@@ -240,7 +240,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                         "standardize", "total", "z"),
              MARGIN = "samples",
              name = method,
-	     # pseudocount=0,
+             pseudocount=0,
              ...){
         # Input check
 
@@ -273,23 +273,35 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
             stop("'MARGIN' must be 'samples' or 'features'.",
                  call. = FALSE)
         }
+        # Check pseudocount
+        if( !(is.numeric(pseudocount) && length(pseudocount) == 1 && pseudocount >= 0) ){
+            stop("'pseudocount' must be a non-negative single integer value.",
+                 call. = FALSE)
+        }
         # Input check end
 
         # Get the method and abundance table
         method <- match.arg(method)
         assay <- assay(x, assay.type)
+    
+        # Apply pseudocount, if it is not 0
+        if( pseudocount != 0 ){
+            assay <- .apply_pseudocount(assay, pseudocount)
+        }
 	
         # Calls help function that does the transformation
         # Help function is different for mia and vegan transformations
         if( method %in% c("log10", "log2") ){
             transformed_table <- .apply_transformation(
-                #assay, method, MARGIN, pseudocount=pseudocount, ...)
-                assay, method, MARGIN, ...)		
+                assay, method, MARGIN, ...)
         } else{
             transformed_table <- .apply_transformation_from_vegan(
-                # assay, method, MARGIN, pseudocount=pseudocount, ...)
-                assay, method, MARGIN, ...)		
+                assay, method, MARGIN, ...)
         }
+        
+        # Add pseudocount info to transformed table
+        attr(transformed_table, "parameters")$pseudocount <- pseudocount
+        
         # Assign transformed table to assays
         assay(x, name, withDimnames=FALSE) <- transformed_table
         x
@@ -379,7 +391,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 # Help function for transformSamples and transformFeatures, takes abundance table
 # as input and returns transformed table. This function utilizes mia's
 # transformation functions.
-.apply_transformation <- function(assay, method, MARGIN, pseudocount=0, ...){
+.apply_transformation <- function(assay, method, MARGIN, ...){
 
     # Transpose if MARGIN is row
     if( MARGIN %in% c("features", "row") ){
@@ -393,11 +405,8 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     )
 
     # Get transformed table
-    transformed_table <- do.call(FUN,
-            list(mat = assay,
-                 method = method,
-		 pseudocount = pseudocount, 
-                 ...))
+    transformed_table <- do.call(
+        FUN, list(mat = assay, method = method, ...) )
 
     # Transpose back to normal if MARGIN is row
     if( MARGIN %in% c("features", "row") ){
@@ -414,7 +423,6 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 # Help function for transformSamples and transformFeatures, takes abundance
 # table as input and returns transformed table. This function utilizes vegan's
 # transformation functions.
-# .apply_transformation_from_vegan <- function(mat, method, MARGIN, ref_vals = NA, pseudocount=0, ...){
 .apply_transformation_from_vegan <- function(mat, method, MARGIN, ref_vals = NA, ...){
     # Input check
     # Check ref_vals
@@ -437,15 +445,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     orig_dimnames <- dimnames(mat)
 
     # Call vegan::decostand and apply transformation
-    # The vegan accepts pseudocount only for some methods
-    # FIXME: for clarity it would be best to use pseudocount=0 when calling vegan and
-    # add pseudocount in mia instead. This would be more explicit (also potentially confusing with vegan)
-    if (method %in% c("clr", "alr", "ilr")) {
-        #transformed_table <- vegan::decostand(mat, method = method, MARGIN = MARGIN, pseudocount=pseudocount, ...)
-        transformed_table <- vegan::decostand(mat, method = method, MARGIN = MARGIN, ...)	
-    } else {
-        transformed_table <- vegan::decostand(mat, method = method, MARGIN = MARGIN, ...)
-    }
+    transformed_table <- vegan::decostand(mat, method = method, MARGIN = MARGIN, ...)
     
     # Add reference sample back if ALR
     if( method %in% c("alr") ){
@@ -465,19 +465,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 
 ####################################.calc_log###################################
 # This function applies log transformation to abundance table.
-.calc_log <- function(mat, method, pseudocount = 0, ...){
-    # Input check
-    # Check pseudocount
-
-    if( !( (length(pseudocount) == 1L && is.numeric(pseudocount)) ) ){
-        stop("'pseudocount' must be NULL or a single numeric value.",
-             call. = FALSE)
-    }
-    # Input check end
-    # Apply pseudocount, if it is not 0
-    if( pseudocount != 0 ){
-        mat <- .apply_pseudocount(mat, pseudocount)
-    }
+.calc_log <- function(mat, method, ...){
     # If abundance table contains zeros, gives an error, because it is not
     # possible to calculate log from zeros. If there is no zeros, calculates log.
     if (any(mat <= 0, na.rm = TRUE)) {
@@ -494,7 +482,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
         mat <- log10(mat)
     }
     # Add parameter to attributes
-    attr(mat, "parameters") <- list("pseudocount" = pseudocount)
+    attr(mat, "parameters") <- list()
     return(mat)
 }
 
