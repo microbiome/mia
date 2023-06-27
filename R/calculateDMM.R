@@ -155,6 +155,8 @@ setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
 #' @importFrom S4Vectors metadata<-
 #' @export
 runDMN <- function(x, name = "DMN", ...){
+    .Deprecated(old="runDMN", new="cluster", 
+                "Now runDMN is deprecated. Use cluster with DMMParam parameter instead.")
     if(!is(x,"SummarizedExperiment")){
         stop("'x' must be a SummarizedExperiment")
     }
@@ -167,7 +169,7 @@ runDMN <- function(x, name = "DMN", ...){
 
 #' @importFrom S4Vectors metadata
 .get_dmn <- function(x, name){
-    dmn <- metadata(x)[[name]]
+    dmn <- metadata(x)[[name]][["dmm"]]
     if(is.null(dmn)){
         stop("No data found for '",name,"'.", call. = FALSE)
     }
@@ -219,6 +221,8 @@ setGeneric("bestDMNFit", signature = "x",
 #' @export
 setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
     function(x, name = "DMN", type = c("laplace","AIC","BIC")){
+        .Deprecated(old="bestDMNFit", new="cluster", 
+                    "Now runDMN is deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
         #
         dmn <- getDMN(x, name)
         fit_FUN <- .get_dmn_fit_FUN(type)
