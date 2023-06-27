@@ -25,16 +25,18 @@
 #'
 #' @param name A single character value specifying the name of transformed
 #'   abundance table.
+#' 
+#' @param pseudocount NULL or numeric value deciding whether pseudocount is
+#'   added. The numeric value specifies the value of pseudocount.
+#'   Recommended default choices for counts and relative abundance assay
+#'   \code{pseudocount = 1} and \code{pseudocount = min(x[x>0])}, respectively.
+#'   (By default: \code{pseudocount = 0})
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
 #'   \item{\code{ref_vals}:} {A single value which will be used to fill 
 #'   reference sample's column in returned assay when calculating alr. 
 #'   (default: \code{ref_vals = NA})}
-#'   \item{\code{pseudocount}:} {NULL or numeric value deciding whether
-#'   pseudocount is added. The numeric value specifies the value of pseudocount.
-#'   Recommended default choices for counts and relative abundance assay
-#'   \code{pseudocount = 1} and \code{pseudocount = min(x[x>0])}, respectively.}
 #' }
 #' @details
 #'
@@ -190,6 +192,8 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
                         "log", "log10", "log2", "normalize", "pa",
                         "rank", "rclr", "relabundance", "rrank",
                         "total"),
+            name = method,
+            pseudocount = 0,
             ...
             ){
         .Deprecated("transformCounts")
@@ -224,7 +228,7 @@ setGeneric("transformCounts", signature = c("x"),
                                "z"),
                     MARGIN = "samples",
                     name = method,
-                    # pseudocount = 0,		    
+                    pseudocount = 0,		    
                     ...)
                standardGeneric("transformCounts"))
 
@@ -240,7 +244,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
                         "standardize", "total", "z"),
              MARGIN = "samples",
              name = method,
-             pseudocount=0,
+             pseudocount = 0,
              ...){
         # Input check
 
@@ -317,7 +321,8 @@ setGeneric("transformFeatures", signature = c("x"),
                     assay.type = "counts", assay_name = NULL,
                     method = c("frequency", "log", "log10", "log2", "max",
                                "pa", "range", "standardize", "z"),
-                    name = method,		 
+                    name = method,
+                    pseudocount = 0,
                     ...)
                standardGeneric("transformFeatures"))
 
@@ -329,6 +334,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
              method = c("frequency", "log", "log10", "log2", "max",
                         "pa", "range", "standardize", "z"),
              name = method,
+             pseudocount = 0,
              ...){
 
         .Deprecated("transformCounts")
