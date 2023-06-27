@@ -8,7 +8,7 @@ tree_file_path <- "PATH_TO_PHYLOGENETIC_TREE_FILE"
 
 # Load data from the biom file into a SummarizedExperiment container
 x1 <- biomformat::read_biom(biom_file_path)
-se <- makeTreeSEFromBiom(x1)
+se <- loadFromBiom(x1)
 
 # Convert the SummarizedExperiment to a TreeSummarizedExperiment container
 tse <- as(se, "TreeSummarizedExperiment")
@@ -49,7 +49,7 @@ colnames(sample_meta) <- c("patient_status", "cohort",
 
 # Add sample metadata to colData slot of the TSE object
 # Note that the data must be given in a DataFrame format (required for our purposes)
-colData(tse) <- DataFrame(sample_meta)
+cbind(colData(tse) <- DataFrame(sample_meta)
 
 # Read the phylogenetic tree from file and assign it to the rowTree slot of the TSE object
 tree <- ape::read.tree(tree_file_path)
