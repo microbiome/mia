@@ -19,6 +19,7 @@ reference:
   - loadFromQIIME2
   - loadFromMothur
   - loadFromMetaphlan
+  - loadFromHumann
   - makePhyloseqFromTreeSummarizedExperiment
 - title: Taxonomic data
   contents:
@@ -54,9 +55,10 @@ reference:
 - subtitle: Evenness indeces
 - contents:
   - estimateEvenness
-- subtitle: Dirichlet-Multinomial Mixture Model
+- subtitle: Clustering
 - contents:
   - calculateDMN
+  - cluster
 - subtitle: decontam
 - contents:
   - isContaminant

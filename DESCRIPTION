@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.9.2
+Version: 1.9.5
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut"),
              email = "felix.gm.ernst@outlook.com",
@@ -22,7 +22,8 @@ Authors@R:
       person(given = "Héctor", family = "Corrada Bravo", role = c("ctb")),
       person(given = "Jayaram", family = "Kancherla", role=c("ctb")),
       person(given = "Domenick", family = "Braccia",
-             email = "dbraccia@umd.edu", role=c("ctb")))
+             email = "dbraccia@umd.edu", role=c("ctb")),
+      person(given = "Basil", family = "Courbayre", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
@@ -62,7 +63,8 @@ Imports:
     rlang,
     dplyr,
     tibble,
-    tidyr
+    tidyr,
+    bluster
 Suggests:
     testthat,
     knitr,
