@@ -29,7 +29,7 @@
 #' @param pseudocount NULL or numeric value deciding whether pseudocount is
 #'   added. The numeric value specifies the value of pseudocount.
 #'   Recommended default choices for counts and relative abundance assay
-#'   \code{pseudocount = 1} and \code{pseudocount = min(x[x>0])}, respectively.
+#'   \code{pseudocount = 1} and \code{pseudocount = min(assay[assay>0])}, respectively.
 #'   (By default: \code{pseudocount = 0})
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
@@ -279,7 +279,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
         }
         # Check pseudocount
         if( !(is.numeric(pseudocount) && length(pseudocount) == 1 && pseudocount >= 0) ){
-            stop("'pseudocount' must be a non-negative single integer value.",
+            stop("'pseudocount' must be a non-negative single numeric value.",
                  call. = FALSE)
         }
         # Input check end
