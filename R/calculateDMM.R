@@ -66,6 +66,7 @@
 #' @name calculateDMN
 #'
 #' @examples
+#' suppressWarnings({
 #' fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
 #' counts <- as.matrix(read.csv(fl, row.names=1))
 #' fl <- system.file(package="DirichletMultinomial", "extdata", "TwinStudy.t")
@@ -99,6 +100,7 @@
 #' bestDMNFit(dmn_tse, type = "laplace")
 #' # return the model, which fits best
 #' getBestDMNFit(dmn_tse, type = "laplace")
+#' })
 NULL
 
 #' @rdname calculateDMN
