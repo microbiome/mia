@@ -55,9 +55,10 @@ reference:
 - subtitle: Evenness indeces
 - contents:
   - estimateEvenness
-- subtitle: Dirichlet-Multinomial Mixture Model
+- subtitle: Clustering
 - contents:
   - calculateDMN
+  - cluster
 - subtitle: decontam
 - contents:
   - isContaminant
