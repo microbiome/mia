@@ -66,7 +66,6 @@
 #' @name calculateDMN
 #'
 #' @examples
-#' suppressWarnings({
 #' fl <- system.file(package="DirichletMultinomial", "extdata", "Twins.csv")
 #' counts <- as.matrix(read.csv(fl, row.names=1))
 #' fl <- system.file(package="DirichletMultinomial", "extdata", "TwinStudy.t")
@@ -79,28 +78,17 @@
 #'                                 colData = colData)
 #'
 #'
-#' #
-#' dmn <- calculateDMN(tse)
-#' dmn[[1L]]
+#' # Compute DMM algorithm and store result in metadata
+#' tse <- cluster(tse, name = "DMM", DmmParam(),
+#'                MARGIN = "samples", full = TRUE)
+#' 
+#' # Get the list of DMN objects
+#' metadata(tse)$DMM$dmm
+#' # Get which objects fits best
+#' metadata(tse)$DMM$best
+#' # Get the model that fits best
+#' metadata(tse)$DMM$dmm[[metadata(tse)$DMM$best]]
 #'
-#' # since this take a bit of resources to calculate for k > 1, the data is
-#' # loaded
-#' \dontrun{
-#' tse <- runDMN(tse, name = "DMN", k = 1:7)
-#' }
-#' data(dmn_se)
-#' # Convert SE to TreeSE to enable all features of mia and TreeSE object
-#' # (Optional step at this point)
-#' dmn_tse <- as(dmn_se, "TreeSummarizedExperiment")
-#' names(metadata(dmn_tse))
-#'
-#' # return a list of DMN objects
-#' getDMN(dmn_tse)
-#' # return, which objects fits best
-#' bestDMNFit(dmn_tse, type = "laplace")
-#' # return the model, which fits best
-#' getBestDMNFit(dmn_tse, type = "laplace")
-#' })
 NULL
 
 #' @rdname calculateDMN
