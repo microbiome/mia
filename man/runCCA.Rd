@@ -122,7 +122,7 @@ in a \code{SummarizedExperiment}.
 By default dbRDA is done with euclidean distances which equals to RDA.
 
 Significance tests are done with \code{vegan:anova.cca} (PERMANOVA), and
-\code{vegan:betadisper} and \code{vegan:anova}
+\code{vegan:betadisper} and \code{stats:anova}
 (multivariate homogeneity of groups dispersions (variances)).
 }
 \examples{
