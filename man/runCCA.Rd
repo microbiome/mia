@@ -27,6 +27,7 @@ runRDA(x, ...)
   x,
   formula,
   variables,
+  test_signif = TRUE,
   ...,
   assay.type = assay_name,
   assay_name = exprs_values,
@@ -41,6 +42,7 @@ runRDA(x, ...)
   x,
   formula,
   variables,
+  test_signif = TRUE,
   ...,
   assay.type = assay_name,
   assay_name = exprs_values,
@@ -82,6 +84,10 @@ into a CA analysis and dbRDA into PCoA/MDS.}
 \code{scale} is disabled when using \code{*RDA} functions. Please scale before
 performing RDA (Check examples.)}
 
+\item{test_signif}{a logical scalar, should the PERMANOVA and analysis of
+multivariate homogeneity of group dispersions be performed.
+(By default: \code{test_signif = TRUE})}
+
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
@@ -114,12 +120,19 @@ in a \code{SummarizedExperiment}.
 \details{
 *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
 By default dbRDA is done with euclidean distances which equals to RDA.
+
+Significance tests are done with \code{vegan:anova.cca} (PERMANOVA), and
+\code{vegan:betadisper} and \code{vegan:anova}
+(multivariate homogeneity of groups dispersions (variances)).
 }
 \examples{
 library(scater)
 data(GlobalPatterns)
 GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
+
+# Fetch significance results
+attr(reducedDim(GlobalPatterns, "CCA"), "significance")$summary
 
 GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")

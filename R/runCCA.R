@@ -28,11 +28,15 @@
 #'   All variables are used. Please subset, if you want to consider only some of them. 
 #'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
 #'   into a CA analysis and dbRDA into PCoA/MDS.
+#' 
+#' @param test_signif a logical scalar, should the PERMANOVA and analysis of
+#'   multivariate homogeneity of group dispersions be performed.
+#'   (By default: \code{test_signif = TRUE})
 #'   
 #' @param scale a logical scalar, should the expression values be standardized?
 #'   \code{scale} is disabled when using \code{*RDA} functions. Please scale before
-#'   performing RDA (Check examples.) 
-#' 
+#'   performing RDA (Check examples.)
+#'
 #' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'
@@ -56,6 +60,10 @@
 #' @details
 #'   *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
 #'   By default dbRDA is done with euclidean distances which equals to RDA.
+#'   
+#'   Significance tests are done with \code{vegan:anova.cca} (PERMANOVA), and
+#'   \code{vegan:betadisper} and \code{vegan:anova}
+#'   (multivariate homogeneity of groups dispersions (variances)).
 #'
 #' @return
 #' For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
@@ -74,6 +82,9 @@
 #' data(GlobalPatterns)
 #' GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
+#' 
+#' # Fetch significance results
+#' attr(reducedDim(GlobalPatterns, "CCA"), "significance")$summary
 #'
 #' GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
@@ -206,10 +217,17 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
 #' @export
 #' @rdname runCCA
 setMethod("calculateCCA", "SummarizedExperiment",
-    function(x, formula, variables, ..., 
+    function(x, formula, variables, test_signif = TRUE, ..., 
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts")
     {
+        # Check assay.type and get assay
+        .check_assay_present(assay.type, x)
         mat <- assay(x, assay.type)
+        # Check test_signif
+        if( !.is_a_bool(test_signif) ){
+            stop("'test_signif' must be TRUE or FALSE.", call. = FALSE)
+        }
+
         # If formula is missing but variables are not
         if( !missing(variables) && missing(formula)){
             # Create a formula based on variables
@@ -221,7 +239,14 @@ setMethod("calculateCCA", "SummarizedExperiment",
             # (If formula is not provided variables is just empty data.frame)
             variables <- .get_variables_from_data_and_formula(x, formula)
         }
-        .calculate_cca(mat, formula, variables, ...)
+        cca <- .calculate_cca(mat, formula, variables, ...)
+        
+        # Test significance if specified
+        if( test_signif ){
+            res <- .test_rda(mat, attr(cca, "cca"), variables, ...)
+            attr(cca, "significance") <- res
+        }
+        return(cca)
     }
 )
 
@@ -240,17 +265,19 @@ setMethod("runCCA", "SingleCellExperiment",
         cca <- calculateCCA(y, ...)
         # If samples do not match / there were samples without appropriate metadata
         # and they are now removed
-        if( all(rownames(cca) != colnames(x)) ){
+        if( !all( colnames(x) %in% rownames(cca) ) ){
             # Take a subset
             x_sub <- x[ , rownames(cca) ]
             # Add CCA
             reducedDim(x_sub, name) <- cca
-            # Add subset to altExp
-            altExp(x, name) <- x_sub
+            # Add subset and original data  to MAE
+            exp_list <- ExperimentList(original = x, subset = x_sub)
+            x <- MultiAssayExperiment(exp_list)
             # Give a message
-            message("After CCA, certain samples are removed. Subsetted object with ",
-                    "results of CCA analysis is stored in altExp.")
+            message("After CCA, certain samples are removed. The result object ",
+                    "is MAE which includes the original and subsetted data.")
         } else{
+            # Otherwose put the result to reducedDim if all the samples are found
             reducedDim(x, name) <- cca
         }
         x
@@ -262,7 +289,7 @@ setMethod("runCCA", "SingleCellExperiment",
     #
     # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))
-    # If formula is missing (vega:dbrda requires formula)
+    # If formula is missing (vegan:dbrda requires formula)
     if( missing(formula) ){
         formula <- x ~ 1  
     }
@@ -297,6 +324,57 @@ setMethod("runCCA", "SingleCellExperiment",
     ans
 }
 
+# Perform PERMANOVA and homogeneity analysis to RDA object
+#' @importFrom vegan anova.cca betadisper anova
+.test_rda <- function(mat, rda, variables, by = "margin", ...){
+    # Perform permanova for whole model and for variables
+    permanova_model <- anova.cca(rda, by = NULL, ...)
+    permanova <- anova.cca(rda, by = by, ...)
+    # Peform homogeneity analysis
+    mat <- t(mat)
+    # Get the dissimilarity matrix based on original dissimilarity index
+    # provided by user.
+    dist_mat <- vegdist(mat, ...)
+    # For all variables run the analysis
+    homogeneity <- lapply(colnames(variables), function(x){
+        # Get variable values
+        var <- variables[[x]]
+        # Run betadisper. Suppress possible messages "missing observations due
+        # to 'group' removed"
+        suppressMessages(betadisper_res <- betadisper(dist_mat, group = var))
+        # Run permanova
+        anova_res <- anova( betadisper_res, ... )
+        # Return the results as a list
+        res <- list(betadisper = betadisper_res, anova = anova_res)
+        return(res)
+    })
+    names(homogeneity) <- colnames(variables)
+    
+    # Create a table from the results
+    # PERMANOVAs
+    table_model <- as.data.frame(permanova_model)
+    table <- as.data.frame(permanova)
+    # Take only model results
+    table <- rbind(table_model[1, ], table)
+    # Take homogeneity results of the different groups
+    homogeneity_tab <- lapply(homogeneity, function(x) as.data.frame(x$anova)[1, ])
+    homogeneity_tab <- do.call(rbind, homogeneity_tab)
+    # Adjust colnames of tables, add info
+    colnames(table) <- paste0(colnames(table), " (PERMANOVA)")
+    colnames(homogeneity_tab) <- paste0(colnames(homogeneity_tab), " (homogeneity)")
+    # Combine and adjust rownames
+    table <- merge(table, homogeneity_tab, by=0, all.x = TRUE)
+    rownames(table) <- table[["Row.names"]]
+    table[["Row.names"]] <- NULL
+    
+    # Add the results to original RDA object
+    res <- list(
+        summary = table,
+        permanova = list(model = permanova_model, variables = permanova),
+        homogeneity = homogeneity)
+    return(res)
+}
+
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "ANY", .calculate_rda)
@@ -304,12 +382,17 @@ setMethod("calculateRDA", "ANY", .calculate_rda)
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "SummarizedExperiment",
-    function(x, formula, variables, ..., 
+    function(x, formula, variables, test_signif = TRUE, ..., 
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts")
     {
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
         mat <- assay(x, assay.type)
+        # Check test_signif
+        if( !.is_a_bool(test_signif) ){
+            stop("'test_signif' must be TRUE or FALSE.", call. = FALSE)
+        }
+        
         # If formula is provided, it takes the precedence
         if( !missing(formula) ){
             # Get variables from colData that are specified by formula
@@ -321,7 +404,14 @@ setMethod("calculateRDA", "SummarizedExperiment",
             variables <- colData(x)[ , variables, drop = FALSE]
         }
         # Calculate RDA
-        .calculate_rda(mat, formula, variables, ...)
+        rda <- .calculate_rda(mat, formula, variables, ...)
+        
+        # Test significance if specified
+        if( test_signif ){
+            res <- .test_rda(mat, attr(rda, "rda"), variables, ...)
+            attr(rda, "significance") <- res
+        }
+        return(rda)
     }
 )
 
@@ -340,19 +430,21 @@ setMethod("runRDA", "SingleCellExperiment",
         rda <- calculateRDA(y, ...)
         # If samples do not match / there were samples without appropriate metadata
         # and they are now removed
-        if( all(rownames(rda) != colnames(x)) ){
+        if( !all( colnames(x) %in% rownames(rda) ) ){
             # Take a subset
             x_sub <- x[ , rownames(rda) ]
             # Add RDA
             reducedDim(x_sub, name) <- rda
-            # Add subset to altExp
-            altExp(x, name) <- x_sub
+            # Add subset and original data  to MAE
+            exp_list <- ExperimentList(original = x, subset = x_sub)
+            x <- MultiAssayExperiment(exp_list)
             # Give a message
-            message("After RDA, certain samples are removed. Subsetted object with ",
-                    "results of RDA analysis is stored in altExp.")
+            message("After RDA, certain samples are removed. The result object ",
+                    "is MAE which includes the original and subsetted data.")
         } else{
+            # Otherwise add the RDA to original data's reducedDim
             reducedDim(x, name) <- rda
         }
-        x
+        return(x)
     }
 )
