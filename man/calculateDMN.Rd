@@ -161,28 +161,19 @@ colData <- DataFrame(pheno = pheno)
 tse <- TreeSummarizedExperiment(assays = list(counts = counts),
                                 colData = colData)
 
+library(bluster)
 
-#
-dmn <- calculateDMN(tse)
-dmn[[1L]]
+# Compute DMM algorithm and store result in metadata
+tse <- cluster(tse, name = "DMM", DmmParam(),
+               MARGIN = "samples", full = TRUE)
 
-# since this take a bit of resources to calculate for k > 1, the data is
-# loaded
-\dontrun{
-tse <- runDMN(tse, name = "DMN", k = 1:7)
-}
-data(dmn_se)
-# Convert SE to TreeSE to enable all features of mia and TreeSE object
-# (Optional step at this point)
-dmn_tse <- as(dmn_se, "TreeSummarizedExperiment")
-names(metadata(dmn_tse))
+# Get the list of DMN objects
+metadata(tse)$DMM$dmm
+# Get which objects fits best
+metadata(tse)$DMM$best
+# Get the model that fits best
+metadata(tse)$DMM$dmm[[metadata(tse)$DMM$best]]
 
-# return a list of DMN objects
-getDMN(dmn_tse)
-# return, which objects fits best
-bestDMNFit(dmn_tse, type = "laplace")
-# return the model, which fits best
-getBestDMNFit(dmn_tse, type = "laplace")
 }
 \seealso{
 \code{\link[DirichletMultinomial:DMN-class]{DMN-class}},
