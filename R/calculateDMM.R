@@ -77,7 +77,8 @@
 #' tse <- TreeSummarizedExperiment(assays = list(counts = counts),
 #'                                 colData = colData)
 #'
-#'
+#' library(bluster)
+#' 
 #' # Compute DMM algorithm and store result in metadata
 #' tse <- cluster(tse, name = "DMM", DmmParam(),
 #'                MARGIN = "samples", full = TRUE)
