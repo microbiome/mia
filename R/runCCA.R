@@ -217,7 +217,7 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
 #' @export
 #' @rdname runCCA
 setMethod("calculateCCA", "SummarizedExperiment",
-    function(x, formula, variables, test_signif = TRUE, ..., 
+    function(x, formula, variables, ..., test_signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts")
     {
         # Check assay.type and get assay
@@ -229,7 +229,7 @@ setMethod("calculateCCA", "SummarizedExperiment",
         }
 
         # If formula is missing but variables are not
-        if( !missing(variables) && missing(formula)){
+        if( !missing(variables) && missing(formula) ){
             # Create a formula based on variables
             formula <- .get_formula_from_data_and_variables(x, variables)
             # Get the data from colData
@@ -238,7 +238,7 @@ setMethod("calculateCCA", "SummarizedExperiment",
             # Otherwise if formula is provided, get variables based on formula
             # (If formula is not provided variables is just empty data.frame)
             variables <- .get_variables_from_data_and_formula(x, formula)
-        }
+        } 
         cca <- .calculate_cca(mat, formula, variables, ...)
         
         # Test significance if specified
@@ -327,11 +327,21 @@ setMethod("runCCA", "SingleCellExperiment",
 # Perform PERMANOVA and homogeneity analysis to RDA object
 #' @importFrom vegan anova.cca betadisper
 #' @importFrom stats anova
-.test_rda <- function(mat, rda, variables, by = "margin", ...){
+.test_rda <- function(mat, rda, variables, ...){
     # Perform permanova for whole model and for variables
     permanova_model <- anova.cca(rda, by = NULL, ...)
+    if( !is.null(variables) ){
+        res <- .test_rda_vars(
+            mat, rda, variables, permanova_model, by = "margin", ...)
+    } else{
+        res <- list(permanova = permanova_model)
+    }
+    return(res)
+}
+
+.test_rda_vars <- function(mat, rda, variables, permanova_model, by = "margin", ...){
     permanova <- anova.cca(rda, by = by, ...)
-    # Peform homogeneity analysis
+    # Perform homogeneity analysis
     mat <- t(mat)
     # Get the dissimilarity matrix based on original dissimilarity index
     # provided by user.
@@ -340,9 +350,14 @@ setMethod("runCCA", "SingleCellExperiment",
     homogeneity <- lapply(colnames(variables), function(x){
         # Get variable values
         var <- variables[[x]]
-        # Run betadisper. Suppress possible messages "missing observations due
-        # to 'group' removed"
-        suppressMessages(betadisper_res <- betadisper(dist_mat, group = var))
+        # Run betadisper.
+        # Suppress possible warnings: "some squared distances are negative and changed to zero"
+        # Suppress possible messages: "missing observations due to 'group' removed"
+        suppressWarnings(
+        suppressMessages(
+        betadisper_res <- betadisper(dist_mat, group = var)
+        )
+        )
         # Run permanova
         anova_res <- anova( betadisper_res, ... )
         # Return the results as a list
@@ -350,7 +365,6 @@ setMethod("runCCA", "SingleCellExperiment",
         return(res)
     })
     names(homogeneity) <- colnames(variables)
-    
     # Create a table from the results
     # PERMANOVAs
     table_model <- as.data.frame(permanova_model)
@@ -375,7 +389,6 @@ setMethod("runCCA", "SingleCellExperiment",
         homogeneity = homogeneity)
     return(res)
 }
-
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "ANY", .calculate_rda)
@@ -383,7 +396,7 @@ setMethod("calculateRDA", "ANY", .calculate_rda)
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "SummarizedExperiment",
-    function(x, formula, variables, test_signif = TRUE, ..., 
+    function(x, formula, variables, ..., test_signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts")
     {
         # Check assay.type and get assay
@@ -394,16 +407,17 @@ setMethod("calculateRDA", "SummarizedExperiment",
             stop("'test_signif' must be TRUE or FALSE.", call. = FALSE)
         }
         
-        # If formula is provided, it takes the precedence
-        if( !missing(formula) ){
-            # Get variables from colData that are specified by formula
-            variables <- .get_variables_from_data_and_formula(x, formula)
-        } else if( !missing(variables) ){
-            # If variables are provided, create a formula based on variables
+        # If formula is missing but variables are not
+        if( !missing(variables) && missing(formula) ){
+            # Create a formula based on variables
             formula <- .get_formula_from_data_and_variables(x, variables)
             # Get the data from colData
             variables <- colData(x)[ , variables, drop = FALSE]
-        }
+        } else{
+            # Otherwise if formula is provided, get variables based on formula
+            # (If formula is not provided variables is just empty data.frame)
+            variables <- .get_variables_from_data_and_formula(x, formula)
+        } 
         # Calculate RDA
         rda <- .calculate_rda(mat, formula, variables, ...)
         
