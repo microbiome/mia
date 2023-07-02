@@ -120,7 +120,7 @@ reference sample's column in returned assay when calculating alr.
 \item{pseudocount}{NULL or numeric value deciding whether pseudocount is
 added. The numeric value specifies the value of pseudocount.
 Recommended default choices for counts and relative abundance assay
-\code{pseudocount = 1} and \code{pseudocount = min(x[x>0])}, respectively.
+\code{pseudocount = 1} and \code{pseudocount = min(assay[assay>0])}, respectively.
 (By default: \code{pseudocount = 0})}
 
 \item{MARGIN}{A single character value for specifying whether the
