@@ -80,16 +80,21 @@
 #' library(bluster)
 #' 
 #' # Compute DMM algorithm and store result in metadata
-#' tse <- cluster(tse, name = "DMM", DmmParam(),
+#' tse <- cluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
 #'                MARGIN = "samples", full = TRUE)
 #' 
 #' # Get the list of DMN objects
 #' metadata(tse)$DMM$dmm
-#' # Get which objects fits best
-#' metadata(tse)$DMM$best
-#' # Get the model that fits best
-#' metadata(tse)$DMM$dmm[[metadata(tse)$DMM$best]]
-#'
+#' 
+#' # Get and display which objects fits best
+#' bestFit <- metadata(tse)$DMM$best
+#' bestFit
+#' 
+#' # Get the model that generqted the best fit
+#' metadata(tse)$DMM$dmm[[bestFit]]
+#' 
+#' # Get the sample-cluster assignement probability matrix
+#' metadata(tse)$DMM$prob
 NULL
 
 #' @rdname calculateDMN
