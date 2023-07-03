@@ -9,10 +9,6 @@ tree_file_path <- "PATH_TO_PHYLOGENETIC_TREE_FILE"
 # Load data from the biom file into a SummarizedExperiment container
 se <- loadFromBiom(biom_file_path, removeTaxaPrefixes = TRUE, rankFromPrefix = TRUE)
 
-# rowdata_modified is a list, so convert this back to DataFrame format. 
-# and assign the cleaned data back to the TSE rowData
-rowData(se) <- DataFrame(rowdata_modified)
-
 # Read sample metadata from file and add column names if necessary
 sample_meta <-
     read.table(
