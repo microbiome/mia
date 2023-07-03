@@ -174,11 +174,15 @@ metadata(tse)$DMM$dmm
 bestFit <- metadata(tse)$DMM$best
 bestFit
 
-# Get the model that generqted the best fit
-metadata(tse)$DMM$dmm[[bestFit]]
+# Get the model that generated the best fit
+bestModel <- metadata(tse)$DMM$dmm[[bestFit]]
+bestModel
 
-# Get the sample-cluster assignement probability matrix
+# Get the sample-cluster assignment probability matrix
 metadata(tse)$DMM$prob
+
+# Get the weight of each component for the best model
+bestModel@mixture$Weight
 }
 \seealso{
 \code{\link[DirichletMultinomial:DMN-class]{DMN-class}},
