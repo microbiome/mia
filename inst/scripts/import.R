@@ -23,7 +23,7 @@ colnames(sample_meta) <- c("patient_status", "cohort",
 
 # Add sample metadata to colData slot of the TSE object
 # Note that the data must be given in a DataFrame format (required for our purposes)
-colData(tse) <- cbind(colData(tse), DataFrame(sample_meta))
+colData(se) <- cbind(colData(se), DataFrame(sample_meta))
 
 # Read the phylogenetic tree from file and assign it to the rowTree slot of the TSE object
 tree <- ape::read.tree(tree_file_path)
