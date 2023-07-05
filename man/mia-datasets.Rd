@@ -11,6 +11,7 @@
 \alias{twins}
 \alias{peerj13075}
 \alias{HintikkaXOData}
+\alias{Tengeler2020}
 \title{mia datasets}
 \format{
 An object of class \code{TreeSummarizedExperiment} with 19216 rows and 26 columns.
@@ -24,6 +25,8 @@ An object of class \code{SummarizedExperiment} with 130 rows and 278 columns.
 An object of class \code{TreeSummarizedExperiment} with 674 rows and 58 columns.
 
 An object of class \code{MultiAssayExperiment} of length 3.
+
+An object of class \code{TreeSummarizedExperiment} with 151 rows and 27 columns.
 }
 \usage{
 data(GlobalPatterns)
@@ -37,6 +40,8 @@ data(dmn_se)
 data(peerj13075)
 
 data(HintikkaXOData)
+
+data(Tengeler2020)
 }
 \description{
 These datasets are conversions of the \pkg{phyloseq} datasets
@@ -86,6 +91,10 @@ samples, including 39 biomarkers, 38 metabolites (NMR), and 12706 OTUs from
 fat diet and xylo-oligosaccaride supplementation. Column metadata is common
 for all experiments (microbiota, metabolites, biomarkers) and includes the
 following fields:
+
+Tengeler data by Tengeler et al. (2022) includes gut microbiota profiles of 27 persons with ADHD.
+A standard bioinformatic and statistical analysis done to  demonstrate that altered microbial composition could be a driver of altered brain structure and function and concomitant changes in the animals’ behavior.
+They investigated this by colonizing young, male, germ-free C57BL/6JOlaHsd mice with microbiota from individuals with and without ADHD.
 }
 \details{
 \itemize{
@@ -153,6 +162,16 @@ steatosis and adipose tissue inflammation: associating taxonomic and
 metabolomic patterns in fecal microbiotas with biclustering. International
 Journal of Environmental Research and Public Health 18(8):4049
 \url{https://doi.org/10.3390/ijerph18084049}
+
+Tengeler, A.C., Dam, S.A., Wiesmann, M. et al.
+Gut microbiota from persons with attention-deficit/hyperactivity disorder affects the brain in mice.
+Microbiome 8, 44 (2020).
+\url{https://rdcu.be/dfgtC}
+\url{https://doi.org/10.1186/s40168-020-00816-x}
+Supplemental information includes Home-cage activity, methods, results and imaging parameters and publicly-accessible from:
+\url{https://static-content.springer.com/esm/art\%3A10.1186\%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM1_ESM.docx}
+\url{https://static-content.springer.com/esm/art\%3A10.1186\%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM2_ESM.docx}
+\url{https://static-content.springer.com/esm/art\%3A10.1186\%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM3_ESM.docx}
 }
 \author{
 Caporaso, J. G., et al.
@@ -166,5 +185,7 @@ Turnbaugh, PJ et al.
 Potbhare, R., et al.
 
 Leo Lahti et al.
+
+A.C. Tengeler, et al.
 }
 \keyword{data}
