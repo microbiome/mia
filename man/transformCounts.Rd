@@ -30,6 +30,7 @@ transformSamples(
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
+  pseudocount = 0,
   ...
 )
 
@@ -42,6 +43,7 @@ transformCounts(
     "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
+  pseudocount = 0,
   ...
 )
 
@@ -54,6 +56,7 @@ transformCounts(
     "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
+  pseudocount = 0,
   ...
 )
 
@@ -64,6 +67,7 @@ transformFeatures(
   method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
     "z"),
   name = method,
+  pseudocount = 0,
   ...
 )
 
@@ -74,6 +78,7 @@ transformFeatures(
   method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
     "z"),
   name = method,
+  pseudocount = 0,
   ...
 )
 
@@ -110,11 +115,13 @@ abundance table.}
 \item{\code{ref_vals}:} {A single value which will be used to fill
 reference sample's column in returned assay when calculating alr.
 (default: \code{ref_vals = NA})}
-\item{\code{pseudocount}:} {NULL or numeric value deciding whether
-pseudocount is added. The numeric value specifies the value of pseudocount.
-Recommended default choices for counts and relative abundance assay
-\code{pseudocount = 1} and \code{pseudocount = min(x[x>0])}, respectively.}
 }}
+
+\item{pseudocount}{NULL or numeric value deciding whether pseudocount is
+added. The numeric value specifies the value of pseudocount.
+Recommended default choices for counts and relative abundance assay
+\code{pseudocount = 1} and \code{pseudocount = min(assay[assay>0])}, respectively.
+(By default: \code{pseudocount = 0})}
 
 \item{MARGIN}{A single character value for specifying whether the
 transformation is applied sample (column) or feature (row) wise.

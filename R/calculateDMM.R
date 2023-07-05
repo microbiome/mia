@@ -77,28 +77,28 @@
 #' tse <- TreeSummarizedExperiment(assays = list(counts = counts),
 #'                                 colData = colData)
 #'
-#'
-#' #
-#' dmn <- calculateDMN(tse)
-#' dmn[[1L]]
-#'
-#' # since this take a bit of resources to calculate for k > 1, the data is
-#' # loaded
-#' \dontrun{
-#' tse <- runDMN(tse, name = "DMN", k = 1:7)
-#' }
-#' data(dmn_se)
-#' # Convert SE to TreeSE to enable all features of mia and TreeSE object
-#' # (Optional step at this point)
-#' dmn_tse <- as(dmn_se, "TreeSummarizedExperiment")
-#' names(metadata(dmn_tse))
-#'
-#' # return a list of DMN objects
-#' getDMN(dmn_tse)
-#' # return, which objects fits best
-#' bestDMNFit(dmn_tse, type = "laplace")
-#' # return the model, which fits best
-#' getBestDMNFit(dmn_tse, type = "laplace")
+#' library(bluster)
+#' 
+#' # Compute DMM algorithm and store result in metadata
+#' tse <- cluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
+#'                MARGIN = "samples", full = TRUE)
+#' 
+#' # Get the list of DMN objects
+#' metadata(tse)$DMM$dmm
+#' 
+#' # Get and display which objects fits best
+#' bestFit <- metadata(tse)$DMM$best
+#' bestFit
+#' 
+#' # Get the model that generated the best fit
+#' bestModel <- metadata(tse)$DMM$dmm[[bestFit]]
+#' bestModel
+#' 
+#' # Get the sample-cluster assignment probability matrix
+#' metadata(tse)$DMM$prob
+#' 
+#' # Get the weight of each component for the best model
+#' bestModel@mixture$Weight
 NULL
 
 #' @rdname calculateDMN
@@ -143,6 +143,8 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
 setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
              transposed = FALSE, ...){
+        .Deprecated(old="calculateDMN", new="cluster", 
+                    "Now calculateDMN is deprecated. Use cluster with DMMParam parameter instead.")
         mat <- assay(x, assay.type)
         if(!transposed){
             mat <- t(mat)
@@ -155,6 +157,8 @@ setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
 #' @importFrom S4Vectors metadata<-
 #' @export
 runDMN <- function(x, name = "DMN", ...){
+    .Deprecated(old="runDMN", new="cluster", 
+                "Now runDMN is deprecated. Use cluster with DMMParam parameter instead.")
     if(!is(x,"SummarizedExperiment")){
         stop("'x' must be a SummarizedExperiment")
     }
@@ -198,6 +202,8 @@ setGeneric("getDMN", signature = "x",
 #' @export
 setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
     function(x, name = "DMN"){
+        .Deprecated(old="getDMN", new="cluster", 
+                    "Now getDMN is deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
         .get_dmn(x, name)
     }
 )
@@ -219,6 +225,8 @@ setGeneric("bestDMNFit", signature = "x",
 #' @export
 setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
     function(x, name = "DMN", type = c("laplace","AIC","BIC")){
+        .Deprecated(old="bestDMNFit", new="cluster", 
+                    "Now bestDMNFit is deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
         #
         dmn <- getDMN(x, name)
         fit_FUN <- .get_dmn_fit_FUN(type)
@@ -238,6 +246,8 @@ setGeneric("getBestDMNFit", signature = "x",
 #' @export
 setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
     function(x, name = "DMN", type = c("laplace","AIC","BIC")){
+        .Deprecated(old="getBestDMNFit", new="cluster", 
+                    "Now getBestDMNFit is deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
         dmn <- getDMN(x, name)
         fit_FUN <- .get_dmn_fit_FUN(type)
         dmn[[.get_best_dmn_fit(dmn, fit_FUN)]]
