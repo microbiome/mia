@@ -177,6 +177,9 @@ jobs:
           # For loading data in test-3agglomerate.R
           remotes::install_github("microbiome/miaTime")
 
+          # For dmm examples
+          remotes::install_github("LTLA/bluster")
+
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = FALSE, upgrade = TRUE)
