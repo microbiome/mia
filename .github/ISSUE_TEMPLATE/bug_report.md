@@ -2,7 +2,7 @@
 name: "Bug report \U0001F41E"
 about: Create a report to help us improve
 title: ''
-labels: '#D93F0B'
+labels: 'Bug Report'
 assignees: ''
 
 ---
