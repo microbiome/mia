@@ -262,7 +262,7 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
         dominant_taxa <- perSampleDominantTaxa(x, ...)
         data <- colData(x)
         # If the length of dominant taxa is not equal to number of rows, then add rows
-        # because there are multiple dominan taxa
+        # because there are multiple dominant taxa
         if(length(dominant_taxa) > nrow(data) ){
             # Get the order
             order <- unique(names(dominant_taxa))
@@ -334,8 +334,7 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
     tallied_data <- data %>%
         tally() %>%
         mutate(
-            rel.freq = round(100 * n / sum(n), 1),
-            rel.freq.pct = paste0(round(100 * n / sum(n), 0), "%")
+            rel.freq = round(n / sum(n), 3)
         ) %>%
         arrange(desc(n))
     return(tallied_data)
