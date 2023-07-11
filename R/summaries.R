@@ -242,14 +242,14 @@ setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
 #' 
 #' @export
 setGeneric("countDominantTaxa",signature = c("x"),
-           function(x, group = NULL,  ...)
+           function(x, group = NULL,  digits = NULL, ...)
                standardGeneric("countDominantTaxa"))
 
 #' @rdname summaries
 #' @aliases countDominantFeatures
 #' @export
 setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, group = NULL, round = NULL, ...){
+    function(x, group = NULL, digits = NULL, ...){
         # Input check
         # group check
         if(!is.null(group)){
@@ -257,6 +257,11 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
                 stop("'group' variable must be in colnames(colData(x))",
                      call. = FALSE)
             }
+        }
+        if(!is.null(digits)) {
+          if(digits%%1 != 0) {
+            stop("'digits' must be an integer value", call. = F)
+          }
         }
         # Adds dominant taxa to colData
         dominant_taxa <- perSampleDominantTaxa(x, ...)
@@ -277,7 +282,7 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
         # Add dominant taxa to data
         data$dominant_taxa <- dominant_taxa
         # Gets an overview
-        .tally_col_data(data, group, round, name = "dominant_taxa")
+        .tally_col_data(data, group, digits, name = "dominant_taxa")
     }
 )
 
@@ -301,7 +306,7 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom S4Vectors as.data.frame
 #' @importFrom dplyr n desc tally group_by arrange mutate
-.tally_col_data <- function(data, group, rounding, name){
+.tally_col_data <- function(data, group, digits, name){
     # Convert data to data.frame
     data <- as.data.frame(data)
     
@@ -331,16 +336,13 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
         data <- data %>%
             group_by(!!group, !!name)
     }
-    if (is.null(rounding)) {
-      rounding <- 3
-    }
-    else {
-      rounding <- as.integer(rounding)
+    if (is.null(digits)) {
+      digits <- 3
     }
     tallied_data <- data %>%
         tally() %>%
         mutate(
-            rel.freq = round(n / sum(n), rounding)
+            rel.freq = round(n / sum(n), digits)
         ) %>%
         arrange(desc(n))
     return(tallied_data)
