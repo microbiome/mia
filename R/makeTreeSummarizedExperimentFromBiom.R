@@ -140,10 +140,10 @@ makeTreeSEFromBiom <- function(
         # Patterns for superkingdom, domain, kingdom, phylum, class, order, family,
         # genus, species
         patterns <- "sk__|([dkpcofgs]+)__"
-        feature_data <- apply(feature_data, 2,
-                              gsub,
-                              pattern = patterns,
-                              replacement = "")
+        feature_data <- lapply(
+            feature_data,
+            gsub, pattern = patterns, replacement = "")
+        feature_data <- as.data.frame(feature_data)
     }
     
     # Adjust row and colnames
