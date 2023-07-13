@@ -146,24 +146,21 @@ makeTreeSEFromBiom <- function(
                               replacement = "")
     }
     
+    # Adjust row and colnames
+    rownames(counts) <- rownames(feature_data) <- biomformat::rownames(obj)
+    colnames(counts) <- rownames(sample_data) <- biomformat::colnames(obj)
+    
     # Convert into DataFrame
     sample_data <- DataFrame(sample_data)
     feature_data <- DataFrame(feature_data)
+    # Convert into list
+    assays <- SimpleList(counts = counts)
     
-    tse <- TreeSummarizedExperiment(assays = list(counts = counts),
-                            colData = sample_data,
-                            rowData = feature_data)
-    # Check if data contains colnames and rownames
-    if( is.null(colnames(tse)) ){
-        warning("Output does not include colnames. You can add them with ",
-                "'colnames() <-'.",
-                call. = FALSE)
-    }
-    if( is.null(rownames(tse)) ){
-        warning("Output does not include rownames. You can add them with ",
-                "'rownames() <-'.",
-                call. = FALSE)
-    }
+    # Create TreeSE
+    tse <- TreeSummarizedExperiment(
+        assays = assays,
+        colData = sample_data,
+        rowData = feature_data)
     return(tse)
 }
 
