@@ -283,3 +283,19 @@
     
     taxa_tab
 }
+
+################################################################################
+# internal wrappers for agglomerateByRank/mergeRows
+.merge_features <- function(x, merge.by, ..., agglomerateTree = FALSE) {
+    # Check if merge.by parameter belongs to taxonomyRanks
+    if (merge.by %in% taxonomyRanks(x)) {
+        # Merge using agglomerateByRank
+        x <- agglomerateByRank(x, rank = merge.by, ..., agglomerateTree = agglomerateTree)
+    } else {
+        # Merge using mergeRows
+        x <- mergeRows(x, f = merge.by, ...)
+    }
+    
+    return(x)
+}
+
