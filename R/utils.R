@@ -286,16 +286,18 @@
 
 ################################################################################
 # internal wrappers for agglomerateByRank/mergeRows
-.merge_features <- function(x, merge.by, ..., agglomerateTree = FALSE) {
+.merge_features <- function(x, merge.by, ...) {
     # Check if merge.by parameter belongs to taxonomyRanks
-    if (merge.by %in% taxonomyRanks(x)) {
-        # Merge using agglomerateByRank
-        x <- agglomerateByRank(x, rank = merge.by, ..., agglomerateTree = agglomerateTree)
+    if (is.character(merge.by) && length(merge.by) < 2 && merge.by %in% taxonomyRanks(x)) {
+         #Merge using agglomerateByRank
+        x <- agglomerateByRank(x, rank = merge.by, ...)
     } else {
         # Merge using mergeRows
         x <- mergeRows(x, f = merge.by, ...)
     }
     
     return(x)
+
 }
+
 
