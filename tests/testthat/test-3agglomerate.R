@@ -51,7 +51,6 @@ test_that("agglomerate", {
     expect_equal(rowData(actual)$Family,c("c",NA,"d","e","f","g","h",NA))
     actual <- agglomerateByRank(xtse,"Phylum")
     expect_equivalent(rowData(actual),rowData(actual_phylum))
-    
     #
     actual1 <- agglomerateByRank(xtse,"Family")
     actual2 <- .merge_features(xtse, merge.by = "Family")
