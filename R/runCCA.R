@@ -377,7 +377,7 @@ setMethod("runCCA", "SingleCellExperiment",
              call. = FALSE)
     }
     #
-    # Perform ANOVA
+    # Perform PERMANOVA
     permanova <- anova.cca(rda, by = by, ...)
     # Create a table from the results
     # PERMANOVAs
