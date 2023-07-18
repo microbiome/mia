@@ -445,6 +445,7 @@ setMethod("runCCA", "SingleCellExperiment",
     return(res)
 }
 
+# Perform statistical test for group homogeneity results
 .homogeneity_significance <- function(betadisper_res, homogeneity_test, ...){
     # Run specified significance test
     if( homogeneity_test == "anova" ){
