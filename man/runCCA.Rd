@@ -27,8 +27,8 @@ runRDA(x, ...)
   x,
   formula,
   variables,
-  test_signif = TRUE,
   ...,
+  test_signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts"
@@ -42,8 +42,8 @@ runRDA(x, ...)
   x,
   formula,
   variables,
-  test_signif = TRUE,
   ...,
+  test_signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts"
@@ -132,7 +132,7 @@ GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
 # Fetch significance results
-attr(reducedDim(GlobalPatterns, "CCA"), "significance")$summary
+attr(reducedDim(GlobalPatterns, "CCA"), "significance")
 
 GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")

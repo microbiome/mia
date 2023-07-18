@@ -363,13 +363,33 @@ setMethod("runCCA", "SingleCellExperiment",
 }
 
 .test_rda_vars <- function(
-        mat, rda, variables, permanova_model, by = "margin", full = FALSE, ...){
+        mat, rda, variables, permanova_model, by = "margin", full = FALSE,
+        homogeneity_test = "permanova", ...){
     # Check full parameter
     if( !.is_a_bool(full) ){
         stop("'full' must be TRUE or FALSE.", call. = FALSE)
     }
+    # Check homogeneity_test
+    if( !(is.character(homogeneity_test) &&
+          length(homogeneity_test) == 1 &&
+          homogeneity_test %in% c("permanova", "anova", "tukeyhsd")) ){
+        stop("'homogeneity_test' must be 'permanova', 'anova', or 'tukeyhsd'.",
+             call. = FALSE)
+    }
     #
+    # Perform ANOVA
     permanova <- anova.cca(rda, by = by, ...)
+    # Create a table from the results
+    # PERMANOVAs
+    table_model <- as.data.frame(permanova_model)
+    permanova_tab <- as.data.frame(permanova)
+    # Take only model results
+    permanova_tab <- rbind(table_model[1, ], permanova_tab)
+    # Add info about total variance
+    permanova_tab[ , "Total variance"] <- permanova_tab["Model", "SumOfSqs"] + permanova_tab["Residual", "SumOfSqs"]
+    # Add info about explained variance
+    permanova_tab[ , "Explained variance"] <- permanova_tab[ , "SumOfSqs"] / permanova_tab[ , "Total variance"]
+
     # Perform homogeneity analysis
     mat <- t(mat)
     # Get the dissimilarity matrix based on original dissimilarity index
@@ -387,26 +407,23 @@ setMethod("runCCA", "SingleCellExperiment",
         betadisper_res <- betadisper(dist_mat, group = var)
         )
         )
-        # Run permanova
-        anova_res <- anova( betadisper_res, ... )
+        # Run significance test
+        significance <- .homogeneity_significance(betadisper_res, homogeneity_test, ...)
         # Return the results as a list
-        res <- list(betadisper = betadisper_res, anova = anova_res)
+        models <- list(betadisper_res, significance[["obj"]])
+        names(models) <- c("betadisper", homogeneity_test)
+        res <- list(
+            models = models,
+            table = significance[["table"]]
+        )
         return(res)
     })
-    names(homogeneity) <- colnames(variables)
-    # Create a table from the results
-    # PERMANOVAs
-    table_model <- as.data.frame(permanova_model)
-    permanova_tab <- as.data.frame(permanova)
-    # Take only model results
-    permanova_tab <- rbind(table_model[1, ], permanova_tab)
-    ## DIFFERENT
-    # Add info about total variance
-    permanova_tab[ , "Total variance"] <- permanova_tab["Model", "SumOfSqs"] + permanova_tab["Residual", "SumOfSqs"]
-    # Add info about explained variance
-    permanova_tab[ , "Explained variance"] <- permanova_tab[ , "SumOfSqs"] / permanova_tab[ , "Total variance"]
-    # Take homogeneity results of the different groups
-    homogeneity_tab <- lapply(homogeneity, function(x) as.data.frame(x$anova)[1, ])
+    # Get models
+    homogeneity_model <- lapply(homogeneity, function(x) x[["models"]])
+    names(homogeneity_model) <- colnames(variables)
+    # Get tables
+    homogeneity_tab <- lapply(homogeneity, function(x) x[["table"]])
+    # Combine tables
     homogeneity_tab <- do.call(rbind, homogeneity_tab)
     
     # Return whole data or just a tables
@@ -418,7 +435,7 @@ setMethod("runCCA", "SingleCellExperiment",
                 variables = permanova),
             homogeneity = list(
                 summary = homogeneity_tab,
-                variables = homogeneity)
+                variables = homogeneity_model)
         )
     } else{
         res <- list(
@@ -427,6 +444,44 @@ setMethod("runCCA", "SingleCellExperiment",
     }
     return(res)
 }
+
+.homogeneity_significance <- function(betadisper_res, homogeneity_test, ...){
+    # Run specified significance test
+    if( homogeneity_test == "anova" ){
+        res <- stats::anova(betadisper_res, ...)
+    } else if ( homogeneity_test == "tukeyhsd" ){
+        res <- stats::TukeyHSD(betadisper_res, ...)
+    } else{
+        res <- vegan::permutest(betadisper_res, ...)
+    }
+
+    # Get summary table from the results
+    if( homogeneity_test == "anova" ){
+        tab <- as.data.frame(res)
+    } else if( homogeneity_test == "tukeyhsd" ){
+        tab <- res[["group"]]
+    } else{
+        tab <- res[["tab"]]
+    }
+    
+    # Modify permanova/anova table
+    if( homogeneity_test != "tukeyhsd" ){
+        # Add info about total variance
+        tab[ , "Total variance"] <- tab["Groups", "Sum Sq"] + tab["Residuals", "Sum Sq"]
+        # Add info about explained variance
+        tab[ , "Explained variance"] <- tab[ , "Sum Sq"] / tab[ , "Total variance"]
+        # Get only groups row (drop residuals row)
+        tab <- tab[1, ]
+    }
+    
+    # Create list from the object and results
+    res <- list(
+        obj = res,
+        table = tab
+    )
+    return(res)
+}
+
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "ANY", .calculate_rda)
