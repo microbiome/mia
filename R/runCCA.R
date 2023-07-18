@@ -362,7 +362,13 @@ setMethod("runCCA", "SingleCellExperiment",
     return(res)
 }
 
-.test_rda_vars <- function(mat, rda, variables, permanova_model, by = "margin", ...){
+.test_rda_vars <- function(
+        mat, rda, variables, permanova_model, by = "margin", full = FALSE, ...){
+    # Check full parameter
+    if( !.is_a_bool(full) ){
+        stop("'full' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
     permanova <- anova.cca(rda, by = by, ...)
     # Perform homogeneity analysis
     mat <- t(mat)
@@ -394,6 +400,7 @@ setMethod("runCCA", "SingleCellExperiment",
     permanova_tab <- as.data.frame(permanova)
     # Take only model results
     permanova_tab <- rbind(table_model[1, ], permanova_tab)
+    ## DIFFERENT
     # Add info about total variance
     permanova_tab[ , "Total variance"] <- permanova_tab["Model", "SumOfSqs"] + permanova_tab["Residual", "SumOfSqs"]
     # Add info about explained variance
@@ -402,10 +409,22 @@ setMethod("runCCA", "SingleCellExperiment",
     homogeneity_tab <- lapply(homogeneity, function(x) as.data.frame(x$anova)[1, ])
     homogeneity_tab <- do.call(rbind, homogeneity_tab)
     
-    # Add the results to original RDA object
-    res <- list(
-        permanova = permanova_tab,
-        homogeneity = homogeneity_tab)
+    # Return whole data or just a tables
+    if( full ){
+        res <- list(
+            permanova = list(
+                summary = permanova_tab,
+                model = permanova_model,
+                variables = permanova),
+            homogeneity = list(
+                summary = homogeneity_tab,
+                variables = homogeneity)
+        )
+    } else{
+        res <- list(
+            permanova = permanova_tab,
+            homogeneity = homogeneity_tab)
+    }
     return(res)
 }
 #' @export
