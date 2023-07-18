@@ -79,3 +79,5 @@ Changes in version 1.9.x
 + loadFromMetaphlan: Bugfix, not all files include ID column.
 + cluster: added wrapper for bluster's clusterRows function
 + Added loadFromHumann
++ calculateDMM: deprecated/updated outdated functions
++ Added Tengeler2020 dataset
