@@ -263,24 +263,9 @@ setMethod("runCCA", "SingleCellExperiment",
         }
         # Calculate CCA
         cca <- calculateCCA(y, ...)
-        # If samples do not match / there were samples without appropriate metadata
-        # and they are now removed
-        if( !all( colnames(x) %in% rownames(cca) ) ){
-            # Take a subset
-            x_sub <- x[ , rownames(cca) ]
-            # Add CCA
-            reducedDim(x_sub, name) <- cca
-            # Add subset and original data  to MAE
-            exp_list <- ExperimentList(original = x, subset = x_sub)
-            x <- MultiAssayExperiment(exp_list)
-            # Give a message
-            message("After CCA, certain samples are removed. The result object ",
-                    "is MAE which includes the original and subsetted data.")
-        } else{
-            # Otherwose put the result to reducedDim if all the samples are found
-            reducedDim(x, name) <- cca
-        }
-        x
+        # Add object to reducedDim
+        x <- .add_object_to_reduceddim(x, cca, name = name, ...)
+        return(x)
     }
 )
 
@@ -322,6 +307,44 @@ setMethod("runCCA", "SingleCellExperiment",
     attr(ans, "eigen") <- X$eig
     attr(ans, "rda") <- rda
     ans
+}
+
+# Add RDA/CCA to reducedDim
+.add_object_to_reduceddim <- function(
+        tse, rda, name, subset_result = FALSE, ...){
+    # Test subset
+    if( !.is_a_bool(subset_result) ){
+        stop("'subset_result' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # If samples do not match / there were samples without appropriate metadata
+    # and they are now removed
+    if( !all(colnames(tse) %in% rownames(rda)) && subset_result ){
+        # Take a subset
+        tse <- tse[ , rownames(rda) ]
+        # Give a message
+        message("Certain samples are removed from the result because they did ",
+                "not include sufficient metadata.")
+    } else if( !all(colnames(tse) %in% rownames(rda)) && !subset_result ){
+        # If user do not want to subset the data
+        # Save attributes from the object
+        attr <- attributes(rda)
+        attr <- attr[ !names(attr) %in% c("dim", "dimnames")]
+        # Find samples that are removed
+        samples_not_found <- setdiff(colnames(tse), rownames(rda))
+        # Create an empty matrix
+        mat <- matrix(nrow = length(samples_not_found), ncol=ncol(rda))
+        rownames(mat) <- samples_not_found
+        # Combine the data and order it in correct order
+        rda <- rbind(rda, mat)
+        rda <- rda[colnames(tse), ]
+        # Add attributes
+        attr <- c(attributes(rda), attr)
+        attributes(rda) <- attr
+    }
+    # Add object to recucedDIm
+    reducedDim(tse, name) <- rda
+    return(tse)
 }
 
 # Perform PERMANOVA and homogeneity analysis to RDA object
@@ -443,23 +466,8 @@ setMethod("runRDA", "SingleCellExperiment",
         }
         # Calculate RDA
         rda <- calculateRDA(y, ...)
-        # If samples do not match / there were samples without appropriate metadata
-        # and they are now removed
-        if( !all( colnames(x) %in% rownames(rda) ) ){
-            # Take a subset
-            x_sub <- x[ , rownames(rda) ]
-            # Add RDA
-            reducedDim(x_sub, name) <- rda
-            # Add subset and original data  to MAE
-            exp_list <- ExperimentList(original = x, subset = x_sub)
-            x <- MultiAssayExperiment(exp_list)
-            # Give a message
-            message("After RDA, certain samples are removed. The result object ",
-                    "is MAE which includes the original and subsetted data.")
-        } else{
-            # Otherwise add the RDA to original data's reducedDim
-            reducedDim(x, name) <- rda
-        }
+        # Add object to reducedDim
+        x <- .add_object_to_reduceddim(x, rda, name = name, ...)
         return(x)
     }
 )
