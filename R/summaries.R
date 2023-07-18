@@ -242,14 +242,14 @@ setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
 #' 
 #' @export
 setGeneric("countDominantTaxa",signature = c("x"),
-           function(x, group = NULL,  digits = NULL, ...)
+           function(x, group = NULL, name = "dominant_taxa"...)
                standardGeneric("countDominantTaxa"))
 
 #' @rdname summaries
 #' @aliases countDominantFeatures
 #' @export
 setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, group = NULL, digits = NULL, ...){
+    function(x, group = NULL, name = "dominant_taxa", ...){
         # Input check
         # group check
         if(!is.null(group)){
@@ -258,11 +258,18 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
                      call. = FALSE)
             }
         }
-        if(!is.null(digits)) {
-          if(digits%%1 != 0) {
-            stop("'digits' must be an integer value", call. = F)
+        # name check
+        if(!is.null(name)) {
+          if(is.character(name)==F) {
+            stop("'name' must be a character value", call. = F)
           }
+          # Replace spaces with underscores to enhance usability
+          name <- gsub(" ", "_", name)
         }
+        # digits for rounding
+        args <- list(...)
+        digits <- args$digits
+        
         # Adds dominant taxa to colData
         dominant_taxa <- perSampleDominantTaxa(x, ...)
         data <- colData(x)
@@ -280,9 +287,9 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
             data <- data[rep(seq_len(nrow(data)), lengths(dominant_taxa_list)), ]
         }
         # Add dominant taxa to data
-        data$dominant_taxa <- dominant_taxa
+        data[name] <- dominant_taxa
         # Gets an overview
-        .tally_col_data(data, group, digits, name = "dominant_taxa")
+        .tally_col_data(data, group, digits, name)
     }
 )
 
@@ -336,15 +343,15 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
         data <- data %>%
             group_by(!!group, !!name)
     }
-    if (is.null(digits)) {
-      digits <- 3
-    }
     tallied_data <- data %>%
         tally() %>%
         mutate(
-            rel.freq = round(n / sum(n), digits)
+            rel.freq = n / sum(n)
         ) %>%
         arrange(desc(n))
+    if(!is.null(digits)) {
+      tallied_data["rel.freq"] <- round(tallied_data["rel.freq"], digits) 
+    }
     return(tallied_data)
 }
 
