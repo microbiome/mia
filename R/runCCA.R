@@ -84,7 +84,7 @@
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 #' 
 #' # Fetch significance results
-#' attr(reducedDim(GlobalPatterns, "CCA"), "significance")$summary
+#' attr(reducedDim(GlobalPatterns, "CCA"), "significance")
 #'
 #' GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
@@ -391,25 +391,21 @@ setMethod("runCCA", "SingleCellExperiment",
     # Create a table from the results
     # PERMANOVAs
     table_model <- as.data.frame(permanova_model)
-    table <- as.data.frame(permanova)
+    permanova_tab <- as.data.frame(permanova)
     # Take only model results
-    table <- rbind(table_model[1, ], table)
+    permanova_tab <- rbind(table_model[1, ], permanova_tab)
+    # Add info about total variance
+    permanova_tab[ , "Total variance"] <- permanova_tab["Model", "SumOfSqs"] + permanova_tab["Residual", "SumOfSqs"]
+    # Add info about explained variance
+    permanova_tab[ , "Explained variance"] <- permanova_tab[ , "SumOfSqs"] / permanova_tab[ , "Total variance"]
     # Take homogeneity results of the different groups
     homogeneity_tab <- lapply(homogeneity, function(x) as.data.frame(x$anova)[1, ])
     homogeneity_tab <- do.call(rbind, homogeneity_tab)
-    # Adjust colnames of tables, add info
-    colnames(table) <- paste0(colnames(table), " (PERMANOVA)")
-    colnames(homogeneity_tab) <- paste0(colnames(homogeneity_tab), " (homogeneity)")
-    # Combine and adjust rownames
-    table <- merge(table, homogeneity_tab, by=0, all.x = TRUE)
-    rownames(table) <- table[["Row.names"]]
-    table[["Row.names"]] <- NULL
     
     # Add the results to original RDA object
     res <- list(
-        summary = table,
-        permanova = list(model = permanova_model, variables = permanova),
-        homogeneity = homogeneity)
+        permanova = permanova_tab,
+        homogeneity = homogeneity_tab)
     return(res)
 }
 #' @export
