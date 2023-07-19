@@ -57,6 +57,59 @@ BiocManager::install(version='devel')
 BiocManager::install("mia")
 ```
 
+## How to develop the package
+
+A minimal workflow for package development is as follows.
+
+1. _Fork_ (with Git) mia R package from [https://github.com/microbiome/mia]
+
+1. _Clone_ (with Git) your own fork of mia 
+
+1. Test package (in R): `devtools::test()` (and fix possible issues)
+
+1. Test examples: `devtools::run_examples()`
+
+1. Update documentation (convert R files to man/ files): `devtools::document()` 
+
+1. Build package: `devtools::build()`
+
+1. Run Bioconductor checks: `BiocCheck::BiocCheck()`
+
+1. Load the updated package: `devtools::load_all()`
+
+1. Install the package: `devtools::install()`
+
+1. Once the package passes all build checks, commit & push to your own
+   fork, then make a pull request (PR) to the original
+   repository. This will trigger additional automated checks. If they
+   fail, inspect the reason, fix accordingly, and update your PR
+   (simply commit + push new material to your fork; the PR is
+   already open).
+
+
+Final checks after the R tests; run on command line (replace "R" with
+your custom R path if necessary):
+
+- `R CMD build `mia/`
+- `R CMD check mia_x.y.z.tar.gz`
+- `R CMD BiocCheck mia_x.y.z.tar.gz`
+- `R CMD INSTALL mia_x.y.z.tar.gz`
+
+
+After updating the package, remember to do the following (if applicable):
+
+- update documentation 
+- update unit tests (in `tests/`)
+- update vignettes (in `vignettes`)
+- run all checks from above
+
+After accepted pull request, check if further updates are needed in:
+
+- OMA
+- other related packages (e.g. miaViz, miaSim, miaTime)
+
+
+
 # Code of conduct
 
 Please note that the mia project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
