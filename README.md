@@ -63,7 +63,9 @@ A minimal workflow for package development is as follows.
 
 1. _Fork_ (with Git) mia R package from [https://github.com/microbiome/mia]
 
-1. _Clone_ (with Git) your own fork of mia 
+1. _Clone_ (with Git) your own fork of mia; or if you have cloned it
+  earlier, then make sure that your branch is in sync with the
+  _upstream_ repository (see next section)
 
 1. Test package (in R): `devtools::test()` (and fix possible issues)
 
@@ -107,6 +109,38 @@ After accepted pull request, check if further updates are needed in:
 
 - OMA
 - other related packages (e.g. miaViz, miaSim, miaTime)
+
+
+## Sync with the official Github development version
+
+Before new pull request, check that your own fork is in sync with the
+main development version. Command line version goes as follows.
+
+```
+# Add the main repository as your _upstream_  
+`git remote add upstream git@github.com:microbiome/mia.git`
+
+# Fetch the changes from upstream (main version) and origin (your fork):
+git fetch --all
+
+# Merge those changes to your fork:
+git merge origin/master
+git merge upstream/master
+
+# Finally, commit and push to origin (your version)
+# then open a new PR from the Github site if relevant.
+git push origin master
+```
+
+## Syncing with the official Bioconductor version
+
+This is usually done only by the main developer. In this case, the upstream will be set to Bioconductor: `git remote add upstream git@git.bioconductor.org:packages/mia.git`
+
+- [Workflow to sync between github and bioc versions](https://bioconductor.org/developers/how-to/git/sync-existing-repositories/)
+
+- [Bioconductor Build reports (devel)](https://bioconductor.org/checkResults/devel/bioc-LATEST/)
+
+- [Package page in Bioconductor](https://bioconductor.org/packages/mia/)
 
 
 
