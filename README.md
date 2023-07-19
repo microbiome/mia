@@ -9,29 +9,18 @@ coverage](https://codecov.io/gh/microbiome/mia/branch/master/graph/badge.svg)](h
 
 <!-- badges: end -->
 
+## Using the package
+
 This project provides functions and workflows examples for analyses
 of microbiome data. The main class for working with microbiome data in this
-package is `TreeSummarizedExperiment`.
+package is `TreeSummarizedExperiment`. 
 
-Currently following things are implemented:
+For examples of functionality, see the [function reference page](https://microbiome.github.io/mia/reference/index.html).
 
-- data wrangling functions (`agglomerate*`, `merge*`, and more)
-- CCA analysis via `vegan` package
-- Bray-Curtis dissimilarity via `vegan` package
-- JSD and UniFrac distance calculation ported from `phyloseq` to work with `TreeSummarizedExperiment` objects
-- MDS via the `scater` package for any other distance objects
-- import functions for `biom` data, `DADA2` objects, `phyloseq` objects and more
+More information and example workflows are provided in the online
+manual [Orchestrating Microbiome Analysis with
+Bioconductor](https://microbiome.github.io/OMA).
 
-# Contribution
-
-Contributions are welcome in the form of feedback, issues, pull
-requests etc, see [contributor guidelines](CONTRIBUTING.md).
-
-## Technical aspects
-
-Let's use a git flow kind of approach. Development version should be done 
-against the `master` branch and then merged to `release` for release. 
-(https://guides.github.com/introduction/flow/)
 
 ## Installation
 
@@ -57,7 +46,13 @@ BiocManager::install("mia")
 ```
 
 
-# Code of conduct
+## Contributing
+
+Contributions are welcome in the form of feedback, issues, pull
+requests etc, see [contributor guidelines](CONTRIBUTING.md).
+
+
+## Code of conduct
 
 Please note that the mia project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.
