@@ -129,6 +129,7 @@ Enhancement proposals are tracked as
 
    - Name and version of the OS
 
+
 ### Making Pull Requests
 
 All packages can be developed locally, and contributions suggested via pull requests.
@@ -253,4 +254,91 @@ freely discuss it with the reviewers.
 
 - Generally try to keep lines below 80-columns, unless splitting a long line
   onto multiple lines makes it harder to read.
+
+
+## How to develop the package
+
+A minimal workflow for package development is as follows.
+
+1. _Fork_ (with Git) mia R package from [https://github.com/microbiome/mia]
+
+1. _Clone_ (with Git) your own fork of mia; or if you have cloned it
+  earlier, then make sure that your branch is in sync with the
+  _upstream_ repository (see next section)
+
+1. Test package (in R): `devtools::test()` (and fix possible issues)
+
+1. Test examples: `devtools::run_examples()`
+
+1. Update documentation (convert R files to man/ files): `devtools::document()` 
+
+1. Build package: `devtools::build()`
+
+1. Run Bioconductor checks: `BiocCheck::BiocCheck()` (for more details on Bioconductor formatting guidelines and automated checks, see [Bioconductor package guidelines](https://bioconductor.org/packages/devel/bioc/vignettes/BiocCheck/inst/doc/BiocCheck.html) and instructions on [Bioconductor packages: Development, Maintenance, and Peer Review](https://contributions.bioconductor.org/))
+
+1. Load the updated package: `devtools::load_all()`
+
+1. Install the package: `devtools::install()`
+
+1. Once the package passes all build checks, commit & push to your own
+   fork, then make a pull request (PR) to the original
+   repository. This will trigger additional automated checks. If they
+   fail, inspect the reason, fix accordingly, and update your PR
+   (simply commit + push new material to your fork; the PR is
+   already open).
+
+
+Final checks after the R tests; run on command line (replace "R" with
+your custom R path if necessary):
+
+- `R CMD build `mia/`
+- `R CMD check mia_x.y.z.tar.gz`
+- `R CMD BiocCheck mia_x.y.z.tar.gz`
+- `R CMD INSTALL mia_x.y.z.tar.gz`
+
+
+After updating the package, remember to do the following (if applicable):
+
+- update documentation 
+- update unit tests (in `tests/`)
+- update vignettes (in `vignettes`)
+- run all checks from above
+
+After accepted pull request, check if further updates are needed in:
+
+- OMA
+- other related packages (e.g. miaViz, miaSim, miaTime)
+
+
+## Sync with the official Github development version
+
+Before new pull request, check that your own fork is in sync with the
+main development version. Command line version goes as follows.
+
+```
+# Add the main repository as your _upstream_  
+`git remote add upstream git@github.com:microbiome/mia.git`
+
+# Fetch the changes from upstream (main version) and origin (your fork):
+git fetch --all
+
+# Merge those changes to your fork:
+git merge origin/master
+git merge upstream/master
+
+# Finally, commit and push to origin (your version)
+# then open a new PR from the Github site if relevant.
+git push origin master
+```
+
+## Syncing with the official Bioconductor version
+
+This is usually done only by the main developer. In this case, the upstream will be set to Bioconductor: `git remote add upstream git@git.bioconductor.org:packages/mia.git`
+
+- [Workflow to sync between github and bioc versions](https://bioconductor.org/developers/how-to/git/sync-existing-repositories/)
+
+- [Bioconductor Build reports (devel)](https://bioconductor.org/checkResults/devel/bioc-LATEST/)
+
+- [Package page in Bioconductor](https://bioconductor.org/packages/mia/)
+
 
