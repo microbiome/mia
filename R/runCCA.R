@@ -282,7 +282,7 @@ setMethod("runCCA", "SingleCellExperiment",
           y <- x
         }
         # Calculate CCA
-        cca <- calculateCCA(y, ...)
+        cca <- calculateCCA(y, formula, variables, ...)
         # Add object to reducedDim
         x <- .add_object_to_reduceddim(x, cca, name = name, ...)
         return(x)
@@ -407,9 +407,9 @@ setMethod("runCCA", "SingleCellExperiment",
     # Take only model results
     permanova_tab <- rbind(table_model[1, ], permanova_tab)
     # Add info about total variance
-    permanova_tab[ , "Total variance"] <- permanova_tab["Model", "Variance"] + permanova_tab["Residual", "Variance"]
+    permanova_tab[ , "Total variance"] <- permanova_tab["Model", 2] + permanova_tab["Residual", 2]
     # Add info about explained variance
-    permanova_tab[ , "Explained variance"] <- permanova_tab[ , "Variance"] / permanova_tab[ , "Total variance"]
+    permanova_tab[ , "Explained variance"] <- permanova_tab[ , 2] / permanova_tab[ , "Total variance"]
 
     # Perform homogeneity analysis
     mat <- t(mat)
@@ -439,6 +439,7 @@ setMethod("runCCA", "SingleCellExperiment",
         )
         return(res)
     })
+    names(homogeneity) <- colnames(variables)
     # Get models
     homogeneity_model <- lapply(homogeneity, function(x) x[["models"]])
     names(homogeneity_model) <- colnames(variables)

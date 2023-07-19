@@ -35,6 +35,12 @@ test_that("CCA", {
     sce <- runCCA(sce, form)
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
+    # Test that data is not subsetted
+    data("enterotype", package = "mia")
+    variable_names <- c("ClinicalStatus", "Gender", "Age")
+    res <- runRDA(enterotype, variables = variable_names, na.action = na.exclude)
+    expect_equal(colnames(res), colnames(enterotype))
+    #
     sce <- runRDA(sce, form)
     actual <- reducedDim(sce,"RDA")
     expect_equal(abs( as.vector(actual) ), abs( as.vector(mrda$CCA$u) ))
