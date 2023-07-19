@@ -11,7 +11,7 @@
 \alias{calculateRDA,ANY-method}
 \alias{calculateRDA,SummarizedExperiment-method}
 \alias{runRDA,SingleCellExperiment-method}
-\title{Canonical Correspondence Analysis}
+\title{Canonical Correspondence Analysis and Redundancy Analysis}
 \usage{
 calculateCCA(x, ...)
 
@@ -27,14 +27,14 @@ runRDA(x, ...)
   x,
   formula,
   variables,
-  ...,
   test_signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
-  exprs_values = "counts"
+  exprs_values = "counts",
+  ...
 )
 
-\S4method{runCCA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "CCA")
+\S4method{runCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
 \S4method{calculateRDA}{ANY}(x, formula, variables, ...)
 
@@ -42,14 +42,14 @@ runRDA(x, ...)
   x,
   formula,
   variables,
-  ...,
   test_signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
-  exprs_values = "counts"
+  exprs_values = "counts",
+  ...
 )
 
-\S4method{runRDA}{SingleCellExperiment}(x, ..., altexp = NULL, name = "RDA")
+\S4method{runRDA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "RDA", ...)
 }
 \arguments{
 \item{x}{For \code{calculate*} a
@@ -60,7 +60,18 @@ For \code{run*} a
 \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
 or a derived object.}
 
-\item{...}{additional arguments passed to vegan::cca or vegan::dbrda}
+\item{...}{additional arguments passed to vegan::cca or vegan::dbrda and
+other internal functions.
+\itemize{
+\item{\code{full} a logical scalar, should all the results from the
+significance calculations be returned. When \code{full=FALSE}, only
+summary tables are returned. (By default: \code{full=FALSE})}
+\item{\code{homogeneity_test} a single \code{character} value for specifying
+the significance test used to analyse \code{vegan::betadisper} results.
+Options include 'permanova' (\code{vegan::permutest}), 'anova'
+(\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
+(By default: \code{homogeneity_test="permanova"})}
+}}
 
 \item{formula}{If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -108,10 +119,11 @@ reducedDims of the output.}
 }
 \value{
 For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
-columns
+columns. Attributes include calculated \code{cca}/\code{rda} object and
+significance analysis results.
 
 For \code{runCCA} a modified \code{x} with the results stored in
-\code{reducedDim} as the given \code{name}
+\code{reducedDim} as the given \code{name}.
 }
 \description{
 These functions perform Canonical Correspondence Analysis on data stored
@@ -121,9 +133,11 @@ in a \code{SummarizedExperiment}.
 *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
 By default dbRDA is done with euclidean distances which equals to RDA.
 
-Significance tests are done with \code{vegan:anova.cca} (PERMANOVA), and
-\code{vegan:betadisper} and \code{stats:anova}
-(multivariate homogeneity of groups dispersions (variances)).
+Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
+dispersion, i.e., homogeneity within groups is analyzed with
+\code{vegan:betadisper} (multivariate homogeneity of groups dispersions (variances))
+and statistical significance of homogeneity is tested with a test
+specified by \code{homogeneity_test} parameter.
 }
 \examples{
 library(scater)
@@ -148,6 +162,11 @@ tse <- runRDA(tse, formula = data ~ SampleType,
               assay.type = "z", name = "rda_scaled", na.action = na.omit)
 # Plot
 plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
+# A common choice along with PERMANOVA is ANOVA when statistical significance
+# of homogeneity of groups is analysed. Moreover, full signficance test results
+# can be returned.
+ tse <- runRDA(tse, data ~ SampleType, homogeneity_test = "anova", full = TRUE)
+
 }
 \seealso{
 For more details on the actual implementation see \code{\link[vegan:cca]{cca}}

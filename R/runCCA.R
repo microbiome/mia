@@ -1,4 +1,4 @@
-#' Canonical Correspondence Analysis
+#' Canonical Correspondence Analysis and Redundancy Analysis
 #'
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
@@ -55,22 +55,36 @@
 #' @param name String specifying the name to be used to store the result in the
 #'   reducedDims of the output.
 #'
-#' @param ... additional arguments passed to vegan::cca or vegan::dbrda
+#' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
+#' other internal functions.
+#' \itemize{
+#'   \item{\code{full} a logical scalar, should all the results from the
+#'   significance calculations be returned. When \code{full=FALSE}, only
+#'   summary tables are returned. (By default: \code{full=FALSE})}
+#'   \item{\code{homogeneity_test} a single \code{character} value for specifying
+#'   the significance test used to analyse \code{vegan::betadisper} results.
+#'   Options include 'permanova' (\code{vegan::permutest}), 'anova'
+#'   (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
+#'   (By default: \code{homogeneity_test="permanova"})}
+#' }
 #' 
 #' @details
 #'   *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
 #'   By default dbRDA is done with euclidean distances which equals to RDA.
 #'   
-#'   Significance tests are done with \code{vegan:anova.cca} (PERMANOVA), and
-#'   \code{vegan:betadisper} and \code{stats:anova}
-#'   (multivariate homogeneity of groups dispersions (variances)).
+#'   Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
+#'   dispersion, i.e., homogeneity within groups is analyzed with 
+#'   \code{vegan:betadisper} (multivariate homogeneity of groups dispersions (variances))
+#'   and statistical significance of homogeneity is tested with a test
+#'   specified by \code{homogeneity_test} parameter.
 #'
 #' @return
 #' For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
-#' columns
+#' columns. Attributes include calculated \code{cca}/\code{rda} object and
+#' significance analysis results.
 #'
 #' For \code{runCCA} a modified \code{x} with the results stored in
-#' \code{reducedDim} as the given \code{name}
+#' \code{reducedDim} as the given \code{name}.
 #'
 #' @name runCCA
 #' @seealso
@@ -100,6 +114,11 @@
 #'               assay.type = "z", name = "rda_scaled", na.action = na.omit)
 #' # Plot
 #' plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
+#' # A common choice along with PERMANOVA is ANOVA when statistical significance
+#' # of homogeneity of groups is analysed. Moreover, full signficance test results
+#' # can be returned.
+#'  tse <- runRDA(tse, data ~ SampleType, homogeneity_test = "anova", full = TRUE)
+#' 
 NULL
 
 #' @rdname runCCA
@@ -217,8 +236,9 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
 #' @export
 #' @rdname runCCA
 setMethod("calculateCCA", "SummarizedExperiment",
-    function(x, formula, variables, ..., test_signif = TRUE,
-             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts")
+    function(x, formula, variables, test_signif = TRUE,
+             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
+             ...)
     {
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
@@ -254,7 +274,7 @@ setMethod("calculateCCA", "SummarizedExperiment",
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runCCA", "SingleCellExperiment",
-    function(x, ..., altexp = NULL, name = "CCA")
+    function(x, formula, variables, altexp = NULL, name = "CCA", ...)
     {
         if (!is.null(altexp)) {
           y <- altExp(x, altexp)
@@ -362,6 +382,7 @@ setMethod("runCCA", "SingleCellExperiment",
     return(res)
 }
 
+# Test association of variables to ordination
 .test_rda_vars <- function(
         mat, rda, variables, permanova_model, by = "margin", full = FALSE,
         homogeneity_test = "permanova", ...){
@@ -386,9 +407,9 @@ setMethod("runCCA", "SingleCellExperiment",
     # Take only model results
     permanova_tab <- rbind(table_model[1, ], permanova_tab)
     # Add info about total variance
-    permanova_tab[ , "Total variance"] <- permanova_tab["Model", "SumOfSqs"] + permanova_tab["Residual", "SumOfSqs"]
+    permanova_tab[ , "Total variance"] <- permanova_tab["Model", "Variance"] + permanova_tab["Residual", "Variance"]
     # Add info about explained variance
-    permanova_tab[ , "Explained variance"] <- permanova_tab[ , "SumOfSqs"] / permanova_tab[ , "Total variance"]
+    permanova_tab[ , "Explained variance"] <- permanova_tab[ , "Variance"] / permanova_tab[ , "Total variance"]
 
     # Perform homogeneity analysis
     mat <- t(mat)
@@ -490,8 +511,9 @@ setMethod("calculateRDA", "ANY", .calculate_rda)
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "SummarizedExperiment",
-    function(x, formula, variables, ..., test_signif = TRUE,
-             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts")
+    function(x, formula, variables, test_signif = TRUE,
+             assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
+             ...)
     {
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
@@ -528,7 +550,7 @@ setMethod("calculateRDA", "SummarizedExperiment",
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runRDA", "SingleCellExperiment",
-    function(x, ..., altexp = NULL, name = "RDA")
+    function(x, formula, variables, altexp = NULL, name = "RDA", ...)
     {
         if (!is.null(altexp)) {
           y <- altExp(x, altexp)
@@ -536,7 +558,7 @@ setMethod("runRDA", "SingleCellExperiment",
           y <- x
         }
         # Calculate RDA
-        rda <- calculateRDA(y, ...)
+        rda <- calculateRDA(y, formula, variables, ...)
         # Add object to reducedDim
         x <- .add_object_to_reduceddim(x, rda, name = name, ...)
         return(x)
