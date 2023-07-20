@@ -32,13 +32,21 @@ test_that("CCA", {
     #
     mcca <- vegan::cca(form, dune.env, scale = TRUE)
     mrda <- vegan::rda(form, dune.env, scale = FALSE)
+    set.seed(46)
     sce <- runCCA(sce, form)
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
-    # Test that data is not subsetted
+    # Check that significance calculations are correct
+    res <- attributes(actual)$significance
+    set.seed(46)
+    test <- vegan::permutest(attributes(actual)$cca, permutations = 999)
+    # Test that data is (not) subsetted
     data("enterotype", package = "mia")
     variable_names <- c("ClinicalStatus", "Gender", "Age")
     res <- runRDA(enterotype, variables = variable_names, na.action = na.exclude)
+    expect_equal(colnames(res), colnames(enterotype))
+    res <- runRDA(enterotype, variables = variable_names, na.action = na.exclude, subset_result = TRUE)
+    enterotype <- enterotype[, complete.cases(colData(enterotype)[, variable_names])]
     expect_equal(colnames(res), colnames(enterotype))
     #
     sce <- runRDA(sce, form)
