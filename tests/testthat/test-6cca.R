@@ -41,15 +41,18 @@ test_that("CCA", {
     sce <- runCCA(sce, form, full = TRUE)
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
+    # Permanova
     set.seed(46)
     test <- vegan::anova.cca(attributes(actual)$cca, permutations = 999)
     expect_equal(res$permanova$model, test)
     set.seed(46)
     test <- vegan::anova.cca(attributes(actual)$cca, permutations = 999, by = "margin")
     expect_equal(res$permanova$variables, test)
+    # Betadisper (homogeneity of groups)
     betadisp <- vegan::betadisper(
         vegan::vegdist(t(assay(sce)), method = "euclidean"), group = colData(sce)[["Manure"]])
     expect_equal(res$homogeneity$variables$Manure$betadisper, betadisp)
+    # Significance of betadisper with different permanova and anova
     set.seed(46)
     test <- vegan::permutest(betadisp, permutations = 999)
     expect_equal(res$homogeneity$variables$Manure$permanova, test)
