@@ -37,9 +37,28 @@ test_that("CCA", {
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
     # Check that significance calculations are correct
+    set.seed(46)
+    sce <- runCCA(sce, form, full = TRUE)
+    actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
     set.seed(46)
-    test <- vegan::permutest(attributes(actual)$cca, permutations = 999)
+    test <- vegan::anova.cca(attributes(actual)$cca, permutations = 999)
+    expect_equal(res$permanova$model, test)
+    set.seed(46)
+    test <- vegan::anova.cca(attributes(actual)$cca, permutations = 999, by = "margin")
+    expect_equal(res$permanova$variables, test)
+    betadisp <- vegan::betadisper(
+        vegan::vegdist(t(assay(sce)), method = "euclidean"), group = colData(sce)[["Manure"]])
+    expect_equal(res$homogeneity$variables$Manure$betadisper, betadisp)
+    set.seed(46)
+    test <- vegan::permutest(betadisp, permutations = 999)
+    expect_equal(res$homogeneity$variables$Manure$permanova, test)
+    set.seed(46)
+    sce <- runCCA(sce, form, full = TRUE, homogeneity_test = "anova")
+    actual <- reducedDim(sce,"CCA")
+    res <- attributes(actual)$significance
+    test <- anova(betadisp)
+    expect_equal(res$homogeneity$variables$Manure$anova, test)
     # Test that data is (not) subsetted
     data("enterotype", package = "mia")
     variable_names <- c("ClinicalStatus", "Gender", "Age")
