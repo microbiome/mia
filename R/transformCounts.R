@@ -45,7 +45,7 @@
 #' wrappers transformSamples, transformFeatures
 #' ZTransform, and relAbundanceCounts have been deprecated.
 #'
-#' The \code{transformCounts} provides sample-wise (column-wise) or feature-wise
+#' The \code{transformAssay} provides sample-wise (column-wise) or feature-wise
 #' (row-wise) transformation to the abundance table
 #' (assay) based on specified \code{MARGIN}.
 #' 
@@ -114,10 +114,10 @@
 #' }
 #'
 #' @return
-#' \code{transformCounts} returns the input object \code{x}, with a new 
+#' \code{transformAssay} returns the input object \code{x}, with a new 
 #' transformed abundance table named \code{name} added in the \code{\link{assay}}.
 #'
-#' @name transformCounts
+#' @name transformAssay
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -128,7 +128,7 @@
 #'
 #' # By specifying 'method', it is possible to apply different transformations, 
 #' # e.g. compositional transformation.
-#' x <- transformCounts(x, method = "relabundance")
+#' x <- transformAssay(x, method = "relabundance")
 #' 
 #' # The target of transformation can be specified with "assay.type"
 #' # Pseudocount can be added by specifying 'pseudocount'.
@@ -137,7 +137,7 @@
 #' mat <- assay(x, "relabundance") 
 #' pseudonumber <- min(mat[mat>0])
 #' # Perform CLR
-#' x <- transformCounts(x, assay.type = "relabundance", method = "clr", 
+#' x <- transformAssay(x, assay.type = "relabundance", method = "clr", 
 #'                      pseudocount = pseudonumber
 #'                      )
 #'                       
@@ -145,19 +145,19 @@
 #' 
 #' # With MARGIN, you can specify the if transformation is done for samples or
 #' # for features. Here Z-transformation is done feature-wise.
-#' x <- transformCounts(x, method = "z", MARGIN = "features")
+#' x <- transformAssay(x, method = "z", MARGIN = "features")
 #' head(assay(x, "z"))
 #' 
 #' # Name of the stored table can be specified.
-#' x <- transformCounts(x, method="hellinger", name="test")
+#' x <- transformAssay(x, method="hellinger", name="test")
 #' head(assay(x, "test"))
 #'
 #' # pa returns presence absence table.
-#' x <- transformCounts(x, method = "pa")
+#' x <- transformAssay(x, method = "pa")
 #' head(assay(x, "pa"))
 #' 
 #' # rank returns ranks of taxa.
-#' x <- transformCounts(x, method = "rank")
+#' x <- transformAssay(x, method = "rank")
 #' head(assay(x, "rank"))
 #'
 #' # In order to use other ranking variants, modify the chosen assay directly:
@@ -167,8 +167,8 @@
 #' 
 NULL
 
-#' @rdname transformCounts
-#' @aliases transformCounts
+#' @rdname transformAssay
+#' @aliases transformAssay
 #' @export
 setGeneric("transformSamples", signature = c("x"),
            function(x,
@@ -182,8 +182,8 @@ setGeneric("transformSamples", signature = c("x"),
                     )
                     standardGeneric("transformSamples"))
 
-#' @rdname transformCounts
-#' @aliases transformCounts
+#' @rdname transformAssay
+#' @aliases transformAssay
 #' @export
 setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
     function(x,
@@ -196,7 +196,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
             pseudocount = 0,
             ...
             ){
-        .Deprecated("transformCounts")
+        .Deprecated("transformAssay")
         # Input check
         # Check method
         # If method is not single string, user has not specified transform method,
@@ -209,16 +209,16 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
         # Input check end
 
         # Call general transformation function with MARGIN specified
-        x <- transformCounts(x = x, assay.type = assay.type,
+        x <- transformAssay(x = x, assay.type = assay.type,
                              method = method, MARGIN = "samples", name = name, ...)
         return(x)
     }
 )
 
-#' @rdname transformCounts
+#' @rdname transformAssay
 #' @aliases transformSamples
 #' @export
-setGeneric("transformCounts", signature = c("x"),
+setGeneric("transformAssay", signature = c("x"),
            function(x,
                     assay.type = "counts", assay_name = NULL,
                     method = c("alr", "chi.square", "clr", "frequency",
@@ -230,12 +230,12 @@ setGeneric("transformCounts", signature = c("x"),
                     name = method,
                     pseudocount = 0,		    
                     ...)
-               standardGeneric("transformCounts"))
+               standardGeneric("transformAssay"))
 
-#' @rdname transformCounts
+#' @rdname transformAssay
 #' @aliases transformSamples
 #' @export
-setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
+setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
              assay.type = "counts", assay_name = NULL,
              method = c("alr", "chi.square", "clr", "frequency", "hellinger",
@@ -314,7 +314,7 @@ setMethod("transformCounts", signature = c(x = "SummarizedExperiment"),
 
 ###############################transformFeatures################################
 
-#' @rdname transformCounts
+#' @rdname transformAssay
 #' @export
 setGeneric("transformFeatures", signature = c("x"),
            function(x,
@@ -326,7 +326,7 @@ setGeneric("transformFeatures", signature = c("x"),
                     ...)
                standardGeneric("transformFeatures"))
 
-#' @rdname transformCounts
+#' @rdname transformAssay
 #' @export
 setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
     function(x,
@@ -337,7 +337,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
              pseudocount = 0,
              ...){
 
-        .Deprecated("transformCounts")
+        .Deprecated("transformAssay")
 
         # Input check
         # Check method
@@ -351,44 +351,44 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
         # Input check end
 
         # Call general transformation function with MARGIN specified
-        x <- transformCounts(x = x, assay.type = assay.type, method = method,
+        x <- transformAssay(x = x, assay.type = assay.type, method = method,
                              MARGIN = "features", name = name, ...)
         return(x)
   }
 )
 ##################################Z-TRANSFORM###################################
 
-#' @rdname transformCounts
+#' @rdname transformAssay
 #' @export
 setGeneric("ZTransform", signature = c("x"),
            function(x, MARGIN = "features", ...)
              standardGeneric("ZTransform"))
 
-#' @rdname transformCounts
+#' @rdname transformAssay
 #' @importFrom SummarizedExperiment assay assay<-
 #' @export
 setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
           function(x, ...){
-	    .Deprecated("transformCounts")
-            transformCounts(x, method = "z", MARGIN = "features", ...)
+	    .Deprecated("transformAssay")
+            transformAssay(x, method = "z", MARGIN = "features", ...)
           }
 )
 
 ###############################relAbundanceCounts###############################
 
-#' @rdname transformCounts
+#' @rdname transformAssay
 #' @export
 setGeneric("relAbundanceCounts", signature = c("x"),
             function(x, ...)
             standardGeneric("relAbundanceCounts"))
 
-#' @rdname transformCounts
+#' @rdname transformAssay
 #' @importFrom SummarizedExperiment assay assay<-
 #' @export
 setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
-	.Deprecated("transformCounts")    
-        transformCounts(x, method = "relabundance", MARGIN = "samples", ...)
+	.Deprecated("transformAssay")    
+        transformAssay(x, method = "relabundance", MARGIN = "samples", ...)
     }
 )
 

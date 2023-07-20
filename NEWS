@@ -2,7 +2,7 @@ Changes in version 0.99.0
 + Submitted to Bioconductor
 
 Changes in version 1.1.x
-+ split transformCounts into transformSamples and transformFeatures
++ split transformAssay into transformSamples and transformFeatures
 + added log_modulo_skewness as a diversity index
 + added functions for summarizing dominant taxa information
 + added wrapper for adding dominant taxa information to colData
@@ -67,7 +67,7 @@ Changes in version 1.7.x
 + mergeSEs: fix bug related to equally named variables that are different class
 + mergeSEs: option for merging multiple assays
 + calculateUnifrac: option for specifying the tree from TreeSE
-+ transformCounts: utilize vegan package
++ transformAssay: utilize vegan package
 + calculateUnifrac: subset tree based on data
 + agglomerateByRank: take into account multiple trees
 + loadFromBiom: name columns of rowData based on prefixes

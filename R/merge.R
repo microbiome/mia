@@ -151,7 +151,7 @@ setGeneric("mergeCols",
     if(length(levels(f)) == nrow(x)){
         return(x)
     }
-
+    
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)
@@ -177,9 +177,9 @@ setGeneric("mergeCols",
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
         warning(paste0("'",assay.type,"'", " includes binary values."),
-        "\nAgglomeration of it might lead to meaningless values.", 
-        "\nCheck the assay, and consider doing transformation again manually", 
-        " with agglomerated data.",
+                "\nAgglomeration of it might lead to meaningless values.", 
+                "\nCheck the assay, and consider doing transformation again manually", 
+                " with agglomerated data.",
                 call. = FALSE)
     }
     if( !all( assay >= 0 | is.na(assay) ) ){
@@ -232,17 +232,17 @@ setGeneric("mergeCols",
 #' @rdname merge-methods
 #' @export
 setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
-    function(x, f, archetype = 1L, ...){
-        .merge_rows(x, f, archetype = archetype, ...)
-    }
+          function(x, f, archetype = 1L, ...){
+              .merge_rows(x, f, archetype = archetype, ...)
+          }
 )
 
 #' @rdname merge-methods
 #' @export
 setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
-    function(x, f, archetype = 1L, ...){
-        .merge_cols(x, f, archetype = archetype, ...)
-    }
+          function(x, f, archetype = 1L, ...){
+              .merge_cols(x, f, archetype = archetype, ...)
+          }
 )
 
 .merge_tree <- function(tree, links){
@@ -330,44 +330,44 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
 #' @importFrom ape keep.tip
 #' @export
 setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...){
-        # input check
-        if(!.is_a_bool(mergeTree)){
-            stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if(!.is_a_bool(mergeRefSeq)){
-            stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
-        }
-        # for optionally merging referenceSeq
-        refSeq <- NULL
-        if(mergeRefSeq){
-            refSeq <- referenceSeq(x)
-        }
-        #
-        x <- callNextMethod(x, f, archetype = 1L, ...)
-        # optionally merge rowTree
-        x <- .merge_trees(x, mergeTree, 1)
-        # optionally merge referenceSeq
-        if(!is.null(refSeq)){
-            referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
-        }
-        x
-    }
+          function(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...){
+              # input check
+              if(!.is_a_bool(mergeTree)){
+                  stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+              }
+              if(!.is_a_bool(mergeRefSeq)){
+                  stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
+              }
+              # for optionally merging referenceSeq
+              refSeq <- NULL
+              if(mergeRefSeq){
+                  refSeq <- referenceSeq(x)
+              }
+              #
+              x <- callNextMethod(x, f, archetype = 1L, ...)
+              # optionally merge rowTree
+              x <- .merge_trees(x, mergeTree, 1)
+              # optionally merge referenceSeq
+              if(!is.null(refSeq)){
+                  referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
+              }
+              x
+          }
 )
 
 #' @rdname merge-methods
 #' @importFrom ape keep.tip
 #' @export
 setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f, archetype = 1L, mergeTree = FALSE, ...){
-        # input check
-        if(!.is_a_bool(mergeTree)){
-            stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
-        x <- callNextMethod(x, f, archetype = 1L, ...)
-        # optionally merge colTree
-        x <- .merge_trees(x, mergeTree, 2)
-        return(x)
-    }
+          function(x, f, archetype = 1L, mergeTree = FALSE, ...){
+              # input check
+              if(!.is_a_bool(mergeTree)){
+                  stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+              }
+              #
+              x <- callNextMethod(x, f, archetype = 1L, ...)
+              # optionally merge colTree
+              x <- .merge_trees(x, mergeTree, 2)
+              return(x)
+          }
 )

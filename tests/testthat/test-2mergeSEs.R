@@ -24,7 +24,7 @@ test_that("mergeSEs", {
     expect_error( mergeSEs(tse1, tse2, missing_values = 36846 ) )
     expect_error( mergeSEs(tse1, tse2, assay.type = "test")  )
     # Calculate relative transform to test assay.type
-    tse1 <- transformCounts(tse1, method = "relabundance")
+    tse1 <- transformAssay(tse1, method = "relabundance")
     expect_error( mergeSEs(tse1, tse2, assay.type = "relabundance")  )
     expect_error( mergeSEs(tse1, tse2, verbose = "test")  )
     expect_error( mergeSEs(tse1, tse2, verbose = 1)  )
@@ -384,9 +384,9 @@ test_that("mergeSEs", {
                                                     ))+2)
     
     # Check that multiple assays are supported
-    tse1 <- transformCounts(tse1, method="relabundance")
-    tse2 <- transformCounts(tse2, method="relabundance")
-    tse3 <- transformCounts(tse3, method="relabundance")    
+    tse1 <- transformAssay(tse1, method="relabundance")
+    tse2 <- transformAssay(tse2, method="relabundance")
+    tse3 <- transformAssay(tse3, method="relabundance")    
     
     tse_temp <- expect_warning( mergeSEs(list(tse1, tse2, tse3),
                                          assay.type = c("counts", 

@@ -10,7 +10,7 @@ reference:
   - mergeSEs
 - subtitle: Transformation
 - contents:
-  - transformCounts
+  - transformAssay
 - subtitle: Data loading
 - contents:
   - makeTreeSummarizedExperimentFromPhyloseq

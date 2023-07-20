@@ -31,7 +31,7 @@ test_that("getPrevalence", {
 
     # Different ways to use relative abundance should yield the same output
     pr2 <- getPrevalence(GlobalPatterns, as_relative=TRUE, assay.type = "counts")
-    GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
+    GlobalPatterns <- transformAssay(GlobalPatterns, method="relabundance")
     pr1 <- getPrevalence(GlobalPatterns, as_relative=FALSE, assay.type = "relabundance")
     expect_true(all(pr1 == pr2))
 
