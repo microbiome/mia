@@ -71,7 +71,7 @@ NULL
 
 loadFromHumann <- function(file, colData = NULL, ...){
     ################################ Input check ###############################
-    if(!mia:::.is_non_empty_string(file)){
+    if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
              call. = FALSE)
     }
@@ -99,6 +99,7 @@ loadFromHumann <- function(file, colData = NULL, ...){
 ################################ HELP FUNCTIONS ################################
 
 # Read Humann file, catch error if it occurs
+#' @importFrom utils read.delim
 .read_humann <- function(file, remove.suffix = FALSE, ...){
     ################################ Input check ###############################
     if(!.is_a_bool(remove.suffix)){
@@ -182,7 +183,7 @@ loadFromHumann <- function(file, colData = NULL, ...){
     # Now we have rowdata that includes gene/pathway info in one column and
     # taxonomy info in other. Let's parse the taxonomy info so that species
     # genus etc levels are in unique columns.
-    taxonomy <- mia:::.parse_taxonomy(
+    taxonomy <- .parse_taxonomy(
         rowdata_temp, column_name = "Taxonomy", sep = "\\.", ...)
     
     # Convert all data to DataFrame
