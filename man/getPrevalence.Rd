@@ -115,6 +115,19 @@ agglomerateByPrevalence(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object}
 
+\item{...}{additional arguments
+\itemize{
+\item{If \code{!is.null(rank)} arguments are passed on to
+\code{\link[=agglomerate-methods]{agglomerateByRank}}. See
+\code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
+}
+\item{for \code{getPrevalentTaxa}, \code{getRareTaxa},
+\code{subsetByPrevalentTaxa} and \code{subsetByRareTaxa} additional
+parameters passed to \code{getPrevalence}}
+\item{for \code{getPrevalentAbundance} additional parameters passed to
+\code{getPrevalentTaxa}}
+}}
+
 \item{detection}{Detection threshold for absence/presence. Either an
 absolute value compared directly to the values of \code{x} or a relative
 value between 0 and 1, if \code{as_relative = TRUE}.}
@@ -137,18 +150,8 @@ will be disabled.)}
 \item{as_relative}{logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? (default: \code{TRUE})}
 
-\item{rank, ...}{additional arguments
-\itemize{
-\item{If \code{!is.null(rank)} arguments are passed on to
-\code{\link[=agglomerate-methods]{agglomerateByRank}}. See
-\code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
-}
-\item{for \code{getPrevalentTaxa}, \code{getRareTaxa},
-\code{subsetByPrevalentTaxa} and \code{subsetByRareTaxa} additional
-parameters passed to \code{getPrevalence}}
-\item{for \code{getPrevalentAbundance} additional parameters passed to
-\code{getPrevalentTaxa}}
-}}
+\item{rank}{a single character defining a taxonomic rank. Must be a value of
+\code{taxonomyRanks()} function.}
 
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
