@@ -34,7 +34,7 @@ in the assay slot of a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperi
 \examples{
 data(GlobalPatterns)
 # Calculates relative abundances
-GlobalPatterns <- transformCounts(GlobalPatterns, method="relabundance")
+GlobalPatterns <- transformAssay(GlobalPatterns, method="relabundance")
 # Fetches calculated relative abundances
 # head(assay(GlobalPatterns, "relabundance"))
 }

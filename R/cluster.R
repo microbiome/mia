@@ -13,7 +13,7 @@
 #' @param ... Additional parameters to use altExps for example
 #' @inheritParams bluster::clusterRows
 #' @inheritParams runDMN
-#' @inheritParams transformCounts
+#' @inheritParams transformAssay
 #'   
 #'   
 #' @details
