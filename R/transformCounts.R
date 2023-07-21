@@ -211,6 +211,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
         # Call general transformation function with MARGIN specified
         x <- transformAssay(x = x, assay.type = assay.type,
                              method = method, MARGIN = "samples", name = name, ...)
+        
         return(x)
     }
 )
@@ -231,7 +232,11 @@ setGeneric("transformAssay", signature = c("x"),
                     pseudocount = 0,		    
                     ...)
                standardGeneric("transformAssay"))
-
+#transformCounts wrapper with a deprecation warning
+transformCounts <- function(x,...){
+    warning("The 'transformCounts' function is deprecated. Use 'transformAssay' instead.")
+    return(transformAssay(x,...))
+}
 #' @rdname transformAssay
 #' @aliases transformSamples
 #' @export
@@ -336,7 +341,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
              name = method,
              pseudocount = 0,
              ...){
-
+        
         .Deprecated("transformAssay")
 
         # Input check
@@ -347,6 +352,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
           stop("'method' must be a non-empty single character value.",
                call. = FALSE)
         }
+        
         method <- match.arg(method, several.ok = FALSE)
         # Input check end
 
