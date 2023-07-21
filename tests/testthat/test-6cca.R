@@ -38,31 +38,48 @@ test_that("CCA", {
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
     # Check that significance calculations are correct
     set.seed(46)
-    sce <- runCCA(sce, form, full = TRUE)
+    sce <- runCCA(sce, variables = "Manure", full = TRUE)
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
+    # Create a function that calculates significances
+    calc_signif <- function(obj, assay, betadisp_group){
+        permanova <- vegan::anova.cca(obj, permutations = 999)
+        permanova2 <- vegan::anova.cca(obj, permutations = 999, by = "margin")
+        dist <- vegan::vegdist(t(assay), method = "euclidean")
+        betadisp <- vegan::betadisper(dist, group = betadisp_group)
+        betadisp_permanova <- vegan::permutest(betadisp, permutations = 999)
+        betadisp_anova <- anova(betadisp)
+        betadisp_tukeyhsd <- TukeyHSD(betadisp)
+        res <- list(
+            permanova = permanova,
+            permanova_variables = permanova2,
+            betadisper = betadisp,
+            betadisper_permanova = betadisp_permanova,
+            betadisper_anova = betadisp_anova,
+            betadisper_tukeyhsd = betadisp_tukeyhsd
+        )
+        return(res)
+    }
+    set.seed(46)
+    test <- calc_signif(attributes(actual)$cca, assay(sce), colData(sce)[["Manure"]])
     # Permanova
-    set.seed(46)
-    test <- vegan::anova.cca(attributes(actual)$cca, permutations = 999)
-    expect_equal(res$permanova$model, test)
-    set.seed(46)
-    test <- vegan::anova.cca(attributes(actual)$cca, permutations = 999, by = "margin")
-    expect_equal(res$permanova$variables, test)
+    expect_equal(res$permanova$model, test$permanova)
+    expect_equal(res$permanova$variables, test$permanova_variables)
     # Betadisper (homogeneity of groups)
-    betadisp <- vegan::betadisper(
-        vegan::vegdist(t(assay(sce)), method = "euclidean"), group = colData(sce)[["Manure"]])
-    expect_equal(res$homogeneity$variables$Manure$betadisper, betadisp)
-    # Significance of betadisper with different permanova and anova
-    set.seed(46)
-    test <- vegan::permutest(betadisp, permutations = 999)
-    expect_equal(res$homogeneity$variables$Manure$permanova, test)
+    expect_equal(res$homogeneity$variables$Manure$betadisper$vectors, test$betadisper$vectors)
+    # Significance of betadisper with different permanova, anova and tukeyhsd
+    expect_equal(res$homogeneity$variables$Manure$permanova, test$betadisper_permanova)
     set.seed(46)
     sce <- runCCA(sce, form, full = TRUE, homogeneity_test = "anova")
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
-    test <- anova(betadisp)
-    expect_equal(res$homogeneity$variables$Manure$anova, test)
-    # Test that data is (not) subsetted
+    expect_equal(res$homogeneity$variables$Manure$anova, test$betadisper_anova)
+    set.seed(46)
+    sce <- runCCA(sce, form, full = TRUE, homogeneity_test = "tukeyhsd")
+    actual <- reducedDim(sce,"CCA")
+    res <- attributes(actual)$significance
+    expect_equal(res$homogeneity$variables$Manure$tukeyhsd, test$betadisper_tukeyhsd)
+    # Test that data is subsetted correctly
     data("enterotype", package = "mia")
     variable_names <- c("ClinicalStatus", "Gender", "Age")
     res <- runRDA(enterotype, variables = variable_names, na.action = na.exclude)

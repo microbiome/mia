@@ -414,8 +414,13 @@ setMethod("runCCA", "SingleCellExperiment",
     # Perform homogeneity analysis
     mat <- t(mat)
     # Get the dissimilarity matrix based on original dissimilarity index
-    # provided by user.
-    dist_mat <- vegdist(mat, ...)
+    # provided by user. If the analysis is CCA, disable method; calculate
+    # always euclidean distances because CCA is based on Euclidean distances.
+    if( length(class(rda)) == 1 && class(rda) == "cca" ){
+        dist_mat <- vegdist(mat, method = "euclidean")
+    } else{
+        dist_mat <- vegdist(mat, ...)
+    }
     # For all variables run the analysis
     homogeneity <- lapply(colnames(variables), function(x){
         # Get variable values
