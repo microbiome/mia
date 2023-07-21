@@ -31,8 +31,11 @@
 #'
 #' @param other_label A single \code{character} valued used as the label for the
 #'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
+#'   
+#' @param rank a single character defining a taxonomic rank. Must be a value of
+#'   \code{taxonomyRanks()} function.
 #'
-#' @param rank,... additional arguments
+#' @param ... additional arguments
 #' \itemize{
 #'   \item{If \code{!is.null(rank)} arguments are passed on to
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
