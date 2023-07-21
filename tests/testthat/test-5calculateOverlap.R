@@ -12,7 +12,7 @@ test_that("calculateOverlap", {
     expect_error(calculateOverlap(tse, detection = TRUE))
     
     # Calculate overlap
-    tse <- transformCounts(tse, method = "relabundance")
+    tse <- transformAssay(tse, method = "relabundance")
     result <- calculateOverlap(tse, assay.type = "relabundance", detection = 0.15)
 
     # Test output

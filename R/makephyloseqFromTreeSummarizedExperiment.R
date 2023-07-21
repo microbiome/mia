@@ -47,7 +47,7 @@
 #' # they can be chosen with assay.type.
 #'
 #' # Counts relative abundances table
-#' tse <- transformCounts(tse, method = "relabundance")
+#' tse <- transformAssay(tse, method = "relabundance")
 #' phy2 <- makePhyloseqFromTreeSE(tse, assay.type = "relabundance")
 #' phy2
 NULL

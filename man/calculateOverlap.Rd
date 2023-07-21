@@ -72,7 +72,7 @@ samples have completely different relative abundances.
 \examples{
 data(esophagus)
 tse <- esophagus
-tse <- transformCounts(tse, method = "relabundance")
+tse <- transformAssay(tse, method = "relabundance")
 overlap <- calculateOverlap(tse, assay_name = "relabundance")
 overlap
 

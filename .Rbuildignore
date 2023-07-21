@@ -6,3 +6,5 @@ pkgdown
 .RData
 .pdf
 inst/extras
+^doc$
+^Meta$
