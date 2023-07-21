@@ -124,44 +124,44 @@
 #'
 #' @examples
 #' data(esophagus, package="mia")
-#' x <- esophagus
+#' tse <- esophagus
 #'
 #' # By specifying 'method', it is possible to apply different transformations, 
 #' # e.g. compositional transformation.
-#' x <- transformAssay(x, method = "relabundance")
+#' tse <- transformAssay(tse, method = "relabundance")
 #' 
 #' # The target of transformation can be specified with "assay.type"
 #' # Pseudocount can be added by specifying 'pseudocount'.
 #' 
 #' # Get pseudocount; here smallest positive value
-#' mat <- assay(x, "relabundance") 
+#' mat <- assay(tse, "relabundance") 
 #' pseudonumber <- min(mat[mat>0])
 #' # Perform CLR
-#' x <- transformAssay(x, assay.type = "relabundance", method = "clr", 
+#' tse <- transformAssay(tse, assay.type = "relabundance", method = "clr", 
 #'                      pseudocount = pseudonumber
 #'                      )
 #'                       
-#' head(assay(x, "clr"))
+#' head(assay(tse, "clr"))
 #' 
 #' # With MARGIN, you can specify the if transformation is done for samples or
 #' # for features. Here Z-transformation is done feature-wise.
-#' x <- transformAssay(x, method = "z", MARGIN = "features")
-#' head(assay(x, "z"))
+#' tse <- transformAssay(tse, method = "z", MARGIN = "features")
+#' head(assay(tse, "z"))
 #' 
 #' # Name of the stored table can be specified.
-#' x <- transformAssay(x, method="hellinger", name="test")
-#' head(assay(x, "test"))
+#' tse <- transformAssay(tse, method="hellinger", name="test")
+#' head(assay(tse, "test"))
 #'
 #' # pa returns presence absence table.
-#' x <- transformAssay(x, method = "pa")
-#' head(assay(x, "pa"))
+#' tse <- transformAssay(tse, method = "pa")
+#' head(assay(tse, "pa"))
 #' 
 #' # rank returns ranks of taxa.
-#' x <- transformAssay(x, method = "rank")
-#' head(assay(x, "rank"))
+#' tse <- transformAssay(tse, method = "rank")
+#' head(assay(tse, "rank"))
 #'
 #' # In order to use other ranking variants, modify the chosen assay directly:
-#' assay(x, "rank_average", withDimnames = FALSE) <- colRanks(assay(x, "counts"), 
+#' assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(assay(tse, "counts"), 
 #'                                                            ties.method="average", 
 #'                                                            preserveShape = TRUE)  
 #' 
