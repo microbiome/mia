@@ -103,9 +103,9 @@
 #' GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 #' 
-#' # To scale values when using *RDA functions, use transformCounts(MARGIN = "features", 
+#' # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", 
 #' tse <- GlobalPatterns
-#' tse <- transformCounts(tse, MARGIN = "features", method = "z")
+#' tse <- transformAssay(tse, MARGIN = "features", method = "z")
 #' # Data might include taxa that do not vary. Remove those because after z-transform
 #' # their value is NA
 #' tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]

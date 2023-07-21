@@ -195,7 +195,7 @@ mae <- HintikkaXOData
 mae[[1]] <- mae[[1]][1:20, 1:10]
 mae[[2]] <- mae[[2]][1:20, 1:10]
 # Transform data
-mae[[1]] <- transformCounts(mae[[1]], method = "rclr")
+mae[[1]] <- transformAssay(mae[[1]], method = "rclr")
 
 # Calculate cross-correlations
 result <- getExperimentCrossAssociation(mae, method = "pearson", assay.type2 = "nmr")
@@ -205,7 +205,7 @@ head(result, 5)
 # Use altExp option to specify alternative experiment from the experiment
 altExp(mae[[1]], "Phylum") <- agglomerateByRank(mae[[1]], rank = "Phylum")
 # Transform data
-altExp(mae[[1]], "Phylum") <- transformCounts(altExp(mae[[1]], "Phylum"), method = "relabundance")
+altExp(mae[[1]], "Phylum") <- transformAssay(altExp(mae[[1]], "Phylum"), method = "relabundance")
 # When mode = matrix, matrix is returned
 result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
                                         assay.type1 = "relabundance", assay.type2 = "nmr",

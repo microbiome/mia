@@ -37,14 +37,14 @@ test_that("merge", {
                  'argument "archetype" is missing')
     expect_error(mia:::.get_element_pos(f),
                  'argument "archetype" is missing')
-		 
+    
     actual <- mia:::.get_element_pos(f, archetype = mia:::.norm_archetype(f, 1))
     expect_equal(actual,c(a = 1, b = 4))
     actual <- mia:::.get_element_pos(f, archetype = mia:::.norm_archetype(f, 2))
     expect_equal(actual,c(a = 2, b = 5))
     actual <- mia:::.get_element_pos(f, archetype = c(2,1))
     expect_equal(actual,c(a = 2, b = 4))
-
+    
     # .merge_rows
     mat <- matrix(1:60, nrow = 6)
     gr <- GRanges("chr1",rep("1-6",6))
@@ -77,9 +77,9 @@ test_that("merge", {
     xtse <- TreeSummarizedExperiment(assays = list(mat = mat),
                                      rowRanges = unname(grl))
     FUN_check_x <- function(x,archetype=1){
-      actual <- mergeRows(x, f, archetype)
-      expect_s4_class(actual,class(x))
-      expect_equal(dim(actual),c(2,10))
+        actual <- mergeRows(x, f, archetype)
+        expect_s4_class(actual,class(x))
+        expect_equal(dim(actual),c(2,10))
     }
     lapply(list(xtse),FUN_check_x)
     lapply(list(xtse),FUN_check_x,archetype=2)
@@ -90,7 +90,7 @@ test_that("merge", {
     rowData(esophagus)$group <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
                                   rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
     rowData(esophagus)$group2 <- c(rep(c("A", "B", "C"), each = nrow(esophagus)/3), 
-                                  rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
+                                   rep("A", nrow(esophagus)-round(nrow(esophagus)/3)*3) )
     rowData(GlobalPatterns)$group <- c(rep(c("C", "D", "E"), each = nrow(GlobalPatterns)/3), 
                                        rep("C", nrow(GlobalPatterns)-round(nrow(GlobalPatterns)/3)*3) )
     # Merge

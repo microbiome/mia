@@ -131,8 +131,8 @@
 #' tse_temp
 #' 
 #' # Merge all available assays
-#' tse <- transformCounts(tse, method="relabundance")
-#' ts1 <- transformCounts(tse1, method="relabundance")
+#' tse <- transformAssay(tse, method="relabundance")
+#' ts1 <- transformAssay(tse1, method="relabundance")
 #' tse_temp <- mergeSEs(tse, tse1, assay.type = assayNames(tse))
 #' 
 NULL

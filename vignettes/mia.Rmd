@@ -177,17 +177,17 @@ altExp(tse,"Species") <- changeTree(altExp(tse,"Species"),
 ## Transformation of assay data
 
 Transformation of count data stored in `assays` is also a main task when work
-with microbiome data. `transformCounts` can be used for this and offers a few
+with microbiome data. `transformAssay` can be used for this and offers a few
 choices of available transformations. A modified object is returned and the
 transformed counts are stored in a new `assay`.
 
 ```{r}
 assayNames(enterotype)
-anterotype <- transformCounts(enterotype, method = "log10", pseudocount = 1)
+anterotype <- transformAssay(enterotype, method = "log10", pseudocount = 1)
 assayNames(enterotype)
 ```
 
-For more details have a look at the man page `?transformCounts`.  
+For more details have a look at the man page `?transformAssay`.  
 
 Sub-sampling to equal number of counts per sample. Also known as rarefying.  
 ```{r}
