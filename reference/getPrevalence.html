@@ -18,7 +18,7 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.9</span>
       </span>
     </div>
 
@@ -159,6 +159,18 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 object</p></dd>
 
 
+<dt>...</dt>
+<dd><p>additional arguments</p><ul><li><p>If <code>!is.null(rank)</code> arguments are passed on to
+<code><a href="agglomerate-methods.html">agglomerateByRank</a></code>. See
+<code><a href="agglomerate-methods.html">?agglomerateByRank</a></code> for more details.</p></li>
+<li><p>for <code>getPrevalentTaxa</code>, <code>getRareTaxa</code>,
+<code>subsetByPrevalentTaxa</code> and <code>subsetByRareTaxa</code> additional
+parameters passed to <code>getPrevalence</code></p></li>
+<li><p>for <code>getPrevalentAbundance</code> additional parameters passed to
+<code>getPrevalentTaxa</code></p></li>
+</ul></dd>
+
+
 <dt>detection</dt>
 <dd><p>Detection threshold for absence/presence. Either an
 absolute value compared directly to the values of <code>x</code> or a relative
@@ -193,16 +205,9 @@ will be disabled.)</p></dd>
 on compositional (relative) abundances? (default: <code>TRUE</code>)</p></dd>
 
 
-<dt>rank, ...</dt>
-<dd><p>additional arguments</p><ul><li><p>If <code>!is.null(rank)</code> arguments are passed on to
-<code><a href="agglomerate-methods.html">agglomerateByRank</a></code>. See
-<code><a href="agglomerate-methods.html">?agglomerateByRank</a></code> for more details.</p></li>
-<li><p>for <code>getPrevalentTaxa</code>, <code>getRareTaxa</code>,
-<code>subsetByPrevalentTaxa</code> and <code>subsetByRareTaxa</code> additional
-parameters passed to <code>getPrevalence</code></p></li>
-<li><p>for <code>getPrevalentAbundance</code> additional parameters passed to
-<code>getPrevalentTaxa</code></p></li>
-</ul></dd>
+<dt>rank</dt>
+<dd><p>a single character defining a taxonomic rank. Must be a value of
+<code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
 
 
 <dt>prevalence</dt>
