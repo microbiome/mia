@@ -159,6 +159,7 @@
 <div class="section level3">
 <h3 id="making-pull-requests">Making Pull Requests<a class="anchor" aria-label="anchor" href="#making-pull-requests"></a></h3>
 <p>All packages can be developed locally, and contributions suggested via pull requests.</p>
+<p>Let’s use a git flow kind of approach. Development version should be done against the <code>master</code> branch and then merged to <code>release</code> for release. (<a href="https://guides.github.com/introduction/flow/" class="external-link uri">https://guides.github.com/introduction/flow/</a>)</p>
 <p>Before you start working on code, it is often a good idea to open an enhancement <a href="#suggest-an-enhancement">suggestion</a></p>
 <p>Hit the ‘Fork’ button on the repositories page to create a forked copy of the target package for your own Github account. This will ensure your work and experiments won’t hinder other users of the released and stable package.</p>
 <p>From there you can clone your fork of the package and work on it on your machine using git. Here’s an example of cloning, assuming you already forked <code>mia</code>:</p>
@@ -259,6 +260,58 @@
 <li><p>Generally try to keep lines below 80-columns, unless splitting a long line onto multiple lines makes it harder to read.</p></li>
 </ul></div>
 </div>
+<div class="section level2">
+<h2 id="how-to-develop-the-package">How to develop the package<a class="anchor" aria-label="anchor" href="#how-to-develop-the-package"></a></h2>
+<p>A minimal workflow for package development is as follows.</p>
+<ol style="list-style-type: decimal"><li><p><em>Fork</em> (with Git) mia R package from [<a href="https://github.com/microbiome/mia" class="external-link uri">https://github.com/microbiome/mia</a>]</p></li>
+<li><p><em>Clone</em> (with Git) your own fork of mia; or if you have cloned it earlier, then make sure that your branch is in sync with the <em>upstream</em> repository (see next section)</p></li>
+<li><p>Test package (in R): <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code> (and fix possible issues)</p></li>
+<li><p>Test examples: <code><a href="https://devtools.r-lib.org/reference/run_examples.html" class="external-link">devtools::run_examples()</a></code></p></li>
+<li><p>Update documentation (convert R files to man/ files): <code><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">devtools::document()</a></code></p></li>
+<li><p>Build package: <code><a href="https://devtools.r-lib.org/reference/build.html" class="external-link">devtools::build()</a></code></p></li>
+<li><p>Run Bioconductor checks: <code><a href="https://rdrr.io/pkg/BiocCheck/man/BiocCheck.html" class="external-link">BiocCheck::BiocCheck()</a></code> (for more details on Bioconductor formatting guidelines and automated checks, see <a href="https://bioconductor.org/packages/devel/bioc/vignettes/BiocCheck/inst/doc/BiocCheck.html" class="external-link">Bioconductor package guidelines</a> and instructions on <a href="https://contributions.bioconductor.org/" class="external-link">Bioconductor packages: Development, Maintenance, and Peer Review</a>)</p></li>
+<li><p>Load the updated package: <code><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">devtools::load_all()</a></code></p></li>
+<li><p>Install the package: <code><a href="https://devtools.r-lib.org/reference/install.html" class="external-link">devtools::install()</a></code></p></li>
+<li><p>Once the package passes all build checks, commit &amp; push to your own fork, then make a pull request (PR) to the original repository. This will trigger additional automated checks. If they fail, inspect the reason, fix accordingly, and update your PR (simply commit + push new material to your fork; the PR is already open).</p></li>
+</ol><p>Final checks after the R tests; run on command line (replace “R” with your custom R path if necessary):</p>
+<ul><li>
+<code>R CMD build</code>mia/`</li>
+<li><code>R CMD check mia_x.y.z.tar.gz</code></li>
+<li><code>R CMD BiocCheck mia_x.y.z.tar.gz</code></li>
+<li><code>R CMD INSTALL mia_x.y.z.tar.gz</code></li>
+</ul><p>After updating the package, remember to do the following (if applicable):</p>
+<ul><li>update documentation</li>
+<li>update unit tests (in <code>tests/</code>)</li>
+<li>update vignettes (in <code>vignettes</code>)</li>
+<li>run all checks from above</li>
+</ul><p>After accepted pull request, check if further updates are needed in:</p>
+<ul><li>OMA</li>
+<li>other related packages (e.g. miaViz, miaSim, miaTime)</li>
+</ul></div>
+<div class="section level2">
+<h2 id="sync-with-the-official-github-development-version">Sync with the official Github development version<a class="anchor" aria-label="anchor" href="#sync-with-the-official-github-development-version"></a></h2>
+<p>Before new pull request, check that your own fork is in sync with the main development version. Command line version goes as follows.</p>
+<pre><code># Add the main repository as your _upstream_  
+`git remote add upstream git@github.com:microbiome/mia.git`
+
+# Fetch the changes from upstream (main version) and origin (your fork):
+git fetch --all
+
+# Merge those changes to your fork:
+git merge origin/master
+git merge upstream/master
+
+# Finally, commit and push to origin (your version)
+# then open a new PR from the Github site if relevant.
+git push origin master</code></pre>
+</div>
+<div class="section level2">
+<h2 id="syncing-with-the-official-bioconductor-version">Syncing with the official Bioconductor version<a class="anchor" aria-label="anchor" href="#syncing-with-the-official-bioconductor-version"></a></h2>
+<p>This is usually done only by the main developer. In this case, the upstream will be set to Bioconductor: <code>git remote add upstream git@git.bioconductor.org:packages/mia.git</code></p>
+<ul><li><p><a href="https://bioconductor.org/developers/how-to/git/sync-existing-repositories/" class="external-link">Workflow to sync between github and bioc versions</a></p></li>
+<li><p><a href="https://bioconductor.org/checkResults/devel/bioc-LATEST/" class="external-link">Bioconductor Build reports (devel)</a></p></li>
+<li><p><a href="https://bioconductor.org/packages/mia/" class="external-link">Package page in Bioconductor</a></p></li>
+</ul></div>
 </div>
 
   </div>
