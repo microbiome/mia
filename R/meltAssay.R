@@ -215,7 +215,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang sym
-.melt_assay <- function(x, assay.type, feature_name, sample_name, check_names = FALSE) {
+.melt_assay <- function(x, assay.type, feature_name, sample_name, check_names = FALSE,...) {
     mat <- assay(x, assay.type) %>%
         as.matrix() 
     rownames(mat) <- rownames(x)
@@ -254,7 +254,7 @@ setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tibble rownames_to_column
 #' @importFrom dplyr rename
 .add_col_data_to_molten_assay <- function(molten_assay, x, add_col_data,
-                                          sample_name, check_names = FALSE) {
+                                          sample_name, check_names = FALSE,...) {
     cd <- SummarizedExperiment::colData(x)[,add_col_data,drop=FALSE] %>%
         data.frame()
     # This makes sure that sample names match
