@@ -1,4 +1,4 @@
-#' Agglomerate data using taxonomic information
+#' Ag           glomerate data using taxonomic information
 #'
 #' \code{agglomerateByRank} can be used to sum up data based on the association
 #' to certain taxonomic ranks given as \code{rowData}. Only available
@@ -135,6 +135,11 @@ setGeneric("agglomerateByRank",
             function(x, ...)
                 standardGeneric("agglomerateByRank"))
 
+setGeneric("mergeFeaturesByRank",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("mergeFeaturesByRank"))
+
 #' @rdname agglomerate-methods
 #' @aliases agglomerateByRank
 #'
@@ -210,6 +215,21 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname agglomerate-methods
+#' @aliases agglomerateByRank
+#'
+#' @importFrom SummarizedExperiment rowData rowData<-
+#'
+#' @export
+setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
+          function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
+                   empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+              .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
+              x <- agglomerateByRank(x)
+              x
+          }
+)
+
+#' @rdname agglomerate-methods
 #' @importFrom SingleCellExperiment altExp altExp<- altExps<-
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
@@ -227,6 +247,18 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
         }
         callNextMethod(x, ...)
     }
+)
+
+#' @rdname agglomerate-methods
+#' @aliases agglomerateByRank
+#' @importFrom SingleCellExperiment altExp altExp<- altExps<-
+#' @export
+setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
+          function(x, ..., altexp = NULL, strip_altexp = TRUE){
+              .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
+              x <- agglomerateByRank(x)
+              x
+          }
 )
 
 
@@ -263,6 +295,16 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
           }
 )
 
+#' @rdname agglomerate-methods
+#' @aliases agglomerateByRank
+#' @export
+setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, ..., agglomerateTree = FALSE){
+              .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
+              x <- agglomerateByRank(x)
+              x
+          }
+)
 ################################ HELP FUNCTIONS ################################
 
 .remove_with_empty_taxonomic_info <-

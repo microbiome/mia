@@ -4,9 +4,12 @@
 \alias{agglomerate-methods}
 \alias{agglomerateByRank,SummarizedExperiment-method}
 \alias{agglomerateByRank}
+\alias{mergeFeaturesByRank,SummarizedExperiment-method}
 \alias{agglomerateByRank,SingleCellExperiment-method}
+\alias{mergeFeaturesByRank,SingleCellExperiment-method}
 \alias{agglomerateByRank,TreeSummarizedExperiment-method}
-\title{Agglomerate data using taxonomic information}
+\alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
+\title{Ag           glomerate data using taxonomic information}
 \usage{
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
@@ -17,9 +20,22 @@
   ...
 )
 
+\S4method{mergeFeaturesByRank}{SummarizedExperiment}(
+  x,
+  rank = taxonomyRanks(x)[1],
+  onRankOnly = FALSE,
+  na.rm = FALSE,
+  empty.fields = c(NA, "", " ", "\\t", "-", "_"),
+  ...
+)
+
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
+\S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
+
 \S4method{agglomerateByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
+
+\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
 }
 \arguments{
 \item{x}{a
