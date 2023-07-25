@@ -102,11 +102,14 @@ test_that("merge", {
     merged  <- mergeRows(tse, f=rowData(tse)$group2, mergeTree=TRUE)
     merged2 <- mergeRows(tse, f = rowData(tse)$group2, mergeTree = FALSE)
     merged3 <- mergeRows(esophagus, f = rowData(esophagus)$group2, mergeTree = TRUE)
+    merged4 <- .merge_features(tse, merge.by = rowData(tse)$group2, mergeTree = TRUE)
+    merged5 <- mergeRows(tse, f = rowData(tse)$group2, mergeTree = TRUE)
     expect_equal( rowLinks(merged)$whichTree, 
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
     expect_equal(rowTree(tse), rowTree(merged2))
     expect_equal(rowTree(merged), rowTree(merged3))
+    expect_equal(merged4, merged5)
     
     # Both datasets have group variable
     merged <- mergeRows(tse, f = rowData(tse)$group, mergeTree = TRUE)
