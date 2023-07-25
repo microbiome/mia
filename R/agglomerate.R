@@ -1,4 +1,4 @@
-#' Ag           glomerate data using taxonomic information
+#' Agglomerate data using taxonomic information
 #'
 #' \code{agglomerateByRank} can be used to sum up data based on the association
 #' to certain taxonomic ranks given as \code{rowData}. Only available
@@ -130,11 +130,15 @@
 #' taxonomyRanks(enterotype)
 NULL
 
+#' @rdname agglomerate-methods
+#' @aliases mergeFeaturesByRank
 setGeneric("agglomerateByRank",
             signature = "x",
             function(x, ...)
                 standardGeneric("agglomerateByRank"))
 
+#' @rdname agglomerate-methods
+#' @aliases agglomerateByRank
 setGeneric("mergeFeaturesByRank",
            signature = "x",
            function(x, ...)

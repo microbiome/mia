@@ -324,16 +324,16 @@ test_that("subsetByRareTaxa", {
     
 })
 
-test_that("agglomerateByPrevalence", {
+test_that("mergeFeaturesByPrevalence", {
 
     data(GlobalPatterns, package="mia")
-    expect_error(agglomerateByPrevalence(GlobalPatterns, other_label=TRUE),
+    expect_error(mergeFeaturesByPrevalence(GlobalPatterns, other_label=TRUE),
                  "'other_label' must be a single character value")
-    actual <- agglomerateByPrevalence(GlobalPatterns)
+    actual <- mergeFeaturesByPrevalence(GlobalPatterns)
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(2,26))
 
-    actual <- agglomerateByPrevalence(GlobalPatterns,
+    actual <- mergeFeaturesByPrevalence(GlobalPatterns,
                                       rank = "Phylum",
                                       detection = 1/100,
                                       prevalence = 50/100,
@@ -343,12 +343,24 @@ test_that("agglomerateByPrevalence", {
     expect_equal(dim(actual),c(6,26))
     expect_equal(rowData(actual)[6,"Phylum"],"test")
 
-    actual <- agglomerateByPrevalence(GlobalPatterns,
+    actual <- mergeFeaturesByPrevalence(GlobalPatterns,
                                       rank = NULL,
                                       detection = 0.0001,
                                       prevalence = 50/100,
                                       as_relative = TRUE,
                                       other_label = "test")
+    expect_equal(mergeFeaturesByPrevalence(GlobalPatterns,
+                                           rank = NULL,
+                                           detection = 0.0001,
+                                           prevalence = 50/100,
+                                           as_relative = TRUE,
+                                           other_label = "test"),
+                 agglomerateByPrevalence(GlobalPatterns,
+                                           rank = NULL,
+                                           detection = 0.0001,
+                                           prevalence = 50/100,
+                                           as_relative = TRUE,
+                                           other_label = "test"))
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(6,26))
     expect_true(all(is.na(rowData(actual)[6,])))
