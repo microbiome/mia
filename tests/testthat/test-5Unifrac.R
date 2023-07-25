@@ -4,7 +4,7 @@ test_that("Unifrac beta diversity", {
     
     data(esophagus, package="mia")
     tse <- esophagus
-    tse <- transformCounts(tse, assay.type="counts", method="relabundance")
+    tse <- transformAssay(tse, assay.type="counts", method="relabundance")
     
     expect_error(
         calculateUnifrac(tse, assay.type = "test", tree_name = "phylo",

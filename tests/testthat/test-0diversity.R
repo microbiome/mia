@@ -5,7 +5,7 @@ test_that("diversity estimates", {
     data(esophagus, package="mia")
 
     tse <- esophagus
-    tse <- transformCounts(tse, method="relabundance")    
+    tse <- transformAssay(tse, method="relabundance")    
     indices <- c("coverage", "fisher", "gini_simpson", "faith",
                  "inverse_simpson", "log_modulo_skewness",
                  "shannon")

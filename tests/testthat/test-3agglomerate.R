@@ -51,6 +51,10 @@ test_that("agglomerate", {
     expect_equal(rowData(actual)$Family,c("c",NA,"d","e","f","g","h",NA))
     actual <- agglomerateByRank(xtse,"Phylum")
     expect_equivalent(rowData(actual),rowData(actual_phylum))
+    #
+    actual1 <- agglomerateByRank(xtse,"Family")
+    actual2 <- .merge_features(xtse, merge.by = "Family")
+    expect_equal(actual1, actual2)
 
     # Only one rank available in the object -
     # the same dimensionality is retained
@@ -75,7 +79,7 @@ test_that("agglomerate", {
     expect_equal(length(rowTree(actual)$tip.label),
                  496)
     # Test that warning occurs when assay contian binary or negative values
-    se1 <- transformCounts(se, method = "pa")
+    se1 <- transformAssay(se, method = "pa")
     se2 <- se1
     assay(se2, "pa")[1, 1] <- -1
     expect_warning(agglomerateByRank(se1, rank = "Phylum"))
