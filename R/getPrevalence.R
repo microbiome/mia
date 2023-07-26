@@ -564,6 +564,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 ############################# agglomerateByPrevalence ##########################
 
 #' @rdname getPrevalence
+#' @aliases mergeFeaturesByPrevalence
 #' @export
 setGeneric("agglomerateByPrevalence", signature = "x",
            function(x, ...)
@@ -578,6 +579,7 @@ setGeneric("mergeFeaturesByPrevalence", signature = "x",
 
 
 #' @rdname getPrevalence
+#' @aliases mergeFeaturesByPRevalence
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1L], other_label = "Other", ...){
@@ -622,7 +624,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
 setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment"),
           function(x, rank = taxonomyRanks(x)[1L], other_label = "Other", ...){
               .Deprecated(old="agglomerateByPrevalence", new="mergeFeaturesByPrevalence", "Now agglomerateByPrevalence is deprecated. Use mergeFeaturesByPrevalence instead.")
-              x <- agglomerateByPrevalence(x)
+              x <- agglomerateByPrevalence(x, rank = rank, other_label = other_label, ...)
               x 
           })
 

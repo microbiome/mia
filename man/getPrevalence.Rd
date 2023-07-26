@@ -29,6 +29,7 @@
 \alias{agglomerateByPrevalence}
 \alias{mergeFeaturesByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
+\alias{mergeFeaturesByPRevalence}
 \alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \title{Calculation prevalence information for features across samples}
 \usage{

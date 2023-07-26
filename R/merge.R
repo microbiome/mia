@@ -419,7 +419,7 @@ setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
 setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
           function(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...){
              .Deprecated(old="mergeRows", new="mergeFeatures", "Now mergeRows is deprecated. Use mergeFeatures instead.")
-             x <- mergeRows(x = x, f = f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...)
+             x <- mergeRows(x = x, f = f, archetype = 1L, mergeTree = mergeTree, mergeRefSeq = mergeRefSeq, ...)
               return(x)
           }
 )
@@ -431,7 +431,7 @@ setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
 setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
           function(x, f, archetype = 1L, mergeTree = FALSE, ...){
               .Deprecated(old="mergeCols", new="mergeSamples", "Now mergeCols is deprecated. Use mergeSamples instead.")
-              x <- mergeCols(x, f, archetype = 1L, mergeTree = FALSE, ...)
+              x <- mergeCols(x, f, archetype = 1L, mergeTree =mergeTree, ...)
               return(x)
           }
 )

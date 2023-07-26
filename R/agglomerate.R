@@ -145,7 +145,7 @@ setGeneric("mergeFeaturesByRank",
                standardGeneric("mergeFeaturesByRank"))
 
 #' @rdname agglomerate-methods
-#' @aliases agglomerateByRank
+#' @aliases mergeFeaturesByRank
 #'
 #' @importFrom SummarizedExperiment rowData rowData<-
 #'
@@ -228,7 +228,8 @@ setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
           function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
                    empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
               .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
-              x <- agglomerateByRank(x, ...)
+              x <- agglomerateByRank(x, rank = rank, onRankOnly = onRankOnly, na.rm = na.rm,
+                                     empty.fields = empty.fields, ...)
               x
           }
 )
@@ -260,7 +261,7 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
 setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
           function(x, ..., altexp = NULL, strip_altexp = TRUE){
               .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
-              x <- agglomerateByRank(x, ...)
+              x <- agglomerateByRank(x, ..., altexp = altexp, strip_altexp = strip_altexp)
               x
           }
 )
@@ -305,7 +306,7 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
 setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ..., agglomerateTree = FALSE){
               .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
-              x <- agglomerateByRank(x,...)
+              x <- agglomerateByRank(x, ..., agglomerateTree = agglomerateTree)
               x
           }
 )
