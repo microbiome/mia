@@ -82,4 +82,5 @@ Changes in version 1.9.x
 + calculateDMM: deprecated/updated outdated functions
 + Added Tengeler2020 dataset
 + *RDA & *CCA: calculate also statistical significance
++ altExp support for meltAssay
 + Deprecate mergeRows, mergeCols, agglomerateByRank, agglomerateByPrevalence
