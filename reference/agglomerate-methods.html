@@ -19,7 +19,7 @@ taxonomyRanks can be used."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.10</span>
       </span>
     </div>
 
@@ -57,8 +57,22 @@ to certain taxonomic ranks given as <code>rowData</code>. Only available
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for SummarizedExperiment</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">agglomerateByRank</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  rank <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>  onRankOnly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  empty.fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">""</span>, <span class="st">" "</span>, <span class="st">"\t"</span>, <span class="st">"-"</span>, <span class="st">"_"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  rank <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
 <span>  onRankOnly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -70,8 +84,14 @@ to certain taxonomic ranks given as <code>rowData</code>. Only available
 <span><span class="co"># S4 method for SingleCellExperiment</span></span>
 <span><span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, strip_altexp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S4 method for SingleCellExperiment</span></span>
+<span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, strip_altexp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, agglomerateTree <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, agglomerateTree <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, agglomerateTree <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -80,6 +100,18 @@ to certain taxonomic ranks given as <code>rowData</code>. Only available
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object</p></dd>
+
+
+<dt>...</dt>
+<dd><p>arguments passed to <code>agglomerateByRank</code> function for
+<code>SummarizedExperiment</code> objects,
+<code><a href="merge-methods.html">mergeRows</a></code> and
+<code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>.</p><ul><li><p><code>remove_empty_ranks</code>A single boolean value for selecting
+whether to remove those columns of rowData that include only NAs after
+agglomeration. (By default: <code>remove_empty_ranks = FALSE</code>)</p></li>
+<li><p><code>make_unique</code>A single boolean value for selecting
+whether to make rownames unique. (By default: <code>make_unique = TRUE</code>)</p></li>
+</ul></dd>
 
 
 <dt>rank</dt>
@@ -104,18 +136,6 @@ will be dropped. This setting can be tweaked by defining
 <dd><p>a <code>character</code> value defining, which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
 removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
-
-
-<dt>...</dt>
-<dd><p>arguments passed to <code>agglomerateByRank</code> function for
-<code>SummarizedExperiment</code> objects,
-<code><a href="merge-methods.html">mergeRows</a></code> and
-<code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>.</p><ul><li><p><code>remove_empty_ranks</code>A single boolean value for selecting
-whether to remove those columns of rowData that include only NAs after
-agglomeration. (By default: <code>remove_empty_ranks = FALSE</code>)</p></li>
-<li><p><code>make_unique</code>A single boolean value for selecting
-whether to make rownames unique. (By default: <code>make_unique = TRUE</code>)</p></li>
-</ul></dd>
 
 
 <dt>altexp</dt>

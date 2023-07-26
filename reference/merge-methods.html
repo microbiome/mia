@@ -20,7 +20,7 @@ retained as defined by archetype."><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.10</span>
       </span>
     </div>
 
@@ -63,17 +63,40 @@ retained as defined by <code>archetype</code>.</p>
 <span></span>
 <span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">mergeFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">mergeSamples</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">mergeFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">mergeSamples</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
 <span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, mergeRefSeq <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">mergeFeatures</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">f</span>,</span>
+<span>  archetype <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  mergeTree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  mergeRefSeq <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">mergeSamples</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
