@@ -97,6 +97,10 @@ makeTreeSEFromBiom <- function(
         # Add correct colnames
         colnames(sample_data) <- colnames
     }
+    # Clean feature_data or rowData might contain possible character artifacts;
+    # so as colnames and feature_data could be parsed safely afterwards,
+    # we define here possible character artifacts that might occur.
+    patterns <- "\"" 
     # rowData is initialized with empty tables with rownames if it is NULL
     if( is.null(feature_data) ){
         feature_data <- S4Vectors::make_zero_col_DFrame(nrow(counts))
@@ -106,6 +110,10 @@ makeTreeSEFromBiom <- function(
         # Feature data is a list of taxa info
         # Get the maximum length of list
         max_length <- max( lengths(feature_data) )
+        # Clean feature_data from possible character artifacts
+        feature_data <- lapply(
+            feature_data,
+            gsub, pattern = patterns, replacement = "")
         # Get the column names from the taxa info that has all the levels that occurs
         # in the data
         colnames <- names( head( feature_data[ lengths(feature_data) == 
@@ -122,6 +130,13 @@ makeTreeSEFromBiom <- function(
         feature_data <- do.call(rbind, feature_data)
         # Add correct colnames
         colnames(feature_data) <- colnames
+    # Otherwise if it is already a data.frame clean from artifacts
+    } else if (is(feature_data, "data.frame")) {
+        feature_data <- apply(
+            feature_data,
+            2,
+            gsub, pattern = patterns, replacement = "")
+        feature_data <- as.data.frame(feature_data)
     }
     
     # Replace taxonomy ranks with ranks found based on prefixes
