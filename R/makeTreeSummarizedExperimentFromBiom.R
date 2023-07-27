@@ -13,6 +13,10 @@
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
 #' (default \code{rankFromPrefix = FALSE})
 #' 
+#' @param cleanTaxaPattern \code{character} or \code{regex}: If file have
+#' some taxonomic character naming artifacts to be removed.
+#' (default \code{cleanTaxaPattern = "\""})
+#' 
 #' @param ... optional arguments (not used).
 #' 
 #' @return An object of class
@@ -31,8 +35,12 @@
 #'   # load from file
 #'   rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
 #'                                  package = "biomformat")
-#'   se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE, rankFromPrefix = TRUE)
-#'
+#'   se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
+#'                     rankFromPrefix = TRUE)
+#'   # or if the file contains some character artifacts at the taxonomy data,
+#'   # the character(s) to be removed could be provided (also as regular expression)
+#'   #se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
+#'   #                  rankFromPrefix = TRUE, cleanTaxaPattern="\"")
 #'   # load from object
 #'   x1 <- biomformat::read_biom(rich_dense_file)
 #'   se <- makeTreeSEFromBiom(x1)
@@ -58,7 +66,8 @@ loadFromBiom <- function(file, ...) {
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame
 makeTreeSEFromBiom <- function(
-        obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE, ...){
+        obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
+        cleanTaxaPattern="\"", ...){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){
@@ -97,10 +106,6 @@ makeTreeSEFromBiom <- function(
         # Add correct colnames
         colnames(sample_data) <- colnames
     }
-    # Clean feature_data or rowData might contain possible character artifacts;
-    # so as colnames and feature_data could be parsed safely afterwards,
-    # we define here possible character artifacts that might occur.
-    patterns <- "\"" 
     # rowData is initialized with empty tables with rownames if it is NULL
     if( is.null(feature_data) ){
         feature_data <- S4Vectors::make_zero_col_DFrame(nrow(counts))
@@ -113,7 +118,7 @@ makeTreeSEFromBiom <- function(
         # Clean feature_data from possible character artifacts
         feature_data <- lapply(
             feature_data,
-            gsub, pattern = patterns, replacement = "")
+            gsub, pattern = cleanTaxaPattern, replacement = "")
         # Get the column names from the taxa info that has all the levels that occurs
         # in the data
         colnames <- names( head( feature_data[ lengths(feature_data) == 
@@ -135,8 +140,8 @@ makeTreeSEFromBiom <- function(
         feature_data <- apply(
             feature_data,
             2,
-            gsub, pattern = patterns, replacement = "")
-        feature_data <- as.data.frame(feature_data)
+            gsub, pattern = cleanTaxaPattern, replacement = "")
+        feature_data <- DataFrame(feature_data)
     }
     
     # Replace taxonomy ranks with ranks found based on prefixes

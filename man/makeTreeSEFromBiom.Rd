@@ -12,6 +12,7 @@ makeTreeSEFromBiom(
   obj,
   removeTaxaPrefixes = FALSE,
   rankFromPrefix = FALSE,
+  cleanTaxaPattern = "\\"",
   ...
 )
 
@@ -30,6 +31,10 @@ taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})}
 \item{rankFromPrefix}{\code{TRUE} or \code{FALSE}: If file does not have
 taxonomic ranks on feature table, should they be scraped from prefixes?
 (default \code{rankFromPrefix = FALSE})}
+
+\item{cleanTaxaPattern}{\code{character} or \code{regex}: If file have
+some taxonomic character naming artifacts to be removed.
+(default \code{cleanTaxaPattern = "\""})}
 }
 \value{
 An object of class
@@ -46,8 +51,12 @@ if(requireNamespace("biomformat")) {
   # load from file
   rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
                                  package = "biomformat")
-  se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE, rankFromPrefix = TRUE)
-
+  se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
+                    rankFromPrefix = TRUE)
+  # or if the file contains some character artifacts at the taxonomy data,
+  # the character(s) to be removed could be provided (also as regular expression)
+  #se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
+  #                  rankFromPrefix = TRUE, cleanTaxaPattern="\"")
   # load from object
   x1 <- biomformat::read_biom(rich_dense_file)
   se <- makeTreeSEFromBiom(x1)
