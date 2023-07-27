@@ -152,7 +152,7 @@ makeTreeSEFromBiom <- function(
         ranks <- lapply(colnames(feature_data),
                         .replace_colnames_based_on_prefix, x=feature_data)
         # Replace old ranks with found ranks
-        colnames(feature_data) <- ranks
+        colnames(feature_data) <- unlist(ranks)
     }
     
     # Remove prefixes if specified and rowData includes info
