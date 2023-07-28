@@ -12,7 +12,7 @@ makeTreeSEFromBiom(
   obj,
   removeTaxaPrefixes = FALSE,
   rankFromPrefix = FALSE,
-  cleanTaxaPattern = "\\"",
+  cleanTaxaPattern = "auto",
   ...
 )
 
@@ -33,8 +33,10 @@ taxonomic ranks on feature table, should they be scraped from prefixes?
 (default \code{rankFromPrefix = FALSE})}
 
 \item{cleanTaxaPattern}{\code{character} or \code{regex}: If file have
-some taxonomic character naming artifacts to be removed.
-(default \code{cleanTaxaPattern = "\""})}
+some taxonomic character naming artifacts to be removed. Additionally
+when \code{cleanTaxaPattern = "auto"} automatically artifacts are detected
+and removed. Otherwise \code{cleanTaxaPattern = NULL} no cleaning is performed.
+(default \code{cleanTaxaPattern = "auto"})}
 }
 \value{
 An object of class
@@ -53,15 +55,22 @@ if(requireNamespace("biomformat")) {
                                  package = "biomformat")
   se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
                     rankFromPrefix = TRUE)
-  # or if the file contains some character artifacts at the taxonomy data,
-  # the character(s) to be removed could be provided (also as regular expression)
-  #se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
-  #                  rankFromPrefix = TRUE, cleanTaxaPattern="\"")
+                    
   # load from object
   x1 <- biomformat::read_biom(rich_dense_file)
   se <- makeTreeSEFromBiom(x1)
   # Convert SE to TreeSE
   tse <- as(se, "TreeSummarizedExperiment")
+  tse
+  
+  # Cleaning artifacts from Taxonomy data
+  biom_object <- biomformat::read_biom(
+      system.file("extdata/testdata/Aggregated_humanization2.biom",
+                  package="mia"))
+  tse <- makeTreeSEFromBiom(biom_object,
+                            removeTaxaPrefixes=TRUE,
+                            rankFromPrefix=TRUE,
+                            cleanTaxaPattern = "auto")
   tse
 }
 }

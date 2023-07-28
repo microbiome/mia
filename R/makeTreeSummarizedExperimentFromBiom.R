@@ -14,8 +14,10 @@
 #' (default \code{rankFromPrefix = FALSE})
 #' 
 #' @param cleanTaxaPattern \code{character} or \code{regex}: If file have
-#' some taxonomic character naming artifacts to be removed.
-#' (default \code{cleanTaxaPattern = "\""})
+#' some taxonomic character naming artifacts to be removed. Additionally
+#' when \code{cleanTaxaPattern = "auto"} automatically artifacts are detected
+#' and removed. Otherwise \code{cleanTaxaPattern = NULL} no cleaning is performed.
+#' (default \code{cleanTaxaPattern = "auto"})
 #' 
 #' @param ... optional arguments (not used).
 #' 
@@ -37,15 +39,22 @@
 #'                                  package = "biomformat")
 #'   se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
 #'                     rankFromPrefix = TRUE)
-#'   # or if the file contains some character artifacts at the taxonomy data,
-#'   # the character(s) to be removed could be provided (also as regular expression)
-#'   #se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
-#'   #                  rankFromPrefix = TRUE, cleanTaxaPattern="\"")
+#'                     
 #'   # load from object
 #'   x1 <- biomformat::read_biom(rich_dense_file)
 #'   se <- makeTreeSEFromBiom(x1)
 #'   # Convert SE to TreeSE
 #'   tse <- as(se, "TreeSummarizedExperiment")
+#'   tse
+#'   
+#'   # Cleaning artifacts from Taxonomy data
+#'   biom_object <- biomformat::read_biom(
+#'       system.file("extdata/testdata/Aggregated_humanization2.biom",
+#'                   package="mia"))
+#'   tse <- makeTreeSEFromBiom(biom_object,
+#'                             removeTaxaPrefixes=TRUE,
+#'                             rankFromPrefix=TRUE,
+#'                             cleanTaxaPattern = "auto")
 #'   tse
 #' }
 NULL
@@ -65,9 +74,10 @@ loadFromBiom <- function(file, ...) {
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame
+#' @importFrom dplyr %>%
 makeTreeSEFromBiom <- function(
         obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
-        cleanTaxaPattern="\"", ...){
+        cleanTaxaPattern="auto", ...){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){
@@ -78,6 +88,9 @@ makeTreeSEFromBiom <- function(
     }
     if( !.is_a_bool(rankFromPrefix) ){
         stop("'rankFromPrefix' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !is.null(cleanTaxaPattern) && !.is_non_empty_character(cleanTaxaPattern) ){
+        stop("'cleanTaxaPattern' must be a character, NULL or 'auto'.", call. = FALSE)
     }
     #
     counts <- as(biomformat::biom_data(obj), "matrix")
@@ -112,17 +125,20 @@ makeTreeSEFromBiom <- function(
         rownames(feature_data) <- rownames(counts)
     # Otherwise convert it into correct format if it is a list
     } else if( is(feature_data, "list") ){
+        # Clean feature_data from possible character artifacts
+        feature_data <- .detect_taxa_artifacts_and_clean(feature_data,
+                                                         cleanTaxaPattern)
         # Feature data is a list of taxa info
         # Get the maximum length of list
         max_length <- max( lengths(feature_data) )
-        # Clean feature_data from possible character artifacts
-        feature_data <- lapply(
-            feature_data,
-            gsub, pattern = cleanTaxaPattern, replacement = "")
+        
+        # In case the list of taxa info have different lengths
+        if (!all(lengths(feature_data)==max_length)){
         # Get the column names from the taxa info that has all the levels that occurs
         # in the data
         colnames <- names( head( feature_data[ lengths(feature_data) == 
                                                    max_length ], 1)[[1]] )
+        
         # Convert the list so that all individual taxa info have the max length
         # of the list objects. All vectors are appended with NAs, if they do not
         # have all the levels. E.g., if only Kingdom level is found, all lower
@@ -133,15 +149,19 @@ makeTreeSEFromBiom <- function(
         })
         # Create a data.frame from the list
         feature_data <- do.call(rbind, feature_data)
+        # In case the list of taxa info all have the same lengths
+        } else {
+            colnames <- names(feature_data)
+            # Create a data.frame from the list
+            feature_data <- do.call(cbind, feature_data)
+        }
         # Add correct colnames
         colnames(feature_data) <- colnames
     # Otherwise if it is already a data.frame clean from artifacts
     } else if (is(feature_data, "data.frame")) {
-        feature_data <- apply(
-            feature_data,
-            2,
-            gsub, pattern = cleanTaxaPattern, replacement = "")
-        feature_data <- DataFrame(feature_data)
+        # Clean feature_data from possible character artifacts
+        feature_data <- DataFrame(.detect_taxa_artifacts_and_clean(feature_data,
+                                                         cleanTaxaPattern))
     }
     
     # Replace taxonomy ranks with ranks found based on prefixes
@@ -223,4 +243,78 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
                           substr(colname, 2, nchar(colname)))
     }
     return(colname)    
+}
+
+# Detect and clean non wanted characters from Taxonomy data if needed.
+.detect_taxa_artifacts_and_clean <- function(x, patterns) {
+    
+    # No cleaning
+    if (is.null(patterns)) {
+        warning("No Taxonomy cleaning was done to the data.",
+                call. = FALSE)
+    }
+    # Automatic cleaning
+    else if (patterns=="auto") {
+        # General regex pattern
+        PATTERN <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
+        patterns <- .detect_taxa_artifacts(x, PATTERN, invert=TRUE)
+        # No artifacts found
+        if (patterns=="") {
+            warning("No artifacts found in the Taxonomy data.",
+                    call. = FALSE)
+        # Clean from artifacts
+        } else {
+            x <- .clean_from_artifacts(x, patterns)
+            warning("The following artifacts: '", patterns, "' were cleaned from 
+                    the Taxonomy data.",
+                    call. = FALSE)
+        }
+    # Clean with the character or regex provided
+    } else {
+        pattern <- .detect_taxa_artifacts(x, patterns=patterns)
+        # patterns provided not found
+        if (pattern=="") {
+            warning("The '", patterns, "' provided at 'cleanTaxaPattern' were
+                    not found in the Taxonomy data.",
+                    call. = FALSE)
+        # patterns found and cleaned
+        } else {
+            x <- .clean_from_artifacts(x, pattern)
+            # warn what was cleaned
+            warning("The following artifacts: '", pattern, "' were cleaned from 
+                    the Taxonomy data.",
+                    call. = FALSE)
+        }
+    }
+    return(x)
+}
+
+# Helper function for detecting taxa artifacts 
+.detect_taxa_artifacts <- function(
+        x,
+        patterns,
+        invert=FALSE) {
+    if (is(x, "list")) {
+        patterns <- lapply(x, function(x_sub) {
+            grep(patterns,
+                 x_sub[[1]] %>% stringr::str_split("") %>% unlist(),
+                 invert = invert, value = TRUE) %>% unique()
+        }) %>% unlist() %>% unique() %>% paste0(collapse = "")
+    } else if (is(x, "data.frame")){
+        patterns <- apply(x, 2, function(x_sub) {
+            grep(patterns,
+                 x_sub %>% stringr::str_split("") %>% unlist(),
+                 invert = invert, value = TRUE) %>% unique()
+        }) %>% unlist() %>% unique() %>% paste0(collapse = "")
+    }
+    return(patterns)
+}
+
+.clean_from_artifacts <- function(x, patterns) {
+    if (is(x, "list")) {
+        x <- lapply(x, gsub, pattern = patterns, replacement = "")
+    } else if (is(x, "data.frame")) {
+        x <- apply(x, 2, gsub, pattern = patterns, replacement = "")
+    }
+    return(x)
 }
