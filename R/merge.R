@@ -72,6 +72,7 @@
 NULL
 
 #' @rdname merge-methods
+#' @aliases mergeFeatures
 #' @export
 setGeneric("mergeRows",
            signature = "x",
@@ -79,11 +80,28 @@ setGeneric("mergeRows",
                standardGeneric("mergeRows"))
 
 #' @rdname merge-methods
+#' @aliases mergeSamples
 #' @export
 setGeneric("mergeCols",
            signature = "x",
            function(x, f, archetype = 1L, ...)
                standardGeneric("mergeCols"))
+
+#' @rdname merge-methods
+#' @aliases mergeRows
+#' @export
+setGeneric("mergeFeatures",
+           signature = "x",
+           function(x, f, archetype = 1L, ...)
+               standardGeneric("mergeFeatures"))
+
+#' @rdname merge-methods
+#' @aliases mergeCols
+#' @export
+setGeneric("mergeSamples",
+           signature = "x",
+           function(x, f, archetype = 1L, ...)
+               standardGeneric("mergeSamples"))
 
 .norm_f <- function(i, f, dim_type = c("rows","columns")){
     dim_type <- match.arg(dim_type)
@@ -230,6 +248,7 @@ setGeneric("mergeCols",
 }
 
 #' @rdname merge-methods
+#' @aliases mergeFeatures
 #' @export
 setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
           function(x, f, archetype = 1L, ...){
@@ -238,9 +257,30 @@ setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname merge-methods
+#' @aliases mergeSmaples
 #' @export
 setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
           function(x, f, archetype = 1L, ...){
+              .merge_cols(x, f, archetype = archetype, ...)
+          }
+)
+
+#' @rdname merge-methods
+#' @aliases mergeRows
+#' @export
+setMethod("mergeFeatures", signature = c(x = "SummarizedExperiment"),
+          function(x, f, archetype = 1L, ...){
+              .Deprecated(old="mergeRows", new="mergeFeatures", "Now mergeRows is deprecated. Use mergeFeatures instead.")
+              .merge_rows(x, f, archetype = archetype, ...)
+          }
+)
+
+#' @rdname merge-methods
+#' @aliases mergeCols
+#' @export
+setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
+          function(x, f, archetype = 1L, ...){
+              .Deprecated(old="mergeCols", new="mergeSamples", "Now mergeCols is deprecated. Use mergeSamples instead.")
               .merge_cols(x, f, archetype = archetype, ...)
           }
 )
@@ -368,6 +408,30 @@ setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
               x <- callNextMethod(x, f, archetype = 1L, ...)
               # optionally merge colTree
               x <- .merge_trees(x, mergeTree, 2)
+              return(x)
+          }
+)
+
+#' @rdname merge-methods
+#' @importFrom ape keep.tip
+#' @aliases mergeRows
+#' @export
+setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...){
+             .Deprecated(old="mergeRows", new="mergeFeatures", "Now mergeRows is deprecated. Use mergeFeatures instead.")
+             x <- mergeRows(x = x, f = f, archetype = 1L, mergeTree = mergeTree, mergeRefSeq = mergeRefSeq, ...)
+              return(x)
+          }
+)
+
+#' @rdname merge-methods
+#' @importFrom ape keep.tip
+#' @aliases mergeCols
+#' @export
+setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, f, archetype = 1L, mergeTree = FALSE, ...){
+              .Deprecated(old="mergeCols", new="mergeSamples", "Now mergeCols is deprecated. Use mergeSamples instead.")
+              x <- mergeCols(x, f, archetype = 1L, mergeTree =mergeTree, ...)
               return(x)
           }
 )

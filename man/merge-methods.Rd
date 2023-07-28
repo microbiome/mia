@@ -4,23 +4,49 @@
 \alias{merge-methods}
 \alias{mergeRows}
 \alias{mergeCols}
+\alias{mergeFeatures}
+\alias{mergeSamples}
 \alias{mergeRows,SummarizedExperiment-method}
 \alias{mergeCols,SummarizedExperiment-method}
+\alias{mergeSmaples}
+\alias{mergeFeatures,SummarizedExperiment-method}
+\alias{mergeSamples,SummarizedExperiment-method}
 \alias{mergeRows,TreeSummarizedExperiment-method}
 \alias{mergeCols,TreeSummarizedExperiment-method}
+\alias{mergeFeatures,TreeSummarizedExperiment-method}
+\alias{mergeSamples,TreeSummarizedExperiment-method}
 \title{Merge a subset of the rows or columns of a \code{SummarizedExperiment}}
 \usage{
 mergeRows(x, f, archetype = 1L, ...)
 
 mergeCols(x, f, archetype = 1L, ...)
 
+mergeFeatures(x, f, archetype = 1L, ...)
+
+mergeSamples(x, f, archetype = 1L, ...)
+
 \S4method{mergeRows}{SummarizedExperiment}(x, f, archetype = 1L, ...)
 
 \S4method{mergeCols}{SummarizedExperiment}(x, f, archetype = 1L, ...)
 
+\S4method{mergeFeatures}{SummarizedExperiment}(x, f, archetype = 1L, ...)
+
+\S4method{mergeSamples}{SummarizedExperiment}(x, f, archetype = 1L, ...)
+
 \S4method{mergeRows}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...)
 
 \S4method{mergeCols}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, ...)
+
+\S4method{mergeFeatures}{TreeSummarizedExperiment}(
+  x,
+  f,
+  archetype = 1L,
+  mergeTree = FALSE,
+  mergeRefSeq = FALSE,
+  ...
+)
+
+\S4method{mergeSamples}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, ...)
 }
 \arguments{
 \item{x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
