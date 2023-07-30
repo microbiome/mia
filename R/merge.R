@@ -103,25 +103,15 @@ setGeneric("mergeSamples",
            function(x, f, archetype = 1L, ...)
                standardGeneric("mergeSamples"))
 
-# Helper function to check if 'f' is a valid column name in rowData or colData
-.is_valid_column_name <- function(x, f, dim_type) {
-    if (dim_type == "rows") {
-        return(f %in% colnames(rowData(x)))
-    } else if (dim_type == "columns") {
-        return(f %in% colnames(colData(x)))
-    }
-    return(FALSE)
-}
-
-.norm_f <- function(i, f, dim_type = c("rows","columns")){
-    dim_type <- match.arg(dim_type)
+.norm_f <- function(i, f, dim.type = c("rows","columns")){
+    dim.type <- match.arg(dim.type)
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
              "meaningful factor.",
              call. = FALSE)
     }
     if(i != length(f)){
-        stop("'f' must have the same number of ",dim_type," as 'x'",
+        stop("'f' must have the same number of ",dim.type," as 'x'",
              call. = FALSE)
     }
     if(is.character(f)){
