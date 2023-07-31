@@ -234,8 +234,8 @@ setGeneric("transformAssay", signature = c("x"),
                standardGeneric("transformAssay"))
 #transformCounts wrapper with a deprecation warning
 transformCounts <- function(x,...){
-    warning("The 'transformCounts' function is deprecated. Use 'transformAssay' instead.")
-    return(transformAssay(x,...))
+    .Deprecated(old ="transformCounts" ,new = "transformAssay",msg = "The 'transformCounts' function is deprecated. Use 'transformAssay' instead.")
+    return(x)
 }
 #' @rdname transformAssay
 #' @aliases transformSamples
