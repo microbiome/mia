@@ -13,11 +13,11 @@
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
 #' (default \code{rankFromPrefix = FALSE})
 #' 
-#' @param cleanTaxaPattern \code{character} or \code{regex}: If file have
+#' @param clean.taxa.names \code{character} or \code{regex}: If file have
 #' some taxonomic character naming artifacts to be removed. Additionally
-#' when \code{cleanTaxaPattern = "auto"} automatically artifacts are detected
-#' and removed. Otherwise \code{cleanTaxaPattern = NULL} no cleaning is performed.
-#' (default \code{cleanTaxaPattern = "auto"})
+#' when \code{clean.taxa.names = "auto"} automatically artifacts are detected
+#' and removed. Otherwise \code{clean.taxa.names = NULL} no cleaning is performed.
+#' (default \code{clean.taxa.names = "auto"})
 #' 
 #' @param ... optional arguments (not used).
 #' 
@@ -48,13 +48,13 @@
 #'   tse
 #'   
 #'   # Cleaning artifacts from Taxonomy data
-#'   biom_object <- biomformat::read_biom(
-#'       system.file("extdata/testdata/Aggregated_humanization2.biom",
-#'                   package="mia"))
+#'   f <- system.file("extdata/testdata/Aggregated_humanization2.biom",
+#'                   package="mia")
+#'   biom_object <- biomformat::read_biom(f)
 #'   tse <- makeTreeSEFromBiom(biom_object,
 #'                             removeTaxaPrefixes=TRUE,
 #'                             rankFromPrefix=TRUE,
-#'                             cleanTaxaPattern = "auto")
+#'                             clean.taxa.names = "auto")
 #'   tse
 #' }
 NULL
@@ -73,11 +73,11 @@ loadFromBiom <- function(file, ...) {
 #' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
 #'
 #' @export
-#' @importFrom S4Vectors make_zero_col_DFrame
+#' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>%
 makeTreeSEFromBiom <- function(
         obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
-        cleanTaxaPattern="auto", ...){
+        clean.taxa.names="auto", ...){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){
@@ -89,8 +89,8 @@ makeTreeSEFromBiom <- function(
     if( !.is_a_bool(rankFromPrefix) ){
         stop("'rankFromPrefix' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( !is.null(cleanTaxaPattern) && !.is_non_empty_character(cleanTaxaPattern) ){
-        stop("'cleanTaxaPattern' must be a character, NULL or 'auto'.", call. = FALSE)
+    if( !is.null(clean.taxa.names) && !.is_non_empty_character(clean.taxa.names) ){
+        stop("'clean.taxa.names' must be a character, NULL or 'auto'.", call. = FALSE)
     }
     #
     counts <- as(biomformat::biom_data(obj), "matrix")
@@ -127,17 +127,19 @@ makeTreeSEFromBiom <- function(
     } else if( is(feature_data, "list") ){
         # Clean feature_data from possible character artifacts
         feature_data <- .detect_taxa_artifacts_and_clean(feature_data,
-                                                         cleanTaxaPattern)
+                                                         clean.taxa.names)
+        # Taxonomy rank names
+        if (is.null(names(feature_data))) {
+            # Assign temporary ones if they do not exist 
+            colnames <- paste0("taxonomy", seq_along(feature_data))
+        } else {
+            # Get them if they exist
+            colnames <- names(feature_data)
+        }
+
         # Feature data is a list of taxa info
         # Get the maximum length of list
         max_length <- max( lengths(feature_data) )
-        
-        # In case the list of taxa info have different lengths
-        if (!all(lengths(feature_data)==max_length)){
-        # Get the column names from the taxa info that has all the levels that occurs
-        # in the data
-        colnames <- names( head( feature_data[ lengths(feature_data) == 
-                                                   max_length ], 1)[[1]] )
         
         # Convert the list so that all individual taxa info have the max length
         # of the list objects. All vectors are appended with NAs, if they do not
@@ -149,19 +151,15 @@ makeTreeSEFromBiom <- function(
         })
         # Create a data.frame from the list
         feature_data <- do.call(rbind, feature_data)
-        # In case the list of taxa info all have the same lengths
-        } else {
-            colnames <- names(feature_data)
-            # Create a data.frame from the list
-            feature_data <- do.call(cbind, feature_data)
-        }
+        # Transposing feature_data and make it DFrame object
+        feature_data <- DataFrame(t(feature_data))
         # Add correct colnames
         colnames(feature_data) <- colnames
     # Otherwise if it is already a data.frame clean from artifacts
     } else if (is(feature_data, "data.frame")) {
         # Clean feature_data from possible character artifacts
         feature_data <- DataFrame(.detect_taxa_artifacts_and_clean(feature_data,
-                                                         cleanTaxaPattern))
+                                                         clean.taxa.names))
     }
     
     # Replace taxonomy ranks with ranks found based on prefixes
@@ -248,44 +246,32 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 # Detect and clean non wanted characters from Taxonomy data if needed.
 .detect_taxa_artifacts_and_clean <- function(x, patterns) {
     
-    # No cleaning
-    if (is.null(patterns)) {
-        warning("No Taxonomy cleaning was done to the data.",
-                call. = FALSE)
-    }
-    # Automatic cleaning
-    else if (patterns=="auto") {
-        # General regex pattern
-        PATTERN <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
-        patterns <- .detect_taxa_artifacts(x, PATTERN, invert=TRUE)
-        # No artifacts found
-        if (patterns=="") {
-            warning("No artifacts found in the Taxonomy data.",
-                    call. = FALSE)
-        # Clean from artifacts
+    # No cleaning if NULL
+    if (!is.null(patterns)) {
+        # Automatic cleaning
+        if (patterns=="auto") {
+            # General regex pattern that corresponds to taxonomy namings
+            PATTERN <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
+            patterns <- .detect_taxa_artifacts(x, PATTERN, invert=TRUE)
+            # Clean from artifacts if found
+            if (patterns!="") {
+                x <- .clean_from_artifacts(x, patterns)
+            }
+        # Clean with the character or regex provided
         } else {
-            x <- .clean_from_artifacts(x, patterns)
-            warning("The following artifacts: '", patterns, "' were cleaned from 
-                    the Taxonomy data.",
-                    call. = FALSE)
-        }
-    # Clean with the character or regex provided
-    } else {
-        pattern <- .detect_taxa_artifacts(x, patterns=patterns)
-        # patterns provided not found
-        if (pattern=="") {
-            warning("The '", patterns, "' provided at 'cleanTaxaPattern' were
-                    not found in the Taxonomy data.",
-                    call. = FALSE)
-        # patterns found and cleaned
-        } else {
-            x <- .clean_from_artifacts(x, pattern)
-            # warn what was cleaned
-            warning("The following artifacts: '", pattern, "' were cleaned from 
-                    the Taxonomy data.",
-                    call. = FALSE)
+            pattern <- .detect_taxa_artifacts(x, patterns=patterns)
+            # patterns provided not found
+            if (pattern=="") {
+                warning("The '", patterns, "' provided at 'clean.taxa.names' were
+                    not found in rowData.",
+                        call. = FALSE)
+                # patterns found and cleaned
+            } else {
+                x <- .clean_from_artifacts(x, pattern)
+            }
         }
     }
+    
     return(x)
 }
 
@@ -316,5 +302,8 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
     } else if (is(x, "data.frame")) {
         x <- apply(x, 2, gsub, pattern = patterns, replacement = "")
     }
+    # warn what was cleaned
+    warning("The following artifacts: '", patterns, "' were cleaned from 
+                    rowData.", call. = FALSE)
     return(x)
 }

@@ -12,7 +12,7 @@ makeTreeSEFromBiom(
   obj,
   removeTaxaPrefixes = FALSE,
   rankFromPrefix = FALSE,
-  cleanTaxaPattern = "auto",
+  clean.taxa.names = "auto",
   ...
 )
 
@@ -32,11 +32,11 @@ taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})}
 taxonomic ranks on feature table, should they be scraped from prefixes?
 (default \code{rankFromPrefix = FALSE})}
 
-\item{cleanTaxaPattern}{\code{character} or \code{regex}: If file have
+\item{clean.taxa.names}{\code{character} or \code{regex}: If file have
 some taxonomic character naming artifacts to be removed. Additionally
-when \code{cleanTaxaPattern = "auto"} automatically artifacts are detected
-and removed. Otherwise \code{cleanTaxaPattern = NULL} no cleaning is performed.
-(default \code{cleanTaxaPattern = "auto"})}
+when \code{clean.taxa.names = "auto"} automatically artifacts are detected
+and removed. Otherwise \code{clean.taxa.names = NULL} no cleaning is performed.
+(default \code{clean.taxa.names = "auto"})}
 }
 \value{
 An object of class
@@ -64,13 +64,13 @@ if(requireNamespace("biomformat")) {
   tse
   
   # Cleaning artifacts from Taxonomy data
-  biom_object <- biomformat::read_biom(
-      system.file("extdata/testdata/Aggregated_humanization2.biom",
-                  package="mia"))
+  f <- system.file("extdata/testdata/Aggregated_humanization2.biom",
+                  package="mia")
+  biom_object <- biomformat::read_biom(f)
   tse <- makeTreeSEFromBiom(biom_object,
                             removeTaxaPrefixes=TRUE,
                             rankFromPrefix=TRUE,
-                            cleanTaxaPattern = "auto")
+                            clean.taxa.names = "auto")
   tse
 }
 }
