@@ -24,12 +24,12 @@ test_that("diversity estimates", {
     ginisimpson <- 1 - lambda
     invsimpson <- 1 / lambda
 
-    expect_equal(lambda, .simpson_lambda(assays(tse_idx)$relabundance))
-    expect_equal(ginisimpson, colData(tse_idx)$gini_simpson)
-    expect_equal(ginisimpson, .calc_gini_simpson(assays(tse_idx)$relabundance))
+    expect_equal(lambda, unname(.simpson_lambda(assays(tse_idx)$relabundance)))
+    expect_equal(ginisimpson, unname(colData(tse_idx)$gini_simpson))
+    expect_equal(ginisimpson, unname(.calc_gini_simpson(assays(tse_idx)$relabundance)))
 
-    expect_equal(invsimpson, colData(tse_idx)$inverse_simpson)
-    expect_equal(invsimpson, .calc_inverse_simpson(assays(tse_idx)$relabundance))
+    expect_equal(invsimpson, unname(colData(tse_idx)$inverse_simpson))
+    expect_equal(invsimpson, unname(.calc_inverse_simpson(assays(tse_idx)$relabundance)))
 
     cd <- colData(tse_idx)
     expect_equal(unname(round(cd$shannon, 5)), c(2.24937, 2.76239, 2.03249))
@@ -63,8 +63,8 @@ test_that("diversity estimates", {
         table(cut(x, cutpoints))
         }))
     
-    expect_equal(test1, test2)
-    expect_equal(round(test1, 6), c(7.256706, 6.098354, 7.278894))
+    expect_equal(unname(test1), unname(test2))
+    expect_equal(unname(round(test1, 6)), c(7.256706, 6.098354, 7.278894))
 
     # Tests faith index with esophagus data
     for( i in c(1:(length(colnames(tse_idx)))) ){
