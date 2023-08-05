@@ -168,7 +168,7 @@ setGeneric("mergeSamples",
     if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
         f <- factor(as.character(rowData(x)[, f]))
     }
-    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(i))){
+    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
         f <- factor(as.character(colData(x)[, f]))
     } else 
     {
@@ -224,7 +224,7 @@ setGeneric("mergeSamples",
     if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
         f <- factor(as.character(rowData(x)[, f]))
     }
-    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(i))){
+    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
         f <- factor(as.character(colData(x)[, f]))
     } else 
     {
