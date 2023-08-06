@@ -193,7 +193,6 @@ returned as attributes as well.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dpcoa</span> <span class="op">&lt;-</span> <span class="fu">calculateDPCoA</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>useNames = NA is deprecated. Instead, specify either useNames = TRUE or useNames = TRUE.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dpcoa</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]         [,2]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> B -0.05368615 -0.046589779</span>
@@ -201,7 +200,6 @@ returned as attributes as well.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D  0.10011870 -0.003144932</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">runDPCoA</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>useNames = NA is deprecated. Instead, specify either useNames = TRUE or useNames = TRUE.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of length 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> names(1): DPCoA</span>

@@ -63,6 +63,7 @@ TreeSummarizedExperiment"><!-- mathjax --><script src="https://cdnjs.cloudflare.
 <span>  <span class="va">obj</span>,</span>
 <span>  removeTaxaPrefixes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  rankFromPrefix <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  clean.taxa.names <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -93,6 +94,14 @@ taxonomic prefixes be removed? (default <code>removeTaxaPrefixes = FALSE</code>)
 taxonomic ranks on feature table, should they be scraped from prefixes?
 (default <code>rankFromPrefix = FALSE</code>)</p></dd>
 
+
+<dt>clean.taxa.names</dt>
+<dd><p><code>character</code> or <code>regex</code>: If file have
+some taxonomic character naming artifacts to be removed. Additionally
+when <code>clean.taxa.names = "auto"</code> automatically artifacts are detected
+and removed. Otherwise <code>clean.taxa.names = NULL</code> no cleaning is performed.
+(default <code>clean.taxa.names = "auto"</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -118,24 +127,36 @@ taxonomic ranks on feature table, should they be scraped from prefixes?
 <span class="r-in"><span>  <span class="co"># load from file</span></span></span>
 <span class="r-in"><span>  <span class="va">rich_dense_file</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"rich_dense_otu_table.biom"</span>,</span></span>
 <span class="r-in"><span>                                 package <span class="op">=</span> <span class="st">"biomformat"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">loadFromBiom</span><span class="op">(</span><span class="va">rich_dense_file</span>, removeTaxaPrefixes <span class="op">=</span> <span class="cn">TRUE</span>, rankFromPrefix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">loadFromBiom</span><span class="op">(</span><span class="va">rich_dense_file</span>, removeTaxaPrefixes <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                    rankFromPrefix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                    </span></span>
 <span class="r-in"><span>  <span class="co"># load from object</span></span></span>
 <span class="r-in"><span>  <span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu">biomformat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomformat/man/read_biom.html" class="external-link">read_biom</a></span><span class="op">(</span><span class="va">rich_dense_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">makeTreeSEFromBiom</span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="co"># Convert SE to TreeSE</span></span></span>
 <span class="r-in"><span>  <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">tse</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span>  <span class="co"># Cleaning artifacts from Taxonomy data</span></span></span>
+<span class="r-in"><span>  <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/testdata/Aggregated_humanization2.biom"</span>,</span></span>
+<span class="r-in"><span>                  package<span class="op">=</span><span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">biom_object</span> <span class="op">&lt;-</span> <span class="fu">biomformat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomformat/man/read_biom.html" class="external-link">read_biom</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">makeTreeSEFromBiom</span><span class="op">(</span><span class="va">biom_object</span>,</span></span>
+<span class="r-in"><span>                            removeTaxaPrefixes<span class="op">=</span><span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                            rankFromPrefix<span class="op">=</span><span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                            clean.taxa.names <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">tse</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The following artifacts: '"' were cleaned from </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>                     rowData.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 6 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 151 27 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): GG_OTU_1 GG_OTU_2 GG_OTU_3 GG_OTU_4 GG_OTU_5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): taxonomy1 taxonomy2 ... taxonomy6 taxonomy7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(6): Sample1 Sample2 ... Sample5 Sample6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(4): BarcodeSequence LinkerPrimerSequence BODY_SITE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(151): 1726470 1726471 ... 17264756 17264757</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(6): Kingdom Phylum ... Family Genus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(27): A110 A111 ... A38 A39</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
