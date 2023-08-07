@@ -242,7 +242,7 @@ setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
 #' 
 #' @export
 setGeneric("countDominantTaxa",signature = c("x"),
-           function(x, group = NULL, name = "dominant_taxa"...)
+           function(x, group = NULL, name = "dominant_taxa", ...)
                standardGeneric("countDominantTaxa"))
 
 #' @rdname summaries
