@@ -65,7 +65,8 @@ Imports:
     dplyr,
     tibble,
     tidyr,
-    bluster
+    bluster,
+    MatrixGenerics
 Suggests:
     testthat,
     knitr,

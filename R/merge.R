@@ -103,15 +103,15 @@ setGeneric("mergeSamples",
            function(x, f, archetype = 1L, ...)
                standardGeneric("mergeSamples"))
 
-.norm_f <- function(i, f, dim_type = c("rows","columns")){
-    dim_type <- match.arg(dim_type)
+.norm_f <- function(i, f, dim.type = c("rows","columns")){
+    dim.type <- match.arg(dim.type)
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
              "meaningful factor.",
              call. = FALSE)
     }
     if(i != length(f)){
-        stop("'f' must have the same number of ",dim_type," as 'x'",
+        stop("'f' must have the same number of ",dim.type," as 'x'",
              call. = FALSE)
     }
     if(is.character(f)){
@@ -165,7 +165,15 @@ setGeneric("mergeSamples",
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
-    f <- .norm_f(nrow(x), f)
+    if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
+        f <- factor(as.character(rowData(x)[, f]))
+    }
+    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
+        f <- factor(as.character(colData(x)[, f]))
+    } else 
+    {
+        f <- .norm_f(nrow(x), f)  
+    }
     if(length(levels(f)) == nrow(x)){
         return(x)
     }
@@ -213,7 +221,15 @@ setGeneric("mergeSamples",
 #' @importFrom scuttle summarizeAssayByGroup
 .merge_cols <- function(x, f, archetype = 1L, ...){
     # input check
-    f <- .norm_f(ncol(x), f, "columns")
+    if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
+        f <- factor(as.character(rowData(x)[, f]))
+    }
+    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
+        f <- factor(as.character(colData(x)[, f]))
+    } else 
+    {
+        f <- .norm_f(ncol(x), f, "columns")  
+    }
     if(length(levels(f)) == ncol(x)){
         return(x)
     }
