@@ -93,11 +93,8 @@ test_that("perSampleDominantTaxa", {
                                            rank = "Kingdom")$dominant_taxa[1],
                          c("Bacteria"))
 
-            expect_equal(countDominantTaxa(tse, rank = "Order")$rel.freq,
-                         c(23.1, 11.5, 7.7, 7.7, 7.7, 7.7, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8))
-
-            expect_equal(countDominantTaxa(tse, rank = "Class")$rel.freq.pct,
-                         c("23%", "15%", "12%", "8%", "8%", "8%", "4%", "4%", "4%", "4%", "4%", "4%", "4%"))
+            expect_equal(countDominantTaxa(tse, rank = "Order", digits = 3)$rel.freq,
+                         c(0.231, 0.115, 0.077, 0.077, 0.077, 0.077, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038))
 
             # check sample type
             sample.type <- countDominantTaxa(tse, rank = "Class",
