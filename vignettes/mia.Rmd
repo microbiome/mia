@@ -287,14 +287,14 @@ For more details have a look at the man page, for examples
 
 ## General wrapper functions 
 
-`getAbundanceFeature` and `getAbundanceSample` are wrappers on row-wise or 
-column-wise assay data subsetting.
+Row-wise or column-wise assay data subsetting.
 
 ```{r}
-abund <- getAbundanceSample(tse, "CC1", assay.type = "counts")
-all(abund == assay(tse, "counts")[,"CC1"])
-abund <- getAbundanceFeature(tse, "522457", assay.type = "counts")
-all(abund == assay(tse, "counts")["522457",])
+# Specific taxa
+assay(tse['522457',], "counts")
+# Specific sample
+assay(tse[,'CC1'], "counts")
+
 ```
 
 ## Selecting most interesting features 

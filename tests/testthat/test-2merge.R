@@ -110,7 +110,7 @@ test_that("merge", {
     expect_equal(rowTree(tse), rowTree(merged2))
     expect_equal(rowTree(merged), rowTree(merged3))
     expect_equal(merged4, merged5)
-    expect_equal(mergeRows(tse, f=rowData(tse)$group2), mergeFeatures(tse, f=rowData(tse)$group2))
+    expect_equal(mergeFeatures(tse, f=rowData(tse)$group2), mergeFeatures(tse, f=rowData(tse)$group2))
     
     # Both datasets have group variable
     merged <- mergeFeatures(tse, f = rowData(tse)$group, mergeTree = TRUE)
