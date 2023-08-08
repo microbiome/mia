@@ -49,9 +49,9 @@ getUniqueFeatures(x, ...)
 
 \S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
 
-countDominantTaxa(x, group = NULL, ...)
+countDominantTaxa(x, group = NULL, name = "dominant_taxa", ...)
 
-\S4method{countDominantTaxa}{SummarizedExperiment}(x, group = NULL, ...)
+\S4method{countDominantTaxa}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
 
 countDominantFeatures(x, ...)
 
