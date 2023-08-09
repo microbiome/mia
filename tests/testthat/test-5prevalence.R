@@ -156,7 +156,7 @@ test_that("getRareTaxa", {
     for( rank in ranks ){
 
         # Agglomerates data by rank
-        se <- agglomerateByRank(GlobalPatterns, rank = rank)
+        se <- mergeFeaturesByRank(GlobalPatterns, rank = rank)
 
         # Gets rownames for all the taxa
         all_taxa <- rownames(se)
@@ -355,7 +355,7 @@ test_that("mergeFeaturesByPrevalence", {
                                            prevalence = 50/100,
                                            as_relative = TRUE,
                                            other_label = "test"),
-                 agglomerateByPrevalence(GlobalPatterns,
+                 mergeFeaturesByPrevalence(GlobalPatterns,
                                            rank = NULL,
                                            detection = 0.0001,
                                            prevalence = 50/100,

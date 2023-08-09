@@ -55,7 +55,7 @@ test_that("agglomerate", {
     actual1 <- mergeFeaturesByRank(xtse,"Family")
     actual2 <- .merge_features(xtse, merge.by = "Family")
     expect_equal(actual1, actual2)
-    expect_equal(agglomerateByRank(xtse,"Family"), mergeFeaturesByRank(xtse,"Family"))
+    expect_equal(mergeFeaturesByRank(xtse,"Family"), mergeFeaturesByRank(xtse,"Family"))
 
     # Only one rank available in the object -
     # the same dimensionality is retained
