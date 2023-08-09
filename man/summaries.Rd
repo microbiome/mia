@@ -90,6 +90,8 @@ the output of \code{taxonomyRanks()}.}
 \item{group}{With group, it is possible to group the observations in an
 overview. Must be one of the column names of \code{colData}.}
 
+\item{name}{The column name for the features. The default is 'dominant_taxa'.}
+
 \item{object}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
 }
