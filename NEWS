@@ -84,3 +84,5 @@ Changes in version 1.9.x
 + *RDA & *CCA: calculate also statistical significance
 + altExp support for meltAssay
 + Deprecate mergeRows, mergeCols, agglomerateByRank, agglomerateByPrevalence
++ Removed  getAbundanceSample and getAbundanceFeature  
++ Updated test to avoid warning from deprecated functions  
