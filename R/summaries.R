@@ -232,25 +232,30 @@ setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
 #'   \code{rank} is specified for \code{countDominantTaxa}.
 #'
 #' @details
-#' \code{countDominantTaxa} returns information about most dominant
+#' \code{countDominantFeatures} returns information about most dominant
 #' taxa in a tibble. Information includes their absolute and relative
 #' abundances in whole data set.
 #'
-#' @aliases countDominantFeatures
 #'
 #' @return
-#' The \code{countDominantTaxa} returns an overview in a tibble. It contains dominant taxa
+#' The \code{countDominantFeatures} returns an overview in a tibble. It contains dominant taxa
 #' in a column named \code{*name*} and its abundance in the data set.
 #' 
 #' @export
-setGeneric("countDominantTaxa",signature = c("x"),
+setGeneric("countDominantFeatures",signature = c("x"),
            function(x, group = NULL, name = "dominant_taxa", ...)
-               standardGeneric("countDominantTaxa"))
+               standardGeneric("countDominantFeatures"))
+
+# countDominantTaxa wrapper with a deprecation warning
+countDominantTaxa <- function(x, group = NULL, name = "dominant_taxa", ...) {
+    .Deprecated(old ="countDominantTaxa", new = "countDominantFeatures", msg = "The 'countDominantTaxa' function is deprecated. Use 'countDominantFeatures' instead.")
+    return(countDominantFeatures(x,...))
+}
 
 #' @rdname summaries
-#' @aliases countDominantFeatures
+#' @aliases countDominantTaxa
 #' @export
-setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
+setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
     function(x, group = NULL, name = "dominant_taxa", ...){
         # Input check
         # group check
@@ -295,21 +300,23 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname summaries
-#' @aliases countDominantTaxa
-#' @export
-setGeneric("countDominantFeatures", signature = c("x"),
-           function(x, ...) 
-               standardGeneric("countDominantFeatures"))
 
 #' @rdname summaries
-#' @aliases countDominantTaxa
+#' @aliases countDominantFeatures
 #' @export
-setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
+setGeneric("countDominantTaxa", signature = c("x"),
+           function(x, ...)
+               standardGeneric("countDominantTaxa"))
+
+#' @rdname summaries
+#' @aliases countDominantFeatures
+#' @export
+setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
-        countDominantTaxa(x, ...)
+        countDominantFeatures(x, ...)
     }
 )
+
 
 ################################ HELP FUNCTIONS ################################
 

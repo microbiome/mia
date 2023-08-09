@@ -80,24 +80,24 @@ test_that("perSampleDominantTaxa", {
     test_perSampleDominantTaxa(GlobalPatterns)
 
 
-    test_that("countDominantTaxa", {
+    test_that("countDominantFeatures", {
 
-        test_countDominantTaxa <- function(tse){
-            expect_equal(countDominantTaxa(tse, group = "SampleType")$dominant_taxa,
+        test_countDominantFeatures <- function(tse){
+            expect_equal(countDominantFeatures(tse, group = "SampleType")$dominant_taxa,
                          c("331820", "549656", "550960", "319044", "189047",
                            "279599", "329744", "12812",  "534609", "557211",
                            "87194", "484436", "64396", "98605", "256977",
                            "36155","71074",  "114821", "360229"))
 
-            expect_equal(countDominantTaxa(tse,
+            expect_equal(countDominantFeatures(tse,
                                            rank = "Kingdom")$dominant_taxa[1],
                          c("Bacteria"))
 
-            expect_equal(countDominantTaxa(tse, rank = "Order", digits = 3)$rel.freq,
+            expect_equal(countDominantFeatures(tse, rank = "Order", digits = 3)$rel.freq,
                          c(0.231, 0.115, 0.077, 0.077, 0.077, 0.077, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038))
 
             # check sample type
-            sample.type <- countDominantTaxa(tse, rank = "Class",
+            sample.type <- countDominantFeatures(tse, rank = "Class",
                                              group = "SampleType")$SampleType
 
             expect_equal(as.character(sample.type),
@@ -110,8 +110,8 @@ test_that("perSampleDominantTaxa", {
             assay(tse1)[1, 1] <- max(assay(tse1)[, 1])
             
             # Calculate info about dominant taxa
-            count_dominant <- countDominantTaxa(tse)
-            count_dominant1 <- countDominantTaxa(tse1)
+            count_dominant <- countDominantFeatures(tse)
+            count_dominant1 <- countDominantFeatures(tse1)
             
             # count_dominant should have one additional row
             expect_equal( nrow(count_dominant1), nrow(count_dominant)+1 )
@@ -126,7 +126,7 @@ test_that("perSampleDominantTaxa", {
 
         # TSE object
         data(GlobalPatterns, package="mia")
-        test_countDominantTaxa(GlobalPatterns)
+        test_countDominantFeatures(GlobalPatterns)
 
     })
 })

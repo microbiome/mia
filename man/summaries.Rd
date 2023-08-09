@@ -10,10 +10,10 @@
 \alias{getUniqueFeatures}
 \alias{getUniqueTaxa,SummarizedExperiment-method}
 \alias{getUniqueFeatures,SummarizedExperiment-method}
-\alias{countDominantTaxa}
 \alias{countDominantFeatures}
-\alias{countDominantTaxa,SummarizedExperiment-method}
 \alias{countDominantFeatures,SummarizedExperiment-method}
+\alias{countDominantTaxa}
+\alias{countDominantTaxa,SummarizedExperiment-method}
 \alias{summary,SummarizedExperiment-method}
 \title{Summarizing microbiome data}
 \usage{
@@ -49,13 +49,13 @@ getUniqueFeatures(x, ...)
 
 \S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
 
-countDominantTaxa(x, group = NULL, name = "dominant_taxa", ...)
+countDominantFeatures(x, group = NULL, name = "dominant_taxa", ...)
 
-\S4method{countDominantTaxa}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
+\S4method{countDominantFeatures}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
 
-countDominantFeatures(x, ...)
+countDominantTaxa(x, ...)
 
-\S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
+\S4method{countDominantTaxa}{SummarizedExperiment}(x, ...)
 
 \S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
@@ -102,7 +102,7 @@ The \code{getTopTaxa} returns a vector of the most \code{top} abundant
 The \code{getUniqueTaxa} returns a vector of unique taxa present at a
 particular rank
 
-The \code{countDominantTaxa} returns an overview in a tibble. It contains dominant taxa
+The \code{countDominantFeatures} returns an overview in a tibble. It contains dominant taxa
 in a column named \code{*name*} and its abundance in the data set.
 
 The \code{summary} returns a list with two \code{tibble}s
@@ -119,7 +119,7 @@ object.
 The \code{getUniqueTaxa} is a basic function to access different taxa at a
 particular taxonomic rank.
 
-\code{countDominantTaxa} returns information about most dominant
+\code{countDominantFeatures} returns information about most dominant
 taxa in a tibble. Information includes their absolute and relative
 abundances in whole data set.
 
