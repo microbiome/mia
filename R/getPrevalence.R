@@ -9,7 +9,7 @@
 #'
 #' @param detection Detection threshold for absence/presence. Either an
 #'   absolute value compared directly to the values of \code{x} or a relative
-#'   value between 0 and 1, if \code{as_relative = TRUE}.
+#'   value between 0 and 1, if \code{as_relative = FALSE}.
 #'
 #' @param include_lowest logical scalar: Should the lower boundary of the
 #'   detection and prevalence cutoffs be included? (default: \code{FALSE})
@@ -18,7 +18,7 @@
 #'   (default: \code{FALSE})
 #'
 #' @param as_relative logical scalar: Should the detection threshold be applied
-#'   on compositional (relative) abundances? (default: \code{TRUE})
+#'   on compositional (relative) abundances? (default: \code{FALSE})
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -54,7 +54,7 @@
 #' prevalence is calculated for the selected taxonomic rank, otherwise for the
 #' rows. The absolute population prevalence can be obtained by multiplying the
 #' prevalence by the number of samples (\code{ncol(x)}). If \code{as_relative =
-#' TRUE} the relative frequency (between 0 and 1) is used to check against the
+#' FALSE} the relative frequency (between 0 and 1) is used to check against the
 #' \code{detection} threshold.
 #'
 #' The core abundance index from \code{getPrevalentAbundance} gives the relative
@@ -244,7 +244,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-             as_relative = TRUE, rank = NULL, ...){
+             as_relative = FALSE, rank = NULL, ...){
         # input check
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
