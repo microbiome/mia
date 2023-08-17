@@ -20,35 +20,35 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param na.rm For \code{getTopTaxa} logical argument for calculation method 
+#' @param na.rm For \code{getTopFeatures} logical argument for calculation method 
 #'              specified to argument \code{method}. Default is TRUE. 
 #'
 #' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{
 #'        \item{\code{sort}}{A single boolean value for selecting 
 #'        whether to sort taxa in alphabetical order or not. Enabled in functions
-#'        \code{getUniqueTaxa}, and \code{getTopTaxa}.
+#'        \code{getUniqueFeatures}, and \code{getTopFeatures}.
 #'        (By default: \code{sort = FALSE})}
 #'        \item{\code{na.rm}}{A single boolean value for selecting 
 #'        whether to remove missing values or not. Enabled in functions
-#'        \code{getUniqueTaxa}, and \code{getTopTaxa}.
+#'        \code{getUniqueFeatures}, and \code{getTopFeatures}.
 #'        (By default: \code{na.rm = FALSE})}
 #'    }
 #'    
 #' @details
-#' The \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
+#' The \code{getTopFeatures} extracts the most \code{top} abundant \dQuote{FeatureID}s
 #' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #'
-#' The \code{getUniqueTaxa} is a basic function to access different taxa at a
+#' The \code{getUniqueFeatures} is a basic function to access different taxa at a
 #' particular taxonomic rank.
 #'
 #' @return
-#' The \code{getTopTaxa} returns a vector of the most \code{top} abundant
+#' The \code{getTopFeatures} returns a vector of the most \code{top} abundant
 #' \dQuote{FeatureID}s
 #'
 #' @seealso
-#' \code{\link[=getPrevalence]{getPrevalentTaxa}}
+#' \code{\link[=getPrevalence]{getPrevalentFeatures}}
 #'
 #' @name summaries
 #'
@@ -57,14 +57,14 @@
 #'
 #' @examples
 #' data(GlobalPatterns)
-#' top_taxa <- getTopTaxa(GlobalPatterns,
+#' top_taxa <- getTopFeatures(GlobalPatterns,
 #'                        method = "mean",
 #'                        top = 5,
 #'                        assay.type = "counts")
 #' top_taxa
 #' 
 #' # Use 'detection' to select detection threshold when using prevalence method
-#' top_taxa <- getTopTaxa(GlobalPatterns,
+#' top_taxa <- getTopFeatures(GlobalPatterns,
 #'                        method = "prevalence",
 #'                        top = 5,
 #'                        assay_name = "counts",
@@ -72,18 +72,18 @@
 #' top_taxa
 #'                        
 #' # Top taxa os specific rank
-#' getTopTaxa(agglomerateByRank(GlobalPatterns,
+#' getTopFeatures(agglomerateByRank(GlobalPatterns,
 #'                              rank = "Genus",
 #'                              na.rm = TRUE))
 #'
 #' # Gets the overview of dominant taxa
-#' dominant_taxa <- countDominantTaxa(GlobalPatterns,
+#' dominant_taxa <- countDominantFeatures(GlobalPatterns,
 #'                                    rank = "Genus")
 #' dominant_taxa
 #'
 #' # With group, it is possible to group observations based on specified groups
 #' # Gets the overview of dominant taxa
-#' dominant_taxa <- countDominantTaxa(GlobalPatterns,
+#' dominant_taxa <- countDominantFeatures(GlobalPatterns,
 #'                                    rank = "Genus",
 #'                                    group = "SampleType",
 #'                                    na.rm = TRUE)
@@ -96,19 +96,19 @@
 #' # Get unique taxa at a particular taxonomic rank
 #' # sort = TRUE means that output is sorted in alphabetical order
 #' # With na.rm = TRUE, it is possible to remove NAs
-#' # sort and na.rm can also be used in function getTopTaxa
-#' getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE)
+#' # sort and na.rm can also be used in function getTopFeatures
+#' getUniqueFeatures(GlobalPatterns, "Phylum", sort = TRUE)
 #'
 NULL
 
 #' @rdname summaries
-#' @aliases getTopFeatures
+#' @aliases getTopTaxa
 #' @export
-setGeneric("getTopTaxa", signature = "x",
+setGeneric("getTopFeatures", signature = "x",
            function(x, top= 5L, method = c("mean","sum","median"),
                     assay.type = assay_name, assay_name = "counts", 
                     na.rm = TRUE, ...)
-               standardGeneric("getTopTaxa"))
+               standardGeneric("getTopFeatures"))
 
 .check_max_taxa <- function(x, top, assay.type){
     if(!is.numeric(top) || as.integer(top) != top){
@@ -124,10 +124,10 @@ setGeneric("getTopTaxa", signature = "x",
 #' @importFrom DelayedMatrixStats rowSums2 rowMeans2 rowMedians
 #' @importFrom utils head
 #' 
-#' @aliases getTopFeatures
+#' @aliases getTopTaxa
 #'
 #' @export
-setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
+setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
     function(x, top = 5L, method = c("mean","sum","median","prevalence"),
              assay.type = assay_name, assay_name = "counts", 
              na.rm = TRUE, ...){
@@ -159,18 +159,19 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname summaries
-#' @aliases getTopTaxa
+#' @aliases getTopFeatures
 #' @export
-setGeneric("getTopFeatures", signature = c("x"),
+setGeneric("getTopTaxa", signature = c("x"),
            function(x, ...) 
-               standardGeneric("getTopFeatures"))
+               standardGeneric("getTopTaxa"))
 
 #' @rdname summaries
-#' @aliases getTopTaxa
+#' @aliases getTopFeatures
 #' @export
-setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
-        getTopTaxa(x, ...)
+        .Deprecated(old ="getTopTaxa", new = "getTopFeatures", msg = "The 'getTopTaxa' function is deprecated. Use 'getTopFeatures' instead.")
+        getTopFeatures(x, ...)
     }
 )
 
@@ -180,21 +181,21 @@ setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
 #' the output of \code{taxonomyRanks()}.
 #'
 #' @return
-#' The \code{getUniqueTaxa} returns a vector of unique taxa present at a
+#' The \code{getUniqueFeatures} returns a vector of unique taxa present at a
 #' particular rank
 #' 
-#' @aliases getUniqueFeatures
+#' @aliases getUniqueTaxa
 #' 
 #' @export
-setGeneric("getUniqueTaxa",
+setGeneric("getUniqueFeatures",
            signature = c("x"),
            function(x, ...)
-               standardGeneric("getUniqueTaxa"))
+               standardGeneric("getUniqueFeatures"))
 
 #' @rdname summaries
-#' @aliases getUniqueFeatures
+#' @aliases getUniqueTaxa
 #' @export
-setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
+setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
         .check_taxonomic_rank(rank, x)
         names <- unique(rowData(x)[,rank])
@@ -205,18 +206,18 @@ setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname summaries
-#' @aliases getUniqueTaxa
+#' @aliases getUniqueFeatures
 #' @export
-setGeneric("getUniqueFeatures", signature = c("x"),
+setGeneric("getUniqueTaxa", signature = c("x"),
            function(x, ...) 
-               standardGeneric("getUniqueFeatures"))
+               standardGeneric("getUniqueTaxa"))
 
 #' @rdname summaries
-#' @aliases getUniqueTaxa
+#' @aliases getUniqueFeatures
 #' @export
-setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
-        getUniqueTaxa(x, ...)
+        getUniqueFeatures(x, ...)
     }
 )
 
@@ -246,11 +247,6 @@ setGeneric("countDominantFeatures",signature = c("x"),
            function(x, group = NULL, name = "dominant_taxa", ...)
                standardGeneric("countDominantFeatures"))
 
-# countDominantTaxa wrapper with a deprecation warning
-countDominantTaxa <- function(x, group = NULL, name = "dominant_taxa", ...) {
-    .Deprecated(old ="countDominantTaxa", new = "countDominantFeatures", msg = "The 'countDominantTaxa' function is deprecated. Use 'countDominantFeatures' instead.")
-    return(countDominantFeatures(x,...))
-}
 
 #' @rdname summaries
 #' @aliases countDominantTaxa
@@ -313,6 +309,7 @@ setGeneric("countDominantTaxa", signature = c("x"),
 #' @export
 setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
+        .Deprecated(old ="countDominantTaxa", new = "countDominantFeatures", msg = "The 'countDominantTaxa' function is deprecated. Use 'countDominantFeatures' instead.")
         countDominantFeatures(x, ...)
     }
 )
