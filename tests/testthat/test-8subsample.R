@@ -32,7 +32,7 @@ test_that("subsampleCounts", {
     
     # check if all samples subsampled to even depth
     expColSums <- rep(60000, 25)
-    expect_equal(colSums2(assay(tse.subsampled, "subsampled")), expColSums)
+    expect_equal(unname(colSums2(assay(tse.subsampled, "subsampled"))), expColSums)
     
     # When replace = FALSE
     expect_warning(tse.subsampled.rp <- subsampleCounts(GlobalPatterns, 
@@ -48,7 +48,7 @@ test_that("subsampleCounts", {
     
     # check if all samples subsampled to even depth
     expColSumsRp <- rep(60000, 25)
-    expect_equal(colSums2(assay(tse.subsampled.rp, "subsampled")), expColSumsRp)
+    expect_equal(unname(colSums2(assay(tse.subsampled.rp, "subsampled"))), expColSumsRp)
     
     # check if same Features removed
     obsFeaturesRemovedRp <- rownames(GlobalPatterns)[!rownames(GlobalPatterns) %in% rownames(tse.subsampled.rp)]
