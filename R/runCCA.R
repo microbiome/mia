@@ -165,11 +165,15 @@ setGeneric("runRDA", signature = c("x"),
 }
 
 #' @importFrom stats as.formula
-.calculate_cca <- function(x, formula, variables, scale = TRUE, ...){
+.calculate_cca <- function(x, formula, variables, scale = TRUE, site.scores = "wa", ...){
     .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(is.character(site.scores) && length(site.scores) == 1 && site.scores %in% c("wa", "u")) ){
+        stop("'site.scores' must be 'wa' (weighted average) or 'u' (linear combination).",
+             call. = FALSE)
     }
     #
     x <- as.matrix(t(x))
@@ -189,7 +193,7 @@ setGeneric("runRDA", signature = c("x"),
         cca <- vegan::cca(X = x, scale = scale, ...)
         X <- cca$CA
     }
-    ans <- X$u
+    ans <- X[[site.scores]]
     attr(ans, "rotation") <- X$v
     attr(ans, "eigen") <- X$eig
     attr(ans, "cca") <- cca
@@ -322,7 +326,7 @@ setMethod("runCCA", "SingleCellExperiment",
     if( is.null(X) ){
         X <- rda$CA
     }
-    ans <- X$u
+    ans <- X[[site.scores]]
     attr(ans, "rotation") <- X$v
     attr(ans, "eigen") <- X$eig
     attr(ans, "rda") <- rda
