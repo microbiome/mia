@@ -82,7 +82,7 @@ will be disabled.)}
 specified to argument \code{method}. Default is TRUE.}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
-\code{rank} is specified for \code{countDominantTaxa}.}
+\code{rank} is specified for \code{countDominantFeatures}.}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomyRanks()}.}

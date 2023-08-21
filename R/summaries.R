@@ -230,7 +230,7 @@ setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
 #' @param name The column name for the features. The default is 'dominant_taxa'.
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
-#'   \code{rank} is specified for \code{countDominantTaxa}.
+#'   \code{rank} is specified for \code{countDominantFeatures}.
 #'
 #' @details
 #' \code{countDominantFeatures} returns information about most dominant
