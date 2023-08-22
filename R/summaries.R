@@ -263,8 +263,8 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
         }
         # name check
         if(!is.null(name)) {
-          if(is.character(name)==F) {
-            stop("'name' must be a character value", call. = F)
+          if(is.character(name)==FALSE) {
+            stop("'name' must be a character value", call. = FALSE)
           }
         }
         
