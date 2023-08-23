@@ -252,7 +252,7 @@ setGeneric("countDominantFeatures",signature = c("x"),
 #' @aliases countDominantTaxa
 #' @export
 setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
-    function(x, group = NULL, name = "dominant_taxa", ...){
+    function(x, group = NULL, name = "dominant.taxa", ...){
         # Input check
         # group check
         if(!is.null(group)){
@@ -262,15 +262,10 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
             }
         }
         # name check
-        if(!is.null(name)) {
-          if(is.character(name)==FALSE) {
-            stop("'name' must be a character value", call. = FALSE)
-          }
+        if(!.is_non_empty_string(name)){
+            stop("'name' must be a non-empty single character value.",
+                 call. = FALSE)
         }
-        
-        # digits for rounding
-        args <- list(...)
-        digits <- args$digits
         
         # Adds dominant taxa to colData
         dominant_taxa <- perSampleDominantTaxa(x, ...)
@@ -289,10 +284,12 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
             data <- data[rep(seq_len(nrow(data)), lengths(dominant_taxa_list)), ]
         }
         # Add dominant taxa to data
-        colname <- "dominant_taxa"
+        colname <- "dominant.taxa"
         data[[colname]] <- dominant_taxa
         # Gets an overview
-        .tally_col_data(data, group, digits, colname, name)
+        tab <- .tally_col_data(data, group, colname, ...)
+        colnames(tab)[colnames(tab) == colname] <- name
+        return(tab)
     }
 )
 
@@ -319,7 +316,7 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom S4Vectors as.data.frame
 #' @importFrom dplyr n desc tally group_by arrange mutate
-.tally_col_data <- function(data, group, digits, colname, name){
+.tally_col_data <- function(data, group, colname, digits = NULL, ...){
     # Convert data to data.frame
     data <- as.data.frame(data)
     
@@ -340,6 +337,13 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
     # is present in samples and relative portion of samples where they
     # present.
     
+    # digits check
+    if(!is.null(digits)){
+        if(!is.numeric(digits)) {
+            stop("'digits' must be numeric", call. = FALSE)
+        } 
+    }
+    
     if (is.null(group)) {
         colname <- sym(colname)
         data <- data %>%
@@ -359,7 +363,6 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
     if(!is.null(digits)) {
       tallied_data["rel.freq"] <- round(tallied_data["rel.freq"], digits) 
     }
-    colnames(tallied_data)[colnames(tallied_data) == colname] <- name
     return(tallied_data)
 }
 
