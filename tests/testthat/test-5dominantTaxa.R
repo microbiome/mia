@@ -93,7 +93,7 @@ test_that("perSampleDominantFeatures", {
                                            rank = "Kingdom")$dominant_taxa[1],
                          c("Bacteria"))
 
-            expect_equal(countDominantFeatures(tse, rank = "Order", digits = 3)$rel.freq,
+            expect_equal(countDominantFeatures(tse, rank = "Order", digits = 3)$rel_freq,
                          c(0.231, 0.115, 0.077, 0.077, 0.077, 0.077, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038))
 
             # check sample type

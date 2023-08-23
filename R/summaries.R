@@ -252,7 +252,7 @@ setGeneric("countDominantFeatures",signature = c("x"),
 #' @aliases countDominantTaxa
 #' @export
 setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
-    function(x, group = NULL, name = "dominant.taxa", ...){
+    function(x, group = NULL, name = "dominant_taxa", ...){
         # Input check
         # group check
         if(!is.null(group)){
@@ -284,7 +284,7 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
             data <- data[rep(seq_len(nrow(data)), lengths(dominant_taxa_list)), ]
         }
         # Add dominant taxa to data
-        colname <- "dominant.taxa"
+        colname <- "dominant_taxa"
         data[[colname]] <- dominant_taxa
         # Gets an overview
         tab <- .tally_col_data(data, group, colname, ...)
@@ -357,11 +357,11 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
     tallied_data <- data %>%
         tally() %>%
         mutate(
-            rel.freq = n / sum(n)
+            rel_freq = n / sum(n)
         ) %>%
         arrange(desc(n))
     if(!is.null(digits)) {
-      tallied_data["rel.freq"] <- round(tallied_data["rel.freq"], digits) 
+        tallied_data["rel_freq"] <- round(tallied_data["rel_freq"], digits) 
     }
     return(tallied_data)
 }
