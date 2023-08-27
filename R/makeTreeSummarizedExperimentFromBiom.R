@@ -125,22 +125,13 @@ makeTreeSEFromBiom <- function(
         rownames(feature_data) <- rownames(counts)
     # Otherwise convert it into correct format if it is a list
     } else if( is(feature_data, "list") ){
-        # Clean feature_data from possible character artifacts
-        feature_data <- .detect_taxa_artifacts_and_clean(feature_data,
-                                                         clean.taxa.names)
-        # Taxonomy rank names
-        if (is.null(names(feature_data))) {
-            # Assign temporary ones if they do not exist 
-            colnames <- paste0("taxonomy", seq_along(feature_data))
-        } else {
-            # Get them if they exist
-            colnames <- names(feature_data)
-        }
-
         # Feature data is a list of taxa info
         # Get the maximum length of list
         max_length <- max( lengths(feature_data) )
-        
+        # Get the column names from the taxa info that has all the levels that occurs
+        # in the data
+        colnames <- names( head(
+            feature_data[ lengths(feature_data) == max_length ], 1)[[1]])
         # Convert the list so that all individual taxa info have the max length
         # of the list objects. All vectors are appended with NAs, if they do not
         # have all the levels. E.g., if only Kingdom level is found, all lower
@@ -151,16 +142,13 @@ makeTreeSEFromBiom <- function(
         })
         # Create a data.frame from the list
         feature_data <- do.call(rbind, feature_data)
-        # Transposing feature_data and make it DFrame object
-        feature_data <- DataFrame(t(feature_data))
+        # Transposing feature_data and make it df object
+        feature_data <- as.data.frame(feature_data)
         # Add correct colnames
         colnames(feature_data) <- colnames
-    # Otherwise if it is already a data.frame clean from artifacts
-    } else if (is(feature_data, "data.frame")) {
-        # Clean feature_data from possible character artifacts
-        feature_data <- DataFrame(.detect_taxa_artifacts_and_clean(feature_data,
-                                                         clean.taxa.names))
     }
+    # Clean feature_data from possible character artifacts
+    feature_data <- .detect_taxa_artifacts_and_clean(feature_data, clean.taxa.names)
     
     # Replace taxonomy ranks with ranks found based on prefixes
     if( rankFromPrefix && all(
@@ -245,7 +233,6 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 
 # Detect and clean non wanted characters from Taxonomy data if needed.
 .detect_taxa_artifacts_and_clean <- function(x, patterns) {
-    
     # No cleaning if NULL
     if (!is.null(patterns)) {
         # Automatic cleaning
@@ -271,7 +258,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
             }
         }
     }
-    
+    x <- as.data.frame(x)
     return(x)
 }
 
@@ -280,28 +267,16 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         x,
         patterns,
         invert=FALSE) {
-    if (is(x, "list")) {
-        patterns <- lapply(x, function(x_sub) {
-            grep(patterns,
-                 x_sub[[1]] %>% stringr::str_split("") %>% unlist(),
-                 invert = invert, value = TRUE) %>% unique()
-        }) %>% unlist() %>% unique() %>% paste0(collapse = "")
-    } else if (is(x, "data.frame")){
-        patterns <- apply(x, 2, function(x_sub) {
-            grep(patterns,
-                 x_sub %>% stringr::str_split("") %>% unlist(),
-                 invert = invert, value = TRUE) %>% unique()
-        }) %>% unlist() %>% unique() %>% paste0(collapse = "")
-    }
+    patterns <- apply(x, 2, function(x_sub) {
+        grep(patterns,
+             x_sub %>% stringr::str_split("") %>% unlist(),
+             invert = invert, value = TRUE) %>% unique()
+    }) %>% unlist() %>% unique() %>% paste0(collapse = "")
     return(patterns)
 }
 
 .clean_from_artifacts <- function(x, patterns) {
-    if (is(x, "list")) {
-        x <- lapply(x, gsub, pattern = patterns, replacement = "")
-    } else if (is(x, "data.frame")) {
-        x <- apply(x, 2, gsub, pattern = patterns, replacement = "")
-    }
+    x <- apply(x, 2, gsub, pattern = patterns, replacement = "")
     # warn what was cleaned
     warning("The following artifacts: '", patterns, "' were cleaned from 
                     rowData.", call. = FALSE)
