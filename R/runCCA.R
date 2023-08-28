@@ -171,8 +171,8 @@ setGeneric("runRDA", signature = c("x"),
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( !(is.character(site.scores) && length(site.scores) == 1 && site.scores %in% c("wa", "u")) ){
-        stop("'site.scores' must be 'wa' (weighted average) or 'u' (linear combination).",
+    if( !(is.character(site.scores) && length(site.scores) == 1 && site.scores %in% c("wa", "u", "v")) ){
+        stop("'site.scores' must be 'wa', 'u', or 'v'.",
              call. = FALSE)
     }
     #
@@ -193,6 +193,7 @@ setGeneric("runRDA", signature = c("x"),
         cca <- vegan::cca(X = x, scale = scale, ...)
         X <- cca$CA
     }
+    # Create the matrix to be returned
     ans <- X[[site.scores]]
     attr(ans, "rotation") <- X$v
     attr(ans, "eigen") <- X$eig
@@ -293,8 +294,13 @@ setMethod("runCCA", "SingleCellExperiment",
     }
 )
 
-.calculate_rda <- function(x, formula, variables, ...){
+#' @importFrom vegan sppscores
+.calculate_rda <- function(x, formula, variables, site.scores = "wa", ...){
     .require_package("vegan")
+    if( !(is.character(site.scores) && length(site.scores) == 1 && site.scores %in% c("wa", "u", "v")) ){
+        stop("'site.scores' must be 'wa', 'u', or 'v'.",
+             call. = FALSE)
+    }
     #
     # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))
@@ -326,6 +332,9 @@ setMethod("runCCA", "SingleCellExperiment",
     if( is.null(X) ){
         X <- rda$CA
     }
+    # Add species scores since they are missing from dbrda object (in cca they are included)
+    sppscores(rda) <- x
+    # Create the matrix to be returned
     ans <- X[[site.scores]]
     attr(ans, "rotation") <- X$v
     attr(ans, "eigen") <- X$eig

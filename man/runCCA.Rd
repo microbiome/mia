@@ -21,7 +21,7 @@ calculateRDA(x, ...)
 
 runRDA(x, ...)
 
-\S4method{calculateCCA}{ANY}(x, formula, variables, scale = TRUE, ...)
+\S4method{calculateCCA}{ANY}(x, formula, variables, scale = TRUE, site.scores = "wa", ...)
 
 \S4method{calculateCCA}{SummarizedExperiment}(
   x,
@@ -36,7 +36,7 @@ runRDA(x, ...)
 
 \S4method{runCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
-\S4method{calculateRDA}{ANY}(x, formula, variables, ...)
+\S4method{calculateRDA}{ANY}(x, formula, variables, site.scores = "wa", ...)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
