@@ -85,4 +85,5 @@ Changes in version 1.9.x
 + altExp support for meltAssay
 + Deprecate mergeRows, mergeCols, agglomerateByRank, agglomerateByPrevalence
 + Removed  getAbundanceSample and getAbundanceFeature  
-+ Updated test to avoid warning from deprecated functions  
++ Updated test to avoid warning from deprecated functions 
++ Export mergeFeaturesByRank
