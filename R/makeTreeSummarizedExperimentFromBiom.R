@@ -19,8 +19,9 @@
 #' 
 #' @param ... additional arguments 
 #'   \itemize{
-#'        \item{\code{pattern}}{\code{character} value pecifiying artifacts
-#'        to be removed. (default: \code{patterns = "[,.;?/\\\\`[\\]\":><|\\=+()\\^{}~'*&%$!@#]"})}
+#'        \item{\code{patter}}{\code{character} value specifying artifacts
+#'        to be removed. If \code{patterns = "auto"}, special characters
+#'        are removed. (default: \code{pattern = "auto"})}
 #'    }
 #' 
 #' @return An object of class
@@ -228,15 +229,27 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 }
 
 # Detect and clean non wanted characters from Taxonomy data if needed.
-.detect_taxa_artifacts_and_clean <- function(
-        x, pattern = "[,.;?/\\\\`[\\]\":><|\\=+()\\^{}~'*&%$!@#]", ...) {
+.detect_taxa_artifacts_and_clean <- function(x, pattern = "auto", ...) {
     #
+    .require_package("stringr")
     if( !.is_non_empty_character(pattern) ){
         stop("'pattern' must be a single character value.", call. = FALSE)
     }
     #
     # Remove artifacts
-    x <- apply(x, 2, gsub, pattern = pattern, replacement = "", perl = TRUE)
+    if( pattern == "auto" ){
+        # Remove all but these characters
+        pattern <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
+        x <- apply(x, 2, function(col){
+            # Take all specified characters as a matrix where each column is a character
+            temp <- stringr::str_extract_all(col, pattern = pattern, simplify = TRUE)
+            # Collapse matrix to strings
+            temp <- apply(temp, 1, paste, collapse = "")
+            return(temp)
+        })
+    } else{
+        x <- apply(x, 2, gsub, pattern = pattern, replacement = "")
+    }
     x <- as.data.frame(x)
     return(x)
 }
