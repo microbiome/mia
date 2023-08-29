@@ -231,13 +231,13 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 # Detect and clean non wanted characters from Taxonomy data if needed.
 .detect_taxa_artifacts_and_clean <- function(x, pattern = "auto", ...) {
     #
-    .require_package("stringr")
     if( !.is_non_empty_character(pattern) ){
         stop("'pattern' must be a single character value.", call. = FALSE)
     }
     #
     # Remove artifacts
     if( pattern == "auto" ){
+        .require_package("stringr")
         # Remove all but these characters
         pattern <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
         x <- apply(x, 2, function(col){
