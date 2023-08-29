@@ -248,7 +248,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
             return(temp)
         })
     } else{
-        # Remove patterns specified by user
+        # Remove pattern specified by user
         x <- apply(x, 2, gsub, pattern = pattern, replacement = "")
     }
     x <- as.data.frame(x)
