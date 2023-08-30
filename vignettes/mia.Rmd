@@ -299,11 +299,11 @@ assay(tse[,'CC1'], "counts")
 
 ## Selecting most interesting features 
 
-`getTopTaxa` returns a vector of the most `top` abundant feature IDs.
+`getTopFeatures` returns a vector of the most `top` abundant feature IDs.
 
 ```{r}
 data(esophagus, package = "mia")
-top_taxa <- getTopTaxa(esophagus,
+top_taxa <- getTopFeatures(esophagus,
                        method = "mean",
                        top = 5,
                        assay.type = "counts")
