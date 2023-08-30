@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.12</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@ object.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">perSampleDominantTaxa</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">perSampleDominantFeatures</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
@@ -66,7 +66,7 @@ object.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">perSampleDominantTaxa</span><span class="op">(</span></span>
+<span><span class="fu">perSampleDominantFeatures</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
@@ -74,20 +74,20 @@ object.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">perSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">perSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">perSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">perSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">addPerSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"dominant_taxa"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">addPerSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"dominant_taxa"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"dominant_taxa"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"dominant_taxa"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">addPerSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">addPerSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -123,17 +123,17 @@ the output of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code>.<
 
 <dt>name</dt>
 <dd><p>A name for the column of the <code>colData</code> where the dominant
-taxa will be stored in when using <code>addPerSampleDominantTaxa</code>.</p></dd>
+taxa will be stored in when using <code>addPerSampleDominantFeatures</code>.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p><code>perSampleDominantTaxa</code> returns a named character vector <code>x</code></p>
+<p><code>perSampleDominantFeatures</code> returns a named character vector <code>x</code></p>
 
 
-<p>while <code>addPerSampleDominantTaxa</code> returns
+<p>while <code>addPerSampleDominantFeatures</code> returns
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code></p>
 
 
@@ -141,10 +141,10 @@ taxa will be stored in when using <code>addPerSampleDominantTaxa</code>.</p></dd
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p><code>addPerSampleDominantTaxa</code> extracts the most abundant taxa in a
+    <p><code>addPerSampleDominantFeatures</code> extracts the most abundant taxa in a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object, and stores the information in the <code>colData</code>. It is a wrapper for
-<code>perSampleDominantTaxa</code>.</p>
+<code>perSampleDominantFeatures</code>.</p>
 <p>With <code>rank</code> parameter, it is possible to agglomerate taxa based on taxonomic
 ranks. E.g. if 'Genus' rank is used, all abundances of same Genus are added
 together, and those families are returned. See <code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> for
@@ -161,10 +161,10 @@ additional arguments to deal with missing values or special characters.</p>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Finds the dominant taxa.</span></span></span>
-<span class="r-in"><span><span class="va">sim.dom</span> <span class="op">&lt;-</span> <span class="fu">perSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, rank<span class="op">=</span><span class="st">"Genus"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sim.dom</span> <span class="op">&lt;-</span> <span class="fu">perSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, rank<span class="op">=</span><span class="st">"Genus"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add information to colData</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">addPerSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="st">"Genus"</span>, name<span class="op">=</span><span class="st">"dominant_genera"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="st">"Genus"</span>, name<span class="op">=</span><span class="st">"dominant_genera"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">colData</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 26 rows and 8 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         X.SampleID   Primer Final_Barcode Barcode_truncated_plus_T</span>

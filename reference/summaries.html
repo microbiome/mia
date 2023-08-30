@@ -18,7 +18,7 @@ functions are available."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.12</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@ functions are available.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getTopTaxa</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getTopFeatures</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  top <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span><span class="op">)</span>,</span>
@@ -66,7 +66,7 @@ functions are available.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">getTopTaxa</span><span class="op">(</span></span>
+<span><span class="fu">getTopFeatures</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  top <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"median"</span>, <span class="st">"prevalence"</span><span class="op">)</span>,</span>
@@ -76,30 +76,30 @@ functions are available.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"dominant_taxa"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, group <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"dominant_taxa"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, assay.type <span class="op">=</span> <span class="va">assay_name</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
@@ -136,13 +136,13 @@ will be disabled.)</p></dd>
 
 
 <dt>na.rm</dt>
-<dd><p>For <code>getTopTaxa</code> logical argument for calculation method
+<dd><p>For <code>getTopFeatures</code> logical argument for calculation method
 specified to argument <code>method</code>. Default is TRUE.</p></dd>
 
 
 <dt>...</dt>
 <dd><p>Additional arguments passed on to <code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> when
-<code>rank</code> is specified for <code>countDominantTaxa</code>.</p></dd>
+<code>rank</code> is specified for <code>countDominantFeatures</code>.</p></dd>
 
 
 <dt>rank</dt>
@@ -155,6 +155,10 @@ the output of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code>.<
 overview. Must be one of the column names of <code>colData</code>.</p></dd>
 
 
+<dt>name</dt>
+<dd><p>The column name for the features. The default is 'dominant_taxa'.</p></dd>
+
+
 <dt>object</dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code> object.</p></dd>
@@ -164,15 +168,15 @@ overview. Must be one of the column names of <code>colData</code>.</p></dd>
     <h2>Value</h2>
     
 
-<p>The <code>getTopTaxa</code> returns a vector of the most <code>top</code> abundant
+<p>The <code>getTopFeatures</code> returns a vector of the most <code>top</code> abundant
 “FeatureID”s</p>
 
 
-<p>The <code>getUniqueTaxa</code> returns a vector of unique taxa present at a
+<p>The <code>getUniqueFeatures</code> returns a vector of unique taxa present at a
 particular rank</p>
 
 
-<p>The <code>countDominantTaxa</code> returns an overview in a tibble. It contains dominant taxa
+<p>The <code>countDominantFeatures</code> returns an overview in a tibble. It contains dominant taxa
 in a column named <code>*name*</code> and its abundance in the data set.</p>
 
 
@@ -180,12 +184,12 @@ in a column named <code>*name*</code> and its abundance in the data set.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>The <code>getTopTaxa</code> extracts the most <code>top</code> abundant “FeatureID”s
+    <p>The <code>getTopFeatures</code> extracts the most <code>top</code> abundant “FeatureID”s
 in a <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p>
-<p>The <code>getUniqueTaxa</code> is a basic function to access different taxa at a
+<p>The <code>getUniqueFeatures</code> is a basic function to access different taxa at a
 particular taxonomic rank.</p>
-<p><code>countDominantTaxa</code> returns information about most dominant
+<p><code>countDominantFeatures</code> returns information about most dominant
 taxa in a tibble. Information includes their absolute and relative
 abundances in whole data set.</p>
 <p>The <code>summary</code> will return a summary of counts for all samples and
@@ -195,7 +199,7 @@ object.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="getPrevalence.html">getPrevalentTaxa</a></code></p>
+    <div class="dont-index"><p><code><a href="getPrevalence.html">getPrevalentFeatures</a></code></p>
 <p><code><a href="https://rdrr.io/pkg/scuttle/man/perCellQCMetrics.html" class="external-link">perCellQCMetrics</a></code>,
 <code><a href="https://rdrr.io/pkg/scuttle/man/perFeatureQCMetrics.html" class="external-link">perFeatureQCMetrics</a></code>,
 <code><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerCellQC</a></code>,
@@ -210,7 +214,7 @@ object.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
 <span class="r-in"><span>                       method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
 <span class="r-in"><span>                       top <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>                       assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
@@ -218,7 +222,7 @@ object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "279599" "360229" "317182"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use 'detection' to select detection threshold when using prevalence method</span></span></span>
-<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
 <span class="r-in"><span>                       method <span class="op">=</span> <span class="st">"prevalence"</span>,</span></span>
 <span class="r-in"><span>                       top <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>                       assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
@@ -227,75 +231,76 @@ object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "549656" "331820" "94166"  "317182" "279599"</span>
 <span class="r-in"><span>                       </span></span>
 <span class="r-in"><span><span class="co"># Top taxa os specific rank</span></span></span>
-<span class="r-in"><span><span class="fu">getTopTaxa</span><span class="op">(</span><span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span><span class="fu">getTopFeatures</span><span class="op">(</span><span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
 <span class="r-in"><span>                             rank <span class="op">=</span> <span class="st">"Genus"</span>,</span></span>
 <span class="r-in"><span>                             na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Bacteroides"      "Dolichospermum"   "Faecalibacterium" "Neisseria"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Haemophilus"     </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gets the overview of dominant taxa</span></span></span>
-<span class="r-in"><span><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
 <span class="r-in"><span>                                   rank <span class="op">=</span> <span class="st">"Genus"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The 'perSampleDominantTaxa' function is deprecated. Use 'perSampleDominantFeatures' instead.</span>
 <span class="r-in"><span><span class="va">dominant_taxa</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    dominant_taxa                  n rel.freq rel.freq.pct</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Genus:Bacteroides              5     19.2 19%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Order:Stramenopiles            4     15.4 15%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Family:Desulfobulbaceae        2      7.7 8%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Genus:Streptococcus            2      7.7 8%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Class:Chloracidobacteria       1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Family:ACK-M1                  1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Family:Flavobacteriaceae       1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Family:Moraxellaceae           1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Family:Ruminococcaceae         1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Genus:CandidatusSolibacter     1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> Genus:Dolichospermum           1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> Genus:Faecalibacterium         1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> Genus:MC18                     1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> Genus:Neisseria                1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> Genus:Prochlorococcus          1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> Genus:Veillonella              1      3.8 4%          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> Order:Chromatiales             1      3.8 4%          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    dominant_taxa                  n rel_freq</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Genus:Bacteroides              5   0.192 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Order:Stramenopiles            4   0.154 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Family:Desulfobulbaceae        2   0.076<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Genus:Streptococcus            2   0.076<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Class:Chloracidobacteria       1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Family:ACK-M1                  1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Family:Flavobacteriaceae       1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Family:Moraxellaceae           1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Family:Ruminococcaceae         1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Genus:CandidatusSolibacter     1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> Genus:Dolichospermum           1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> Genus:Faecalibacterium         1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> Genus:MC18                     1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> Genus:Neisseria                1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> Genus:Prochlorococcus          1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> Genus:Veillonella              1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> Order:Chromatiales             1   0.038<span style="text-decoration: underline;">5</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With group, it is possible to group observations based on specified groups</span></span></span>
 <span class="r-in"><span><span class="co"># Gets the overview of dominant taxa</span></span></span>
-<span class="r-in"><span><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
+<span class="r-in"><span><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
 <span class="r-in"><span>                                   rank <span class="op">=</span> <span class="st">"Genus"</span>,</span></span>
 <span class="r-in"><span>                                   group <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
 <span class="r-in"><span>                                   na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The 'perSampleDominantTaxa' function is deprecated. Use 'perSampleDominantFeatures' instead.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dominant_taxa</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   SampleType [9]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    SampleType         dominant_taxa                n rel.freq rel.freq.pct</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Mock               Bacteroides                  3    100   100%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Feces              Bacteroides                  2     50   50%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Feces              Faecalibacterium             2     50   50%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Freshwater (creek) Crenothrix                   2     66.7 67%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Skin               Streptococcus                2     66.7 67%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Freshwater         Dolichospermum               1     50   50%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Freshwater         Prochlorococcus              1     50   50%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Freshwater (creek) Luteolibacter                1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Ocean              CandidatusPortiera           1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Ocean              Polaribacter                 1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> Ocean              Prochlorococcus              1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> Sediment (estuary) Crenothrix                   1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> Sediment (estuary) Desulfuromonas               1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> Sediment (estuary) Nitrosopumilus               1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> Skin               Corynebacterium              1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> Soil               CandidatusNitrososphaera     1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> Soil               CandidatusSolibacter         1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span> Soil               MC18                         1     33.3 33%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span> Tongue             Neisseria                    1     50   50%         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span> Tongue             Veillonella                  1     50   50%         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    SampleType         dominant_taxa                n rel_freq</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Mock               Bacteroides                  3    1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Feces              Bacteroides                  2    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Feces              Faecalibacterium             2    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Freshwater (creek) Crenothrix                   2    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Skin               Streptococcus                2    0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Freshwater         Dolichospermum               1    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Freshwater         Prochlorococcus              1    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Freshwater (creek) Luteolibacter                1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Ocean              CandidatusPortiera           1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Ocean              Polaribacter                 1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> Ocean              Prochlorococcus              1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> Sediment (estuary) Crenothrix                   1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> Sediment (estuary) Desulfuromonas               1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> Sediment (estuary) Nitrosopumilus               1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> Skin               Corynebacterium              1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> Soil               CandidatusNitrososphaera     1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> Soil               CandidatusSolibacter         1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span> Soil               MC18                         1    0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span> Tongue             Neisseria                    1    0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span> Tongue             Veillonella                  1    0.5  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get an overview of sample and taxa counts</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, assay_name<span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Following assays detected: FALSE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> counts</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>useNames = NA is deprecated. Instead, specify either useNames = TRUE or useNames = TRUE.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $samples</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   total_counts min_counts max_counts median_counts mean_counts stdev_counts</span>
@@ -312,8 +317,8 @@ object.</p>
 <span class="r-in"><span><span class="co"># Get unique taxa at a particular taxonomic rank</span></span></span>
 <span class="r-in"><span><span class="co"># sort = TRUE means that output is sorted in alphabetical order</span></span></span>
 <span class="r-in"><span><span class="co"># With na.rm = TRUE, it is possible to remove NAs</span></span></span>
-<span class="r-in"><span><span class="co"># sort and na.rm can also be used in function getTopTaxa</span></span></span>
-<span class="r-in"><span><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="st">"Phylum"</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># sort and na.rm can also be used in function getTopFeatures</span></span></span>
+<span class="r-in"><span><span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="st">"Phylum"</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "ABY1_OD1"         "AC1"              "AD3"              "Acidobacteria"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "Actinobacteria"   "Armatimonadetes"  "BRC1"             "Bacteroidetes"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "CCM11b"           "Caldiserica"      "Caldithrix"       "Chlamydiae"      </span>
