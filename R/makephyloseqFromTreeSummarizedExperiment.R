@@ -101,6 +101,7 @@ setMethod("makePhyloseqFromTreeSE",
             # Gets the taxonomic data from rowData, and converts it to tax_table
             tax_table <- as.matrix(rowData(x)[,taxonomyRanks(x)])
             tax_table <- phyloseq::tax_table(tax_table)
+            tax_table <- grep("sp",tax_table)
             # Adds to the list
             args[["tax_table"]] <- tax_table
         }
