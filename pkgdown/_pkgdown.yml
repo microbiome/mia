@@ -46,7 +46,6 @@ reference:
   - getPrevalence
   - getPrevalentAbundance
   - getTopTaxa
-  - getAbundanceSample
   - getExperimentCrossCorrelation
 - subtitle: Dominance
 - contents:
