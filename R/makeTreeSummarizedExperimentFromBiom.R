@@ -160,13 +160,7 @@ makeTreeSEFromBiom <- function(
     
     # Remove prefixes if specified and rowData includes info
     if(removeTaxaPrefixes && ncol(feature_data) > 0){
-        # Patterns for superkingdom, domain, kingdom, phylum, class, order, family,
-        # genus, species
-        patterns <- "sk__|([dkpcofgs]+)__"
-        feature_data <- lapply(
-            feature_data,
-            gsub, pattern = patterns, replacement = "")
-        feature_data <- as.data.frame(feature_data)
+        feature_data <- .remove_prefixes_from_taxa(feature_data)
     }
     
     # Adjust row and colnames
@@ -196,6 +190,15 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 }
 
 ################################ HELP FUNCTIONS ################################
+# This function removes prefixes from taxonomy names
+.remove_prefixes_from_taxa <- function(tax_tab, patterns = "sk__|([dkpcofgs]+)__", ...){
+    tax_tab <- lapply(
+        tax_tab,
+        gsub, pattern = patterns, replacement = "")
+    tax_tab <- as.data.frame(tax_tab)
+    return(tax_tab)
+}
+
 # Find taxonomy rank based on prefixes. If found, return
 # corresponding rank. Otherwise, return the original
 # rank that is fed to function.
