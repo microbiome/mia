@@ -54,6 +54,12 @@
 #'
 #' @param name String specifying the name to be used to store the result in the
 #'   reducedDims of the output.
+#' 
+#' @param scores A string specifying scores to be returned. Must be
+#' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
+#' v with weights Xbar, but the multiplying effect of eigenvalues removed),
+#' 'u' ((weighted) orthonormal site scores.), or 'v' ((weighted) orthonormal
+#' species scores). (By default: \code{scores='wa'})
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
 #' other internal functions.
@@ -165,15 +171,11 @@ setGeneric("runRDA", signature = c("x"),
 }
 
 #' @importFrom stats as.formula
-.calculate_cca <- function(x, formula, variables, scale = TRUE, site.scores = "wa", ...){
+.calculate_cca <- function(x, formula, variables, scores,  scale = TRUE, ...){
     .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
         stop("'scale' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !(is.character(site.scores) && length(site.scores) == 1 && site.scores %in% c("wa", "u", "v")) ){
-        stop("'site.scores' must be 'wa', 'u', or 'v'.",
-             call. = FALSE)
     }
     #
     x <- as.matrix(t(x))
@@ -194,7 +196,7 @@ setGeneric("runRDA", signature = c("x"),
         X <- cca$CA
     }
     # Create the matrix to be returned
-    ans <- X[[site.scores]]
+    ans <- X[[scores]]
     attr(ans, "rotation") <- X$v
     attr(ans, "eigen") <- X$eig
     attr(ans, "cca") <- cca
@@ -243,7 +245,7 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
 setMethod("calculateCCA", "SummarizedExperiment",
     function(x, formula, variables, test_signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
-             ...)
+             scores = "wa", ...)
     {
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
@@ -251,6 +253,10 @@ setMethod("calculateCCA", "SummarizedExperiment",
         # Check test_signif
         if( !.is_a_bool(test_signif) ){
             stop("'test_signif' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if( !(.is_a_string(scores) && scores %in% c("wa", "u", "v")) ){
+            stop("'scores' must be 'wa', 'u', or 'v'.",
+                 call. = FALSE)
         }
 
         # If formula is missing but variables are not
@@ -264,7 +270,7 @@ setMethod("calculateCCA", "SummarizedExperiment",
             # (If formula is not provided variables is just empty data.frame)
             variables <- .get_variables_from_data_and_formula(x, formula)
         } 
-        cca <- .calculate_cca(mat, formula, variables, ...)
+        cca <- .calculate_cca(mat, formula, variables, scores, ...)
         
         # Test significance if specified
         if( test_signif ){
@@ -295,12 +301,8 @@ setMethod("runCCA", "SingleCellExperiment",
 )
 
 #' @importFrom vegan sppscores
-.calculate_rda <- function(x, formula, variables, site.scores = "wa", ...){
+.calculate_rda <- function(x, formula, variables, scores, ...){
     .require_package("vegan")
-    if( !(is.character(site.scores) && length(site.scores) == 1 && site.scores %in% c("wa", "u", "v")) ){
-        stop("'site.scores' must be 'wa', 'u', or 'v'.",
-             call. = FALSE)
-    }
     #
     # Transpose and ensure that the table is in matrix format
     x <- as.matrix(t(x))
@@ -335,7 +337,7 @@ setMethod("runCCA", "SingleCellExperiment",
     # Add species scores since they are missing from dbrda object (in cca they are included)
     sppscores(rda) <- x
     # Create the matrix to be returned
-    ans <- X[[site.scores]]
+    ans <- X[[scores]]
     attr(ans, "rotation") <- X$v
     attr(ans, "eigen") <- X$eig
     attr(ans, "rda") <- rda
@@ -532,7 +534,7 @@ setMethod("calculateRDA", "ANY", .calculate_rda)
 setMethod("calculateRDA", "SummarizedExperiment",
     function(x, formula, variables, test_signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
-             ...)
+             scores = "wa", ...)
     {
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
@@ -540,6 +542,10 @@ setMethod("calculateRDA", "SummarizedExperiment",
         # Check test_signif
         if( !.is_a_bool(test_signif) ){
             stop("'test_signif' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if( !(.is_a_string(scores) && scores %in% c("wa", "u", "v")) ){
+            stop("'scores' must be 'wa', 'u', or 'v'.",
+                 call. = FALSE)
         }
         
         # If formula is missing but variables are not
@@ -554,7 +560,7 @@ setMethod("calculateRDA", "SummarizedExperiment",
             variables <- .get_variables_from_data_and_formula(x, formula)
         } 
         # Calculate RDA
-        rda <- .calculate_rda(mat, formula, variables, ...)
+        rda <- .calculate_rda(mat, formula, variables, scores, ...)
         
         # Test significance if specified
         if( test_signif ){
