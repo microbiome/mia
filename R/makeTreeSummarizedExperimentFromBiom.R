@@ -142,6 +142,14 @@ makeTreeSEFromBiom <- function(
         # Add correct colnames
         colnames(feature_data) <- colnames
     }
+    # If there is only one column in the feature data, it is the most probable
+    # that the taxonomy is not parsed. Try to parse it.
+    if( ncol(feature_data) == 1 ){
+        tax_tab <- .parse_taxonomy(feature_data, column_name = colnames(feature_data))
+        feature_data <- cbind(tax_tab, feature_data)
+        feature_data <- as.data.frame(feature_data)
+    }
+    
     # Clean feature_data from possible character artifacts if specified
     if( remove.artifacts ){
         feature_data <- .detect_taxa_artifacts_and_clean(feature_data, ...)
@@ -191,11 +199,17 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 
 ################################ HELP FUNCTIONS ################################
 # This function removes prefixes from taxonomy names
-.remove_prefixes_from_taxa <- function(tax_tab, patterns = "sk__|([dkpcofgs]+)__", ...){
+.remove_prefixes_from_taxa <- function(feature_tab, patterns = "sk__|([dkpcofgs]+)__", ...){
+    # Subset by taking only taxonomy info
+    ind <- tolower(colnames(feature_tab)) %in% TAXONOMY_RANKS
+    tax_tab <- feature_tab[, ind, drop = FALSE]
+    # Remove patterns
     tax_tab <- lapply(
         tax_tab,
         gsub, pattern = patterns, replacement = "")
     tax_tab <- as.data.frame(tax_tab)
+    # Combine table
+    feature_tab[, ind] <- tax_tab
     return(tax_tab)
 }
 
