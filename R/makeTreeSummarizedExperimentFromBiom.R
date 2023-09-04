@@ -202,14 +202,16 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 .remove_prefixes_from_taxa <- function(feature_tab, patterns = "sk__|([dkpcofgs]+)__", ...){
     # Subset by taking only taxonomy info
     ind <- tolower(colnames(feature_tab)) %in% TAXONOMY_RANKS
-    tax_tab <- feature_tab[, ind, drop = FALSE]
-    # Remove patterns
-    tax_tab <- lapply(
-        tax_tab,
-        gsub, pattern = patterns, replacement = "")
-    tax_tab <- as.data.frame(tax_tab)
-    # Combine table
-    feature_tab[, ind] <- tax_tab
+    if( length(ind) > 0 ){
+        tax_tab <- feature_tab[, ind, drop = FALSE]
+        # Remove patterns
+        tax_tab <- lapply(
+            tax_tab,
+            gsub, pattern = patterns, replacement = "")
+        tax_tab <- as.data.frame(tax_tab)
+        # Combine table
+        feature_tab[, ind] <- tax_tab
+    }
     return(tax_tab)
 }
 
