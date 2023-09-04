@@ -4,32 +4,31 @@
 \alias{getPrevalence}
 \alias{getPrevalence,ANY-method}
 \alias{getPrevalence,SummarizedExperiment-method}
-\alias{getPrevalentTaxa}
 \alias{getPrevalentFeatures}
-\alias{getPrevalentTaxa,ANY-method}
-\alias{getRarePrevalentFeatures}
-\alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{getPrevalentTaxa}
 \alias{getPrevalentFeatures,ANY-method}
-\alias{getRareTaxa}
+\alias{getRarePrevalentTaxa}
+\alias{getPrevalentFeatures,SummarizedExperiment-method}
+\alias{getPrevalentTaxa,ANY-method}
 \alias{getRareFeatures}
-\alias{getRareTaxa,ANY-method}
-\alias{getRareTaxa,SummarizedExperiment-method}
+\alias{getRareTaxa}
 \alias{getRareFeatures,ANY-method}
-\alias{subsetByPrevalentTaxa}
+\alias{getRareFeatures,SummarizedExperiment-method}
+\alias{getRareTaxa,ANY-method}
 \alias{subsetByPrevalentFeatures}
-\alias{subsetByPrevalentTaxa,SummarizedExperiment-method}
-\alias{subsetByPrevalentFeatures,ANY-method}
-\alias{subsetByRareTaxa}
+\alias{subsetByPrevalentTaxa}
+\alias{subsetByPrevalentFeatures,SummarizedExperiment-method}
+\alias{subsetByPrevalentTaxa,ANY-method}
 \alias{subsetByRareFeatures}
-\alias{subsetByRareTaxa,SummarizedExperiment-method}
-\alias{subsetByRareFeatures,ANY-method}
+\alias{subsetByRareTaxa}
+\alias{subsetByRareFeatures,SummarizedExperiment-method}
+\alias{subsetByRareTaxa,ANY-method}
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
 \alias{agglomerateByPrevalence}
 \alias{mergeFeaturesByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
-\alias{mergeFeaturesByPRevalence}
 \alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \title{Calculation prevalence information for features across samples}
 \usage{
@@ -41,16 +40,16 @@ getPrevalence(x, ...)
   x,
   assay.type = assay_name,
   assay_name = "counts",
-  as_relative = TRUE,
+  as_relative = FALSE,
   rank = NULL,
   ...
 )
 
-getPrevalentTaxa(x, ...)
+getPrevalentFeatures(x, ...)
 
-\S4method{getPrevalentTaxa}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
+\S4method{getPrevalentFeatures}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
 
-\S4method{getPrevalentTaxa}{SummarizedExperiment}(
+\S4method{getPrevalentFeatures}{SummarizedExperiment}(
   x,
   rank = NULL,
   prevalence = 50/100,
@@ -58,35 +57,41 @@ getPrevalentTaxa(x, ...)
   ...
 )
 
-getPrevalentFeatures(x, ...)
+getPrevalentTaxa(x, ...)
 
-\S4method{getPrevalentFeatures}{ANY}(x, ...)
-
-getRareTaxa(x, ...)
-
-\S4method{getRareTaxa}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
-
-\S4method{getRareTaxa}{SummarizedExperiment}(x, rank = NULL, prevalence = 50/100, include_lowest = FALSE, ...)
+\S4method{getPrevalentTaxa}{ANY}(x, ...)
 
 getRareFeatures(x, ...)
 
-\S4method{getRareFeatures}{ANY}(x, ...)
+\S4method{getRareFeatures}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
 
-subsetByPrevalentTaxa(x, ...)
+\S4method{getRareFeatures}{SummarizedExperiment}(
+  x,
+  rank = NULL,
+  prevalence = 50/100,
+  include_lowest = FALSE,
+  ...
+)
 
-\S4method{subsetByPrevalentTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
+getRareTaxa(x, ...)
+
+\S4method{getRareTaxa}{ANY}(x, ...)
 
 subsetByPrevalentFeatures(x, ...)
 
-\S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
+\S4method{subsetByPrevalentFeatures}{SummarizedExperiment}(x, rank = NULL, ...)
 
-subsetByRareTaxa(x, ...)
+subsetByPrevalentTaxa(x, ...)
 
-\S4method{subsetByRareTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
+\S4method{subsetByPrevalentTaxa}{ANY}(x, ...)
 
 subsetByRareFeatures(x, ...)
 
-\S4method{subsetByRareFeatures}{ANY}(x, ...)
+\S4method{subsetByRareFeatures}{SummarizedExperiment}(x, rank = NULL, ...)
+
+subsetByRareTaxa(x, ...)
+
+\S4method{subsetByRareTaxa}{ANY}(x, ...)
 
 getPrevalentAbundance(
   x,
@@ -133,16 +138,16 @@ object}
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 }
-\item{for \code{getPrevalentTaxa}, \code{getRareTaxa},
-\code{subsetByPrevalentTaxa} and \code{subsetByRareTaxa} additional
+\item{for \code{getPrevalentFeatures}, \code{getRareFeatures},
+\code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional
 parameters passed to \code{getPrevalence}}
 \item{for \code{getPrevalentAbundance} additional parameters passed to
-\code{getPrevalentTaxa}}
+\code{getPrevalentFeatures}}
 }}
 
 \item{detection}{Detection threshold for absence/presence. Either an
 absolute value compared directly to the values of \code{x} or a relative
-value between 0 and 1, if \code{as_relative = TRUE}.}
+value between 0 and 1, if \code{as_relative = FALSE}.}
 
 \item{include_lowest}{logical scalar: Should the lower boundary of the
 detection and prevalence cutoffs be included? (default: \code{FALSE})}
@@ -160,7 +165,7 @@ assay to use for calculation.
 will be disabled.)}
 
 \item{as_relative}{logical scalar: Should the detection threshold be applied
-on compositional (relative) abundances? (default: \code{TRUE})}
+on compositional (relative) abundances? (default: \code{FALSE})}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
@@ -173,7 +178,7 @@ limit, set \code{include_lowest} to \code{TRUE}.}
 summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 }
 \value{
-\code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return subset of \code{x}.
+\code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return subset of \code{x}.
 
 All other functions return a named vectors:
 \itemize{
@@ -183,7 +188,7 @@ agglomeration.}
 \item{\code{getPrevalentAbundance} returns a \code{numeric} vector with
 the names corresponding to the column name of \code{x} and include the
 joint abundance of prevalent taxa.}
-\item{\code{getPrevalentTaxa} and \code{getRareTaxa} return a
+\item{\code{getPrevalentTaxa} and \code{getRareFeatures} return a
 \code{character} vector with only the names exceeding the threshold set
 by \code{prevalence}, if the \code{rownames} of \code{x} is set.
 Otherwise an \code{integer} vector is returned matching the rows in
@@ -200,22 +205,22 @@ the detection threshold. For \code{SummarizedExperiment} objects, the
 prevalence is calculated for the selected taxonomic rank, otherwise for the
 rows. The absolute population prevalence can be obtained by multiplying the
 prevalence by the number of samples (\code{ncol(x)}). If \code{as_relative =
-TRUE} the relative frequency (between 0 and 1) is used to check against the
+FALSE} the relative frequency (between 0 and 1) is used to check against the
 \code{detection} threshold.
 
 The core abundance index from \code{getPrevalentAbundance} gives the relative
 proportion of the core species (in between 0 and 1). The core taxa are
 defined as those that exceed the given population prevalence threshold at the
-given detection level as set for \code{getPrevalentTaxa}.
+given detection level as set for \code{getPrevalentFeatures}.
 
-\code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return a subset of \code{x}.
+\code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return a subset of \code{x}.
 The subset includes the most prevalent or rare taxa that are calculated with
-\code{getPrevalentTaxa} or \code{getRareTaxa} respectively.
+\code{getPrevalentFeatures} or \code{getRareFeatures} respectively.
 
-\code{getPrevalentTaxa} returns taxa that are more prevalent with the
+\code{getPrevalentFeatures} returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.
 
-\code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
+\code{getRareFeatures} returns complement of \code{getPrevalentTaxa}.
 }
 \examples{
 data(GlobalPatterns)
@@ -245,7 +250,7 @@ head(prevalence.count)
 # Note that the data (GlobalPatterns) is here in absolute counts
 # (and not compositional, relative abundances)
 # Prevalence threshold 50 percent (strictly greater by default)
-prevalent <- getPrevalentTaxa(tse,
+prevalent <- getPrevalentFeatures(tse,
                               rank = "Phylum",
                               detection = 10,
                               prevalence = 50/100,
@@ -253,15 +258,15 @@ prevalent <- getPrevalentTaxa(tse,
 head(prevalent)
 
 # Gets a subset of object that includes prevalent taxa
-altExp(tse, "prevalent") <- subsetByPrevalentTaxa(tse,
+altExp(tse, "prevalent") <- subsetByPrevalentFeatures(tse,
                                        rank = "Family",
                                        detection = 0.001,
                                        prevalence = 0.55,
                                        as_relative = TRUE)
 altExp(tse, "prevalent")                                 
 
-# getRareTaxa returns the inverse
-rare <- getRareTaxa(tse,
+# getRareFeatures returns the inverse
+rare <- getRareFeatures(tse,
                     rank = "Phylum",
                     detection = 1/100,
                     prevalence = 50/100,
@@ -269,7 +274,7 @@ rare <- getRareTaxa(tse,
 head(rare)
 
 # Gets a subset of object that includes rare taxa
-altExp(tse, "rare") <- subsetByRareTaxa(tse,
+altExp(tse, "rare") <- subsetByRareFeatures(tse,
                              rank = "Class",
                              detection = 0.001,
                              prevalence = 0.001,
