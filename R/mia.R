@@ -23,6 +23,21 @@ NULL
 #' @title mia datasets
 #'
 #' @description
+#' mia provides various datasets derived from independent experimental studies.
+#' The datasets represent instances of the TreeSummarizedExperiment and
+#' MultiAssayExperiment containers and can serve as tools to practice the
+#' mia functionality. Currently, the following datasets are available:
+#' 
+#' \itemize{
+#'   \item{**dmn_se**}
+#'   \item{**enterotype**}
+#'   \item{**esophagus**}
+#'   \item{**GlobalPatterns**}
+#'   \item{**HintikkaXOData**}
+#'   \item{**peerj13075**}
+#'   \item{**Tengeler2020**}
+#' }
+#' MODIFIED UNTIL HERE
 #' These datasets are conversions of the \pkg{phyloseq} datasets
 #' \code{GlobalPatterns}, \code{enterotype}, and \code{esophagus} into the
 #' \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}
