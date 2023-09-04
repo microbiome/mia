@@ -398,16 +398,7 @@ setMethod("right_join", signature = c(x = "ANY"),
             # If class is TreeSE, get trees and links, and reference sequences
             if( class == "TreeSummarizedExperiment" ){
                 tse_args <- .get_TreeSE_args(temp, tse_args)
-            } else{
-                tse_args <- NULL
             }
-            # TODO: Ensure that row and colnames are unique --> take into account when adding a tree and refseq...
-            # TODO: When making uniwue feature names --> add all the columns. If some of the column values differ, rows are not merged together.
-            # But when we have different classes, what to do?? --> assay and rowData is merged differently...
-            # We cannot just use all the data beacuse columns can be in different order...
-            # --> make check that checks that there are same number of rows...?
-            # Tai en ole itse asiassa 100-varma mitä tapahtuu jos sarake on samanniminen mutta solun arvo on eri... --> check. Jos ottaa ekan arvon mutta mergettää, älä tee checkkiä.
-            # Jos arvot eroavat, eri mergetä --> checkki
             
             # Create an object
             tse <- do.call(FUN_constructor, args = args)
@@ -433,24 +424,12 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( !is.null(refSeqs) ){
         tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
     }
-    # Adjust rownames, make sure that feature and sample names are unique. Feature names
-    # might be equal when rowData is different but rowname is equal. This means that
-    # these rows are not merged together but when their rowname is preserved in this
-    # # step, they are named equally. This leads to an error.
-    # .adjust_rownames(tse, "asd")
-    rownames(tse) <- make.unique( rowData(tse)[[rownames_name]] )
+    # Adjust rownames
+    rownames(tse) <- rowData(tse)[[rownames_name]]
     rowData(tse)[[rownames_name]] <- NULL
     return(tse)
 }
 
-############################## .make_names_unique ##############################
-# This function ensures that feature and sample names are unique. Feature names
-# might be equal when rowData is different but rowname is equal. THis means that
-# these rows are not merged together but when their rowname is preserved in the
-# last step, they are named equally. This leads to an error.
-.adjust_rownames <- function(tse, rownames_name){
-    
-}
 
 ########################### .add_rowdata_to_rownames ###########################
 # This function adds taxonomy information to rownames to enable more specific match
