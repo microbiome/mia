@@ -928,11 +928,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     assay <- .join_two_tables(assay1, assay2, join)
     
     # Convert into matrix
-    colnames <- colnames(assay)
     assay <- as.matrix(assay)
-    colnames(assay) <- colnames
-    ############# colnames are changed from col.name to col_name
-    # TODO: Check whatt this means
     
     # Fill missing values
     assay[ is.na(assay) ] <- missing_values
