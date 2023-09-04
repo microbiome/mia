@@ -962,7 +962,8 @@ setMethod("right_join", signature = c(x = "ANY"),
     
     # There might be duplicated rownames. This might occur when there are features
     # with equal taxonomy data but merged datasets have some additional info
-    # that do not match with each other. --> remove duplicated rows.
+    # that do not match with each other. --> collapse duplicated rows/features
+    # into one row.
     dupl_rows <- rownames(rd)[ duplicated(rownames(rd)) ]
     if( length(dupl_rows) > 0 ){
         for( r in dupl_rows ){
