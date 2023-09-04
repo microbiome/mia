@@ -398,8 +398,9 @@ setMethod("right_join", signature = c(x = "ANY"),
             # If class is TreeSE, get trees and links, and reference sequences
             if( class == "TreeSummarizedExperiment" ){
                 tse_args <- .get_TreeSE_args(temp, tse_args)
+            } else{
+                tse_args <- NULL
             }
-            
             # TODO: Ensure that row and colnames are unique --> take into account when adding a tree and refseq...
             # TODO: When making uniwue feature names --> add all the columns. If some of the column values differ, rows are not merged together.
             # But when we have different classes, what to do?? --> assay and rowData is merged differently...
@@ -432,10 +433,23 @@ setMethod("right_join", signature = c(x = "ANY"),
     if( !is.null(refSeqs) ){
         tse <- .check_and_add_refSeqs(tse, refSeqs, verbose)
     }
-    # Adjust rownames
-    rownames(tse) <- rowData(tse)[[rownames_name]]
+    # Adjust rownames, make sure that feature and sample names are unique. Feature names
+    # might be equal when rowData is different but rowname is equal. This means that
+    # these rows are not merged together but when their rowname is preserved in this
+    # # step, they are named equally. This leads to an error.
+    # .adjust_rownames(tse, "asd")
+    rownames(tse) <- make.unique( rowData(tse)[[rownames_name]] )
     rowData(tse)[[rownames_name]] <- NULL
     return(tse)
+}
+
+############################## .make_names_unique ##############################
+# This function ensures that feature and sample names are unique. Feature names
+# might be equal when rowData is different but rowname is equal. THis means that
+# these rows are not merged together but when their rowname is preserved in the
+# last step, they are named equally. This leads to an error.
+.adjust_rownames <- function(tse, rownames_name){
+    
 }
 
 ########################### .add_rowdata_to_rownames ###########################
@@ -971,6 +985,35 @@ setMethod("right_join", signature = c(x = "ANY"),
     
     # Merge rowdata
     rd <- .join_two_tables(rd1, rd2, join)
+    
+    # There might be duplicated rownames. This might occur when there are features
+    # with equal taxonomy data but merged datasets have some additional info
+    # that do not match with each other. --> remove duplicated rows.
+    dupl_rows <- rownames(rd)[ duplicated(rownames(rd)) ]
+    if( length(dupl_rows) > 0 ){
+        for( r in dupl_rows ){
+            # Get duplicated rows
+            temp <- rd[rownames(rd) %in% r, , drop = FALSE]
+            # Get uniwu rows
+            temp1 <- temp[1,]
+            temp2 <- temp[2,]
+            temp1 <- temp1[, !apply(temp1, 2, is.na), drop = FALSE]
+            temp2 <- temp2[, !apply(temp2, 2, is.na), drop = FALSE]
+            # Merge them together
+            temp <- merge(temp1, temp2, all = TRUE)
+            rownames(temp) <- r
+            # Remove the row from the original rowData
+            rd <- rd[!rownames(rd) %in% r, , drop = FALSE]
+            # Add the data back
+            rd[["rownames_merge_ID"]] <- rownames(rd)
+            temp[["rownames_merge_ID"]] <- rownames(temp)
+            rd <- merge(rd, temp, all = TRUE)
+            rownames(rd) <- rd[["rownames_merge_ID"]]
+            rd[["rownames_merge_ID"]] <- NULL
+        }
+        # Ensure that the rowData is DF
+        rd <- DataFrame(rd)
+    }
     
     # Get column indices that match with taxonomy ranks
     ranks_ind <- match( TAXONOMY_RANKS, colnames(rd) )
