@@ -430,7 +430,6 @@ setMethod("right_join", signature = c(x = "ANY"),
     return(tse)
 }
 
-
 ########################### .add_rowdata_to_rownames ###########################
 # This function adds taxonomy information to rownames to enable more specific match
 # between rows
