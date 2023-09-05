@@ -22,6 +22,15 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/GlobalPatterns.html</loc>
+  </url>
+  <url>
+    <loc>/reference/HintikkaXOData.html</loc>
+  </url>
+  <url>
+    <loc>/reference/Tengeler2020.html</loc>
+  </url>
+  <url>
     <loc>/reference/agglomerate-methods.html</loc>
   </url>
   <url>
@@ -38,6 +47,15 @@
   </url>
   <url>
     <loc>/reference/cluster.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dmn_se.html</loc>
+  </url>
+  <url>
+    <loc>/reference/enterotype.html</loc>
+  </url>
+  <url>
+    <loc>/reference/esophagus.html</loc>
   </url>
   <url>
     <loc>/reference/estimateDivergence.html</loc>
@@ -104,6 +122,9 @@
   </url>
   <url>
     <loc>/reference/mia-package.html</loc>
+  </url>
+  <url>
+    <loc>/reference/peerj13075.html</loc>
   </url>
   <url>
     <loc>/reference/perSampleDominantTaxa.html</loc>
