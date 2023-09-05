@@ -23,8 +23,9 @@ makeTreeSummarizedExperimentFromBiom(obj, ...)
 
 \item{...}{additional arguments
 \itemize{
-\item{\code{pattern}}{\code{character} value pecifiying artifacts
-to be removed. (default: \code{patterns = "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"})}
+\item{\code{patter}}{\code{character} value specifying artifacts
+to be removed. If \code{patterns = "auto"}, special characters
+are removed. (default: \code{pattern = "auto"})}
 }}
 
 \item{obj}{object of type \code{\link[biomformat:read_biom]{biom}}}
