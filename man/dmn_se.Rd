@@ -5,13 +5,21 @@
 \alias{dmn_se}
 \alias{twins}
 \title{dmn_se}
+\format{
+A SummarizedExperiment with 130 features and 278 samples. The
+rowData contains no taxonomic information. The colData includes:
+
+\describe{
+\item{pheno}{participant's weight condition (Lean, Overwt and Obese)}
+}
+}
 \usage{
 data(dmn_se)
 }
 \description{
-dmn_se is a dataset on twins' microbiome used to demonstrate sample
-stratification by Dirichlet Multinomial Mixtures (DMM). It was derived from
-the \pkg{DirichletMultinomial} package.
+dmn_se is a dataset on twins' microbiome where samples are stratified by
+their community composition through Dirichlet Multinomial Mixtures (DMM). It
+was derived from the \pkg{DirichletMultinomial} package.
 }
 \references{
 Holmes I, Harris K, Quince C (2012).
@@ -24,7 +32,7 @@ A core gut microbiome in obese and lean twins. Nature 457: 480–484.
 }
 \seealso{
 \code{\link{mia-datasets}}
-\code{\link{[mia:calculateDMN]{calculateDMN}}}
+\code{\link{calculateDMN}}
 }
 \author{
 Turnbaugh, PJ et al.

@@ -8,8 +8,8 @@
 A MultiAssayExperiment with 3 experiments (microbiota, metabolites and
 biomarkers). rowData of the microbiota experiment contains taxonomic information
 at Phylum, Class, Order, Family, Genus, Species and OTU levels. The metabolites
-and biomarkers experiments contains 38 NMR metabolites and 39 biomarkers,
-respectively. Its colData is outlined below.
+and biomarkers experiments contain 38 NMR metabolites and 39 biomarkers,
+respectively. The colData includes:
 
 \describe{
 \item{Sample}{Sample ID (character)}

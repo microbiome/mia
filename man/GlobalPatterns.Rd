@@ -5,7 +5,10 @@
 \alias{GlobalPatterns}
 \title{GlobalPatterns}
 \format{
-A TreeSummarizedExperiment with 19216 features and 26 samples:
+A TreeSummarizedExperiment with 19216 features and 26 samples. The
+rowData contains taxonomic information at Kingdom, Phylum, Class, Order,
+Family, Genus and Species levels. The colData includes:
+
 \describe{
 \item{X.SampleID}{Sample ID taken from the corresponding study}
 \item{Primer}{primer used for sequencing}

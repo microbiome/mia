@@ -5,7 +5,9 @@
 \alias{enterotype}
 \title{enterotype}
 \format{
-A TreeSummarizedExperiment with 553 features and 280 samples:
+A TreeSummarizedExperiment with 553 features and 280 samples. The
+rowData contains taxonomic information at Genus level. The colData includes:
+
 \describe{
 \item{Enterotype}{enterotype the sample belongs to (1, 2 and 3)}
 \item{Sample_ID}{sample ID of samples from all studies}

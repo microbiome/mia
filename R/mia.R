@@ -25,8 +25,9 @@ NULL
 #' mia provides various datasets derived from independent experimental studies.
 #' The datasets represent instances of the TreeSummarizedExperiment and
 #' MultiAssayExperiment containers and can serve as tools to practice the
-#' mia functionality. Currently, the following datasets are available:
+#' mia functionality
 #' 
+#' Currently, the following datasets are available:
 #' \itemize{
 #'   \item{\code{\link{dmn_se}}}
 #'   \item{\code{\link{enterotype}}}
@@ -53,7 +54,10 @@ NULL
 #' files for inclusion in the \pkg{phyloseq} package, from which this data was
 #' converted to \code{TreeSummarizedExperiment}.
 #' 
-#' @format A TreeSummarizedExperiment with 19216 features and 26 samples:
+#' @format A TreeSummarizedExperiment with 19216 features and 26 samples. The
+#' rowData contains taxonomic information at Kingdom, Phylum, Class, Order,
+#' Family, Genus and Species levels. The colData includes:
+#' 
 #' \describe{
 #'   \item{X.SampleID}{Sample ID taken from the corresponding study}
 #'   \item{Primer}{primer used for sequencing}
@@ -90,7 +94,9 @@ NULL
 #' clusters, but as a way of stratifying samples to reduce complexity. It was
 #' converted into a TreeSummarizedExperiment from the \pkg{phyloseq} package.
 #'
-#' @format A TreeSummarizedExperiment with 553 features and 280 samples:
+#' @format A TreeSummarizedExperiment with 553 features and 280 samples. The
+#' rowData contains taxonomic information at Genus level. The colData includes:
+#' 
 #' \describe{
 #'   \item{Enterotype}{enterotype the sample belongs to (1, 2 and 3)}
 #'   \item{Sample_ID}{sample ID of samples from all studies}
@@ -128,6 +134,9 @@ NULL
 #' 3 human adults based on biopsies analysed with 16S rDNA PCR. The 16S rRNA
 #' sequence processing is provided in the mothur wiki from the link below. It was
 #' converted into a TreeSummarizedExperiment from the \pkg{phyloseq} package.
+#' 
+#' @format A TreeSummarizedExperiment with 58 features and 3 samples. The
+#' rowData contains no taxonomic information. The colData is empty.
 #'
 #' @name esophagus
 #' @docType data
@@ -150,9 +159,16 @@ NULL
 
 #' dmn_se
 #'
-#' dmn_se is a dataset on twins' microbiome used to demonstrate sample
-#' stratification by Dirichlet Multinomial Mixtures (DMM). It was derived from
-#' the \pkg{DirichletMultinomial} package.
+#' dmn_se is a dataset on twins' microbiome where samples are stratified by
+#' their community composition through Dirichlet Multinomial Mixtures (DMM). It
+#' was derived from the \pkg{DirichletMultinomial} package.
+#' 
+#' @format A SummarizedExperiment with 130 features and 278 samples. The
+#' rowData contains no taxonomic information. The colData includes:
+#' 
+#' \describe{
+#'   \item{pheno}{participant's weight condition (Lean, Overwt and Obese)}
+#' }
 #' 
 #' @name dmn_se
 #' @docType data
@@ -161,7 +177,7 @@ NULL
 #' @usage data(dmn_se)
 #' @seealso
 #' \code{\link{mia-datasets}}
-#' \code{\link{[mia:calculateDMN]{calculateDMN}}}
+#' \code{\link{calculateDMN}}
 #' @author Turnbaugh, PJ et al.
 #' @references
 #' Holmes I, Harris K, Quince C (2012).
@@ -181,6 +197,19 @@ NULL
 #' analysis done to explore skin bacterial diversity and its association with
 #' age, diet, geographical locations. The authors investigated significant
 #' association of skin microbiota with individual’s geographical location.
+#' 
+#' @format A TreeSummarizedExperiment with 674 features and 58 samples. The
+#' rowData contains taxonomic information at kingdom, phylum, class, order,
+#' family and genus level. The colData includes:
+#' 
+#' \describe{
+#'   \item{Sample}{sample ID}
+#'   \item{Geographical_location}{city where participant lives (Ahmednagar,
+#'     Pune and Nashik)}
+#'   \item{Gender}{participant's gender (Male or Female)}
+#'   \item{Age}{participant's age group (Middle_age, Adult and Elderly)}
+#'   \item{Diet}{participant's diet (Veg or Mixed)}
+#' }
 #'
 #' @name peerj13075
 #' @docType data
@@ -210,8 +239,8 @@ NULL
 #' @format A MultiAssayExperiment with 3 experiments (microbiota, metabolites and
 #' biomarkers). rowData of the microbiota experiment contains taxonomic information
 #' at Phylum, Class, Order, Family, Genus, Species and OTU levels. The metabolites
-#' and biomarkers experiments contains 38 NMR metabolites and 39 biomarkers,
-#' respectively. Its colData is outlined below.
+#' and biomarkers experiments contain 38 NMR metabolites and 39 biomarkers,
+#' respectively. The colData includes:
 #' 
 #' \describe{
 #'   \item{Sample}{Sample ID (character)}
@@ -246,8 +275,9 @@ NULL
 #' investigated by colonizing young, male, germ-free C57BL/6JOlaHsd mice with
 #' microbiota from individuals with and without ADHD.
 #'
-#' @format A TreeSummarizedExperiment with 151 features and 27 samples. Its
-#' colData is outlined below.
+#' @format A TreeSummarizedExperiment with 151 features and 27 samples. The
+#' rowData contains taxonomic information at Kingdom, Phylum, Class, Order,
+#' Family and Genus level. The colData includes:
 #' 
 #' \describe{
 #'   \item{patient_status}{clinical status of the patient (ADHD or Control)}

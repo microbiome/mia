@@ -4,6 +4,20 @@
 \name{peerj13075}
 \alias{peerj13075}
 \title{peerj13075}
+\format{
+A TreeSummarizedExperiment with 674 features and 58 samples. The
+rowData contains taxonomic information at kingdom, phylum, class, order,
+family and genus level. The colData includes:
+
+\describe{
+\item{Sample}{sample ID}
+\item{Geographical_location}{city where participant lives (Ahmednagar,
+Pune and Nashik)}
+\item{Gender}{participant's gender (Male or Female)}
+\item{Age}{participant's age group (Middle_age, Adult and Elderly)}
+\item{Diet}{participant's diet (Veg or Mixed)}
+}
+}
 \usage{
 data(peerj13075)
 }

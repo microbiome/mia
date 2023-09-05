@@ -8,9 +8,10 @@
 mia provides various datasets derived from independent experimental studies.
 The datasets represent instances of the TreeSummarizedExperiment and
 MultiAssayExperiment containers and can serve as tools to practice the
-mia functionality. Currently, the following datasets are available:
+mia functionality
 }
 \details{
+Currently, the following datasets are available:
 \itemize{
 \item{\code{\link{dmn_se}}}
 \item{\code{\link{enterotype}}}

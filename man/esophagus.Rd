@@ -4,6 +4,10 @@
 \name{esophagus}
 \alias{esophagus}
 \title{esophagus}
+\format{
+A TreeSummarizedExperiment with 58 features and 3 samples. The
+rowData contains no taxonomic information. The colData is empty.
+}
 \source{
 \url{http://www.mothur.org/wiki/Esophageal_community_analysis}
 }

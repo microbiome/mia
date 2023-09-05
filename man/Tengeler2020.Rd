@@ -5,8 +5,9 @@
 \alias{Tengeler2020}
 \title{Tengeler2020}
 \format{
-A TreeSummarizedExperiment with 151 features and 27 samples. Its
-colData is outlined below.
+A TreeSummarizedExperiment with 151 features and 27 samples. The
+rowData contains taxonomic information at Kingdom, Phylum, Class, Order,
+Family and Genus level. The colData includes:
 
 \describe{
 \item{patient_status}{clinical status of the patient (ADHD or Control)}
