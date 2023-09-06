@@ -160,7 +160,7 @@ setGeneric("mergeCols",
     # merge assays
     assays <- assays(x)
     if( check.assays ){
-        mapply(.check.assays_for_merge, names(assays), assays)
+        mapply(.check_assays_for_merge, names(assays), assays)
     }
     assays <- S4Vectors::SimpleList(lapply(assays,
                                            scuttle::sumCountsAcrossFeatures,
@@ -179,7 +179,7 @@ setGeneric("mergeCols",
 }
 
 #' @importFrom scuttle sumCountsAcrossFeatures
-.check.assays_for_merge <- function(assay.type, assay){
+.check_assays_for_merge <- function(assay.type, assay){
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
         warning(paste0("'",assay.type,"'", " includes binary values."),
@@ -211,7 +211,7 @@ setGeneric("mergeCols",
     col_data <- colData(x)[element_pos,,drop=FALSE]
     # merge assays
     assays <- assays(x)
-    mapply(.check.assays_for_merge, names(assays), assays)
+    mapply(.check_assays_for_merge, names(assays), assays)
     FUN <- function(mat, ...){
         temp <- scuttle::summarizeAssayByGroup(mat,
                                                statistics = "sum",
