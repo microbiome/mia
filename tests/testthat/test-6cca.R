@@ -41,6 +41,13 @@ test_that("CCA", {
     sce <- runCCA(sce, form, scores = "u")
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
+    # Check that test.signif works
+    expect_error(sce, test.signif = 1)
+    expect_error(sce, test.signif = "TRUE")
+    expect_error(sce, test.signif = NULL)
+    expect_error(sce, test.signif = c(TRUE, TRUE))
+    mat <- calculateRDA(sce, test.signif = FALSE)
+    expect_true(is.null(attributes(mat)$significance))
     # Check that significance calculations are correct
     set.seed(46)
     sce <- runCCA(sce, variables = "Manure", full = TRUE)
@@ -75,12 +82,12 @@ test_that("CCA", {
     # Significance of betadisper with different permanova, anova and tukeyhsd
     expect_equal(res$homogeneity$variables$Manure$permanova, test$betadisper_permanova)
     set.seed(46)
-    sce <- runCCA(sce, form, full = TRUE, homogeneity_test = "anova")
+    sce <- runCCA(sce, form, full = TRUE, homogeneity.test = "anova")
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
     expect_equal(res$homogeneity$variables$Manure$anova, test$betadisper_anova)
     set.seed(46)
-    sce <- runCCA(sce, form, full = TRUE, homogeneity_test = "tukeyhsd")
+    sce <- runCCA(sce, form, full = TRUE, homogeneity.test = "tukeyhsd")
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
     expect_equal(res$homogeneity$variables$Manure$tukeyhsd, test$betadisper_tukeyhsd)
