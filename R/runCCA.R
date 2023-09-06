@@ -330,8 +330,8 @@ setMethod("runCCA", "SingleCellExperiment",
     # Get CCA
     if( !is.null(rda$CCA) ){
         X <- rda$CCA
-        # Get species scores. Fet only those samples that are included in rda
-        # object (some might missing due missing metadta)
+        # Get species scores. Get only those samples that are included in rda
+        # object (some might missing due missing metadata)
         species_scores <- x[ rownames(X[[scores]]),  ]
     } else{
         # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
