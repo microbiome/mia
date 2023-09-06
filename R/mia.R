@@ -9,7 +9,7 @@
 #'
 #' @name mia-package
 #' @docType package
-#' @seealso \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment} class
+#' @seealso \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}
 NULL
 
 #' @import methods
@@ -20,108 +20,164 @@ NULL
 #' @importFrom rlang sym :=
 NULL
 
-#' @title mia datasets
+#' mia datasets
 #'
-#' @description
-#' These datasets are conversions of the \pkg{phyloseq} datasets
-#' \code{GlobalPatterns}, \code{enterotype}, and \code{esophagus} into the
-#' \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}
-#' data container.
-#'
-#' \code{dmn_se} contains an example \code{SummarizedExperiment} derived
-#' from data in the \pkg{DirichletMultinomial} package. See
-#' \code{?calculateDMN} for more details.
-#'
-
-#' Global patterns of 16S rRNA diversity at a depth of millions of sequences per sample (2011)
-#'
-#' This work compared the microbial communities from 25 environmental samples and three known ``mock communities''
-#' at a an averag depth of 3.1 million reads per sample.
-#' Authors reproduced diversity patterns seen in many other 
-#' published studies, while invesitigating technical issues/bias by 
-#' applying the same techniques to simulated microbial communities of known
-#' composition. Many thanks to J. Gregory Caporaso for providing the OTU-clustered data files
-#' for inclusion in the \pkg{phyloseq} package, from which this data \code{TreeSummarizedExperiment}
-#' version was then converted.
-#'
+#' mia provides various datasets derived from independent experimental studies.
+#' The datasets represent instances of the TreeSummarizedExperiment and
+#' MultiAssayExperiment containers and can serve as tools to practice the
+#' mia functionality
+#' 
+#' Currently, the following datasets are available:
+#' \itemize{
+#'   \item{\code{\link{dmn_se}}}
+#'   \item{\code{\link{enterotype}}}
+#'   \item{\code{\link{esophagus}}}
+#'   \item{\code{\link{GlobalPatterns}}}
+#'   \item{\code{\link{HintikkaXOData}}}
+#'   \item{\code{\link{peerj13075}}}
+#'   \item{\code{\link{Tengeler2020}}}
+#' }
+#' 
 #' @name mia-datasets
-#' @aliases GlobalPatterns
-#' @keywords data
-#' @usage data(GlobalPatterns)
-#' @author Caporaso, J. G., et al.
 #' @docType data
+#' @keywords datasets
+NULL
+
+#' GlobalPatterns
+#'
+#' GlobalPatterns compared the microbial communities from 25 environmental samples
+#' and three known "mock communities" at a an average depth of 3.1 million reads
+#' per sample. Authors reproduced diversity patterns seen in many other 
+#' published studies, while investigating technical bias by applying the same
+#' techniques to simulated microbial communities of known composition. Special
+#' thanks are given to J. Gregory Caporaso for providing the OTU-clustered data
+#' files for inclusion in the \pkg{phyloseq} package, from which this data was
+#' converted to \code{TreeSummarizedExperiment}.
+#' 
+#' @format A TreeSummarizedExperiment with 19216 features and 26 samples. The
+#' rowData contains taxonomic information at Kingdom, Phylum, Class, Order,
+#' Family, Genus and Species levels. The colData includes:
+#' 
+#' \describe{
+#'   \item{X.SampleID}{Sample ID taken from the corresponding study}
+#'   \item{Primer}{primer used for sequencing}
+#'   \item{Final_Barcode}{final barcode (6 nucleotides)}
+#'   \item{Barcode_truncated_plus_T}{truncated barcode with an added tyrosine
+#'     (6 nucleotides)}
+#'   \item{Barcode_full_length}{complete barcode with a length of 11 nucleotides}
+#'   \item{SampleType}{sampling type by collection site (Soil, Feces, Skin,
+#'     Tongue, Freshwater, Creek Freshwater, Ocean, Estuary Sediment and Mock)}
+#'   \item{Description}{additional information (sampling location, environmental
+#'     factors and study type)}
+#' }
+#'
+#' @name GlobalPatterns
+#' @docType data
+#' @keywords datasets
+#' @usage data(GlobalPatterns)
+#' @seealso \code{\link{mia-datasets}}
+#' @author Caporaso, J. G., et al.
 #' @references
 #' Caporaso, J. G., et al. (2011). 
 #' Global patterns of 16S rRNA diversity at a depth of millions of sequences per sample.
-#' PNAS, 108, 4516-4522.
-#' \url{http://www.pnas.org/content/108/suppl.1/4516.short}
-"GlobalPatterns"
+#' PNAS, 108, 4516-4522. \url{https://doi.org/10.1073/pnas.1000080107}
+NULL
 
-#' Enterotype data
+#' enterotype
 #'
-#' The enterotype data of the human gut microbiome (Arumugam et al. 2011) includes
-#' taxonomic profiling for 280 fecal samples from 22 subjects based on shotgun DNA sequencing.
-#' The authors claimed that the data naturally clumps into three community-level clusters, or
-#' ``enterotypes'', that are not immediately explained by sequencing technology or demographic 
-#' features of the subjects. A later addendum (2014) the authors stated that enterotypes
-#' "should not be seen as discrete clusters, but as a way of stratifying samples to reduce complexity."
+#' The enterotype data of the human gut microbiome includes taxonomic profiling
+#' for 280 fecal samples from 22 subjects based on shotgun DNA sequencing. The
+#' authors claimed that the data naturally clumps into three community-level
+#' clusters, or "enterotypes", that are not immediately explained by sequencing
+#' technology or demographic features of the subjects. In a later addendum from
+#' 2014 the authors stated that enterotypes should not be seen as discrete
+#' clusters, but as a way of stratifying samples to reduce complexity. It was
+#' converted into a TreeSummarizedExperiment from the \pkg{phyloseq} package.
 #'
-#' @name mia-datasets
-#' @aliases enterotype
-#' @keywords data
-#' @usage data(enterotype)
-#' @author Arumugam, M., Raes, J., et al.
+#' @format A TreeSummarizedExperiment with 553 features and 280 samples. The
+#' rowData contains taxonomic information at Genus level. The colData includes:
+#' 
+#' \describe{
+#'   \item{Enterotype}{enterotype the sample belongs to (1, 2 and 3)}
+#'   \item{Sample_ID}{sample ID of samples from all studies}
+#'   \item{SeqTech}{sequencing technology}
+#'   \item{SampleID}{sample ID of complete samples}
+#'   \item{Project}{original project from which sample was obtained (gill06,
+#'     turnbaugh09, MetaHIT, MicroObes, MicroAge and kurokawa07)}
+#'   \item{Nationality}{participant's nationality (american, danish, spanish,
+#'     french, italian and japanese)}
+#'   \item{Gender}{participant's gender (F or M)}
+#'   \item{Age}{participant's age (0.25 -- 87)}
+#'   \item{ClinicalStatus}{participant's clinical status (healthy, obese, CD,
+#'     UC and elderly)}
+#' }
+#' 
+#' @name enterotype
 #' @docType data
+#' @keywords datasets
+#' @usage data(enterotype)
+#' @seealso \code{\link{mia-datasets}}
+#' @author Arumugam, M., Raes, J., et al.
 #' @references
 #' Arumugam, M., et al. (2011). Enterotypes of the human gut microbiome.
-#' Nature, 473(7346), 174-180.
-#' \url{http://www.nature.com/doifinder/10.1038/nature09944}
-#' Supplemental information includes subject data. 
-#' OTU-clustered data was initially downloaded from the publicly-accessible:
-#' \url{http://www.bork.embl.de/Docu/Arumugam_et_al_2011/downloads.html}
+#' Nature, 473(7346), 174-180. \url{https://doi.org/10.1038/nature09944}
 #'
 #' Arumugam, M., et al. (2014). Addendum: Enterotypes of the human gut microbiome.
 #' Nature 506, 516 (2014). \url{https://doi.org/10.1038/nature13075}
-"enterotype"
-
-#' Small example dataset from a human esophageal community
 #' 
-#' The esophagus data set from Pei et al. (2004)
-#' includes 3 samples from 3 human adults based on biopsies analysed with 16S rDNA PCR.
-#' The 16S rRNA sequence processing has been provided in the mothur wiki
-#' at the link below. 
+#' @source \url{http://www.bork.embl.de/Docu/Arumugam_et_al_2011/downloads.html}
+NULL
+
+#' esophagus
+#' 
+#' This small dataset from a human esophageal community includes 3 samples from
+#' 3 human adults based on biopsies analysed with 16S rDNA PCR. The 16S rRNA
+#' sequence processing is provided in the mothur wiki from the link below. It was
+#' converted into a TreeSummarizedExperiment from the \pkg{phyloseq} package.
+#' 
+#' @format A TreeSummarizedExperiment with 58 features and 3 samples. The
+#' rowData contains no taxonomic information. The colData is empty.
 #'
-#' @name mia-datasets
-#' @aliases esophagus
-#' @keywords data
-#' @usage data(esophagus)
-#' @author Pei et al. \email{zhiheng.pei@@med.nyu.edu}.
+#' @name esophagus
 #' @docType data
+#' @keywords datasets
+#' @usage data(esophagus)
+#' @seealso \code{\link{mia-datasets}}
+#' @author Pei et al. \email{zhiheng.pei@@med.nyu.edu}.
 #' @references 
 #' Pei, Z., Bini, E. J., Yang, L., Zhou, M., Francois, F., & Blaser, M. J. (2004). 
 #' Bacterial biota in the human distal esophagus.
 #' Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4250-4255.
-#' \url{http://www.ncbi.nlm.nih.gov/pmc/articles/PMC384727}
+#' \url{https://doi.org/10.1073/pnas.0306398101}
 #'
 #' McMurdie, J. & Holmes, S. (2013) \emph{phyloseq}: An R Package for reproducible interactive analysis
 #' and graphics of microbiome census data. PLoS ONE. 8(4):e61217.
 #' \url{https://doi.org/10.1371/journal.pone.0061217}
 #'
-#' Mothur-processed files and the sequence data can be downloaded at:
-#' \url{http://www.mothur.org/wiki/Esophageal_community_analysis}
-"esophagus"
-#'
+#' @source \url{http://www.mothur.org/wiki/Esophageal_community_analysis}
+NULL
 
-#' Twins data set for Dirichlet Multinomial Mixtures (DMM)
+#' dmn_se
 #'
-#' This data set from Turnbaugh et al. (2009) was used to introduce
-#' Dirichlet Multinomial Mixtures (DMM) for microbiota stratification by
-#' Holmes et al. (2012).
+#' dmn_se is a dataset on twins' microbiome where samples are stratified by
+#' their community composition through Dirichlet Multinomial Mixtures (DMM). It
+#' was derived from the \pkg{DirichletMultinomial} package.
 #' 
-#' @name mia-datasets
-#' @aliases dmn_se, twins
-#' @keywords data
+#' @format A SummarizedExperiment with 130 features and 278 samples. The
+#' rowData contains no taxonomic information. The colData includes:
+#' 
+#' \describe{
+#'   \item{pheno}{participant's weight condition (Lean, Overwt and Obese)}
+#' }
+#' 
+#' @name dmn_se
+#' @docType data
+#' @aliases twins
+#' @keywords datasets
 #' @usage data(dmn_se)
+#' @seealso
+#' \code{\link{mia-datasets}}
+#' \code{\link{calculateDMN}}
 #' @author Turnbaugh, PJ et al.
 #' @references
 #' Holmes I, Harris K, Quince C (2012).
@@ -131,93 +187,120 @@ NULL
 #' Turnbaugh PJ, Hamady M, Yatsunenko T, Cantarel BL, Duncan A, et al. (2009).
 #' A core gut microbiome in obese and lean twins. Nature 457: 480–484. 
 #' \url{https://doi.org/10.1038/nature07540}
-"dmn_se"
+NULL
 
 #' peerj13075
 #' 
+#' peerj13075 includes skin microbial profiles of 58 volunteers with multiple
+#' factors. 16S r-RNA sequencing of V3-V4 regions was done to generate millions
+#' of read using illumina platform. A standard bioinformatic and statistical
+#' analysis done to explore skin bacterial diversity and its association with
+#' age, diet, geographical locations. The authors investigated significant
+#' association of skin microbiota with individual’s geographical location.
+#' 
+#' @format A TreeSummarizedExperiment with 674 features and 58 samples. The
+#' rowData contains taxonomic information at kingdom, phylum, class, order,
+#' family and genus level. The colData includes:
+#' 
+#' \describe{
+#'   \item{Sample}{sample ID}
+#'   \item{Geographical_location}{city where participant lives (Ahmednagar,
+#'     Pune and Nashik)}
+#'   \item{Gender}{participant's gender (Male or Female)}
+#'   \item{Age}{participant's age group (Middle_age, Adult and Elderly)}
+#'   \item{Diet}{participant's diet (Veg or Mixed)}
+#' }
 #'
-#' PeerJ data by Potbhare et al. (2022) includes skin microbial profiles of 58 volunteers with multiple factors. 
-#' 16S r-RNA sequencing of V3-V4 regions was done to generate millions of read using illumina platform.
-#' A standard bioinformatic and statistical analysis done to explore skin bacterial diversity and its association with age, diet, geographical locations.
-#' The authors investigated significant association of skin microbiota with individual’s geographical location.
-#'
-#' @name mia-datasets
-#' @aliases peerj13075
-#' @keywords data
-#' @usage data(peerj13075)
-#' @author Potbhare, R., et al.
+#' @name peerj13075
 #' @docType data
+#' @keywords datasets
+#' @usage data(peerj13075)
+#' @seealso \code{\link{mia-datasets}}
+#' @author Potbhare, R., et al.
 #' @references
 #' Potbhare, R., RaviKumar, A., Munukka, E., Lahti, L., & Ashma, R. (2022). 
 #' Skin microbiota diversity among genetically unrelated individuals of Indian origin. 
-#' PeerJ, 10, e13075.
-#' \url{https://peerj.com/articles/13075/}
-#' Supplemental information includes OTU table and taxonomy table and publicly-accessible from: 
+#' PeerJ, 10, e13075. \url{https://doi.org/10.7717/peerj.13075}
+#' Supplemental information includes OTU table and taxonomy table publicly-accessible from: 
 #' \url{https://www.doi.org/10.7717/peerj.13075/supp-1}
 #' \url{https://www.doi.org/10.7717/peerj.13075/supp-2}
-"peerj13075"
+NULL
 
-#' Multiomics dataset from a rat experiment studying effect of fat and prebiotics in diet
+#' HintikkaXOData
 #' 
-#' The HintikkaXO dataset contains high-throughput profiling data from 40 rat 
-#' samples, including 39 biomarkers, 38 metabolites (NMR), and 12706 OTUs from 
-#' 318 species, measured from Cecum. This is diet comparison study with High/Low 
-#' fat diet and xylo-oligosaccaride supplementation. Column metadata is common 
-#' for all experiments (microbiota, metabolites, biomarkers) and includes the 
-#' following fields:
+#' HintikkaXO is a multiomics dataset from a rat experiment studying effect of
+#' fat and prebiotics in diet. It contains high-throughput profiling data from
+#' 40 rat samples, including 39 biomarkers, 38 metabolites (NMR), and 12706 OTUs
+#' from 318 species, measured from Cecum. This is diet comparison study with
+#' High/Low fat diet and xylo-oligosaccaride supplementation. Column metadata is
+#' common for all experiments (microbiota, metabolites, biomarkers) and is
+#' described below.
 #' 
-#' \itemize{
-#'   \item{Sample: Sample ID (character)}
-#'   \item{Rat: Rat ID (factor)}
-#'   \item{Site: Site of measurement ("Cecum"); single value}
-#'   \item{Diet: Diet group (factor; combination of the Fat and XOS fields)}
-#'   \item{Fat: Fat in Diet (factor; Low/High)}
-#'   \item{XOS: XOS Diet Supplement (numeric; 0/1)}
+#' @format A MultiAssayExperiment with 3 experiments (microbiota, metabolites and
+#' biomarkers). rowData of the microbiota experiment contains taxonomic information
+#' at Phylum, Class, Order, Family, Genus, Species and OTU levels. The metabolites
+#' and biomarkers experiments contain 38 NMR metabolites and 39 biomarkers,
+#' respectively. The colData includes:
+#' 
+#' \describe{
+#'   \item{Sample}{Sample ID (character)}
+#'   \item{Rat}{Rat ID (factor)}
+#'   \item{Site}{Site of measurement ("Cecum"); single value}
+#'   \item{Diet}{Diet group (factor; combination of the Fat and XOS fields)}
+#'   \item{Fat}{Fat in Diet (factor; Low/High)}
+#'   \item{XOS}{XOS Diet Supplement (numeric; 0/1)}
 #' }
 #' 
-#' Row metadata of the microbiota data contains taxonomic information on the 
-#' Phylum, Class, Order, Family, Genus, Species, and OTU levels.
-#' 
-#' Biomarker data contains 39 biomarkers.
-#' 
-#' Metabolite data contains 38 NMR metabolites.
-#' 
-#' @name mia-datasets
-#' @aliases HintikkaXOData
-#' @keywords data
-#' @usage data(HintikkaXOData)
-#' @author Leo Lahti et al.
+#' @name HintikkaXOData
 #' @docType data
+#' @keywords datasets
+#' @usage data(HintikkaXOData)
+#' @seealso \code{\link{mia-datasets}}
+#' @author Hintikka L et al.
 #' @references
 #' Hintikka L et al. (2021): Xylo-oligosaccharides in prevention of hepatic 
 #' steatosis and adipose tissue inflammation: associating taxonomic and 
-#' metabolomic patterns in fecal microbiotas with biclustering. International 
-#' Journal of Environmental Research and Public Health 18(8):4049 
+#' metabolomic patterns in fecal microbiota with biclustering. International 
+#' Journal of Environmental Research and Public Health 18(8):4049.
 #' \url{https://doi.org/10.3390/ijerph18084049}
 #' 
-"HintikkaXOData"
+NULL
 
 #' Tengeler2020
 #' 
-#' Tengeler data by Tengeler et al. (2022) includes gut microbiota profiles of 27 persons with ADHD. 
-#' A standard bioinformatic and statistical analysis done to  demonstrate that altered microbial 
-#' composition could be a driver of altered brain structure and function and concomitant changes in the animals’ behavior.
-#' They investigated this by colonizing young, male, germ-free C57BL/6JOlaHsd mice with microbiota from individuals with and without ADHD.
+#' Tengeler2020 includes gut microbiota profiles of 27 persons with ADHD. A
+#' standard bioinformatic and statistical analysis done to demonstrate that
+#' altered microbial composition could be a driver of altered brain structure
+#' and function and concomitant changes in the animals’ behavior. This was
+#' investigated by colonizing young, male, germ-free C57BL/6JOlaHsd mice with
+#' microbiota from individuals with and without ADHD.
 #'
-#' @name mia-datasets
-#' @aliases Tengeler2020
-#' @keywords data
-#' @usage data(Tengeler2020)
-#' @author A.C. Tengeler, et al.
+#' @format A TreeSummarizedExperiment with 151 features and 27 samples. The
+#' rowData contains taxonomic information at Kingdom, Phylum, Class, Order,
+#' Family and Genus level. The colData includes:
+#' 
+#' \describe{
+#'   \item{patient_status}{clinical status of the patient (ADHD or Control)}
+#'   \item{cohort}{cohort to which the patient belongs (Cohort_1, Cohort_2 and
+#'     Cohort_3)}
+#'   \item{patient_status_vs_cohort}{combination of patient_status and cohort}
+#'   \item{sample_name}{unique sample ID}
+#' }
+#' 
+#' @name Tengeler2020
 #' @docType data
+#' @keywords datasets
+#' @usage data(Tengeler2020)
+#' @seealso \code{\link{mia-datasets}}
+#' @author A.C. Tengeler, et al.
 #' @references
 #' Tengeler, A.C., Dam, S.A., Wiesmann, M. et al. 
 #' Gut microbiota from persons with attention-deficit/hyperactivity disorder affects the brain in mice. 
-#' Microbiome 8, 44 (2020). 
-#' \url{https://doi.org/10.1186/s40168-020-00816-x}
+#' Microbiome 8, 44 (2020). \url{https://doi.org/10.1186/s40168-020-00816-x}
+#' 
 #' Supplemental information includes Home-cage activity, methods, results and imaging parameters and publicly-accessible from: 
 #' \url{https://static-content.springer.com/esm/art%3A10.1186%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM1_ESM.docx}
 #' \url{https://static-content.springer.com/esm/art%3A10.1186%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM2_ESM.docx}
 #' \url{https://static-content.springer.com/esm/art%3A10.1186%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM3_ESM.docx}
 #' 
-"Tengeler2020"
+NULL

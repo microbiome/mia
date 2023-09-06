@@ -3,15 +3,15 @@
 \name{perSampleDominantTaxa}
 \alias{perSampleDominantTaxa}
 \alias{perSampleDominantFeatures}
-\alias{perSampleDominantTaxa,SummarizedExperiment-method}
 \alias{perSampleDominantFeatures,SummarizedExperiment-method}
-\alias{addPerSampleDominantTaxa}
+\alias{perSampleDominantTaxa,SummarizedExperiment-method}
 \alias{addPerSampleDominantFeatures}
-\alias{addPerSampleDominantTaxa,SummarizedExperiment-method}
+\alias{addPerSampleDominantTaxa}
 \alias{addPerSampleDominantFeatures,SummarizedExperiment-method}
+\alias{addPerSampleDominantTaxa,SummarizedExperiment-method}
 \title{Get dominant taxa}
 \usage{
-perSampleDominantTaxa(
+perSampleDominantFeatures(
   x,
   assay.type = assay_name,
   assay_name = "counts",
@@ -19,7 +19,7 @@ perSampleDominantTaxa(
   ...
 )
 
-\S4method{perSampleDominantTaxa}{SummarizedExperiment}(
+\S4method{perSampleDominantFeatures}{SummarizedExperiment}(
   x,
   assay.type = assay_name,
   assay_name = "counts",
@@ -27,17 +27,17 @@ perSampleDominantTaxa(
   ...
 )
 
-perSampleDominantFeatures(x, ...)
+perSampleDominantTaxa(x, ...)
 
-\S4method{perSampleDominantFeatures}{SummarizedExperiment}(x, ...)
+\S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, ...)
 
-addPerSampleDominantTaxa(x, name = "dominant_taxa", ...)
+addPerSampleDominantFeatures(x, name = "dominant_taxa", ...)
 
-\S4method{addPerSampleDominantTaxa}{SummarizedExperiment}(x, name = "dominant_taxa", ...)
+\S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(x, name = "dominant_taxa", ...)
 
-addPerSampleDominantFeatures(x, ...)
+addPerSampleDominantTaxa(x, ...)
 
-\S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(x, ...)
+\S4method{addPerSampleDominantTaxa}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
@@ -60,11 +60,11 @@ the output of \code{taxonomyRanks()}.}
 \code{rank} is specified.}
 
 \item{name}{A name for the column of the \code{colData} where the dominant
-taxa will be stored in when using \code{addPerSampleDominantTaxa}.}
+taxa will be stored in when using \code{addPerSampleDominantFeatures}.}
 }
 \value{
-\code{perSampleDominantTaxa} returns a named character vector \code{x}
-while \code{addPerSampleDominantTaxa} returns
+\code{perSampleDominantFeatures} returns a named character vector \code{x}
+while \code{addPerSampleDominantFeatures} returns
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 with additional column in \code{\link{colData}} named \code{*name*}.
 }
@@ -74,10 +74,10 @@ These functions return information about the most dominant taxa in a
 object.
 }
 \details{
-\code{addPerSampleDominantTaxa} extracts the most abundant taxa in a
+\code{addPerSampleDominantFeatures} extracts the most abundant taxa in a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object, and stores the information in the \code{colData}. It is a wrapper for
-\code{perSampleDominantTaxa}.
+\code{perSampleDominantFeatures}.
 
 With \code{rank} parameter, it is possible to agglomerate taxa based on taxonomic
 ranks. E.g. if 'Genus' rank is used, all abundances of same Genus are added
@@ -89,10 +89,10 @@ data(GlobalPatterns)
 x <- GlobalPatterns
 
 # Finds the dominant taxa.
-sim.dom <- perSampleDominantTaxa(x, rank="Genus")
+sim.dom <- perSampleDominantFeatures(x, rank="Genus")
 
 # Add information to colData
-x <- addPerSampleDominantTaxa(x, rank = "Genus", name="dominant_genera")
+x <- addPerSampleDominantFeatures(x, rank = "Genus", name="dominant_genera")
 colData(x)
 }
 \author{
