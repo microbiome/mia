@@ -57,9 +57,8 @@
 #' 
 #' @param scores A string specifying scores to be returned. Must be
 #' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
-#' v with weights Xbar, but the multiplying effect of eigenvalues removed),
-#' 'u' ((weighted) orthonormal site scores.), or 'v' ((weighted) orthonormal
-#' species scores). (By default: \code{scores='wa'})
+#' v with weights Xbar, but the multiplying effect of eigenvalues removed) or
+#' 'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
 #' other internal functions.
@@ -254,8 +253,8 @@ setMethod("calculateCCA", "SummarizedExperiment",
         if( !.is_a_bool(test.signif) ){
             stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
         }
-        if( !(.is_a_string(scores) && scores %in% c("wa", "u", "v")) ){
-            stop("'scores' must be 'wa', 'u', or 'v'.",
+        if( !(.is_a_string(scores) && scores %in% c("wa", "u")) ){
+            stop("'scores' must be 'wa' or 'u'.",
                  call. = FALSE)
         }
 

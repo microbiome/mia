@@ -34,15 +34,11 @@ test_that("CCA", {
     expect_error(runCCA(sce, form, scores = TRUE))
     expect_error(runCCA(sce, form, scores = NULL))
     expect_error(runCCA(sce, form, scores = c("wa", "u")))
-    # Remove "v" ption from parameters, it is already in rotation atrribute.
     # 
     mcca <- vegan::cca(form, dune.env)
     sce <- runCCA(sce, form)
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$wa))
-    sce <- runCCA(sce, form, scores = "v") # With tes.signif = F this works...
-    actual <- reducedDim(sce,"CCA")
-    expect_equal(as.vector(actual), as.vector(mcca$CCA$v))
     #
     mcca <- vegan::cca(form, dune.env, scale = TRUE)
     mrda <- vegan::rda(form, dune.env, scale = FALSE)

@@ -95,9 +95,8 @@ into a CA analysis and dbRDA into PCoA/MDS.}
 
 \item{scores}{A string specifying scores to be returned. Must be
 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
-v with weights Xbar, but the multiplying effect of eigenvalues removed),
-'u' ((weighted) orthonormal site scores.), or 'v' ((weighted) orthonormal
-species scores). (By default: \code{scores='wa'})}
+v with weights Xbar, but the multiplying effect of eigenvalues removed) or
+'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})}
 
 \item{scale}{a logical scalar, should the expression values be standardized?
 \code{scale} is disabled when using \code{*RDA} functions. Please scale before
