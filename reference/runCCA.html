@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.14</span>
       </span>
     </div>
 
@@ -64,17 +64,18 @@ in a <code>SummarizedExperiment</code>.</p>
 <span><span class="fu">runRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">calculateCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, scale <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">calculateCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, <span class="va">scores</span>, scale <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">calculateCCA</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">formula</span>,</span>
 <span>  <span class="va">variables</span>,</span>
-<span>  test_signif <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  test.signif <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
 <span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  scores <span class="op">=</span> <span class="st">"wa"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -82,17 +83,18 @@ in a <code>SummarizedExperiment</code>.</p>
 <span><span class="fu">runCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"CCA"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">calculateRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">calculateRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, <span class="va">scores</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">calculateRDA</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">formula</span>,</span>
 <span>  <span class="va">variables</span>,</span>
-<span>  test_signif <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  test.signif <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
 <span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  scores <span class="op">=</span> <span class="st">"wa"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -116,11 +118,11 @@ or a derived object.</p></dd>
 other internal functions.</p><ul><li><p><code>full</code> a logical scalar, should all the results from the
 significance calculations be returned. When <code>full=FALSE</code>, only
 summary tables are returned. (By default: <code>full=FALSE</code>)</p></li>
-<li><p><code>homogeneity_test</code> a single <code>character</code> value for specifying
+<li><p><code>homogeneity.test</code> a single <code>character</code> value for specifying
 the significance test used to analyse <code><a href="https://rdrr.io/pkg/vegan/man/betadisper.html" class="external-link">vegan::betadisper</a></code> results.
 Options include 'permanova' (<code><a href="https://rdrr.io/pkg/vegan/man/anova.cca.html" class="external-link">vegan::permutest</a></code>), 'anova'
 (<code><a href="https://rdrr.io/r/stats/anova.html" class="external-link">stats::anova</a></code>) and 'tukeyhsd' (<code><a href="https://rdrr.io/r/stats/TukeyHSD.html" class="external-link">stats::TukeyHSD</a></code>).
-(By default: <code>homogeneity_test="permanova"</code>)</p></li>
+(By default: <code>homogeneity.test="permanova"</code>)</p></li>
 </ul></dd>
 
 
@@ -143,16 +145,23 @@ an object coercible to one containing the variables to use.</p>
 into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
 
 
+<dt>scores</dt>
+<dd><p>A string specifying scores to be returned. Must be
+'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
+v with weights Xbar, but the multiplying effect of eigenvalues removed) or
+'u' ((weighted) orthonormal site scores). (By default: <code>scores='wa'</code>)</p></dd>
+
+
 <dt>scale</dt>
 <dd><p>a logical scalar, should the expression values be standardized?
 <code>scale</code> is disabled when using <code>*RDA</code> functions. Please scale before
 performing RDA (Check examples.)</p></dd>
 
 
-<dt>test_signif</dt>
+<dt>test.signif</dt>
 <dd><p>a logical scalar, should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
-(By default: <code>test_signif = TRUE</code>)</p></dd>
+(By default: <code>test.signif = TRUE</code>)</p></dd>
 
 
 <dt>assay.type</dt>
@@ -203,7 +212,7 @@ By default dbRDA is done with euclidean distances which equals to RDA.</p>
 dispersion, i.e., homogeneity within groups is analyzed with
 <code>vegan:betadisper</code> (multivariate homogeneity of groups dispersions (variances))
 and statistical significance of homogeneity is tested with a test
-specified by <code>homogeneity_test</code> parameter.</p>
+specified by <code>homogeneity.test</code> parameter.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -229,7 +238,7 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $homogeneity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Df       Sum Sq     Mean Sq        F N.Perm Pr(&gt;F) Total variance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SampleType  8 517998722243 64749840280 6.262765    999  0.002   693759304679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SampleType  8 517998722243 64749840280 6.262765    999  0.001   693759304679</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Explained variance</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SampleType          0.7466548</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -257,7 +266,7 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
 <span class="r-in"><span><span class="co"># A common choice along with PERMANOVA is ANOVA when statistical significance</span></span></span>
 <span class="r-in"><span><span class="co"># of homogeneity of groups is analysed. Moreover, full signficance test results</span></span></span>
 <span class="r-in"><span><span class="co"># can be returned.</span></span></span>
-<span class="r-in"><span> <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, homogeneity_test <span class="op">=</span> <span class="st">"anova"</span>, full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, homogeneity.test <span class="op">=</span> <span class="st">"anova"</span>, full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
