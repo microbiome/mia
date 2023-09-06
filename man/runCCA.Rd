@@ -27,7 +27,7 @@ runRDA(x, ...)
   x,
   formula,
   variables,
-  test_signif = TRUE,
+  test.signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
@@ -43,7 +43,7 @@ runRDA(x, ...)
   x,
   formula,
   variables,
-  test_signif = TRUE,
+  test.signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
@@ -68,11 +68,11 @@ other internal functions.
 \item{\code{full} a logical scalar, should all the results from the
 significance calculations be returned. When \code{full=FALSE}, only
 summary tables are returned. (By default: \code{full=FALSE})}
-\item{\code{homogeneity_test} a single \code{character} value for specifying
+\item{\code{homogeneity.test} a single \code{character} value for specifying
 the significance test used to analyse \code{vegan::betadisper} results.
 Options include 'permanova' (\code{vegan::permutest}), 'anova'
 (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
-(By default: \code{homogeneity_test="permanova"})}
+(By default: \code{homogeneity.test="permanova"})}
 }}
 
 \item{formula}{If \code{x} is a
@@ -103,9 +103,9 @@ species scores). (By default: \code{scores='wa'})}
 \code{scale} is disabled when using \code{*RDA} functions. Please scale before
 performing RDA (Check examples.)}
 
-\item{test_signif}{a logical scalar, should the PERMANOVA and analysis of
+\item{test.signif}{a logical scalar, should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
-(By default: \code{test_signif = TRUE})}
+(By default: \code{test.signif = TRUE})}
 
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -145,7 +145,7 @@ Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with
 \code{vegan:betadisper} (multivariate homogeneity of groups dispersions (variances))
 and statistical significance of homogeneity is tested with a test
-specified by \code{homogeneity_test} parameter.
+specified by \code{homogeneity.test} parameter.
 }
 \examples{
 library(scater)
@@ -173,7 +173,7 @@ plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 # A common choice along with PERMANOVA is ANOVA when statistical significance
 # of homogeneity of groups is analysed. Moreover, full signficance test results
 # can be returned.
- tse <- runRDA(tse, data ~ SampleType, homogeneity_test = "anova", full = TRUE)
+ tse <- runRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
 
 }
 \seealso{
