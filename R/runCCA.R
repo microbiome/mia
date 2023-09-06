@@ -338,7 +338,7 @@ setMethod("runCCA", "SingleCellExperiment",
         X <- rda$CA
         # Get species scores (whole data since metadata was not in input)
         species_scores <- x
-        # IF scores is "wa", but they are not available
+        # If scores is "wa", but they are not available
         if( scores == "wa" ){
             warning("'wa' scores are not available. Defaults to 'u'.", call. = FALSE)
             scores <- "u"
