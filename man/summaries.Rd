@@ -2,22 +2,22 @@
 % Please edit documentation in R/summaries.R
 \name{summaries}
 \alias{summaries}
-\alias{getTopFeatures}
 \alias{getTopTaxa}
-\alias{getTopFeatures,SummarizedExperiment-method}
+\alias{getTopFeatures}
 \alias{getTopTaxa,SummarizedExperiment-method}
-\alias{getUniqueFeatures}
+\alias{getTopFeatures,SummarizedExperiment-method}
 \alias{getUniqueTaxa}
-\alias{getUniqueFeatures,SummarizedExperiment-method}
+\alias{getUniqueFeatures}
 \alias{getUniqueTaxa,SummarizedExperiment-method}
-\alias{countDominantFeatures}
-\alias{countDominantFeatures,SummarizedExperiment-method}
+\alias{getUniqueFeatures,SummarizedExperiment-method}
 \alias{countDominantTaxa}
+\alias{countDominantFeatures}
 \alias{countDominantTaxa,SummarizedExperiment-method}
+\alias{countDominantFeatures,SummarizedExperiment-method}
 \alias{summary,SummarizedExperiment-method}
 \title{Summarizing microbiome data}
 \usage{
-getTopFeatures(
+getTopTaxa(
   x,
   top = 5L,
   method = c("mean", "sum", "median"),
@@ -27,7 +27,7 @@ getTopFeatures(
   ...
 )
 
-\S4method{getTopFeatures}{SummarizedExperiment}(
+\S4method{getTopTaxa}{SummarizedExperiment}(
   x,
   top = 5L,
   method = c("mean", "sum", "median", "prevalence"),
@@ -37,25 +37,25 @@ getTopFeatures(
   ...
 )
 
-getTopTaxa(x, ...)
+getTopFeatures(x, ...)
 
-\S4method{getTopTaxa}{SummarizedExperiment}(x, ...)
-
-getUniqueFeatures(x, ...)
-
-\S4method{getUniqueFeatures}{SummarizedExperiment}(x, rank = NULL, ...)
+\S4method{getTopFeatures}{SummarizedExperiment}(x, ...)
 
 getUniqueTaxa(x, ...)
 
-\S4method{getUniqueTaxa}{SummarizedExperiment}(x, ...)
+\S4method{getUniqueTaxa}{SummarizedExperiment}(x, rank = NULL, ...)
 
-countDominantFeatures(x, group = NULL, name = "dominant_taxa", ...)
+getUniqueFeatures(x, ...)
 
-\S4method{countDominantFeatures}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
+\S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
 
-countDominantTaxa(x, ...)
+countDominantTaxa(x, group = NULL, ...)
 
-\S4method{countDominantTaxa}{SummarizedExperiment}(x, ...)
+\S4method{countDominantTaxa}{SummarizedExperiment}(x, group = NULL, ...)
+
+countDominantFeatures(x, ...)
+
+\S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
 
 \S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
@@ -78,11 +78,11 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{na.rm}{For \code{getTopFeatures} logical argument for calculation method
+\item{na.rm}{For \code{getTopTaxa} logical argument for calculation method
 specified to argument \code{method}. Default is TRUE.}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
-\code{rank} is specified for \code{countDominantFeatures}.}
+\code{rank} is specified for \code{countDominantTaxa}.}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomyRanks()}.}
@@ -90,19 +90,17 @@ the output of \code{taxonomyRanks()}.}
 \item{group}{With group, it is possible to group the observations in an
 overview. Must be one of the column names of \code{colData}.}
 
-\item{name}{The column name for the features. The default is 'dominant_taxa'.}
-
 \item{object}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
 }
 \value{
-The \code{getTopFeatures} returns a vector of the most \code{top} abundant
+The \code{getTopTaxa} returns a vector of the most \code{top} abundant
 \dQuote{FeatureID}s
 
-The \code{getUniqueFeatures} returns a vector of unique taxa present at a
+The \code{getUniqueTaxa} returns a vector of unique taxa present at a
 particular rank
 
-The \code{countDominantFeatures} returns an overview in a tibble. It contains dominant taxa
+The \code{countDominantTaxa} returns an overview in a tibble. It contains dominant taxa
 in a column named \code{*name*} and its abundance in the data set.
 
 The \code{summary} returns a list with two \code{tibble}s
@@ -112,14 +110,14 @@ To query a \code{SummarizedExperiment} for interesting features, several
 functions are available.
 }
 \details{
-The \code{getTopFeatures} extracts the most \code{top} abundant \dQuote{FeatureID}s
+The \code{getTopTaxa} extracts the most \code{top} abundant \dQuote{FeatureID}s
 in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.
 
-The \code{getUniqueFeatures} is a basic function to access different taxa at a
+The \code{getUniqueTaxa} is a basic function to access different taxa at a
 particular taxonomic rank.
 
-\code{countDominantFeatures} returns information about most dominant
+\code{countDominantTaxa} returns information about most dominant
 taxa in a tibble. Information includes their absolute and relative
 abundances in whole data set.
 
@@ -130,14 +128,14 @@ object.
 }
 \examples{
 data(GlobalPatterns)
-top_taxa <- getTopFeatures(GlobalPatterns,
+top_taxa <- getTopTaxa(GlobalPatterns,
                        method = "mean",
                        top = 5,
                        assay.type = "counts")
 top_taxa
 
 # Use 'detection' to select detection threshold when using prevalence method
-top_taxa <- getTopFeatures(GlobalPatterns,
+top_taxa <- getTopTaxa(GlobalPatterns,
                        method = "prevalence",
                        top = 5,
                        assay_name = "counts",
@@ -145,18 +143,18 @@ top_taxa <- getTopFeatures(GlobalPatterns,
 top_taxa
                        
 # Top taxa os specific rank
-getTopFeatures(agglomerateByRank(GlobalPatterns,
+getTopTaxa(agglomerateByRank(GlobalPatterns,
                              rank = "Genus",
                              na.rm = TRUE))
 
 # Gets the overview of dominant taxa
-dominant_taxa <- countDominantFeatures(GlobalPatterns,
+dominant_taxa <- countDominantTaxa(GlobalPatterns,
                                    rank = "Genus")
 dominant_taxa
 
 # With group, it is possible to group observations based on specified groups
 # Gets the overview of dominant taxa
-dominant_taxa <- countDominantFeatures(GlobalPatterns,
+dominant_taxa <- countDominantTaxa(GlobalPatterns,
                                    rank = "Genus",
                                    group = "SampleType",
                                    na.rm = TRUE)
@@ -169,12 +167,12 @@ summary(GlobalPatterns, assay_name= "counts")
 # Get unique taxa at a particular taxonomic rank
 # sort = TRUE means that output is sorted in alphabetical order
 # With na.rm = TRUE, it is possible to remove NAs
-# sort and na.rm can also be used in function getTopFeatures
-getUniqueFeatures(GlobalPatterns, "Phylum", sort = TRUE)
+# sort and na.rm can also be used in function getTopTaxa
+getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE)
 
 }
 \seealso{
-\code{\link[=getPrevalence]{getPrevalentFeatures}}
+\code{\link[=getPrevalence]{getPrevalentTaxa}}
 
 \code{\link[scuttle:perCellQCMetrics]{perCellQCMetrics}},
 \code{\link[scuttle:perFeatureQCMetrics]{perFeatureQCMetrics}},

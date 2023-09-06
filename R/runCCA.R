@@ -29,9 +29,9 @@
 #'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
 #'   into a CA analysis and dbRDA into PCoA/MDS.
 #' 
-#' @param test.signif a logical scalar, should the PERMANOVA and analysis of
+#' @param test_signif a logical scalar, should the PERMANOVA and analysis of
 #'   multivariate homogeneity of group dispersions be performed.
-#'   (By default: \code{test.signif = TRUE})
+#'   (By default: \code{test_signif = TRUE})
 #'   
 #' @param scale a logical scalar, should the expression values be standardized?
 #'   \code{scale} is disabled when using \code{*RDA} functions. Please scale before
@@ -54,11 +54,6 @@
 #'
 #' @param name String specifying the name to be used to store the result in the
 #'   reducedDims of the output.
-#' 
-#' @param scores A string specifying scores to be returned. Must be
-#' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
-#' v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-#' 'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})
 #'
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
 #' other internal functions.
@@ -66,11 +61,11 @@
 #'   \item{\code{full} a logical scalar, should all the results from the
 #'   significance calculations be returned. When \code{full=FALSE}, only
 #'   summary tables are returned. (By default: \code{full=FALSE})}
-#'   \item{\code{homogeneity.test} a single \code{character} value for specifying
+#'   \item{\code{homogeneity_test} a single \code{character} value for specifying
 #'   the significance test used to analyse \code{vegan::betadisper} results.
 #'   Options include 'permanova' (\code{vegan::permutest}), 'anova'
 #'   (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
-#'   (By default: \code{homogeneity.test="permanova"})}
+#'   (By default: \code{homogeneity_test="permanova"})}
 #' }
 #' 
 #' @details
@@ -81,7 +76,7 @@
 #'   dispersion, i.e., homogeneity within groups is analyzed with 
 #'   \code{vegan:betadisper} (multivariate homogeneity of groups dispersions (variances))
 #'   and statistical significance of homogeneity is tested with a test
-#'   specified by \code{homogeneity.test} parameter.
+#'   specified by \code{homogeneity_test} parameter.
 #'
 #' @return
 #' For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
@@ -122,7 +117,7 @@
 #' # A common choice along with PERMANOVA is ANOVA when statistical significance
 #' # of homogeneity of groups is analysed. Moreover, full signficance test results
 #' # can be returned.
-#'  tse <- runRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
+#'  tse <- runRDA(tse, data ~ SampleType, homogeneity_test = "anova", full = TRUE)
 #' 
 NULL
 
@@ -170,7 +165,7 @@ setGeneric("runRDA", signature = c("x"),
 }
 
 #' @importFrom stats as.formula
-.calculate_cca <- function(x, formula, variables, scores,  scale = TRUE, ...){
+.calculate_cca <- function(x, formula, variables, scale = TRUE, ...){
     .require_package("vegan")
     # input check
     if(!.is_a_bool(scale)){
@@ -194,8 +189,7 @@ setGeneric("runRDA", signature = c("x"),
         cca <- vegan::cca(X = x, scale = scale, ...)
         X <- cca$CA
     }
-    # Create the matrix to be returned
-    ans <- X[[scores]]
+    ans <- X$u
     attr(ans, "rotation") <- X$v
     attr(ans, "eigen") <- X$eig
     attr(ans, "cca") <- cca
@@ -242,20 +236,16 @@ setMethod("calculateCCA", "ANY", .calculate_cca)
 #' @export
 #' @rdname runCCA
 setMethod("calculateCCA", "SummarizedExperiment",
-    function(x, formula, variables, test.signif = TRUE,
+    function(x, formula, variables, test_signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
-             scores = "wa", ...)
+             ...)
     {
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
         mat <- assay(x, assay.type)
-        # Check test.signif
-        if( !.is_a_bool(test.signif) ){
-            stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if( !(.is_a_string(scores) && scores %in% c("wa", "u")) ){
-            stop("'scores' must be 'wa' or 'u'.",
-                 call. = FALSE)
+        # Check test_signif
+        if( !.is_a_bool(test_signif) ){
+            stop("'test_signif' must be TRUE or FALSE.", call. = FALSE)
         }
 
         # If formula is missing but variables are not
@@ -269,10 +259,10 @@ setMethod("calculateCCA", "SummarizedExperiment",
             # (If formula is not provided variables is just empty data.frame)
             variables <- .get_variables_from_data_and_formula(x, formula)
         } 
-        cca <- .calculate_cca(mat, formula, variables, scores, ...)
+        cca <- .calculate_cca(mat, formula, variables, ...)
         
         # Test significance if specified
-        if( test.signif ){
+        if( test_signif ){
             res <- .test_rda(mat, attr(cca, "cca"), variables, ...)
             attr(cca, "significance") <- res
         }
@@ -299,8 +289,7 @@ setMethod("runCCA", "SingleCellExperiment",
     }
 )
 
-#' @importFrom vegan sppscores<-
-.calculate_rda <- function(x, formula, variables, scores, ...){
+.calculate_rda <- function(x, formula, variables, ...){
     .require_package("vegan")
     #
     # Transpose and ensure that the table is in matrix format
@@ -328,26 +317,12 @@ setMethod("runCCA", "SingleCellExperiment",
         rda <- vegan::dbrda(formula = form, ...)
     }
     # Get CCA
-    if( !is.null(rda$CCA) ){
-        X <- rda$CCA
-        # Get species scores. Get only those samples that are included in rda
-        # object (some might missing due missing metadata)
-        species_scores <- x[ rownames(X[[scores]]),  ]
-    } else{
-        # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
+    X <- rda$CCA
+    # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
+    if( is.null(X) ){
         X <- rda$CA
-        # Get species scores (whole data since metadata was not in input)
-        species_scores <- x
-        # If scores is "wa", but they are not available
-        if( scores == "wa" ){
-            warning("'wa' scores are not available. Defaults to 'u'.", call. = FALSE)
-            scores <- "u"
-        }
     }
-    # Add species scores since they are missing from dbrda object (in cca they are included)
-    sppscores(rda) <- species_scores
-    # Create the matrix to be returned
-    ans <- X[[scores]]
+    ans <- X$u
     attr(ans, "rotation") <- X$v
     attr(ans, "eigen") <- X$eig
     attr(ans, "rda") <- rda
@@ -410,16 +385,16 @@ setMethod("runCCA", "SingleCellExperiment",
 # Test association of variables to ordination
 .test_rda_vars <- function(
         mat, rda, variables, permanova_model, by = "margin", full = FALSE,
-        homogeneity.test = "permanova", ...){
+        homogeneity_test = "permanova", ...){
     # Check full parameter
     if( !.is_a_bool(full) ){
         stop("'full' must be TRUE or FALSE.", call. = FALSE)
     }
-    # Check homogeneity.test
-    if( !(is.character(homogeneity.test) &&
-          length(homogeneity.test) == 1 &&
-          homogeneity.test %in% c("permanova", "anova", "tukeyhsd")) ){
-        stop("'homogeneity.test' must be 'permanova', 'anova', or 'tukeyhsd'.",
+    # Check homogeneity_test
+    if( !(is.character(homogeneity_test) &&
+          length(homogeneity_test) == 1 &&
+          homogeneity_test %in% c("permanova", "anova", "tukeyhsd")) ){
+        stop("'homogeneity_test' must be 'permanova', 'anova', or 'tukeyhsd'.",
              call. = FALSE)
     }
     #
@@ -459,10 +434,10 @@ setMethod("runCCA", "SingleCellExperiment",
         )
         )
         # Run significance test
-        significance <- .homogeneity_significance(betadisper_res, homogeneity.test, ...)
+        significance <- .homogeneity_significance(betadisper_res, homogeneity_test, ...)
         # Return the results as a list
         models <- list(betadisper_res, significance[["obj"]])
-        names(models) <- c("betadisper", homogeneity.test)
+        names(models) <- c("betadisper", homogeneity_test)
         res <- list(
             models = models,
             table = significance[["table"]]
@@ -498,27 +473,27 @@ setMethod("runCCA", "SingleCellExperiment",
 }
 
 # Perform statistical test for group homogeneity results
-.homogeneity_significance <- function(betadisper_res, homogeneity.test, ...){
+.homogeneity_significance <- function(betadisper_res, homogeneity_test, ...){
     # Run specified significance test
-    if( homogeneity.test == "anova" ){
+    if( homogeneity_test == "anova" ){
         res <- stats::anova(betadisper_res, ...)
-    } else if ( homogeneity.test == "tukeyhsd" ){
+    } else if ( homogeneity_test == "tukeyhsd" ){
         res <- stats::TukeyHSD(betadisper_res, ...)
     } else{
         res <- vegan::permutest(betadisper_res, ...)
     }
 
     # Get summary table from the results
-    if( homogeneity.test == "anova" ){
+    if( homogeneity_test == "anova" ){
         tab <- as.data.frame(res)
-    } else if( homogeneity.test == "tukeyhsd" ){
+    } else if( homogeneity_test == "tukeyhsd" ){
         tab <- res[["group"]]
     } else{
         tab <- res[["tab"]]
     }
     
     # Modify permanova/anova table
-    if( homogeneity.test != "tukeyhsd" ){
+    if( homogeneity_test != "tukeyhsd" ){
         # Add info about total variance
         tab[ , "Total variance"] <- tab["Groups", "Sum Sq"] + tab["Residuals", "Sum Sq"]
         # Add info about explained variance
@@ -542,20 +517,16 @@ setMethod("calculateRDA", "ANY", .calculate_rda)
 #' @export
 #' @rdname runCCA
 setMethod("calculateRDA", "SummarizedExperiment",
-    function(x, formula, variables, test.signif = TRUE,
+    function(x, formula, variables, test_signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
-             scores = "wa", ...)
+             ...)
     {
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
         mat <- assay(x, assay.type)
-        # Check test.signif
-        if( !.is_a_bool(test.signif) ){
-            stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if( !(.is_a_string(scores) && scores %in% c("wa", "u", "v")) ){
-            stop("'scores' must be 'wa', 'u', or 'v'.",
-                 call. = FALSE)
+        # Check test_signif
+        if( !.is_a_bool(test_signif) ){
+            stop("'test_signif' must be TRUE or FALSE.", call. = FALSE)
         }
         
         # If formula is missing but variables are not
@@ -570,10 +541,10 @@ setMethod("calculateRDA", "SummarizedExperiment",
             variables <- .get_variables_from_data_and_formula(x, formula)
         } 
         # Calculate RDA
-        rda <- .calculate_rda(mat, formula, variables, scores, ...)
+        rda <- .calculate_rda(mat, formula, variables, ...)
         
         # Test significance if specified
-        if( test.signif ){
+        if( test_signif ){
             res <- .test_rda(mat, attr(rda, "rda"), variables, ...)
             attr(rda, "significance") <- res
         }

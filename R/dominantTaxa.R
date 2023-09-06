@@ -21,24 +21,24 @@
 #'   the output of \code{taxonomyRanks()}.
 #'
 #' @param name A name for the column of the \code{colData} where the dominant
-#'   taxa will be stored in when using \code{addPerSampleDominantFeatures}.
+#'   taxa will be stored in when using \code{addPerSampleDominantTaxa}.
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
 #' \code{rank} is specified.
 #'
 #' @details
-#' \code{addPerSampleDominantFeatures} extracts the most abundant taxa in a
+#' \code{addPerSampleDominantTaxa} extracts the most abundant taxa in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object, and stores the information in the \code{colData}. It is a wrapper for
-#' \code{perSampleDominantFeatures}.
+#' \code{perSampleDominantTaxa}.
 #'
 #' With \code{rank} parameter, it is possible to agglomerate taxa based on taxonomic
 #' ranks. E.g. if 'Genus' rank is used, all abundances of same Genus are added
 #' together, and those families are returned. See \code{agglomerateByRank()} for
 #' additional arguments to deal with missing values or special characters.
 #'
-#' @return \code{perSampleDominantFeatures} returns a named character vector \code{x}
-#' while \code{addPerSampleDominantFeatures} returns
+#' @return \code{perSampleDominantTaxa} returns a named character vector \code{x}
+#' while \code{addPerSampleDominantTaxa} returns
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' with additional column in \code{\link{colData}} named \code{*name*}.
 #'
@@ -52,26 +52,26 @@
 #' x <- GlobalPatterns
 #'
 #' # Finds the dominant taxa.
-#' sim.dom <- perSampleDominantFeatures(x, rank="Genus")
+#' sim.dom <- perSampleDominantTaxa(x, rank="Genus")
 #'
 #' # Add information to colData
-#' x <- addPerSampleDominantFeatures(x, rank = "Genus", name="dominant_genera")
+#' x <- addPerSampleDominantTaxa(x, rank = "Genus", name="dominant_genera")
 #' colData(x)
 NULL
 
 #' @rdname perSampleDominantTaxa
-#' @aliases perSampleDominantTaxa
+#' @aliases perSampleDominantFeatures
 #' @export
-setGeneric("perSampleDominantFeatures",signature = c("x"),
+setGeneric("perSampleDominantTaxa",signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
                     rank = NULL, ...)
-               standardGeneric("perSampleDominantFeatures"))
+               standardGeneric("perSampleDominantTaxa"))
 
 #' @rdname perSampleDominantTaxa
-#' @aliases perSampleDominantTaxa
+#' @aliases perSampleDominantFeatures
 #' @importFrom IRanges relist
 #' @export
-setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
              rank = NULL, ...){
         # Input check
@@ -108,40 +108,39 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
 )
 
 #' @rdname perSampleDominantTaxa
-#' @aliases perSampleDominantFeatures
+#' @aliases perSampleDominantTaxa
 #' @export
-setGeneric("perSampleDominantTaxa", signature = c("x"),
+setGeneric("perSampleDominantFeatures", signature = c("x"),
         function(x, ...) 
-            standardGeneric("perSampleDominantTaxa"))
+            standardGeneric("perSampleDominantFeatures"))
 
 #' @rdname perSampleDominantTaxa
-#' @aliases perSampleDominantFeatures
+#' @aliases perSampleDominantTaxa
 #' @export
-setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
+setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
         function(x, ...){
-            .Deprecated(old ="perSampleDominantTaxa", new = "perSampleDominantFeatures", msg = "The 'perSampleDominantTaxa' function is deprecated. Use 'perSampleDominantFeatures' instead.")
-            perSampleDominantFeatures(x, ...)
+            perSampleDominantTaxa(x, ...)
         }
 )
 
 #' @rdname perSampleDominantTaxa
-#' @aliases addPerSampleDominantTaxa
+#' @aliases addPerSampleDominantFeatures
 #' @export
-setGeneric("addPerSampleDominantFeatures", signature = c("x"),
+setGeneric("addPerSampleDominantTaxa", signature = c("x"),
            function(x, name = "dominant_taxa", ...)
-               standardGeneric("addPerSampleDominantFeatures"))
+               standardGeneric("addPerSampleDominantTaxa"))
 
 #' @rdname perSampleDominantTaxa
-#' @aliases addPerSampleDominantTaxa
+#' @aliases addPerSampleDominantFeatures
 #' @export
-setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, name = "dominant_taxa", ...){
         # name check
         if(!.is_non_empty_string(name)){
             stop("'name' must be a non-empty single character value.",
                  call. = FALSE)
         }
-        dom.taxa <- perSampleDominantFeatures(x, ...)
+        dom.taxa <- perSampleDominantTaxa(x, ...)
         # If individual sample contains multiple dominant taxa (they have equal counts)
         if( length(dom.taxa) > nrow(colData(x)) ){
             # Store order
@@ -159,18 +158,17 @@ setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperimen
 )
 
 #' @rdname perSampleDominantTaxa
-#' @aliases addPerSampleDominantFeatures
+#' @aliases addPerSampleDominantTaxa
 #' @export
-setGeneric("addPerSampleDominantTaxa", signature = c("x"),
+setGeneric("addPerSampleDominantFeatures", signature = c("x"),
         function(x, ...) 
-            standardGeneric("addPerSampleDominantTaxa"))
+            standardGeneric("addPerSampleDominantFeatures"))
 
 #' @rdname perSampleDominantTaxa
-#' @aliases addPerSampleDominantFeatures
+#' @aliases addPerSampleDominantTaxa
 #' @export
-setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
+setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
         function(x, ...){
-            .Deprecated(old ="addPerSampleDominantTaxa", new = "addPerSampleDominantFeatures", msg = "The 'addPerSampleDominantTaxa' function is deprecated. Use 'addPerSampleDominantFeatures' instead.")
-            addPerSampleDominantFeatures(x, ...)
+            addPerSampleDominantTaxa(x, ...)
         }
 )

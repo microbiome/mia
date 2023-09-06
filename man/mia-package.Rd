@@ -13,5 +13,5 @@ common task are implemented such as community indices calculation and
 summarization.
 }
 \seealso{
-\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}
+\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment} class
 }

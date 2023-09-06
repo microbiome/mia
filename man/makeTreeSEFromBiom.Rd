@@ -12,7 +12,7 @@ makeTreeSEFromBiom(
   obj,
   removeTaxaPrefixes = FALSE,
   rankFromPrefix = FALSE,
-  remove.artifacts = FALSE,
+  clean.taxa.names = "auto",
   ...
 )
 
@@ -21,12 +21,7 @@ makeTreeSummarizedExperimentFromBiom(obj, ...)
 \arguments{
 \item{file}{biom file location}
 
-\item{...}{additional arguments
-\itemize{
-\item{\code{patter}}{\code{character} value specifying artifacts
-to be removed. If \code{patterns = "auto"}, special characters
-are removed. (default: \code{pattern = "auto"})}
-}}
+\item{...}{optional arguments (not used).}
 
 \item{obj}{object of type \code{\link[biomformat:read_biom]{biom}}}
 
@@ -37,9 +32,11 @@ taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})}
 taxonomic ranks on feature table, should they be scraped from prefixes?
 (default \code{rankFromPrefix = FALSE})}
 
-\item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
-some taxonomic character naming artifacts, should they be removed.
-(default \code{remove.artifacts = FALSE})}
+\item{clean.taxa.names}{\code{character} or \code{regex}: If file have
+some taxonomic character naming artifacts to be removed. Additionally
+when \code{clean.taxa.names = "auto"} automatically artifacts are detected
+and removed. Otherwise \code{clean.taxa.names = NULL} no cleaning is performed.
+(default \code{clean.taxa.names = "auto"})}
 }
 \value{
 An object of class
@@ -67,13 +64,13 @@ if(requireNamespace("biomformat")) {
   tse
   
   # Cleaning artifacts from Taxonomy data
-  file_name <- system.file(
-        "extdata/testdata", "Aggregated_humanization2.biom", package = "mia")
-  tse <- loadFromBiom(
-        file_name,
-        removeTaxaPrefixes=TRUE,
-        rankFromPrefix=TRUE,
-        remove.artifacts = TRUE)
+  f <- system.file("extdata/testdata/Aggregated_humanization2.biom",
+                  package="mia")
+  biom_object <- biomformat::read_biom(f)
+  tse <- makeTreeSEFromBiom(biom_object,
+                            removeTaxaPrefixes=TRUE,
+                            rankFromPrefix=TRUE,
+                            clean.taxa.names = "auto")
   tse
 }
 }

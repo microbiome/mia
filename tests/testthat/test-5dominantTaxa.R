@@ -1,8 +1,8 @@
-context("perSampleDominantFeatures")
+context("perSampleDominantTaxa")
 
-test_that("perSampleDominantFeatures", {
+test_that("perSampleDominantTaxa", {
 
-    test_perSampleDominantFeatures <- function(tse){
+    test_perSampleDominantTaxa <- function(tse){
 
         # names
         exp.names.one <- c("CL3", "CC1", "SV1", "M31Fcsw",
@@ -18,10 +18,10 @@ test_that("perSampleDominantFeatures", {
                           "549656","549656","549656")
         names(exp.vals.one) <- exp.names.one
 
-        expect_equal(perSampleDominantFeatures(tse)[1:15], exp.vals.one)
+        expect_equal(perSampleDominantTaxa(tse)[1:15], exp.vals.one)
 
         # Test at taxonomic level for values are passed to agglomerateRanks
-        perSampleDominantFeatures(tse, rank = "Genus", na.rm = FALSE)
+        perSampleDominantTaxa(tse, rank = "Genus", na.rm = FALSE)
 
         exp.vals.two <- c("Genus:CandidatusSolibacter", "Genus:MC18",
                           "Class:Chloracidobacteria", "Genus:Bacteroides",
@@ -31,16 +31,16 @@ test_that("perSampleDominantFeatures", {
                           "Genus:Dolichospermum", "Family:ACK-M1",
                           "Order:Stramenopiles","Order:Stramenopiles","Order:Stramenopiles")
         names(exp.vals.two) <- exp.names.one
-        expect_equal(perSampleDominantFeatures(tse,
+        expect_equal(perSampleDominantTaxa(tse,
                                            rank = "Genus",
                                            na.rm = FALSE)[1:15],
                      exp.vals.two)
 
         # Check if DominantTaxa is added to coldata
-        expect_equal(colData(addPerSampleDominantFeatures(tse,
+        expect_equal(colData(addPerSampleDominantTaxa(tse,
                                                       name="dominant"))$dominant[1:15],
                      exp.vals.one)
-        expect_equal(colData(addPerSampleDominantFeatures(tse,
+        expect_equal(colData(addPerSampleDominantTaxa(tse,
                                                       rank = "Genus",
                                                       na.rm = FALSE,
                                                       name="dominant"))$dominant[1:15],
@@ -51,8 +51,8 @@ test_that("perSampleDominantFeatures", {
         assay(tse1)[1, 1] <- max(assay(tse1)[, 1])
         
         # Get dominant taxa
-        dominant_taxa <- perSampleDominantFeatures(tse)
-        dominant_taxa1 <- perSampleDominantFeatures(tse1)
+        dominant_taxa <- perSampleDominantTaxa(tse)
+        dominant_taxa1 <- perSampleDominantTaxa(tse1)
         
         # dominant_taxa1 should have one additioal element
         expect_equal( length(dominant_taxa1), length(dominant_taxa)+1 )
@@ -64,8 +64,8 @@ test_that("perSampleDominantFeatures", {
         expect_equal(dominant_taxa1_removed, dominant_taxa)
         
         # Add dominant taxa to colData and check that it equals to dominant taxa
-        # that is got by perSampleDominantFeatures
-        add_dom1 <- unlist(colData(addPerSampleDominantFeatures(tse1))$dominant_taxa)
+        # that is got by perSampleDominantTaxa
+        add_dom1 <- unlist(colData(addPerSampleDominantTaxa(tse1))$dominant_taxa)
         expect_equal(unname(add_dom1), unname(dominant_taxa1))
         
         # Test alias
@@ -77,27 +77,30 @@ test_that("perSampleDominantFeatures", {
 
     # TSE object
     data(GlobalPatterns, package="mia")
-    test_perSampleDominantFeatures(GlobalPatterns)
+    test_perSampleDominantTaxa(GlobalPatterns)
 
 
-    test_that("countDominantFeatures", {
+    test_that("countDominantTaxa", {
 
-        test_countDominantFeatures <- function(tse){
-            expect_equal(countDominantFeatures(tse, group = "SampleType")$dominant_taxa,
+        test_countDominantTaxa <- function(tse){
+            expect_equal(countDominantTaxa(tse, group = "SampleType")$dominant_taxa,
                          c("331820", "549656", "550960", "319044", "189047",
                            "279599", "329744", "12812",  "534609", "557211",
                            "87194", "484436", "64396", "98605", "256977",
                            "36155","71074",  "114821", "360229"))
 
-            expect_equal(countDominantFeatures(tse,
+            expect_equal(countDominantTaxa(tse,
                                            rank = "Kingdom")$dominant_taxa[1],
                          c("Bacteria"))
 
-            expect_equal(countDominantFeatures(tse, rank = "Order", digits = 3)$rel_freq,
-                         c(0.231, 0.115, 0.077, 0.077, 0.077, 0.077, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038))
+            expect_equal(countDominantTaxa(tse, rank = "Order")$rel.freq,
+                         c(23.1, 11.5, 7.7, 7.7, 7.7, 7.7, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8))
+
+            expect_equal(countDominantTaxa(tse, rank = "Class")$rel.freq.pct,
+                         c("23%", "15%", "12%", "8%", "8%", "8%", "4%", "4%", "4%", "4%", "4%", "4%", "4%"))
 
             # check sample type
-            sample.type <- countDominantFeatures(tse, rank = "Class",
+            sample.type <- countDominantTaxa(tse, rank = "Class",
                                              group = "SampleType")$SampleType
 
             expect_equal(as.character(sample.type),
@@ -110,8 +113,8 @@ test_that("perSampleDominantFeatures", {
             assay(tse1)[1, 1] <- max(assay(tse1)[, 1])
             
             # Calculate info about dominant taxa
-            count_dominant <- countDominantFeatures(tse)
-            count_dominant1 <- countDominantFeatures(tse1)
+            count_dominant <- countDominantTaxa(tse)
+            count_dominant1 <- countDominantTaxa(tse1)
             
             # count_dominant should have one additional row
             expect_equal( nrow(count_dominant1), nrow(count_dominant)+1 )
@@ -126,7 +129,7 @@ test_that("perSampleDominantFeatures", {
 
         # TSE object
         data(GlobalPatterns, package="mia")
-        test_countDominantFeatures(GlobalPatterns)
+        test_countDominantTaxa(GlobalPatterns)
 
     })
 })

@@ -9,7 +9,7 @@
 #'
 #' @param detection Detection threshold for absence/presence. Either an
 #'   absolute value compared directly to the values of \code{x} or a relative
-#'   value between 0 and 1, if \code{as_relative = FALSE}.
+#'   value between 0 and 1, if \code{as_relative = TRUE}.
 #'
 #' @param include_lowest logical scalar: Should the lower boundary of the
 #'   detection and prevalence cutoffs be included? (default: \code{FALSE})
@@ -18,7 +18,7 @@
 #'   (default: \code{FALSE})
 #'
 #' @param as_relative logical scalar: Should the detection threshold be applied
-#'   on compositional (relative) abundances? (default: \code{FALSE})
+#'   on compositional (relative) abundances? (default: \code{TRUE})
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -41,11 +41,11 @@
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
-#'   \item{for \code{getPrevalentFeatures}, \code{getRareFeatures}, 
-#'     \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional 
+#'   \item{for \code{getPrevalentTaxa}, \code{getRareTaxa}, 
+#'     \code{subsetByPrevalentTaxa} and \code{subsetByRareTaxa} additional 
 #'     parameters passed to \code{getPrevalence}}
 #'   \item{for \code{getPrevalentAbundance} additional parameters passed to
-#'     \code{getPrevalentFeatures}}
+#'     \code{getPrevalentTaxa}}
 #' }
 #'
 #' @details
@@ -54,20 +54,20 @@
 #' prevalence is calculated for the selected taxonomic rank, otherwise for the
 #' rows. The absolute population prevalence can be obtained by multiplying the
 #' prevalence by the number of samples (\code{ncol(x)}). If \code{as_relative =
-#' FALSE} the relative frequency (between 0 and 1) is used to check against the
+#' TRUE} the relative frequency (between 0 and 1) is used to check against the
 #' \code{detection} threshold.
 #'
 #' The core abundance index from \code{getPrevalentAbundance} gives the relative
 #' proportion of the core species (in between 0 and 1). The core taxa are
 #' defined as those that exceed the given population prevalence threshold at the
-#' given detection level as set for \code{getPrevalentFeatures}.
+#' given detection level as set for \code{getPrevalentTaxa}.
 #' 
-#' \code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return a subset of \code{x}. 
+#' \code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return a subset of \code{x}. 
 #' The subset includes the most prevalent or rare taxa that are calculated with 
-#' \code{getPrevalentFeatures} or \code{getRareFeatures} respectively.
+#' \code{getPrevalentTaxa} or \code{getRareTaxa} respectively.
 #'
 #' @return
-#' \code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return subset of \code{x}.
+#' \code{subsetPrevalentTaxa} and \code{subsetRareTaxa} return subset of \code{x}.
 #' 
 #' All other functions return a named vectors:
 #' \itemize{
@@ -77,7 +77,7 @@
 #'   \item{\code{getPrevalentAbundance} returns a \code{numeric} vector with
 #'     the names corresponding to the column name of \code{x} and include the 
 #'     joint abundance of prevalent taxa.}
-#'   \item{\code{getPrevalentTaxa} and \code{getRareFeatures} return a 
+#'   \item{\code{getPrevalentTaxa} and \code{getRareTaxa} return a 
 #'     \code{character} vector with only the names exceeding the threshold set
 #'     by \code{prevalence}, if the \code{rownames} of \code{x} is set. 
 #'     Otherwise an \code{integer} vector is returned matching the rows in
@@ -133,7 +133,7 @@
 #' # Note that the data (GlobalPatterns) is here in absolute counts
 #' # (and not compositional, relative abundances)
 #' # Prevalence threshold 50 percent (strictly greater by default)
-#' prevalent <- getPrevalentFeatures(tse,
+#' prevalent <- getPrevalentTaxa(tse,
 #'                               rank = "Phylum",
 #'                               detection = 10,
 #'                               prevalence = 50/100,
@@ -141,15 +141,15 @@
 #' head(prevalent)
 #' 
 #' # Gets a subset of object that includes prevalent taxa
-#' altExp(tse, "prevalent") <- subsetByPrevalentFeatures(tse,
+#' altExp(tse, "prevalent") <- subsetByPrevalentTaxa(tse,
 #'                                        rank = "Family",
 #'                                        detection = 0.001,
 #'                                        prevalence = 0.55,
 #'                                        as_relative = TRUE)
 #' altExp(tse, "prevalent")                                 
 #'
-#' # getRareFeatures returns the inverse
-#' rare <- getRareFeatures(tse,
+#' # getRareTaxa returns the inverse
+#' rare <- getRareTaxa(tse,
 #'                     rank = "Phylum",
 #'                     detection = 1/100,
 #'                     prevalence = 50/100,
@@ -157,7 +157,7 @@
 #' head(rare)
 #' 
 #' # Gets a subset of object that includes rare taxa
-#' altExp(tse, "rare") <- subsetByRareFeatures(tse,
+#' altExp(tse, "rare") <- subsetByRareTaxa(tse,
 #'                              rank = "Class",
 #'                              detection = 0.001,
 #'                              prevalence = 0.001,
@@ -246,7 +246,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-             as_relative = FALSE, rank = NULL, ...){
+             as_relative = TRUE, rank = NULL, ...){
         # input check
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
@@ -262,7 +262,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         getPrevalence(mat, ...)
     }
 )
-############################# getPrevalentFeatures #################################
+############################# getPrevalentTaxa #################################
 #' @rdname getPrevalence
 #'
 #' @param prevalence Prevalence threshold (in 0 to 1). The
@@ -270,15 +270,15 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
 #'   limit, set \code{include_lowest} to \code{TRUE}.
 #'
 #' @details
-#' \code{getPrevalentFeatures} returns taxa that are more prevalent with the
+#' \code{getPrevalentTaxa} returns taxa that are more prevalent with the
 #' given detection threshold for the selected taxonomic rank.
 #'
-#' @aliases getPrevalentTaxa
+#' @aliases getPrevalentFeatures
 #' 
 #' @export
-setGeneric("getPrevalentFeatures", signature = "x",
+setGeneric("getPrevalentTaxa", signature = "x",
            function(x, ...)
-               standardGeneric("getPrevalentFeatures"))
+               standardGeneric("getPrevalentTaxa"))
 
 .norm_rownames <- function(x){
     if(is.null(rownames(x))){
@@ -342,11 +342,10 @@ setGeneric("getPrevalentFeatures", signature = "x",
     unique(taxa)
 }
 
-
 #' @rdname getPrevalence
-#' @aliases getRarePrevalentTaxa
+#' @aliases getRarePrevalentFeatures
 #' @export
-setMethod("getPrevalentFeatures", signature = c(x = "ANY"),
+setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
     function(x, prevalence = 50/100, include_lowest = FALSE, ...){
         .get_prevalent_taxa(x, rank = NULL, prevalence = prevalence,
                             include_lowest = include_lowest, ...)
@@ -354,9 +353,9 @@ setMethod("getPrevalentFeatures", signature = c(x = "ANY"),
 )
 
 #' @rdname getPrevalence
-#' @aliases getPrevalentTaxa
+#' @aliases getPrevalentFeatures
 #' @export
-setMethod("getPrevalentFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, prevalence = 50/100, 
              include_lowest = FALSE, ...){
         .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
@@ -365,35 +364,34 @@ setMethod("getPrevalentFeatures", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname getPrevalence
-#' @aliases getPrevalentFeatures
+#' @aliases getPrevalentTaxa
 #' @export
-setGeneric("getPrevalentTaxa", signature = c("x"),
+setGeneric("getPrevalentFeatures", signature = c("x"),
         function(x, ...) 
-            standardGeneric("getPrevalentTaxa"))
+            standardGeneric("getPrevalentFeatures"))
 
 #' @rdname getPrevalence
-#' @aliases getPrevalentFeatures
+#' @aliases getPrevalentTaxa
 #' @export
-setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
+setMethod("getPrevalentFeatures", signature = c(x = "ANY"),
         function(x, ...){
-            .Deprecated(old ="getPrevalentTaxa", new = "getPrevalentFeatures", msg = "The 'getPrevalentTaxa' function is deprecated. Use 'getPrevalentFeatures' instead.")
-            getPrevalentFeatures(x, ...)
+            getPrevalentTaxa(x, ...)
         }
 )
 
-############################# getRareFeatures ######################################
+############################# getRareTaxa ######################################
 
 #' @rdname getPrevalence
 #'
 #' @details
-#' \code{getRareFeatures} returns complement of \code{getPrevalentTaxa}.
+#' \code{getRareTaxa} returns complement of \code{getPrevalentTaxa}.
 #' 
-#' @aliases getRareTaxa
+#' @aliases getRareFeatures
 #' 
 #' @export
-setGeneric("getRareFeatures", signature = "x",
+setGeneric("getRareTaxa", signature = "x",
            function(x, ...)
-               standardGeneric("getRareFeatures"))
+               standardGeneric("getRareTaxa"))
 
 .get_rare_indices <- function(x, ...){
     indices <- .get_prevalent_indices(x = x, ...)
@@ -421,9 +419,9 @@ setGeneric("getRareFeatures", signature = "x",
 }
 
 #' @rdname getPrevalence
-#' @aliases getRareTaxa
+#' @aliases getRareFeatures
 #' @export
-setMethod("getRareFeatures", signature = c(x = "ANY"),
+setMethod("getRareTaxa", signature = c(x = "ANY"),
     function(x, prevalence = 50/100, include_lowest = FALSE, ...){
         .get_rare_taxa(x, rank = NULL, prevalence = prevalence,
                        include_lowest = include_lowest, ...)
@@ -431,9 +429,9 @@ setMethod("getRareFeatures", signature = c(x = "ANY"),
 )
 
 #' @rdname getPrevalence
-#' @aliases getRareTaxa
+#' @aliases getRareFeatures
 #' @export
-setMethod("getRareFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, prevalence = 50/100, 
              include_lowest = FALSE, ...){
         .get_rare_taxa(x, rank = rank, prevalence = prevalence,
@@ -442,35 +440,34 @@ setMethod("getRareFeatures", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname getPrevalence
-#' @aliases getRareFeatures
+#' @aliases getRareTaxa
 #' @export
-setGeneric("getRareTaxa", signature = c("x"),
+setGeneric("getRareFeatures", signature = c("x"),
            function(x, ...) 
-               standardGeneric("getRareTaxa"))
+               standardGeneric("getRareFeatures"))
 
 #' @rdname getPrevalence
-#' @aliases getRareFeatures
+#' @aliases getRareTaxa
 #' @export
-setMethod("getRareTaxa", signature = c(x = "ANY"),
+setMethod("getRareFeatures", signature = c(x = "ANY"),
         function(x, ...){
-            .Deprecated(old ="getRareTaxa", new = "getRareFeatures", msg = "The 'getRareTaxa' function is deprecated. Use 'getRareFeatures' instead.")
-            getRareFeatures(x, ...)
+            getRareTaxa(x, ...)
         }
 )
 
-############################# subsetByPrevalentFeatures ############################
+############################# subsetByPrevalentTaxa ############################
 
 #' @rdname getPrevalence
-#' @aliases subsetByPrevalentTaxa
+#' @aliases subsetByPrevalentFeatures
 #' @export
-setGeneric("subsetByPrevalentFeatures", signature = "x",
+setGeneric("subsetByPrevalentTaxa", signature = "x",
            function(x, ...)
-               standardGeneric("subsetByPrevalentFeatures"))
+               standardGeneric("subsetByPrevalentTaxa"))
 
 #' @rdname getPrevalence
-#' @aliases subsetByPrevalentTaxa
+#' @aliases subsetByPrevalentFeatures
 #' @export
-setMethod("subsetByPrevalentFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("subsetByPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
         x <- .agg_for_prevalence(x, rank = rank, ...)
         prevalent_indices <- .get_prevalent_indices(x, ...)
@@ -479,35 +476,34 @@ setMethod("subsetByPrevalentFeatures", signature = c(x = "SummarizedExperiment")
 )
 
 #' @rdname getPrevalence
-#' @aliases subsetByPrevalentFeatures
+#' @aliases subsetByPrevalentTaxa
 #' @export
-setGeneric("subsetByPrevalentTaxa", signature = c("x"),
+setGeneric("subsetByPrevalentFeatures", signature = c("x"),
         function(x, ...) 
-            standardGeneric("subsetByPrevalentTaxa"))
+            standardGeneric("subsetByPrevalentFeatures"))
 
 #' @rdname getPrevalence
-#' @aliases subsetByPrevalentFeatures
+#' @aliases subsetByPrevalentTaxa
 #' @export
-setMethod("subsetByPrevalentTaxa", signature = c(x = "ANY"),
+setMethod("subsetByPrevalentFeatures", signature = c(x = "ANY"),
         function(x, ...){
-            .Deprecated(old ="subsetByPrevalentTaxa", new = "subsetByPrevalentFeatures", msg = "The 'subsetByPrevalentTaxa' function is deprecated. Use 'subsetByPrevalentFeatures' instead.")
-            subsetByPrevalentFeatures(x, ...)
+            subsetByPrevalentTaxa(x, ...)
         }
 )
 
-############################# subsetByRareFeatures #################################
+############################# subsetByRareTaxa #################################
 
 #' @rdname getPrevalence
-#' @aliases subsetByRareTaxa
+#' @aliases subsetByRareFeatures
 #' @export
-setGeneric("subsetByRareFeatures", signature = "x",
+setGeneric("subsetByRareTaxa", signature = "x",
            function(x, ...)
-               standardGeneric("subsetByRareFeatures"))
+               standardGeneric("subsetByRareTaxa"))
 
 #' @rdname getPrevalence
-#' @aliases subsetByRareTaxa
+#' @aliases subsetByRareFeatures
 #' @export
-setMethod("subsetByRareFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("subsetByRareTaxa", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
         x <- .agg_for_prevalence(x, rank = rank, ...)
         rare_indices <- .get_rare_indices(x, ...)
@@ -516,19 +512,18 @@ setMethod("subsetByRareFeatures", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname getPrevalence
-#' @aliases subsetByRareFeatures
+#' @aliases subsetByRareTaxa
 #' @export
-setGeneric("subsetByRareTaxa", signature = c("x"),
+setGeneric("subsetByRareFeatures", signature = c("x"),
         function(x, ...) 
-            standardGeneric("subsetByRareTaxa"))
+            standardGeneric("subsetByRareFeatures"))
 
 #' @rdname getPrevalence
-#' @aliases subsetByRareFeatures
+#' @aliases subsetByRareTaxa
 #' @export
-setMethod("subsetByRareTaxa", signature = c(x = "ANY"),
+setMethod("subsetByRareFeatures", signature = c(x = "ANY"),
         function(x, ...){
-            .Deprecated(old ="subsetByRareTaxa", new = "subsetByRareFeatures", msg = "The 'subsetByRareTaxa' function is deprecated. Use 'subsetByRareFeatures' instead.")
-            subsetByRareFeatures(x, ...)
+            subsetByRareTaxa(x, ...)
         }
 )
 
@@ -586,7 +581,7 @@ setGeneric("mergeFeaturesByPrevalence", signature = "x",
 
 
 #' @rdname getPrevalence
-#' @aliases mergeFeaturesByPrevalence
+#' @aliases mergeFeaturesByPRevalence
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1L], other_label = "Other", ...){

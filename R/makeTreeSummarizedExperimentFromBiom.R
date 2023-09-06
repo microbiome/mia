@@ -13,16 +13,13 @@
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
 #' (default \code{rankFromPrefix = FALSE})
 #' 
-#' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
-#' some taxonomic character naming artifacts, should they be removed.
-#' (default \code{remove.artifacts = FALSE})
+#' @param clean.taxa.names \code{character} or \code{regex}: If file have
+#' some taxonomic character naming artifacts to be removed. Additionally
+#' when \code{clean.taxa.names = "auto"} automatically artifacts are detected
+#' and removed. Otherwise \code{clean.taxa.names = NULL} no cleaning is performed.
+#' (default \code{clean.taxa.names = "auto"})
 #' 
-#' @param ... additional arguments 
-#'   \itemize{
-#'        \item{\code{patter}}{\code{character} value specifying artifacts
-#'        to be removed. If \code{patterns = "auto"}, special characters
-#'        are removed. (default: \code{pattern = "auto"})}
-#'    }
+#' @param ... optional arguments (not used).
 #' 
 #' @return An object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -51,13 +48,13 @@
 #'   tse
 #'   
 #'   # Cleaning artifacts from Taxonomy data
-#'   file_name <- system.file(
-#'         "extdata/testdata", "Aggregated_humanization2.biom", package = "mia")
-#'   tse <- loadFromBiom(
-#'         file_name,
-#'         removeTaxaPrefixes=TRUE,
-#'         rankFromPrefix=TRUE,
-#'         remove.artifacts = TRUE)
+#'   f <- system.file("extdata/testdata/Aggregated_humanization2.biom",
+#'                   package="mia")
+#'   biom_object <- biomformat::read_biom(f)
+#'   tse <- makeTreeSEFromBiom(biom_object,
+#'                             removeTaxaPrefixes=TRUE,
+#'                             rankFromPrefix=TRUE,
+#'                             clean.taxa.names = "auto")
 #'   tse
 #' }
 NULL
@@ -77,10 +74,10 @@ loadFromBiom <- function(file, ...) {
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
-#' @importFrom dplyr %>% bind_rows
+#' @importFrom dplyr %>%
 makeTreeSEFromBiom <- function(
         obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
-        remove.artifacts = FALSE, ...){
+        clean.taxa.names="auto", ...){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){
@@ -92,8 +89,8 @@ makeTreeSEFromBiom <- function(
     if( !.is_a_bool(rankFromPrefix) ){
         stop("'rankFromPrefix' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( !.is_a_bool(remove.artifacts) ){
-        stop("'remove.artifacts' must be TRUE or FALSE.", call. = FALSE)
+    if( !is.null(clean.taxa.names) && !.is_non_empty_character(clean.taxa.names) ){
+        stop("'clean.taxa.names' must be a character, NULL or 'auto'.", call. = FALSE)
     }
     #
     counts <- as(biomformat::biom_data(obj), "matrix")
@@ -106,9 +103,21 @@ makeTreeSEFromBiom <- function(
         rownames(sample_data) <- colnames(counts)
     # Otherwise convert it into correct format if it is a list
     } else if( is(sample_data, "list") ){
-        # Merge list of data.frames into one
-        sample_data <- bind_rows(sample_data)
-        sample_data < as.data.frame(sample_data)
+        # Get the maximum length of list
+        max_length <- max( lengths(sample_data) )
+        # Get the column names from the taxa info that has all the columns that occurs
+        # in the data
+        colnames <- names( head( sample_data[ lengths(sample_data) == 
+                                                  max_length ], 1)[[1]] )
+        # Append the data with NAs if some samples do not have all the info
+        sample_data <- lapply(sample_data, function(x){
+            length(x) <- max_length 
+            return(x)
+        })
+        # Create a data.frame from the list
+        sample_data <- do.call(rbind, sample_data)
+        # Add correct colnames
+        colnames(sample_data) <- colnames
     }
     # rowData is initialized with empty tables with rownames if it is NULL
     if( is.null(feature_data) ){
@@ -116,17 +125,22 @@ makeTreeSEFromBiom <- function(
         rownames(feature_data) <- rownames(counts)
     # Otherwise convert it into correct format if it is a list
     } else if( is(feature_data, "list") ){
-        # Feature data is a list of taxa info. Dfs are merged together differentlu
-        # than sample metadata since the column names are only "Taxonomy". If there
-        # is only one taxonomy level, the column name does not get a suffix.
-        # --> bind rows based on the index of column.
-        
+        # Clean feature_data from possible character artifacts
+        feature_data <- .detect_taxa_artifacts_and_clean(feature_data,
+                                                         clean.taxa.names)
+        # Taxonomy rank names
+        if (is.null(names(feature_data))) {
+            # Assign temporary ones if they do not exist 
+            colnames <- paste0("taxonomy", seq_along(feature_data))
+        } else {
+            # Get them if they exist
+            colnames <- names(feature_data)
+        }
+
+        # Feature data is a list of taxa info
         # Get the maximum length of list
         max_length <- max( lengths(feature_data) )
-        # Get the column names from the taxa info that has all the levels that occurs
-        # in the data
-        colnames <- names( head(
-            feature_data[ lengths(feature_data) == max_length ], 1)[[1]])
+        
         # Convert the list so that all individual taxa info have the max length
         # of the list objects. All vectors are appended with NAs, if they do not
         # have all the levels. E.g., if only Kingdom level is found, all lower
@@ -137,22 +151,15 @@ makeTreeSEFromBiom <- function(
         })
         # Create a data.frame from the list
         feature_data <- do.call(rbind, feature_data)
-        # Transposing feature_data and make it df object
-        feature_data <- as.data.frame(feature_data)
+        # Transposing feature_data and make it DFrame object
+        feature_data <- DataFrame(t(feature_data))
         # Add correct colnames
         colnames(feature_data) <- colnames
-    }
-    # If there is only one column in the feature data, it is the most probable
-    # that the taxonomy is not parsed. Try to parse it.
-    if( ncol(feature_data) == 1 ){
-        tax_tab <- .parse_taxonomy(feature_data, column_name = colnames(feature_data))
-        feature_data <- cbind(tax_tab, feature_data)
-        feature_data <- as.data.frame(feature_data)
-    }
-    
-    # Clean feature_data from possible character artifacts if specified
-    if( remove.artifacts ){
-        feature_data <- .detect_taxa_artifacts_and_clean(feature_data, ...)
+    # Otherwise if it is already a data.frame clean from artifacts
+    } else if (is(feature_data, "data.frame")) {
+        # Clean feature_data from possible character artifacts
+        feature_data <- DataFrame(.detect_taxa_artifacts_and_clean(feature_data,
+                                                         clean.taxa.names))
     }
     
     # Replace taxonomy ranks with ranks found based on prefixes
@@ -168,7 +175,13 @@ makeTreeSEFromBiom <- function(
     
     # Remove prefixes if specified and rowData includes info
     if(removeTaxaPrefixes && ncol(feature_data) > 0){
-        feature_data <- .remove_prefixes_from_taxa(feature_data)
+        # Patterns for superkingdom, domain, kingdom, phylum, class, order, family,
+        # genus, species
+        patterns <- "sk__|([dkpcofgs]+)__"
+        feature_data <- lapply(
+            feature_data,
+            gsub, pattern = patterns, replacement = "")
+        feature_data <- as.data.frame(feature_data)
     }
     
     # Adjust row and colnames
@@ -198,37 +211,6 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 }
 
 ################################ HELP FUNCTIONS ################################
-# This function removes prefixes from taxonomy names
-.remove_prefixes_from_taxa <- function(
-        feature_tab, patterns = "sk__|([dkpcofgs]+)__",
-        only.taxa.col = FALSE, ...){
-    if( !.is_a_bool(only.taxa.col) ){
-        stop("'only.taxa.col' must be TRUE or FALSE.", call. = FALSE)
-    }
-    #
-    # Subset by taking only taxonomy info if user want to remove the pattern only
-    # from those. (Might be too restricting, e.g., if taxonomy columns are not
-    # detected in previous steps. That is way the default is FALSE)
-    if( only.taxa.col ){
-        ind <- tolower(colnames(feature_tab)) %in% TAXONOMY_RANKS
-        temp <- feature_tab[, ind, drop = FALSE]
-    } else{
-        ind <- rep(TRUE, ncol(feature_tab))
-        temp <- feature_tab
-    }
-    
-    # If there are columns left for removing the pattern
-    if( ncol(temp) > 0 ){
-        # Remove patterns
-        temp <- lapply(
-            temp, gsub, pattern = patterns, replacement = "")
-        temp <- as.data.frame(temp)
-        # Combine table
-        feature_tab[, ind] <- temp
-    }
-    return(feature_tab)
-}
-
 # Find taxonomy rank based on prefixes. If found, return
 # corresponding rank. Otherwise, return the original
 # rank that is fed to function.
@@ -262,28 +244,66 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 }
 
 # Detect and clean non wanted characters from Taxonomy data if needed.
-.detect_taxa_artifacts_and_clean <- function(x, pattern = "auto", ...) {
-    #
-    if( !.is_non_empty_character(pattern) ){
-        stop("'pattern' must be a single character value.", call. = FALSE)
+.detect_taxa_artifacts_and_clean <- function(x, patterns) {
+    
+    # No cleaning if NULL
+    if (!is.null(patterns)) {
+        # Automatic cleaning
+        if (patterns=="auto") {
+            # General regex pattern that corresponds to taxonomy namings
+            PATTERN <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
+            patterns <- .detect_taxa_artifacts(x, PATTERN, invert=TRUE)
+            # Clean from artifacts if found
+            if (patterns!="") {
+                x <- .clean_from_artifacts(x, patterns)
+            }
+        # Clean with the character or regex provided
+        } else {
+            pattern <- .detect_taxa_artifacts(x, patterns=patterns)
+            # patterns provided not found
+            if (pattern=="") {
+                warning("The '", patterns, "' provided at 'clean.taxa.names' were
+                    not found in rowData.",
+                        call. = FALSE)
+                # patterns found and cleaned
+            } else {
+                x <- .clean_from_artifacts(x, pattern)
+            }
+        }
     }
-    #
-    # Remove artifacts
-    if( pattern == "auto" ){
-        .require_package("stringr")
-        # Remove all but these characters
-        pattern <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
-        x <- apply(x, 2, function(col){
-            # Take all specified characters as a matrix where each column is a character
-            temp <- stringr::str_extract_all(col, pattern = pattern, simplify = TRUE)
-            # Collapse matrix to strings
-            temp <- apply(temp, 1, paste, collapse = "")
-            return(temp)
-        })
-    } else{
-        # Remove pattern specified by user
-        x <- apply(x, 2, gsub, pattern = pattern, replacement = "")
+    
+    return(x)
+}
+
+# Helper function for detecting taxa artifacts 
+.detect_taxa_artifacts <- function(
+        x,
+        patterns,
+        invert=FALSE) {
+    if (is(x, "list")) {
+        patterns <- lapply(x, function(x_sub) {
+            grep(patterns,
+                 x_sub[[1]] %>% stringr::str_split("") %>% unlist(),
+                 invert = invert, value = TRUE) %>% unique()
+        }) %>% unlist() %>% unique() %>% paste0(collapse = "")
+    } else if (is(x, "data.frame")){
+        patterns <- apply(x, 2, function(x_sub) {
+            grep(patterns,
+                 x_sub %>% stringr::str_split("") %>% unlist(),
+                 invert = invert, value = TRUE) %>% unique()
+        }) %>% unlist() %>% unique() %>% paste0(collapse = "")
     }
-    x <- as.data.frame(x)
+    return(patterns)
+}
+
+.clean_from_artifacts <- function(x, patterns) {
+    if (is(x, "list")) {
+        x <- lapply(x, gsub, pattern = patterns, replacement = "")
+    } else if (is(x, "data.frame")) {
+        x <- apply(x, 2, gsub, pattern = patterns, replacement = "")
+    }
+    # warn what was cleaned
+    warning("The following artifacts: '", patterns, "' were cleaned from 
+                    rowData.", call. = FALSE)
     return(x)
 }
