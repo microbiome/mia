@@ -2,13 +2,30 @@
 % Please edit documentation in R/agglomerate.R
 \name{agglomerate-methods}
 \alias{agglomerate-methods}
-\alias{agglomerateByRank,SummarizedExperiment-method}
 \alias{agglomerateByRank}
+\alias{mergeFeaturesByRank}
+\alias{agglomerateByRank,SummarizedExperiment-method}
+\alias{mergeFeaturesByRank,SummarizedExperiment-method}
 \alias{agglomerateByRank,SingleCellExperiment-method}
+\alias{mergeFeaturesByRank,SingleCellExperiment-method}
 \alias{agglomerateByRank,TreeSummarizedExperiment-method}
+\alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
 \title{Agglomerate data using taxonomic information}
 \usage{
+agglomerateByRank(x, ...)
+
+mergeFeaturesByRank(x, ...)
+
 \S4method{agglomerateByRank}{SummarizedExperiment}(
+  x,
+  rank = taxonomyRanks(x)[1],
+  onRankOnly = FALSE,
+  na.rm = FALSE,
+  empty.fields = c(NA, "", " ", "\\t", "-", "_"),
+  ...
+)
+
+\S4method{mergeFeaturesByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
   onRankOnly = FALSE,
@@ -19,12 +36,28 @@
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
+\S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
+
 \S4method{agglomerateByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
+
+\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
 }
 \arguments{
 \item{x}{a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object}
+
+\item{...}{arguments passed to \code{agglomerateByRank} function for
+\code{SummarizedExperiment} objects,
+\code{\link[=merge-methods]{mergeRows}} and
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+\itemize{
+\item{\code{remove_empty_ranks}}{A single boolean value for selecting
+whether to remove those columns of rowData that include only NAs after
+agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
+\item{\code{make_unique}}{A single boolean value for selecting
+whether to make rownames unique. (By default: \code{make_unique = TRUE})}
+}}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
@@ -41,18 +74,6 @@ will be dropped. This setting can be tweaked by defining
 \item{empty.fields}{a \code{character} value defining, which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration.}
-
-\item{...}{arguments passed to \code{agglomerateByRank} function for
-\code{SummarizedExperiment} objects,
-\code{\link[=merge-methods]{mergeRows}} and
-\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
-\itemize{
-\item{\code{remove_empty_ranks}}{A single boolean value for selecting
-whether to remove those columns of rowData that include only NAs after
-agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
-\item{\code{make_unique}}{A single boolean value for selecting
-whether to make rownames unique. (By default: \code{make_unique = TRUE})}
-}}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}

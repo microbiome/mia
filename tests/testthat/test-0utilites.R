@@ -90,36 +90,6 @@ test_that("meltAssay", {
     expect_equal(melted, melted2)
 })
 
-context("getAbundanceFeature/getAbundanceSample")
-test_that("getAbundanceFeature/getAbundanceSample", {
-    # .check_ids_assays
-    expect_error(mia:::.check_feature_sample_ids(),
-                 'argument "id" is missing')
-    expect_error(mia:::.check_feature_sample_ids("test"),
-                 'argument "names" is missing')
-    expect_null(mia:::.check_feature_sample_ids("test","test"))
-    #
-    data(GlobalPatterns, package="mia")
-    expect_error(getAbundanceFeature(GlobalPatterns,
-                                     feature_id="x522457",
-                                     assay.type="counts"),
-        "Please provide a valid 'feature_id'", fixed=TRUE)
-    feature_ab <- getAbundanceFeature(GlobalPatterns,
-                                      feature_id = "522457",
-                                      assay.type = "counts")
-    expect_equal(names(feature_ab)[1], "CL3")
-    #
-    expect_error(getAbundanceSample(GlobalPatterns,
-                                    sample_id= "bogus",
-                                    assay.type="counts"),
-                 "Please provide a valid 'sample_id'")
-    sam_ab <- getAbundanceSample(GlobalPatterns,
-                                 sample_id = "CC1",
-                                 assay.type = "counts")
-    expect_equal(names(sam_ab)[1], "549322")
-})
-
-
 context("getTopTaxa")
 test_that("getTopTaxa", {
     #
