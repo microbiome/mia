@@ -132,6 +132,7 @@ NULL
 
 #' @rdname agglomerate-methods
 #' @aliases mergeFeaturesByRank
+#' @export
 setGeneric("agglomerateByRank",
             signature = "x",
             function(x, ...)
@@ -139,6 +140,7 @@ setGeneric("agglomerateByRank",
 
 #' @rdname agglomerate-methods
 #' @aliases agglomerateByRank
+#' @export
 setGeneric("mergeFeaturesByRank",
            signature = "x",
            function(x, ...)

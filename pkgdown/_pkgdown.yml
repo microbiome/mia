@@ -46,7 +46,6 @@ reference:
   - getPrevalence
   - getPrevalentAbundance
   - getTopTaxa
-  - getAbundanceSample
   - getExperimentCrossCorrelation
 - subtitle: Dominance
 - contents:
@@ -70,7 +69,14 @@ reference:
   - subsetSamples
 - subtitle: Datasets
 - contents:
+  - mia-datasets
+  - dmn_se
+  - enterotype
+  - esophagus
   - GlobalPatterns
+  - HintikkaXOData
+  - peerj13075
+  - Tengeler2020
 - subtitle: Package
 - contents:
   - mia-package
