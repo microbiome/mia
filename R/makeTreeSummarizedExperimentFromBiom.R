@@ -142,6 +142,14 @@ makeTreeSEFromBiom <- function(
         # Add correct colnames
         colnames(feature_data) <- colnames
     }
+    # If there is only one column in the feature data, it is the most probable
+    # that the taxonomy is not parsed. Try to parse it.
+    if( ncol(feature_data) == 1 ){
+        tax_tab <- .parse_taxonomy(feature_data, column_name = colnames(feature_data))
+        feature_data <- cbind(tax_tab, feature_data)
+        feature_data <- as.data.frame(feature_data)
+    }
+    
     # Clean feature_data from possible character artifacts if specified
     if( remove.artifacts ){
         feature_data <- .detect_taxa_artifacts_and_clean(feature_data, ...)
@@ -191,12 +199,34 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 
 ################################ HELP FUNCTIONS ################################
 # This function removes prefixes from taxonomy names
-.remove_prefixes_from_taxa <- function(tax_tab, patterns = "sk__|([dkpcofgs]+)__", ...){
-    tax_tab <- lapply(
-        tax_tab,
-        gsub, pattern = patterns, replacement = "")
-    tax_tab <- as.data.frame(tax_tab)
-    return(tax_tab)
+.remove_prefixes_from_taxa <- function(
+        feature_tab, patterns = "sk__|([dkpcofgs]+)__",
+        only.taxa.col = FALSE, ...){
+    if( !.is_a_bool(only.taxa.col) ){
+        stop("'only.taxa.col' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # Subset by taking only taxonomy info if user want to remove the pattern only
+    # from those. (Might be too restricting, e.g., if taxonomy columns are not
+    # detected in previous steps. That is way the default is FALSE)
+    if( only.taxa.col ){
+        ind <- tolower(colnames(feature_tab)) %in% TAXONOMY_RANKS
+        temp <- feature_tab[, ind, drop = FALSE]
+    } else{
+        ind <- rep(TRUE, ncol(feature_tab))
+        temp <- feature_tab
+    }
+    
+    # If there are columns left for removing the pattern
+    if( ncol(temp) > 0 ){
+        # Remove patterns
+        temp <- lapply(
+            temp, gsub, pattern = patterns, replacement = "")
+        temp <- as.data.frame(temp)
+        # Combine table
+        feature_tab[, ind] <- temp
+    }
+    return(feature_tab)
 }
 
 # Find taxonomy rank based on prefixes. If found, return
