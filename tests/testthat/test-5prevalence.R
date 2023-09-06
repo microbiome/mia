@@ -160,14 +160,7 @@ test_that("getRareTaxa", {
 
         # Gets rownames for all the taxa
         all_taxa <- rownames(se)
-
-        # All but "Kingdom" can includes different taxa levels and e.g. "Species"
-        # before their name
-        if( rank != "Kingdom" ){
-            # Takes e.g. only species and removes e.g. "Species:" from the names
-            all_taxa <- stringr::str_remove(all_taxa[grepl(paste0(rank, ":"), all_taxa)], paste0(rank, ":"))
-        }
-
+        
         # Gets prevalent taxa
         prevalent_taxa <- getPrevalentTaxa(GlobalPatterns,
                                            prevalence = 0.05,
