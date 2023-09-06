@@ -221,14 +221,16 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
     }
 )
 
-.agg_for_prevalence <- function(x, rank, relabel = FALSE, make_unique = TRUE,
-                                ...){
+.agg_for_prevalence <- function(
+        x, rank, relabel = FALSE, make_unique = TRUE, na.rm = FALSE, ...){
+    # Check na.rm
+    if(!.is_a_bool(na.rm)){
+        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
     if(!is.null(rank)){
         .check_taxonomic_rank(rank, x)
-        args <- c(list(x = x, rank = rank), list(...))
-        if(is.null(args[["na.rm"]])){
-            args[["na.rm"]] <- TRUE
-        }
+        args <- c(list(x = x, rank = rank, na.rm = na.rm), list(...))
         argNames <- c("x","rank","onRankOnly","na.rm","empty.fields",
                       "archetype","mergeTree","average","BPPARAM")
         args <- args[names(args) %in% argNames]
@@ -594,11 +596,14 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         #
-        x <- .agg_for_prevalence(x, rank, ...)
+        # Check assays that they can be merged safely
+        mapply(.check_assays_for_merge, assayNames(x), assays(x))
+        #
+        x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
         pr <- getPrevalentTaxa(x, rank = NULL, ...)
         f <- rownames(x) %in% pr
         if(any(!f)){
-            other_x <- mergeRows(x[!f,], factor(rep(1L,sum(!f))))
+            other_x <- mergeRows(x[!f,], factor(rep(1L,sum(!f))), check_assays = FALSE)
             rowData(other_x)[,colnames(rowData(other_x))] <- NA
             # set the other label
             rownames(other_x) <- other_label

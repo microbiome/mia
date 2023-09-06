@@ -159,12 +159,17 @@ setGeneric("mergeSamples",
 #' @importFrom scuttle sumCountsAcrossFeatures
 .merge_rows <- function(x, f, archetype = 1L, 
                         average = FALSE,
-                        BPPARAM = SerialParam(), 
+                        BPPARAM = SerialParam(),
+                        check.assays = TRUE,
                         ...){
     # input check
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
+    if( !.is_a_bool(check.assays) ){
+        stop("'check.assays' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
     if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
         f <- factor(as.character(rowData(x)[, f]))
     }
@@ -181,7 +186,9 @@ setGeneric("mergeSamples",
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)
-    mapply(.check_assays_for_merge, names(assays), assays)
+    if( check.assays ){
+        mapply(.check_assays_for_merge, names(assays), assays)
+    }
     assays <- S4Vectors::SimpleList(lapply(assays,
                                            scuttle::sumCountsAcrossFeatures,
                                            ids = f, 
