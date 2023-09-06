@@ -142,14 +142,14 @@ setGeneric("mergeCols",
 .merge_rows <- function(x, f, archetype = 1L, 
                         average = FALSE,
                         BPPARAM = SerialParam(),
-                        check_assays = TRUE,
+                        check.assays = TRUE,
                         ...){
     # input check
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( !.is_a_bool(check_assays) ){
-        stop("'check_assays' must be TRUE or FALSE.", call. = FALSE)
+    if( !.is_a_bool(check.assays) ){
+        stop("'check.assays' must be TRUE or FALSE.", call. = FALSE)
     }
     f <- .norm_f(nrow(x), f)
     if(length(levels(f)) == nrow(x)){
@@ -159,8 +159,8 @@ setGeneric("mergeCols",
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)
-    if( check_assays ){
-        mapply(.check_assays_for_merge, names(assays), assays)
+    if( check.assays ){
+        mapply(.check.assays_for_merge, names(assays), assays)
     }
     assays <- S4Vectors::SimpleList(lapply(assays,
                                            scuttle::sumCountsAcrossFeatures,
@@ -179,7 +179,7 @@ setGeneric("mergeCols",
 }
 
 #' @importFrom scuttle sumCountsAcrossFeatures
-.check_assays_for_merge <- function(assay.type, assay){
+.check.assays_for_merge <- function(assay.type, assay){
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
         warning(paste0("'",assay.type,"'", " includes binary values."),
@@ -211,7 +211,7 @@ setGeneric("mergeCols",
     col_data <- colData(x)[element_pos,,drop=FALSE]
     # merge assays
     assays <- assays(x)
-    mapply(.check_assays_for_merge, names(assays), assays)
+    mapply(.check.assays_for_merge, names(assays), assays)
     FUN <- function(mat, ...){
         temp <- scuttle::summarizeAssayByGroup(mat,
                                                statistics = "sum",

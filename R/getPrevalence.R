@@ -585,7 +585,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         # Check assays that they can be merged safely
         mapply(.check_assays_for_merge, assayNames(x), assays(x))
         #
-        x <- .agg_for_prevalence(x, rank, check_assays = FALSE, ...)
+        x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
         pr <- getPrevalentTaxa(x, rank = NULL, ...)
         f <- rownames(x) %in% pr
         if(any(!f)){
