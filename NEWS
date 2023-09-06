@@ -88,3 +88,4 @@ Changes in version 1.9.x
 + Updated test to avoid warning from deprecated functions 
 + Export mergeFeaturesByRank
 + *RDA & *CCA: scores parameter for specifying output
++ Improve mergeSEs and loadFromBiom
