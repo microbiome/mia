@@ -34,19 +34,28 @@ test_that("CCA", {
     expect_error(runCCA(sce, form, scores = TRUE))
     expect_error(runCCA(sce, form, scores = NULL))
     expect_error(runCCA(sce, form, scores = c("wa", "u")))
+    # Remove "v" ption from parameters, it is already in rotation atrribute.
+    # 
+    mcca <- vegan::cca(form, dune.env)
+    sce <- runCCA(sce, form)
+    actual <- reducedDim(sce,"CCA")
+    expect_equal(as.vector(actual), as.vector(mcca$CCA$wa))
+    sce <- runCCA(sce, form, scores = "v") # With tes.signif = F this works...
+    actual <- reducedDim(sce,"CCA")
+    expect_equal(as.vector(actual), as.vector(mcca$CCA$v))
     #
     mcca <- vegan::cca(form, dune.env, scale = TRUE)
     mrda <- vegan::rda(form, dune.env, scale = FALSE)
-    set.seed(46)
+    
     sce <- runCCA(sce, form, scores = "u")
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
     # Check that test.signif works
-    expect_error(sce, test.signif = 1)
-    expect_error(sce, test.signif = "TRUE")
-    expect_error(sce, test.signif = NULL)
-    expect_error(sce, test.signif = c(TRUE, TRUE))
-    mat <- calculateRDA(sce, test.signif = FALSE)
+    expect_error( runCCA(sce, test.signif = 1) )
+    expect_error( runCCA(sce, test.signif = "TRUE") )
+    expect_error( runCCA(sce, test.signif = NULL) )
+    expect_error( runCCA(sce, test.signif = c(TRUE, TRUE)) )
+    mat <- calculateRDA(sce, scores = "u", test.signif = FALSE)
     expect_true(is.null(attributes(mat)$significance))
     # Check that significance calculations are correct
     set.seed(46)
