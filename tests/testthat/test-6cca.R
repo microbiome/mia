@@ -29,11 +29,16 @@ test_that("CCA", {
                  'argument "formula" is missing, with no default')
     actual <- mia:::.get_dependent_var_name(form)
     expect_equal(actual, "dune")
+    # Check that input check of scores is working
+    expect_error(runCCA(sce, form, scores = 1))
+    expect_error(runCCA(sce, form, scores = TRUE))
+    expect_error(runCCA(sce, form, scores = NULL))
+    expect_error(runCCA(sce, form, scores = c("wa", "u")))
     #
     mcca <- vegan::cca(form, dune.env, scale = TRUE)
     mrda <- vegan::rda(form, dune.env, scale = FALSE)
     set.seed(46)
-    sce <- runCCA(sce, form)
+    sce <- runCCA(sce, form, scores = "u")
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
     # Check that significance calculations are correct
@@ -88,15 +93,15 @@ test_that("CCA", {
     enterotype <- enterotype[, complete.cases(colData(enterotype)[, variable_names])]
     expect_equal(colnames(res), colnames(enterotype))
     #
-    sce <- runRDA(sce, form)
+    sce <- runRDA(sce, form, scores = "u")
     actual <- reducedDim(sce,"RDA")
     expect_equal(abs( as.vector(actual) ), abs( as.vector(mrda$CCA$u) ))
-    sce <- runRDA(sce, form, distance = "bray", name = "rda_bray")
+    sce <- runRDA(sce, form, distance = "bray", name = "rda_bray", scores = "u")
     actual <- reducedDim(sce,"rda_bray")
     rda_bray <- vegan::dbrda(form, dune.env, distance = "bray")
     expect_equal(abs( as.vector(actual) ), abs( as.vector(rda_bray$CCA$u) ))
     #
-    sce <- runRDA(sce)
+    sce <- runRDA(sce, scores = "u")
     test <- reducedDim(sce,"RDA")
     # Test that eigenvalues match
     test <- attr(test, "rda")$CA$eig

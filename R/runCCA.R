@@ -300,7 +300,7 @@ setMethod("runCCA", "SingleCellExperiment",
     }
 )
 
-#' @importFrom vegan sppscores
+#' @importFrom vegan sppscores<-
 .calculate_rda <- function(x, formula, variables, scores, ...){
     .require_package("vegan")
     #
@@ -329,13 +329,24 @@ setMethod("runCCA", "SingleCellExperiment",
         rda <- vegan::dbrda(formula = form, ...)
     }
     # Get CCA
-    X <- rda$CCA
-    # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
-    if( is.null(X) ){
+    if( !is.null(rda$CCA) ){
+        X <- rda$CCA
+        # Get species scores. Fet only those samples that are included in rda
+        # object (some might missing due missing metadta)
+        species_scores <- x[ rownames(X[[scores]]),  ]
+    } else{
+        # If variable(s) do not explain inertia at all, CCA is NULL. Then take CA
         X <- rda$CA
+        # Get species scores (whole data since metadata was not in input)
+        species_scores <- x
+        # IF scores is "wa", but they are not available
+        if( scores == "wa" ){
+            warning("'wa' scores are not available. Defaults to 'u'.", call. = FALSE)
+            scores <- "u"
+        }
     }
     # Add species scores since they are missing from dbrda object (in cca they are included)
-    sppscores(rda) <- x
+    sppscores(rda) <- species_scores
     # Create the matrix to be returned
     ans <- X[[scores]]
     attr(ans, "rotation") <- X$v
