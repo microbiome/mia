@@ -199,20 +199,34 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 
 ################################ HELP FUNCTIONS ################################
 # This function removes prefixes from taxonomy names
-.remove_prefixes_from_taxa <- function(feature_tab, patterns = "sk__|([dkpcofgs]+)__", ...){
-    # Subset by taking only taxonomy info
-    ind <- tolower(colnames(feature_tab)) %in% TAXONOMY_RANKS
-    if( length(ind) > 0 ){
-        tax_tab <- feature_tab[, ind, drop = FALSE]
-        # Remove patterns
-        tax_tab <- lapply(
-            tax_tab,
-            gsub, pattern = patterns, replacement = "")
-        tax_tab <- as.data.frame(tax_tab)
-        # Combine table
-        feature_tab[, ind] <- tax_tab
+.remove_prefixes_from_taxa <- function(
+        feature_tab, patterns = "sk__|([dkpcofgs]+)__",
+        only.taxa.col = FALSE, ...){
+    if( !.is_a_bool(only.taxa.col) ){
+        stop("'only.taxa.col' must be TRUE or FALSE.", call. = FALSE)
     }
-    return(tax_tab)
+    #
+    # Subset by taking only taxonomy info if user want to remove the pattern only
+    # from those. (Might be too restricting, e.g., if taxonomy columns are not
+    # detected in previous steps. That is way the default is FALSE)
+    if( only.taxa.col ){
+        ind <- tolower(colnames(feature_tab)) %in% TAXONOMY_RANKS
+        temp <- feature_tab[, ind, drop = FALSE]
+    } else{
+        ind <- rep(TRUE, ncol(feature_tab))
+        temp <- feature_tab
+    }
+    
+    # If there are columns left for removing the pattern
+    if( ncol(temp) > 0 ){
+        # Remove patterns
+        temp <- lapply(
+            temp, gsub, pattern = patterns, replacement = "")
+        temp <- as.data.frame(temp)
+        # Combine table
+        feature_tab[, ind] <- temp
+    }
+    return(feature_tab)
 }
 
 # Find taxonomy rank based on prefixes. If found, return

@@ -87,3 +87,4 @@ Changes in version 1.9.x
 + Removed  getAbundanceSample and getAbundanceFeature  
 + Updated test to avoid warning from deprecated functions 
 + Export mergeFeaturesByRank
++ Improve mergeSEs and loadFromBiom
