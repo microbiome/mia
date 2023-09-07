@@ -99,7 +99,7 @@ setMethod("makePhyloseqFromTreeSE",
             # Converts taxonomy table to characters if it's not already
             rowData(x) <- DataFrame(lapply(rowData(x), as.character))
             # Gets the taxonomic data from rowData, and converts it to tax_table
-            tax_table <- as.matrix(rowData(x)[,taxonomyRanks(x)])
+            tax_table <- as.matrix(rowData(x)[,taxonomyRanks(x),drop=FALSE])
             tax_table <- phyloseq::tax_table(tax_table)
             # Adds to the list
             args[["tax_table"]] <- tax_table
