@@ -248,7 +248,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
     )
     # Find which prefix is found from each column value, if none.
     found_rank <- lapply(
-        prefixes, FUN = function(pref){all(grepl(pattern=pref, col))})
+        prefixes, FUN = function(pref){all(grepl(pattern=pref, col) | is.na(col))})
     found_rank <- unlist(found_rank)
     # If only one prefix was found (like it should be), get the corresponding
     # rank name.
@@ -278,6 +278,8 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
             temp <- stringr::str_extract_all(col, pattern = pattern, simplify = TRUE)
             # Collapse matrix to strings
             temp <- apply(temp, 1, paste, collapse = "")
+            # Now NAs are converted into characters. Convert them back
+            temp[ temp == "NA" ] <- NA
             return(temp)
         })
     } else{
