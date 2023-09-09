@@ -223,6 +223,8 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         temp <- lapply(
             temp, gsub, pattern = patterns, replacement = "")
         temp <- as.data.frame(temp)
+        # If cell had only prefix, it is now empty string. Convert to NA
+        temp[ temp == "" ] <- NA
         # Combine table
         feature_tab[, ind] <- temp
     }
