@@ -87,3 +87,5 @@ Changes in version 1.9.x
 + Removed  getAbundanceSample and getAbundanceFeature  
 + Updated test to avoid warning from deprecated functions 
 + Export mergeFeaturesByRank
++ *RDA & *CCA: scores parameter for specifying output
++ Improve mergeSEs and loadFromBiom
