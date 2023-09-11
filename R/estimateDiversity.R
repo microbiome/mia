@@ -502,40 +502,40 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     samples <- seq_len(ncol(mat))
 
     # Repeats taxa as many times there are samples, i.e. get all the
-    # taxa that are
-    
-    # analyzed in each sample.
+    # taxa that are analyzed in each sample.
     taxa <- rep(rownames(mat), length(samples))
 
     # Gets those taxa that are present/absent in each sample.
     # Gets one big list that combines
     # taxa from all the samples.
     present_combined <- taxa[ mat[, samples] > 0 ]
-    absent_combined <- taxa[ mat[, samples] == 0 ]
     
     # Gets how many taxa there are in each sample. 
     # After that, determines indices of samples' first taxa with cumsum.
     split_present <- as.vector(cumsum(colSums(mat > 0)))
-    split_absent <- as.vector(cumsum(colSums(mat == 0)))
     
     # Determines which taxa belongs to which sample by first determining
     # the splitting points,
     # and after that giving every taxa number which tells their sample.
     split_present <- as.factor(cumsum((seq_along(present_combined)-1) %in%
                         split_present))
-    split_absent <- as.factor(cumsum((seq_along(absent_combined)-1) %in%
-                        split_absent))
-    
+
     # Assigns taxa to right samples based on their number that they got from
     # previous step, and deletes unnecessary names.
     present <- unname(split(present_combined, split_present))
-    absent <- unname(split(absent_combined, split_absent))
+    
+    # If there were samples without any taxa present/absent, the length of the
+    # list is not the number of samples. Add empty samples.
+    names(present) <- names(which(colSums2(mat) > 0))
+    present[names(which(colSums2(mat) == 0))] <- list(NULL)
+    present <- present[colnames(mat)]
+    
 
     # Assign NA to all samples
     faiths <- rep(NA,length(samples))
     
     # If all the taxa are present, then faith is the sum of all edges of taxa
-    faiths[lengths(absent) == 0] <- sum(tree$edge.length)
+    faiths[lengths(present) == nrow(mat)] <- sum(tree$edge.length)
 
     # If there are taxa that are not present:
     
@@ -549,13 +549,14 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # tells edges between two indices. Find the edge between root and certain
     # taxon; get its index. --> Find the length of that edge.
     ind <- lengths(present) == 1
-    faiths[ind] <- tree$edge.length[
-        which(tree$edge[, 2] == which(tree$tip.label == present[ind]))]
+    # Find index of edge of individual tip
+    edge_ind <-  sapply(present[ind], function(x) which(tree$edge[, 2] == which(tree$tip.label == x)))
+    faiths[ind] <- tree$edge.length[edge_ind]
     
-    # 3 If several taxa is not present
-    ind <- lengths(absent) > 0
-    # absent taxa are dropped
-    trees <- lapply(absent[ind], ape::drop.tip, phy = tree)
+    # 3 If several taxa is present
+    ind <- lengths(present) > 0
+    # kep only present taxa
+    trees <- lapply(present[ind], ape::keep.tip, phy = tree)
     # and faith is calculated based on the subset tree
     faiths[ind] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
 
