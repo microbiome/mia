@@ -282,6 +282,8 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
             temp <- apply(temp, 1, paste, collapse = "")
             # Now NAs are converted into characters. Convert them back
             temp[ temp == "NA" ] <- NA
+            # Convert also empty strings to NA
+            temp[ temp == "" ] <- NA
             return(temp)
         })
     } else{

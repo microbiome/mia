@@ -529,38 +529,57 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     names(present) <- names(which(colSums2(mat) > 0))
     present[names(which(colSums2(mat) == 0))] <- list(NULL)
     present <- present[colnames(mat)]
-    
 
     # Assign NA to all samples
     faiths <- rep(NA,length(samples))
     
-    # If all the taxa are present, then faith is the sum of all edges of taxa
+    # If all the taxa are present, then faith is the sum of lengths of 
+    # all edges in taxa tree
     faiths[lengths(present) == nrow(mat)] <- sum(tree$edge.length)
 
     # If there are taxa that are not present:
     
     # 1 If there are no taxa present, then faith is 0
-    faiths[lengths(present) == 0] <- 0
+    ind <- lengths(present) == 0
+    faiths[ind] <- 0
     
-    # 2 If there is only one taxon present, then faith is the age of taxon
-    # could be calculated similarly to other samples with different number of
-    # absent taxa, but this allows vectorization.
-    # --> Find taxon from labels --> get its tip label index. The edge df
-    # tells edges between two indices. Find the edge between root and certain
-    # taxon; get its index. --> Find the length of that edge.
-    ind <- lengths(present) == 1
-    # Find index of edge of individual tip
-    edge_ind <-  sapply(present[ind], function(x) which(tree$edge[, 2] == which(tree$tip.label == x)))
-    faiths[ind] <- tree$edge.length[edge_ind]
+    # # 2 If there is only one taxon present, then faith is the age of taxon
+    # # could be calculated similarly to other samples with different number of
+    # # absent taxa, but this allows vectorization.
+    # # --> Find taxon from labels --> get its tip label index. The edge df
+    # # tells edges between two indices. Find the edge between root and certain
+    # # taxon; get its index. --> Find the length of that edge.
+    # ind <- lengths(present) == 1
+    # if( any(ind) ){
+    #     # Find index of edge of individual tip
+    #     edge_ind <-  sapply(present[ind], function(x) which(tree$edge[, 2] == which(tree$tip.label == x)))
+    #     faiths[ind] <- tree$edge.length[edge_ind]
+    # }
+    # # There are some rows that are not in tip but they are nodes. 
+    # # 3 If several taxa is present
     
-    # 3 If several taxa is present
+    # If there are taxa present
     ind <- lengths(present) > 0
     # kep only present taxa
-    trees <- lapply(present[ind], ape::keep.tip, phy = tree)
+    faiths_for_trees <- lapply(present[ind], function(x){
+        temp <- .prune_tree(tree, x)
+        temp <- sum(temp$edge.length)
+        return(temp)
+    })
+    faiths[ind] <- unlist(faiths_for_trees)
     # and faith is calculated based on the subset tree
-    faiths[ind] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
+    # faiths[ind] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
 
     return(faiths)
+}
+
+.prune_tree <- function(tree, nodes){
+    remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
+    while( length(remove_tips) > 0 ){
+        tree <- ape::drop.tip(tree, remove_tips, trim.internal = FALSE, collapse.singles = FALSE)
+        remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
+    }
+    return(tree)
 }
 
 .calc_log_modulo_skewness <- function(mat, quantile = 0.5, num_of_classes = 50, ...){
