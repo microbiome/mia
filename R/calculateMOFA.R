@@ -3,8 +3,38 @@
 #' \code{calculateMOFA} produces a prepared MOFA2 model from a MAE.
 #'
 #' @param mae a \code{\link[MultiAssayExperiment:MultiAssayExperiment]{MultiAssayExperiment}}
+#' 
+#' @param assay.types so
+#' 
+#' @param groups so
+#' 
+#' @param extract_metadata so
+#' 
+#' @param ... additional parameters for MOFA, named as the options
+#'   of \code{\link[MOFA2:prepare_mofa]{prepare_mofa}}.
+#' 
+#' @return 
+#' Returns an untrained \code{\link[MOFA2:MOFA]{MOFA}} with specified options
+#' filled in the corresponding slots
 #'
 #' @name calculateMOFA
+#' 
+#' @examples
+#' # Load package and mport dataset
+#' library(mia)
+#' data("HintikkaXOData", package = "mia")
+#' mae <- HintikkaXOData
+#' 
+#' # Prepare basic model with selected assays
+#' prep_model <- calculateMOFA(mae, assay.types = c("counts", "nmr", "signals"))
+#' 
+#' # Specify grouping variable and extract metadata
+#' prep_model <- calculateMOFA(mae, assay.types = c("counts", "nmr", "signals"),
+#'                             groups = "Diet", extract_metadata = TRUE)
+#'
+#' # Modify MOFA options with corresponding arguments
+#' prep_model <- calculateMOFA(mae, assay.types = c("counts", "nmr", "signals"),
+#'                             num_factors = 5, stochastic = TRUE)
 NULL
 
 #' @rdname calculateMOFA
@@ -50,27 +80,27 @@ setMethod("calculateMOFA", signature = c(mae = "MultiAssayExperiment"),
 #' @importFrom MultiAssayExperiment experiments
 #' @importFrom SummarizedExperiment assay assays assayNames
 .select_assays <- function(mae, assay.types) {
-  # Give corresponding experiment names to assay.types
-  names(assay.types) <- names(experiments(mae))
-  # For every experiment in MAE
-  for ( exp in names(experiments(mae)) ){
-    # Keep only selected assay.type from a given experiment
-    assays(mae[[exp]]) <- list(assay(mae[[exp]], assay.types[[exp]]))
-    # Update assay names
-    assayNames(mae[[exp]]) <- assay.types[[exp]]
-  }
-  return(mae)
+    # Give corresponding experiment names to assay.types
+    names(assay.types) <- names(experiments(mae))
+    # For every experiment in MAE
+    for ( exp in names(experiments(mae)) ){
+        # Keep only selected assay.type from a given experiment
+        assays(mae[[exp]]) <- list(assay(mae[[exp]], assay.types[[exp]]))
+        # Update assay names
+        assayNames(mae[[exp]]) <- assay.types[[exp]]
+    }
+    return(mae)
 }
 
 # Combine custom options found in ... with default options
 .set_opts <- function(default, ...) {
-  # For every option in a set (data, model, train, ...)
-  for ( opt in names(default) ){
-    # If that option is found among arguments
-    if ( opt %in% names(list(...)) ){
-      # Replace default with value specified in arguments
-      default[[opt]] <- list(...)[[opt]]
+    # For every option in a set (data, model, train, ...)
+    for ( opt in names(default) ){
+        # If that option is found among arguments
+        if ( opt %in% names(list(...)) ){
+            # Replace default with value specified in arguments
+            default[[opt]] <- list(...)[[opt]]
+        }
     }
-  }
-  return(default)
+    return(default)
 }
