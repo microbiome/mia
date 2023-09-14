@@ -497,6 +497,9 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 }
 
 .calc_faith <- function(mat, tree, ...){
+    # To ensure that the function works with NA also, convert NAs to 0.
+    # Zero means that the taxon is not present --> same as NA (no information)
+    mat[ is.na(mat) ] <- 0
 
     # Gets vector where number represent nth sample
     samples <- seq_len(ncol(mat))
