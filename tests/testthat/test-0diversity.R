@@ -79,7 +79,7 @@ test_that("diversity estimates", {
 
         expect_equal(cd$faith[i], faith)
     }
-
+    
     ########## Check that estimateFaith works correctly ##########
     ########## with different SE object types ##########
     
@@ -134,4 +134,13 @@ test_that("diversity estimates", {
     expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
                                    tree_name = c("phylo", "phylo.1")))
     
+    # Test Faith with picante packages results (version 1.8.2)
+    picante_res <- c(
+        250.5354, 262.2629, 208.4578, 117.8762, 119.8247, 135.7673, 159.3715,
+        123.3516, 143.7972, 111.7095, 156.4513, 147.9323, 247.2830, 253.2101,
+        245.1008, 127.2336, 167.7246, 155.5872, 142.3473, 197.6823, 197.2321,
+        124.6510, 121.2056, 179.9377, 140.8096, 126.5695)
+    tse <- GlobalPatterns
+    res <- estimateFaith(tse)$faith
+    expect_equal(res, picante_res, tolerance=1e-5)
     })
