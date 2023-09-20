@@ -101,6 +101,10 @@ By default, \code{quantile} is 0.5.}
 \item{num_of_classes}{ The number of arithmetic abundance classes
 from zero to the quantile cutoff indicated by \code{quantile}.
 By default, \code{num_of_classes} is 50.}
+\item{only.tips}{ A boolean value specifying whether to remove internal
+nodes when Faith's inex is calculated. When \code{only.tips=TRUE}, those
+rows that are not tips of tree are removed.
+(By default: \code{only.tips=FALSE})}
 }}
 
 \item{BPPARAM}{A
@@ -149,7 +153,13 @@ argument.}
 \item{'faith' }{Faith's phylogenetic alpha diversity index measures how
 long the taxonomic distance is between taxa that are present in the sample.
 Larger values represent higher diversity. Using this index requires
-rowTree. (Faith 1992)}
+rowTree. (Faith 1992)
+
+If the data includes features that are not in tree's tips but in
+internal nodes, there are two options. First, you can keep those features,
+and prune the tree to match features so that each tip can be found from
+the features. Other option is to remove all features that are not tips.
+(See \code{only.tips} parameter)}
 
 \item{'fisher' }{Fisher's alpha; as implemented in
 \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}

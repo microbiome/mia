@@ -143,4 +143,8 @@ test_that("diversity estimates", {
     tse <- GlobalPatterns
     res <- estimateFaith(tse)$faith
     expect_equal(res, picante_res, tolerance=1e-5)
+    # Check only tips paramater
+    expect_error(estimateFaith(tse, only.tips = 1))
+    expect_error(estimateFaith(tse, only.tips = "TRUE"))
+    expect_error(estimateFaith(tse, only.tips = c(TRUE, FALSE)))
     })

@@ -56,6 +56,10 @@
 #'   \item{num_of_classes}{ The number of arithmetic abundance classes
 #'   from zero to the quantile cutoff indicated by \code{quantile}. 
 #'   By default, \code{num_of_classes} is 50.}
+#'   \item{only.tips}{ A boolean value specifying whether to remove internal
+#'   nodes when Faith's inex is calculated. When \code{only.tips=TRUE}, those
+#'   rows that are not tips of tree are removed.
+#'   (By default: \code{only.tips=FALSE})}
 #' }
 #'
 #' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
@@ -77,7 +81,13 @@
 #' \item{'faith' }{Faith's phylogenetic alpha diversity index measures how
 #' long the taxonomic distance is between taxa that are present in the sample.
 #' Larger values represent higher diversity. Using this index requires
-#' rowTree. (Faith 1992)}
+#' rowTree. (Faith 1992)
+#' 
+#' If the data includes features that are not in tree's tips but in
+#' internal nodes, there are two options. First, you can keep those features,
+#' and prune the tree to match features so that each tip can be found from
+#' the features. Other option is to remove all features that are not tips.
+#' (See \code{only.tips} parameter)}
 #' 
 #' \item{'fisher' }{Fisher's alpha; as implemented in
 #' \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
@@ -401,7 +411,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
             rownames(mat) <- node_lab
         }
         # Calculates Faith index
-        faith <- list(.calc_faith(mat, tree))
+        faith <- list(.calc_faith(mat, tree, ...))
         # Adds calculated Faith index to colData
         .add_values_to_colData(x, faith, name)
     }
@@ -496,7 +506,16 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     vegan::fisher.alpha(t(mat))
 }
 
-.calc_faith <- function(mat, tree, ...){
+.calc_faith <- function(mat, tree, only.tips = FALSE, ...){
+    # Input check
+    if( !.is_a_bool(only.tips) ){
+        stop("'only.tips' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # Remove internal nodes if specified
+    if( only.tips ){
+        mat <- mat[ rownames(mat) %in% tree$tip.label, ]
+    }
     # To ensure that the function works with NA also, convert NAs to 0.
     # Zero means that the taxon is not present --> same as NA (no information)
     mat[ is.na(mat) ] <- 0
