@@ -56,6 +56,10 @@
 #'   \item{num_of_classes}{ The number of arithmetic abundance classes
 #'   from zero to the quantile cutoff indicated by \code{quantile}. 
 #'   By default, \code{num_of_classes} is 50.}
+#'   \item{only.tips}{ A boolean value specifying whether to remove internal
+#'   nodes when Faith's inex is calculated. When \code{only.tips=TRUE}, those
+#'   rows that are not tips of tree are removed.
+#'   (By default: \code{only.tips=FALSE})}
 #' }
 #'
 #' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
@@ -77,7 +81,13 @@
 #' \item{'faith' }{Faith's phylogenetic alpha diversity index measures how
 #' long the taxonomic distance is between taxa that are present in the sample.
 #' Larger values represent higher diversity. Using this index requires
-#' rowTree. (Faith 1992)}
+#' rowTree. (Faith 1992)
+#' 
+#' If the data includes features that are not in tree's tips but in
+#' internal nodes, there are two options. First, you can keep those features,
+#' and prune the tree to match features so that each tip can be found from
+#' the features. Other option is to remove all features that are not tips.
+#' (See \code{only.tips} parameter)}
 #' 
 #' \item{'fisher' }{Fisher's alpha; as implemented in
 #' \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
@@ -401,7 +411,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
             rownames(mat) <- node_lab
         }
         # Calculates Faith index
-        faith <- list(.calc_faith(mat, tree))
+        faith <- list(.calc_faith(mat, tree, ...))
         # Adds calculated Faith index to colData
         .add_values_to_colData(x, faith, name)
     }
@@ -496,70 +506,98 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     vegan::fisher.alpha(t(mat))
 }
 
-.calc_faith <- function(mat, tree, ...){
+.calc_faith <- function(mat, tree, only.tips = FALSE, ...){
+    # Input check
+    if( !.is_a_bool(only.tips) ){
+        stop("'only.tips' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # Remove internal nodes if specified
+    if( only.tips ){
+        mat <- mat[ rownames(mat) %in% tree$tip.label, ]
+    }
+    # To ensure that the function works with NA also, convert NAs to 0.
+    # Zero means that the taxon is not present --> same as NA (no information)
+    mat[ is.na(mat) ] <- 0
 
     # Gets vector where number represent nth sample
     samples <- seq_len(ncol(mat))
 
     # Repeats taxa as many times there are samples, i.e. get all the
-    # taxa that are
-    
-    # analyzed in each sample.
+    # taxa that are analyzed in each sample.
     taxa <- rep(rownames(mat), length(samples))
 
     # Gets those taxa that are present/absent in each sample.
     # Gets one big list that combines
     # taxa from all the samples.
     present_combined <- taxa[ mat[, samples] > 0 ]
-    absent_combined <- taxa[ mat[, samples] == 0 ]
     
     # Gets how many taxa there are in each sample. 
     # After that, determines indices of samples' first taxa with cumsum.
     split_present <- as.vector(cumsum(colSums(mat > 0)))
-    split_absent <- as.vector(cumsum(colSums(mat == 0)))
     
     # Determines which taxa belongs to which sample by first determining
     # the splitting points,
     # and after that giving every taxa number which tells their sample.
     split_present <- as.factor(cumsum((seq_along(present_combined)-1) %in%
                         split_present))
-    split_absent <- as.factor(cumsum((seq_along(absent_combined)-1) %in%
-                        split_absent))
-    
+
     # Assigns taxa to right samples based on their number that they got from
     # previous step, and deletes unnecessary names.
     present <- unname(split(present_combined, split_present))
-    absent <- unname(split(absent_combined, split_absent))
+    
+    # If there were samples without any taxa present/absent, the length of the
+    # list is not the number of samples since these empty samples are missing.
+    # Add empty samples as NULL.
+    names(present) <- names(which(colSums2(mat) > 0))
+    present[names(which(colSums2(mat) == 0))] <- list(NULL)
+    present <- present[colnames(mat)]
 
     # Assign NA to all samples
     faiths <- rep(NA,length(samples))
     
-    # If all the taxa are present, then faith is the sum of all edges of taxa
-    faiths[lengths(absent) == 0] <- sum(tree$edge.length)
-
-    # If there are taxa that are not present:
+    # If there are no taxa present, then faith is 0
+    ind <- lengths(present) == 0
+    faiths[ind] <- 0
     
-    # 1 If there are no taxa present, then faith is 0
-    faiths[lengths(present) == 0] <- 0
-    
-    # 2 If there is only one taxon present, then faith is the age of taxon
-    # could be calculated similarly to other samples with different number of
-    # absent taxa, but this allows vectorization.
-    # --> Find taxon from labels --> get its tip label index. The edge df
-    # tells edges between two indices. Find the edge between root and certain
-    # taxon; get its index. --> Find the length of that edge.
-    ind <- lengths(present) == 1
-    faiths[ind] <- tree$edge.length[
-        which(tree$edge[, 2] == which(tree$tip.label == present[ind]))]
-    
-    # 3 If several taxa is not present
-    ind <- lengths(absent) > 0
-    # absent taxa are dropped
-    trees <- lapply(absent[ind], ape::drop.tip, phy = tree)
-    # and faith is calculated based on the subset tree
-    faiths[ind] <- vapply(trees, function(t){sum(t$edge.length)},numeric(1))
-
+    # If there are taxa present
+    ind <- lengths(present) > 0
+    # Loop through taxa that were found from each sample
+    faiths_for_taxa_present <- lapply(present[ind], function(x){
+        # Trim the tree
+        temp <- .prune_tree(tree, x)
+        # Sum up all the lengths of edges
+        temp <- sum(temp$edge.length)
+        return(temp)
+    })
+    faiths_for_taxa_present <- unlist(faiths_for_taxa_present)
+    faiths[ind] <- faiths_for_taxa_present
     return(faiths)
+}
+
+# This function trims tips until all tips can be found from provided set of nodes
+#' @importFrom ape drop.tip
+.prune_tree <- function(tree, nodes){
+    # Get those tips that can not be found from provided nodes
+    remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
+    # As long as there are tips to be dropped, run the loop
+    while( length(remove_tips) > 0 ){
+        # Drop tips that cannot be found. Drop only one layer at the time. Some
+        # dataset might have taxa that are not in tip layer but they are higher
+        # higher rank. IF we delete more than one layer at the time, we might
+        # loose the node for those taxa. --> The result of pruning is a tree
+        # whose all tips can be found provided nodes i.e., rows of TreeSE. Some
+        # taxa might be higher rank meaning that all rows might not be in tips
+        # even after pruning; they have still child-nodes.
+        tree <- drop.tip(tree, remove_tips, trim.internal = FALSE, collapse.singles = FALSE)
+        # If all tips were dropped, the result is NULL --> stop loop
+        if( is.null(tree) ){
+            break
+        }
+        # Again, get those tips of updated tree that cannot be found from provided nodes
+        remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
+    }
+    return(tree)
 }
 
 .calc_log_modulo_skewness <- function(mat, quantile = 0.5, num_of_classes = 50, ...){
