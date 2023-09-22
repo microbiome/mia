@@ -290,7 +290,10 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         
         # Apply pseudocount, if it is not 0
         assay <- .apply_pseudocount(assay, pseudocount)
-	
+        # Store pseudocount value and set attr equal to NULL
+        pseudocount <- attr(assay, "pseudocount")
+        attr(assay, "pseudocount") <- NULL
+        
         # Calls help function that does the transformation
         # Help function is different for mia and vegan transformations
         if( method %in% c("log10", "log2") ){
@@ -569,5 +572,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     }
     # Add pseudocount
     mat <- mat + pseudocount
+    # Set attr equal to pseudocount
+    attr(mat, "pseudocount") <- pseudocount
     return(mat)
 }
