@@ -474,13 +474,16 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 ####################################.calc_log###################################
 # This function applies log transformation to abundance table.
 .calc_log <- function(mat, method, ...){
-    # If abundance table contains zeros, gives an error, because it is not
-    # possible to calculate log from zeros. If there is no zeros, calculates log.
-    if (any(mat <= 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero or negative values and ",
-            method, " transformation is being applied without pseudocount.\n",
-            "Pseudocount must be set to TRUE.",
-            call. = FALSE)
+    # If abundance table contains zeros or negative values, gives an error, because
+    # it is not possible to calculate log from zeros. Otherwise, calculates log.
+    if ( any(mat < 0, na.rm = TRUE) ){
+        stop("The assay contains negative values and ", method,
+             " transformation is being applied without pseudocount.",
+            "`pseudocount` must be specified manually.", call. = FALSE)
+    } else if ( any(mat == 0, na.rm = TRUE) ){
+        stop("The assay contains zeroes and ", method,
+             " transformation is being applied without pseudocount.",
+             "`pseudocount` must be set to TRUE.", call. = FALSE)
     }
     # Calculate log2 or log10 abundances
     if(method == "log2"){
@@ -561,12 +564,12 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     }
     # Give warning if pseudocount should not be added
     # Case 1: only positive values
-    if( all(mat>0) ){
+    if( pseudocount != 0 && all(mat>0) ){
         warning("The assay contains only positive values. ",
                 "Applying a pseudocount is not necessary.", call. = FALSE)
     }
     # Case 2: some negative values
-    if( any(mat<0) ){
+    if( pseudocount != 0 && any(mat<0) ){
         warning("The assay contains some negative values. ",
                 "Applying a pseudocount may produce meaningless data.", call. = FALSE)
     }
