@@ -26,11 +26,9 @@
 #' @param name A single character value specifying the name of transformed
 #'   abundance table.
 #' 
-#' @param pseudocount NULL or numeric value deciding whether pseudocount is
-#'   added. The numeric value specifies the value of pseudocount.
-#'   Recommended default choices for counts and relative abundance assay
-#'   \code{pseudocount = 1} and \code{pseudocount = min(assay[assay>0])}, respectively.
-#'   (By default: \code{pseudocount = 0})
+#' @param pseudocount TRUE or FALSE, should the minimum value of \code{assay.type} 
+#'   be added to assay values. Alternatively, a numeric value specifying the value
+#'   to be added. (default: \code{pseudocount = FALSE})
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
@@ -133,12 +131,9 @@
 #' # The target of transformation can be specified with "assay.type"
 #' # Pseudocount can be added by specifying 'pseudocount'.
 #' 
-#' # Get pseudocount; here smallest positive value
-#' mat <- assay(tse, "relabundance") 
-#' pseudonumber <- min(mat[mat>0])
-#' # Perform CLR
+#' # Perform CLR with smallest positive value as pseudocount
 #' tse <- transformAssay(tse, assay.type = "relabundance", method = "clr", 
-#'                      pseudocount = pseudonumber
+#'                      pseudocount = TRUE
 #'                      )
 #'                       
 #' head(assay(tse, "clr"))
@@ -193,7 +188,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
                         "rank", "rclr", "relabundance", "rrank",
                         "total"),
             name = method,
-            pseudocount = 0,
+            pseudocount = FALSE,
             ...
             ){
         .Deprecated("transformAssay")
@@ -229,7 +224,7 @@ setGeneric("transformAssay", signature = c("x"),
                                "z"),
                     MARGIN = "samples",
                     name = method,
-                    pseudocount = 0,		    
+                    pseudocount = FALSE,		    
                     ...)
                standardGeneric("transformAssay"))
 #transformCounts wrapper with a deprecation warning
@@ -249,7 +244,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
                         "standardize", "total", "z"),
              MARGIN = "samples",
              name = method,
-             pseudocount = 0,
+             pseudocount = FALSE,
              ...){
         # Input check
 
@@ -283,8 +278,8 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         # Check pseudocount
-        if( !(is.numeric(pseudocount) && length(pseudocount) == 1 && pseudocount >= 0) ){
-            stop("'pseudocount' must be a non-negative single numeric value.",
+        if( !.is_a_bool(pseudocount) && !(is.numeric(pseudocount) && length(pseudocount) == 1 && pseudocount >= 0) ){
+            stop("'pseudocount' must TRUE, FALSE or a non-negative single numeric value.",
                  call. = FALSE)
         }
         # Input check end
@@ -293,6 +288,11 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         method <- match.arg(method)
         assay <- assay(x, assay.type)
     
+        # If pseudocount TRUE, set it to non-zero minimum value
+        # If pseudocount FALSE, set it to zero
+        if( .is_a_bool(pseudocount) ){
+            pseudocount <- ifelse(pseudocount, min(assay[assay > 0]), 0)
+        }
         # Apply pseudocount, if it is not 0
         if( pseudocount != 0 ){
             assay <- .apply_pseudocount(assay, pseudocount)
@@ -327,7 +327,7 @@ setGeneric("transformFeatures", signature = c("x"),
                     method = c("frequency", "log", "log10", "log2", "max",
                                "pa", "range", "standardize", "z"),
                     name = method,
-                    pseudocount = 0,
+                    pseudocount = FALSE,
                     ...)
                standardGeneric("transformFeatures"))
 
@@ -339,7 +339,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
              method = c("frequency", "log", "log10", "log2", "max",
                         "pa", "range", "standardize", "z"),
              name = method,
-             pseudocount = 0,
+             pseudocount = FALSE,
              ...){
         
         .Deprecated("transformAssay")
@@ -483,8 +483,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     if (any(mat <= 0, na.rm = TRUE)) {
         stop("Abundance table contains zero or negative values and ",
             method, " transformation is being applied without pseudocount.\n",
-            "Try to add pseudocount (default choice pseudocount = 1 for count ",
-            "assay; or pseudocount = min(x[x>0]) for relabundance assay).",
+            "Pseudocount must be set to TRUE.",
             call. = FALSE)
     }
     # Calculate log2 or log10 abundances
@@ -556,7 +555,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
         warning("The abundance table contains only positive values. ",
                 "A pseudocount is not encouraged to apply.", call. = FALSE)
     }
-    # Add pseudocount.
+    # Add pseudocount
     mat <- mat + pseudocount
     return(mat)
 }

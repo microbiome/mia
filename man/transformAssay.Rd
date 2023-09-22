@@ -30,7 +30,7 @@ transformSamples(
   method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
     "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
   name = method,
-  pseudocount = 0,
+  pseudocount = FALSE,
   ...
 )
 
@@ -43,7 +43,7 @@ transformAssay(
     "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
-  pseudocount = 0,
+  pseudocount = FALSE,
   ...
 )
 
@@ -56,7 +56,7 @@ transformAssay(
     "standardize", "total", "z"),
   MARGIN = "samples",
   name = method,
-  pseudocount = 0,
+  pseudocount = FALSE,
   ...
 )
 
@@ -67,7 +67,7 @@ transformFeatures(
   method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
     "z"),
   name = method,
-  pseudocount = 0,
+  pseudocount = FALSE,
   ...
 )
 
@@ -78,7 +78,7 @@ transformFeatures(
   method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
     "z"),
   name = method,
-  pseudocount = 0,
+  pseudocount = FALSE,
   ...
 )
 
@@ -117,11 +117,9 @@ reference sample's column in returned assay when calculating alr.
 (default: \code{ref_vals = NA})}
 }}
 
-\item{pseudocount}{NULL or numeric value deciding whether pseudocount is
-added. The numeric value specifies the value of pseudocount.
-Recommended default choices for counts and relative abundance assay
-\code{pseudocount = 1} and \code{pseudocount = min(assay[assay>0])}, respectively.
-(By default: \code{pseudocount = 0})}
+\item{pseudocount}{TRUE or FALSE, should the minimum value of \code{assay.type}
+be added to assay values. Alternatively, a numeric value specifying the value
+to be added. (default: \code{pseudocount = FALSE})}
 
 \item{MARGIN}{A single character value for specifying whether the
 transformation is applied sample (column) or feature (row) wise.
@@ -220,12 +218,9 @@ tse <- transformAssay(tse, method = "relabundance")
 # The target of transformation can be specified with "assay.type"
 # Pseudocount can be added by specifying 'pseudocount'.
 
-# Get pseudocount; here smallest positive value
-mat <- assay(tse, "relabundance") 
-pseudonumber <- min(mat[mat>0])
-# Perform CLR
+# Perform CLR with smallest positive value as pseudocount
 tse <- transformAssay(tse, assay.type = "relabundance", method = "clr", 
-                     pseudocount = pseudonumber
+                     pseudocount = TRUE
                      )
                       
 head(assay(tse, "clr"))
