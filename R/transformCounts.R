@@ -566,7 +566,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     # Case 1: only positive values
     if( pseudocount != 0 && all(mat>0) ){
         warning("The assay contains only positive values. ",
-                "Applying a pseudocount is not necessary.", call. = FALSE)
+                "Applying a pseudocount may be unnecessary.", call. = FALSE)
     }
     # Case 2: some negative values
     if( pseudocount != 0 && any(mat<0) ){
