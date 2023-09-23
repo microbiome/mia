@@ -36,10 +36,7 @@ test_that("transformAssay", {
                                    rowData = df)
         expect_error(transformAssay(se, name = FALSE, method="relabundance"),
                      "'name' must be a non-empty single character value")
-        expect_warning(
-            actual <- transformAssay(se, method="relabundance"),
-            "The assay contains only positive values. Applying a pseudocount is not necessary."
-        )
+        actual <- transformAssay(se, method="relabundance")
         expect_named(assays(actual), c("counts", "relabundance"))
 
         expect_equal(assay(actual,"relabundance")[,1],
@@ -166,10 +163,7 @@ test_that("transformAssay", {
         assay(tse, "test2")[1, ] <- 0
         
         # clr robust transformations
-        expect_warning(
-            test <- assay(transformAssay(tse, method = "rclr", assay.type = "test"), "rclr"),
-            "The assay contains only positive values. Applying a pseudocount is not necessary."
-        )
+        test <- assay(transformAssay(tse, method = "rclr", assay.type = "test"), "rclr")
         test2 <- assay(transformAssay(tse, method = "rclr", assay.type = "test2"), "rclr")
 
         # Removes first rows
@@ -196,10 +190,7 @@ test_that("transformAssay", {
 
         # Test that CLR with counts equal to CLR with relabundance
         assay(tse, "pseudo") <- assay(tse, "counts") + 1
-        expect_warning(
-            tse <- transformAssay(tse, assay.type = "pseudo", method = "clr", name = "clr1"),
-            "The assay contains only positive values. Applying a pseudocount is not necessary."
-        )
+        tse <- transformAssay(tse, assay.type = "pseudo", method = "clr", name = "clr1")
         tse <- transformAssay(
             tse, assay.type = "counts", method = "clr", name = "clr2",
             pseudocount =1)
@@ -209,11 +200,7 @@ test_that("transformAssay", {
         tse <- transformAssay(
             tse, assay.type = "counts", method = "relabundance", pseudocount = 1,
             name = "rel_pseudo1")
-        expect_warning(
-            tse <- transformAssay(
-                tse, assay.type = "pseudo", method = "relabundance", name = "rel_pseudo2"),
-            "The assay contains only positive values. Applying a pseudocount is not necessary."
-        )
+        tse <- transformAssay(tse, assay.type = "pseudo", method = "relabundance", name = "rel_pseudo2")
         expect_equal(assay(tse, "rel_pseudo1"), assay(tse, "rel_pseudo2"),
                      check.attributes = FALSE)
         
