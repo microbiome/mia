@@ -36,7 +36,6 @@ test_that("transformAssay", {
                                    rowData = df)
         expect_error(transformAssay(se, name = FALSE, method="relabundance"),
                      "'name' must be a non-empty single character value")
-
         actual <- transformAssay(se, method="relabundance")
         expect_named(assays(actual), c("counts", "relabundance"))
 
@@ -158,7 +157,8 @@ test_that("transformAssay", {
         tse <- transformAssay(tse, method = "relabundance")
         # Adds pseudocount
         assay(tse, "test") <- assay(tse, "relabundance")+1
-        assay(tse, "test2") <- assay(tse, "test") 
+        assay(tse, "test2") <- assay(tse, "test")
+        assay(tse, "neg_values") <- assay(tse, "counts") - 2
         # First row is zeroes
         assay(tse, "test2")[1, ] <- 0
         
@@ -181,12 +181,16 @@ test_that("transformAssay", {
         # Expect error warning when zeroes
         tse <- transformAssay(tse, method = "relabundance")
         expect_error(transformAssay(tse, assay.type = "relabundance", 
-                                     method = "clr") ) 
+                                     method = "clr"))
+        
+        # Expect error when pseudocount TRUE but negative values present
+        expect_error(transformAssay(tse, method = "relabundance",
+                                    assay.type = "neg_values", pseudocount = TRUE),
+                     "The assay contains some negative values. 'pseudocount' must be specified manually.")
 
         # Test that CLR with counts equal to CLR with relabundance
         assay(tse, "pseudo") <- assay(tse, "counts") + 1
-        tse <- transformAssay(
-            tse, assay.type = "pseudo", method = "clr", name = "clr1")
+        tse <- transformAssay(tse, assay.type = "pseudo", method = "clr", name = "clr1")
         tse <- transformAssay(
             tse, assay.type = "counts", method = "clr", name = "clr2",
             pseudocount =1)
@@ -196,10 +200,22 @@ test_that("transformAssay", {
         tse <- transformAssay(
             tse, assay.type = "counts", method = "relabundance", pseudocount = 1,
             name = "rel_pseudo1")
-        tse <- transformAssay(
-            tse, assay.type = "pseudo", method = "relabundance", name = "rel_pseudo2")
+        tse <- transformAssay(tse, assay.type = "pseudo", method = "relabundance", name = "rel_pseudo2")
         expect_equal(assay(tse, "rel_pseudo1"), assay(tse, "rel_pseudo2"),
                      check.attributes = FALSE)
+        
+        # Check that pseudocount = TRUE is the same as pseudocount = min
+        # and pseudocount = FALSE is the same as pseudocount = 0
+        tse <- transformAssay(tse, method = "relabundance", pseudocount = TRUE, name = "pseudo_true")
+        tse <- transformAssay(
+            tse, method = "relabundance", name = "pseudo_min",
+            pseudocount = min(assay(tse, "counts")[assay(tse, "counts") > 0]),
+        )
+        tse <- transformAssay(tse, method = "relabundance", pseudocount = FALSE, name = "pseudo_false")
+        tse <- transformAssay(tse, method = "relabundance", pseudocount = 0, name = "pseudo_zero")
+        expect_equal(assay(tse, "pseudo_true"), assay(tse, "pseudo_min"), check.attributes = FALSE)
+        expect_equal(assay(tse, "pseudo_false"), assay(tse, "pseudo_zero"), check.attributes = FALSE)
+        expect_false(all(assay(tse, "pseudo_true") == assay(tse, "pseudo_false")))
 
         ############################# NAMES ####################################
         # Tests that samples have correct names
@@ -278,7 +294,7 @@ test_that("transformAssay", {
                                     pseudocount = 4, reference = 2)	    
 
         # The TreeSE version maintains the row & col number including the reference
-	    coms <- intersect(rownames(actual), rownames(compare))
+	      coms <- intersect(rownames(actual), rownames(compare))
         expect_equal(actual[coms, -2], compare[coms, -2], check.attributes = FALSE)
 
         # hellinger
