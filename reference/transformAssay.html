@@ -73,7 +73,7 @@ See details for options.</p>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>,</span>
 <span>    <span class="st">"log2"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>, <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>, <span class="st">"total"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
-<span>  pseudocount <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -86,7 +86,7 @@ See details for options.</p>
 <span>    <span class="st">"standardize"</span>, <span class="st">"total"</span>, <span class="st">"z"</span><span class="op">)</span>,</span>
 <span>  MARGIN <span class="op">=</span> <span class="st">"samples"</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
-<span>  pseudocount <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -100,7 +100,7 @@ See details for options.</p>
 <span>    <span class="st">"standardize"</span>, <span class="st">"total"</span>, <span class="st">"z"</span><span class="op">)</span>,</span>
 <span>  MARGIN <span class="op">=</span> <span class="st">"samples"</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
-<span>  pseudocount <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -111,7 +111,7 @@ See details for options.</p>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"frequency"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>, <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"standardize"</span>,</span>
 <span>    <span class="st">"z"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
-<span>  pseudocount <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -123,7 +123,7 @@ See details for options.</p>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"frequency"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>, <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"standardize"</span>,</span>
 <span>    <span class="st">"z"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
-<span>  pseudocount <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -177,11 +177,9 @@ reference sample's column in returned assay when calculating alr.
 
 
 <dt>pseudocount</dt>
-<dd><p>NULL or numeric value deciding whether pseudocount is
-added. The numeric value specifies the value of pseudocount.
-Recommended default choices for counts and relative abundance assay
-<code>pseudocount = 1</code> and <code>pseudocount = min(assay[assay&gt;0])</code>, respectively.
-(By default: <code>pseudocount = 0</code>)</p></dd>
+<dd><p>TRUE or FALSE, should the minimum value of <code>assay.type</code>
+be added to assay values. Alternatively, a numeric value specifying the value
+to be added. (default: <code>pseudocount = FALSE</code>)</p></dd>
 
 
 <dt>MARGIN</dt>
@@ -264,13 +262,11 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-in"><span><span class="co"># The target of transformation can be specified with "assay.type"</span></span></span>
 <span class="r-in"><span><span class="co"># Pseudocount can be added by specifying 'pseudocount'.</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Get pseudocount; here smallest positive value</span></span></span>
-<span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"relabundance"</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="va">pseudonumber</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">mat</span><span class="op">[</span><span class="va">mat</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Perform CLR</span></span></span>
+<span class="r-in"><span><span class="co"># Perform CLR with smallest positive value as pseudocount</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"clr"</span>, </span></span>
-<span class="r-in"><span>                     pseudocount <span class="op">=</span> <span class="va">pseudonumber</span></span></span>
+<span class="r-in"><span>                     pseudocount <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span>                     <span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> A pseudocount of 0.00392156862745098 was applied.</span>
 <span class="r-in"><span>                      </span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"clr"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C           D</span>
