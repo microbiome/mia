@@ -193,7 +193,7 @@ transformation is applied sample (column) or feature (row) wise.
     
 
 <p><code>transformAssay</code> returns the input object <code>x</code>, with a new
-transformed abundance table named <code>name</code> added in the <code>assay</code>.</p>
+transformed abundance table named <code>name</code> added in the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -268,7 +268,7 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-in"><span>                     <span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> A pseudocount of 0.00392156862745098 was applied.</span>
 <span class="r-in"><span>                      </span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"clr"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"clr"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C           D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22  3.4161459  2.0677373  1.10139252</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 -0.7397308  0.1706173 -0.81874812</span>
@@ -282,7 +282,7 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"z"</span>, MARGIN <span class="op">=</span> <span class="st">"features"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>result contains NaN, perhaps due to impossible mathematical</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                  operation</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"z"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"z"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C          D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22  1.1000638 -0.2460669 -0.8539969</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 -0.5773503  1.1547005 -0.5773503</span>
@@ -293,7 +293,7 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Name of the stored table can be specified.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method<span class="op">=</span><span class="st">"hellinger"</span>, name<span class="op">=</span><span class="st">"test"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"test"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"test"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C          D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 0.49629167 0.27296484 0.15109947</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 0.00000000 0.08856149 0.00000000</span>
@@ -304,7 +304,7 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># pa returns presence absence table.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"pa"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"pa"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"pa"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         B C D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 1 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 0 1 0</span>
@@ -315,7 +315,7 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rank returns ranks of taxa.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"rank"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rank"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rank"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            B  C    D</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22 27.0 30 33.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13  0.0 13  0.0</span>
@@ -325,7 +325,7 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10  0.0  0 11.5</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># In order to use other ranking variants, modify the chosen assay directly:</span></span></span>
-<span class="r-in"><span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rank_average"</span>, withDimnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">colRanks</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"counts"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rank_average"</span>, withDimnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">colRanks</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"counts"</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>                                                           ties.method<span class="op">=</span><span class="st">"average"</span>, </span></span>
 <span class="r-in"><span>                                                           preserveShape <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </span></span>
 <span class="r-in"><span></span></span>
