@@ -35,32 +35,30 @@
 #' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'
 #' @examples
-#' if(requireNamespace("biomformat")) {
-#'   # Load biom file
-#'   library(biomformat)
-#'   biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
-#'                            package = "biomformat")
+#' # Load biom file
+#' library(biomformat)
+#' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
+#'                          package = "biomformat")
 #' 
-#'   # Make TreeSE from biom file
-#'   tse <- loadFromBiom(biom_file)
+#' # Make TreeSE from biom file
+#' tse <- loadFromBiom(biom_file)
 #' 
-#'   # Make TreeSE from biom object
-#'   biom_object <- biomformat::read_biom(biom_file)
-#'   tse <- makeTreeSEFromBiom(biom_object)
+#' # Make TreeSE from biom object
+#' biom_object <- biomformat::read_biom(biom_file)
+#' tse <- makeTreeSEFromBiom(biom_object)
 #' 
-#'   # Get taxonomyRanks from prefixes and remove prefixes
-#'   tse <- loadFromBiom(biom_file,
-#'                       rankFromPrefix = TRUE,
-#'                       removeTaxaPrefixes = TRUE)
+#' # Get taxonomyRanks from prefixes and remove prefixes
+#' tse <- loadFromBiom(biom_file,
+#'                     rankFromPrefix = TRUE,
+#'                     removeTaxaPrefixes = TRUE)
 #' 
-#'   # Load another biom file
-#'   biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
-#'                            package = "mia")
+#' # Load another biom file
+#' biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
+#'                          package = "mia")
 #' 
-#'   # Clean artifacts from taxonomic data
-#'   tse <- loadFromBiom(biom_file,
-#'                       remove.artifacts = TRUE)
-#' }
+#' # Clean artifacts from taxonomic data
+#' tse <- loadFromBiom(biom_file,
+#'                     remove.artifacts = TRUE)
 NULL
 
 #' @rdname makeTreeSEFromBiom
