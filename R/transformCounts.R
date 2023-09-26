@@ -550,9 +550,9 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 # This function applies pseudocount to abundance table.
 .apply_pseudocount <- function(mat, pseudocount){
     if( .is_a_bool(pseudocount) ){
-        # If pseudocount TRUE and some negative values, numerical pseudocount needed
-        if ( pseudocount && any(mat<0) ){
-            stop("The assay contains some negative values. ",
+        # If pseudocount TRUE but some NAs or negative values, numerical pseudocount needed
+        if ( pseudocount && (any(is.na(mat)) || any(mat < 0, na.rm = TRUE)) ){
+            stop("The assay contains missing or negative values. ",
                  "'pseudocount' must be specified manually.", call. = FALSE)
         }
         # If pseudocount TRUE, set it to non-zero minimum value, else set it to zero
@@ -564,12 +564,12 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
     }
     # Give warning if pseudocount should not be added
     # Case 1: only positive values
-    if( pseudocount != 0 && all(mat>0) ){
+    if( pseudocount != 0 && all(mat > 0, na.rm = TRUE) ){
         warning("The assay contains only positive values. ",
                 "Applying a pseudocount may be unnecessary.", call. = FALSE)
     }
     # Case 2: some negative values
-    if( pseudocount != 0 && any(mat<0) ){
+    if( pseudocount != 0 && any(mat < 0, na.rm = TRUE) ){
         warning("The assay contains some negative values. ",
                 "Applying a pseudocount may produce meaningless data.", call. = FALSE)
     }

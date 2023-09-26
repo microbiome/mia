@@ -156,11 +156,14 @@ test_that("transformAssay", {
         # one value per sample are changed to zero
         tse <- transformAssay(tse, method = "relabundance")
         # Adds pseudocount
-        assay(tse, "test") <- assay(tse, "relabundance")+1
+        assay(tse, "test") <- assay(tse, "relabundance") + 1
         assay(tse, "test2") <- assay(tse, "test")
         assay(tse, "neg_values") <- assay(tse, "counts") - 2
+        assay(tse, "na_values") <- assay(tse, "counts") + 2
         # First row is zeroes
         assay(tse, "test2")[1, ] <- 0
+        # One missing value
+        assay(tse, "na_values")[4, 5] <- NA
         
         # clr robust transformations
         test <- assay(transformAssay(tse, method = "rclr", assay.type = "test"), "rclr")
@@ -183,10 +186,13 @@ test_that("transformAssay", {
         expect_error(transformAssay(tse, assay.type = "relabundance", 
                                      method = "clr"))
         
-        # Expect error when pseudocount TRUE but negative values present
+        # Expect error when pseudocount TRUE but missing or negative values present
         expect_error(transformAssay(tse, method = "relabundance",
                                     assay.type = "neg_values", pseudocount = TRUE),
-                     "The assay contains some negative values. 'pseudocount' must be specified manually.")
+                     "The assay contains missing or negative values. 'pseudocount' must be specified manually.")
+        expect_error(transformAssay(tse, method = "relabundance",
+                                    assay.type = "na_values", pseudocount = TRUE),
+                     "The assay contains missing or negative values. 'pseudocount' must be specified manually.")
 
         # Test that CLR with counts equal to CLR with relabundance
         assay(tse, "pseudo") <- assay(tse, "counts") + 1
