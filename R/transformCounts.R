@@ -1,4 +1,4 @@
-#' Transform Counts
+#' Transform assay
 #'
 #' Variety of transformations for abundance data, stored in \code{assay}.
 #' See details for options.
@@ -227,11 +227,16 @@ setGeneric("transformAssay", signature = c("x"),
                     pseudocount = FALSE,		    
                     ...)
                standardGeneric("transformAssay"))
+
 #transformCounts wrapper with a deprecation warning
+#' @rdname transformAssay
+#' @aliases transformSamples
+#' @export
 transformCounts <- function(x,...){
     .Deprecated(old ="transformCounts" ,new = "transformAssay",msg = "The 'transformCounts' function is deprecated. Use 'transformAssay' instead.")
     return(transformAssay(x,...))
 }
+
 #' @rdname transformAssay
 #' @aliases transformSamples
 #' @export
