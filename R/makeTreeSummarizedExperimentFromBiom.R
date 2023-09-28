@@ -269,6 +269,8 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         stop("'pattern' must be a single character value.", call. = FALSE)
     }
     #
+    row_names <- rownames(x)
+    dim_orig <- dim(x)
     # Remove artifacts
     if( pattern == "auto" ){
         .require_package("stringr")
@@ -290,5 +292,11 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         x <- apply(x, 2, gsub, pattern = pattern, replacement = "")
     }
     x <- as.data.frame(x)
+    # Preserve the right orientation
+    if( dim_orig != dim(x) ){
+        x <- t(x)
+    }
+    # Add rownames because the are dropped
+    rownames(x) <- row_names
     return(x)
 }
