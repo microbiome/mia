@@ -270,13 +270,12 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
     }
     #
     row_names <- rownames(x)
-    dim_orig <- dim(x)
     # Remove artifacts
     if( pattern == "auto" ){
         .require_package("stringr")
         # Remove all but these characters
         pattern <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
-        x <- apply(x, 2, function(col){
+        x <- lapply(x, function(col){
             # Take all specified characters as a matrix where each column is a character
             temp <- stringr::str_extract_all(col, pattern = pattern, simplify = TRUE)
             # Collapse matrix to strings
@@ -292,11 +291,6 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         x <- apply(x, 2, gsub, pattern = pattern, replacement = "")
     }
     x <- as.data.frame(x)
-    # Preserve the right orientation. The df is transposed if there is only one
-    # taxon present.
-    if( all(dim_orig != dim(x)) ){
-        x <- t(x)
-    }
     # Add rownames because they are dropped while removing artifacts
     rownames(x) <- row_names
     return(x)
