@@ -254,7 +254,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
     found_rank <- unlist(found_rank)
     # If only one prefix was found (like it should be), get the corresponding
     # rank name.
-    if( sum(found_rank) ){
+    if( sum(found_rank) == 1 ){
         colname <- TAXONOMY_RANKS[found_rank]
         # Make it capitalized
         colname <- paste0(toupper(substr(colname, 1, 1)),
