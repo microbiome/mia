@@ -4,6 +4,7 @@
 \alias{transformAssay}
 \alias{transformSamples}
 \alias{transformSamples,SummarizedExperiment-method}
+\alias{transformCounts}
 \alias{transformAssay,SummarizedExperiment-method}
 \alias{transformFeatures}
 \alias{transformFeatures,SummarizedExperiment-method}
@@ -11,7 +12,7 @@
 \alias{ZTransform,SummarizedExperiment-method}
 \alias{relAbundanceCounts}
 \alias{relAbundanceCounts,SummarizedExperiment-method}
-\title{Transform Counts}
+\title{Transform assay}
 \usage{
 transformSamples(
   x,
@@ -46,6 +47,8 @@ transformAssay(
   pseudocount = FALSE,
   ...
 )
+
+transformCounts(x, ...)
 
 \S4method{transformAssay}{SummarizedExperiment}(
   x,
