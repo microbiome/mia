@@ -269,12 +269,13 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         stop("'pattern' must be a single character value.", call. = FALSE)
     }
     #
+    row_names <- rownames(x)
     # Remove artifacts
     if( pattern == "auto" ){
         .require_package("stringr")
         # Remove all but these characters
         pattern <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
-        x <- apply(x, 2, function(col){
+        x <- lapply(x, function(col){
             # Take all specified characters as a matrix where each column is a character
             temp <- stringr::str_extract_all(col, pattern = pattern, simplify = TRUE)
             # Collapse matrix to strings
@@ -287,8 +288,10 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         })
     } else{
         # Remove pattern specified by user
-        x <- apply(x, 2, gsub, pattern = pattern, replacement = "")
+        x <- lapply(x, gsub, pattern = pattern, replacement = "")
     }
     x <- as.data.frame(x)
+    # Add rownames because they are dropped while removing artifacts
+    rownames(x) <- row_names
     return(x)
 }
