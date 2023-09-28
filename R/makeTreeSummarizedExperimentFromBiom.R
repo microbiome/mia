@@ -288,7 +288,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         })
     } else{
         # Remove pattern specified by user
-        x <- apply(x, 2, gsub, pattern = pattern, replacement = "")
+        x <- lapply(x, gsub, pattern = pattern, replacement = "")
     }
     x <- as.data.frame(x)
     # Add rownames because they are dropped while removing artifacts
