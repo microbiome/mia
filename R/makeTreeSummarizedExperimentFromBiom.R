@@ -138,12 +138,15 @@ makeTreeSEFromBiom <- function(
         feature_data <- do.call(rbind, feature_data)
         # Transposing feature_data and make it df object
         feature_data <- as.data.frame(feature_data)
+        # Add column that includes all the data
+        feature_data[["taxonomy_unparsed"]] <- apply(feature_data, 1, paste0, collapse = ";")
         # Add correct colnames
-        colnames(feature_data) <- colnames
+        colnames(feature_data) <- c(colnames, "taxonomy_unparsed")
     }
     # If there is only one column in the feature data, it is the most probable
     # that the taxonomy is not parsed. Try to parse it.
     if( ncol(feature_data) == 1 ){
+        colnames(feature_data) <- "taxonomy_unparsed"
         tax_tab <- .parse_taxonomy(feature_data, column_name = colnames(feature_data))
         feature_data <- cbind(tax_tab, feature_data)
         feature_data <- as.data.frame(feature_data)
