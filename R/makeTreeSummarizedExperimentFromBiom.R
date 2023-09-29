@@ -7,7 +7,9 @@
 #' @param file biom file location
 #' 
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
-#' taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})
+#' taxonomic prefixes be removed? The prefixes is removed only from detected
+#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
+#' (default \code{removeTaxaPrefixes = FALSE})
 #' 
 #' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
@@ -202,7 +204,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 ################################ HELP FUNCTIONS ################################
 # This function removes prefixes from taxonomy names
 .remove_prefixes_from_taxa <- function(
-        feature_tab, patterns = "sk__|([dkpcofgs]+)__",
+        feature_tab, prefixes = "sk__|([dkpcofgs]+)__",
         only.taxa.col = TRUE, ...){
     if( !.is_a_bool(only.taxa.col) ){
         stop("'only.taxa.col' must be TRUE or FALSE.", call. = FALSE)
@@ -223,7 +225,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
     if( ncol(temp) > 0 ){
         # Remove patterns
         temp <- lapply(
-            temp, gsub, pattern = patterns, replacement = "")
+            temp, gsub, pattern = prefixes, replacement = "")
         temp <- as.data.frame(temp)
         # If cell had only prefix, it is now empty string. Convert to NA
         temp[ temp == "" ] <- NA

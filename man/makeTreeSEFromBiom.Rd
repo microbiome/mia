@@ -31,7 +31,9 @@ are removed. (default: \code{pattern = "auto"})}
 \item{obj}{object of type \code{\link[biomformat:read_biom]{biom}}}
 
 \item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
-taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})}
+taxonomic prefixes be removed? The prefixes is removed only from detected
+taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
+(default \code{removeTaxaPrefixes = FALSE})}
 
 \item{rankFromPrefix}{\code{TRUE} or \code{FALSE}: If file does not have
 taxonomic ranks on feature table, should they be scraped from prefixes?
