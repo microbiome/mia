@@ -167,7 +167,7 @@ makeTreeSEFromBiom <- function(
     
     # Remove prefixes if specified and rowData includes info
     if(removeTaxaPrefixes && ncol(feature_data) > 0){
-        feature_data <- .remove_prefixes_from_taxa(feature_data)
+        feature_data <- .remove_prefixes_from_taxa(feature_data, ...)
     }
     
     # Adjust row and colnames
@@ -200,7 +200,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 # This function removes prefixes from taxonomy names
 .remove_prefixes_from_taxa <- function(
         feature_tab, patterns = "sk__|([dkpcofgs]+)__",
-        only.taxa.col = FALSE, ...){
+        only.taxa.col = TRUE, ...){
     if( !.is_a_bool(only.taxa.col) ){
         stop("'only.taxa.col' must be TRUE or FALSE.", call. = FALSE)
     }
