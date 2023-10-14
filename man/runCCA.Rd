@@ -37,7 +37,15 @@ runRDA(x, ...)
 
 \S4method{runCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
-\S4method{calculateRDA}{ANY}(x, formula, variables, scores, method = "euclidean", ...)
+\S4method{calculateRDA}{ANY}(
+  x,
+  formula,
+  variables,
+  scores,
+  method = distance,
+  distance = "euclidean",
+  ...
+)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
@@ -161,8 +169,8 @@ GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
 # Specify dissimilarity measure
-tse <- transformAssay(tse, method = "relabundance")
-tse <- runRDA(tse, data ~ SampleType, assay.type = "relabundance",  method = "bray")
+tse <- transformAssay(GlobalPatterns, method = "relabundance")
+tse <- runRDA(GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
 
 # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
 tse <- GlobalPatterns
