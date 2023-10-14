@@ -37,7 +37,7 @@ runRDA(x, ...)
 
 \S4method{runCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
-\S4method{calculateRDA}{ANY}(x, formula, variables, scores, ...)
+\S4method{calculateRDA}{ANY}(x, formula, variables, scores, method = "euclidean", ...)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
@@ -65,6 +65,8 @@ or a derived object.}
 \item{...}{additional arguments passed to vegan::cca or vegan::dbrda and
 other internal functions.
 \itemize{
+\item{\code{method} a dissimilarity measure to be applied in dbRDA and
+possible following homogeneity test. (By default: \code{method="euclidean"})}
 \item{\code{full} a logical scalar, should all the results from the
 significance calculations be returned. When \code{full=FALSE}, only
 summary tables are returned. (By default: \code{full=FALSE})}
@@ -158,14 +160,18 @@ attr(reducedDim(GlobalPatterns, "CCA"), "significance")
 GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
-# To scale values when using *RDA functions, use transformAssay(MARGIN = "features", 
+# Specify dissimilarity measure
+tse <- transformAssay(tse, method = "relabundance")
+tse <- runRDA(tse, data ~ SampleType, assay.type = "relabundance",  method = "bray")
+
+# To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
 tse <- GlobalPatterns
 tse <- transformAssay(tse, MARGIN = "features", method = "z")
 # Data might include taxa that do not vary. Remove those because after z-transform
 # their value is NA
 tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 # Calculate RDA
-tse <- runRDA(tse, formula = data ~ SampleType, 
+tse <- runRDA(tse, formula = data ~ SampleType,
               assay.type = "z", name = "rda_scaled", na.action = na.omit)
 # Plot
 plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
