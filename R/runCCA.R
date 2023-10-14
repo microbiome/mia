@@ -306,7 +306,8 @@ setMethod("runCCA", "SingleCellExperiment",
 )
 
 #' @importFrom vegan sppscores<-
-.calculate_rda <- function(x, formula, variables, scores, method = "euclidean", ...){
+.calculate_rda <- function(
+        x, formula, variables, scores, method = distance, distance = "euclidean", ...){
     .require_package("vegan")
     #
     # Transpose and ensure that the table is in matrix format
@@ -416,7 +417,8 @@ setMethod("runCCA", "SingleCellExperiment",
 # Test association of variables to ordination
 .test_rda_vars <- function(
         mat, rda, variables, permanova_model, by = "margin", full = FALSE,
-        homogeneity.test = "permanova", ...){
+        homogeneity.test = "permanova", method = distance, distance = "euclidean",
+        ...){
     # Check full parameter
     if( !.is_a_bool(full) ){
         stop("'full' must be TRUE or FALSE.", call. = FALSE)
@@ -450,7 +452,7 @@ setMethod("runCCA", "SingleCellExperiment",
     if( length(class(rda)) == 1 && class(rda) == "cca" ){
         dist_mat <- vegdist(mat, method = "euclidean")
     } else{
-        dist_mat <- vegdist(mat, ...)
+        dist_mat <- vegdist(mat, method = method, ...)
     }
     # For all variables run the analysis
     homogeneity <- lapply(colnames(variables), function(x){
