@@ -169,8 +169,8 @@ GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
 # Specify dissimilarity measure
-tse <- transformAssay(GlobalPatterns, method = "relabundance")
-tse <- runRDA(GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
+GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
+GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
 
 # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
 tse <- GlobalPatterns
