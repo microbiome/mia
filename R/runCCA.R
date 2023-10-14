@@ -112,7 +112,8 @@
 #' 
 #' # Specify dissimilarity measure
 #' GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
-#' GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
+#' GlobalPatterns <- runRDA(
+#'     GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
 #' 
 #' # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
 #' tse <- GlobalPatterns
@@ -210,7 +211,10 @@ setGeneric("runRDA", signature = c("x"),
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateCCA", "ANY", .calculate_cca)
+setMethod("calculateCCA", "ANY",
+      function(x, ...){
+          .calculate_cca(x, ...)
+      })
 
 #' @importFrom stats terms
 #' @importFrom SummarizedExperiment colData
@@ -545,7 +549,10 @@ setMethod("runCCA", "SingleCellExperiment",
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateRDA", "ANY", .calculate_rda)
+setMethod("calculateRDA", "ANY",
+      function(x, ...){
+          .calculate_rda(x, ...)
+      })
 
 #' @export
 #' @rdname runCCA

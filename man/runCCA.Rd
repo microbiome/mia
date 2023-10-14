@@ -21,7 +21,7 @@ calculateRDA(x, ...)
 
 runRDA(x, ...)
 
-\S4method{calculateCCA}{ANY}(x, formula, variables, scores, scale = TRUE, ...)
+\S4method{calculateCCA}{ANY}(x, ...)
 
 \S4method{calculateCCA}{SummarizedExperiment}(
   x,
@@ -37,15 +37,7 @@ runRDA(x, ...)
 
 \S4method{runCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
-\S4method{calculateRDA}{ANY}(
-  x,
-  formula,
-  variables,
-  scores,
-  method = distance,
-  distance = "euclidean",
-  ...
-)
+\S4method{calculateRDA}{ANY}(x, ...)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
@@ -103,15 +95,6 @@ All variables are used. Please subset, if you want to consider only some of them
 \code{variables} and \code{formula} can be missing, which turns the CCA analysis
 into a CA analysis and dbRDA into PCoA/MDS.}
 
-\item{scores}{A string specifying scores to be returned. Must be
-'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
-v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})}
-
-\item{scale}{a logical scalar, should the expression values be standardized?
-\code{scale} is disabled when using \code{*RDA} functions. Please scale before
-performing RDA (Check examples.)}
-
 \item{test.signif}{a logical scalar, should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
 (By default: \code{test.signif = TRUE})}
@@ -128,11 +111,20 @@ will be disabled.)}
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
+\item{scores}{A string specifying scores to be returned. Must be
+'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
+v with weights Xbar, but the multiplying effect of eigenvalues removed) or
+'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})}
+
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
 \item{name}{String specifying the name to be used to store the result in the
 reducedDims of the output.}
+
+\item{scale}{a logical scalar, should the expression values be standardized?
+\code{scale} is disabled when using \code{*RDA} functions. Please scale before
+performing RDA (Check examples.)}
 }
 \value{
 For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
@@ -170,7 +162,8 @@ plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
 # Specify dissimilarity measure
 GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
-GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
+GlobalPatterns <- runRDA(
+    GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
 
 # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
 tse <- GlobalPatterns
