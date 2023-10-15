@@ -67,6 +67,9 @@ other internal functions.
 \itemize{
 \item{\code{method} a dissimilarity measure to be applied in dbRDA and
 possible following homogeneity test. (By default: \code{method="euclidean"})}
+\item{\code{scale} a logical scalar, should the expression values be
+standardized? \code{scale} is disabled when using \code{*RDA} functions.
+Please scale before performing RDA. (By default: \code{scale=TRUE})}
 \item{\code{full} a logical scalar, should all the results from the
 significance calculations be returned. When \code{full=FALSE}, only
 summary tables are returned. (By default: \code{full=FALSE})}
@@ -121,10 +124,6 @@ containing the input data.}
 
 \item{name}{String specifying the name to be used to store the result in the
 reducedDims of the output.}
-
-\item{scale}{a logical scalar, should the expression values be standardized?
-\code{scale} is disabled when using \code{*RDA} functions. Please scale before
-performing RDA (Check examples.)}
 }
 \value{
 For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as

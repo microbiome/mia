@@ -32,10 +32,6 @@
 #' @param test.signif a logical scalar, should the PERMANOVA and analysis of
 #'   multivariate homogeneity of group dispersions be performed.
 #'   (By default: \code{test.signif = TRUE})
-#'   
-#' @param scale a logical scalar, should the expression values be standardized?
-#'   \code{scale} is disabled when using \code{*RDA} functions. Please scale before
-#'   performing RDA (Check examples.)
 #'
 #' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
@@ -65,6 +61,9 @@
 #' \itemize{
 #'   \item{\code{method} a dissimilarity measure to be applied in dbRDA and
 #'   possible following homogeneity test. (By default: \code{method="euclidean"})}
+#'   \item{\code{scale} a logical scalar, should the expression values be
+#'   standardized? \code{scale} is disabled when using \code{*RDA} functions.
+#'   Please scale before performing RDA. (By default: \code{scale=TRUE})}
 #'   \item{\code{full} a logical scalar, should all the results from the
 #'   significance calculations be returned. When \code{full=FALSE}, only
 #'   summary tables are returned. (By default: \code{full=FALSE})}
