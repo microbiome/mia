@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.19</span>
       </span>
     </div>
 
@@ -64,7 +64,7 @@ in a <code>SummarizedExperiment</code>.</p>
 <span><span class="fu">runRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">calculateCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, <span class="va">scores</span>, scale <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">calculateCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">calculateCCA</span><span class="op">(</span></span>
@@ -83,7 +83,7 @@ in a <code>SummarizedExperiment</code>.</p>
 <span><span class="fu">runCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"CCA"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">calculateRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">formula</span>, <span class="va">variables</span>, <span class="va">scores</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">calculateRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">calculateRDA</span><span class="op">(</span></span>
@@ -115,7 +115,12 @@ or a derived object.</p></dd>
 
 <dt>...</dt>
 <dd><p>additional arguments passed to vegan::cca or vegan::dbrda and
-other internal functions.</p><ul><li><p><code>full</code> a logical scalar, should all the results from the
+other internal functions.</p><ul><li><p><code>method</code> a dissimilarity measure to be applied in dbRDA and
+possible following homogeneity test. (By default: <code>method="euclidean"</code>)</p></li>
+<li><p><code>scale</code> a logical scalar, should the expression values be
+standardized? <code>scale</code> is disabled when using <code>*RDA</code> functions.
+Please scale before performing RDA. (By default: <code>scale=TRUE</code>)</p></li>
+<li><p><code>full</code> a logical scalar, should all the results from the
 significance calculations be returned. When <code>full=FALSE</code>, only
 summary tables are returned. (By default: <code>full=FALSE</code>)</p></li>
 <li><p><code>homogeneity.test</code> a single <code>character</code> value for specifying
@@ -145,19 +150,6 @@ an object coercible to one containing the variables to use.</p>
 into a CA analysis and dbRDA into PCoA/MDS.</p></dd>
 
 
-<dt>scores</dt>
-<dd><p>A string specifying scores to be returned. Must be
-'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
-v with weights Xbar, but the multiplying effect of eigenvalues removed) or
-'u' ((weighted) orthonormal site scores). (By default: <code>scores='wa'</code>)</p></dd>
-
-
-<dt>scale</dt>
-<dd><p>a logical scalar, should the expression values be standardized?
-<code>scale</code> is disabled when using <code>*RDA</code> functions. Please scale before
-performing RDA (Check examples.)</p></dd>
-
-
 <dt>test.signif</dt>
 <dd><p>a logical scalar, should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
@@ -180,6 +172,13 @@ will be disabled.)</p></dd>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead.)</p></dd>
+
+
+<dt>scores</dt>
+<dd><p>A string specifying scores to be returned. Must be
+'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
+v with weights Xbar, but the multiplying effect of eigenvalues removed) or
+'u' ((weighted) orthonormal site scores). (By default: <code>scores='wa'</code>)</p></dd>
 
 
 <dt>altexp</dt>
@@ -247,7 +246,12 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"CCA"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="runCCA-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># To scale values when using *RDA functions, use transformAssay(MARGIN = "features", </span></span></span>
+<span class="r-in"><span><span class="co"># Specify dissimilarity measure</span></span></span>
+<span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">GlobalPatterns</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,  method <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) </span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, MARGIN <span class="op">=</span> <span class="st">"features"</span>, method <span class="op">=</span> <span class="st">"z"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>result contains NaN, perhaps due to impossible mathematical</span>
@@ -256,10 +260,8 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
 <span class="r-in"><span><span class="co"># their value is NA</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"z"</span><span class="op">)</span> <span class="op">)</span> <span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="co"># Calculate RDA</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span><span class="va">tse</span>, formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, </span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span><span class="va">tse</span>, formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>,</span></span>
 <span class="r-in"><span>              assay.type <span class="op">=</span> <span class="st">"z"</span>, name <span class="op">=</span> <span class="st">"rda_scaled"</span>, na.action <span class="op">=</span> <span class="va">na.omit</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>results may be meaningless because data have negative entries</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>                  in method “bray”</span>
 <span class="r-in"><span><span class="co"># Plot</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"rda_scaled"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="runCCA-3.png" alt="" width="700" height="433"></span>
