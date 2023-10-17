@@ -4,7 +4,6 @@
 #' to certain taxonomic ranks given as \code{rowData}. Only available
 #' \code{\link{taxonomyRanks}} can be used.
 #' @inheritParams perSampleDominantTaxa
-#' @param x a
 #'
 #' @param onRankOnly \code{TRUE} or \code{FALSE}: Should information only from
 #'   the specified rank be used or from ranks equal and above? See details.
