@@ -3,31 +3,10 @@
 #' These functions are accessors for functions implemented in the
 #' \code{\link[DirichletMultinomial:DirichletMultinomial-package]{DirichletMultinomial}}
 #' package
-#'
-#' @param x a numeric matrix with samples as rows or a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object.
-#'
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @inheritParams calculateUnifrac
 #'
 #' @param k the number of Dirichlet components to fit. See
 #'   \code{\link[DirichletMultinomial:dmn]{dmn}}
-#'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the UniFrac calculation should be parallelized.
-#'
-#' @param transposed Logical scalar, is x transposed with samples in rows?
 #'
 #' @param type the type of measure used for the goodness of fit. One of
 #'   \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.

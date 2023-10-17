@@ -6,22 +6,10 @@
 #' These include the \sQuote{ace}, \sQuote{Chao1}, \sQuote{Hill}, and 
 #' \sQuote{Observed} richness measures.
 #' See details for more information and references.
+#' @inheritParams calculateNMDS
 #'
-#' @param x a \code{\link{SummarizedExperiment}} object.
-#'
-#' @param assay.type the name of the assay used for calculation of the
-#'   sample-wise estimates.
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
 #' @param index a \code{character} vector, specifying the richness measures
 #'   to be calculated.
-#'
-#' @param name a name for the column(s) of the colData the results should be
-#'   stored in.
 #'
 #' @param detection a numeric value for selecting detection threshold
 #' for the abundances. The default detection threshold is 0.

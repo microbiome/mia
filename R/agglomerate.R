@@ -3,13 +3,8 @@
 #' \code{agglomerateByRank} can be used to sum up data based on the association
 #' to certain taxonomic ranks given as \code{rowData}. Only available
 #' \code{\link{taxonomyRanks}} can be used.
-#'
+#' @inheritParams perSampleDominantTaxa
 #' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
-#'
-#' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomyRanks()} function.
 #'
 #' @param onRankOnly \code{TRUE} or \code{FALSE}: Should information only from
 #'   the specified rank be used or from ranks equal and above? See details.

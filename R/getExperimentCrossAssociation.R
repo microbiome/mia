@@ -1,9 +1,5 @@
 #' Calculate correlations between features of two experiments.
-#' 
-#' @param x A
-#'   \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}} or
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object.
+#' @inheritParams transformAssay
 #'   
 #' @param experiment1 A single character or numeric value for selecting the experiment 1
 #'    from \code{experiments(x)} of \code{MultiassayExperiment} object. 
@@ -51,14 +47,6 @@
 #' @param colData_variable2 A character value specifying column(s) from colData
 #'   of experiment 2. If colData_variable2 is used, assay.type2 is disabled.
 #'   (By default: \code{colData_variable2 = NULL})
-#' 
-#' @param MARGIN A single numeric value for selecting if association are calculated
-#'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
-#'   \code{2}. (By default: \code{MARGIN = 1}) 
-#'   
-#' @param method A single character value for selecting association method 
-#'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
-#'     (By default: \code{method = "kendall"})
 #' 
 #' @param mode A single character value for selecting output format 
 #'    Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})

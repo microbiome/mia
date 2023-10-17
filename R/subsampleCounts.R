@@ -10,19 +10,7 @@
 #' instances where it can be useful.
 #' Note that the output of \code{subsampleCounts} is not the equivalent as the 
 #' input and any result have to be verified with the original dataset.
-#'
-#' @param x A
-#'   \code{SummarizedExperiment} object.
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{SummarizedExperiment} \code{assay} used for random subsampling. 
-#'   Only counts are useful and other transformed data as input will give 
-#'   meaningless output.
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @inheritParams calculateNMDS
 #'   
 #' @param min_size A single integer value equal to the number of counts being 
 #'   simulated this can equal to lowest number of total counts 

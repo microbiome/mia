@@ -8,9 +8,7 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are 
 #' agglomerated, i.e.. summed up. Other than counts / absolute values might lead
 #' to meaningless values. 
-#'
-#' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
-#'   a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' @inheritParams mergeSEs
 #'
 #' @param f A factor for merging. Must be the same length as
 #'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
