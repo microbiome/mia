@@ -2,10 +2,7 @@
 #'
 #' These functions calculate the population prevalence for taxonomic ranks in a
 #' \code{\link{SummarizedExperiment-class}} object.
-#'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
+#' @inheritParams perSampleDominantTaxa
 #'
 #' @param detection Detection threshold for absence/presence. Either an
 #'   absolute value compared directly to the values of \code{x} or a relative
@@ -19,18 +16,7 @@
 #'
 #' @param as_relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? (default: \code{FALSE})
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to use for prevalence calculation.
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
-#' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomyRanks()} function.
 #'  
 #' @param na.rm logical scalar: Should NA values be omitted when calculating
 #' prevalence? (default: \code{na.rm = TRUE})

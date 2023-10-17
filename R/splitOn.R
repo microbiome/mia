@@ -1,10 +1,5 @@
 #' Split \code{TreeSummarizedExperiment} column-wise or row-wise based on grouping variable
-#'
-#' @param x A
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object or a list of 
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   objects.
+#' @inheritParams calculateNMDS
 #'
 #' @param f A single character value for selecting the grouping variable
 #'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 

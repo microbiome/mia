@@ -3,22 +3,7 @@
 #' This function creates a phyloseq object from a TreeSummarizedExperiment
 #' object. By using \code{assay.type}, it is possible to specify which table
 #' from \code{assay} is added to the phyloseq object.
-#'
-#' @param x a \code{TreeSummarizedExperiment} object
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   included in the phyloseq object that is created. 
-#'   (By default: \code{assay.type = "counts"})
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
-#' @param tree_name a single \code{character} value for specifying which
-#'   tree will be included in the phyloseq object that is created, 
-#'   (By default: \code{tree_name = "phylo"})
+#' @inheritParams calculateDPCoA
 #'
 #' @param ... additional arguments
 #'

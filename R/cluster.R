@@ -2,10 +2,7 @@
 #'
 #' This function returns a \code{SummarizedExperiment} with clustering 
 #'   information in its colData or rowData
-#'
-#' @param x A
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object.
+#' @inheritParams perSampleDominantTaxa
 #'   
 #' @param clust.col A single character value indicating the name of the 
 #'   \code{rowData} (or \code{colData}) where the data will be stored.

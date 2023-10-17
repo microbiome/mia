@@ -17,11 +17,7 @@
 #' agglomerated, i.e. summed up. If the assay contains values other than counts 
 #' or absolute values, this can lead to meaningless values being produced. 
 #'
-#' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
-#'   a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'
-#' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomyRanks()} function.
+#' @inheritParams perSampleDominantTaxa
 #'
 #' @param onRankOnly \code{TRUE} or \code{FALSE}: Should information only from
 #'   the specified rank be used or from ranks equal and above? See details.

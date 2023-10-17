@@ -2,23 +2,10 @@
 #'
 #' To query a \code{SummarizedExperiment} for interesting features, several
 #' functions are available.
-#'
-#' @param x A
-#'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
+#' @inheritParams transformAssay
 #'
 #' @param top Numeric value, how many top taxa to return. Default return top
 #'   five taxa.
-#'
-#' @param method Specify the method to determine top taxa. Either sum, mean,
-#'   median or prevalence. Default is 'mean'.
-#'
-#' @param assay.type A \code{character} value to select an
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}} 
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
 #'   
 #' @param na.rm For \code{getTop} logical argument for calculation method 
 #'              specified to argument \code{method}. Default is TRUE. 

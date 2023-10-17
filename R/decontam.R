@@ -4,21 +4,9 @@
 #' \code{isNotContaminant} are made available for
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' objects.
-#'
+#' @inheritParams perSampleDominantTaxa
 #' @param seqtab,x
 #'   a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to use.
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param name A name for the column of the colData in which the contaminant
-#'   information should be stored.
 #'
 #' @param concentration \code{NULL} or a single \code{character} value. Defining
 #'   a column with numeric values from the \code{colData} to use as

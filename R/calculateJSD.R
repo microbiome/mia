@@ -3,27 +3,7 @@
 #' This function calculates the Jensen-Shannon Divergence (JSD) in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
-#'
-#' @param x a numeric matrix or a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
-#'   
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param transposed Logical scalar, is x transposed with cells in rows?
-#'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the JSD calculation should be parallelized.
+#' @inheritParams calculateUnifrac
 #'
 #' @param chunkSize an integer scalar, defining the size of data send
 #'   to the individual worker. Only has an effect, if \code{BPPARAM} defines

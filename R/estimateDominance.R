@@ -5,22 +5,7 @@
 #' \sQuote{Core abundance},
 #' \sQuote{Gini}, \sQuote{McNaughton’s}, \sQuote{Relative}, and
 #' \sQuote{Simpson's} indices.
-#'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to calculate the sample-wise estimates.
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
-#' @param index a \code{character} vector, specifying the indices to be
-#'   calculated.
+#' @inheritParams estimateRichness
 #'
 #' @param ntaxa Optional and only used for the \code{Absolute} and
 #'   \code{Relative} dominance indices: The n-th position of the dominant taxa
@@ -35,14 +20,6 @@
 #'   relative abundance is returned for the single taxa with the indicated rank
 #'   (default: \code{aggregate = TRUE}). Disregarded for the indices
 #'   \dQuote{core_abundance}, \dQuote{gini}, \dQuote{dmn}, and \dQuote{simpson}.
-#'
-#' @param name A name for the column(s) of the colData where the calculated
-#'   Dominance indices should be stored in.
-#'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether calculation of estimates should be parallelized.
-#'   (Currently not used)
 #'
 #' @param ... additional arguments currently not used.
 #'

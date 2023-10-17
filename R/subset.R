@@ -9,10 +9,7 @@
 #' both dimension at the same time, is more flexible and is used throughout R to
 #' subset data with two or more dimension. Therefore, these functions will be
 #' removed in Bioconductor release 3.15 (April, 2022).
-#'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
+#' @inheritParams transformAssay
 #'
 #' @param ... See \code{\link[BiocGenerics:subset]{subset}}. \code{drop} is
 #'   not supported.

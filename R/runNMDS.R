@@ -13,7 +13,8 @@
 #'   to obtain.
 #'
 #' @param ntop Numeric scalar specifying the number of features with the highest
-#'   variances to use for dimensionality reduction.
+#'   variances to use for dimensionality reduction. Alternatively \code{NULL},
+#'   if all features should be used. (default: \code{ntop = NULL})
 #'
 #' @param subset_row Vector specifying the subset of features to use for
 #'   dimensionality reduction. This can be a character vector of row names, an

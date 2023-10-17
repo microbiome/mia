@@ -28,13 +28,7 @@
 #'   not provided, then all matching taxonomy rows in \code{rowData} will be
 #'   returned. This function allows handy conversions between different
 #    taxonomic levels.
-#'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
-#'
-#' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomyRanks()} function
+#' @inheritParams perSampleDominantTaxa
 #'
 #' @param empty.fields a \code{character} value defining, which values should be
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be

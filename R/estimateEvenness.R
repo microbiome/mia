@@ -4,27 +4,7 @@
 #' These include the \sQuote{Camargo}, \sQuote{Pielou}, \sQuote{Simpson},
 #' \sQuote{Evar} and \sQuote{Bulla} evenness measures.
 #' See details for more information and references.
-#'
-#' @param x a \code{\link{SummarizedExperiment}} object
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
-#'   calculation of the sample-wise estimates.
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param index a \code{character} vector, specifying the evenness measures to be
-#'   calculated.
-#'
-#' @param name a name for the column(s) of the colData the results should be
-#'   stored in.
-#'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether calculation of estimates should be parallelized.
+#' @inheritParams estimateRichness
 #'
 #' @param ... optional arguments:
 #' \itemize{

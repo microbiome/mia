@@ -6,10 +6,7 @@
 #'
 #' Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
 #' \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
-#'
-#' @param x a numeric matrix or a
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   object containing a tree.
+#' @inheritParams estimateDiversity
 #'
 #'   Please  note that \code{runUnifrac} expects a matrix with samples per row
 #'   and not per column. This is implemented to be compatible with other
@@ -25,22 +22,6 @@
 #'   a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
 #'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the 
 #'   node labs must be present in \code{tree}.
-#'
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param tree_name a single \code{character} value for specifying which
-#'   tree will be used in calculation. 
-#'   (By default: \code{tree_name = "phylo"})
 #'   
 #' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
 #'   calculation? Weighted-Unifrac takes into account the relative abundance of
@@ -53,10 +34,6 @@
 #'   values? Default is \code{TRUE}. Note that (unweighted) \code{Unifrac} is
 #'   always normalized by total branch-length, and so this value is ignored when
 #'   \code{weighted == FALSE}.
-#'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the Unifrac calculation should be parallelized.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
 #'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
