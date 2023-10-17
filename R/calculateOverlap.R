@@ -3,19 +3,7 @@
 #' This function calculates overlap for all sample-pairs
 #' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
-#'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object containing a tree.
-#'   
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to calculate the overlap.
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @inheritParams estimateDiversity
 #'   
 #' @param detection A single numeric value for selecting detection threshold for 
 #'   absence/presence of features. Feature that has abundance under threshold in

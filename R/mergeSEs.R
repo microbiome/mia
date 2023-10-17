@@ -1,16 +1,8 @@
 #' Merge SE objects into single SE object.
-#' 
-#' @param x a \code{\link{SummarizedExperiment}} object or a list of 
-#' \code{\link{SummarizedExperiment}} objects.
+#' @inheritParams subsampleCounts
 #' 
 #' @param y a \code{\link{SummarizedExperiment}} object when \code{x} is a
 #' \code{\link{SummarizedExperiment}} object. Disabled when \code{x} is a list.
-#' 
-#' @param assay.type A character value for selecting the
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#' to be merged. (By default: \code{assay.type = "counts"})
-#'
-#' @param assay_name (Deprecated) alias for \code{assay.type}. 
 #' 
 #' @param join A single character value for selecting the joining method.
 #' Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
@@ -30,9 +22,6 @@
 #' option, it is possible to specify whether these strains are combined if their
 #' taxonomy information along with OTU number matches.
 #' (By default: \code{collapse_features = TRUE})
-#' 
-#' @param verbose A single boolean value to choose whether to show messages. 
-#' (By default: \code{verbose = TRUE})
 #'
 #' @param ... optional arguments (not used).
 #'

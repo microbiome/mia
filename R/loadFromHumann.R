@@ -1,12 +1,5 @@
 #' Import HUMAnN results to \code{TreeSummarizedExperiment}
-#
-#' @param file a single \code{character} value defining the file
-#' path of the HUMAnN file. The file must be in merged HUMAnN format.
-#'
-#' @param colData a DataFrame-like object that includes sample names in
-#' rownames, or a single \code{character} value defining the file
-#' path of the sample metadata file. The file must be in \code{tsv} format
-#' (default: \code{colData = NULL}).
+#' @inheritParams loadFromMetaphlan
 #' 
 #' @param ... additional arguments:
 #' \itemize{

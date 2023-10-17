@@ -4,8 +4,7 @@
 #' Please use \code{assay(x, "relabundance")} instead, which provides a more
 #' flexible and robust way to access and modify relative abundance data stored
 #' in the assay slot of a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
-#'
-#' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object
+#' @inheritParams transformAssay
 #' @param value a matrix to store as the \sQuote{relabundance} assay
 #' @param ... optional arguments not used currently.
 #'

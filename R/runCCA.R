@@ -2,10 +2,7 @@
 #'
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
-#'
-#' @param x For \code{calculate*} a 
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} 
-#'   or a numeric matrix with columns as samples 
+#' @inheritParams calculateNMDS
 #'
 #'   For \code{run*} a
 #'   \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
@@ -33,24 +30,6 @@
 #'   multivariate homogeneity of group dispersions be performed.
 #'   (By default: \code{test.signif = TRUE})
 #'
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
-#' @param altexp String or integer scalar specifying an alternative experiment
-#'   containing the input data.
-#'
-#' @param name String specifying the name to be used to store the result in the
-#'   reducedDims of the output.
-#' 
 #' @param scores A string specifying scores to be returned. Must be
 #' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 #' v with weights Xbar, but the multiplying effect of eigenvalues removed) or

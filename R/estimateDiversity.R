@@ -8,28 +8,11 @@
 #' \sQuote{Gini-Simpson}, 
 #' \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon} 
 #' indices. See details for more information and references.
-#'
-#' @param x a \code{\link{SummarizedExperiment}} object or \code{\link{TreeSummarizedExperiment}}.
-#' The latter is recommended for microbiome data sets and tree-based alpha diversity indices.
+#' @inheritParams estimateRichness
 #' 
 #' @param tree A phylogenetic tree that is used to calculate 'faith' index.
 #'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
 #'   used by default.
-#'
-#' @param assay.type the name of the assay used for
-#'   calculation of the sample-wise estimates.
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param index a \code{character} vector, specifying the diversity measures
-#'   to be calculated.
-#'
-#' @param name a name for the column(s) of the colData the results should be
-#'   stored in. By default this will use the original names of the calculated
-#'   indices.
 #'   
 #' @param tree_name a single \code{character} value for specifying which
 #'   rowTree will be used to calculate faith index. 
@@ -39,10 +22,6 @@
 #'   node labels of \code{tree}. If a certain row is not linked with the tree, missing 
 #'   instance should be noted as NA. When NULL, all the rownames should be found from
 #'   the tree. (By default: \code{node_lab = NULL})
-#'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether calculation of estimates should be parallelized.
 #'
 #' @param ... optional arguments:
 #' \itemize{

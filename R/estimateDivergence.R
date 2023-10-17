@@ -1,19 +1,7 @@
 #' Estimate divergence
 #'
 #' Estimate divergence against a given reference sample.
-#' 
-#' @param x a \code{\link{SummarizedExperiment}} object.
-#'
-#' @param assay.type the name of the assay used for calculation of the
-#'   sample-wise estimates.
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
-#' @param name a name for the column of the colData the results should be
-#'   stored in. By default, \code{name} is \code{"divergence"}.
+#' @inheritParams estimateRichness
 #'   
 #' @param reference a numeric vector that has length equal to number of
 #'   features, or a non-empty character value; either 'median' or 'mean'.
