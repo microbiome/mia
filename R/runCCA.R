@@ -32,10 +32,6 @@
 #' @param test.signif a logical scalar, should the PERMANOVA and analysis of
 #'   multivariate homogeneity of group dispersions be performed.
 #'   (By default: \code{test.signif = TRUE})
-#'   
-#' @param scale a logical scalar, should the expression values be standardized?
-#'   \code{scale} is disabled when using \code{*RDA} functions. Please scale before
-#'   performing RDA (Check examples.)
 #'
 #' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
@@ -63,6 +59,11 @@
 #' @param ... additional arguments passed to vegan::cca or vegan::dbrda and
 #' other internal functions.
 #' \itemize{
+#'   \item{\code{method} a dissimilarity measure to be applied in dbRDA and
+#'   possible following homogeneity test. (By default: \code{method="euclidean"})}
+#'   \item{\code{scale} a logical scalar, should the expression values be
+#'   standardized? \code{scale} is disabled when using \code{*RDA} functions.
+#'   Please scale before performing RDA. (By default: \code{scale=TRUE})}
 #'   \item{\code{full} a logical scalar, should all the results from the
 #'   significance calculations be returned. When \code{full=FALSE}, only
 #'   summary tables are returned. (By default: \code{full=FALSE})}
@@ -108,14 +109,19 @@
 #' GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 #' 
-#' # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", 
+#' # Specify dissimilarity measure
+#' GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
+#' GlobalPatterns <- runRDA(
+#'     GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
+#' 
+#' # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
 #' tse <- GlobalPatterns
 #' tse <- transformAssay(tse, MARGIN = "features", method = "z")
 #' # Data might include taxa that do not vary. Remove those because after z-transform
 #' # their value is NA
 #' tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 #' # Calculate RDA
-#' tse <- runRDA(tse, formula = data ~ SampleType, 
+#' tse <- runRDA(tse, formula = data ~ SampleType,
 #'               assay.type = "z", name = "rda_scaled", na.action = na.omit)
 #' # Plot
 #' plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
@@ -204,7 +210,10 @@ setGeneric("runRDA", signature = c("x"),
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateCCA", "ANY", .calculate_cca)
+setMethod("calculateCCA", "ANY",
+      function(x, ...){
+          .calculate_cca(x, ...)
+      })
 
 #' @importFrom stats terms
 #' @importFrom SummarizedExperiment colData
@@ -300,7 +309,8 @@ setMethod("runCCA", "SingleCellExperiment",
 )
 
 #' @importFrom vegan sppscores<-
-.calculate_rda <- function(x, formula, variables, scores, ...){
+.calculate_rda <- function(
+        x, formula, variables, scores, method = distance, distance = "euclidean", ...){
     .require_package("vegan")
     #
     # Transpose and ensure that the table is in matrix format
@@ -322,10 +332,10 @@ setMethod("runCCA", "SingleCellExperiment",
         # Convert into data.frame
         variables <- as.data.frame(variables)
         # Calculate RDA with variables
-        rda <- vegan::dbrda(formula = form, data = variables, ...)
+        rda <- vegan::dbrda(formula = form, data = variables, distance = method, ...)
     } else{
         # Otherwise calculate RDA without variables
-        rda <- vegan::dbrda(formula = form, ...)
+        rda <- vegan::dbrda(formula = form, distance = method, ...)
     }
     # Get CCA
     if( !is.null(rda$CCA) ){
@@ -410,7 +420,8 @@ setMethod("runCCA", "SingleCellExperiment",
 # Test association of variables to ordination
 .test_rda_vars <- function(
         mat, rda, variables, permanova_model, by = "margin", full = FALSE,
-        homogeneity.test = "permanova", ...){
+        homogeneity.test = "permanova", method = distance, distance = "euclidean",
+        ...){
     # Check full parameter
     if( !.is_a_bool(full) ){
         stop("'full' must be TRUE or FALSE.", call. = FALSE)
@@ -444,7 +455,7 @@ setMethod("runCCA", "SingleCellExperiment",
     if( length(class(rda)) == 1 && class(rda) == "cca" ){
         dist_mat <- vegdist(mat, method = "euclidean")
     } else{
-        dist_mat <- vegdist(mat, ...)
+        dist_mat <- vegdist(mat, method = method, ...)
     }
     # For all variables run the analysis
     homogeneity <- lapply(colnames(variables), function(x){
@@ -537,7 +548,10 @@ setMethod("runCCA", "SingleCellExperiment",
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateRDA", "ANY", .calculate_rda)
+setMethod("calculateRDA", "ANY",
+      function(x, ...){
+          .calculate_rda(x, ...)
+      })
 
 #' @export
 #' @rdname runCCA

@@ -35,31 +35,30 @@
 #' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'
 #' @examples
-#' if(requireNamespace("biomformat")) {
-#'   library(biomformat)
-#'   # load from file
-#'   rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
-#'                                  package = "biomformat")
-#'   se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
-#'                     rankFromPrefix = TRUE)
-#'                     
-#'   # load from object
-#'   x1 <- biomformat::read_biom(rich_dense_file)
-#'   se <- makeTreeSEFromBiom(x1)
-#'   # Convert SE to TreeSE
-#'   tse <- as(se, "TreeSummarizedExperiment")
-#'   tse
-#'   
-#'   # Cleaning artifacts from Taxonomy data
-#'   file_name <- system.file(
-#'         "extdata/testdata", "Aggregated_humanization2.biom", package = "mia")
-#'   tse <- loadFromBiom(
-#'         file_name,
-#'         removeTaxaPrefixes=TRUE,
-#'         rankFromPrefix=TRUE,
-#'         remove.artifacts = TRUE)
-#'   tse
-#' }
+#' # Load biom file
+#' library(biomformat)
+#' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
+#'                          package = "biomformat")
+#' 
+#' # Make TreeSE from biom file
+#' tse <- loadFromBiom(biom_file)
+#' 
+#' # Make TreeSE from biom object
+#' biom_object <- biomformat::read_biom(biom_file)
+#' tse <- makeTreeSEFromBiom(biom_object)
+#' 
+#' # Get taxonomyRanks from prefixes and remove prefixes
+#' tse <- loadFromBiom(biom_file,
+#'                     rankFromPrefix = TRUE,
+#'                     removeTaxaPrefixes = TRUE)
+#' 
+#' # Load another biom file
+#' biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
+#'                          package = "mia")
+#' 
+#' # Clean artifacts from taxonomic data
+#' tse <- loadFromBiom(biom_file,
+#'                     remove.artifacts = TRUE)
 NULL
 
 #' @rdname makeTreeSEFromBiom
@@ -223,6 +222,8 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         temp <- lapply(
             temp, gsub, pattern = patterns, replacement = "")
         temp <- as.data.frame(temp)
+        # If cell had only prefix, it is now empty string. Convert to NA
+        temp[ temp == "" ] <- NA
         # Combine table
         feature_tab[, ind] <- temp
     }
@@ -247,12 +248,13 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         "^s__"
     )
     # Find which prefix is found from each column value, if none.
-    found_rank <- lapply(
-        prefixes, FUN = function(pref){all(grepl(pattern=pref, col))})
+    found_rank <- lapply(prefixes, FUN = function(pref){
+        all(grepl(pattern = pref, col) | is.na(col)) && !all(is.na(col))
+        })
     found_rank <- unlist(found_rank)
     # If only one prefix was found (like it should be), get the corresponding
     # rank name.
-    if( sum(found_rank) ){
+    if( sum(found_rank) == 1 ){
         colname <- TAXONOMY_RANKS[found_rank]
         # Make it capitalized
         colname <- paste0(toupper(substr(colname, 1, 1)),
@@ -268,22 +270,29 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
         stop("'pattern' must be a single character value.", call. = FALSE)
     }
     #
+    row_names <- rownames(x)
     # Remove artifacts
     if( pattern == "auto" ){
         .require_package("stringr")
         # Remove all but these characters
         pattern <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
-        x <- apply(x, 2, function(col){
+        x <- lapply(x, function(col){
             # Take all specified characters as a matrix where each column is a character
             temp <- stringr::str_extract_all(col, pattern = pattern, simplify = TRUE)
             # Collapse matrix to strings
             temp <- apply(temp, 1, paste, collapse = "")
+            # Now NAs are converted into characters. Convert them back
+            temp[ temp == "NA" ] <- NA
+            # Convert also empty strings to NA
+            temp[ temp == "" ] <- NA
             return(temp)
         })
     } else{
         # Remove pattern specified by user
-        x <- apply(x, 2, gsub, pattern = pattern, replacement = "")
+        x <- lapply(x, gsub, pattern = pattern, replacement = "")
     }
     x <- as.data.frame(x)
+    # Add rownames because they are dropped while removing artifacts
+    rownames(x) <- row_names
     return(x)
 }

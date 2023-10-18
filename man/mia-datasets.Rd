@@ -8,18 +8,36 @@
 mia provides various datasets derived from independent experimental studies.
 The datasets represent instances of the TreeSummarizedExperiment and
 MultiAssayExperiment containers and can serve as tools to practice the
-mia functionality
+mia functionality.
 }
 \details{
 Currently, the following datasets are available:
 \itemize{
-\item{\code{\link{dmn_se}}}
-\item{\code{\link{enterotype}}}
-\item{\code{\link{esophagus}}}
-\item{\code{\link{GlobalPatterns}}}
-\item{\code{\link{HintikkaXOData}}}
-\item{\code{\link{peerj13075}}}
-\item{\code{\link{Tengeler2020}}}
+\item{\code{\link{dmn_se}}: A SummarizedExperiment with 130 features and
+278 samples}
+\item{\code{\link{enterotype}}: A TreeSummarizedExperiment with 553
+features and 280 samples}
+\item{\code{\link{esophagus}}: A TreeSummarizedExperiment with 58 features
+and 3 samples}
+\item{\code{\link{GlobalPatterns}}: A TreeSummarizedExperiment with 19216
+features and 26 samples}
+\item{\code{\link{HintikkaXOData}}: A MultiAssayExperiment with 3
+experiments (microbiota, metabolites and biomarkers)}
+\item{\code{\link{peerj13075}}: A TreeSummarizedExperiment with 674
+features and 58 samples}
+\item{\code{\link{Tengeler2020}}: A TreeSummarizedExperiment with 151
+features and 27 samples}
 }
+}
+\examples{
+# Load dataset from mia
+library(mia)
+data("GlobalPatterns", package = "mia")
+
+# In this case, the dataset is a TreeSE, so it is renamed as tse
+tse <- GlobalPatterns
+
+# Print summary
+tse
 }
 \keyword{datasets}
