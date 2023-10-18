@@ -956,7 +956,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # If assays were identical, and duplicate variable pairs were dropped
     if( assays_identical ){
         # Change names so that they are not equal to colnames of variable_pairs
-        colnames(variable_pairs)[1:2] <- c("Var1_", "Var2_")
+        colnames(variable_pairs)c(1:2) <- c("Var1_", "Var2_")
         # Combine feature-pair names with correlation values and p-values
         correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
         
