@@ -63,22 +63,23 @@ This can be single integer value or an integer vector of the same length
 as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
 element encountered per factor level will be kept)}
 
-\item{...}{optional arguments:
+\item{...}{Optional arguments:
 \itemize{
-\item{passed onto \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}, except \code{subset_row}, \code{subset_col}}
+\item{Passed on to \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
+with the exception of \code{subset_row}, \code{subset_col}}
 }}
 
-\item{mergeTree}{\code{TRUE} or \code{FALSE}: should to
+\item{mergeTree}{\code{TRUE} or \code{FALSE}: Should
 \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})}
 
-\item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: should a consensus sequence
-calculate? If set to \code{FALSE}, the result from \code{archetype} is
+\item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
+be calculated? If set to \code{FALSE}, the result from \code{archetype} is
 returned; If set to \code{TRUE} the result from
 \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
 returned. (Default: \code{mergeRefSeq = FALSE})}
 }
 \value{
-an object with the same class \code{x} with the specified entries
+An object of the same class as \code{x} with the specified entries
 merged into one entry in all relevant components.
 }
 \description{
@@ -89,8 +90,8 @@ retained as defined by \code{archetype}.
 }
 \details{
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are
-agglomerated, i.e.. summed up. Other than counts / absolute values might lead
-to meaningless values.
+agglomerated, i.e. summed up. If the assay contains values other than counts
+or absolute values, this can lead to meaningless values being produced.
 
 These functions are similar to
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
