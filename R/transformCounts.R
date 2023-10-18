@@ -564,7 +564,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
         pseudocount <- ifelse(pseudocount, min(mat[mat>0]), 0)
         # Report pseudocount if positive value
         if ( pseudocount > 0 ){
-            message(paste("A pseudocount of", pseudocount, "was applied."))
+            message("A pseudocount of ", pseudocount, " was applied.")
         }
     }
     # Give warning if pseudocount should not be added
