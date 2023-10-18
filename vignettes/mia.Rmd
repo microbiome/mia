@@ -292,9 +292,9 @@ Row-wise or column-wise assay data subsetting.
 
 ```{r}
 # Specific taxa
-assay(tse['522457',], "counts") %>% head()
+assay(tse['522457',], "counts") |> head()
 # Specific sample
-assay(tse[,'CC1'], "counts") %>% head()
+assay(tse[,'CC1'], "counts") |> head()
 
 ```
 
