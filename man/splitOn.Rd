@@ -89,8 +89,8 @@ se_list <- splitOn(tse, f = "SampleType")
 se_list
 
 # Create arbitrary groups
-rowData(tse)$group <- sample(1:10, nrow(tse), replace = TRUE)
-colData(tse)$group <- sample(1:10, ncol(tse), replace = TRUE)
+rowData(tse)$group <- sample(1:3, nrow(tse), replace = TRUE)
+colData(tse)$group <- sample(1:3, ncol(tse), replace = TRUE)
 
 # Split based on rows
 # Each element is named based on their group name. If you don't want to name

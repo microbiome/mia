@@ -1,4 +1,4 @@
-#' Transform Counts
+#' Transform assay
 #'
 #' Variety of transformations for abundance data, stored in \code{assay}.
 #' See details for options.
@@ -26,11 +26,9 @@
 #' @param name A single character value specifying the name of transformed
 #'   abundance table.
 #' 
-#' @param pseudocount NULL or numeric value deciding whether pseudocount is
-#'   added. The numeric value specifies the value of pseudocount.
-#'   Recommended default choices for counts and relative abundance assay
-#'   \code{pseudocount = 1} and \code{pseudocount = min(assay[assay>0])}, respectively.
-#'   (By default: \code{pseudocount = 0})
+#' @param pseudocount TRUE or FALSE, should the minimum value of \code{assay.type} 
+#'   be added to assay values. Alternatively, a numeric value specifying the value
+#'   to be added. (default: \code{pseudocount = FALSE})
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
@@ -133,12 +131,9 @@
 #' # The target of transformation can be specified with "assay.type"
 #' # Pseudocount can be added by specifying 'pseudocount'.
 #' 
-#' # Get pseudocount; here smallest positive value
-#' mat <- assay(tse, "relabundance") 
-#' pseudonumber <- min(mat[mat>0])
-#' # Perform CLR
+#' # Perform CLR with smallest positive value as pseudocount
 #' tse <- transformAssay(tse, assay.type = "relabundance", method = "clr", 
-#'                      pseudocount = pseudonumber
+#'                      pseudocount = TRUE
 #'                      )
 #'                       
 #' head(assay(tse, "clr"))
@@ -193,7 +188,7 @@ setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
                         "rank", "rclr", "relabundance", "rrank",
                         "total"),
             name = method,
-            pseudocount = 0,
+            pseudocount = FALSE,
             ...
             ){
         .Deprecated("transformAssay")
@@ -229,14 +224,19 @@ setGeneric("transformAssay", signature = c("x"),
                                "z"),
                     MARGIN = "samples",
                     name = method,
-                    pseudocount = 0,		    
+                    pseudocount = FALSE,		    
                     ...)
                standardGeneric("transformAssay"))
+
 #transformCounts wrapper with a deprecation warning
+#' @rdname transformAssay
+#' @aliases transformSamples
+#' @export
 transformCounts <- function(x,...){
     .Deprecated(old ="transformCounts" ,new = "transformAssay",msg = "The 'transformCounts' function is deprecated. Use 'transformAssay' instead.")
     return(transformAssay(x,...))
 }
+
 #' @rdname transformAssay
 #' @aliases transformSamples
 #' @export
@@ -249,7 +249,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
                         "standardize", "total", "z"),
              MARGIN = "samples",
              name = method,
-             pseudocount = 0,
+             pseudocount = FALSE,
              ...){
         # Input check
 
@@ -283,8 +283,8 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         # Check pseudocount
-        if( !(is.numeric(pseudocount) && length(pseudocount) == 1 && pseudocount >= 0) ){
-            stop("'pseudocount' must be a non-negative single numeric value.",
+        if( !.is_a_bool(pseudocount) && !(is.numeric(pseudocount) && length(pseudocount) == 1 && pseudocount >= 0) ){
+            stop("'pseudocount' must be TRUE, FALSE or a number equal to or greater than 0.",
                  call. = FALSE)
         }
         # Input check end
@@ -292,12 +292,13 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         # Get the method and abundance table
         method <- match.arg(method)
         assay <- assay(x, assay.type)
-    
+        
         # Apply pseudocount, if it is not 0
-        if( pseudocount != 0 ){
-            assay <- .apply_pseudocount(assay, pseudocount)
-        }
-	
+        assay <- .apply_pseudocount(assay, pseudocount)
+        # Store pseudocount value and set attr equal to NULL
+        pseudocount <- attr(assay, "pseudocount")
+        attr(assay, "pseudocount") <- NULL
+        
         # Calls help function that does the transformation
         # Help function is different for mia and vegan transformations
         if( method %in% c("log10", "log2") ){
@@ -327,7 +328,7 @@ setGeneric("transformFeatures", signature = c("x"),
                     method = c("frequency", "log", "log10", "log2", "max",
                                "pa", "range", "standardize", "z"),
                     name = method,
-                    pseudocount = 0,
+                    pseudocount = FALSE,
                     ...)
                standardGeneric("transformFeatures"))
 
@@ -339,7 +340,7 @@ setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
              method = c("frequency", "log", "log10", "log2", "max",
                         "pa", "range", "standardize", "z"),
              name = method,
-             pseudocount = 0,
+             pseudocount = FALSE,
              ...){
         
         .Deprecated("transformAssay")
@@ -478,14 +479,16 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 ####################################.calc_log###################################
 # This function applies log transformation to abundance table.
 .calc_log <- function(mat, method, ...){
-    # If abundance table contains zeros, gives an error, because it is not
-    # possible to calculate log from zeros. If there is no zeros, calculates log.
-    if (any(mat <= 0, na.rm = TRUE)) {
-        stop("Abundance table contains zero or negative values and ",
-            method, " transformation is being applied without pseudocount.\n",
-            "Try to add pseudocount (default choice pseudocount = 1 for count ",
-            "assay; or pseudocount = min(x[x>0]) for relabundance assay).",
-            call. = FALSE)
+    # If abundance table contains zeros or negative values, gives an error, because
+    # it is not possible to calculate log from zeros. Otherwise, calculates log.
+    if ( any(mat < 0, na.rm = TRUE) ){
+        stop("The assay contains negative values and ", method,
+             " transformation is being applied without pseudocount.",
+            "`pseudocount` must be specified manually.", call. = FALSE)
+    } else if ( any(mat == 0, na.rm = TRUE) ){
+        stop("The assay contains zeroes and ", method,
+             " transformation is being applied without pseudocount.",
+             "`pseudocount` must be set to TRUE.", call. = FALSE)
     }
     # Calculate log2 or log10 abundances
     if(method == "log2"){
@@ -551,12 +554,33 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 ###############################.apply_pseudocount###############################
 # This function applies pseudocount to abundance table.
 .apply_pseudocount <- function(mat, pseudocount){
-    # Give warning if pseudocount should not be added
-    if( all(mat>0) ){
-        warning("The abundance table contains only positive values. ",
-                "A pseudocount is not encouraged to apply.", call. = FALSE)
+    if( .is_a_bool(pseudocount) ){
+        # If pseudocount TRUE but some NAs or negative values, numerical pseudocount needed
+        if ( pseudocount && (any(is.na(mat)) || any(mat < 0, na.rm = TRUE)) ){
+            stop("The assay contains missing or negative values. ",
+                 "'pseudocount' must be specified manually.", call. = FALSE)
+        }
+        # If pseudocount TRUE, set it to non-zero minimum value, else set it to zero
+        pseudocount <- ifelse(pseudocount, min(mat[mat>0]), 0)
+        # Report pseudocount if positive value
+        if ( pseudocount > 0 ){
+            message(paste("A pseudocount of", pseudocount, "was applied."))
+        }
     }
-    # Add pseudocount.
+    # Give warning if pseudocount should not be added
+    # Case 1: only positive values
+    if( pseudocount != 0 && all(mat > 0, na.rm = TRUE) ){
+        warning("The assay contains only positive values. ",
+                "Applying a pseudocount may be unnecessary.", call. = FALSE)
+    }
+    # Case 2: some negative values
+    if( pseudocount != 0 && any(mat < 0, na.rm = TRUE) ){
+        warning("The assay contains some negative values. ",
+                "Applying a pseudocount may produce meaningless data.", call. = FALSE)
+    }
+    # Add pseudocount
     mat <- mat + pseudocount
+    # Set attr equal to pseudocount
+    attr(mat, "pseudocount") <- pseudocount
     return(mat)
 }

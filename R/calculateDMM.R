@@ -95,7 +95,7 @@
 #' bestModel
 #' 
 #' # Get the sample-cluster assignment probability matrix
-#' metadata(tse)$DMM$prob
+#' head(metadata(tse)$DMM$prob)
 #' 
 #' # Get the weight of each component for the best model
 #' bestModel@mixture$Weight
