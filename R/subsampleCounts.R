@@ -130,7 +130,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
                  "different from `assay.type`.",
                  call. = FALSE)
         }
-        set.seed(seed)
+        #set.seed(seed)
         # Make sure min_size is of length 1.
         if(length(min_size) > 1){
             stop("`min_size` had more than one value. ", 
