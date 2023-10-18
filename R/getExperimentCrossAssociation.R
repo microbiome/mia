@@ -1134,17 +1134,17 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
             suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
         },
         error = function(cond) {
-            stop(paste0("Error occurred during calculation. Check, e.g., that ",
+            stop("Error occurred during calculation. Check, e.g., that ",
                     "'association_FUN' fulfills requirements. 'association_FUN' ",
-                    "threw a following error:\n",  cond),
+                    "threw a following error:\n",  cond,
                  call. = FALSE)
         })
     }
   
     # If temp's length is not 1, then function does not return single numeric value for each pair
     if( length(temp) != 1 ){
-        stop(paste0("Error occurred during calculation. Check that ", 
-            "'association_FUN' fulfills requirements."), 
+        stop("Error occurred during calculation. Check that ", 
+            "'association_FUN' fulfills requirements.", 
             call. = FALSE)
     } 
     return(temp)
@@ -1252,8 +1252,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                use="pairwise.complete.obs")))$order
     },
     error = function(cond) {
-        stop(paste0("Error occurred during sorting. Possible reason is that ",
-                    "correlation matrix includes NAs. Try with 'sort = FALSE'."), 
+        stop("Error occurred during sorting. Possible reason is that ",
+                    "correlation matrix includes NAs. Try with 'sort = FALSE'.", 
              call. = FALSE)
     }
     )
@@ -1262,8 +1262,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                use="pairwise.complete.obs")))$order
     },
     error = function(cond) {
-        stop(paste0("Error occurred during sorting. Possible reason is that ",
-                    "correlation matrix includes NAs. Try with 'sort = FALSE'."), 
+        stop("Error occurred during sorting. Possible reason is that ",
+                    "correlation matrix includes NAs. Try with 'sort = FALSE'.", 
              call. = FALSE)
     }
     )
