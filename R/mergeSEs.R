@@ -369,7 +369,7 @@ setMethod("right_join", signature = c(x = "ANY"),
 
     # Loop through individual TreeSEs and add them to tse
     if( length(x) > 0 ){
-        for( i in 1:length(x) ){
+        for( i in seq_len(length(x)) ){
             # Give message if TRUE
             if( verbose ){
                 message("\r", i+1, "/", length(x)+1, appendLF = FALSE)
