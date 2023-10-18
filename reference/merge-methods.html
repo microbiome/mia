@@ -122,18 +122,19 @@ element encountered per factor level will be kept)</p></dd>
 
 
 <dt>...</dt>
-<dd><p>optional arguments:</p><ul><li><p>passed onto <code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>, except <code>subset_row</code>, <code>subset_col</code></p></li>
+<dd><p>Optional arguments:</p><ul><li><p>Passed on to <code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>,
+with the exception of <code>subset_row</code>, <code>subset_col</code></p></li>
 </ul></dd>
 
 
 <dt>mergeTree</dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: should to
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should
 <code>rowTree()</code> also be merged? (Default: <code>mergeTree = FALSE</code>)</p></dd>
 
 
 <dt>mergeRefSeq</dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: should a consensus sequence
-calculate? If set to <code>FALSE</code>, the result from <code>archetype</code> is
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should a consensus sequence
+be calculated? If set to <code>FALSE</code>, the result from <code>archetype</code> is
 returned; If set to <code>TRUE</code> the result from
 <code><a href="https://rdrr.io/pkg/DECIPHER/man/ConsensusSequence.html" class="external-link">DECIPHER::ConsensusSequence</a></code> is
 returned. (Default: <code>mergeRefSeq = FALSE</code>)</p></dd>
@@ -143,14 +144,14 @@ returned. (Default: <code>mergeRefSeq = FALSE</code>)</p></dd>
     <h2>Value</h2>
     
 
-<p>an object with the same class <code>x</code> with the specified entries
+<p>An object of the same class as <code>x</code> with the specified entries
 merged into one entry in all relevant components.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p><code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> are
-agglomerated, i.e.. summed up. Other than counts / absolute values might lead
-to meaningless values.</p>
+agglomerated, i.e. summed up. If the assay contains values other than counts
+or absolute values, this can lead to meaningless values being produced.</p>
 <p>These functions are similar to
 <code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>.
 However, additional support for <code>TreeSummarizedExperiment</code> was added and
