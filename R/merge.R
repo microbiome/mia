@@ -6,8 +6,8 @@
 #' retained as defined by \code{archetype}.
 #' 
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are 
-#' agglomerated, i.e.. summed up. Other than counts / absolute values might lead
-#' to meaningless values. 
+#' agglomerated, i.e. summed up. If the assay contains values other than counts 
+#' or absolute values, this can lead to meaningless values being produced. 
 #'
 #' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
 #'   a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -23,18 +23,19 @@
 #'   as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
 #'   element encountered per factor level will be kept)
 #'   
-#' @param mergeTree \code{TRUE} or \code{FALSE}: should to
+#' @param mergeTree \code{TRUE} or \code{FALSE}: Should
 #'   \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})
 #'
-#' @param mergeRefSeq \code{TRUE} or \code{FALSE}: should a consensus sequence
-#'   calculate? If set to \code{FALSE}, the result from \code{archetype} is
+#' @param mergeRefSeq \code{TRUE} or \code{FALSE}: Should a consensus sequence
+#'   be calculated? If set to \code{FALSE}, the result from \code{archetype} is
 #'   returned; If set to \code{TRUE} the result from
 #'   \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
 #'   returned. (Default: \code{mergeRefSeq = FALSE})
 #'
-#' @param ... optional arguments:
+#' @param ... Optional arguments:
 #' \itemize{
-#'   \item{passed onto \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}, except \code{subset_row}, \code{subset_col}}
+#'   \item{Passed on to \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
+#'   with the exception of \code{subset_row}, \code{subset_col}}
 #' }
 #'
 #' @details
@@ -49,7 +50,7 @@
 #' @name merge-methods
 #' @aliases mergeRows mergeCols
 #'
-#' @return an object with the same class \code{x} with the specified entries
+#' @return An object of the same class as \code{x} with the specified entries
 #'   merged into one entry in all relevant components.
 #'
 #' @seealso
