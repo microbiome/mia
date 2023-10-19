@@ -194,6 +194,9 @@ mae <- HintikkaXOData
 # Subset so that less observations / quicker to run, just for example
 mae[[1]] <- mae[[1]][1:20, 1:10]
 mae[[2]] <- mae[[2]][1:20, 1:10]
+# Several rows in the counts assay have a standard deviation of zero
+# Remove them, since they do not add useful information about cross-association
+mae[[1]] <- mae[[1]][rowSds(assay(mae[[1]])) > 0, ]
 # Transform data
 mae[[1]] <- transformAssay(mae[[1]], method = "rclr")
 
@@ -206,7 +209,7 @@ head(result, 5)
 altExp(mae[[1]], "Phylum") <- agglomerateByRank(mae[[1]], rank = "Phylum")
 # Transform data
 altExp(mae[[1]], "Phylum") <- transformAssay(altExp(mae[[1]], "Phylum"), method = "relabundance")
-# When mode = matrix, matrix is returned
+# When mode = "matrix", the return value is a matrix
 result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
                                         assay.type1 = "relabundance", assay.type2 = "nmr",
                                         altexp1 = "Phylum", 
@@ -214,18 +217,18 @@ result <- getExperimentCrossAssociation(mae, experiment2 = 2,
 # Show first 5 entries
 head(result, 5)
 
-# testExperimentCorrelation returns also significances
+# testExperimentCorrelation additionally returns significances
 # filter_self_correlations = TRUE filters self correlations
-# With p_adj_threshold it is possible to filter those features that do no have
-# any correlations that have p-value under threshold
+# p_adj_threshold can be used to filter those features that do not
+# have any correlations whose p-value is lower than the threshold
 result <- testExperimentCrossAssociation(mae[[1]], experiment2 = mae[[1]], method = "pearson",
                                          filter_self_correlations = TRUE,
                                          p_adj_threshold = 0.05)
 # Show first 5 entries
 head(result, 5)
 
-# Also getExperimentCrossAssociation returns significances when 
-# test_signicance = TRUE
+# getExperimentCrossAssociation also returns significances when 
+# test_significance = TRUE
 # Warnings can be suppressed by using show_warnings = FALSE
 result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
                                         assay.type2 = "nmr",
@@ -249,9 +252,10 @@ result <- getExperimentCrossAssociation(mae, experiment1 = "microbiota", experim
                                         assay.type1 = "counts", assay.type2 = "counts",
                                         symmetric = TRUE)
 
-# For big data sets, calculation might take long. To make calculations quicker, you can take
-# a random sample from data. In a complex biological problems, random sample
-# can describe the data enough. Here our random sample is 30 \% of whole data.
+# For big data sets, the calculations might take a long time.
+# To speed them up, you can take a random sample from the data. 
+# When dealing with complex biological problems, random samples can be 
+# enough to describe the data. Here, our random sample is 30 \% of whole data.
 sample_size <- 0.3
 tse <- mae[[1]]
 tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
