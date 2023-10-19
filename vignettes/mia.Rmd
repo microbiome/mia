@@ -226,7 +226,7 @@ and results are stored automatically in `colData`. Selected indices can be
 calculated individually by setting `index = "shannon"` for example. 
 
 ```{r}
-tse <- estimateDiversity(tse)
+suppressWarnings(tse <- estimateDiversity(tse))
 colnames(colData(tse))[8:ncol(colData(tse))]
 ```
 

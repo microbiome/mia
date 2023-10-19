@@ -209,7 +209,7 @@
 #' 
 #' # It is also possible to choose variables from colData and calculate association
 #' # between assay and sample metadata or between variables of sample metadata
-#' mae[[1]] <- estimateDiversity(mae[[1]])
+#' suppressWarnings(mae[[1]] <- estimateDiversity(mae[[1]]))
 #' # colData_variable works similarly to assay.type. Instead of fetching an assay
 #' # named assay.type from assay slot, it fetches a column named colData_variable
 #' # from colData.
