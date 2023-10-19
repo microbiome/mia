@@ -129,13 +129,14 @@ estimateAlpha <- function(x, assay.type = "counts", assay_name = NULL,
                                            min_size=rarefaction_depth,
                                            verbose=FALSE),
                            FUN=FUN,
-                           args.fun=list(index=index,
-                                         assay.type="subsampled",
-                                         ...),
+                           args.fun=list(index=index, assay.type="subsampled"),
+                           ...,
                            name=name)
     } else {
-        suppressWarnings(do.call(FUN, list(x, assay.type=assay.type, assay_name=assay_name,
-                          index=index, name=name, ...)))
+        suppressWarnings(do.call(FUN, args = c(list(x, assay.type=assay.type,
+                                                  assay_name=assay_name,
+                                                  index=index, name=name),
+                                                  list(...))))
     }
 
 }
@@ -177,14 +178,16 @@ estimateAlpha <- function(x, assay.type = "counts", assay_name = NULL,
                                                           na.rm = TRUE),
                                              verbose=FALSE),
                                FUN=estimateDiversity,
-                               args.fun=list(index="shannon",
-                                             assay.type="subsampled",
-                                             ...),
+                               args.fun=c(index="shannon",
+                                             assay.type="subsampled"),
+                               ...,
                                name = args.fun$index) {
     set.seed(seed)
     colData(x)[, name] <- lapply(seq(nrounds), function(i){
-        x_sub <- do.call(subsampleCounts, append(list(x), args.sub))
-        suppressWarnings(x_sub <- do.call(FUN, append(list(x_sub), args.fun)))
+        x_sub <- do.call(subsampleCounts, args = c(list(x), args.sub))
+        suppressWarnings(x_sub <- do.call(FUN, args = c(list(x_sub),
+                                                        args.fun,
+                                                        list(...))))
         colData(x_sub)[, args.fun$index, drop=FALSE]
     }) %>% as.data.frame() %>% rowMeans() %>% as.data.frame()
     return(x)

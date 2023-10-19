@@ -142,8 +142,9 @@
 #' data(esophagus)
 #'
 #' # Calculates all richness indices by default
-#' esophagus <- estimateRichness(esophagus)
-#'
+#' suppressWarnings(
+#'     esophagus <- estimateRichness(esophagus)
+#' )
 #' # Shows all indices
 #' colData(esophagus)
 #'
@@ -160,10 +161,11 @@
 #' colData(esophagus)[, c("observed", "chao1", "ace")] <- NULL
 #'
 #' # Calculates observed richness index and saves them with specific names
-#' esophagus <- estimateRichness(esophagus,
-#'     index = c("observed", "chao1", "ace", "hill"),
-#'      name = c("Observed", "Chao1", "ACE", "Hill"))
-#'
+#' suppressWarnings(
+#'     esophagus <- estimateRichness(esophagus,
+#'         index = c("observed", "chao1", "ace", "hill"),
+#'         name = c("Observed", "Chao1", "ACE", "Hill"))
+#' )
 #' # Show the new indices
 #' colData(esophagus)
 #'
@@ -171,8 +173,9 @@
 #' colData(esophagus) <- NULL
 #'
 #' # Calculate observed richness excluding singletons (detection limit 1)
-#' esophagus <- estimateRichness(esophagus, index="observed", detection = 1)
-#'
+#' suppressWarnings(
+#'     esophagus <- estimateRichness(esophagus, index="observed", detection = 1)
+#' )
 #' # Deletes all colData (including the indices)
 #' colData(esophagus) <- NULL
 #'
@@ -181,17 +184,20 @@
 #' \dontrun{esophagus <- estimateRichness(esophagus, index="ace")}
 #'
 #' # Calculates Chao1 and ACE indices only
-#' esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"),
-#'                                           name=c("Chao1", "ACE"))
-#'
+#' suppressWarnings(
+#'     esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"),
+#'                                               name=c("Chao1", "ACE"))
+#' )
 #' # Deletes all colData (including the indices)
 #' colData(esophagus) <- NULL
 #'
 #' # Names of columns can be chosen arbitrarily, but the length of arguments
 #' # must match.
-#' esophagus <- estimateRichness(esophagus,
-#'                                index = c("ace", "chao1"),
-#'                                name = c("index1", "index2"))
+#' suppressWarnings(
+#'     esophagus <- estimateRichness(esophagus,
+#'                                    index = c("ace", "chao1"),
+#'                                    name = c("index1", "index2"))
+#' )
 #' # Shows all indices
 #' colData(esophagus)
 #'

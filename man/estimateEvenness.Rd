@@ -94,8 +94,9 @@ index <- c("pielou", "camargo", "simpson_evenness", "evar", "bulla")
 name  <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 
 # Estimate evenness and give polished names to be used in the output
-tse <- estimateEvenness(tse, index = index, name = name)
-
+suppressWarnings(
+    tse <- estimateEvenness(tse, index = index, name = name)
+)
 # Check the output
 head(colData(tse))
 

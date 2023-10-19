@@ -208,7 +208,9 @@ name <- c("Shannon","GiniSimpson","InverseSimpson", "Coverage", "Fisher",
 "Faith",  "LogModSkewness")
 
 # Calculate diversities
-tse <- estimateDiversity(tse, index = index)
+suppressWarnings(
+    tse <- estimateDiversity(tse, index = index)
+)
 
 # The colData contains the indices with their code names by default
 colData(tse)[, index]
@@ -217,19 +219,24 @@ colData(tse)[, index]
 colData(tse)[, index] <- NULL
 
 # 'threshold' can be used to determine threshold for 'coverage' index
-tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
+suppressWarnings(
+    tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
+)
 # 'quantile' and 'num_of_classes' can be used when
 # 'log_modulo_skewness' is calculated
-tse <- estimateDiversity(tse, index = "log_modulo_skewness",
+suppressWarnings(
+    tse <- estimateDiversity(tse, index = "log_modulo_skewness",
        quantile = 0.75, num_of_classes = 100)
+)
 
 # It is recommended to specify also the final names used in the output.
-tse <- estimateDiversity(tse,
-  index = c("shannon", "gini_simpson", "inverse_simpson", "coverage",
-               "fisher", "faith", "log_modulo_skewness"),
-   name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
-               "Fisher", "Faith", "LogModSkewness"))
-
+suppressWarnings(
+    tse <- estimateDiversity(tse,
+        index = c("shannon", "gini_simpson", "inverse_simpson", "coverage",
+                   "fisher", "faith", "log_modulo_skewness"),
+        name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
+                   "Fisher", "Faith", "LogModSkewness"))
+)
 # The colData contains the indices by their new names provided by the user
 colData(tse)[, name]
 
