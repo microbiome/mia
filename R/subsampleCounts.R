@@ -130,7 +130,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
                  "different from `assay.type`.",
                  call. = FALSE)
         }
-        #set.seed(seed)
+        set.seed(seed)
         # Make sure min_size is of length 1.
         if(length(min_size) > 1){
             stop("`min_size` had more than one value. ", 
@@ -163,9 +163,9 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
                           min_size=min_size, replace=replace)
         rownames(newassay) <- rownames(newtse)
         # remove features not present in any samples after subsampling
-        message(paste(length(which(rowSums2(newassay) == 0)), "features", 
-                      "removed because they are not present in all samples", 
-                      "after subsampling."))
+        message(length(which(rowSums2(newassay) == 0)), " features", 
+                      " removed because they are not present in all samples", 
+                      " after subsampling.")
         newassay <- newassay[rowSums2(newassay)>0,]
         newtse <- newtse[rownames(newassay),]
         assay(newtse, name, withDimnames=FALSE) <- newassay
