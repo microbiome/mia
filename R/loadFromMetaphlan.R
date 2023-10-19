@@ -174,7 +174,7 @@ loadFromMetaphlan <- function(
     }
     # Remove possible suffix from the colnames if user has specified
     if( remove.suffix ){
-        table <- .remove_suffix(table, c("clade_name", "_id"))
+        table <- .remove_suffix(table, c("clade_name", "ID", "_id"))
     }
     return(table)
 }
@@ -183,7 +183,7 @@ loadFromMetaphlan <- function(
 .check_metaphlan <- function(data){
     # Get rowdata columns. metaphlan v2 has ID column. Metaphlan > v2 has
     # clade_name for taxonomy names
-    rowdata_col <- c("clade_name", "_id", "ID")
+    rowdata_col <- c("clade_name", "ID", "_id")
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
     rowdata_columns <- data[ , rowdata_id, drop = FALSE]
     # Get columns that go to assay
@@ -358,7 +358,7 @@ loadFromMetaphlan <- function(
 # from file names. This can cause problems when, e.g., taxonomy and pathway
 # information is combined. Because their suffixes differ, the sample names
 # differ. The purpose of the function is to remove those file names.
-.remove_suffix <- function( data, rowdata_col = c("clade_name", "_id") ){
+.remove_suffix <- function( data, rowdata_col = c("clade_name", "ID", "_id") ){
     # Get rowdata columns
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
     # Get sample names
