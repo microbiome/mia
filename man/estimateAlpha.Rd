@@ -17,7 +17,6 @@ estimateAlpha(
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
   ...,
-  BPPARAM = SerialParam(),
   rarify = FALSE,
   seed = 123,
   nrounds = 10,
@@ -43,10 +42,6 @@ stored in. By default this will use the original names of the calculated
 indices specifying the alpha diversity measures used.}
 
 \item{...}{optional arguments.}
-
-\item{BPPARAM}{A
-\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.}
 
 \item{rarify}{logical scalar: Should the alpha diversity measures be estimated
 using rarefaction? (default: \code{FALSE})}

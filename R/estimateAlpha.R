@@ -22,9 +22,6 @@
 #'   
 #' @param ... optional arguments.
 #' 
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether calculation of estimates should be parallelized.
 #' 
 #' @param rarify logical scalar: Should the alpha diversity measures be estimated
 #'   using rarefaction? (default: \code{FALSE})
@@ -79,7 +76,6 @@ estimateAlpha <- function(x, assay.type = "counts", assay_name = NULL,
                                     "observed_richness"),
                           name = index,
                           ...,
-                          BPPARAM = SerialParam(),
                           rarify=FALSE,
                           seed = 123,
                           nrounds=10,
@@ -135,12 +131,11 @@ estimateAlpha <- function(x, assay.type = "counts", assay_name = NULL,
                            FUN=FUN,
                            args.fun=list(index=index,
                                          assay.type="subsampled",
-                                         ...,
-                                         BPPARAM=BPPARAM),
+                                         ...),
                            name=name)
     } else {
         suppressWarnings(do.call(FUN, list(x, assay.type=assay.type, assay_name=assay_name,
-                          index=index, name=name, ..., BPPARAM=BPPARAM)))
+                          index=index, name=name, ...)))
     }
 
 }
@@ -184,8 +179,7 @@ estimateAlpha <- function(x, assay.type = "counts", assay_name = NULL,
                                FUN=estimateDiversity,
                                args.fun=list(index="shannon",
                                              assay.type="subsampled",
-                                             ...,
-                                             BPPARAM=BPPARAM),
+                                             ...),
                                name = args.fun$index) {
     set.seed(seed)
     colData(x)[, name] <- lapply(seq(nrounds), function(i){
@@ -213,9 +207,9 @@ estimateAlpha <- function(x, assay.type = "counts", assay_name = NULL,
                                 index = c("coverage", "fisher", "gini_simpson", 
                                           "inverse_simpson", "log_modulo_skewness",
                                           "shannon"),
-                                name = index, ..., BPPARAM = SerialParam()) {
+                                name = index, ...) {
     estimateDiversity(x, assay.type=assay.type, assay_name=assay_name,
-                      index=index, name=name, ..., BPPARAM=BPPARAM)
+                      index=index, name=name, ...)
 }
 
 .estimate_dominance <- function(x,
@@ -226,19 +220,18 @@ estimateAlpha <- function(x, assay.type = "counts", assay_name = NULL,
                                 ntaxa = 1,
                                 aggregate = TRUE,
                                 name = index,
-                                ...,
-                                BPPARAM = SerialParam()) {
+                                ...) {
     estimateDominance(x, assay.type=assay.type, assay_name=assay_name,
                       index=index, ntaxa=ntaxa, aggregate=aggregate,
-                      name=name, ..., BPPARAM=BPPARAM)
+                      name=name, ...)
 }
 
 .estimate_evenness <- function(x, assay.type = assay_name, assay_name = "counts",
                                index = c("camargo", "pielou", "simpson_evenness",
                                          "evar", "bulla"),
-                               name = index, ..., BPPARAM = SerialParam()) {
+                               name = index, ...) {
     estimateEvenness(x, assay.type = assay.type, assay_name = assay_name,
-                     index=index, name=name, ..., BPPARAM=BPPARAM)
+                     index=index, name=name, ...)
 }
 
 .estimate_richness <- function(x,
@@ -246,9 +239,7 @@ estimateAlpha <- function(x, assay.type = "counts", assay_name = NULL,
                                index = c("ace", "chao1", "hill", "observed"),
                                name = index,
                                detection = 0,
-                               ...,
-                               BPPARAM = SerialParam()) {
+                               ...) {
     estimateRichness(x, assay.type = assay.type, assay_name = assay_name,
-                     index=index, name=name, detection=detection, ...,
-                     BPPARAM=BPPARAM)
+                     index=index, name=name, detection=detection, ...)
 }
