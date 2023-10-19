@@ -291,13 +291,13 @@ loadFromMetaphlan <- function(
         sample_names <- rownames(coldata)
         names(sample_names) <- sample_names
     } else{
-        sample_names <- sapply(rownames(coldata), function(x){
+        sample_names <- vapply(rownames(coldata), function(x){
             x <- colnames(tse)[grep(x, colnames(tse))]
             if( length(x) != 1 ){
                 x <- NULL
             }
             return(x)
-        })
+        },FUN.VALUE = character(1))
         sample_names <- unlist(sample_names)
     }
 
