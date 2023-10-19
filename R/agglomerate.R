@@ -1,7 +1,7 @@
 #' Agglomerate data using taxonomic information
 #'
-#' \code{agglomerateByRank} can be used to sum up data based on the association
-#' to certain taxonomic ranks given as \code{rowData}. Only available
+#' \code{agglomerateByRank} can be used to sum up data based on associations
+#' with certain taxonomic ranks, as defined in \code{rowData}. Only available
 #' \code{\link{taxonomyRanks}} can be used.
 #'
 #' @param x a
@@ -49,16 +49,16 @@
 #'   \code{strip_altexp = TRUE})
 #'
 #' @details
-#' Based on the available taxonomic data and its structure setting
+#' Depending on the available taxonomic data and its structure, setting
 #' \code{onRankOnly = TRUE} has certain implications on the interpretability of
 #' your results. If no loops exist (loops meaning two higher ranks containing
-#' the same lower rank), the results should be comparable. you can check for
+#' the same lower rank), the results should be comparable. You can check for
 #' loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
 #' 
-#' Agglomeration sum up values of assays at specified taxonomic level. Certain assays,
-#' e.g. those that include binary or negative values, can lead to meaningless values, 
-#' when values are summed. In those cases, consider doing agglomeration first and then 
-#' transformation.
+#' Agglomeration sums up the values of assays at the specified taxonomic level. With
+#' certain assays, e.g. those that include binary or negative values, this summing
+#' can produce meaningless values. In those cases, consider performing agglomeration
+#' first, and then applying the transformation afterwards.
 #'
 #' @return A taxonomically-agglomerated, optionally-pruned object of the same
 #'   class as \code{x}.
@@ -80,7 +80,7 @@
 #' nrow(GlobalPatterns)
 #' nrow(x1)
 #' 
-#' # with agglomeration of the tree
+#' # agglomerate the tree as well
 #' x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
 #'                        agglomerateTree = TRUE)
 #' nrow(x2) # same number of rows, but
@@ -111,27 +111,28 @@
 #' x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
 #' head(rowData(x4))
 #' 
-#' # If assay contains NAs, you might want to consider replacing them since summing-up
-#' # NAs lead to NA
+#' # If the assay contains NAs, you might want to consider replacing them,
+#' # since summing-up NAs lead to NA
 #' x5 <- GlobalPatterns
 #' # Replace first value with NA
 #' assay(x5)[1,1] <- NA
 #' x6 <- agglomerateByRank(x5, "Kingdom")
 #' head( assay(x6) )
-#' # Replace NAs with 0. It is justified when we are summing-up counts
+#' # Replace NAs with 0. This is justified when we are summing-up counts.
 #' assay(x5)[ is.na(assay(x5)) ] <- 0
 #' x6 <- agglomerateByRank(x5, "Kingdom")
 #' head( assay(x6) )
 #' 
 #' ## Look at enterotype dataset...
 #' data(enterotype)
-#' ## print the available taxonomic ranks. Shows only 1 rank available
+#' ## Print the available taxonomic ranks. Shows only 1 available rank,
 #' ## not useful for agglomerateByRank
 #' taxonomyRanks(enterotype)
 NULL
 
 #' @rdname agglomerate-methods
 #' @aliases mergeFeaturesByRank
+#' @export
 setGeneric("agglomerateByRank",
             signature = "x",
             function(x, ...)
@@ -139,6 +140,7 @@ setGeneric("agglomerateByRank",
 
 #' @rdname agglomerate-methods
 #' @aliases agglomerateByRank
+#' @export
 setGeneric("mergeFeaturesByRank",
            signature = "x",
            function(x, ...)

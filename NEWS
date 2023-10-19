@@ -85,4 +85,10 @@ Changes in version 1.9.x
 + altExp support for meltAssay
 + Deprecate mergeRows, mergeCols, agglomerateByRank, agglomerateByPrevalence
 + Removed  getAbundanceSample and getAbundanceFeature  
-+ Updated test to avoid warning from deprecated functions  
++ Updated test to avoid warning from deprecated functions 
++ Export mergeFeaturesByRank
++ *RDA & *CCA: scores parameter for specifying output
++ Improve mergeSEs and loadFromBiom
++ Faith index: bugfix
++ runRDA bugfix: vegan::dbrda and vegan::vegdist have different parameter for dissimilarity --> taken into account
+

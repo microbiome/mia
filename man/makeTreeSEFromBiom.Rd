@@ -12,7 +12,7 @@ makeTreeSEFromBiom(
   obj,
   removeTaxaPrefixes = FALSE,
   rankFromPrefix = FALSE,
-  clean.taxa.names = "auto",
+  remove.artifacts = FALSE,
   ...
 )
 
@@ -21,7 +21,12 @@ makeTreeSummarizedExperimentFromBiom(obj, ...)
 \arguments{
 \item{file}{biom file location}
 
-\item{...}{optional arguments (not used).}
+\item{...}{additional arguments
+\itemize{
+\item{\code{patter}}{\code{character} value specifying artifacts
+to be removed. If \code{patterns = "auto"}, special characters
+are removed. (default: \code{pattern = "auto"})}
+}}
 
 \item{obj}{object of type \code{\link[biomformat:read_biom]{biom}}}
 
@@ -32,11 +37,9 @@ taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})}
 taxonomic ranks on feature table, should they be scraped from prefixes?
 (default \code{rankFromPrefix = FALSE})}
 
-\item{clean.taxa.names}{\code{character} or \code{regex}: If file have
-some taxonomic character naming artifacts to be removed. Additionally
-when \code{clean.taxa.names = "auto"} automatically artifacts are detected
-and removed. Otherwise \code{clean.taxa.names = NULL} no cleaning is performed.
-(default \code{clean.taxa.names = "auto"})}
+\item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
+some taxonomic character naming artifacts, should they be removed.
+(default \code{remove.artifacts = FALSE})}
 }
 \value{
 An object of class
@@ -48,31 +51,30 @@ For convenience a few functions are available to convert data from a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 }
 \examples{
-if(requireNamespace("biomformat")) {
-  library(biomformat)
-  # load from file
-  rich_dense_file  = system.file("extdata", "rich_dense_otu_table.biom",
-                                 package = "biomformat")
-  se <- loadFromBiom(rich_dense_file, removeTaxaPrefixes = TRUE,
-                    rankFromPrefix = TRUE)
-                    
-  # load from object
-  x1 <- biomformat::read_biom(rich_dense_file)
-  se <- makeTreeSEFromBiom(x1)
-  # Convert SE to TreeSE
-  tse <- as(se, "TreeSummarizedExperiment")
-  tse
-  
-  # Cleaning artifacts from Taxonomy data
-  f <- system.file("extdata/testdata/Aggregated_humanization2.biom",
-                  package="mia")
-  biom_object <- biomformat::read_biom(f)
-  tse <- makeTreeSEFromBiom(biom_object,
-                            removeTaxaPrefixes=TRUE,
-                            rankFromPrefix=TRUE,
-                            clean.taxa.names = "auto")
-  tse
-}
+# Load biom file
+library(biomformat)
+biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
+                         package = "biomformat")
+
+# Make TreeSE from biom file
+tse <- loadFromBiom(biom_file)
+
+# Make TreeSE from biom object
+biom_object <- biomformat::read_biom(biom_file)
+tse <- makeTreeSEFromBiom(biom_object)
+
+# Get taxonomyRanks from prefixes and remove prefixes
+tse <- loadFromBiom(biom_file,
+                    rankFromPrefix = TRUE,
+                    removeTaxaPrefixes = TRUE)
+
+# Load another biom file
+biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
+                         package = "mia")
+
+# Clean artifacts from taxonomic data
+tse <- loadFromBiom(biom_file,
+                    remove.artifacts = TRUE)
 }
 \seealso{
 \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}

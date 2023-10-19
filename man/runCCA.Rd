@@ -21,31 +21,33 @@ calculateRDA(x, ...)
 
 runRDA(x, ...)
 
-\S4method{calculateCCA}{ANY}(x, formula, variables, scale = TRUE, ...)
+\S4method{calculateCCA}{ANY}(x, ...)
 
 \S4method{calculateCCA}{SummarizedExperiment}(
   x,
   formula,
   variables,
-  test_signif = TRUE,
+  test.signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
+  scores = "wa",
   ...
 )
 
 \S4method{runCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
-\S4method{calculateRDA}{ANY}(x, formula, variables, ...)
+\S4method{calculateRDA}{ANY}(x, ...)
 
 \S4method{calculateRDA}{SummarizedExperiment}(
   x,
   formula,
   variables,
-  test_signif = TRUE,
+  test.signif = TRUE,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
+  scores = "wa",
   ...
 )
 
@@ -63,14 +65,19 @@ or a derived object.}
 \item{...}{additional arguments passed to vegan::cca or vegan::dbrda and
 other internal functions.
 \itemize{
+\item{\code{method} a dissimilarity measure to be applied in dbRDA and
+possible following homogeneity test. (By default: \code{method="euclidean"})}
+\item{\code{scale} a logical scalar, should the expression values be
+standardized? \code{scale} is disabled when using \code{*RDA} functions.
+Please scale before performing RDA. (By default: \code{scale=TRUE})}
 \item{\code{full} a logical scalar, should all the results from the
 significance calculations be returned. When \code{full=FALSE}, only
 summary tables are returned. (By default: \code{full=FALSE})}
-\item{\code{homogeneity_test} a single \code{character} value for specifying
+\item{\code{homogeneity.test} a single \code{character} value for specifying
 the significance test used to analyse \code{vegan::betadisper} results.
 Options include 'permanova' (\code{vegan::permutest}), 'anova'
 (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
-(By default: \code{homogeneity_test="permanova"})}
+(By default: \code{homogeneity.test="permanova"})}
 }}
 
 \item{formula}{If \code{x} is a
@@ -91,13 +98,9 @@ All variables are used. Please subset, if you want to consider only some of them
 \code{variables} and \code{formula} can be missing, which turns the CCA analysis
 into a CA analysis and dbRDA into PCoA/MDS.}
 
-\item{scale}{a logical scalar, should the expression values be standardized?
-\code{scale} is disabled when using \code{*RDA} functions. Please scale before
-performing RDA (Check examples.)}
-
-\item{test_signif}{a logical scalar, should the PERMANOVA and analysis of
+\item{test.signif}{a logical scalar, should the PERMANOVA and analysis of
 multivariate homogeneity of group dispersions be performed.
-(By default: \code{test_signif = TRUE})}
+(By default: \code{test.signif = TRUE})}
 
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -110,6 +113,11 @@ will be disabled.)}
 \item{exprs_values}{a single \code{character} value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
+
+\item{scores}{A string specifying scores to be returned. Must be
+'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
+v with weights Xbar, but the multiplying effect of eigenvalues removed) or
+'u' ((weighted) orthonormal site scores). (By default: \code{scores='wa'})}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -137,7 +145,7 @@ Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
 dispersion, i.e., homogeneity within groups is analyzed with
 \code{vegan:betadisper} (multivariate homogeneity of groups dispersions (variances))
 and statistical significance of homogeneity is tested with a test
-specified by \code{homogeneity_test} parameter.
+specified by \code{homogeneity.test} parameter.
 }
 \examples{
 library(scater)
@@ -151,21 +159,26 @@ attr(reducedDim(GlobalPatterns, "CCA"), "significance")
 GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
-# To scale values when using *RDA functions, use transformAssay(MARGIN = "features", 
+# Specify dissimilarity measure
+GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
+GlobalPatterns <- runRDA(
+    GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
+
+# To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
 tse <- GlobalPatterns
 tse <- transformAssay(tse, MARGIN = "features", method = "z")
 # Data might include taxa that do not vary. Remove those because after z-transform
 # their value is NA
 tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 # Calculate RDA
-tse <- runRDA(tse, formula = data ~ SampleType, 
+tse <- runRDA(tse, formula = data ~ SampleType,
               assay.type = "z", name = "rda_scaled", na.action = na.omit)
 # Plot
 plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 # A common choice along with PERMANOVA is ANOVA when statistical significance
 # of homogeneity of groups is analysed. Moreover, full signficance test results
 # can be returned.
- tse <- runRDA(tse, data ~ SampleType, homogeneity_test = "anova", full = TRUE)
+ tse <- runRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
 
 }
 \seealso{

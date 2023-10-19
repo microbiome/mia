@@ -3,6 +3,9 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
 *.Rproj
 /doc/
 /Meta/
+docs/
+.DS_Store
