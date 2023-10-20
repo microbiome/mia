@@ -7,8 +7,7 @@
 estimateAlpha(
   x,
   assay.type = "counts",
-  assay_name = NULL,
-  index = c("coverage_diversity", "fisher_diversity", "faith_diversity", "faith",
+  index = c("coverage_diversity", "fisher_diversity", "faith_diversity",
     "gini_simpson_diversity", "inverse_simpson_diversity",
     "log_modulo_skewness_diversity", "shannon_diversity", "absolute_dominance",
     "dbp_dominance", "core_abundance_dominance", "gini_dominance", "dmn_dominance",
@@ -19,8 +18,8 @@ estimateAlpha(
   ...,
   rarify = FALSE,
   seed = 123,
-  nrounds = 10,
-  rarefaction_depth = min(colSums(assay(x, "counts")), na.rm = TRUE)
+  n.iter = 10,
+  rarefaction_depth = min(colSums(assay(x, assay.type)), na.rm = TRUE)
 )
 }
 \arguments{
@@ -28,11 +27,6 @@ estimateAlpha(
 
 \item{assay.type}{the name of the assay used for
 calculation of the sample-wise estimates.}
-
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
 
 \item{index}{a \code{character} vector, specifying the alpha diversity measures
 to be calculated}
@@ -49,7 +43,7 @@ using rarefaction? (default: \code{FALSE})}
 \item{seed}{a single \code{integer} value as the seed used for the nround
 rarefaction.}
 
-\item{nrounds}{a single \code{integer} value for the number of rarefaction
+\item{n.iter}{a single \code{integer} value for the number of rarefaction
 rounds.}
 
 \item{rarefaction_depth}{a \code{double} value as for the minimim size or
@@ -76,7 +70,7 @@ colData(tse)$shannon_diversity
 
 # Calculate observed richness with 10 rarefaction rounds
 tse <- estimateAlpha(tse, assay.type = "counts", index = "observed_richness",
-rarify=TRUE, nrounds=10)
+rarify=TRUE, n.iter=10)
 
 # Shows the estimated observed richness
 colData(tse)$observed_richness
