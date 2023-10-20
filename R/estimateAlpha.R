@@ -76,8 +76,8 @@ estimateAlpha <- function(x, assay.type = "counts",
                           n.iter=10,
                           rarefaction_depth=min(colSums(assay(x, assay.type)), na.rm = TRUE)){
     # checks
-    if(!.is_non_empty_string(index)) {
-        stop("'index' should be a non empty string.",
+    if(is.null(index) & any(!sapply(index, .is_non_empty_string))) {
+        stop("'index' should be a character vector.",
              call. = FALSE)
     }
     if(!.is_a_bool(rarify)){
@@ -141,8 +141,8 @@ estimateAlpha <- function(x, assay.type = "counts",
                                                              name=name[i]),
                                                         list(...))))
         }
-        return(x)
     }
+    return(x)
 }
 
 ## Helper functions
