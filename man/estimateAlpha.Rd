@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimateAlpha.R
 \name{estimateAlpha}
 \alias{estimateAlpha}
-\title{Estimate alpha indices using rarefaction}
+\title{Estimate alpha indices.}
 \usage{
 estimateAlpha(
   x,
@@ -16,10 +16,9 @@ estimateAlpha(
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
   ...,
-  rarify = FALSE,
   seed = 123,
   n.iter = 10,
-  rarefaction_depth = min(colSums(assay(x, assay.type)), na.rm = TRUE)
+  rarefaction.depth = max(colSums(assay(x, assay.type)), na.rm = TRUE)
 )
 }
 \arguments{
@@ -28,17 +27,14 @@ estimateAlpha(
 \item{assay.type}{the name of the assay used for
 calculation of the sample-wise estimates.}
 
-\item{index}{a \code{character} vector, specifying the alpha diversity measures
+\item{index}{a \code{character} vector, specifying the alpha diversity indices
 to be calculated}
 
 \item{name}{a name for the column(s) of the colData the results should be
 stored in. By default this will use the original names of the calculated
-indices specifying the alpha diversity measures used.}
+indices.}
 
 \item{...}{optional arguments.}
-
-\item{rarify}{logical scalar: Should the alpha diversity measures be estimated
-using rarefaction? (default: \code{FALSE})}
 
 \item{seed}{a single \code{integer} value as the seed used for the nround
 rarefaction.}
@@ -46,16 +42,16 @@ rarefaction.}
 \item{n.iter}{a single \code{integer} value for the number of rarefaction
 rounds.}
 
-\item{rarefaction_depth}{a \code{double} value as for the minimim size or
-rarefaction_depth. (default: \code{min(colSums(assay(x, "counts")), na.rm = TRUE)})}
+\item{rarefaction.depth}{a \code{double} value as for the minimim size or
+rarefaction.depth. (default: \code{min(colSums(assay(x, "counts")), na.rm = TRUE)})}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named after the index
 used.
 }
 \description{
-The function estimates alpha diversity measures optionally using n rounds of rarefaction,
-given the rarefaction depth, then stores results at \code{\link{colData}}.
+The function estimates alpha diversity indices optionally using of rarefaction,
+then stores results at \code{\link{colData}}.
 }
 \examples{
 
@@ -66,13 +62,13 @@ tse <- GlobalPatterns
 tse <- estimateAlpha(tse, assay.type = "counts", index = "shannon")
 
 # Shows the estimated Shannon index
-colData(tse)$shannon_diversity
+tse$shannon_diversity
 
 # Calculate observed richness with 10 rarefaction rounds
 tse <- estimateAlpha(tse, assay.type = "counts", index = "observed_richness",
-rarify=TRUE, n.iter=10)
+rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE), n.iter=10)
 
 # Shows the estimated observed richness
-colData(tse)$observed_richness
+tse$observed_richness
 
 }

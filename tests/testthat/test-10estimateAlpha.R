@@ -9,7 +9,8 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     expect_true(any(grepl("shannon_diversity", colnames(colData(tse)))))
     # Calculate same index with 10 rarefaction rounds
     tse <- estimateAlpha(tse, assay.type = "counts", index = "shannon",
-                         rarify=TRUE, n.iter=10, name="shannon_10")
+                         rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+                         n.iter=10, name="shannon_10")
     expect_true(any(grepl("shannon_10", colnames(colData(tse)))))
     # comparing the estimates
     expect_false(all(tse$shannon_diversity==tse$shannon_10))
@@ -20,7 +21,8 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     expect_true(any(grepl("gini_dominance", colnames(colData(tse)))))
     # Calculate same index with 10 rarefaction rounds
     tse <- estimateAlpha(tse, assay.type = "counts", index = "gini_dominance",
-                         rarify=TRUE, n.iter=10, name="gini_dominance_10")
+                         rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+                         n.iter=10, name="gini_dominance_10")
     expect_true(any(grepl("gini_dominance_10", colnames(colData(tse)))))
     # comparing the estimates
     expect_false(all(tse$gini_dominance==tse$gini_dominance_10))
@@ -31,7 +33,8 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     expect_true(any(grepl("pielou_evenness", colnames(colData(tse)))))
     # Calculate same index with 10 rarefaction rounds
     tse <- estimateAlpha(tse, assay.type = "counts", index = "pielou",
-                         rarify=TRUE, n.iter=10, name="pielou_10")
+                         rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+                         n.iter=10, name="pielou_10")
     expect_true(any(grepl("pielou_10", colnames(colData(tse)))))
     # comparing the estimates
     expect_false(all(tse$pielou_evenness==tse$pielou_10))
@@ -42,8 +45,8 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     expect_true(any(grepl("chao1_richness", colnames(colData(tse)))))
     # Calculate same index with 10 rarefaction rounds
     tse <- estimateAlpha(tse, assay.type = "counts", index = "chao1",
-                         rarify=TRUE, n.iter=10, name="chao1_10",
-                         rarefaction_depth=0.1*mean(colSums(assay(tse, "counts")), na.rm = TRUE))
+                         n.iter=10, name="chao1_10",
+                         rarefaction.depth=0.1*mean(colSums(assay(tse, "counts")), na.rm = TRUE))
     expect_true(any(grepl("pielou_10", colnames(colData(tse)))))
     # comparing the estimates
     expect_false(all(tse$chao1_richness==tse$chao1_10))
@@ -53,7 +56,8 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     
     # comparing 10 iter with 20 iters estimates
     tse <- estimateAlpha(tse, assay.type = "counts", index = "shannon",
-                         rarify=TRUE, n.iter=20, name="shannon_20", seed=321)
+                         rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+                         n.iter=20, name="shannon_20", seed=321)
     # comparing the estimates
     expect_false(all(tse$shannon_20==tse$shannon_10))
     
@@ -66,7 +70,9 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     expect_true(any(grepl("ace_richness", colnames(colData(tse)))))
     
     # Testing with multiple indices with rarefaction
-    tse <- estimateAlpha(tse, assay.type = "counts", rarify=TRUE, n.iter=10, 
+    tse <- estimateAlpha(tse, assay.type = "counts", 
+                         rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+                         n.iter=10, 
                          index = c("coverage","absolute", "camargo", "ace"),
                          name=c("coverage_10","absolute_10", "camargo_10", "ace_10"))
     expect_true(any(grepl("coverage_10", colnames(colData(tse)))))
