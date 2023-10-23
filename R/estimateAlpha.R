@@ -126,7 +126,7 @@ estimateAlpha <- function(x, assay.type = "counts",
         # Performing rarefaction if rarefaction.depth is specified to be less 
         # the max of the total read counts
         if (rarefaction.depth < max(colSums(assay(x, assay.type)), na.rm = TRUE)) {
-            x <- .alpha_rarefaction(x, n.iter = n.iter, seed = seed,
+            x <- .alpha_rarefaction(x, n.iter = n.iter,
                                     args.sub = list(assay.type=assay.type,
                                                     min_size=rarefaction.depth,
                                                     verbose=FALSE),
@@ -175,7 +175,7 @@ estimateAlpha <- function(x, assay.type = "counts",
                                ...,
                                name = args.fun$index) {
     # Calculating the mean of the subsampled alpha estimates ans storing them
-    colData(x)[, name] <- lapply(seq(n.iter), function(j){
+    colData(x)[, name] <- lapply(seq(n.iter), function(){
         # subsampling the counts from the original tse object
         x_sub <- do.call(subsampleCounts, args = c(list(x), args.sub))
         # calculating the diversity indices on the subsampled object
@@ -186,7 +186,7 @@ estimateAlpha <- function(x, assay.type = "counts",
                                                         list(...))))
         # Storing estimate results
         colData(x_sub)[, args.fun$index, drop=FALSE]
-    }) %>% as.data.frame() %>% rowMeans() %>% as.data.frame()
+    }) %>% data.frame() %>% rowMeans() %>% data.frame()
     return(x)
 }
 
