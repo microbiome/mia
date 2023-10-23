@@ -17,9 +17,6 @@
 #'   
 #' @param ... optional arguments.
 #' 
-#' @param seed a single \code{integer} value as the seed used for the nround
-#'  rarefaction.
-#' 
 #' @param n.iter a single \code{integer} value for the number of rarefaction
 #' rounds.
 #' 
@@ -67,16 +64,11 @@ estimateAlpha <- function(x, assay.type = "counts",
                                     "observed_richness"),
                           name = index,
                           ...,
-                          seed = 123,
                           n.iter=10,
                           rarefaction.depth=max(colSums(assay(x, assay.type)), na.rm = TRUE)){
     # checks
     if(is.null(index) & any(!sapply(index, .is_non_empty_string))) {
         stop("'index' should be a character vector.",
-             call. = FALSE)
-    }
-    if(!.is_an_integer(seed)) {
-        stop("'seed' must be an interger.",
              call. = FALSE)
     }
     if(!.is_an_integer(n.iter)) {
@@ -119,7 +111,16 @@ estimateAlpha <- function(x, assay.type = "counts",
             index[i] <- gsub("_richness", "", index[i])
             FUN <- .estimate_richness
         } else {
-            stop("'index' is coresponding to none of the alpha diversity indices.",
+            stop("'index' is coresponding to none of the alpha diversity indices.
+                  'index' should be one of: coverage_diversity, fisher_diversity,
+                  faith_diversity, gini_simpson_diversity,
+                  inverse_simpson_diversity, log_modulo_skewness_diversity,
+                  shannon_diversity, absolute_dominance, dbp_dominance,
+                  core_abundance_dominance, gini_dominance,
+                  dmn_dominance, relative_dominance, simpson_lambda_dominance,
+                  camargo_evenness, pielou_evenness, simpson_evenness,
+                  evar_evenness, bulla_evenness, ace_richness, chao1_richness,
+                  hill_richness or observed_richness.",
                  call. = FALSE)
         }
         # Performing rarefaction if rarefaction.depth is specified to be less 
@@ -134,6 +135,7 @@ estimateAlpha <- function(x, assay.type = "counts",
                                     ...,
                                     name=name[i])
         } else {
+            # Estimate index without rarefaction
             suppressWarnings(x <- do.call(FUN, args = c(list(x, assay.type=assay.type,
                                                              index=index[i],
                                                              name=name[i]),
@@ -163,7 +165,6 @@ estimateAlpha <- function(x, assay.type = "counts",
 
 .alpha_rarefaction <- function(x,
                                n.iter=1L,
-                               seed=123,
                                args.sub=list(assay.type="counts",
                                              min_size=min(colSums(assay(x, "counts")),
                                                           na.rm = TRUE),
@@ -173,7 +174,6 @@ estimateAlpha <- function(x, assay.type = "counts",
                                           assay.type="subsampled"),
                                ...,
                                name = args.fun$index) {
-    set.seed(seed)
     # Calculating the mean of the subsampled alpha estimates ans storing them
     colData(x)[, name] <- lapply(seq(n.iter), function(j){
         # subsampling the counts from the original tse object
@@ -196,14 +196,14 @@ estimateAlpha <- function(x, assay.type = "counts",
         # check if suffix of the alpha indices if present at index
         # otherwise keeping suffix as a name if name not defined by user.
         if (measure %in% unlist(strsplit(index, "\\_"))) {
-            name = index
-            } else {
-                name = paste0(index, "_", measure)
-                }
+            name <- index
         } else {
-            # don't change name if defined by user
-            return(name)
+            name <- paste0(index, "_", measure)
         }
+    } else {
+        # don't change name if defined by user
+        return(name)
+    }
 }
 
 .estimate_diversity <- function(x, assay.type = "counts",

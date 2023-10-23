@@ -57,7 +57,7 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     # comparing 10 iter with 20 iters estimates
     tse <- estimateAlpha(tse, assay.type = "counts", index = "shannon",
                          rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
-                         n.iter=20, name="shannon_20", seed=321)
+                         n.iter=20, name="shannon_20")
     # comparing the estimates
     expect_false(all(tse$shannon_20==tse$shannon_10))
     

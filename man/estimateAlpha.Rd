@@ -16,7 +16,6 @@ estimateAlpha(
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
   ...,
-  seed = 123,
   n.iter = 10,
   rarefaction.depth = max(colSums(assay(x, assay.type)), na.rm = TRUE)
 )
@@ -35,9 +34,6 @@ stored in. By default this will use the original names of the calculated
 indices.}
 
 \item{...}{optional arguments.}
-
-\item{seed}{a single \code{integer} value as the seed used for the nround
-rarefaction.}
 
 \item{n.iter}{a single \code{integer} value for the number of rarefaction
 rounds.}
