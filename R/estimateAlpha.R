@@ -175,7 +175,7 @@ estimateAlpha <- function(x, assay.type = "counts",
                                ...,
                                name = args.fun$index) {
     # Calculating the mean of the subsampled alpha estimates ans storing them
-    colData(x)[, name] <- lapply(seq(n.iter), function(){
+    colData(x)[, name] <- lapply(seq(n.iter), function(j){
         # subsampling the counts from the original tse object
         x_sub <- do.call(subsampleCounts, args = c(list(x), args.sub))
         # calculating the diversity indices on the subsampled object
@@ -186,7 +186,7 @@ estimateAlpha <- function(x, assay.type = "counts",
                                                         list(...))))
         # Storing estimate results
         colData(x_sub)[, args.fun$index, drop=FALSE]
-    }) %>% data.frame() %>% rowMeans() %>% data.frame()
+    }) %>% data.frame(.) %>% rowMeans(.) %>% data.frame(.)
     return(x)
 }
 
