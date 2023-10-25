@@ -7,7 +7,9 @@
 #' @param file biom file location
 #' 
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
-#' taxonomic prefixes be removed? (default \code{removeTaxaPrefixes = FALSE})
+#' taxonomic prefixes be removed? The prefixes is removed only from detected
+#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
+#' (default \code{removeTaxaPrefixes = FALSE})
 #' 
 #' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
@@ -138,12 +140,15 @@ makeTreeSEFromBiom <- function(
         feature_data <- do.call(rbind, feature_data)
         # Transposing feature_data and make it df object
         feature_data <- as.data.frame(feature_data)
+        # Add column that includes all the data
+        feature_data[["taxonomy_unparsed"]] <- apply(feature_data, 1, paste0, collapse = ";")
         # Add correct colnames
-        colnames(feature_data) <- colnames
+        colnames(feature_data) <- c(colnames, "taxonomy_unparsed")
     }
     # If there is only one column in the feature data, it is the most probable
     # that the taxonomy is not parsed. Try to parse it.
     if( ncol(feature_data) == 1 ){
+        colnames(feature_data) <- "taxonomy_unparsed"
         tax_tab <- .parse_taxonomy(feature_data, column_name = colnames(feature_data))
         feature_data <- cbind(tax_tab, feature_data)
         feature_data <- as.data.frame(feature_data)
@@ -167,7 +172,7 @@ makeTreeSEFromBiom <- function(
     
     # Remove prefixes if specified and rowData includes info
     if(removeTaxaPrefixes && ncol(feature_data) > 0){
-        feature_data <- .remove_prefixes_from_taxa(feature_data)
+        feature_data <- .remove_prefixes_from_taxa(feature_data, ...)
     }
     
     # Adjust row and colnames
@@ -199,8 +204,8 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
 ################################ HELP FUNCTIONS ################################
 # This function removes prefixes from taxonomy names
 .remove_prefixes_from_taxa <- function(
-        feature_tab, patterns = "sk__|([dkpcofgs]+)__",
-        only.taxa.col = FALSE, ...){
+        feature_tab, prefixes = "sk__|([dkpcofgs]+)__",
+        only.taxa.col = TRUE, ...){
     if( !.is_a_bool(only.taxa.col) ){
         stop("'only.taxa.col' must be TRUE or FALSE.", call. = FALSE)
     }
@@ -220,7 +225,7 @@ makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
     if( ncol(temp) > 0 ){
         # Remove patterns
         temp <- lapply(
-            temp, gsub, pattern = patterns, replacement = "")
+            temp, gsub, pattern = prefixes, replacement = "")
         temp <- as.data.frame(temp)
         # If cell had only prefix, it is now empty string. Convert to NA
         temp[ temp == "" ] <- NA
