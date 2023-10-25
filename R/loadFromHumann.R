@@ -150,10 +150,11 @@ loadFromHumann <- function(file, colData = NULL, ...){
     # Check rowdata column names that they contain right information, and check
     # that rest of the columns represents abundances in samples.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
-    if( any(colnames(rowdata_columns) %in% c("Pathway", "Gene_Family")) && 
-        is.numeric(unlist(assay_columns)) ){
-        result <- FALSE
+    if (any(colnames(rowdata_columns) %in% c("Pathway", "Gene_Family")) && 
+        all(unlist(lapply(assay_columns, is.numeric)))) {
+      result <- FALSE
     }
+    
     return(result)
 }
 
