@@ -48,7 +48,8 @@ object
 Import Metaphlan results to \code{TreeSummarizedExperiment}
 }
 \details{
-Import Metaphlan results. Input must be in merged Metaphlan format.
+Import Metaphlan (versions 2, 3 and 4 supported) results.
+Input must be in merged Metaphlan format.
 (See
 \href{https://github.com/biobakery/MetaPhlAn/wiki/MetaPhlAn-4#merging-tables}{
 the Metaphlan documentation and \code{merge_metaphlan_tables} method.})
@@ -56,6 +57,8 @@ Data is imported so that data at the lowest rank is imported as a
 \code{TreeSummarizedExperiment} object. Data at higher rank is imported as a
 \code{SummarizedExperiment} objects which are stored to \code{altExp} of
 \code{TreeSummarizedExperiment} object.
+
+Currently Metaphlan versions 2, 3, and 4 are supported.
 }
 \examples{
 # (Data is from tutorial
