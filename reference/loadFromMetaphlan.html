@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.20</span>
       </span>
     </div>
 
@@ -110,7 +110,8 @@ names that is shared by all. (default: <code>remove.suffix = FALSE</code>)</p></
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>Import Metaphlan results. Input must be in merged Metaphlan format.
+    <p>Import Metaphlan (versions 2, 3 and 4 supported) results.
+Input must be in merged Metaphlan format.
 (See
 <a href="https://github.com/biobakery/MetaPhlAn/wiki/MetaPhlAn-4#merging-tables" class="external-link">
 the Metaphlan documentation and <code>merge_metaphlan_tables</code> method.</a>)
@@ -118,6 +119,7 @@ Data is imported so that data at the lowest rank is imported as a
 <code>TreeSummarizedExperiment</code> object. Data at higher rank is imported as a
 <code>SummarizedExperiment</code> objects which are stored to <code>altExp</code> of
 <code>TreeSummarizedExperiment</code> object.</p>
+<p>Currently Metaphlan versions 2, 3, and 4 are supported.</p>
     </div>
     <div id="references">
     <h2>References</h2>
