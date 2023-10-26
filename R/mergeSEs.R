@@ -446,7 +446,7 @@ setMethod("right_join", signature = c(x = "ANY"),
                                   tolower(colnames(rd)), nomatch = 0 ), 
                          drop = FALSE]
     # Combine taxonomy info
-    rownames <- apply(taxonomy_info, 1, paste0, collapse = "_")
+    rownames <- apply(taxonomy_info, 1, function(x) paste0(x[!is.na(x)], collapse = "_"))
     # Add new rownames
     rownames(x) <- rownames
     return(x)
