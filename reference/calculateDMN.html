@@ -268,13 +268,13 @@ one element for each value of k provided.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38872.47 BIC: 39588.93 AIC: 39115.53 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38872.71 BIC: 39588.93 AIC: 39115.53 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.24 BIC: 40001.15 AIC: 39290.14 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.28 BIC: 40001.15 AIC: 39290.14 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get and display which objects fits best</span></span></span>
@@ -288,21 +288,21 @@ one element for each value of k provided.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: DMN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> k: 3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> samples x taxa: 278 x 130 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.24 BIC: 40001.15 AIC: 39290.14 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Laplace: 38854.28 BIC: 40001.15 AIC: 39290.14 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get the sample-cluster assignment probability matrix</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">DMM</span><span class="op">$</span><span class="va">prob</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    1            2            3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS1.2   9.999997e-01 2.998459e-07 4.862578e-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS10.2  9.516067e-01 8.374173e-09 4.839332e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS100.2 4.435733e-08 8.562098e-02 9.143790e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS100   9.919533e-01 8.046259e-03 4.122541e-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS101.2 1.352783e-12 4.161968e-07 9.999996e-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TS103.2 9.999977e-01 7.467546e-10 2.313107e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS1.2   9.999997e-01 2.998326e-07 4.862431e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS10.2  9.516081e-01 8.378384e-09 4.839188e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS100.2 4.436488e-08 8.562948e-02 9.143705e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS100   9.919533e-01 8.046280e-03 4.123182e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS101.2 1.352698e-12 4.161947e-07 9.999996e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TS103.2 9.999977e-01 7.468226e-10 2.313113e-06</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get the weight of each component for the best model</span></span></span>
 <span class="r-in"><span><span class="va">bestModel</span><span class="op">@</span><span class="va">mixture</span><span class="op">$</span><span class="va">Weight</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5655852 0.2227190 0.2116958</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5655855 0.2227201 0.2116945</span>
 </code></pre></div>
     </div>
   </div>
