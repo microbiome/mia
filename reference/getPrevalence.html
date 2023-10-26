@@ -316,19 +316,19 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                                      sort <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                                      as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prevalence.frequency</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Chloroflexi           WPS-2      Firmicutes  Planctomycetes Verrucomicrobia </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               1               1               1               1               1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             WS3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Phylum:Chloroflexi           Phylum:WPS-2      Phylum:Firmicutes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      1                      1                      1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Phylum:Planctomycetes Phylum:Verrucomicrobia             Phylum:WS3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      1                      1                      1 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># - to obtain population counts, multiply frequencies with the sample size,</span></span></span>
 <span class="r-in"><span><span class="co"># which answers the question "In how many samples is this phylum detectable"</span></span></span>
 <span class="r-in"><span><span class="va">prevalence.count</span> <span class="op">&lt;-</span> <span class="va">prevalence.frequency</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prevalence.count</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Chloroflexi           WPS-2      Firmicutes  Planctomycetes Verrucomicrobia </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              26              26              26              26              26 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             WS3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Phylum:Chloroflexi           Phylum:WPS-2      Phylum:Firmicutes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     26                     26                     26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Phylum:Planctomycetes Phylum:Verrucomicrobia             Phylum:WS3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     26                     26                     26 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Detection threshold 1 (strictly greater by default);</span></span></span>
 <span class="r-in"><span><span class="co"># Note that the data (GlobalPatterns) is here in absolute counts</span></span></span>
@@ -340,8 +340,8 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                              prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span></span>
 <span class="r-in"><span>                              as_relative <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prevalent</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Crenarchaeota"  "Euryarchaeota"  "Actinobacteria" "Spirochaetes"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Proteobacteria" "Fusobacteria"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Phylum:Crenarchaeota"  "Phylum:Euryarchaeota"  "Phylum:Actinobacteria"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "Phylum:Spirochaetes"   "Phylum:Proteobacteria" "Phylum:Fusobacteria"  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gets a subset of object that includes prevalent taxa</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByPrevalentFeatures</span><span class="op">(</span><span class="va">tse</span>,</span></span>
@@ -351,18 +351,19 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                                       as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span>                                 </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 7 26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): agglomerated_by_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(7): Rhodobacteraceae_1 Sphingomonadaceae ... Lachnospiraceae</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Veillonellaceae</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(5): Order:Stramenopiles Family:Rhodobacteraceae_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Family:Flavobacteriaceae Order:Sphingobacteriales</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Family:Lachnospiraceae</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (7 rows)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (5 rows)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
@@ -374,8 +375,8 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                    prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span></span>
 <span class="r-in"><span>                    as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rare</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Crenarchaeota" "Euryarchaeota" "Spirochaetes"  "MVP-15"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "SBR1093"       "Fusobacteria" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Phylum:Crenarchaeota" "Phylum:Euryarchaeota" "Phylum:Spirochaetes" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "Phylum:MVP-15"        "Phylum:SBR1093"       "Phylum:Fusobacteria" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gets a subset of object that includes rare taxa</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByRareFeatures</span><span class="op">(</span><span class="va">tse</span>,</span></span>
@@ -385,17 +386,18 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                             as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span>      </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 71 26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 105 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): agglomerated_by_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(71): Thermoprotei Sd-NA ... Thermotogae Synergistia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(105): Class:Thermoprotei Class:Sd-NA ... Class:Thermotogae</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Class:Synergistia</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (71 rows)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (105 rows)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
@@ -435,7 +437,8 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 6 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(2): agglomerated_by_rank agglomerated_by_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(6): Actinobacteria Proteobacteria ... Firmicutes Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(6): Phylum:Actinobacteria Phylum:Proteobacteria ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Phylum:Firmicutes Other</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
