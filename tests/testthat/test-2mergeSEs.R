@@ -66,6 +66,11 @@ test_that("mergeSEs", {
     # Expect no NAs in assay
     expect_true( all(!is.na(assay(tse))) )
     
+    # Check that rows are merged correctly when all the rowData is used to
+    # specify rows
+    test <- mergeSEs(tse1, tse2, missing_values = 0, only.taxonomy = FALSE)
+    expect_equal(tse, test)
+    
     # Test that dimensions match
     tse <- suppressWarnings( 
         mergeSEs(list(tse1, tse2, tse3), missing_values = "MISSING")
