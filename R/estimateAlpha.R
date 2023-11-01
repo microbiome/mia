@@ -6,22 +6,22 @@
 #' @param x a \code{\link{SummarizedExperiment}} object.
 #' 
 #' @param assay.type the name of the assay used for
-#'   calculation of the sample-wise estimates.
+#'   calculation of the sample-wise estimates (default: \code{assay.type = "counts"}).
 #'   
 #' @param index a \code{character} vector, specifying the alpha diversity indices
-#'   to be calculated
+#'   to be calculated.
 #'   
 #' @param name a name for the column(s) of the colData the results should be
 #'   stored in. By default this will use the original names of the calculated
-#'   indices.
+#'   indices(default: \code{name = index}).
 #'   
 #' @param ... optional arguments.
 #' 
 #' @param n.iter a single \code{integer} value for the number of rarefaction
-#' rounds.
+#' rounds(default: \code{n.iter = 10}).
 #' 
 #' @param rarefaction.depth a \code{double} value as for the minimim size or 
-#' rarefaction.depth. (default: \code{min(colSums(assay(x, "counts")), na.rm = TRUE)})
+#' rarefaction.depth. (default: \code{rarefaction.depth = NULL})
 #' 
 #' @return \code{x} with additional \code{\link{colData}} named after the index 
 #' used.
@@ -68,7 +68,7 @@ setGeneric("estimateAlpha",signature = c("x"),
                     name = index,
                     ...,
                     n.iter=10,
-                    rarefaction.depth=max(colSums(assay(x, assay.type)), na.rm = TRUE))
+                    rarefaction.depth=NULL)
                standardGeneric("estimateAlpha"))
 
 #' @rdname estimateAlpha
@@ -92,15 +92,24 @@ setMethod("estimateAlpha", signature = c(x = "SummarizedExperiment"),
                    name = index,
                    ...,
                    n.iter=10,
-                   rarefaction.depth=max(colSums(assay(x, assay.type)), na.rm = TRUE)){
-              # checks
-              if(is.null(index) & any(!sapply(index, .is_non_empty_string))) {
+                   rarefaction.depth=NULL){
+              # Input checks
+              if(is.null(index) && any(!sapply(index, .is_non_empty_string))) {
                   stop("'index' should be a character vector.", call. = FALSE)
-                  }
+              }
+              # Check if index exists
+              all_indices <- c(.get_indices("diversity"), .get_indices("dominance"),
+                               .get_indices("evenness"), .get_indices("richness"))
+              if (!all(sapply(index, function(i) any(grepl(i, all_indices))))) {
+                  stop("'index' is coresponding to none of the alpha diversity indices.
+                  'index' should be one of: ", paste0(all_indices, collapse = ", "),
+                       call. = FALSE)
+              }
               if(!.is_an_integer(n.iter)) {
                   stop("'n.iter' must be an integer.", call. = FALSE)
                   }
-              if(!(is.numeric(rarefaction.depth) & rarefaction.depth > 0)) {
+              if(!is.null(rarefaction.depth) && 
+                 !(is.numeric(rarefaction.depth) && rarefaction.depth > 0)) {
                   stop("'rarefaction.depth' must be a non-zero positive double.",
                        call. = FALSE)
                   }
@@ -135,22 +144,9 @@ setMethod("estimateAlpha", signature = c(x = "SummarizedExperiment"),
                       name[i] <- .parse_name(index[i], name[i], "richness")
                       index[i] <- gsub("_richness", "", index[i])
                       FUN <- .estimate_richness
-                  } else {
-                  stop("'index' is coresponding to none of the alpha diversity indices.
-                  'index' should be one of: coverage_diversity, fisher_diversity,
-                  faith_diversity, gini_simpson_diversity,
-                  inverse_simpson_diversity, log_modulo_skewness_diversity,
-                  shannon_diversity, absolute_dominance, dbp_dominance,
-                  core_abundance_dominance, gini_dominance,
-                  dmn_dominance, relative_dominance, simpson_lambda_dominance,
-                  camargo_evenness, pielou_evenness, simpson_evenness,
-                  evar_evenness, bulla_evenness, ace_richness, chao1_richness,
-                  hill_richness or observed_richness.",
-                       call. = FALSE)
                   }
-                  # Performing rarefaction if rarefaction.depth is specified to be less 
-                  # the max of the total read counts
-                  if (rarefaction.depth < max(colSums(assay(x, assay.type)), na.rm = TRUE)) {
+                  # Performing rarefaction if rarefaction.depth is specified
+                  if (!is.null(rarefaction.depth)) {
                       x <- .alpha_rarefaction(x, n.iter = n.iter,
                                               args.sub = list(assay.type=assay.type,
                                                               min_size=rarefaction.depth,
@@ -213,7 +209,7 @@ setMethod("estimateAlpha", signature = c(x = "SummarizedExperiment"),
                                                         list(...))))
         # Storing estimate results
         colData(x_sub)[, args.fun$index, drop=FALSE]
-    }) %>% data.frame(.) %>% rowMeans(.) %>% data.frame(.)
+    }) %>% data.frame() %>% rowMeans() %>% data.frame()
     return(x)
 }
 
@@ -232,43 +228,4 @@ setMethod("estimateAlpha", signature = c(x = "SummarizedExperiment"),
         # don't change name if defined by user
         return(name)
     }
-}
-
-.estimate_diversity <- function(
-        x, assay.type = "counts",
-        index = c("coverage", "fisher", "gini_simpson",  "inverse_simpson",
-                  "log_modulo_skewness","shannon"),
-        name = index, ...) {
-    estimateDiversity(x, assay.type=assay.type, index=index, name=name, ...)
-}
-
-.estimate_dominance <- function(
-        x,
-        assay.type = "counts", 
-        index = c("absolute", "dbp", "core_abundance", "gini", "dmn",  "relative",
-                  "simpson_lambda"),
-        ntaxa = 1,
-        aggregate = TRUE,
-        name = index,
-        ...) {
-    estimateDominance(x, assay.type=assay.type, index=index, ntaxa=ntaxa,
-                      aggregate=aggregate, name=name, ...)
-}
-
-.estimate_evenness <- function(
-        x, assay.type = "counts",
-        index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
-        name = index, ...) {
-    estimateEvenness(x, assay.type = assay.type, index=index, name=name, ...)
-}
-
-.estimate_richness <- function(
-        x,
-        assay.type = "counts",
-        index = c("ace", "chao1", "hill", "observed"),
-        name = index,
-        detection = 0,
-        ...) {
-    estimateRichness(x, assay.type = assay.type, index=index, name=name,
-                     detection=detection, ...)
 }

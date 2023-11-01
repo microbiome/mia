@@ -155,6 +155,13 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+.estimate_evenness <- function(
+        x, assay.type = "counts",
+        index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
+        name = index, ...) {
+    estimateEvenness(x, assay.type = assay.type, index=index, name=name, ...)
+}
+
 .calc_bulla_evenness <- function(mat) {
     # Species richness (number of species)
     S <- colSums2(mat > 0, na.rm = TRUE)

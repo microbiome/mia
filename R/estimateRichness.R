@@ -247,6 +247,16 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+.estimate_richness <- function(
+        x,
+        assay.type = "counts",
+        index = c("ace", "chao1", "hill", "observed"),
+        name = index,
+        detection = 0,
+        ...) {
+    estimateRichness(x, assay.type = assay.type, index=index, name=name,
+                     detection=detection, ...)
+}
 
 .calc_observed <- function(mat, detection, ...){
     # vegan::estimateR(t(mat))["S.obs",]

@@ -466,6 +466,14 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 
 ################################################################################
 
+.estimate_diversity <- function(
+        x, assay.type = "counts",
+        index = c("coverage", "fisher", "gini_simpson",  "inverse_simpson",
+                  "log_modulo_skewness","shannon"),
+        name = index, ...) {
+    estimateDiversity(x, assay.type=assay.type, index=index, name=name, ...)
+}
+
 .calc_shannon <- function(mat, ...){
     vegan::diversity(t(mat), index="shannon")
 }

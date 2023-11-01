@@ -18,7 +18,7 @@ estimateAlpha(
   name = index,
   ...,
   n.iter = 10,
-  rarefaction.depth = max(colSums(assay(x, assay.type)), na.rm = TRUE)
+  rarefaction.depth = NULL
 )
 
 \S4method{estimateAlpha}{SummarizedExperiment}(
@@ -34,29 +34,29 @@ estimateAlpha(
   name = index,
   ...,
   n.iter = 10,
-  rarefaction.depth = max(colSums(assay(x, assay.type)), na.rm = TRUE)
+  rarefaction.depth = NULL
 )
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
 \item{assay.type}{the name of the assay used for
-calculation of the sample-wise estimates.}
+calculation of the sample-wise estimates (default: \code{assay.type = "counts"}).}
 
 \item{index}{a \code{character} vector, specifying the alpha diversity indices
-to be calculated}
+to be calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be
 stored in. By default this will use the original names of the calculated
-indices.}
+indices(default: \code{name = index}).}
 
 \item{...}{optional arguments.}
 
 \item{n.iter}{a single \code{integer} value for the number of rarefaction
-rounds.}
+rounds(default: \code{n.iter = 10}).}
 
 \item{rarefaction.depth}{a \code{double} value as for the minimim size or
-rarefaction.depth. (default: \code{min(colSums(assay(x, "counts")), na.rm = TRUE)})}
+rarefaction.depth. (default: \code{rarefaction.depth = NULL})}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named after the index
