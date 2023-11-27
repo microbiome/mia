@@ -311,11 +311,11 @@ setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
         
         # Add colnames if not defined
         if (is.null(colnames(exp1))) {
-            colnames(exp1) <- paste("c", c(1:ncol(exp1)), sep = "")
+            colnames(exp1) <- paste("c", seq_len(ncol(exp1)), sep = "")
             warning("Colnames not defined; arbitrary colnames added in experiment1")
         }
         if (is.null(colnames(exp2))) {
-            colnames(exp2) <- paste("c", c(1:ncol(exp2)), sep = "")
+            colnames(exp2) <- paste("c", seq_len(ncol(exp2)), sep = "")
             warning("Colnames not defined; arbitrary colnames added in experiment2")
         }
         
