@@ -36,7 +36,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     # Testing prefixes removed
     tse <- makeTreeSEFromBiom(biom_object,
                               removeTaxaPrefixes=TRUE,
-                              rankFromPrefix=FALSE,
+                              rankFromPrefix=TRUE,
                               remove.artifacts = TRUE,
                               pattern = "\"")
     expect_false(rowData(tse) %>%
