@@ -10,6 +10,8 @@
 #' instances where it can be useful.
 #' Note that the output of \code{subsampleCounts} is not the equivalent as the 
 #' input and any result have to be verified with the original dataset.
+#' To maintain the reproducibility, please define the seed using set.seed() 
+#' before implement this function.
 #'
 #' @param x A
 #'   \code{SummarizedExperiment} object.
@@ -28,7 +30,7 @@
 #'   simulated this can equal to lowest number of total counts 
 #'   found in a sample or a user specified number. 
 #'   
-#' @param seed A random number seed for reproducibility of sampling. 
+#'  
 #' 
 #' @param replace Logical Default is \code{TRUE}. The default is with 
 #'   replacement (\code{replace=TRUE}). 
@@ -68,10 +70,11 @@
 #' # they will be removed.
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
+#' set.seed(123)
 #' tse.subsampled <- subsampleCounts(tse, 
 #'                                   min_size = 60000, 
-#'                                   name = "subsampled", 
-#'                                   seed = 123)
+#'                                   name = "subsampled" 
+#'                                   )
 #' tse.subsampled
 #' dim(tse)
 #' dim(tse.subsampled)
@@ -84,7 +87,7 @@ NULL
 setGeneric("subsampleCounts", signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
                     min_size = min(colSums2(assay(x))),
-                    seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
+                    replace = TRUE,
                     name = "subsampled", verbose = TRUE, ...)
                standardGeneric("subsampleCounts"))
 
@@ -94,86 +97,78 @@ setGeneric("subsampleCounts", signature = c("x"),
 #' @aliases rarifyCounts
 #' @export
 setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
-             min_size = min(colSums2(assay(x))),
-       seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
-       name = "subsampled", verbose = TRUE, ...){
-    
-        warning("Subsampling/Rarefying may undermine downstream analyses ",
-                "and have unintended consequences. Therefore, make sure ",
-                "this normalization is appropriate for your data.",
-              call. = FALSE)
-        .check_assay_present(assay.type, x)
-        if(any(assay(x, assay.type) %% 1 != 0)){
-            warning("assay contains non-integer values. Only counts table ",
-                    "is applicable...")
-        }
-        if(!is.logical(verbose)){
-            stop("`verbose` has to be logical i.e. TRUE or FALSE")
-        }
-        if(verbose){
-            # Print to screen this value
-            message("`set.seed(", seed, ")` was used to initialize repeatable ",
-                    "random subsampling.","\nPlease record this for your ",
-                    "records so others can reproduce.")
-        }
-        if(!.is_numeric_string(seed)){
-            stop("`seed` has to be an numeric value See `?set.seed`")
-        } 
-        if(!is.logical(replace)){
-            stop("`replace` has to be logical i.e. TRUE or FALSE")
-        } 
-        # Check name
-        if(!.is_non_empty_string(name) ||
-           name == assay.type){
-            stop("'name' must be a non-empty single character value and be ",
-                 "different from `assay.type`.",
-                 call. = FALSE)
-        }
-        set.seed(seed)
-        # Make sure min_size is of length 1.
-        if(length(min_size) > 1){
-            stop("`min_size` had more than one value. ", 
-                 "Specifiy a single integer value.")
-            min_size <- min_size[1]    
-        }
-        if(!is.numeric(min_size) || 
-           as.integer(min_size) != min_size && min_size <= 0){
-            stop("min_size needs to be a positive integer value.")
-        }
-        # get samples with less than min number of reads
-        if(min(colSums2(assay(x, assay.type))) < min_size){
-            rmsams <- colnames(x)[colSums2(assay(x, assay.type)) < min_size]
-            # Return NULL, if no samples were found after subsampling
-            if( !any(!colnames(x) %in% rmsams) ){
-                stop("No samples were found after subsampling.",
-                     call. = FALSE)
-            }
-            if(verbose){
-                message(length(rmsams), " samples removed ",
-                        "because they contained fewer reads than `min_size`.")
-            }
-            # remove sample(s)
-            newtse <- x[, !colnames(x) %in% rmsams]
-        } else {
-            newtse <- x
-        }
-        newassay <- apply(assay(newtse, assay.type), 2, 
-                          .subsample_assay,
-                          min_size=min_size, replace=replace)
-        rownames(newassay) <- rownames(newtse)
-        # remove features not present in any samples after subsampling
-        message(length(which(rowSums2(newassay) == 0)), " features", 
-                      " removed because they are not present in all samples", 
-                      " after subsampling.")
-        newassay <- newassay[rowSums2(newassay)>0,]
-        newtse <- newtse[rownames(newassay),]
-        assay(newtse, name, withDimnames=FALSE) <- newassay
-        newtse <- .add_values_to_metadata(newtse, 
-                                          "subsampleCounts_min_size",
-                                          min_size)
-        return(newtse)
-    }
+          function(x, assay.type = assay_name, assay_name = "counts", 
+                   min_size = min(colSums2(assay(x))),
+                    replace = TRUE, 
+                   name = "subsampled", verbose = TRUE, ...){
+              
+              warning("Subsampling/Rarefying may undermine downstream analyses ",
+                      "and have unintended consequences. Therefore, make sure ",
+                      "this normalization is appropriate for your data.",
+                      call. = FALSE)
+              .check_assay_present(assay.type, x)
+              if(any(assay(x, assay.type) %% 1 != 0)){
+                  warning("assay contains non-integer values. Only counts table ",
+                          "is applicable...")
+              }
+              if(!is.logical(verbose)){
+                  stop("`verbose` has to be logical i.e. TRUE or FALSE")
+              }
+            
+              if(!is.logical(replace)){
+                  stop("`replace` has to be logical i.e. TRUE or FALSE")
+              } 
+              # Check name
+              if(!.is_non_empty_string(name) ||
+                 name == assay.type){
+                  stop("'name' must be a non-empty single character value and be ",
+                       "different from `assay.type`.",
+                       call. = FALSE)
+              }
+              #set.seed(seed)
+              # Make sure min_size is of length 1.
+              if(length(min_size) > 1){
+                  stop("`min_size` had more than one value. ", 
+                       "Specifiy a single integer value.")
+                  min_size <- min_size[1]    
+              }
+              if(!is.numeric(min_size) || 
+                 as.integer(min_size) != min_size && min_size <= 0){
+                  stop("min_size needs to be a positive integer value.")
+              }
+              # get samples with less than min number of reads
+              if(min(colSums2(assay(x, assay.type))) < min_size){
+                  rmsams <- colnames(x)[colSums2(assay(x, assay.type)) < min_size]
+                  # Return NULL, if no samples were found after subsampling
+                  if( !any(!colnames(x) %in% rmsams) ){
+                      stop("No samples were found after subsampling.",
+                           call. = FALSE)
+                  }
+                  if(verbose){
+                      message(length(rmsams), " samples removed ",
+                              "because they contained fewer reads than `min_size`.")
+                  }
+                  # remove sample(s)
+                  newtse <- x[, !colnames(x) %in% rmsams]
+              } else {
+                  newtse <- x
+              }
+              newassay <- apply(assay(newtse, assay.type), 2, 
+                                .subsample_assay,
+                                min_size=min_size, replace=replace)
+              rownames(newassay) <- rownames(newtse)
+              # remove features not present in any samples after subsampling
+              message(paste(length(which(rowSums2(newassay) == 0)), "features", 
+                            "removed because they are not present in all samples", 
+                            "after subsampling."))
+              newassay <- newassay[rowSums2(newassay)>0,]
+              newtse <- newtse[rownames(newassay),]
+              assay(newtse, name, withDimnames=FALSE) <- newassay
+              newtse <- .add_values_to_metadata(newtse, 
+                                                "subsampleCounts_min_size",
+                                                min_size)
+              return(newtse)
+          }
 )
 
 
