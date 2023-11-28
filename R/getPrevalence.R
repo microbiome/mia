@@ -545,7 +545,7 @@ setGeneric("getPrevalentAbundance", signature = "x",
 setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
     function(x, ...){
         x <- .calc_rel_abund(x)
-        cm <- getPrevalentTaxa(x, ...)
+        cm <- getPrevalentFeatures(x, ...)
         if (length(cm) == 0) {
             stop("With the given abundance and prevalence thresholds, no taxa ",
                  "were found. Try to change detection and prevalence ",
@@ -600,7 +600,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         mapply(.check_assays_for_merge, assayNames(x), assays(x))
         #
         x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
-        pr <- getPrevalentTaxa(x, rank = NULL, ...)
+        pr <- getPrevalentFeatures(x, rank = NULL, ...)
         f <- rownames(x) %in% pr
         if(any(!f)){
             other_x <- mergeRows(x[!f,], factor(rep(1L,sum(!f))), check_assays = FALSE)
