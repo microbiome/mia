@@ -2,30 +2,21 @@
 % Please edit documentation in R/estimateEvenness.R
 \name{estimateEvenness}
 \alias{estimateEvenness}
-\alias{estimateEvenness,SummarizedExperiment-method}
+\alias{estimateEvenness,ANY-method}
 \title{Estimate Evenness measures}
 \usage{
-estimateEvenness(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  index = c("pielou", "camargo", "simpson_evenness", "evar", "bulla"),
-  name = index,
-  ...
-)
+estimateEvenness(x, ...)
 
-\S4method{estimateEvenness}{SummarizedExperiment}(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
-  name = index,
-  ...,
-  BPPARAM = SerialParam()
-)
+\S4method{estimateEvenness}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
+
+\item{...}{optional arguments:
+\itemize{
+\item{threshold}{ a numeric threshold. assay values below or equal
+to this threshold will be set to zero.}
+}}
 
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
@@ -41,12 +32,6 @@ calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be
 stored in.}
-
-\item{...}{optional arguments:
-\itemize{
-\item{threshold}{ a numeric threshold. assay values below or equal
-to this threshold will be set to zero.}
-}}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}

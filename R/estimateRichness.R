@@ -205,101 +205,99 @@ NULL
 
 #' @rdname estimateRichness
 #' @export
-setGeneric("estimateRichness",signature = c("x"),
-        function(x, assay.type = assay_name, assay_name = "counts",
-                  index = c("ace", "chao1", "hill", "observed"),
-                  name = index,
-                  detection = 0,
-                  ...,
-                  BPPARAM = SerialParam())
-                  standardGeneric("estimateRichness"))
+setGeneric(
+  "estimateRichness", signature = c("x"),
+  function(x, ...) standardGeneric("estimateRichness"))
 
 #' @rdname estimateRichness
 #' @export
-setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
-    function(x,
-            assay.type = assay_name, assay_name = "counts",
-            index = c("ace", "chao1", "hill", "observed"),
-            name = index,
-            detection = 0,
-            ...,
-            BPPARAM = SerialParam()){
-        .Deprecated(old="estimateRichness", new="estimateAlpha",
-                    "Now estimateRichness is deprecated. Use estimateAlpha instead.")
-        # Input check
-        # Check assay.type
-        .check_assay_present(assay.type, x)
-        # Check indices
-        index <- match.arg(index, several.ok = TRUE)
-        if(!.is_non_empty_character(name) || length(name) != length(index)){
-            stop("'name' must be a non-empty character value and have the ",
-                "same length than 'index'.",
-                call. = FALSE)
-        }
-        # Calculates richness indices
-        richness <- BiocParallel::bplapply(index,
-                                            FUN = .get_richness_values,
-                                            mat = assay(x, assay.type),
-                                            detection = detection,
-                                            BPPARAM = BPPARAM)
-        # Add richness indices to colData
-        .add_values_to_colData(x, richness, name)
+setMethod(
+  "estimateRichness", signature = c(x="ANY"),
+  function(x, ...){
+    .Deprecated(
+      old = "estimateRichness", new = "estimateAlpha",
+      msg = paste0(
+        "Now estimateRichness is deprecated. Use estimateAlpha ",
+        "instead."))
+    .estimate_richness(x, ...)
+  })
+
+setGeneric(
+    ".estimate_richness", signature = c("x"), function(
+    x, assay.type = assay_name, assay_name = "counts",
+    index = c("ace", "chao1", "hill", "observed"), name = index,
+    detection = 0, BPPARAM = SerialParam(), ...)
+    standardGeneric(".estimate_richness"))
+
+setMethod(
+    ".estimate_richness", signature = c(x = "SummarizedExperiment"),
+    function(
+    x, assay.type = assay_name, assay_name = "counts",
+    index = c("ace", "chao1", "hill", "observed"), name = index, detection = 0,
+    BPPARAM = SerialParam(), ...){
+    # Input check
+    # Check assay.type
+    .check_assay_present(assay.type, x)
+    # Check indices
+    index <- match.arg(index, several.ok = TRUE)
+    if(!.is_non_empty_character(name) || length(name) != length(index)){
+      stop("'name' must be a non-empty character value and have the ",
+           "same length than 'index'.",
+           call. = FALSE)
     }
+    # Calculates richness indices
+    richness <- BiocParallel::bplapply(index,
+                                       FUN = .get_richness_values,
+                                       mat = assay(x, assay.type),
+                                       detection = detection,
+                                       BPPARAM = BPPARAM)
+    # Add richness indices to colData
+    .add_values_to_colData(x, richness, name)
+  }
 )
 
-.estimate_richness <- function(
-        x,
-        assay.type = "counts",
-        index = c("ace", "chao1", "hill", "observed"),
-        name = index,
-        detection = 0,
-        ...) {
-    estimateRichness(x, assay.type = assay.type, index=index, name=name,
-                     detection=detection, ...)
-}
-
 .calc_observed <- function(mat, detection, ...){
-    # vegan::estimateR(t(mat))["S.obs",]
-    colSums(mat > detection)
+  # vegan::estimateR(t(mat))["S.obs",]
+  colSums(mat > detection)
 }
 
 .calc_chao1 <- function(mat, ...){
-    # Required to work with DelayedArray
-    if(is(mat, "DelayedArray")) {
-      mat <- matrix(mat, nrow = nrow(mat))
-    }
-
-    ans <- t(vegan::estimateR(t(mat))[c("S.chao1","se.chao1"),])
-    colnames(ans) <- c("","se")
-    ans
+  # Required to work with DelayedArray
+  if(is(mat, "DelayedArray")) {
+    mat <- matrix(mat, nrow = nrow(mat))
+  }
+  
+  ans <- t(vegan::estimateR(t(mat))[c("S.chao1","se.chao1"),])
+  colnames(ans) <- c("","se")
+  ans
 }
 
 .calc_ace <- function(mat, ...){
-    # Required to work with DelayedArray
-    if(is(mat, "DelayedArray")) {
-      mat <- matrix(mat, nrow = nrow(mat))
-    }
-
-    ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
-    colnames(ans) <- c("","se")
-    ans
+  # Required to work with DelayedArray
+  if(is(mat, "DelayedArray")) {
+    mat <- matrix(mat, nrow = nrow(mat))
+  }
+  
+  ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
+  colnames(ans) <- c("","se")
+  ans
 }
 
 .calc_hill <- function(mat, ...){
-    # Exponent of Shannon diversity
-    exp(vegan::diversity(t(mat), index="shannon"))
+  # Exponent of Shannon diversity
+  exp(vegan::diversity(t(mat), index="shannon"))
 }
 
 .get_richness_values <- function(index, mat, detection, ...) {
-
-    FUN <- switch(index,
+  
+  FUN <- switch(index,
                 observed = .calc_observed,
                 chao1 = .calc_chao1,
                 ace = .calc_ace,
                 hill = .calc_hill
-        )
-
-    FUN(mat = mat, detection = detection, ...)
-
+  )
+  
+  FUN(mat = mat, detection = detection, ...)
+  
 }
 

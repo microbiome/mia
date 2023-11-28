@@ -10,7 +10,7 @@ subsampleCounts(
   x,
   assay.type = assay_name,
   assay_name = "counts",
-  min_size = min(colSums2(assay(x))),
+  min_size = min(colSums2(assay(x, assay.type))),
   seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
   name = "subsampled",
@@ -22,7 +22,7 @@ subsampleCounts(
   x,
   assay.type = assay_name,
   assay_name = "counts",
-  min_size = min(colSums2(assay(x))),
+  min_size = min(colSums2(assay(x, assay.type))),
   seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
   name = "subsampled",
@@ -31,8 +31,7 @@ subsampleCounts(
 )
 }
 \arguments{
-\item{x}{A
-\code{SummarizedExperiment} object.}
+\item{x}{A \code{SummarizedExperiment} object.}
 
 \item{assay.type}{A single character value for selecting the
 \code{SummarizedExperiment} \code{assay} used for random subsampling.
@@ -77,6 +76,10 @@ we include the \code{subsampleCounts} function because there may be some
 instances where it can be useful.
 Note that the output of \code{subsampleCounts} is not the equivalent as the
 input and any result have to be verified with the original dataset.
+
+Subsampling/Rarefying may undermine downstream analyses and have unintended
+consequences. Therefore, make sure this normalization is appropriate for
+your data.
 }
 \examples{
 # When samples in TreeSE are less than specified min_size, they will be removed.

@@ -2,33 +2,17 @@
 % Please edit documentation in R/estimateRichness.R
 \name{estimateRichness}
 \alias{estimateRichness}
-\alias{estimateRichness,SummarizedExperiment-method}
+\alias{estimateRichness,ANY-method}
 \title{Estimate richness measures}
 \usage{
-estimateRichness(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  index = c("ace", "chao1", "hill", "observed"),
-  name = index,
-  detection = 0,
-  ...,
-  BPPARAM = SerialParam()
-)
+estimateRichness(x, ...)
 
-\S4method{estimateRichness}{SummarizedExperiment}(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  index = c("ace", "chao1", "hill", "observed"),
-  name = index,
-  detection = 0,
-  ...,
-  BPPARAM = SerialParam()
-)
+\S4method{estimateRichness}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
+
+\item{...}{additional parameters passed to \code{estimateRichness}}
 
 \item{assay.type}{the name of the assay used for calculation of the
 sample-wise estimates.}
@@ -46,8 +30,6 @@ stored in.}
 
 \item{detection}{a numeric value for selecting detection threshold
 for the abundances. The default detection threshold is 0.}
-
-\item{...}{additional parameters passed to \code{estimateRichness}}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}

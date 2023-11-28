@@ -2,92 +2,22 @@
 % Please edit documentation in R/estimateDiversity.R
 \name{estimateDiversity}
 \alias{estimateDiversity}
-\alias{estimateDiversity,SummarizedExperiment-method}
-\alias{estimateDiversity,TreeSummarizedExperiment-method}
+\alias{estimateDiversity,ANY-method}
 \alias{estimateFaith}
-\alias{estimateFaith,SummarizedExperiment,phylo-method}
-\alias{estimateFaith,TreeSummarizedExperiment,missing-method}
+\alias{estimateFaith,ANY-method}
 \title{Estimate (alpha) diversity measures}
 \usage{
-estimateDiversity(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
-    "log_modulo_skewness", "shannon"),
-  name = index,
-  ...
-)
+estimateDiversity(x, ...)
 
-\S4method{estimateDiversity}{SummarizedExperiment}(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  index = c("coverage", "fisher", "gini_simpson", "inverse_simpson",
-    "log_modulo_skewness", "shannon"),
-  name = index,
-  ...,
-  BPPARAM = SerialParam()
-)
+\S4method{estimateDiversity}{ANY}(x, ...)
 
-\S4method{estimateDiversity}{TreeSummarizedExperiment}(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  index = c("coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
-    "log_modulo_skewness", "shannon"),
-  name = index,
-  tree_name = "phylo",
-  ...,
-  BPPARAM = SerialParam()
-)
+estimateFaith(x, ...)
 
-estimateFaith(
-  x,
-  tree = "missing",
-  assay.type = "counts",
-  assay_name = NULL,
-  name = "faith",
-  ...
-)
-
-\S4method{estimateFaith}{SummarizedExperiment,phylo}(
-  x,
-  tree,
-  assay.type = "counts",
-  assay_name = NULL,
-  name = "faith",
-  node_lab = NULL,
-  ...
-)
-
-\S4method{estimateFaith}{TreeSummarizedExperiment,missing}(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  name = "faith",
-  tree_name = "phylo",
-  ...
-)
+\S4method{estimateFaith}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object or \code{\link{TreeSummarizedExperiment}}.
 The latter is recommended for microbiome data sets and tree-based alpha diversity indices.}
-
-\item{assay.type}{the name of the assay used for
-calculation of the sample-wise estimates.}
-
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
-
-\item{index}{a \code{character} vector, specifying the diversity measures
-to be calculated.}
-
-\item{name}{a name for the column(s) of the colData the results should be
-stored in. By default this will use the original names of the calculated
-indices.}
 
 \item{...}{optional arguments:
 \itemize{
@@ -107,22 +37,37 @@ rows that are not tips of tree are removed.
 (By default: \code{only.tips=FALSE})}
 }}
 
-\item{BPPARAM}{A
-\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether calculation of estimates should be parallelized.}
+\item{tree}{A phylogenetic tree that is used to calculate 'faith' index.
+If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is
+used by default.}
+
+\item{assay.type}{the name of the assay used for
+calculation of the sample-wise estimates.}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
+
+\item{index}{a \code{character} vector, specifying the diversity measures
+to be calculated.}
+
+\item{name}{a name for the column(s) of the colData the results should be
+stored in. By default this will use the original names of the calculated
+indices.}
 
 \item{tree_name}{a single \code{character} value for specifying which
 rowTree will be used to calculate faith index.
 (By default: \code{tree_name = "phylo"})}
 
-\item{tree}{A phylogenetic tree that is used to calculate 'faith' index.
-If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is
-used by default.}
-
 \item{node_lab}{NULL or a character vector specifying the links between rows and
 node labels of \code{tree}. If a certain row is not linked with the tree, missing
 instance should be noted as NA. When NULL, all the rownames should be found from
 the tree. (By default: \code{node_lab = NULL})}
+
+\item{BPPARAM}{A
+\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+object specifying whether calculation of estimates should be parallelized.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}

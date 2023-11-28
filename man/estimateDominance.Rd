@@ -2,39 +2,19 @@
 % Please edit documentation in R/estimateDominance.R
 \name{estimateDominance}
 \alias{estimateDominance}
-\alias{estimateDominance,SummarizedExperiment-method}
+\alias{estimateDominance,ANY-method}
 \title{Estimate dominance measures}
 \usage{
-estimateDominance(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  index = c("absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
-    "simpson_lambda"),
-  ntaxa = 1,
-  aggregate = TRUE,
-  name = index,
-  ...,
-  BPPARAM = SerialParam()
-)
+estimateDominance(x, ...)
 
-\S4method{estimateDominance}{SummarizedExperiment}(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  index = c("absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
-    "simpson_lambda"),
-  ntaxa = 1,
-  aggregate = TRUE,
-  name = index,
-  ...,
-  BPPARAM = SerialParam()
-)
+\S4method{estimateDominance}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object}
+
+\item{...}{additional arguments currently not used.}
 
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -64,8 +44,6 @@ relative abundance is returned for the single taxa with the indicated rank
 
 \item{name}{A name for the column(s) of the colData where the calculated
 Dominance indices should be stored in.}
-
-\item{...}{additional arguments currently not used.}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}

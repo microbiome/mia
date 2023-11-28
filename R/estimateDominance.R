@@ -227,33 +227,41 @@ NULL
 
 #' @rdname estimateDominance
 #' @export
-setGeneric("estimateDominance",signature = c("x"),
-           function(x,
-                    assay.type = assay_name, assay_name = "counts",
-                    index = c("absolute", "dbp", "core_abundance", "gini",
-                              "dmn", "relative", "simpson_lambda"),
-                    ntaxa = 1,
-                    aggregate = TRUE,
-                    name = index,
-                    ...,
-                    BPPARAM = SerialParam())
-               standardGeneric("estimateDominance"))
-
+setGeneric(
+    "estimateDominance", signature = c("x"),
+    function(x, ...) standardGeneric("estimateDominance"))
 
 #' @rdname estimateDominance
 #' @export
-setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
-    function(x,
-             assay.type = assay_name, assay_name = "counts",
-             index = c("absolute", "dbp", "core_abundance", "gini", "dmn", 
-                       "relative", "simpson_lambda"),
-             ntaxa = 1,
-             aggregate = TRUE,
-             name = index,
-             ...,
-             BPPARAM = SerialParam()){
-        .Deprecated(old="estimateDominance", new="estimateAlpha",
-                    "Now estimateDominance is deprecated. Use estimateAlpha instead.")
+setMethod(
+    "estimateDominance", signature = c(x="ANY"),
+    function(x, ...){
+        .Deprecated(
+            old = "estimateDominance", new = "estimateAlpha",
+            msg = paste0(
+                "Now estimateDominance is deprecated. Use estimateAlpha ",
+                "instead."))
+        .estimate_dominance(x, ...)
+    })
+
+setGeneric(
+    ".estimate_dominance",signature = c("x"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c(
+            "absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
+            "simpson_lambda"),
+        ntaxa = 1, aggregate = TRUE, name = index, BPPARAM = SerialParam(), ...)
+    standardGeneric(".estimate_dominance"))
+
+setMethod(".estimate_dominance", signature = c(x = "SummarizedExperiment"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c(
+            "absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
+            "simpson_lambda"),
+        ntaxa = 1, aggregate = TRUE, name = index, BPPARAM = SerialParam(),
+        ...){
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
@@ -284,19 +292,6 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 )
 
 #---------------------------Help functions--------------------------------------
-
-.estimate_dominance <- function(
-        x,
-        assay.type = "counts", 
-        index = c("absolute", "dbp", "core_abundance", "gini", "dmn",  "relative",
-                  "simpson_lambda"),
-        ntaxa = 1,
-        aggregate = TRUE,
-        name = index,
-        ...) {
-    estimateDominance(x, assay.type=assay.type, index=index, ntaxa=ntaxa,
-                      aggregate=aggregate, name=name, ...)
-}
 
 .gini_dominance <- function(x, w=rep(1, length(x))) {
     # See also reldist::gini for an independent implementation

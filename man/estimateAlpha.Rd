@@ -16,9 +16,9 @@ estimateAlpha(
     "pielou_evenness", "simpson_evenness", "evar_evenness", "bulla_evenness",
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
-  ...,
   n.iter = 10,
-  rarefaction.depth = NULL
+  rarefaction.depth = NULL,
+  ...
 )
 
 \S4method{estimateAlpha}{SummarizedExperiment}(
@@ -32,9 +32,9 @@ estimateAlpha(
     "pielou_evenness", "simpson_evenness", "evar_evenness", "bulla_evenness",
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
-  ...,
   n.iter = 10,
-  rarefaction.depth = NULL
+  rarefaction.depth = NULL,
+  ...
 )
 }
 \arguments{
@@ -48,15 +48,15 @@ to be calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be
 stored in. By default this will use the original names of the calculated
-indices(default: \code{name = index}).}
-
-\item{...}{optional arguments.}
+indices(By default: \code{name = index}).}
 
 \item{n.iter}{a single \code{integer} value for the number of rarefaction
-rounds(default: \code{n.iter = 10}).}
+rounds (By default: \code{n.iter = 10}).}
 
 \item{rarefaction.depth}{a \code{double} value as for the minimim size or
-rarefaction.depth. (default: \code{rarefaction.depth = NULL})}
+rarefaction.depth. (By default: \code{rarefaction.depth = NULL})}
+
+\item{...}{optional arguments.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named after the index
@@ -75,7 +75,7 @@ tse <- GlobalPatterns
 tse <- estimateAlpha(tse, assay.type = "counts", index = "shannon")
 
 # Shows the estimated Shannon index
-tse$shannon_diversity
+tse$shannon
 
 # Calculate observed richness with 10 rarefaction rounds
 tse <- estimateAlpha(tse, assay.type = "counts", index = "observed_richness",
