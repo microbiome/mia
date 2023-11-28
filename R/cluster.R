@@ -78,10 +78,11 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
         altexp <- se_altexp$altexp
         .check_data_name(se, clust.col, MARGIN)
         .check_assay_present(assay.type, se)
-        
-        if (full) {
-            .check_name(se, name)
+        if( !.is_a_string(name) ){
+            stop("'name' must be a non-empty single character value.",
+                 call. = FALSE)
         }
+        #
         mat <- assay(se, assay.type)
         
         # Transpose if clustering on the columns
@@ -93,7 +94,7 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
         # Getting the clusters and setting metadata
         if (full) {
             clusters <- result$clusters
-            metadata(se)[[name]] <- result$objects
+            se <- .add_values_to_metadata(se, name, result$objects)
         } else {
             clusters <- result
         }

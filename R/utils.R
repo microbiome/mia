@@ -171,9 +171,17 @@
 
 #' @importFrom S4Vectors metadata metadata<-
 .add_values_to_metadata <- function(x, names, values){
-    add_metadata <- as.list(values)
-    names(add_metadata) <- names
-    metadata(x) <- c(metadata(x), add_metadata)
+    # Check for duplicated values
+    f <- names(metadata) %in% names
+    if(any(f)) {
+      warning(
+        "The following values are already present in `metadata` and ",
+        "will be overwritten: '",
+        paste(names(metadata(x))[f], collapse = "', '"),
+        "'. Consider using the 'name' argument to specify alternative ",
+        "names.", call. = FALSE)
+    }
+    metadata[[names]] <- values
     x
 }
 
