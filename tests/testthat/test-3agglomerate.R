@@ -30,7 +30,7 @@ test_that("agglomerate", {
     expect_equal(assays(actual)$mat[3,1],c(c = 24))
     #
     expect_error(mergeFeaturesByRank(xtse,"",na.rm=FALSE),
-                 "'rank' must be an non empty single character value")
+                 "'rank' must be a non-empty single character value")
     expect_error(mergeFeaturesByRank(xtse,"Family",na.rm=""),
                  "'na.rm' must be TRUE or FALSE")
     expect_error(
@@ -46,12 +46,12 @@ test_that("agglomerate", {
     actual <- mergeFeaturesByRank(xtse,"Phylum",na.rm=FALSE)
     expect_equivalent(rowData(actual),rowData(actual_phylum))
     #
-    actual <- mergeFeaturesByRank(xtse,"Family", na.rm = TRUE)
+    actual <- mergeFeaturesByRank(xtse,"Family", onRankOnly = FALSE, na.rm = TRUE)
     expect_equal(dim(actual),c(6,10))
     expect_equal(rowData(actual)$Family,c("c","d","e","f","g","h"))
-    actual <- mergeFeaturesByRank(xtse,"Family", na.rm = FALSE) # the default
+    actual <- mergeFeaturesByRank(xtse,"Family", onRankOnly = FALSE, na.rm = FALSE) # the default
     expect_equal(dim(actual),c(8,10))
-    expect_equal(rowData(actual)$Family,c("c",NA,"d","e","f","g","h",NA))
+    expect_equal(rowData(actual)$Family,c("c","d","e","f","g","h",NA,NA))
     actual <- mergeFeaturesByRank(xtse,"Phylum")
     expect_equivalent(rowData(actual),rowData(actual_phylum))
     #
@@ -64,19 +64,19 @@ test_that("agglomerate", {
     # the same dimensionality is retained
     data(enterotype, package="mia")
     expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
-                 nrow(mergeFeaturesByRank(enterotype,"Genus")))
+                 nrow(mergeFeaturesByRank(enterotype,"Genus", onRankOnly = FALSE)))
 
     # agglomeration in all its forms
     data(GlobalPatterns, package="mia")
     se <- GlobalPatterns
-    actual <- mergeFeaturesByRank(se, rank = "Family")
+    actual <- mergeFeaturesByRank(se, rank = "Family", onRankOnly = FALSE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
                  length(rowTree(se)$tip.label))
-    actual <- mergeFeaturesByRank(se, rank = "Family", agglomerate.tree = TRUE)
+    actual <- mergeFeaturesByRank(se, rank = "Family", onRankOnly = FALSE, agglomerate.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), 603)
-    actual <- mergeFeaturesByRank(se, rank = "Family", agglomerate.tree = TRUE)
+    actual <- mergeFeaturesByRank(se, rank = "Family", onRankOnly = FALSE, agglomerate.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), nrow(actual))
     # Test that warning occurs when assay contian binary or negative values

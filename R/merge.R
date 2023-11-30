@@ -52,32 +52,41 @@
 
 #' @importFrom S4Vectors SimpleList
 #' @importFrom scuttle sumCountsAcrossFeatures
-.merge_rows <- function(x, f, archetype = 1L, 
+.merge_rows <- function(x, f, archetype = 1L,
+                        na.rm = FALSE,
                         average = FALSE,
                         BPPARAM = SerialParam(),
                         check.assays = TRUE,
                         ...){
     # input check
+    if(!.is_a_bool(na.rm)){
+        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
     if( !.is_a_bool(check.assays) ){
         stop("'check.assays' must be TRUE or FALSE.", call. = FALSE)
     }
-    #
+
+    # This is done otherwise we lose NA values
+    if ( na.rm ) {
+        f[is.na(f)] <- "NA"
+    }
     if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
         f <- factor(as.character(rowData(x)[, f]))
     }
     else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
+        f[is.na(f)] <- "NA"
         f <- factor(as.character(colData(x)[, f]))
-    } else 
+    } else
     {
-        f <- .norm_f(nrow(x), f)  
+        f <- .norm_f(nrow(x), f)
     }
     if(length(levels(f)) == nrow(x)){
         return(x)
     }
-    
+
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)
@@ -86,8 +95,8 @@
     }
     assays <- S4Vectors::SimpleList(lapply(assays,
                                             scuttle::sumCountsAcrossFeatures,
-                                            ids = f, 
-                                            subset.row = NULL, 
+                                            ids = f,
+                                            subset.row = NULL,
                                             subset.col = NULL,
                                             average = average,
                                             BPPARAM = BPPARAM))
@@ -95,7 +104,7 @@
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]
     assays(x, withDimnames = FALSE) <- assays
-    # Change rownames to group names 
+    # Change rownames to group names
     rownames(x) <- rownames(assays[[1]])
     x
 }
@@ -105,7 +114,7 @@
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
         warning("'",assay.type,"'", " includes binary values.",
-                "\nAgglomeration of it might lead to meaningless values.", 
+                "\nAgglomeration of it might lead to meaningless values.",
                 "\nCheck the assay, and consider doing transformation again",
                 "manually with agglomerated data.",
                 call. = FALSE)
@@ -121,16 +130,24 @@
 
 #' @importFrom S4Vectors SimpleList
 #' @importFrom scuttle summarizeAssayByGroup
-.merge_cols <- function(x, f, archetype = 1L, ...){
+.merge_cols <- function(x, f, archetype = 1L, na.rm = FALSE, ...){
     # input check
+    if(!.is_a_bool(na.rm)){
+        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # This is done otherwise we lose NA values
+    if ( na.rm ) {
+        f[is.na(f)] <- "NA"
+    }
     if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
         f <- factor(as.character(rowData(x)[, f]))
     }
     else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
+        f[is.na(f)] <- "NA"
         f <- factor(as.character(colData(x)[, f]))
-    } else 
+    } else
     {
-        f <- .norm_f(ncol(x), f, "columns")  
+        f <- .norm_f(ncol(x), f, "columns")
     }
     if(length(levels(f)) == ncol(x)){
         return(x)
@@ -152,15 +169,15 @@
     }
     assays <- S4Vectors::SimpleList(lapply(assays,
                                             FUN = FUN,
-                                            ids = f, 
-                                            subset.row = NULL, 
+                                            ids = f,
+                                            subset.row = NULL,
                                             subset.col = NULL,
                                             ...))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[,.get_element_pos(f, archetype = archetype)]
     assays(x, withDimnames = FALSE) <- assays
-    # Change colnames to group names 
+    # Change colnames to group names
     colnames(x) <- colnames(assays[[1]])
     x
 }
@@ -198,7 +215,7 @@
     seq
 }
 
-.merge_rows_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE, 
+.merge_rows_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE,
                             mergeRefSeq = FALSE, ...){
     # input check
     if(!.is_a_bool(mergeTree)){

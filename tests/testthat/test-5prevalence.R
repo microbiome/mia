@@ -104,13 +104,13 @@ test_that("getPrevalence", {
     remove <- c(15, 200)
     assay(tse, "counts")[remove, ] <- NA
     # Check that agglomeration works
-    tse_agg <- agglomerateByRank(tse, rank = rank)
+    tse_agg <- agglomerateByRank(tse, onRankOnly = FALSE, rank = rank)
     expect_warning(ref <- getPrevalence(tse_agg, na.rm = FALSE))
-    expect_warning(res <- getPrevalence(tse, na.rm = FALSE, rank = "Genus"))
+    expect_warning(res <- getPrevalence(tse, onRankOnly = FALSE, na.rm = FALSE, rank = "Genus"))
     expect_true( all(res == ref, na.rm = TRUE) )
     #
     expect_warning(ref <- getPrevalence(tse_agg, na.rm = TRUE))
-    expect_warning(res <- getPrevalence(tse, na.rm = TRUE, rank = "Genus"))
+    expect_warning(res <- getPrevalence(tse, onRankOnly = FALSE, na.rm = TRUE, rank = "Genus"))
     expect_true( all(res == ref, na.rm = TRUE) )
 })
 
@@ -374,7 +374,7 @@ test_that("mergeFeaturesByPrevalence", {
     data(GlobalPatterns, package="mia")
     expect_error(mergeFeaturesByPrevalence(GlobalPatterns, other_label=TRUE),
                  "'other_label' must be a single character value")
-    actual <- mergeFeaturesByPrevalence(GlobalPatterns)
+    actual <- mergeFeaturesByPrevalence(GlobalPatterns, rank = "Kingdom")
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(2,26))
 

@@ -239,7 +239,7 @@ altExp(tse, "rare")
 # Names of both experiments, prevalent and rare, can be found from slot
 # altExpNames
 tse
-                         
+
 data(esophagus)
 getPrevalentAbundance(esophagus, assay.type = "counts")
 

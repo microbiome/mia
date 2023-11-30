@@ -29,7 +29,7 @@ agglomerateByVariable(x, ...)
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  onRankOnly = FALSE,
+  onRankOnly = TRUE,
   na.rm = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
@@ -292,8 +292,8 @@ nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
 
-# If assay contains binary or negative values, summing might lead to 
-# meaningless values, and you will get a warning. In these cases, you might 
+# If assay contains binary or negative values, summing might lead to
+# meaningless values, and you will get a warning. In these cases, you might
 # want to do agglomeration again at chosen taxonomic level.
 tse <- transformAssay(GlobalPatterns, method = "pa")
 tse <- agglomerateByRank(tse, rank = "Genus")
@@ -304,8 +304,8 @@ sum(is.na(rowData(GlobalPatterns)$Family))
 x3 <- agglomerateByRank(GlobalPatterns, rank="Family", na.rm = TRUE)
 nrow(x3) # different from x2
 
-# Because all the rownames are from the same rank, rownames do not include 
-# prefixes, in this case "Family:". 
+# Because all the rownames are from the same rank, rownames do not include
+# prefixes, in this case "Family:".
 print(rownames(x3[1:3,]))
 
 # To add them, use getTaxonomyLabels function.
@@ -313,7 +313,7 @@ rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
 print(rownames(x3[1:3,]))
 
 # use 'remove_empty_ranks' to remove columns that include only NAs
-x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", 
+x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum",
                         remove_empty_ranks = TRUE)
 head(rowData(x4))
 
@@ -343,13 +343,13 @@ plot(rowTree(esophagus))
 # get a factor for merging
 f <- factor(regmatches(rownames(esophagus),
                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f, 
+merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f,
                                 mergeTree = TRUE)
 plot(rowTree(merged))
 #
 data(GlobalPatterns)
 GlobalPatterns
-merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols", 
+merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols",
                                 colData(GlobalPatterns)$SampleType)
 merged
 ## Data can be aggregated based on prevalent taxonomic results
@@ -363,9 +363,9 @@ tse <- agglomerateByPrevalence(tse,
 tse
 
 # Here data is aggregated at the taxonomic level "Phylum". The five phyla
-# that exceed the population prevalence threshold of 50/100 represent the 
+# that exceed the population prevalence threshold of 50/100 represent the
 # five first rows of the assay in the aggregated data. The sixth and last row
-# named by default "Other" takes the summed up values of all the other phyla 
+# named by default "Other" takes the summed up values of all the other phyla
 # that are below the prevalence threshold.
 
 assay(tse)[,1:5]
