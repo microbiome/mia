@@ -308,6 +308,27 @@ setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
         } else {
             exp2 <- experiment2
         }
+        
+        # Add colnames if not defined
+        if (is.null(colnames(exp1))) {
+            colnames(exp1) <- paste("c", seq_len(ncol(exp1)), sep = "")
+            warning("Colnames not defined; arbitrary colnames added in experiment1")
+        }
+        if (is.null(colnames(exp2))) {
+            colnames(exp2) <- paste("c", seq_len(ncol(exp2)), sep = "")
+            warning("Colnames not defined; arbitrary colnames added in experiment2")
+        }
+        
+        # Add rownames if not defined
+        if (is.null(rownames(exp1))) {
+            rownames(exp1) <- paste("r", seq_len(nrow(exp1)), sep = "")
+            warning("Rownames not defined; arbitrary rownames added in experiment1")
+        }
+        if (is.null(rownames(exp2))) {
+            rownames(exp2) <- paste("r", seq_len(nrow(exp2)), sep = "")
+            warning("Rownames not defined; arbitrary rownames added in experiment2")
+        }
+        
         # Create a MAE
         experiments <- ExperimentList(exp1 = exp1, exp2 = exp2)
         exp2_num <- 2
