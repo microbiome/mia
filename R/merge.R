@@ -16,6 +16,11 @@
 #'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
 #'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 #'   returned unchanged.
+#'   
+#' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
+#'   removed? Use it with caution, since empty entries on the selected rank
+#'   will be dropped. This setting can be tweaked by defining
+#'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
 #'
 #' @param archetype Of each level of \code{f}, which element should be regarded
 #'   as the archetype and metadata in the columns or rows kept, while merging?
@@ -158,12 +163,16 @@ setGeneric("mergeSamples",
 
 #' @importFrom S4Vectors SimpleList
 #' @importFrom scuttle sumCountsAcrossFeatures
-.merge_rows <- function(x, f, archetype = 1L, 
+.merge_rows <- function(x, f, archetype = 1L,
+                        na.rm = FALSE,
                         average = FALSE,
                         BPPARAM = SerialParam(),
                         check.assays = TRUE,
                         ...){
     # input check
+    if(!.is_a_bool(na.rm)){
+        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
@@ -171,6 +180,17 @@ setGeneric("mergeSamples",
         stop("'check.assays' must be TRUE or FALSE.", call. = FALSE)
     }
     #
+    # Make a vector from the taxonomic data.
+    rank <- taxonomyRanks(x)[1]
+    col <- which( taxonomyRanks(x) %in% rank )
+    tax_cols <- .get_tax_cols_from_se(x)
+    
+    # if na.rm is TRUE, remove the empty, white-space, NA values from
+    # tree will be pruned later.
+    if( na.rm ){
+        x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
+                                               empty.fields)
+    }
     if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
         f <- factor(as.character(rowData(x)[, f]))
     }
