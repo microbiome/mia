@@ -51,28 +51,27 @@ test_that("perSampleDominantFeatures", {
         assay(tse1)[1, 1] <- max(assay(tse1)[, 1])
         
         # Get dominant taxa
-        dominant_taxa <- perSampleDominantFeatures(tse)
-        dominant_taxa1 <- perSampleDominantFeatures(tse1)
+        dominant_taxa <- perSampleDominantFeatures(tse, complete = TRUE)
+        dominant_taxa1 <- perSampleDominantFeatures(tse1, complete = TRUE)
         
-        # dominant_taxa1 should have one additioal element
-        expect_equal( length(dominant_taxa1), length(dominant_taxa)+1 )
-        
-        # Remove additional dominant taxa
-        dominant_taxa1_removed <- dominant_taxa1[ !(names(dominant_taxa1) == colnames(tse1)[1] & 
-                                                dominant_taxa1 == rownames(tse1)[1]) ] 
-        # Now they should be equal
-        expect_equal(dominant_taxa1_removed, dominant_taxa)
+        # dominant_taxa1 should have one additional element
+        expect_equal( length(unlist(dominant_taxa1)), length(dominant_taxa)+1)
         
         # Add dominant taxa to colData and check that it equals to dominant taxa
         # that is got by perSampleDominantFeatures
-        add_dom1 <- unlist(colData(addPerSampleDominantFeatures(tse1))$dominant_taxa)
-        expect_equal(unname(add_dom1), unname(dominant_taxa1))
+        add_dom <- unlist(colData(addPerSampleDominantFeatures(tse, complete = FALSE))$dominant_taxa)
+        dominant_taxa <- perSampleDominantFeatures(tse, complete = FALSE)
+        expect_equal(unname(add_dom), unname(dominant_taxa))
         
         # Test alias
-        alias <- unlist(colData(addPerSampleDominantFeatures(tse1))$dominant_taxa)
-        expect_equal(unname(add_dom1), unname(alias))
-        alias <- perSampleDominantFeatures(tse1)
-        expect_equal(alias, dominant_taxa1)
+        alias <- unlist(colData(addPerSampleDominantFeatures(tse))$dominant_taxa)
+        expect_equal(unname(add_dom), unname(alias))
+        alias <- perSampleDominantFeatures(tse)
+        expect_equal(alias, dominant_taxa)
+        
+        # Test that chosen dominant taxon is included in the list of dominant taxa for those samples with multiple dominant taxa
+        add_dom <- unlist(colData(addPerSampleDominantFeatures(tse1, complete = FALSE))$dominant_taxa)
+        expect_true(add_dom[[1]] %in% dominant_taxa1[[1]])
     }
 
     # TSE object
@@ -113,14 +112,18 @@ test_that("perSampleDominantFeatures", {
             count_dominant <- countDominantFeatures(tse)
             count_dominant1 <- countDominantFeatures(tse1)
             
-            # count_dominant should have one additional row
-            expect_equal( nrow(count_dominant1), nrow(count_dominant)+1 )
+            # count_dominant1 should have one extra row, since there are more dominant taxa
+            expect_equal( nrow(count_dominant1), nrow(count_dominant) + 1)
             
-            # Remove additional dominant taxa
-            count_dominant1 <- count_dominant1[ !count_dominant1$dominant_taxa == rownames(tse1)[1], ]
             
-            # Now the order of taxa should be equal
-            expect_equal(count_dominant1$dominant_taxa, count_dominant$dominant_taxa)
+            # Test if dominant taxa list with only one dominant taxon is included in the list that have multiple for one sample
+            expect_true(count_dominant$dominant_taxa[1] %in% count_dominant1$dominant_taxa)
+            
+            # Now the row lengths should be equal
+            count_dominant <- countDominantFeatures(tse, complete = F)
+            count_dominant1 <- countDominantFeatures(tse1, complete = F)
+            
+            expect_equal(nrow(count_dominant1), nrow(count_dominant))
 
         }
 

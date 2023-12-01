@@ -16,6 +16,9 @@ perSampleDominantFeatures(
   assay.type = assay_name,
   assay_name = "counts",
   rank = NULL,
+  other_name = "Other",
+  n = NULL,
+  complete = FALSE,
   ...
 )
 
@@ -24,6 +27,9 @@ perSampleDominantFeatures(
   assay.type = assay_name,
   assay_name = "counts",
   rank = NULL,
+  other_name = "Other",
+  n = NULL,
+  complete = TRUE,
   ...
 )
 
@@ -31,9 +37,22 @@ perSampleDominantTaxa(x, ...)
 
 \S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, ...)
 
-addPerSampleDominantFeatures(x, name = "dominant_taxa", ...)
+addPerSampleDominantFeatures(
+  x,
+  name = "dominant_taxa",
+  other_name = "Other",
+  n = NULL,
+  ...
+)
 
-\S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(x, name = "dominant_taxa", ...)
+\S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(
+  x,
+  name = "dominant_taxa",
+  other_name = "Other",
+  n = NULL,
+  complete = FALSE,
+  ...
+)
 
 addPerSampleDominantTaxa(x, ...)
 
@@ -55,6 +74,10 @@ will be disabled.)}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomyRanks()}.}
+
+\item{n}{}
+
+\item{complete}{}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified.}
