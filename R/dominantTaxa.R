@@ -23,11 +23,20 @@
 #' @param name A name for the column of the \code{colData} where the dominant
 #'   taxa will be stored in when using \code{addPerSampleDominantFeatures}.
 #'   
-#' @param other.name
+#' @param other.name A name for features that are not n the most abundant in the data.
+#' Default is "Other".
 #' 
-#' @param n
+#' @param n The number of features that are included in the most dominant in the data.
+#' Default is NULL, which defaults that each sample is assigned a dominant taxon that
+#' is not dependent on the most dominant taxa in the data.
 #' 
-#' @param complete
+#' @param complete A boolean value to manage multiple dominant taxa for a sample.
+#' Default for perSampleDominantTaxa is TRUE to include all equally dominant taxa
+#' for each sample. complete = FALSE samples one taxa for the samples that have 
+#' multiple. 
+#' Default for addPerSampleDominantTaxa is FALSE to add a column with only one 
+#' dominant taxon assigned for each sample into colData. complete = TRUE adds a
+#' list that includes all dominant taxa for each sample into colData.
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
 #' \code{rank} is specified.

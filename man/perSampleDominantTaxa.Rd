@@ -75,11 +75,20 @@ will be disabled.)}
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomyRanks()}.}
 
-\item{other.name}{}
+\item{other.name}{A name for features that are not n the most abundant in the data.
+Default is "Other".}
 
-\item{n}{}
+\item{n}{The number of features that are included in the most dominant in the data.
+Default is NULL, which defaults that each sample is assigned a dominant taxon that
+is not dependent on the most dominant taxa in the data.}
 
-\item{complete}{}
+\item{complete}{A boolean value to manage multiple dominant taxa for a sample.
+Default for perSampleDominantTaxa is TRUE to include all equally dominant taxa
+for each sample. complete = FALSE samples one taxa for the samples that have
+multiple.
+Default for addPerSampleDominantTaxa is FALSE to add a column with only one
+dominant taxon assigned for each sample into colData. complete = TRUE adds a
+list that includes all dominant taxa for each sample into colData.}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified.}
