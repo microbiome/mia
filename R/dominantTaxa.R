@@ -23,7 +23,7 @@
 #' @param name A name for the column of the \code{colData} where the dominant
 #'   taxa will be stored in when using \code{addPerSampleDominantFeatures}.
 #'   
-#' @param complete 
+#' @param other.name
 #' 
 #' @param n
 #' 
@@ -70,7 +70,7 @@ NULL
 #' @export
 setGeneric("perSampleDominantFeatures",signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
-                    rank = NULL, other_name = "Other", n = NULL, complete = FALSE, ...)
+                    rank = NULL, other.name = "Other", n = NULL, complete = FALSE, ...)
                standardGeneric("perSampleDominantFeatures"))
 
 #' @rdname perSampleDominantTaxa
@@ -79,7 +79,7 @@ setGeneric("perSampleDominantFeatures",signature = c("x"),
 #' @export
 setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-             rank = NULL, other_name = "Other", n = NULL, complete = TRUE, ...){
+             rank = NULL, ...){
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
@@ -113,7 +113,7 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
         
         # If individual sample contains multiple dominant taxa (they have equal counts) and if 
         # complete is FALSE, the an arbitrarily chosen dominant taxa is returned
-        if( length(taxa) > nrow(colData(x))){
+        if( length(taxa) > ncol(x) & !complete) {
             # Store order
             order <- unique(names(taxa))
             # there are multiple dominant taxa in one sample (counts are equal), length
@@ -121,39 +121,33 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
             taxa <- split(taxa, rep(names(taxa), lengths(taxa)) )
             # Order the data
             taxa <- taxa[order]
-            
+            names <- names(taxa)
             # If complete is set FALSE, and there are multiple dominant taxa, one of them is arbitrarily chosen
-            if( complete == FALSE) {
-                # Randomly choose one element from each sublist
-                taxa <- lapply(taxa, function(item) {
-                                if (length(item) > 1) {
-                                # If it's a list with more than one element, choose one randomly
-                                    return(sample(item, 1))
-                                } else {
-                                    return(item)
-                                }
-                            })
-                taxa <- unname(sapply(taxa, function (x) {unlist(x)}))
-                warning("Multiple dominant taxa were found for some samples. Run perSampleDominantFeatures(x, complete = TRUE) for details.")
-            }
-        }     
+            taxa <- lapply(taxa, function(item) {
+                        return(sample(item, 1)) })
+            taxa <- unname(sapply(taxa, function (x) {
+                        unlist(x)}))
+            names(taxa) <- names
+            warning("Multiple dominant taxa were found for some samples. Run perSampleDominantFeatures(x, complete = TRUE) for details.")
+        }
         
         # Name "Other" the features that are not included in n the most abundant in the data
         if(!is.null(n)) {
             flat_taxa <- unlist(taxa, recursive = TRUE)
-            top <- microbiome::top(flat_taxa, n=n)
+            top <- top(flat_taxa, n=n)
+            top <- names(top)
             # Group the rest into the "Other" category
-            
-            # complete parameter defines the output format
-            if (complete) { # return a list
-                taxa <- lapply(taxa, function(item) {
-                        replace <- !(item %in% names(top))
-                        item[replace] <- other_name
-                        return(item)
-                })
-            } else { # return a vector
-                taxa[!taxa %in% names(top)] <- other_name
-                taxa <- unname(sapply(taxa, function (x) {unlist(x)}))
+            taxa <- lapply(taxa, function(x){
+                ind <- sapply(x, function(y) y %in% top)
+                if( any(ind) ){
+                    res <- x[ ind ]
+                } else{
+                    res <- other.name
+                }
+                return(res)
+            })
+            if( all(lengths(taxa) == 1 ) ){
+                taxa <- unlist(taxa)
             }
         }
         return(taxa)
@@ -181,32 +175,35 @@ setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
 #' @aliases addPerSampleDominantTaxa
 #' @export
 setGeneric("addPerSampleDominantFeatures", signature = c("x"),
-           function(x, name = "dominant_taxa", other_name = "Other", n = NULL, ...)
+           function(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
                standardGeneric("addPerSampleDominantFeatures"))
 
 #' @rdname perSampleDominantTaxa
 #' @aliases addPerSampleDominantTaxa
 #' @export
 setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
-    function(x, name = "dominant_taxa", other_name = "Other", n = NULL, complete = FALSE, ...) {
+    function(x, name = "dominant_taxa", other.name = "Other", n = NULL, complete = FALSE, ...) {
         # name check
         if(!.is_non_empty_string(name)){
             stop("'name' must be a non-empty single character value.",
                  call. = FALSE)
         }
-        # other_name check
-        if(!.is_non_empty_string(other_name)){
-            stop("'other_name' must be a non-empty single character value.",
+        # other.name check
+        if(!.is_non_empty_string(other.name)){
+            stop("'other.name' must be a non-empty single character value.",
                  call. = FALSE)
         }
-        if(complete) {
-            warning("Multiple dominant taxa are not allowed for samples. Run perSampleDominantFeatures(x, complete = TRUE) for details. ")
-            complete <- FALSE
-        }
+        # if(complete) {
+        #     warning("Multiple dominant taxa are not allowed for samples. Run perSampleDominantFeatures(x, complete = TRUE) for details. ")
+        #     complete <- FALSE
+        # }
         # complete must be FALSE to fit the dominant feature vector in colData
-        dom.taxa <- perSampleDominantFeatures(x, other_name = other_name, n = n, complete = complete, ...)
-        
-        colData(x)[[name]] <- dom.taxa
+        dom.taxa <- perSampleDominantFeatures(x, other.name = other.name, n = n, complete = complete, ...)
+        grouped <- list()
+        for (n in unique(names(dom.taxa))) {
+            grouped[[n]] <- dom.taxa[names(dom.taxa) == n]
+        }
+        colData(x)[[name]] <- grouped
         return(x)
     }
 )
@@ -227,3 +224,62 @@ setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
             addPerSampleDominantFeatures(x, ...)
         }
 )
+
+
+########################## HELP FUNCTIONS summary ##############################
+
+# top entries in a vector or given field in a data frame
+# from microbiome package
+
+top <- function (x, field = NULL, n = NULL, output = "vector", round = NULL, na.rm = FALSE, include.rank = FALSE) {
+    if (is.factor(x)) {
+        x <- as.character(x)
+    } 
+    if (is.vector(x)) {
+        if (na.rm) {
+            inds <- which(x == "NA")
+            if (length(inds) > 0) {
+                x[inds] <- NA
+                warning(paste("Interpreting NA string as missing value NA. 
+            Removing", length(inds), "entries"))
+            }
+            x <- x[!is.na(x)]
+        }
+        s <- rev(sort(table(x)))
+        N <- length(x)
+    } else if (is.data.frame(x) || is.matrix(x)) {
+        if (is.null(field)) {
+            return(NULL)
+        }
+        x <- x[, field]
+        if (na.rm) {
+            inds <- which(x == "NA")
+            if (length(inds) > 0) {
+                x[inds] <- NA
+                warning(
+                    paste("Interpreting NA string as missing value NA. Removing",
+                          length(inds), "entries"))
+            }
+            x <- x[!is.na(x)]
+        }
+        N <- length(x)
+        s <- rev(sort(table(x)))
+    } 
+    if (!is.null(n)) {
+        s <- s[seq_len(min(n, length(s)))]
+    } 
+    if (output == "data.frame") {
+        s <- data_frame(name = names(s),
+                        n = unname(s),
+                        fraction = 100*unname(s)/N)
+        if (is.null(field)) {field <- "Field"}
+        names(s) <- c(field, "Entries (N)", "Fraction (%)")
+        if (!is.null(round)) {
+            s[,3] = round(s[,3], round)
+        } 
+        if (include.rank) {
+            s <- cbind(Rank = seq_len(nrow(s)), s)
+        } 
+    }
+    s
+}
