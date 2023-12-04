@@ -70,8 +70,8 @@ test_that("perSampleDominantFeatures", {
         expect_equal(alias, dominant_taxa)
         
         # Test that chosen dominant taxon is included in the list of dominant taxa for those samples with multiple dominant taxa
-        add_dom <- unlist(colData(addPerSampleDominantFeatures(tse1, complete = FALSE))$dominant_taxa)
-        expect_true(add_dom[[1]] %in% dominant_taxa1[[1]])
+        expect_warning(add_dom <- unlist(colData(addPerSampleDominantFeatures(tse1, complete = FALSE))$dominant_taxa))
+        expect_true(add_dom[[1]] %in% dominant_taxa1)
     }
 
     # TSE object
@@ -121,7 +121,7 @@ test_that("perSampleDominantFeatures", {
             
             # Now the row lengths should be equal
             count_dominant <- countDominantFeatures(tse, complete = F)
-            count_dominant1 <- countDominantFeatures(tse1, complete = F)
+            expect_warning(count_dominant1 <- countDominantFeatures(tse1, complete = F))
             
             expect_equal(nrow(count_dominant1), nrow(count_dominant))
 

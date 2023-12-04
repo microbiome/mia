@@ -16,9 +16,9 @@ perSampleDominantFeatures(
   assay.type = assay_name,
   assay_name = "counts",
   rank = NULL,
-  other_name = "Other",
+  other.name = "Other",
   n = NULL,
-  complete = FALSE,
+  complete = TRUE,
   ...
 )
 
@@ -27,7 +27,7 @@ perSampleDominantFeatures(
   assay.type = assay_name,
   assay_name = "counts",
   rank = NULL,
-  other_name = "Other",
+  other.name = "Other",
   n = NULL,
   complete = TRUE,
   ...
@@ -40,7 +40,7 @@ perSampleDominantTaxa(x, ...)
 addPerSampleDominantFeatures(
   x,
   name = "dominant_taxa",
-  other_name = "Other",
+  other.name = "Other",
   n = NULL,
   ...
 )
@@ -48,7 +48,7 @@ addPerSampleDominantFeatures(
 \S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(
   x,
   name = "dominant_taxa",
-  other_name = "Other",
+  other.name = "Other",
   n = NULL,
   complete = FALSE,
   ...
@@ -74,6 +74,8 @@ will be disabled.)}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomyRanks()}.}
+
+\item{other.name}{}
 
 \item{n}{}
 

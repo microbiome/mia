@@ -70,16 +70,16 @@ NULL
 #' @export
 setGeneric("perSampleDominantFeatures",signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
-                    rank = NULL, other.name = "Other", n = NULL, complete = FALSE, ...)
+                    rank = NULL, other.name = "Other", n = NULL, complete = TRUE, ...)
                standardGeneric("perSampleDominantFeatures"))
 
 #' @rdname perSampleDominantTaxa
 #' @aliases perSampleDominantTaxa
-#' @importFrom IRanges relist microbiome
+#' @importFrom IRanges relist
 #' @export
 setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-             rank = NULL, ...){
+             rank = NULL, other.name = "Other", n = NULL, complete = TRUE, ...){
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
@@ -199,11 +199,16 @@ setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperimen
         # }
         # complete must be FALSE to fit the dominant feature vector in colData
         dom.taxa <- perSampleDominantFeatures(x, other.name = other.name, n = n, complete = complete, ...)
-        grouped <- list()
-        for (n in unique(names(dom.taxa))) {
-            grouped[[n]] <- dom.taxa[names(dom.taxa) == n]
+        
+        # Add list into colData if complete = TRUE
+        if(complete) {
+            grouped <- list()
+            for (n in unique(names(dom.taxa))) {
+                grouped[[n]] <- dom.taxa[names(dom.taxa) == n]
+            }
+            dom.taxa <- grouped
         }
-        colData(x)[[name]] <- grouped
+        colData(x)[[name]] <- dom.taxa
         return(x)
     }
 )
