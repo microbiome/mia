@@ -23,12 +23,11 @@
 #' @param name A name for the column of the \code{colData} where the dominant
 #'   taxa will be stored in when using \code{addPerSampleDominantFeatures}.
 #'   
-#' @param other.name A name for features that are not n the most abundant in the data.
-#' Default is "Other".
+#' @param other.name A name for features that are not included in n the most frequent 
+#' dominant features in the data. Default is "Other".
 #' 
-#' @param n The number of features that are included in the most dominant in the data.
-#' Default is NULL, which defaults that each sample is assigned a dominant taxon that
-#' is not dependent on the most dominant taxa in the data.
+#' @param n The number of features that are the most frequent dominant features.
+#' Default is NULL, which defaults that each sample is assigned a dominant taxon.
 #' 
 #' @param complete A boolean value to manage multiple dominant taxa for a sample.
 #' Default for perSampleDominantTaxa is TRUE to include all equally dominant taxa
@@ -102,7 +101,7 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
         }
         # If "rank" is not NULL, species are aggregated according to the
         # taxonomic rank that is specified by user.
-        if (!is.null(rank)) {
+        if(!is.null(rank)){
             x <- agglomerateByRank(x, rank, ...)
             mat <- assay(x, assay.type)
         } # Otherwise, if "rank" is NULL, abundances are stored without ranking
@@ -122,7 +121,7 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
         
         # If individual sample contains multiple dominant taxa (they have equal counts) and if 
         # complete is FALSE, the an arbitrarily chosen dominant taxa is returned
-        if( length(taxa) > ncol(x) && !complete) {
+        if( length(taxa)>ncol(x) && !complete){
             # Store order
             order <- unique(names(taxa))
             # there are multiple dominant taxa in one sample (counts are equal), length
@@ -141,7 +140,7 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
         }
         
         # Name "Other" the features that are not included in n the most abundant in the data
-        if(!is.null(n)) {
+        if(!is.null(n)){
             flat_taxa <- unlist(taxa, recursive = TRUE)
             top <- top(flat_taxa, n=n)
             top <- names(top)
@@ -155,7 +154,7 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
                 }
                 return(res)
             })
-            if( all(lengths(taxa) == 1 ) ){
+            if ( all(lengths(taxa) == 1 ) ){
                 taxa <- unlist(taxa)
             }
         }
@@ -238,57 +237,21 @@ setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
 ########################## HELP FUNCTIONS summary ##############################
 
 # top entries in a vector or given field in a data frame
-# from microbiome package
-
-top <- function (x, field = NULL, n = NULL, output = "vector", round = NULL, na.rm = FALSE, include.rank = FALSE) {
-    if (is.factor(x)) {
-        x <- as.character(x)
-    } 
-    if (is.vector(x)) {
-        if (na.rm) {
-            inds <- which(x == "NA")
-            if (length(inds) > 0) {
-                x[inds] <- NA
-                warning(paste("Interpreting NA string as missing value NA. 
-            Removing", length(inds), "entries"))
-            }
-            x <- x[!is.na(x)]
+.top <- function(x, n = NULL, na.rm = FALSE) { # output = "vector",  round = NULL, include.rank = FALSE
+    if (na.rm){
+        inds <- which(x == "NA")
+        if (length(inds) > 0){
+            x[inds] <- NA
+            warning(paste("Interpreting NA string as missing value NA. 
+        Removing", length(inds), "entries"))
         }
-        s <- rev(sort(table(x)))
-        N <- length(x)
-    } else if (is.data.frame(x) || is.matrix(x)) {
-        if (is.null(field)) {
-            return(NULL)
-        }
-        x <- x[, field]
-        if (na.rm) {
-            inds <- which(x == "NA")
-            if (length(inds) > 0) {
-                x[inds] <- NA
-                warning(
-                    paste("Interpreting NA string as missing value NA. Removing",
-                          length(inds), "entries"))
-            }
-            x <- x[!is.na(x)]
-        }
-        N <- length(x)
-        s <- rev(sort(table(x)))
-    } 
-    if (!is.null(n)) {
-        s <- s[seq_len(min(n, length(s)))]
-    } 
-    if (output == "data.frame") {
-        s <- data_frame(name = names(s),
-                        n = unname(s),
-                        fraction = 100*unname(s)/N)
-        if (is.null(field)) {field <- "Field"}
-        names(s) <- c(field, "Entries (N)", "Fraction (%)")
-        if (!is.null(round)) {
-            s[,3] = round(s[,3], round)
-        } 
-        if (include.rank) {
-            s <- cbind(Rank = seq_len(nrow(s)), s)
-        } 
+        x <- x[!is.na(x)]
     }
-    s
+    # Create a frequency table of unique values of the dominant taxa for each sample
+    s <- rev(sort(table(x)))
+    # Include only n the most frequent taxa
+    if (!is.null(n)){
+        s <- s[seq_len(min(n, length(s)))]
+    }
+    return(s)
 }

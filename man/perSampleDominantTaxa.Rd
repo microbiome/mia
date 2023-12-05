@@ -75,12 +75,11 @@ will be disabled.)}
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomyRanks()}.}
 
-\item{other.name}{A name for features that are not n the most abundant in the data.
-Default is "Other".}
+\item{other.name}{A name for features that are not included in n the most frequent
+dominant features in the data. Default is "Other".}
 
-\item{n}{The number of features that are included in the most dominant in the data.
-Default is NULL, which defaults that each sample is assigned a dominant taxon that
-is not dependent on the most dominant taxa in the data.}
+\item{n}{The number of features that are the most frequent dominant features.
+Default is NULL, which defaults that each sample is assigned a dominant taxon.}
 
 \item{complete}{A boolean value to manage multiple dominant taxa for a sample.
 Default for perSampleDominantTaxa is TRUE to include all equally dominant taxa
