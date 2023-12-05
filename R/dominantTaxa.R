@@ -122,7 +122,7 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
         
         # If individual sample contains multiple dominant taxa (they have equal counts) and if 
         # complete is FALSE, the an arbitrarily chosen dominant taxa is returned
-        if( length(taxa) > ncol(x) & !complete) {
+        if( length(taxa) > ncol(x) && !complete) {
             # Store order
             order <- unique(names(taxa))
             # there are multiple dominant taxa in one sample (counts are equal), length
@@ -202,20 +202,15 @@ setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperimen
             stop("'other.name' must be a non-empty single character value.",
                  call. = FALSE)
         }
-        # if(complete) {
-        #     warning("Multiple dominant taxa are not allowed for samples. Run perSampleDominantFeatures(x, complete = TRUE) for details. ")
-        #     complete <- FALSE
-        # }
-        # complete must be FALSE to fit the dominant feature vector in colData
         dom.taxa <- perSampleDominantFeatures(x, other.name = other.name, n = n, complete = complete, ...)
-        
-        # Add list into colData if complete = TRUE
-        if(complete) {
-            grouped <- list()
-            for (n in unique(names(dom.taxa))) {
-                grouped[[n]] <- dom.taxa[names(dom.taxa) == n]
-            }
+        # Add list into colData if there are multiple dominant taxa
+        if(length(unique(names(dom.taxa))) < length(names(dom.taxa))) {
+            # Store order
+            order <- unique(names(dom.taxa))
+            grouped <- split(dom.taxa, rep(names(dom.taxa)), lengths(dom.taxa))
+            grouped <- grouped[order]
             dom.taxa <- grouped
+            warning("A new column that was added in colData(x) is a list")
         }
         colData(x)[[name]] <- dom.taxa
         return(x)
