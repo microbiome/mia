@@ -267,10 +267,21 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         dvrsts <- BiocParallel::bplapply(index,
                                         .get_diversity_values,
                                         x = x,
-                                        mat = assay(x, assay.type),
+                                        mat = .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...),
                                         BPPARAM = BPPARAM,
                                         ...)
-        .add_values_to_colData(x, dvrsts, name)
+        browser()
+        # Get MARGIN and specify where to store the results
+        args <- list(...)
+        MARGIN <- args[["MARGIN"]]
+        MARGIN <- ifelse(
+            (MARGIN %in% c(1, "row", "features") || is.null(MARGIN)), 2, 1)
+        args[["x"]] <- x
+        args[["values"]] <- dvrsts
+        args[["name"]] <- name
+        args[["MARGIN"]] <- MARGIN
+        x <- do.call(.add_values_to_colData, args)
+        return(x)
     }
 )
 
@@ -376,7 +387,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                 call. = FALSE)
         }
         # Check 'assay.type'
-        .check_assay_present(assay.type, x)
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         # Check that it is numeric
         if( !is.numeric(assay(x, assay.type)) ){
             stop("The abundance matrix specificied by 'assay.type' must be numeric.",
@@ -395,8 +406,6 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                  "rownames and node labs of 'tree'.",
                  call. = FALSE)
         }
-        # Get the abundance matrix
-        mat <- assay(x, assay.type)
         # Check that it is numeric
         if( !is.numeric(mat) ){
             stop("The abundance matrix specificied by 'assay.type' must be numeric.",
@@ -413,7 +422,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         # Calculates Faith index
         faith <- list(.calc_faith(mat, tree, ...))
         # Adds calculated Faith index to colData
-        .add_values_to_colData(x, faith, name)
+        .add_values_to_colData(x, faith, name, default.MARGIN = 2, ...)
     }
 )
 
@@ -428,7 +437,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                  call. = FALSE)
         }
         # Gets the tree
-        tree <- rowTree(x, tree_name)
+        tree <- .check_and_get_tree(x, tree_name, default.MARGIN = 1, ...)
         if( is.null(tree) || is.null(tree$edge.length)){
             stop("rowTree(x, tree_name) is NULL or the tree does not have any branches. ",
             "The Faith's alpha diversity index cannot be calculated.",
