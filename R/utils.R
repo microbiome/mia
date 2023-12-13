@@ -80,29 +80,27 @@
     }
 }
 
-.check_altExp_present <- function(altexp, tse, 
-                                  altExpName = .get_name_in_parent(altexp),
-                                  tse_name = paste0("'", .get_name_in_parent(tse), "'") ){
-    # Get class of object
-    class <- as.character( class(tse) )
-    # If the object does not have altExp slot
-    if( !(is(tse, "TreeSummarizedExperiment") ||
-          is(tse, "SingleCellExperiment")) ){
-        stop("The class of ", tse_name, " is '", class, "' which does not have ",
-             "an altExp slot. Please try '", altExpName, " = NULL'.", 
-             call. = FALSE)
+# Check if alternative experiment can be found from altExp slot.
+.check_altExp_present <- function(
+    altexp, tse, altExpName = .get_name_in_parent(altexp),
+    tse_name = paste0("'", .get_name_in_parent(tse), "'") ){
+    # Check that altexp.name must be an integer or name
+    if( !(.is_a_string(altexp) || .is_an_integer(altexp) || is.null(altexp)) ){
+        stop(
+            "'", altExpName, "' must be a string or an integer.", call. = FALSE)
     }
-    # If the object does not contain any altExps
-    if( length(altExps(tse)) == 0 ){
-        stop("altExps() of ", tse_name, " is empty. ",
-             "Please try '", altExpName, " = NULL'.",
-             call. = FALSE)
+    # If is not NULL, but the object does not have altExp slot
+    if( !is.null(altexp) && !is(tse, "SingleCellExperiment") ){
+        stop(
+            "'", altExpName, "', is specified but '", tse_name, "' does not ",
+            "have altExp slot.", call. = FALSE)
     }
-    # altexp must specify altExp
-    if( !( ( .is_an_integer(altexp) && altexp<length(altExps(tse)) && altexp>0) ||
-           (.is_a_string(altexp) && altexp %in% altExpNames(tse)) ) ){
-        stop("'", altExpName, "' must be integer or character specifying an ",
-             "alternative experiment from ", tse_name, ".", call. = FALSE)
+    # Then check that altExp can be found; name or index.
+    if( !is.null(altexp) && !altexp %in% c(
+        altExpNames(tse), seq_len(length(altExps(tse)))) ){
+        stop(
+            "'", altExpName, "', does not specify an experiment from altExp ",
+            "slot of '", tse_name, "'.", call. = FALSE)
     }
 }
 
@@ -131,11 +129,118 @@
 }
 
 ################################################################################
-# internal wrappers for getter/setter
+# internal wrappers for getter
 
-#' @importFrom SummarizedExperiment colData colData<-
+# Check that assay is present and return it. Enables access to altExp slot and
+# controlling of MARGIN (whether to analyze rows or cols). With default.MARGIN,
+# we can still change our default MARGIN from main function, but allows also
+# user to overwrite this default choice.
+.check_and_get_assay <- function(
+    x, assay.type, altexp.name = NULL, MARGIN = default.MARGIN,
+    default.MARGIN = 1, ...){
+    # Check if altExp can be found
+    .check_altExp_present(altexp.name, x)
+    # If altexp.name was not NULL, then we know that it specifies correctly
+    # altExp from the slot. Take the experiment.
+    if( !is.null(altexp.name) ){
+        x <- altExp(x, altexp.name)
+    }
+    # Check assay.type
+    .check_assay_present(assay.type, x)
+    # Check that MARGIN is correct
+    if( !(length(MARGIN) == 1 && MARGIN %in% c(
+        1, 2, "rows", "columns", "features", "samples")) ){
+        stop("'MARGIN' must be 1 or 2.", call. = FALSE)
+    }
+    #
+    # Get matrix
+    mat <- assay(x, assay.type)
+    # If MARGIN specifies columns, transpose matrix
+    if( MARGIN %in% c(2, "columns", "samples") ){
+        mat <- t(mat)
+    }
+    return(mat)
+}
+
+# Fetch tree from row/colTree slot. Enables access to altExp and controlling of
+# MARGIN (whtehr to analyze rows or cols).
+.check_and_get_tree <- function(
+    x, tree, tree.name = .get_name_in_parent(tree), altexp.name = NULL,
+    MARGIN = default.MARGIN, default.MARGIN = 1, ...){
+    # Check if altExp can be found
+    .check_altExp_present(altexp.name, x)
+    # If altexp.name was not NULL, then we know that it specifies correctly
+    # altExp from the slot. Take the experiment.
+    if( !is.null(altexp.name) ){
+      x <- altExp(x, altexp.name)
+    }
+    # Check that MARGIN is correct
+    if( !(length(MARGIN) == 1 && MARGIN %in% c(
+      1, 2, "rows", "columns", "features", "samples")) ){
+      stop("'MARGIN' must be 1 or 2.", call. = FALSE)
+    }
+    # Check that tree is correct; string or integer.
+    if( !(.is_a_string(tree) || .is_an_integer(tree)) ){
+      stop(
+        "'", tree.name, "' must be a string or an integer.", call. = FALSE)
+    }
+    #
+    # Take rowTree or colTree
+    if( MARGIN %in% c(1, "rows", "features") ){
+        .check_rowTree_present(tree, x)
+        tree <- rowTree(x, tree)
+    } else{
+        .check_colTree_present(tree, x)
+        tree <- colTree(x, tree)
+    }
+    return(tree)
+}
+
+# Get variables from rowData or colData. Control where to search with
+# default.MARGIN parameter. altExp and MARGIN is enabled for user to control.
+# The default value of MARGIN is controlled with default.MARGIN.
+.check_and_get_covariate <- function(
+    x, variable, altexp.name = NULL, default.MARGIN = 1,
+    MARGIN = default.MARGIN, ...){
+    # Check if altExp can be found
+    .check_altExp_present(altexp.name, x)
+    # If altexp.name was not NULL, then we know that it specifies correctly
+    # altExp from the slot. Take the experiment.
+    if( !is.null(altexp.name) ){
+        x <- altExp(x, altexp.name)
+    }
+    # Check that MARGIN is correct
+    if( !(length(MARGIN) == 1 && MARGIN %in% c(
+        1, 2, "rows", "columns", "features", "samples")) ){
+        stop("'MARGIN' must be 1 or 2.", call. = FALSE)
+    }
+    # Get values specified by variable. Fetch it from rowData or colData based
+    # on MARGIN.
+    if( MARGIN %in% c(1, "rows", "features") ){
+        res <- retrieveFeatureInfo(x, variable)    
+    } else{
+        res <- retrieveCellInfo(x, variable)
+    }
+    res <- res[["value"]]
+    return(res)
+}
+
+################################################################################
+# internal wrappers for setter
+
+#' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
 #' @importFrom S4Vectors DataFrame
-.add_values_to_colData <- function(x, values, name){
+.add_values_to_colData <- function(
+    x, values, name, altexp.name = NULL, MARGIN = default.MARGIN,
+    default.MARGIN = 2, ...){
+    # Check if altExp can be found
+    .check_altExp_present(altexp.name, x)
+    # Check that MARGIN is correct
+    if( !(length(MARGIN) == 1 && MARGIN %in% c(
+        1, 2, "rows", "columns", "features", "samples")) ){
+        stop("'MARGIN' must be 1 or 2.", call. = FALSE)
+    }
+    #
     # converts each value:name pair into a DataFrame
     values <- mapply(
         function(value, n){
@@ -151,30 +256,126 @@
         name)
 
     values <- do.call(cbind, values)
-
+    
+    # Based on MARGIN, get rowDatra or colData
+    FUN <- colData
+    FUN_name <- "colData"
+    if( MARGIN %in% c(1, "rows", "features") ){
+        FUN <- rowData
+        FUN_name <- "rowData"
+    }
+    
+    # If altexp.name was not NULL, then we know that it specifies correctly
+    # altExp from the slot. Take the colData/rowData from experiment..
+    if( !is.null(altexp.name) ){
+        cd <- FUN( altExp(x, altexp.name) )
+    } else{
+        cd <- FUN(x)
+    }
+    
     # check for duplicated values
-    f <- colnames(colData(x)) %in% colnames(values)
+    f <- colnames(cd) %in% colnames(values)
     if(any(f)) {
-        warning("The following values are already present in `colData` and ",
-                "will be overwritten: '",
-                paste(colnames(colData(x))[f], collapse = "', '"),
+        warning("The following values are already present in `", FUN_name,
+                "` and will be overwritten: '",
+                paste(colnames(cd)[f], collapse = "', '"),
                 "'. Consider using the 'name' argument to specify alternative ",
                 "names.",
                 call. = FALSE)
     }
-    # keep only unique values
-    colData(x) <- cbind(colData(x)[!f], values)
-
-    x
+    # Keep only unique values
+    values <- cbind( (cd)[!f], values )
+    
+    # Based on MARGIN, add result to rowData or colData
+    FUN <- `colData<-`
+    if( MARGIN %in% c(1, "rows", "features") ){
+      FUN <- `rowData<-`
+    }
+    # If altexp was specified, add result to altExp. Otherwise add it directly
+    # to x.
+    if( !is.null(altexp.name) ){
+        x <- FUN( altExp(x, altexp.name), value = values )
+    } else{
+        x <- FUN(x, value = values)
+    }
+    return(x)
 }
 
-
 #' @importFrom S4Vectors metadata metadata<-
-.add_values_to_metadata <- function(x, names, values){
+.add_values_to_metadata <- function(x, names, values, altexp.name, ...){
+    # Check if altExp can be found
+    .check_altExp_present(altexp.name, x)
+    #
+    # Create a list and name elements
     add_metadata <- as.list(values)
     names(add_metadata) <- names
-    metadata(x) <- c(metadata(x), add_metadata)
-    x
+    # Get old metadata
+    if( !is.null(altexp.name) ){
+        old_metadata <- metadata( altExp(x, altexp.name) )
+    } else{
+        old_metadata <- metadata(x)
+    }
+    # Check if names match with elements that are already present
+    f <- names(old_metadata) %in% names(add_metadata)
+    if( any(f) ){
+        warning(
+            "The following values are already present in `metadata` and will ",
+            "be overwritten: '",
+            paste(names(old_metadata)[f], collapse = "', '"),
+            "'. Consider using the 'name' argument to specify alternative ",
+            "names.", call. = FALSE)
+    }
+    # keep only unique values
+    add_metadata <- c( old_metadata[!f], add_metadata )
+    # Add metadata to altExp or directly to x
+    if( !is.null(altexp.name) ){
+        metadata( altExp(x, altexp.name) ) <- add_metadata
+    } else{
+        metadata(x) <- add_metadata
+    }
+    return(x)
+}
+
+.add_values_to_reducedDim <- function(x, names, values, altexp.name, ...){
+    # If the object is SummarizedExperiment, it does not have reducedDim.
+    # Convert to TreeSE to enable reducedDim slot.
+    if( !is(x, "SingleCellExperiment") ){
+        warning(
+            "'x' does not have reducedDim slot. Coarsed to ",
+            "TreeSummarizedExperiment.")
+        x <- as(x, "TreeSummarizedExperiment")
+    }
+    # Check if altExp can be found
+    .check_altExp_present(altexp.name, x)
+    #
+    # Create a list and name elements
+    add_reduceddim <- as.list(values)
+    names(add_reduceddim) <- names
+    # Get old reducedDims
+    if( !is.null(altexp.name) ){
+        old_reduceddim <- reducedDims( altExp(x, altexp.name) )
+    } else{
+        old_reduceddim <- reducedDims(x)
+    }
+    # Check if names match with elements that are already present
+    f <- names(old_reduceddim) %in% names(add_reduceddim)
+    if( any(f) ){
+        warning(
+            "The following values are already present in `reducedDim` and ",
+            "will be overwritten: '",
+            paste(names(old_reduceddim)[f], collapse = "', '"),
+            "'. Consider using the 'name' argument to specify alternative ",
+            "names.", call. = FALSE)
+    }
+    # Keep only unique values
+    add_reduceddim <- c( old_reduceddim[!f], add_reduceddim )
+    # Add metadata to altExp or directly to x
+    if( !is.null(altexp.name) ){
+        reducedDims( altExp(x, altexp.name) ) <- add_reduceddim
+    } else{
+        reducedDims(x) <- add_reduceddim
+    }
+    return(x)
 }
 
 # keep dimnames of feature table (assay) consistent with the meta data 
