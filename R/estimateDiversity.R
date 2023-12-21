@@ -254,33 +254,25 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         }
 
         # input check
-        index<- match.arg(index, several.ok = TRUE)
-        
+        index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                 "same length than 'index'.",
                 call. = FALSE)
         }
-        .check_assay_present(assay.type, x)
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         .require_package("vegan")
 
         dvrsts <- BiocParallel::bplapply(index,
                                         .get_diversity_values,
                                         x = x,
-                                        mat = .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...),
+                                        mat = mat,
                                         BPPARAM = BPPARAM,
                                         ...)
-        browser()
-        # Get MARGIN and specify where to store the results
-        args <- list(...)
-        MARGIN <- args[["MARGIN"]]
-        MARGIN <- ifelse(
-            (MARGIN %in% c(1, "row", "features") || is.null(MARGIN)), 2, 1)
-        args[["x"]] <- x
-        args[["values"]] <- dvrsts
-        args[["name"]] <- name
-        args[["MARGIN"]] <- MARGIN
-        x <- do.call(.add_values_to_colData, args)
+        # Add values to colData
+        x <- .add_values_to_colData(
+            x, values = dvrsts, name = name, default.MARGIN = 1,
+            transpose.MARGIN = TRUE, ...)
         return(x)
     }
 )
@@ -328,7 +320,6 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             # Faith will not be calculated
             calc_faith <- FALSE
         }
-        
         # If index list contained other than 'faith' index, the length of the
         # list is over 0
         if( length(index)>0){
@@ -338,7 +329,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         # If 'faith' was one of the indices, 'calc_faith' is TRUE
         if( calc_faith ){
             # Get tree to check whether faith can be calculated
-            tree <- rowTree(x, tree_name)
+            tree <- .check_and_get_tree(x, tree_name, fail.test = FALSE, ...)
             # Check if faith can be calculated. Give warning and do not run estimateFaith
             # if there is no rowTree and other indices were also calculated. Otherwise, 
             # run estimateFaith. (If there is no rowTree --> error)
@@ -422,7 +413,9 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         # Calculates Faith index
         faith <- list(.calc_faith(mat, tree, ...))
         # Adds calculated Faith index to colData
-        .add_values_to_colData(x, faith, name, default.MARGIN = 2, ...)
+        .add_values_to_colData(
+            x, values = faith, name = name, default.MARGIN = 1,
+            transpose.MARGIN = TRUE, ...)
     }
 )
 
@@ -505,7 +498,11 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # Number of groups needed to have threshold (e.g. 50 %) of the
     # ecosystem occupied
     coverage <- apply(rel, 2, function(x) {
-        min(which(cumsum(rev(sort(x/sum(x)))) >= threshold))
+        res <- NA
+        if( sum(x) != 0 ){
+            res <- min(which(cumsum(rev(sort(x/sum(x)))) >= threshold))
+        }
+        return(res)
     })
     names(coverage) <- colnames(rel)
     coverage

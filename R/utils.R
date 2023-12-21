@@ -104,28 +104,64 @@
     }
 }
 
-.check_rowTree_present <- function(tree_name, x,
-                                   name = .get_name_in_parent(tree_name) ){
+.check_rowTree_present <- function(
+    tree_name, x, name = .get_name_in_parent(tree_name), fail.test = TRUE, ...){
+    # If fail.test is TRUE, give error. Otherwise give warning.
+    FUN <- stop
+    if( !fail.test ){
+        FUN <- warning
+    }
     if( !.is_non_empty_string(tree_name) ){
         stop("'", name, "' must be a single non-empty character value.",
              call. = FALSE)
     }
+    pass <- TRUE
     if( !(tree_name %in% names(x@rowTree)) ){
-        stop("'", name, "' must specify a tree from 'x@rowTree'.",
-             call. = FALSE)
+        do.call(FUN, args = list(
+            msg = "'", name, "' must specify a tree from 'rowTree(x)'.",
+            call. = FALSE))
+        pass <- FALSE
     }
+    return(pass)
 }
 
-.check_colTree_present <- function(tree_name, x,
-                                   name = .get_name_in_parent(tree_name) ){
+.check_colTree_present <- function(
+    tree_name, x, name = .get_name_in_parent(tree_name), fail.test = TRUE, ...){
+    # If fail.test is TRUE, give error. Otherwise give warning.
+    FUN <- stop
+    if( !fail.test ){
+      FUN <- warning
+    }
     if( !.is_non_empty_string(tree_name) ){
         stop("'", name, "' must be a single non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
+    pass <- TRUE
     if( !(tree_name %in% names(x@colTree)) ){
-        stop("'", name, "' must specify a tree from 'x@colTree'.",
-             call. = FALSE)
+        do.call(FUN, args = list(
+            msg = "'", name, "' must specify a tree from 'colTree(x)'.",
+            call. = FALSE))
+        pass <- FALSE
     }
+    return(pass)
+}
+
+# Check MARGIN parameters. Should be defining rows or columns.
+.check_MARGIN <- function(MARGIN) {
+    # Convert to lowcase if it is a string
+    if( .is_non_empty_string(MARGIN) ) {
+      MARGIN <- tolower(MARGIN)
+    }
+    # MARGIN must be one of the following options
+    if( !(length(MARGIN) == 1L && MARGIN %in% c(
+        1, 2, "1", "2", "features", "samples", "columns", "col", "row", "rows",
+        "cols")) ) {
+        stop("'MARGIN' must equal 1 or 2.", call. = FALSE)
+    }
+    # Convert MARGIN to numeric if it is not.
+    MARGIN <- ifelse(MARGIN %in% c(
+        "samples", "columns", "col", 2, "cols"), 2, 1)
+    return(MARGIN)
 }
 
 ################################################################################
@@ -148,15 +184,12 @@
     # Check assay.type
     .check_assay_present(assay.type, x)
     # Check that MARGIN is correct
-    if( !(length(MARGIN) == 1 && MARGIN %in% c(
-        1, 2, "rows", "columns", "features", "samples")) ){
-        stop("'MARGIN' must be 1 or 2.", call. = FALSE)
-    }
+    MARGIN <- .check_MARGIN(MARGIN)
     #
     # Get matrix
     mat <- assay(x, assay.type)
     # If MARGIN specifies columns, transpose matrix
-    if( MARGIN %in% c(2, "columns", "samples") ){
+    if( MARGIN == 2 ){
         mat <- t(mat)
     }
     return(mat)
@@ -172,26 +205,26 @@
     # If altexp.name was not NULL, then we know that it specifies correctly
     # altExp from the slot. Take the experiment.
     if( !is.null(altexp.name) ){
-      x <- altExp(x, altexp.name)
+        x <- altExp(x, altexp.name)
     }
     # Check that MARGIN is correct
-    if( !(length(MARGIN) == 1 && MARGIN %in% c(
-      1, 2, "rows", "columns", "features", "samples")) ){
-      stop("'MARGIN' must be 1 or 2.", call. = FALSE)
-    }
+    MARGIN <- .check_MARGIN(MARGIN)
     # Check that tree is correct; string or integer.
     if( !(.is_a_string(tree) || .is_an_integer(tree)) ){
-      stop(
-        "'", tree.name, "' must be a string or an integer.", call. = FALSE)
+        stop(
+            "'", tree.name, "' must be a string or an integer.", call. = FALSE)
     }
+    # Check if tree can be found
+    FUN <- switch(MARGIN, .check_rowTree_present, .check_colTree_present)
+    pass <- do.call(FUN, args = c(list(tree_name = tree, x = x), list(...)))
     #
-    # Take rowTree or colTree
-    if( MARGIN %in% c(1, "rows", "features") ){
-        .check_rowTree_present(tree, x)
-        tree <- rowTree(x, tree)
-    } else{
-        .check_colTree_present(tree, x)
-        tree <- colTree(x, tree)
+    # Take rowTree or colTree, if it can be found
+    tree <- NULL
+    FUN <- switch(MARGIN, rowTree, colTree)
+    if( pass ){
+        # The returned value is a list. Take the element.
+        tree <- do.call(FUN, args = list(x = x, whichTree = tree))
+        tree <- tree[[1]]
     }
     return(tree)
 }
@@ -200,8 +233,8 @@
 # default.MARGIN parameter. altExp and MARGIN is enabled for user to control.
 # The default value of MARGIN is controlled with default.MARGIN.
 .check_and_get_covariate <- function(
-    x, variable, altexp.name = NULL, default.MARGIN = 1,
-    MARGIN = default.MARGIN, ...){
+    x, variable, altexp.name = NULL, MARGIN = default.MARGIN,
+    default.MARGIN = 1, ...){
     # Check if altExp can be found
     .check_altExp_present(altexp.name, x)
     # If altexp.name was not NULL, then we know that it specifies correctly
@@ -210,13 +243,10 @@
         x <- altExp(x, altexp.name)
     }
     # Check that MARGIN is correct
-    if( !(length(MARGIN) == 1 && MARGIN %in% c(
-        1, 2, "rows", "columns", "features", "samples")) ){
-        stop("'MARGIN' must be 1 or 2.", call. = FALSE)
-    }
+    MARGIN <- .check_MARGIN(MARGIN)
     # Get values specified by variable. Fetch it from rowData or colData based
     # on MARGIN.
-    if( MARGIN %in% c(1, "rows", "features") ){
+    if( MARGIN == 1 ){
         res <- retrieveFeatureInfo(x, variable)    
     } else{
         res <- retrieveCellInfo(x, variable)
@@ -232,15 +262,18 @@
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(
     x, values, name, altexp.name = NULL, MARGIN = default.MARGIN,
-    default.MARGIN = 2, ...){
+    default.MARGIN = 2, transpose.MARGIN = FALSE, ...){
     # Check if altExp can be found
     .check_altExp_present(altexp.name, x)
     # Check that MARGIN is correct
-    if( !(length(MARGIN) == 1 && MARGIN %in% c(
-        1, 2, "rows", "columns", "features", "samples")) ){
-        stop("'MARGIN' must be 1 or 2.", call. = FALSE)
-    }
+    MARGIN <- .check_MARGIN(MARGIN)
     #
+    # If trasnpose.MARGIN is TRUE, transpose MARGIN, i.e. 1 --> 2, and 2 --> 1.
+    # In certain functions, values calculated by rows (MARGIN=1) are stored to
+    # colData (MARGIN=2) and vice versa.
+    if( transpose.MARGIN ){
+        MARGIN <- ifelse(MARGIN == 1, 2, 1)
+    }
     # converts each value:name pair into a DataFrame
     values <- mapply(
         function(value, n){
@@ -260,7 +293,7 @@
     # Based on MARGIN, get rowDatra or colData
     FUN <- colData
     FUN_name <- "colData"
-    if( MARGIN %in% c(1, "rows", "features") ){
+    if( MARGIN  == 1 ){
         FUN <- rowData
         FUN_name <- "rowData"
     }
@@ -288,7 +321,7 @@
     
     # Based on MARGIN, add result to rowData or colData
     FUN <- `colData<-`
-    if( MARGIN %in% c(1, "rows", "features") ){
+    if( MARGIN == 1 ){
       FUN <- `rowData<-`
     }
     # If altexp was specified, add result to altExp. Otherwise add it directly
