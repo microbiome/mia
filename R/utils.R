@@ -291,13 +291,7 @@
     values <- do.call(cbind, values)
     
     # Based on MARGIN, get rowDatra or colData
-    FUN <- colData
-    FUN_name <- "colData"
-    if( MARGIN  == 1 ){
-        FUN <- rowData
-        FUN_name <- "rowData"
-    }
-    
+    FUN <- switch(MARGIN, rowData, colData)
     # If altexp.name was not NULL, then we know that it specifies correctly
     # altExp from the slot. Take the colData/rowData from experiment..
     if( !is.null(altexp.name) ){
@@ -308,6 +302,7 @@
     
     # check for duplicated values
     f <- colnames(cd) %in% colnames(values)
+    FUN_name <- switch(MARGIN, "rowData", "colData")
     if(any(f)) {
         warning("The following values are already present in `", FUN_name,
                 "` and will be overwritten: '",
@@ -320,10 +315,7 @@
     values <- cbind( (cd)[!f], values )
     
     # Based on MARGIN, add result to rowData or colData
-    FUN <- `colData<-`
-    if( MARGIN == 1 ){
-      FUN <- `rowData<-`
-    }
+    FUN <- switch(MARGIN, `rowData<-`, `colData<-`)
     # If altexp was specified, add result to altExp. Otherwise add it directly
     # to x.
     if( !is.null(altexp.name) ){
