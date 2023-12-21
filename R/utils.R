@@ -69,8 +69,8 @@
 # checks
 
 #' @importFrom SummarizedExperiment assays
-.check_assay_present <- function(assay.type, x,
-                                 name = .get_name_in_parent(assay.type)){
+.check_assay_present <- function(
+    assay.type, x, name = .get_name_in_parent(assay.type)){
     if(!.is_non_empty_string(assay.type)){
         stop("'",name,"' must be a single non-empty character value.",
              call. = FALSE)
@@ -116,7 +116,7 @@
              call. = FALSE)
     }
     pass <- TRUE
-    if( !(tree_name %in% names(x@rowTree)) ){
+    if( !(tree_name %in% rowTreeNames(tse)) ){
         do.call(FUN, args = list(
             msg = "'", name, "' must specify a tree from 'rowTree(x)'.",
             call. = FALSE))
@@ -137,7 +137,7 @@
             call. = FALSE)
     }
     pass <- TRUE
-    if( !(tree_name %in% names(x@colTree)) ){
+    if( !(tree_name %in% colTreeNames(tse)) ){
         do.call(FUN, args = list(
             msg = "'", name, "' must specify a tree from 'colTree(x)'.",
             call. = FALSE))
