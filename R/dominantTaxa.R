@@ -78,7 +78,8 @@ NULL
 #' @export
 setGeneric("perSampleDominantFeatures",signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
-                    rank = NULL, other.name = "Other", n = NULL, complete = TRUE, ...)
+                    rank = NULL, other.name = "Other", n = NULL, 
+                    complete = TRUE, ...)
                standardGeneric("perSampleDominantFeatures"))
 
 #' @rdname perSampleDominantTaxa
@@ -119,8 +120,9 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
         # sample name. Names are converted so that they include only sample names.
         names(taxa) <- rep( names(idx), times = lengths(idx) )
         
-        # If individual sample contains multiple dominant taxa (they have equal counts) and if 
-        # complete is FALSE, the an arbitrarily chosen dominant taxa is returned
+        # If individual sample contains multiple dominant taxa (they have equal 
+        # counts) and if complete is FALSE, the an arbitrarily chosen dominant 
+        # taxa is returned
         if( length(taxa)>ncol(x) && !complete){
             # Store order
             order <- unique(names(taxa))
@@ -130,23 +132,25 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
             # Order the data
             taxa <- taxa[order]
             names <- names(taxa)
-            # If complete is set FALSE, and there are multiple dominant taxa, one of them is arbitrarily chosen
+            # If complete is set FALSE, and there are multiple dominant taxa, 
+            # one of them is arbitrarily chosen
             taxa <- lapply(taxa, function(item) {
                         return(sample(item, 1)) })
             taxa <- unname(sapply(taxa, function (x) {
                         unlist(x)}))
             names(taxa) <- names
-            warning("Multiple dominant taxa were found for some samples. Run perSampleDominantFeatures(x, complete = TRUE) for details.")
+            warning("Multiple dominant taxa were found for some samples. Use complete = TRUE for details.", call. = FALSE)
         }
         
-        # Name "Other" the features that are not included in n the most abundant in the data
+        # Name "Other" the features that are not included in n the most abundant 
+        # in the data
         if(!is.null(n)){
             flat_taxa <- unlist(taxa, recursive = TRUE)
-            top <- top(flat_taxa, n=n)
+            top <- .top_n(flat_taxa, n=n)
             top <- names(top)
             # Group the rest into the "Other" category
             taxa <- lapply(taxa, function(x){
-                ind <- sapply(x, function(y) y %in% top)
+                ind <- vapply(x, function(y) y %in% top, FUN.VALUE = logical(1))
                 if( any(ind) ){
                     res <- x[ ind ]
                 } else{
@@ -174,7 +178,9 @@ setGeneric("perSampleDominantTaxa", signature = c("x"),
 #' @export
 setMethod("perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
         function(x, ...){
-            .Deprecated(old ="perSampleDominantTaxa", new = "perSampleDominantFeatures", msg = "The 'perSampleDominantTaxa' function is deprecated. Use 'perSampleDominantFeatures' instead.")
+            .Deprecated(old ="perSampleDominantTaxa", 
+                        new = "perSampleDominantFeatures", 
+                        msg = "The 'perSampleDominantTaxa' function is deprecated. Use 'perSampleDominantFeatures' instead.")
             perSampleDominantFeatures(x, ...)
         }
 )
@@ -190,7 +196,8 @@ setGeneric("addPerSampleDominantFeatures", signature = c("x"),
 #' @aliases addPerSampleDominantTaxa
 #' @export
 setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
-    function(x, name = "dominant_taxa", other.name = "Other", n = NULL, complete = FALSE, ...) {
+    function(x, name = "dominant_taxa", other.name = "Other", n = NULL, 
+             complete = FALSE, ...) {
         # name check
         if(!.is_non_empty_string(name)){
             stop("'name' must be a non-empty single character value.",
@@ -201,7 +208,8 @@ setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperimen
             stop("'other.name' must be a non-empty single character value.",
                  call. = FALSE)
         }
-        dom.taxa <- perSampleDominantFeatures(x, other.name = other.name, n = n, complete = complete, ...)
+        dom.taxa <- perSampleDominantFeatures(x, other.name = other.name, n = n, 
+                                              complete = complete, ...)
         # Add list into colData if there are multiple dominant taxa
         if(length(unique(names(dom.taxa))) < length(names(dom.taxa))) {
             # Store order
@@ -209,7 +217,8 @@ setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperimen
             grouped <- split(dom.taxa, rep(names(dom.taxa)), lengths(dom.taxa))
             grouped <- grouped[order]
             dom.taxa <- grouped
-            warning("A new column that was added in colData(x) is a list")
+            warning("A new column that was added in colData(x) is a list", 
+                    call. = FALSE)
         }
         colData(x)[[name]] <- dom.taxa
         return(x)
@@ -228,7 +237,9 @@ setGeneric("addPerSampleDominantTaxa", signature = c("x"),
 #' @export
 setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
         function(x, ...){
-            .Deprecated(old ="addPerSampleDominantTaxa", new = "addPerSampleDominantFeatures", msg = "The 'addPerSampleDominantTaxa' function is deprecated. Use 'addPerSampleDominantFeatures' instead.")
+            .Deprecated(old ="addPerSampleDominantTaxa", 
+                        new = "addPerSampleDominantFeatures", 
+                        msg = "The 'addPerSampleDominantTaxa' function is deprecated. Use 'addPerSampleDominantFeatures' instead.")
             addPerSampleDominantFeatures(x, ...)
         }
 )
@@ -237,13 +248,13 @@ setMethod("addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
 ########################## HELP FUNCTIONS summary ##############################
 
 # top entries in a vector or given field in a data frame
-.top <- function(x, n = NULL, na.rm = FALSE) { # output = "vector",  round = NULL, include.rank = FALSE
+.top_n <- function(x, n = NULL, na.rm = FALSE) {
     if (na.rm){
         inds <- which(x == "NA")
         if (length(inds) > 0){
             x[inds] <- NA
             warning(paste("Interpreting NA string as missing value NA. 
-        Removing", length(inds), "entries"))
+        Removing", length(inds), "entries"), call. = FALSE)
         }
         x <- x[!is.na(x)]
     }
