@@ -77,11 +77,12 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
         # is set to NULL, if it exists altexp contains the name of the altExp
         altexp <- se_altexp$altexp
         .check_data_name(se, clust.col, MARGIN)
+        .check_assay_present(assay.type, se)
 
         if (full) {
             .check_name(se, name)
         }
-        mat <- .check_and_get_assay(se, assay.type, default.MARGIN = 1, ...)
+        mat <- assay(se, assay.type)
 
         # Transpose if clustering on the columns
         if(MARGIN == 2){

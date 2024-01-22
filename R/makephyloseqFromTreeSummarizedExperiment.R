@@ -236,8 +236,8 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
         # If rowtree do not match, tree is pruned
         x <- .get_x_with_pruned_tree(x, tree_name)
     }
-    # Check and get rowTree
-    phy_tree <- .check_and_get_tree(x, tree_name, default.MARGIN = 1, ...)
+    # Get rowTree
+    phy_tree <- rowTree(x, tree_name)
     # Convert rowTree to phyloseq object
     phy_tree <- phyloseq::phy_tree(phy_tree)
 

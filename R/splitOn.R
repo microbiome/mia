@@ -112,7 +112,9 @@ setGeneric("splitOn",
              call. = FALSE)
     }
     # Check MARGIN
-    MARGIN <- .check_MARGIN(MARGIN)
+    if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
+        stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
+    }
     # If f is a vector containing levels
     if( !.is_non_empty_string(f) ){
         # Convert into factors
