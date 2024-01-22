@@ -320,7 +320,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         }
         # If index list contained other than 'faith' index, the length of the
         # list is over 0
-        if( length(index)>0){
+        if( length(index) > 0 ){
             # Calculates all indices but not 'faith'
             x <- callNextMethod()
         }
