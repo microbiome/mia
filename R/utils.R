@@ -105,43 +105,49 @@
 }
 
 .check_rowTree_present <- function(
-    tree_name, x, name = .get_name_in_parent(tree_name), fail.test = TRUE, ...){
-    # If fail.test is TRUE, give error. Otherwise give warning.
-    FUN <- stop
-    if( !fail.test ){
-        FUN <- warning
+    tree_name, x, name = .get_name_in_parent(tree_name), disable.error = FALSE,
+    ...){
+    #
+    if( !.is_a_bool(disable.error) ){
+      stop("'disable.error' must be TRUE or FALSE.", call. = FALSE)  
     }
     if( !.is_non_empty_string(tree_name) ){
-        stop("'", name, "' must be a single non-empty character value.",
-             call. = FALSE)
+      stop("'", name, "' must be a single non-empty character value.",
+           call. = FALSE)
     }
+    #
     pass <- TRUE
-    if( !(tree_name %in% rowTreeNames(tse)) ){
-        do.call(FUN, args = list(
-            msg = "'", name, "' must specify a tree from 'rowTree(x)'.",
-            call. = FALSE))
-        pass <- FALSE
+    if( !(tree_name %in% rowTreeNames(x)) ){
+      pass <- FALSE
+    }
+    # Give error if specified
+    if( !disable.error && !pass ){
+      stop("'", name, "' must specify a tree from 'rowTree(x)'.",
+           call. = FALSE)
     }
     return(pass)
 }
 
 .check_colTree_present <- function(
-    tree_name, x, name = .get_name_in_parent(tree_name), fail.test = TRUE, ...){
-    # If fail.test is TRUE, give error. Otherwise give warning.
-    FUN <- stop
-    if( !fail.test ){
-      FUN <- warning
+    tree_name, x, name = .get_name_in_parent(tree_name), disable.error = FALSE,
+    ...){
+    #
+    if( !.is_a_bool(disable.error) ){
+        stop("'disable.error' must be TRUE or FALSE.", call. = FALSE)  
     }
     if( !.is_non_empty_string(tree_name) ){
         stop("'", name, "' must be a single non-empty character value.",
             call. = FALSE)
     }
+    #
     pass <- TRUE
-    if( !(tree_name %in% colTreeNames(tse)) ){
-        do.call(FUN, args = list(
-            msg = "'", name, "' must specify a tree from 'colTree(x)'.",
-            call. = FALSE))
+    if( !(tree_name %in% colTreeNames(x)) ){
         pass <- FALSE
+    }
+    # Give error if specified
+    if( !disable.error && !pass ){
+        stop("'", name, "' must specify a tree from 'colTree(x)'.",
+            call. = FALSE)
     }
     return(pass)
 }
@@ -219,14 +225,12 @@
     pass <- do.call(FUN, args = c(list(tree_name = tree, x = x), list(...)))
     #
     # Take rowTree or colTree, if it can be found
-    tree <- NULL
+    res <- NULL
     FUN <- switch(MARGIN, rowTree, colTree)
     if( pass ){
-        # The returned value is a list. Take the element.
-        tree <- do.call(FUN, args = list(x = x, whichTree = tree))
-        tree <- tree[[1]]
+        res <- do.call(FUN, args = list(x = x, whichTree = tree))
     }
-    return(tree)
+    return(res)
 }
 
 # Get variables from rowData or colData. Control where to search with
@@ -327,7 +331,7 @@
 }
 
 #' @importFrom S4Vectors metadata metadata<-
-.add_values_to_metadata <- function(x, names, values, altexp.name, ...){
+.add_values_to_metadata <- function(x, names, values, altexp.name = NULL, ...){
     # Check if altExp can be found
     .check_altExp_present(altexp.name, x)
     #
