@@ -10,7 +10,7 @@
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
 #'   calculation of the sample-wise estimates.
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
@@ -50,7 +50,7 @@
 #'   \item{'evar' }{Smith and Wilson’s Evar index (Smith & Wilson 1996).}
 #'   \item{'bulla' }{Bulla’s index (O) (Bulla 1994).}
 #' }
-#'   
+#'
 #' Desirable statistical evenness metrics avoid strong bias towards very
 #' large or very small abundances; are independent of richness; and range
 #' within the unit interval with increasing evenness (Smith & Wilson 1996).
@@ -135,7 +135,7 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts",
              index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
              name = index, ..., BPPARAM = SerialParam()){
-         
+
         # input check
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -143,13 +143,16 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
                  "same length than 'index'.",
                  call. = FALSE)
         }
-        .check_assay_present(assay.type, x)
+        # Check and get assay.type
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         #
         vnss <- BiocParallel::bplapply(index,
                                        .get_evenness_values,
-                                       mat = assay(x, assay.type),
+                                       mat = mat,
                                        BPPARAM = BPPARAM, ...)
-        .add_values_to_colData(x, vnss, name)
+        .add_values_to_colData(
+            x, values = vnss, name = name, default.MARGIN = 1,
+            transpose.MARGIN = TRUE, ...)
     }
 )
 
@@ -247,7 +250,7 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
     if(threshold > 0){
         mat[mat <= threshold] <- 0
     }
-    
+
     FUN <- switch(index,
                        camargo = .calc_camargo_evenness,
                        pielou = .calc_pielou_evenness,

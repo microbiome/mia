@@ -214,7 +214,7 @@ please refer to \code{\link[vegan:decostand]{decostand}} for details.}
 data(esophagus, package="mia")
 tse <- esophagus
 
-# By specifying 'method', it is possible to apply different transformations, 
+# By specifying 'method', it is possible to apply different transformations,
 # e.g. compositional transformation.
 tse <- transformAssay(tse, method = "relabundance")
 
@@ -222,10 +222,10 @@ tse <- transformAssay(tse, method = "relabundance")
 # Pseudocount can be added by specifying 'pseudocount'.
 
 # Perform CLR with smallest positive value as pseudocount
-tse <- transformAssay(tse, assay.type = "relabundance", method = "clr", 
+tse <- transformAssay(tse, assay.type = "relabundance", method = "clr",
                      pseudocount = TRUE
                      )
-                      
+
 head(assay(tse, "clr"))
 
 # With MARGIN, you can specify the if transformation is done for samples or
@@ -246,9 +246,9 @@ tse <- transformAssay(tse, method = "rank")
 head(assay(tse, "rank"))
 
 # In order to use other ranking variants, modify the chosen assay directly:
-assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(assay(tse, "counts"), 
-                                                           ties.method="average", 
-                                                           preserveShape = TRUE)  
+assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(assay(tse, "counts"),
+                                                           ties.method="average",
+                                                           preserveShape = TRUE)
 
 }
 \author{

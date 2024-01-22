@@ -27,6 +27,7 @@ subsampleCounts(
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
+  altexp = NULL,
   ...
 )
 }
@@ -62,6 +63,9 @@ abundance table.}
 message about the random number used is printed.}
 
 \item{...}{additional arguments not used}
+
+\item{altexp}{String or integer scalar specifying an alternative experiment
+containing the input data.}
 }
 \value{
 \code{subsampleCounts} return \code{x} with subsampled data.

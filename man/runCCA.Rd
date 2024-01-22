@@ -164,7 +164,7 @@ GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
 GlobalPatterns <- runRDA(
     GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
 
-# To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
+# To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...)
 tse <- GlobalPatterns
 tse <- transformAssay(tse, MARGIN = "features", method = "z")
 # Data might include taxa that do not vary. Remove those because after z-transform

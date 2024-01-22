@@ -16,7 +16,7 @@
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'   
+#'
 #' @param rank A single character defining a taxonomic rank. Must be a value of
 #'   the output of \code{taxonomyRanks()}.
 #'
@@ -63,7 +63,7 @@ NULL
 #' @aliases perSampleDominantTaxa
 #' @export
 setGeneric("perSampleDominantFeatures",signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts", 
+           function(x, assay.type = assay_name, assay_name = "counts",
                     rank = NULL, ...)
                standardGeneric("perSampleDominantFeatures"))
 
@@ -72,11 +72,9 @@ setGeneric("perSampleDominantFeatures",signature = c("x"),
 #' @importFrom IRanges relist
 #' @export
 setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
+    function(x, assay.type = assay_name, assay_name = "counts",
              rank = NULL, ...){
         # Input check
-        # Check assay.type
-        .check_assay_present(assay.type, x)
         # rank check
         if(!is.null(rank)){
             if(!.is_a_string(rank)){
@@ -89,10 +87,10 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
         # taxonomic rank that is specified by user.
         if (!is.null(rank)) {
             x <- agglomerateByRank(x, rank, ...)
-            mat <- assay(x, assay.type)
+            mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         } # Otherwise, if "rank" is NULL, abundances are stored without ranking
         else {
-            mat <- assay(x, assay.type)
+            mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         }
         # apply() function finds the indices of taxa's that has the highest
         # abundance.
@@ -100,7 +98,7 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
         idx <- as.list(apply(t(mat) == colMaxs(mat),1L,which))
         # Get rownames based on indices
         taxa <- rownames(mat)[unlist(idx)]
-        # If multiple dominant taxa were found, names contain taxa in addition to 
+        # If multiple dominant taxa were found, names contain taxa in addition to
         # sample name. Names are converted so that they include only sample names.
         names(taxa) <- rep( names(idx), times = lengths(idx) )
         return(taxa)
@@ -111,7 +109,7 @@ setMethod("perSampleDominantFeatures", signature = c(x = "SummarizedExperiment")
 #' @aliases perSampleDominantFeatures
 #' @export
 setGeneric("perSampleDominantTaxa", signature = c("x"),
-        function(x, ...) 
+        function(x, ...)
             standardGeneric("perSampleDominantTaxa"))
 
 #' @rdname perSampleDominantTaxa
@@ -162,7 +160,7 @@ setMethod("addPerSampleDominantFeatures", signature = c(x = "SummarizedExperimen
 #' @aliases addPerSampleDominantFeatures
 #' @export
 setGeneric("addPerSampleDominantTaxa", signature = c("x"),
-        function(x, ...) 
+        function(x, ...)
             standardGeneric("addPerSampleDominantTaxa"))
 
 #' @rdname perSampleDominantTaxa

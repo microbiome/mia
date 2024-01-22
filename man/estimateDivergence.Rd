@@ -77,17 +77,17 @@ data(GlobalPatterns)
 tse <- GlobalPatterns
 
 # By default, reference is median of all samples. The name of column where results
-# is "divergence" by default, but it can be specified. 
+# is "divergence" by default, but it can be specified.
 tse <- estimateDivergence(tse)
 
-# The method that are used to calculate distance in divergence and 
-# reference can be specified. Here, euclidean distance and dist function from 
+# The method that are used to calculate distance in divergence and
+# reference can be specified. Here, euclidean distance and dist function from
 # stats package are used. Reference is the first sample.
-tse <- estimateDivergence(tse, name = "divergence_first_sample", 
-                          reference = assays(tse)$counts[,1], 
+tse <- estimateDivergence(tse, name = "divergence_first_sample",
+                          reference = assays(tse)$counts[,1],
                           FUN = stats::dist, method = "euclidean")
 
-# Reference can also be median or mean of all samples. 
+# Reference can also be median or mean of all samples.
 # By default, divergence is calculated by using median. Here, mean is used.
 tse <- estimateDivergence(tse, name = "divergence_average", reference = "mean")
 

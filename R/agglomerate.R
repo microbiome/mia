@@ -154,7 +154,7 @@ setGeneric("mergeFeaturesByRank",
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
-        empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+        empty.fields = c(NA, "", " ", "\t", "-", "_"), altexp = NULL, ...){
         # input check
         if(nrow(x) == 0L){
             stop("No data available in `x` ('x' has nrow(x) == 0L.)",
@@ -169,6 +169,9 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         }
         if(!.is_a_bool(na.rm)){
             stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if (!is.null(altexp)) {
+            x <- altExp(x, altexp)
         }
         if(ncol(rowData(x)) == 0L){
             stop("taxonomyData needs to be populated.", call. = FALSE)
@@ -215,7 +218,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
                                         with_rank = FALSE, resolve_loops = FALSE)
         # Remove those columns from rowData that include only NAs
         x <- .remove_NA_cols_from_rowdata(x, ...)
-        x <- .add_values_to_metadata(x, "agglomerated_by_rank", rank)
+        x <- .add_values_to_metadata(x, "agglomerated_by_rank", rank, altexp.name = altexp)
         x
     }
 )
@@ -228,10 +231,10 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
           function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
-                   empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+                   empty.fields = c(NA, "", " ", "\t", "-", "_"), altexp = NULL, ...){
               .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
               x <- agglomerateByRank(x, rank = rank, onRankOnly = onRankOnly, na.rm = na.rm,
-                                     empty.fields = empty.fields, ...)
+                                     empty.fields = empty.fields, altexp = altexp, ...)
               x
           }
 )

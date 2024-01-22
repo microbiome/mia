@@ -40,6 +40,9 @@
 #' 
 #' @param verbose Logical Default is \code{TRUE}. When \code{TRUE} an additional 
 #'   message about the random number used is printed.
+#'
+#' @param altexp String or integer scalar specifying an alternative experiment
+#'   containing the input data.
 #' 
 #' @param ... additional arguments not used
 #' 
@@ -97,7 +100,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
              min_size = min(colSums2(assay(x))),
        seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
-       name = "subsampled", verbose = TRUE, ...){
+       name = "subsampled", verbose = TRUE, altexp = NULL, ...){
     
         warning("Subsampling/Rarefying may undermine downstream analyses ",
                 "and have unintended consequences. Therefore, make sure ",
@@ -123,6 +126,9 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         if(!is.logical(replace)){
             stop("`replace` has to be logical i.e. TRUE or FALSE")
         } 
+        if (!is.null(altexp)) {
+            x <- altExp(x, altexp)
+        }
         # Check name
         if(!.is_non_empty_string(name) ||
            name == assay.type){
@@ -171,7 +177,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         assay(newtse, name, withDimnames=FALSE) <- newassay
         newtse <- .add_values_to_metadata(newtse, 
                                           "subsampleCounts_min_size",
-                                          min_size)
+                                          min_size, altexp.name = altexp)
         return(newtse)
     }
 )

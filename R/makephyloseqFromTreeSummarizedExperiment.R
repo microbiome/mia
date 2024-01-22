@@ -8,16 +8,16 @@
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   included in the phyloseq object that is created. 
+#'   included in the phyloseq object that is created.
 #'   (By default: \code{assay.type = "counts"})
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'   
+#'
 #' @param tree_name a single \code{character} value for specifying which
-#'   tree will be included in the phyloseq object that is created, 
+#'   tree will be included in the phyloseq object that is created,
 #'   (By default: \code{tree_name = "phylo"})
 #'
 #' @param ... additional arguments
@@ -76,11 +76,11 @@ setMethod("makePhyloseqFromTreeSE",
         if (!is.null(assay_name)) {
             .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
         }
-	
+
         # Check assay.type
         .check_assay_present(assay.type, x)
-        
-        # phyloseq object requires nonduplicated rownames. If there are 
+
+        # phyloseq object requires nonduplicated rownames. If there are
         # duplicated rownames, they are converted so that they are unique
         if( any(duplicated(rownames(x))) ){
             rownames(x) <- getTaxonomyLabels(x)
@@ -104,7 +104,7 @@ setMethod("makePhyloseqFromTreeSE",
             # Adds to the list
             args[["tax_table"]] <- tax_table
         }
-        
+
         # If colData includes information
         if(!( length(colData(x)) == 0 || is.null(ncol(colData(x))) )){
             # Gets the feature_data from colData and converts it to sample_data
@@ -113,7 +113,7 @@ setMethod("makePhyloseqFromTreeSE",
             # Adds to the list
             args[["sample_data"]] <- sample_data
         }
-        
+
         # Creates a phyloseq object
         phyloseq <- do.call(phyloseq::phyloseq, args)
         return(phyloseq)
@@ -135,8 +135,8 @@ setMethod("makePhyloseqFromTreeSE",
             add_phy_tree <- FALSE
         }
         #
-        
-        # phyloseq and tree objects require nonduplicated rownames. If there are 
+
+        # phyloseq and tree objects require nonduplicated rownames. If there are
         # duplicated rownames, they are converted so that they are unique
         if( any(duplicated(rownames(x))) ){
             rownames(x) <- getTaxonomyLabels(x)
@@ -154,7 +154,7 @@ setMethod("makePhyloseqFromTreeSE",
             # Adds otu_table to the list
             args[["otu_table"]] <- obj
         }
-        
+
         # Add phylogenetic tree
         if( add_phy_tree ){
             phy_tree <- .get_rowTree_for_phyloseq(x, tree_name)
@@ -166,7 +166,7 @@ setMethod("makePhyloseqFromTreeSE",
                 args[["phy_tree"]] <- phy_tree
             }
         }
-        
+
         # If referenceSeq has information, stores it to refseq and converts is
         # to phyloseq's refseq.
         if( !is.null(referenceSeq(x)) ){
@@ -185,7 +185,7 @@ setMethod("makePhyloseqFromTreeSE",
                 }
             }
         }
-        
+
         # If 'obj' is not a phyloseq object, creates one.
         if(!is(obj,"phyloseq")){
             # Creates a phyloseq object
@@ -236,11 +236,11 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
         # If rowtree do not match, tree is pruned
         x <- .get_x_with_pruned_tree(x, tree_name)
     }
-    # Get rowTree
-    phy_tree <- rowTree(x, tree_name)
+    # Check and get rowTree
+    phy_tree <- .check_and_get_tree(x, tree_name, default.MARGIN = 1, ...)
     # Convert rowTree to phyloseq object
     phy_tree <- phyloseq::phy_tree(phy_tree)
-        
+
     return(phy_tree)
 }
 
@@ -249,7 +249,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
     refSeqs <- referenceSeq(x)
     # Is referenceSeq a list / does it contain multiple DNA sets
     is_list <- is(refSeqs, "DNAStringSetList")
-    
+
     # Take only one set, if it is a list
     if( is_list ){
         # Check referenceSeq
@@ -263,7 +263,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
         # Get specified referenceSeq
         refSeqs <- refSeqs[[referenceSeq]]
         warning("Use 'referenceSeq' to specify DNA set from DNAStringSetList. ",
-                "Current choice is '", referenceSeq, "'.", 
+                "Current choice is '", referenceSeq, "'.",
                 call. = FALSE)
     }
     # Check if all rownames have referenceSeqs

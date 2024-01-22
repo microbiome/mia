@@ -2,30 +2,30 @@
 #'
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object or a list of 
+#'   object or a list of
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   objects.
 #'
 #' @param f A single character value for selecting the grouping variable
-#'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
+#'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
 #'   with the same length as one of the dimensions. If \code{f} matches with both
-#'   dimensions, \code{MARGIN} must be specified. 
-#'   Split by cols is not encouraged, since this is not compatible with 
+#'   dimensions, \code{MARGIN} must be specified.
+#'   Split by cols is not encouraged, since this is not compatible with
 #'   storing the results in \code{altExps}.
 #'
 #' @param keep_reducedDims \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
 #'   (By default: \code{keep_reducedDims = FALSE})
-#'   
+#'
 #' @param update_rowTree \code{TRUE} or \code{FALSE}: Should the rowTree be updated
-#'   based on splitted data? Option is enabled when \code{x} is a 
-#'   \code{TreeSummarizedExperiment} object or a list of such objects. 
+#'   based on splitted data? Option is enabled when \code{x} is a
+#'   \code{TreeSummarizedExperiment} object or a list of such objects.
 #'   (By default: \code{update_rowTree = FALSE})
-#'   
+#'
 #' @param altExpNames a \code{character} vector specifying the alternative experiments
 #'   to be unsplit. (By default: \code{altExpNames = names(altExps(x))})
-#'   
+#'
 #' @param ... Arguments passed to \code{mergeRows}/\code{mergeCols} function for
 #'   \code{SummarizedExperiment} objects and other functions.
 #'   See \code{\link[=agglomerate-methods]{mergeRows}} for more details.
@@ -48,7 +48,7 @@
 #' data replaced by the unsplit data. \code{colData} of x is kept as well
 #' and any existing \code{rowTree} is dropped as well, since existing
 #' \code{rowLinks} are not valid anymore.
-#' 
+#'
 #' @name splitOn
 #' @seealso
 #' \code{\link[=splitByRanks]{splitByRanks}}
@@ -61,37 +61,37 @@
 #'
 #' @export
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-#' 
+#'
 #' @examples
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
-#' # Split data based on SampleType. 
+#' # Split data based on SampleType.
 #' se_list <- splitOn(tse, f = "SampleType")
-#' 
-#' # List of SE objects is returned. 
+#'
+#' # List of SE objects is returned.
 #' se_list
-#' 
+#'
 #' # Create arbitrary groups
 #' rowData(tse)$group <- sample(1:3, nrow(tse), replace = TRUE)
 #' colData(tse)$group <- sample(1:3, ncol(tse), replace = TRUE)
-#' 
+#'
 #' # Split based on rows
 #' # Each element is named based on their group name. If you don't want to name
 #' # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
 #' # you must use MARGIN.
 #' se_list <- splitOn(tse, f = "group", use_names = FALSE, MARGIN = 1)
-#' 
+#'
 #' # When column names are shared between elements, you can store the list to altExps
 #' altExps(tse) <- se_list
-#' 
+#'
 #' altExps(tse)
-#' 
+#'
 #' # If you want to split on columns and update rowTree, you can do
 #' se_list <- splitOn(tse, f = colData(tse)$group, update_rowTree = TRUE)
-#' 
+#'
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitOn(se_list)
-#' 
+#'
 NULL
 
 #' @rdname splitOn
@@ -101,7 +101,7 @@ setGeneric("splitOn",
            function(x, ...)
                standardGeneric("splitOn"))
 
-# This function collects f (grouping variable), MARGIN, and 
+# This function collects f (grouping variable), MARGIN, and
 # use_names and returns them as a list.
 .norm_args_for_split_by <- function(x, f, MARGIN = NULL, use_names = TRUE, ...){
     # input check
@@ -112,9 +112,7 @@ setGeneric("splitOn",
              call. = FALSE)
     }
     # Check MARGIN
-    if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
-        stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
-    }
+    MARGIN <- .check_MARGIN(MARGIN)
     # If f is a vector containing levels
     if( !.is_non_empty_string(f) ){
         # Convert into factors
@@ -131,7 +129,7 @@ setGeneric("splitOn",
                  "Please specify 'MARGIN'.", call. = FALSE)
         # If MARGIN is specified but it does not match with length of f
         } else if( !is.null(MARGIN) && (length(f) !=  dim(x)[[MARGIN]]) ){
-            stop("'f' does not match with ", 
+            stop("'f' does not match with ",
                  ifelse(MARGIN==1, "nrow", "ncol"), ". Please check 'MARGIN'.",
                  call. = FALSE)
         # IF f matches with nrow
@@ -141,7 +139,7 @@ setGeneric("splitOn",
         } else if( is.null(MARGIN) ){
             MARGIN <- 2L
         }
-    # Else if f is a character specifying column from rowData or colData  
+    # Else if f is a character specifying column from rowData or colData
     } else {
         # If MARGIN is specified
         if( !is.null(MARGIN) ){
@@ -159,7 +157,7 @@ setGeneric("splitOn",
             # Give error if it cannot be found
             if(is(tmp,"try-error")){
                 stop("'f' is not found. ",
-                     "Please check that 'f' specifies a column from ", dim_name, ".", 
+                     "Please check that 'f' specifies a column from ", dim_name, ".",
                      call. = FALSE)
             }
             # Get values
@@ -170,14 +168,14 @@ setGeneric("splitOn",
             tmp_row <- try({retrieveFeatureInfo(x, f, search = "rowData")},
                            silent = TRUE)
             # Try to get information from colData
-            tmp_col <- try({retrieveCellInfo(x, f, search = "colData")}, 
+            tmp_col <- try({retrieveCellInfo(x, f, search = "colData")},
                            silent = TRUE)
-            
-            # If it was not found 
+
+            # If it was not found
             if( is(tmp_row, "try-error") && is(tmp_col, "try-error") ){
                 stop("'f' is not found. ",
                      "Please check that 'f' specifies a column from ",
-                     "rowData or colData.", 
+                     "rowData or colData.",
                      call. = FALSE)
                 # If f was found from both
             } else if( !is(tmp_row, "try-error") && !is(tmp_col, "try-error") ){
@@ -198,7 +196,7 @@ setGeneric("splitOn",
         }
         # Convert values into factors
         f <- factor(f, unique(f))
-        
+
         # If there are NAs, add NA as level
         if( any(is.na(f)) ){
             f <- addNA(f)
@@ -345,8 +343,8 @@ setGeneric("unsplitOn",
         } else if(length(unique(dims[2L,])) == 1L) {
             MARGIN <- 1L
         } else {
-            stop("The dimensions are not equal across all elements. ", 
-                 "Please check that either number of rows or columns match.", 
+            stop("The dimensions are not equal across all elements. ",
+                 "Please check that either number of rows or columns match.",
                  call. = FALSE)
         }
     } else{
@@ -356,7 +354,7 @@ setGeneric("unsplitOn",
             stop("The dimensions are not equal across all elements.", call. = FALSE)
         }
     }
-    
+
     # Get the class of objects SCE, SE or TreeSE
     class_x <- class(ses[[1L]])
     # Combine assays
@@ -381,7 +379,7 @@ setGeneric("unsplitOn",
     rowData(ans) <- rd
     # Update rownames
     rownames(ans) <- rownames(rd)
-    
+
     # IF the object is TreeSE. add rowTree
     if( class_x == "TreeSummarizedExperiment" ){
         # Update or add old tree from the first element of list

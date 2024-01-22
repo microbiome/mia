@@ -82,10 +82,10 @@ group.
 \examples{
 data(GlobalPatterns)
 tse <- GlobalPatterns
-# Split data based on SampleType. 
+# Split data based on SampleType.
 se_list <- splitOn(tse, f = "SampleType")
 
-# List of SE objects is returned. 
+# List of SE objects is returned.
 se_list
 
 # Create arbitrary groups

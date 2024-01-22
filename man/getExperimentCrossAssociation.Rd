@@ -210,9 +210,9 @@ altExp(mae[[1]], "Phylum") <- agglomerateByRank(mae[[1]], rank = "Phylum")
 # Transform data
 altExp(mae[[1]], "Phylum") <- transformAssay(altExp(mae[[1]], "Phylum"), method = "relabundance")
 # When mode = "matrix", the return value is a matrix
-result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
+result <- getExperimentCrossAssociation(mae, experiment2 = 2,
                                         assay.type1 = "relabundance", assay.type2 = "nmr",
-                                        altexp1 = "Phylum", 
+                                        altexp1 = "Phylum",
                                         method = "pearson", mode = "matrix")
 # Show first 5 entries
 head(result, 5)
@@ -227,14 +227,14 @@ result <- testExperimentCrossAssociation(mae[[1]], experiment2 = mae[[1]], metho
 # Show first 5 entries
 head(result, 5)
 
-# getExperimentCrossAssociation also returns significances when 
+# getExperimentCrossAssociation also returns significances when
 # test_significance = TRUE
 # Warnings can be suppressed by using show_warnings = FALSE
 result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
                                         assay.type2 = "nmr",
                                         mode = "matrix", test_significance = TRUE,
                                         show_warnings = FALSE)
-                                        
+
 # Returned value is a list of matrices
 names(result)
 
@@ -242,19 +242,19 @@ names(result)
 # paired samples, you can use paired = TRUE.
 result <- getExperimentCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
                                         association_FUN = vegan::vegdist, method = "bray")
-                                        
+
 
 # If experiments are equal and measure is symmetric (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),
 # it is possible to speed-up calculations by calculating association only for unique
 # variable-pairs. Use "symmetric" to choose whether to measure association for only
 # other half of of variable-pairs.
-result <- getExperimentCrossAssociation(mae, experiment1 = "microbiota", experiment2 = "microbiota", 
+result <- getExperimentCrossAssociation(mae, experiment1 = "microbiota", experiment2 = "microbiota",
                                         assay.type1 = "counts", assay.type2 = "counts",
                                         symmetric = TRUE)
 
 # For big data sets, the calculations might take a long time.
-# To speed them up, you can take a random sample from the data. 
-# When dealing with complex biological problems, random samples can be 
+# To speed them up, you can take a random sample from the data.
+# When dealing with complex biological problems, random samples can be
 # enough to describe the data. Here, our random sample is 30 \% of whole data.
 sample_size <- 0.3
 tse <- mae[[1]]
@@ -267,9 +267,9 @@ mae[[1]] <- estimateDiversity(mae[[1]])
 # colData_variable works similarly to assay.type. Instead of fetching an assay
 # named assay.type from assay slot, it fetches a column named colData_variable
 # from colData.
-result <- getExperimentCrossAssociation(mae[[1]], assay.type1 = "counts", 
+result <- getExperimentCrossAssociation(mae[[1]], assay.type1 = "counts",
                                         colData_variable2 = c("shannon", "coverage"))
-                                        
+
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
