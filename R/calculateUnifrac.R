@@ -20,28 +20,28 @@
 #'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
 #'   matrix. This means that the phylo object and the columns should relate
 #'   to the same type of features (aka. microorganisms).
-#'   
-#' @param nodeLab if \code{x} is a matrix, 
+#'
+#' @param nodeLab if \code{x} is a matrix,
 #'   a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
-#'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the 
+#'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the
 #'   node labs must be present in \code{tree}.
 #'
 #' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   
+#'
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead.)
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param tree_name a single \code{character} value for specifying which
-#'   tree will be used in calculation. 
+#'   tree will be used in calculation.
 #'   (By default: \code{tree_name = "phylo"})
-#'   
+#'
 #' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
 #'   calculation? Weighted-Unifrac takes into account the relative abundance of
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
@@ -58,10 +58,10 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the Unifrac calculation should be parallelized.
 #'
-#' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
+#' @param transposed Logical scalar, is x transposed with cells in rows, i.e.,
 #'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 #'   (By default: \code{transposed = FALSE})
-#'   
+#'
 #' @param ... optional arguments not used.
 #'
 #' @return a sample-by-sample distance matrix, suitable for NMDS, etc.
@@ -130,7 +130,7 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
            stop("When providing a 'tree', please provide a matrix-like as 'x'",
                 " and not a 'SummarizedExperiment' object. Please consider ",
                 "combining both into a 'TreeSummarizedExperiment' object.",
-                call. = FALSE) 
+                call. = FALSE)
         }
         .calculate_distance(x, FUN = runUnifrac, tree = tree,
                             weighted = weighted, normalized = normalized,
@@ -146,16 +146,13 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
 setMethod("calculateUnifrac",
           signature = c(x = "TreeSummarizedExperiment",
                         tree = "missing"),
-    function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
+    function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
              tree_name = "phylo", transposed = FALSE, ...){
         # Check assay.type and get assay
-        .check_assay_present(assay.type, x)
-        mat <- assay(x, assay.type)
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         if(!transposed){
-            # Check tree_name
-            .check_rowTree_present(tree_name, x)
-            # Get tree
-            tree <- rowTree(x, tree_name)
+            # Check tree_name and get tree
+            tree <- .check_and_get_tree(x, tree_name, default.MARGIN = 1, ...)
             # Select only those features that are in the rowTree
             whichTree <- rowLinks(x)[, "whichTree"] == tree_name
             if( any(!whichTree) ){
@@ -170,10 +167,8 @@ setMethod("calculateUnifrac",
             # Get links
             links <- rowLinks(x)
         } else {
-            # Check tree_name
-            .check_colTree_present(tree_name, x)
-            # Get tree
-            tree <- colTree(x, tree_name)
+            # Check tree_name and get tree
+            tree <- .check_and_get_tree(x, tree_name, default.MARGIN = 1, ...)
             # Select only those samples that are in the colTree
             whichTree <- colLinks(x)[, "whichTree"] == tree_name
             if( any(!whichTree) ){
@@ -221,7 +216,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # converting the function to work with the input matrix as is
     x <- try(t(x), silent = TRUE)
     if(is(x,"try-error")){
-        stop("The input to 'runUnifrac' must be a matrix-like object: ", 
+        stop("The input to 'runUnifrac' must be a matrix-like object: ",
              as.character(x), call. = FALSE)
     }
     # input check
@@ -234,7 +229,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     if(is.null(colnames(x)) || is.null(rownames(x))){
         stop("colnames and rownames must not be NULL", call. = FALSE)
     }
-    # nodeLab should be NULL or character vector specifying links between 
+    # nodeLab should be NULL or character vector specifying links between
     # rows and tree labels
     if( !(is.null(nodeLab) ||
         (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
@@ -243,7 +238,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
              "abundance table and tree labels.", call. = FALSE)
     }
     # check that matrix and tree are compatible
-    if( is.null(nodeLab) && 
+    if( is.null(nodeLab) &&
         !all(rownames(x) %in% c(tree$tip.label)) ) {
         stop("Incompatible tree and abundance table! Please try to provide ",
              "'nodeLab'.", call. = FALSE)
@@ -262,7 +257,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     if( any(!tree$tip.label %in% rownames(x)) ){
         tree <- ape::drop.tip(
             tree, tree$tip.label[!tree$tip.label %in% rownames(x)])
-        warning("The tree is pruned so that tips that cannot be found from ", 
+        warning("The tree is pruned so that tips that cannot be found from ",
                 "the abundance matrix are removed.", call. = FALSE)
     }
     #
@@ -389,8 +384,8 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
     # Merge assay based on nodeLabs
-    x <- scuttle::sumCountsAcrossFeatures(x, ids = nodeLab, 
-                                          subset.row = NULL, subset.col = NULL, 
+    x <- scuttle::sumCountsAcrossFeatures(x, ids = nodeLab,
+                                          subset.row = NULL, subset.col = NULL,
                                           average = average)
     # Remove NAs from nodeLab
     nodeLab <- nodeLab[ !is.na(nodeLab) ]

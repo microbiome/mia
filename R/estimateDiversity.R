@@ -254,23 +254,26 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         }
 
         # input check
-        index<- match.arg(index, several.ok = TRUE)
-        
+        index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                 "same length than 'index'.",
                 call. = FALSE)
         }
-        .check_assay_present(assay.type, x)
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         .require_package("vegan")
 
         dvrsts <- BiocParallel::bplapply(index,
                                         .get_diversity_values,
                                         x = x,
-                                        mat = assay(x, assay.type),
+                                        mat = mat,
                                         BPPARAM = BPPARAM,
                                         ...)
-        .add_values_to_colData(x, dvrsts, name)
+        # Add values to colData
+        x <- .add_values_to_colData(
+            x, values = dvrsts, name = name, default.MARGIN = 1,
+            transpose.MARGIN = TRUE, ...)
+        return(x)
     }
 )
 
@@ -300,6 +303,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         }
         
         # If 'faith' is one of the indices
+        calc_faith <- FALSE
         if( "faith" %in% index ){
             # Get the name of "faith" index
             faith_name <- name[index %in% "faith"]
@@ -313,42 +317,44 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             
             # Faith will be calculated
             calc_faith <- TRUE
-        } else{
-            # Faith will not be calculated
-            calc_faith <- FALSE
         }
-        
         # If index list contained other than 'faith' index, the length of the
         # list is over 0
-        if( length(index)>0){
+        if( length(index) > 0 ){
             # Calculates all indices but not 'faith'
             x <- callNextMethod()
         }
         # If 'faith' was one of the indices, 'calc_faith' is TRUE
         if( calc_faith ){
             # Get tree to check whether faith can be calculated
-            tree <- rowTree(x, tree_name)
-            # Check if faith can be calculated. Give warning and do not run estimateFaith
-            # if there is no rowTree and other indices were also calculated. Otherwise, 
-            # run estimateFaith. (If there is no rowTree --> error)
-            if( (is.null(tree) || is.null(tree$edge.length)) &&
-                length(index) >= 1 ){
-                warning("Faith diversity has been excluded from the results ",
-                        "since it cannot be calculated without rowTree. ",
-                        "This requires a rowTree in the input argument x. ",
-                        "Make sure that 'rowTree(x)' is not empty, or ",
-                        "make sure to specify 'tree_name' in the input ",
-                        "arguments. Warning is also provided if the tree does ",
-                        "not have any branches. You can consider adding ",
-                        "rowTree to include this index.", 
-                        call. = FALSE)
-            } else {
-                x <- estimateFaith(x, name = faith_name, tree_name = tree_name, ...)
+            tree <- .check_and_get_tree(x, tree_name, disable.error = TRUE, ...)
+            # If rowTree can be found, calculate faith. If user wants to only
+            # calculate faith, let it also go through. --> this leads to an
+            # error.
+            if( !is.null(tree) || ( is.null(tree) && length(index) == 0 ) ){
+                x <- estimateFaith(
+                    x, name = faith_name, tree_name = tree_name, ...)
                 # Ensure that indices are in correct order
                 colnames <- colnames(colData(x))
-                colnames <- c(colnames[ !colnames %in% name_original ], name_original)
+                colnames <- c(
+                    colnames[ !colnames %in% name_original ], name_original)
                 colData(x) <- colData(x)[ , colnames]
             }
+            # Give warning if faith could not be calculated but there were
+            # other indices that are calculated.
+            if( is.null(tree) ){
+                warning(
+                    "Faith diversity has been excluded from the results ",
+                    "since it cannot be calculated without rowTree. ",
+                    "This requires a rowTree in the input argument x. ",
+                    "Make sure that 'rowTree(x)' is not empty, or ",
+                    "make sure to specify 'tree_name' in the input ",
+                    "arguments. Warning is also provided if the tree does ",
+                    "not have any branches. You can consider adding ",
+                    "rowTree to include this index.", 
+                    call. = FALSE)
+            }
+            
         }
         return(x)
     }
@@ -376,7 +382,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                 call. = FALSE)
         }
         # Check 'assay.type'
-        .check_assay_present(assay.type, x)
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         # Check that it is numeric
         if( !is.numeric(assay(x, assay.type)) ){
             stop("The abundance matrix specificied by 'assay.type' must be numeric.",
@@ -395,8 +401,6 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                  "rownames and node labs of 'tree'.",
                  call. = FALSE)
         }
-        # Get the abundance matrix
-        mat <- assay(x, assay.type)
         # Check that it is numeric
         if( !is.numeric(mat) ){
             stop("The abundance matrix specificied by 'assay.type' must be numeric.",
@@ -413,7 +417,9 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         # Calculates Faith index
         faith <- list(.calc_faith(mat, tree, ...))
         # Adds calculated Faith index to colData
-        .add_values_to_colData(x, faith, name)
+        .add_values_to_colData(
+            x, values = faith, name = name, default.MARGIN = 1,
+            transpose.MARGIN = TRUE, ...)
     }
 )
 
@@ -428,7 +434,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                  call. = FALSE)
         }
         # Gets the tree
-        tree <- rowTree(x, tree_name)
+        tree <- .check_and_get_tree(x, tree_name, default.MARGIN = 1, ...)
         if( is.null(tree) || is.null(tree$edge.length)){
             stop("rowTree(x, tree_name) is NULL or the tree does not have any branches. ",
             "The Faith's alpha diversity index cannot be calculated.",
@@ -496,7 +502,11 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # Number of groups needed to have threshold (e.g. 50 %) of the
     # ecosystem occupied
     coverage <- apply(rel, 2, function(x) {
-        min(which(cumsum(rev(sort(x/sum(x)))) >= threshold))
+        res <- NA
+        if( sum(x) != 0 ){
+            res <- min(which(cumsum(rev(sort(x/sum(x)))) >= threshold))
+        }
+        return(res)
     })
     names(coverage) <- colnames(rel)
     coverage

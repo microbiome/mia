@@ -86,8 +86,8 @@ tse <- GlobalPatterns
 tse <- cluster(tse, KmeansParam(centers = 3))
 
 # Clustering done on the samples using Hclust
-tse <- cluster(tse, 
-               MARGIN = "samples", 
+tse <- cluster(tse,
+               MARGIN = "samples",
                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 
 # Getting the clusters

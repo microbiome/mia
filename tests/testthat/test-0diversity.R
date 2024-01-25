@@ -104,7 +104,7 @@ test_that("diversity estimates", {
     expect_true(class(tse_tree)== "TreeSummarizedExperiment")
     # tse_tree should include "faith"
     expect_equal(colnames(colData(tse_tree)), c(colnames(colData(tse)), "faith"))
-    
+    # 
     
     # Calculates "faith" SE + TREE
     se_tree <- estimateFaith(se, tree = rowTree(tse))

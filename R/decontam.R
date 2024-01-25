@@ -45,7 +45,7 @@
 #'   \code{\link[decontam:isContaminant]{decontam:isContaminant}} or
 #'   \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}
 #'
-#' @param ... 
+#' @param ...
 #' \itemize{
 #'   \item{for \code{isContaminant}/ \code{isNotContaminant}: }{arguments
 #'     passed on to \code{\link[decontam:isContaminant]{decontam:isContaminant}}
@@ -136,7 +136,7 @@ setMethod("isContaminant", signature = c(seqtab = "SummarizedExperiment"),
                                       search = "colData")$value
             batch <- factor(batch, sort(unique(batch)))
         }
-        mat <- assay(seqtab,assay.type)
+        mat <- .check_and_get_assay(seqtab, assay.type, default.MARGIN = 1, ...)
         contaminant <- isContaminant(t(mat),
                                      conc = concentration,
                                      neg = control,
@@ -193,7 +193,7 @@ setMethod("isNotContaminant", signature = c(seqtab = "SummarizedExperiment"),
                      call. = FALSE)
             }
         }
-        mat <- assay(seqtab,assay.type)
+        mat <- .check_and_get_assay(seqtab, assay.type, default.MARGIN = 1, ...)
         not_contaminant <- isNotContaminant(t(mat),
                                             neg = control,
                                             threshold = threshold,

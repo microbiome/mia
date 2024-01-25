@@ -3,9 +3,9 @@
 #' These functions perform Canonical Correspondence Analysis on data stored
 #' in a \code{SummarizedExperiment}.
 #'
-#' @param x For \code{calculate*} a 
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} 
-#'   or a numeric matrix with columns as samples 
+#' @param x For \code{calculate*} a
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   or a numeric matrix with columns as samples
 #'
 #'   For \code{run*} a
 #'   \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
@@ -15,20 +15,20 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   a formula can be supplied. Based on the right-hand side of the given formula
 #'   \code{colData} is subset to \code{variables}.
-#'   
-#'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
+#'
+#'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis
 #'   into a CA analysis and dbRDA into PCoA/MDS.
 #'
 #' @param variables When \code{x} is a \code{SummarizedExperiment},
-#'   \code{variables} can be used to specify variables from \code{colData}. 
-#'   
-#'   When \code{x} is a matrix, \code{variables} is a \code{data.frame} or 
-#'   an object coercible to one containing the variables to use. 
-#'    
-#'   All variables are used. Please subset, if you want to consider only some of them. 
-#'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis 
+#'   \code{variables} can be used to specify variables from \code{colData}.
+#'
+#'   When \code{x} is a matrix, \code{variables} is a \code{data.frame} or
+#'   an object coercible to one containing the variables to use.
+#'
+#'   All variables are used. Please subset, if you want to consider only some of them.
+#'   \code{variables} and \code{formula} can be missing, which turns the CCA analysis
 #'   into a CA analysis and dbRDA into PCoA/MDS.
-#' 
+#'
 #' @param test.signif a logical scalar, should the PERMANOVA and analysis of
 #'   multivariate homogeneity of group dispersions be performed.
 #'   (By default: \code{test.signif = TRUE})
@@ -39,18 +39,18 @@
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead.)
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'   
+#'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
 #'
 #' @param name String specifying the name to be used to store the result in the
 #'   reducedDims of the output.
-#' 
+#'
 #' @param scores A string specifying scores to be returned. Must be
 #' 'wa' (site scores found as weighted averages (cca) or weighted sums (rda) of
 #' v with weights Xbar, but the multiplying effect of eigenvalues removed) or
@@ -73,13 +73,13 @@
 #'   (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
 #'   (By default: \code{homogeneity.test="permanova"})}
 #' }
-#' 
+#'
 #' @details
 #'   *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
 #'   By default dbRDA is done with euclidean distances which equals to RDA.
-#'   
+#'
 #'   Significance tests are done with \code{vegan:anova.cca} (PERMANOVA). Group
-#'   dispersion, i.e., homogeneity within groups is analyzed with 
+#'   dispersion, i.e., homogeneity within groups is analyzed with
 #'   \code{vegan:betadisper} (multivariate homogeneity of groups dispersions (variances))
 #'   and statistical significance of homogeneity is tested with a test
 #'   specified by \code{homogeneity.test} parameter.
@@ -102,19 +102,19 @@
 #' data(GlobalPatterns)
 #' GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
-#' 
+#'
 #' # Fetch significance results
 #' attr(reducedDim(GlobalPatterns, "CCA"), "significance")
 #'
 #' GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
-#' 
+#'
 #' # Specify dissimilarity measure
 #' GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
 #' GlobalPatterns <- runRDA(
 #'     GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
-#' 
-#' # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
+#'
+#' # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...)
 #' tse <- GlobalPatterns
 #' tse <- transformAssay(tse, MARGIN = "features", method = "z")
 #' # Data might include taxa that do not vary. Remove those because after z-transform
@@ -129,7 +129,7 @@
 #' # of homogeneity of groups is analysed. Moreover, full signficance test results
 #' # can be returned.
 #'  tse <- runRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
-#' 
+#'
 NULL
 
 #' @rdname runCCA
@@ -235,7 +235,7 @@ setMethod("calculateCCA", "ANY",
     # Check that variables specify columns from colData
     if( all(!is.character(variables)) ){
         stop("'variables' should be a character specifying variables from ",
-             "colData(x).", 
+             "colData(x).",
              call. = FALSE)
     }
     if(!all(variables %in% colnames(colData(x)))){
@@ -243,7 +243,7 @@ setMethod("calculateCCA", "ANY",
              "present in colData(x).", call. = FALSE)
     }
     # Create a formula based on variables
-    formula <- as.formula(paste0("x ~ ", 
+    formula <- as.formula(paste0("x ~ ",
                                  paste(variables, collapse = " + ")))
     formula
 }
@@ -255,9 +255,8 @@ setMethod("calculateCCA", "SummarizedExperiment",
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
              scores = "wa", ...)
     {
-        # Check assay.type and get assay
-        .check_assay_present(assay.type, x)
-        mat <- assay(x, assay.type)
+        # Check and get assay.type
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         # Check test.signif
         if( !.is_a_bool(test.signif) ){
             stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
@@ -277,9 +276,9 @@ setMethod("calculateCCA", "SummarizedExperiment",
             # Otherwise if formula is provided, get variables based on formula
             # (If formula is not provided variables is just empty data.frame)
             variables <- .get_variables_from_data_and_formula(x, formula)
-        } 
+        }
         cca <- .calculate_cca(mat, formula, variables, scores, ...)
-        
+
         # Test significance if specified
         if( test.signif ){
             res <- .test_rda(mat, attr(cca, "cca"), variables, ...)
@@ -317,7 +316,7 @@ setMethod("runCCA", "SingleCellExperiment",
     x <- as.matrix(t(x))
     # If formula is missing (vegan:dbrda requires formula)
     if( missing(formula) ){
-        formula <- x ~ 1  
+        formula <- x ~ 1
     }
     # Get the dependent variable
     dep_var_name <- .get_dependent_var_name(formula)
@@ -488,7 +487,7 @@ setMethod("runCCA", "SingleCellExperiment",
     homogeneity_tab <- lapply(homogeneity, function(x) x[["table"]])
     # Combine tables
     homogeneity_tab <- do.call(rbind, homogeneity_tab)
-    
+
     # Return whole data or just a tables
     if( full ){
         res <- list(
@@ -527,7 +526,7 @@ setMethod("runCCA", "SingleCellExperiment",
     } else{
         tab <- res[["tab"]]
     }
-    
+
     # Modify permanova/anova table
     if( homogeneity.test != "tukeyhsd" ){
         # Add info about total variance
@@ -537,7 +536,7 @@ setMethod("runCCA", "SingleCellExperiment",
         # Get only groups row (drop residuals row)
         tab <- tab[1, ]
     }
-    
+
     # Create list from the object and results
     res <- list(
         obj = res,
@@ -560,9 +559,8 @@ setMethod("calculateRDA", "SummarizedExperiment",
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
              scores = "wa", ...)
     {
-        # Check assay.type and get assay
-        .check_assay_present(assay.type, x)
-        mat <- assay(x, assay.type)
+        # Check and get assay.type
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         # Check test.signif
         if( !.is_a_bool(test.signif) ){
             stop("'test.signif' must be TRUE or FALSE.", call. = FALSE)
@@ -571,7 +569,7 @@ setMethod("calculateRDA", "SummarizedExperiment",
             stop("'scores' must be 'wa', 'u', or 'v'.",
                  call. = FALSE)
         }
-        
+
         # If formula is missing but variables are not
         if( !missing(variables) && missing(formula) ){
             # Create a formula based on variables
@@ -582,10 +580,10 @@ setMethod("calculateRDA", "SummarizedExperiment",
             # Otherwise if formula is provided, get variables based on formula
             # (If formula is not provided variables is just empty data.frame)
             variables <- .get_variables_from_data_and_formula(x, formula)
-        } 
+        }
         # Calculate RDA
         rda <- .calculate_rda(mat, formula, variables, scores, ...)
-        
+
         # Test significance if specified
         if( test.signif ){
             res <- .test_rda(mat, attr(rda, "rda"), variables, ...)

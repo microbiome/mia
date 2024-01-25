@@ -32,18 +32,18 @@
 #'
 #' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   
+#'
 #' @param exprs_values a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead.)
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'   
+#'
 #' @param tree_name a single \code{character} value for specifying which
-#'   rowTree will be used in calculation. 
+#'   rowTree will be used in calculation.
 #'   (By default: \code{tree_name = "phylo"})
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
@@ -153,17 +153,12 @@ setMethod("calculateDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 #' @importFrom ape cophenetic.phylo
 #' @rdname runDPCoA
 setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
-    function(x, ..., assay.type = assay_name, assay_name = exprs_values, 
+    function(x, ..., assay.type = assay_name, assay_name = exprs_values,
              exprs_values = "counts", tree_name = "phylo")
     {
         .require_package("ade4")
-        # Check assay.type
-        .check_assay_present(assay.type, x)
-        # Check tree_name
-        .check_rowTree_present(tree_name, x)
-        #
-        # Get tree
-        tree <- rowTree(x, tree_name)
+        # Check tree_name and get tree
+        tree <- .check_and_get_tree(x, tree_name, default.MARGIN = 1, ...)
         # Select only those features that are in the rowTree
         whichTree <- rowLinks(x)[ , "whichTree"] == tree_name
         if( any(!whichTree) ){
@@ -173,8 +168,8 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
             x <- x[ whichTree, ]
         }
         dist <- cophenetic.phylo(tree)
-        # Get assay
-        mat <- assay(x, assay.type)
+        # Check and get assay.type
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         calculateDPCoA(mat, dist, ...)
     }
 )

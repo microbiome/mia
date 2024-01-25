@@ -1,12 +1,12 @@
 #' Estimate divergence
 #'
 #' Estimate divergence against a given reference sample.
-#' 
+#'
 #' @param x a \code{\link{SummarizedExperiment}} object.
 #'
 #' @param assay.type the name of the assay used for calculation of the
 #'   sample-wise estimates.
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
@@ -14,25 +14,25 @@
 #'
 #' @param name a name for the column of the colData the results should be
 #'   stored in. By default, \code{name} is \code{"divergence"}.
-#'   
+#'
 #' @param reference a numeric vector that has length equal to number of
 #'   features, or a non-empty character value; either 'median' or 'mean'.
 #'   \code{reference} specifies the reference that is used to calculate
 #'   \code{divergence}. by default, \code{reference} is  \code{"median"}.
-#'   
+#'
 #' @param FUN a \code{function} for distance calculation. The function must
-#'   expect the input matrix as its first argument. With rows as samples 
+#'   expect the input matrix as its first argument. With rows as samples
 #'   and columns as features. By default, \code{FUN} is
 #'   \code{vegan::vegdist}.
-#'   
+#'
 #' @param method a method that is used to calculate the distance. Method is
 #'   passed to the function that is specified by \code{FUN}. By default,
 #'   \code{method} is \code{"bray"}.
 #'
 #' @param ... optional arguments
-#' 
+#'
 #' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
-#' 
+#'
 #' @details
 #'
 #' Microbiota divergence (heterogeneity / spread) within a given sample
@@ -42,7 +42,7 @@
 #' This measure is sensitive to sample size.
 #' Subsampling or bootstrapping can be applied to equalize sample sizes
 #' between comparisons.
-#' 
+#'
 #' @seealso
 #' \code{\link[scater:plotColData]{plotColData}}
 #' \itemize{
@@ -50,65 +50,65 @@
 #'   \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
 #'   \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
 #' }
-#' 
+#'
 #' @name estimateDivergence
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-#' 
+#'
 #' @examples
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
-#' 
+#'
 #' # By default, reference is median of all samples. The name of column where results
-#' # is "divergence" by default, but it can be specified. 
+#' # is "divergence" by default, but it can be specified.
 #' tse <- estimateDivergence(tse)
-#' 
-#' # The method that are used to calculate distance in divergence and 
-#' # reference can be specified. Here, euclidean distance and dist function from 
+#'
+#' # The method that are used to calculate distance in divergence and
+#' # reference can be specified. Here, euclidean distance and dist function from
 #' # stats package are used. Reference is the first sample.
-#' tse <- estimateDivergence(tse, name = "divergence_first_sample", 
-#'                           reference = assays(tse)$counts[,1], 
+#' tse <- estimateDivergence(tse, name = "divergence_first_sample",
+#'                           reference = assays(tse)$counts[,1],
 #'                           FUN = stats::dist, method = "euclidean")
-#' 
-#' # Reference can also be median or mean of all samples. 
+#'
+#' # Reference can also be median or mean of all samples.
 #' # By default, divergence is calculated by using median. Here, mean is used.
 #' tse <- estimateDivergence(tse, name = "divergence_average", reference = "mean")
-#' 
+#'
 #' # All three divergence results are stored in colData.
 #' colData(tse)
-#' 
+#'
 NULL
 
 #' @rdname estimateDivergence
 #' @export
 setGeneric("estimateDivergence",signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts", 
-                    name = "divergence", reference = "median", 
+           function(x, assay.type = assay_name, assay_name = "counts",
+                    name = "divergence", reference = "median",
                     FUN = vegan::vegdist, method = "bray", ...)
              standardGeneric("estimateDivergence"))
 
 #' @rdname estimateDivergence
 #' @export
 setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
-             name = "divergence", reference = "median", 
+    function(x, assay.type = assay_name, assay_name = "counts",
+             name = "divergence", reference = "median",
              FUN = vegan::vegdist, method = "bray", ...){
-        
+
         ################### Input check ###############
-        # Check assay.type
-        .check_assay_present(assay.type, x)
+        # Check and get assay.type
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         # Check name
         if(!.is_non_empty_character(name) || length(name) != 1L){
             stop("'name' must be a non-empty character value.",
                  call. = FALSE)
         }
         # Check reference
-        # If "reference" is not right: 
+        # If "reference" is not right:
         # it is not numeric or character
         # its length does not equal to number of samples when it's numeric,
         # reference is not "median" or "mean"
-        reference_stop_msg <- 
+        reference_stop_msg <-
             paste0("'reference' must be a numeric vector that has lenght equal",
                    " to number of features, or 'reference' must be either",
                    " 'median' or 'mean'.")
@@ -118,19 +118,22 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
             if( is.numeric(reference) && length(reference) != nrow(x) ){
                 stop(reference_stop_msg, call. = FALSE)
             }
-            if( is.character(reference) && length(reference) != 1L && 
+            if( is.character(reference) && length(reference) != 1L &&
                !any(c("median","mean") %in% reference) ){
                 stop(reference_stop_msg, call. = FALSE)
             }
         }
 
         ################# Input check end #############
-        divergence <- .calc_reference_dist(mat = assay(x, assay.type),
-                                       reference = reference, 
+        divergence <- .calc_reference_dist(mat = mat,
+                                       reference = reference,
                                        FUN = FUN,
                                        method = method, ...)
 
-        .add_values_to_colData(x, list(divergence), name)
+        # Add values to colData
+        x <- .add_values_to_colData(
+            x, values = list(divergence), name = name, default.MARGIN = 1,
+            transpose.MARGIN = TRUE, ...)
 
     }
 )
