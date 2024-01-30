@@ -115,8 +115,10 @@ loadFromMetaphlan <- function(
     tables <- .parse_metaphlan(data, ...)
 
     # Create multiple SE objects at different rank from the data
+    available_ranks <- names(tables)
     se_objects <- lapply(
-        tables, .create_se_from_metaphlan, returned.ranks = names(tables), ...)
+        tables, .create_se_from_metaphlan, returned.ranks = available_ranks,
+        ...)
     
     # Get the object with lowest rank
     tse <- se_objects[[ length(se_objects) ]]
