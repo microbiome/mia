@@ -95,3 +95,4 @@ Changes in version 1.9.x
 + loadFromHumann: Improved speed
 
 Changes in version 1.11.x
++ loadFromMetaphlan: support strain rank

@@ -115,7 +115,8 @@ loadFromMetaphlan <- function(
     tables <- .parse_metaphlan(data, ...)
 
     # Create multiple SE objects at different rank from the data
-    se_objects <- lapply(tables, .create_se_from_metaphlan, ...)
+    se_objects <- lapply(
+        tables, .create_se_from_metaphlan, returned.ranks = names(tables), ...)
     
     # Get the object with lowest rank
     tse <- se_objects[[ length(se_objects) ]]
@@ -207,7 +208,7 @@ loadFromMetaphlan <- function(
     # ID in Metaphlan v2, > 2 clade_name
     col <- colnames(table) %in% c("clade_name", "ID")
     if( sum(col) != 1 ){
-        stop("Error in parsin Metaphlan file.", call. = FALSE)
+        stop("Error in parsing Metaphlan file.", call. = FALSE)
     }
     # Get the lowest level of each row
     
@@ -218,7 +219,8 @@ loadFromMetaphlan <- function(
     # at specific rank
     tables <- split(table, levels)
     # Get the order
-    indices <- match(TAXONOMY_RANKS, tolower(names(tables)))
+    metaphlan_tax = c(TAXONOMY_RANKS, "strain")
+    indices <- match(metaphlan_tax, tolower(names(tables)))
     # Remove NAs which occurs if rank is not included
     indices <- indices[!is.na(indices)]
     # Order tables 
@@ -230,24 +232,24 @@ loadFromMetaphlan <- function(
 # Output is single character that specifies the rank, e.g, "s" == "Species"
 .get_lowest_taxonomic_level <- function(string){
     # Get indices that specify location of rank prefixes 
-    levels <- gregexpr("([kpcofgs]+)__", string)[[1]]
+    levels <- gregexpr("([kpcofgst]+)__", string)[[1]]
     # Get the location of lowest rank
     lowest_level_ind <- levels[length(levels)]
     # Get the lowest rank that was found
     lowest_level <- substr(string, start = lowest_level_ind, stop = lowest_level_ind)
     
     # List all ranks and what prefix they correspond
-    ranks <- c(Domain = "d", Kingdom = "k", Phylum = "p", Class = "c",
-               Order = "o", Family = "f", Genus = "g", Species = "s")
+    ranks <- c(
+        Domain = "d", Kingdom = "k", Phylum = "p", Class = "c", Order = "o",
+        Family = "f", Genus = "g", Species = "s", Strain = "t")
     # Convert prefix into full rank name
     lowest_level <- names(ranks[ match(lowest_level, ranks) ])
     return(lowest_level)
 }
 
 # Create SE object that include rowdata and assay, from the metaphlan table
-.create_se_from_metaphlan <- function(table,
-                                      assay.type = assay_name, assay_name = "counts",
-                                      ...){
+.create_se_from_metaphlan <- function(
+        table, assay.type = assay_name, assay_name = "counts", ...){
     # Check assay.type
     if( !.is_non_empty_character(assay.type) ){
         stop("'assay.type' must be a non-empty character value.",
@@ -261,7 +263,9 @@ loadFromMetaphlan <- function(
     # Get those columns that belong to assay
     assay <- table[, -rowdata_id, drop = FALSE]
     # Parse taxonomic levels
-    taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = colnames(rowdata)[[1]], ...)
+    taxonomy <- .parse_taxonomy(
+        rowdata[ , 1, drop = FALSE], sep = "\\|",
+        column_name = colnames(rowdata)[[1]], ...)
     # Add parsed taxonomy level information to rowdata
     rowdata <- cbind(taxonomy, rowdata)
     # Ensure that rowData is DataFrame
