@@ -223,9 +223,8 @@
 #' @param column_name a single \code{character} value defining the column of taxa_tab
 #'  that includes taxonomical information.
 #'  
-#' @param removeTaxaPrefixes {\code{TRUE} or \code{FALSE}: Should 
-#'  taxonomic prefixes be removed? (default:
-#'  \code{removeTaxaPrefixes = FALSE})}
+#' @param remove.prefix {\code{TRUE} or \code{FALSE}: Should 
+#'  taxonomic prefixes be removed? (default: \code{remove.prefix = FALSE})}
 #'  
 #' @return  a `data.frame`.
 #' @keywords internal
@@ -233,7 +232,8 @@
 #' @importFrom S4Vectors DataFrame
 #' @noRd
 .parse_taxonomy <- function(
-    taxa_tab, sep = "; |;", column_name = "Taxon", removeTaxaPrefixes = FALSE,
+    taxa_tab, sep = "; |;", column_name = "Taxon",
+    remove.prefix = removeTaxaPrefixes, removeTaxaPrefixes = FALSE,
     returned.ranks = TAXONOMY_RANKS, ...) {
     ############################### Input check ################################
     # Check sep
@@ -247,9 +247,13 @@
            " information about taxonomic levels.",
            call. = FALSE)
     }
-    # Check removeTaxaPrefixes
-    if(!.is_a_bool(removeTaxaPrefixes)){
-      stop("'removeTaxaPrefixes' must be TRUE or FALSE.", call. = FALSE)
+    # Check remove.prefix
+    if(!.is_a_bool(remove.prefix)){
+        stop("'remove.prefix' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # Check returned.ranks
+    if( !is.character(returned.ranks) ){
+        stop("'returned.ranks' must be a character vector.", call. = FALSE)
     }
     ############################## Input check end #############################
     
@@ -266,11 +270,9 @@
     taxa_prefixes_match <- lapply(taxa_prefixes, match, x = all_prefixes)
     taxa_prefixes_match <- IntegerList(taxa_prefixes_match)
     # get the taxa values
-    if(removeTaxaPrefixes){
-      taxa_split <- lapply(taxa_split,
-                           gsub,
-                           pattern = "([kpcofgst]+)__",
-                           replacement = "")
+    if(remove.prefix){
+        taxa_split <- lapply(
+            taxa_split, gsub, pattern = "([kpcofgst]+)__", replacement = "")
       taxa_split <- CharacterList(taxa_split)
     }
     # extract by order matches
