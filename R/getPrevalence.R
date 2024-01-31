@@ -204,13 +204,16 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
             stop("'sort' must be TRUE or FALSE.", call. = FALSE)
         }
         #
-
         if (include_lowest) {
             prev <- x >= detection
         } else {
             prev <- x > detection
         }
-        prev <- rowSums(prev, na.rm = TRUE)
+        # If there were taxa with NA values, convert NA values to FALSE -->
+        # not detected.
+        prev[ is.na(prev) ] <- FALSE
+        # Calculate prevalence for each taxa
+        prev <- rowSums(prev)
         # Always return prevalence as a relative frequency.
         # This helps to avoid confusion with detection limit
         prev <- prev / ncol(x)
