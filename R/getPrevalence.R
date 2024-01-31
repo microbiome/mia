@@ -210,7 +210,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
         } else {
             prev <- x > detection
         }
-        prev <- rowSums(prev)
+        prev <- rowSums(prev, na.rm = TRUE)
         # Always return prevalence as a relative frequency.
         # This helps to avoid confusion with detection limit
         prev <- prev / ncol(x)
