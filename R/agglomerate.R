@@ -155,10 +155,16 @@ setGeneric("mergeFeaturesByRank",
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
         empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+        # Get rowData/colData
+        # browser()
+        rd <- .get_rowdata(x, ...)
         # input check
-        if(nrow(x) == 0L){
+        if(nrow(rd) == 0L){
             stop("No data available in `x` ('x' has nrow(x) == 0L.)",
                  call. = FALSE)
+        }
+        if(ncol(rd) == 0L){
+            stop("taxonomyData needs to be populated.", call. = FALSE)
         }
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
@@ -170,53 +176,57 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         if(!.is_a_bool(na.rm)){
             stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(ncol(rowData(x)) == 0L){
-            stop("taxonomyData needs to be populated.", call. = FALSE)
-        }
-        .check_taxonomic_rank(rank, x)
-        .check_for_taxonomic_data_order(x)
+        .check_taxonomic_rank(rank, x, ...)
+        .check_for_taxonomic_data_order(x, ...)
         #
 
         # Make a vector from the taxonomic data.
-        col <- which( taxonomyRanks(x) %in% rank )
-        tax_cols <- .get_tax_cols_from_se(x)
+        col <- which( taxonomyRanks(x, ...) %in% rank )
+        tax_cols <- .get_tax_cols_from_se(x, ...)
 
         # if na.rm is TRUE, remove the empty, white-space, NA values from
         # tree will be pruned later, if agglomerateTree = TRUE
         if( na.rm ){
-            x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
-                                                   empty.fields)
+            x <- .remove_with_empty_taxonomic_info(
+                x, tax_cols[col], empty.fields, ...)
         }
         # If rank is the only rank that is available and this data is unique,
         # then the data is already 'aggregated' and no further operations
         # are needed.
-        if (length(taxonomyRanks(x)) == 1L &&
-            !anyDuplicated(rowData(x)[,taxonomyRanks(x)])) {
+        if( length(taxonomyRanks(x, ...)) == 1L &&
+            !anyDuplicated(rd[,taxonomyRanks(x, ...)]) ){
             return(x)
         }
 
         # get groups of taxonomy entries
-        tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
+        tax_factors <- .get_tax_groups(
+            x, col = col, onRankOnly = onRankOnly, ...)
 
         # merge taxa
-        x <- mergeRows(x, f = tax_factors, ...)
+        FUN <- .get_merge_FUN(...)
+        x <- FUN(x, f = tax_factors, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
-        if( col < length(taxonomyRanks(x)) ){
+        if( col < length(taxonomyRanks(x, ...)) ){
             badcolumns <- tax_cols[seq_along(tax_cols) > col]
             if(length(badcolumns) > 0L){
-                row_data <- rowData(x)
+                row_data <- .get_rowdata(x, ...)
                 row_data[, badcolumns] <- NA_character_
-                rowData(x) <- row_data
+                # Add function that stores data to rowData. (does the function that is already, work? --> it does not replace so I guess no...)
+                x <- .add_rowdata(x, row_data, ...)
             }
         }
         # adjust rownames
-        rownames(x) <- getTaxonomyLabels(x, empty.fields, ...,
-                                        with_rank = FALSE, resolve_loops = FALSE)
+        row_names <- getTaxonomyLabels(
+            x, empty.fields, ...,
+            with_rank = FALSE, resolve_loops = FALSE)
+        FUN <- .get_rownames_FUN(...)
+        x <- FUN(x, value = row_names)
         # Remove those columns from rowData that include only NAs
+        # Add margin
         x <- .remove_NA_cols_from_rowdata(x, ...)
         x <- .add_values_to_metadata(x, "agglomerated_by_rank", rank)
-        x
+        return(x)
     }
 )
 
@@ -246,13 +256,16 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
             stop("'strip_altexp' mus be TRUE or FALSE.", call. = FALSE)
         }
         #
-        if (!is.null(altexp)) {
-            x <- altExp(x, altexp)
-        }
+        # There might be problems with altExp. No --> the rsult is agglomerated so also columns are subsetted, and altexp workds. do not pass through altexp, might cause problems...Because this already gets the
+        # Altexp and when it it passed, then altexp again--.> but thias catches the altexp, so it is not in ... anymore... so evrythin good,
+        x <- .check_and_get_altExp(x, altexp)
+
+        x <- callNextMethod(x, ...)
+        
         if(strip_altexp && is(x, "SingleCellExperiment")){
             altExps(x) <- NULL
         }
-        callNextMethod(x, ...)
+        return(x)
     }
 )
 
@@ -281,6 +294,7 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
               # trees are preserved after agglomeration even though the dataset
               # could be presented with one tree. --> order the data so that
               # the taxa are searched from one tree first.
+              # Use check and get rowtree
               if( length(x@rowTree) > 1 ){
                   x <- .order_based_on_trees(x)
               }
@@ -295,6 +309,7 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
                               "agglomeration. Agglomeration of tree is not ",
                               "possible.", call. = FALSE)
                   } else{
+                      # This does not agglomerate tree, it creates a new tree. --> fix!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                       x <- addTaxonomyTree(x)
                   }
               }
@@ -314,15 +329,38 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
 )
 ################################ HELP FUNCTIONS ################################
 
-.remove_with_empty_taxonomic_info <-
-    function(x, column, empty.fields = c(NA,""," ","\t","-","_"))
-    {
-        tax <- as.character(rowData(x)[,column])
-        f <- !(tax %in% empty.fields)
-        if(any(!f)){
+.get_rownames_FUN <- function(MARGIN = 1, ...){
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
+    FUN <- switch(MARGIN, `rownames<-`, `colnames<-`)
+    return(FUN)
+}
+
+.get_merge_FUN <- function(MARGIN = 1, ...){
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
+    FUN <- switch(MARGIN, mergeRows, mergeCols)
+    return(FUN)
+}
+
+.remove_with_empty_taxonomic_info <- function(
+        x, column, empty.fields = c(NA,""," ","\t","-","_"), MARGIN = 1, ...){
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
+    # Get rowData
+    rd <- .get_rowdata(x, MARGIN = MARGIN, ...)
+    
+    tax <- as.character(rd[,column])
+    f <- !(tax %in% empty.fields)
+    # Remove those rows (features in rowData) from TreeSE that do not have info
+    if(any(!f)){
+        if( MARGIN == 1 ){
             x <- x[f, , drop=FALSE]
+        } else{
+            x <- x[, f, drop=FALSE]    
         }
-        x
+    }
+    return(x)
     }
 
 # This function removes empty columns from rowdata. (Those that include only
@@ -336,13 +374,13 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
     # If user wants to remove those columns
     if( remove_empty_ranks ){
         # Get rowData
-        rd <- rowData(x)
+        rd <- .get_rowdata(x, ...)
         # Does teh column include data?
         columns_including_data <- apply(rd, 2, function(x){!all(is.na(x))})
         # Subset data so that it includes only columns that include data
         rd <- rd[, columns_including_data]
         # Assign it back to SE
-        rowData(x) <- rd
+        x <- .add_rowdata(x, rd, .disable.altexp = TRUE, ...)
     }
     return(x)
 }

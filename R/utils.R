@@ -83,7 +83,15 @@
 # Check if alternative experiment can be found from altExp slot.
 .check_altExp_present <- function(
     altexp, tse, altExpName = .get_name_in_parent(altexp),
-    tse_name = paste0("'", .get_name_in_parent(tse), "'") ){
+    tse_name = paste0("'", .get_name_in_parent(tse), "'"),
+    .disable.altexp = FALSE, ...){
+    # Disable altExp if specified
+    if( !.is_a_bool(.disable.altexp) ){
+        stop("'.disable.altexp' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( .disable.altexp ){
+        altexp <- NULL
+    }
     # Check that altexp.name must be an integer or name
     if( !(.is_a_string(altexp) || .is_an_integer(altexp) || is.null(altexp)) ){
         stop(
@@ -173,20 +181,31 @@
 ################################################################################
 # internal wrappers for getter
 
+# This function checks if altexp is specified. If so, then it returns
+# alternative experiment from altExp.
+
+# Input: (Tree)SE
+# Output: (Tree)SE
+.check_and_get_altExp <- function(
+    x, altexp = NULL, ...){
+    # If altexp is specified, check and get it.
+    # Otherwise return the original object
+    if( !is.null(altexp) ){
+      # Check altexp
+      .check_altExp_present(altexp, x, ...)
+      # Get altExp and return it
+      x <- altExp(x, altexp)
+    }
+    return(x)
+}
 # Check that assay is present and return it. Enables access to altExp slot and
 # controlling of MARGIN (whether to analyze rows or cols). With default.MARGIN,
 # we can still change our default MARGIN from main function, but allows also
 # user to overwrite this default choice.
 .check_and_get_assay <- function(
-    x, assay.type, altexp.name = NULL, MARGIN = default.MARGIN,
-    default.MARGIN = 1, ...){
-    # Check if altExp can be found
-    .check_altExp_present(altexp.name, x)
-    # If altexp.name was not NULL, then we know that it specifies correctly
-    # altExp from the slot. Take the experiment.
-    if( !is.null(altexp.name) ){
-        x <- altExp(x, altexp.name)
-    }
+    x, assay.type, MARGIN = default.MARGIN, default.MARGIN = 1, ...){
+    # Check if altExp can be found if it is specified and return it
+    x <- .check_and_get_altExp(x, ...)
     # Check assay.type
     .check_assay_present(assay.type, x)
     # Check that MARGIN is correct
@@ -204,15 +223,10 @@
 # Fetch tree from row/colTree slot. Enables access to altExp and controlling of
 # MARGIN (whtehr to analyze rows or cols).
 .check_and_get_tree <- function(
-    x, tree, tree.name = .get_name_in_parent(tree), altexp.name = NULL,
+    x, tree, tree.name = .get_name_in_parent(tree),
     MARGIN = default.MARGIN, default.MARGIN = 1, ...){
-    # Check if altExp can be found
-    .check_altExp_present(altexp.name, x)
-    # If altexp.name was not NULL, then we know that it specifies correctly
-    # altExp from the slot. Take the experiment.
-    if( !is.null(altexp.name) ){
-        x <- altExp(x, altexp.name)
-    }
+    # Check if altExp can be found if it is specified and return it
+    x <- .check_and_get_altExp(x, ...)
     # Check that MARGIN is correct
     MARGIN <- .check_MARGIN(MARGIN)
     # Check that tree is correct; string or integer.
@@ -237,15 +251,9 @@
 # default.MARGIN parameter. altExp and MARGIN is enabled for user to control.
 # The default value of MARGIN is controlled with default.MARGIN.
 .check_and_get_covariate <- function(
-    x, variable, altexp.name = NULL, MARGIN = default.MARGIN,
-    default.MARGIN = 1, ...){
-    # Check if altExp can be found
-    .check_altExp_present(altexp.name, x)
-    # If altexp.name was not NULL, then we know that it specifies correctly
-    # altExp from the slot. Take the experiment.
-    if( !is.null(altexp.name) ){
-        x <- altExp(x, altexp.name)
-    }
+    x, variable, MARGIN = default.MARGIN, default.MARGIN = 1, ...){
+    # Check if altExp can be found if it is specified and return it
+    x <- .check_and_get_altExp(x, ...)
     # Check that MARGIN is correct
     MARGIN <- .check_MARGIN(MARGIN)
     # Get values specified by variable. Fetch it from rowData or colData based
@@ -256,6 +264,22 @@
         res <- retrieveCellInfo(x, variable)
     }
     res <- res[["value"]]
+    return(res)
+}
+
+# Get feature or sample metadata. Allow hidden usage of MARGIN and altExp.
+#' @importFrom SummarizedExperiment rowData colData
+.get_rowdata <- function(
+    x, MARGIN = default.MARGIN, default.MARGIN = 1, ...){
+    # Check if altExp can be found if it is specified and return it
+    x <- .check_and_get_altExp(x, ...)
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
+    if( MARGIN == 1 ){
+        res <- rowData(x)
+    } else{
+        res <- colData(x)
+    }
     return(res)
 }
 
@@ -318,14 +342,33 @@
     # Keep only unique values
     values <- cbind( (cd)[!f], values )
     
+    # Replace colData with new one
+    x <- .add_rowdata(x, cd, altexp.name = altexp.name, MARGIN = MARGIN)
+    
+    return(x)
+}
+
+# Get feature or sample metadata. Allow hidden usage of MARGIN and altExp.
+#' @importFrom SummarizedExperiment rowData colData
+.add_rowdata <- function(
+    x, rd, altexp.name = NULL, .disable.altexp = FALSE,
+    MARGIN = default.MARGIN, default.MARGIN = 1, ...){
+    #
+    if( !.is_a_bool(.disable.altexp) ){
+        stop("'.disable.altexp' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # Check if altExp can be found
+    .check_altExp_present(altexp.name, x, ...)
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
     # Based on MARGIN, add result to rowData or colData
     FUN <- switch(MARGIN, `rowData<-`, `colData<-`)
     # If altexp was specified, add result to altExp. Otherwise add it directly
     # to x.
-    if( !is.null(altexp.name) ){
-        x <- FUN( altExp(x, altexp.name), value = values )
+    if( !is.null(altexp.name) && !.disable.altexp ){
+      x <- FUN( altExp(x, altexp.name), value = rd )
     } else{
-        x <- FUN(x, value = values)
+      x <- FUN(x, value = rd)
     }
     return(x)
 }

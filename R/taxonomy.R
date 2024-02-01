@@ -138,9 +138,9 @@ TAXONOMY_RANKS <- c("domain","kingdom","phylum","class","order","family",
                     "genus","species")
 
 #' @rdname taxonomy-methods
-setGeneric("taxonomyRanks", signature = c("x"),
-           function(x)
-             standardGeneric("taxonomyRanks"))
+setGeneric(
+    "taxonomyRanks", signature = c("x"), function(x, ...)
+        standardGeneric("taxonomyRanks"))
 
 #' @rdname taxonomy-methods
 #'
@@ -148,8 +148,9 @@ setGeneric("taxonomyRanks", signature = c("x"),
 #'
 #' @export
 setMethod("taxonomyRanks", signature = c(x = "SummarizedExperiment"),
-    function(x){
-        ranks <- colnames(rowData(x))
+    function(x, ...){
+        rd <- .get_rowdata(x, ...)
+        ranks <- colnames(rd)
         ranks[.get_tax_cols(ranks)]
     }
 )
@@ -209,26 +210,26 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-.check_taxonomic_rank <- function(rank, x){
+.check_taxonomic_rank <- function(rank, x, ...){
     if(length(rank) != 1L){
         stop("'rank' must be a single character value.",call. = FALSE)
     }
-    if( !(rank %in% taxonomyRanks(x) ) ){
+    if( !(rank %in% taxonomyRanks(x, ...) ) ){
         stop("'rank' must be a value from 'taxonomyRanks()'",call. = FALSE)
     }
 }
-.check_taxonomic_ranks <- function(ranks, x){
+.check_taxonomic_ranks <- function(ranks, x, ...){
     if(length(ranks) == 0L){
         stop("'ranks' must contain at least one value.",call. = FALSE)
     }
-    if( !all(ranks %in% taxonomyRanks(x) ) ){
+    if( !all(ranks %in% taxonomyRanks(x, ...) ) ){
         stop("'ranks' must contain values from 'taxonomyRanks()'")
     }
 }
 
-#' @importFrom SummarizedExperiment rowData
-.check_for_taxonomic_data_order <- function(x){
-    ranks <- colnames(rowData(x))
+.check_for_taxonomic_data_order <- function(x, ...){
+    rd <- .get_rowdata(x)
+    ranks <- colnames(rd)
     f <- tolower(ranks) %in% TAXONOMY_RANKS
     if(!any(f)){
         stop("no taxonomic ranks detected in rowData(). Columns with one of ",
@@ -262,14 +263,15 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"),
              with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE, ...){
         # input check
-        if(nrow(x) == 0L){
+        rd <- .get_rowdata(x, ...)
+        if(nrow(rd) == 0L){
             stop("No data available in `x` ('x' has nrow(x) == 0L.)",
                  call. = FALSE)
         }
-        if(ncol(rowData(x)) == 0L){
+        if(ncol(rd) == 0L){
             stop("rowData needs to be populated.", call. = FALSE)
         }
-        .check_for_taxonomic_data_order(x)
+        .check_for_taxonomic_data_order(x, ...)
         if(!is.character(empty.fields) || length(empty.fields) == 0L){
             stop("'empty.fields' must be a character vector with one or ",
                  "more values.", call. = FALSE)
@@ -284,16 +286,16 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
             stop("'resolve_loops' must be TRUE or FALSE.", call. = FALSE)
         }
         #
-        dup <- duplicated(rowData(x)[,taxonomyRanks(x)])
+        dup <- duplicated(rd[,taxonomyRanks(x, ...)])
         if(any(dup)){
-            td <- apply(rowData(x)[,taxonomyRanks(x)],1L,paste,collapse = "___")
+            td <- apply(rd[,taxonomyRanks(x, ...)],1L,paste,collapse = "___")
             td_non_dup <- td[!dup]
             m <- match(td, td_non_dup)
         }
         ans <- .get_taxonomic_label(x[!dup,],
                                     empty.fields = empty.fields,
                                     with_rank = with_rank,
-                                    resolve_loops = resolve_loops)
+                                    resolve_loops = resolve_loops, ...)
         if(any(dup)){
             ans <- ans[m]
         }
@@ -348,15 +350,14 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-.get_taxonomic_label <- function(x,
-                                 empty.fields = c(NA, "", " ", "\t", "-", "_"),
-                                 with_rank = FALSE,
-                                 resolve_loops = FALSE){
-    rd <- rowData(x)
-    tax_cols <- .get_tax_cols_from_se(x)
+.get_taxonomic_label <- function(
+    x, empty.fields = c(NA, "", " ", "\t", "-", "_"), with_rank = FALSE,
+    resolve_loops = FALSE, ...){
+    rd <- .get_rowdata(x, ...)
+    tax_cols <- .get_tax_cols_from_se(x, ...)
     tax_ranks_selected <- .get_tax_ranks_selected(x, rd, tax_cols, empty.fields)
     if(is.null(tax_ranks_selected)){
-        return(rownames(x))
+        return(rownames(rd))
     }
     tax_cols_selected <- tax_cols[tax_ranks_selected]
     # resolve loops
@@ -577,22 +578,27 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
     which(.get_tax_cols_logical(x))
 }
 
-#' @importFrom SummarizedExperiment rowData
-.get_tax_cols_from_se <- function(x){
-    .get_tax_cols(colnames(rowData(x)))
+.get_tax_cols_from_se <- function(x, ...){
+    rd <- .get_rowdata(x, ...)
+    .get_tax_cols(colnames(rd))
 }
 
 #' @importFrom SummarizedExperiment rowData
-.get_tax_groups <- function(x, col, onRankOnly = FALSE){
-    tax_cols <- .get_tax_cols_from_se(x)
+.get_tax_groups <- function(x, col, onRankOnly = FALSE, MARGIN = 1, ...){
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
+    # Get rowData
+    rd <- .get_rowdata(x, MARGIN = MARGIN, ...)
+    
+    tax_cols <- .get_tax_cols_from_se(x, MARGIN = MARGIN, ...)
     tax_col_n <- seq_along(tax_cols)
     if(length(tax_col_n) < col){
         stop(".")
     }
     if(onRankOnly){
-        groups <- rowData(x)[,tax_cols[tax_col_n == col],drop=TRUE]
+        groups <- rd[,tax_cols[tax_col_n == col],drop=TRUE]
     } else {
-        groups <- rowData(x)[,tax_cols[tax_col_n <= col],drop=FALSE]
+        groups <- rd[,tax_cols[tax_col_n <= col],drop=FALSE]
         groups <- apply(groups,1L,paste,collapse="_")
     }
     factor(groups, unique(groups))

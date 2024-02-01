@@ -248,7 +248,7 @@ setGeneric("mergeSamples",
     # merge assays
     assays <- assays(x)
     mapply(.check_assays_for_merge, names(assays), assays)
-    FUN <- function(mat, ...){
+    FUN <- function(mat, MARGIN = 2, ...){
         temp <- scuttle::summarizeAssayByGroup(mat,
                                                statistics = "sum",
                                                ...)
