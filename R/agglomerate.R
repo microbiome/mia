@@ -24,9 +24,11 @@
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 #'   removed if \code{na.rm = TRUE} before agglomeration.
 #'
-#' @param agglomerateTree \code{TRUE} or \code{FALSE}: should
+#' @param agglomerate.tree \code{TRUE} or \code{FALSE}: should
 #'   \code{rowTree()} also be agglomerated? (Default:
-#'   \code{agglomerateTree = FALSE})
+#'   \code{agglomerate.tree = FALSE})
+#' 
+#' @param agglomerateTree alias for \code{agglomerate.tree}.
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
@@ -176,7 +178,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         .check_taxonomic_rank(rank, x)
         .check_for_taxonomic_data_order(x)
         #
-
+        
         # Make a vector from the taxonomic data.
         col <- which( taxonomyRanks(x) %in% rank )
         tax_cols <- .get_tax_cols_from_se(x)
@@ -271,11 +273,13 @@ setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
 
 #' @rdname agglomerate-methods
 #' @export
-setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, ..., agglomerateTree = FALSE){
+setMethod(
+    "agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
+    function(
+        x, ..., agglomerate.tree = agglomerateTree, agglomerateTree = FALSE){
               # input check
-              if(!.is_a_bool(agglomerateTree)){
-                  stop("'agglomerateTree' must be TRUE or FALSE.", call. = FALSE)
+              if(!.is_a_bool(agglomerate.tree)){
+                  stop("'agglomerate.tree' must be TRUE or FALSE.", call. = FALSE)
               }
               # If there are multipe rowTrees, it might be that multiple
               # trees are preserved after agglomeration even though the dataset
@@ -289,14 +293,8 @@ setMethod("agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
               # Agglomerate also tree, if the data includes only one
               # rowTree --> otherwise it is not possible to agglomerate
               # since all rownames are not found from individual tree.
-              if(agglomerateTree){
-                  if( length(x@rowTree) > 1 ){
-                      warning("The dataset includes multiple tree after ",
-                              "agglomeration. Agglomeration of tree is not ",
-                              "possible.", call. = FALSE)
-                  } else{
-                      x <- addTaxonomyTree(x)
-                  }
+              if(agglomerate.tree){
+                  x <- .agglomerate_trees(x)
               }
               x
           }
@@ -368,4 +366,33 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
     # Order the data
     x <- x[order, ]
     return(x)
+}
+
+.agglomerate_trees <- function(x){
+    # Get all rowTrees and links between trees and rows
+    trees <- x@rowTree
+    row_links <- rowLinks(x)
+    tree_names <- names(trees)
+    # Loop through tree names
+    trees <- lapply(tree_names, function(name){
+        # Get the tree that is being agglomerated
+        tree <- trees[[name]]
+        # Get corresponding links; which node represent which row?
+        nodes <- row_links[ row_links[["whichTree"]] == name, "nodeLab"]
+        # Remove additional tips, keep only those that are in nodes variable
+        tree <- .agglomerate_tree(tree, nodes)
+        return(tree)
+    })
+    names(trees) <- tree_names
+    # Add trees back
+    x@rowTree <- trees
+    return(x)
+}
+
+.agglomerate_tree <- function(tree, keep_nodes){
+    # Get indices of those tips that are not representing rows
+    remove_index <- which( !tree$tip.label %in% keep_nodes )
+    # Agglomerate tree
+    tree <- drop.tip(tree, remove_index)
+    return(tree)
 }
