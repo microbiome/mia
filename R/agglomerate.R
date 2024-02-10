@@ -368,6 +368,8 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
     return(x)
 }
 
+# Agglomerate all rowTrees found in TreeSE object. Get tips that represent
+# rows and remove all others.
 .agglomerate_trees <- function(x){
     # Get all rowTrees and links between trees and rows
     trees <- x@rowTree
@@ -389,6 +391,8 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
     return(x)
 }
 
+# Agglomerate single tree. Get nodes to keep and drop those tips that are not
+# in the set of nodes.
 .agglomerate_tree <- function(tree, keep_nodes){
     # Get indices of those tips that are not representing rows
     remove_index <- which( !tree$tip.label %in% keep_nodes )
