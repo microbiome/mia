@@ -84,7 +84,7 @@
 #' 
 #' # agglomerate the tree as well
 #' x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-#'                        agglomerateTree = TRUE)
+#'                        agglomerate.tree = TRUE)
 #' nrow(x2) # same number of rows, but
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
@@ -184,7 +184,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         tax_cols <- .get_tax_cols_from_se(x)
 
         # if na.rm is TRUE, remove the empty, white-space, NA values from
-        # tree will be pruned later, if agglomerateTree = TRUE
+        # tree will be pruned later, if agglomerate.tree = TRUE
         if( na.rm ){
             x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
                                                    empty.fields)
@@ -304,9 +304,9 @@ setMethod(
 #' @aliases agglomerateByRank
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, ..., agglomerateTree = FALSE){
+          function(x, ..., agglomerate.tree = FALSE){
               .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
-              x <- agglomerateByRank(x, ..., agglomerateTree = agglomerateTree)
+              x <- agglomerateByRank(x, ..., agglomerate.tree = agglomerate.tree)
               x
           }
 )

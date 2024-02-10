@@ -445,7 +445,8 @@ test_that("makePhyloseqFromTreeSE", {
     
     # Test with agglomeration that that pruning is done internally
     test1 <- agglomerateByRank(tse, rank = "Phylum")
-    test2 <- expect_warning(agglomerateByRank(tse, rank = "Phylum", agglomerateTree = TRUE))
+    test2 <- expect_warning(
+        agglomerateByRank(tse, rank = "Phylum", agglomerate.tree = TRUE))
     test1_phy <- expect_warning(makePhyloseqFromTreeSE(test1))
     test2_phy <- makePhyloseqFromTreeSE(test2)
     
