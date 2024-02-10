@@ -45,7 +45,7 @@ mergeFeaturesByRank(x, ...)
   agglomerateTree = FALSE
 )
 
-\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
+\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerate.tree = FALSE)
 }
 \arguments{
 \item{x}{a
@@ -129,7 +129,7 @@ nrow(x1)
 
 # agglomerate the tree as well
 x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-                       agglomerateTree = TRUE)
+                       agglomerate.tree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree

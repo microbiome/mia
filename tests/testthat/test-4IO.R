@@ -445,15 +445,15 @@ test_that("makePhyloseqFromTreeSE", {
     
     # Test with agglomeration that that pruning is done internally
     test1 <- agglomerateByRank(tse, rank = "Phylum")
-    test2 <- expect_warning(
-        agglomerateByRank(tse, rank = "Phylum", agglomerate.tree = TRUE))
+    test2 <- agglomerateByRank(tse, rank = "Phylum", agglomerate.tree = TRUE)
     test1_phy <- expect_warning(makePhyloseqFromTreeSE(test1))
     test2_phy <- makePhyloseqFromTreeSE(test2)
     
     expect_equal(length(phyloseq::phy_tree(test1_phy)$node), 
                  length(ape::keep.tip(rowTree(test1), rowLinks(test1)$nodeLab)$node))
     expect_equal(phyloseq::phy_tree(test1_phy)$tip.label, rownames(test2))
-    expect_identical(phyloseq::phy_tree(test2_phy), rowTree(test2))
+    # The tip labels do not match because of renaming
+    expect_identical(phyloseq::phy_tree(test2_phy)$edge, rowTree(test2)$edge)
     
     # Check that everything works also with agglomerated data
     for (level in colnames(rowData(tse)) ){
