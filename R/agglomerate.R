@@ -393,10 +393,34 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
 
 # Agglomerate single tree. Get nodes to keep and drop those tips that are not
 # in the set of nodes.
-.agglomerate_tree <- function(tree, keep_nodes){
+.agglomerate_tree <- function(tree, keep.nodes){
+    #
+    if( !is.character(keep.nodes) ){
+        stop(
+            "'keep.nodes' must be a single character value or a vector of ",
+            "character values.", call. = FALSE)
+    }
+    #
     # Get indices of those tips that are not representing rows
-    remove_index <- which( !tree$tip.label %in% keep_nodes )
+    remove_index <- which( !tree$tip.label %in% keep.nodes )
+    # Do not agglomerate if all tips are removed or if there is no tips to
+    # remove. Instead, give informative warning message.
+    remove_all <- length(remove_index) == length(tree$tip.label)
+    remove_none <- length(remove_index) == 0
+    if( remove_all ){
+        stop(
+            "'keep.nodes' does not specify any tips from 'tree'. After ",
+            "agglomeration, all tips would be removed resulting to ",
+            "NULL. The tree is not agglomerated.", call. = FALSE)
+    }
+    if( remove_none ){
+        stop(
+            "'keep.nodes' does specify all the tips from 'tree'. ",
+            "The tree is not agglomerated.", call. = FALSE)
+    }
     # Agglomerate tree
-    tree <- drop.tip(tree, remove_index)
+    if( !(remove_all || remove_none) ){
+        tree <- drop.tip(tree, remove_index)
+    }
     return(tree)
 }
