@@ -408,13 +408,13 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
     remove_all <- length(remove_index) == length(tree$tip.label)
     remove_none <- length(remove_index) == 0
     if( remove_all ){
-        stop(
+        warning(
             "'keep.nodes' does not specify any tips from 'tree'. After ",
             "agglomeration, all tips would be removed resulting to ",
             "NULL. The tree is not agglomerated.", call. = FALSE)
     }
     if( remove_none ){
-        stop(
+        warning(
             "'keep.nodes' does specify all the tips from 'tree'. ",
             "The tree is not agglomerated.", call. = FALSE)
     }
