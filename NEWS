@@ -96,3 +96,4 @@ Changes in version 1.9.x
 
 Changes in version 1.11.x
 + loadFromMetaphlan: support strain rank
++ agglomerateByRank: agglomerate tree fix
