@@ -19,7 +19,7 @@ taxonomyRanks can be used."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.3</span>
       </span>
     </div>
 
@@ -88,10 +88,15 @@ with certain taxonomic ranks, as defined in <code>rowData</code>. Only available
 <span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, strip_altexp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, agglomerateTree <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">agglomerateByRank</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  agglomerate.tree <span class="op">=</span> <span class="va">agglomerateTree</span>,</span>
+<span>  agglomerateTree <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, agglomerateTree <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, agglomerate.tree <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -150,10 +155,14 @@ nested alternative experiments by default (default:
 <code>strip_altexp = TRUE</code>)</p></dd>
 
 
-<dt>agglomerateTree</dt>
+<dt>agglomerate.tree</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: should
 <code>rowTree()</code> also be agglomerated? (Default:
-<code>agglomerateTree = FALSE</code>)</p></dd>
+<code>agglomerate.tree = FALSE</code>)</p></dd>
+
+
+<dt>agglomerateTree</dt>
+<dd><p>alias for <code>agglomerate.tree</code>.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -200,8 +209,7 @@ first, and then applying the transformation afterwards.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># agglomerate the tree as well</span></span></span>
 <span class="r-in"><span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank<span class="op">=</span><span class="st">"Family"</span>,</span></span>
-<span class="r-in"><span>                       agglomerateTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The root is added with label 'ALL'</span>
+<span class="r-in"><span>                       agglomerate.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># same number of rows, but</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 603</span>
 <span class="r-in"><span><span class="fu">rowTree</span><span class="op">(</span><span class="va">x1</span><span class="op">)</span> <span class="co"># ... different</span></span></span>
@@ -216,12 +224,12 @@ first, and then applying the transformation afterwards.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rooted; includes branch lengths.</span>
 <span class="r-in"><span><span class="fu">rowTree</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># ... tree</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 496 tips and 260 internal nodes.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 603 tips and 602 internal nodes.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Tip labels:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Family:Cenarchaeaceae, Family:SAGMA-X, Family:Nitrososphaeraceae, Family:Sulfolobaceae, Family:Halobacteriaceae, Family:MSBL1, ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   549322, 951, 244423, 143239, 215972, 138353, ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Node labels:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   root:ALL, Kingdom:Archaea, Phylum:Crenarchaeota, Class:C2, Class:Sd-NA, Class:Thaumarchaeota, ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 0.943.7, ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rooted; includes branch lengths.</span>
 <span class="r-in"><span></span></span>
