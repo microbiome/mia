@@ -96,4 +96,5 @@ Changes in version 1.9.x
 
 Changes in version 1.11.x
 + loadFromMetaphlan: support strain rank
++ agglomerateByRank: agglomerate tree fix
 + getPrevalence: bugfix, if assay contains NA values, it does not end up to NA anymore.
