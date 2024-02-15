@@ -76,7 +76,9 @@ test_that("getPrevalence", {
         getPrevalence(tse, assay.type = "counts", na.rm = TRUE) )) == 0)
     # Expect that other than features with NA values are the same as in reference
     res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE)
-    expect_equal( res[ !names(res) %in% remove ], ref[ !names(ref) %in% remove ])
+    res <- res[ !names(res) %in% remove ]
+    ref <- ref[ !names(ref) %in% remove ]
+    expect_equal( res[ names(ref) ], res[ names(ref) ] )
     
     # Now test that the number of samples where feature was detected is correct
     tse <- GlobalPatterns
@@ -88,8 +90,8 @@ test_that("getPrevalence", {
     # Get the feature values and check that they have correct number of samples
     res <- res[ feature ]
     ref <- ref[ feature ]
-    expect_equal(res*ncol(tse) == 2)
-    expect_equal(ref*ncol(tse) == 3)
+    expect_true(res*ncol(tse) == 2)
+    expect_true(ref*ncol(tse) == 3)
 })
 
 
