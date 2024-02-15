@@ -62,6 +62,34 @@ test_that("getPrevalence", {
     pr2 <- getPrevalence(gp_null, detection=0.004, as_relative=TRUE, rank = "Family") 
     expect_equal(pr1, pr2)
     
+    # Check that na.rm works correctly
+    tse <- GlobalPatterns
+    # Get reference value
+    ref <- getPrevalence(tse, assay.type = "counts")
+    # Add NA values to matrix
+    remove <- c(1, 3, 10)
+    assay(tse, "counts")[remove, ] <- NA
+    # There should be 3 NA values if na.rm = FALSE. Otherwise there should be 0
+    expect_true( sum(is.na(
+        getPrevalence(tse, assay.type = "counts", na.rm = FALSE) )) == 3)
+    expect_true( sum(is.na(
+        getPrevalence(tse, assay.type = "counts", na.rm = TRUE) )) == 0)
+    # Expect that other than features with NA values are the same as in reference
+    res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE)
+    expect_equal( res[ !names(res) %in% remove ], ref[ !names(ref) %in% remove ])
+    
+    # Now test that the number of samples where feature was detected is correct
+    tse <- GlobalPatterns
+    ref <- getPrevalence(tse, assay.type = "counts")
+    # Add NA values to specific feature that has non-zero value
+    feature <- rownames(tse)[[7]]
+    assay(tse, "counts")[feature, 1] <- NA
+    res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE)
+    # Get the feature values and check that they have correct number of samples
+    res <- res[ feature ]
+    ref <- ref[ feature ]
+    expect_equal(res*ncol(tse) == 2)
+    expect_equal(ref*ncol(tse) == 3)
 })
 
 
