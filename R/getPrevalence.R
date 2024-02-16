@@ -215,8 +215,8 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
         # Give warning if there are taxa with NA values
         if( any( is.na(x) ) ){
             msg <- paste0(
-                "The abundance table contains NA values and they are ",
-                ifelse(na.rm, "not", ""), "excluded (see 'na.rm').")
+                "The abundance table contains NA values and they are",
+                ifelse(na.rm, " not ", " "), "excluded (see 'na.rm').")
             warning(msg, call. = FALSE)
         }
         #

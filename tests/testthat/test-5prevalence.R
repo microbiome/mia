@@ -97,9 +97,21 @@ test_that("getPrevalence", {
     expect_true(res*ncol(tse) == 2)
     expect_true(ref*ncol(tse) == 3)
     
-    # In getPrevalence, na.rm is not passed to agglomerateByRank. Instead, the
-    # argument is replaced with agg.na.rm.
-    
+    # 
+    tse <- GlobalPatterns
+    rank <- "Genus"
+    # Add NA values to matrix
+    remove <- c(15, 200)
+    assay(tse, "counts")[remove, ] <- NA
+    # Check that agglomeration works
+    tse_agg <- agglomerateByRank(tse, rank = rank)
+    expect_warning(ref <- getPrevalence(tse_agg, na.rm = FALSE))
+    expect_warning(res <- getPrevalence(tse, na.rm = FALSE, rank = "Genus"))
+    expect_true( all(res == ref, na.rm = TRUE) )
+    #
+    expect_warning(ref <- getPrevalence(tse_agg, na.rm = TRUE))
+    expect_warning(res <- getPrevalence(tse, na.rm = TRUE, rank = "Genus"))
+    expect_true( all(res == ref, na.rm = TRUE) )
 })
 
 
