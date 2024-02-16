@@ -96,6 +96,10 @@ test_that("getPrevalence", {
     ref <- ref[ feature ]
     expect_true(res*ncol(tse) == 2)
     expect_true(ref*ncol(tse) == 3)
+    
+    # In getPrevalence, na.rm is not passed to agglomerateByRank. Instead, the
+    # argument is replaced with agg.na.rm.
+    
 })
 
 

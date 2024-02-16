@@ -44,7 +44,7 @@
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'     Note that you can specify whether to remove empty ranks with
-#'     \code{drop.empty.ranks} instead of \code{na.rm}. (default: \code{FALSE})
+#'     \code{agg.na.rm} instead of \code{na.rm}. (default: \code{FALSE})
 #'   }
 #'   \item{for \code{getPrevalentFeatures}, \code{getRareFeatures}, 
 #'     \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional 
@@ -239,7 +239,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 
 .agg_for_prevalence <- function(
         x, rank, relabel = FALSE, make_unique = TRUE, na.rm = FALSE,
-        drop.empty.ranks = FALSE, ...){
+        agg.na.rm = FALSE, ...){
     # Check na.rm. It is used in this function, it is only catched so that it
     # can be passed to getPrevalence(matrix) and not use it here in
     # agglomerateByRank.
@@ -248,13 +248,13 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
     }
     #
     # Check drop.empty.rank
-    if(!.is_a_bool(drop.empty.ranks)){
-        stop("'drop.empty.ranks' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(agg.na.rm)){
+        stop("'agg.na.rm' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     if(!is.null(rank)){
         .check_taxonomic_rank(rank, x)
-        args <- c(list(x = x, rank = rank, na.rm = drop.empty.ranks), list(...))
+        args <- c(list(x = x, rank = rank, na.rm = agg.na.rm), list(...))
         argNames <- c("x","rank","onRankOnly","na.rm","empty.fields",
                       "archetype","mergeTree","average","BPPARAM")
         args <- args[names(args) %in% argNames]

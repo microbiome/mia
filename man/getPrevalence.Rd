@@ -145,7 +145,7 @@ object}
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 Note that you can specify whether to remove empty ranks with
-\code{drop.empty.ranks} instead of \code{na.rm}. (default: \code{FALSE})
+\code{agg.na.rm} instead of \code{na.rm}. (default: \code{FALSE})
 }
 \item{for \code{getPrevalentFeatures}, \code{getRareFeatures},
 \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional
