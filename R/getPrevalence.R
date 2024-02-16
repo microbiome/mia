@@ -44,8 +44,7 @@
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'     Note that you can specify whether to remove empty ranks with
-#'     \code{drop.empty.ranks} instead of \code{na.rm}. (default:
-#'     \code{drop.empty.rank = FALSE})
+#'     \code{drop.empty.ranks} instead of \code{na.rm}. (default: \code{FALSE})
 #'   }
 #'   \item{for \code{getPrevalentFeatures}, \code{getRareFeatures}, 
 #'     \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional 
@@ -211,6 +210,14 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
         }
         if(!.is_a_bool(sort)){
             stop("'sort' must be TRUE or FALSE.", call. = FALSE)
+        }
+        #
+        # Give warning if there are taxa with NA values
+        if( any( is.na(x) ) ){
+            msg <- paste0(
+                "The abundance table contains NA values and they are ",
+                ifelse(na.rm, "not", ""), "excluded (see 'na.rm').")
+            warning(msg, call. = FALSE)
         }
         #
         if (include_lowest) {

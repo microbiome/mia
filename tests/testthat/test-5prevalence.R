@@ -70,12 +70,15 @@ test_that("getPrevalence", {
     remove <- c(1, 3, 10)
     assay(tse, "counts")[remove, ] <- NA
     # There should be 3 NA values if na.rm = FALSE. Otherwise there should be 0
-    expect_true( sum(is.na(
-        getPrevalence(tse, assay.type = "counts", na.rm = FALSE) )) == 3)
-    expect_true( sum(is.na(
-        getPrevalence(tse, assay.type = "counts", na.rm = TRUE) )) == 0)
+    expect_warning(
+        res <- getPrevalence(tse, assay.type = "counts", na.rm = FALSE) )
+    expect_true( sum(is.na(res)) == 3)
+    expect_warning(
+        res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE) )
+    expect_true( sum(is.na(res)) == 0)
     # Expect that other than features with NA values are the same as in reference
-    res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE)
+    expect_warning(
+        res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE))
     res <- res[ !names(res) %in% remove ]
     ref <- ref[ !names(ref) %in% remove ]
     expect_equal( res[ names(ref) ], res[ names(ref) ] )
@@ -86,7 +89,8 @@ test_that("getPrevalence", {
     # Add NA values to specific feature that has non-zero value
     feature <- rownames(tse)[[7]]
     assay(tse, "counts")[feature, 1] <- NA
-    res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE)
+    expect_warning(
+        res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE))
     # Get the feature values and check that they have correct number of samples
     res <- res[ feature ]
     ref <- ref[ feature ]
