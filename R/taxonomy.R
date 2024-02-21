@@ -18,11 +18,15 @@
 #'   the lowest taxonomic information possible. If data from different levels,
 #'   is to be mixed, the taxonomic level is prepended by default.
 #'
-#' \code{taxonomyTree} generates a \code{phylo} tree object from the available
+#' \code{getHierarchyTree} generates a hierarchy tree from the available
 #'   taxonomic information. Internally it uses
 #'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
 #'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
 #'   data if needed.
+#'
+#' \code{addTree} calculates hierarchy tree from the available taxonomic
+#'   information and add it to rowTree.
+#'   
 #'
 #' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 #'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
@@ -40,11 +44,11 @@
 #'   object
 #'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomyRanks()} function.
+#'   \code{taxonomyRanks()} function
 #'
 #' @param empty.fields a \code{character} value defining, which values should be
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
-#'   removed if \code{na.rm = TRUE} before agglomeration.
+#'   removed if \code{na.rm = TRUE} before agglomeration
 #'
 #' @param with_rank \code{TRUE} or \code{FALSE}: Should the level be add as a
 #'   suffix? For example: "Phylum:Crenarchaeota" (default:
@@ -126,7 +130,7 @@
 #' # adding a rowTree() based on the available taxonomic information. Please
 #' # note that any tree already stored in rowTree() will be overwritten.
 #' x <- GlobalPatterns
-#' x <- addTaxonomyTree(x)
+#' x <- addTree(x)
 #' x
 NULL
 
@@ -380,14 +384,14 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @rdname taxonomy-methods
-setGeneric("taxonomyTree",
+setGeneric("getHierarchyTree",
            signature = "x",
            function(x, ...)
-               standardGeneric("taxonomyTree"))
+               standardGeneric("getHierarchyTree"))
 
 #' @rdname taxonomy-methods
 #' @export
-setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
+setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
         # Input check
         # If there is no rowData it is not possible to create rowTree
@@ -422,17 +426,17 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname taxonomy-methods
-setGeneric("addTaxonomyTree",
+setGeneric("addTree",
            signature = "x",
            function(x, ...)
-               standardGeneric("addTaxonomyTree"))
+               standardGeneric("addTree"))
 
 #' @rdname taxonomy-methods
 #' @export
-setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
+setMethod("addTree", signature = c(x = "SummarizedExperiment"),
     function(x){
         #
-        tree <- taxonomyTree(x)
+        tree <- getHierarchyTree(x)
         x <- as(x,"TreeSummarizedExperiment")
         rownames(x) <- getTaxonomyLabels(x, with_rank = TRUE,
                                          resolve_loops = TRUE,

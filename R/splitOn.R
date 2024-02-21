@@ -290,10 +290,10 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
         if( update_rowTree ){
             # If the returned value is a list, go through all of them
             if( class(x) == "SimpleList" ){
-                x <- SimpleList(lapply(x, addTaxonomyTree))
+                x <- SimpleList(lapply(x, addTree))
             } else {
                 # Otherwise, the returned value is TreeSE
-                x <- addTaxonomyTree(x)
+                x <- addTree(x)
             }
         }
         x
@@ -386,7 +386,7 @@ setGeneric("unsplitOn",
     if( class_x == "TreeSummarizedExperiment" ){
         # Update or add old tree from the first element of list
         if( update_rowTree ){
-            ans <- addTaxonomyTree(ans)
+            ans <- addTree(ans)
         } else{
             rowTree(ans) <- rowTree(ses[[1L]])
         }

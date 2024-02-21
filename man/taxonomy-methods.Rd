@@ -12,10 +12,9 @@
 \alias{checkTaxonomy,SummarizedExperiment-method}
 \alias{getTaxonomyLabels}
 \alias{getTaxonomyLabels,SummarizedExperiment-method}
-\alias{taxonomyTree}
-\alias{taxonomyTree,SummarizedExperiment-method}
-\alias{addTaxonomyTree}
-\alias{addTaxonomyTree,SummarizedExperiment-method}
+\alias{getHierarchyTree,SummarizedExperiment-method}
+\alias{addTree}
+\alias{addTree,SummarizedExperiment-method}
 \alias{mapTaxonomy}
 \alias{mapTaxonomy,SummarizedExperiment-method}
 \alias{IdTaxaToDataFrame}
@@ -58,13 +57,11 @@ getTaxonomyLabels(x, ...)
   ...
 )
 
-taxonomyTree(x, ...)
+\S4method{getHierarchyTree}{SummarizedExperiment}(x)
 
-\S4method{taxonomyTree}{SummarizedExperiment}(x)
+addTree(x, ...)
 
-addTaxonomyTree(x, ...)
-
-\S4method{addTaxonomyTree}{SummarizedExperiment}(x)
+\S4method{addTree}{SummarizedExperiment}(x)
 
 mapTaxonomy(x, ...)
 
@@ -146,11 +143,14 @@ creation.
 the lowest taxonomic information possible. If data from different levels,
 is to be mixed, the taxonomic level is prepended by default.
 
-\code{taxonomyTree} generates a \code{phylo} tree object from the available
+\code{getHierarchyTree} generates a hierarchy tree from the available
 taxonomic information. Internally it uses
 \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
 \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
 data if needed.
+
+\code{addTree} calculates hierarchy tree from the available taxonomic
+information and add it to rowTree.
 
 \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
@@ -192,7 +192,7 @@ mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
 # adding a rowTree() based on the available taxonomic information. Please
 # note that any tree already stored in rowTree() will be overwritten.
 x <- GlobalPatterns
-x <- addTaxonomyTree(x)
+x <- addTree(x)
 x
 }
 \seealso{
