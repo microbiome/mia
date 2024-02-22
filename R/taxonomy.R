@@ -18,15 +18,8 @@
 #'   the lowest taxonomic information possible. If data from different levels,
 #'   is to be mixed, the taxonomic level is prepended by default.
 #'
-#' \code{getHierarchyTree} generates a hierarchy tree from the available
-#'   taxonomic information. Internally it uses
-#'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
-#'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
-#'   data if needed.
-#'
 #' \code{addTree} calculates hierarchy tree from the available taxonomic
 #'   information and add it to rowTree.
-#'   
 #'
 #' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 #'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
@@ -383,13 +376,29 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-#' @rdname taxonomy-methods
+#' Functions for accessing data  
+#' 
+#' These functions find and return data present in a 
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' object.
+#' 
+#' \code{getHierarchyTree} generates a hierarchy tree from the available
+#'   taxonomic information. Internally it uses
+#'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
+#'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
+#'   data if needed.
+#' 
+#' @inheritParams taxonomy-methods
+#' 
+#' @name get-values
+
+#' @rdname get-values
 setGeneric("getHierarchyTree",
            signature = "x",
            function(x, ...)
                standardGeneric("getHierarchyTree"))
 
-#' @rdname taxonomy-methods
+#' @rdname get-values
 #' @export
 setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
     function(x){

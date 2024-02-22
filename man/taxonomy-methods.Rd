@@ -12,7 +12,6 @@
 \alias{checkTaxonomy,SummarizedExperiment-method}
 \alias{getTaxonomyLabels}
 \alias{getTaxonomyLabels,SummarizedExperiment-method}
-\alias{getHierarchyTree,SummarizedExperiment-method}
 \alias{addTree}
 \alias{addTree,SummarizedExperiment-method}
 \alias{mapTaxonomy}
@@ -57,8 +56,6 @@ getTaxonomyLabels(x, ...)
   ...
 )
 
-\S4method{getHierarchyTree}{SummarizedExperiment}(x)
-
 addTree(x, ...)
 
 \S4method{addTree}{SummarizedExperiment}(x)
@@ -75,11 +72,11 @@ IdTaxaToDataFrame(from)
 object}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
-\code{taxonomyRanks()} function.}
+\code{taxonomyRanks()} function}
 
 \item{empty.fields}{a \code{character} value defining, which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
-removed if \code{na.rm = TRUE} before agglomeration.}
+removed if \code{na.rm = TRUE} before agglomeration}
 
 \item{...}{optional arguments not used currently.}
 
@@ -142,12 +139,6 @@ creation.
 \code{getTaxonomyLabels} generates a character vector per row consisting of
 the lowest taxonomic information possible. If data from different levels,
 is to be mixed, the taxonomic level is prepended by default.
-
-\code{getHierarchyTree} generates a hierarchy tree from the available
-taxonomic information. Internally it uses
-\code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
-\code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
-data if needed.
 
 \code{addTree} calculates hierarchy tree from the available taxonomic
 information and add it to rowTree.
