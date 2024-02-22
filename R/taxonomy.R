@@ -316,7 +316,10 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 
     tax_ranks_non_empty <- t(as(tax_ranks_non_empty,"matrix"))
     tax_ranks_selected <- apply(tax_ranks_non_empty,1L,which)
-    if(any(lengths(tax_ranks_selected) == 0L)){
+    # Check if every row got at least some rank information from taxonomy table
+    # i.e. the info was not empty.
+    if( any(lengths(tax_ranks_selected) == 0L) || length(
+        tax_ranks_selected) == 0L){
         if(!anyDuplicated(rownames(x))){
             return(NULL)
         }
