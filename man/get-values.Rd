@@ -3,6 +3,7 @@
 \name{get-values}
 \alias{get-values}
 \alias{getHierarchyTree,SummarizedExperiment-method}
+\alias{getHierarchyTree}
 \title{Functions for accessing data}
 \usage{
 getHierarchyTree(x, ...)

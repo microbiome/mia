@@ -141,7 +141,7 @@ the lowest taxonomic information possible. If data from different levels,
 is to be mixed, the taxonomic level is prepended by default.
 
 \code{addTree} calculates hierarchy tree from the available taxonomic
-information and add it to rowTree.
+information and add it to \code{rowTree}.
 
 \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.

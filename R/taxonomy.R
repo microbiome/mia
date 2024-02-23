@@ -19,7 +19,7 @@
 #'   is to be mixed, the taxonomic level is prepended by default.
 #'
 #' \code{addTree} calculates hierarchy tree from the available taxonomic
-#'   information and add it to rowTree.
+#'   information and add it to \code{rowTree}.
 #'
 #' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 #'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
@@ -399,6 +399,7 @@ setGeneric("getHierarchyTree",
                standardGeneric("getHierarchyTree"))
 
 #' @rdname get-values
+#' @aliases getHierarchyTree
 #' @export
 setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
