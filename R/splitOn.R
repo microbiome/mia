@@ -290,10 +290,17 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
         if( update_rowTree ){
             # If the returned value is a list, go through all of them
             if( class(x) == "SimpleList" ){
+<<<<<<< HEAD
                 x <- SimpleList(lapply(x, addTree))
             } else {
                 # Otherwise, the returned value is TreeSE
                 x <- addTree(x)
+=======
+                x <- SimpleList(lapply(x, .agglomerate_trees))
+            } else {
+                # Otherwise, the returned value is TreeSE
+                x <- .agglomerate_trees(x)
+>>>>>>> be6bcbd1711d31bb9ae731edc2e6abb625823310
             }
         }
         x

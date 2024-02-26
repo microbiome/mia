@@ -97,4 +97,8 @@ Changes in version 1.9.x
 Changes in version 1.11.x
 + loadFromMetaphlan: support strain rank
 + agglomerateByRank: agglomerate tree fix
+<<<<<<< HEAD
 + Deprecate taxonomyTree, addTaxonomyTree
+=======
++ splitOn: update rowTree fix
+>>>>>>> be6bcbd1711d31bb9ae731edc2e6abb625823310
