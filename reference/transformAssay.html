@@ -18,7 +18,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.5</span>
       </span>
     </div>
 
@@ -179,9 +179,10 @@ reference sample's column in returned assay when calculating alr.
 
 
 <dt>pseudocount</dt>
-<dd><p>TRUE or FALSE, should the minimum value of <code>assay.type</code>
-be added to assay values. Alternatively, a numeric value specifying the value
-to be added. (default: <code>pseudocount = FALSE</code>)</p></dd>
+<dd><p>TRUE, FALSE, or a numeric value. When TRUE,
+automatically adds the minimum positive value of <code>assay.type</code>.
+When FALSE, does not add any pseudocount (pseudocount = 0).
+Alternatively, a user-specified numeric value can be added as pseudocount.</p></dd>
 
 
 <dt>MARGIN</dt>
