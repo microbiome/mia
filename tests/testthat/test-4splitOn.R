@@ -39,6 +39,14 @@ test_that("splitOn", {
     expect_equal( rownames(list[[1]]), rownames(x) )
     expect_true( length(list) == 10 )
     
+    # Test that number of tips of updated rowTree equals number of rows for
+    # each tse in the list returned
+    list <- splitOn(x, "SampleType", update_rowTree = TRUE)
+    for (k in length(list)){
+        expect_equal( length(rowTree(list[[k]], "phylo")$tip.label), 
+                      nrow(list[[k]]) )
+    }
+    
     ################################# unsplitOn ################################
     # Test that error occurs
     expect_error( unsplitOn(x) )
