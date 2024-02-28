@@ -18,8 +18,8 @@ setGeneric("addTaxonomyTree",
 setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
           function(x){
               .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated.\n",
-                                       "Use 'addTree' instead."))
-              addTree(x)
+                                       "Use 'addHierarchyTree' instead."))
+              addHierarchyTree(x)
           }
 )
 

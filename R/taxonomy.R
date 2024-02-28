@@ -18,7 +18,7 @@
 #'   the lowest taxonomic information possible. If data from different levels,
 #'   is to be mixed, the taxonomic level is prepended by default.
 #'
-#' \code{addTree} calculates hierarchy tree from the available taxonomic
+#' \code{addHierarchyTree} calculates hierarchy tree from the available taxonomic
 #'   information and add it to \code{rowTree}.
 #'
 #' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
@@ -123,7 +123,7 @@
 #' # adding a rowTree() based on the available taxonomic information. Please
 #' # note that any tree already stored in rowTree() will be overwritten.
 #' x <- GlobalPatterns
-#' x <- addTree(x)
+#' x <- addHierarchyTree(x)
 #' x
 NULL
 
@@ -393,7 +393,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' 
 #' @inheritParams taxonomy-methods
 #' 
-#' @name get-values
+#' @name getHierarchyTree
 
 #' @rdname get-values
 setGeneric("getHierarchyTree",
@@ -439,14 +439,14 @@ setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname taxonomy-methods
-setGeneric("addTree",
+setGeneric("addHierarchyTree",
            signature = "x",
            function(x, ...)
-               standardGeneric("addTree"))
+               standardGeneric("addHierarchyTree"))
 
 #' @rdname taxonomy-methods
 #' @export
-setMethod("addTree", signature = c(x = "SummarizedExperiment"),
+setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
         #
         tree <- getHierarchyTree(x)
