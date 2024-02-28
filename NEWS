@@ -99,3 +99,4 @@ Changes in version 1.11.x
 + agglomerateByRank: agglomerate tree fix
 + Replace taxonomyTree and addTaxonomyTree with getHierarchyTree and addHierarchyTree
 + splitOn: update rowTree fix
++ perSampleDominantFeatures: add new arguments (n, other.name, complete)
