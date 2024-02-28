@@ -62,6 +62,9 @@ object.</p>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  other.name <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  n <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  complete <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -71,6 +74,9 @@ object.</p>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  other.name <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  n <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  complete <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -79,10 +85,23 @@ object.</p>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">perSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"dominant_taxa"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"dominant_taxa"</span>,</span>
+<span>  other.name <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  n <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"dominant_taxa"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"dominant_taxa"</span>,</span>
+<span>  other.name <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  n <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  complete <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">addPerSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -114,6 +133,26 @@ will be disabled.)</p></dd>
 <dt>rank</dt>
 <dd><p>A single character defining a taxonomic rank. Must be a value of
 the output of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code>.</p></dd>
+
+
+<dt>other.name</dt>
+<dd><p>A name for features that are not included in n the most frequent
+dominant features in the data. Default is "Other".</p></dd>
+
+
+<dt>n</dt>
+<dd><p>The number of features that are the most frequent dominant features.
+Default is NULL, which defaults that each sample is assigned a dominant taxon.</p></dd>
+
+
+<dt>complete</dt>
+<dd><p>A boolean value to manage multiple dominant taxa for a sample.
+Default for perSampleDominantTaxa is TRUE to include all equally dominant taxa
+for each sample. complete = FALSE samples one taxa for the samples that have
+multiple.
+Default for addPerSampleDominantTaxa is FALSE to add a column with only one
+dominant taxon assigned for each sample into colData. complete = TRUE adds a
+list that includes all dominant taxa for each sample into colData.</p></dd>
 
 
 <dt>...</dt>
