@@ -28,3 +28,8 @@ taxonomic information. Internally it uses
 \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
 data if needed.
 }
+\examples{
+data(GlobalPatterns)
+GlobalPatterns
+getHierarchyTree(GlobalPatterns)
+}
