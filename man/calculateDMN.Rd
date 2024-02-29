@@ -3,14 +3,7 @@
 \name{calculateDMN}
 \alias{calculateDMN}
 \alias{calculateDMN,ANY-method}
-\alias{calculateDMN,SummarizedExperiment-method}
-\alias{runDMN}
-\alias{getDMN}
-\alias{getDMN,SummarizedExperiment-method}
 \alias{bestDMNFit}
-\alias{bestDMNFit,SummarizedExperiment-method}
-\alias{getBestDMNFit}
-\alias{getBestDMNFit,SummarizedExperiment-method}
 \alias{calculateDMNgroup}
 \alias{calculateDMNgroup,ANY-method}
 \alias{calculateDMNgroup,SummarizedExperiment-method}
@@ -29,28 +22,7 @@ calculateDMN(x, ...)
   ...
 )
 
-\S4method{calculateDMN}{SummarizedExperiment}(
-  x,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
-  transposed = FALSE,
-  ...
-)
-
-runDMN(x, name = "DMN", ...)
-
-getDMN(x, name = "DMN", ...)
-
-\S4method{getDMN}{SummarizedExperiment}(x, name = "DMN")
-
 bestDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
-
-\S4method{bestDMNFit}{SummarizedExperiment}(x, name = "DMN", type = c("laplace", "AIC", "BIC"))
-
-getBestDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
-
-\S4method{getBestDMNFit}{SummarizedExperiment}(x, name = "DMN", type = c("laplace", "AIC", "BIC"))
 
 calculateDMNgroup(x, ...)
 
@@ -109,6 +81,15 @@ object specifying whether the UniFrac calculation should be parallelized.}
 \item{seed}{random number seed. See
 \code{\link[DirichletMultinomial:dmn]{dmn}}}
 
+\item{name}{the name to store the result in
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
+
+\item{type}{the type of measure used for the goodness of fit. One of
+\sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.}
+
+\item{variable}{a variable from \code{colData} to use as a grouping variable.
+Must be a character of factor.}
+
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
@@ -122,15 +103,6 @@ assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
 \item{transposed}{Logical scalar, is x transposed with samples in rows?}
-
-\item{name}{the name to store the result in
-\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
-
-\item{type}{the type of measure used for the goodness of fit. One of
-\sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.}
-
-\item{variable}{a variable from \code{colData} to use as a grouping variable.
-Must be a character of factor.}
 }
 \value{
 \code{calculateDMN} and \code{getDMN} return a list of \code{DMN} objects,
@@ -164,7 +136,7 @@ tse <- TreeSummarizedExperiment(assays = list(counts = counts),
 library(bluster)
 
 # Compute DMM algorithm and store result in metadata
-tse <- cluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
+tse <- addCluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
                MARGIN = "samples", full = TRUE)
 
 # Get the list of DMN objects

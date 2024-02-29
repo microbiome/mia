@@ -27,11 +27,11 @@
 #' By default, clustering is done on the features.
 #'
 #' @return
-#' \code{cluster} returns an object of the same type as the \code{x} parameter 
+#' \code{addCluster} returns an object of the same type as the \code{x} parameter 
 #' with clustering information named \code{clusters} stored in \code{colData} 
 #' or \code{rowData}. 
 #'
-#' @name cluster
+#' @name addCluster
 #' @export
 #' 
 #' @author Basil Courbayre
@@ -42,10 +42,10 @@
 #' tse <- GlobalPatterns
 #'
 #' # Cluster on rows using Kmeans
-#' tse <- cluster(tse, KmeansParam(centers = 3))
+#' tse <- addCluster(tse, KmeansParam(centers = 3))
 #' 
 #' # Clustering done on the samples using Hclust
-#' tse <- cluster(tse, 
+#' tse <- addCluster(tse, 
 #'                MARGIN = "samples", 
 #'                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 #' 
@@ -54,21 +54,21 @@
 #' 
 NULL
 
-#' @rdname cluster
+#' @rdname addCluster
 #' @export
-setGeneric("cluster", signature = c("x"),
-           function(x, BLUSPARAM, assay.type = assay_name, 
+setGeneric("addCluster", signature = c("x"),
+            function(x, BLUSPARAM, assay.type = assay_name, 
                     assay_name = "counts", MARGIN = "features", full = FALSE, 
                     name = "clusters", clust.col = "clusters", ...)
-               standardGeneric("cluster"))
+                standardGeneric("addCluster"))
 
-#' @rdname cluster
+#' @rdname addCluster
 #' @export
 #' @importFrom bluster clusterRows
-setMethod("cluster", signature = c(x = "SummarizedExperiment"),
-          function(x, BLUSPARAM, assay.type = assay_name, 
-                   assay_name = "counts", MARGIN = "features", full = FALSE, 
-                   name = "clusters", clust.col = "clusters", ...) {
+setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
+            function(x, BLUSPARAM, assay.type = assay_name, 
+                    assay_name = "counts", MARGIN = "features", full = FALSE, 
+                    name = "clusters", clust.col = "clusters", ...) {
         # Checking parameters
         MARGIN <- .check_margin(MARGIN)
         se_altexp <- .get_altExp(x, ...)
@@ -133,12 +133,12 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
     }
     if (length(MARGIN) != 1L 
         || !(MARGIN %in% c(1, 2, "features", "samples", "columns", 
-                           "col", "row", "rows", "cols"))) {
+                            "col", "row", "rows", "cols"))) {
         stop("'MARGIN' must equal to either 1, 2, 'features', 'samples', 'columns', 'col', 'row', 'rows', or 'cols'.",
-             call. = FALSE)
+            call. = FALSE)
     }
     MARGIN <- ifelse(MARGIN %in% c("samples", "columns", "col", 2, "cols"), 
-                     2, 1)
+                    2, 1)
     MARGIN
 }
 
@@ -152,12 +152,12 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
     if (MARGIN == 1) {
         if (clust.col %in% names(rowData(x))) {
             stop("The 'clust.col' parameter must not exist in the names of the rowData of the object.", 
-                 call. = FALSE)
+                call. = FALSE)
         }
     } else {
         if (clust.col %in% names(colData(x))) {
             stop("The 'clust.col' parameter must not exist in the names of the colData of the object.", 
-                 call. = FALSE)
+                call. = FALSE)
         }
     }
 }
