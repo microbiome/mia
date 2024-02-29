@@ -16,6 +16,11 @@ object}
 
 \item{...}{optional arguments not used currently.}
 }
+\value{
+\itemize{
+\item{\code{getHierarchyTree}:} {a \code{phylo} tree representing the
+hierarchy among available taxonomy information
+}
 \description{
 These functions find and return data present in a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}

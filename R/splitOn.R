@@ -289,7 +289,7 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
         # Manipulate rowTree or not?
         if( update_rowTree ){
             # If the returned value is a list, go through all of them
-            if( class(x) == "SimpleList" ){
+            if( is(x, 'SimpleList') ){
                 x <- SimpleList(lapply(x, .agglomerate_trees))
             } else {
                 # Otherwise, the returned value is TreeSE

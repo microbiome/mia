@@ -393,6 +393,11 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' 
 #' @inheritParams taxonomy-methods
 #' 
+#' @return
+#' \itemize{
+#'   \item{\code{getHierarchyTree}:} {a \code{phylo} tree representing the 
+#'   hierarchy among available taxonomy information
+#' 
 #' @name getHierarchyTree
 #' 
 #' @examples
