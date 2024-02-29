@@ -19,7 +19,8 @@ object}
 \value{
 \itemize{
 \item{\code{getHierarchyTree}:} {a \code{phylo} tree representing the
-hierarchy among available taxonomy information
+hierarchy among available taxonomy information.}
+}
 }
 \description{
 These functions find and return data present in a
