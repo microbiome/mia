@@ -12,8 +12,6 @@
 \alias{checkTaxonomy,SummarizedExperiment-method}
 \alias{getTaxonomyLabels}
 \alias{getTaxonomyLabels,SummarizedExperiment-method}
-\alias{addHierarchyTree}
-\alias{addHierarchyTree,SummarizedExperiment-method}
 \alias{mapTaxonomy}
 \alias{mapTaxonomy,SummarizedExperiment-method}
 \alias{IdTaxaToDataFrame}
@@ -55,10 +53,6 @@ getTaxonomyLabels(x, ...)
   resolve_loops = FALSE,
   ...
 )
-
-addHierarchyTree(x, ...)
-
-\S4method{addHierarchyTree}{SummarizedExperiment}(x)
 
 mapTaxonomy(x, ...)
 
@@ -140,9 +134,6 @@ creation.
 the lowest taxonomic information possible. If data from different levels,
 is to be mixed, the taxonomic level is prepended by default.
 
-\code{addHierarchyTree} calculates hierarchy tree from the available taxonomic
-information and add it to \code{rowTree}.
-
 \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
 
@@ -179,12 +170,6 @@ mapTaxonomy(GlobalPatterns)
 mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 # returns information on a single output
 mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
-
-# adding a rowTree() based on the available taxonomic information. Please
-# note that any tree already stored in rowTree() will be overwritten.
-x <- GlobalPatterns
-x <- addHierarchyTree(x)
-x
 }
 \seealso{
 \code{\link[=agglomerate-methods]{agglomerateByRank}},

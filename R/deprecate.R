@@ -17,7 +17,7 @@ setGeneric("addTaxonomyTree",
 #' @export
 setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
             function(x){
-                .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated.\n",
+                .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated.",
                                         "Use 'addHierarchyTree' instead."))
                 addHierarchyTree(x)
             }
@@ -33,7 +33,7 @@ setGeneric("taxonomyTree",
 #' @export
 setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
             function(x){
-                .Deprecated(msg = paste0("'taxonomyTree' is deprecated.\n",
+                .Deprecated(msg = paste0("'taxonomyTree' is deprecated.",
                                         "Use 'getHierarchyTree' instead."))
                 getHierarchyTree(x)
             }

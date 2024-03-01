@@ -18,9 +18,6 @@
 #'   the lowest taxonomic information possible. If data from different levels,
 #'   is to be mixed, the taxonomic level is prepended by default.
 #'
-#' \code{addHierarchyTree} calculates hierarchy tree from the available taxonomic
-#'   information and add it to \code{rowTree}.
-#'
 #' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 #'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
 #'
@@ -119,12 +116,6 @@
 #' mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 #' # returns information on a single output
 #' mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
-#'
-#' # adding a rowTree() based on the available taxonomic information. Please
-#' # note that any tree already stored in rowTree() will be overwritten.
-#' x <- GlobalPatterns
-#' x <- addHierarchyTree(x)
-#' x
 NULL
 
 #' @rdname taxonomy-methods
@@ -379,12 +370,15 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-#' Functions for accessing data  
+#' Calculate hierarchy tree
 #' 
-#' These functions find and return data present in a 
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object.
+#' These functions generate a hierarchy tree using taxonomic information from a
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{SummarizedExperiment}}
+#' object and add this hierarchy tree into the \code{rowTree}.
 #' 
+#' \code{addHierarchyTree} calculates hierarchy tree from the available taxonomic
+#'   information and add it to \code{rowTree}.
+#'   
 #' \code{getHierarchyTree} generates a hierarchy tree from the available
 #'   taxonomic information. Internally it uses
 #'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
@@ -395,26 +389,37 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' 
 #' @return
 #' \itemize{
+#'   \item{\code{addHierarchyTree}:} {a \code{TreeSummarizedExperiment} whose
+#'   \code{phylo} tree represents the hierarchy among available taxonomy 
+#'   information}
 #'   \item{\code{getHierarchyTree}:} {a \code{phylo} tree representing the 
 #'   hierarchy among available taxonomy information.}
 #' }
 #' 
-#' @name getHierarchyTree
+#' @name hierarchy-tree
 #' 
 #' @examples
+#' # generating a hierarchy tree based on available taxonomic information.
 #' data(GlobalPatterns)
 #' GlobalPatterns
 #' getHierarchyTree(GlobalPatterns)
+#' 
+#' # adding a hierarchy tree based on the available taxonomic information. 
+#' # Please note that any tree already stored in rowTree() will be overwritten.
+#' x <- GlobalPatterns
+#' x <- addHierarchyTree(x)
+#' x
 
-#' @rdname get-values
+#' @rdname hierarchy-tree
 setGeneric("getHierarchyTree",
             signature = "x",
             function(x, ...)
                 standardGeneric("getHierarchyTree"))
 
-#' @rdname get-values
+#' @rdname hierarchy-tree
 #' @aliases getHierarchyTree
 #' @export
+#' @importFrom ape drop.tip
 setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
         # Input check
@@ -449,13 +454,13 @@ setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname taxonomy-methods
+#' @rdname hierarchy-tree
 setGeneric("addHierarchyTree",
             signature = "x",
             function(x, ...)
                 standardGeneric("addHierarchyTree"))
 
-#' @rdname taxonomy-methods
+#' @rdname hierarchy-tree
 #' @export
 setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
