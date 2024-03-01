@@ -99,3 +99,4 @@ Changes in version 1.11.x
 + agglomerateByRank: agglomerate tree fix
 + splitOn: update rowTree fix
 + perSampleDominantFeatures: add new arguments (n, other.name, complete)
++ loadFromMetaphlan: support "taxonomy" column for specifying taxonomy
