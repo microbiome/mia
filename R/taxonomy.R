@@ -399,16 +399,17 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' @name hierarchy-tree
 #' 
 #' @examples
-#' # generating a hierarchy tree based on available taxonomic information.
+#' # Generating a hierarchy tree based on available taxonomic information.
 #' data(GlobalPatterns)
-#' GlobalPatterns
-#' getHierarchyTree(GlobalPatterns)
+#' tse <- GlobalPatterns
+#' getHierarchyTree(tse)
 #' 
-#' # adding a hierarchy tree based on the available taxonomic information. 
+#' # Adding a hierarchy tree based on the available taxonomic information. 
 #' # Please note that any tree already stored in rowTree() will be overwritten.
-#' x <- GlobalPatterns
-#' x <- addHierarchyTree(x)
-#' x
+#' tse <- addHierarchyTree(tse)
+#' tse
+#' 
+NULL
 
 #' @rdname hierarchy-tree
 setGeneric("getHierarchyTree",
@@ -444,10 +445,11 @@ setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
         for(i in rev(seq_len(ncol(td)))){
             if(any(td_NA[,i])){
                 to_drop <- paste0(colnames(td)[i],":",td[,i][td_NA[,i]])
-                tree <- ape::drop.tip(tree,
-                                        to_drop,
-                                        trim.internal = FALSE,
-                                        collapse.singles = FALSE)
+                tree <- drop.tip(
+                    tree,
+                    to_drop,
+                    trim.internal = FALSE,
+                    collapse.singles = FALSE)
             }
         }
         tree

@@ -2,8 +2,8 @@
 % Please edit documentation in R/taxonomy.R
 \name{hierarchy-tree}
 \alias{hierarchy-tree}
-\alias{getHierarchyTree,SummarizedExperiment-method}
 \alias{getHierarchyTree}
+\alias{getHierarchyTree,SummarizedExperiment-method}
 \alias{addHierarchyTree}
 \alias{addHierarchyTree,SummarizedExperiment-method}
 \title{Calculate hierarchy tree}
@@ -48,14 +48,14 @@ taxonomic information. Internally it uses
 data if needed.
 }
 \examples{
-# generating a hierarchy tree based on available taxonomic information.
+# Generating a hierarchy tree based on available taxonomic information.
 data(GlobalPatterns)
-GlobalPatterns
-getHierarchyTree(GlobalPatterns)
+tse <- GlobalPatterns
+getHierarchyTree(tse)
 
-# adding a hierarchy tree based on the available taxonomic information. 
+# Adding a hierarchy tree based on the available taxonomic information. 
 # Please note that any tree already stored in rowTree() will be overwritten.
-x <- GlobalPatterns
-x <- addHierarchyTree(x)
-x
+tse <- addHierarchyTree(tse)
+tse
+
 }
