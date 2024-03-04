@@ -7,6 +7,15 @@
 #' @param clust.col A single character value indicating the name of the 
 #'   \code{rowData} (or \code{colData}) where the data will be stored.
 #'   
+#' @param exprs_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay.type} instead.)
+#'   
+#' @param transposed Logical scalar, is x transposed with cells in rows?
+#' 
+#' @param type the type of measure used for the goodness of fit. One of
+#'   \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.
+#'   
 #' @param ... Additional parameters to use altExps for example
 #' @inheritParams bluster::clusterRows
 #' @inheritParams runDMN
