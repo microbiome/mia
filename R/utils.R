@@ -136,6 +136,24 @@
       }
 }
 
+# Check MARGIN parameters. Should be defining rows or columns.
+.check_MARGIN <- function(MARGIN) {
+    # Convert to lowcase if it is a string
+    if( .is_non_empty_string(MARGIN) ) {
+        MARGIN <- tolower(MARGIN)
+    }
+    # MARGIN must be one of the following options
+    if( !(length(MARGIN) == 1L && MARGIN %in% c(
+            1, 2, "1", "2", "features", "samples", "columns", "col", "row",
+            "rows", "cols")) ) {
+        stop("'MARGIN' must equal 1 or 2.", call. = FALSE)
+    }
+    # Convert MARGIN to numeric if it is not.
+    MARGIN <- ifelse(MARGIN %in% c(
+        "samples", "columns", "col", 2, "cols"), 2, 1)
+    return(MARGIN)
+}
+
 ################################################################################
 # internal wrappers for getter/setter
 
@@ -194,14 +212,38 @@
             call. = FALSE)
     }
     # Keep only unique values
-    values <- cbind( (cd)[!f], values )
+    cd <- cbind( (cd)[!f], values )
     
     # Replace colData with new one
-    x <- .add_rowdata(x, cd, altexp.name = altexp.name, MARGIN = MARGIN)
+    x <- .add_to_coldata(x, cd, altexp.name = altexp.name, MARGIN = MARGIN)
     
     return(x)
 }
 
+# Get feature or sample metadata. Allow hidden usage of MARGIN and altExp.
+#' @importFrom SummarizedExperiment rowData colData
+.add_to_coldata <- function(
+        x, cd, altexp.name = NULL, .disable.altexp = FALSE,
+        MARGIN = default.MARGIN, default.MARGIN = 1, ...){
+    #
+    if( !.is_a_bool(.disable.altexp) ){
+        stop("'.disable.altexp' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # Check if altExp can be found
+    .check_altExp_present(altexp.name, x, ...)
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
+    # Based on MARGIN, add result to rowData or colData
+    FUN <- switch(MARGIN, `rowData<-`, `colData<-`)
+    # If altexp was specified, add result to altExp. Otherwise add it directly
+    # to x.
+    if( !is.null(altexp.name) && !.disable.altexp ){
+        x <- FUN( altExp(x, altexp.name), value = cd )
+    } else{
+        x <- FUN(x, value = cd)
+    }
+    return(x)
+}
 
 #' @importFrom S4Vectors metadata metadata<-
 .add_values_to_metadata <- function(x, names, values){
