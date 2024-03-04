@@ -136,6 +136,7 @@
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(x, values, name){
+  ##################################################################### GET EXAMPLE FROM ANOTHER FILE
     # converts each value:name pair into a DataFrame
     values <- mapply(
         function(value, n){
@@ -172,7 +173,7 @@
 #' @importFrom S4Vectors metadata metadata<-
 .add_values_to_metadata <- function(x, names, values){
     # Check for duplicated values
-    f <- names(metadata) %in% names
+    f <- names(metadata(x)) %in% names
     if(any(f)) {
       warning(
         "The following values are already present in `metadata` and ",
@@ -181,8 +182,8 @@
         "'. Consider using the 'name' argument to specify alternative ",
         "names.", call. = FALSE)
     }
-    metadata[[names]] <- values
-    x
+    metadata(x)[[names]] <- values
+    return(x)
 }
 
 # keep dimnames of feature table (assay) consistent with the meta data 
