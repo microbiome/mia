@@ -80,32 +80,6 @@
     }
 }
 
-.check_altExp_present <- function(altexp, tse, 
-                                  altExpName = .get_name_in_parent(altexp),
-                                  tse_name = paste0("'", .get_name_in_parent(tse), "'") ){
-    # Get class of object
-    class <- as.character( class(tse) )
-    # If the object does not have altExp slot
-    if( !(is(tse, "TreeSummarizedExperiment") ||
-          is(tse, "SingleCellExperiment")) ){
-        stop("The class of ", tse_name, " is '", class, "' which does not have ",
-             "an altExp slot. Please try '", altExpName, " = NULL'.", 
-             call. = FALSE)
-    }
-    # If the object does not contain any altExps
-    if( length(altExps(tse)) == 0 ){
-        stop("altExps() of ", tse_name, " is empty. ",
-             "Please try '", altExpName, " = NULL'.",
-             call. = FALSE)
-    }
-    # altexp must specify altExp
-    if( !( ( .is_an_integer(altexp) && altexp<length(altExps(tse)) && altexp>0) ||
-           (.is_a_string(altexp) && altexp %in% altExpNames(tse)) ) ){
-        stop("'", altExpName, "' must be integer or character specifying an ",
-             "alternative experiment from ", tse_name, ".", call. = FALSE)
-    }
-}
-
 .check_rowTree_present <- function(tree_name, x,
                                    name = .get_name_in_parent(tree_name) ){
     if( !.is_non_empty_string(tree_name) ){
@@ -130,13 +104,57 @@
     }
 }
 
+# Check if alternative experiment can be found from altExp slot.
+.check_altExp_present <- function(
+        altexp, tse, altExpName = .get_name_in_parent(altexp),
+        tse_name = paste0("'", .get_name_in_parent(tse), "'"),
+        .disable.altexp = FALSE, ...){
+    # Disable altExp if specified
+    if( !.is_a_bool(.disable.altexp) ){
+        stop("'.disable.altexp' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( .disable.altexp ){
+        altexp <- NULL
+    }
+    # Check that altexp.name must be an integer or name
+    if( !(.is_a_string(altexp) || .is_an_integer(altexp) || is.null(altexp)) ){
+        stop(
+            "'", altExpName, "' must be a string or an integer.", call. = FALSE)
+    }
+    # If is not NULL, but the object does not have altExp slot
+    if( !is.null(altexp) && !is(tse, "SingleCellExperiment") ){
+        stop(
+            "'", altExpName, "', is specified but '", tse_name, "' does not ",
+            "have altExp slot.", call. = FALSE)
+    }
+    # Then check that altExp can be found; name or index.
+    if( !is.null(altexp) && !altexp %in% c(
+            altExpNames(tse), seq_len(length(altExps(tse)))) ){
+        stop(
+          "'", altExpName, "', does not specify an experiment from altExp ",
+          "slot of '", tse_name, "'.", call. = FALSE)
+      }
+}
+
 ################################################################################
 # internal wrappers for getter/setter
 
-#' @importFrom SummarizedExperiment colData colData<-
+#' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
 #' @importFrom S4Vectors DataFrame
-.add_values_to_colData <- function(x, values, name){
-  ##################################################################### GET EXAMPLE FROM ANOTHER FILE
+.add_values_to_colData <- function(
+        x, values, name, altexp.name = NULL, MARGIN = default.MARGIN,
+        default.MARGIN = 2, transpose.MARGIN = FALSE, ...){
+    # Check if altExp can be found
+    .check_altExp_present(altexp.name, x)
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
+    #
+    # If trasnpose.MARGIN is TRUE, transpose MARGIN, i.e. 1 --> 2, and 2 --> 1.
+    # In certain functions, values calculated by rows (MARGIN=1) are stored to
+    # colData (MARGIN=2) and vice versa.
+    if( transpose.MARGIN ){
+        MARGIN <- ifelse(MARGIN == 1, 2, 1)
+    }
     # converts each value:name pair into a DataFrame
     values <- mapply(
         function(value, n){
@@ -150,23 +168,38 @@
         },
         values,
         name)
-
+    
     values <- do.call(cbind, values)
-
-    # check for duplicated values
-    f <- colnames(colData(x)) %in% colnames(values)
-    if(any(f)) {
-        warning("The following values are already present in `colData` and ",
-                "will be overwritten: '",
-                paste(colnames(colData(x))[f], collapse = "', '"),
-                "'. Consider using the 'name' argument to specify alternative ",
-                "names.",
-                call. = FALSE)
+    
+    # Based on MARGIN, get rowDatra or colData
+    FUN <- switch(MARGIN, rowData, colData)
+    # If altexp.name was not NULL, then we know that it specifies correctly
+    # altExp from the slot. Take the colData/rowData from experiment..
+    if( !is.null(altexp.name) ){
+        cd <- FUN( altExp(x, altexp.name) )
+    } else{
+        cd <- FUN(x)
     }
-    # keep only unique values
-    colData(x) <- cbind(colData(x)[!f], values)
-
-    x
+    
+    # check for duplicated values
+    f <- colnames(cd) %in% colnames(values)
+    FUN_name <- switch(MARGIN, "rowData", "colData")
+    if(any(f)) {
+        warning(
+            "The following values are already present in `", FUN_name,
+            "` and will be overwritten: '",
+            paste(colnames(cd)[f], collapse = "', '"),
+            "'. Consider using the 'name' argument to specify alternative ",
+            "names.",
+            call. = FALSE)
+    }
+    # Keep only unique values
+    values <- cbind( (cd)[!f], values )
+    
+    # Replace colData with new one
+    x <- .add_rowdata(x, cd, altexp.name = altexp.name, MARGIN = MARGIN)
+    
+    return(x)
 }
 
 
@@ -220,6 +253,21 @@
     }
   
     feature_tab
+}
+
+# Input: (Tree)SE
+# Output: (Tree)SE
+.check_and_get_altExp <- function(
+          x, altexp = NULL, ...){
+    # If altexp is specified, check and get it.
+    # Otherwise return the original object
+    if( !is.null(altexp) ){
+        # Check altexp
+        .check_altExp_present(altexp, x, ...)
+        # Get altExp and return it
+        x <- altExp(x, altexp)
+    }
+    return(x)
 }
 
 #' Parse taxa in different taxonomic levels

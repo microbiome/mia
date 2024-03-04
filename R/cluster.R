@@ -70,9 +70,9 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
                    assay_name = "counts", MARGIN = "features", full = FALSE, 
                    name = "clusters", clust.col = "clusters", ...) {
         # Checking parameters
+              browser()
         MARGIN <- .check_margin(MARGIN)
-        se_altexp <- .get_altExp(x, ...)
-        se <- se_altexp$se
+        x <- .get_altExp(x, ...)
         # If there wasn't an altExp in the SE (or if the name was wrong), altexp 
         # is set to NULL, if it exists altexp contains the name of the altExp
         altexp <- se_altexp$altexp
@@ -117,15 +117,9 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-.get_altExp <- function(x, ...) {
-    altexppos <- which(...names() == "altexp")
-    if (length(altexppos) == 0) {
-        altexp <- NULL
-    } else {
-        altexp <- ...elt(altexppos)
-    }
-    se <- .check_and_get_altExp(x, altexp)
-    list(se = se, altexp = altexp)
+.get_altExp <- function(x, altexp = NULL, ...) {
+    x <- .check_and_get_altExp(x, altexp)
+    return(x)
 }
 
 .check_margin <- function(MARGIN) {
