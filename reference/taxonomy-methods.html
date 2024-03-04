@@ -94,16 +94,6 @@ represent taxonomic data alongside the features of a
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">taxonomyTree</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">taxonomyTree</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">addTaxonomyTree</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">addTaxonomyTree</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu">mapTaxonomy</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
@@ -127,13 +117,13 @@ object</p></dd>
 
 <dt>rank</dt>
 <dd><p>a single character defining a taxonomic rank. Must be a value of
-<code>taxonomyRanks()</code> function.</p></dd>
+<code>taxonomyRanks()</code> function</p></dd>
 
 
 <dt>empty.fields</dt>
 <dd><p>a <code>character</code> value defining, which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
-removed if <code>na.rm = TRUE</code> before agglomeration.</p></dd>
+removed if <code>na.rm = TRUE</code> before agglomeration</p></dd>
 
 
 <dt>...</dt>
@@ -206,11 +196,6 @@ creation.</p>
 <p><code>getTaxonomyLabels</code> generates a character vector per row consisting of
 the lowest taxonomic information possible. If data from different levels,
 is to be mixed, the taxonomic level is prepended by default.</p>
-<p><code>taxonomyTree</code> generates a <code>phylo</code> tree object from the available
-taxonomic information. Internally it uses
-<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/toTree.html" class="external-link">toTree</a></code> and
-<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/resolveLoop.html" class="external-link">resolveLoop</a></code> to sanitize
-data if needed.</p>
 <p><code>IdTaxaToDataFrame</code> extracts taxonomic results from results of
 <code><a href="https://rdrr.io/pkg/DECIPHER/man/IdTaxa.html" class="external-link">IdTaxa</a></code>.</p>
 <p><code>mapTaxonomy</code> maps the given features (taxonomic groups; <code>taxa</code>)
@@ -324,31 +309,6 @@ be accessed using <code>metadata(df)$confidence</code>.</p>
 <span class="r-in"><span><span class="fu">mapTaxonomy</span><span class="op">(</span><span class="va">GlobalPatterns</span>, taxa <span class="op">=</span> <span class="st">"Escherichia"</span>,to<span class="op">=</span><span class="st">"Family"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Escherichia </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "Enterobacteriaceae" </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># adding a rowTree() based on the available taxonomic information. Please</span></span></span>
-<span class="r-in"><span><span class="co"># note that any tree already stored in rowTree() will be overwritten.</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">addTaxonomyTree</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>16909 duplicated rows are removed</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The root is added with label 'ALL'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Multiple nodes are found to have the same label.</span>
-<span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 19216 26 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(19216): Class:Thermoprotei Class:Thermoprotei ... Phylum:SR1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Phylum:SR1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (19216 rows)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (1645 leaves)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 </code></pre></div>
     </div>
   </div>

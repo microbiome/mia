@@ -49,6 +49,9 @@
     <loc>/reference/cluster.html</loc>
   </url>
   <url>
+    <loc>/reference/deprecate.html</loc>
+  </url>
+  <url>
     <loc>/reference/dmn_se.html</loc>
   </url>
   <url>
@@ -77,6 +80,9 @@
   </url>
   <url>
     <loc>/reference/getPrevalence.html</loc>
+  </url>
+  <url>
+    <loc>/reference/hierarchy-tree.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
