@@ -38,9 +38,14 @@ mergeFeaturesByRank(x, ...)
 
 \S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
-\S4method{agglomerateByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
+\S4method{agglomerateByRank}{TreeSummarizedExperiment}(
+  x,
+  ...,
+  agglomerate.tree = agglomerateTree,
+  agglomerateTree = FALSE
+)
 
-\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerateTree = FALSE)
+\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerate.tree = FALSE)
 }
 \arguments{
 \item{x}{a
@@ -83,9 +88,11 @@ experiments be removed prior to agglomeration? This prevents to many
 nested alternative experiments by default (default:
 \code{strip_altexp = TRUE})}
 
-\item{agglomerateTree}{\code{TRUE} or \code{FALSE}: should
+\item{agglomerate.tree}{\code{TRUE} or \code{FALSE}: should
 \code{rowTree()} also be agglomerated? (Default:
-\code{agglomerateTree = FALSE})}
+\code{agglomerate.tree = FALSE})}
+
+\item{agglomerateTree}{alias for \code{agglomerate.tree}.}
 }
 \value{
 A taxonomically-agglomerated, optionally-pruned object of the same
@@ -122,7 +129,7 @@ nrow(x1)
 
 # agglomerate the tree as well
 x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-                       agglomerateTree = TRUE)
+                       agglomerate.tree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree

@@ -95,3 +95,9 @@ Changes in version 1.9.x
 + loadFromHumann: Improved speed
 
 Changes in version 1.11.x
++ loadFromMetaphlan: support strain rank
++ agglomerateByRank: agglomerate tree fix
++ Replace taxonomyTree and addTaxonomyTree with getHierarchyTree and addHierarchyTree
++ splitOn: update rowTree fix
++ perSampleDominantFeatures: add new arguments (n, other.name, complete)
++ loadFromMetaphlan: support "taxonomy" column for specifying taxonomy
