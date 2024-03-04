@@ -31,7 +31,7 @@
 #' with clustering information named \code{clusters} stored in \code{colData} 
 #' or \code{rowData}. 
 #'
-#' @name cluster
+#' @name addCluster
 #' @export
 #' 
 #' @author Basil Courbayre
@@ -54,7 +54,7 @@
 #' 
 NULL
 
-#' @rdname cluster
+#' @rdname addCluster
 #' @export
 setGeneric("addCluster", signature = c("x"),
             function(x, BLUSPARAM, assay.type = assay_name, 
