@@ -87,6 +87,15 @@ abundance table.}
 \code{rowData} (or \code{colData}) where the data will be stored.}
 
 \item{...}{Additional parameters to use altExps for example}
+
+\item{exprs_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead.)}
+
+\item{transposed}{Logical scalar, is x transposed with cells in rows?}
+
+\item{type}{the type of measure used for the goodness of fit. One of
+\sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.
