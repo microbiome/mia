@@ -154,17 +154,35 @@
 }
 
 ################################################################################
-# internal wrappers for getter/setter
+# Internal wrappers for getters
+
+# Input: (Tree)SE
+# Output: (Tree)SE
+.check_and_get_altExp <- function(
+        x, altexp = NULL, ...){
+    # If altexp is specified, check and get it.
+    # Otherwise return the original object
+    if( !is.null(altexp) ){
+        # Check altexp
+        .check_altExp_present(altexp, x, ...)
+        # Get altExp and return it
+        x <- altExp(x, altexp)
+    }
+    return(x)
+}
+
+################################################################################
+# Internal wrappers for setters
 
 #' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(
         x, values, name, altexp = NULL, MARGIN = default.MARGIN,
-        default.MARGIN = 2, transpose.MARGIN = FALSE, col.name.param = "name",
+        default.MARGIN = 2, transpose.MARGIN = FALSE, colname = "name",
         ...){
     #
-    if( !.is_a_string(col.name.param) ){
-        stop("'col.name.param' must be a string.", call. = FALSE)
+    if( !.is_a_string(col.name) ){
+        stop("'colname' must be a string.", call. = FALSE)
     }
     #
     # Check if altExp can be found
@@ -211,8 +229,8 @@
             "The following values are already present in `", FUN_name,
             "` and will be overwritten: '",
             paste(colnames(cd)[f], collapse = "', '"),
-            "'. Consider using the '", col.name.param,
-            "' argument to specify alternative ", "names.",
+            "'. Consider using the '", colname,
+            "' argument to specify alternative names.",
             call. = FALSE)
     }
     # Keep only unique values
@@ -220,7 +238,6 @@
     
     # Replace colData with new one
     x <- .add_to_coldata(x, cd, altexp = altexp, MARGIN = MARGIN)
-    
     return(x)
 }
 
@@ -284,6 +301,9 @@
     return(x)
 }
 
+################################################################################
+# Other common functions
+
 # keep dimnames of feature table (assay) consistent with the meta data 
 # of sample (colData) and feature (rowData)
 .set_feature_tab_dimnames <- function(feature_tab, 
@@ -318,21 +338,6 @@
     }
   
     feature_tab
-}
-
-# Input: (Tree)SE
-# Output: (Tree)SE
-.check_and_get_altExp <- function(
-          x, altexp = NULL, ...){
-    # If altexp is specified, check and get it.
-    # Otherwise return the original object
-    if( !is.null(altexp) ){
-        # Check altexp
-        .check_altExp_present(altexp, x, ...)
-        # Get altExp and return it
-        x <- altExp(x, altexp)
-    }
-    return(x)
 }
 
 #' Parse taxa in different taxonomic levels
