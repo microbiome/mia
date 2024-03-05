@@ -78,7 +78,6 @@ the metadata of the object.
 By default, clustering is done on the features.
 }
 \examples{
-library(bluster)
 data(GlobalPatterns, package = "mia")
 tse <- GlobalPatterns
 

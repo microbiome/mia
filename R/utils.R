@@ -267,7 +267,12 @@
 }
 
 #' @importFrom S4Vectors metadata metadata<-
-.add_values_to_metadata <- function(x, names, values, altexp = NULL, ...){
+.add_values_to_metadata <- function(
+        x, names, values, altexp = NULL, metadata.name = "name", ...){
+    #
+    if( !.is_a_string(metadata.name) ){
+        stop("'metadata.name' must be a string.", call. = FALSE)
+    }
     # Check if altExp can be found
     .check_altExp_present(altexp, x)
     #
@@ -287,8 +292,8 @@
             "The following values are already present in `metadata` and will ",
             "be overwritten: '",
             paste(names(old_metadata)[f], collapse = "', '"),
-            "'. Consider using the 'name' argument to specify alternative ",
-            "names.", call. = FALSE)
+            "'. Consider using the '", metadata.name,
+            "' argument to specify alternative ", "names.", call. = FALSE)
     }
     # keep only unique values
     add_metadata <- c( old_metadata[!f], add_metadata )
