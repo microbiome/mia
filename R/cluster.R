@@ -37,6 +37,7 @@
 #' @author Basil Courbayre
 #'
 #' @examples
+#' library(bluster)
 #' data(GlobalPatterns, package = "mia")
 #' tse <- GlobalPatterns
 #'
