@@ -102,3 +102,4 @@ Changes in version 1.11.x
 + perSampleDominantFeatures: add new arguments (n, other.name, complete)
 + loadFromMetaphlan: support "taxonomy" column for specifying taxonomy
 + cluster: Overwrite old results instead of failing
++ Rename cluster to addCluster
