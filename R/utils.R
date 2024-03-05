@@ -181,7 +181,7 @@
         default.MARGIN = 2, transpose.MARGIN = FALSE, colname = "name",
         ...){
     #
-    if( !.is_a_string(col.name) ){
+    if( !.is_a_string(colname) ){
         stop("'colname' must be a string.", call. = FALSE)
     }
     #
