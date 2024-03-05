@@ -277,7 +277,7 @@
     .check_altExp_present(altexp, x)
     #
     # Create a list and name elements
-    add_metadata <- as.list(values)
+    add_metadata <- list(values)
     names(add_metadata) <- names
     # Get old metadata
     if( !is.null(altexp) ){

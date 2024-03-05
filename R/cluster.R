@@ -107,7 +107,7 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
         # list
         clusters <- list(clusters)
         x <- .add_values_to_colData(
-            x, clusters, name, MARGIN = MARGIN, colname = "clust.col", ...)
+            x, clusters, clust.col, MARGIN = MARGIN, colname = "clust.col", ...)
         return(x)
     }
 )
