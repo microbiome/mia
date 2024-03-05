@@ -37,7 +37,6 @@
 #' @author Basil Courbayre
 #'
 #' @examples
-#' library(bluster)
 #' data(GlobalPatterns, package = "mia")
 #' tse <- GlobalPatterns
 #'
@@ -69,7 +68,9 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
           function(x, BLUSPARAM, assay.type = assay_name, 
                    assay_name = "counts", MARGIN = "features", full = FALSE, 
                    name = "clusters", clust.col = "clusters", ...) {
+        .require_package("bluster")
         # Checking parameters
+              browser()
         MARGIN <- .check_MARGIN(MARGIN)
         se <- .check_and_get_altExp(x, ...)
         .check_assay_present(assay.type, se)
@@ -89,13 +90,13 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
         # Getting the clusters and setting metadata
         if (full) {
             clusters <- result$clusters
-            se <- .add_values_to_metadata(se, name, result$objects)
+            x <- .add_values_to_metadata(x, name, result$objects, ...)
         } else {
             clusters <- result
         }
         clusters <- list(clusters)
         # Setting clusters in the object
-        se <- .add_values_to_colData(se, clusters, name, MARGIN = 1, ...)
-        return(se)
+        x <- .add_values_to_colData(x, clusters, name, MARGIN = MARGIN, ...)
+        return(x)
     }
 )

@@ -160,10 +160,10 @@
 #' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(
-        x, values, name, altexp.name = NULL, MARGIN = default.MARGIN,
+        x, values, name, altexp = NULL, MARGIN = default.MARGIN,
         default.MARGIN = 2, transpose.MARGIN = FALSE, ...){
     # Check if altExp can be found
-    .check_altExp_present(altexp.name, x)
+    .check_altExp_present(altexp, x)
     # Check that MARGIN is correct
     MARGIN <- .check_MARGIN(MARGIN)
     #
@@ -193,8 +193,8 @@
     FUN <- switch(MARGIN, rowData, colData)
     # If altexp.name was not NULL, then we know that it specifies correctly
     # altExp from the slot. Take the colData/rowData from experiment..
-    if( !is.null(altexp.name) ){
-        cd <- FUN( altExp(x, altexp.name) )
+    if( !is.null(altexp) ){
+        cd <- FUN( altExp(x, altexp) )
     } else{
         cd <- FUN(x)
     }
@@ -215,7 +215,7 @@
     cd <- cbind( (cd)[!f], values )
     
     # Replace colData with new one
-    x <- .add_to_coldata(x, cd, altexp.name = altexp.name, MARGIN = MARGIN)
+    x <- .add_to_coldata(x, cd, altexp = altexp, MARGIN = MARGIN)
     
     return(x)
 }
@@ -223,22 +223,22 @@
 # Get feature or sample metadata. Allow hidden usage of MARGIN and altExp.
 #' @importFrom SummarizedExperiment rowData colData
 .add_to_coldata <- function(
-        x, cd, altexp.name = NULL, .disable.altexp = FALSE,
+        x, cd, altexp = NULL, .disable.altexp = FALSE,
         MARGIN = default.MARGIN, default.MARGIN = 1, ...){
     #
     if( !.is_a_bool(.disable.altexp) ){
         stop("'.disable.altexp' must be TRUE or FALSE.", call. = FALSE)
     }
     # Check if altExp can be found
-    .check_altExp_present(altexp.name, x, ...)
+    .check_altExp_present(altexp, x, ...)
     # Check that MARGIN is correct
     MARGIN <- .check_MARGIN(MARGIN)
     # Based on MARGIN, add result to rowData or colData
     FUN <- switch(MARGIN, `rowData<-`, `colData<-`)
     # If altexp was specified, add result to altExp. Otherwise add it directly
     # to x.
-    if( !is.null(altexp.name) && !.disable.altexp ){
-        x <- FUN( altExp(x, altexp.name), value = cd )
+    if( !is.null(altexp) && !.disable.altexp ){
+        altExp(x, altexp) <- FUN( altExp(x, altexp), value = cd )
     } else{
         x <- FUN(x, value = cd)
     }
@@ -246,18 +246,37 @@
 }
 
 #' @importFrom S4Vectors metadata metadata<-
-.add_values_to_metadata <- function(x, names, values){
-    # Check for duplicated values
-    f <- names(metadata(x)) %in% names
-    if(any(f)) {
-      warning(
-        "The following values are already present in `metadata` and ",
-        "will be overwritten: '",
-        paste(names(metadata(x))[f], collapse = "', '"),
-        "'. Consider using the 'name' argument to specify alternative ",
-        "names.", call. = FALSE)
+.add_values_to_metadata <- function(x, names, values, altexp = NULL, ...){
+    # Check if altExp can be found
+    .check_altExp_present(altexp, x)
+    #
+    # Create a list and name elements
+    add_metadata <- as.list(values)
+    names(add_metadata) <- names
+    # Get old metadata
+    if( !is.null(altexp) ){
+        old_metadata <- metadata( altExp(x, altexp) )
+    } else{
+        old_metadata <- metadata(x)
     }
-    metadata(x)[[names]] <- values
+    # Check if names match with elements that are already present
+    f <- names(old_metadata) %in% names(add_metadata)
+    if( any(f) ){
+        warning(
+            "The following values are already present in `metadata` and will ",
+            "be overwritten: '",
+            paste(names(old_metadata)[f], collapse = "', '"),
+            "'. Consider using the 'name' argument to specify alternative ",
+            "names.", call. = FALSE)
+    }
+    # keep only unique values
+    add_metadata <- c( old_metadata[!f], add_metadata )
+    # Add metadata to altExp or directly to x
+    if( !is.null(altexp) ){
+        metadata( altExp(x, altexp) ) <- add_metadata
+    } else{
+        metadata(x) <- add_metadata
+    }
     return(x)
 }
 
