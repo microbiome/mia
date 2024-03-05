@@ -16,10 +16,13 @@
 #' @param type the type of measure used for the goodness of fit. One of
 #'   \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.
 #'   
-#' @param ... Additional parameters to use altExps for example
 #' @inheritParams bluster::clusterRows
 #' @inheritParams runDMN
 #' @inheritParams transformAssay
+#' 
+#' @param x a \code{\link{SummarizedExperiment}} object -
+#' 
+#' @param ... Additional parameters to use altExps for example
 #' 
 #' @name deprecate
 NULL
@@ -38,9 +41,25 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
             function(x, BLUSPARAM, assay.type = assay_name, 
                     assay_name = "counts", MARGIN = "features", full = FALSE, 
                     name = "clusters", clust.col = "clusters", ...){
-                .Deprecated(msg = paste0("'cluster' is deprecated.\n",
+                .Deprecated(msg = paste0("'cluster' is deprecated. ",
                                         "Use 'addCluster' instead."))
                 addCluster(x)
+            }
+)
+
+#' @rdname deprecate
+setGeneric("addTaxonomyTree",
+            signature = "x",
+            function(x, ...)
+                standardGeneric("addTaxonomyTree"))
+
+#' @rdname deprecate
+#' @export
+setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
+            function(x){
+                .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated.",
+                                        "Use 'addHierarchyTree' instead."))
+                addHierarchyTree(x)
             }
 )
 
@@ -49,8 +68,8 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
 setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
             function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
                     transposed = FALSE, ...){
-                .Deprecated(old="calculateDMN", new="addCluster", 
-                            "Now calculateDMN is deprecated. Use addCluster with DMMParam parameter instead.")
+                .Deprecated(msg = paste0("'calculateDMN' is deprecated. ",
+                                        "Use 'addCluster' with DMMParam parameter instead."))
                 mat <- assay(x, assay.type)
                 if(!transposed){
                     mat <- t(mat)
@@ -63,8 +82,8 @@ setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
 #' @importFrom S4Vectors metadata<-
 #' @export
 runDMN <- function(x, name = "DMN", ...){
-    .Deprecated(old="runDMN", new="addCluster", 
-                "Now runDMN is deprecated. Use addCluster with DMMParam parameter instead.")
+    .Deprecated(msg = paste0("'runDMN' is deprecated. ",
+                            "Use 'addCluster' with DMMParam parameter instead."))
     if(!is(x,"SummarizedExperiment")){
         stop("'x' must be a SummarizedExperiment")
     }
@@ -82,8 +101,9 @@ setGeneric("getDMN", signature = "x",
 #' @export
 setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
             function(x, name = "DMN"){
-                .Deprecated(old="getDMN", new="addCluster", 
-                            "Now getDMN is deprecated. Use addCluster with DMMParam parameter and full parameter set as true instead.")
+                .Deprecated(msg = paste0("'getDMN' is deprecated. ",
+                                        "Use 'addCluster' with DMMParam parameter",
+                                        "and full parameter set as true instead."))
                 .get_dmn(x, name)
             }
 )
@@ -93,8 +113,9 @@ setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
             function(x, name = "DMN", type = c("laplace","AIC","BIC")){
-                .Deprecated(old="bestDMNFit", new="addCluster", 
-                            "Now bestDMNFit is deprecated. Use addCluster with DMMParam parameter and full parameter set as true instead.")
+                .Deprecated(msg = paste0("'bestDMNFit' is deprecated. ",
+                                        "Use 'addCluster' with DMMParam parameter",
+                                        "and full parameter set as true instead."))
                 dmn <- getDMN(x, name)
                 fit_FUN <- .get_dmn_fit_FUN(type)
                 .get_best_dmn_fit(dmn, fit_FUN)
@@ -111,10 +132,27 @@ setGeneric("getBestDMNFit", signature = "x",
 #' @export
 setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
             function(x, name = "DMN", type = c("laplace","AIC","BIC")){
-                .Deprecated(old="getBestDMNFit", new="addCluster", 
-                            "Now getBestDMNFit is deprecated. Use addCluster with DMMParam parameter and full parameter set as true instead.")
+                .Deprecated(msg = paste0("'getBestDMNFit' is deprecated. ",
+                                        "Use 'addCluster' with DMMParam parameter",
+                                        "and full parameter set as true instead."))
                 dmn <- getDMN(x, name)
                 fit_FUN <- .get_dmn_fit_FUN(type)
                 dmn[[.get_best_dmn_fit(dmn, fit_FUN)]]
+            }
+)
+
+#' @rdname deprecate
+setGeneric("taxonomyTree",
+            signature = "x",
+            function(x, ...)
+                standardGeneric("taxonomyTree"))
+
+#' @rdname deprecate
+#' @export
+setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
+            function(x){
+                .Deprecated(msg = paste0("'taxonomyTree' is deprecated. ",
+                                        "Use 'getHierarchyTree' instead."))
+                getHierarchyTree(x)
             }
 )

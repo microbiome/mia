@@ -4,6 +4,7 @@
 \alias{deprecate}
 \alias{cluster}
 \alias{cluster,SummarizedExperiment-method}
+\alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{calculateDMN,SummarizedExperiment-method}
 \alias{runDMN}
 \alias{getDMN}
@@ -11,6 +12,7 @@
 \alias{bestDMNFit,SummarizedExperiment-method}
 \alias{getBestDMNFit}
 \alias{getBestDMNFit,SummarizedExperiment-method}
+\alias{taxonomyTree,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(
@@ -37,6 +39,8 @@ cluster(
   ...
 )
 
+\S4method{addTaxonomyTree}{SummarizedExperiment}(x)
+
 \S4method{calculateDMN}{SummarizedExperiment}(
   x,
   assay.type = assay_name,
@@ -57,11 +61,11 @@ getDMN(x, name = "DMN", ...)
 getBestDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
 
 \S4method{getBestDMNFit}{SummarizedExperiment}(x, name = "DMN", type = c("laplace", "AIC", "BIC"))
+
+\S4method{taxonomyTree}{SummarizedExperiment}(x)
 }
 \arguments{
-\item{x}{A
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
+\item{x}{a \code{\link{SummarizedExperiment}} object -}
 
 \item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
 
