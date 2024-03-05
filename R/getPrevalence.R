@@ -240,9 +240,9 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 .agg_for_prevalence <- function(
         x, rank, relabel = FALSE, make_unique = TRUE, na.rm = FALSE,
         agg.na.rm = FALSE, ...){
-    # Check na.rm. It is used in this function, it is only catched so that it
-    # can be passed to getPrevalence(matrix) and not use it here in
-    # agglomerateByRank.
+    # Check na.rm. It is not used in this function, it is only catched so that
+    # it can be passed to getPrevalence(matrix) and not use it here in
+    # agglomerateByRank function.
     if(!.is_a_bool(na.rm)){
         stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
     }
