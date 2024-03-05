@@ -56,47 +56,59 @@ NULL
 #' @rdname cluster
 #' @export
 setGeneric("cluster", signature = c("x"),
-           function(x, BLUSPARAM, assay.type = assay_name, 
-                    assay_name = "counts", MARGIN = "features", full = FALSE, 
-                    name = "clusters", clust.col = "clusters", ...)
-               standardGeneric("cluster"))
+    function(
+            x, BLUSPARAM, assay.type = assay_name, 
+            assay_name = "counts", MARGIN = "features", full = FALSE, 
+            name = "clusters", clust.col = "clusters", ...)
+    standardGeneric("cluster"))
 
 #' @rdname cluster
 #' @export
 #' @importFrom bluster clusterRows
 setMethod("cluster", signature = c(x = "SummarizedExperiment"),
-          function(x, BLUSPARAM, assay.type = assay_name, 
-                   assay_name = "counts", MARGIN = "features", full = FALSE, 
-                   name = "clusters", clust.col = "clusters", ...) {
+    function(
+            x, BLUSPARAM, assay.type = assay_name, 
+            assay_name = "counts", MARGIN = "features", full = FALSE, 
+            name = "clusters", clust.col = "clusters", ...) {
         .require_package("bluster")
         # Checking parameters
-              browser()
         MARGIN <- .check_MARGIN(MARGIN)
         se <- .check_and_get_altExp(x, ...)
         .check_assay_present(assay.type, se)
         if( !.is_a_string(name) ){
             stop("'name' must be a non-empty single character value.",
-                 call. = FALSE)
+                call. = FALSE)
+        }
+        if( !.is_a_string(clust.col) ){
+            stop("'clust.col' must be a non-empty single character value.",
+                call. = FALSE)
+        }
+        if( !.is_a_bool(full) ){
+            stop("'full' must be TRUE or FALSE.", call. = FALSE)
         }
         #
+        # Get assay
         mat <- assay(se, assay.type)
-        
         # Transpose if clustering on the columns
         if(MARGIN == 2){
             mat <- t(mat)
         }
-        
+        # Get clusters
         result <- clusterRows(mat, BLUSPARAM, full)
-        # Getting the clusters and setting metadata
+        # If user has specified full=TRUE, result includes additional info
+        # that will be stored to metadata.
         if (full) {
             clusters <- result$clusters
             x <- .add_values_to_metadata(x, name, result$objects, ...)
         } else {
             clusters <- result
         }
+        # Setting clusters in the object. The adding function requires data as
+        # list
         clusters <- list(clusters)
-        # Setting clusters in the object
-        x <- .add_values_to_colData(x, clusters, name, MARGIN = MARGIN, ...)
+        x <- .add_values_to_colData(
+            x, clusters, name, MARGIN = MARGIN, col.name.param = "clust.col",
+            ...)
         return(x)
     }
 )

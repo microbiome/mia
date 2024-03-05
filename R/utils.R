@@ -107,8 +107,7 @@
 # Check if alternative experiment can be found from altExp slot.
 .check_altExp_present <- function(
         altexp, tse, altExpName = .get_name_in_parent(altexp),
-        tse_name = paste0("'", .get_name_in_parent(tse), "'"),
-        .disable.altexp = FALSE, ...){
+        tse_name = .get_name_in_parent(tse), .disable.altexp = FALSE, ...){
     # Disable altExp if specified
     if( !.is_a_bool(.disable.altexp) ){
         stop("'.disable.altexp' must be TRUE or FALSE.", call. = FALSE)
@@ -161,7 +160,13 @@
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(
         x, values, name, altexp = NULL, MARGIN = default.MARGIN,
-        default.MARGIN = 2, transpose.MARGIN = FALSE, ...){
+        default.MARGIN = 2, transpose.MARGIN = FALSE, col.name.param = "name",
+        ...){
+    #
+    if( !.is_a_string(col.name.param) ){
+        stop("'col.name.param' must be a string.", call. = FALSE)
+    }
+    #
     # Check if altExp can be found
     .check_altExp_present(altexp, x)
     # Check that MARGIN is correct
@@ -186,7 +191,6 @@
         },
         values,
         name)
-    
     values <- do.call(cbind, values)
     
     # Based on MARGIN, get rowDatra or colData
@@ -207,8 +211,8 @@
             "The following values are already present in `", FUN_name,
             "` and will be overwritten: '",
             paste(colnames(cd)[f], collapse = "', '"),
-            "'. Consider using the 'name' argument to specify alternative ",
-            "names.",
+            "'. Consider using the '", col.name.param,
+            "' argument to specify alternative ", "names.",
             call. = FALSE)
     }
     # Keep only unique values
