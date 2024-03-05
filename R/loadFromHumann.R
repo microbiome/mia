@@ -85,10 +85,12 @@ loadFromHumann <- function(file, colData = NULL, ...){
              call. = FALSE)
     }
     ############################## Input check end #############################
+    # Humann files has these columns that goes to rowData
+    rowdata_col <- c("Pathway", "Gene_Family")
     # Read metaphlan data
-    data <- .read_humann(file, ...)
+    data <- .read_humann(file, rowdata_col, ...)
     # Create TreeSE from the data
-    tse <- .create_tse_from_humann(data, ...)
+    tse <- .create_tse_from_humann(data, rowdata_col, ...)
     # Add colData if provided
     if( !is.null(colData) ){
         tse <- .add_coldata(tse, colData)
@@ -100,7 +102,7 @@ loadFromHumann <- function(file, colData = NULL, ...){
 
 # Read Humann file, catch error if it occurs
 #' @importFrom utils read.delim
-.read_humann <- function(file, remove.suffix = FALSE, ...){
+.read_humann <- function(file, rowdata_col, remove.suffix = FALSE, ...){
     ################################ Input check ###############################
     if(!.is_a_bool(remove.suffix)){
         stop("'remove.suffix' must be TRUE or FALSE.", call. = FALSE)
@@ -123,12 +125,12 @@ loadFromHumann <- function(file, colData = NULL, ...){
     colnames(table)[1] <- gsub(" ", "_", colnames(table)[1])
     # Remove possible suffix from the colnames if user has specified
     if( remove.suffix ){
-        table <- .remove_suffix(table, c("Pathway", "Gene_Family"))
+        table <- .remove_suffix(table, rowdata_col)
     }
     # Add rownames
     rownames(table) <- table[, 1] 
     # Check that file is in right format
-    if( .check_humann(table) ){
+    if( .check_metaphlan(table, rowdata_col) ){
         stop("Error while reading ", file,
              "\nPlease check that the file is in merged HUMAnN file format.",
              call. = FALSE)
@@ -136,32 +138,9 @@ loadFromHumann <- function(file, colData = NULL, ...){
     return(table)
 }
 
-# Check that metaphlan file contains correct information
-.check_humann <- function(data){
-    # Get rowdata columns
-    rowdata_col <- c("Pathway", "Gene_Family")
-    rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
-    rowdata_columns <- data[ , rowdata_id, drop = FALSE]
-    # Get columns that go to assay
-    assay_columns <- data[ , -rowdata_id, drop = FALSE]
-    # Initialize result 
-    result <- TRUE
-    
-    # Check rowdata column names that they contain right information, and check
-    # that rest of the columns represents abundances in samples.
-    # If these requirements are met, give FALSE. Otherwise, give TRUE.
-    if (any(colnames(rowdata_columns) %in% c("Pathway", "Gene_Family")) && 
-        all(unlist(lapply(assay_columns, is.numeric)))) {
-      result <- FALSE
-    }
-    
-    return(result)
-}
-
 # This function parses humann file and creates tse from it.
-.create_tse_from_humann <- function(data, colData, assay.type = "counts", ...){
+.create_tse_from_humann <- function(data, rowdata_col, assay.type = "counts", ...){
     # Get rowdata columns
-    rowdata_col <- c("Pathway", "Gene_Family")
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
     rowdata <- data[ , rowdata_id, drop = FALSE]
     # Get columns that go to assay

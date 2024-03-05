@@ -69,9 +69,9 @@ test_that("taxonomy", {
                  c("Family:j","Phylum:a","Family:k","Family:l","Family:m",
                    "Family:n","Family:o_1","Phylum:c","Family:o_2"))
 
-    # addTaxonomyTree
+    # addHierarchyTree
     data(GlobalPatterns, package="mia")
-    expect_warning(GlobalPatterns <- addTaxonomyTree(GlobalPatterns))
+    expect_warning(GlobalPatterns <- addHierarchyTree(GlobalPatterns))
     expect_equal(dim(GlobalPatterns),c(19216,26))
     expect_equal(rowTree(GlobalPatterns)$Nnode, 1089)
     expect_equal(length(rowTree(GlobalPatterns)$tip.label), 1645)
