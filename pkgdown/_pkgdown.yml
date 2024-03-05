@@ -47,6 +47,7 @@ reference:
   - getPrevalentAbundance
   - getTopTaxa
   - getExperimentCrossCorrelation
+  - hierarchy-tree
 - subtitle: Dominance
 - contents:
   - perSampleDominantTaxa
@@ -80,3 +81,6 @@ reference:
 - subtitle: Package
 - contents:
   - mia-package
+- subtitle: Deprecated functions
+- contents:
+  - deprecate

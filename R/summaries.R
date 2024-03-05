@@ -23,6 +23,7 @@
 #' @param na.rm For \code{getTopFeatures} logical argument for calculation method 
 #'              specified to argument \code{method}. Default is TRUE. 
 #'
+#'
 #' @param ... Additional arguments passed, e.g., to getPrevalence:
 #'    \itemize{
 #'        \item{\code{sort}}{A single boolean value for selecting 
@@ -232,6 +233,7 @@ setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
 #'   \code{rank} is specified for \code{countDominantFeatures}.
 #'
+#'
 #' @details
 #' \code{countDominantFeatures} returns information about most dominant
 #' taxa in a tibble. Information includes their absolute and relative
@@ -266,13 +268,12 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
             stop("'name' must be a non-empty single character value.",
                  call. = FALSE)
         }
-        
         # Adds dominant taxa to colData
-        dominant_taxa <- perSampleDominantTaxa(x, ...)
+        dominant_taxa <- perSampleDominantFeatures(x, ...)
         data <- colData(x)
         # If the length of dominant taxa is not equal to number of rows, then add rows
         # because there are multiple dominant taxa
-        if(length(dominant_taxa) > nrow(data) ){
+        if(length(unlist(dominant_taxa)) > nrow(data) ){
             # Get the order
             order <- unique(names(dominant_taxa))
             # there are multiple dominant taxa in one sample (counts are equal), length
@@ -320,18 +321,17 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
     # Convert data to data.frame
     data <- as.data.frame(data)
     
-    # 
     # # If there are multiple dominant taxa in one sample, the column is a list.
     # # Convert it so that there are multiple rows for sample and each row contains
     # # one dominant taxa.
-    # if( is.list(data[[name]]) ){
-    #     # Get dominant taxa as a vector
-    #     dominant_taxa <- unlist(data[[name]])
-    #     # Create additional rows
-    #     data <- data[rep(seq_len(nrow(data)), lengths(data[[name]])), ]
-    #     # Add dominant taxa
-    #     data[[name]] <- dominant_taxa
-    # }
+    if( is.list(data[[colname]]) ){
+        # Get dominant taxa as a vector
+        dominant_taxa <- unlist(data[[colname]])
+        # Create additional rows
+        data <- data[rep(seq_len(nrow(data)), lengths(data[[colname]])), ]
+        # Add dominant taxa
+        data[[colname]] <- dominant_taxa
+    }
     
     # Creates a tibble that contains number of times that a column of "name"
     # is present in samples and relative portion of samples where they

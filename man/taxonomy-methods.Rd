@@ -12,10 +12,6 @@
 \alias{checkTaxonomy,SummarizedExperiment-method}
 \alias{getTaxonomyLabels}
 \alias{getTaxonomyLabels,SummarizedExperiment-method}
-\alias{taxonomyTree}
-\alias{taxonomyTree,SummarizedExperiment-method}
-\alias{addTaxonomyTree}
-\alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{mapTaxonomy}
 \alias{mapTaxonomy,SummarizedExperiment-method}
 \alias{IdTaxaToDataFrame}
@@ -58,14 +54,6 @@ getTaxonomyLabels(x, ...)
   ...
 )
 
-taxonomyTree(x, ...)
-
-\S4method{taxonomyTree}{SummarizedExperiment}(x)
-
-addTaxonomyTree(x, ...)
-
-\S4method{addTaxonomyTree}{SummarizedExperiment}(x)
-
 mapTaxonomy(x, ...)
 
 \S4method{mapTaxonomy}{SummarizedExperiment}(x, taxa = NULL, from = NULL, to = NULL, use_grepl = FALSE)
@@ -78,11 +66,11 @@ IdTaxaToDataFrame(from)
 object}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
-\code{taxonomyRanks()} function.}
+\code{taxonomyRanks()} function}
 
 \item{empty.fields}{a \code{character} value defining, which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
-removed if \code{na.rm = TRUE} before agglomeration.}
+removed if \code{na.rm = TRUE} before agglomeration}
 
 \item{...}{optional arguments not used currently.}
 
@@ -146,12 +134,6 @@ creation.
 the lowest taxonomic information possible. If data from different levels,
 is to be mixed, the taxonomic level is prepended by default.
 
-\code{taxonomyTree} generates a \code{phylo} tree object from the available
-taxonomic information. Internally it uses
-\code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
-\code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
-data if needed.
-
 \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
 
@@ -188,12 +170,6 @@ mapTaxonomy(GlobalPatterns)
 mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 # returns information on a single output
 mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
-
-# adding a rowTree() based on the available taxonomic information. Please
-# note that any tree already stored in rowTree() will be overwritten.
-x <- GlobalPatterns
-x <- addTaxonomyTree(x)
-x
 }
 \seealso{
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
