@@ -18,7 +18,7 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.8</span>
       </span>
     </div>
 
@@ -58,7 +58,14 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">getPrevalence</span><span class="op">(</span><span class="va">x</span>, detection <span class="op">=</span> <span class="fl">0</span>, include_lowest <span class="op">=</span> <span class="cn">FALSE</span>, sort <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">getPrevalence</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  detection <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  include_lowest <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sort <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">getPrevalence</span><span class="op">(</span></span>
@@ -178,7 +185,9 @@ object</p></dd>
 <dt>...</dt>
 <dd><p>additional arguments</p><ul><li><p>If <code>!is.null(rank)</code> arguments are passed on to
 <code><a href="agglomerate-methods.html">agglomerateByRank</a></code>. See
-<code><a href="agglomerate-methods.html">?agglomerateByRank</a></code> for more details.</p></li>
+<code><a href="agglomerate-methods.html">?agglomerateByRank</a></code> for more details.
+Note that you can specify whether to remove empty ranks with
+<code>agg.na.rm</code> instead of <code>na.rm</code>. (default: <code>FALSE</code>)</p></li>
 <li><p>for <code>getPrevalentFeatures</code>, <code>getRareFeatures</code>,
 <code>subsetByPrevalentFeatures</code> and <code>subsetByRareFeatures</code> additional
 parameters passed to <code>getPrevalence</code></p></li>
@@ -201,6 +210,11 @@ detection and prevalence cutoffs be included? (default: <code>FALSE</code>)</p><
 <dt>sort</dt>
 <dd><p>logical scalar: Should the result be sorted by prevalence?
 (default: <code>FALSE</code>)</p></dd>
+
+
+<dt>na.rm</dt>
+<dd><p>logical scalar: Should NA values be omitted when calculating
+prevalence? (default: <code>na.rm = TRUE</code>)</p></dd>
 
 
 <dt>assay.type</dt>
