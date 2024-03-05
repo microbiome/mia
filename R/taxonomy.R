@@ -71,7 +71,8 @@
 #'   (default: \code{FALSE})
 #'
 #' @param ... optional arguments not used currently.
-#'
+#' 
+#' @param ranks Avector of ranks to be set
 #' @details
 #' Taxonomic information from the \code{IdTaxa} function of \code{DECIPHER}
 #' package are returned as a special class. With \code{as(taxa,"DataFrame")}
@@ -116,6 +117,17 @@
 #' mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 #' # returns information on a single output
 #' mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
+#' 
+#' # setTaxonomyRanks
+#' tse <- GlobalPatterns
+#' colnames(rowData(tse))[1] <- "TAXA1"
+#' 
+#' setTaxonomyRanks(colnames(rowData(tse)))
+#' # Taxonomy ranks set to: taxa1 phylum class order family genus species 
+#' 
+#' # getTaxonomyRanks is to get/check if the taxonomic ranks is set to "TAXA1"
+#' getTaxonomyRanks()
+#' 
 NULL
 
 #' @rdname taxonomy-methods
@@ -196,6 +208,68 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
         ans
     }
 )
+
+#' @rdname taxonomy-methods
+#' @importFrom utils assignInMyNamespace
+#' @aliases checkTaxonomy
+#' @export
+# Function to set taxonomy ranks
+setTaxonomyRanks <- function(ranks) {
+    ranks <- tolower(ranks)
+    # Check if rank is a character vector with length >= 1
+    if (!is.character(ranks) || length(ranks) < 1 
+        || any(ranks == "" | ranks == " " | ranks == "\t" | ranks == "-" | ranks == "_")
+        || any(grepl("\\s{2,}", ranks))) {
+        stop("Input 'rank' should be a character vector with non-empty strings,
+             no spaces, tabs, hyphens, underscores, and non-continuous spaces."
+             , call. = FALSE)
+    }
+    
+    assignInMyNamespace("TAXONOMY_RANKS", ranks)
+}
+
+
+#' @rdname taxonomy-methods
+#'@export
+# Function to get taxonomy ranks
+getTaxonomyRanks <- function() {
+    return(TAXONOMY_RANKS)
+}
+
+.set_taxonomy_ranks <- function(tse, ranks, set.ranks = FALSE) {
+    # Check if ranks are not specified by the user
+    if (is.null(ranks)) {
+        # Attempt to retrieve ranks from the column names of rowData(tse)
+        if (!is.null(rowData(tse))) {
+            ranks <- colnames(rowData(tse))
+            if (length(ranks) == 0) {
+                stop("rowData of the 'tse' object has no column names to infer ranks.", call. = FALSE)
+            }
+        } else {
+            stop("rowData of the 'tse' object does not exist or does not have column names.", call. = FALSE)
+        }
+    } else {
+        # User has specified ranks, validate them
+        if (!is.character(ranks) || length(ranks) == 0) {
+            stop("Provided 'ranks' must be a non-empty character vector.", call. = FALSE)
+        }
+    }
+    
+    # Proceed to set ranks if the set.ranks flag is TRUE
+    if (set.ranks) {
+        # Validate that ranks have been properly defined
+        if (is.null(ranks) || length(ranks) == 0) {
+            stop("No ranks are available to set.", call. = FALSE)
+        }
+        
+        # Here you would set the ranks accordingly
+        message(sprintf("Ranks are set to %s. Use 'setTaxonomyRanks()' to overwrite ranks if necessary.", paste(ranks, collapse=", ")))
+        
+    } else {
+        # handle the case when ranks are not set
+        message(sprintf("Ranks identified but not set: %s. Set 'set.ranks' to TRUE to apply changes.", paste(ranks, collapse=", ")))
+    }
+}
 
 .check_taxonomic_rank <- function(rank, x){
     if(length(rank) != 1L){

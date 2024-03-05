@@ -10,6 +10,8 @@
 \alias{taxonomyRankEmpty,SummarizedExperiment-method}
 \alias{checkTaxonomy}
 \alias{checkTaxonomy,SummarizedExperiment-method}
+\alias{setTaxonomyRanks}
+\alias{getTaxonomyRanks}
 \alias{getTaxonomyLabels}
 \alias{getTaxonomyLabels,SummarizedExperiment-method}
 \alias{mapTaxonomy}
@@ -43,6 +45,10 @@ checkTaxonomy(x, ...)
 
 \S4method{checkTaxonomy}{SummarizedExperiment}(x)
 
+setTaxonomyRanks(ranks)
+
+getTaxonomyRanks()
+
 getTaxonomyLabels(x, ...)
 
 \S4method{getTaxonomyLabels}{SummarizedExperiment}(
@@ -73,6 +79,8 @@ regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration}
 
 \item{...}{optional arguments not used currently.}
+
+\item{ranks}{Avector of ranks to be set}
 
 \item{with_rank}{\code{TRUE} or \code{FALSE}: Should the level be add as a
 suffix? For example: "Phylum:Crenarchaeota" (default:
@@ -170,6 +178,17 @@ mapTaxonomy(GlobalPatterns)
 mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 # returns information on a single output
 mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
+
+# setTaxonomyRanks
+tse <- GlobalPatterns
+colnames(rowData(tse))[1] <- "TAXA1"
+
+setTaxonomyRanks(colnames(rowData(tse)))
+# Taxonomy ranks set to: taxa1 phylum class order family genus species 
+
+# getTaxonomyRanks is to get/check if the taxonomic ranks is set to "TAXA1"
+getTaxonomyRanks()
+
 }
 \seealso{
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
