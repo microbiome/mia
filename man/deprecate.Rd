@@ -17,42 +17,15 @@
 \alias{taxonomyTree,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
-cluster(
-  x,
-  BLUSPARAM,
-  assay.type = assay_name,
-  assay_name = "counts",
-  MARGIN = "features",
-  full = FALSE,
-  name = "clusters",
-  clust.col = "clusters",
-  ...
-)
+cluster(x, ...)
 
-\S4method{cluster}{SummarizedExperiment}(
-  x,
-  BLUSPARAM,
-  assay.type = assay_name,
-  assay_name = "counts",
-  MARGIN = "features",
-  full = FALSE,
-  name = "clusters",
-  clust.col = "clusters",
-  ...
-)
+\S4method{cluster}{SummarizedExperiment}(x, ...)
 
 addTaxonomyTree(x, ...)
 
-\S4method{addTaxonomyTree}{SummarizedExperiment}(x)
+\S4method{addTaxonomyTree}{SummarizedExperiment}(x, ...)
 
-\S4method{calculateDMN}{SummarizedExperiment}(
-  x,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
-  transposed = FALSE,
-  ...
-)
+\S4method{calculateDMN}{SummarizedExperiment}(x, ...)
 
 runDMN(x, name = "DMN", ...)
 
@@ -68,44 +41,12 @@ getBestDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
 
 taxonomyTree(x, ...)
 
-\S4method{taxonomyTree}{SummarizedExperiment}(x)
+\S4method{taxonomyTree}{SummarizedExperiment}(x, ...)
 }
 \arguments{
-\item{x}{a \code{\link{SummarizedExperiment}} object -}
-
-\item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
-
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-transformed.}
-
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
-
-\item{MARGIN}{A single character value for specifying whether the
-transformation is applied sample (column) or feature (row) wise.
-(By default: \code{MARGIN = "samples"})}
-
-\item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
-
-\item{name}{A single character value specifying the name of transformed
-abundance table.}
-
-\item{clust.col}{A single character value indicating the name of the
-\code{rowData} (or \code{colData}) where the data will be stored.}
-
-\item{...}{Additional parameters to use altExps for example}
-
-\item{exprs_values}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead.)}
-
-\item{transposed}{Logical scalar, is x transposed with cells in rows?}
-
-\item{type}{the type of measure used for the goodness of fit. One of
-\sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.}
+\item{x}{A
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.
