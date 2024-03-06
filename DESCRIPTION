@@ -41,7 +41,8 @@ Depends:
     SummarizedExperiment,
     SingleCellExperiment,
     TreeSummarizedExperiment (>= 1.99.3),
-    MultiAssayExperiment
+    MultiAssayExperiment,
+    mediation
 Imports:
     methods,
     stats,
