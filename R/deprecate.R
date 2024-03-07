@@ -4,6 +4,8 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #' 
+#' @param ... Additional parameters. See dedicated function.
+#' 
 #' @name deprecate
 NULL
 
@@ -56,7 +58,7 @@ setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
 #' @rdname deprecate
 #' @importFrom S4Vectors metadata<-
 #' @export
-runDMN <- function(x, name = "DMN", ...){
+runDMN <- function(x,...){
     .Deprecated(msg = paste0("'runDMN' is deprecated. ",
                             "Use 'addCluster' with DMMParam parameter instead."))
     if(!is(x,"SummarizedExperiment")){
@@ -68,18 +70,18 @@ runDMN <- function(x, name = "DMN", ...){
 
 #' @rdname deprecate
 setGeneric("getDMN", signature = "x",
-            function(x, name = "DMN", ...)
+            function(x,...)
                 standardGeneric("getDMN"))
 
 #' @rdname deprecate
 #' @importFrom DirichletMultinomial laplace AIC BIC
 #' @export
 setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
-            function(x, name = "DMN"){
+            function(x,...){
                 .Deprecated(msg = paste0("'getDMN' is deprecated. ",
                                         "Use 'addCluster' with DMMParam parameter",
                                         "and full parameter set as true instead."))
-                .get_dmn(x, name)
+                .get_dmn(x,...)
             }
 )
 
@@ -87,31 +89,31 @@ setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DirichletMultinomial laplace AIC BIC
 #' @export
 setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
-            function(x, name = "DMN", type = c("laplace","AIC","BIC")){
+            function(x,...){
                 .Deprecated(msg = paste0("'bestDMNFit' is deprecated. ",
                                         "Use 'addCluster' with DMMParam parameter",
                                         "and full parameter set as true instead."))
-                dmn <- getDMN(x, name)
-                fit_FUN <- .get_dmn_fit_FUN(type)
+                dmn <- getDMN(x,...)
+                fit_FUN <- .get_dmn_fit_FUN(...)
                 .get_best_dmn_fit(dmn, fit_FUN)
             }
 )
 
 #' @rdname deprecate
 setGeneric("getBestDMNFit", signature = "x",
-            function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
+            function(x,...)
                 standardGeneric("getBestDMNFit"))
 
 #' @rdname deprecate
 #' @importFrom DirichletMultinomial laplace AIC BIC
 #' @export
 setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
-            function(x, name = "DMN", type = c("laplace","AIC","BIC")){
+            function(x,...){
                 .Deprecated(msg = paste0("'getBestDMNFit' is deprecated. ",
                                         "Use 'addCluster' with DMMParam parameter",
                                         "and full parameter set as true instead."))
-                dmn <- getDMN(x, name)
-                fit_FUN <- .get_dmn_fit_FUN(type)
+                dmn <- getDMN(x,...)
+                fit_FUN <- .get_dmn_fit_FUN(...)
                 dmn[[.get_best_dmn_fit(dmn, fit_FUN)]]
             }
 )

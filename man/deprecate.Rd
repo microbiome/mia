@@ -27,17 +27,17 @@ addTaxonomyTree(x, ...)
 
 \S4method{calculateDMN}{SummarizedExperiment}(x, ...)
 
-runDMN(x, name = "DMN", ...)
+runDMN(x, ...)
 
-getDMN(x, name = "DMN", ...)
+getDMN(x, ...)
 
-\S4method{getDMN}{SummarizedExperiment}(x, name = "DMN")
+\S4method{getDMN}{SummarizedExperiment}(x, ...)
 
-\S4method{bestDMNFit}{SummarizedExperiment}(x, name = "DMN", type = c("laplace", "AIC", "BIC"))
+\S4method{bestDMNFit}{SummarizedExperiment}(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
 
-getBestDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
+getBestDMNFit(x, ...)
 
-\S4method{getBestDMNFit}{SummarizedExperiment}(x, name = "DMN", type = c("laplace", "AIC", "BIC"))
+\S4method{getBestDMNFit}{SummarizedExperiment}(x, ...)
 
 taxonomyTree(x, ...)
 
@@ -47,6 +47,8 @@ taxonomyTree(x, ...)
 \item{x}{A
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
+
+\item{...}{Additional parameters. See dedicated function.}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.
