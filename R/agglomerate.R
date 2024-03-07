@@ -13,7 +13,7 @@
 #'
 #' @param onRankOnly \code{TRUE} or \code{FALSE}: Should information only from
 #'   the specified rank be used or from ranks equal and above? See details.
-#'   (default: \code{onRankOnly = FALSE})
+#'   (default: \code{onRankOnly =   TRUE})
 #'
 #' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
 #'   removed? Use it with caution, since empty entries on the selected rank
@@ -155,16 +155,22 @@ setGeneric("mergeFeaturesByRank",
 #'
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
+    function(x, rank = taxonomyRanks(x)[1], onRankOnly = TRUE, na.rm = FALSE,
         empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
         if(nrow(x) == 0L){
             stop("No data available in `x` ('x' has nrow(x) == 0L.)",
                  call. = FALSE)
         }
-        if(!.is_non_empty_string(rank)){
-            stop("'rank' must be an non empty single character value.",
-                call. = FALSE)
+        if (!is.null(rank)) {
+            if (!.is_non_empty_string(rank)){
+                stop("'rank' must be a non-empty single character value.", call. = FALSE)
+            }
+            if (!(rank %in% taxonomyRanks(x))) {
+                stop("'rank' must be a value from 'taxonomyRanks()'", call. = FALSE)
+            }
+        } else {
+            rank <- taxonomyRanks(x)[1]
         }
         if(!.is_a_bool(onRankOnly)){
             stop("'onRankOnly' must be TRUE or FALSE.", call. = FALSE)
@@ -229,7 +235,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #'
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
-          function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
+          function(x, rank = NULL, onRankOnly = TRUE, na.rm = FALSE,
                    empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
               .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
               x <- agglomerateByRank(x, rank = rank, onRankOnly = onRankOnly, na.rm = na.rm,
