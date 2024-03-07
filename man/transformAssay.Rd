@@ -120,9 +120,10 @@ reference sample's column in returned assay when calculating alr.
 (default: \code{ref_vals = NA})}
 }}
 
-\item{pseudocount}{TRUE or FALSE, should the minimum value of \code{assay.type}
-be added to assay values. Alternatively, a numeric value specifying the value
-to be added. (default: \code{pseudocount = FALSE})}
+\item{pseudocount}{TRUE, FALSE, or a numeric value. When TRUE,
+automatically adds the minimum positive value of \code{assay.type}.
+When FALSE, does not add any pseudocount (pseudocount = 0).
+Alternatively, a user-specified numeric value can be added as pseudocount.}
 
 \item{MARGIN}{A single character value for specifying whether the
 transformation is applied sample (column) or feature (row) wise.

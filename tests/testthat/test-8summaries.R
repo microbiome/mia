@@ -57,4 +57,8 @@ test_that("summaries", {
                   getUniqueFeatures(GlobalPatterns, "Phylum", sort = TRUE) )
     expect_equal( countDominantTaxa(GlobalPatterns),
                   countDominantFeatures(GlobalPatterns))
+    
+    # Test with multiple equal dominant taxa in one sample
+    assay(GlobalPatterns)[1, 1] <- max(assay(GlobalPatterns)[, 1])
+    expect_warning(countDominantFeatures(GlobalPatterns, complete = FALSE))
 })

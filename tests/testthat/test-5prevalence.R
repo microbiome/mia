@@ -62,6 +62,56 @@ test_that("getPrevalence", {
     pr2 <- getPrevalence(gp_null, detection=0.004, as_relative=TRUE, rank = "Family") 
     expect_equal(pr1, pr2)
     
+    # Check that na.rm works correctly
+    tse <- GlobalPatterns
+    # Get reference value
+    ref <- getPrevalence(tse, assay.type = "counts")
+    # Add NA values to matrix
+    remove <- c(1, 3, 10)
+    assay(tse, "counts")[remove, ] <- NA
+    # There should be 3 NA values if na.rm = FALSE. Otherwise there should be 0
+    expect_warning(
+        res <- getPrevalence(tse, assay.type = "counts", na.rm = FALSE) )
+    expect_true( sum(is.na(res)) == 3)
+    expect_warning(
+        res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE) )
+    expect_true( sum(is.na(res)) == 0)
+    # Expect that other than features with NA values are the same as in reference
+    expect_warning(
+        res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE))
+    res <- res[ !names(res) %in% remove ]
+    ref <- ref[ !names(ref) %in% remove ]
+    expect_equal( res[ names(ref) ], res[ names(ref) ] )
+    
+    # Now test that the number of samples where feature was detected is correct
+    tse <- GlobalPatterns
+    ref <- getPrevalence(tse, assay.type = "counts")
+    # Add NA values to specific feature that has non-zero value
+    feature <- rownames(tse)[[7]]
+    assay(tse, "counts")[feature, 1] <- NA
+    expect_warning(
+        res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE))
+    # Get the feature values and check that they have correct number of samples
+    res <- res[ feature ]
+    ref <- ref[ feature ]
+    expect_true(res*ncol(tse) == 2)
+    expect_true(ref*ncol(tse) == 3)
+    
+    # 
+    tse <- GlobalPatterns
+    rank <- "Genus"
+    # Add NA values to matrix
+    remove <- c(15, 200)
+    assay(tse, "counts")[remove, ] <- NA
+    # Check that agglomeration works
+    tse_agg <- agglomerateByRank(tse, rank = rank)
+    expect_warning(ref <- getPrevalence(tse_agg, na.rm = FALSE))
+    expect_warning(res <- getPrevalence(tse, na.rm = FALSE, rank = "Genus"))
+    expect_true( all(res == ref, na.rm = TRUE) )
+    #
+    expect_warning(ref <- getPrevalence(tse_agg, na.rm = TRUE))
+    expect_warning(res <- getPrevalence(tse, na.rm = TRUE, rank = "Genus"))
+    expect_true( all(res == ref, na.rm = TRUE) )
 })
 
 

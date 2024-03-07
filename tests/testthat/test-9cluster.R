@@ -18,16 +18,16 @@ test_that("subsampleCounts", {
     tse <- cluster(GlobalPatterns, 
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
-                   full = T,
+                   full = TRUE,
                    clust.col = "customdataname")
     altExp(tse, "test") <- tse[1:1000,]
-    # Checking wrong name
-    expect_error(cluster(tse, 
+    # Checking same name that is already present
+    expect_warning(cluster(tse, 
                          KmeansParam(centers = 3), 
                          name = "custommetadata",
-                         full = T))
-    # Checking wrong clust.col
-    expect_error(cluster(tse, 
+                         full = TRUE))
+    # Checking wrong clust.col with already-present name
+    expect_warning(cluster(tse, 
                          KmeansParam(centers = 3), 
                          clust.col = "customdataname"))
     # Checking wrong altexp
@@ -41,12 +41,12 @@ test_that("subsampleCounts", {
     tse <- cluster(tse, 
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
-                   full = T,
+                   full = TRUE,
                    clust.col = "customdataname")
     tse <- cluster(tse, 
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
-                   full = T,
+                   full = TRUE,
                    clust.col = "customdataname",
                    altexp = "test")
     # Checking custom metadata/dataname in main/altExp
@@ -56,17 +56,17 @@ test_that("subsampleCounts", {
     expect_true("customdataname" %in% names(rowData(altExp(tse, "test"))))
     
     # Checking existing custom metadata/dataname in main/altExp
-    expect_error(cluster(tse, 
+    expect_warning(cluster(tse, 
                          KmeansParam(centers = 3), 
                          name = "custommetadata",
-                         full = T))
-    expect_error(cluster(tse, 
+                         full = TRUE))
+    expect_warning(cluster(tse, 
                          KmeansParam(centers = 3), 
                          clust.col = "customdataname"))
-    expect_error(cluster(tse, 
+    expect_warning(cluster(tse, 
                          KmeansParam(centers = 3), 
                          name = "custommetadata",
-                         full = T,
+                         full = TRUE,
                          clust.col = "customdataname",
                          altexp = "test"))
     # Checking working MARGIN
@@ -92,10 +92,10 @@ test_that("subsampleCounts", {
                    HclustParam(),
                    MARGIN = "row",
                    altexp = "test",
-                   full = T)
+                   full = TRUE)
     expectedCol <- clusterRows(t(assay(tse, "counts")), HclustParam())
     expectedRow <- clusterRows(assay(altExp(tse, "test"), "counts"), 
-                               HclustParam(), full = T)
+                               HclustParam(), full = TRUE)
     # Checking same output on cols
     expect_identical(expectedCol, colData(tse)$clusters)
     # Checking same output on rows

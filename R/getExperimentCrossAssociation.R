@@ -638,27 +638,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
              call. = FALSE)
     }
 }
-############################# .check_and_get_altExp ############################
-# This function checks if altexp is specified. If so, then it returns alternative
-# experiment from altExp.
-
-# Input: (Tree)SE
-# Output: (Tree)SE
-.check_and_get_altExp <- function(tse, altexp){
-    # Get the variable names
-    altExp_name <- deparse(substitute(altexp))
-    exp_num <- substr(altExp_name, nchar(altExp_name), nchar(altExp_name))
-    tse_name <- paste0("experiment ", exp_num)
-    
-    # If altexp is specified, check and get it. Otherwise return the original object
-    if( !is.null(altexp) ){
-        # Check altexp
-        .check_altExp_present(altexp, tse, altExp_name, tse_name)
-        # Get altExp and return it
-        tse <- altExp(tse, altexp)
-    }
-    return(tse)
-}
 ###################### .check_and_subset_colData_variables #####################
 # This function checks if columns can be found from colData. Additionally, 
 # integers are converted into numeric and factors to character.

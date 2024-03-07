@@ -34,7 +34,14 @@
 \usage{
 getPrevalence(x, ...)
 
-\S4method{getPrevalence}{ANY}(x, detection = 0, include_lowest = FALSE, sort = FALSE, ...)
+\S4method{getPrevalence}{ANY}(
+  x,
+  detection = 0,
+  include_lowest = FALSE,
+  sort = FALSE,
+  na.rm = TRUE,
+  ...
+)
 
 \S4method{getPrevalence}{SummarizedExperiment}(
   x,
@@ -137,6 +144,8 @@ object}
 \item{If \code{!is.null(rank)} arguments are passed on to
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
+Note that you can specify whether to remove empty ranks with
+\code{agg.na.rm} instead of \code{na.rm}. (default: \code{FALSE})
 }
 \item{for \code{getPrevalentFeatures}, \code{getRareFeatures},
 \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional
@@ -154,6 +163,9 @@ detection and prevalence cutoffs be included? (default: \code{FALSE})}
 
 \item{sort}{logical scalar: Should the result be sorted by prevalence?
 (default: \code{FALSE})}
+
+\item{na.rm}{logical scalar: Should NA values be omitted when calculating
+prevalence? (default: \code{na.rm = TRUE})}
 
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}

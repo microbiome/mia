@@ -224,7 +224,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
     tree_pruned$tip.label <- rownames(x)
     # Assigns the pruned tree back to TSE object
     rowTree(x) <- tree_pruned
-    warning("rowTree is pruned to match rownames.", call. = FALSE)
+    warning("Tips of rowTree are renamed to match rownames.", call. = FALSE)
     return(x)
 }
 
@@ -232,7 +232,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
 .get_rowTree_for_phyloseq <- function(x, tree_name){
     # Check if the rowTree's tips match with rownames:
     # tips labels are found from rownames
-    if( any(!( rowTree(x, tree_name)$tip) %in% rownames(x)) ){
+    if( any(!( rowTree(x, tree_name)$tip.label) %in% rownames(x)) ){
         # If rowtree do not match, tree is pruned
         x <- .get_x_with_pruned_tree(x, tree_name)
     }

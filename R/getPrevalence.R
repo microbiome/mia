@@ -34,12 +34,17 @@
 #'   
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomyRanks()} function.
-#'
+#'  
+#' @param na.rm logical scalar: Should NA values be omitted when calculating
+#' prevalence? (default: \code{na.rm = TRUE})
+#'   
 #' @param ... additional arguments
 #' \itemize{
 #'   \item{If \code{!is.null(rank)} arguments are passed on to
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
+#'     Note that you can specify whether to remove empty ranks with
+#'     \code{agg.na.rm} instead of \code{na.rm}. (default: \code{FALSE})
 #'   }
 #'   \item{for \code{getPrevalentFeatures}, \code{getRareFeatures}, 
 #'     \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional 
@@ -186,16 +191,19 @@ setGeneric("getPrevalence", signature = "x",
 
 #' @rdname getPrevalence
 #' @export
-setMethod("getPrevalence", signature = c(x = "ANY"),
-    function(x, detection = 0, include_lowest = FALSE, sort = FALSE, ...){
-
+setMethod("getPrevalence", signature = c(x = "ANY"), function(
+    x, detection = 0, include_lowest = FALSE, sort = FALSE, na.rm = TRUE, ...){
         # input check
         if (!.is_numeric_string(detection)) {
             stop("'detection' must be a single numeric value or coercible to ",
                  "one.",
                  call. = FALSE)
         }
-
+        #
+        if(!.is_a_bool(na.rm)){
+            stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+        }
+        #
         detection <- as.numeric(detection)
         if(!.is_a_bool(include_lowest)){
             stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
@@ -204,13 +212,21 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
             stop("'sort' must be TRUE or FALSE.", call. = FALSE)
         }
         #
-
+        # Give warning if there are taxa with NA values
+        if( any( is.na(x) ) ){
+            msg <- paste0(
+                "The abundance table contains NA values and they are",
+                ifelse(na.rm, " not ", " "), "excluded (see 'na.rm').")
+            warning(msg, call. = FALSE)
+        }
+        #
         if (include_lowest) {
             prev <- x >= detection
         } else {
             prev <- x > detection
         }
-        prev <- rowSums(prev)
+        # Calculate prevalence for each taxa
+        prev <- rowSums(prev, na.rm = na.rm)
         # Always return prevalence as a relative frequency.
         # This helps to avoid confusion with detection limit
         prev <- prev / ncol(x)
@@ -222,15 +238,23 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
 )
 
 .agg_for_prevalence <- function(
-        x, rank, relabel = FALSE, make_unique = TRUE, na.rm = FALSE, ...){
-    # Check na.rm
+        x, rank, relabel = FALSE, make_unique = TRUE, na.rm = FALSE,
+        agg.na.rm = FALSE, ...){
+    # Check na.rm. It is not used in this function, it is only catched so that
+    # it can be passed to getPrevalence(matrix) and not use it here in
+    # agglomerateByRank function.
     if(!.is_a_bool(na.rm)){
         stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
     }
     #
+    # Check drop.empty.rank
+    if(!.is_a_bool(agg.na.rm)){
+        stop("'agg.na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
     if(!is.null(rank)){
         .check_taxonomic_rank(rank, x)
-        args <- c(list(x = x, rank = rank, na.rm = na.rm), list(...))
+        args <- c(list(x = x, rank = rank, na.rm = agg.na.rm), list(...))
         argNames <- c("x","rank","onRankOnly","na.rm","empty.fields",
                       "archetype","mergeTree","average","BPPARAM")
         args <- args[names(args) %in% argNames]
