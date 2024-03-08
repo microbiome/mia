@@ -3,7 +3,6 @@
 \name{calculateDMN}
 \alias{calculateDMN}
 \alias{calculateDMN,ANY-method}
-\alias{bestDMNFit}
 \alias{calculateDMNgroup}
 \alias{calculateDMNgroup,ANY-method}
 \alias{calculateDMNgroup,SummarizedExperiment-method}
@@ -21,8 +20,6 @@ calculateDMN(x, ...)
   seed = runif(1, 0, .Machine$integer.max),
   ...
 )
-
-bestDMNFit(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
 
 calculateDMNgroup(x, ...)
 
@@ -81,12 +78,6 @@ object specifying whether the UniFrac calculation should be parallelized.}
 \item{seed}{random number seed. See
 \code{\link[DirichletMultinomial:dmn]{dmn}}}
 
-\item{name}{the name to store the result in
-\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
-
-\item{type}{the type of measure used for the goodness of fit. One of
-\sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.}
-
 \item{variable}{a variable from \code{colData} to use as a grouping variable.
 Must be a character of factor.}
 
@@ -103,6 +94,12 @@ assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
 \item{transposed}{Logical scalar, is x transposed with samples in rows?}
+
+\item{type}{the type of measure used for the goodness of fit. One of
+\sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.}
+
+\item{name}{the name to store the result in
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }
 \value{
 \code{calculateDMN} and \code{getDMN} return a list of \code{DMN} objects,

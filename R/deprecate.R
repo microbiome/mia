@@ -35,7 +35,7 @@ setGeneric("addTaxonomyTree",
 #' @export
 setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
             function(x,...){
-                .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated.",
+                .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated. ",
                                         "Use 'addHierarchyTree' instead."))
                 addHierarchyTree(x,...)
             }
@@ -79,11 +79,16 @@ setGeneric("getDMN", signature = "x",
 setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
             function(x,...){
                 .Deprecated(msg = paste0("'getDMN' is deprecated. ",
-                                        "Use 'addCluster' with DMMParam parameter",
+                                        "Use 'addCluster' with DMMParam parameter ",
                                         "and full parameter set as true instead."))
                 .get_dmn(x,...)
             }
 )
+
+#' @rdname deprecate
+setGeneric("bestDMNFit", signature = "x",
+           function(x,...)
+               standardGeneric("bestDMNFit"))
 
 #' @rdname deprecate
 #' @importFrom DirichletMultinomial laplace AIC BIC
@@ -91,7 +96,7 @@ setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
 setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
             function(x,...){
                 .Deprecated(msg = paste0("'bestDMNFit' is deprecated. ",
-                                        "Use 'addCluster' with DMMParam parameter",
+                                        "Use 'addCluster' with DMMParam parameter ",
                                         "and full parameter set as true instead."))
                 dmn <- getDMN(x,...)
                 fit_FUN <- .get_dmn_fit_FUN(...)
@@ -110,7 +115,7 @@ setGeneric("getBestDMNFit", signature = "x",
 setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
             function(x,...){
                 .Deprecated(msg = paste0("'getBestDMNFit' is deprecated. ",
-                                        "Use 'addCluster' with DMMParam parameter",
+                                        "Use 'addCluster' with DMMParam parameter ",
                                         "and full parameter set as true instead."))
                 dmn <- getDMN(x,...)
                 fit_FUN <- .get_dmn_fit_FUN(...)

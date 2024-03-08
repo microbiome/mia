@@ -167,12 +167,6 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
     which.min(fit)
 }
 
-#' @rdname calculateDMN
-#' @export
-setGeneric("bestDMNFit", signature = "x",
-            function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
-                standardGeneric("bestDMNFit"))
-
 ################################################################################
 # DMN group
 

@@ -10,6 +10,7 @@
 \alias{runDMN}
 \alias{getDMN}
 \alias{getDMN,SummarizedExperiment-method}
+\alias{bestDMNFit}
 \alias{bestDMNFit,SummarizedExperiment-method}
 \alias{getBestDMNFit}
 \alias{getBestDMNFit,SummarizedExperiment-method}
@@ -33,7 +34,9 @@ getDMN(x, ...)
 
 \S4method{getDMN}{SummarizedExperiment}(x, ...)
 
-\S4method{bestDMNFit}{SummarizedExperiment}(x, name = "DMN", type = c("laplace", "AIC", "BIC"), ...)
+bestDMNFit(x, ...)
+
+\S4method{bestDMNFit}{SummarizedExperiment}(x, ...)
 
 getBestDMNFit(x, ...)
 
