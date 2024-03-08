@@ -36,9 +36,8 @@ object.}
 
 \item{BLUSPARAM}{A \linkS4class{BlusterParam} object specifying the algorithm to use.}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-transformed.}
+\item{assay.type}{a single \code{character} value for specifying which
+assay to use for calculation.}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
@@ -51,8 +50,8 @@ transformation is applied sample (column) or feature (row) wise.
 
 \item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
 
-\item{name}{A single character value specifying the name of transformed
-abundance table.}
+\item{name}{the name to store the result in
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
 \item{clust.col}{A single character value indicating the name of the
 \code{rowData} (or \code{colData}) where the data will be stored.}

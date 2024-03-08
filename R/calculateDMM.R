@@ -80,7 +80,7 @@
 #' library(bluster)
 #' 
 #' # Compute DMM algorithm and store result in metadata
-#' tse <- addCluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
+#' tse <- cluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
 #'                MARGIN = "samples", full = TRUE)
 #' 
 #' # Get the list of DMN objects
@@ -104,21 +104,22 @@ NULL
 #' @rdname calculateDMN
 #' @export
 setGeneric("calculateDMN", signature = c("x"),
-            function(x, ...)
-                standardGeneric("calculateDMN"))
+           function(x, ...)
+               standardGeneric("calculateDMN"))
 
 #' @importFrom DirichletMultinomial dmn
 #' @importFrom stats runif
 .calculate_DMN <- function(x, k = 1, BPPARAM = SerialParam(),
-                            seed = runif(1, 0, .Machine$integer.max), ...){
+                           seed = runif(1, 0, .Machine$integer.max), ...){
     if(!is.numeric(k) ||
-        length(k) == 0 ||
-        anyNA(k) ||
-        any(k <= 0) ||
-        any(k != as.integer(k))){
+       length(k) == 0 ||
+       anyNA(k) ||
+       any(k <= 0) ||
+       any(k != as.integer(k))){
         stop("'k' must be an integer vector with positive values only.",
-            call. = FALSE)
+             call. = FALSE)
     }
+    #
     old <- getAutoBPPARAM()
     setAutoBPPARAM(BPPARAM)
     on.exit(setAutoBPPARAM(old))
@@ -126,16 +127,44 @@ setGeneric("calculateDMN", signature = c("x"),
         bpstart(BPPARAM)
         on.exit(bpstop(BPPARAM), add = TRUE)
     }
-
+    
     ans <- BiocParallel::bplapply(k, DirichletMultinomial::dmn, count = x,
-                                    seed = seed, ...,
-                                    BPPARAM = BPPARAM)
+                                  seed = seed, ...,
+                                  BPPARAM = BPPARAM)
     ans
 }
 
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
+
+#' @rdname calculateDMN
+#' @export
+setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
+          function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
+                   transposed = FALSE, ...){
+              .Deprecated(old="calculateDMN", new="cluster", 
+                          "Now calculateDMN is deprecated. Use cluster with DMMParam parameter instead.")
+              mat <- assay(x, assay.type)
+              if(!transposed){
+                  mat <- t(mat)
+              }
+              calculateDMN(mat, ...)
+          }
+)
+
+#' @rdname calculateDMN
+#' @importFrom S4Vectors metadata<-
+#' @export
+runDMN <- function(x, name = "DMN", ...){
+    .Deprecated(old="runDMN", new="cluster", 
+                "Now runDMN is deprecated. Use cluster with DMMParam parameter instead.")
+    if(!is(x,"SummarizedExperiment")){
+        stop("'x' must be a SummarizedExperiment")
+    }
+    metadata(x)[[name]] <- calculateDMN(x, ...)
+    x
+}
 
 ################################################################################
 # accessors
@@ -156,16 +185,74 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
 .get_dmn_fit_FUN <- function(type){
     type <- match.arg(type, c("laplace","AIC","BIC"))
     fit_FUN <- switch(type,
-                        laplace = DirichletMultinomial::laplace,
-                        AIC = DirichletMultinomial::AIC,
-                        BIC = DirichletMultinomial::BIC)
+                      laplace = DirichletMultinomial::laplace,
+                      AIC = DirichletMultinomial::AIC,
+                      BIC = DirichletMultinomial::BIC)
     fit_FUN
 }
+
+#' @rdname calculateDMN
+#' @export
+setGeneric("getDMN", signature = "x",
+           function(x, name = "DMN", ...)
+               standardGeneric("getDMN"))
+
+#' @rdname calculateDMN
+#' @importFrom DirichletMultinomial laplace AIC BIC
+#' @export
+setMethod("getDMN", signature = c(x = "SummarizedExperiment"),
+          function(x, name = "DMN"){
+              .Deprecated(old="getDMN", new="cluster", 
+                          "Now getDMN is deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
+              .get_dmn(x, name)
+          }
+)
+
 
 .get_best_dmn_fit <- function(dmn, fit_FUN){
     fit <- vapply(dmn, fit_FUN, numeric(1))
     which.min(fit)
 }
+
+#' @rdname calculateDMN
+#' @export
+setGeneric("bestDMNFit", signature = "x",
+           function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
+               standardGeneric("bestDMNFit"))
+
+#' @rdname calculateDMN
+#' @importFrom DirichletMultinomial laplace AIC BIC
+#' @export
+setMethod("bestDMNFit", signature = c(x = "SummarizedExperiment"),
+          function(x, name = "DMN", type = c("laplace","AIC","BIC")){
+              .Deprecated(old="bestDMNFit", new="cluster", 
+                          "Now bestDMNFit is deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
+              #
+              dmn <- getDMN(x, name)
+              fit_FUN <- .get_dmn_fit_FUN(type)
+              #
+              .get_best_dmn_fit(dmn, fit_FUN)
+          }
+)
+
+#' @rdname calculateDMN
+#' @export
+setGeneric("getBestDMNFit", signature = "x",
+           function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
+               standardGeneric("getBestDMNFit"))
+
+#' @rdname calculateDMN
+#' @importFrom DirichletMultinomial laplace AIC BIC
+#' @export
+setMethod("getBestDMNFit", signature = c(x = "SummarizedExperiment"),
+          function(x, name = "DMN", type = c("laplace","AIC","BIC")){
+              .Deprecated(old="getBestDMNFit", new="cluster", 
+                          "Now getBestDMNFit is deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
+              dmn <- getDMN(x, name)
+              fit_FUN <- .get_dmn_fit_FUN(type)
+              dmn[[.get_best_dmn_fit(dmn, fit_FUN)]]
+          }
+)
 
 ################################################################################
 # DMN group
@@ -173,8 +260,8 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
 #' @rdname calculateDMN
 #' @export
 setGeneric("calculateDMNgroup", signature = c("x"),
-            function(x, ...)
-                standardGeneric("calculateDMNgroup"))
+           function(x, ...)
+               standardGeneric("calculateDMNgroup"))
 
 #' @importFrom DirichletMultinomial dmngroup
 #' @importFrom stats runif
@@ -186,6 +273,7 @@ setGeneric("calculateDMNgroup", signature = c("x"),
     } else if(!is.factor(variable)) {
         stop("'variable' must be a factor or a character value.", call. = FALSE)
     }
+    #
     variable <- droplevels(variable)
     dmngroup(x, variable, k = k, seed = seed, ...)
 }
@@ -197,20 +285,20 @@ setMethod("calculateDMNgroup", signature = c(x = "ANY"), .calculate_DMNgroup)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
-    function(x, variable, 
-            assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
-            transposed = FALSE, ...){
-        mat <- assay(x, assay.type)
-        if(!transposed){
-            mat <- t(mat)
-        }
-        variable <- colData(x)[,variable]
-        if(is.null(variable)){
-            stop("No data found in '",variable,"' column of colData(x).",
-                call. = FALSE)
-        }
-        calculateDMNgroup(x = mat, variable = variable, ...)
-    }
+          function(x, variable, 
+                   assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
+                   transposed = FALSE, ...){
+              mat <- assay(x, assay.type)
+              if(!transposed){
+                  mat <- t(mat)
+              }
+              variable <- colData(x)[,variable]
+              if(is.null(variable)){
+                  stop("No data found in '",variable,"' column of colData(x).",
+                       call. = FALSE)
+              }
+              calculateDMNgroup(x = mat, variable = variable, ...)
+          }
 )
 
 ################################################################################
@@ -219,13 +307,13 @@ setMethod("calculateDMNgroup", signature = c(x = "SummarizedExperiment"),
 #' @rdname calculateDMN
 #' @export
 setGeneric("performDMNgroupCV", signature = c("x"),
-            function(x, ...)
-                standardGeneric("performDMNgroupCV"))
+           function(x, ...)
+               standardGeneric("performDMNgroupCV"))
 
 #' @importFrom DirichletMultinomial cvdmngroup
 #' @importFrom stats runif
 .perform_DMNgroup_cv <- function(x, variable, k = 1,
-                                seed = runif(1, 0, .Machine$integer.max), ...){
+                                 seed = runif(1, 0, .Machine$integer.max), ...){
     # input check
     if(!is.factor(variable) && is.character(variable)){
         variable <- factor(variable, unique(variable))
@@ -235,7 +323,7 @@ setGeneric("performDMNgroupCV", signature = c("x"),
     variable <- droplevels(variable)
     if(is.null(names(k)) || !all(names(k) %in% levels(variable))){
         stop("'k' must be named. Names must fit the levels of 'variable'.",
-            call. = FALSE)
+             call. = FALSE)
     }
     #
     cvdmngroup(nrow(x), x, variable, k = k, seed = seed, ...)
@@ -248,18 +336,18 @@ setMethod("performDMNgroupCV", signature = c(x = "ANY"), .perform_DMNgroup_cv)
 #' @rdname calculateDMN
 #' @export
 setMethod("performDMNgroupCV", signature = c(x = "SummarizedExperiment"),
-    function(x, variable, 
-            assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
-            transposed = FALSE, ...){
-        mat <- assay(x, assay.type)
-        if(!transposed){
-            mat <- t(mat)
-        }
-        variable <- colData(x)[,variable]
-        if(is.null(variable)){
-            stop("No data found in '",variable,"' column of colData(x).",
-                call. = FALSE)
-        }
-        performDMNgroupCV(x = mat, variable = variable, ...)
-    }
+          function(x, variable, 
+                   assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
+                   transposed = FALSE, ...){
+              mat <- assay(x, assay.type)
+              if(!transposed){
+                  mat <- t(mat)
+              }
+              variable <- colData(x)[,variable]
+              if(is.null(variable)){
+                  stop("No data found in '",variable,"' column of colData(x).",
+                       call. = FALSE)
+              }
+              performDMNgroupCV(x = mat, variable = variable, ...)
+          }
 )

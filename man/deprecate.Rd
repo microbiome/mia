@@ -6,14 +6,6 @@
 \alias{cluster,SummarizedExperiment-method}
 \alias{addTaxonomyTree}
 \alias{addTaxonomyTree,SummarizedExperiment-method}
-\alias{calculateDMN,SummarizedExperiment-method}
-\alias{runDMN}
-\alias{getDMN}
-\alias{getDMN,SummarizedExperiment-method}
-\alias{bestDMNFit}
-\alias{bestDMNFit,SummarizedExperiment-method}
-\alias{getBestDMNFit}
-\alias{getBestDMNFit,SummarizedExperiment-method}
 \alias{taxonomyTree}
 \alias{taxonomyTree,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
@@ -25,22 +17,6 @@ cluster(x, ...)
 addTaxonomyTree(x, ...)
 
 \S4method{addTaxonomyTree}{SummarizedExperiment}(x, ...)
-
-\S4method{calculateDMN}{SummarizedExperiment}(x, ...)
-
-runDMN(x, ...)
-
-getDMN(x, ...)
-
-\S4method{getDMN}{SummarizedExperiment}(x, ...)
-
-bestDMNFit(x, ...)
-
-\S4method{bestDMNFit}{SummarizedExperiment}(x, ...)
-
-getBestDMNFit(x, ...)
-
-\S4method{getBestDMNFit}{SummarizedExperiment}(x, ...)
 
 taxonomyTree(x, ...)
 
