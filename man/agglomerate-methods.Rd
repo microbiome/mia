@@ -22,6 +22,7 @@ mergeFeaturesByRank(x, ...)
   onRankOnly = FALSE,
   na.rm = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
+  altexp = NULL,
   ...
 )
 
@@ -31,6 +32,7 @@ mergeFeaturesByRank(x, ...)
   onRankOnly = FALSE,
   na.rm = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
+  altexp = NULL,
   ...
 )
 

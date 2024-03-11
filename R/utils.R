@@ -117,7 +117,7 @@
     ...){
     #
     if( !.is_a_bool(disable.error) ){
-      stop("'disable.error' must be TRUE or FALSE.", call. = FALSE)  
+      stop("'disable.error' must be TRUE or FALSE.", call. = FALSE)
     }
     if( !.is_non_empty_string(tree_name) ){
       stop("'", name, "' must be a single non-empty character value.",
@@ -141,7 +141,7 @@
     ...){
     #
     if( !.is_a_bool(disable.error) ){
-        stop("'disable.error' must be TRUE or FALSE.", call. = FALSE)  
+        stop("'disable.error' must be TRUE or FALSE.", call. = FALSE)
     }
     if( !.is_non_empty_string(tree_name) ){
         stop("'", name, "' must be a single non-empty character value.",
@@ -259,7 +259,7 @@
     # Get values specified by variable. Fetch it from rowData or colData based
     # on MARGIN.
     if( MARGIN == 1 ){
-        res <- retrieveFeatureInfo(x, variable)    
+        res <- retrieveFeatureInfo(x, variable)
     } else{
         res <- retrieveCellInfo(x, variable)
     }
@@ -317,7 +317,7 @@
         name)
 
     values <- do.call(cbind, values)
-    
+
     # Based on MARGIN, get rowDatra or colData
     FUN <- switch(MARGIN, rowData, colData)
     # If altexp.name was not NULL, then we know that it specifies correctly
@@ -327,7 +327,7 @@
     } else{
         cd <- FUN(x)
     }
-    
+
     # check for duplicated values
     f <- colnames(cd) %in% colnames(values)
     FUN_name <- switch(MARGIN, "rowData", "colData")
@@ -341,10 +341,10 @@
     }
     # Keep only unique values
     values <- cbind( (cd)[!f], values )
-    
+
     # Replace colData with new one
     x <- .add_rowdata(x, cd, altexp.name = altexp.name, MARGIN = MARGIN)
-    
+
     return(x)
 }
 
@@ -450,13 +450,13 @@
     return(x)
 }
 
-# keep dimnames of feature table (assay) consistent with the meta data 
+# keep dimnames of feature table (assay) consistent with the meta data
 # of sample (colData) and feature (rowData)
-.set_feature_tab_dimnames <- function(feature_tab, 
-                                      sample_meta, 
+.set_feature_tab_dimnames <- function(feature_tab,
+                                      sample_meta,
                                       feature_meta) {
     if (nrow(sample_meta) > 0 || ncol(sample_meta) > 0) {
-        if (ncol(feature_tab) != nrow(sample_meta) 
+        if (ncol(feature_tab) != nrow(sample_meta)
             || !setequal(colnames(feature_tab), rownames(sample_meta))) {
             stop(
                 "The sample ids in feature table are not incompatible ",
@@ -468,7 +468,7 @@
             feature_tab <- feature_tab[, rownames(sample_meta), drop = FALSE]
         }
     }
-    
+
     if (nrow(feature_meta) > 0 || ncol(feature_meta) > 0) {
         if (nrow(feature_tab) != nrow(feature_meta)
             || !setequal(rownames(feature_tab), rownames(feature_meta))) {
@@ -482,24 +482,24 @@
             feature_tab <- feature_tab[rownames(feature_meta), , drop = FALSE]
         }
     }
-  
+
     feature_tab
 }
 
 #' Parse taxa in different taxonomic levels
 #' @param taxa_tab `data.frame` object.
-#' 
+#'
 #' @param sep character string containing a regular expression, separator
 #'  between different taxonomic levels, defaults to one compatible with both
 #'  GreenGenes and SILVA `; |;"`.
-#'  
+#'
 #' @param column_name a single \code{character} value defining the column of taxa_tab
 #'  that includes taxonomical information.
-#'  
-#' @param removeTaxaPrefixes {\code{TRUE} or \code{FALSE}: Should 
+#'
+#' @param removeTaxaPrefixes {\code{TRUE} or \code{FALSE}: Should
 #'  taxonomic prefixes be removed? (default:
 #'  \code{removeTaxaPrefixes = FALSE})}
-#'  
+#'
 #' @return  a `data.frame`.
 #' @keywords internal
 #' @importFrom IRanges CharacterList IntegerList
@@ -524,11 +524,11 @@
       stop("'removeTaxaPrefixes' must be TRUE or FALSE.", call. = FALSE)
     }
     ############################## Input check end #############################
-    
+
     #  work with any combination of taxonomic ranks available
     all_ranks <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
     all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__")
-    
+
     # split the taxa strings
     taxa_split <- CharacterList(strsplit(taxa_tab[, column_name],sep))
     # extract present prefixes
@@ -553,7 +553,7 @@
     }
     taxa_tab <- DataFrame(as.matrix(taxa_split))
     colnames(taxa_tab) <- all_ranks
-    
+
     taxa_tab
 }
 

@@ -3,7 +3,7 @@
 #' Several functions for calculation of community richness indices available via
 #' wrapper functions. They are implemented via the \code{vegan} package.
 #'
-#' These include the \sQuote{ace}, \sQuote{Chao1}, \sQuote{Hill}, and 
+#' These include the \sQuote{ace}, \sQuote{Chao1}, \sQuote{Hill}, and
 #' \sQuote{Observed} richness measures.
 #' See details for more information and references.
 #'
@@ -11,12 +11,12 @@
 #'
 #' @param assay.type the name of the assay used for calculation of the
 #'   sample-wise estimates.
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'   
+#'
 #' @param index a \code{character} vector, specifying the richness measures
 #'   to be calculated.
 #'
@@ -54,7 +54,7 @@
 #' The following richness indices are provided.
 #'
 #' \itemize{
-#'   
+#'
 #'   \item{'ace' }{Abundance-based coverage estimator (ACE) is another
 #'   nonparametric richness
 #'   index that uses sample coverage, defined based on the sum of the
@@ -73,7 +73,7 @@
 #'   For an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
-#'   
+#'
 #'   \item{'chao1' }{This is a nonparametric estimator of species richness. It
 #'   assumes that rare species carry information about the (unknown) number
 #'   of unobserved species. We use here the bias-corrected version
@@ -86,7 +86,7 @@
 #'   hence it gives more weight to the low abundance species.
 #'   Note that this index comes with an additional column with standard
 #'   error information.}
-#'   
+#'
 #'   \item{'hill' }{Effective species richness aka Hill index
 #'   (see e.g. Chao et al. 2016).
 #'   Currently only the case 1D is implemented. This corresponds to the exponent
@@ -95,12 +95,12 @@
 #'   species whose even distribution would lead to the same diversity than the
 #'   observed
 #'   community, where the species abundances are unevenly distributed.}
-#'   
+#'
 #'   \item{'observed' }{The _observed richness_ gives the number of species that
 #'   is detected above a given \code{detection} threshold in the observed sample
 #'   (default 0). This is conceptually the simplest richness index. The
 #'   corresponding index in the \pkg{vegan} package is "richness".}
-#'   
+#'
 #' }
 #'
 #'
@@ -220,8 +220,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
             BPPARAM = SerialParam()){
 
         # Input check
-        # Check assay.type
-        .check_assay_present(assay.type, x)
+        # Check and get assay.type
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -232,11 +232,13 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
         # Calculates richness indices
         richness <- BiocParallel::bplapply(index,
                                             FUN = .get_richness_values,
-                                            mat = assay(x, assay.type),
+                                            mat = mat,
                                             detection = detection,
                                             BPPARAM = BPPARAM)
         # Add richness indices to colData
-        .add_values_to_colData(x, richness, name)
+        .add_values_to_colData(
+            x, values = richness, name = name, default.MARGIN = 1,
+            transpose.MARGIN = TRUE, ...)
     }
 )
 

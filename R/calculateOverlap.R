@@ -1,5 +1,5 @@
 #' Estimate overlap
-#' 
+#'
 #' This function calculates overlap for all sample-pairs
 #' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
@@ -7,73 +7,73 @@
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object containing a tree.
-#'   
+#'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to calculate the overlap.
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'   
-#' @param detection A single numeric value for selecting detection threshold for 
+#'
+#' @param detection A single numeric value for selecting detection threshold for
 #'   absence/presence of features. Feature that has abundance under threshold in
-#'   either of samples, will be discarded when evaluating overlap between samples. 
-#'   
+#'   either of samples, will be discarded when evaluating overlap between samples.
+#'
 #' @param ... Optional arguments not used.
-#'   
-#' @return calculateOverlap returns sample-by-sample distance matrix. 
-#'   runOverlap returns \code{x} that includes overlap matrix in its 
-#'   reducedDim. 
-#' 
+#'
+#' @return calculateOverlap returns sample-by-sample distance matrix.
+#'   runOverlap returns \code{x} that includes overlap matrix in its
+#'   reducedDim.
+#'
 #' @details These function calculates overlap between all the sample-pairs. Overlap
-#'   reflects similarity between sample-pairs. 
-#'   
-#'   When overlap is calculated using relative abundances, the higher the value the 
-#'   higher the similarity is, When using relative abundances, overlap value 1 means that 
-#'   all the abundances of features are equal between two samples, and 0 means that 
-#'   samples have completely different relative abundances. 
+#'   reflects similarity between sample-pairs.
+#'
+#'   When overlap is calculated using relative abundances, the higher the value the
+#'   higher the similarity is, When using relative abundances, overlap value 1 means that
+#'   all the abundances of features are equal between two samples, and 0 means that
+#'   samples have completely different relative abundances.
 #'
 #' @seealso
 #'   \code{\link[mia:calculateJSD]{calculateJSD}}
 #'   \code{\link[mia:calculateUnifrac]{calculateUnifrac}}
-#' 
-#' 
+#'
+#'
 #' @name calculateOverlap
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-#' 
+#'
 #' @examples
 #' data(esophagus)
 #' tse <- esophagus
 #' tse <- transformAssay(tse, method = "relabundance")
 #' overlap <- calculateOverlap(tse, assay_name = "relabundance")
 #' overlap
-#' 
+#'
 #' # Store result to reducedDim
 #' tse <- runOverlap(tse, assay.type = "relabundance", name = "overlap_between_samples")
 #' head(reducedDims(tse)$overlap_between_samples)
-#' 
+#'
 NULL
 
 
 #' @rdname calculateOverlap
 #' @export
 setGeneric("calculateOverlap", signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts", 
+           function(x, assay.type = assay_name, assay_name = "counts",
                     detection = 0, ...)
              standardGeneric("calculateOverlap"))
 
 #' @rdname calculateOverlap
 #' @export
 setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
+    function(x, assay.type = assay_name, assay_name = "counts",
              detection = 0, ...){
         ############################# INPUT CHECK ##############################
         # Check assay.type
-        .check_assay_present(assay.type, x)
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         # Check detection
         if (!.is_numeric_string(detection)) {
           stop("'detection' must be a single numeric value or coercible to ",
@@ -82,27 +82,25 @@ setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
         }
         detection <- as.numeric(detection)
         ########################### INPUT CHECK END ############################
-        # Get assay
-        assay <- assay(x, assay.type)
-        
+
         # All the sample pairs
         sample_pairs <- as.matrix(expand.grid(colnames(x), colnames(x)))
-        
+
         # Loop through all sample pairs
         result <- apply(sample_pairs, 1, FUN = function(sample_pair){
           # Get samples
-          sample1 <- assay[ , sample_pair[1]]
-          sample2 <- assay[ , sample_pair[2]]
+          sample1 <- mat[ , sample_pair[1]]
+          sample2 <- mat[ , sample_pair[2]]
           # Calculate overlap
-          temp_result <- .calculate_overlap(sample1, 
-                                            sample2, 
+          temp_result <- .calculate_overlap(sample1,
+                                            sample2,
                                             detection)
         })
         # Create a matrix from result vector and give name to rownames and colnames
-        result <- matrix(result, ncol = ncol(assay))
-        colnames(result) <- colnames(assay)
-        rownames(result) <- colnames(assay)
-        
+        result <- matrix(result, ncol = ncol(mat))
+        colnames(result) <- colnames(mat)
+        rownames(result) <- colnames(mat)
+
         # Convert into distances
         result <- stats::as.dist(result)
         return(result)
@@ -116,10 +114,10 @@ setGeneric("runOverlap", signature = c("x"),
                standardGeneric("runOverlap"))
 
 #' @rdname calculateOverlap
-#' 
+#'
 #' @param name A single character value specifying the name of overlap matrix that
 #' is stored in reducedDim(x).
-#'   
+#'
 #' @export
 #' @importFrom SingleCellExperiment reducedDim<-
 setMethod("runOverlap", signature = c(x = "SummarizedExperiment"),

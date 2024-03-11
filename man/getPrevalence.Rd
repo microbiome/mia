@@ -263,7 +263,7 @@ altExp(tse, "prevalent") <- subsetByPrevalentFeatures(tse,
                                        detection = 0.001,
                                        prevalence = 0.55,
                                        as_relative = TRUE)
-altExp(tse, "prevalent")                                 
+altExp(tse, "prevalent")
 
 # getRareFeatures returns the inverse
 rare <- getRareFeatures(tse,
@@ -279,11 +279,11 @@ altExp(tse, "rare") <- subsetByRareFeatures(tse,
                              detection = 0.001,
                              prevalence = 0.001,
                              as_relative = TRUE)
-altExp(tse, "rare")      
+altExp(tse, "rare")
 
 # Names of both experiments, prevalent and rare, can be found from slot altExpNames
 tse
-                         
+
 data(esophagus)
 getPrevalentAbundance(esophagus, assay.type = "counts")
 

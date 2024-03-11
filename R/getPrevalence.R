@@ -23,7 +23,7 @@
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for prevalence calculation.
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
@@ -31,7 +31,7 @@
 #'
 #' @param other_label A single \code{character} valued used as the label for the
 #'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
-#'   
+#'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomyRanks()} function.
 #'
@@ -41,8 +41,8 @@
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
-#'   \item{for \code{getPrevalentFeatures}, \code{getRareFeatures}, 
-#'     \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional 
+#'   \item{for \code{getPrevalentFeatures}, \code{getRareFeatures},
+#'     \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional
 #'     parameters passed to \code{getPrevalence}}
 #'   \item{for \code{getPrevalentAbundance} additional parameters passed to
 #'     \code{getPrevalentFeatures}}
@@ -61,25 +61,25 @@
 #' proportion of the core species (in between 0 and 1). The core taxa are
 #' defined as those that exceed the given population prevalence threshold at the
 #' given detection level as set for \code{getPrevalentFeatures}.
-#' 
-#' \code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return a subset of \code{x}. 
-#' The subset includes the most prevalent or rare taxa that are calculated with 
+#'
+#' \code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return a subset of \code{x}.
+#' The subset includes the most prevalent or rare taxa that are calculated with
 #' \code{getPrevalentFeatures} or \code{getRareFeatures} respectively.
 #'
 #' @return
 #' \code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return subset of \code{x}.
-#' 
+#'
 #' All other functions return a named vectors:
 #' \itemize{
-#'   \item{\code{getPrevalence} returns a \code{numeric} vector with the 
-#'     names being set to either the row names of \code{x} or the names after 
+#'   \item{\code{getPrevalence} returns a \code{numeric} vector with the
+#'     names being set to either the row names of \code{x} or the names after
 #'     agglomeration.}
 #'   \item{\code{getPrevalentAbundance} returns a \code{numeric} vector with
-#'     the names corresponding to the column name of \code{x} and include the 
+#'     the names corresponding to the column name of \code{x} and include the
 #'     joint abundance of prevalent taxa.}
-#'   \item{\code{getPrevalentTaxa} and \code{getRareFeatures} return a 
+#'   \item{\code{getPrevalentTaxa} and \code{getRareFeatures} return a
 #'     \code{character} vector with only the names exceeding the threshold set
-#'     by \code{prevalence}, if the \code{rownames} of \code{x} is set. 
+#'     by \code{prevalence}, if the \code{rownames} of \code{x} is set.
 #'     Otherwise an \code{integer} vector is returned matching the rows in
 #'     \code{x}.}
 #' }
@@ -139,14 +139,14 @@
 #'                               prevalence = 50/100,
 #'                               as_relative = FALSE)
 #' head(prevalent)
-#' 
+#'
 #' # Gets a subset of object that includes prevalent taxa
 #' altExp(tse, "prevalent") <- subsetByPrevalentFeatures(tse,
 #'                                        rank = "Family",
 #'                                        detection = 0.001,
 #'                                        prevalence = 0.55,
 #'                                        as_relative = TRUE)
-#' altExp(tse, "prevalent")                                 
+#' altExp(tse, "prevalent")
 #'
 #' # getRareFeatures returns the inverse
 #' rare <- getRareFeatures(tse,
@@ -155,18 +155,18 @@
 #'                     prevalence = 50/100,
 #'                     as_relative = TRUE)
 #' head(rare)
-#' 
+#'
 #' # Gets a subset of object that includes rare taxa
 #' altExp(tse, "rare") <- subsetByRareFeatures(tse,
 #'                              rank = "Class",
 #'                              detection = 0.001,
 #'                              prevalence = 0.001,
 #'                              as_relative = TRUE)
-#' altExp(tse, "rare")      
-#' 
+#' altExp(tse, "rare")
+#'
 #' # Names of both experiments, prevalent and rare, can be found from slot altExpNames
 #' tse
-#'                          
+#'
 #' data(esophagus)
 #' getPrevalentAbundance(esophagus, assay.type = "counts")
 #'
@@ -245,7 +245,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
+    function(x, assay.type = assay_name, assay_name = "counts",
              as_relative = FALSE, rank = NULL, ...){
         # input check
         if(!.is_a_bool(as_relative)){
@@ -253,9 +253,8 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         }
 
         # check assay
-        .check_assay_present(assay.type, x)
         x <- .agg_for_prevalence(x, rank = rank, ...)
-        mat <- assay(x, assay.type)
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         if (as_relative) {
             mat <- .calc_rel_abund(mat)
         }
@@ -274,7 +273,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
 #' given detection threshold for the selected taxonomic rank.
 #'
 #' @aliases getPrevalentTaxa
-#' 
+#'
 #' @export
 setGeneric("getPrevalentFeatures", signature = "x",
            function(x, ...)
@@ -297,16 +296,16 @@ setGeneric("getPrevalentFeatures", signature = "x",
              "one.",
              call. = FALSE)
     }
-    
+
     prevalence <- as.numeric(prevalence)
     if(!.is_a_bool(include_lowest)){
         stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
     }
-    # rownames must bet set and unique, because if sort = TRUE, the order is 
+    # rownames must bet set and unique, because if sort = TRUE, the order is
     # not preserved
     x <- .norm_rownames(x)
     pr <- getPrevalence(x, rank = NULL, ...)
-    
+
     # get logical vector which row does exceed threshold
     if (include_lowest) {
         f <- pr >= prevalence
@@ -322,7 +321,7 @@ setGeneric("getPrevalentFeatures", signature = "x",
     m <- match(names(f),names(indices))
     m <- m[!is.na(m)]
     indices <- indices[m]
-    # 
+    #
     indices
 }
 
@@ -357,7 +356,7 @@ setMethod("getPrevalentFeatures", signature = c(x = "ANY"),
 #' @aliases getPrevalentTaxa
 #' @export
 setMethod("getPrevalentFeatures", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, prevalence = 50/100, 
+    function(x, rank = NULL, prevalence = 50/100,
              include_lowest = FALSE, ...){
         .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
                             include_lowest = include_lowest, ...)
@@ -368,7 +367,7 @@ setMethod("getPrevalentFeatures", signature = c(x = "SummarizedExperiment"),
 #' @aliases getPrevalentFeatures
 #' @export
 setGeneric("getPrevalentTaxa", signature = c("x"),
-        function(x, ...) 
+        function(x, ...)
             standardGeneric("getPrevalentTaxa"))
 
 #' @rdname getPrevalence
@@ -387,9 +386,9 @@ setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
 #'
 #' @details
 #' \code{getRareFeatures} returns complement of \code{getPrevalentTaxa}.
-#' 
+#'
 #' @aliases getRareTaxa
-#' 
+#'
 #' @export
 setGeneric("getRareFeatures", signature = "x",
            function(x, ...)
@@ -403,7 +402,7 @@ setGeneric("getRareFeatures", signature = "x",
     indices_new <- indices_x[f]
     indices_new
 }
-    
+
 .get_rare_taxa <- function(x, rank = NULL, ...){
     if(is(x,"SummarizedExperiment")){
         x <- .agg_for_prevalence(x, rank = rank, ...)
@@ -434,7 +433,7 @@ setMethod("getRareFeatures", signature = c(x = "ANY"),
 #' @aliases getRareTaxa
 #' @export
 setMethod("getRareFeatures", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, prevalence = 50/100, 
+    function(x, rank = NULL, prevalence = 50/100,
              include_lowest = FALSE, ...){
         .get_rare_taxa(x, rank = rank, prevalence = prevalence,
                        include_lowest = include_lowest, ...)
@@ -445,7 +444,7 @@ setMethod("getRareFeatures", signature = c(x = "SummarizedExperiment"),
 #' @aliases getRareFeatures
 #' @export
 setGeneric("getRareTaxa", signature = c("x"),
-           function(x, ...) 
+           function(x, ...)
                standardGeneric("getRareTaxa"))
 
 #' @rdname getPrevalence
@@ -482,7 +481,7 @@ setMethod("subsetByPrevalentFeatures", signature = c(x = "SummarizedExperiment")
 #' @aliases subsetByPrevalentFeatures
 #' @export
 setGeneric("subsetByPrevalentTaxa", signature = c("x"),
-        function(x, ...) 
+        function(x, ...)
             standardGeneric("subsetByPrevalentTaxa"))
 
 #' @rdname getPrevalence
@@ -519,7 +518,7 @@ setMethod("subsetByRareFeatures", signature = c(x = "SummarizedExperiment"),
 #' @aliases subsetByRareFeatures
 #' @export
 setGeneric("subsetByRareTaxa", signature = c("x"),
-        function(x, ...) 
+        function(x, ...)
             standardGeneric("subsetByRareTaxa"))
 
 #' @rdname getPrevalence
@@ -635,6 +634,6 @@ setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment")
           function(x, rank = taxonomyRanks(x)[1L], other_label = "Other", ...){
               .Deprecated(old="agglomerateByPrevalence", new="mergeFeaturesByPrevalence", "Now agglomerateByPrevalence is deprecated. Use mergeFeaturesByPrevalence instead.")
               x <- agglomerateByPrevalence(x, rank = rank, other_label = other_label, ...)
-              x 
+              x
           })
 

@@ -33,10 +33,10 @@
 #'   \code{\link[=merge-methods]{mergeRows}} and
 #'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 #'   \itemize{
-#'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
+#'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting
 #'        whether to remove those columns of rowData that include only NAs after
 #'        agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
-#'        \item{\code{make_unique}}{A single boolean value for selecting 
+#'        \item{\code{make_unique}}{A single boolean value for selecting
 #'        whether to make rownames unique. (By default: \code{make_unique = TRUE})}
 #'    }
 #'
@@ -54,7 +54,7 @@
 #' your results. If no loops exist (loops meaning two higher ranks containing
 #' the same lower rank), the results should be comparable. You can check for
 #' loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
-#' 
+#'
 #' Agglomeration sums up the values of assays at the specified taxonomic level. With
 #' certain assays, e.g. those that include binary or negative values, this summing
 #' can produce meaningless values. In those cases, consider performing agglomeration
@@ -79,16 +79,16 @@
 #' ## How many taxa before/after agglomeration?
 #' nrow(GlobalPatterns)
 #' nrow(x1)
-#' 
+#'
 #' # agglomerate the tree as well
 #' x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
 #'                        agglomerateTree = TRUE)
 #' nrow(x2) # same number of rows, but
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
-#' 
+#'
 #'  # If assay contains binary or negative values, summing might lead to meaningless
-#'  # values, and you will get a warning. In these cases, you might want to do 
+#'  # values, and you will get a warning. In these cases, you might want to do
 #'  # agglomeration again at chosen taxonomic level.
 #'  tse <- transformAssay(GlobalPatterns, method = "pa")
 #'  tse <- agglomerateByRank(tse, rank = "Genus")
@@ -98,19 +98,19 @@
 #' sum(is.na(rowData(GlobalPatterns)$Family))
 #' x3 <- agglomerateByRank(GlobalPatterns, rank="Family", na.rm = TRUE)
 #' nrow(x3) # different from x2
-#' 
-#' # Because all the rownames are from the same rank, rownames do not include 
-#' # prefixes, in this case "Family:". 
+#'
+#' # Because all the rownames are from the same rank, rownames do not include
+#' # prefixes, in this case "Family:".
 #' print(rownames(x3[1:3,]))
-#' 
+#'
 #' # To add them, use getTaxonomyLabels function.
 #' rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
 #' print(rownames(x3[1:3,]))
-#' 
+#'
 #' # use 'remove_empty_ranks' to remove columns that include only NAs
 #' x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
 #' head(rowData(x4))
-#' 
+#'
 #' # If the assay contains NAs, you might want to consider replacing them,
 #' # since summing-up NAs lead to NA
 #' x5 <- GlobalPatterns
@@ -122,7 +122,7 @@
 #' assay(x5)[ is.na(assay(x5)) ] <- 0
 #' x6 <- agglomerateByRank(x5, "Kingdom")
 #' head( assay(x6) )
-#' 
+#'
 #' ## Look at enterotype dataset...
 #' data(enterotype)
 #' ## Print the available taxonomic ranks. Shows only 1 available rank,
@@ -238,10 +238,10 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
           function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = FALSE,
-                   empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+                   empty.fields = c(NA, "", " ", "\t", "-", "_"), altexp = NULL, ...){
               .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", "Now agglomerateByRank is deprecated. Use mergeFeaturesByRank instead.")
               x <- agglomerateByRank(x, rank = rank, onRankOnly = onRankOnly, na.rm = na.rm,
-                                     empty.fields = empty.fields, ...)
+                                     empty.fields = empty.fields, altexp = altexp, ...)
               x
           }
 )
@@ -261,7 +261,7 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
         x <- .check_and_get_altExp(x, altexp)
 
         x <- callNextMethod(x, ...)
-        
+
         if(strip_altexp && is(x, "SingleCellExperiment")){
             altExps(x) <- NULL
         }
@@ -349,7 +349,7 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
     MARGIN <- .check_MARGIN(MARGIN)
     # Get rowData
     rd <- .get_rowdata(x, MARGIN = MARGIN, ...)
-    
+
     tax <- as.character(rd[,column])
     f <- !(tax %in% empty.fields)
     # Remove those rows (features in rowData) from TreeSE that do not have info
@@ -357,7 +357,7 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
         if( MARGIN == 1 ){
             x <- x[f, , drop=FALSE]
         } else{
-            x <- x[, f, drop=FALSE]    
+            x <- x[, f, drop=FALSE]
         }
     }
     return(x)
@@ -368,7 +368,7 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
 .remove_NA_cols_from_rowdata <- function(x, remove_empty_ranks = FALSE, ...){
     # Check remove_empty_ranks
     if( !.is_a_bool(remove_empty_ranks) ){
-        stop("'remove_empty_ranks' must be a boolean value.", 
+        stop("'remove_empty_ranks' must be a boolean value.",
              call. = FALSE)
     }
     # If user wants to remove those columns

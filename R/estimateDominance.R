@@ -18,7 +18,7 @@
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'   
+#'
 #' @param index a \code{character} vector, specifying the indices to be
 #'   calculated.
 #'
@@ -59,11 +59,11 @@
 #' indices:
 #'
 #' \itemize{
-#' 
+#'
 #' \item{'absolute' }{Absolute index equals to the absolute abundance of the
 #' most dominant n species of the sample (specify the number with the argument
 #' \code{ntaxa}). Index gives positive integer values.}
-#' 
+#'
 #' \item{'dbp' }{Berger-Parker index (See Berger & Parker 1970) calculation
 #' is a special case of the 'relative' index. dbp is the relative abundance of
 #' the most
@@ -74,7 +74,7 @@
 #' dbp = N_1/N_tot} where \eqn{N_1} is the absolute abundance of the most
 #' dominant species and \eqn{N_{tot}} is the sum of absolute abundances of all
 #' species.}
-#' 
+#'
 #' \item{'core_abundance' }{ Core abundance index is related to core species.
 #' Core species are species that are most abundant in all samples, i.e., in
 #' whole data set. Core species are defined as those species that have
@@ -88,12 +88,12 @@
 #' core_abundance = N_core/N_tot} where \eqn{N_{core}} is the sum of absolute
 #' abundance of the core species and \eqn{N_{tot}} is the sum of absolute
 #' abundances of all species.}
-#' 
+#'
 #' \item{'gini' }{ Gini index is probably best-known from socio-economic
 #' contexts (Gini 1921). In economics, it is used to measure, for example, how
 #' unevenly income is distributed among population. Here, Gini index is used
-#' similarly, but income is replaced with abundance. 
-#' 
+#' similarly, but income is replaced with abundance.
+#'
 #' If there is small group of species
 #' that represent large portion of total abundance of microbes, the inequality
 #' is large and Gini index closer to 1. If all species has equally large
@@ -137,7 +137,7 @@
 #' abundances is used instead as the alternative index is not in the unit
 #' interval and it is highly
 #' correlated with the simpler variant implemented here.}
-#' 
+#'
 #' }
 #'
 #' @references
@@ -237,7 +237,7 @@ setGeneric("estimateDominance",signature = c("x"),
 setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     function(x,
              assay.type = assay_name, assay_name = "counts",
-             index = c("absolute", "dbp", "core_abundance", "gini", "dmn", 
+             index = c("absolute", "dbp", "core_abundance", "gini", "dmn",
                        "relative", "simpson_lambda"),
              ntaxa = 1,
              aggregate = TRUE,
@@ -246,8 +246,8 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
              BPPARAM = SerialParam()){
 
         # Input check
-        # Check assay.type
-        .check_assay_present(assay.type, x)
+        # Check and get assay.type
+        mat <- .check_and_get_assay(x, assay.type, default.MARGIN = 1, ...)
         # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -264,13 +264,15 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
         # Calculates dominance indices
         dominances <- BiocParallel::bplapply(index,
                                              FUN = .get_dominance_values,
-                                             mat = assay(x,assay.type),
+                                             mat = mat,
                                              ntaxa = ntaxa,
                                              aggregate = aggregate,
                                              BPPARAM = BPPARAM)
 
         # Add dominance indices to colData
-        .add_values_to_colData(x, dominances, name)
+        .add_values_to_colData(
+            x, values = dominances, name = name, default.MARGIN = 1,
+            transpose.MARGIN = TRUE, ...)
     }
 )
 
