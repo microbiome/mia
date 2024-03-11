@@ -137,6 +137,8 @@ loadFromMetaphlan <- function(
             altExp(tse, rank) <- se_objects[[rank]]
         }
     }
+    # Set taxonomy ranks using .set_taxonomy_ranks
+    .set_taxonomy_ranks(tse, ranks = NULL, set.ranks = TRUE, ...)
     
     # Load sample meta data if it is provided
     if( !is.null(colData) ) {
@@ -392,3 +394,40 @@ loadFromMetaphlan <- function(
     }
     return(data)
 }
+.set_taxonomy_ranks <- function(tse, ranks = NULL, set.ranks = FALSE,...) {
+    # Input checks
+    if (!is.logical(set.ranks) || length(set.ranks) != 1) {
+        stop("'set.ranks' must be a logical scalar.", call. = FALSE)
+    }
+    
+    if (!is.null(ranks) && (!is.character(ranks) || length(ranks) == 0)) {
+        stop("'ranks' must be a non-empty character vector if provided.", call. = FALSE)
+    }
+    
+    # Attempt to retrieve ranks if NULL
+    if (is.null(ranks)) {
+        if (!is.null(rowData(tse))) {
+            # Filter column names by those that are character type
+            char_cols <- sapply(rowData(tse), is.character)
+            ranks <- colnames(rowData(tse))[char_cols]
+            
+            if (length(ranks) == 0 && !set.ranks) {
+                stop("No character-type column names in 'rowData(tse)' to infer ranks and 'set.ranks' is TRUE.", call. = FALSE)
+            }
+        } else {
+            ranks <- character(0)
+            #stop("rowData of the 'tse' object does not exist.", call. = FALSE)
+        }
+        
+    }
+    new_ranks_not_in_existing <- setdiff(ranks, TAXONOMY_RANKS)
+    
+    if (length(new_ranks_not_in_existing) > 0 && set.ranks) {
+        message(sprintf("Different taxonomy ranks in data not in TAXONOMY_RANKS: %s. Set 'set.ranks' to TRUE to update ranks with 'setTaxonomyRanks'.", paste(new_ranks_not_in_existing, collapse = ", ")))
+    }
+    # Set ranks if set.ranks = TRUE
+    if (!set.ranks) {
+        message(sprintf("Ranks set to: %s", paste(ranks, collapse = ", ")))
+    }
+}
+

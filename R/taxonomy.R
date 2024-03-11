@@ -236,41 +236,6 @@ getTaxonomyRanks <- function() {
     return(TAXONOMY_RANKS)
 }
 
-.set_taxonomy_ranks <- function(tse, ranks, set.ranks = FALSE) {
-    # Check if ranks are not specified by the user
-    if (is.null(ranks)) {
-        # Attempt to retrieve ranks from the column names of rowData(tse)
-        if (!is.null(rowData(tse))) {
-            ranks <- colnames(rowData(tse))
-            if (length(ranks) == 0) {
-                stop("rowData of the 'tse' object has no column names to infer ranks.", call. = FALSE)
-            }
-        } else {
-            stop("rowData of the 'tse' object does not exist or does not have column names.", call. = FALSE)
-        }
-    } else {
-        # User has specified ranks, validate them
-        if (!is.character(ranks) || length(ranks) == 0) {
-            stop("Provided 'ranks' must be a non-empty character vector.", call. = FALSE)
-        }
-    }
-    
-    # Proceed to set ranks if the set.ranks flag is TRUE
-    if (set.ranks) {
-        # Validate that ranks have been properly defined
-        if (is.null(ranks) || length(ranks) == 0) {
-            stop("No ranks are available to set.", call. = FALSE)
-        }
-        
-        # Here you would set the ranks accordingly
-        message(sprintf("Ranks are set to %s. Use 'setTaxonomyRanks()' to overwrite ranks if necessary.", paste(ranks, collapse=", ")))
-        
-    } else {
-        # handle the case when ranks are not set
-        message(sprintf("Ranks identified but not set: %s. Set 'set.ranks' to TRUE to apply changes.", paste(ranks, collapse=", ")))
-    }
-}
-
 .check_taxonomic_rank <- function(rank, x){
     if(length(rank) != 1L){
         stop("'rank' must be a single character value.",call. = FALSE)
