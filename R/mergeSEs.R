@@ -427,6 +427,12 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Adjust rownames
     rownames(tse) <- rowData(tse)[[rownames_name]]
     rowData(tse)[[rownames_name]] <- NULL
+    # Ensure that rownames and colnames are unique. TreeSE allows equal
+    # rownames. However, if in this points rownames are equal, it means that
+    # rows are not really equal. They might have different taxonomy data, but
+    # their ID might be same. This can cause problems.
+    rownames(tse) <- make.unique(rownames(tse))
+    colnames(tse) <- make.unique(colnames(tse))
     return(tse)
 }
 
@@ -436,17 +442,32 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: (Tree)SE, name of the column that is being added to rowData
 # Output: (Tree)SE with rownames that include all taxonomy information
-.add_rowdata_to_rownames <- function(x, rownames_name, ...){
+.add_rowdata_to_rownames <- function(
+        x, rownames_name, only.taxonomy = TRUE, ...){
+    # Input check
+    if( !.is_a_bool(only.taxonomy) ){
+        stop("'only.taxonomy' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
     # Add rownames to rowData
     rowData(x)[[rownames_name]] <- rownames(x)
     # Get rowData
     rd <- rowData(x)
+    # If specified, get specify column only based on detected taxonomy columns.
+    # Otherwise, use all the data to specify rows.
+    if( only.taxonomy ){
+        tax_cols <- match(
+            c(tolower(TAXONOMY_RANKS), rownames_name),
+            tolower(colnames(rd)), nomatch = 0 )
+        tax_cols <- colnames(rd)[tax_cols]
+    } else{
+        tax_cols <- colnames(rd)
+    }
     # Get taxonomy_info
-    taxonomy_info <- rd[ , match( c(tolower(TAXONOMY_RANKS), rownames_name), 
-                                  tolower(colnames(rd)), nomatch = 0 ), 
-                         drop = FALSE]
+    taxonomy_info <- rd[ , tax_cols, drop = FALSE]
     # Combine taxonomy info
-    rownames <- apply(taxonomy_info, 1, paste0, collapse = "_")
+    rownames <- apply(
+        taxonomy_info, 1, function(x) paste0(x[!is.na(x)], collapse = "_"))
     # Add new rownames
     rownames(x) <- rownames
     return(x)
@@ -960,34 +981,60 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Merge rowdata
     rd <- .join_two_tables(rd1, rd2, join)
     
-    # There might be duplicated rownames. This might occur when there are features
-    # with equal taxonomy data but merged datasets have some additional info
-    # that do not match with each other. --> collapse duplicated rows/features
-    # into one row.
+    # There might be duplicated rownames. This might occur when there are
+    # features with equal taxonomy data but merged datasets have some
+    # additional info that do not match with each other. --> collapse
+    # duplicated rows/features into one row.
     dupl_rows <- rownames(rd)[ duplicated(rownames(rd)) ]
     if( length(dupl_rows) > 0 ){
         for( r in dupl_rows ){
             # Get duplicated rows
             temp <- rd[rownames(rd) %in% r, , drop = FALSE]
-            # Get uniwu rows
-            temp1 <- temp[1,]
-            temp2 <- temp[2,]
-            temp1 <- temp1[, !apply(temp1, 2, is.na), drop = FALSE]
-            temp2 <- temp2[, !apply(temp2, 2, is.na), drop = FALSE]
-            # Merge them together
-            temp <- merge(temp1, temp2, all = TRUE)
-            rownames(temp) <- r
-            # Remove the row from the original rowData
+            # Remove columns with no info
+            temp <- temp[, vapply(temp, function(x)
+                !all(is.na(x)), logical(1)), drop = FALSE]
+            # 1st row is kept if the value is not NA
+            keep1 <- vapply(temp, function(x) !is.na(x[1]),  logical(1))
+            # 2nd row is kept if it is not NA and the value differs from 1st row
+            keep2 <- vapply(temp, function(x)
+                !is.na(x[2]) &&
+                    (is.na(x[1]) ||
+                         (!is.na(x[1]) && x[2] != x[[1]])), logical(1))
+            # Get the rows
+            keep1 <- temp[1, keep1, drop = FALSE]
+            keep2 <- temp[2, keep2, drop = FALSE]
+            # If the two different, previously merged TreeSEs had same row,
+            # but the row had variales with unequal values, there are variable
+            # and variable.1 columns. Check if the value can be found from those
+            # columns.
+            for( col in colnames(keep2) ){
+                # Get those column that have been added with suffix
+                col_add <- grep(paste0(col, "."), colnames(keep1))
+                if( length(col_add) > 0 ){
+                    col_add <- keep1[, col_add, drop = FALSE]
+                    # If the value can be found already, remove it, i.e., do
+                    # not add it again
+                    if( keep2[, col] %in% unlist(col_add) ){
+                        keep2[, col] <- NULL
+                    }
+                }
+            }
+            # Combine rows together
+            temp <- cbind(keep1, keep2)
+            colnames(temp) <- make.unique(colnames(temp))
+            # Remove the rows from the original rowData
             rd <- rd[!rownames(rd) %in% r, , drop = FALSE]
             # Add the data back
             rd[["rownames_merge_ID"]] <- rownames(rd)
-            temp[["rownames_merge_ID"]] <- rownames(temp)
+            temp[["rownames_merge_ID"]] <- r
             rd <- merge(rd, temp, all = TRUE)
+            # Ensure that the rowData is DF (it can handle duplicated rownames)
+            rd <- DataFrame(rd)
+            # Add original rownames
             rownames(rd) <- rd[["rownames_merge_ID"]]
             rd[["rownames_merge_ID"]] <- NULL
         }
-        # Ensure that the rowData is DF
-        rd <- DataFrame(rd)
+        
     }
     
     # Get column indices that match with taxonomy ranks
@@ -1002,9 +1049,10 @@ setMethod("right_join", signature = c(x = "ANY"),
         rd_other <- rd[ , -ranks_ind, drop = FALSE]
         # Get rank names
         rank_names <- colnames(rd_rank)
-        # Convert names s that they have capital letters
-        new_rank_names <- paste(toupper(substr(rank_names, 1, 1)), 
-                                substr(rank_names, 2, nchar(rank_names)), sep = "")
+        # Convert names that they have capital letters
+        new_rank_names <- paste(
+            toupper(substr(rank_names, 1, 1)),
+            substr(rank_names, 2, nchar(rank_names)), sep = "")
         # Add new names to colnames of rd_rank
         colnames(rd_rank) <- new_rank_names
         

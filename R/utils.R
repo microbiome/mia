@@ -223,17 +223,18 @@
 #' @param column_name a single \code{character} value defining the column of taxa_tab
 #'  that includes taxonomical information.
 #'  
-#' @param removeTaxaPrefixes {\code{TRUE} or \code{FALSE}: Should 
-#'  taxonomic prefixes be removed? (default:
-#'  \code{removeTaxaPrefixes = FALSE})}
+#' @param remove.prefix {\code{TRUE} or \code{FALSE}: Should 
+#'  taxonomic prefixes be removed? (default: \code{remove.prefix = FALSE})}
 #'  
 #' @return  a `data.frame`.
 #' @keywords internal
 #' @importFrom IRanges CharacterList IntegerList
 #' @importFrom S4Vectors DataFrame
 #' @noRd
-.parse_taxonomy <- function(taxa_tab, sep = "; |;", column_name = "Taxon",
-                            removeTaxaPrefixes = FALSE, ...) {
+.parse_taxonomy <- function(
+    taxa_tab, sep = "; |;", column_name = "Taxon",
+    remove.prefix = removeTaxaPrefixes, removeTaxaPrefixes = FALSE,
+    returned.ranks = TAXONOMY_RANKS, ...) {
     ############################### Input check ################################
     # Check sep
     if(!.is_non_empty_string(sep)){
@@ -246,15 +247,20 @@
            " information about taxonomic levels.",
            call. = FALSE)
     }
-    # Check removeTaxaPrefixes
-    if(!.is_a_bool(removeTaxaPrefixes)){
-      stop("'removeTaxaPrefixes' must be TRUE or FALSE.", call. = FALSE)
+    # Check remove.prefix
+    if(!.is_a_bool(remove.prefix)){
+        stop("'remove.prefix' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # Check returned.ranks
+    if( !is.character(returned.ranks) ){
+        stop("'returned.ranks' must be a character vector.", call. = FALSE)
     }
     ############################## Input check end #############################
     
     #  work with any combination of taxonomic ranks available
-    all_ranks <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
-    all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__")
+    all_ranks <- c(
+      "Kingdom","Phylum","Class","Order","Family","Genus","Species", "Strain")
+    all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__", "t__")
     
     # split the taxa strings
     taxa_split <- CharacterList(strsplit(taxa_tab[, column_name],sep))
@@ -264,11 +270,9 @@
     taxa_prefixes_match <- lapply(taxa_prefixes, match, x = all_prefixes)
     taxa_prefixes_match <- IntegerList(taxa_prefixes_match)
     # get the taxa values
-    if(removeTaxaPrefixes){
-      taxa_split <- lapply(taxa_split,
-                           gsub,
-                           pattern = "([kpcofgs]+)__",
-                           replacement = "")
+    if(remove.prefix){
+        taxa_split <- lapply(
+            taxa_split, gsub, pattern = "([kpcofgst]+)__", replacement = "")
       taxa_split <- CharacterList(taxa_split)
     }
     # extract by order matches
@@ -281,7 +285,13 @@
     taxa_tab <- DataFrame(as.matrix(taxa_split))
     colnames(taxa_tab) <- all_ranks
     
-    taxa_tab
+    # Subset columns so that it includes TAXONOMY_RANKS columns by default.
+    # If strain column has values, it it also returned.
+    ind <- !(!tolower(colnames(taxa_tab)) %in% tolower(returned.ranks) &
+        colSums(is.na(taxa_tab)) == nrow(taxa_tab))
+    taxa_tab <- taxa_tab[ , ind, drop = FALSE]
+    
+    return(taxa_tab)
 }
 
 ################################################################################
