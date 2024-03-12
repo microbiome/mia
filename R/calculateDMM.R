@@ -141,16 +141,16 @@ setMethod("calculateDMN", signature = c(x = "ANY"), .calculate_DMN)
 #' @rdname calculateDMN
 #' @export
 setMethod("calculateDMN", signature = c(x = "SummarizedExperiment"),
-          function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
-                   transposed = FALSE, ...){
-              .Deprecated(old="calculateDMN", new="cluster", 
-                          "Now calculateDMN is deprecated. Use cluster with DMMParam parameter instead.")
-              mat <- assay(x, assay.type)
-              if(!transposed){
-                  mat <- t(mat)
-              }
-              calculateDMN(mat, ...)
-          }
+    function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
+            transposed = FALSE, ...){
+        .Deprecated(old="calculateDMN", new="cluster", 
+                    "Now calculateDMN is deprecated. Use cluster with DMMParam parameter instead.")
+        mat <- assay(x, assay.type)
+        if(!transposed){
+            mat <- t(mat)
+        }
+        calculateDMN(mat, ...)
+    }
 )
 
 #' @rdname calculateDMN
