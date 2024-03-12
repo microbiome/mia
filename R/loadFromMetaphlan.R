@@ -109,16 +109,20 @@ loadFromMetaphlan <- function(
              call. = FALSE)
     }
     ############################## Input check end #############################
+    # Get rowdata columns. metaphlan v2 has ID column. Metaphlan > v2 has
+    # clade_name for taxonomy names. Some has taxonomy.
+    rowdata_col <- c("clade_name", "ID", "_id", "taxonomy")
     # Read metaphlan data
-    data <- .read_metaphlan(file, ...)
+    data <- .read_metaphlan(file, rowdata_col, ...)
     # Parse data into separate tables, which include data at certain taxonomy rank
     tables <- .parse_metaphlan(data, ...)
 
     # Create multiple SE objects at different rank from the data
     available_ranks <- names(tables)
-    se_objects <- lapply(
-        tables, .create_se_from_metaphlan, returned.ranks = available_ranks,
-        ...)
+    se_objects <- lapply(tables, function(x){
+        .create_se_from_metaphlan(
+            x, rowdata_col, returned.ranks = available_ranks, ...)
+        })
     
     # Get the object with lowest rank
     tse <- se_objects[[ length(se_objects) ]]
@@ -152,7 +156,7 @@ loadFromMetaphlan <- function(
 ################################ HELP FUNCTIONS ################################
 
 # Read Metaphlan file, catch error if it occurs
-.read_metaphlan <- function(file, remove.suffix = FALSE, ...){
+.read_metaphlan <- function(file, rowdata_col, remove.suffix = FALSE, ...){
     ################################ Input check ###############################
     if(!.is_a_bool(remove.suffix)){
         stop("'remove.suffix' must be TRUE or FALSE.", call. = FALSE)
@@ -170,23 +174,21 @@ loadFromMetaphlan <- function(
         }
     )
     # Check that file is in right format
-    if( .check_metaphlan(table) ){
+    if( .check_metaphlan(table, rowdata_col) ){
         stop("Error while reading ", file,
              "\nPlease check that the file is in merged Metaphlan file format.",
              call. = FALSE)
     }
     # Remove possible suffix from the colnames if user has specified
     if( remove.suffix ){
-        table <- .remove_suffix(table, c("clade_name", "ID", "_id"))
+        table <- .remove_suffix(table, rowdata_col)
     }
     return(table)
 }
 
 # Check that metaphlan file contains correct information
-.check_metaphlan <- function(data){
-    # Get rowdata columns. metaphlan v2 has ID column. Metaphlan > v2 has
-    # clade_name for taxonomy names
-    rowdata_col <- c("clade_name", "ID", "_id")
+.check_metaphlan <- function(data, rowdata_col){
+    # Get rowData columns
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
     rowdata_columns <- data[ , rowdata_id, drop = FALSE]
     # Get columns that go to assay
@@ -197,8 +199,8 @@ loadFromMetaphlan <- function(
     # Check rowdata column names that they contain right information, and check that 
     # rest of the columns represents abundances in samples.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
-    if( any(colnames(rowdata_columns) %in% c("clade_name", "ID")) && 
-        is.numeric(unlist(assay_columns)) ){
+    if( length(rowdata_id) > 0 &&
+            all(unlist(lapply(assay_columns, is.numeric))) ){
         result <- FALSE
     }
     return(result)
@@ -251,14 +253,14 @@ loadFromMetaphlan <- function(
 
 # Create SE object that include rowdata and assay, from the metaphlan table
 .create_se_from_metaphlan <- function(
-        table, assay.type = assay_name, assay_name = "counts", ...){
+        table, rowdata_col, assay.type = assay_name, assay_name = "counts",
+        ...){
     # Check assay.type
     if( !.is_non_empty_character(assay.type) ){
         stop("'assay.type' must be a non-empty character value.",
              call. = FALSE)
     }
     # Get rowdata columns
-    rowdata_col <- c("clade_name", "ID", "_id")
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(table)))
     # Get those columns that belong to rowData
     rowdata <- table[, rowdata_id, drop = FALSE]
@@ -364,7 +366,8 @@ loadFromMetaphlan <- function(
 # from file names. This can cause problems when, e.g., taxonomy and pathway
 # information is combined. Because their suffixes differ, the sample names
 # differ. The purpose of the function is to remove those file names.
-.remove_suffix <- function( data, rowdata_col = c("clade_name", "ID", "_id") ){
+.remove_suffix <- function(
+        data, rowdata_col = c("clade_name", "ID", "_id", "taxonomy")){
     # Get rowdata columns
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
     # Get sample names
