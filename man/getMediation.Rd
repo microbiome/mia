@@ -92,6 +92,7 @@ those three arguments are mutually exclusive.
 # Import libraries
 library(mia)
 library(microbiomeDataSets)
+library(scater)
 
 # Load dataset
 tse <- LahtiWAData()
@@ -125,16 +126,16 @@ med_df <- getMediation(tse,
                        boot = TRUE, sims = 300)
  
 # Perform ordination
-tse <- runNMDS(tse,
-               method = "euclidean",
-               assay.type = "clr",
-               name = "NMDS")
+tse <- runMDS(tse, name = "MDS",
+              method = "euclidean",
+              assay.type = "clr",
+              ncomponents = 3)
 
 # Analyse mediated effect of nationality on BMI through NMDS components        
 med_df <- getMediation(tse,
                        outcome = "bmi_group",
                        treatment = "nationality",
-                       dim.type = "NMDS",
+                       dim.type = "MDS",
                        covariates = c("sex", "age"),
                        treat.value = "Scandinavia",
                        control.value = "CentralEurope",

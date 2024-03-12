@@ -70,6 +70,7 @@
 #' # Import libraries
 #' library(mia)
 #' library(microbiomeDataSets)
+#' library(scater)
 #' 
 #' # Load dataset
 #' tse <- LahtiWAData()
@@ -103,16 +104,16 @@
 #'                        boot = TRUE, sims = 300)
 #'  
 #' # Perform ordination
-#' tse <- runNMDS(tse,
-#'                method = "euclidean",
-#'                assay.type = "clr",
-#'                name = "NMDS")
+#' tse <- runMDS(tse, name = "MDS",
+#'               method = "euclidean",
+#'               assay.type = "clr",
+#'               ncomponents = 3)
 #' 
 #' # Analyse mediated effect of nationality on BMI through NMDS components        
 #' med_df <- getMediation(tse,
 #'                        outcome = "bmi_group",
 #'                        treatment = "nationality",
-#'                        dim.type = "NMDS",
+#'                        dim.type = "MDS",
 #'                        covariates = c("sex", "age"),
 #'                        treat.value = "Scandinavia",
 #'                        control.value = "CentralEurope",
@@ -132,62 +133,88 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
                mediator = NULL, assay.type = NULL, dim.type = NULL,
                family = gaussian(), covariates = NULL, p.adj.method = "BH",
                add.metadata = FALSE, message = TRUE, ...) {
-            
-        results <- list(Treatment = c(), Mediator = c(), Outcome = c(),
-                        ACME_estimate = c(), ADE_estimate = c(), ACME_pval = c(),
-                        ADE_pval = c(), ACME_ci = c(), ADE_ci = c(), Model = list())
-            
+
+        ###################### Input check ########################
+        if (!outcome %in% names(colData(se))) {
+          stop(outcome, " not found in colData(se).", call. = FALSE)
+        }
+        if (!treatment %in% names(colData(se))) {
+          stop(treatment, " not found in colData(se).", call. = FALSE)
+        }
+        if (!is.null(covariates) & !all(covariates %in% names(colData(se)))) {
+          stop("covariates not found in colData(se).", call. = FALSE)
+        }
+        if (!.is_a_bool(add.metadata)) {
+          stop("add.metadata must be TRUE or FALSE.", call. = FALSE)
+        }
+        if (!.is_a_bool(message)) {
+          stop("message must be TRUE or FALSE.", call. = FALSE)
+        }
+        
+        se <- check.mediate.args(se, outcome, treatment, mediator, covariates, ...)
+        
+        # Check which mediator was provided (colData, assay or reducedDim)
         med_opts <- sapply(
           list(mediator = mediator, assay.type = assay.type, dim.type = dim.type),
           function(x) !is.null(x)
         )
-            
+        
         if (sum(med_opts) == 1) {
           if (med_opts[[1]]) {
-                
+            # Check that mediator is in colData
             if (!mediator %in% names(colData(se))) {
               stop(mediator, " not found in colData(se).", call. = FALSE)
             }
-                
+            # Use mediator for analysis  
             mediators <- mediator
             mat <- NULL
                 
           } else if (med_opts[[2]]) {
-                
+            # Check that assay is in assays
             if (!assay.type %in% assayNames(se)) {
               stop(assay.type, " not found in assays(se).", call. = FALSE)
             }
-                
+            # Define matrix for analysis
             mat <- assay(se, assay.type)
+            # Use assay for analysis
             mediators <- rownames(mat)
                 
           } else if (med_opts[[3]]) {
-                
+            # Check that reducedDim is in reducedDims
             if (!dim.type %in% reducedDimNames(se)) {
               stop(dim.type, " not found in reducedDims(se).", call. = FALSE)
             }
-                
+            # Define matrix for analysis
             mat <- t(reducedDim(se, dim.type))
+            # Give component names to matrix rows
             rownames(mat) <- paste0(dim.type, seq(1, nrow(mat)))
+            # Use reducedDim for analysis
             mediators <- rownames(mat)
-                
           }
-              
+          
         } else {
+          # Throw error if none or multiple mediation options are specified
           stop("The arguments mediator, assay.type and dim.type are mutually exclusive",
                ", but ", sum(med_opts), " were provided.", call. = FALSE)
         }
-            
+        
+        # Create template list of results
+        results <- list(Treatment = c(), Mediator = c(), Outcome = c(),
+                        ACME_estimate = c(), ADE_estimate = c(), ACME_pval = c(),
+                        ADE_pval = c(), ACME_ci = c(), ADE_ci = c(), Model = list())
+        
+        # Set initial index  
         i <- 0
             
         for (mediator in mediators) {
-              
+             
+          # Update index 
           i <- i + 1
-              
+          
           if (message) {
             print(paste0("Mediator ", i, " out of ", length(mediators), ": ", mediator)) 
           }
-              
+          
           med_out <- wrap.mediate(se, outcome, treatment, mediator,
                                   family = family, mat = mat,
                                   covariates = covariates, ...)
@@ -203,19 +230,22 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
 
 
 
-check.args <- function(df, ...) {
+check.mediate.args <- function(se, outcome, treatment, mediator, covariates, ...) {
   
+  df <- as.data.frame(colData(se))
   kwargs <- list(...)
   
-  if (any(is.na(df))) {
-    
-    total <- nrow(df)
-    df <- na.omit(df)
-    message(paste(total - nrow(df), "samples removed because of missing data."))
-    
+  df <- na.omit(df, cols = c(outcome, treatment, mediator, covariates))
+  diff <- ncol(se) - nrow(df)
+  
+  if (diff != 0) {
+
+    se <- se[ , rownames(df)]
+    message(paste(diff, "samples removed because of missing data."))
+
   }
   
-  if (!is.numeric(df[["Treatment"]]) & length(unique((df[["Treatment"]]))) > 2) {
+  if (!is.numeric(df[[treatment]]) & length(unique((df[[treatment]]))) > 2) {
     
     multilevel_message <- paste(
       "Too many treatment levels. Consider specifing a treat.value and a control.value\n"
@@ -227,32 +257,32 @@ check.args <- function(df, ...) {
         stop(multilevel_message, call. = FALSE)
       } else {
         
-        if (!all(kwargs[c("control.value", "treat.value")] %in% unique(df[["Treatment"]]))) {
+        if (!all(kwargs[c("control.value", "treat.value")] %in% unique(df[[treatment]]))) {
           stop(multilevel_message, call. = FALSE)
         }
         
-        keep <- df[["Treatment"]] %in% kwargs[c("control.value", "treat.value")]
-        message(paste(nrow(df) - sum(keep), "samples removed because different",
-                      "from control and treatment."))
-        
+        keep <- df[[treatment]] %in% kwargs[c("control.value", "treat.value")]
         df <- df[keep, ]
+        diff <- ncol(se) - nrow(df)
         
+        se <- se[ , rownames(df)]
+        message(paste(diff, "samples removed because different",
+                      "from control and treatment."))
+
       }
     }
   }
-  return(df)
+  return(se)
 }
 
 
 
 # utility function to run mediation
-run.mediation <- function(df, family,
-                          covariates = NULL,
-                          relation_m, relation_dv,
-                          ...) {
-  
-  df <- check.args(df, ...)
-  
+run.mediate <- function(df, family,
+                        covariates = NULL,
+                        relation_m, relation_dv,
+                        ...) {
+
   fit_m <- do.call(lm, list(formula = formula(relation_m),
                             data = df))
   
@@ -299,9 +329,9 @@ wrap.mediate <- function(se, outcome, treatment, mediator,
     }
   }
   
-  med_out <- run.mediation(df, family,
-                           relation_m, relation_dv,
-                           covariates = covariates, ...)
+  med_out <- run.mediate(df, family,
+                         relation_m, relation_dv,
+                         covariates = covariates, ...)
   
   return(med_out)
 }
