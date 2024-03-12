@@ -209,8 +209,9 @@ check.args <- function(df, ...) {
   
   if (any(is.na(df))) {
     
+    total <- nrow(df)
     df <- na.omit(df)
-    message(paste(ncol(se) - nrow(df), "samples removed because of missing data."))
+    message(paste(total - nrow(df), "samples removed because of missing data."))
     
   }
   
