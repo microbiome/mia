@@ -215,7 +215,7 @@ check.args <- function(df, ...) {
     
   }
   
-  if (!is.numeric(df[["Treatment"]]) & n_distinct(df[["Treatment"]]) > 2) {
+  if (!is.numeric(df[["Treatment"]]) & length(unique((df[["Treatment"]]))) > 2) {
     
     multilevel_message <- paste(
       "Too many treatment levels. Consider specifing a treat.value and a control.value\n"
