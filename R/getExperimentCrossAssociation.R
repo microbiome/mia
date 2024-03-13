@@ -419,17 +419,16 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Check experiment1 and experiment2
     .test_experiment_of_mae(x, experiment1)
     .test_experiment_of_mae(x, experiment2)
+    # Rename TreeSEs based on sample map, i.e., based on on what they are
+    # linking to. In MAE, colnames can different between experiments even though
+    # those samples are linking to same patient.
+    obj_list <- .rename_based_on_samplemap(mae, experiment1, experiment2)
     # Fetch tse objects
-    tse1 <- x[[experiment1]]
-    tse2 <- x[[experiment2]]
+    tse1 <- obj_list[[1]]
+    tse2 <- obj_list[[2]]
     # Check and fetch tse objects
     tse1 <- .check_and_get_altExp(tse1, altexp1)
     tse2 <- .check_and_get_altExp(tse2, altexp2)
-    # Check that experiments have same amount of samples
-    if( ncol(tse1) != ncol(tse2) ){
-        stop("Samples must match between experiments.",
-             call. = FALSE)
-    }
     # If variables from coldata are specified check them. Otherwise,
     # check assay.type1
     if( !is.null(colData_variable1) ){
@@ -612,6 +611,36 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 }
 
 ################################ HELP FUNCTIONS ################################
+# Rename experiments' colnames based on sample map linkages.
+.rename_based_on_samplemap <- function(mae, exp1, exp2){
+    # Get sample map
+    sample_map <- sampleMap(mae)
+    # Get sample map for first experiment1
+    map_sub <- sample_map[ sample_map[["assay"]] == names(mae)[[exp1]], ]
+    # Rename TreeSE of experiment1 based on sample map info
+    tse1 <- mae[[exp1]]
+    ind <- match(colnames(tse1), map_sub[["colname"]])
+    colnames(tse1) <- map_sub[ind, "primary"]
+    
+    # Do the same for experiment2
+    map_sub <- sample_map[ sample_map[["assay"]] == names(mae)[[exp2]], ]
+    # Rename TreeSE of experiment1 based on sample map info
+    tse2 <- mae[[exp2]]
+    ind <- match(colnames(tse2), map_sub[["colname"]])
+    colnames(tse2) <- map_sub[ind, "primary"]
+    
+    # Check if samples match
+    all1 <- all(colnames(tse1) %in% colnames(tse2))
+    all2 <- all(colnames(tse2) %in% colnames(tse1))
+    if( !(all1 && all2)  ){
+      stop("colnames must match between experiments.", call. = FALSE)
+    }
+    # Order samples
+    tse2 <- tse2[, colnames(tse1)]
+    res <- list(tse1, tse2)
+    return(res)
+}
+
 # This function is for testing if experiment can be found from MAE
 #' @importFrom MultiAssayExperiment experiments
 .test_experiment_of_mae <- function(x, experiment){
