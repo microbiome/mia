@@ -52,8 +52,8 @@
 #'   \item{Treatment}{the treatment variable}
 #'   \item{Mediator}{the mediator variable}
 #'   \item{Outcome}{the outcome variable}
-#'   \item{ACME_estimate}{the ACME estimate}
-#'   \item{ADE_estimate}{the ADE estimate}
+#'   \item{ACME_estimate}{the Average Causal Mediation Effect (ACME) estimate}
+#'   \item{ADE_estimate}{the Average Direct Effect (ADE) estimate}
 #'   \item{ACME_pval}{the p-value for the ACME estimate}
 #'   \item{ADE_pval}{the p-value for the ADE estimate}
 #'   \item{ACME_adjpval}{the adjusted p-value for the ACME estimate}
@@ -151,6 +151,7 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
           stop("message must be TRUE or FALSE.", call. = FALSE)
         }
         
+        # Check that arguments can be passed to mediate and remove unused samples
         se <- check.mediate.args(se, outcome, treatment, mediator, covariates, ...)
         
         # Check which mediator was provided (colData, assay or reducedDim)
@@ -215,60 +216,67 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
             print(paste0("Mediator ", i, " out of ", length(mediators), ": ", mediator)) 
           }
           
+          # Run mediation analysis for current mediator
           med_out <- wrap.mediate(se, outcome, treatment, mediator,
                                   family = family, mat = mat,
                                   covariates = covariates, ...)
-              
+          # Update list of results
           results <- update.results(results, med_out, treatment, mediator, outcome)
-              
         }
-            
+        
+        # Combine results into dataframe
         med_df <- make.output(results, p.adj.method, add.metadata)
         return(med_df)
     }
 )
 
 
-
+# Check that arguments can be passed to mediate and remove unused samples
 check.mediate.args <- function(se, outcome, treatment, mediator, covariates, ...) {
   
+  # Convert colData to dataframe
   df <- as.data.frame(colData(se))
+  # Store kwargs into variable
   kwargs <- list(...)
   
+  # Remove missing data from df
   df <- na.omit(df, cols = c(outcome, treatment, mediator, covariates))
   diff <- ncol(se) - nrow(df)
   
   if (diff != 0) {
-
+    # Remove missing data from se
     se <- se[ , rownames(df)]
     message(paste(diff, "samples removed because of missing data."))
-
   }
   
+  # If the treatment variable has three or more levels
   if (!is.numeric(df[[treatment]]) & length(unique((df[[treatment]]))) > 2) {
     
     multilevel_message <- paste(
       "Too many treatment levels. Consider specifing a treat.value and a control.value\n"
     )
-    
+    # and boot is TRUE
     if (!is.null(kwargs[["boot"]])) {
-      
+      # and control and treat value are not specified
       if (any(sapply(kwargs[c("control.value", "treat.value")], is.null))) {
         stop(multilevel_message, call. = FALSE)
+      # but if they are specified
       } else {
-        
+        # and they also appear in the treatment variable
         if (!all(kwargs[c("control.value", "treat.value")] %in% unique(df[[treatment]]))) {
           stop(multilevel_message, call. = FALSE)
         }
         
+        # Find indices of samples that belong to either control or treatment
         keep <- df[[treatment]] %in% kwargs[c("control.value", "treat.value")]
+        
+        # Remove samples different from control and treatment from df
         df <- df[keep, ]
         diff <- ncol(se) - nrow(df)
         
+        # Remove samples different from control and treatment from se
         se <- se[ , rownames(df)]
-        message(paste(diff, "samples removed because different",
-                      "from control and treatment."))
-
+        message(paste(diff, "samples removed because different from control and treatment."))
       }
     }
   }
@@ -276,20 +284,48 @@ check.mediate.args <- function(se, outcome, treatment, mediator, covariates, ...
 }
 
 
+# Run mediation analysis
+run.mediate <- function(se, outcome, treatment, mediator,
+                        family = gaussian(), mat = NULL,
+                        covariates = NULL, ...) {
+  
+  # Create initial dataframe with outcome and treatment variables
+  df <- data.frame(Outcome = eval(parse(text = paste0("se$", outcome))),
+                   Treatment = eval(parse(text = paste0("se$", treatment))))
+  
+  if (is.null(mat)) {
+    # If matrix not given, fetch mediator from colData
+    df[["Mediator"]] <- eval(parse(text = paste0("se$", mediator)))
+  } else {
+    # If matrix given, use it as mediators
+    df[["Mediator"]] <- mat[mediator, ]
+  }
+  
+  # Define basic formula mediation model
+  relation_m <- "Mediator ~ Treatment"
+  # Define basic formula outcome model
+  relation_dv <- "Outcome ~ Treatment + Mediator"
+  
+  if (!is.null(covariates)) {
+    for (covariate in covariates) {
+      # Fetch covariate from colData and store it in dataframe
+      df[[covariate]] <- eval(parse(text = paste0("se$", covariate)))
+      
+      # Add covariate to formula of mediation model
+      relation_m <- paste(relation_m, "+", covariate)
+      # Add covariate to formula of outcome model
+      relation_dv <- paste(relation_dv, "+", covariate)
+    }
+  }
 
-# utility function to run mediation
-run.mediate <- function(df, family,
-                        covariates = NULL,
-                        relation_m, relation_dv,
-                        ...) {
-
+  # Fit mediation model
   fit_m <- do.call(lm, list(formula = formula(relation_m),
                             data = df))
-  
+  # Fit outcome model
   fit_dv <- do.call(glm, list(formula = formula(relation_dv),
                               family = family,
                               data = df))
-  
+  # Run mediation analysis
   med_out <- mediate(fit_m, fit_dv,
                      treat = "Treatment",
                      mediator = "Mediator",
@@ -297,88 +333,57 @@ run.mediate <- function(df, family,
                      ...)
   
   return(med_out)
-  
 }
 
 
-
-wrap.mediate <- function(se, outcome, treatment, mediator,
-                         family = gaussian(), mat = NULL,
-                         covariates = NULL, ...) {
-  
-  df <- data.frame(Outcome = eval(parse(text = paste0("se$", outcome))),
-                   Treatment = eval(parse(text = paste0("se$", treatment))))
-  
-  if (is.null(mat)) {
-    df[["Mediator"]] <- eval(parse(text = paste0("se$", mediator)))
-  } else {
-    df[["Mediator"]] <- mat[mediator, ]
-  }
-  
-  relation_m <- "Mediator ~ Treatment"
-  relation_dv <- "Outcome ~ Treatment + Mediator"
-  
-  if (!is.null(covariates)) {
-    for (covariate in covariates) {
-      
-      df[[covariate]] <- eval(parse(text = paste0("se$", covariate)))
-      
-      relation_m <- paste(relation_m, "+", covariate)
-      relation_dv <- paste(relation_dv, "+", covariate)
-      
-    }
-  }
-  
-  med_out <- run.mediate(df, family,
-                         relation_m, relation_dv,
-                         covariates = covariates, ...)
-  
-  return(med_out)
-}
-
-
-
+# Update list of results
 update.results <- function(results, med_out,
                            treatment, mediator, outcome) {
   
-  # variables
+  # Update model variables
   results[["Treatment"]] <- c(results[["Treatment"]], treatment)
   results[["Mediator"]] <- c(results[["Mediator"]], mediator)
   results[["Outcome"]] <- c(results[["Outcome"]], outcome)
   
-  # ACME (average causal mediation effect)
+  # Update stats of ACME (average causal mediation effect)
   results[["ACME_estimate"]] <- c(results[["ACME_estimate"]], med_out$d.avg)
   results[["ACME_pval"]] <- c(results[["ACME_pval"]], med_out$d.avg.p)
   results[["ACME_ci"]] <- c(results[["ACME_ci"]], med_out$d.avg.ci)
   
-  # ADE (average direct effect)
+  # Update stats of ADE (average direct effect)
   results[["ADE_estimate"]] <- c(results[["ADE_estimate"]], med_out$z.avg)
   results[["ADE_pval"]] <- c(results[["ADE_pval"]], med_out$z.avg.p)
   results[["ADE_ci"]] <- c(results[["ADE_ci"]], med_out$z.avg.ci)
   
-  # Raw model as metadata
+  # Add current model to metadata
   results[["Model"]][[length(results[["Model"]]) + 1]] <- med_out
   
   return(results)
 }
 
 
+# Combine results into output dataframe
 make.output <- function(results, p.adj.method, add.metadata) {
   
+  # Create dataframe with model variables, effect sizes and p-values
   med_df <- do.call(data.frame, results[1:(length(results) - 3)])
   
+  # Compute adjusted p-values and add them to dataframe
   med_df[["ACME_adjpval"]] <- p.adjust(med_df[["ACME_pval"]], method = p.adj.method)
   med_df[["ADE_adjpval"]] <- p.adjust(med_df[["ADE_pval"]], method = p.adj.method)
   
+  # Split CI lists into lower and upper limits and add them to dataframe
   med_df[["ACME_CI_lower"]] <- results[["ACME_ci"]][names(results[["ACME_ci"]]) == "2.5%"]
   med_df[["ACME_CI_upper"]] <- results[["ACME_ci"]][names(results[["ACME_ci"]]) == "97.5%"]
   med_df[["ADE_CI_lower"]] <- results[["ADE_ci"]][names(results[["ADE_ci"]]) == "2.5%"]
   med_df[["ADE_CI_upper"]] <- results[["ADE_ci"]][names(results[["ADE_ci"]]) == "97.5%"]
   
   if (add.metadata) {
+    # If desired, the models for every mediator are saved into the metadata attribute
     attr(med_df, "metadata") <- results[["Model"]]
   }
   
+  # Order output dataframe by ACME p-values
   med_df <- med_df[order(med_df[["ACME_pval"]]), ]
   
   return(med_df)

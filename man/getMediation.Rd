@@ -63,8 +63,8 @@ the ACMEs and ADEs of every mediator included in the analysis. Columns include:
 \item{Treatment}{the treatment variable}
 \item{Mediator}{the mediator variable}
 \item{Outcome}{the outcome variable}
-\item{ACME_estimate}{the ACME estimate}
-\item{ADE_estimate}{the ADE estimate}
+\item{ACME_estimate}{the Average Causal Mediation Effect (ACME) estimate}
+\item{ADE_estimate}{the Average Direct Effect (ADE) estimate}
 \item{ACME_pval}{the p-value for the ACME estimate}
 \item{ADE_pval}{the p-value for the ADE estimate}
 \item{ACME_adjpval}{the adjusted p-value for the ACME estimate}
