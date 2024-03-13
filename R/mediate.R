@@ -217,7 +217,7 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
           }
           
           # Run mediation analysis for current mediator
-          med_out <- wrap.mediate(se, outcome, treatment, mediator,
+          med_out <- run.mediate(se, outcome, treatment, mediator,
                                   family = family, mat = mat,
                                   covariates = covariates, ...)
           # Update list of results
@@ -234,13 +234,13 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
 # Check that arguments can be passed to mediate and remove unused samples
 check.mediate.args <- function(se, outcome, treatment, mediator, covariates, ...) {
   
-  # Convert colData to dataframe
-  df <- as.data.frame(colData(se))
+  # Create dataframe from selected columns of colData
+  df <- as.data.frame(colData(se)[ , names(colData(se)) %in% c(outcome, treatment, mediator, covariates)])
   # Store kwargs into variable
   kwargs <- list(...)
   
   # Remove missing data from df
-  df <- na.omit(df, cols = c(outcome, treatment, mediator, covariates))
+  df <- na.omit(df)
   diff <- ncol(se) - nrow(df)
   
   if (diff != 0) {
@@ -251,20 +251,16 @@ check.mediate.args <- function(se, outcome, treatment, mediator, covariates, ...
   
   # If the treatment variable has three or more levels
   if (!is.numeric(df[[treatment]]) & length(unique((df[[treatment]]))) > 2) {
-    
-    multilevel_message <- paste(
-      "Too many treatment levels. Consider specifing a treat.value and a control.value\n"
-    )
     # and boot is TRUE
     if (!is.null(kwargs[["boot"]])) {
       # and control and treat value are not specified
       if (any(sapply(kwargs[c("control.value", "treat.value")], is.null))) {
-        stop(multilevel_message, call. = FALSE)
+        stop("Too many treatment levels. Consider specifing a treat.value and a control.value", call. = FALSE)
       # but if they are specified
       } else {
         # and they also appear in the treatment variable
         if (!all(kwargs[c("control.value", "treat.value")] %in% unique(df[[treatment]]))) {
-          stop(multilevel_message, call. = FALSE)
+          stop("treat.value and/or control.value not found in the levels of the treatment variable.", call. = FALSE)
         }
         
         # Find indices of samples that belong to either control or treatment
@@ -283,19 +279,19 @@ check.mediate.args <- function(se, outcome, treatment, mediator, covariates, ...
   return(se)
 }
 
-
 # Run mediation analysis
-run.mediate <- function(se, outcome, treatment, mediator,
-                        family = gaussian(), mat = NULL,
-                        covariates = NULL, ...) {
+#' @importFrom mediation mediate
+run.mediate <- function(se, outcome, treatment,
+                        mediator = NULL, mat = NULL,
+                        family = gaussian(), covariates = NULL, ...) {
   
   # Create initial dataframe with outcome and treatment variables
-  df <- data.frame(Outcome = eval(parse(text = paste0("se$", outcome))),
-                   Treatment = eval(parse(text = paste0("se$", treatment))))
+  df <- data.frame(Outcome = colData(se)[[outcome]],
+                   Treatment = colData(se)[[treatment]])
   
   if (is.null(mat)) {
     # If matrix not given, fetch mediator from colData
-    df[["Mediator"]] <- eval(parse(text = paste0("se$", mediator)))
+    df[["Mediator"]] <- colData(se)[[mediator]]
   } else {
     # If matrix given, use it as mediators
     df[["Mediator"]] <- mat[mediator, ]
@@ -309,7 +305,7 @@ run.mediate <- function(se, outcome, treatment, mediator,
   if (!is.null(covariates)) {
     for (covariate in covariates) {
       # Fetch covariate from colData and store it in dataframe
-      df[[covariate]] <- eval(parse(text = paste0("se$", covariate)))
+      df[[covariate]] <- colData(se)[[covariate]]
       
       # Add covariate to formula of mediation model
       relation_m <- paste(relation_m, "+", covariate)
