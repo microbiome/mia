@@ -633,7 +633,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     all1 <- all(colnames(tse1) %in% colnames(tse2))
     all2 <- all(colnames(tse2) %in% colnames(tse1))
     no_dupl1 <- anyDuplicated(colnames(tse1)) == 0
-    no_dupl1 <- anyDuplicated(colnames(tse2)) == 0
+    no_dupl2 <- anyDuplicated(colnames(tse2)) == 0
     if( !(all1 && all2 && no_dupl1 && no_dupl2)  ){
       stop(
         "Samples must match between experiments. Please check colnames.",
