@@ -614,17 +614,24 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Rename experiments' colnames based on sample map linkages.
 #' @importFrom MultiAssayExperiment sampleMap
 .rename_based_on_samplemap <- function(mae, exp1, exp2){
+    # Get name of experiments, if indices are provided
+    if( is.numeric(exp1) ){
+        exp1 <- names(mae)[[exp1]]
+    }
+    if( is.numeric(exp2) ){
+        exp2 <- names(mae)[[exp2]]
+    }
     # Get sample map
     sample_map <- sampleMap(mae)
     # Get sample map for first experiment1
-    map_sub <- sample_map[ sample_map[["assay"]] == names(mae)[[exp1]], ]
+    map_sub <- sample_map[ sample_map[["assay"]] == exp1, ]
     # Rename TreeSE of experiment1 based on sample map info
     tse1 <- mae[[exp1]]
     ind <- match(colnames(tse1), map_sub[["colname"]])
     colnames(tse1) <- map_sub[ind, "primary"]
     
     # Do the same for experiment2
-    map_sub <- sample_map[ sample_map[["assay"]] == names(mae)[[exp2]], ]
+    map_sub <- sample_map[ sample_map[["assay"]] == exp2, ]
     # Rename TreeSE of experiment1 based on sample map info
     tse2 <- mae[[exp2]]
     ind <- match(colnames(tse2), map_sub[["colname"]])
