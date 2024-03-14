@@ -18,7 +18,7 @@ in a SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.9</span>
       </span>
     </div>
 
@@ -224,6 +224,7 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu">runCCA</span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"CCA"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="runCCA-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -243,6 +244,7 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span><span class="va">GlobalPatterns</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"CCA"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="runCCA-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -250,6 +252,7 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
 <span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">GlobalPatterns</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,  method <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) </span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
@@ -262,6 +265,7 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
 <span class="r-in"><span><span class="co"># Calculate RDA</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span><span class="va">tse</span>, formula <span class="op">=</span> <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>,</span></span>
 <span class="r-in"><span>              assay.type <span class="op">=</span> <span class="st">"z"</span>, name <span class="op">=</span> <span class="st">"rda_scaled"</span>, na.action <span class="op">=</span> <span class="va">na.omit</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
 <span class="r-in"><span><span class="co"># Plot</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"rda_scaled"</span>, colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="runCCA-3.png" alt="" width="700" height="433"></span>
@@ -269,6 +273,7 @@ and <code><a href="https://rdrr.io/pkg/vegan/man/capscale.html" class="external-
 <span class="r-in"><span><span class="co"># of homogeneity of groups is analysed. Moreover, full signficance test results</span></span></span>
 <span class="r-in"><span><span class="co"># can be returned.</span></span></span>
 <span class="r-in"><span> <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">runRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="va">data</span> <span class="op">~</span> <span class="va">SampleType</span>, homogeneity.test <span class="op">=</span> <span class="st">"anova"</span>, full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.factor()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

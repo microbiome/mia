@@ -18,7 +18,7 @@ files provided as input."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.9</span>
       </span>
     </div>
 
@@ -129,6 +129,8 @@ the sample metadata to be imported. The File has to be in <code>desing
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Creates se object from files</span></span></span>
 <span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">loadFromMothur</span><span class="op">(</span><span class="va">counts</span>, <span class="va">taxa</span>, <span class="va">meta</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.integer()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Direct call of 'as.data.frame.integer()' is deprecated.  Use 'as.data.frame.vector()' or 'as.data.frame()' instead</span>
 <span class="r-in"><span><span class="co"># Convert SE to TreeSE</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span></span></span>
