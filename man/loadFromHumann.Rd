@@ -47,7 +47,7 @@ from the input file. This information is stored to \code{rowData}. Abundances
 are stored to \code{assays}.
 
 Usually the workflow includes also taxonomy data from Metaphlan. See
-\link[=loadFromMetaphlan]{loadFromMetaphlan} to load the data to \code{TreeSE}.
+\link[=importMetaphlan]{importMetaphlan} to load the data to \code{TreeSE}.
 }
 \examples{
 # File path
@@ -65,7 +65,7 @@ Integrating taxonomic, functional, and strain-level profiling of diverse
 microbial communities with bioBakery 3. \emph{eLife}. 10:e65088.
 }
 \seealso{
-\code{\link[=loadFromMetaphlan]{loadFromMetaphlan}}
+\code{\link[=importMetaphlan]{importMetaphlan}}
 \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}

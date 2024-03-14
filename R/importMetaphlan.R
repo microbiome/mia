@@ -52,7 +52,7 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name loadFromMetaphlan
+#' @name importMetaphlan
 #' @seealso
 #' \code{\link[=loadFromHumann]{loadFromHumann}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
@@ -78,7 +78,7 @@
 #' # File path
 #' file_path <- system.file("extdata", "merged_abundance_table.txt", package = "mia")
 #' # Import data
-#' tse <- loadFromMetaphlan(file_path)
+#' tse <- importMetaphlan(file_path)
 #' # Data at the lowest rank
 #' tse
 #' # Data at higher rank is stored in altExp
@@ -88,7 +88,7 @@
 #' 
 NULL
 
-loadFromMetaphlan <- function(
+importMetaphlan <- function(
         file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL, ...){
     ################################ Input check ################################
     if(!.is_non_empty_string(file)){

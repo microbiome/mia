@@ -35,7 +35,7 @@
 #' are stored to \code{assays}.
 #' 
 #' Usually the workflow includes also taxonomy data from Metaphlan. See
-#' \link[=loadFromMetaphlan]{loadFromMetaphlan} to load the data to \code{TreeSE}.
+#' \link[=importMetaphlan]{importMetaphlan} to load the data to \code{TreeSE}.
 #'
 #' @return  A
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -43,7 +43,7 @@
 #'
 #' @name loadFromHumann
 #' @seealso
-#' \code{\link[=loadFromMetaphlan]{loadFromMetaphlan}}
+#' \code{\link[=importMetaphlan]{importMetaphlan}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 #' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
