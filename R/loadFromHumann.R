@@ -73,16 +73,16 @@ loadFromHumann <- function(file, colData = NULL, ...){
     ################################ Input check ###############################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
     if(!is.null(colData) &&
-       !(.is_non_empty_string(colData) || is.data.frame(colData) ||
-         is.matrix(colData) || is(colData, "DataFrame")) ){
+        !(.is_non_empty_string(colData) || is.data.frame(colData) ||
+            is.matrix(colData) || is(colData, "DataFrame")) ){
         stop("'colData' must be a single character value, DataFrame or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     ############################## Input check end #############################
     # Humann files has these columns that goes to rowData
@@ -115,8 +115,8 @@ loadFromHumann <- function(file, colData = NULL, ...){
         },
         error = function(condition){
             stop("Error while reading ", file,
-                 "\nPlease check that the file is in merged HUMAnN file ",
-                 "format.", call. = FALSE)
+                "\nPlease check that the file is in merged HUMAnN file ",
+                "format.", call. = FALSE)
         }
     )
     # In the first column name, there is "# " prefix. Remove it
@@ -132,8 +132,8 @@ loadFromHumann <- function(file, colData = NULL, ...){
     # Check that file is in right format
     if( .check_metaphlan(table, rowdata_col) ){
         stop("Error while reading ", file,
-             "\nPlease check that the file is in merged HUMAnN file format.",
-             call. = FALSE)
+            "\nPlease check that the file is in merged HUMAnN file format.",
+            call. = FALSE)
     }
     return(table)
 }
