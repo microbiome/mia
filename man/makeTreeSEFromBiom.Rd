@@ -2,11 +2,11 @@
 % Please edit documentation in R/makeTreeSummarizedExperimentFromBiom.R
 \name{makeTreeSEFromBiom}
 \alias{makeTreeSEFromBiom}
-\alias{loadFromBiom}
+\alias{importBIOM}
 \alias{makeTreeSummarizedExperimentFromBiom}
 \title{Loading a biom file}
 \usage{
-loadFromBiom(file, ...)
+importBIOM(file, ...)
 
 makeTreeSEFromBiom(
   obj,
@@ -59,14 +59,14 @@ biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
                          package = "biomformat")
 
 # Make TreeSE from biom file
-tse <- loadFromBiom(biom_file)
+tse <- importBIOM(biom_file)
 
 # Make TreeSE from biom object
 biom_object <- biomformat::read_biom(biom_file)
 tse <- makeTreeSEFromBiom(biom_object)
 
 # Get taxonomyRanks from prefixes and remove prefixes
-tse <- loadFromBiom(biom_file,
+tse <- importBIOM(biom_file,
                     rankFromPrefix = TRUE,
                     removeTaxaPrefixes = TRUE)
 
@@ -75,7 +75,7 @@ biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
                          package = "mia")
 
 # Clean artifacts from taxonomic data
-tse <- loadFromBiom(biom_file,
+tse <- importBIOM(biom_file,
                     remove.artifacts = TRUE)
 }
 \seealso{

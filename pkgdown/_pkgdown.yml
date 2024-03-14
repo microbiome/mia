@@ -15,7 +15,7 @@ reference:
 - contents:
   - makeTreeSummarizedExperimentFromPhyloseq
   - makeTreeSummarizedExperimentFromDADA2
-  - loadFromBiom
+  - importBIOM
   - loadFromQIIME2
   - loadFromMothur
   - loadFromMetaphlan
