@@ -1,7 +1,7 @@
 #' Import QIIME2 results to \code{TreeSummarizedExperiment}
 #'
 #' Results exported from QIMME2 can be imported as a
-#' \code{TreeSummarizedExperiment} using \code{loadFromQIIME2}. Except for the
+#' \code{TreeSummarizedExperiment} using \code{importQIIME2}. Except for the
 #' \code{featureTableFile}, the other data types, \code{taxonomyTableFile},
 #' \code{refSeqFile} and \code{phyTreeFile}, are optional, but are highly
 #' encouraged to be provided.
@@ -50,7 +50,7 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name loadFromQIIME2
+#' @name importQIIME2
 #' @seealso
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
@@ -73,7 +73,7 @@
 #' sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 #' phyTreeFile <- system.file("extdata", "tree.qza", package = "mia")
 #' refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
-#' tse <- loadFromQIIME2(
+#' tse <- importQIIME2(
 #'   featureTableFile = featureTableFile,
 #'   taxonomyTableFile = taxonomyTableFile,
 #'   sampleMetaFile = sampleMetaFile,
@@ -84,7 +84,7 @@
 #' tse
 
 #' @importFrom S4Vectors make_zero_col_DFrame
-loadFromQIIME2 <- function(featureTableFile,
+importQIIME2 <- function(featureTableFile,
                            taxonomyTableFile = NULL,
                            sampleMetaFile = NULL,
                            featureNamesAsRefSeq = TRUE,
@@ -175,7 +175,7 @@ loadFromQIIME2 <- function(featureTableFile,
 #'   [`ape::phylo`] object for phylogenetic tree,
 #'   [`Biostrings::DNAStringSet-class`] for representative sequences of taxa.
 #'   
-#' @name loadFromQIIME2
+#' @name importQIIME2
 #' @export
 #'
 #' @examples 

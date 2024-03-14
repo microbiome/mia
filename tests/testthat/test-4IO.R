@@ -226,7 +226,7 @@ refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
 test_that("make TSE worked properly while no sample or taxa data", {
     skip_if_not(require("biomformat", quietly = TRUE))
     ## no sample data or taxa data
-    expect_silent(tse <- loadFromQIIME2(featureTableFile))
+    expect_silent(tse <- importQIIME2(featureTableFile))
     expect_s4_class(tse, "TreeSummarizedExperiment")
     expect_equal(dim(tse), c(770,34))
 })
@@ -234,11 +234,11 @@ test_that("make TSE worked properly while no sample or taxa data", {
 test_that("reference sequences of TSE", {
     skip_if_not(require("biomformat", quietly = TRUE))
     # 1. fasta file of refseq
-    tse <- loadFromQIIME2(
+    tse <- importQIIME2(
         featureTableFile,
         refSeqFile = refSeqFile
     )
-    tse2 <-  loadFromQIIME2(
+    tse2 <-  importQIIME2(
         featureTableFile,
         refSeqFile = refSeqFile,
         featureNamesAsRefseq = FALSE
@@ -248,7 +248,7 @@ test_that("reference sequences of TSE", {
 
     # 2. row.names of feature table as refseq
     # 2.1 element of row.names of feature table is not DNA sequence
-    tse <- loadFromQIIME2(
+    tse <- importQIIME2(
         featureTableFile,
         featureNamesAsRefseq = TRUE
     )
@@ -289,7 +289,7 @@ test_that("reference sequences of TSE", {
 
     # featureNamesAsRefseq is TRUE, refSeqFile is NULL, set row.names of
     # feature table as reference sequences
-    tse <- loadFromQIIME2(
+    tse <- importQIIME2(
         featureTableFile2,
         featureNamesAsRefseq = TRUE
     )
@@ -300,7 +300,7 @@ test_that("reference sequences of TSE", {
 
     # refSeqFile is not NULL, featureNamesAsRefseq is TRUE,
     # set the sequences from refSeqFile as reference sequences
-    tse <- loadFromQIIME2(
+    tse <- importQIIME2(
         featureTableFile2,
         featureNamesAsRefseq = TRUE,
         refSeqFile = refSeqFile
@@ -308,7 +308,7 @@ test_that("reference sequences of TSE", {
     expect_identical(tse@referenceSeq, readQZA(refSeqFile))
 
     # 3. refSeqFile = NULL, featureNamesAsRefseq = FALSE
-    tse <- loadFromQIIME2(
+    tse <- importQIIME2(
         featureTableFile,
         refSeqFile = NULL,
         featureNamesAsRefseq = FALSE
@@ -367,7 +367,7 @@ test_that('read qza file', {
 
 test_that("Confidence of taxa is numberic", {
     skip_if_not(require("biomformat", quietly = TRUE))
-    tse <- loadFromQIIME2(
+    tse <- importQIIME2(
         featureTableFile,
         taxonomyTableFile = taxonomyTableFile
     )
