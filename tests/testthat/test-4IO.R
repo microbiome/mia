@@ -492,7 +492,7 @@ test_that("makePhyloseqFromTreeSE", {
 
 test_that("Import HUMAnN file", {
     file_path <- system.file("extdata", "humann_output.tsv", package = "mia")
-    tse <- loadFromHumann(file_path)
+    tse <- importHumann(file_path)
     #
     expect_true( length(taxonomyRanks(tse)) == 7 )
     expect_true( ncol(rowData(tse)) == 9 )
@@ -500,17 +500,17 @@ test_that("Import HUMAnN file", {
     expect_true( nrow(tse) == 12 )
     expect_true( all(!is.na(assay(tse))) )
     #
-    expect_error(loadFromHumann("test"))
-    expect_error(loadFromHumann(file_path, remove.suffix="test"))
-    expect_error(loadFromHumann(file_path, remove.suffix=1))
-    expect_error(loadFromHumann(file_path, remove.suffix=c(FALSE, TRUE)))
+    expect_error(importHumann("test"))
+    expect_error(importHumann(file_path, remove.suffix="test"))
+    expect_error(importHumann(file_path, remove.suffix=1))
+    expect_error(importHumann(file_path, remove.suffix=c(FALSE, TRUE)))
     #
-    tse2 <- loadFromHumann(file_path, remove.suffix=TRUE)
+    tse2 <- importHumann(file_path, remove.suffix=TRUE)
     # There is no suffix, should be equal
     expect_equal(tse, tse2)
     #
     cd <- colData(tse)
-    tse2 <- loadFromHumann(file_path, colData = cd)
+    tse2 <- importHumann(file_path, colData = cd)
     # colData should not change the result
     expect_equal(tse, tse2)
 })

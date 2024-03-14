@@ -19,7 +19,7 @@ reference:
   - importQIIME2
   - importMothur
   - importMetaphlan
-  - loadFromHumann
+  - importHumann
   - makePhyloseqFromTreeSummarizedExperiment
 - title: Taxonomic data
   contents:

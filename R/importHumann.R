@@ -41,7 +41,7 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name loadFromHumann
+#' @name importHumann
 #' @seealso
 #' \code{\link[=importMetaphlan]{importMetaphlan}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
@@ -64,12 +64,12 @@
 #' # File path
 #' file_path <- system.file("extdata", "humann_output.tsv", package = "mia")
 #' # Import data
-#' tse <- loadFromHumann(file_path)
+#' tse <- importHumann(file_path)
 #' tse
 #' 
 NULL
 
-loadFromHumann <- function(file, colData = NULL, ...){
+importHumann <- function(file, colData = NULL, ...){
     ################################ Input check ###############################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",

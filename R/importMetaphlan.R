@@ -54,7 +54,7 @@
 #'
 #' @name importMetaphlan
 #' @seealso
-#' \code{\link[=loadFromHumann]{loadFromHumann}}
+#' \code{\link[=importHumann]{importHumann}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 #' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}

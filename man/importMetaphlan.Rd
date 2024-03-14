@@ -84,7 +84,7 @@ and strain-level profiling of diverse microbial communities with bioBakery 3.
 \emph{eLife}. 10:e65088. doi: 10.7554/eLife.65088
 }
 \seealso{
-\code{\link[=loadFromHumann]{loadFromHumann}}
+\code{\link[=importHumann]{importHumann}}
 \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
