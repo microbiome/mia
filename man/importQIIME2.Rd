@@ -2,7 +2,7 @@
 % Please edit documentation in R/importQIIME2.R
 \name{importQIIME2}
 \alias{importQIIME2}
-\alias{readQZA}
+\alias{importQZA}
 \title{Import QIIME2 results to \code{TreeSummarizedExperiment}}
 \usage{
 importQIIME2(
@@ -15,7 +15,7 @@ importQIIME2(
   ...
 )
 
-readQZA(file, temp = tempdir(), ...)
+importQZA(file, temp = tempdir(), ...)
 }
 \arguments{
 \item{featureTableFile}{a single \code{character} value defining the file
@@ -105,8 +105,8 @@ featureTableFile <- system.file("extdata", "table.qza", package = "mia")
 taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
 sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 
-assay <- readQZA(featureTableFile)
-rowdata <- readQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
+assay <- importQZA(featureTableFile)
+rowdata <- importQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
 coldata <- read.table(sampleMetaFile, header = TRUE, sep = "\t", comment.char = "")
 
 # Assign rownames 

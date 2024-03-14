@@ -85,43 +85,43 @@
 
 #' @importFrom S4Vectors make_zero_col_DFrame
 importQIIME2 <- function(featureTableFile,
-                           taxonomyTableFile = NULL,
-                           sampleMetaFile = NULL,
-                           featureNamesAsRefSeq = TRUE,
-                           refSeqFile = NULL,
-                           phyTreeFile = NULL,
+                            taxonomyTableFile = NULL,
+                            sampleMetaFile = NULL,
+                            featureNamesAsRefSeq = TRUE,
+                            refSeqFile = NULL,
+                            phyTreeFile = NULL,
                            ...) {
     .require_package("yaml")
     # input check
     if(!.is_non_empty_string(featureTableFile)){
         stop("'featureTableFile' must be a single character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(!is.null(taxonomyTableFile) && !.is_non_empty_string(taxonomyTableFile)){
         stop("'taxonomyTableFile' must be a single character value or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(!is.null(sampleMetaFile) && !.is_non_empty_string(sampleMetaFile)){
         stop("'sampleMetaFile' must be a single character value or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(!.is_a_bool(featureNamesAsRefSeq)){
         stop("'featureNamesAsRefSeq' must be TRUE or FALSE.", call. = FALSE)
     }
     if(!is.null(refSeqFile) && !.is_non_empty_string(refSeqFile)){
         stop("'refSeqFile' must be a single character value or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(!is.null(phyTreeFile) && !.is_non_empty_string(phyTreeFile)){
         stop("'phyTreeFile' must be a single character value or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     #
 
-    feature_tab <- readQZA(featureTableFile, ...)
+    feature_tab <- importQZA(featureTableFile, ...)
 
     if (!is.null(taxonomyTableFile)) {
-        taxa_tab <- readQZA(taxonomyTableFile, ...)
+        taxa_tab <- importQZA(taxonomyTableFile, ...)
         taxa_tab <- .subset_taxa_in_feature(taxa_tab, feature_tab)
     } else {
         taxa_tab <- S4Vectors::make_zero_col_DFrame(nrow(feature_tab))
@@ -136,14 +136,14 @@ importQIIME2 <- function(featureTableFile,
     }
 
     if (!is.null(phyTreeFile)) {
-        tree <- readQZA(phyTreeFile, ...)
+        tree <- importQZA(phyTreeFile, ...)
     } else {
         tree <- NULL
     }
 
     # if row.names(feature_tab) is a DNA sequence,  set it as refseq
     if (!is.null(refSeqFile)){
-        refseq <- readQZA(refSeqFile, ...)
+        refseq <- importQZA(refSeqFile, ...)
     } else if (featureNamesAsRefSeq) {
         refseq <- .rownames_as_dna_seq(rownames(feature_tab))
     } else {
@@ -184,8 +184,8 @@ importQIIME2 <- function(featureTableFile,
 #' taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
 #' sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 #' 
-#' assay <- readQZA(featureTableFile)
-#' rowdata <- readQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
+#' assay <- importQZA(featureTableFile)
+#' rowdata <- importQZA(taxonomyTableFile, removeTaxaPrefixes = TRUE)
 #' coldata <- read.table(sampleMetaFile, header = TRUE, sep = "\t", comment.char = "")
 #' 
 #' # Assign rownames 
@@ -202,18 +202,18 @@ importQIIME2 <- function(featureTableFile,
 #' @importFrom utils unzip
 #' @importFrom ape read.tree
 #' @importFrom Biostrings readDNAStringSet
-readQZA <- function(file, temp = tempdir(), ...) {
+importQZA <- function(file, temp = tempdir(), ...) {
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
     if (.get_ext(file) != "qza") {
         stop("The input '", file, "' must be in `qza` format (QIIME2 Artifact)",
-             call. = FALSE)
+            call. = FALSE)
     }
 
     unzipped_file <- unzip(file, exdir = temp)
     on.exit(unlink(c(unzipped_file,unique(dirname(unzipped_file))),
-                   recursive = TRUE))
+                    recursive = TRUE))
     meta_file <- grep("metadata.yaml", unzipped_file, value = TRUE)
     metadata <- yaml::read_yaml(meta_file[1])
     uuid <- metadata$uuid
