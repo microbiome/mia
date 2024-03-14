@@ -70,7 +70,7 @@ microbial communities with bioBakery 3. \emph{eLife}. 10:e65088.
 \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
-\code{\link[=loadFromMothur]{loadFromMothur}}
+\code{\link[=importMothur]{importMothur}}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

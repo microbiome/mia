@@ -132,7 +132,7 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
 \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
-\code{\link[=loadFromMothur]{loadFromMothur}}
+\code{\link[=importMothur]{importMothur}}
 }
 \author{
 Yang Cao

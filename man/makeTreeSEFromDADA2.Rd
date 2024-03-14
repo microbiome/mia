@@ -43,5 +43,5 @@ if(requireNamespace("dada2")) {
 \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 \code{\link[=importQIIME2]{importQIIME2}}
-\code{\link[=loadFromMothur]{loadFromMothur}}
+\code{\link[=importMothur]{importMothur}}
 }

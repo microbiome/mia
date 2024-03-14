@@ -39,5 +39,5 @@ if (requireNamespace("phyloseq")) {
 \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
-\code{\link[=loadFromMothur]{loadFromMothur}}
+\code{\link[=importMothur]{importMothur}}
 }

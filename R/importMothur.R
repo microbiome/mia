@@ -19,7 +19,7 @@
 #'
 #' @details
 #' Results exported from Mothur can be imported as a
-#' \code{SummarizedExperiment} using \code{loadFromMothur}. Except for the
+#' \code{SummarizedExperiment} using \code{importMothur}. Except for the
 #' \code{sharedFile}, the other data types, \code{taxonomyFile}, and
 #' \code{designFile}, are optional, but are highly encouraged to be provided.
 #'
@@ -27,7 +27,7 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name loadFromMothur
+#' @name importMothur
 #' @seealso
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
@@ -53,19 +53,19 @@
 #' meta <- system.file("extdata", "mothur_example.design", package = "mia")
 #' 
 #' # Creates se object from files
-#' se <- loadFromMothur(counts, taxa, meta)
+#' se <- importMothur(counts, taxa, meta)
 #' # Convert SE to TreeSE
 #' tse <- as(se, "TreeSummarizedExperiment")
 #' tse
 NULL
 
-#' @rdname loadFromMothur
+#' @rdname importMothur
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom S4Vectors make_zero_col_DFrame
 #' @export
-loadFromMothur <- function(sharedFile,
-                           taxonomyFile = NULL,
-                           designFile = NULL) {
+importMothur <- function(sharedFile,
+                            taxonomyFile = NULL,
+                            designFile = NULL) {
 
     # input check
     if(!.is_non_empty_string(sharedFile)){
@@ -114,20 +114,20 @@ loadFromMothur <- function(sharedFile,
 # These extra information must be added to colData. Return list of assay and 
 # extra info
 .read_mothur_feature <- function(sharedFile){
-  
+
     if (!.is_mothur_shared_file(sharedFile)) {
         stop("The input '", sharedFile, "' must be in `shared` format.",
-             call. = FALSE)
+            call. = FALSE)
     }
-  
+
     # Stores name of columns will be included in colData not in assays
     MOTHUR_NON_ASSAY_COLS <- c("label","numOtus","Group")
     data <- read.table(sharedFile, check.names=FALSE, header=TRUE,
-                       sep="\t", stringsAsFactors=FALSE)
+                        sep="\t", stringsAsFactors=FALSE)
     # Checks that colnames contain information and it is not NULL
     if ( !(length(colnames(data)) > 0) || is.null(colnames(data)) ){
         stop("'shared' does not include names of taxa.",
-           call. = FALSE)
+            call. = FALSE)
     }
     # Takes all columns but not those that goes to colData, 
     # and transforms the data frame to matrix
@@ -145,33 +145,33 @@ loadFromMothur <- function(sharedFile,
     # If the file is in "cons.taxonomy" format
     if (.is_mothur_constaxonomy_file(taxonomyFile, feature_tab)) {
         data <- read.table(taxonomyFile, check.names=FALSE,
-                           header=TRUE, sep="\t", stringsAsFactors=FALSE)
+                            header=TRUE, sep="\t", stringsAsFactors=FALSE)
     } 
     # If the file is in "taxonomy" format, adds column names
     else if (.is_mothur_taxonomy_file(taxonomyFile, feature_tab)){
         data <- read.table(taxonomyFile, check.names=FALSE,
-                           header=FALSE, sep="\t", 
-                           stringsAsFactors=FALSE, 
-                           col.names = c("OTU", "Taxonomy"))
+                            header=FALSE, sep="\t", 
+                            stringsAsFactors=FALSE, 
+                            col.names = c("OTU", "Taxonomy"))
     }
     # Else the file is not either gives an error
     else{
         stop("The input '", taxonomyFile, "' must be provided in the ",
-             "`taxonomy` or `cons.taxonomy` format. In addition, it must ",
-             "match the data of the 'sharedFile'",
-             call. = FALSE)
+            "`taxonomy` or `cons.taxonomy` format. In addition, it must ",
+            "match the data of the 'sharedFile'",
+            call. = FALSE)
     }
-  
+
     # Column that includes taxonomical information
     MOTHUR_TAX_COL <- "Taxonomy"
 
     # Checks that colnames contain information, it is not NULL, and taxonomical 
     # information is present 
     if ( !(length(colnames(data)) > 0) || 
-         is.null(colnames(data)) || 
-         is.null(data[[MOTHUR_TAX_COL]]) ){
+        is.null(colnames(data)) || 
+        is.null(data[[MOTHUR_TAX_COL]]) ){
         stop("'taxonomy' does not include taxonomical information.",
-             call. = FALSE)
+            call. = FALSE)
     }
     
     # Removes additional characters between taxa
@@ -180,10 +180,10 @@ loadFromMothur <- function(sharedFile,
     # Splits taxa level into separate columns
     into <- c("Kingdom", "Phylum", "Order", "Class", "Family", "Genus")
     tax <- tidyr::separate(data,
-                           MOTHUR_TAX_COL,
-                           into=into,
-                           sep=";",
-                           extra="merge")
+                            MOTHUR_TAX_COL,
+                            into=into,
+                            sep=";",
+                            extra="merge")
     # Removes ";" from the end of genus level names
     tax$Genus <- gsub(";", "", tax$Genus)
     rowData <- tax
@@ -196,15 +196,15 @@ loadFromMothur <- function(sharedFile,
     # Checks if file is in "design" format. data_to_colData$Group includes 
     # sample names that were extracted from assay, i.e. sharedFile
     if (!.is_mothur_design_file(designFile, data_to_colData$Group)) {
-      stop("The input '", designFile, "' must be in `design` format, 
-           and it must inlude same sample names as 'sharedFile'.",
-           call. = FALSE)
+        stop("The input '", designFile, "' must be in `design` format, 
+            and it must inlude same sample names as 'sharedFile'.",
+            call. = FALSE)
     }
-  
+
     # Reads the file
     colData <- read.table(designFile, check.names=FALSE,
-                          header=TRUE, sep="\t",
-                          stringsAsFactors=FALSE)
+                            header=TRUE, sep="\t",
+                            stringsAsFactors=FALSE)
     
     # Combines the extracted colData and data from the assay
     colData <- cbind(colData, data_to_colData)
@@ -223,7 +223,7 @@ loadFromMothur <- function(sharedFile,
     
     # Reads the data
     data <- read.table(file, check.names=FALSE, header=TRUE,
-                       sep="\t", stringsAsFactors=FALSE)
+                        sep="\t", stringsAsFactors=FALSE)
     
     # If data contains column names, then it is shared file
     if( identical(colnames(data)[seq_len(3)], columns_that_must_be_found) ){
@@ -239,7 +239,7 @@ loadFromMothur <- function(sharedFile,
     
     # Reads the data
     data <- read.table(file, check.names=FALSE, header=FALSE,
-                       sep="\t", stringsAsFactors=FALSE)
+                        sep="\t", stringsAsFactors=FALSE)
     
     # If data contains 2 columns and the first column includes same taxa as 
     # feature_tab in rownames, then it is taxonomy file
@@ -258,7 +258,7 @@ loadFromMothur <- function(sharedFile,
     
     # Reads the data
     data <- read.table(file, check.names=FALSE, header=TRUE,
-                       sep="\t", stringsAsFactors=FALSE)
+                        sep="\t", stringsAsFactors=FALSE)
     
     # If data contains column names, and "OTU" column that includes same taxa as 
     # feature_tab, 
@@ -274,7 +274,7 @@ loadFromMothur <- function(sharedFile,
     result <- FALSE
     # Reads the data
     data <- read.table(file, check.names=FALSE, header=TRUE,
-                       sep="\t", stringsAsFactors=FALSE)
+                        sep="\t", stringsAsFactors=FALSE)
     
     # If data contains "group" column that include sample names, then it is 
     # design file

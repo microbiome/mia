@@ -55,7 +55,7 @@
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 #' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
-#' \code{\link[=loadFromMothur]{loadFromMothur}}
+#' \code{\link[=importMothur]{importMothur}}
 #'
 #' @export
 #' @author Yang Cao
