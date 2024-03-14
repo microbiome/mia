@@ -422,7 +422,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Rename TreeSEs based on sample map, i.e., based on on what they are
     # linking to. In MAE, colnames can different between experiments even though
     # those samples are linking to same patient.
-    obj_list <- .rename_based_on_samplemap(mae, experiment1, experiment2)
+    obj_list <- .rename_based_on_samplemap(x, experiment1, experiment2)
     # Fetch tse objects
     tse1 <- obj_list[[1]]
     tse2 <- obj_list[[2]]
@@ -642,6 +642,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Order samples
     tse2 <- tse2[, colnames(tse1)]
     res <- list(tse1, tse2)
+    names(res) <- c(exp1, exp2)
     return(res)
 }
 
