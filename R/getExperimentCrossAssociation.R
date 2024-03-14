@@ -612,6 +612,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 
 ################################ HELP FUNCTIONS ################################
 # Rename experiments' colnames based on sample map linkages.
+#' @importFrom MultiAssayExperiment sampleMap
 .rename_based_on_samplemap <- function(mae, exp1, exp2){
     # Get sample map
     sample_map <- sampleMap(mae)
