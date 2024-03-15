@@ -10,9 +10,12 @@
 #' instances where it can be useful.
 #' Note that the output of \code{subsampleCounts} is not the equivalent as the 
 #' input and any result have to be verified with the original dataset.
+#' 
+#' Subsampling/Rarefying may undermine downstream analyses and have unintended
+#' consequences. Therefore, make sure this normalization is appropriate for
+#' your data.
 #'
-#' @param x A
-#'   \code{SummarizedExperiment} object.
+#' @param x A \code{SummarizedExperiment} object.
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{SummarizedExperiment} \code{assay} used for random subsampling. 
@@ -83,7 +86,7 @@ NULL
 #' @export
 setGeneric("subsampleCounts", signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
-                    min_size = min(colSums2(assay(x))),
+                    min_size = min(colSums2(assay(x, assay.type))),
                     seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
                     name = "subsampled", verbose = TRUE, ...)
                standardGeneric("subsampleCounts"))
@@ -95,14 +98,10 @@ setGeneric("subsampleCounts", signature = c("x"),
 #' @export
 setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-             min_size = min(colSums2(assay(x))),
+             min_size = min(colSums2(assay(x, assay.type))),
        seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
        name = "subsampled", verbose = TRUE, ...){
-    
-        warning("Subsampling/Rarefying may undermine downstream analyses ",
-                "and have unintended consequences. Therefore, make sure ",
-                "this normalization is appropriate for your data.",
-              call. = FALSE)
+        #
         .check_assay_present(assay.type, x)
         if(any(assay(x, assay.type) %% 1 != 0)){
             warning("assay contains non-integer values. Only counts table ",
@@ -163,12 +162,16 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
                           min_size=min_size, replace=replace)
         rownames(newassay) <- rownames(newtse)
         # remove features not present in any samples after subsampling
-        message(paste(length(which(rowSums2(newassay) == 0)), "features", 
-                      "removed because they are not present in all samples", 
-                      "after subsampling."))
-        newassay <- newassay[rowSums2(newassay)>0,]
+        if(verbose){
+            message(
+                length(which(rowSums2(newassay) == 0)), " features removed ",
+                "because they are not present in all samples after subsampling."
+                )
+        }
+        
+        newassay <- newassay[rowSums2(newassay)>0, ]
         newtse <- newtse[rownames(newassay),]
-        assay(newtse, name, withDimnames=FALSE) <- newassay
+        assay(newtse, name, withDimnames = FALSE) <- newassay
         newtse <- .add_values_to_metadata(newtse, 
                                           "subsampleCounts_min_size",
                                           min_size)
@@ -177,7 +180,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
 )
 
 
-## Modified Sub sampling function from phyloseq internals
+# Modified Sub sampling function from phyloseq internals
 .subsample_assay <- function(x, min_size, replace){
     # Create replacement species vector
     rarvec <- numeric(length(x))    

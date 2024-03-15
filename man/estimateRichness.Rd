@@ -2,33 +2,17 @@
 % Please edit documentation in R/estimateRichness.R
 \name{estimateRichness}
 \alias{estimateRichness}
-\alias{estimateRichness,SummarizedExperiment-method}
+\alias{estimateRichness,ANY-method}
 \title{Estimate richness measures}
 \usage{
-estimateRichness(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  index = c("ace", "chao1", "hill", "observed"),
-  name = index,
-  detection = 0,
-  ...,
-  BPPARAM = SerialParam()
-)
+estimateRichness(x, ...)
 
-\S4method{estimateRichness}{SummarizedExperiment}(
-  x,
-  assay.type = assay_name,
-  assay_name = "counts",
-  index = c("ace", "chao1", "hill", "observed"),
-  name = index,
-  detection = 0,
-  ...,
-  BPPARAM = SerialParam()
-)
+\S4method{estimateRichness}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
+
+\item{...}{additional parameters passed to \code{estimateRichness}}
 
 \item{assay.type}{the name of the assay used for calculation of the
 sample-wise estimates.}
@@ -46,8 +30,6 @@ stored in.}
 
 \item{detection}{a numeric value for selecting detection threshold
 for the abundances. The default detection threshold is 0.}
-
-\item{...}{additional parameters passed to \code{estimateRichness}}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -136,8 +118,9 @@ corresponding index in the \pkg{vegan} package is "richness".}
 data(esophagus)
 
 # Calculates all richness indices by default
-esophagus <- estimateRichness(esophagus)
-
+suppressWarnings(
+    esophagus <- estimateRichness(esophagus)
+)
 # Shows all indices
 colData(esophagus)
 
@@ -154,10 +137,11 @@ colData(esophagus)
 colData(esophagus)[, c("observed", "chao1", "ace")] <- NULL
 
 # Calculates observed richness index and saves them with specific names
-esophagus <- estimateRichness(esophagus,
-    index = c("observed", "chao1", "ace", "hill"),
-     name = c("Observed", "Chao1", "ACE", "Hill"))
-
+suppressWarnings(
+    esophagus <- estimateRichness(esophagus,
+        index = c("observed", "chao1", "ace", "hill"),
+        name = c("Observed", "Chao1", "ACE", "Hill"))
+)
 # Show the new indices
 colData(esophagus)
 
@@ -165,8 +149,9 @@ colData(esophagus)
 colData(esophagus) <- NULL
 
 # Calculate observed richness excluding singletons (detection limit 1)
-esophagus <- estimateRichness(esophagus, index="observed", detection = 1)
-
+suppressWarnings(
+    esophagus <- estimateRichness(esophagus, index="observed", detection = 1)
+)
 # Deletes all colData (including the indices)
 colData(esophagus) <- NULL
 
@@ -175,17 +160,20 @@ colData(esophagus) <- NULL
 \dontrun{esophagus <- estimateRichness(esophagus, index="ace")}
 
 # Calculates Chao1 and ACE indices only
-esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"),
-                                          name=c("Chao1", "ACE"))
-
+suppressWarnings(
+    esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"),
+                                              name=c("Chao1", "ACE"))
+)
 # Deletes all colData (including the indices)
 colData(esophagus) <- NULL
 
 # Names of columns can be chosen arbitrarily, but the length of arguments
 # must match.
-esophagus <- estimateRichness(esophagus,
-                               index = c("ace", "chao1"),
-                               name = c("index1", "index2"))
+suppressWarnings(
+    esophagus <- estimateRichness(esophagus,
+                                   index = c("ace", "chao1"),
+                                   name = c("index1", "index2"))
+)
 # Shows all indices
 colData(esophagus)
 

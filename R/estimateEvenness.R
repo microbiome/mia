@@ -113,8 +113,9 @@
 #' name  <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 #'
 #' # Estimate evenness and give polished names to be used in the output
-#' tse <- estimateEvenness(tse, index = index, name = name)
-#'
+#' suppressWarnings(
+#'     tse <- estimateEvenness(tse, index = index, name = name)
+#' )
 #' # Check the output
 #' head(colData(tse))
 #'
@@ -122,20 +123,37 @@ NULL
 
 #' @rdname estimateEvenness
 #' @export
-setGeneric("estimateEvenness",signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts",
-                    index = c("pielou", "camargo", "simpson_evenness", "evar",
-                              "bulla"),
-                    name = index, ...)
-               standardGeneric("estimateEvenness"))
+setGeneric(
+    "estimateEvenness", signature = c("x"),
+    function(x, ...) standardGeneric("estimateEvenness"))
 
 #' @rdname estimateEvenness
 #' @export
-setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts",
-             index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
-             name = index, ..., BPPARAM = SerialParam()){
-         
+setMethod(
+    "estimateEvenness", signature = c(x="ANY"),
+    function(x, ...){
+        .Deprecated(
+            old = "estimateEvenness", new = "estimateAlpha",
+            msg = paste0(
+                "Now estimateEvenness is deprecated. Use estimateAlpha ",
+                "instead."))
+        .estimate_evenness(x, ...)
+    })
+
+setGeneric(
+    ".estimate_evenness",signature = c("x"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c("pielou", "camargo", "simpson_evenness", "evar", "bulla"),
+        name = index, ...)
+        standardGeneric(".estimate_evenness"))
+
+setMethod(
+    ".estimate_evenness", signature = c(x = "SummarizedExperiment"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c("camargo", "pielou", "simpson_evenness", "evar", "bulla"),
+        name = index, ..., BPPARAM = SerialParam()){
         # input check
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -257,3 +275,4 @@ setMethod("estimateEvenness", signature = c(x = "SummarizedExperiment"),
 
     FUN(mat = mat, ...)
 }
+

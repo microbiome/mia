@@ -177,7 +177,9 @@
 #' data(esophagus)
 #'
 #' # Calculates Simpson's lambda (can be used as a dominance index)
-#' esophagus <- estimateDominance(esophagus, index="simpson_lambda")
+#' suppressWarnings(
+#'     esophagus <- estimateDominance(esophagus, index="simpson_lambda")
+#' )
 #'
 #' # Shows all indices
 #' colData(esophagus)
@@ -186,7 +188,9 @@
 #' # gets thrown
 #' \dontrun{esophagus <- estimateDominance(esophagus, index="dbp")}
 #' # Calculates dbp and Core Abundance indices
-#' esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
+#' suppressWarnings(
+#'     esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
+#' )
 #' # Shows all indices
 #' colData(esophagus)
 #' # Shows dbp index
@@ -199,18 +203,22 @@
 #' colData(esophagus) <- NULL
 #'
 #' # Calculates all indices
-#' esophagus <- estimateDominance(esophagus)
+#' suppressWarnings(
+#'     esophagus <- estimateDominance(esophagus)
+#' )
 #' # Shows all indices
 #' colData(esophagus)
 #' # Deletes all indices
 #' colData(esophagus) <- NULL
 #'
 #' # Calculates all indices with explicitly specified names
-#' esophagus <- estimateDominance(esophagus,
-#'     index = c("dbp", "dmn", "absolute", "relative",
-#'               "simpson_lambda", "core_abundance", "gini"),
-#'     name  = c("BergerParker", "McNaughton", "Absolute", "Relative",
-#'               "SimpsonLambda", "CoreAbundance", "Gini")
+#' suppressWarnings(
+#'     esophagus <- estimateDominance(esophagus,
+#'         index = c("dbp", "dmn", "absolute", "relative",
+#'                   "simpson_lambda", "core_abundance", "gini"),
+#'         name  = c("BergerParker", "McNaughton", "Absolute", "Relative",
+#'                   "SimpsonLambda", "CoreAbundance", "Gini")
+#'     )
 #' )
 #' # Shows all indices
 #' colData(esophagus)
@@ -219,32 +227,41 @@ NULL
 
 #' @rdname estimateDominance
 #' @export
-setGeneric("estimateDominance",signature = c("x"),
-           function(x,
-                    assay.type = assay_name, assay_name = "counts",
-                    index = c("absolute", "dbp", "core_abundance", "gini",
-                              "dmn", "relative", "simpson_lambda"),
-                    ntaxa = 1,
-                    aggregate = TRUE,
-                    name = index,
-                    ...,
-                    BPPARAM = SerialParam())
-               standardGeneric("estimateDominance"))
-
+setGeneric(
+    "estimateDominance", signature = c("x"),
+    function(x, ...) standardGeneric("estimateDominance"))
 
 #' @rdname estimateDominance
 #' @export
-setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
-    function(x,
-             assay.type = assay_name, assay_name = "counts",
-             index = c("absolute", "dbp", "core_abundance", "gini", "dmn", 
-                       "relative", "simpson_lambda"),
-             ntaxa = 1,
-             aggregate = TRUE,
-             name = index,
-             ...,
-             BPPARAM = SerialParam()){
+setMethod(
+    "estimateDominance", signature = c(x="ANY"),
+    function(x, ...){
+        .Deprecated(
+            old = "estimateDominance", new = "estimateAlpha",
+            msg = paste0(
+                "Now estimateDominance is deprecated. Use estimateAlpha ",
+                "instead."))
+        .estimate_dominance(x, ...)
+    })
 
+setGeneric(
+    ".estimate_dominance",signature = c("x"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c(
+            "absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
+            "simpson_lambda"),
+        ntaxa = 1, aggregate = TRUE, name = index, BPPARAM = SerialParam(), ...)
+    standardGeneric(".estimate_dominance"))
+
+setMethod(".estimate_dominance", signature = c(x = "SummarizedExperiment"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c(
+            "absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
+            "simpson_lambda"),
+        ntaxa = 1, aggregate = TRUE, name = index, BPPARAM = SerialParam(),
+        ...){
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
@@ -369,5 +386,6 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     FUN(index, mat = mat, ntaxa = ntaxa, aggregate = aggregate, ...)
 
 }
+
 
 
