@@ -152,7 +152,8 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
         }
         
         # Check that arguments can be passed to mediate and remove unused samples
-        x <- check.mediate.args(x, outcome, treatment, mediator, covariates, ...)
+        x <- check.mediate.args(x, outcome, treatment,
+                                mediator, covariates, verbose, ...)
         
         # Check which mediator was provided (colData, assay or reducedDim)
         med_opts <- sapply(
@@ -232,7 +233,8 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
 
 
 # Check that arguments can be passed to mediate and remove unused samples
-check.mediate.args <- function(x, outcome, treatment, mediator, covariates, ...) {
+check.mediate.args <- function(x, outcome, treatment, mediator,
+                               covariates, verbose = TRUE, ...) {
   
   # Create dataframe from selected columns of colData
   df <- as.data.frame(colData(x)[ , names(colData(x)) %in% c(outcome, treatment, mediator, covariates)])
