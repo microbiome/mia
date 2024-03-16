@@ -3,7 +3,7 @@
 #' \code{getMediation} provides a wrapper of \code{\link[mediation:mediate]{mediate}}
 #' for \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #'
-#' @param se a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
+#' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #' 
 #' @param outcome The name of the colData variable used as outcome in the model.
 #' 
@@ -30,8 +30,8 @@
 #' @param add.metadata TRUE or FALSE, should the model metadata be returned.
 #'   (default: \code{add.metadata = FALSE})
 #' 
-#' @param message TRUE or FALSE, should execution messages be printed.
-#'   (default: \code{message = TRUE})
+#' @param verbose TRUE or FALSE, should execution messages be printed.
+#'   (default: \code{verbose = TRUE})
 #' 
 #' @param ... additional parameters that can be passed to \code{\link[mediation:mediate]{mediate}}.
 #' 
@@ -123,36 +123,36 @@ NULL
 
 #' @rdname getMediation
 #' @export
-setGeneric("getMediation", signature = c("se"),
-           function(se, ...) standardGeneric("getMediation"))
+setGeneric("getMediation", signature = c("x"),
+           function(x, ...) standardGeneric("getMediation"))
 
 #' @rdname getMediation
 #' @export
-setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
-      function(se, outcome, treatment,
+setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
+      function(x, outcome, treatment,
                mediator = NULL, assay.type = NULL, dim.type = NULL,
                family = gaussian(), covariates = NULL, p.adj.method = "BH",
-               add.metadata = FALSE, message = TRUE, ...) {
+               add.metadata = FALSE, verbose = TRUE, ...) {
 
         ###################### Input check ########################
-        if (!outcome %in% names(colData(se))) {
-          stop(outcome, " not found in colData(se).", call. = FALSE)
+        if (!outcome %in% names(colData(x))) {
+          stop(outcome, " not found in colData(x).", call. = FALSE)
         }
-        if (!treatment %in% names(colData(se))) {
-          stop(treatment, " not found in colData(se).", call. = FALSE)
+        if (!treatment %in% names(colData(x))) {
+          stop(treatment, " not found in colData(x).", call. = FALSE)
         }
-        if (!is.null(covariates) & !all(covariates %in% names(colData(se)))) {
-          stop("covariates not found in colData(se).", call. = FALSE)
+        if (!is.null(covariates) & !all(covariates %in% names(colData(x)))) {
+          stop("covariates not found in colData(x).", call. = FALSE)
         }
         if (!.is_a_bool(add.metadata)) {
           stop("add.metadata must be TRUE or FALSE.", call. = FALSE)
         }
-        if (!.is_a_bool(message)) {
-          stop("message must be TRUE or FALSE.", call. = FALSE)
+        if (!.is_a_bool(verbose)) {
+          stop("verbose must be TRUE or FALSE.", call. = FALSE)
         }
         
         # Check that arguments can be passed to mediate and remove unused samples
-        se <- check.mediate.args(se, outcome, treatment, mediator, covariates, ...)
+        x <- check.mediate.args(x, outcome, treatment, mediator, covariates, ...)
         
         # Check which mediator was provided (colData, assay or reducedDim)
         med_opts <- sapply(
@@ -160,11 +160,16 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
           function(x) !is.null(x)
         )
         
-        if (sum(med_opts) == 1) {
+        if (sum(med_opts) != 1) {
+          # Throw error if none or multiple mediation options are specified
+          stop("The arguments mediator, assay.type and dim.type are mutually exclusive",
+               ", but ", sum(med_opts), " were provided.", call. = FALSE)
+        
+        } else {
           if (med_opts[[1]]) {
             # Check that mediator is in colData
-            if (!mediator %in% names(colData(se))) {
-              stop(mediator, " not found in colData(se).", call. = FALSE)
+            if (!mediator %in% names(colData(x))) {
+              stop(mediator, " not found in colData(x).", call. = FALSE)
             }
             # Use mediator for analysis  
             mediators <- mediator
@@ -172,31 +177,26 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
                 
           } else if (med_opts[[2]]) {
             # Check that assay is in assays
-            if (!assay.type %in% assayNames(se)) {
-              stop(assay.type, " not found in assays(se).", call. = FALSE)
+            if (!assay.type %in% assayNames(x)) {
+              stop(assay.type, " not found in assays(x).", call. = FALSE)
             }
             # Define matrix for analysis
-            mat <- assay(se, assay.type)
+            mat <- assay(x, assay.type)
             # Use assay for analysis
             mediators <- rownames(mat)
                 
           } else if (med_opts[[3]]) {
             # Check that reducedDim is in reducedDims
-            if (!dim.type %in% reducedDimNames(se)) {
-              stop(dim.type, " not found in reducedDims(se).", call. = FALSE)
+            if (!dim.type %in% reducedDimNames(x)) {
+              stop(dim.type, " not found in reducedDims(x).", call. = FALSE)
             }
             # Define matrix for analysis
-            mat <- t(reducedDim(se, dim.type))
+            mat <- t(reducedDim(x, dim.type))
             # Give component names to matrix rows
             rownames(mat) <- paste0(dim.type, seq(1, nrow(mat)))
             # Use reducedDim for analysis
             mediators <- rownames(mat)
           }
-          
-        } else {
-          # Throw error if none or multiple mediation options are specified
-          stop("The arguments mediator, assay.type and dim.type are mutually exclusive",
-               ", but ", sum(med_opts), " were provided.", call. = FALSE)
         }
         
         # Create template list of results
@@ -212,12 +212,12 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
           # Update index 
           i <- i + 1
           
-          if (message) {
-            print(paste0("Mediator ", i, " out of ", length(mediators), ": ", mediator)) 
+          if (verbose) {
+            message("\rMediator ", i, " out of ", length(mediators), ": ", mediator, appendLF = FALSE) 
           }
           
           # Run mediation analysis for current mediator
-          med_out <- run.mediate(se, outcome, treatment, mediator,
+          med_out <- run.mediate(x, outcome, treatment, mediator,
                                   family = family, mat = mat,
                                   covariates = covariates, ...)
           # Update list of results
@@ -232,21 +232,24 @@ setMethod("getMediation", signature = c(se = "SummarizedExperiment"),
 
 
 # Check that arguments can be passed to mediate and remove unused samples
-check.mediate.args <- function(se, outcome, treatment, mediator, covariates, ...) {
+check.mediate.args <- function(x, outcome, treatment, mediator, covariates, ...) {
   
   # Create dataframe from selected columns of colData
-  df <- as.data.frame(colData(se)[ , names(colData(se)) %in% c(outcome, treatment, mediator, covariates)])
+  df <- as.data.frame(colData(x)[ , names(colData(x)) %in% c(outcome, treatment, mediator, covariates)])
   # Store kwargs into variable
   kwargs <- list(...)
   
   # Remove missing data from df
   df <- na.omit(df)
-  diff <- ncol(se) - nrow(df)
+  diff <- ncol(x) - nrow(df)
   
   if (diff != 0) {
     # Remove missing data from se
-    se <- se[ , rownames(df)]
-    message(paste(diff, "samples removed because of missing data."))
+    x <- x[ , rownames(df)]
+    
+    if (verbose) {
+      message(diff, " samples removed because of missing data.")
+    }
   }
   
   # If the treatment variable has three or more levels
@@ -268,30 +271,33 @@ check.mediate.args <- function(se, outcome, treatment, mediator, covariates, ...
         
         # Remove samples different from control and treatment from df
         df <- df[keep, ]
-        diff <- ncol(se) - nrow(df)
+        diff <- ncol(x) - nrow(df)
         
         # Remove samples different from control and treatment from se
-        se <- se[ , rownames(df)]
-        message(paste(diff, "samples removed because different from control and treatment."))
+        x <- x[ , rownames(df)]
+        
+        if (verbose) {
+          message(diff, " samples removed because different from control and treatment.")
+        }
       }
     }
   }
-  return(se)
+  return(x)
 }
 
 # Run mediation analysis
 #' @importFrom mediation mediate
-run.mediate <- function(se, outcome, treatment,
+run.mediate <- function(x, outcome, treatment,
                         mediator = NULL, mat = NULL,
                         family = gaussian(), covariates = NULL, ...) {
   
   # Create initial dataframe with outcome and treatment variables
-  df <- data.frame(Outcome = colData(se)[[outcome]],
-                   Treatment = colData(se)[[treatment]])
+  df <- data.frame(Outcome = colData(x)[[outcome]],
+                   Treatment = colData(x)[[treatment]])
   
   if (is.null(mat)) {
     # If matrix not given, fetch mediator from colData
-    df[["Mediator"]] <- colData(se)[[mediator]]
+    df[["Mediator"]] <- colData(x)[[mediator]]
   } else {
     # If matrix given, use it as mediators
     df[["Mediator"]] <- mat[mediator, ]
@@ -305,7 +311,7 @@ run.mediate <- function(se, outcome, treatment,
   if (!is.null(covariates)) {
     for (covariate in covariates) {
       # Fetch covariate from colData and store it in dataframe
-      df[[covariate]] <- colData(se)[[covariate]]
+      df[[covariate]] <- colData(x)[[covariate]]
       
       # Add covariate to formula of mediation model
       relation_m <- paste(relation_m, "+", covariate)

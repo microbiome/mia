@@ -1,8 +1,6 @@
 test_that("getMediation", {
   
-  skip_if_not(requireNamespace("microbiomeDataSets", quietly = TRUE))
-  tse <- LahtiWAData()
-  
+  tse <- microbiomeDataSets::LahtiWAData()
   tse$bmi_group <- as.numeric(tse$bmi_group)
   
   ### Batch 1: check errors when missing or wrong arguments ###
@@ -14,27 +12,27 @@ test_that("getMediation", {
   
   expect_error(
     getMediation(tse, outcome = "wrong_name", treatment = "nationality", mediator = "diversity"),
-    "wrong_name not found in colData(se).", fixed = TRUE
+    "wrong_name not found in colData(x).", fixed = TRUE
   )
   
   expect_error(
     getMediation(tse, outcome = "bmi_group", treatment = "wrong_name", mediator = "diversity"),
-    "wrong_name not found in colData(se).", fixed = TRUE
+    "wrong_name not found in colData(x).", fixed = TRUE
   )
   
   expect_error(
     getMediation(tse, outcome = "bmi_group", treatment = "nationality", mediator = "wrong_name"),
-    "wrong_name not found in colData(se).", fixed = TRUE
+    "wrong_name not found in colData(x).", fixed = TRUE
   )
   
   expect_error(
     getMediation(tse, outcome = "bmi_group", treatment = "nationality", assay.type = "wrong_name"),
-    "wrong_name not found in assays(se).", fixed = TRUE
+    "wrong_name not found in assays(x).", fixed = TRUE
   )
   
   expect_error(
     getMediation(tse, outcome = "bmi_group", treatment = "nationality", dim.type = "wrong_name"),
-    "wrong_name not found in reducedDims(se).", fixed = TRUE
+    "wrong_name not found in reducedDims(x).", fixed = TRUE
   )
   
   expect_error(
