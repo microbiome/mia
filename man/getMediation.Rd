@@ -5,10 +5,10 @@
 \alias{getMediation,SummarizedExperiment-method}
 \title{Perform mediation analysis}
 \usage{
-getMediation(se, ...)
+getMediation(x, ...)
 
 \S4method{getMediation}{SummarizedExperiment}(
-  se,
+  x,
   outcome,
   treatment,
   mediator = NULL,
@@ -18,12 +18,12 @@ getMediation(se, ...)
   covariates = NULL,
   p.adj.method = "BH",
   add.metadata = FALSE,
-  message = TRUE,
+  verbose = TRUE,
   ...
 )
 }
 \arguments{
-\item{se}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
+\item{x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
 
 \item{...}{additional parameters that can be passed to \code{\link[mediation:mediate]{mediate}}.}
 
@@ -52,8 +52,8 @@ of p-values. Passed to \code{p.adjust} function. (default: \code{p.adj.method = 
 \item{add.metadata}{TRUE or FALSE, should the model metadata be returned.
 (default: \code{add.metadata = FALSE})}
 
-\item{message}{TRUE or FALSE, should execution messages be printed.
-(default: \code{message = TRUE})}
+\item{verbose}{TRUE or FALSE, should execution messages be printed.
+(default: \code{verbose = TRUE})}
 }
 \value{
 A \code{data.frame} of p-values, effect sizes and confidence intervals for
