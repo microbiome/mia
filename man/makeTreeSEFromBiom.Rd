@@ -2,33 +2,9 @@
 % Please edit documentation in R/makeTreeSummarizedExperimentFromBiom.R
 \name{makeTreeSEFromBiom}
 \alias{makeTreeSEFromBiom}
-\alias{loadFromBiom}
-\alias{makeTreeSummarizedExperimentFromBiom}
 \title{Loading a biom file}
-\usage{
-loadFromBiom(file, ...)
-
-makeTreeSEFromBiom(
-  obj,
-  removeTaxaPrefixes = FALSE,
-  rankFromPrefix = FALSE,
-  remove.artifacts = FALSE,
-  ...
-)
-
-makeTreeSummarizedExperimentFromBiom(obj, ...)
-}
 \arguments{
 \item{file}{biom file location}
-
-\item{...}{additional arguments
-\itemize{
-\item{\code{patter}}{\code{character} value specifying artifacts
-to be removed. If \code{patterns = "auto"}, special characters
-are removed. (default: \code{pattern = "auto"})}
-}}
-
-\item{obj}{object of type \code{\link[biomformat:read_biom]{biom}}}
 
 \item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
@@ -42,6 +18,13 @@ taxonomic ranks on feature table, should they be scraped from prefixes?
 \item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
 some taxonomic character naming artifacts, should they be removed.
 (default \code{remove.artifacts = FALSE})}
+
+\item{...}{additional arguments
+\itemize{
+\item{\code{patter}}{\code{character} value specifying artifacts
+to be removed. If \code{patterns = "auto"}, special characters
+are removed. (default: \code{pattern = "auto"})}
+}}
 }
 \value{
 An object of class

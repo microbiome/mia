@@ -2,26 +2,9 @@
 % Please edit documentation in R/makephyloseqFromTreeSummarizedExperiment.R
 \name{makePhyloseqFromTreeSE}
 \alias{makePhyloseqFromTreeSE}
-\alias{makePhyloseqFromTreeSE,SummarizedExperiment-method}
-\alias{makePhyloseqFromTreeSE,TreeSummarizedExperiment-method}
-\alias{makePhyloseqFromTreeSummarizedExperiment}
-\alias{makePhyloseqFromTreeSummarizedExperiment,ANY-method}
 \title{Create a phyloseq object from a TreeSummarizedExperiment object}
-\usage{
-makePhyloseqFromTreeSE(x, ...)
-
-\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
-
-\S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, tree_name = "phylo", ...)
-
-makePhyloseqFromTreeSummarizedExperiment(x, ...)
-
-\S4method{makePhyloseqFromTreeSummarizedExperiment}{ANY}(x, ...)
-}
 \arguments{
 \item{x}{a \code{TreeSummarizedExperiment} object}
-
-\item{...}{additional arguments}
 
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
@@ -36,6 +19,8 @@ will be disabled.)}
 \item{tree_name}{a single \code{character} value for specifying which
 tree will be included in the phyloseq object that is created,
 (By default: \code{tree_name = "phylo"})}
+
+\item{...}{additional arguments}
 }
 \value{
 An object of class \code{Phyloseq} object.

@@ -2,15 +2,10 @@
 % Please edit documentation in R/makeTreeSummarizedExperimentFromPhyloseq.R
 \name{makeTreeSEFromPhyloseq}
 \alias{makeTreeSEFromPhyloseq}
-\alias{makeTreeSummarizedExperimentFromPhyloseq}
-\alias{makeTreeSummarizedExperimentFromPhyloseq,ANY-method}
+\alias{.makeTreeSEFromPhyloseq}
 \title{Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}}
 \usage{
-makeTreeSEFromPhyloseq(obj)
-
-makeTreeSummarizedExperimentFromPhyloseq(obj)
-
-\S4method{makeTreeSummarizedExperimentFromPhyloseq}{ANY}(obj)
+.makeTreeSEFromPhyloseq(obj)
 }
 \arguments{
 \item{obj}{a \code{phyloseq} object}

@@ -52,164 +52,134 @@
 #' phy2
 NULL
 
-#' @rdname makePhyloseqFromTreeSE
-#' @export
-setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
-           function(x, ...)
-               standardGeneric("makePhyloseqFromTreeSE"))
-
-
-#' @rdname makePhyloseqFromTreeSE
-#' @export
-setMethod("makePhyloseqFromTreeSE",
-          signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = "counts", assay_name = NULL, ...){
-        # Input check
-        .require_package("phyloseq")
-        # Check that tse do not have zero rows
-        if(!all(dim(x) > 0)){
-            stop("'x' contains zero rows. 'x' can not be converted
-                 to a phyloseq object.",
-                 call. = FALSE)
-        }
-
-        if (!is.null(assay_name)) {
-            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
-        }
-	
-        # Check assay.type
-        .check_assay_present(assay.type, x)
-        
-        # phyloseq object requires nonduplicated rownames. If there are 
-        # duplicated rownames, they are converted so that they are unique
-        if( any(duplicated(rownames(x))) ){
-            rownames(x) <- getTaxonomyLabels(x)
-        }
-        # List of arguments
-        args = list()
-        # Gets the abundance data from assay, and converts it to otu_table
-        otu_table <- as.matrix(assay(x, assay.type))
-        otu_table <- phyloseq::otu_table(otu_table, taxa_are_rows = TRUE)
-        # Adds to the list
-        args[["otu_table"]] <- otu_table
-
-        # If rowData includes information
-        if(!( length(rowData(x)[,taxonomyRanks(x)]) == 0 ||
-              is.null((rowData(x)[,taxonomyRanks(x)])) )){
-            # Converts taxonomy table to characters if it's not already
-            rowData(x) <- DataFrame(lapply(rowData(x), as.character))
-            # Gets the taxonomic data from rowData, and converts it to tax_table
-            tax_table <- as.matrix(rowData(x)[,taxonomyRanks(x),drop=FALSE])
-            tax_table <- phyloseq::tax_table(tax_table)
-            # Adds to the list
-            args[["tax_table"]] <- tax_table
-        }
-        
-        # If colData includes information
-        if(!( length(colData(x)) == 0 || is.null(ncol(colData(x))) )){
-            # Gets the feature_data from colData and converts it to sample_data
-            sample_data <- as.data.frame(colData(x))
-            sample_data <- phyloseq::sample_data(sample_data)
-            # Adds to the list
-            args[["sample_data"]] <- sample_data
-        }
-        
-        # Creates a phyloseq object
-        phyloseq <- do.call(phyloseq::phyloseq, args)
-        return(phyloseq)
+.makePhyloseqFromSE <- function(x, assay.type = "counts", assay_name = NULL, ...){
+    # Input check
+    .require_package("phyloseq")
+    # Check that tse do not have zero rows
+    if(!all(dim(x) > 0)){
+        stop("'x' contains zero rows. 'x' can not be converted
+             to a phyloseq object.",
+             call. = FALSE)
     }
-)
 
-#' @rdname makePhyloseqFromTreeSE
-#' @export
-setMethod("makePhyloseqFromTreeSE",
-          signature = c(x = "TreeSummarizedExperiment"),
-    function(x, tree_name = "phylo", ...){
-        # If rowTrees exist, check tree_name
-        if( length(x@rowTree) > 0 ){
-            .check_rowTree_present(tree_name, x)
-            # Subset the data based on the tree
-            x <- x[ rowLinks(x)$whichTree == tree_name, ]
-            add_phy_tree <- TRUE
+    if (!is.null(assay_name)) {
+        .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+    }
+	
+    # Check assay.type
+    .check_assay_present(assay.type, x)
+    
+    # phyloseq object requires nonduplicated rownames. If there are 
+    # duplicated rownames, they are converted so that they are unique
+    if( any(duplicated(rownames(x))) ){
+        rownames(x) <- getTaxonomyLabels(x)
+    }
+    # List of arguments
+    args = list()
+    # Gets the abundance data from assay, and converts it to otu_table
+    otu_table <- as.matrix(assay(x, assay.type))
+    otu_table <- phyloseq::otu_table(otu_table, taxa_are_rows = TRUE)
+    # Adds to the list
+    args[["otu_table"]] <- otu_table
+
+    # If rowData includes information
+    if(!( length(rowData(x)[,taxonomyRanks(x)]) == 0 ||
+            is.null((rowData(x)[,taxonomyRanks(x)])) )){
+        # Converts taxonomy table to characters if it's not already
+        rowData(x) <- DataFrame(lapply(rowData(x), as.character))
+        # Gets the taxonomic data from rowData, and converts it to tax_table
+        tax_table <- as.matrix(rowData(x)[,taxonomyRanks(x),drop=FALSE])
+        tax_table <- phyloseq::tax_table(tax_table)
+        # Adds to the list
+        args[["tax_table"]] <- tax_table
+    }
+        
+    # If colData includes information
+    if(!( length(colData(x)) == 0 || is.null(ncol(colData(x))) )){
+        # Gets the feature_data from colData and converts it to sample_data
+        sample_data <- as.data.frame(colData(x))
+        sample_data <- phyloseq::sample_data(sample_data)
+        # Adds to the list
+        args[["sample_data"]] <- sample_data
+    }
+        
+    # Creates a phyloseq object
+    phyloseq <- do.call(phyloseq::phyloseq, args)
+    return(phyloseq)
+}
+
+
+.makePhyloseqFromTreeSE <- function(x, tree_name = "phylo", ...){
+    # If rowTrees exist, check tree_name
+    if( length(x@rowTree) > 0 ){
+        .check_rowTree_present(tree_name, x)
+        # Subset the data based on the tree
+        x <- x[ rowLinks(x)$whichTree == tree_name, ]
+        add_phy_tree <- TRUE
+    } else{
+        add_phy_tree <- FALSE
+    }
+    #
+        
+    # phyloseq and tree objects require nonduplicated rownames. If there are 
+    # duplicated rownames, they are converted so that they are unique
+    if( any(duplicated(rownames(x))) ){
+        rownames(x) <- getTaxonomyLabels(x)
+    }
+    # Gets otu_table object from the function above this, if tse contains
+    # only abundance table.
+    # Otherwise, gets a phyloseq object with otu_table, and tax_table
+    # and/or sample_data
+    obj <- callNextMethod()
+    # List of arguments
+    args = list()
+    # Adds to the list of arguments, if 'obj' is not a phyloseq object
+    # i.e. is an otu_table
+    if(!is(obj,"phyloseq")){
+        # Adds otu_table to the list
+        args[["otu_table"]] <- obj
+    }
+        
+    # Add phylogenetic tree
+    if( add_phy_tree ){
+        phy_tree <- .get_rowTree_for_phyloseq(x, tree_name)
+        # If the object is a phyloseq object, adds phy_tree to it
+        if(is(obj,"phyloseq")){
+            phyloseq::phy_tree(obj) <- phy_tree
         } else{
-            add_phy_tree <- FALSE
+            # Adds to the list
+            args[["phy_tree"]] <- phy_tree
         }
-        #
+    }
         
-        # phyloseq and tree objects require nonduplicated rownames. If there are 
-        # duplicated rownames, they are converted so that they are unique
-        if( any(duplicated(rownames(x))) ){
-            rownames(x) <- getTaxonomyLabels(x)
-        }
-        # Gets otu_table object from the function above this, if tse contains
-        # only abundance table.
-        # Otherwise, gets a phyloseq object with otu_table, and tax_table
-        # and/or sample_data
-        obj <- callNextMethod()
-        # List of arguments
-        args = list()
-        # Adds to the list of arguments, if 'obj' is not a phyloseq object
-        # i.e. is an otu_table
-        if(!is(obj,"phyloseq")){
-            # Adds otu_table to the list
-            args[["otu_table"]] <- obj
-        }
-        
-        # Add phylogenetic tree
-        if( add_phy_tree ){
-            phy_tree <- .get_rowTree_for_phyloseq(x, tree_name)
-            # If the object is a phyloseq object, adds phy_tree to it
+    # If referenceSeq has information, stores it to refseq and converts is
+    # to phyloseq's refseq.
+    if( !is.null(referenceSeq(x)) ){
+        # Get referenceSeqs
+        refseq <- .get_referenceSeq_for_phyloseq(x, ...)
+        # IF refSeq passed the test, add it
+        if( !is.null(refseq) ){
+        # Convert it to phyloseq object
+            refseq <- phyloseq::refseq(refseq)
+            # If the object is a phyloseq object, adds refseq to it
             if(is(obj,"phyloseq")){
-                phyloseq::phy_tree(obj) <- phy_tree
+                obj <- phyloseq::merge_phyloseq(obj, refseq)
             } else{
                 # Adds to the list
-                args[["phy_tree"]] <- phy_tree
+                args[["refseq"]] <- refseq
             }
         }
-        
-        # If referenceSeq has information, stores it to refseq and converts is
-        # to phyloseq's refseq.
-        if( !is.null(referenceSeq(x)) ){
-            # Get referenceSeqs
-            refseq <- .get_referenceSeq_for_phyloseq(x, ...)
-            # IF refSeq passed the test, add it
-            if( !is.null(refseq) ){
-                # Convert it to phyloseq object
-                refseq <- phyloseq::refseq(refseq)
-                # If the object is a phyloseq object, adds refseq to it
-                if(is(obj,"phyloseq")){
-                    obj <- phyloseq::merge_phyloseq(obj, refseq)
-                } else{
-                    # Adds to the list
-                    args[["refseq"]] <- refseq
-                }
-            }
-        }
-        
-        # If 'obj' is not a phyloseq object, creates one.
-        if(!is(obj,"phyloseq")){
-            # Creates a phyloseq object
-            phyloseq <- do.call(phyloseq::phyloseq, args)
-        } else{
-            phyloseq <- obj
-        }
-        phyloseq
     }
-)
-
-################### makePhyloseqFromTreeSummarizedExperiment ###################
-#' @rdname makePhyloseqFromTreeSE
-#' @export
-setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
-    function(x, ...)
-        standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
-
-#' @rdname makePhyloseqFromTreeSE
-#' @export
-setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
-        function(x, ...){
-            makePhyloseqFromTreeSE(x, ...)
-    })
+        
+    # If 'obj' is not a phyloseq object, creates one.
+    if(!is(obj,"phyloseq")){
+        # Creates a phyloseq object
+        phyloseq <- do.call(phyloseq::phyloseq, args)
+    } else{
+        phyloseq <- obj
+    }
+    phyloseq
+}
 
 ################################ HELP FUNCTIONS ################################
 # If tips do not match with rownames, prune the tree

@@ -63,8 +63,6 @@
 #'                     remove.artifacts = TRUE)
 NULL
 
-#' @rdname makeTreeSEFromBiom
-#'
 #' @export
 loadFromBiom <- function(file, ...) {
     .require_package("biomformat")
@@ -72,14 +70,9 @@ loadFromBiom <- function(file, ...) {
     makeTreeSEFromBiom(biom, ...)
 }
 
-#' @rdname makeTreeSEFromBiom
-#'
-#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
-#'
-#' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
-makeTreeSEFromBiom <- function(
+.makeTreeSEFromBiom <- function(
         obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
         remove.artifacts = FALSE, ...){
     # input check
@@ -191,14 +184,6 @@ makeTreeSEFromBiom <- function(
         colData = sample_data,
         rowData = feature_data)
     return(tse)
-}
-
-####################### makeTreeSummarizedExperimentFromBiom #######################
-#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
-#' @rdname makeTreeSEFromBiom
-#' @export
-makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
-    makeTreeSEFromBiom(obj, ...)
 }
 
 ################################ HELP FUNCTIONS ################################

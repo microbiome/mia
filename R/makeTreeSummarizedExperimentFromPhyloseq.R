@@ -12,8 +12,6 @@
 #' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
 #' @importFrom SummarizedExperiment colData colData<-
 #'
-#' @export
-#'
 #' @name makeTreeSEFromPhyloseq
 #' @seealso
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
@@ -30,7 +28,7 @@
 #'     data(esophagus, package="phyloseq")
 #'     makeTreeSEFromPhyloseq(esophagus)
 #' }
-makeTreeSEFromPhyloseq <- function(obj) {
+.makeTreeSEFromPhyloseq <- function(obj) {
     # input check
     .require_package("phyloseq")
     if(!is(obj,"phyloseq")){
@@ -74,17 +72,3 @@ makeTreeSEFromPhyloseq <- function(obj) {
                              rowTree = rowTree,
                              referenceSeq = referenceSeq)
 }
-
-####################### makeTreeSummarizedExperimentFromPhyloseq #######################
-#' @rdname makeTreeSEFromPhyloseq
-#' @export
-setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("obj"),
-    function(obj)
-        standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
-
-#' @rdname makeTreeSEFromPhyloseq
-#' @export
-setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(obj = "ANY"),
-    function(obj){
-        makeTreeSEFromPhyloseq(obj)
-    })

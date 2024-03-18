@@ -26,8 +26,6 @@
 #' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'
-#' @export
-#'
 #' @examples
 #' if(requireNamespace("dada2")) {
 #'   fnF <- system.file("extdata", "sam1F.fastq.gz", package="dada2")
@@ -38,7 +36,7 @@
 #'   tse <- makeTreeSEFromDADA2(dadaF, fnF, dadaR, fnR)
 #'   tse
 #' }
-makeTreeSEFromDADA2 <- function(...) {
+.makeTreeSEFromDADA2 <- function(...) {
     # input checks
     .require_package("dada2")
     .require_package("stringr")
@@ -61,13 +59,4 @@ makeTreeSEFromDADA2 <- function(...) {
     colnames(output) <- cName
     rownames(output) <- rName
     output
-}
-
-#################### makeTreeSummarizedExperimentFromDADA2 #####################
-#' @param ... See \code{mergePairs} function for
-#'   more details.
-#' @name makeTreeSEFromDADA2
-#' @export
-makeTreeSummarizedExperimentFromDADA2 <- function(...) {
-    makeTreeSEFromDADA2(...)
 }
