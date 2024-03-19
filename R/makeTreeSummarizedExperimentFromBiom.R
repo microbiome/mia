@@ -67,7 +67,7 @@ NULL
 loadFromBiom <- function(file, ...) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    makeTreeSEFromBiom(biom, ...)
+    convert(biom, ...)
 }
 
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame

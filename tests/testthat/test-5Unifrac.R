@@ -57,7 +57,7 @@ test_that("Unifrac beta diversity", {
     # Compare to phyloseq function
     .require_package("phyloseq")
     # Convert data into phyloseq
-    pseq <- makePhyloseqFromTreeSE(tse)
+    pseq <- convert(tse)
     # Calculate unifrac
     unifrac_tse <- as.matrix(calculateUnifrac(tse))
     unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq))
@@ -71,9 +71,9 @@ test_that("Unifrac beta diversity", {
     tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
     
     # Convert data into phyloseq
-    pseq <- makePhyloseqFromTreeSE(tse, assay.type="counts")
+    pseq <- convert(tse, assay.type="counts")
     # Convert back to TreeSE (pseq has pruned tree)
-    tse <- makeTreeSEFromPhyloseq(pseq)
+    tse <- convert(pseq)
     # Calculate unifrac
     unifrac_tse <- as.matrix(calculateUnifrac(tse))
     unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq))
@@ -87,9 +87,9 @@ test_that("Unifrac beta diversity", {
     # Test the function with agglomerated data
     tse <- agglomerateByRank(tse, rank = "Phylum")
     # Convert data into phyloseq
-    suppressWarnings( pseq <- makePhyloseqFromTreeSE(tse) )
+    suppressWarnings( pseq <- convert(tse) )
     # Convert back to TreeSE (pseq has pruned tree)
-    tse <- makeTreeSEFromPhyloseq(pseq)
+    tse <- convert(pseq)
     # Calculate unifrac
     unifrac_tse <- as.matrix(calculateUnifrac(tse, normalized = TRUE))
     unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, normalized = TRUE))

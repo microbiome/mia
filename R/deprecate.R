@@ -10,6 +10,7 @@
 NULL
 
 #' @rdname deprecate
+#' @export
 setGeneric("addTaxonomyTree",
             signature = "x",
             function(x, ...)
@@ -26,6 +27,7 @@ setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname deprecate
+#' @export
 setGeneric("taxonomyTree",
             signature = "x",
             function(x, ...)
@@ -43,16 +45,16 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
-setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("obj"),
+setGeneric("makeTreeSEFromPhyloseq", signature = c("obj"),
            function(obj)
-               standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
+               standardGeneric("makeTreeSEFromPhyloseq"))
 
 #' @rdname deprecate
 #' @export
-setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(obj = "ANY"),
+setMethod("makeTreeSEFromPhyloseq", signature = c(obj = "ANY"),
             function(obj){
                 .Deprecated(msg = paste0(
-                    "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
+                    "'makeTreeSEFromPhyloseq' is deprecated.",
                     " Use 'convert' instead."))
                 convert(obj)
             }
@@ -60,16 +62,16 @@ setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(obj = "ANY")
 
 #' @rdname deprecate
 #' @export
-setGeneric("makeTreeSummarizedExperimentFromDADA2", signature = c("obj"),
+setGeneric("makeTreeSEFromDADA2", signature = c("obj"),
             function(obj,...)
-                standardGeneric("makeTreeSummarizedExperimentFromDADA2"))
+                standardGeneric("makeTreeSEFromDADA2"))
 
 #' @rdname deprecate
 #' @export
-setMethod("makeTreeSummarizedExperimentFromDADA2", signature = c(obj = "ANY"),
+setMethod("makeTreeSEFromDADA2", signature = c(obj = "ANY"),
             function(obj,...){
                 .Deprecated(msg = paste0(
-                    "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
+                    "'makeTreeSEFromDADA2' is deprecated.",
                     " Use 'convert' instead."))
                 convert(obj,...)
             }
@@ -77,32 +79,32 @@ setMethod("makeTreeSummarizedExperimentFromDADA2", signature = c(obj = "ANY"),
 
 #' @rdname deprecate
 #' @export
-setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
-           function(x, ...)
-               standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
+setGeneric("makePhyloseqFromTreeSE", signature = c("obj"),
+           function(obj, ...)
+               standardGeneric("makePhyloseqFromTreeSE"))
 
 #' @rdname deprecate
 #' @export
-setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
-          function(x, ...){
+setMethod("makePhyloseqFromTreeSE", signature = c(obj = "ANY"),
+          function(obj, ...){
               .Deprecated(msg = paste0(
-                  "'makePhyloseqFromTreeSummarizedExperiment' is deprecated.",
+                  "'makePhyloseqFromTreeSE' is deprecated.",
                   " Use 'convert' instead."))
-              convert(x, ...)
+              convert(obj, ...)
           })
 
 #' @rdname deprecate
 #' @export
-setGeneric("makeTreeSummarizedExperimentFromBiom", signature = c("x"),
-           function(x, ...)
-               standardGeneric("makeTreeSummarizedExperimentFromBiom"))
+setGeneric("makeTreeSEFromBiom", signature = c("obj"),
+           function(obj, ...)
+               standardGeneric("makeTreeSEFromBiom"))
 
 #' @rdname deprecate
 #' @export
-setMethod("makeTreeSummarizedExperimentFromBiom", signature = c(x = "ANY"),
-          function(x, ...){
+setMethod("makeTreeSEFromBiom", signature = c(obj = "ANY"),
+          function(obj, ...){
               .Deprecated(msg = paste0(
-                  "'makeTreeSummarizedExperimentFromBiom' is deprecated.",
+                  "'makeTreeSEFromBiom' is deprecated.",
                   " Use 'convert' instead."))
-              convert(x, ...)
+              convert(obj, ...)
           })
