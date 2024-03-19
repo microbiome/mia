@@ -104,3 +104,5 @@ Changes in version 1.11.x
 + cluster: Overwrite old results instead of failing
 + getPrevalence: bugfix, if assay contains NA values, it does not end up to NA anymore.
 + getExperimentCrossCorrelation fix: enable using of sampleMap in MAE.
++ new generic function convert to replace converters makeTreeSEFromPhyloseq,
+makeTreeSEFromBiom, makeTreeSEFromDADA2, makePhyloseqFromTreeSE
