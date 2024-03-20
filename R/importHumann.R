@@ -35,15 +35,15 @@
 #' are stored to \code{assays}.
 #' 
 #' Usually the workflow includes also taxonomy data from Metaphlan. See
-#' \link[=importMetaphlan]{importMetaphlan} to load the data to \code{TreeSE}.
+#' \link[=importMetaPhlAn]{importMetaPhlAn} to load the data to \code{TreeSE}.
 #'
 #' @return  A
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name importHumann
+#' @name importHUMAnN
 #' @seealso
-#' \code{\link[=importMetaphlan]{importMetaphlan}}
+#' \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 #' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
@@ -64,12 +64,12 @@
 #' # File path
 #' file_path <- system.file("extdata", "humann_output.tsv", package = "mia")
 #' # Import data
-#' tse <- importHumann(file_path)
+#' tse <- importHUMAnN(file_path)
 #' tse
 #' 
 NULL
 
-importHumann <- function(file, colData = NULL, ...){
+importHUMAnN <- function(file, colData = NULL, ...){
     ################################ Input check ###############################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",

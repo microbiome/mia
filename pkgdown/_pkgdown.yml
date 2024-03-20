@@ -18,8 +18,8 @@ reference:
   - importBIOM
   - importQIIME2
   - importMothur
-  - importMetaphlan
-  - importHumann
+  - importMetaPhlAn
+  - importHUMAnN
   - makePhyloseqFromTreeSummarizedExperiment
 - title: Taxonomic data
   contents:
