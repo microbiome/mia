@@ -63,6 +63,7 @@
 #'                     remove.artifacts = TRUE)
 NULL
 
+#' @rdname convert
 #' @export
 loadFromBiom <- function(file, ...) {
     .require_package("biomformat")
