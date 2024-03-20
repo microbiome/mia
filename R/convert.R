@@ -4,45 +4,52 @@
 #' @param x Input data to be converted. See details for more information on 
 #' supported formats.
 #' 
-#' @param ... See \code{mergePairs} function for more details (dada2 input)
-#' 
-#' @param file biom file location
+#' @param ... See \code{mergePairs} function for more details 
+#' (x : dada2 object)
 #' 
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
 #' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
-#' (default \code{removeTaxaPrefixes = FALSE})
+#' (default \code{removeTaxaPrefixes = FALSE}) 
+#' (x : biom object)
 #' 
 #' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
-#' (default \code{rankFromPrefix = FALSE})
+#' (default \code{rankFromPrefix = FALSE}) 
+#' (x : biom object)
 #' 
 #' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
 #' some taxonomic character naming artifacts, should they be removed.
-#' (default \code{remove.artifacts = FALSE})
+#' (default \code{remove.artifacts = FALSE}) 
+#' (x : biom object)
 #' 
 #' @param ... additional arguments 
 #'   \itemize{
 #'        \item{\code{patter}}{\code{character} value specifying artifacts
 #'        to be removed. If \code{patterns = "auto"}, special characters
-#'        are removed. (default: \code{pattern = "auto"})}
+#'        are removed. (default: \code{pattern = "auto"}) 
+#'        (x : biom object)
+#'        } 
 #'    }
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #'   included in the phyloseq object that is created. 
 #'   (By default: \code{assay.type = "counts"})
+#'   (x : phyloseq object)
 #'   
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
+#'   (x : phyloseq object)
 #'   
 #' @param tree_name a single \code{character} value for specifying which
 #'   tree will be included in the phyloseq object that is created, 
 #'   (By default: \code{tree_name = "phylo"})
+#'   (x : phyloseq object)
 #'
-#' @param ... Additional arguments passed to specific conversion functions.
+#' @param ... Additional arguments
 #'
 #' @details
 #' The `convert` function supports the conversion of data from the following
@@ -123,6 +130,7 @@
 #' @export
 NULL
 
+#' @rdname convert
 #' @export
 setGeneric("convert", signature = c("x"),
            function(x,...)
