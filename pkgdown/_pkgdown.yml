@@ -13,6 +13,7 @@ reference:
   - transformAssay
 - subtitle: Data loading
 - contents:
+  - convert
   - makeTreeSummarizedExperimentFromPhyloseq
   - makeTreeSummarizedExperimentFromDADA2
   - loadFromBiom
