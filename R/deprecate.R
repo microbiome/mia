@@ -41,62 +41,48 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
-loadFromBiom <- function(file, ...) {
+loadFromBiom <- function(...) {
     .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
                             " Use 'importBIOM' instead."))
-    importBiom(file,...)
+    importBiom(...)
 }
 
 #' @rdname deprecate
 #' @export
-loadFromQIIME2 <- function(featureTableFile,
-                         taxonomyTableFile = NULL,
-                         sampleMetaFile = NULL,
-                         featureNamesAsRefSeq = TRUE,
-                         refSeqFile = NULL,
-                         phyTreeFile = NULL,
-                         ...) {
+loadFromQIIME2 <- function(...) {
     .Deprecated(msg = paste0("'loadFromQIIME2' is deprecated.",
                             " Use 'importQIIME2' instead."))
-    importQIIME2(featureTableFile,
-                 taxonomyTableFile = NULL,
-                 sampleMetaFile = NULL,
-                 featureNamesAsRefSeq = TRUE,
-                 refSeqFile = NULL,
-                 phyTreeFile = NULL,
-                 ...)
+    importQIIME2(...)
 }
 
 #' @rdname deprecate
 #' @export
-loadFromQZA <- function(file, temp = tempdir(), ...) {
+loadFromQZA <- function(...) {
     .Deprecated(msg = paste0("'loadFromQZA' is deprecated.",
                             " Use 'importQZA' instead."))
-    importQZA(file, temp = tempdir(), ...)
+    importQZA(...)
 }
 
 #' @rdname deprecate
 #' @export
-loadFromMothur <- function(sharedFile, taxonomyFile = NULL, designFile = NULL) {
+loadFromMothur <- function(...) {
     .Deprecated(msg = paste0("'loadFromMothur' is deprecated.",
                              " Use 'importMothur' instead."))
-    importMothur(sharedFile, taxonomyFile = NULL, designFile = NULL)
+    importMothur(...)
 }
 
 #' @rdname deprecate
 #' @export   
-loadFromMetaphlan <- function(
-        file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL, ...) {
+loadFromMetaphlan <- function(...) {
     .Deprecated(msg = paste0("'loadFromMetaphlan' is deprecated.",
                              " Use 'importMetaPhlAn' instead."))
-    importMetaPhlAn(file, colData = sample_meta, sample_meta = NULL, 
-                    phy_tree = NULL, ...)
+    importMetaPhlAn(...)
 }
 
 #' @rdname deprecate
 #' @export    
-loadFromHumann <- function(file, colData = NULL, ...) {
+loadFromHumann <- function(...) {
     .Deprecated(msg = paste0("'loadFromHumann' is deprecated.",
                              " Use 'importHUMAnN' instead."))
-    importHUMAnN(file, colData = NULL, ...)
+    importHUMAnN(...)
 }
