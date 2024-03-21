@@ -52,7 +52,7 @@
 #' phy2
 NULL
 
-.makePhyloseqFromSE <- function(x, assay.type = "counts", assay_name = NULL, ...){
+.make_phyloseq_from_SE <- function(x, assay.type = "counts", assay_name = NULL, ...){
     # Input check
     .require_package("phyloseq")
     # Check that tse do not have zero rows
@@ -109,7 +109,7 @@ NULL
 }
 
 
-.makePhyloseqFromTreeSE <- function(x, tree_name = "phylo", ...){
+.make_phyloseq_from_TreeSE <- function(x, tree_name = "phylo", ...){
     # If rowTrees exist, check tree_name
     if( length(x@rowTree) > 0 ){
         .check_rowTree_present(tree_name, x)

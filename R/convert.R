@@ -139,34 +139,34 @@ setGeneric("convert", signature = c("x"),
 #' @export
 setMethod("convert", signature = c(x = "SummarizedExperiment"),
           function(x,...){
-              .makePhyloseqFromSE(x,...)
+              .make_phyloseq_from_SE(x,...)
           }
 )
 
 #' @export
 setMethod("convert", signature = c(x = "TreeSummarizedExperiment"),
           function(x,...){
-              .makePhyloseqFromTreeSE(x,...)
+              .make_phyloseq_from_TreeSE(x,...)
           }
 )
 
 #' @export
 setMethod("convert", signature = c(x = "dada"),
           function(x,...){
-              .makeTreeSEFromDADA2(x,...)
+              .make_TreeSE_from_DADA2(x,...)
           }
 )
 
 #' @export
 setMethod("convert", signature = c(x = "phyloseq"),
           function(x,...){
-              .makeTreeSEFromPhyloseq(x,...)
+              .make_TreeSE_from_phyloseq(x,...)
           }
 )
 
 #' @export
 setMethod("convert", signature = c(x = "biom"),
           function(x,...){
-              .makeTreeSEFromBiom(x,...)
+              .make_TreeSE_from_biom(x,...)
           }
 )

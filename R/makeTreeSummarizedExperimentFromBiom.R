@@ -73,7 +73,7 @@ loadFromBiom <- function(file, ...) {
 
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
-.makeTreeSEFromBiom <- function(
+.make_TreeSE_from_biom <- function(
         obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
         remove.artifacts = FALSE, ...){
     # input check

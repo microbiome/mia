@@ -28,7 +28,7 @@
 #'     data(esophagus, package="phyloseq")
 #'     makeTreeSEFromPhyloseq(esophagus)
 #' }
-.makeTreeSEFromPhyloseq <- function(obj) {
+.make_TreeSE_from_phyloseq <- function(obj) {
     # input check
     .require_package("phyloseq")
     if(!is(obj,"phyloseq")){

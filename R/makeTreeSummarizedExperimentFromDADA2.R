@@ -36,7 +36,7 @@
 #'   tse <- makeTreeSEFromDADA2(dadaF, fnF, dadaR, fnR)
 #'   tse
 #' }
-.makeTreeSEFromDADA2 <- function(...) {
+.make_TreeSE_from_DADA2 <- function(...) {
     # input checks
     .require_package("dada2")
     .require_package("stringr")
