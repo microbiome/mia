@@ -7,6 +7,8 @@
 #' @param ... See \code{mergePairs} function for more details 
 #' (x : dada2 object)
 #' 
+#' @param file biom file location (x : biom object)
+#' 
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
 #' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
@@ -72,8 +74,8 @@
 #' @name convert
 #' 
 #' @seealso 
-#' \code{\link[=importQIIME2]{importQIIME2}}
-#' \code{\link[=importMothur]{importMothur}}
+#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
+#' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'
 #' @examples
 #' ### Make a TreeSummarizedExperiment from a Phyloseq object
@@ -133,40 +135,45 @@ NULL
 #' @rdname convert
 #' @export
 setGeneric("convert", signature = c("x"),
-           function(x,...)
-               standardGeneric("convert"))
+            function(x, ...)
+                standardGeneric("convert"))
 
+#' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "SummarizedExperiment"),
-          function(x,...){
-              .make_phyloseq_from_SE(x,...)
-          }
+            function(x,...){
+                .make_phyloseq_from_SE(x,...)
+            }
 )
 
+#' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "TreeSummarizedExperiment"),
-          function(x,...){
-              .make_phyloseq_from_TreeSE(x,...)
-          }
+            function(x,...){
+                .make_phyloseq_from_TreeSE(x,...)
+            }
 )
 
+#' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "dada"),
-          function(x,...){
-              .make_TreeSE_from_DADA2(x,...)
-          }
+            function(x,...){
+                .make_TreeSE_from_DADA2(x,...)
+            }
 )
 
+#' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "phyloseq"),
-          function(x,...){
-              .make_TreeSE_from_phyloseq(x,...)
-          }
+            function(x,...){
+                .make_TreeSE_from_phyloseq(x,...)
+            }
 )
 
+#' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "biom"),
-          function(x,...){
-              .make_TreeSE_from_biom(x,...)
-          }
+            function(x,...){
+                .make_TreeSE_from_biom(x,...)
+            }
 )
