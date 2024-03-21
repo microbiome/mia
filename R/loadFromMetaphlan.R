@@ -141,12 +141,12 @@ loadFromMetaphlan <- function(
     if(set.ranks) {
         #If set.ranks == FALSE, skip the function by returning NULL
         if(is.null(rowData(tse))) {
-            warning("rowData not found in the provided object. Skipping .set_taxonomy_ranks.")
+            warning("rowData not found in the provided object.")
         } else {
             # character values from rowData, If none found, give warning and skip
             rowDataChars <- rowData(tse)[,sapply(rowData(tse), is.character)]
             if(ncol(rowDataChars) == 0) {
-                warning("No character values found in rowData. Skipping .set_taxonomy_ranks.")
+                warning("No character values found in rowData. ")
             } else {
                 # Set taxonomy ranks and give messages
                 tse <- .set_taxonomy_ranks(tse, ranks = NULL, set.ranks = set.ranks, ...)
