@@ -141,16 +141,16 @@ setGeneric("convert", signature = c("x"),
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "SummarizedExperiment"),
-            function(x,...){
-                .make_phyloseq_from_SE(x,...)
+            function(x, assay.type = "counts", assay_name = NULL, ...){
+                .make_phyloseq_from_SE(x, assay.type, assay_name, ...)
             }
 )
 
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "TreeSummarizedExperiment"),
-            function(x,...){
-                .make_phyloseq_from_TreeSE(x,...)
+            function(x, tree_name = "phylo", ...){
+                .make_phyloseq_from_TreeSE(x, tree_name, ...)
             }
 )
 
@@ -173,7 +173,9 @@ setMethod("convert", signature = c(x = "phyloseq"),
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "biom"),
-            function(x,...){
-                .make_TreeSE_from_biom(x,...)
+            function(x, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
+                     remove.artifacts = FALSE, ...){
+                .make_TreeSE_from_biom(x, removeTaxaPrefixes, rankFromPrefix,
+                                       remove.artifacts, ...)
             }
 )

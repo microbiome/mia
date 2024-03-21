@@ -76,7 +76,7 @@
     # only abundance table.
     # Otherwise, gets a phyloseq object with otu_table, and tax_table
     # and/or sample_data
-    obj <- callNextMethod()
+    obj <- .make_phyloseq_from_SE(x, ...)
     # List of arguments
     args = list()
     # Adds to the list of arguments, if 'obj' is not a phyloseq object
