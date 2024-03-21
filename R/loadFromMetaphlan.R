@@ -138,23 +138,25 @@ loadFromMetaphlan <- function(
         }
     }
     # Set taxonomy ranks using .set_taxonomy_ranks
-    if(set.ranks) {
-        #If set.ranks == FALSE, skip the function by returning NULL
-        if(is.null(rowData(tse))) {
-            warning("rowData not found in the provided object.", call. = FALSE)
-        } else {
-            # character values from rowData, If none found, give warning and skip
-            rowDataChars <- rowData(tse)[,sapply(rowData(tse), is.character)]
-            if(ncol(rowDataChars) == 0) {
-                warning("No character values found in rowData.", call. = FALSE)
-            } else {
-                # Set taxonomy ranks and give messages
-                tse <- .set_taxonomy_ranks(tse, ranks = NULL, set.ranks = set.ranks, ...)
-                message("Ranks have been set successfully.")
-            }
-        }
-    }
-   
+    # if(set.ranks) {
+    #     #If set.ranks == FALSE, skip the function by returning NULL
+    #     if(is.null(rowData(tse))) {
+    #         warning("rowData not found in the provided object.", call. = FALSE)
+    #     } else {
+    #         # character values from rowData, If none found, give warning and skip
+    #         rowDataChars <- rowData(tse)[,sapply(rowData(tse), is.character)]
+    #         if(ncol(rowDataChars) == 0) {
+    #             warning("No character values found in rowData.", call. = FALSE)
+    #         } else {
+    #             # Set taxonomy ranks and give messages
+    #             tse <- .set_taxonomy_ranks(tse, ranks = NULL, set.ranks = set.ranks, ...)
+    #             message("Ranks have been set successfully.")
+    #         }
+    #     }
+    # }
+    
+    # Set taxonomy ranks using .set_taxonomy_ranks
+    .set_ranks_based_on_rowdata(tse, set.ranks = FALSE, ...)
     
     # Load sample meta data if it is provided
     if( !is.null(colData) ) {
@@ -410,45 +412,31 @@ loadFromMetaphlan <- function(
     }
     return(data)
 }
-.set_taxonomy_ranks <- function(tse, ranks = NULL, set.ranks = FALSE,...) {
-    #check if 'rowData' exists in the 'tse' object
-    if (is.null(rowData(tse))) {
-        warning("rowData of the 'tse' object does not exist.", call. = FALSE)
-        return(tse)
+.set_ranks_based_on_rowdata <- function(tse, set.ranks = FALSE, ...){
+    # Check set.ranks
+    if( !.is_a_bool(set.ranks) ){
+        stop("'set.ranks' must be TRUE or FALSE.", call. = FALSE)
     }
-    # Validate 'set.ranks'
-    if (!.is_a_bool(set.ranks) || length(set.ranks) != 1) {
-        stop("'set.ranks' must be a logical scalar.", call. = FALSE)
+    # If user do not want to set ranks based on rowData
+    if( !set.ranks ){
+        return(NULL)
     }
-    if(!set.ranks && is.null(rowData(tse))){
-        stop("rowData of the 'tse' object does not exist.",call. = FALSE)
+    # Get ranks from rowData
+    ranks <- colnames(rowData(tse))
+    # Ranks must be character columns
+    is_char <- lapply(rowData(tse), function(x) is.character(x) || is.factor(x))
+    is_char <- unlist(is_char)
+    ranks <- ranks[ is_char ]
+    # rowData is empty, cannot set ranks
+    if( length(ranks) == 0 ){
+        warning(
+            "Ranks cannot be set. rowData(x) does not include columns ",
+            "specifying character values.", call. = FALSE)
+        return(NULL)
     }
-    # Attempt to retrieve ranks if NULL
-    if (!is.null(rowData(tse))) {
-        # Filter column names by those that are character type
-        char_cols <- sapply(rowData(tse), is.character)
-        ranks <- colnames(rowData(tse))[char_cols]
-        
-        if (length(ranks) == 0 && set.ranks) {
-            warning("No character-type column names in 'rowData(tse)' 
-                        to infer ranks and 'set.ranks' is TRUE.", call. = FALSE)
-        }
-    } else {
-        ranks <- character(0)
-    }
-    # Identify new ranks not in existing TAXONOMY_RANKS
-    new_ranks_not_in_existing <- setdiff(ranks, TAXONOMY_RANKS)
-    # Update TAXONOMY_RANKS if there are new ranks and set.ranks is TRUE
-    if (length(new_ranks_not_in_existing) > 0 && set.ranks) {
-        TAXONOMY_RANKS <- c(TAXONOMY_RANKS, new_ranks_not_in_existing)
-        message(sprintf("Added new taxonomy ranks to TAXONOMY_RANKS: %s.", 
-                        paste(new_ranks_not_in_existing, collapse = ", ")))
-    }
-    # Set ranks if set.ranks = TRUE
-    if (set.ranks) {
-        tse <- setTaxonomyRanks(tse, ranks, ...)
-        message(sprintf("Ranks set to: %s", paste(ranks, collapse = ", ")))
-    }
-    return(tse)
+    # Finally, set ranks and give message
+    tse <- setTaxonomyRanks(tse, ranks, ...)
+    message("TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
+    return(NULL)
 }
 
