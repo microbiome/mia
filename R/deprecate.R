@@ -45,16 +45,16 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
-setGeneric("makeTreeSEFromPhyloseq", signature = c("obj"),
+setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("obj"),
            function(obj)
-               standardGeneric("makeTreeSEFromPhyloseq"))
+               standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
 
 #' @rdname deprecate
 #' @export
-setMethod("makeTreeSEFromPhyloseq", signature = c(obj = "ANY"),
-            function(obj){
+setMethod("makeTreeSummarizedExperimentFromPhyloseq", 
+          signature = c(obj = "ANY"), function(obj){
                 .Deprecated(msg = paste0(
-                    "'makeTreeSEFromPhyloseq' is deprecated.",
+                    "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
                     " Use 'convert' instead."))
                 convert(obj)
             }
@@ -62,16 +62,16 @@ setMethod("makeTreeSEFromPhyloseq", signature = c(obj = "ANY"),
 
 #' @rdname deprecate
 #' @export
-setGeneric("makeTreeSEFromDADA2", signature = c("obj"),
+setGeneric("makeTreeSummarizedExperimentFromDADA2", signature = c("obj"),
             function(obj,...)
-                standardGeneric("makeTreeSEFromDADA2"))
+                standardGeneric("makeTreeSummarizedExperimentFromDADA2"))
 
 #' @rdname deprecate
 #' @export
-setMethod("makeTreeSEFromDADA2", signature = c(obj = "ANY"),
+setMethod("makeTreeSummarizedExperimentFromDADA2", signature = c(obj = "ANY"),
             function(obj,...){
                 .Deprecated(msg = paste0(
-                    "'makeTreeSEFromDADA2' is deprecated.",
+                    "'makeTreeSummarizedExperimentFromDADA2' is deprecated.",
                     " Use 'convert' instead."))
                 convert(obj,...)
             }
@@ -79,32 +79,32 @@ setMethod("makeTreeSEFromDADA2", signature = c(obj = "ANY"),
 
 #' @rdname deprecate
 #' @export
-setGeneric("makePhyloseqFromTreeSE", signature = c("obj"),
+setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("obj"),
            function(obj, ...)
-               standardGeneric("makePhyloseqFromTreeSE"))
+               standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
 
 #' @rdname deprecate
 #' @export
-setMethod("makePhyloseqFromTreeSE", signature = c(obj = "ANY"),
-          function(obj, ...){
+setMethod("makePhyloseqFromTreeSummarizedExperiment", 
+          signature = c(obj = "ANY"), function(obj, ...){
               .Deprecated(msg = paste0(
-                  "'makePhyloseqFromTreeSE' is deprecated.",
+                  "'makePhyloseqFromTreeSummarizedExperiment' is deprecated.",
                   " Use 'convert' instead."))
               convert(obj, ...)
           })
 
 #' @rdname deprecate
 #' @export
-setGeneric("makeTreeSEFromBiom", signature = c("obj"),
+setGeneric("makeTreeSummarizedExperimentFromBiom", signature = c("obj"),
            function(obj, ...)
-               standardGeneric("makeTreeSEFromBiom"))
+               standardGeneric("makeTreeSummarizedExperimentFromBiom"))
 
 #' @rdname deprecate
 #' @export
-setMethod("makeTreeSEFromBiom", signature = c(obj = "ANY"),
+setMethod("makeTreeSummarizedExperimentFromBiom", signature = c(obj = "ANY"),
           function(obj, ...){
               .Deprecated(msg = paste0(
-                  "'makeTreeSEFromBiom' is deprecated.",
+                  "'makeTreeSummarizedExperimentFromBiom' is deprecated.",
                   " Use 'convert' instead."))
               convert(obj, ...)
           })
