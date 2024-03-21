@@ -22,31 +22,17 @@ taxonomyTree(x, ...)
 
 \S4method{taxonomyTree}{SummarizedExperiment}(x)
 
-loadFromBiom(file, ...)
+loadFromBiom(...)
 
-loadFromQIIME2(
-  featureTableFile,
-  taxonomyTableFile = NULL,
-  sampleMetaFile = NULL,
-  featureNamesAsRefSeq = TRUE,
-  refSeqFile = NULL,
-  phyTreeFile = NULL,
-  ...
-)
+loadFromQIIME2(...)
 
-loadFromQZA(file, temp = tempdir(), ...)
+loadFromQZA(...)
 
-loadFromMothur(sharedFile, taxonomyFile = NULL, designFile = NULL)
+loadFromMothur(...)
 
-loadFromMetaphlan(
-  file,
-  colData = sample_meta,
-  sample_meta = NULL,
-  phy_tree = NULL,
-  ...
-)
+loadFromMetaphlan(...)
 
-loadFromHumann(file, colData = NULL, ...)
+loadFromHumann(...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object -}
