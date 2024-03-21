@@ -3,11 +3,32 @@
 %   R/makeTreeSummarizedExperimentFromBiom.R
 \name{convert}
 \alias{convert}
+\alias{convert,SummarizedExperiment-method}
+\alias{convert,TreeSummarizedExperiment-method}
+\alias{convert,dada-method}
+\alias{convert,phyloseq-method}
+\alias{convert,biom-method}
 \alias{loadFromBiom}
 \title{Convert data from various formats to a TreeSummarizedExperiment object or
 Phyloseq object}
 \usage{
 convert(x, ...)
+
+\S4method{convert}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
+
+\S4method{convert}{TreeSummarizedExperiment}(x, tree_name = "phylo", ...)
+
+\S4method{convert}{dada}(x, ...)
+
+\S4method{convert}{phyloseq}(x)
+
+\S4method{convert}{biom}(
+  x,
+  removeTaxaPrefixes = FALSE,
+  rankFromPrefix = FALSE,
+  remove.artifacts = FALSE,
+  ...
+)
 
 loadFromBiom(file, ...)
 }
@@ -16,22 +37,6 @@ loadFromBiom(file, ...)
 supported formats.}
 
 \item{...}{Additional arguments}
-
-\item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
-taxonomic prefixes be removed? The prefixes is removed only from detected
-taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
-(default \code{removeTaxaPrefixes = FALSE})
-(x : biom object)}
-
-\item{rankFromPrefix}{\code{TRUE} or \code{FALSE}: If file does not have
-taxonomic ranks on feature table, should they be scraped from prefixes?
-(default \code{rankFromPrefix = FALSE})
-(x : biom object)}
-
-\item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
-some taxonomic character naming artifacts, should they be removed.
-(default \code{remove.artifacts = FALSE})
-(x : biom object)}
 
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
@@ -49,6 +54,24 @@ will be disabled.)
 tree will be included in the phyloseq object that is created,
 (By default: \code{tree_name = "phylo"})
 (x : phyloseq object)}
+
+\item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
+taxonomic prefixes be removed? The prefixes is removed only from detected
+taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
+(default \code{removeTaxaPrefixes = FALSE})
+(x : biom object)}
+
+\item{rankFromPrefix}{\code{TRUE} or \code{FALSE}: If file does not have
+taxonomic ranks on feature table, should they be scraped from prefixes?
+(default \code{rankFromPrefix = FALSE})
+(x : biom object)}
+
+\item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
+some taxonomic character naming artifacts, should they be removed.
+(default \code{remove.artifacts = FALSE})
+(x : biom object)}
+
+\item{file}{biom file location (x : biom object)}
 }
 \value{
 An object of class TreeSummarizedExperiment or Phyloseq.
@@ -124,6 +147,6 @@ phy2 <- convert(tse, assay.type = "relabundance")
 phy2
 }
 \seealso{
-\code{\link[=importQIIME2]{importQIIME2}}
-\code{\link[=importMothur]{importMothur}}
+\code{\link[=loadFromQIIME2]{loadFromQIIME2}}
+\code{\link[=loadFromMothur]{loadFromMothur}}
 }
