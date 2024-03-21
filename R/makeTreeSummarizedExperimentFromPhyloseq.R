@@ -1,33 +1,3 @@
-#' Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}
-#'
-#' \code{makeTreeSEFromPhyloseq} converts \code{phyloseq}
-#' objects into \code{TreeSummarizedExperiment} objects.
-#'
-#' All data stored in a \code{phyloseq} object is transferred.
-#'
-#' @param obj a \code{phyloseq} object
-#'
-#' @return An object of class \code{TreeSummarizedExperiment}
-#'
-#' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
-#' @importFrom SummarizedExperiment colData colData<-
-#'
-#' @name makeTreeSEFromPhyloseq
-#' @seealso
-#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
-#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
-#' \code{\link[=loadFromMothur]{loadFromMothur}}
-#'
-#' @examples
-#' if (requireNamespace("phyloseq")) {
-#'     data(GlobalPatterns, package="phyloseq")
-#'     makeTreeSEFromPhyloseq(GlobalPatterns)
-#'     data(enterotype, package="phyloseq")
-#'     makeTreeSEFromPhyloseq(enterotype)
-#'     data(esophagus, package="phyloseq")
-#'     makeTreeSEFromPhyloseq(esophagus)
-#' }
 .make_TreeSE_from_phyloseq <- function(obj) {
     # input check
     .require_package("phyloseq")

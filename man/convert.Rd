@@ -14,21 +14,15 @@ Phyloseq object}
 \usage{
 convert(x, ...)
 
-\S4method{convert}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
+\S4method{convert}{SummarizedExperiment}(x, ...)
 
-\S4method{convert}{TreeSummarizedExperiment}(x, tree_name = "phylo", ...)
+\S4method{convert}{TreeSummarizedExperiment}(x, ...)
 
 \S4method{convert}{dada}(x, ...)
 
-\S4method{convert}{phyloseq}(x)
+\S4method{convert}{phyloseq}(x, ...)
 
-\S4method{convert}{biom}(
-  x,
-  removeTaxaPrefixes = FALSE,
-  rankFromPrefix = FALSE,
-  remove.artifacts = FALSE,
-  ...
-)
+\S4method{convert}{biom}(x, ...)
 
 loadFromBiom(file, ...)
 }
@@ -38,22 +32,7 @@ supported formats.}
 
 \item{...}{Additional arguments}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-included in the phyloseq object that is created.
-(By default: \code{assay.type = "counts"})
-(x : phyloseq object)}
-
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)
-(x : phyloseq object)}
-
-\item{tree_name}{a single \code{character} value for specifying which
-tree will be included in the phyloseq object that is created,
-(By default: \code{tree_name = "phylo"})
-(x : phyloseq object)}
+\item{file}{biom file location (x : biom object)}
 
 \item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
@@ -71,7 +50,22 @@ some taxonomic character naming artifacts, should they be removed.
 (default \code{remove.artifacts = FALSE})
 (x : biom object)}
 
-\item{file}{biom file location (x : biom object)}
+\item{assay.type}{A single character value for selecting the
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
+included in the phyloseq object that is created.
+(By default: \code{assay.type = "counts"})
+(x : phyloseq object)}
+
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)
+(x : phyloseq object)}
+
+\item{tree_name}{a single \code{character} value for specifying which
+tree will be included in the phyloseq object that is created,
+(By default: \code{tree_name = "phylo"})
+(x : phyloseq object)}
 }
 \value{
 An object of class TreeSummarizedExperiment or Phyloseq.
