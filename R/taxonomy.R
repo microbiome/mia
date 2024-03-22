@@ -224,13 +224,12 @@ setTaxonomyRanks <- function(ranks) {
              no spaces, tabs, hyphens, underscores, and non-continuous spaces."
              , call. = FALSE)
     }
-    
+    #Replace default value of mia::TAXONOMY_RANKS
     assignInMyNamespace("TAXONOMY_RANKS", ranks)
 }
 
-
 #' @rdname taxonomy-methods
-#'@export
+#' @export
 # Function to get taxonomy ranks
 getTaxonomyRanks <- function() {
     return(TAXONOMY_RANKS)
