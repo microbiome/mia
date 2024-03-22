@@ -138,7 +138,7 @@ loadFromMetaphlan <- function(
         }
     }
     # Set taxonomy ranks using .set_taxonomy_ranks
-    .set_ranks_based_on_rowdata(tse, set.ranks = FALSE, ...)
+    .set_ranks_based_on_rowdata(tse,...)
     
     # Load sample meta data if it is provided
     if( !is.null(colData) ) {
@@ -395,14 +395,6 @@ loadFromMetaphlan <- function(
     return(data)
 }
 .set_ranks_based_on_rowdata <- function(tse,...){
-    # Check set.ranks
-    if( !.is_a_bool(set.ranks) ){
-        stop("'set.ranks' must be TRUE or FALSE.", call. = FALSE)
-    }
-    # If user do not want to set ranks based on rowData
-    if( !set.ranks ){
-        return(NULL)
-    }
     # Get ranks from rowData
     ranks <- colnames(rowData(tse))
     # Ranks must be character columns
@@ -417,7 +409,7 @@ loadFromMetaphlan <- function(
         return(NULL)
     }
     # Finally, set ranks and give message
-    tse <- setTaxonomyRanks(tse, ranks, ...)
+    tse <- setTaxonomyRanks(ranks)
     message("TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
     return(NULL)
 }
