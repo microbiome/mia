@@ -11,7 +11,6 @@ subsampleCounts(
   assay.type = assay_name,
   assay_name = "counts",
   min_size = min(colSums2(assay(x))),
-  seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
@@ -23,7 +22,6 @@ subsampleCounts(
   assay.type = assay_name,
   assay_name = "counts",
   min_size = min(colSums2(assay(x))),
-  seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
@@ -47,8 +45,6 @@ will be disabled.)}
 \item{min_size}{A single integer value equal to the number of counts being
 simulated this can equal to lowest number of total counts
 found in a sample or a user specified number.}
-
-\item{seed}{A random number seed for reproducibility of sampling.}
 
 \item{replace}{Logical Default is \code{TRUE}. The default is with
 replacement (\code{replace=TRUE}).
@@ -77,6 +73,8 @@ we include the \code{subsampleCounts} function because there may be some
 instances where it can be useful.
 Note that the output of \code{subsampleCounts} is not the equivalent as the
 input and any result have to be verified with the original dataset.
+To maintain the reproducibility, please define the seed using set.seed()
+before implement this function.
 }
 \examples{
 # When samples in TreeSE are less than specified min_size, they will be removed.
@@ -84,10 +82,11 @@ input and any result have to be verified with the original dataset.
 # they will be removed.
 data(GlobalPatterns)
 tse <- GlobalPatterns
+set.seed(123)
 tse.subsampled <- subsampleCounts(tse, 
                                   min_size = 60000, 
-                                  name = "subsampled", 
-                                  seed = 123)
+                                  name = "subsampled" 
+                                  )
 tse.subsampled
 dim(tse)
 dim(tse.subsampled)

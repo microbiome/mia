@@ -291,6 +291,7 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
             # If the returned value is a list, go through all of them
             if( is(x, 'SimpleList') ){
                 x <- SimpleList(lapply(x, .agglomerate_trees))
+
             } else {
                 # Otherwise, the returned value is TreeSE
                 x <- .agglomerate_trees(x)

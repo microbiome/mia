@@ -479,7 +479,7 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 .check_NAs_assay_counts <- function(x, assay.type){
     assay.x <- .get_assay(x, assay.type)
     if(any(is.na(assay.x))) {
-        stop(paste0("There are samples with NAs in 'assay': ", assay.type),
+        stop("There are samples with NAs in 'assay': ", assay.type,
              " . This function is limited to sequencing data only. ",
              "Where raw counts do not usually have NAs. ",
              "Try to supply raw counts",
