@@ -44,9 +44,7 @@
 #' @name loadFromHumann
 #' @seealso
 #' \code{\link[=loadFromMetaphlan]{loadFromMetaphlan}}
-#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+#' \code{\link[=convert]{convert}}
 #' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
 #' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'

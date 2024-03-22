@@ -52,9 +52,7 @@
 #'
 #' @name loadFromQIIME2
 #' @seealso
-#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+#' \code{\link[=convert]{convert}}
 #' \code{\link[=loadFromMothur]{loadFromMothur}}
 #'
 #' @export
