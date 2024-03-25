@@ -42,6 +42,7 @@
 #' object
 #'
 #' @name importHUMAnN
+#' 
 #' @seealso
 #' \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
