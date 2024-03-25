@@ -2,52 +2,7 @@
 % Please edit documentation in R/merge.R
 \name{merge-methods}
 \alias{merge-methods}
-\alias{mergeRows}
-\alias{mergeCols}
-\alias{mergeFeatures}
-\alias{mergeSamples}
-\alias{mergeRows,SummarizedExperiment-method}
-\alias{mergeCols,SummarizedExperiment-method}
-\alias{mergeSmaples}
-\alias{mergeFeatures,SummarizedExperiment-method}
-\alias{mergeSamples,SummarizedExperiment-method}
-\alias{mergeRows,TreeSummarizedExperiment-method}
-\alias{mergeCols,TreeSummarizedExperiment-method}
-\alias{mergeFeatures,TreeSummarizedExperiment-method}
-\alias{mergeSamples,TreeSummarizedExperiment-method}
 \title{Merge a subset of the rows or columns of a \code{SummarizedExperiment}}
-\usage{
-mergeRows(x, f, archetype = 1L, ...)
-
-mergeCols(x, f, archetype = 1L, ...)
-
-mergeFeatures(x, f, archetype = 1L, ...)
-
-mergeSamples(x, f, archetype = 1L, ...)
-
-\S4method{mergeRows}{SummarizedExperiment}(x, f, archetype = 1L, ...)
-
-\S4method{mergeCols}{SummarizedExperiment}(x, f, archetype = 1L, ...)
-
-\S4method{mergeFeatures}{SummarizedExperiment}(x, f, archetype = 1L, ...)
-
-\S4method{mergeSamples}{SummarizedExperiment}(x, f, archetype = 1L, ...)
-
-\S4method{mergeRows}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...)
-
-\S4method{mergeCols}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, ...)
-
-\S4method{mergeFeatures}{TreeSummarizedExperiment}(
-  x,
-  f,
-  archetype = 1L,
-  mergeTree = FALSE,
-  mergeRefSeq = FALSE,
-  ...
-)
-
-\S4method{mergeSamples}{TreeSummarizedExperiment}(x, f, archetype = 1L, mergeTree = FALSE, ...)
-}
 \arguments{
 \item{x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
 a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
@@ -63,12 +18,6 @@ This can be single integer value or an integer vector of the same length
 as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
 element encountered per factor level will be kept)}
 
-\item{...}{Optional arguments:
-\itemize{
-\item{Passed on to \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
-with the exception of \code{subset_row}, \code{subset_col}}
-}}
-
 \item{mergeTree}{\code{TRUE} or \code{FALSE}: Should
 \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})}
 
@@ -77,13 +26,19 @@ be calculated? If set to \code{FALSE}, the result from \code{archetype} is
 returned; If set to \code{TRUE} the result from
 \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
 returned. (Default: \code{mergeRefSeq = FALSE})}
+
+\item{...}{Optional arguments:
+\itemize{
+\item{Passed on to \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
+with the exception of \code{subset_row}, \code{subset_col}}
+}}
 }
 \value{
 An object of the same class as \code{x} with the specified entries
 merged into one entry in all relevant components.
 }
 \description{
-\code{mergeRows}/\code{mergeCols} merge data on rows or columns of a
+\code{agglomerateByVariable} merge data on rows or columns of a
 \code{SummarizedExperiment} as defined by a \code{factor} alongside the
 chosen dimension. Metadata from the \code{rowData} or \code{colData} are
 retained as defined by \code{archetype}.
@@ -108,12 +63,13 @@ plot(rowTree(esophagus))
 # get a factor for merging
 f <- factor(regmatches(rownames(esophagus),
                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-merged <- mergeRows(esophagus,f, mergeTree = TRUE)
+merged <- agglomerateByVariable("rows", esophagus,f, mergeTree = TRUE)
 plot(rowTree(merged))
 #
 data(GlobalPatterns)
 GlobalPatterns
-merged <- mergeCols(GlobalPatterns,colData(GlobalPatterns)$SampleType)
+merged <- agglomerateByVariable("cols", GlobalPatterns,
+                                colData(GlobalPatterns)$SampleType)
 merged
 }
 \seealso{

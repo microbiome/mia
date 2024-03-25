@@ -32,7 +32,7 @@
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
-#'   \code{\link[=merge-methods]{mergeRows}} and
+#'   \code{\link[=agglomerate-methods]{agglomerateByVariable}} and
 #'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 #'   \itemize{
 #'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
@@ -67,7 +67,7 @@
 #'
 #' @name agglomerate-methods
 #' @seealso
-#' \code{\link[=merge-methods]{mergeRows}},
+#' \code{\link[=agglomerate-methods]{agglomerateByVariable}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 #'
 #' @examples
@@ -141,6 +141,13 @@ setGeneric("agglomerateByRank",
                 standardGeneric("agglomerateByRank"))
 
 #' @rdname agglomerate-methods
+#' @export
+setGeneric("agglomerateByVariable",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("agglomerateByVariable"))
+
+#' @rdname agglomerate-methods
 #' @aliases agglomerateByRank
 #' @export
 setGeneric("mergeFeaturesByRank",
@@ -201,7 +208,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
 
         # merge taxa
-        x <- mergeRows(x, f = tax_factors, ...)
+        x <- agglomerateByVariable("rows", x, f = tax_factors, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
@@ -220,6 +227,19 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         x <- .add_values_to_metadata(x, "agglomerated_by_rank", rank)
         x
     }
+)
+
+#' @rdname agglomerate-methods
+#' @export
+setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
+            function(MARGIN, x, f, archetype = 1L, average = FALSE,
+                    BPPARAM = SerialParam(),check.assays = TRUE,... ){
+                FUN <- switch(MARGIN, 
+                            rows = .merge_rows,
+                            cols = .merge_cols)
+                FUN(x, f, archetype = 1L, average = FALSE,
+                    BPPARAM = SerialParam(),check.assays = TRUE,...)
+            }
 )
 
 #' @rdname agglomerate-methods

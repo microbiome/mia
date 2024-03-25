@@ -6,6 +6,15 @@
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{taxonomyTree}
 \alias{taxonomyTree,SummarizedExperiment-method}
+\alias{mergeRows}
+\alias{mergeFeatures}
+\alias{mergeRows,SummarizedExperiment-method}
+\alias{mergeCols}
+\alias{mergeSamples}
+\alias{mergeCols,SummarizedExperiment-method}
+\alias{mergeSmaples}
+\alias{mergeFeatures,SummarizedExperiment-method}
+\alias{mergeSamples,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 addTaxonomyTree(x, ...)
@@ -15,6 +24,22 @@ addTaxonomyTree(x, ...)
 taxonomyTree(x, ...)
 
 \S4method{taxonomyTree}{SummarizedExperiment}(x)
+
+mergeRows(x, f, archetype = 1L, ...)
+
+\S4method{mergeRows}{SummarizedExperiment}(x, f, archetype = 1L, ...)
+
+mergeCols(x, f, archetype = 1L, ...)
+
+\S4method{mergeCols}{SummarizedExperiment}(x, f, archetype = 1L, ...)
+
+mergeFeatures(x, f, archetype = 1L, ...)
+
+\S4method{mergeFeatures}{SummarizedExperiment}(x, f, archetype = 1L, ...)
+
+mergeSamples(x, f, archetype = 1L, ...)
+
+\S4method{mergeSamples}{SummarizedExperiment}(x, f, archetype = 1L, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object -}

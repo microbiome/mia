@@ -4,7 +4,9 @@
 \alias{agglomerate-methods}
 \alias{agglomerateByRank}
 \alias{mergeFeaturesByRank}
+\alias{agglomerateByVariable}
 \alias{agglomerateByRank,SummarizedExperiment-method}
+\alias{agglomerateByVariable,SummarizedExperiment-method}
 \alias{mergeFeaturesByRank,SummarizedExperiment-method}
 \alias{agglomerateByRank,SingleCellExperiment-method}
 \alias{mergeFeaturesByRank,SingleCellExperiment-method}
@@ -14,6 +16,8 @@
 \usage{
 agglomerateByRank(x, ...)
 
+agglomerateByVariable(x, ...)
+
 mergeFeaturesByRank(x, ...)
 
 \S4method{agglomerateByRank}{SummarizedExperiment}(
@@ -22,6 +26,17 @@ mergeFeaturesByRank(x, ...)
   onRankOnly = FALSE,
   na.rm = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
+  ...
+)
+
+\S4method{agglomerateByVariable}{SummarizedExperiment}(
+  MARGIN,
+  x,
+  f,
+  archetype = 1L,
+  average = FALSE,
+  BPPARAM = SerialParam(),
+  check.assays = TRUE,
   ...
 )
 
@@ -54,7 +69,7 @@ object}
 
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects,
-\code{\link[=merge-methods]{mergeRows}} and
+\code{\link[=agglomerate-methods]{agglomerateByVariable}} and
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 \itemize{
 \item{\code{remove_empty_ranks}}{A single boolean value for selecting
@@ -177,6 +192,6 @@ data(enterotype)
 taxonomyRanks(enterotype)
 }
 \seealso{
-\code{\link[=merge-methods]{mergeRows}},
+\code{\link[=agglomerate-methods]{agglomerateByVariable}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 }
