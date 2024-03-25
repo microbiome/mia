@@ -1,36 +1,35 @@
-#' Convert data from various formats to a TreeSummarizedExperiment object or 
-#' Phyloseq object
+#' Generic converter
+#'
+#' Convert data from various formats to a TreeSummarizedExperiment or Phyloseq 
+#' object
 #'
 #' @param x Input data to be converted. See details for more information on 
 #' supported formats.
 #' 
-#' @param ... See \code{mergePairs} function for more details 
-#' (x : dada2 object)
-#' 
-#' @param file biom file location (x : biom object)
+#' @param file biom file location (x class : biom)
 #' 
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
 #' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
 #' (default \code{removeTaxaPrefixes = FALSE}) 
-#' (x : biom object)
+#' (x class : biom)
 #' 
 #' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
 #' (default \code{rankFromPrefix = FALSE}) 
-#' (x : biom object)
+#' (x class : biom)
 #' 
 #' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
 #' some taxonomic character naming artifacts, should they be removed.
 #' (default \code{remove.artifacts = FALSE}) 
-#' (x : biom object)
+#' (x class : biom)
 #' 
 #' @param ... additional arguments 
 #'   \itemize{
 #'        \item{\code{patter}}{\code{character} value specifying artifacts
 #'        to be removed. If \code{patterns = "auto"}, special characters
 #'        are removed. (default: \code{pattern = "auto"}) 
-#'        (x : biom object)
+#'        (x class : biom)
 #'        } 
 #'    }
 #'
@@ -38,20 +37,21 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #'   included in the phyloseq object that is created. 
 #'   (By default: \code{assay.type = "counts"})
-#'   (x : phyloseq object)
+#'   (x class : SummarizedExperiment)
 #'   
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'   (x : phyloseq object)
+#'   (x class : SummarizedExperiment)
 #'   
 #' @param tree_name a single \code{character} value for specifying which
 #'   tree will be included in the phyloseq object that is created, 
 #'   (By default: \code{tree_name = "phylo"})
-#'   (x : phyloseq object)
-#'
-#' @param ... Additional arguments
+#'   (x class : TreeSummarizedExperiment)
+#'   
+#' @param ... Additional arguments. See \code{mergePairs} function for more
+#' details if input data class is dada2
 #'
 #' @details
 #' The `convert` function supports the conversion of data from the following
@@ -165,8 +165,8 @@ setMethod("convert", signature = c(x = "dada"),
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "phyloseq"),
-            function(x,...){
-                .make_TreeSE_from_phyloseq(x,...)
+            function(x){
+                .make_TreeSE_from_phyloseq(x)
             }
 )
 

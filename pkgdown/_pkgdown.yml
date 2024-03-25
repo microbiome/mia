@@ -14,14 +14,11 @@ reference:
 - subtitle: Data loading
 - contents:
   - convert
-  - makeTreeSummarizedExperimentFromPhyloseq
-  - makeTreeSummarizedExperimentFromDADA2
   - loadFromBiom
   - loadFromQIIME2
   - loadFromMothur
   - loadFromMetaphlan
   - loadFromHumann
-  - makePhyloseqFromTreeSummarizedExperiment
 - title: Taxonomic data
   contents:
   - taxonomyRanks

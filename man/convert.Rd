@@ -9,8 +9,7 @@
 \alias{convert,phyloseq-method}
 \alias{convert,biom-method}
 \alias{loadFromBiom}
-\title{Convert data from various formats to a TreeSummarizedExperiment object or
-Phyloseq object}
+\title{Generic converter}
 \usage{
 convert(x, ...)
 
@@ -20,7 +19,7 @@ convert(x, ...)
 
 \S4method{convert}{dada}(x, ...)
 
-\S4method{convert}{phyloseq}(x, ...)
+\S4method{convert}{phyloseq}(x)
 
 \S4method{convert}{biom}(
   x,
@@ -36,49 +35,50 @@ loadFromBiom(file, ...)
 \item{x}{Input data to be converted. See details for more information on
 supported formats.}
 
-\item{...}{Additional arguments}
+\item{...}{Additional arguments. See \code{mergePairs} function for more
+details if input data class is dada2}
 
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 included in the phyloseq object that is created.
 (By default: \code{assay.type = "counts"})
-(x : phyloseq object)}
+(x class : SummarizedExperiment)}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)
-(x : phyloseq object)}
+(x class : SummarizedExperiment)}
 
 \item{tree_name}{a single \code{character} value for specifying which
 tree will be included in the phyloseq object that is created,
 (By default: \code{tree_name = "phylo"})
-(x : phyloseq object)}
+(x class : TreeSummarizedExperiment)}
 
 \item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
 taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
 (default \code{removeTaxaPrefixes = FALSE})
-(x : biom object)}
+(x class : biom)}
 
 \item{rankFromPrefix}{\code{TRUE} or \code{FALSE}: If file does not have
 taxonomic ranks on feature table, should they be scraped from prefixes?
 (default \code{rankFromPrefix = FALSE})
-(x : biom object)}
+(x class : biom)}
 
 \item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
 some taxonomic character naming artifacts, should they be removed.
 (default \code{remove.artifacts = FALSE})
-(x : biom object)}
+(x class : biom)}
 
-\item{file}{biom file location (x : biom object)}
+\item{file}{biom file location (x class : biom)}
 }
 \value{
 An object of class TreeSummarizedExperiment or Phyloseq.
 }
 \description{
-Convert data from various formats to a TreeSummarizedExperiment object or
-Phyloseq object
+Convert data from various formats to a TreeSummarizedExperiment or Phyloseq
+object
 }
 \details{
 The \code{convert} function supports the conversion of data from the following
