@@ -1,85 +1,14 @@
-#' Loading a biom file
-#'
-#' For convenience a few functions are available to convert data from a
-#' \sQuote{biom} file or object into a
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'
-#' @param file biom file location
-#' 
-#' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
-#' taxonomic prefixes be removed? The prefixes is removed only from detected
-#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
-#' (default \code{removeTaxaPrefixes = FALSE})
-#' 
-#' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
-#' taxonomic ranks on feature table, should they be scraped from prefixes?
-#' (default \code{rankFromPrefix = FALSE})
-#' 
-#' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
-#' some taxonomic character naming artifacts, should they be removed.
-#' (default \code{remove.artifacts = FALSE})
-#' 
-#' @param ... additional arguments 
-#'   \itemize{
-#'        \item{\code{patter}}{\code{character} value specifying artifacts
-#'        to be removed. If \code{patterns = "auto"}, special characters
-#'        are removed. (default: \code{pattern = "auto"})}
-#'    }
-#' 
-#' @return An object of class
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'
-#' @name makeTreeSEFromBiom
-#' @seealso
-#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
-#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
-#' \code{\link[=loadFromMothur]{loadFromMothur}}
-#'
-#' @examples
-#' # Load biom file
-#' library(biomformat)
-#' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
-#'                          package = "biomformat")
-#' 
-#' # Make TreeSE from biom file
-#' tse <- loadFromBiom(biom_file)
-#' 
-#' # Make TreeSE from biom object
-#' biom_object <- biomformat::read_biom(biom_file)
-#' tse <- makeTreeSEFromBiom(biom_object)
-#' 
-#' # Get taxonomyRanks from prefixes and remove prefixes
-#' tse <- loadFromBiom(biom_file,
-#'                     rankFromPrefix = TRUE,
-#'                     removeTaxaPrefixes = TRUE)
-#' 
-#' # Load another biom file
-#' biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
-#'                          package = "mia")
-#' 
-#' # Clean artifacts from taxonomic data
-#' tse <- loadFromBiom(biom_file,
-#'                     remove.artifacts = TRUE)
-NULL
-
-#' @rdname makeTreeSEFromBiom
-#'
+#' @rdname convert
 #' @export
 loadFromBiom <- function(file, ...) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    makeTreeSEFromBiom(biom, ...)
+    convert(biom, ...)
 }
 
-#' @rdname makeTreeSEFromBiom
-#'
-#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
-#'
-#' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
-makeTreeSEFromBiom <- function(
+.make_TreeSE_from_biom <- function(
         obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
         remove.artifacts = FALSE, ...){
     # input check
@@ -191,14 +120,6 @@ makeTreeSEFromBiom <- function(
         colData = sample_data,
         rowData = feature_data)
     return(tse)
-}
-
-####################### makeTreeSummarizedExperimentFromBiom #######################
-#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
-#' @rdname makeTreeSEFromBiom
-#' @export
-makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
-    makeTreeSEFromBiom(obj, ...)
 }
 
 ################################ HELP FUNCTIONS ################################

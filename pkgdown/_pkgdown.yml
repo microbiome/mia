@@ -13,14 +13,12 @@ reference:
   - transformAssay
 - subtitle: Data loading
 - contents:
-  - makeTreeSummarizedExperimentFromPhyloseq
-  - makeTreeSummarizedExperimentFromDADA2
+  - convert
   - loadFromBiom
   - loadFromQIIME2
   - loadFromMothur
   - loadFromMetaphlan
   - loadFromHumann
-  - makePhyloseqFromTreeSummarizedExperiment
 - title: Taxonomic data
   contents:
   - taxonomyRanks
