@@ -6,6 +6,12 @@
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{taxonomyTree}
 \alias{taxonomyTree,SummarizedExperiment-method}
+\alias{loadFromBiom}
+\alias{loadFromQIIME2}
+\alias{loadFromQZA}
+\alias{loadFromMothur}
+\alias{loadFromMetaphlan}
+\alias{loadFromHumann}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 addTaxonomyTree(x, ...)
@@ -15,6 +21,18 @@ addTaxonomyTree(x, ...)
 taxonomyTree(x, ...)
 
 \S4method{taxonomyTree}{SummarizedExperiment}(x)
+
+loadFromBiom(...)
+
+loadFromQIIME2(...)
+
+loadFromQZA(...)
+
+loadFromMothur(...)
+
+loadFromMetaphlan(...)
+
+loadFromHumann(...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object -}
