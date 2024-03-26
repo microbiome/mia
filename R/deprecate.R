@@ -67,7 +67,7 @@ loadFromQZA <- function(...) {
 #' @export
 loadFromMothur <- function(...) {
     .Deprecated(msg = paste0("'loadFromMothur' is deprecated.",
-                             " Use 'importMothur' instead."))
+                            " Use 'importMothur' instead."))
     importMothur(...)
 }
 
@@ -75,7 +75,7 @@ loadFromMothur <- function(...) {
 #' @export   
 loadFromMetaphlan <- function(...) {
     .Deprecated(msg = paste0("'loadFromMetaphlan' is deprecated.",
-                             " Use 'importMetaPhlAn' instead."))
+                            " Use 'importMetaPhlAn' instead."))
     importMetaPhlAn(...)
 }
 
@@ -83,6 +83,6 @@ loadFromMetaphlan <- function(...) {
 #' @export    
 loadFromHumann <- function(...) {
     .Deprecated(msg = paste0("'loadFromHumann' is deprecated.",
-                             " Use 'importHUMAnN' instead."))
+                            " Use 'importHUMAnN' instead."))
     importHUMAnN(...)
 }
