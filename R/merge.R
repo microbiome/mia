@@ -76,44 +76,44 @@ NULL
 #' @aliases mergeFeatures
 #' @export
 setGeneric("mergeRows",
-           signature = "x",
-           function(x, f, archetype = 1L, ...)
-               standardGeneric("mergeRows"))
+            signature = "x",
+            function(x, f, archetype = 1L, ...)
+                standardGeneric("mergeRows"))
 
 #' @rdname merge-methods
 #' @aliases mergeSamples
 #' @export
 setGeneric("mergeCols",
-           signature = "x",
-           function(x, f, archetype = 1L, ...)
-               standardGeneric("mergeCols"))
+            signature = "x",
+            function(x, f, archetype = 1L, ...)
+                standardGeneric("mergeCols"))
 
 #' @rdname merge-methods
 #' @aliases mergeRows
 #' @export
 setGeneric("mergeFeatures",
-           signature = "x",
-           function(x, f, archetype = 1L, ...)
-               standardGeneric("mergeFeatures"))
+            signature = "x",
+            function(x, f, archetype = 1L, ...)
+                standardGeneric("mergeFeatures"))
 
 #' @rdname merge-methods
 #' @aliases mergeCols
 #' @export
 setGeneric("mergeSamples",
-           signature = "x",
-           function(x, f, archetype = 1L, ...)
-               standardGeneric("mergeSamples"))
+            signature = "x",
+            function(x, f, archetype = 1L, ...)
+                standardGeneric("mergeSamples"))
 
 .norm_f <- function(i, f, dim.type = c("rows","columns")){
     dim.type <- match.arg(dim.type)
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
-             "meaningful factor.",
-             call. = FALSE)
+            "meaningful factor.",
+            call. = FALSE)
     }
     if(i != length(f)){
         stop("'f' must have the same number of ",dim.type," as 'x'",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(is.character(f)){
         f <- factor(f)
@@ -125,21 +125,21 @@ setGeneric("mergeSamples",
     if(length(archetype) > 1L){
         if(length(levels(f)) != length(archetype)){
             stop("length of 'archetype' must have the same length as ",
-                 "levels('f')",
-                 call. = FALSE)
+                "levels('f')",
+                call. = FALSE)
         }
     }
     f_table <- table(f)
     if(!is.null(names(archetype))){
         if(anyNA(names(archetype)) || anyDuplicated(names(archetype))){
             stop("If 'archetype' is named, names must be non-NA and unqiue.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         archetype <- archetype[names(f_table)]
     }
     if(any(f_table < archetype)){
         stop("'archetype' out of bounds for some levels of 'f'. The maximum of",
-             " 'archetype' is defined as table('f')", call. = FALSE)
+            " 'archetype' is defined as table('f')", call. = FALSE)
     }
     if(length(archetype) == 1L){
         archetype <- rep(archetype,length(levels(f)))
@@ -191,12 +191,12 @@ setGeneric("mergeSamples",
         mapply(.check_assays_for_merge, names(assays), assays)
     }
     assays <- S4Vectors::SimpleList(lapply(assays,
-                                           scuttle::sumCountsAcrossFeatures,
-                                           ids = f, 
-                                           subset.row = NULL, 
-                                           subset.col = NULL,
-                                           average = average,
-                                           BPPARAM = BPPARAM))
+                                            scuttle::sumCountsAcrossFeatures,
+                                            ids = f, 
+                                            subset.row = NULL, 
+                                            subset.col = NULL,
+                                            average = average,
+                                            BPPARAM = BPPARAM))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]
@@ -212,15 +212,15 @@ setGeneric("mergeSamples",
     if( all(assay == 0 | assay == 1) ){
         warning(paste0("'",assay.type,"'", " includes binary values."),
                 "\nAgglomeration of it might lead to meaningless values.", 
-                "\nCheck the assay, and consider doing transformation again manually", 
-                " with agglomerated data.",
+                "\nCheck the assay, and consider doing transformation again",
+                "manually with agglomerated data.",
                 call. = FALSE)
     }
     if( !all( assay >= 0 | is.na(assay) ) ){
         warning(paste0("'",assay.type,"'", " includes negative values."),
                 "\nAgglomeration of it might lead to meaningless values.",
-                "\nCheck the assay, and consider doing transformation again manually", 
-                " with agglomerated data.",
+                "\nCheck the assay, and consider doing transformation again",
+                "manually with agglomerated data.",
                 call. = FALSE)
     }
 }
@@ -250,18 +250,18 @@ setGeneric("mergeSamples",
     mapply(.check_assays_for_merge, names(assays), assays)
     FUN <- function(mat, ...){
         temp <- scuttle::summarizeAssayByGroup(mat,
-                                               statistics = "sum",
-                                               ...)
+                                                statistics = "sum",
+                                                ...)
         # "sum" includes agglomerated (summed up) data
         mat <- assay(temp, "sum")
         return(mat)
     }
     assays <- S4Vectors::SimpleList(lapply(assays,
-                                           FUN = FUN,
-                                           ids = f, 
-                                           subset.row = NULL, 
-                                           subset.col = NULL,
-                                           ...))
+                                            FUN = FUN,
+                                            ids = f, 
+                                            subset.row = NULL, 
+                                            subset.col = NULL,
+                                            ...))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[,.get_element_pos(f, archetype = archetype)]
@@ -356,7 +356,7 @@ merge_cols_SE <- function(x, f, archetype = 1L, ...){
 .merge_refseq <- function(sequences, f, names, threshold){
     sequences <- split(sequences,f)
     seq <- unlist(DNAStringSetList(lapply(sequences, ConsensusSequence,
-                                          threshold = threshold)))
+                                            threshold = threshold)))
     seq
 }
 
@@ -405,11 +405,17 @@ merge_cols_SE <- function(x, f, archetype = 1L, ...){
 #' @aliases mergeRows
 #' @export
 setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...){
-              .Deprecated(old="mergeRows", new="mergeFeatures", "Now mergeRows is deprecated. Use mergeFeatures instead.")
-              x <- mergeRows(x = x, f = f, archetype = 1L, mergeTree = mergeTree, mergeRefSeq = mergeRefSeq, ...)
-              return(x)
-          }
+            function(x, f, archetype = 1L, mergeTree = FALSE, 
+                     mergeRefSeq = FALSE, ...){
+                .Deprecated(old="mergeRows", new="mergeFeatures", 
+                            "Now mergeRows is deprecated. 
+                            Use mergeFeatures instead.")
+                x <- mergeRows(x = x, f = f, archetype = 1L, 
+                            mergeTree = mergeTree, 
+                            mergeRefSeq = mergeRefSeq, 
+                            ...)
+                return(x)
+            }
 )
 
 #' @rdname merge-methods
@@ -417,9 +423,11 @@ setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
 #' @aliases mergeCols
 #' @export
 setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, f, archetype = 1L, mergeTree = FALSE, ...){
-              .Deprecated(old="mergeCols", new="mergeSamples", "Now mergeCols is deprecated. Use mergeSamples instead.")
-              x <- mergeCols(x, f, archetype = 1L, mergeTree =mergeTree, ...)
-              return(x)
-          }
+            function(x, f, archetype = 1L, mergeTree = FALSE, ...){
+                .Deprecated(old="mergeCols", new="mergeSamples", 
+                            "Now mergeCols is deprecated. 
+                            Use mergeSamples instead.")
+                x <- mergeCols(x, f, archetype = 1L, mergeTree =mergeTree, ...)
+                return(x)
+            }
 )
