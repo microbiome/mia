@@ -10,7 +10,8 @@
 #' 
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
-#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
+#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most
+#' cases. 
 #' (default \code{removeTaxaPrefixes = FALSE}) 
 #' (x class : biom)
 #' 
@@ -174,8 +175,8 @@ setMethod("convert", signature = c(x = "phyloseq"),
 #' @export
 setMethod("convert", signature = c(x = "biom"),
             function(x, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
-                     remove.artifacts = FALSE, ...){
+                    remove.artifacts = FALSE, ...){
                 .make_TreeSE_from_biom(x, removeTaxaPrefixes, rankFromPrefix,
-                                       remove.artifacts, ...)
+                                        remove.artifacts, ...)
             }
 )
