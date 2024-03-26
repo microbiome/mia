@@ -1,12 +1,20 @@
-#' Agglomerate data using taxonomic information
+#' Agglomerate or merge data using taxonomic information
 #'
 #' \code{agglomerateByRank} can be used to sum up data based on associations
 #' with certain taxonomic ranks, as defined in \code{rowData}. Only available
 #' \code{\link{taxonomyRanks}} can be used.
 #'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
+#' \code{agglomerateByVariable} merges data on rows or columns of a
+#' \code{SummarizedExperiment} as defined by a \code{factor} alongside the
+#' chosen dimension. Metadata from the \code{rowData} or \code{colData} are
+#' retained as defined by \code{archetype}.
+#' 
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are 
+#' agglomerated, i.e. summed up. If the assay contains values other than counts 
+#' or absolute values, this can lead to meaningless values being produced. 
+#'
+#' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
+#'   a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomyRanks()} function.
@@ -33,7 +41,8 @@
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
 #'   \code{\link[=agglomerate-methods]{agglomerateByVariable}} and
-#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
+#'   with the exception of \code{subset_row}, \code{subset_col}}.
 #'   \itemize{
 #'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
 #'        whether to remove those columns of rowData that include only NAs after
@@ -51,6 +60,26 @@
 #'   nested alternative experiments by default (default:
 #'   \code{strip_altexp = TRUE})
 #'
+#' @param f A factor for merging. Must be the same length as
+#'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
+#'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
+#'   returned unchanged.
+#'
+#' @param archetype Of each level of \code{f}, which element should be regarded
+#'   as the archetype and metadata in the columns or rows kept, while merging?
+#'   This can be single integer value or an integer vector of the same length
+#'   as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
+#'   element encountered per factor level will be kept)
+#'   
+#' @param mergeTree \code{TRUE} or \code{FALSE}: Should
+#'   \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})
+#'
+#' @param mergeRefSeq \code{TRUE} or \code{FALSE}: Should a consensus sequence
+#'   be calculated? If set to \code{FALSE}, the result from \code{archetype} is
+#'   returned; If set to \code{TRUE} the result from
+#'   \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
+#'   returned. (Default: \code{mergeRefSeq = FALSE})
+#'
 #' @details
 #' Depending on the available taxonomic data and its structure, setting
 #' \code{onRankOnly = TRUE} has certain implications on the interpretability of
@@ -63,14 +92,28 @@
 #' summing can produce meaningless values. In those cases, consider performing 
 #' agglomeration first, and then applying the transformation afterwards.
 #'
-#' @return A taxonomically-agglomerated, optionally-pruned object of the same
-#'   class as \code{x}.
+#' \code{agglomerateByVariable} works similarly to
+#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+#' However, additional support for \code{TreeSummarizedExperiment} was added and
+#' science field agnostic names were used. In addition the \code{archetype}
+#' argument lets the user select how to preserve row or column data.
+#'
+#' For merge data of assays the function from \code{scuttle} are used.
+#'
+#' @return \code{agglomerateByRank} returns a taxonomically-agglomerated, 
+#' optionally-pruned object of the same class as \code{x} while 
+#' \code{agglomerateByVariable} returns an object of the same class as \code{x} 
+#' with the specified entries merged into one entry in all relevant components.
 #'
 #' @name agglomerate-methods
+#' 
 #' @seealso
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 #'
 #' @examples
+#' 
+#' ### Agglomerate data based on taxonomic information
+#' 
 #' data(GlobalPatterns)
 #' # print the available taxonomic ranks
 #' colnames(rowData(GlobalPatterns))
@@ -131,6 +174,24 @@
 #' ## Print the available taxonomic ranks. Shows only 1 available rank,
 #' ## not useful for agglomerateByRank
 #' taxonomyRanks(enterotype)
+#' 
+#' ### Merge TreeSummarizedExperiments on rows and columns
+#' 
+#' data(esophagus)
+#' esophagus
+#' plot(rowTree(esophagus))
+#' # get a factor for merging
+#' f <- factor(regmatches(rownames(esophagus),
+#'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
+#' merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f, 
+#'                                 mergeTree = TRUE)
+#' plot(rowTree(merged))
+#' #
+#' data(GlobalPatterns)
+#' GlobalPatterns
+#' merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols", 
+#'                                 colData(GlobalPatterns)$SampleType)
+#' merged
 NULL
 
 #' @rdname agglomerate-methods
