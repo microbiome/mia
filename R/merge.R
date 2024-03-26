@@ -1,6 +1,6 @@
 #' Merge a subset of the rows or columns of a \code{SummarizedExperiment}
 #'
-#' \code{mergeRows}/\code{mergeCols} merge data on rows or columns of a
+#' \code{agglomerateByVariable} merges data on rows or columns of a
 #' \code{SummarizedExperiment} as defined by a \code{factor} alongside the
 #' chosen dimension. Metadata from the \code{rowData} or \code{colData} are
 #' retained as defined by \code{archetype}.

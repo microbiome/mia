@@ -68,7 +68,6 @@
 #'
 #' @name agglomerate-methods
 #' @seealso
-#' \code{\link[=agglomerate-methods]{agglomerateByVariable}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 #'
 #' @examples
