@@ -30,8 +30,8 @@ mergeFeaturesByRank(x, ...)
 )
 
 \S4method{agglomerateByVariable}{SummarizedExperiment}(
-  MARGIN,
   x,
+  MARGIN,
   f,
   archetype = 1L,
   average = FALSE,

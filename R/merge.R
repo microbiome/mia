@@ -62,12 +62,13 @@
 #' # get a factor for merging
 #' f <- factor(regmatches(rownames(esophagus),
 #'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-#' merged <- agglomerateByVariable("rows", esophagus,f, mergeTree = TRUE)
+#' merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f, 
+#'                                 mergeTree = TRUE)
 #' plot(rowTree(merged))
-#' #
+#' 
 #' data(GlobalPatterns)
 #' GlobalPatterns
-#' merged <- agglomerateByVariable("cols", GlobalPatterns,
+#' merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols",
 #'                                 colData(GlobalPatterns)$SampleType)
 #' merged
 NULL

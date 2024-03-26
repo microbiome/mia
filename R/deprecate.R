@@ -54,7 +54,7 @@ setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
               .Deprecated(msg = paste0("'mergeRows' is deprecated.",
                                        "Use AgglomerateByVariable with parameter
                                        MARGIN = 'rows' instead"))
-              AgglomerateByVariable(MARGIN = 'rows', x, f, 
+              AgglomerateByVariable(x, MARGIN = 'rows', f, 
                                     archetype = archetype, ...)
           }
 )
@@ -75,7 +75,7 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
               .Deprecated(msg = paste0("'mergeCols' is deprecated.",
                                        "Use AgglomerateByVariable with parameter
                                        MARGIN = 'cols' instead"))
-              AgglomerateByVariable(MARGIN = "cols", x, f, 
+              AgglomerateByVariable(x, MARGIN = "cols", f, 
                                     archetype = archetype, ...)
           }
 )
@@ -95,7 +95,7 @@ setMethod("mergeFeatures", signature = c(x = "SummarizedExperiment"),
               .Deprecated(msg = paste0("'mergeFeatures' is deprecated.",
                                        "Use AgglomerateByVariable with parameter
                                        MARGIN = 'rows' instead"))
-              AgglomerateByVariable(MARGIN = 'rows', x, f, 
+              AgglomerateByVariable(x, MARGIN = 'rows', f, 
                                     archetype = archetype, ...)
           }
 )
@@ -116,7 +116,7 @@ setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
               .Deprecated(msg = paste0("'mergeSamples' is deprecated.",
                                        "Use AgglomerateByVariable with parameter
                                        MARGIN = 'cols' instead"))
-              AgglomerateByVariable(MARGIN = "cols", x, f, 
+              AgglomerateByVariable(x, MARGIN = "cols", f, 
                                     archetype = archetype, ...)
           }
 )

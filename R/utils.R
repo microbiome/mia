@@ -435,7 +435,7 @@
         x <- agglomerateByRank(x, rank = merge.by, ...)
     } else {
         # Merge using agglomerateByVariable
-        x <- agglomerateByVariable("rows", x, f = merge.by, ...)
+        x <- agglomerateByVariable(x, MARGIN = "rows", f = merge.by, ...)
     }
     return(x)
 }

@@ -208,7 +208,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
 
         # merge taxa
-        x <- agglomerateByVariable("rows", x, f = tax_factors, ...)
+        x <- agglomerateByVariable(x, MARGIN = "rows", f = tax_factors, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
@@ -232,13 +232,13 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
-            function(MARGIN, x, f, archetype = 1L, average = FALSE,
-                    BPPARAM = SerialParam(),check.assays = TRUE,... ){
+            function(x, MARGIN, f, archetype = 1L, mergeTree = FALSE, 
+                     mergeRefSeq = FALSE, ...){
                 FUN <- switch(MARGIN, 
                             rows = .merge_rows,
                             cols = .merge_cols)
-                FUN(x, f, archetype = 1L, average = FALSE,
-                    BPPARAM = SerialParam(),check.assays = TRUE,...)
+                FUN(x = x, f = f, archetype = 1L, 
+                    mergeTree = mergeTree, mergeRefSeq = mergeRefSeq, ...)
             }
 )
 
