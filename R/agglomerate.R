@@ -232,13 +232,25 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
-            function(x, MARGIN, f, archetype = 1L, mergeTree = FALSE, 
-                     mergeRefSeq = FALSE, ...){
+            function(x, MARGIN, f, archetype = 1L, ...){
                 FUN <- switch(MARGIN, 
-                            rows = .merge_rows,
-                            cols = .merge_cols)
-                FUN(x = x, f = f, archetype = 1L, 
-                    mergeTree = mergeTree, mergeRefSeq = mergeRefSeq, ...)
+                            rows = .merge_rows_SE,
+                            cols = .merge_cols_SE)
+                FUN(x, f, archetype = archetype, ...)
+            }
+)
+
+#' @rdname agglomerate-methods
+#' @export
+setMethod("agglomerateByVariable", 
+            signature = c(x = "TreeSummarizedExperiment"),
+            function(x, MARGIN, f, archetype = 1L, mergeTree = FALSE, 
+                    mergeRefSeq = FALSE, ...){
+                FUN <- switch(MARGIN, 
+                            rows = .merge_rows_TSE,
+                            cols = .merge_cols_TSE)
+                FUN(x, f, archetype = 1L, mergeTree = mergeTree, 
+                    mergeRefSeq = mergeRefSeq, ...)
             }
 )
 

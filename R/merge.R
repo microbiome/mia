@@ -1,6 +1,6 @@
 #' Merge a subset of the rows or columns of a \code{SummarizedExperiment}
 #'
-#' \code{agglomerateByVariable} merge data on rows or columns of a
+#' \code{mergeRows}/\code{mergeCols} merge data on rows or columns of a
 #' \code{SummarizedExperiment} as defined by a \code{factor} alongside the
 #' chosen dimension. Metadata from the \code{rowData} or \code{colData} are
 #' retained as defined by \code{archetype}.
@@ -48,6 +48,7 @@
 #' For merge data of assays the function from \code{scuttle} are used.
 #'
 #' @name merge-methods
+#' @aliases mergeRows mergeCols
 #'
 #' @return An object of the same class as \code{x} with the specified entries
 #'   merged into one entry in all relevant components.
@@ -62,16 +63,46 @@
 #' # get a factor for merging
 #' f <- factor(regmatches(rownames(esophagus),
 #'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-#' merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f, 
-#'                                 mergeTree = TRUE)
+#' merged <- mergeRows(esophagus,f, mergeTree = TRUE)
 #' plot(rowTree(merged))
-#' 
+#' #
 #' data(GlobalPatterns)
 #' GlobalPatterns
-#' merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols",
-#'                                 colData(GlobalPatterns)$SampleType)
+#' merged <- mergeCols(GlobalPatterns,colData(GlobalPatterns)$SampleType)
 #' merged
 NULL
+
+#' @rdname merge-methods
+#' @aliases mergeFeatures
+#' @export
+setGeneric("mergeRows",
+           signature = "x",
+           function(x, f, archetype = 1L, ...)
+               standardGeneric("mergeRows"))
+
+#' @rdname merge-methods
+#' @aliases mergeSamples
+#' @export
+setGeneric("mergeCols",
+           signature = "x",
+           function(x, f, archetype = 1L, ...)
+               standardGeneric("mergeCols"))
+
+#' @rdname merge-methods
+#' @aliases mergeRows
+#' @export
+setGeneric("mergeFeatures",
+           signature = "x",
+           function(x, f, archetype = 1L, ...)
+               standardGeneric("mergeFeatures"))
+
+#' @rdname merge-methods
+#' @aliases mergeCols
+#' @export
+setGeneric("mergeSamples",
+           signature = "x",
+           function(x, f, archetype = 1L, ...)
+               standardGeneric("mergeSamples"))
 
 .norm_f <- function(i, f, dim.type = c("rows","columns")){
     dim.type <- match.arg(dim.type)
@@ -240,6 +271,14 @@ NULL
     x
 }
 
+.merge_rows_SE <- function(x, f, archetype = 1L, ...){
+    .merge_rows(x, f, archetype = archetype, ...)
+}
+
+merge_cols_SE <- function(x, f, archetype = 1L, ...){
+    .merge_cols(x, f, archetype = archetype, ...)
+}
+
 .merge_tree <- function(tree, links){
     tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
     drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
@@ -320,3 +359,67 @@ NULL
                                           threshold = threshold)))
     seq
 }
+
+.merge_rows_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE, 
+                            mergeRefSeq = FALSE, ...){
+    # input check
+    if(!.is_a_bool(mergeTree)){
+        stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if(!.is_a_bool(mergeRefSeq)){
+        stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # for optionally merging referenceSeq
+    refSeq <- NULL
+    if(mergeRefSeq){
+        refSeq <- referenceSeq(x)
+    }
+    #
+    x <- .merge_rows_SE(x, f, archetype = 1L, ...)
+    # optionally merge rowTree
+    x <- .merge_trees(x, mergeTree, 1)
+    # optionally merge referenceSeq
+    if(!is.null(refSeq)){
+        referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
+    }
+    x
+}
+
+
+
+.merge_cols_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE, ...){
+    # input check
+    if(!.is_a_bool(mergeTree)){
+        stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    x <- .merge_cols_SE(x, f, archetype = 1L, ...)
+    # optionally merge colTree
+    x <- .merge_trees(x, mergeTree, 2)
+    return(x)
+}
+
+
+#' @rdname merge-methods
+#' @importFrom ape keep.tip
+#' @aliases mergeRows
+#' @export
+setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, f, archetype = 1L, mergeTree = FALSE, mergeRefSeq = FALSE, ...){
+              .Deprecated(old="mergeRows", new="mergeFeatures", "Now mergeRows is deprecated. Use mergeFeatures instead.")
+              x <- mergeRows(x = x, f = f, archetype = 1L, mergeTree = mergeTree, mergeRefSeq = mergeRefSeq, ...)
+              return(x)
+          }
+)
+
+#' @rdname merge-methods
+#' @importFrom ape keep.tip
+#' @aliases mergeCols
+#' @export
+setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, f, archetype = 1L, mergeTree = FALSE, ...){
+              .Deprecated(old="mergeCols", new="mergeSamples", "Now mergeCols is deprecated. Use mergeSamples instead.")
+              x <- mergeCols(x, f, archetype = 1L, mergeTree =mergeTree, ...)
+              return(x)
+          }
+)
