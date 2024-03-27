@@ -44,35 +44,29 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 #' @export
 setGeneric("mergeRows",
             signature = "x",
-            function(x, f, archetype = 1L, ...)
+            function(x, ...)
                 standardGeneric("mergeRows"))
 
 #' @rdname deprecate
 #' @aliases mergeFeatures
 #' @export
 setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
-            function(x, f, archetype = 1L, ...){
+            function(x, ...){
                 .Deprecated(msg = paste0("'mergeRows' is deprecated.",
                                         "Use AgglomerateByVariable with 
                                         parameter MARGIN = 'rows' instead"))
-                AgglomerateByVariable(x, MARGIN = 'rows', f, 
-                                    archetype = archetype, ...)
+                AgglomerateByVariable(x, MARGIN = "rows", ...)
             }
 )
 
 #' @rdname deprecate
 #' @export
 setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, f, archetype = 1L, mergeTree = FALSE, 
-                   mergeRefSeq = FALSE, ...){
+          function(x, ...){
               .Deprecated(msg = paste0("'mergeRows' is deprecated.",
                                        "Use AgglomerateByVariable with 
                                         parameter MARGIN = 'rows' instead"))
-              AgglomerateByVariable(x, MARGIN = 'rows', f, 
-                                    archetype = archetype,
-                                    mergeTree = mergeTree,
-                                    mergeRefSeq = mergeRefSeq,
-                                    ...)
+              AgglomerateByVariable(x, MARGIN = "rows", ...)
           }
 )
 
@@ -81,19 +75,18 @@ setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
 #' @export
 setGeneric("mergeCols",
             signature = "x",
-            function(x, f, archetype = 1L, ...)
+            function(x, ...)
                 standardGeneric("mergeCols"))
 
 #' @rdname deprecate
 #' @aliases mergeSamples
 #' @export
 setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
-            function(x, f, archetype = 1L, ...){
+            function(x, ...){
                 .Deprecated(msg = paste0("'mergeCols' is deprecated.",
                                         "Use AgglomerateByVariable with 
                                         parameter MARGIN = 'cols' instead"))
-                AgglomerateByVariable(x, MARGIN = "cols", f, 
-                                    archetype = archetype, ...)
+                AgglomerateByVariable(x, MARGIN = "cols", ...)
             }
 )
 
@@ -101,16 +94,11 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
 #' @aliases mergeSamples
 #' @export
 setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, f, archetype = 1L, mergeTree = FALSE, 
-                   mergeRefSeq = FALSE, ...){
+          function(x, ...){
               .Deprecated(msg = paste0("'mergeCols' is deprecated.",
                                        "Use AgglomerateByVariable with 
                                         parameter MARGIN = 'cols' instead"))
-              AgglomerateByVariable(x, MARGIN = 'cols', f, 
-                                    archetype = archetype,
-                                    mergeTree = mergeTree,
-                                    mergeRefSeq = mergeRefSeq,
-                                    ...)
+              AgglomerateByVariable(x, MARGIN = "cols", ...)
           }
 )
 
@@ -119,34 +107,28 @@ setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
 #' @export
 setGeneric("mergeFeatures",
             signature = "x",
-            function(x, f, archetype = 1L, ...)
+            function(x, ...)
                 standardGeneric("mergeFeatures"))
 
 #' @rdname deprecate
 #' @export
 setMethod("mergeFeatures", signature = c(x = "SummarizedExperiment"),
-            function(x, f, archetype = 1L, ...){
+            function(x, ...){
                 .Deprecated(msg = paste0("'mergeFeatures' is deprecated.",
                                         "Use AgglomerateByVariable with 
                                         parameter MARGIN = 'rows' instead"))
-                AgglomerateByVariable(x, MARGIN = 'rows', f, 
-                                    archetype = archetype, ...)
+                AgglomerateByVariable(x, MARGIN = "rows", ...)
             }
 )
 
 #' @rdname deprecate
 #' @export
 setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, f, archetype = 1L, mergeTree = FALSE, 
-                   mergeRefSeq = FALSE, ...){
+          function(x, ...){
               .Deprecated(msg = paste0("'mergeFeatures' is deprecated.",
                                        "Use AgglomerateByVariable with 
                                         parameter MARGIN = 'rows' instead"))
-              AgglomerateByVariable(x, MARGIN = 'rows', f, 
-                                    archetype = archetype,
-                                    mergeTree = mergeTree,
-                                    mergeRefSeq = mergeRefSeq,
-                                    ...)
+              AgglomerateByVariable(x, MARGIN = "rows", ...)
           }
 )
 
@@ -155,19 +137,18 @@ setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
 #' @export
 setGeneric("mergeSamples",
             signature = "x",
-            function(x, f, archetype = 1L, ...)
+            function(x, ...)
                 standardGeneric("mergeSamples"))
 
 #' @rdname deprecate
 #' @aliases mergeSamples
 #' @export
 setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
-            function(x, f, archetype = 1L, ...){
+            function(x, ...){
                 .Deprecated(msg = paste0("'mergeSamples' is deprecated.",
                                         "Use AgglomerateByVariable with 
                                         parameter MARGIN = 'cols' instead"))
-                AgglomerateByVariable(x, MARGIN = "cols", f, 
-                                    archetype = archetype, ...)
+                AgglomerateByVariable(x, MARGIN = "cols", ...)
             }
 )
 
@@ -175,15 +156,10 @@ setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
 #' @aliases mergeSamples
 #' @export
 setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, f, archetype = 1L, mergeTree = FALSE, 
-                   mergeRefSeq = FALSE, ...){
+          function(x, ...){
               .Deprecated(msg = paste0("'mergeSamples' is deprecated.",
                                        "Use AgglomerateByVariable with 
                                         parameter MARGIN = 'cols' instead"))
-              AgglomerateByVariable(x, MARGIN = 'cols', f, 
-                                    archetype = archetype,
-                                    mergeTree = mergeTree,
-                                    mergeRefSeq = mergeRefSeq,
-                                    ...)
+              AgglomerateByVariable(x, MARGIN = "cols", ...)
           }
 )
