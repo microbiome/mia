@@ -99,7 +99,7 @@ x
 \seealso{
 \code{\link[=splitOn]{splitOn}}
 \code{\link[=unsplitOn]{unsplitOn}}
-\code{\link[=merge-methods]{mergeRows}},
+\code{\link[=agglomerate-methods]{agglomerateByVariable}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
 \code{\link[SingleCellExperiment:altExps]{altExps}},

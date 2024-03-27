@@ -34,9 +34,10 @@ object or a list of
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 objects.}
 
-\item{...}{Arguments passed to \code{mergeRows}/\code{mergeCols} function for
+\item{...}{Arguments passed to \code{agglomerateByVariable} function for
 \code{SummarizedExperiment} objects and other functions.
-See \code{\link[=agglomerate-methods]{mergeRows}} for more details.
+See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more
+details.
 \itemize{
 \item{\code{use_names} A single boolean value to select whether to name elements of
 list by their group names.}
@@ -113,7 +114,7 @@ unsplitOn(se_list)
 \seealso{
 \code{\link[=splitByRanks]{splitByRanks}}
 \code{\link[=unsplitByRanks]{unsplitByRanks}}
-\code{\link[=merge-methods]{mergeRows}},
+\code{\link[=agglomerate-methods]{agglomerateByVariable}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
 \code{\link[SingleCellExperiment:altExps]{altExps}},

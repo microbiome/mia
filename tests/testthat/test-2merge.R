@@ -61,7 +61,7 @@ test_that("merge", {
     expect_error(mia:::.merge_rows(x),
                  'argument "f" is missing')
     FUN_check_x <- function(x,archetype=1){
-        actual <- mergeFeatures(x, f, archetype)
+        actual <- agglomerateByVariable(x, MARGIN = "rows", f, archetype)
         expect_s4_class(actual,class(x))
         expect_equal(dim(actual),c(2,10))
     }
@@ -77,7 +77,7 @@ test_that("merge", {
     xtse <- TreeSummarizedExperiment(assays = list(mat = mat),
                                      rowRanges = unname(grl))
     FUN_check_x <- function(x,archetype=1){
-        actual <- mergeFeatures(x, f, archetype)
+        actual <- agglomerateByVariable(x, MARGIN = "rows", f, archetype)
         expect_s4_class(actual,class(x))
         expect_equal(dim(actual),c(2,10))
     }
@@ -99,22 +99,33 @@ test_that("merge", {
     # (trees are pruned differently --> first instance represent specific branch)
     tse <- tse[c(rownames(esophagus), rownames(GlobalPatterns)), ]
     # Only esophagus has these groups --> the merge should contain only esophagus
-    merged  <- mergeFeatures(tse, f=rowData(tse)$group2, mergeTree=TRUE)
-    merged2 <- mergeFeatures(tse, f = rowData(tse)$group2, mergeTree = FALSE)
-    merged3 <- mergeFeatures(esophagus, f = rowData(esophagus)$group2, mergeTree = TRUE)
-    merged4 <- .merge_features(tse, merge.by = rowData(tse)$group2, mergeTree = TRUE)
-    merged5 <- mergeFeatures(tse, f = rowData(tse)$group2, mergeTree = TRUE)
+    merged  <- agglomerateByVariable(tse, MARGIN = "rows", 
+                                    f = rowData(tse)$group2, mergeTree=TRUE)
+    merged2 <- agglomerateByVariable(tse, MARGIN = "rows", 
+                                    f = rowData(tse)$group2, mergeTree = FALSE)
+    merged3 <- agglomerateByVariable(esophagus, MARGIN = "rows",
+                                    f = rowData(esophagus)$group2, 
+                                    mergeTree = TRUE)
+    merged4 <- .merge_features(tse, merge.by = rowData(tse)$group2, 
+                                    mergeTree = TRUE)
+    merged5 <- agglomerateByVariable(tse, MARGIN = "rows",
+                                    f = rowData(tse)$group2, mergeTree = TRUE)
     expect_equal( rowLinks(merged)$whichTree, 
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
     expect_equal(rowTree(tse), rowTree(merged2))
     expect_equal(rowTree(merged), rowTree(merged3))
     expect_equal(merged4, merged5)
-    expect_equal(mergeFeatures(tse, f=rowData(tse)$group2), mergeFeatures(tse, f=rowData(tse)$group2))
+    expect_equal(agglomerateByVariable(tse, MARGIN = "rows", 
+                                        f=rowData(tse)$group2), 
+                agglomerateByVariable(tse, MARGIN = "rows",
+                                        f=rowData(tse)$group2))
     
     # Both datasets have group variable
-    merged <- mergeFeatures(tse, f = rowData(tse)$group, mergeTree = TRUE)
-    merged2 <- mergeFeatures(tse, f = rowData(tse)$group, mergeTree = FALSE)
+    merged <- agglomerateByVariable(tse, MARGIN = "rows", 
+                                    f = rowData(tse)$group, mergeTree = TRUE)
+    merged2 <- agglomerateByVariable(tse, MARGIN = "rows", 
+                                    f = rowData(tse)$group, mergeTree = FALSE)
     expect_equal( rowLinks(merged)$whichTree, 
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )

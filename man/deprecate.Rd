@@ -6,6 +6,18 @@
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{taxonomyTree}
 \alias{taxonomyTree,SummarizedExperiment-method}
+\alias{mergeRows}
+\alias{mergeFeatures}
+\alias{mergeRows,SummarizedExperiment-method}
+\alias{mergeRows,TreeSummarizedExperiment-method}
+\alias{mergeCols}
+\alias{mergeSamples}
+\alias{mergeCols,SummarizedExperiment-method}
+\alias{mergeCols,TreeSummarizedExperiment-method}
+\alias{mergeFeatures,SummarizedExperiment-method}
+\alias{mergeFeatures,TreeSummarizedExperiment-method}
+\alias{mergeSamples,SummarizedExperiment-method}
+\alias{mergeSamples,TreeSummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 addTaxonomyTree(x, ...)
@@ -15,6 +27,30 @@ addTaxonomyTree(x, ...)
 taxonomyTree(x, ...)
 
 \S4method{taxonomyTree}{SummarizedExperiment}(x)
+
+mergeRows(x, ...)
+
+\S4method{mergeRows}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeRows}{TreeSummarizedExperiment}(x, ...)
+
+mergeCols(x, ...)
+
+\S4method{mergeCols}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeCols}{TreeSummarizedExperiment}(x, ...)
+
+mergeFeatures(x, ...)
+
+\S4method{mergeFeatures}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeFeatures}{TreeSummarizedExperiment}(x, ...)
+
+mergeSamples(x, ...)
+
+\S4method{mergeSamples}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeSamples}{TreeSummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object -}
