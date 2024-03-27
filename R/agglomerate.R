@@ -42,7 +42,7 @@
 #'   \code{SummarizedExperiment} objects,
 #'   \code{\link[=agglomerate-methods]{agglomerateByVariable}} and
 #'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
-#'   with the exception of \code{subset_row}, \code{subset_col}}.
+#'   with the exception of \code{subset_row}, \code{subset_col}.
 #'   \itemize{
 #'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
 #'        whether to remove those columns of rowData that include only NAs after
@@ -59,6 +59,10 @@
 #'   experiments be removed prior to agglomeration? This prevents to many
 #'   nested alternative experiments by default (default:
 #'   \code{strip_altexp = TRUE})
+#'
+#' @param MARGIN A character value for selecting if data is merged
+#'   row-wise / for features ('rows') or column-wise / for samples ('cols'). 
+#'   Must be \code{'rows'} or \code{'cols'}.
 #'
 #' @param f A factor for merging. Must be the same length as
 #'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
