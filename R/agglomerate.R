@@ -2,13 +2,12 @@
 #'
 #' \code{agglomerateByRank} can be used to sum up data based on associations
 #' with certain taxonomic ranks, as defined in \code{rowData}. Only available
-#' \code{\link{taxonomyRanks}} can be used.
-#'
-#' \code{agglomerateByVariable} merges data on rows or columns of a
-#' \code{SummarizedExperiment} as defined by a \code{factor} alongside the
-#' chosen dimension. Metadata from the \code{rowData} or \code{colData} are
-#' retained as defined by \code{archetype}.
+#' \code{\link{taxonomyRanks}} can be used. 
 #' 
+#' \code{agglomerateByVariable} merges data on rows or columns of a 
+#' \code{SummarizedExperiment} as defined by a \code{factor} alongside the 
+#' chosen dimension. Metadata from the \code{rowData} or \code{colData} are 
+#' retained as defined by \code{archetype}.
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are 
 #' agglomerated, i.e. summed up. If the assay contains values other than counts 
 #' or absolute values, this can lead to meaningless values being produced. 
@@ -136,12 +135,12 @@
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
 #' 
-#'  # If assay contains binary or negative values, summing might lead to 
-#'  # meaningless values, and you will get a warning. In these cases, you might 
-#'  want to do agglomeration again at chosen taxonomic level.
-#'  tse <- transformAssay(GlobalPatterns, method = "pa")
-#'  tse <- agglomerateByRank(tse, rank = "Genus")
-#'  tse <- transformAssay(tse, method = "pa")
+#' If assay contains binary or negative values, summing might lead to 
+#' meaningless values, and you will get a warning. In these cases, you might 
+#' want to do agglomeration again at chosen taxonomic level.
+#' tse <- transformAssay(GlobalPatterns, method = "pa")
+#' tse <- agglomerateByRank(tse, rank = "Genus")
+#' tse <- transformAssay(tse, method = "pa")
 #'
 #' # removing empty labels by setting na.rm = TRUE
 #' sum(is.na(rowData(GlobalPatterns)$Family))
