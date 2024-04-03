@@ -1002,7 +1002,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # If assays were identical, and duplicate variable pairs were dropped
     if( assays_identical ){
         # Change names so that they are not equal to colnames of variable_pairs
-        colnames(variable_pairs)[1:2] <- c("Var1_", "Var2_")
+        colnames(variable_pairs)[c(1,2)] <- c("Var1_", "Var2_")
         # Combine feature-pair names with correlation values and p-values
         correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
         
@@ -1170,9 +1170,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
           do.call(association_FUN, args = c(list(feature_mat), list(...)))
         },
         error = function(cond) {
-            stop(paste0("Error occurred during calculation. Check, e.g., that ",
+            stop("Error occurred during calculation. Check, e.g., that ",
                 "'association_FUN' fulfills requirements. 'association_FUN' ",
-                "threw a following error:\n",  cond),
+                "threw a following error:\n",  cond,
                 call. = FALSE)
         })
     } else {
@@ -1180,17 +1180,17 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
             suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
         },
         error = function(cond) {
-            stop(paste0("Error occurred during calculation. Check, e.g., that ",
+            stop("Error occurred during calculation. Check, e.g., that ",
                     "'association_FUN' fulfills requirements. 'association_FUN' ",
-                    "threw a following error:\n",  cond),
+                    "threw a following error:\n",  cond,
                  call. = FALSE)
         })
     }
   
     # If temp's length is not 1, then function does not return single numeric value for each pair
     if( length(temp) != 1 ){
-        stop(paste0("Error occurred during calculation. Check that ", 
-            "'association_FUN' fulfills requirements."), 
+        stop("Error occurred during calculation. Check that ", 
+            "'association_FUN' fulfills requirements.", 
             call. = FALSE)
     } 
     return(temp)
@@ -1298,8 +1298,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                use="pairwise.complete.obs")))$order
     },
     error = function(cond) {
-        stop(paste0("Error occurred during sorting. Possible reason is that ",
-                    "correlation matrix includes NAs. Try with 'sort = FALSE'."), 
+        stop("Error occurred during sorting. Possible reason is that ",
+                    "correlation matrix includes NAs. Try with 'sort = FALSE'.", 
              call. = FALSE)
     }
     )
@@ -1308,8 +1308,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                use="pairwise.complete.obs")))$order
     },
     error = function(cond) {
-        stop(paste0("Error occurred during sorting. Possible reason is that ",
-                    "correlation matrix includes NAs. Try with 'sort = FALSE'."), 
+        stop("Error occurred during sorting. Possible reason is that ",
+                    "correlation matrix includes NAs. Try with 'sort = FALSE'.", 
              call. = FALSE)
     }
     )
