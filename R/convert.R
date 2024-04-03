@@ -68,10 +68,6 @@
 #'
 #' @return An object of class TreeSummarizedExperiment or Phyloseq.
 #'
-#' @importFrom Biostrings DNAStringSet
-#' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
-#' @importFrom SummarizedExperiment colData colData<-
-#'
 #' @name convert
 #' 
 #' @seealso 
@@ -133,6 +129,9 @@
 #' @export
 NULL
 
+#' @importFrom Biostrings DNAStringSet
+#' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
+#' @importFrom SummarizedExperiment colData colData<-
 #' @rdname convert
 #' @export
 setGeneric("convert", signature = c("x"),
