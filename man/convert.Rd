@@ -13,9 +13,15 @@
 \usage{
 convert(x, ...)
 
-\S4method{convert}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
+\S4method{convert}{SummarizedExperiment}(
+  x,
+  output.type = "phyloseq",
+  assay.type = "counts",
+  assay_name = NULL,
+  ...
+)
 
-\S4method{convert}{TreeSummarizedExperiment}(x, tree_name = "phylo", ...)
+\S4method{convert}{TreeSummarizedExperiment}(x, output.type = "phyloseq", tree.name = "phylo", ...)
 
 \S4method{convert}{dada}(x, ...)
 
@@ -38,6 +44,9 @@ supported formats.}
 \item{...}{Additional arguments. See \code{mergePairs} function for more
 details if input data class is dada2}
 
+\item{output.type}{a single \code{character} value for specifying the desired
+class for conversion of a \code{TreeSummarizedExperiment}}
+
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 included in the phyloseq object that is created.
@@ -50,14 +59,15 @@ assay to use for calculation.
 will be disabled.)
 (x class : SummarizedExperiment)}
 
-\item{tree_name}{a single \code{character} value for specifying which
+\item{tree.name}{a single \code{character} value for specifying which
 tree will be included in the phyloseq object that is created,
-(By default: \code{tree_name = "phylo"})
+(By default: \code{tree.name = "phylo"})
 (x class : TreeSummarizedExperiment)}
 
 \item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
-taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
+taxa columns meaning that \code{rankFromPrefix} should be enabled in the most
+cases.
 (default \code{removeTaxaPrefixes = FALSE})
 (x class : biom)}
 

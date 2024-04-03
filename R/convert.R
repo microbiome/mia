@@ -34,6 +34,9 @@
 #'        } 
 #'    }
 #'
+#'@param output.type a single \code{character} value for specifying the desired
+#'   class for conversion of a \code{TreeSummarizedExperiment}
+#'   
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #'   included in the phyloseq object that is created. 
@@ -141,16 +144,37 @@ setGeneric("convert", signature = c("x"),
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "SummarizedExperiment"),
-            function(x, assay.type = "counts", assay_name = NULL, ...){
-                .make_phyloseq_from_SE(x, assay.type, assay_name, ...)
+            function(x, output.type = "phyloseq", assay.type = "counts", 
+                    assay_name = NULL, ...){
+                if( !.is_non_empty_character(output.type) ){
+                    stop("'output.type' must be a non-empty character value.",
+                         call. = FALSE)
+                }
+                if( !(output.type %in% c("phyloseq")) ){
+                    stop("'output.type' must be 'phyloseq'")
+                }
+                FUN <- switch(output.type, 
+                        "phyloseq" = .make_phyloseq_from_SE
+                        )
+                FUN(x, assay.type, assay_name, ...)
             }
 )
 
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "TreeSummarizedExperiment"),
-            function(x, tree.name = "phylo", ...){
-                .make_phyloseq_from_TreeSE(x, tree.name, ...)
+            function(x, output.type = "phyloseq", tree.name = "phylo", ...){
+                if( !.is_non_empty_character(output.type) ){
+                    stop("'output.type' must be a non-empty character value.",
+                         call. = FALSE)
+                }
+                if( !(output.type %in% c("phyloseq")) ){
+                    stop("'output.type' must be 'phyloseq'")
+                }
+                FUN <- switch(output.type, 
+                              "phyloseq" = .make_phyloseq_from_TSE
+                )
+                FUN(x, tree.name, ...)
             }
 )
 
