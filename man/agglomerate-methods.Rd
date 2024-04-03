@@ -145,15 +145,17 @@ with the specified entries merged into one entry in all relevant components.
 \description{
 \code{agglomerateByRank} can be used to sum up data based on associations
 with certain taxonomic ranks, as defined in \code{rowData}. Only available
-\code{\link{taxonomyRanks}} can be used. \code{agglomerateByVariable} merges
-data on rows or columns of a \code{SummarizedExperiment} as defined by a
-\code{factor} alongside the chosen dimension. Metadata from the
-\code{rowData} or \code{colData} are retained as defined by \code{archetype}.
+\code{\link{taxonomyRanks}} can be used.
+}
+\details{
+\code{agglomerateByVariable} merges data on rows or columns of a
+\code{SummarizedExperiment} as defined by a \code{factor} alongside the
+chosen dimension. Metadata from the \code{rowData} or \code{colData} are
+retained as defined by \code{archetype}.
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are
 agglomerated, i.e. summed up. If the assay contains values other than counts
 or absolute values, this can lead to meaningless values being produced.
-}
-\details{
+
 Depending on the available taxonomic data and its structure, setting
 \code{onRankOnly = TRUE} has certain implications on the interpretability of
 your results. If no loops exist (loops meaning two higher ranks containing
