@@ -19,7 +19,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.9</span>
       </span>
     </div>
 
@@ -82,6 +82,10 @@ represent taxonomic data alongside the features of a
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">checkTaxonomy</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">setTaxonomyRanks</span><span class="op">(</span><span class="va">ranks</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getTaxonomyRanks</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">getTaxonomyLabels</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
@@ -128,6 +132,10 @@ removed if <code>na.rm = TRUE</code> before agglomeration</p></dd>
 
 <dt>...</dt>
 <dd><p>optional arguments not used currently.</p></dd>
+
+
+<dt>ranks</dt>
+<dd><p>Avector of ranks to be set</p></dd>
 
 
 <dt>with_rank</dt>
@@ -309,6 +317,18 @@ be accessed using <code>metadata(df)$confidence</code>.</p>
 <span class="r-in"><span><span class="fu">mapTaxonomy</span><span class="op">(</span><span class="va">GlobalPatterns</span>, taxa <span class="op">=</span> <span class="st">"Escherichia"</span>,to<span class="op">=</span><span class="st">"Family"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Escherichia </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "Enterobacteriaceae" </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># setTaxonomyRanks</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"TAXA1"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">setTaxonomyRanks</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Taxonomy ranks set to: taxa1 phylum class order family genus species </span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># getTaxonomyRanks is to get/check if the taxonomic ranks is set to "TAXA1"</span></span></span>
+<span class="r-in"><span><span class="fu">getTaxonomyRanks</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "taxa1"   "phylum"  "class"   "order"   "family"  "genus"   "species"</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
