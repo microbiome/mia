@@ -104,5 +104,9 @@ Changes in version 1.11.x
 + cluster: Overwrite old results instead of failing
 + getPrevalence: bugfix, if assay contains NA values, it does not end up to NA anymore.
 + getExperimentCrossCorrelation fix: enable using of sampleMap in MAE.
+<<<<<<< HEAD
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
 loadFromMetaphlan, loadFromHumann
+=======
++ Implemented the setTaxonomyRanks function to specify which ranks are recognized as taxonomy ranks.
+>>>>>>> 32d85c6bfe311c9160a72bf718d5f36987bdc261
