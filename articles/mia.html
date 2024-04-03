@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.10</span>
       </span>
     </div>
 
@@ -354,17 +354,17 @@ rarefying.</p>
 <span>                                  seed <span class="op">=</span> <span class="fl">1938</span><span class="op">)</span></span>
 <span><span class="va">tse.subsampled</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
-<span><span class="co">## dim: 12470 25 </span></span>
+<span><span class="co">## dim: 12388 25 </span></span>
 <span><span class="co">## metadata(1): subsampleCounts_min_size</span></span>
 <span><span class="co">## assays(2): counts subsampled</span></span>
-<span><span class="co">## rownames(12470): 549322 522457 ... 200359 271582</span></span>
+<span><span class="co">## rownames(12388): 549322 522457 ... 200359 271582</span></span>
 <span><span class="co">## rowData names(7): Kingdom Phylum ... Genus Species</span></span>
 <span><span class="co">## colnames(25): CL3 CC1 ... Even2 Even3</span></span>
 <span><span class="co">## colData names(7): X.SampleID Primer ... SampleType Description</span></span>
 <span><span class="co">## reducedDimNames(0):</span></span>
 <span><span class="co">## mainExpName: NULL</span></span>
 <span><span class="co">## altExpNames(0):</span></span>
-<span><span class="co">## rowLinks: a LinkDataFrame (12470 rows)</span></span>
+<span><span class="co">## rowLinks: a LinkDataFrame (12388 rows)</span></span>
 <span><span class="co">## rowTree: 1 phylo tree(s) (19216 leaves)</span></span>
 <span><span class="co">## colLinks: NULL</span></span>
 <span><span class="co">## colTree: NULL</span></span></code></pre>
@@ -379,7 +379,7 @@ TreeSE within a MultiAssayExperiment object.</p>
 <span><span class="co">##  experiments with user-defined names and respective classes.</span></span>
 <span><span class="co">##  Containing an ExperimentList class object of length 2:</span></span>
 <span><span class="co">##  [1] originalTreeSE: TreeSummarizedExperiment with 19216 rows and 26 columns</span></span>
-<span><span class="co">##  [2] subsampledTreeSE: TreeSummarizedExperiment with 12470 rows and 25 columns</span></span>
+<span><span class="co">##  [2] subsampledTreeSE: TreeSummarizedExperiment with 12388 rows and 25 columns</span></span>
 <span><span class="co">## Functionality:</span></span>
 <span><span class="co">##  experiments() - obtain the ExperimentList instance</span></span>
 <span><span class="co">##  colData() - the primary/phenotype DataFrame</span></span>
@@ -392,17 +392,17 @@ TreeSE within a MultiAssayExperiment object.</p>
 <code class="sourceCode R"><span><span class="co"># To extract specifically the subsampled TreeSE</span></span>
 <span><span class="fu"><a href="http://waldronlab.io/MultiAssayExperiment/reference/MultiAssayExperiment-methods.html" class="external-link">experiments</a></span><span class="op">(</span><span class="va">mae</span><span class="op">)</span><span class="op">$</span><span class="va">subsampledTreeSE</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
-<span><span class="co">## dim: 12470 25 </span></span>
+<span><span class="co">## dim: 12388 25 </span></span>
 <span><span class="co">## metadata(1): subsampleCounts_min_size</span></span>
 <span><span class="co">## assays(2): counts subsampled</span></span>
-<span><span class="co">## rownames(12470): 549322 522457 ... 200359 271582</span></span>
+<span><span class="co">## rownames(12388): 549322 522457 ... 200359 271582</span></span>
 <span><span class="co">## rowData names(7): Kingdom Phylum ... Genus Species</span></span>
 <span><span class="co">## colnames(25): CL3 CC1 ... Even2 Even3</span></span>
 <span><span class="co">## colData names(7): X.SampleID Primer ... SampleType Description</span></span>
 <span><span class="co">## reducedDimNames(0):</span></span>
 <span><span class="co">## mainExpName: NULL</span></span>
 <span><span class="co">## altExpNames(0):</span></span>
-<span><span class="co">## rowLinks: a LinkDataFrame (12470 rows)</span></span>
+<span><span class="co">## rowLinks: a LinkDataFrame (12388 rows)</span></span>
 <span><span class="co">## rowTree: 1 phylo tree(s) (19216 leaves)</span></span>
 <span><span class="co">## colLinks: NULL</span></span>
 <span><span class="co">## colTree: NULL</span></span></code></pre>
@@ -603,7 +603,7 @@ long format will be returned.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] phyloseq_1.47.0                 scater_1.31.2                  </span></span>
 <span><span class="co">##  [3] ggplot2_3.5.0                   scuttle_1.13.1                 </span></span>
-<span><span class="co">##  [5] mia_1.11.9                      MultiAssayExperiment_1.29.1    </span></span>
+<span><span class="co">##  [5] mia_1.11.10                     MultiAssayExperiment_1.29.1    </span></span>
 <span><span class="co">##  [7] TreeSummarizedExperiment_2.11.0 Biostrings_2.71.5              </span></span>
 <span><span class="co">##  [9] XVector_0.43.1                  SingleCellExperiment_1.25.1    </span></span>
 <span><span class="co">## [11] SummarizedExperiment_1.33.3     Biobase_2.63.1                 </span></span>
