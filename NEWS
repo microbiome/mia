@@ -103,9 +103,6 @@ Changes in version 1.11.x
 + loadFromMetaphlan: support "taxonomy" column for specifying taxonomy
 + cluster: Overwrite old results instead of failing
 + getPrevalence: bugfix, if assay contains NA values, it does not end up to NA anymore.
-<<<<<<< HEAD
-+ Rename cluster to addCluster
-=======
 + getExperimentCrossCorrelation fix: enable using of sampleMap in MAE.
 + Implemented the setTaxonomyRanks function to specify which ranks are recognized as taxonomy ranks.
->>>>>>> 32d85c6bfe311c9160a72bf718d5f36987bdc261
++ Rename cluster to addCluster
