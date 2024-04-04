@@ -104,14 +104,14 @@
 .check_assays_for_merge <- function(assay.type, assay){
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
-        warning(paste0("'",assay.type,"'", " includes binary values."),
+        warning("'",assay.type,"'", " includes binary values.",
                 "\nAgglomeration of it might lead to meaningless values.", 
                 "\nCheck the assay, and consider doing transformation again",
                 "manually with agglomerated data.",
                 call. = FALSE)
     }
     if( !all( assay >= 0 | is.na(assay) ) ){
-        warning(paste0("'",assay.type,"'", " includes negative values."),
+        warning("'",assay.type,"'", " includes negative values.",
                 "\nAgglomeration of it might lead to meaningless values.",
                 "\nCheck the assay, and consider doing transformation again",
                 "manually with agglomerated data.",

@@ -145,13 +145,13 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
         if( "median" %in% reference || "mean" %in% reference ){
             reference <- apply(mat, 1, reference)
         } else if( !reference %in% colnames(mat) ) {
-            stop(paste("Reference", reference, "not recognized."))
+            stop("Reference ", reference, " not recognized.", call. = FALSE)
         }
     }
 
     # Distance between all samples against one reference sample
     # FIXME: could be be optimzed with sweep / parallelization
     v <- seq_len(ncol(mat))
-    sapply(v, function (i) {FUN(rbind(mat[,i], reference), method=method, ...)})
+    vapply(v, function (i) {FUN(rbind(mat[,i], reference), method=method, ...)},FUN.VALUE = numeric(1))
 }
 
