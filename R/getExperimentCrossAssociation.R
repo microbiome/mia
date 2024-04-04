@@ -419,17 +419,16 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Check experiment1 and experiment2
     .test_experiment_of_mae(x, experiment1)
     .test_experiment_of_mae(x, experiment2)
+    # Rename TreeSEs based on sample map, i.e., based on on what they are
+    # linking to. In MAE, colnames can different between experiments even though
+    # those samples are linking to same patient.
+    obj_list <- .rename_based_on_samplemap(x, experiment1, experiment2)
     # Fetch tse objects
-    tse1 <- x[[experiment1]]
-    tse2 <- x[[experiment2]]
+    tse1 <- obj_list[[1]]
+    tse2 <- obj_list[[2]]
     # Check and fetch tse objects
     tse1 <- .check_and_get_altExp(tse1, altexp1)
     tse2 <- .check_and_get_altExp(tse2, altexp2)
-    # Check that experiments have same amount of samples
-    if( ncol(tse1) != ncol(tse2) ){
-        stop("Samples must match between experiments.",
-             call. = FALSE)
-    }
     # If variables from coldata are specified check them. Otherwise,
     # check assay.type1
     if( !is.null(colData_variable1) ){
@@ -612,6 +611,49 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 }
 
 ################################ HELP FUNCTIONS ################################
+# Rename experiments' colnames based on sample map linkages.
+#' @importFrom MultiAssayExperiment sampleMap
+.rename_based_on_samplemap <- function(mae, exp1, exp2){
+    # Get name of experiments, if indices are provided
+    if( is.numeric(exp1) ){
+        exp1 <- names(mae)[[exp1]]
+    }
+    if( is.numeric(exp2) ){
+        exp2 <- names(mae)[[exp2]]
+    }
+    # Get sample map
+    sample_map <- sampleMap(mae)
+    # Get sample map for first experiment1
+    map_sub <- sample_map[ sample_map[["assay"]] == exp1, ]
+    # Rename TreeSE of experiment1 based on sample map info
+    tse1 <- mae[[exp1]]
+    ind <- match(colnames(tse1), map_sub[["colname"]])
+    colnames(tse1) <- map_sub[ind, "primary"]
+    
+    # Do the same for experiment2
+    map_sub <- sample_map[ sample_map[["assay"]] == exp2, ]
+    # Rename TreeSE of experiment1 based on sample map info
+    tse2 <- mae[[exp2]]
+    ind <- match(colnames(tse2), map_sub[["colname"]])
+    colnames(tse2) <- map_sub[ind, "primary"]
+    
+    # Check if samples match
+    all1 <- all(colnames(tse1) %in% colnames(tse2))
+    all2 <- all(colnames(tse2) %in% colnames(tse1))
+    no_dupl1 <- anyDuplicated(colnames(tse1)) == 0
+    no_dupl2 <- anyDuplicated(colnames(tse2)) == 0
+    if( !(all1 && all2 && no_dupl1 && no_dupl2)  ){
+      stop(
+        "Samples must match between experiments. Please check colnames.",
+        call. = FALSE)
+    }
+    # Order samples
+    tse2 <- tse2[, colnames(tse1)]
+    res <- list(tse1, tse2)
+    names(res) <- c(exp1, exp2)
+    return(res)
+}
+
 # This function is for testing if experiment can be found from MAE
 #' @importFrom MultiAssayExperiment experiments
 .test_experiment_of_mae <- function(x, experiment){
@@ -960,7 +1002,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # If assays were identical, and duplicate variable pairs were dropped
     if( assays_identical ){
         # Change names so that they are not equal to colnames of variable_pairs
-        colnames(variable_pairs)[1:2] <- c("Var1_", "Var2_")
+        colnames(variable_pairs)[c(1,2)] <- c("Var1_", "Var2_")
         # Combine feature-pair names with correlation values and p-values
         correlations_and_p_values <- cbind(variable_pairs, correlations_and_p_values)
         
@@ -1128,9 +1170,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
           do.call(association_FUN, args = c(list(feature_mat), list(...)))
         },
         error = function(cond) {
-            stop(paste0("Error occurred during calculation. Check, e.g., that ",
+            stop("Error occurred during calculation. Check, e.g., that ",
                 "'association_FUN' fulfills requirements. 'association_FUN' ",
-                "threw a following error:\n",  cond),
+                "threw a following error:\n",  cond,
                 call. = FALSE)
         })
     } else {
@@ -1138,17 +1180,17 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
             suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
         },
         error = function(cond) {
-            stop(paste0("Error occurred during calculation. Check, e.g., that ",
+            stop("Error occurred during calculation. Check, e.g., that ",
                     "'association_FUN' fulfills requirements. 'association_FUN' ",
-                    "threw a following error:\n",  cond),
+                    "threw a following error:\n",  cond,
                  call. = FALSE)
         })
     }
   
     # If temp's length is not 1, then function does not return single numeric value for each pair
     if( length(temp) != 1 ){
-        stop(paste0("Error occurred during calculation. Check that ", 
-            "'association_FUN' fulfills requirements."), 
+        stop("Error occurred during calculation. Check that ", 
+            "'association_FUN' fulfills requirements.", 
             call. = FALSE)
     } 
     return(temp)
@@ -1256,8 +1298,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                use="pairwise.complete.obs")))$order
     },
     error = function(cond) {
-        stop(paste0("Error occurred during sorting. Possible reason is that ",
-                    "correlation matrix includes NAs. Try with 'sort = FALSE'."), 
+        stop("Error occurred during sorting. Possible reason is that ",
+                    "correlation matrix includes NAs. Try with 'sort = FALSE'.", 
              call. = FALSE)
     }
     )
@@ -1266,8 +1308,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                use="pairwise.complete.obs")))$order
     },
     error = function(cond) {
-        stop(paste0("Error occurred during sorting. Possible reason is that ",
-                    "correlation matrix includes NAs. Try with 'sort = FALSE'."), 
+        stop("Error occurred during sorting. Possible reason is that ",
+                    "correlation matrix includes NAs. Try with 'sort = FALSE'.", 
              call. = FALSE)
     }
     )
