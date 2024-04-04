@@ -172,7 +172,7 @@ setMethod("convert", signature = c(x = "TreeSummarizedExperiment"),
                     stop("'output.type' must be 'phyloseq'")
                 }
                 FUN <- switch(output.type, 
-                              "phyloseq" = .make_phyloseq_from_TSE
+                              "phyloseq" = .make_phyloseq_from_TreeSE
                 )
                 FUN(x, tree.name, ...)
             }
