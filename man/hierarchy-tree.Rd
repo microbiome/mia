@@ -38,8 +38,8 @@ These functions generate a hierarchy tree using taxonomic information from a
 object and add this hierarchy tree into the \code{rowTree}.
 }
 \details{
-\code{addHierarchyTree} calculates hierarchy tree from the available taxonomic
-information and add it to \code{rowTree}.
+\code{addHierarchyTree} calculates a hierarchy tree from the available
+taxonomic information and add it to \code{rowTree}.
 
 \code{getHierarchyTree} generates a hierarchy tree from the available
 taxonomic information. Internally it uses
@@ -48,14 +48,26 @@ taxonomic information. Internally it uses
 data if needed.
 }
 \examples{
-# Generating a hierarchy tree based on available taxonomic information.
+# Generate a tree based on taxonomic rank hierarchy (a hierarchy tree).
 data(GlobalPatterns)
 tse <- GlobalPatterns
 getHierarchyTree(tse)
 
-# Adding a hierarchy tree based on the available taxonomic information. 
+# Add a hierarchy tree to a TreeSummarizedExperiment.
 # Please note that any tree already stored in rowTree() will be overwritten.
 tse <- addHierarchyTree(tse)
 tse
+
+# A hierarchy tree is not an actual phylogenic tree.
+# A phylogenic tree represents evolutionary relationships among organisms.
+# On the other hand, a hierarchy tree organizes species into a hierarchical 
+# structure based on their taxonomic ranks.
+
+# For instance, the TreeSummarizedExperiment  Tengeler2020 contains an actual
+# phylogenic tree.
+data(Tengeler2020)
+tse2 <- Tengeler2020
+phylo_tree <- rowTree(tse2)
+phylo_tree
 
 }
