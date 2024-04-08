@@ -49,9 +49,6 @@
     <loc>/reference/cluster.html</loc>
   </url>
   <url>
-    <loc>/reference/convert.html</loc>
-  </url>
-  <url>
     <loc>/reference/deprecate.html</loc>
   </url>
   <url>
@@ -104,6 +101,18 @@
   </url>
   <url>
     <loc>/reference/loadFromQIIME2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makePhyloseqFromTreeSE.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makeTreeSEFromBiom.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makeTreeSEFromDADA2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makeTreeSEFromPhyloseq.html</loc>
   </url>
   <url>
     <loc>/reference/meltAssay.html</loc>
