@@ -169,7 +169,7 @@
     .merge_rows(x, f, archetype = archetype, ...)
 }
 
-merge_cols_SE <- function(x, f, archetype = 1L, ...){
+.merge_cols_SE <- function(x, f, archetype = 1L, ...){
     .merge_cols(x, f, archetype = archetype, ...)
 }
 
