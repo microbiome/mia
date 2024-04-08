@@ -191,6 +191,8 @@ summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 }
 \value{
 \code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return subset of \code{x}.
+\code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
+of the same class as x and based on prevalent taxonomic results.
 
 All other functions return a named vectors:
 \itemize{
@@ -233,6 +235,13 @@ The subset includes the most prevalent or rare taxa that are calculated with
 given detection threshold for the selected taxonomic rank.
 
 \code{getRareFeatures} returns complement of \code{getPrevalentTaxa}.
+
+\code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
+level specified by \code{rank} (by default the highest taxonomic level
+available) and selects the summed results that exceed the given population
+prevalence at the given detection level. The other summed values (below the
+threshold) are agglomerated in an additional row taking the name indicated by
+\code{other_label} (by default "Other").
 }
 \examples{
 data(GlobalPatterns)
@@ -300,11 +309,21 @@ data(esophagus)
 getPrevalentAbundance(esophagus, assay.type = "counts")
 
 # data can be aggregated based on prevalent taxonomic results
-agglomerateByPrevalence(tse,
-                        rank = "Phylum",
-                        detection = 1/100,
-                        prevalence = 50/100,
-                        as_relative = TRUE)
+x1 <- agglomerateByPrevalence(tse,
+                              rank = "Phylum",
+                              detection = 1/100,
+                              prevalence = 50/100,
+                              as_relative = TRUE)
+
+x1
+
+# Here data is aggregated at the taxonomic level "Phylum". The five phyla
+# that exceed the population prevalence threshold of 50/100 represent the 
+# five first rows of the assay in the aggregated data. The sixth and last row
+# named by default "Other" takes the summed up values of all the other phyla 
+# that are below the prevalence threshold.
+
+assay(x1)[,1:5]
 }
 \references{
 A Salonen et al. The adult intestinal core microbiota is determined by
