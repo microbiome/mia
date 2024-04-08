@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.10</span>
       </span>
     </div>
 
@@ -354,17 +354,17 @@ rarefying.</p>
 <span>                                  seed <span class="op">=</span> <span class="fl">1938</span><span class="op">)</span></span>
 <span><span class="va">tse.subsampled</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
-<span><span class="co">## dim: 12425 25 </span></span>
+<span><span class="co">## dim: 12389 25 </span></span>
 <span><span class="co">## metadata(1): subsampleCounts_min_size</span></span>
 <span><span class="co">## assays(2): counts subsampled</span></span>
-<span><span class="co">## rownames(12425): 549322 522457 ... 200359 271582</span></span>
+<span><span class="co">## rownames(12389): 549322 255340 ... 200359 271582</span></span>
 <span><span class="co">## rowData names(7): Kingdom Phylum ... Genus Species</span></span>
 <span><span class="co">## colnames(25): CL3 CC1 ... Even2 Even3</span></span>
 <span><span class="co">## colData names(7): X.SampleID Primer ... SampleType Description</span></span>
 <span><span class="co">## reducedDimNames(0):</span></span>
 <span><span class="co">## mainExpName: NULL</span></span>
 <span><span class="co">## altExpNames(0):</span></span>
-<span><span class="co">## rowLinks: a LinkDataFrame (12425 rows)</span></span>
+<span><span class="co">## rowLinks: a LinkDataFrame (12389 rows)</span></span>
 <span><span class="co">## rowTree: 1 phylo tree(s) (19216 leaves)</span></span>
 <span><span class="co">## colLinks: NULL</span></span>
 <span><span class="co">## colTree: NULL</span></span></code></pre>
@@ -379,7 +379,7 @@ TreeSE within a MultiAssayExperiment object.</p>
 <span><span class="co">##  experiments with user-defined names and respective classes.</span></span>
 <span><span class="co">##  Containing an ExperimentList class object of length 2:</span></span>
 <span><span class="co">##  [1] originalTreeSE: TreeSummarizedExperiment with 19216 rows and 26 columns</span></span>
-<span><span class="co">##  [2] subsampledTreeSE: TreeSummarizedExperiment with 12425 rows and 25 columns</span></span>
+<span><span class="co">##  [2] subsampledTreeSE: TreeSummarizedExperiment with 12389 rows and 25 columns</span></span>
 <span><span class="co">## Functionality:</span></span>
 <span><span class="co">##  experiments() - obtain the ExperimentList instance</span></span>
 <span><span class="co">##  colData() - the primary/phenotype DataFrame</span></span>
@@ -392,17 +392,17 @@ TreeSE within a MultiAssayExperiment object.</p>
 <code class="sourceCode R"><span><span class="co"># To extract specifically the subsampled TreeSE</span></span>
 <span><span class="fu"><a href="http://waldronlab.io/MultiAssayExperiment/reference/MultiAssayExperiment-methods.html" class="external-link">experiments</a></span><span class="op">(</span><span class="va">mae</span><span class="op">)</span><span class="op">$</span><span class="va">subsampledTreeSE</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
-<span><span class="co">## dim: 12425 25 </span></span>
+<span><span class="co">## dim: 12389 25 </span></span>
 <span><span class="co">## metadata(1): subsampleCounts_min_size</span></span>
 <span><span class="co">## assays(2): counts subsampled</span></span>
-<span><span class="co">## rownames(12425): 549322 522457 ... 200359 271582</span></span>
+<span><span class="co">## rownames(12389): 549322 255340 ... 200359 271582</span></span>
 <span><span class="co">## rowData names(7): Kingdom Phylum ... Genus Species</span></span>
 <span><span class="co">## colnames(25): CL3 CC1 ... Even2 Even3</span></span>
 <span><span class="co">## colData names(7): X.SampleID Primer ... SampleType Description</span></span>
 <span><span class="co">## reducedDimNames(0):</span></span>
 <span><span class="co">## mainExpName: NULL</span></span>
 <span><span class="co">## altExpNames(0):</span></span>
-<span><span class="co">## rowLinks: a LinkDataFrame (12425 rows)</span></span>
+<span><span class="co">## rowLinks: a LinkDataFrame (12389 rows)</span></span>
 <span><span class="co">## rowTree: 1 phylo tree(s) (19216 leaves)</span></span>
 <span><span class="co">## colLinks: NULL</span></span>
 <span><span class="co">## colTree: NULL</span></span></code></pre>
@@ -603,12 +603,12 @@ long format will be returned.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] phyloseq_1.47.0                 scater_1.31.2                  </span></span>
 <span><span class="co">##  [3] ggplot2_3.5.0                   scuttle_1.13.1                 </span></span>
-<span><span class="co">##  [5] mia_1.11.9                      MultiAssayExperiment_1.29.1    </span></span>
+<span><span class="co">##  [5] mia_1.11.10                     MultiAssayExperiment_1.29.1    </span></span>
 <span><span class="co">##  [7] TreeSummarizedExperiment_2.11.0 Biostrings_2.71.5              </span></span>
 <span><span class="co">##  [9] XVector_0.43.1                  SingleCellExperiment_1.25.1    </span></span>
 <span><span class="co">## [11] SummarizedExperiment_1.33.3     Biobase_2.63.1                 </span></span>
-<span><span class="co">## [13] GenomicRanges_1.55.4            GenomeInfoDb_1.39.10           </span></span>
-<span><span class="co">## [15] IRanges_2.37.1                  S4Vectors_0.41.5               </span></span>
+<span><span class="co">## [13] GenomicRanges_1.55.4            GenomeInfoDb_1.39.12           </span></span>
+<span><span class="co">## [15] IRanges_2.37.1                  S4Vectors_0.41.6               </span></span>
 <span><span class="co">## [17] BiocGenerics_0.49.1             MatrixGenerics_1.15.0          </span></span>
 <span><span class="co">## [19] matrixStats_1.2.0               BiocStyle_2.31.0               </span></span>
 <span><span class="co">## </span></span>
@@ -617,56 +617,57 @@ long format will be returned.</p>
 <span><span class="co">##   [3] permute_0.9-7               rlang_1.1.3                </span></span>
 <span><span class="co">##   [5] magrittr_2.0.3              ade4_1.7-22                </span></span>
 <span><span class="co">##   [7] compiler_4.5.0              mgcv_1.9-1                 </span></span>
-<span><span class="co">##   [9] DelayedMatrixStats_1.25.1   systemfonts_1.0.6          </span></span>
-<span><span class="co">##  [11] vctrs_0.6.5                 reshape2_1.4.4             </span></span>
+<span><span class="co">##   [9] DelayedMatrixStats_1.25.1   reshape2_1.4.4             </span></span>
+<span><span class="co">##  [11] systemfonts_1.0.6           vctrs_0.6.5                </span></span>
 <span><span class="co">##  [13] stringr_1.5.1               pkgconfig_2.0.3            </span></span>
 <span><span class="co">##  [15] crayon_1.5.2                fastmap_1.1.1              </span></span>
 <span><span class="co">##  [17] utf8_1.2.4                  rmarkdown_2.26             </span></span>
-<span><span class="co">##  [19] ggbeeswarm_0.7.2            ragg_1.3.0                 </span></span>
-<span><span class="co">##  [21] DirichletMultinomial_1.45.0 purrr_1.0.2                </span></span>
-<span><span class="co">##  [23] xfun_0.43                   bluster_1.13.0             </span></span>
-<span><span class="co">##  [25] zlibbioc_1.49.3             cachem_1.0.8               </span></span>
-<span><span class="co">##  [27] beachmat_2.19.4             jsonlite_1.8.8             </span></span>
-<span><span class="co">##  [29] biomformat_1.31.0           rhdf5filters_1.15.4        </span></span>
-<span><span class="co">##  [31] DelayedArray_0.29.9         Rhdf5lib_1.25.1            </span></span>
-<span><span class="co">##  [33] BiocParallel_1.37.1         irlba_2.3.5.1              </span></span>
-<span><span class="co">##  [35] parallel_4.5.0              cluster_2.1.6              </span></span>
-<span><span class="co">##  [37] R6_2.5.1                    stringi_1.8.3              </span></span>
-<span><span class="co">##  [39] bslib_0.7.0                 jquerylib_0.1.4            </span></span>
-<span><span class="co">##  [41] iterators_1.0.14            Rcpp_1.0.12                </span></span>
-<span><span class="co">##  [43] bookdown_0.38               knitr_1.45                 </span></span>
-<span><span class="co">##  [45] DECIPHER_2.31.4             splines_4.5.0              </span></span>
-<span><span class="co">##  [47] Matrix_1.7-0                igraph_2.0.3               </span></span>
-<span><span class="co">##  [49] tidyselect_1.2.1            abind_1.4-5                </span></span>
-<span><span class="co">##  [51] yaml_2.3.8                  viridis_0.6.5              </span></span>
-<span><span class="co">##  [53] vegan_2.6-4                 codetools_0.2-20           </span></span>
-<span><span class="co">##  [55] lattice_0.22-6              tibble_3.2.1               </span></span>
-<span><span class="co">##  [57] plyr_1.8.9                  withr_3.0.0                </span></span>
-<span><span class="co">##  [59] treeio_1.27.0               evaluate_0.23              </span></span>
-<span><span class="co">##  [61] survival_3.5-8              desc_1.4.3                 </span></span>
-<span><span class="co">##  [63] pillar_1.9.0                BiocManager_1.30.22        </span></span>
-<span><span class="co">##  [65] foreach_1.5.2               generics_0.1.3             </span></span>
-<span><span class="co">##  [67] sparseMatrixStats_1.15.0    munsell_0.5.1              </span></span>
-<span><span class="co">##  [69] scales_1.3.0                tidytree_0.4.6             </span></span>
-<span><span class="co">##  [71] glue_1.7.0                  lazyeval_0.2.2             </span></span>
-<span><span class="co">##  [73] tools_4.5.0                 data.table_1.15.4          </span></span>
-<span><span class="co">##  [75] BiocNeighbors_1.21.2        ScaledMatrix_1.11.1        </span></span>
-<span><span class="co">##  [77] fs_1.6.3                    rhdf5_2.47.6               </span></span>
-<span><span class="co">##  [79] grid_4.5.0                  tidyr_1.3.1                </span></span>
-<span><span class="co">##  [81] ape_5.7-1                   colorspace_2.1-0           </span></span>
-<span><span class="co">##  [83] nlme_3.1-164                GenomeInfoDbData_1.2.12    </span></span>
-<span><span class="co">##  [85] beeswarm_0.4.0              BiocSingular_1.19.0        </span></span>
-<span><span class="co">##  [87] vipor_0.4.7                 cli_3.6.2                  </span></span>
-<span><span class="co">##  [89] rsvd_1.0.5                  textshaping_0.3.7          </span></span>
-<span><span class="co">##  [91] fansi_1.0.6                 S4Arrays_1.3.6             </span></span>
-<span><span class="co">##  [93] viridisLite_0.4.2           dplyr_1.1.4                </span></span>
-<span><span class="co">##  [95] gtable_0.3.4                yulab.utils_0.1.4          </span></span>
-<span><span class="co">##  [97] sass_0.4.9                  digest_0.6.35              </span></span>
-<span><span class="co">##  [99] SparseArray_1.3.4           ggrepel_0.9.5              </span></span>
-<span><span class="co">## [101] decontam_1.23.0             multtest_2.59.0            </span></span>
-<span><span class="co">## [103] memoise_2.0.1               htmltools_0.5.8.1          </span></span>
-<span><span class="co">## [105] pkgdown_2.0.7               lifecycle_1.0.4            </span></span>
-<span><span class="co">## [107] MASS_7.3-60.2</span></span></code></pre>
+<span><span class="co">##  [19] UCSC.utils_0.99.5           ggbeeswarm_0.7.2           </span></span>
+<span><span class="co">##  [21] ragg_1.3.0                  DirichletMultinomial_1.45.0</span></span>
+<span><span class="co">##  [23] purrr_1.0.2                 xfun_0.43                  </span></span>
+<span><span class="co">##  [25] bluster_1.13.0              zlibbioc_1.49.3            </span></span>
+<span><span class="co">##  [27] cachem_1.0.8                beachmat_2.19.4            </span></span>
+<span><span class="co">##  [29] jsonlite_1.8.8              biomformat_1.31.0          </span></span>
+<span><span class="co">##  [31] rhdf5filters_1.15.4         DelayedArray_0.29.9        </span></span>
+<span><span class="co">##  [33] Rhdf5lib_1.25.3             BiocParallel_1.37.1        </span></span>
+<span><span class="co">##  [35] irlba_2.3.5.1               parallel_4.5.0             </span></span>
+<span><span class="co">##  [37] cluster_2.1.6               R6_2.5.1                   </span></span>
+<span><span class="co">##  [39] stringi_1.8.3               bslib_0.7.0                </span></span>
+<span><span class="co">##  [41] jquerylib_0.1.4             iterators_1.0.14           </span></span>
+<span><span class="co">##  [43] Rcpp_1.0.12                 bookdown_0.38              </span></span>
+<span><span class="co">##  [45] knitr_1.46                  DECIPHER_2.31.4            </span></span>
+<span><span class="co">##  [47] splines_4.5.0               Matrix_1.7-0               </span></span>
+<span><span class="co">##  [49] igraph_2.0.3                tidyselect_1.2.1           </span></span>
+<span><span class="co">##  [51] abind_1.4-5                 yaml_2.3.8                 </span></span>
+<span><span class="co">##  [53] viridis_0.6.5               vegan_2.6-4                </span></span>
+<span><span class="co">##  [55] codetools_0.2-20            plyr_1.8.9                 </span></span>
+<span><span class="co">##  [57] lattice_0.22-6              tibble_3.2.1               </span></span>
+<span><span class="co">##  [59] withr_3.0.0                 treeio_1.27.0              </span></span>
+<span><span class="co">##  [61] evaluate_0.23               survival_3.5-8             </span></span>
+<span><span class="co">##  [63] desc_1.4.3                  pillar_1.9.0               </span></span>
+<span><span class="co">##  [65] BiocManager_1.30.22         foreach_1.5.2              </span></span>
+<span><span class="co">##  [67] generics_0.1.3              sparseMatrixStats_1.15.0   </span></span>
+<span><span class="co">##  [69] munsell_0.5.1               scales_1.3.0               </span></span>
+<span><span class="co">##  [71] tidytree_0.4.6              glue_1.7.0                 </span></span>
+<span><span class="co">##  [73] lazyeval_0.2.2              tools_4.5.0                </span></span>
+<span><span class="co">##  [75] data.table_1.15.4           BiocNeighbors_1.21.2       </span></span>
+<span><span class="co">##  [77] ScaledMatrix_1.11.1         fs_1.6.3                   </span></span>
+<span><span class="co">##  [79] rhdf5_2.47.6                grid_4.5.0                 </span></span>
+<span><span class="co">##  [81] tidyr_1.3.1                 ape_5.7-1                  </span></span>
+<span><span class="co">##  [83] colorspace_2.1-0            nlme_3.1-164               </span></span>
+<span><span class="co">##  [85] GenomeInfoDbData_1.2.12     beeswarm_0.4.0             </span></span>
+<span><span class="co">##  [87] BiocSingular_1.19.0         vipor_0.4.7                </span></span>
+<span><span class="co">##  [89] cli_3.6.2                   rsvd_1.0.5                 </span></span>
+<span><span class="co">##  [91] textshaping_0.3.7           fansi_1.0.6                </span></span>
+<span><span class="co">##  [93] S4Arrays_1.3.6              viridisLite_0.4.2          </span></span>
+<span><span class="co">##  [95] dplyr_1.1.4                 gtable_0.3.4               </span></span>
+<span><span class="co">##  [97] yulab.utils_0.1.4           sass_0.4.9                 </span></span>
+<span><span class="co">##  [99] digest_0.6.35               SparseArray_1.3.4          </span></span>
+<span><span class="co">## [101] ggrepel_0.9.5               decontam_1.23.0            </span></span>
+<span><span class="co">## [103] multtest_2.59.0             memoise_2.0.1              </span></span>
+<span><span class="co">## [105] htmltools_0.5.8.1           pkgdown_2.0.7              </span></span>
+<span><span class="co">## [107] lifecycle_1.0.4             httr_1.4.7                 </span></span>
+<span><span class="co">## [109] MASS_7.3-60.2</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
