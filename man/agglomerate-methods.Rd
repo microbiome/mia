@@ -197,9 +197,9 @@ nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
 
-If assay contains binary or negative values, summing might lead to 
-meaningless values, and you will get a warning. In these cases, you might 
-want to do agglomeration again at chosen taxonomic level.
+# If assay contains binary or negative values, summing might lead to 
+# meaningless values, and you will get a warning. In these cases, you might 
+# want to do agglomeration again at chosen taxonomic level.
 tse <- transformAssay(GlobalPatterns, method = "pa")
 tse <- agglomerateByRank(tse, rank = "Genus")
 tse <- transformAssay(tse, method = "pa")
