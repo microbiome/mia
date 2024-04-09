@@ -53,9 +53,9 @@ setGeneric("mergeRows",
 setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeRows' is deprecated.",
-                                        "Use AgglomerateByVariable with 
+                                        "Use agglomerateByVariable with 
                                         parameter MARGIN = 'rows' instead"))
-                AgglomerateByVariable(x, MARGIN = "rows", ...)
+                agglomerateByVariable(x, MARGIN = "rows", ...)
             }
 )
 
@@ -64,9 +64,9 @@ setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
 setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
               .Deprecated(msg = paste0("'mergeRows' is deprecated.",
-                                       "Use AgglomerateByVariable with 
+                                       "Use agglomerateByVariable with 
                                         parameter MARGIN = 'rows' instead"))
-              AgglomerateByVariable(x, MARGIN = "rows", ...)
+              agglomerateByVariable(x, MARGIN = "rows", ...)
           }
 )
 
@@ -84,9 +84,9 @@ setGeneric("mergeCols",
 setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeCols' is deprecated.",
-                                        "Use AgglomerateByVariable with 
+                                        "Use agglomerateByVariable with 
                                         parameter MARGIN = 'cols' instead"))
-                AgglomerateByVariable(x, MARGIN = "cols", ...)
+                agglomerateByVariable(x, MARGIN = "cols", ...)
             }
 )
 
@@ -96,9 +96,9 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
 setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
               .Deprecated(msg = paste0("'mergeCols' is deprecated.",
-                                       "Use AgglomerateByVariable with 
+                                       "Use agglomerateByVariable with 
                                         parameter MARGIN = 'cols' instead"))
-              AgglomerateByVariable(x, MARGIN = "cols", ...)
+              agglomerateByVariable(x, MARGIN = "cols", ...)
           }
 )
 
@@ -115,9 +115,9 @@ setGeneric("mergeFeatures",
 setMethod("mergeFeatures", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeFeatures' is deprecated.",
-                                        "Use AgglomerateByVariable with 
+                                        "Use agglomerateByVariable with 
                                         parameter MARGIN = 'rows' instead"))
-                AgglomerateByVariable(x, MARGIN = "rows", ...)
+                agglomerateByVariable(x, MARGIN = "rows", ...)
             }
 )
 
@@ -126,9 +126,9 @@ setMethod("mergeFeatures", signature = c(x = "SummarizedExperiment"),
 setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
               .Deprecated(msg = paste0("'mergeFeatures' is deprecated.",
-                                       "Use AgglomerateByVariable with 
+                                       "Use agglomerateByVariable with 
                                         parameter MARGIN = 'rows' instead"))
-              AgglomerateByVariable(x, MARGIN = "rows", ...)
+              agglomerateByVariable(x, MARGIN = "rows", ...)
           }
 )
 
@@ -146,9 +146,9 @@ setGeneric("mergeSamples",
 setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeSamples' is deprecated.",
-                                        "Use AgglomerateByVariable with 
+                                        "Use agglomerateByVariable with 
                                         parameter MARGIN = 'cols' instead"))
-                AgglomerateByVariable(x, MARGIN = "cols", ...)
+                agglomerateByVariable(x, MARGIN = "cols", ...)
             }
 )
 
@@ -158,8 +158,8 @@ setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
 setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
               .Deprecated(msg = paste0("'mergeSamples' is deprecated.",
-                                       "Use AgglomerateByVariable with 
+                                       "Use agglomerateByVariable with 
                                         parameter MARGIN = 'cols' instead"))
-              AgglomerateByVariable(x, MARGIN = "cols", ...)
+              agglomerateByVariable(x, MARGIN = "cols", ...)
           }
 )
