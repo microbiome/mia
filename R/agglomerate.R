@@ -206,6 +206,7 @@ setGeneric("agglomerateByRank",
                 standardGeneric("agglomerateByRank"))
 
 #' @rdname agglomerate-methods
+#' @aliases agglomerateByVariable
 #' @export
 setGeneric("agglomerateByVariable",
             signature = "x",
@@ -296,6 +297,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname agglomerate-methods
+#' @aliases agglomerateByVariable
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
             function(x, MARGIN, f, archetype = 1L, ...){
@@ -307,14 +309,20 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname agglomerate-methods
+#' @aliases agglomerateByVariable
 #' @export
 setMethod("agglomerateByVariable", 
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, MARGIN, f, archetype = 1L, mergeTree = FALSE, ...){
-                FUN <- switch(MARGIN, 
-                            rows = .merge_rows_TSE,
-                            cols = .merge_cols_TSE)
-                FUN(x, f, archetype = 1L, mergeTree = mergeTree, ...)
+            function(x, MARGIN, f, archetype = 1L, mergeTree = FALSE,
+                     mergeRefSeq = FALSE, ...){
+                if ( MARGIN == "rows" ){
+                    .merge_rows_TSE(x, f, archetype = 1L, mergeTree = mergeTree,
+                                   mergeRefSeq = mergeRefSeq, ...)
+                }
+                else{
+                    .merge_cols_TSE(x, f, archetype = 1L, mergeTree = mergeTree,
+                                   ...)
+                }
             }
 )
 
