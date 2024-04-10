@@ -4,46 +4,46 @@ test_that("subsampleCounts", {
     data(GlobalPatterns, package="mia")
     
     # Parameters validity check
-    expect_error(cluster(GlobalPatterns, 
-                         KmeansParam(centers = 3), 
-                         assay.type = "error"))
+    expect_error(addCluster(GlobalPatterns, 
+                        KmeansParam(centers = 3), 
+                        assay.type = "error"))
     # Checking wrong MARGIN (char)
-    expect_error(cluster(GlobalPatterns, 
-                         KmeansParam(centers = 3), 
-                         MARGIN = "error"))
+    expect_error(addCluster(GlobalPatterns, 
+                        KmeansParam(centers = 3), 
+                        MARGIN = "error"))
     # Checking wrong MARGIN (number)
-    expect_error(cluster(GlobalPatterns, 
+    expect_error(addCluster(GlobalPatterns, 
                          KmeansParam(centers = 3), 
                          MARGIN = 3))
-    tse <- cluster(GlobalPatterns, 
+    tse <- addCluster(GlobalPatterns, 
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
                    full = TRUE,
                    clust.col = "customdataname")
     altExp(tse, "test") <- tse[1:1000,]
     # Checking same name that is already present
-    expect_warning(cluster(tse, 
+    expect_warning(addCluster(tse, 
                          KmeansParam(centers = 3), 
                          name = "custommetadata",
                          full = TRUE))
     # Checking wrong clust.col with already-present name
-    expect_warning(cluster(tse, 
+    expect_warning(addCluster(tse, 
                          KmeansParam(centers = 3), 
                          clust.col = "customdataname"))
     # Checking wrong altexp
-    expect_error(cluster(tse, 
-                         KmeansParam(centers = 3), 
-                         altexp = "error"))
+    expect_error(addCluster(tse, 
+                        KmeansParam(centers = 3), 
+                        altexp = "error"))
     
     # Parameters check
     tse <- GlobalPatterns
     altExp(tse, "test") <- tse[1:1000,]
-    tse <- cluster(tse, 
+    tse <- addCluster(tse, 
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
                    full = TRUE,
                    clust.col = "customdataname")
-    tse <- cluster(tse, 
+    tse <- addCluster(tse, 
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
                    full = TRUE,
@@ -56,14 +56,14 @@ test_that("subsampleCounts", {
     expect_true("customdataname" %in% names(rowData(altExp(tse, "test"))))
     
     # Checking existing custom metadata/dataname in main/altExp
-    expect_warning(cluster(tse, 
+    expect_warning(addCluster(tse, 
                          KmeansParam(centers = 3), 
                          name = "custommetadata",
                          full = TRUE))
-    expect_warning(cluster(tse, 
+    expect_warning(addCluster(tse, 
                          KmeansParam(centers = 3), 
                          clust.col = "customdataname"))
-    expect_warning(cluster(tse, 
+    expect_warning(addCluster(tse, 
                          KmeansParam(centers = 3), 
                          name = "custommetadata",
                          full = TRUE,
@@ -72,23 +72,23 @@ test_that("subsampleCounts", {
     # Checking working MARGIN
     tse <- GlobalPatterns
     altExp(tse, "test") <- tse[1:1000,]
-    tse <- cluster(tse, 
-                   KmeansParam(centers = 3),
-                   MARGIN = "col")
-    tse <- cluster(tse, 
-                   KmeansParam(centers = 3),
-                   altexp = "test",
-                   MARGIN = 2)
+    tse <- addCluster(tse, 
+                    KmeansParam(centers = 3),
+                    MARGIN = "col")
+    tse <- addCluster(tse, 
+                    KmeansParam(centers = 3),
+                    altexp = "test",
+                    MARGIN = 2)
     expect_true("clusters" %in% names(colData(tse)))
     expect_true("clusters" %in% names(colData(altExp(tse, "test"))))
     
     # Checking wrapper operational
     tse <- GlobalPatterns
     altExp(tse, "test") <- tse[1:2000,]
-    tse <- cluster(tse, 
+    tse <- addCluster(tse, 
                    HclustParam(),
                    MARGIN = "col")
-    tse <- cluster(tse, 
+    tse <- addCluster(tse, 
                    HclustParam(),
                    MARGIN = "row",
                    altexp = "test",
@@ -100,8 +100,8 @@ test_that("subsampleCounts", {
     expect_identical(expectedCol, colData(tse)$clusters)
     # Checking same output on rows
     expect_identical(expectedRow$clusters, 
-                     rowData(altExp(tse, "test"))$clusters)
+                    rowData(altExp(tse, "test"))$clusters)
     # Checking same metdata output on rows
     expect_identical(expectedRow$objects, 
-                     metadata(altExp(tse, "test"))$clusters)
+                    metadata(altExp(tse, "test"))$clusters)
 })
