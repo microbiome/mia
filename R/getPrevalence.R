@@ -28,9 +28,6 @@
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'
-#' @param other_label A single \code{character} valued used as the label for the
-#'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
 #'   
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomyRanks()} function.
@@ -73,9 +70,6 @@
 #'
 #' @return
 #' \code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return subset of \code{x}.
-#' \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
-#' of the same class as x and based on prevalent taxonomic results.
-#' 
 #' 
 #' All other functions return a named vectors:
 #' \itemize{
@@ -178,22 +172,6 @@
 #' data(esophagus)
 #' getPrevalentAbundance(esophagus, assay.type = "counts")
 #'
-#' # data can be aggregated based on prevalent taxonomic results
-#' x1 <- agglomerateByPrevalence(tse,
-#'                               rank = "Phylum",
-#'                               detection = 1/100,
-#'                               prevalence = 50/100,
-#'                               as_relative = TRUE)
-#' 
-#' x1
-#' 
-#' # Here data is aggregated at the taxonomic level "Phylum". The five phyla
-#' # that exceed the population prevalence threshold of 50/100 represent the 
-#' # five first rows of the assay in the aggregated data. The sixth and last row
-#' # named by default "Other" takes the summed up values of all the other phyla 
-#' # that are below the prevalence threshold.
-#' 
-#' assay(x1)[,1:5]
 NULL
 
 #' @rdname getPrevalence
@@ -607,7 +585,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 ############################# agglomerateByPrevalence ##########################
 
-#' @rdname getPrevalence
+#' @rdname agglomerate-methods
 #' 
 #' @details
 #' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic 
@@ -679,8 +657,11 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment"),
           function(x, rank = taxonomyRanks(x)[1L], other_label = "Other", ...){
-              .Deprecated(old="agglomerateByPrevalence", new="mergeFeaturesByPrevalence", "Now agglomerateByPrevalence is deprecated. Use mergeFeaturesByPrevalence instead.")
-              x <- agglomerateByPrevalence(x, rank = rank, other_label = other_label, ...)
+              .Deprecated(msg = paste0(
+                                "'mergeFeaturesByPrevalence' is deprecated. ",
+                                "Use agglomerateByPrevalence instead."))
+              x <- agglomerateByPrevalence(x, rank = rank, 
+                                            other_label = other_label, ...)
               x 
           })
 
