@@ -107,9 +107,7 @@ the sample metadata to be imported. The File has to be in <code>desing
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="makeTreeSEFromPhyloseq.html">makeTreeSEFromPhyloseq</a></code>
-<code><a href="makeTreeSEFromBiom.html">makeTreeSEFromBiom</a></code>
-<code><a href="makeTreeSEFromDADA2.html">makeTreeSEFromDADA2</a></code>
+    <div class="dont-index"><p><code><a href="convert.html">convert</a></code>
 <code><a href="loadFromQIIME2.html">loadFromQIIME2</a></code></p></div>
     </div>
     <div id="author">
@@ -130,7 +128,7 @@ the sample metadata to be imported. The File has to be in <code>desing
 <span class="r-in"><span><span class="co"># Creates se object from files</span></span></span>
 <span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">loadFromMothur</span><span class="op">(</span><span class="va">counts</span>, <span class="va">taxa</span>, <span class="va">meta</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Convert SE to TreeSE</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 100 100 </span>

@@ -45,7 +45,7 @@ object"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Generic converter</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/R/convert.R" class="external-link"><code>R/convert.R</code></a>, <a href="https://github.com/microbiome/mia/blob/HEAD/R/makeTreeSummarizedExperimentFromBiom.R" class="external-link"><code>R/makeTreeSummarizedExperimentFromBiom.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/R/convert.R" class="external-link"><code>R/convert.R</code></a></small>
     <div class="hidden name"><code>convert.Rd</code></div>
     </div>
 
@@ -82,9 +82,7 @@ object</p>
 <span>  rankFromPrefix <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  remove.artifacts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">loadFromBiom</span><span class="op">(</span><span class="va">file</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -149,10 +147,6 @@ some taxonomic character naming artifacts, should they be removed.
 (default <code>remove.artifacts = FALSE</code>)
 (x class : biom)</p></dd>
 
-
-<dt>file</dt>
-<dd><p>biom file location (x class : biom)</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -182,28 +176,9 @@ the input data.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"phyloseq"</span><span class="op">)</span> <span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package<span class="op">=</span><span class="st">"phyloseq"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu">convert</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">enterotype</span>, package<span class="op">=</span><span class="st">"phyloseq"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu">convert</span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span>, package<span class="op">=</span><span class="st">"phyloseq"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu">convert</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">convert</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: phyloseq</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 58 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(58): 59_8_22 59_5_13 ... 65_9_9 59_2_6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(3): B C D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (58 rows)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (58 leaves)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Make a TreesummarizedExperiment from dada2 results</span></span></span>
 <span class="r-in"><span></span></span>
@@ -214,7 +189,6 @@ the input data.</p>
 <span class="r-in"><span>    <span class="va">dadaR</span> <span class="op">&lt;-</span> <span class="fu">dada2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dada2/man/dada.html" class="external-link">dada</a></span><span class="op">(</span><span class="va">fnR</span>, selfConsist<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">convert</span><span class="op">(</span><span class="va">dadaF</span>, <span class="va">fnF</span>, <span class="va">dadaR</span>, <span class="va">fnR</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: dada2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initializing error rates to maximum possible estimate.</span>
@@ -229,22 +203,6 @@ the input data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    selfConsist step 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    selfConsist step 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Convergence after  4  rounds.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 4 1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(4): ASV01 ASV02 ASV03 ASV04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colnames: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> referenceSeq: a DNAStringSet (4 sequences)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Make a TreeSummarizedExperiment from a biom file</span></span></span>
 <span class="r-in"><span></span></span>
@@ -265,12 +223,6 @@ the input data.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a phyloseq object from it</span></span></span>
 <span class="r-in"><span><span class="va">phy</span> <span class="op">&lt;-</span> <span class="fu">convert</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">phy</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> phyloseq-class experiment-level object</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> otu_table()   OTU Table:         [ 19216 taxa and 26 samples ]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sample_data() Sample Data:       [ 26 samples by 7 sample variables ]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># By default the chosen table is counts, but if there are other tables,</span></span></span>
 <span class="r-in"><span><span class="co"># they can be chosen with assay.type.</span></span></span>
@@ -284,6 +236,7 @@ the input data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> sample_data() Sample Data:       [ 26 samples by 7 sample variables ]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> tax_table()   Taxonomy Table:    [ 19216 taxa by 7 taxonomic ranks ]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phy_tree()    Phylogenetic Tree: [ 19216 tips and 19215 internal nodes ]</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
