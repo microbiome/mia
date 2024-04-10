@@ -12,6 +12,7 @@
 \alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
 \alias{agglomerateByPrevalence}
 \alias{mergeFeaturesByPrevalence}
+\alias{agglomerateByPrevalence,SummarizedExperiment-method}
 \title{Agglomerate data using taxonomic information}
 \usage{
 agglomerateByRank(x, ...)
@@ -50,6 +51,13 @@ mergeFeaturesByRank(x, ...)
 \S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerate.tree = FALSE)
 
 agglomerateByPrevalence(x, ...)
+
+\S4method{agglomerateByPrevalence}{SummarizedExperiment}(
+  x,
+  rank = taxonomyRanks(x)[1L],
+  other_label = "Other",
+  ...
+)
 }
 \arguments{
 \item{x}{a

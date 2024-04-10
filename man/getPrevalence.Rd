@@ -26,10 +26,6 @@
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
-\alias{mergeFeaturesByPrevalence}
-\alias{agglomerateByPrevalence}
-\alias{agglomerateByPrevalence,SummarizedExperiment-method}
-\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \title{Calculation prevalence information for features across samples}
 \usage{
 getPrevalence(x, ...)
@@ -115,22 +111,6 @@ getPrevalentAbundance(
 )
 
 \S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
-
-mergeFeaturesByPrevalence(x, ...)
-
-\S4method{agglomerateByPrevalence}{SummarizedExperiment}(
-  x,
-  rank = taxonomyRanks(x)[1L],
-  other_label = "Other",
-  ...
-)
-
-\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(
-  x,
-  rank = taxonomyRanks(x)[1L],
-  other_label = "Other",
-  ...
-)
 }
 \arguments{
 \item{x}{a
