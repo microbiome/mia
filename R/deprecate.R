@@ -1,11 +1,29 @@
 #' These functions will be deprecated. Please use other functions instead.
 #' 
-#' @param x a \code{\link{SummarizedExperiment}} object -
-#' 
-#' @param ... -
+#' @param x A
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   object.
+#'   
+#' @param ... Additional parameters. See dedicated function.
 #' 
 #' @name deprecate
 NULL
+
+#' @rdname deprecate
+setGeneric("cluster", signature = c("x"),
+            function(x,...)
+                standardGeneric("cluster"))
+
+#' @rdname deprecate
+#' @export
+#' @importFrom bluster clusterRows
+setMethod("cluster", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'cluster' is deprecated. ",
+                                        "Use 'addCluster' instead."))
+                addCluster(x,...)
+            }
+)
 
 #' @rdname deprecate
 setGeneric("addTaxonomyTree",
@@ -16,10 +34,10 @@ setGeneric("addTaxonomyTree",
 #' @rdname deprecate
 #' @export
 setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
-            function(x){
-                .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated.",
+            function(x,...){
+                .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated. ",
                                         "Use 'addHierarchyTree' instead."))
-                addHierarchyTree(x)
+                addHierarchyTree(x,...)
             }
 )
 
@@ -32,10 +50,10 @@ setGeneric("taxonomyTree",
 #' @rdname deprecate
 #' @export
 setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
-            function(x){
-                .Deprecated(msg = paste0("'taxonomyTree' is deprecated.",
+            function(x,...){
+                .Deprecated(msg = paste0("'taxonomyTree' is deprecated. ",
                                         "Use 'getHierarchyTree' instead."))
-                getHierarchyTree(x)
+                getHierarchyTree(x,...)
             }
 )
 
