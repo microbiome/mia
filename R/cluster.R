@@ -27,11 +27,11 @@
 #' By default, clustering is done on the features.
 #'
 #' @return
-#' \code{cluster} returns an object of the same type as the \code{x} parameter 
+#' \code{addCluster} returns an object of the same type as the \code{x} parameter 
 #' with clustering information named \code{clusters} stored in \code{colData} 
 #' or \code{rowData}. 
 #'
-#' @name cluster
+#' @name addCluster
 #' @export
 #' 
 #' @author Basil Courbayre
@@ -42,10 +42,10 @@
 #' tse <- GlobalPatterns
 #'
 #' # Cluster on rows using Kmeans
-#' tse <- cluster(tse, KmeansParam(centers = 3))
+#' tse <- addCluster(tse, KmeansParam(centers = 3))
 #' 
 #' # Clustering done on the samples using Hclust
-#' tse <- cluster(tse, 
+#' tse <- addCluster(tse, 
 #'                MARGIN = "samples", 
 #'                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 #' 
@@ -54,19 +54,20 @@
 #' 
 NULL
 
-#' @rdname cluster
+#' @rdname addCluster
 #' @export
-setGeneric("cluster", signature = c("x"),
+setGeneric("addCluster", signature = c("x"),
     function(
             x, BLUSPARAM, assay.type = assay_name, 
             assay_name = "counts", MARGIN = "features", full = FALSE, 
             name = "clusters", clust.col = "clusters", ...)
-    standardGeneric("cluster"))
+    standardGeneric("addCluster"))
 
-#' @rdname cluster
+
+#' @rdname addCluster
 #' @export
 #' @importFrom bluster clusterRows
-setMethod("cluster", signature = c(x = "SummarizedExperiment"),
+setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
     function(
             x, BLUSPARAM, assay.type = assay_name, 
             assay_name = "counts", MARGIN = "features", full = FALSE, 
