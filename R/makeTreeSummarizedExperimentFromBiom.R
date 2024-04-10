@@ -61,10 +61,13 @@ NULL
 
 #' @rdname loadFromBiom
 #' @export
-loadFromBiom <- function(file, ...) {
+loadFromBiom <- function(file, removeTaxaPrefixes = FALSE, 
+                        rankFromPrefix = FALSE, remove.artifacts = FALSE, ...) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    convert(biom, ...)
+    convert(biom, removeTaxaPrefixes = removeTaxaPrefixes, 
+            rankFromPrefix = rankFromPrefix, 
+            remove.artifacts = remove.artifacts, ...)
 }
 
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
