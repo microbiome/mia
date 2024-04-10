@@ -198,7 +198,6 @@
 NULL
 
 #' @rdname agglomerate-methods
-#' @aliases mergeFeaturesByRank
 #' @export
 setGeneric("agglomerateByRank",
             signature = "x",
@@ -214,15 +213,6 @@ setGeneric("agglomerateByVariable",
                 standardGeneric("agglomerateByVariable"))
 
 #' @rdname agglomerate-methods
-#' @aliases agglomerateByRank
-#' @export
-setGeneric("mergeFeaturesByRank",
-            signature = "x",
-            function(x, ...)
-                standardGeneric("mergeFeaturesByRank"))
-
-#' @rdname agglomerate-methods
-#' @aliases mergeFeaturesByRank
 #'
 #' @importFrom SummarizedExperiment rowData rowData<-
 #'
@@ -301,9 +291,8 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
             function(x, MARGIN, f, archetype = 1L, ...){
-                FUN <- switch(MARGIN, 
-                            rows = .merge_rows_SE,
-                            cols = .merge_cols_SE)
+                MARGIN <- .check_MARGIN(MARGIN)
+                FUN <- switch(MARGIN, .merge_rows_SE, .merge_cols_SE)
                 FUN(x, f, archetype = archetype, ...)
             }
 )
@@ -315,7 +304,8 @@ setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
             function(x, MARGIN, f, archetype = 1L, mergeTree = FALSE,
                      mergeRefSeq = FALSE, ...){
-                if ( MARGIN == "rows" ){
+                MARGIN <- .check_MARGIN(MARGIN)
+                if ( MARGIN == 1L ){
                     .merge_rows_TSE(x, f, archetype = 1L, mergeTree = mergeTree,
                                    mergeRefSeq = mergeRefSeq, ...)
                 }
@@ -323,26 +313,6 @@ setMethod("agglomerateByVariable",
                     .merge_cols_TSE(x, f, archetype = 1L, mergeTree = mergeTree,
                                    ...)
                 }
-            }
-)
-
-#' @rdname agglomerate-methods
-#' @aliases agglomerateByRank
-#'
-#' @importFrom SummarizedExperiment rowData rowData<-
-#'
-#' @export
-setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
-            function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, 
-                    na.rm = FALSE, 
-                    empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
-                .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank", 
-                            "Now agglomerateByRank is deprecated. 
-                            Use mergeFeaturesByRank instead.")
-                x <- agglomerateByRank(x, rank = rank, onRankOnly = onRankOnly,
-                                        na.rm = na.rm,
-                                        empty.fields = empty.fields, ...)
-                x
             }
 )
 
@@ -365,22 +335,6 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
         callNextMethod(x, ...)
     }
 )
-
-#' @rdname agglomerate-methods
-#' @aliases agglomerateByRank
-#' @importFrom SingleCellExperiment altExp altExp<- altExps<-
-#' @export
-setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
-            function(x, ..., altexp = NULL, strip_altexp = TRUE){
-                .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank",
-                            "Now agglomerateByRank is deprecated. 
-                            Use mergeFeaturesByRank instead.")
-                x <- agglomerateByRank(x, ..., altexp = altexp, 
-                                        strip_altexp = strip_altexp)
-                x
-            }
-)
-
 
 #' @rdname agglomerate-methods
 #' @export
@@ -413,19 +367,6 @@ setMethod(
             }
 )
 
-#' @rdname agglomerate-methods
-#' @aliases agglomerateByRank
-#' @export
-setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
-            function(x, ..., agglomerate.tree = FALSE){
-                .Deprecated(old="agglomerateByRank", new="mergeFeaturesByRank",
-                            "Now agglomerateByRank is deprecated. 
-                            Use mergeFeaturesByRank instead.")
-                x <- agglomerateByRank(x, ..., 
-                                        agglomerate.tree = agglomerate.tree)
-                x
-            }
-)
 ################################ HELP FUNCTIONS ################################
 
 .remove_with_empty_taxonomic_info <-
