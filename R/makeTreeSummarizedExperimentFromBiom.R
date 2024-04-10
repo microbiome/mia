@@ -1,4 +1,4 @@
-#' @rdname convert
+#' @rdname makeTreeSummarizedExperimentFromBiom
 #' @export
 loadFromBiom <- function(file, ...) {
     .require_package("biomformat")
