@@ -6,8 +6,6 @@
 #' @param x Input data to be converted. See details for more information on 
 #' supported formats.
 #' 
-#' @param file biom file location (x class : biom)
-#' 
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
 #' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most
@@ -27,7 +25,7 @@
 #' 
 #' @param ... additional arguments 
 #'   \itemize{
-#'        \item{\code{patter}}{\code{character} value specifying artifacts
+#'        \item{\code{pattern}}{\code{character} value specifying artifacts
 #'        to be removed. If \code{patterns = "auto"}, special characters
 #'        are removed. (default: \code{pattern = "auto"}) 
 #'        (x class : biom)

@@ -8,12 +8,20 @@
 \alias{taxonomyTree,SummarizedExperiment-method}
 \alias{makeTreeSummarizedExperimentFromPhyloseq}
 \alias{makeTreeSummarizedExperimentFromPhyloseq,ANY-method}
+\alias{makeTreeSEFromPhyloseq}
+\alias{makeTreeSEFromPhyloseq,ANY-method}
 \alias{makeTreeSummarizedExperimentFromDADA2}
 \alias{makeTreeSummarizedExperimentFromDADA2,ANY-method}
+\alias{makeTreeSEFromDADA2}
+\alias{makeTreeSEFromDADA2,ANY-method}
 \alias{makePhyloseqFromTreeSummarizedExperiment}
 \alias{makePhyloseqFromTreeSummarizedExperiment,ANY-method}
+\alias{makePhyloseqFromTreeSE}
+\alias{makePhyloseqFromTreeSE,ANY-method}
 \alias{makeTreeSummarizedExperimentFromBiom}
 \alias{makeTreeSummarizedExperimentFromBiom,ANY-method}
+\alias{makeTreeSEFromBiom}
+\alias{makeTreeSEFromBiom,ANY-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 addTaxonomyTree(x, ...)
@@ -28,17 +36,33 @@ makeTreeSummarizedExperimentFromPhyloseq(obj)
 
 \S4method{makeTreeSummarizedExperimentFromPhyloseq}{ANY}(obj)
 
+makeTreeSEFromPhyloseq(obj)
+
+\S4method{makeTreeSEFromPhyloseq}{ANY}(obj)
+
 makeTreeSummarizedExperimentFromDADA2(obj, ...)
 
 \S4method{makeTreeSummarizedExperimentFromDADA2}{ANY}(obj, ...)
+
+makeTreeSEFromDADA2(obj, ...)
+
+\S4method{makeTreeSEFromDADA2}{ANY}(obj, ...)
 
 makePhyloseqFromTreeSummarizedExperiment(obj, ...)
 
 \S4method{makePhyloseqFromTreeSummarizedExperiment}{ANY}(obj, ...)
 
+makePhyloseqFromTreeSE(obj, ...)
+
+\S4method{makePhyloseqFromTreeSE}{ANY}(obj, ...)
+
 makeTreeSummarizedExperimentFromBiom(obj, ...)
 
 \S4method{makeTreeSummarizedExperimentFromBiom}{ANY}(obj, ...)
+
+makeTreeSEFromBiom(obj, ...)
+
+\S4method{makeTreeSEFromBiom}{ANY}(obj, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object -}

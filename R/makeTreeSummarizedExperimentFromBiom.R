@@ -1,4 +1,65 @@
-#' @rdname convert
+#' Loading a biom file
+#'
+#' For convenience a few functions are available to convert data from a
+#' \sQuote{biom} file or object into a
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'
+#' @param file biom file location
+#' 
+#' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
+#' taxonomic prefixes be removed? The prefixes is removed only from detected
+#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
+#' (default \code{removeTaxaPrefixes = FALSE})
+#' 
+#' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
+#' taxonomic ranks on feature table, should they be scraped from prefixes?
+#' (default \code{rankFromPrefix = FALSE})
+#' 
+#' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
+#' some taxonomic character naming artifacts, should they be removed.
+#' (default \code{remove.artifacts = FALSE})
+#' 
+#' @param ... additional arguments 
+#'   \itemize{
+#'        \item{\code{patter}}{\code{character} value specifying artifacts
+#'        to be removed. If \code{patterns = "auto"}, special characters
+#'        are removed. (default: \code{pattern = "auto"})}
+#'    }
+#' 
+#' @return An object of class
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'
+#' @name loadFromBiom
+#' 
+#' @seealso
+#' \code{\link[=convert]{convert}}
+#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
+#' \code{\link[=loadFromMothur]{loadFromMothur}}
+#' 
+#' @examples
+#' # Load biom file
+#' library(biomformat)
+#' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
+#'                          package = "biomformat")
+#' 
+#' # Make TreeSE from biom file
+#' tse <- loadFromBiom(biom_file)
+#' 
+#' # Get taxonomyRanks from prefixes and remove prefixes
+#' tse <- loadFromBiom(biom_file,
+#'                     rankFromPrefix = TRUE,
+#'                     removeTaxaPrefixes = TRUE)
+#' 
+#' # Load another biom file
+#' biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
+#'                          package = "mia")
+#' 
+#' # Clean artifacts from taxonomic data
+#' tse <- loadFromBiom(biom_file,
+#'                     remove.artifacts = TRUE)
+NULL
+
+#' @rdname loadFromBiom
 #' @export
 loadFromBiom <- function(file, ...) {
     .require_package("biomformat")
