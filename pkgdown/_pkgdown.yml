@@ -56,7 +56,7 @@ reference:
 - subtitle: Clustering
 - contents:
   - calculateDMN
-  - cluster
+  - addCluster
 - subtitle: decontam
 - contents:
   - isContaminant

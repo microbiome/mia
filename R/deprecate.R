@@ -11,6 +11,23 @@ NULL
 
 #' @rdname deprecate
 #' @export
+setGeneric("cluster", signature = c("x"),
+            function(x,...)
+                standardGeneric("cluster"))
+
+#' @rdname deprecate
+#' @export
+#' @importFrom bluster clusterRows
+setMethod("cluster", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'cluster' is deprecated. ",
+                                        "Use 'addCluster' instead."))
+                addCluster(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
 setGeneric("addTaxonomyTree",
             signature = "x",
             function(x, ...)
@@ -19,10 +36,10 @@ setGeneric("addTaxonomyTree",
 #' @rdname deprecate
 #' @export
 setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
-            function(x){
-                .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated.",
+            function(x,...){
+                .Deprecated(msg = paste0("'addTaxonomyTree' is deprecated. ",
                                         "Use 'addHierarchyTree' instead."))
-                addHierarchyTree(x)
+                addHierarchyTree(x,...)
             }
 )
 
@@ -36,10 +53,10 @@ setGeneric("taxonomyTree",
 #' @rdname deprecate
 #' @export
 setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
-            function(x){
-                .Deprecated(msg = paste0("'taxonomyTree' is deprecated.",
-                                        " Use 'getHierarchyTree' instead."))
-                getHierarchyTree(x)
+            function(x,...){
+                .Deprecated(msg = paste0("'taxonomyTree' is deprecated. ",
+                                        "Use 'getHierarchyTree' instead."))
+                getHierarchyTree(x,...)
             }
 )
 

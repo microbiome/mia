@@ -2,6 +2,8 @@
 % Please edit documentation in R/deprecate.R
 \name{deprecate}
 \alias{deprecate}
+\alias{cluster}
+\alias{cluster,SummarizedExperiment-method}
 \alias{addTaxonomyTree}
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{taxonomyTree}
@@ -24,13 +26,17 @@
 \alias{makeTreeSEFromBiom,ANY-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
+cluster(x, ...)
+
+\S4method{cluster}{SummarizedExperiment}(x, ...)
+
 addTaxonomyTree(x, ...)
 
-\S4method{addTaxonomyTree}{SummarizedExperiment}(x)
+\S4method{addTaxonomyTree}{SummarizedExperiment}(x, ...)
 
 taxonomyTree(x, ...)
 
-\S4method{taxonomyTree}{SummarizedExperiment}(x)
+\S4method{taxonomyTree}{SummarizedExperiment}(x, ...)
 
 makeTreeSummarizedExperimentFromPhyloseq(obj)
 
