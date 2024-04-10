@@ -2,6 +2,8 @@
 % Please edit documentation in R/deprecate.R
 \name{deprecate}
 \alias{deprecate}
+\alias{cluster}
+\alias{cluster,SummarizedExperiment-method}
 \alias{addTaxonomyTree}
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{taxonomyTree}
@@ -14,13 +16,17 @@
 \alias{loadFromHumann}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
+cluster(x, ...)
+
+\S4method{cluster}{SummarizedExperiment}(x, ...)
+
 addTaxonomyTree(x, ...)
 
-\S4method{addTaxonomyTree}{SummarizedExperiment}(x)
+\S4method{addTaxonomyTree}{SummarizedExperiment}(x, ...)
 
 taxonomyTree(x, ...)
 
-\S4method{taxonomyTree}{SummarizedExperiment}(x)
+\S4method{taxonomyTree}{SummarizedExperiment}(x, ...)
 
 loadFromBiom(...)
 
@@ -35,11 +41,11 @@ loadFromMetaphlan(...)
 loadFromHumann(...)
 }
 \arguments{
-\item{x}{a \code{\link{SummarizedExperiment}} object -}
+\item{x}{A
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
-\item{...}{\itemize{
-\item 
-}}
+\item{...}{Additional parameters. See dedicated function.}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.
