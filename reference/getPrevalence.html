@@ -255,9 +255,7 @@ summary of non-prevalent taxa. (default: <code>other_label = "Other"</code>)</p>
     <h2>Value</h2>
     
 
-<p><code>subsetPrevalentFeatures</code> and <code>subsetRareFeatures</code> return subset of <code>x</code>.
-<code>agglomerateByPrevalence</code> returns a taxonomically-agglomerated object
-of the same class as x and based on prevalent taxonomic results.</p>
+<p><code>subsetPrevalentFeatures</code> and <code>subsetRareFeatures</code> return subset of <code>x</code>.</p>
 
 
 <p>All other functions return a named vectors:</p><ul><li><p><code>getPrevalence</code> returns a <code>numeric</code> vector with the
@@ -291,12 +289,6 @@ The subset includes the most prevalent or rare taxa that are calculated with
 <p><code>getPrevalentFeatures</code> returns taxa that are more prevalent with the
 given detection threshold for the selected taxonomic rank.</p>
 <p><code>getRareFeatures</code> returns complement of <code>getPrevalentTaxa</code>.</p>
-<p><code>agglomerateByPrevalence</code> sums up the values of assays at the taxonomic
-level specified by <code>rank</code> (by default the highest taxonomic level
-available) and selects the summed results that exceed the given population
-prevalence at the given detection level. The other summed values (below the
-threshold) are agglomerated in an additional row taking the name indicated by
-<code>other_label</code> (by default "Other").</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -449,14 +441,12 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.9605911 0.8980392 0.9086758 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># data can be aggregated based on prevalent taxonomic results</span></span></span>
-<span class="r-in"><span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                              rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>                              detection <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                              prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                              as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>                        rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>                        detection <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,</span></span>
+<span class="r-in"><span>                        prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span></span>
+<span class="r-in"><span>                        as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The 'getPrevalentTaxa' function is deprecated. Use 'getPrevalentFeatures' instead.</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">x1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 6 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(2): agglomerated_by_rank agglomerated_by_rank</span>
@@ -473,21 +463,6 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Here data is aggregated at the taxonomic level "Phylum". The five phyla</span></span></span>
-<span class="r-in"><span><span class="co"># that exceed the population prevalence threshold of 50/100 represent the </span></span></span>
-<span class="r-in"><span><span class="co"># five first rows of the assay in the aggregated data. The sixth and last row</span></span></span>
-<span class="r-in"><span><span class="co"># named by default "Other" takes the summed up values of all the other phyla </span></span></span>
-<span class="r-in"><span><span class="co"># that are below the prevalence threshold.</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">assay</span><span class="op">(</span><span class="va">x1</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                          CL3    CC1    SV1 M31Fcsw M11Fcsw</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Actinobacteria  39601  90280 121703    2540     841</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Proteobacteria 294228 361327 224004   18798   86614</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Cyanobacteria    1955   3353  16676     423  212812</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Bacteroidetes   67395  96398  93436  804395 1424107</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Firmicutes       8584   4726   3524  700084  330423</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Other                 452314 579373 238166   17211   21679</span>
 </code></pre></div>
     </div>
   </div>
