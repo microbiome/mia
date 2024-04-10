@@ -64,18 +64,11 @@ mergeSamples(x, ...)
 
 mergeFeaturesByRank(x, ...)
 
-\S4method{mergeFeaturesByRank}{SummarizedExperiment}(
-  x,
-  rank = taxonomyRanks(x)[1],
-  onRankOnly = FALSE,
-  na.rm = FALSE,
-  empty.fields = c(NA, "", " ", "\\t", "-", "_"),
-  ...
-)
+\S4method{mergeFeaturesByRank}{SummarizedExperiment}(x, ...)
 
-\S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
+\S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ...)
 
-\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerate.tree = FALSE)
+\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

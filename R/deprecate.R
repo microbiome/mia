@@ -193,14 +193,10 @@ setGeneric("mergeFeaturesByRank",
 #' @importFrom SummarizedExperiment rowData rowData<-
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
-          function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, 
-                   na.rm = FALSE, 
-                   empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+          function(x, ...){
               .Deprecated(msg = paste0("'mergeFeaturesByRank' is deprecated. ",
                                         "Use 'agglomerateByRank' instead."))
-              x <- agglomerateByRank(x, rank = rank, onRankOnly = onRankOnly,
-                                     na.rm = na.rm,
-                                     empty.fields = empty.fields, ...)
+              x <- agglomerateByRank(x, ...)
               x
           }
 )
@@ -209,11 +205,10 @@ setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SingleCellExperiment altExp altExp<- altExps<-
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
-          function(x, ..., altexp = NULL, strip_altexp = TRUE){
+          function(x, ...){
               .Deprecated(msg = paste0("'mergeFeaturesByRank' is deprecated. ",
                                         "Use 'agglomerateByRank' instead."))
-              x <- agglomerateByRank(x, ..., altexp = altexp, 
-                                     strip_altexp = strip_altexp)
+              x <- agglomerateByRank(x, ...)
               x
           }
 )
@@ -221,11 +216,10 @@ setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
 #' @rdname deprecate
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, ..., agglomerate.tree = FALSE){
+          function(x, ...){
               .Deprecated(msg = paste0("'mergeFeaturesByRank' is deprecated. ",
                                         "Use 'agglomerateByRank' instead."))
-              x <- agglomerateByRank(x, ..., 
-                                     agglomerate.tree = agglomerate.tree)
+              x <- agglomerateByRank(x, ...)
               x
           }
 )
