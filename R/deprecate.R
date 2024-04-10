@@ -57,8 +57,8 @@ loadFromQIIME2 <- function(...) {
 
 #' @rdname deprecate
 #' @export
-loadFromQZA <- function(...) {
-    .Deprecated(msg = paste0("'loadFromQZA' is deprecated.",
+readQZA <- function(...) {
+    .Deprecated(msg = paste0("'readQZA' is deprecated.",
                             " Use 'importQZA' instead."))
     importQZA(...)
 }

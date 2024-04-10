@@ -8,7 +8,7 @@
 \alias{taxonomyTree,SummarizedExperiment-method}
 \alias{loadFromBiom}
 \alias{loadFromQIIME2}
-\alias{loadFromQZA}
+\alias{readQZA}
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
@@ -26,7 +26,7 @@ loadFromBiom(...)
 
 loadFromQIIME2(...)
 
-loadFromQZA(...)
+readQZA(...)
 
 loadFromMothur(...)
 
