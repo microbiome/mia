@@ -177,6 +177,9 @@ will be disabled.)}
 \item{as_relative}{logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? (default: \code{FALSE})}
 
+\item{rank}{a single character defining a taxonomic rank. Must be a value of
+\code{taxonomyRanks()} function.}
+
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set \code{include_lowest} to \code{TRUE}.}

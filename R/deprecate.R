@@ -56,3 +56,21 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
                 getHierarchyTree(x,...)
             }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric("mergeFeaturesByPrevalence", signature = "x",
+           function(x, ...)
+               standardGeneric("mergeFeaturesByPrevalence"))
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0(
+                  "'mergeFeaturesByPrevalence' is deprecated. ",
+                  "Use agglomerateByPrevalence instead."))
+              x <- agglomerateByPrevalence(x, ...)
+              x 
+          }
+)
