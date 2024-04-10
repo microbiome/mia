@@ -85,22 +85,22 @@
     <loc>/reference/hierarchy-tree.html</loc>
   </url>
   <url>
-    <loc>/reference/importHUMAnN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/importMetaPhlAn.html</loc>
-  </url>
-  <url>
-    <loc>/reference/importMothur.html</loc>
-  </url>
-  <url>
-    <loc>/reference/importQIIME2.html</loc>
-  </url>
-  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
     <loc>/reference/isContaminant.html</loc>
+  </url>
+  <url>
+    <loc>/reference/loadFromHumann.html</loc>
+  </url>
+  <url>
+    <loc>/reference/loadFromMetaphlan.html</loc>
+  </url>
+  <url>
+    <loc>/reference/loadFromMothur.html</loc>
+  </url>
+  <url>
+    <loc>/reference/loadFromQIIME2.html</loc>
   </url>
   <url>
     <loc>/reference/makePhyloseqFromTreeSE.html</loc>
@@ -116,9 +116,6 @@
   </url>
   <url>
     <loc>/reference/meltAssay.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge-methods.html</loc>
   </url>
   <url>
     <loc>/reference/mergeSEs.html</loc>
