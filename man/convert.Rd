@@ -102,11 +102,7 @@ the input data.
 
 if( requireNamespace("phyloseq") ) {
     data(GlobalPatterns, package="phyloseq")
-    convert(GlobalPatterns)
-    data(enterotype, package="phyloseq")
-    convert(enterotype)
-    data(esophagus, package="phyloseq")
-    convert(esophagus)
+    tse <- convert(GlobalPatterns)
 }
 
 ### Make a TreesummarizedExperiment from dada2 results
@@ -118,7 +114,6 @@ if( requireNamespace("dada2") ) {
     dadaR <- dada2::dada(fnR, selfConsist=TRUE)
 
     tse <- convert(dadaF, fnF, dadaR, fnR)
-    tse
 }
 
 ### Make a TreeSummarizedExperiment from a biom file
@@ -140,7 +135,6 @@ tse <- GlobalPatterns
 
 # Create a phyloseq object from it
 phy <- convert(tse)
-phy
 
 # By default the chosen table is counts, but if there are other tables,
 # they can be chosen with assay.type.
@@ -149,6 +143,7 @@ phy
 tse <- transformAssay(tse, method = "relabundance")
 phy2 <- convert(tse, assay.type = "relabundance")
 phy2
+
 }
 \seealso{
 \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
