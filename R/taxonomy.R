@@ -425,6 +425,12 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' 
 #' @inheritParams taxonomy-methods
 #' 
+#' @details
+#' Please note that a hierarchy tree is not an actual phylogenetic tree.
+#' A phylogenetic tree represents evolutionary relationships among features.
+#' On the other hand, a hierarchy tree organizes species into a hierarchical 
+#' structure based on their taxonomic ranks. 
+#' 
 #' @return
 #' \itemize{
 #'   \item{\code{addHierarchyTree}:} {a \code{TreeSummarizedExperiment} whose
@@ -446,11 +452,6 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' # Please note that any tree already stored in rowTree() will be overwritten.
 #' tse <- addHierarchyTree(tse)
 #' tse
-#' 
-#' # Please note that a hierarchy tree is not an actual phylogenetic tree.
-#' # A phylogenetic tree represents evolutionary relationships among features.
-#' # On the other hand, a hierarchy tree organizes species into a hierarchical 
-#' # structure based on their taxonomic ranks.
 #' 
 #' # For instance, the TreeSummarizedExperiment Tengeler2020 contains an
 #' # actual phylogenetic tree.

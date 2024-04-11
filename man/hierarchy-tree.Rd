@@ -46,6 +46,11 @@ taxonomic information. Internally it uses
 \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
 \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
 data if needed.
+
+Please note that a hierarchy tree is not an actual phylogenetic tree.
+A phylogenetic tree represents evolutionary relationships among features.
+On the other hand, a hierarchy tree organizes species into a hierarchical
+structure based on their taxonomic ranks.
 }
 \examples{
 # Generate a tree based on taxonomic rank hierarchy (a hierarchy tree).
@@ -57,11 +62,6 @@ getHierarchyTree(tse)
 # Please note that any tree already stored in rowTree() will be overwritten.
 tse <- addHierarchyTree(tse)
 tse
-
-# Please note that a hierarchy tree is not an actual phylogenetic tree.
-# A phylogenetic tree represents evolutionary relationships among features.
-# On the other hand, a hierarchy tree organizes species into a hierarchical 
-# structure based on their taxonomic ranks.
 
 # For instance, the TreeSummarizedExperiment Tengeler2020 contains an
 # actual phylogenetic tree.
