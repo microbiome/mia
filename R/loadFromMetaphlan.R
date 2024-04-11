@@ -89,7 +89,7 @@
 NULL
 
 loadFromMetaphlan <- function(
-        file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL, ...){
+        file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL,...){
     ################################ Input check ################################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
@@ -137,6 +137,8 @@ loadFromMetaphlan <- function(
             altExp(tse, rank) <- se_objects[[rank]]
         }
     }
+    # Set taxonomy ranks using .set_taxonomy_ranks
+    .set_ranks_based_on_rowdata(tse,...)
     
     # Load sample meta data if it is provided
     if( !is.null(colData) ) {
@@ -307,13 +309,13 @@ loadFromMetaphlan <- function(
         sample_names <- rownames(coldata)
         names(sample_names) <- sample_names
     } else{
-        sample_names <- sapply(rownames(coldata), function(x){
+        sample_names <- vapply(rownames(coldata), function(x){
             x <- colnames(tse)[grep(x, colnames(tse))]
             if( length(x) != 1 ){
                 x <- NULL
             }
             return(x)
-        })
+        },FUN.VALUE = character(1))
         sample_names <- unlist(sample_names)
     }
 
@@ -392,3 +394,23 @@ loadFromMetaphlan <- function(
     }
     return(data)
 }
+.set_ranks_based_on_rowdata <- function(tse,...){
+    # Get ranks from rowData
+    ranks <- colnames(rowData(tse))
+    # Ranks must be character columns
+    is_char <- lapply(rowData(tse), function(x) is.character(x) || is.factor(x))
+    is_char <- unlist(is_char)
+    ranks <- ranks[ is_char ]
+    # rowData is empty, cannot set ranks
+    if( length(ranks) == 0 ){
+        warning(
+            "Ranks cannot be set. rowData(x) does not include columns ",
+            "specifying character values.", call. = FALSE)
+        return(NULL)
+    }
+    # Finally, set ranks and give message
+    tse <- setTaxonomyRanks(ranks)
+    message("TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
+    return(NULL)
+}
+
