@@ -6,6 +6,15 @@
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{taxonomyTree}
 \alias{taxonomyTree,SummarizedExperiment-method}
+\alias{getExperimentCrossAssociation}
+\alias{getExperimentCrossAssociation,MultiAssayExperiment-method}
+\alias{getExperimentCrossAssociation,SummarizedExperiment-method}
+\alias{testExperimentCrossAssociation}
+\alias{testExperimentCrossAssociation,ANY-method}
+\alias{testExperimentCrossCorrelation}
+\alias{testExperimentCrossCorrelation,ANY-method}
+\alias{getExperimentCrossCorrelation}
+\alias{getExperimentCrossCorrelation,ANY-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 addTaxonomyTree(x, ...)
@@ -15,6 +24,24 @@ addTaxonomyTree(x, ...)
 taxonomyTree(x, ...)
 
 \S4method{taxonomyTree}{SummarizedExperiment}(x)
+
+getExperimentCrossAssociation(x, ...)
+
+\S4method{getExperimentCrossAssociation}{MultiAssayExperiment}(x, ...)
+
+\S4method{getExperimentCrossAssociation}{SummarizedExperiment}(x, ...)
+
+testExperimentCrossAssociation(x, ...)
+
+\S4method{testExperimentCrossAssociation}{ANY}(x, ...)
+
+testExperimentCrossCorrelation(x, ...)
+
+\S4method{testExperimentCrossCorrelation}{ANY}(x, ...)
+
+getExperimentCrossCorrelation(x, ...)
+
+\S4method{getExperimentCrossCorrelation}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object -}

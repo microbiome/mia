@@ -111,10 +111,10 @@
 #'    }
 #'    
 #' @details
-#' These functions calculates associations between features of two experiments. 
-#' \code{getExperimentCrossAssociation} calculates only associations by default.
-#' \code{testExperimentCrossAssociation} calculates also significance of 
-#' associations.
+#' The function \code{getCrossAssociation} calculates associations between 
+#' features of two experiments. By default, it not only computes associations 
+#' but also tests their significance. If desired, setting 
+#' \code{test_significance} to FALSE disables significance calculation.
 #' 
 #' We recommend the non-parametric Kendall's tau as the default method for association 
 #' analysis. Kendall's tau has desirable statistical properties and robustness at lower 
@@ -128,7 +128,7 @@
 #' when only associations are calculated. If also significances are tested, then
 #' returned value is a list of matrices.
 #'
-#' @name getExperimentCrossAssociation
+#' @name getCrossAssociation
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -147,7 +147,7 @@
 #' mae[[1]] <- transformAssay(mae[[1]], method = "rclr")
 #' 
 #' # Calculate cross-correlations
-#' result <- getExperimentCrossAssociation(mae, method = "pearson", assay.type2 = "nmr")
+#' result <- getCrossAssociation(mae, method = "pearson", assay.type2 = "nmr")
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
@@ -156,7 +156,7 @@
 #' # Transform data
 #' altExp(mae[[1]], "Phylum") <- transformAssay(altExp(mae[[1]], "Phylum"), method = "relabundance")
 #' # When mode = "matrix", the return value is a matrix
-#' result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
+#' result <- getCrossAssociation(mae, experiment2 = 2, 
 #'                                         assay.type1 = "relabundance", assay.type2 = "nmr",
 #'                                         altexp1 = "Phylum", 
 #'                                         method = "pearson", mode = "matrix")
@@ -173,10 +173,10 @@
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
-#' # getExperimentCrossAssociation also returns significances when 
+#' # getCrossAssociation also returns significances when 
 #' # test_significance = TRUE
 #' # Warnings can be suppressed by using show_warnings = FALSE
-#' result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
+#' result <- getCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
 #'                                         assay.type2 = "nmr",
 #'                                         mode = "matrix", test_significance = TRUE,
 #'                                         show_warnings = FALSE)
@@ -186,7 +186,7 @@
 #' 
 #' # Calculate Bray-Curtis dissimilarity between samples. If dataset includes
 #' # paired samples, you can use paired = TRUE.
-#' result <- getExperimentCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
+#' result <- getCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
 #'                                         association_FUN = vegan::vegdist, method = "bray")
 #'                                         
 #' 
@@ -194,7 +194,7 @@
 #' # it is possible to speed-up calculations by calculating association only for unique
 #' # variable-pairs. Use "symmetric" to choose whether to measure association for only
 #' # other half of of variable-pairs.
-#' result <- getExperimentCrossAssociation(mae, experiment1 = "microbiota", experiment2 = "microbiota", 
+#' result <- getCrossAssociation(mae, experiment1 = "microbiota", experiment2 = "microbiota", 
 #'                                         assay.type1 = "counts", assay.type2 = "counts",
 #'                                         symmetric = TRUE)
 #' 
@@ -213,22 +213,20 @@
 #' # colData_variable works similarly to assay.type. Instead of fetching an assay
 #' # named assay.type from assay slot, it fetches a column named colData_variable
 #' # from colData.
-#' result <- getExperimentCrossAssociation(mae[[1]], assay.type1 = "counts", 
+#' result <- getCrossAssociation(mae[[1]], assay.type1 = "counts", 
 #'                                         colData_variable2 = c("shannon", "coverage"))
 #'                                         
 NULL
 
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossCorrelation
+#' @rdname getCrossAssociation
 #' @export
-setGeneric("getExperimentCrossAssociation", signature = c("x"),
+setGeneric("getCrossAssociation", signature = c("x"),
            function(x, ...)
-               standardGeneric("getExperimentCrossAssociation"))
+               standardGeneric("getCrossAssociation"))
 
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossCorrelation
+#' @rdname getCrossAssociation
 #' @export
-setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperiment"),
+setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
     function(x,
            experiment1 = 1,
            experiment2 = 2,
@@ -248,7 +246,7 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            sort = FALSE,
            filter_self_correlations = FALSE,
            verbose = TRUE,
-           test_significance = FALSE,
+           test_significance = TRUE,
            show_warnings = TRUE,
            paired = FALSE,
            ...){
@@ -277,12 +275,12 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
     }
 )
 
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossCorrelation
+#' @rdname getCrossAssociation
+#' @aliases getCrossCorrelation
 #' @importFrom MultiAssayExperiment MultiAssayExperiment ExperimentList
 #' @importFrom SingleCellExperiment altExps
 #' @export
-setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
+setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     function(x, experiment2 = x, ...){
         ############################## INPUT CHECK #############################
         # If y is  SE or TreeSE object
@@ -341,54 +339,6 @@ setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
     }
 )
 
-#' @rdname getExperimentCrossAssociation
-#' @aliases testExperimentCrossCorrelation
-#' @export
-setGeneric("testExperimentCrossAssociation", signature = c("x"),
-           function(x, ...)
-               standardGeneric("testExperimentCrossAssociation"))
-
-#' @rdname getExperimentCrossAssociation
-#' @aliases testExperimentCrossCorrelation
-#' @export
-setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
-          function(x, ...){
-              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
-          }
-)
-
-############################# Methods for aliases ##############################
-#' @rdname getExperimentCrossAssociation
-#' @aliases testExperimentCrossAssociation
-#' @export
-setGeneric("testExperimentCrossCorrelation", signature = c("x"),
-           function(x, ...)
-               standardGeneric("testExperimentCrossCorrelation"))
-
-#' @rdname getExperimentCrossAssociation
-#' @aliases testExperimentCrossAssociation
-#' @export
-setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
-          function(x, ...){
-              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
-          }
-)
-
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossAssociation
-#' @export
-setGeneric("getExperimentCrossCorrelation", signature = c("x"),
-           function(x, ...)
-               standardGeneric("getExperimentCrossCorrelation"))
-
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossAssociation
-#' @export
-setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
-          function(x, ...){
-              getExperimentCrossAssociation(x, ...)
-          }
-)
 ############################## MAIN FUNCTIONALITY ##############################
 # This function includes all the main functionality.
 #' @importFrom S4Vectors unfactor

@@ -38,3 +38,83 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
                 getHierarchyTree(x)
             }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric("getExperimentCrossAssociation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("getExperimentCrossAssociation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getExperimentCrossAssociation", 
+            signature = c(x = "MultiAssayExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
+                                        "deprecated. Use ", 
+                                        "'getCrossAssociation' instead."))
+                getExperimentCrossAssociation(x, ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
+          function(x, ...){
+              .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getExperimentCrossAssociation(x, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("testExperimentCrossAssociation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("testExperimentCrossAssociation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'testExperimentCrossAssociation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("testExperimentCrossCorrelation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("testExperimentCrossCorrelation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'testExperimentCrossCorrelation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getExperimentCrossCorrelation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("getExperimentCrossCorrelation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'getExperimentCrossCorrelation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getExperimentCrossAssociation(x, ...)
+          }
+)
