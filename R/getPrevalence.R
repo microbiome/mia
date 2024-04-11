@@ -595,14 +595,12 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' threshold) are agglomerated in an additional row taking the name indicated by
 #' \code{other_label} (by default "Other").
 #' 
-#' @aliases mergeFeaturesByPrevalence
 #' @export
 setGeneric("agglomerateByPrevalence", signature = "x",
            function(x, ...)
                standardGeneric("agglomerateByPrevalence"))
 
 #' @rdname agglomerate-methods
-#' @aliases mergeFeaturesByPrevalence
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1L], other_label = "Other", ...){

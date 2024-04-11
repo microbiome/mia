@@ -11,7 +11,6 @@
 \alias{agglomerateByRank,TreeSummarizedExperiment-method}
 \alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
 \alias{agglomerateByPrevalence}
-\alias{mergeFeaturesByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
 \title{Agglomerate data using taxonomic information}
 \usage{
