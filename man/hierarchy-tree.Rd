@@ -58,13 +58,14 @@ getHierarchyTree(tse)
 tse <- addHierarchyTree(tse)
 tse
 
-# A hierarchy tree is not an actual phylogenic tree.
-# A phylogenic tree represents evolutionary relationships among organisms.
+# Please note that a hierarchy tree is not an actual phylogenic tree.
+# A phylogenic tree represents evolutionary relationships among features.
 # On the other hand, a hierarchy tree organizes species into a hierarchical 
 # structure based on their taxonomic ranks.
 
-# For instance, the TreeSummarizedExperiment  Tengeler2020 contains an actual
-# phylogenic tree.
+# For instance, the TreeSummarizedExperiment Tengeler2020 contains an
+# actual phylogenic tree.
+
 data(Tengeler2020)
 tse2 <- Tengeler2020
 phylo_tree <- rowTree(tse2)
