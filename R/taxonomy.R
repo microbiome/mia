@@ -447,13 +447,13 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' tse <- addHierarchyTree(tse)
 #' tse
 #' 
-#' # Please note that a hierarchy tree is not an actual phylogenic tree.
-#' # A phylogenic tree represents evolutionary relationships among features.
+#' # Please note that a hierarchy tree is not an actual phylogenetic tree.
+#' # A phylogenetic tree represents evolutionary relationships among features.
 #' # On the other hand, a hierarchy tree organizes species into a hierarchical 
 #' # structure based on their taxonomic ranks.
 #' 
 #' # For instance, the TreeSummarizedExperiment Tengeler2020 contains an
-#' # actual phylogenic tree.
+#' # actual phylogenetic tree.
 #' 
 #' data(Tengeler2020)
 #' tse2 <- Tengeler2020
