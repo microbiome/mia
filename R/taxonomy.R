@@ -414,6 +414,10 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{SummarizedExperiment}}
 #' object and add this hierarchy tree into the \code{rowTree}.
 #' 
+#' @inheritParams taxonomy-methods
+#' 
+#' @details
+#' 
 #' \code{addHierarchyTree} calculates a hierarchy tree from the available 
 #'   taxonomic information and add it to \code{rowTree}.
 #'   
@@ -422,10 +426,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
 #'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
 #'   data if needed.
-#' 
-#' @inheritParams taxonomy-methods
-#' 
-#' @details
+#'   
 #' Please note that a hierarchy tree is not an actual phylogenetic tree.
 #' A phylogenetic tree represents evolutionary relationships among features.
 #' On the other hand, a hierarchy tree organizes species into a hierarchical 
