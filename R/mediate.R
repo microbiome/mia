@@ -1,6 +1,6 @@
 #' Perform mediation analysis
 #'
-#' \code{getMediation} provides a wrapper of \code{\link[mediation:mediate]{mediate}}
+#' \code{getMediation} and \code{addMediation} provide a wrapper of \code{\link[mediation:mediate]{mediate}}
 #' for \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #'
 #' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
@@ -41,27 +41,21 @@
 #' provides a simple method to analyse the effect of a treatment variable on an
 #' outcome variable found in \code{colData(se)} through the mediation of either
 #' another variable in colData (argument \code{mediator}) or an assay
-#' (argument \code{assay.type}) or a reducedDim (argument \code{dim.type}). Notably,
+#' (argument \code{assay.type}) or a reducedDim (argument \code{dim.type}). Importantly,
 #' those three arguments are mutually exclusive.
 #' 
 #' @return 
-#' A \code{data.frame} of p-values, effect sizes and confidence intervals for
-#' the ACMEs and ADEs of every mediator included in the analysis. Columns include:
+#' \code{getMediation} returns a \code{data.frame} of adjusted p-values and effect
+#' sizes for the ACMEs and ADEs of every mediator given as input, whereas \code{addMediation}
+#' returns an updated \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' instance with the same \code{data.frame} stored in the metadata. Its columns include:
 #' 
 #' \describe{
-#'   \item{Treatment}{the treatment variable}
 #'   \item{Mediator}{the mediator variable}
-#'   \item{Outcome}{the outcome variable}
 #'   \item{ACME_estimate}{the Average Causal Mediation Effect (ACME) estimate}
 #'   \item{ADE_estimate}{the Average Direct Effect (ADE) estimate}
-#'   \item{ACME_pval}{the p-value for the ACME estimate}
-#'   \item{ADE_pval}{the p-value for the ADE estimate}
-#'   \item{ACME_adjpval}{the adjusted p-value for the ACME estimate}
-#'   \item{ADE_adjpval}{the adjusted p-value for the ADE estimate}
-#'   \item{ACME_CI_lower}{the lower limit of the confidence interval for the ACME estimate}
-#'   \item{ACME_CI_upper}{the upper limit of the confidence interval for the ACME estimate}
-#'   \item{ADE_CI_lower}{the lower limit of the confidence interval for the ADE estimate}
-#'   \item{ADE_CI_upper}{the upper limit of the confidence interval for the ADE estimate}
+#'   \item{ACME_pval}{the adjusted p-value for the ACME estimate}
+#'   \item{ADE_pval}{the adjusted p-value for the ADE estimate}
 #' }
 #'
 #' @name getMediation
@@ -122,6 +116,30 @@
 #'                        p.adj.method = "fdr")
 #' 
 NULL
+
+#' @rdname addMediation
+#' @export
+setGeneric("addMediation", signature = c("x"),
+           function(x, ...) standardGeneric("addMediation"))
+
+#' @rdname addMediation
+#' @export
+setMethod("addMediation", signature = c(x = "SummarizedExperiment"),
+        function(x, outcome, treatment,
+                 mediator = NULL, assay.type = NULL, dim.type = NULL,
+                 family = gaussian(), covariates = NULL, p.adj.method = "holm",
+                 add.metadata = FALSE, verbose = TRUE, ...) {
+          
+            med_df <- getMediation(
+                x, outcome, treatment,
+                mediator, assay.type, dim.type,
+                family, covariates, p.adj.method,
+                add.metadata, verbose, ...)
+            
+            x <- .add_values_to_metadata(x, "mediation", med_df)
+            return(x)
+        }
+)
 
 #' @rdname getMediation
 #' @export
