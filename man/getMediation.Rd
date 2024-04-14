@@ -16,7 +16,7 @@ getMediation(x, ...)
   dim.type = NULL,
   family = gaussian(),
   covariates = NULL,
-  p.adj.method = "BH",
+  p.adj.method = "holm",
   add.metadata = FALSE,
   verbose = TRUE,
   ...
@@ -47,7 +47,7 @@ getMediation(x, ...)
 in the model. (default: \code{covariates = NULL})}
 
 \item{p.adj.method}{A single character value for selecting adjustment method
-of p-values. Passed to \code{p.adjust} function. (default: \code{p.adj.method = "BH"})}
+of p-values. Passed to \code{p.adjust} function. (default: \code{p.adj.method = "holm"})}
 
 \item{add.metadata}{TRUE or FALSE, should the model metadata be returned.
 (default: \code{add.metadata = FALSE})}
@@ -123,7 +123,8 @@ med_df <- getMediation(tse,
                        covariates = c("sex", "age"),
                        treat.value = "Scandinavia",
                        control.value = "CentralEurope",
-                       boot = TRUE, sims = 300)
+                       boot = TRUE, sims = 300,
+                       p.adj.method = "fdr")
  
 # Perform ordination
 tse <- runMDS(tse, name = "MDS",
@@ -139,6 +140,7 @@ med_df <- getMediation(tse,
                        covariates = c("sex", "age"),
                        treat.value = "Scandinavia",
                        control.value = "CentralEurope",
-                       boot = TRUE, sims = 500)
+                       boot = TRUE, sims = 500,
+                       p.adj.method = "fdr")
 
 }
