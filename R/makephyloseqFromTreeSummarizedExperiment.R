@@ -54,7 +54,6 @@
     return(phyloseq)
 }
 
-
 .make_phyloseq_from_TreeSE <- function(x, tree.name = tree_name, 
                                         tree_name = "phylo", ...){
     # If rowTrees exist, check tree.name
