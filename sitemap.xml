@@ -49,9 +49,6 @@
     <loc>/reference/calculateUnifrac.html</loc>
   </url>
   <url>
-    <loc>/reference/convert.html</loc>
-  </url>
-  <url>
     <loc>/reference/deprecate.html</loc>
   </url>
   <url>
@@ -94,9 +91,6 @@
     <loc>/reference/isContaminant.html</loc>
   </url>
   <url>
-    <loc>/reference/loadFromBiom.html</loc>
-  </url>
-  <url>
     <loc>/reference/loadFromHumann.html</loc>
   </url>
   <url>
@@ -109,10 +103,19 @@
     <loc>/reference/loadFromQIIME2.html</loc>
   </url>
   <url>
-    <loc>/reference/meltAssay.html</loc>
+    <loc>/reference/makePhyloseqFromTreeSE.html</loc>
   </url>
   <url>
-    <loc>/reference/merge-methods.html</loc>
+    <loc>/reference/makeTreeSEFromBiom.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makeTreeSEFromDADA2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makeTreeSEFromPhyloseq.html</loc>
+  </url>
+  <url>
+    <loc>/reference/meltAssay.html</loc>
   </url>
   <url>
     <loc>/reference/mergeSEs.html</loc>
