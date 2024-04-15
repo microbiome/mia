@@ -131,7 +131,9 @@ with certain taxonomic ranks, as defined in \code{rowData}. Only available
 \details{
 \code{agglomerateByVariable} merges data on rows or columns of a
 \code{SummarizedExperiment} as defined by a \code{factor} alongside the
-chosen dimension. Metadata from the \code{rowData} or \code{colData} are
+chosen dimension. This function allows agglomeration of data based on other
+variables than taxonomy ranks.
+Metadata from the \code{rowData} or \code{colData} are
 retained as defined by \code{archetype}.
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are
 agglomerated, i.e. summed up. If the assay contains values other than counts
