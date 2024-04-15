@@ -111,6 +111,7 @@ summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,
 optionally-pruned object of the same class as \code{x}.
+
 \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
 of the same class as x and based on prevalent taxonomic results.
 }
