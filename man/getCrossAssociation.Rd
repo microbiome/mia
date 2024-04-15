@@ -30,7 +30,7 @@ getCrossAssociation(x, ...)
   sort = FALSE,
   filter_self_correlations = FALSE,
   verbose = TRUE,
-  test_significance = TRUE,
+  test_significance = FALSE,
   show_warnings = TRUE,
   paired = FALSE,
   ...
@@ -141,7 +141,7 @@ about progress of calculation.}
 
 \item{test_significance}{A single boolean value for selecting whether to test
 statistical significance of associations.
-(By default: \code{test_significance = TRUE})}
+(By default: \code{test_significance = FALSE})}
 
 \item{show_warnings}{A single boolean value for selecting whether to show warnings
 that might occur when correlations and p-values are calculated.}
@@ -185,8 +185,7 @@ mae[[1]] <- mae[[1]][rowSds(assay(mae[[1]])) > 0, ]
 mae[[1]] <- transformAssay(mae[[1]], method = "rclr")
 
 # Calculate cross-correlations
-result <- getCrossAssociation(mae, method = "pearson", assay.type2 = "nmr",
-                                test_significance = FALSE)
+result <- getCrossAssociation(mae, method = "pearson", assay.type2 = "nmr")
 # Show first 5 entries
 head(result, 5)
 
@@ -198,13 +197,12 @@ altExp(mae[[1]], "Phylum") <- transformAssay(altExp(mae[[1]], "Phylum"), method 
 result <- getCrossAssociation(mae, experiment2 = 2, 
                                         assay.type1 = "relabundance", assay.type2 = "nmr",
                                         altexp1 = "Phylum", 
-                                        method = "pearson", mode = "matrix",
-                                        test_significance = FALSE)
+                                        method = "pearson", mode = "matrix")
 # Show first 5 entries
 head(result, 5)
 
-# If test_significance = TRUE (default value), then getCrossAssociation 
-# additionally returns significances
+# If test_significance = TRUE, then getCrossAssociation additionally returns 
+# significances
 # filter_self_correlations = TRUE filters self correlations
 # p_adj_threshold can be used to filter those features that do not
 # have any correlations whose p-value is lower than the threshold
@@ -222,8 +220,7 @@ names(result)
 # paired samples, you can use paired = TRUE.
 result <- getCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
                                         association_FUN = vegan::vegdist, 
-                                        method = "bray",
-                                        test_significance = FALSE)
+                                        method = "bray")
                                         
 
 # If experiments are equal and measure is symmetric (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),
@@ -234,8 +231,7 @@ result <- getCrossAssociation(mae, experiment1 = "microbiota",
                                  experiment2 = "microbiota", 
                                  assay.type1 = "counts", 
                                  assay.type2 = "counts",
-                                 symmetric = TRUE,
-                                 test_significance = FALSE)
+                                 symmetric = TRUE)
 
 # For big data sets, the calculations might take a long time.
 # To speed them up, you can take a random sample from the data. 

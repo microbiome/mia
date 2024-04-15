@@ -396,7 +396,8 @@ test_that("getCrossAssociation", {
         getCrossAssociation(mae_sub, 
                             p_adj_threshold = 0, 
                             mode = "matrix", 
-                            show_warnings = FALSE)) )
+                            show_warnings = FALSE,
+                            test_significance = TRUE)) )
     
     # When correlation between same assay is calculated, calculation is made faster
     # by not calculating duplicates
