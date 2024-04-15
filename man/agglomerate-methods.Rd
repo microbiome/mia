@@ -198,7 +198,6 @@ data(enterotype)
 ## Print the available taxonomic ranks. Shows only 1 available rank,
 ## not useful for agglomerateByRank
 taxonomyRanks(enterotype)
-
 ## Data can be aggregated based on prevalent taxonomic results
 tse <- GlobalPatterns
 tse <- agglomerateByPrevalence(tse,
@@ -216,6 +215,7 @@ tse
 # that are below the prevalence threshold.
 
 assay(tse)[,1:5]
+
 }
 \seealso{
 \code{\link[=merge-methods]{mergeRows}},

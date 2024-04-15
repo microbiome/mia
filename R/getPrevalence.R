@@ -587,6 +587,9 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname agglomerate-methods
 #' 
+#' @param other_label A single \code{character} valued used as the label for the
+#'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
+#' 
 #' @details
 #' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic 
 #' level specified by \code{rank} (by default the highest taxonomic level 
@@ -594,6 +597,29 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' prevalence at the given detection level. The other summed values (below the 
 #' threshold) are agglomerated in an additional row taking the name indicated by
 #' \code{other_label} (by default "Other").
+#' 
+#' @return 
+#' \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
+#' of the same class as x and based on prevalent taxonomic results.
+#' 
+#' @examples
+#' ## Data can be aggregated based on prevalent taxonomic results
+#' tse <- GlobalPatterns
+#' tse <- agglomerateByPrevalence(tse,
+#'                               rank = "Phylum",
+#'                               detection = 1/100,
+#'                               prevalence = 50/100,
+#'                               as_relative = TRUE)
+#' 
+#' tse
+#' 
+#' # Here data is aggregated at the taxonomic level "Phylum". The five phyla
+#' # that exceed the population prevalence threshold of 50/100 represent the 
+#' # five first rows of the assay in the aggregated data. The sixth and last row
+#' # named by default "Other" takes the summed up values of all the other phyla 
+#' # that are below the prevalence threshold.
+#' 
+#' assay(tse)[,1:5]
 #' 
 #' @export
 setGeneric("agglomerateByPrevalence", signature = "x",

@@ -49,9 +49,6 @@
 #'   experiments be removed prior to agglomeration? This prevents to many
 #'   nested alternative experiments by default (default:
 #'   \code{strip_altexp = TRUE})
-#'   
-#' @param other_label A single \code{character} valued used as the label for the
-#'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
 #'
 #' @details
 #' Depending on the available taxonomic data and its structure, setting
@@ -68,8 +65,6 @@
 #' @return 
 #' \code{agglomerateByRank} returns a taxonomically-agglomerated, 
 #'   optionally-pruned object of the same class as \code{x}.
-#' \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
-#' of the same class as x and based on prevalent taxonomic results.
 #'
 #' @name agglomerate-methods
 #' @seealso
@@ -136,24 +131,6 @@
 #' ## Print the available taxonomic ranks. Shows only 1 available rank,
 #' ## not useful for agglomerateByRank
 #' taxonomyRanks(enterotype)
-#' 
-#' ## Data can be aggregated based on prevalent taxonomic results
-#' tse <- GlobalPatterns
-#' tse <- agglomerateByPrevalence(tse,
-#'                               rank = "Phylum",
-#'                               detection = 1/100,
-#'                               prevalence = 50/100,
-#'                               as_relative = TRUE)
-#' 
-#' tse
-#' 
-#' # Here data is aggregated at the taxonomic level "Phylum". The five phyla
-#' # that exceed the population prevalence threshold of 50/100 represent the 
-#' # five first rows of the assay in the aggregated data. The sixth and last row
-#' # named by default "Other" takes the summed up values of all the other phyla 
-#' # that are below the prevalence threshold.
-#' 
-#' assay(tse)[,1:5]
 NULL
 
 #' @rdname agglomerate-methods
