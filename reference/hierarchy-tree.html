@@ -19,7 +19,7 @@ object and add this hierarchy tree into the rowTree."><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.10</span>
       </span>
     </div>
 
@@ -92,22 +92,18 @@ hierarchy among available taxonomy information.</p></li>
 </ul></div>
     <div id="details">
     <h2>Details</h2>
-    <p><code>addHierarchyTree</code> calculates a hierarchy tree from the available
-taxonomic information and add it to <code>rowTree</code>.</p>
+    <p><code>addHierarchyTree</code> calculates hierarchy tree from the available taxonomic
+information and add it to <code>rowTree</code>.</p>
 <p><code>getHierarchyTree</code> generates a hierarchy tree from the available
 taxonomic information. Internally it uses
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/toTree.html" class="external-link">toTree</a></code> and
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/resolveLoop.html" class="external-link">resolveLoop</a></code> to sanitize
 data if needed.</p>
-<p>Please note that a hierarchy tree is not an actual phylogenetic tree.
-A phylogenetic tree represents evolutionary relationships among features.
-On the other hand, a hierarchy tree organizes species into a hierarchical
-structure based on their taxonomic ranks.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Generate a tree based on taxonomic rank hierarchy (a hierarchy tree).</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Generating a hierarchy tree based on available taxonomic information.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span><span class="fu">getHierarchyTree</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
@@ -123,7 +119,7 @@ structure based on their taxonomic ranks.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rooted; includes branch lengths.</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add a hierarchy tree to a TreeSummarizedExperiment.</span></span></span>
+<span class="r-in"><span><span class="co"># Adding a hierarchy tree based on the available taxonomic information. </span></span></span>
 <span class="r-in"><span><span class="co"># Please note that any tree already stored in rowTree() will be overwritten.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addHierarchyTree</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>16909 duplicated rows are removed</span>
@@ -146,23 +142,6 @@ structure based on their taxonomic ranks.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (1645 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># For instance, the TreeSummarizedExperiment Tengeler2020 contains an</span></span></span>
-<span class="r-in"><span><span class="co"># actual phylogenetic tree.</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Tengeler2020</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse2</span> <span class="op">&lt;-</span> <span class="va">Tengeler2020</span></span></span>
-<span class="r-in"><span><span class="va">phylo_tree</span> <span class="op">&lt;-</span> <span class="fu">rowTree</span><span class="op">(</span><span class="va">tse2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">phylo_tree</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 151 tips and 149 internal nodes.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tip labels:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   172647198, 1726478, 1726479, 172647201, 172647222, 17264798, ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Node labels:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   , 0.789, 0.810, 0.844, 0.973, 0.685, ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Unrooted; includes branch lengths.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
