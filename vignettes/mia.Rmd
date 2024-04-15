@@ -147,12 +147,12 @@ dim(x1)
 dim(altExp(tse,"species"))
 ```
 
-For convenience the function `splitByRanks` is available, which agglomerates
+For convenience the function `agglomerateByRanks` is available, which agglomerates
 data on all `ranks` selected. By default all available ranks will be used.
 The output is compatible to be stored as alternative experiments.
 
 ```{r}
-altExps(tse) <- splitByRanks(tse)
+tse <- agglomerateByRanks(tse, as.list = FALSE)
 tse
 altExpNames(tse)
 ```

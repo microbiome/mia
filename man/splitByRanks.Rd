@@ -9,7 +9,7 @@
 \alias{unsplitByRanks}
 \alias{unsplitByRanks,SingleCellExperiment-method}
 \alias{unsplitByRanks,TreeSummarizedExperiment-method}
-\title{Split/Unsplit a \code{SingleCellExperiment} by taxonomic ranks}
+\title{Agglomerate a \code{SummarizedExperiment} based on several taxonomic ranks}
 \usage{
 agglomerateByRanks(x, ...)
 
@@ -54,14 +54,22 @@ removed? Use it with caution, since results with NA on the selected rank
 will be dropped. This setting can be tweaked by defining
 \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})}
 
+\item{as.list}{\code{TRUE} or \code{FALSE}: Should the list of
+\code{SummarizedExperiment} objects be returned by the function
+\code{agglomerateByRanks} or stored in altExps?}
+
 \item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (default: \code{keep_reducedDims = FALSE})}
 }
 \value{
-For \code{splitByRanks}: \code{SummarizedExperiment} objects in a
-\code{SimpleList}.
+For \code{agglomerateByRanks}:
+If \code{as.list = TRUE} : \code{SummarizedExperiment} objects in a
+\code{SimpleList}
+If \code{as.list = FALSE} : The \code{SummarizedExperiment} passed as a
+parameter and now containing the \code{SummarizedExperiment} objects in its
+altExps
 
 For \code{unsplitByRanks}: \code{x}, with \code{rowData} and \code{assay}
 data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -69,7 +77,7 @@ and any existing \code{rowTree} is dropped as well, since existing
 \code{rowLinks} are not valid anymore.
 }
 \description{
-\code{splitByRanks} takes a \code{SummarizedExperiment}, splits it along the
+\code{agglomerateByRanks} takes a \code{SummarizedExperiment}, splits it along the
 taxonomic ranks, aggregates the data per rank, converts the input to a
 \code{SingleCellExperiment} objects and stores the aggregated data as
 alternative experiments.
@@ -78,7 +86,7 @@ alternative experiments.
 \code{unsplitByRanks} takes these alternative experiments and flattens them
 again into a single \code{SummarizedExperiment}.
 
-\code{splitByRanks} will use by default all available taxonomic ranks, but
+\code{agglomerateByRanks} will use by default all available taxonomic ranks, but
 this can be controlled by setting \code{ranks} manually. \code{NA} values
 are removed by default, since they would not make sense, if the result
 should be used for \code{unsplitByRanks} at some point. The input data
@@ -100,10 +108,11 @@ data(GlobalPatterns)
 taxonomyRanks(GlobalPatterns)
 
 # agglomerateByRanks
-agglomerateByRanks(GlobalPatterns, as.list = FALSE)
-altExps(GlobalPatterns)
-altExp(GlobalPatterns,"Kingdom")
-altExp(GlobalPatterns,"Species")
+# 
+x <- agglomerateByRanks(GlobalPatterns, as.list = FALSE)
+altExps(x)
+altExp(x,"Kingdom")
+altExp(x,"Species")
 
 # unsplitByRanks
 x <- unsplitByRanks(GlobalPatterns)

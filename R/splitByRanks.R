@@ -1,6 +1,6 @@
-#' Split/Unsplit a \code{SingleCellExperiment} by taxonomic ranks
+#' Agglomerate a \code{SummarizedExperiment} based on several taxonomic ranks
 #'
-#' \code{splitByRanks} takes a \code{SummarizedExperiment}, splits it along the
+#' \code{agglomerateByRanks} takes a \code{SummarizedExperiment}, splits it along the
 #' taxonomic ranks, aggregates the data per rank, converts the input to a 
 #' \code{SingleCellExperiment} objects and stores the aggregated data as 
 #' alternative experiments.
@@ -24,14 +24,22 @@
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
 #'   (default: \code{keep_reducedDims = FALSE})
+#'   
+#' @param as.list \code{TRUE} or \code{FALSE}: Should the list of 
+#'   \code{SummarizedExperiment} objects be returned by the function 
+#'   \code{agglomerateByRanks} or stored in altExps?
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects and other functions.
 #'   See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
 #'
 #' @return
-#' For \code{splitByRanks}: \code{SummarizedExperiment} objects in a 
-#' \code{SimpleList}.
+#' For \code{agglomerateByRanks}: 
+#' If \code{as.list = TRUE} : \code{SummarizedExperiment} objects in a 
+#' \code{SimpleList} 
+#' If \code{as.list = FALSE} : The \code{SummarizedExperiment} passed as a 
+#'   parameter and now containing the \code{SummarizedExperiment} objects in its
+#'   altExps
 #'
 #' For \code{unsplitByRanks}: \code{x}, with \code{rowData} and \code{assay}
 #' data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -39,7 +47,7 @@
 #' \code{rowLinks} are not valid anymore.
 #'
 #' @details
-#' \code{splitByRanks} will use by default all available taxonomic ranks, but
+#' \code{agglomerateByRanks} will use by default all available taxonomic ranks, but
 #' this can be controlled by setting \code{ranks} manually. \code{NA} values
 #' are removed by default, since they would not make sense, if the result
 #' should be used for \code{unsplitByRanks} at some point. The input data 
@@ -72,10 +80,11 @@
 #' taxonomyRanks(GlobalPatterns)
 #'
 #' # agglomerateByRanks
-#' agglomerateByRanks(GlobalPatterns, as.list = FALSE)
-#' altExps(GlobalPatterns)
-#' altExp(GlobalPatterns,"Kingdom")
-#' altExp(GlobalPatterns,"Species")
+#' # 
+#' x <- agglomerateByRanks(GlobalPatterns, as.list = FALSE)
+#' altExps(x)
+#' altExp(x,"Kingdom")
+#' altExp(x,"Species")
 #'
 #' # unsplitByRanks
 #' x <- unsplitByRanks(GlobalPatterns)

@@ -428,7 +428,7 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
 #' @importFrom tibble tibble
 .get_summary_row_data <- function(x, assay.type){
     # Should check and extract assay
-    # Internal from splitByRanks
+    # Internal from agglomerateByRanks
     assay.x <- .get_assay(x, assay.type)
     summary_row_data <- tibble(total = nrow(assay.x),
                                singletons = .get_singletons(assay.x),

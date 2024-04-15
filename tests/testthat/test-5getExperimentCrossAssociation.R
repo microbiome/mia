@@ -500,7 +500,7 @@ test_that("getExperimentCrossAssociation", {
     expect_true( !all(tab1_levels2 == tab2_levels2) )
     
     # Test altexps
-    altExps(tse) <- splitByRanks(tse)
+    tse <- agglomerateByRanks(tse, as.list = FALSE)
     # Test that output has right columns
     expect_equal(getExperimentCrossAssociation(tse, tse, show_warnings = FALSE, 
                                                altexp1 = 1, altexp2 = "Phylum"),
