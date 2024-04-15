@@ -1,6 +1,9 @@
 test_that("getMediation", {
   
-  tse <- microbiomeDataSets::LahtiWAData()
+  data("hitchip1006", package = "miaTime")
+  tse <- hitchip1006
+  
+  expect_warning(tse <- mergeFeaturesByRank(tse, rank = "Family"))
   tse$bmi_group <- as.numeric(tse$bmi_group)
   
   ### Batch 1: check errors when missing or wrong arguments ###

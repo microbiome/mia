@@ -2,9 +2,29 @@
 % Please edit documentation in R/mediate.R
 \name{getMediation}
 \alias{getMediation}
+\alias{addMediation}
+\alias{addMediation,SummarizedExperiment-method}
 \alias{getMediation,SummarizedExperiment-method}
 \title{Perform mediation analysis}
 \usage{
+addMediation(x, ...)
+
+\S4method{addMediation}{SummarizedExperiment}(
+  x,
+  outcome,
+  treatment,
+  name = "mediation",
+  mediator = NULL,
+  assay.type = NULL,
+  dim.type = NULL,
+  family = gaussian(),
+  covariates = NULL,
+  p.adj.method = "holm",
+  add.metadata = FALSE,
+  verbose = TRUE,
+  ...
+)
+
 getMediation(x, ...)
 
 \S4method{getMediation}{SummarizedExperiment}(
@@ -31,6 +51,10 @@ getMediation(x, ...)
 
 \item{treatment}{The name of the colData variable used as treatment in the model.}
 
+\item{name}{A single character value to name the metadata element and avoid
+overwriting other metadata slots. It is supported only by \code{addMediation}.
+(default: \code{name = "mediation"})}
+
 \item{mediator}{The name of the colData variable used as mediator in the model.
 (default: \code{mediator = NULL})}
 
@@ -56,27 +80,22 @@ of p-values. Passed to \code{p.adjust} function. (default: \code{p.adj.method = 
 (default: \code{verbose = TRUE})}
 }
 \value{
-A \code{data.frame} of p-values, effect sizes and confidence intervals for
-the ACMEs and ADEs of every mediator included in the analysis. Columns include:
+\code{getMediation} returns a \code{data.frame} of adjusted p-values and effect
+sizes for the ACMEs and ADEs of every mediator given as input, whereas \code{addMediation}
+returns an updated \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+instance with the same \code{data.frame} stored in the metadata as "mediation".
+Its columns include:
 
 \describe{
-\item{Treatment}{the treatment variable}
 \item{Mediator}{the mediator variable}
-\item{Outcome}{the outcome variable}
 \item{ACME_estimate}{the Average Causal Mediation Effect (ACME) estimate}
 \item{ADE_estimate}{the Average Direct Effect (ADE) estimate}
-\item{ACME_pval}{the p-value for the ACME estimate}
-\item{ADE_pval}{the p-value for the ADE estimate}
-\item{ACME_adjpval}{the adjusted p-value for the ACME estimate}
-\item{ADE_adjpval}{the adjusted p-value for the ADE estimate}
-\item{ACME_CI_lower}{the lower limit of the confidence interval for the ACME estimate}
-\item{ACME_CI_upper}{the upper limit of the confidence interval for the ACME estimate}
-\item{ADE_CI_lower}{the lower limit of the confidence interval for the ADE estimate}
-\item{ADE_CI_upper}{the upper limit of the confidence interval for the ADE estimate}
+\item{ACME_pval}{the adjusted p-value for the ACME estimate}
+\item{ADE_pval}{the adjusted p-value for the ADE estimate}
 }
 }
 \description{
-\code{getMediation} provides a wrapper of \code{\link[mediation:mediate]{mediate}}
+\code{getMediation} and \code{addMediation} provide a wrapper of \code{\link[mediation:mediate]{mediate}}
 for \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 }
 \details{
@@ -85,46 +104,57 @@ This wrapper of \code{\link[mediation:mediate]{mediate}} for
 provides a simple method to analyse the effect of a treatment variable on an
 outcome variable found in \code{colData(se)} through the mediation of either
 another variable in colData (argument \code{mediator}) or an assay
-(argument \code{assay.type}) or a reducedDim (argument \code{dim.type}). Notably,
+(argument \code{assay.type}) or a reducedDim (argument \code{dim.type}). Importantly,
 those three arguments are mutually exclusive.
 }
 \examples{
 # Import libraries
 library(mia)
-library(microbiomeDataSets)
+library(miaTime)
 library(scater)
 
 # Load dataset
-tse <- LahtiWAData()
+data("hitchip1006", package = "miaTime")
+tse <- hitchip1006
  
+# Agglomerate features by family (merely to speed up execution)
+tse <- mergeFeaturesByRank(tse, rank = "Family")
 # Convert BMI variable to numeric
 tse$bmi_group <- as.numeric(tse$bmi_group)
 
-# Analyse mediated effect of nationality on BMI through alpha diversity 
-med_df <- getMediation(tse,
-                       outcome = "bmi_group",
-                       treatment = "nationality",
-                       mediator = "diversity",
-                       covariates = c("sex", "age"),
-                       treat.value = "Scandinavia",
-                       control.value = "CentralEurope",
-                       boot = TRUE, sims = 1000)
+# Analyse mediated effect of nationality on BMI through alpha diversity
+# 300 permutations were done to speed up execution, but ~1000 are recommended 
+tse <- addMediation(tse, name = "diversity_mediation",
+                    outcome = "bmi_group",
+                    treatment = "nationality",
+                    mediator = "diversity",
+                    covariates = c("sex", "age"),
+                    treat.value = "Scandinavia",
+                    control.value = "CentralEurope",
+                    boot = TRUE, sims = 300,
+                    add.metadata = TRUE)
+ 
+ # Retrieve results from metadata
+ med_df <- metadata(tse)$diversity_mediation
+ # Visualise model statistics for 1st mediator
+ plot(attr(med_df, "metadata")[[1]])
 
 # Apply clr transformation to counts assay
 tse <- transformAssay(tse,
                       method = "clr",
                       pseudocount = 1)
 
-# Analyse mediated effect of nationality on BMI through clr-transformed features     
-med_df <- getMediation(tse,
-                       outcome = "bmi_group",
-                       treatment = "nationality",
-                       assay.type = "clr",
-                       covariates = c("sex", "age"),
-                       treat.value = "Scandinavia",
-                       control.value = "CentralEurope",
-                       boot = TRUE, sims = 300,
-                       p.adj.method = "fdr")
+# Analyse mediated effect of nationality on BMI through clr-transformed features
+# 100 permutations were done to speed up execution, but ~1000 are recommended     
+tse <- addMediation(tse, name = "assay_mediation",
+                    outcome = "bmi_group",
+                    treatment = "nationality",
+                    assay.type = "clr",
+                    covariates = c("sex", "age"),
+                    treat.value = "Scandinavia",
+                    control.value = "CentralEurope",
+                    boot = TRUE, sims = 100,
+                    p.adj.method = "fdr")
  
 # Perform ordination
 tse <- runMDS(tse, name = "MDS",
@@ -132,15 +162,16 @@ tse <- runMDS(tse, name = "MDS",
               assay.type = "clr",
               ncomponents = 3)
 
-# Analyse mediated effect of nationality on BMI through NMDS components        
-med_df <- getMediation(tse,
-                       outcome = "bmi_group",
-                       treatment = "nationality",
-                       dim.type = "MDS",
-                       covariates = c("sex", "age"),
-                       treat.value = "Scandinavia",
-                       control.value = "CentralEurope",
-                       boot = TRUE, sims = 500,
-                       p.adj.method = "fdr")
+# Analyse mediated effect of nationality on BMI through NMDS components 
+# 100 permutations were done to speed up execution, but ~1000 are recommended       
+tse <- addMediation(tse, name = "reddim_mediation",
+                    outcome = "bmi_group",
+                    treatment = "nationality",
+                    dim.type = "MDS",
+                    covariates = c("sex", "age"),
+                    treat.value = "Scandinavia",
+                    control.value = "CentralEurope",
+                    boot = TRUE, sims = 100,
+                    p.adj.method = "fdr")
 
 }

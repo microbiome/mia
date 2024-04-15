@@ -32,6 +32,10 @@
 #' 
 #' @param verbose TRUE or FALSE, should execution messages be printed.
 #'   (default: \code{verbose = TRUE})
+#'   
+#' @param name A single character value to name the metadata element and avoid
+#'   overwriting other metadata slots. It is supported only by \code{addMediation}.
+#'   (default: \code{name = "mediation"})
 #' 
 #' @param ... additional parameters that can be passed to \code{\link[mediation:mediate]{mediate}}.
 #' 
@@ -48,7 +52,8 @@
 #' \code{getMediation} returns a \code{data.frame} of adjusted p-values and effect
 #' sizes for the ACMEs and ADEs of every mediator given as input, whereas \code{addMediation}
 #' returns an updated \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' instance with the same \code{data.frame} stored in the metadata. Its columns include:
+#' instance with the same \code{data.frame} stored in the metadata as "mediation".
+#' Its columns include:
 #' 
 #' \describe{
 #'   \item{Mediator}{the mediator variable}
@@ -63,40 +68,51 @@
 #' @examples
 #' # Import libraries
 #' library(mia)
-#' library(microbiomeDataSets)
+#' library(miaTime)
 #' library(scater)
 #' 
 #' # Load dataset
-#' tse <- LahtiWAData()
+#' data("hitchip1006", package = "miaTime")
+#' tse <- hitchip1006
 #'  
+#' # Agglomerate features by family (merely to speed up execution)
+#' tse <- mergeFeaturesByRank(tse, rank = "Family")
 #' # Convert BMI variable to numeric
 #' tse$bmi_group <- as.numeric(tse$bmi_group)
 #' 
-#' # Analyse mediated effect of nationality on BMI through alpha diversity 
-#' med_df <- getMediation(tse,
-#'                        outcome = "bmi_group",
-#'                        treatment = "nationality",
-#'                        mediator = "diversity",
-#'                        covariates = c("sex", "age"),
-#'                        treat.value = "Scandinavia",
-#'                        control.value = "CentralEurope",
-#'                        boot = TRUE, sims = 1000)
+#' # Analyse mediated effect of nationality on BMI through alpha diversity
+#' # 300 permutations were done to speed up execution, but ~1000 are recommended 
+#' tse <- addMediation(tse, name = "diversity_mediation",
+#'                     outcome = "bmi_group",
+#'                     treatment = "nationality",
+#'                     mediator = "diversity",
+#'                     covariates = c("sex", "age"),
+#'                     treat.value = "Scandinavia",
+#'                     control.value = "CentralEurope",
+#'                     boot = TRUE, sims = 300,
+#'                     add.metadata = TRUE)
+#'  
+#'  # Retrieve results from metadata
+#'  med_df <- metadata(tse)$diversity_mediation
+#'  # Visualise model statistics for 1st mediator
+#'  plot(attr(med_df, "metadata")[[1]])
 #' 
 #' # Apply clr transformation to counts assay
 #' tse <- transformAssay(tse,
 #'                       method = "clr",
 #'                       pseudocount = 1)
 #'
-#' # Analyse mediated effect of nationality on BMI through clr-transformed features     
-#' med_df <- getMediation(tse,
-#'                        outcome = "bmi_group",
-#'                        treatment = "nationality",
-#'                        assay.type = "clr",
-#'                        covariates = c("sex", "age"),
-#'                        treat.value = "Scandinavia",
-#'                        control.value = "CentralEurope",
-#'                        boot = TRUE, sims = 300,
-#'                        p.adj.method = "fdr")
+#' # Analyse mediated effect of nationality on BMI through clr-transformed features
+#' # 100 permutations were done to speed up execution, but ~1000 are recommended     
+#' tse <- addMediation(tse, name = "assay_mediation",
+#'                     outcome = "bmi_group",
+#'                     treatment = "nationality",
+#'                     assay.type = "clr",
+#'                     covariates = c("sex", "age"),
+#'                     treat.value = "Scandinavia",
+#'                     control.value = "CentralEurope",
+#'                     boot = TRUE, sims = 100,
+#'                     p.adj.method = "fdr")
 #'  
 #' # Perform ordination
 #' tse <- runMDS(tse, name = "MDS",
@@ -104,28 +120,29 @@
 #'               assay.type = "clr",
 #'               ncomponents = 3)
 #' 
-#' # Analyse mediated effect of nationality on BMI through NMDS components        
-#' med_df <- getMediation(tse,
-#'                        outcome = "bmi_group",
-#'                        treatment = "nationality",
-#'                        dim.type = "MDS",
-#'                        covariates = c("sex", "age"),
-#'                        treat.value = "Scandinavia",
-#'                        control.value = "CentralEurope",
-#'                        boot = TRUE, sims = 500,
-#'                        p.adj.method = "fdr")
+#' # Analyse mediated effect of nationality on BMI through NMDS components 
+#' # 100 permutations were done to speed up execution, but ~1000 are recommended       
+#' tse <- addMediation(tse, name = "reddim_mediation",
+#'                     outcome = "bmi_group",
+#'                     treatment = "nationality",
+#'                     dim.type = "MDS",
+#'                     covariates = c("sex", "age"),
+#'                     treat.value = "Scandinavia",
+#'                     control.value = "CentralEurope",
+#'                     boot = TRUE, sims = 100,
+#'                     p.adj.method = "fdr")
 #' 
 NULL
 
-#' @rdname addMediation
+#' @rdname getMediation
 #' @export
 setGeneric("addMediation", signature = c("x"),
            function(x, ...) standardGeneric("addMediation"))
 
-#' @rdname addMediation
+#' @rdname getMediation
 #' @export
 setMethod("addMediation", signature = c(x = "SummarizedExperiment"),
-        function(x, outcome, treatment,
+        function(x, outcome, treatment, name = "mediation",
                  mediator = NULL, assay.type = NULL, dim.type = NULL,
                  family = gaussian(), covariates = NULL, p.adj.method = "holm",
                  add.metadata = FALSE, verbose = TRUE, ...) {
@@ -134,9 +151,10 @@ setMethod("addMediation", signature = c(x = "SummarizedExperiment"),
                 x, outcome, treatment,
                 mediator, assay.type, dim.type,
                 family, covariates, p.adj.method,
-                add.metadata, verbose, ...)
+                add.metadata, verbose, ...
+            )
             
-            x <- .add_values_to_metadata(x, "mediation", med_df)
+            x <- .add_values_to_metadata(x, name, med_df)
             return(x)
         }
 )
