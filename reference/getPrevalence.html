@@ -18,7 +18,7 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.9</span>
       </span>
     </div>
 
@@ -151,7 +151,27 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">getPrevalentAbundance</span><span class="op">(</span><span class="va">x</span>, assay.type <span class="op">=</span> <span class="va">assay_name</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">getPrevalentAbundance</span><span class="op">(</span><span class="va">x</span>, assay.type <span class="op">=</span> <span class="va">assay_name</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">mergeFeaturesByPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  rank <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,</span>
+<span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">mergeFeaturesByPrevalence</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  rank <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,</span>
+<span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -224,6 +244,11 @@ on compositional (relative) abundances? (default: <code>FALSE</code>)</p></dd>
 <dd><p>Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set <code>include_lowest</code> to <code>TRUE</code>.</p></dd>
+
+
+<dt>other_label</dt>
+<dd><p>A single <code>character</code> valued used as the label for the
+summary of non-prevalent taxa. (default: <code>other_label = "Other"</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -415,6 +440,29 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         B         C         D </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.9605911 0.8980392 0.9086758 </span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># data can be aggregated based on prevalent taxonomic results</span></span></span>
+<span class="r-in"><span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>                        rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>                        detection <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,</span></span>
+<span class="r-in"><span>                        prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span></span>
+<span class="r-in"><span>                        as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The 'getPrevalentTaxa' function is deprecated. Use 'getPrevalentFeatures' instead.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 6 26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(2): agglomerated_by_rank agglomerated_by_rank</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(6): Phylum:Actinobacteria Phylum:Proteobacteria ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Phylum:Firmicutes Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 </code></pre></div>
     </div>
   </div>
