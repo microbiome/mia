@@ -71,7 +71,7 @@ setMethod("getExperimentCrossAssociation",
                 .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
                                         "deprecated. Use ", 
                                         "'getCrossAssociation' instead."))
-                getExperimentCrossAssociation(x, ...)
+                getCrossAssociation(x, ...)
             }
 )
 
@@ -82,7 +82,7 @@ setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
               .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
                                        "deprecated. Use ", 
                                        "'getCrossAssociation' instead."))
-              getExperimentCrossAssociation(x, ...)
+              getCrossAssociation(x, ...)
           }
 )
 
@@ -99,7 +99,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
               .Deprecated(msg = paste0("'testExperimentCrossAssociation' is ",
                                        "deprecated. Use ", 
                                        "'getCrossAssociation' instead."))
-              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
+              getCrossAssociation(x, test_significance = TRUE, ...)
           }
 )
 
@@ -116,7 +116,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
               .Deprecated(msg = paste0("'testExperimentCrossCorrelation' is ",
                                        "deprecated. Use ", 
                                        "'getCrossAssociation' instead."))
-              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
+              getCrossAssociation(x, test_significance = TRUE, ...)
           }
 )
 
@@ -133,6 +133,6 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
               .Deprecated(msg = paste0("'getExperimentCrossCorrelation' is ",
                                        "deprecated. Use ", 
                                        "'getCrossAssociation' instead."))
-              getExperimentCrossAssociation(x, ...)
+              getCrossAssociation(x, ...)
           }
 )

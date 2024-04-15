@@ -35,8 +35,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
     expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
                                         experiment2 = 2,
@@ -50,8 +49,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
     expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
                                         experiment2 = 2,
@@ -66,8 +64,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
     expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
                                         experiment2 = 2,
@@ -82,8 +79,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = TRUE,
@@ -96,8 +92,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -110,8 +105,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -124,8 +118,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -138,8 +131,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -152,8 +144,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -166,8 +157,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -180,8 +170,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -194,8 +183,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -208,8 +196,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = 2,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -222,8 +209,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = TRUE,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -236,8 +222,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = 1,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -250,8 +235,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = TRUE,
                                         filter_self_correlations = 1,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
                                         experiment2 = 2,
@@ -264,8 +248,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = TRUE,
                                         filter_self_correlations = TRUE,
-                                        verbose = 1,
-                                        test_significance = FALSE))
+                                        verbose = 1))
      expect_error(getCrossAssociation(mae[[1]],
                                         assay(mae1[[2]]),
                                         experiment1 = 1,
@@ -279,8 +262,7 @@ test_that("getCrossAssociation", {
                                                 cor_threshold = NULL,
                                                 sort = TRUE,
                                                 filter_self_correlations = TRUE,
-                                                verbose = 1,
-                                                test_significance = FALSE))
+                                                verbose = 1))
      expect_error(getCrossAssociation(mae[[1]],
                                         NULL,
                                         experiment1 = 1,
@@ -294,8 +276,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = TRUE,
                                         filter_self_correlations = TRUE,
-                                        verbose = 1,
-                                        test_significance = FALSE))
+                                        verbose = 1))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
                                         experiment2 = 2,
@@ -310,8 +291,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
                                         experiment2 = 2,
@@ -326,8 +306,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
                                         experiment2 = 2,
@@ -342,8 +321,7 @@ test_that("getCrossAssociation", {
                                         cor_threshold = NULL,
                                         sort = FALSE,
                                         filter_self_correlations = FALSE,
-                                        verbose = TRUE,
-                                        test_significance = FALSE))
+                                        verbose = TRUE))
      ############################# Test input end #############################
      # Test that association is calculated correctly with numeric data
      # Result from
@@ -358,7 +336,8 @@ test_that("getCrossAssociation", {
     cor <- getCrossAssociation(mae, 
                                 method = "pearson", 
                                 p_adj_threshold = NULL, 
-                                show_warnings = FALSE)
+                                show_warnings = FALSE,
+                                test_significance = TRUE)
     # Take only specific taxa and lipids
     df <- cor[cor$Var1 %in% c("Fusobacteria", "Campylobacter", "Actinomycetaceae") & 
                  cor$Var2 %in% c("PE(48:7)", "TG(50:0)", "SM(d18:1/18:0)"), ]
@@ -393,28 +372,24 @@ test_that("getCrossAssociation", {
     # Test that output is in correct type
     expect_true( is.data.frame(
         getCrossAssociation(mae_sub, p_adj_threshold = NULL, 
-                            show_warnings = FALSE)) )
+                            show_warnings = FALSE, test_significance = TRUE)) )
     expect_true( is.data.frame(getCrossAssociation(mae_sub, 
-                                                   show_warnings = FALSE,
-                                                   test_significance = FALSE)) )
+                                                   show_warnings = FALSE)) )
     # There should not be any p-values that are under 0
     expect_true( is.null(
         getCrossAssociation(mae_sub, p_adj_threshold = 0, 
-                            show_warnings = FALSE)) )
+                            show_warnings = FALSE,
+                            test_significance = TRUE)) )
     # Test that output is in correct type
     expect_true( is.list(
         getCrossAssociation(mae_sub, mode = "matrix", 
                                         p_adj_threshold = NULL, 
-                                        show_warnings = FALSE)) )
-    expect_true( is.list(
-        getCrossAssociation(mae_sub, test_significance = TRUE, 
-                                        mode = "matrix", 
-                                        p_adj_threshold = NULL, 
-                                        show_warnings = FALSE)) )
+                                        show_warnings = FALSE,
+                                        test_significance = TRUE)) )
+
     expect_true( is.matrix(getCrossAssociation(mae_sub, 
                                                 mode = "matrix", 
-                                                show_warnings = FALSE,
-                                                test_significance = FALSE)) )
+                                                show_warnings = FALSE)) )
     
     # There should not be any p-values that are under 0
     expect_true( is.null(
@@ -427,25 +402,31 @@ test_that("getCrossAssociation", {
     # by not calculating duplicates
     expect_error(getCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
                                                 show_warnings = FALSE, 
-                                                symmetric = "TRUE"))
+                                                symmetric = "TRUE",
+                                                test_significance = TRUE))
     expect_error(getCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
                                                 show_warnings = FALSE, 
-                                                symmetric = 1))
+                                                symmetric = 1,
+                                                test_significance = TRUE))
     expect_error(getCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
                                                 show_warnings = FALSE, 
-                                                symmetric = NULL))
+                                                symmetric = NULL,
+                                                test_significance = TRUE))
     expect_error(getCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
                                                 show_warnings = FALSE, 
-                                                symmetric = c(TRUE, TRUE)))
+                                                symmetric = c(TRUE, TRUE),
+                                                test_significance = TRUE))
     
     time <- system.time(
         cor <-  getCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
                                             show_warnings = FALSE, 
-                                            symmetric = TRUE)
+                                            symmetric = TRUE,
+                                            test_significance = TRUE)
     )
     time2 <- system.time(
         cor2 <-  getCrossAssociation(mae, experiment1 = 1, experiment2 = 1, 
-                                                show_warnings = FALSE)
+                                                show_warnings = FALSE,
+                                                test_significance = TRUE)
     )
     # Get random variables and test that their duplicates are equal
     for(i in 1:10 ){
@@ -471,12 +452,14 @@ test_that("getCrossAssociation", {
                                         experiment2 = tse2,  
                                         paired = TRUE, 
                                         MARGIN = 2, 
-                                        show_warnings = FALSE)
+                                        show_warnings = FALSE,
+                                        test_significance = TRUE)
     # Calculate all pairs
     cor <- getCrossAssociation(tse1,
                                 experiment2 = tse2,  
                                 MARGIN = 2, 
-                                show_warnings = FALSE)
+                                show_warnings = FALSE,
+                                test_significance = TRUE)
     # Take only pairs that are paired
     cor <- cor[cor$Var1 == cor$Var2, ]
     rownames(cor) <- NULL
@@ -488,17 +471,17 @@ test_that("getCrossAssociation", {
     # Test that result does not depend on names (if there are equal names)
     tse <- mae[[1]]
     rownames(tse)[1:10] <- rep("Unknown", 10)
-    cor_table <- getCrossAssociation(tse, show_warnings = FALSE)
-    cor_table_ref <- getCrossAssociation(mae[[1]], show_warnings = FALSE)
+    cor_table <- getCrossAssociation(tse, show_warnings = FALSE, 
+                                        test_significance = TRUE)
+    cor_table_ref <- getCrossAssociation(mae[[1]], show_warnings = FALSE, 
+                                            test_significance = TRUE)
     expect_equal(cor_table[ , 3:5], cor_table_ref[ , 3:5])
-    mat <- getCrossAssociation(tse, mode = "matrix", show_warnings = FALSE,
-                                test_significance = FALSE)
+    mat <- getCrossAssociation(tse, mode = "matrix", show_warnings = FALSE)
     expect_true( is.matrix(mat) )
     expect_true(nrow(mat) == nrow(tse) && ncol(mat) == nrow(tse))
     mat <- getCrossAssociation(tse, mode = "matrix", show_warnings = FALSE,
                                         cor_threshold = 0.8, 
-                                        filter_self_correlation = TRUE,
-                                        test_significance = FALSE)
+                                        filter_self_correlation = TRUE)
     expect_true(nrow(mat) < nrow(tse) && ncol(mat) < nrow(tse))
     
     
@@ -506,35 +489,34 @@ test_that("getCrossAssociation", {
     expect_true( is.data.frame(getCrossAssociation(tse, method = "canberra",
                                                         mode = "table", 
                                                         show_warnings = T,
-                                                        association_FUN = stats::dist,
-                                                        test_significance = FALSE) ) )
+                                                        association_FUN = stats::dist) ) )
     
     expect_true( is.matrix( getCrossAssociation(tse, method = "bray",
                                                         show_warnings = FALSE,
                                                         mode = "matrix",
-                                                        association_FUN = vegan::vegdist) ) )
+                                                        association_FUN = vegan::vegdist,
+                                                        test_significance = TRUE) ) )
     expect_error( getCrossAssociation(tse, method = "bray",
                                                 show_warnings = FALSE,
                                                 mode = "matrix",
-                                                association_FUN = DelayedMatrixStats::rowSums2) )
+                                                association_FUN = DelayedMatrixStats::rowSums2,
+                                                test_significance = TRUE) )
     
     # Test that output has right columns
     expect_equal(colnames(getCrossAssociation(tse, 
-                                                show_warnings = FALSE, 
-                                                test_significance = FALSE)),
+                                                show_warnings = FALSE)),
                 c("Var1", "Var2", "cor"))
-    expect_equal(colnames(getCrossAssociation(tse, show_warnings = FALSE)),
+    expect_equal(colnames(getCrossAssociation(tse, show_warnings = FALSE,
+                                                test_significance = TRUE)),
                  c("Var1", "Var2", "cor", "pval", "p_adj"))
     
     # Test that the table have same information with different levels
-    tab1 <- getCrossAssociation(tse, show_warnings = FALSE, 
-                                test_significance = FALSE)
+    tab1 <- getCrossAssociation(tse, show_warnings = FALSE)
     tab1_levels1 <- levels(tab1$Var1)
     tab1_levels2 <- levels(tab1$Var2)
     tab1$Var1 <- as.character(tab1$Var1)
     tab1$Var2 <- as.character(tab1$Var2)
-    tab2 <- getCrossAssociation(tse, show_warnings = FALSE, sort = TRUE, 
-                                test_significance = FALSE)
+    tab2 <- getCrossAssociation(tse, show_warnings = FALSE, sort = TRUE)
     tab2_levels1 <- levels(tab2$Var1)
     tab2_levels2 <- levels(tab2$Var2)
     tab2$Var1 <- as.character(tab2$Var1)
@@ -547,18 +529,14 @@ test_that("getCrossAssociation", {
     altExps(tse) <- splitByRanks(tse)
     # Test that output has right columns
     expect_equal(getCrossAssociation(tse, tse, show_warnings = FALSE, 
-                                                altexp1 = 1, altexp2 = "Phylum",
-                                                test_significance = FALSE),
+                                                altexp1 = 1, altexp2 = "Phylum"),
                  getCrossAssociation(altExps(tse)[[1]], altExp(tse, "Phylum"), 
-                                                show_warnings = FALSE,
-                                                test_significance = FALSE))
+                                                show_warnings = FALSE))
     expect_equal(getCrossAssociation(tse, tse, show_warnings = FALSE, 
                                                 altexp1 = "Family", 
-                                                altexp2 = NULL,
-                                                test_significance = FALSE),
+                                                altexp2 = NULL),
                  getCrossAssociation(altExp(tse, "Family"), tse, 
-                                                show_warnings = FALSE,
-                                                test_significance = FALSE))
+                                                show_warnings = FALSE))
     
     # Test colData_variable
     # Check that all the correct names are included
@@ -566,8 +544,7 @@ test_that("getCrossAssociation", {
     tse <- estimateDiversity(tse, index = indices)
     res <- getCrossAssociation(tse, tse, 
                                          assay.type1 = "counts", 
-                                         colData_variable2 = indices,
-                                         test_significance = FALSE)
+                                         colData_variable2 = indices)
     unique_var1 <- unfactor(unique(res$Var1))
     unique_var2 <- unfactor(unique(res$Var2))
     rownames <- rownames(tse)
@@ -577,14 +554,12 @@ test_that("getCrossAssociation", {
     # Check that assay.type is disabled
     res2 <- getCrossAssociation(tse, assay.type1 = "counts", 
                                 assay.type2 = "counts",
-                                colData_variable2 = indices,
-                                test_significance = FALSE)
+                                colData_variable2 = indices)
     expect_equal(res, res2)
     
     colData(tse)[, "test"] <- rep("a")
     expect_error(
-        getCrossAssociation(tse, colData_variable2 = c("shannon", "test"),
-                            test_significance = FALSE))
+        getCrossAssociation(tse, colData_variable2 = c("shannon", "test")))
   
 }  
 })
