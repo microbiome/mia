@@ -71,8 +71,8 @@
 #' # print the available taxonomic ranks
 #' taxonomyRanks(GlobalPatterns)
 #'
-#' # splitByRanks
-#' altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+#' # agglomerateByRanks
+#' agglomerateByRanks(GlobalPatterns, as.list = FALSE)
 #' altExps(GlobalPatterns)
 #' altExp(GlobalPatterns,"Kingdom")
 #' altExp(GlobalPatterns,"Species")
@@ -83,14 +83,14 @@
 NULL
 
 ################################################################################
-# splitByRanks
+# agglomerateByRanks
 
 #' @rdname splitByRanks
 #' @export
-setGeneric("splitByRanks",
+setGeneric("agglomerateByRanks",
            signature = "x",
            function(x, ...)
-               standardGeneric("splitByRanks"))
+               standardGeneric("agglomerateByRanks"))
 
 .norm_args_for_split_by_ranks <- function(na.rm, ...){
     args <- list(...)
@@ -123,26 +123,46 @@ setGeneric("splitByRanks",
 
 #' @rdname splitByRanks
 #' @export
-setMethod("splitByRanks", signature = c(x = "SummarizedExperiment"),
-    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
+setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
+    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = TRUE, ...){
+        browser()
         args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
-        .split_by_ranks(x, ranks, args)
+        if( !.is_a_bool(as.list) ){
+            stop("'as.list' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if( as.list ){
+            .split_by_ranks(x, ranks, args)
+        }
+        else{
+            altExps(x) <- .split_by_ranks(x, ranks, args)
+            x
+        }
     }
 )
 
 #' @rdname splitByRanks
 #' @export
-setMethod("splitByRanks", signature = c(x = "SingleCellExperiment"),
-          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
+setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
+          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = TRUE,
+                    ...){
               args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
               args[["strip_altexp"]] <- TRUE
-              .split_by_ranks(x, ranks, args)
+              if( !.is_a_bool(as.list) ){
+                  stop("'as.list' must be TRUE or FALSE.", call. = FALSE)
+              }
+              if( as.list ){
+                  .split_by_ranks(x, ranks, args)
+              }
+              else{
+                  altExps(x) <- .split_by_ranks(x, ranks, args)
+                  x
+              }
           }
 )
 
 #' @rdname splitByRanks
 #' @export
-setMethod("splitByRanks", signature = c(x = "TreeSummarizedExperiment"),
+setMethod("agglomerateByRanks", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
               callNextMethod()
           }

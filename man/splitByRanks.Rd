@@ -2,21 +2,34 @@
 % Please edit documentation in R/splitByRanks.R
 \name{splitByRanks}
 \alias{splitByRanks}
-\alias{splitByRanks,SummarizedExperiment-method}
-\alias{splitByRanks,SingleCellExperiment-method}
-\alias{splitByRanks,TreeSummarizedExperiment-method}
+\alias{agglomerateByRanks}
+\alias{agglomerateByRanks,SummarizedExperiment-method}
+\alias{agglomerateByRanks,SingleCellExperiment-method}
+\alias{agglomerateByRanks,TreeSummarizedExperiment-method}
 \alias{unsplitByRanks}
 \alias{unsplitByRanks,SingleCellExperiment-method}
 \alias{unsplitByRanks,TreeSummarizedExperiment-method}
 \title{Split/Unsplit a \code{SingleCellExperiment} by taxonomic ranks}
 \usage{
-splitByRanks(x, ...)
+agglomerateByRanks(x, ...)
 
-\S4method{splitByRanks}{SummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
+\S4method{agglomerateByRanks}{SummarizedExperiment}(
+  x,
+  ranks = taxonomyRanks(x),
+  na.rm = TRUE,
+  as.list = TRUE,
+  ...
+)
 
-\S4method{splitByRanks}{SingleCellExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
+\S4method{agglomerateByRanks}{SingleCellExperiment}(
+  x,
+  ranks = taxonomyRanks(x),
+  na.rm = TRUE,
+  as.list = TRUE,
+  ...
+)
 
-\S4method{splitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
+\S4method{agglomerateByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
 
 unsplitByRanks(x, ...)
 
@@ -86,8 +99,8 @@ data(GlobalPatterns)
 # print the available taxonomic ranks
 taxonomyRanks(GlobalPatterns)
 
-# splitByRanks
-altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+# agglomerateByRanks
+agglomerateByRanks(GlobalPatterns, as.list = FALSE)
 altExps(GlobalPatterns)
 altExp(GlobalPatterns,"Kingdom")
 altExp(GlobalPatterns,"Species")
