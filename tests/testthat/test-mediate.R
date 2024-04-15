@@ -10,7 +10,7 @@ test_that("getMediation", {
   expect_error(
     getMediation(tse, outcome = "bmi_group", treatment = "nationality",
                  mediator = "diversity", assay.type = "counts"),
-    "The arguments mediator, assay.type and dim.type are mutually exclusive, but 2 were provided."
+    "The arguments mediator, assay.type and dimred are mutually exclusive, but 2 were provided."
   )
   
   expect_error(
@@ -34,7 +34,7 @@ test_that("getMediation", {
   )
   
   expect_error(
-    getMediation(tse, outcome = "bmi_group", treatment = "nationality", dim.type = "wrong_name"),
+    getMediation(tse, outcome = "bmi_group", treatment = "nationality", dimred = "wrong_name"),
     "wrong_name not found in reducedDims(x).", fixed = TRUE
   )
   

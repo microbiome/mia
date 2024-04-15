@@ -16,7 +16,7 @@ addMediation(x, ...)
   name = "mediation",
   mediator = NULL,
   assay.type = NULL,
-  dim.type = NULL,
+  dimred = NULL,
   family = gaussian(),
   covariates = NULL,
   p.adj.method = "holm",
@@ -33,7 +33,7 @@ getMediation(x, ...)
   treatment,
   mediator = NULL,
   assay.type = NULL,
-  dim.type = NULL,
+  dimred = NULL,
   family = gaussian(),
   covariates = NULL,
   p.adj.method = "holm",
@@ -47,28 +47,29 @@ getMediation(x, ...)
 
 \item{...}{additional parameters that can be passed to \code{\link[mediation:mediate]{mediate}}.}
 
-\item{outcome}{The name of the colData variable used as outcome in the model.}
+\item{outcome}{A single character value indicating the colData variable used as outcome in the model.}
 
-\item{treatment}{The name of the colData variable used as treatment in the model.}
+\item{treatment}{A single character value indicating the colData variable used as treatment in the model.}
 
 \item{name}{A single character value to name the metadata element and avoid
 overwriting other metadata slots. It is supported only by \code{addMediation}.
 (default: \code{name = "mediation"})}
 
-\item{mediator}{The name of the colData variable used as mediator in the model.
-(default: \code{mediator = NULL})}
+\item{mediator}{A single character value indicating the colData variable used
+as mediator in the model. (default: \code{mediator = NULL})}
 
-\item{assay.type}{The name of the assay used for feature-wise mediation analysis.
-(default: \code{assay.type = NULL})}
+\item{assay.type}{A single character value indicating the assay used for
+feature-wise mediation analysis. (default: \code{assay.type = NULL})}
 
-\item{dim.type}{The name of the reducedDim used for component-wise mediation analysis.
-(default: \code{dim.type = NULL})}
+\item{dimred}{A single character value indicating the reduced dimension result
+in \code{reducedDims(object)} for component-wise mediation analysis.
+(default: \code{dimred = NULL})}
 
 \item{family}{A specification for the outcome model link function.
 (default: \code{family = gaussian("identity")})}
 
-\item{covariates}{Name or list of names of colData variables used as covariates
-in the model. (default: \code{covariates = NULL})}
+\item{covariates}{Single character value or list indicating the colData variables
+used as covariates in the model. (default: \code{covariates = NULL})}
 
 \item{p.adj.method}{A single character value for selecting adjustment method
 of p-values. Passed to \code{p.adjust} function. (default: \code{p.adj.method = "holm"})}
@@ -104,7 +105,7 @@ This wrapper of \code{\link[mediation:mediate]{mediate}} for
 provides a simple method to analyse the effect of a treatment variable on an
 outcome variable found in \code{colData(se)} through the mediation of either
 another variable in colData (argument \code{mediator}) or an assay
-(argument \code{assay.type}) or a reducedDim (argument \code{dim.type}). Importantly,
+(argument \code{assay.type}) or a reducedDim (argument \code{dimred}). Importantly,
 those three arguments are mutually exclusive.
 }
 \examples{
@@ -167,7 +168,7 @@ tse <- runMDS(tse, name = "MDS",
 tse <- addMediation(tse, name = "reddim_mediation",
                     outcome = "bmi_group",
                     treatment = "nationality",
-                    dim.type = "MDS",
+                    dimred = "MDS",
                     covariates = c("sex", "age"),
                     treat.value = "Scandinavia",
                     control.value = "CentralEurope",

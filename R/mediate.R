@@ -5,24 +5,25 @@
 #'
 #' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #' 
-#' @param outcome The name of the colData variable used as outcome in the model.
+#' @param outcome A single character value indicating the colData variable used as outcome in the model.
 #' 
-#' @param treatment The name of the colData variable used as treatment in the model.
+#' @param treatment A single character value indicating the colData variable used as treatment in the model.
 #'
-#' @param mediator The name of the colData variable used as mediator in the model.
-#'   (default: \code{mediator = NULL})
+#' @param mediator A single character value indicating the colData variable used
+#'   as mediator in the model. (default: \code{mediator = NULL})
 #'
-#' @param assay.type The name of the assay used for feature-wise mediation analysis.
-#'   (default: \code{assay.type = NULL})
+#' @param assay.type A single character value indicating the assay used for
+#'   feature-wise mediation analysis. (default: \code{assay.type = NULL})
 #' 
-#' @param dim.type The name of the reducedDim used for component-wise mediation analysis.
-#'   (default: \code{dim.type = NULL})
+#' @param dimred A single character value indicating the reduced dimension result
+#'   in \code{reducedDims(object)} for component-wise mediation analysis.
+#'   (default: \code{dimred = NULL})
 #'
 #' @param family A specification for the outcome model link function.
-#'    (default: \code{family = gaussian("identity")})
+#'   (default: \code{family = gaussian("identity")})
 #' 
-#' @param covariates Name or list of names of colData variables used as covariates
-#'   in the model. (default: \code{covariates = NULL})
+#' @param covariates Single character value or list indicating the colData variables
+#'   used as covariates in the model. (default: \code{covariates = NULL})
 #' 
 #' @param p.adj.method A single character value for selecting adjustment method
 #'   of p-values. Passed to `p.adjust` function. (default: \code{p.adj.method = "holm"})
@@ -45,7 +46,7 @@
 #' provides a simple method to analyse the effect of a treatment variable on an
 #' outcome variable found in \code{colData(se)} through the mediation of either
 #' another variable in colData (argument \code{mediator}) or an assay
-#' (argument \code{assay.type}) or a reducedDim (argument \code{dim.type}). Importantly,
+#' (argument \code{assay.type}) or a reducedDim (argument \code{dimred}). Importantly,
 #' those three arguments are mutually exclusive.
 #' 
 #' @return 
@@ -125,7 +126,7 @@
 #' tse <- addMediation(tse, name = "reddim_mediation",
 #'                     outcome = "bmi_group",
 #'                     treatment = "nationality",
-#'                     dim.type = "MDS",
+#'                     dimred = "MDS",
 #'                     covariates = c("sex", "age"),
 #'                     treat.value = "Scandinavia",
 #'                     control.value = "CentralEurope",
@@ -143,13 +144,13 @@ setGeneric("addMediation", signature = c("x"),
 #' @export
 setMethod("addMediation", signature = c(x = "SummarizedExperiment"),
         function(x, outcome, treatment, name = "mediation",
-                 mediator = NULL, assay.type = NULL, dim.type = NULL,
+                 mediator = NULL, assay.type = NULL, dimred = NULL,
                  family = gaussian(), covariates = NULL, p.adj.method = "holm",
                  add.metadata = FALSE, verbose = TRUE, ...) {
           
             med_df <- getMediation(
                 x, outcome, treatment,
-                mediator, assay.type, dim.type,
+                mediator, assay.type, dimred,
                 family, covariates, p.adj.method,
                 add.metadata, verbose, ...
             )
@@ -168,7 +169,7 @@ setGeneric("getMediation", signature = c("x"),
 #' @export
 setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
         function(x, outcome, treatment,
-                 mediator = NULL, assay.type = NULL, dim.type = NULL,
+                 mediator = NULL, assay.type = NULL, dimred = NULL,
                  family = gaussian(), covariates = NULL, p.adj.method = "holm",
                  add.metadata = FALSE, verbose = TRUE, ...) {
 
@@ -193,50 +194,49 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
         x <- .check.mediate.args(x, outcome, treatment, mediator, covariates, verbose, ...)
         
         # Check which mediator was provided (colData, assay or reducedDim)
-        med_opts <- sapply(
-            list(mediator = mediator, assay.type = assay.type, dim.type = dim.type),
+        med_opts <- unlist(lapply(
+            list(mediator = mediator, assay.type = assay.type, dimred = dimred),
             function(x) !is.null(x)
-        )
+        ))
         
         if( sum(med_opts) != 1 ){
             # Throw error if none or multiple mediation options are specified
             stop(
-                "The arguments mediator, assay.type and dim.type are mutually exclusive",
+                "The arguments mediator, assay.type and dimred are mutually exclusive",
                 ", but ", sum(med_opts), " were provided.", call. = FALSE
             )
+        }
         
-        } else {
-            if ( med_opts[[1]] ){
-                # Check that mediator is in colData
-                if( !mediator %in% names(colData(x)) ) {
-                    stop(mediator, " not found in colData(x).", call. = FALSE)
-                }
-                # Use mediator for analysis  
-                mediators <- mediator
-                mat <- NULL
-                
-            } else if( med_opts[[2]] ){
-                # Check that assay is in assays
-                if( !assay.type %in% assayNames(x) ){
-                    stop(assay.type, " not found in assays(x).", call. = FALSE)
-                }
-                # Define matrix for analysis
-                mat <- assay(x, assay.type)
-                # Use assay for analysis
-                mediators <- rownames(mat)
-                
-            } else if( med_opts[[3]] ){
-                # Check that reducedDim is in reducedDims
-                if(!dim.type %in% reducedDimNames(x)){
-                    stop(dim.type, " not found in reducedDims(x).", call. = FALSE)
-                }
-                # Define matrix for analysis
-                mat <- t(reducedDim(x, dim.type))
-                # Give component names to matrix rows
-                rownames(mat) <- paste0(dim.type, seq(1, nrow(mat)))
-                # Use reducedDim for analysis
-                mediators <- rownames(mat)
+        if ( med_opts[[1]] ){
+            # Check that mediator is in colData
+            if( !mediator %in% names(colData(x)) ) {
+                stop(mediator, " not found in colData(x).", call. = FALSE)
             }
+            # Use mediator for analysis  
+            mediators <- mediator
+            mat <- NULL
+                
+        } else if( med_opts[[2]] ){
+            # Check that assay is in assays
+            if( !assay.type %in% assayNames(x) ){
+                stop(assay.type, " not found in assays(x).", call. = FALSE)
+            }
+            # Define matrix for analysis
+            mat <- assay(x, assay.type)
+            # Use assay for analysis
+            mediators <- rownames(mat)
+                
+        } else if( med_opts[[3]] ){
+            # Check that reducedDim is in reducedDims
+            if(!dimred %in% reducedDimNames(x)){
+                stop(dimred, " not found in reducedDims(x).", call. = FALSE)
+            }
+            # Define matrix for analysis
+            mat <- t(reducedDim(x, dimred))
+            # Give component names to matrix rows
+            rownames(mat) <- paste0(dimred, seq(1, nrow(mat)))
+            # Use reducedDim for analysis
+            mediators <- rownames(mat)
         }
         
         # Create template list of results
@@ -296,34 +296,31 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
         }
     }
   
-    # If the treatment variable has three or more levels
-    if( !is.numeric(df[[treatment]]) && length(unique((df[[treatment]]))) > 2 ) {
-        # and boot is TRUE
-        if( !is.null(kwargs[["boot"]]) ){
-            # and control and treat value are not specified
-            if( any(sapply(kwargs[c("control.value", "treat.value")], is.null)) ){
-                stop("Too many treatment levels. Consider specifing a treat.value and a control.value", call. = FALSE)
-            # but if they are specified
-            } else {
-                # and they also appear in the treatment variable
-                if( !all(kwargs[c("control.value", "treat.value")] %in% unique(df[[treatment]])) ){
-                    stop("treat.value and/or control.value not found in the levels of the treatment variable.", call. = FALSE)
-                }
+    # If boot is TRUE and the treatment variable is discrete and has three or more levels
+    if( !is.null(kwargs[["boot"]]) && !is.numeric(df[[treatment]]) && length(unique((df[[treatment]]))) > 2 ) {
+      
+        ## if control and treat value are not specified
+        if( any(sapply(kwargs[c("control.value", "treat.value")], is.null)) ){
+            stop("Too many treatment levels. Consider specifing a treat.value and a control.value", call. = FALSE)
+        }
+        ## but if they are specified
+        # if they appear in the treatment variable
+        if( !all(kwargs[c("control.value", "treat.value")] %in% unique(df[[treatment]])) ){
+            stop("treat.value and/or control.value not found in the levels of the treatment variable.", call. = FALSE)
+        }
         
-                # Find indices of samples that belong to either control or treatment
-                keep <- df[[treatment]] %in% kwargs[c("control.value", "treat.value")]
+        # Find indices of samples that belong to either control or treatment
+        keep <- df[[treatment]] %in% kwargs[c("control.value", "treat.value")]
         
-                # Remove samples different from control and treatment from df
-                df <- df[keep, ]
-                diff <- ncol(x) - nrow(df)
+        # Remove samples different from control and treatment from df
+        df <- df[keep, ]
+        diff <- ncol(x) - nrow(df)
         
-                # Remove samples different from control and treatment from se
-                x <- x[ , rownames(df)]
+        # Remove samples different from control and treatment from se
+        x <- x[ , rownames(df)]
         
-                if( verbose ){
-                    message(diff, " samples removed because different from control and treatment.")
-                }
-            }
+        if( verbose ){
+            message(diff, " samples removed because different from control and treatment.")
         }
     }
     return(x)
@@ -351,15 +348,14 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
     relation_dv <- "Outcome ~ Treatment + Mediator"
   
     if( !is.null(covariates) ){
-        for( covariate in covariates ){
-        # Fetch covariate from colData and store it in dataframe
-        df[[covariate]] <- colData(x)[[covariate]]
-      
+        
+        # Fetch covariates from colData and store them in dataframe
+        df <- cbind(df, colData(x)[covariates])
+        
         # Add covariate to formula of mediation model
-        relation_m <- paste(relation_m, "+", covariate)
+        relation_m <- paste(relation_m, "+", paste(covariates, collapse = " + "))
         # Add covariate to formula of outcome model
-        relation_dv <- paste(relation_dv, "+", covariate)
-        }
+        relation_dv <- paste(relation_dv, "+", paste(covariates, collapse = " + "))
     }
 
     # Fit mediation model
@@ -398,7 +394,7 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
 .make.output <- function(results, p.adj.method, add.metadata) {
   
     # Create dataframe with model variables, effect sizes and p-values
-    med_df <- do.call(data.frame, results[1:(length(results) - 1)])
+    med_df <- do.call(data.frame, results[seq_len(length(results) - 1)])
   
     # Compute adjusted p-values and add them to dataframe
     med_df[["ACME_pval"]] <- p.adjust(med_df[["ACME_pval"]], method = p.adj.method)
