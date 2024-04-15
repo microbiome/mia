@@ -127,7 +127,6 @@
 #' 
 #' # getTaxonomyRanks is to get/check if the taxonomic ranks is set to "TAXA1"
 #' getTaxonomyRanks()
-#' 
 NULL
 
 #' @rdname taxonomy-methods
@@ -453,15 +452,6 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' # Please note that any tree already stored in rowTree() will be overwritten.
 #' tse <- addHierarchyTree(tse)
 #' tse
-#' 
-#' # For instance, the TreeSummarizedExperiment Tengeler2020 contains an
-#' # actual phylogenetic tree.
-#' 
-#' data(Tengeler2020)
-#' tse2 <- Tengeler2020
-#' phylo_tree <- rowTree(tse2)
-#' phylo_tree
-#' 
 NULL
 
 #' @rdname hierarchy-tree
