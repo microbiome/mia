@@ -56,3 +56,51 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
                 getHierarchyTree(x,...)
             }
 )
+
+#' @rdname deprecate
+#' @export
+loadFromBiom <- function(...) {
+    .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
+                            " Use 'importBIOM' instead."))
+    importBiom(...)
+}
+
+#' @rdname deprecate
+#' @export
+loadFromQIIME2 <- function(...) {
+    .Deprecated(msg = paste0("'loadFromQIIME2' is deprecated.",
+                            " Use 'importQIIME2' instead."))
+    importQIIME2(...)
+}
+
+#' @rdname deprecate
+#' @export
+readQZA <- function(...) {
+    .Deprecated(msg = paste0("'readQZA' is deprecated.",
+                            " Use 'importQZA' instead."))
+    importQZA(...)
+}
+
+#' @rdname deprecate
+#' @export
+loadFromMothur <- function(...) {
+    .Deprecated(msg = paste0("'loadFromMothur' is deprecated.",
+                            " Use 'importMothur' instead."))
+    importMothur(...)
+}
+
+#' @rdname deprecate
+#' @export   
+loadFromMetaphlan <- function(...) {
+    .Deprecated(msg = paste0("'loadFromMetaphlan' is deprecated.",
+                            " Use 'importMetaPhlAn' instead."))
+    importMetaPhlAn(...)
+}
+
+#' @rdname deprecate
+#' @export    
+loadFromHumann <- function(...) {
+    .Deprecated(msg = paste0("'loadFromHumann' is deprecated.",
+                            " Use 'importHUMAnN' instead."))
+    importHUMAnN(...)
+}
