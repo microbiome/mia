@@ -119,24 +119,22 @@ data("hitchip1006", package = "miaTime")
 tse <- hitchip1006
  
 # Agglomerate features by family (merely to speed up execution)
-tse <- agglomerateByRank(tse, rank = "Family")
+tse <- agglomerateByRank(tse, rank = "Phylum")
 # Convert BMI variable to numeric
 tse$bmi_group <- as.numeric(tse$bmi_group)
 
 # Analyse mediated effect of nationality on BMI through alpha diversity
-# 300 permutations were done to speed up execution, but ~1000 are recommended 
-tse <- addMediation(tse, name = "diversity_mediation",
-                    outcome = "bmi_group",
-                    treatment = "nationality",
-                    mediator = "diversity",
-                    covariates = c("sex", "age"),
-                    treat.value = "Scandinavia",
-                    control.value = "CentralEurope",
-                    boot = TRUE, sims = 300,
-                    add.metadata = TRUE)
+# 100 permutations were done to speed up execution, but ~1000 are recommended 
+med_df <- getMediation(tse,
+                       outcome = "bmi_group",
+                       treatment = "nationality",
+                       mediator = "diversity",
+                       covariates = c("sex", "age"),
+                       treat.value = "Scandinavia",
+                       control.value = "CentralEurope",
+                       boot = TRUE, sims = 100,
+                       add.metadata = TRUE)
  
- # Retrieve results from metadata
- med_df <- metadata(tse)$diversity_mediation
  # Visualise model statistics for 1st mediator
  plot(attr(med_df, "metadata")[[1]])
 

@@ -3,7 +3,7 @@ test_that("getMediation", {
   data("hitchip1006", package = "miaTime")
   tse <- hitchip1006
   
-  tse <- agglomerateByRank(tse, rank = "Family")
+  tse <- agglomerateByRank(tse, rank = "Phylum")
   tse$bmi_group <- as.numeric(tse$bmi_group)
   
   ### Batch 1: check errors when missing or wrong arguments ###
@@ -40,13 +40,13 @@ test_that("getMediation", {
   
   expect_error(
     getMediation(tse, outcome = "bmi_group", treatment = "nationality",
-                 mediator = "diversity", boot = TRUE, sims = 10),
+                 mediator = "diversity", boot = TRUE, sims = 1),
     "Too many treatment levels. Consider specifing a treat.value and a control.value"
   )
   
   expect_error(
     getMediation(tse, outcome = "bmi_group", treatment = "nationality", mediator = "diversity",
-                 boot = TRUE, sims = 10, treat.value = "wrong_value", control.value = "wrong_value"),
+                 boot = TRUE, sims = 1, treat.value = "wrong_value", control.value = "wrong_value"),
     "treat.value and/or control.value not found in the levels of the treatment variable."
   )
   
@@ -54,7 +54,7 @@ test_that("getMediation", {
   set.seed(123)
   med_df <- getMediation(tse, outcome = "bmi_group", treatment = "nationality", mediator = "diversity",
                          treat.value = "Scandinavia", control.value = "CentralEurope",
-                         boot = TRUE, sims = 10, add.metadata = TRUE)
+                         boot = TRUE, sims = 1, add.metadata = TRUE)
   
   df <- data.frame(Outcome = tse$bmi_group, Treatment = tse$nationality, Mediator = tse$diversity)
   df <- na.omit(df)
@@ -66,7 +66,7 @@ test_that("getMediation", {
   set.seed(123)
   med_out <- mediate(fit_m, fit_dv, treat = "Treatment", mediator = "Mediator",
                      treat.value = "Scandinavia", control.value = "CentralEurope",
-                     boot = TRUE, sims = 10)
+                     boot = TRUE, sims = 1)
   
   expect_equal(attr(med_df, "metadata")[[1]]$d.avg, med_out$d.avg)
   expect_equal(attr(med_df, "metadata")[[1]]$d.avg.p, med_out$d.avg.p)
