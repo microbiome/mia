@@ -213,28 +213,26 @@ those three arguments are mutually exclusive.</p>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">hitchip1006</span></span></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Agglomerate features by family (merely to speed up execution)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Convert BMI variable to numeric</span></span></span>
 <span class="r-in"><span><span class="va">tse</span><span class="op">$</span><span class="va">bmi_group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">tse</span><span class="op">$</span><span class="va">bmi_group</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Analyse mediated effect of nationality on BMI through alpha diversity</span></span></span>
-<span class="r-in"><span><span class="co"># 300 permutations were done to speed up execution, but ~1000 are recommended </span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">addMediation</span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"diversity_mediation"</span>,</span></span>
-<span class="r-in"><span>                    outcome <span class="op">=</span> <span class="st">"bmi_group"</span>,</span></span>
-<span class="r-in"><span>                    treatment <span class="op">=</span> <span class="st">"nationality"</span>,</span></span>
-<span class="r-in"><span>                    mediator <span class="op">=</span> <span class="st">"diversity"</span>,</span></span>
-<span class="r-in"><span>                    covariates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"age"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                    treat.value <span class="op">=</span> <span class="st">"Scandinavia"</span>,</span></span>
-<span class="r-in"><span>                    control.value <span class="op">=</span> <span class="st">"CentralEurope"</span>,</span></span>
-<span class="r-in"><span>                    boot <span class="op">=</span> <span class="cn">TRUE</span>, sims <span class="op">=</span> <span class="fl">300</span>,</span></span>
-<span class="r-in"><span>                    add.metadata <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># 100 permutations were done to speed up execution, but ~1000 are recommended </span></span></span>
+<span class="r-in"><span><span class="va">med_df</span> <span class="op">&lt;-</span> <span class="fu">getMediation</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>                       outcome <span class="op">=</span> <span class="st">"bmi_group"</span>,</span></span>
+<span class="r-in"><span>                       treatment <span class="op">=</span> <span class="st">"nationality"</span>,</span></span>
+<span class="r-in"><span>                       mediator <span class="op">=</span> <span class="st">"diversity"</span>,</span></span>
+<span class="r-in"><span>                       covariates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sex"</span>, <span class="st">"age"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                       treat.value <span class="op">=</span> <span class="st">"Scandinavia"</span>,</span></span>
+<span class="r-in"><span>                       control.value <span class="op">=</span> <span class="st">"CentralEurope"</span>,</span></span>
+<span class="r-in"><span>                       boot <span class="op">=</span> <span class="cn">TRUE</span>, sims <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>                       add.metadata <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 115 samples removed because of missing data.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 164 samples removed because different from control and treatment.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 1 out of 1: diversity</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
 <span class="r-in"><span> </span></span>
-<span class="r-in"><span> <span class="co"># Retrieve results from metadata</span></span></span>
-<span class="r-in"><span> <span class="va">med_df</span> <span class="op">&lt;-</span> <span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">diversity_mediation</span></span></span>
 <span class="r-in"><span> <span class="co"># Visualise model statistics for 1st mediator</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">med_df</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="getMediation-1.png" alt="" width="700" height="433"></span>
@@ -257,50 +255,31 @@ those three arguments are mutually exclusive.</p>
 <span class="r-in"><span>                    p.adj.method <span class="op">=</span> <span class="st">"fdr"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 115 samples removed because of missing data.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 164 samples removed because different from control and treatment.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 1 out of 22: Actinobacteria</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 1 out of 8: Actinobacteria</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 2 out of 22: Bacilli</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 2 out of 8: Firmicutes</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 3 out of 22: Proteobacteria</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 3 out of 8: Proteobacteria</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 4 out of 22: Verrucomicrobia</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 4 out of 8: Verrucomicrobia</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 5 out of 22: Bacteroidetes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 5 out of 8: Bacteroidetes</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 6 out of 22: Clostridium cluster XV</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 6 out of 8: Spirochaetes</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 7 out of 22: Clostridium cluster XIVa</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 7 out of 8: Fusobacteria</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 8 out of 22: Clostridium cluster IV</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 8 out of 8: Cyanobacteria</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 9 out of 22: Clostridium cluster XI</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 10 out of 22: Asteroleplasma</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 11 out of 22: Spirochaetes</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 12 out of 22: Clostridium cluster XVI</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 13 out of 22: Clostridium cluster XVII</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 14 out of 22: Clostridium cluster I</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 15 out of 22: Clostridium cluster XVIII</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 16 out of 22: Clostridium cluster III</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 17 out of 22: Clostridium cluster IX</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 18 out of 22: Fusobacteria</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 19 out of 22: Clostridium cluster XIII</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 20 out of 22: Cyanobacteria</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 21 out of 22: Uncultured Clostridiales</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 22 out of 22: Uncultured Mollicutes</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Show results for first 5 mediators</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">assay_mediation</span>, <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Mediator ACME_estimate ADE_estimate ACME_pval ADE_pval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      Firmicutes   -0.03783007   -0.3168376     0.000        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   Bacteroidetes   -0.11295749   -0.2417102     0.000        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Proteobacteria   -0.04111416   -0.3135535     0.040        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Verrucomicrobia   -0.03454847   -0.3201192     0.040        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Actinobacteria   -0.04583438   -0.3088333     0.128        0</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Perform ordination</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">runMDS</a></span><span class="op">(</span><span class="va">tse</span>, name <span class="op">=</span> <span class="st">"MDS"</span>,</span></span>
@@ -327,6 +306,13 @@ those three arguments are mutually exclusive.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Mediator 3 out of 3: MDS3</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nonparametric bootstrap</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Show results for first 5 mediators</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">reddim_mediation</span>, <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Mediator ACME_estimate ADE_estimate ACME_pval ADE_pval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     MDS1  -0.131691621   -0.2229761      0.00        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     MDS2   0.010393213   -0.3650609      0.52        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     MDS3  -0.003292529   -0.3513752      0.52        0</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
