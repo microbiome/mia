@@ -300,7 +300,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         }
         
         # If 'faith' is one of the indices
-        if( "faith" %in% index ){
+        if( "faith" %in% index & !is.null(rowTree(x))){
             # Get the name of "faith" index
             faith_name <- name[index %in% "faith"]
             # Store original names
@@ -313,7 +313,13 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             
             # Faith will be calculated
             calc_faith <- TRUE
-        } else{
+        } 
+        else if (is.null(rowTree(x))) {
+            warning("Faith diversity will not be calculated because there's 
+                    no phylogenetic tree.")
+        }
+        
+        else{
             # Faith will not be calculated
             calc_faith <- FALSE
         }
