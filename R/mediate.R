@@ -114,6 +114,9 @@
 #'                     control.value = "CentralEurope",
 #'                     boot = TRUE, sims = 100,
 #'                     p.adj.method = "fdr")
+#' 
+#' # Show results for first 5 mediators
+#' head(metadata(tse)$assay_mediation, 5)
 #'  
 #' # Perform ordination
 #' tse <- runMDS(tse, name = "MDS",
@@ -132,6 +135,9 @@
 #'                     control.value = "CentralEurope",
 #'                     boot = TRUE, sims = 100,
 #'                     p.adj.method = "fdr")
+#' 
+#' # Show results for first 5 mediators
+#' head(metadata(tse)$reddim_mediation, 5)
 #' 
 NULL
 

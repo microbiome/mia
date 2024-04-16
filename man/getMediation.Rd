@@ -156,6 +156,9 @@ tse <- addMediation(tse, name = "assay_mediation",
                     control.value = "CentralEurope",
                     boot = TRUE, sims = 100,
                     p.adj.method = "fdr")
+
+# Show results for first 5 mediators
+head(metadata(tse)$assay_mediation, 5)
  
 # Perform ordination
 tse <- runMDS(tse, name = "MDS",
@@ -174,5 +177,8 @@ tse <- addMediation(tse, name = "reddim_mediation",
                     control.value = "CentralEurope",
                     boot = TRUE, sims = 100,
                     p.adj.method = "fdr")
+
+# Show results for first 5 mediators
+head(metadata(tse)$reddim_mediation, 5)
 
 }
