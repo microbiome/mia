@@ -284,7 +284,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             ..., BPPARAM = SerialParam()){
         # input check
         # Check tree_name
-        if( !.is_non_empty_string(tree_name) ){
+        if(!.is_non_empty_string(tree_name) ){
             stop("'tree_name' must be a character specifying a rowTree of 'x'.",
                  call. = FALSE)
         }
@@ -300,7 +300,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         }
         
         # If 'faith' is one of the indices and the object has a tree
-        if( "faith" %in% index & !is.null(rowTree(x))){
+        if("faith" %in% index & !is.null(rowTree(x))){
             # Get the name of "faith" index
             faith_name <- name[index %in% "faith"]
             # Store original names
@@ -327,18 +327,18 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         
         # If index list contained other than 'faith' index, the length of the
         # list is over 0
-        if( length(index)>0){
+        if(length(index)>0){
             # Calculates all indices but not 'faith'
             x <- callNextMethod()
         }
         # If 'faith' was one of the indices, 'calc_faith' is TRUE
-        if( calc_faith ){
+        if(calc_faith ){
             # Get tree to check whether faith can be calculated
             tree <- rowTree(x, tree_name)
             # Check if faith can be calculated. Give warning and do not run estimateFaith
             # if there is no rowTree and other indices were also calculated. Otherwise, 
             # run estimateFaith. (If there is no rowTree --> error)
-            if( (is.null(tree) || is.null(tree$edge.length)) &&
+            if((is.null(tree) || is.null(tree$edge.length)) &&
                 length(index) >= 1 ){
                 warning("Faith diversity has been excluded from the results ",
                         "since it cannot be calculated without rowTree. ",
@@ -377,7 +377,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         # Input check
         # Check 'tree'
         # IF there is no rowTree gives an error
-        if( is.null(tree) || is.null(tree$edge.length) ){
+        if(is.null(tree) || is.null(tree$edge.length) ){
             stop("'tree' is NULL or it does not have any branches.",
                 "The Faith's alpha diversity index is not possible to calculate.",
                 call. = FALSE)
@@ -385,7 +385,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         # Check 'assay.type'
         .check_assay_present(assay.type, x)
         # Check that it is numeric
-        if( !is.numeric(assay(x, assay.type)) ){
+        if(!is.numeric(assay(x, assay.type)) ){
             stop("The abundance matrix specificied by 'assay.type' must be numeric.",
                  call. = FALSE)
         }
@@ -396,7 +396,7 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         }
         # Check that node_lab is NULL or it specifies links between rownames and 
         # node labs
-        if( !( is.null(node_lab) || 
+        if(!( is.null(node_lab) || 
                is.character(node_lab) && length(node_lab) == nrow(x) ) ){
             stop("'node_lab' must be NULL or a vector specifying links between ",
                  "rownames and node labs of 'tree'.",
@@ -405,12 +405,12 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         # Get the abundance matrix
         mat <- assay(x, assay.type)
         # Check that it is numeric
-        if( !is.numeric(mat) ){
+        if(!is.numeric(mat) ){
             stop("The abundance matrix specificied by 'assay.type' must be numeric.",
                  call. = FALSE)
         }
         # Subset and rename rows of the assay to correspond node_labs
-        if( !is.null(node_lab) ){
+        if(!is.null(node_lab) ){
             # Subset 
             mat <- mat[ !is.na(node_lab), ]
             node_lab <- node_lab[ !is.na(node_lab) ]
@@ -430,13 +430,13 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     function(x, assay.type = "counts", assay_name = NULL,
             name = "faith", tree_name = "phylo", ...){
         # Check tree_name
-        if( !.is_non_empty_character(tree_name) ){
+        if(!.is_non_empty_character(tree_name) ){
             stop("'tree_name' must be a character specifying a rowTree of 'x'.",
                  call. = FALSE)
         }
         # Gets the tree
         tree <- rowTree(x, tree_name)
-        if( is.null(tree) || is.null(tree$edge.length)){
+        if(is.null(tree) || is.null(tree$edge.length)){
             stop("rowTree(x, tree_name) is NULL or the tree does not have any branches. ",
             "The Faith's alpha diversity index cannot be calculated.",
                 call. = FALSE)
@@ -445,7 +445,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
         node_lab <- rowLinks(x)[ , "nodeLab" ]
         node_lab[ rowLinks(x)[, "whichTree"] != tree_name ] <- NA
         # Give a warning, data will be subsetted
-        if( any(is.na(node_lab)) ){
+        if(any(is.na(node_lab)) ){
             warning("The rowTree named 'tree_name' does not include all the ",
                     "rows which is why 'x' is subsetted when the Faith's alpha ",
                     "diversity index is calculated.",
@@ -492,7 +492,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 .calc_coverage <- function(mat, threshold = 0.9, ...){
 
     # Threshold must be a numeric value between 0-1
-    if( !( is.numeric(threshold) && (threshold >= 0 && threshold <= 1) ) ){
+    if(!( is.numeric(threshold) && (threshold >= 0 && threshold <= 1) ) ){
         stop("'threshold' must be a numeric value between 0-1.",
             call. = FALSE)
     }
@@ -515,12 +515,12 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 
 .calc_faith <- function(mat, tree, only.tips = FALSE, ...){
     # Input check
-    if( !.is_a_bool(only.tips) ){
+    if(!.is_a_bool(only.tips) ){
         stop("'only.tips' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     # Remove internal nodes if specified
-    if( only.tips ){
+    if(only.tips ){
         mat <- mat[ rownames(mat) %in% tree$tip.label, ]
     }
     # To ensure that the function works with NA also, convert NAs to 0.
@@ -598,7 +598,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
         # even after pruning; they have still child-nodes.
         tree <- drop.tip(tree, remove_tips, trim.internal = FALSE, collapse.singles = FALSE)
         # If all tips were dropped, the result is NULL --> stop loop
-        if( is.null(tree) ){
+        if(is.null(tree) ){
             break
         }
         # Again, get those tips of updated tree that cannot be found from provided nodes
@@ -609,12 +609,12 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 
 .calc_log_modulo_skewness <- function(mat, quantile = 0.5, num_of_classes = 50, ...){
     # quantile must be a numeric value between 0-1
-    if( !( is.numeric(quantile) && (quantile >= 0 && quantile <= 1) ) ){
+    if(!( is.numeric(quantile) && (quantile >= 0 && quantile <= 1) ) ){
         stop("'quantile' must be a numeric value between 0-1.",
             call. = FALSE)
     }
     # num_of_classes must be a positive numeric value
-    if( !( is.numeric(num_of_classes) && num_of_classes > 0 ) ){
+    if(!( is.numeric(num_of_classes) && num_of_classes > 0 ) ){
         stop("'num_of_classes' must be a positive numeric value.",
             call. = FALSE)
     }
