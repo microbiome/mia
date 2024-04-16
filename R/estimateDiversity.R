@@ -57,7 +57,7 @@
 #'   from zero to the quantile cutoff indicated by \code{quantile}. 
 #'   By default, \code{num_of_classes} is 50.}
 #'   \item{only.tips}{ A boolean value specifying whether to remove internal
-#'   nodes when Faith's inex is calculated. When \code{only.tips=TRUE}, those
+#'   nodes when Faith's index is calculated. When \code{only.tips=TRUE}, those
 #'   rows that are not tips of tree are removed.
 #'   (By default: \code{only.tips=FALSE})}
 #' }
@@ -299,7 +299,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
                 call. = FALSE)
         }
         
-        # If 'faith' is one of the indices
+        # If 'faith' is one of the indices and the object has a tree
         if( "faith" %in% index & !is.null(rowTree(x))){
             # Get the name of "faith" index
             faith_name <- name[index %in% "faith"]
@@ -314,6 +314,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             # Faith will be calculated
             calc_faith <- TRUE
         } 
+        # throw warning if there's no tree
         else if (is.null(rowTree(x))) {
             warning("Faith diversity will not be calculated because there's 
                     no phylogenetic tree.")
