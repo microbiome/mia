@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.11</span>
       </span>
     </div>
 
@@ -68,7 +68,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 data-toc-skip class="date">2024-04-15</h4>
+            <h4 data-toc-skip class="date">2024-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -283,12 +283,12 @@ settings different number of rows will be returned.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2307   26</span></span></code></pre>
-<p>For convenience the function <code>splitByRanks</code> is available,
-which agglomerates data on all <code>ranks</code> selected. By default
-all available ranks will be used. The output is compatible to be stored
-as alternative experiments.</p>
+<p>For convenience the function <code>agglomerateByRanks</code> is
+available, which agglomerates data on all <code>ranks</code> selected.
+By default all available ranks will be used. The output is compatible to
+be stored as alternative experiments.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/splitByRanks.html">splitByRanks</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRanks</a></span><span class="op">(</span><span class="va">tse</span>, as.list <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">tse</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
 <span><span class="co">## dim: 19216 26 </span></span>
@@ -300,14 +300,15 @@ as alternative experiments.</p>
 <span><span class="co">## colData names(7): X.SampleID Primer ... SampleType Description</span></span>
 <span><span class="co">## reducedDimNames(0):</span></span>
 <span><span class="co">## mainExpName: NULL</span></span>
-<span><span class="co">## altExpNames(7): Kingdom Phylum ... Genus Species</span></span>
+<span><span class="co">## altExpNames(9): family species ... Genus Species</span></span>
 <span><span class="co">## rowLinks: a LinkDataFrame (19216 rows)</span></span>
 <span><span class="co">## rowTree: 1 phylo tree(s) (19216 leaves)</span></span>
 <span><span class="co">## colLinks: NULL</span></span>
 <span><span class="co">## colTree: NULL</span></span></code></pre>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExpNames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "family"  "species" "Kingdom" "Phylum"  "Class"   "Order"   "Family" </span></span>
+<span><span class="co">## [8] "Genus"   "Species"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="constructing-a-tree-from-taxonomic-data">Constructing a tree from taxonomic data<a class="anchor" aria-label="anchor" href="#constructing-a-tree-from-taxonomic-data"></a>
@@ -603,7 +604,7 @@ long format will be returned.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] phyloseq_1.47.0                 scater_1.31.2                  </span></span>
 <span><span class="co">##  [3] ggplot2_3.5.0                   scuttle_1.13.1                 </span></span>
-<span><span class="co">##  [5] mia_1.11.10                     MultiAssayExperiment_1.29.1    </span></span>
+<span><span class="co">##  [5] mia_1.11.11                     MultiAssayExperiment_1.29.1    </span></span>
 <span><span class="co">##  [7] TreeSummarizedExperiment_2.11.0 Biostrings_2.71.5              </span></span>
 <span><span class="co">##  [9] XVector_0.43.1                  SingleCellExperiment_1.25.1    </span></span>
 <span><span class="co">## [11] SummarizedExperiment_1.33.3     Biobase_2.63.1                 </span></span>
@@ -634,7 +635,7 @@ long format will be returned.</p>
 <span><span class="co">##  [37] cluster_2.1.6               R6_2.5.1                   </span></span>
 <span><span class="co">##  [39] stringi_1.8.3               bslib_0.7.0                </span></span>
 <span><span class="co">##  [41] jquerylib_0.1.4             iterators_1.0.14           </span></span>
-<span><span class="co">##  [43] Rcpp_1.0.12                 bookdown_0.38              </span></span>
+<span><span class="co">##  [43] Rcpp_1.0.12                 bookdown_0.39              </span></span>
 <span><span class="co">##  [45] knitr_1.46                  DECIPHER_2.31.4            </span></span>
 <span><span class="co">##  [47] splines_4.5.0               Matrix_1.7-0               </span></span>
 <span><span class="co">##  [49] igraph_2.0.3                tidyselect_1.2.1           </span></span>
