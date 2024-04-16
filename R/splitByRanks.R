@@ -137,22 +137,25 @@ setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
-          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = TRUE,
+            function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = TRUE,
                     ...){
-              args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
-              args[["strip_altexp"]] <- TRUE
-              if( !.is_a_bool(as.list) ){
-                  stop("'as.list' must be TRUE or FALSE.", call. = FALSE)
-              }
-              if( as.list ){
-                  .split_by_ranks(x, ranks, args)
-              }
-              else{
-                  x <- as(x, "TreeSummarizedExperiment")
-                  altExps(x) <- c(altExps(x),.split_by_ranks(x, ranks, args))
-                  x
-              }
-          }
+                args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
+                args[["strip_altexp"]] <- TRUE
+                if( !.is_a_bool(as.list) ){
+                    stop("'as.list' must be TRUE or FALSE.", call. = FALSE)
+                }
+                if( as.list ){
+                    .split_by_ranks(x, ranks, args)
+                }
+                else{
+                    x <- as(x, "TreeSummarizedExperiment")
+                    warning("SummarizedExperiment does not have altExps slot. ",
+                            "Therefore, it has been converted to ",
+                            "TreeSummarizedExperiment.")
+                    altExps(x) <- c(altExps(x),.split_by_ranks(x, ranks, args))
+                    x
+                }
+            }
 )
 
 ################################################################################
