@@ -119,7 +119,7 @@ data("hitchip1006", package = "miaTime")
 tse <- hitchip1006
  
 # Agglomerate features by family (merely to speed up execution)
-tse <- mergeFeaturesByRank(tse, rank = "Family")
+tse <- agglomerateByRank(tse, rank = "Family")
 # Convert BMI variable to numeric
 tse$bmi_group <- as.numeric(tse$bmi_group)
 

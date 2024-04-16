@@ -77,7 +77,7 @@
 #' tse <- hitchip1006
 #'  
 #' # Agglomerate features by family (merely to speed up execution)
-#' tse <- mergeFeaturesByRank(tse, rank = "Family")
+#' tse <- agglomerateByRank(tse, rank = "Family")
 #' # Convert BMI variable to numeric
 #' tse$bmi_group <- as.numeric(tse$bmi_group)
 #' 
@@ -142,6 +142,7 @@ setGeneric("addMediation", signature = c("x"),
 
 #' @rdname getMediation
 #' @export
+#' @importFrom stats gaussian
 setMethod("addMediation", signature = c(x = "SummarizedExperiment"),
         function(x, outcome, treatment, name = "mediation",
                  mediator = NULL, assay.type = NULL, dimred = NULL,
@@ -167,6 +168,8 @@ setGeneric("getMediation", signature = c("x"),
 
 #' @rdname getMediation
 #' @export
+#' @importFrom stats gaussian
+#' @importFrom SingleCellExperiment reducedDim reducedDimNames
 setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
         function(x, outcome, treatment,
                  mediator = NULL, assay.type = NULL, dimred = NULL,
@@ -276,6 +279,7 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
 
 
 # Check that arguments can be passed to mediate and remove unused samples
+#' @importFrom stats na.omit
 .check.mediate.args <- function(x, outcome, treatment, mediator, covariates, verbose = TRUE, ...) {
   
     # Create dataframe from selected columns of colData
@@ -328,6 +332,7 @@ setMethod("getMediation", signature = c(x = "SummarizedExperiment"),
 
 # Run mediation analysis
 #' @importFrom mediation mediate
+#' @importFrom stats lm formula glm
 .run.mediate <- function(x, outcome, treatment, mediator = NULL, mat = NULL,
                         family = gaussian(), covariates = NULL, ...) {
   
