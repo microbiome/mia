@@ -13,7 +13,6 @@
 \alias{agglomerateByRanks}
 \alias{agglomerateByRanks,SummarizedExperiment-method}
 \alias{agglomerateByRanks,SingleCellExperiment-method}
-\alias{agglomerateByRanks,TreeSummarizedExperiment-method}
 \alias{unsplitByRanks}
 \alias{unsplitByRanks,SingleCellExperiment-method}
 \alias{unsplitByRanks,TreeSummarizedExperiment-method}
@@ -71,8 +70,6 @@ agglomerateByRanks(x, ...)
   as.list = TRUE,
   ...
 )
-
-\S4method{agglomerateByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...)
 
 unsplitByRanks(x, ...)
 

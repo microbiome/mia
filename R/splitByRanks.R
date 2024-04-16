@@ -148,17 +148,10 @@ setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
                   .split_by_ranks(x, ranks, args)
               }
               else{
-                  altExps(x) <- .split_by_ranks(x, ranks, args)
+                  x <- as(x, "TreeSummarizedExperiment")
+                  altExps(x) <- c(altExps(x),.split_by_ranks(x, ranks, args))
                   x
               }
-          }
-)
-
-#' @rdname agglomerate-methods
-#' @export
-setMethod("agglomerateByRanks", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
-              callNextMethod()
           }
 )
 
