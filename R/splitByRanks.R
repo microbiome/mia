@@ -3,10 +3,9 @@
 #' \code{agglomerateByRanks} takes a \code{SummarizedExperiment}, splits it along the
 #' taxonomic ranks, aggregates the data per rank, converts the input to a 
 #' \code{SingleCellExperiment} objects and stores the aggregated data as 
-#' alternative experiments.
-#' 
-#' \code{unsplitByRanks} takes these alternative experiments and flattens them 
-#' again into a single \code{SummarizedExperiment}.
+#' alternative experiments. \code{unsplitByRanks} takes these alternative 
+#' experiments and flattens them again into a single 
+#' \code{SummarizedExperiment}.
 #'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -38,8 +37,8 @@
 #' If \code{as.list = TRUE} : \code{SummarizedExperiment} objects in a 
 #' \code{SimpleList} 
 #' If \code{as.list = FALSE} : The \code{SummarizedExperiment} passed as a 
-#'   parameter and now containing the \code{SummarizedExperiment} objects in its
-#'   altExps
+#' parameter and now containing the \code{SummarizedExperiment} objects in its
+#' altExps
 #'
 #' For \code{unsplitByRanks}: \code{x}, with \code{rowData} and \code{assay}
 #' data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -63,16 +62,7 @@
 #' changes to \code{rowData} of the base object are not returned, whereas only 
 #' the \code{colData} of the base object is kept. 
 #'
-#' @seealso
-#' \code{\link[=splitOn]{splitOn}}
-#' \code{\link[=unsplitOn]{unsplitOn}}
-#' \code{\link[=merge-methods]{mergeRows}},
-#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
-#' \code{\link[=agglomerate-methods]{agglomerateByRank}},
-#' \code{\link[SingleCellExperiment:altExps]{altExps}},
-#' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
-#'
-#' @name splitByRanks
+#' @rdname agglomerate-methods
 #'
 #' @examples
 #' data(GlobalPatterns)
@@ -89,12 +79,7 @@
 #' # unsplitByRanks
 #' x <- unsplitByRanks(X)
 #' x
-NULL
-
-################################################################################
-# agglomerateByRanks
-
-#' @rdname splitByRanks
+#'
 #' @export
 setGeneric("agglomerateByRanks",
            signature = "x",
@@ -130,7 +115,7 @@ setGeneric("agglomerateByRanks",
     SimpleList(ans)
 }
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
     function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = TRUE, ...){
@@ -149,7 +134,7 @@ setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
           function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = TRUE,
@@ -169,7 +154,7 @@ setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
           }
 )
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
@@ -180,7 +165,7 @@ setMethod("agglomerateByRanks", signature = c(x = "TreeSummarizedExperiment"),
 ################################################################################
 # unsplitByRanks
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
 setGeneric("unsplitByRanks",
            signature = "x",
@@ -224,7 +209,7 @@ setGeneric("unsplitByRanks",
     ans
 }
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
     function(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...){
@@ -238,7 +223,7 @@ setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
     }
 )
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
     function(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...){
