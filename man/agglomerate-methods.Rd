@@ -107,6 +107,23 @@ nested alternative experiments by default (default:
 
 \item{other_label}{A single \code{character} valued used as the label for the
 summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
+
+\item{detection}{Passed to \code{getPrevalence} and \code{getPrevalentTaxa}
+functions and used in \code{agglomeratebyPrevalence} function.
+Detection threshold for absence/presence. Either an absolute value compared
+directly to the values of \code{x} or a relative value between 0 and 1, if
+\code{as_relative = FALSE}.}
+
+\item{prevalence}{Passed to \code{getPrevalence} and \code{getPrevalentTaxa}
+functions and used in \code{agglomeratebyPrevalence} function.
+Prevalence threshold (in 0 to 1). The required prevalence is strictly
+greater by default. To include the limit, set \code{include_lowest} to
+\code{TRUE}.}
+
+\item{as.relative}{Passed to \code{getPrevalence} and \code{getPrevalentTaxa}
+functions and used in \code{agglomeratebyPrevalence} function.
+Logical scalar: Should the detection threshold be applied
+on compositional (relative) abundances? (default: \code{FALSE})}
 }
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,
