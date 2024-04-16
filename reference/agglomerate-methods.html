@@ -117,7 +117,7 @@ experiments and flattens them again into a single
 <span>  <span class="va">x</span>,</span>
 <span>  ranks <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  as.list <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as.list <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -126,7 +126,7 @@ experiments and flattens them again into a single
 <span>  <span class="va">x</span>,</span>
 <span>  ranks <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  as.list <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as.list <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -207,7 +207,8 @@ of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p
 <dt>as.list</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the list of
 <code>SummarizedExperiment</code> objects be returned by the function
-<code>agglomerateByRanks</code> or stored in altExps?</p></dd>
+<code>agglomerateByRanks</code> as a SimpleList or stored in altExps?
+(default: <code>as.list = FALSE</code>)</p></dd>
 
 
 <dt>keep_reducedDims</dt>
@@ -405,7 +406,7 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># agglomerateByRanks</span></span></span>
 <span class="r-in"><span><span class="co"># </span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRanks</span><span class="op">(</span><span class="va">GlobalPatterns</span>, as.list <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRanks</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>SummarizedExperiment does not have altExps slot. Therefore, it has been converted to TreeSummarizedExperiment.</span>
 <span class="r-in"><span><span class="fu">altExps</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of length 7</span>
