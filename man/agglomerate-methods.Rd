@@ -260,7 +260,7 @@ altExp(x,"Kingdom")
 altExp(x,"Species")
 
 # unsplitByRanks
-x <- unsplitByRanks(X)
+x <- unsplitByRanks(x)
 x
 
 }

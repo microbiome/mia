@@ -51,8 +51,8 @@
 #' 
 #' @name splitOn
 #' @seealso
-#' \code{\link[=splitByRanks]{splitByRanks}}
-#' \code{\link[=unsplitByRanks]{unsplitByRanks}}
+#' \code{\link[=agglomerate-methods]{agglomerateByRanks}}
+#' \code{\link[=agglomerate-methods]{unsplitByRanks}}
 #' \code{\link[=merge-methods]{mergeRows}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},

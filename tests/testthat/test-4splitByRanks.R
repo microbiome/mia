@@ -1,5 +1,5 @@
-context("splitByRanks")
-test_that("splitByRanks", {
+context("agglomerateByRanks")
+test_that("agglomerateByRanks", {
     data(GlobalPatterns, package="mia")
     x <- GlobalPatterns
 

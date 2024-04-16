@@ -77,7 +77,7 @@
 #' altExp(x,"Species")
 #'
 #' # unsplitByRanks
-#' x <- unsplitByRanks(X)
+#' x <- unsplitByRanks(x)
 #' x
 #'
 #' @export
