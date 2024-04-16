@@ -4,7 +4,7 @@ test_that("agglomerateByRanks", {
     x <- GlobalPatterns
 
     # splitByRanks
-    x <- agglomerateByRanks(x, as.list = FALSE)
+    x <- agglomerateByRanks(x)
     expect_equal(altExpNames(x),
                  taxonomyRanks(x))
     altExp(x,"Kingdom")

@@ -59,7 +59,7 @@ agglomerateByRanks(x, ...)
   x,
   ranks = taxonomyRanks(x),
   na.rm = TRUE,
-  as.list = TRUE,
+  as.list = FALSE,
   ...
 )
 
@@ -67,7 +67,7 @@ agglomerateByRanks(x, ...)
   x,
   ranks = taxonomyRanks(x),
   na.rm = TRUE,
-  as.list = TRUE,
+  as.list = FALSE,
   ...
 )
 
@@ -121,7 +121,8 @@ of \code{taxonomyRanks()} function.}
 
 \item{as.list}{\code{TRUE} or \code{FALSE}: Should the list of
 \code{SummarizedExperiment} objects be returned by the function
-\code{agglomerateByRanks} or stored in altExps?}
+\code{agglomerateByRanks} as a SimpleList or stored in altExps?
+(default: \code{as.list = FALSE})}
 
 \item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
@@ -251,7 +252,7 @@ taxonomyRanks(GlobalPatterns)
 
 # agglomerateByRanks
 # 
-x <- agglomerateByRanks(GlobalPatterns, as.list = FALSE)
+x <- agglomerateByRanks(GlobalPatterns)
 altExps(x)
 altExp(x,"Kingdom")
 altExp(x,"Species")

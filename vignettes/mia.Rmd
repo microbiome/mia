@@ -152,7 +152,7 @@ data on all `ranks` selected. By default all available ranks will be used.
 The output is compatible to be stored as alternative experiments.
 
 ```{r}
-tse <- agglomerateByRanks(tse, as.list = FALSE)
+tse <- agglomerateByRanks(tse)
 tse
 altExpNames(tse)
 ```

@@ -14,6 +14,9 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{splitByRanks}
+\alias{splitByRanks,SummarizedExperiment-method}
+\alias{splitByRanks,SingleCellExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +42,12 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+splitByRanks(x, ...)
+
+\S4method{splitByRanks}{SummarizedExperiment}(x, ...)
+
+\S4method{splitByRanks}{SingleCellExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

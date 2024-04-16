@@ -26,7 +26,8 @@
 #'   
 #' @param as.list \code{TRUE} or \code{FALSE}: Should the list of 
 #'   \code{SummarizedExperiment} objects be returned by the function 
-#'   \code{agglomerateByRanks} or stored in altExps?
+#'   \code{agglomerateByRanks} as a SimpleList or stored in altExps?
+#'   (default: \code{as.list = FALSE})
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects and other functions.
@@ -71,7 +72,7 @@
 #'
 #' # agglomerateByRanks
 #' # 
-#' x <- agglomerateByRanks(GlobalPatterns, as.list = FALSE)
+#' x <- agglomerateByRanks(GlobalPatterns)
 #' altExps(x)
 #' altExp(x,"Kingdom")
 #' altExp(x,"Species")
@@ -118,7 +119,7 @@ setGeneric("agglomerateByRanks",
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
-    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = TRUE, ...){
+    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
         browser()
         args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
         if( !.is_a_bool(as.list) ){
@@ -137,7 +138,7 @@ setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
-            function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = TRUE,
+            function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE,
                     ...){
                 args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
                 args[["strip_altexp"]] <- TRUE
