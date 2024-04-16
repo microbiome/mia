@@ -115,7 +115,7 @@ altExp(x,"Kingdom")
 altExp(x,"Species")
 
 # unsplitByRanks
-x <- unsplitByRanks(GlobalPatterns)
+x <- unsplitByRanks(X)
 x
 }
 \seealso{
