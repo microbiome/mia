@@ -24,7 +24,8 @@ Authors@R:
       person(given = "Domenick", family = "Braccia",
              email = "dbraccia@umd.edu", role=c("ctb")),
       person(given = "Basil", family = "Courbayre", role=c("ctb")),
-      person(given = "Muluh", family = "Muluh", role=c("ctb")))
+      person(given = "Muluh", family = "Muluh", role=c("ctb")),
+      person(given = "Giulio", family = "Benedetti", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
@@ -83,6 +84,7 @@ Suggests:
     microbiomeDataSets,
     miaTime,
     rmarkdown
+Remotes: microbiome/miaTime
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
