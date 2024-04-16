@@ -10,6 +10,11 @@
 \alias{taxonomyTree,SummarizedExperiment-method}
 \alias{mergeFeaturesByPrevalence}
 \alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
+\alias{loadFromQIIME2}
+\alias{readQZA}
+\alias{loadFromMothur}
+\alias{loadFromMetaphlan}
+\alias{loadFromHumann}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -27,6 +32,16 @@ taxonomyTree(x, ...)
 mergeFeaturesByPrevalence(x, ...)
 
 \S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
+
+loadFromQIIME2(...)
+
+readQZA(...)
+
+loadFromMothur(...)
+
+loadFromMetaphlan(...)
+
+loadFromHumann(...)
 }
 \arguments{
 \item{x}{A
