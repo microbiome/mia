@@ -17,6 +17,11 @@
 \alias{testExperimentCrossCorrelation,ANY-method}
 \alias{getExperimentCrossCorrelation}
 \alias{getExperimentCrossCorrelation,ANY-method}
+\alias{loadFromQIIME2}
+\alias{readQZA}
+\alias{loadFromMothur}
+\alias{loadFromMetaphlan}
+\alias{loadFromHumann}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -48,6 +53,16 @@ testExperimentCrossCorrelation(x, ...)
 getExperimentCrossCorrelation(x, ...)
 
 \S4method{getExperimentCrossCorrelation}{ANY}(x, ...)
+
+loadFromQIIME2(...)
+
+readQZA(...)
+
+loadFromMothur(...)
+
+loadFromMetaphlan(...)
+
+loadFromHumann(...)
 }
 \arguments{
 \item{x}{A

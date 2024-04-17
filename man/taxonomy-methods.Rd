@@ -188,7 +188,6 @@ setTaxonomyRanks(colnames(rowData(tse)))
 
 # getTaxonomyRanks is to get/check if the taxonomic ranks is set to "TAXA1"
 getTaxonomyRanks()
-
 }
 \seealso{
 \code{\link[=agglomerate-methods]{agglomerateByRank}},

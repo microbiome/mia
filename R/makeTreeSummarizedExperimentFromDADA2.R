@@ -23,8 +23,8 @@
 #' @seealso
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
-#' \code{\link[=loadFromMothur]{loadFromMothur}}
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
 #'
 #' @export
 #'
@@ -49,15 +49,15 @@ makeTreeSEFromDADA2 <- function(...) {
     # generate row and col names
     rName <- paste0("ASV",
                     stringr::str_pad(seq.int(1L,nrow(seqtab)),
-                                     nchar(nrow(seqtab)) + 1L,
-                                     pad="0"))
+                                    nchar(nrow(seqtab)) + 1L,
+                                    pad="0"))
     cName <- colnames(seqtab)
     # retrieve count data and reference sequence
     assays <- S4Vectors::SimpleList(counts = unname(seqtab))
     refseq <- Biostrings::DNAStringSet(rownames(seqtab))
     # construct ME an name rows and cols
     output <- TreeSummarizedExperiment(assays = assays,
-                                       referenceSeq = refseq)
+                                        referenceSeq = refseq)
     colnames(output) <- cName
     rownames(output) <- rName
     output
