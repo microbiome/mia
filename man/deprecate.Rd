@@ -9,21 +9,27 @@
 \alias{taxonomyTree}
 \alias{taxonomyTree,SummarizedExperiment-method}
 \alias{mergeRows}
-\alias{mergeFeatures}
 \alias{mergeRows,SummarizedExperiment-method}
 \alias{mergeRows,TreeSummarizedExperiment-method}
 \alias{mergeCols}
-\alias{mergeSamples}
 \alias{mergeCols,SummarizedExperiment-method}
 \alias{mergeCols,TreeSummarizedExperiment-method}
+\alias{mergeFeatures}
 \alias{mergeFeatures,SummarizedExperiment-method}
 \alias{mergeFeatures,TreeSummarizedExperiment-method}
+\alias{mergeSamples}
 \alias{mergeSamples,SummarizedExperiment-method}
 \alias{mergeSamples,TreeSummarizedExperiment-method}
 \alias{mergeFeaturesByRank}
 \alias{mergeFeaturesByRank,SummarizedExperiment-method}
 \alias{mergeFeaturesByRank,SingleCellExperiment-method}
 \alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
+\alias{loadFromBiom}
+\alias{loadFromQIIME2}
+\alias{readQZA}
+\alias{loadFromMothur}
+\alias{loadFromMetaphlan}
+\alias{loadFromHumann}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -69,6 +75,18 @@ mergeFeaturesByRank(x, ...)
 \S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ...)
 
 \S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ...)
+
+loadFromBiom(...)
+
+loadFromQIIME2(...)
+
+readQZA(...)
+
+loadFromMothur(...)
+
+loadFromMetaphlan(...)
+
+loadFromHumann(...)
 }
 \arguments{
 \item{x}{A

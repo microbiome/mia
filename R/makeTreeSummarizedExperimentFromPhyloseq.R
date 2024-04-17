@@ -18,8 +18,8 @@
 #' @seealso
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 #' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
-#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
-#' \code{\link[=loadFromMothur]{loadFromMothur}}
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
 #'
 #' @examples
 #' if (requireNamespace("phyloseq")) {
@@ -69,10 +69,10 @@ makeTreeSEFromPhyloseq <- function(obj) {
         referenceSeq <- NULL
     }
     TreeSummarizedExperiment(assays = assays,
-                             rowData = rowData,
-                             colData = colData,
-                             rowTree = rowTree,
-                             referenceSeq = referenceSeq)
+                            rowData = rowData,
+                            colData = colData,
+                            rowTree = rowTree,
+                            referenceSeq = referenceSeq)
 }
 
 ####################### makeTreeSummarizedExperimentFromPhyloseq #######################

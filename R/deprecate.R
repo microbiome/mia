@@ -58,7 +58,6 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname deprecate
-#' @aliases mergeFeatures
 #' @export
 setGeneric("mergeRows",
             signature = "x",
@@ -66,7 +65,6 @@ setGeneric("mergeRows",
                 standardGeneric("mergeRows"))
 
 #' @rdname deprecate
-#' @aliases mergeFeatures
 #' @export
 setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
@@ -89,7 +87,6 @@ setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
 )
 
 #' @rdname deprecate
-#' @aliases mergeSamples
 #' @export
 setGeneric("mergeCols",
             signature = "x",
@@ -97,7 +94,6 @@ setGeneric("mergeCols",
                 standardGeneric("mergeCols"))
 
 #' @rdname deprecate
-#' @aliases mergeSamples
 #' @export
 setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
@@ -109,7 +105,6 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname deprecate
-#' @aliases mergeSamples
 #' @export
 setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
@@ -121,7 +116,6 @@ setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
 )
 
 #' @rdname deprecate
-#' @aliases mergeRows
 #' @export
 setGeneric("mergeFeatures",
             signature = "x",
@@ -151,7 +145,6 @@ setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
 )
 
 #' @rdname deprecate
-#' @aliases mergeCols
 #' @export
 setGeneric("mergeSamples",
             signature = "x",
@@ -159,7 +152,6 @@ setGeneric("mergeSamples",
                 standardGeneric("mergeSamples"))
 
 #' @rdname deprecate
-#' @aliases mergeSamples
 #' @export
 setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
@@ -171,7 +163,6 @@ setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname deprecate
-#' @aliases mergeSamples
 #' @export
 setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
@@ -223,3 +214,51 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
               x
           }
 )
+
+#' @rdname deprecate
+#' @export
+loadFromBiom <- function(...) {
+    .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
+                            " Use 'importBIOM' instead."))
+    importBiom(...)
+}
+
+#' @rdname deprecate
+#' @export
+loadFromQIIME2 <- function(...) {
+    .Deprecated(msg = paste0("'loadFromQIIME2' is deprecated.",
+                            " Use 'importQIIME2' instead."))
+    importQIIME2(...)
+}
+
+#' @rdname deprecate
+#' @export
+readQZA <- function(...) {
+    .Deprecated(msg = paste0("'readQZA' is deprecated.",
+                            " Use 'importQZA' instead."))
+    importQZA(...)
+}
+
+#' @rdname deprecate
+#' @export
+loadFromMothur <- function(...) {
+    .Deprecated(msg = paste0("'loadFromMothur' is deprecated.",
+                            " Use 'importMothur' instead."))
+    importMothur(...)
+}
+
+#' @rdname deprecate
+#' @export   
+loadFromMetaphlan <- function(...) {
+    .Deprecated(msg = paste0("'loadFromMetaphlan' is deprecated.",
+                            " Use 'importMetaPhlAn' instead."))
+    importMetaPhlAn(...)
+}
+
+#' @rdname deprecate
+#' @export    
+loadFromHumann <- function(...) {
+    .Deprecated(msg = paste0("'loadFromHumann' is deprecated.",
+                            " Use 'importHUMAnN' instead."))
+    importHUMAnN(...)
+}
