@@ -318,6 +318,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         else if (is.null(rowTree(x))) {
             warning("Faith diversity will not be calculated because there's 
                     no phylogenetic tree.")
+            calc_faith <- FALSE
         }
         
         else{
