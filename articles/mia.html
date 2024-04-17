@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.10</span>
       </span>
     </div>
 
@@ -201,10 +201,10 @@ data to be present.</p>
 <p><code>mergeFeaturesByRank</code> constructs a <code>factor</code> to
 guide merging from the available taxonomic information. For more
 information on merging have a look at the man page via
-<code><a href="../reference/merge-methods.html">?mergeFeatures</a></code>.</p>
+<code><a href="../reference/deprecate.html">?mergeFeatures</a></code>.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># agglomerate at the Family taxonomic rank</span></span>
-<span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span>
+<span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deprecate.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span>
 <span><span class="co">## How many taxa before/after agglomeration?</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 19216</span></span></code></pre>
@@ -215,7 +215,7 @@ information on merging have a look at the man page via
 turned of by default.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># with agglomeration of the tree</span></span>
-<span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,</span>
+<span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deprecate.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>                        agglomerateTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># same number of rows, but</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 603</span></span></code></pre>
@@ -233,12 +233,12 @@ turned of by default.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-accessor.html" class="external-link">rowTree</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># ... tree</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Phylogenetic tree with 19216 tips and 19215 internal nodes.</span></span>
+<span><span class="co">## Phylogenetic tree with 603 tips and 602 internal nodes.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Tip labels:</span></span>
-<span><span class="co">##   549322, 522457, 951, 244423, 586076, 246140, ...</span></span>
+<span><span class="co">##   549322, 951, 244423, 143239, 215972, 138353, ...</span></span>
 <span><span class="co">## Node labels:</span></span>
-<span><span class="co">##   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 1.000.2, ...</span></span>
+<span><span class="co">##   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 0.943.7, ...</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Rooted; includes branch lengths.</span></span></code></pre>
 <p>For <code>mergeFeaturesByRank</code> to work, taxonomic data must be
@@ -250,7 +250,7 @@ effectively de-duplicating entries for the genus level.</p>
 <span><span class="fu"><a href="../reference/taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "Genus"</span></span></code></pre>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/agglomerate-methods.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/deprecate.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">enterotype</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
 <span><span class="co">## dim: 552 280 </span></span>
 <span><span class="co">## metadata(1): agglomerated_by_rank</span></span>
@@ -276,8 +276,8 @@ sample subsetting becomes very easy.</p>
 <code>empty.fields</code> argument) will be removed. Depending on these
 settings different number of rows will be returned.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deprecate.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deprecate.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Species"</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 944  26</span></span></code></pre>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
@@ -603,7 +603,7 @@ long format will be returned.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] phyloseq_1.47.0                 scater_1.31.2                  </span></span>
 <span><span class="co">##  [3] ggplot2_3.5.0                   scuttle_1.13.1                 </span></span>
-<span><span class="co">##  [5] mia_1.11.11                     MultiAssayExperiment_1.29.1    </span></span>
+<span><span class="co">##  [5] mia_1.11.10                     MultiAssayExperiment_1.29.1    </span></span>
 <span><span class="co">##  [7] TreeSummarizedExperiment_2.11.0 Biostrings_2.71.5              </span></span>
 <span><span class="co">##  [9] XVector_0.43.1                  SingleCellExperiment_1.25.1    </span></span>
 <span><span class="co">## [11] SummarizedExperiment_1.33.3     Biobase_2.63.1                 </span></span>
@@ -628,13 +628,13 @@ long format will be returned.</p>
 <span><span class="co">##  [25] bluster_1.13.0              zlibbioc_1.49.3            </span></span>
 <span><span class="co">##  [27] cachem_1.0.8                beachmat_2.19.4            </span></span>
 <span><span class="co">##  [29] jsonlite_1.8.8              biomformat_1.31.0          </span></span>
-<span><span class="co">##  [31] rhdf5filters_1.15.5         DelayedArray_0.29.9        </span></span>
+<span><span class="co">##  [31] rhdf5filters_1.15.4         DelayedArray_0.29.9        </span></span>
 <span><span class="co">##  [33] Rhdf5lib_1.25.3             BiocParallel_1.37.1        </span></span>
 <span><span class="co">##  [35] irlba_2.3.5.1               parallel_4.5.0             </span></span>
 <span><span class="co">##  [37] cluster_2.1.6               R6_2.5.1                   </span></span>
 <span><span class="co">##  [39] stringi_1.8.3               bslib_0.7.0                </span></span>
 <span><span class="co">##  [41] jquerylib_0.1.4             iterators_1.0.14           </span></span>
-<span><span class="co">##  [43] Rcpp_1.0.12                 bookdown_0.39              </span></span>
+<span><span class="co">##  [43] Rcpp_1.0.12                 bookdown_0.38              </span></span>
 <span><span class="co">##  [45] knitr_1.46                  DECIPHER_2.31.4            </span></span>
 <span><span class="co">##  [47] splines_4.5.0               Matrix_1.7-0               </span></span>
 <span><span class="co">##  [49] igraph_2.0.3                tidyselect_1.2.1           </span></span>

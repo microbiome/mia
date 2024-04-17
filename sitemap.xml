@@ -118,9 +118,6 @@
     <loc>/reference/meltAssay.html</loc>
   </url>
   <url>
-    <loc>/reference/merge-methods.html</loc>
-  </url>
-  <url>
     <loc>/reference/mergeSEs.html</loc>
   </url>
   <url>
@@ -155,6 +152,9 @@
   </url>
   <url>
     <loc>/reference/subsampleCounts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/subsetSamples.html</loc>
   </url>
   <url>
     <loc>/reference/summaries.html</loc>
