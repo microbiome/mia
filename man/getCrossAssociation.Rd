@@ -4,7 +4,6 @@
 \alias{getCrossAssociation}
 \alias{getCrossAssociation,MultiAssayExperiment-method}
 \alias{getCrossAssociation,SummarizedExperiment-method}
-\alias{getCrossCorrelation}
 \title{Calculate correlations between features of two experiments.}
 \usage{
 getCrossAssociation(x, ...)

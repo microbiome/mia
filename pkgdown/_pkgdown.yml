@@ -46,7 +46,7 @@ reference:
   - getPrevalence
   - getPrevalentAbundance
   - getTopTaxa
-  - getCrossCorrelation
+  - getCrossAssociation
   - hierarchy-tree
 - subtitle: Dominance
 - contents:

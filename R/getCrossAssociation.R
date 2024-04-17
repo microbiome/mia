@@ -275,7 +275,6 @@ setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
 )
 
 #' @rdname getCrossAssociation
-#' @aliases getCrossCorrelation
 #' @importFrom MultiAssayExperiment MultiAssayExperiment ExperimentList
 #' @importFrom SingleCellExperiment altExps
 #' @export
