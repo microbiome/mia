@@ -49,6 +49,9 @@
     <loc>/reference/calculateUnifrac.html</loc>
   </url>
   <url>
+    <loc>/reference/convert.html</loc>
+  </url>
+  <url>
     <loc>/reference/deprecate.html</loc>
   </url>
   <url>
@@ -76,7 +79,7 @@
     <loc>/reference/estimateRichness.html</loc>
   </url>
   <url>
-    <loc>/reference/getCrossAssociation.html</loc>
+    <loc>/reference/getExperimentCrossAssociation.html</loc>
   </url>
   <url>
     <loc>/reference/getPrevalence.html</loc>
@@ -103,16 +106,7 @@
     <loc>/reference/isContaminant.html</loc>
   </url>
   <url>
-    <loc>/reference/makePhyloseqFromTreeSE.html</loc>
-  </url>
-  <url>
-    <loc>/reference/makeTreeSEFromBiom.html</loc>
-  </url>
-  <url>
-    <loc>/reference/makeTreeSEFromDADA2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/makeTreeSEFromPhyloseq.html</loc>
+    <loc>/reference/loadFromBiom.html</loc>
   </url>
   <url>
     <loc>/reference/meltAssay.html</loc>
