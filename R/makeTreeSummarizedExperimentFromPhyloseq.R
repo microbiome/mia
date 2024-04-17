@@ -37,8 +37,8 @@
         referenceSeq <- NULL
     }
     TreeSummarizedExperiment(assays = assays,
-                             rowData = rowData,
-                             colData = colData,
-                             rowTree = rowTree,
-                             referenceSeq = referenceSeq)
+                            rowData = rowData,
+                            colData = colData,
+                            rowTree = rowTree,
+                            referenceSeq = referenceSeq)
 }

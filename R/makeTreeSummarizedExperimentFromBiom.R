@@ -33,9 +33,9 @@
 #' 
 #' @seealso
 #' \code{\link[=convert]{convert}}
-#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
-#' \code{\link[=loadFromMothur]{loadFromMothur}}
-#' 
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
+#'
 #' @examples
 #' # Load biom file
 #' library(biomformat)
@@ -43,10 +43,10 @@
 #'                          package = "biomformat")
 #' 
 #' # Make TreeSE from biom file
-#' tse <- loadFromBiom(biom_file)
+#' tse <- importBIOM(biom_file)
 #' 
 #' # Get taxonomyRanks from prefixes and remove prefixes
-#' tse <- loadFromBiom(biom_file,
+#' tse <- importBIOM(biom_file,
 #'                     rankFromPrefix = TRUE,
 #'                     removeTaxaPrefixes = TRUE)
 #' 
@@ -55,14 +55,13 @@
 #'                          package = "mia")
 #' 
 #' # Clean artifacts from taxonomic data
-#' tse <- loadFromBiom(biom_file,
+#' tse <- importBIOM(biom_file,
 #'                     remove.artifacts = TRUE)
 NULL
 
 #' @rdname loadFromBiom
 #' @export
-loadFromBiom <- function(file, removeTaxaPrefixes = FALSE, 
-                        rankFromPrefix = FALSE, remove.artifacts = FALSE, ...) {
+importBIOM <- function(file, ...) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
     convert(biom, removeTaxaPrefixes = removeTaxaPrefixes, 
@@ -110,15 +109,16 @@ loadFromBiom <- function(file, removeTaxaPrefixes = FALSE,
         rownames(feature_data) <- rownames(counts)
     # Otherwise convert it into correct format if it is a list
     } else if( is(feature_data, "list") ){
-        # Feature data is a list of taxa info. Dfs are merged together differentlu
-        # than sample metadata since the column names are only "Taxonomy". If there
-        # is only one taxonomy level, the column name does not get a suffix.
+        # Feature data is a list of taxa info. Dfs are merged together 
+        # differently than sample metadata since the column names are only 
+        # "Taxonomy". If there is only one taxonomy level, the column name does 
+        # not get a suffix.
         # --> bind rows based on the index of column.
         
         # Get the maximum length of list
         max_length <- max( lengths(feature_data) )
-        # Get the column names from the taxa info that has all the levels that occurs
-        # in the data
+        # Get the column names from the taxa info that has all the levels that 
+        # occurs in the data
         colnames <- names( head(
             feature_data[ lengths(feature_data) == max_length ], 1)[[1]])
         # Convert the list so that all individual taxa info have the max length
@@ -155,7 +155,7 @@ loadFromBiom <- function(file, removeTaxaPrefixes = FALSE,
     # Replace taxonomy ranks with ranks found based on prefixes
     if( rankFromPrefix && all(
         unlist(lapply(colnames(feature_data),
-                      function(x) !x %in% TAXONOMY_RANKS)))){
+                        function(x) !x %in% TAXONOMY_RANKS)))){
         # Find ranks
         ranks <- lapply(colnames(feature_data),
                         .replace_colnames_based_on_prefix, x=feature_data)
@@ -186,6 +186,14 @@ loadFromBiom <- function(file, removeTaxaPrefixes = FALSE,
     return(tse)
 }
 
+####################### makeTreeSummarizedExperimentFromBiom ###################
+#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
+#' @rdname makeTreeSEFromBiom
+#' @export
+makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
+    makeTreeSEFromBiom(obj, ...)
+}
+
 ################################ HELP FUNCTIONS ################################
 # This function removes prefixes from taxonomy names
 .remove_prefixes_from_taxa <- function(
@@ -195,9 +203,9 @@ loadFromBiom <- function(file, removeTaxaPrefixes = FALSE,
         stop("'only.taxa.col' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    # Subset by taking only taxonomy info if user want to remove the pattern only
-    # from those. (Might be too restricting, e.g., if taxonomy columns are not
-    # detected in previous steps. That is way the default is FALSE)
+    # Subset by taking only taxonomy info if user want to remove the pattern 
+    # only from those. (Might be too restricting, e.g., if taxonomy columns are 
+    # not detected in previous steps. That is way the default is FALSE)
     if( only.taxa.col ){
         ind <- tolower(colnames(feature_tab)) %in% TAXONOMY_RANKS
         temp <- feature_tab[, ind, drop = FALSE]
@@ -248,7 +256,7 @@ loadFromBiom <- function(file, removeTaxaPrefixes = FALSE,
         colname <- TAXONOMY_RANKS[found_rank]
         # Make it capitalized
         colname <- paste0(toupper(substr(colname, 1, 1)),
-                          substr(colname, 2, nchar(colname)))
+                            substr(colname, 2, nchar(colname)))
     }
     return(colname)    
 }
@@ -267,7 +275,8 @@ loadFromBiom <- function(file, removeTaxaPrefixes = FALSE,
         # Remove all but these characters
         pattern <- "[[:alnum:]]|-|_|\\[|\\]|,|;\\||[[:space:]]"
         x <- lapply(x, function(col){
-            # Take all specified characters as a matrix where each column is a character
+            # Take all specified characters as a matrix where each column is a 
+            # character
             temp <- stringr::str_extract_all(col, pattern = pattern, simplify = TRUE)
             # Collapse matrix to strings
             temp <- apply(temp, 1, paste, collapse = "")

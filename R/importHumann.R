@@ -35,18 +35,19 @@
 #' are stored to \code{assays}.
 #' 
 #' Usually the workflow includes also taxonomy data from Metaphlan. See
-#' \link[=loadFromMetaphlan]{loadFromMetaphlan} to load the data to \code{TreeSE}.
+#' \link[=importMetaPhlAn]{importMetaPhlAn} to load the data to \code{TreeSE}.
 #'
 #' @return  A
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name loadFromHumann
+#' @name importHUMAnN
+#' 
 #' @seealso
-#' \code{\link[=loadFromMetaphlan]{loadFromMetaphlan}}
+#' \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
 #' \code{\link[=convert]{convert}}
-#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
-#' \code{\link[=loadFromMothur]{loadFromMothur}}
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
 #'
 #' @export
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -62,25 +63,25 @@
 #' # File path
 #' file_path <- system.file("extdata", "humann_output.tsv", package = "mia")
 #' # Import data
-#' tse <- loadFromHumann(file_path)
+#' tse <- importHUMAnN(file_path)
 #' tse
 #' 
 NULL
 
-loadFromHumann <- function(file, colData = NULL, ...){
+importHUMAnN <- function(file, colData = NULL, ...){
     ################################ Input check ###############################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
     if(!is.null(colData) &&
-       !(.is_non_empty_string(colData) || is.data.frame(colData) ||
-         is.matrix(colData) || is(colData, "DataFrame")) ){
+        !(.is_non_empty_string(colData) || is.data.frame(colData) ||
+            is.matrix(colData) || is(colData, "DataFrame")) ){
         stop("'colData' must be a single character value, DataFrame or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     ############################## Input check end #############################
     # Humann files has these columns that goes to rowData
@@ -113,8 +114,8 @@ loadFromHumann <- function(file, colData = NULL, ...){
         },
         error = function(condition){
             stop("Error while reading ", file,
-                 "\nPlease check that the file is in merged HUMAnN file ",
-                 "format.", call. = FALSE)
+                "\nPlease check that the file is in merged HUMAnN file ",
+                "format.", call. = FALSE)
         }
     )
     # In the first column name, there is "# " prefix. Remove it
@@ -130,8 +131,8 @@ loadFromHumann <- function(file, colData = NULL, ...){
     # Check that file is in right format
     if( .check_metaphlan(table, rowdata_col) ){
         stop("Error while reading ", file,
-             "\nPlease check that the file is in merged HUMAnN file format.",
-             call. = FALSE)
+            "\nPlease check that the file is in merged HUMAnN file format.",
+            call. = FALSE)
     }
     return(table)
 }

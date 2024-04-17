@@ -14,11 +14,11 @@ reference:
 - subtitle: Data loading
 - contents:
   - convert
-  - loadFromBiom
-  - loadFromQIIME2
-  - loadFromMothur
-  - loadFromMetaphlan
-  - loadFromHumann
+  - importBIOM
+  - importQIIME2
+  - importMothur
+  - importMetaPhlAn
+  - importHUMAnN
 - title: Taxonomic data
   contents:
   - taxonomyRanks

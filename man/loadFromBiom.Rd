@@ -2,18 +2,20 @@
 % Please edit documentation in R/makeTreeSummarizedExperimentFromBiom.R
 \name{loadFromBiom}
 \alias{loadFromBiom}
+\alias{importBIOM}
 \title{Loading a biom file}
 \usage{
-loadFromBiom(
-  file,
-  removeTaxaPrefixes = FALSE,
-  rankFromPrefix = FALSE,
-  remove.artifacts = FALSE,
-  ...
-)
+importBIOM(file, ...)
 }
 \arguments{
 \item{file}{biom file location}
+
+\item{...}{additional arguments
+\itemize{
+\item{\code{patter}}{\code{character} value specifying artifacts
+to be removed. If \code{patterns = "auto"}, special characters
+are removed. (default: \code{pattern = "auto"})}
+}}
 
 \item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
@@ -27,13 +29,6 @@ taxonomic ranks on feature table, should they be scraped from prefixes?
 \item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
 some taxonomic character naming artifacts, should they be removed.
 (default \code{remove.artifacts = FALSE})}
-
-\item{...}{additional arguments
-\itemize{
-\item{\code{patter}}{\code{character} value specifying artifacts
-to be removed. If \code{patterns = "auto"}, special characters
-are removed. (default: \code{pattern = "auto"})}
-}}
 }
 \value{
 An object of class
@@ -51,10 +46,10 @@ biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
                          package = "biomformat")
 
 # Make TreeSE from biom file
-tse <- loadFromBiom(biom_file)
+tse <- importBIOM(biom_file)
 
 # Get taxonomyRanks from prefixes and remove prefixes
-tse <- loadFromBiom(biom_file,
+tse <- importBIOM(biom_file,
                     rankFromPrefix = TRUE,
                     removeTaxaPrefixes = TRUE)
 
@@ -63,11 +58,11 @@ biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
                          package = "mia")
 
 # Clean artifacts from taxonomic data
-tse <- loadFromBiom(biom_file,
+tse <- importBIOM(biom_file,
                     remove.artifacts = TRUE)
 }
 \seealso{
 \code{\link[=convert]{convert}}
-\code{\link[=loadFromQIIME2]{loadFromQIIME2}}
-\code{\link[=loadFromMothur]{loadFromMothur}}
+\code{\link[=importQIIME2]{importQIIME2}}
+\code{\link[=importMothur]{importMothur}}
 }

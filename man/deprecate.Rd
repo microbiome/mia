@@ -14,6 +14,11 @@
 \alias{makePhyloseqFromTreeSummarizedExperiment,ANY-method}
 \alias{makePhyloseqFromTreeSE}
 \alias{makePhyloseqFromTreeSE,ANY-method}
+\alias{loadFromQIIME2}
+\alias{readQZA}
+\alias{loadFromMothur}
+\alias{loadFromMetaphlan}
+\alias{loadFromHumann}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +44,16 @@ makePhyloseqFromTreeSummarizedExperiment(obj, ...)
 makePhyloseqFromTreeSE(obj, ...)
 
 \S4method{makePhyloseqFromTreeSE}{ANY}(obj, ...)
+
+loadFromQIIME2(...)
+
+readQZA(...)
+
+loadFromMothur(...)
+
+loadFromMetaphlan(...)
+
+loadFromHumann(...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object -}
