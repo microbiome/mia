@@ -76,7 +76,10 @@
     <loc>/reference/estimateRichness.html</loc>
   </url>
   <url>
-    <loc>/reference/getCrossAssociation.html</loc>
+    <loc>/reference/getExperimentCrossAssociation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getMediation.html</loc>
   </url>
   <url>
     <loc>/reference/getPrevalence.html</loc>
