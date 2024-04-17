@@ -32,7 +32,9 @@
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
-#'   \code{\link[=merge-methods]{mergeRows}} and
+#'   to \code{getPrevalence} and \code{getPrevalentTaxa} and used in 
+#'   \code{agglomeratebyPrevalence},
+#'   to \code{\link[=merge-methods]{mergeRows}} and
 #'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 #'   \itemize{
 #'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
@@ -40,24 +42,16 @@
 #'        agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
 #'        \item{\code{make_unique}}{A single boolean value for selecting 
 #'        whether to make rownames unique. (By default: \code{make_unique = TRUE})}
+#'        \item{\code{detection}}{Detection threshold for absence/presence. 
+#'        Either an absolute value compared directly to the values of \code{x} 
+#'        or a relative value between 0 and 1, if \code{as_relative = FALSE}.}
+#'        \item{\code{prevalence}}{Prevalence threshold (in 0 to 1). The 
+#'        required prevalence is strictly greater by default. To include the 
+#'        limit, set \code{include_lowest} to \code{TRUE}.}
+#'        \item{\code{as.relative}}{Logical scalar: Should the detection 
+#'        threshold be applied on compositional (relative) abundances? 
+#'        (default: \code{FALSE})}
 #'    }
-#'    
-#' @param detection Passed to \code{getPrevalence} and \code{getPrevalentTaxa} 
-#'   functions and used in \code{agglomeratebyPrevalence} function.
-#'   Detection threshold for absence/presence. Either an absolute value compared
-#'   directly to the values of \code{x} or a relative value between 0 and 1, if 
-#'   \code{as_relative = FALSE}.
-#'   
-#' @param prevalence Passed to \code{getPrevalence} and \code{getPrevalentTaxa} 
-#'   functions and used in \code{agglomeratebyPrevalence} function.
-#'   Prevalence threshold (in 0 to 1). The required prevalence is strictly 
-#'   greater by default. To include the limit, set \code{include_lowest} to 
-#'   \code{TRUE}.
-#'   
-#' @param as.relative Passed to \code{getPrevalence} and \code{getPrevalentTaxa} 
-#'   functions and used in \code{agglomeratebyPrevalence} function.
-#'   Logical scalar: Should the detection threshold be applied
-#'   on compositional (relative) abundances? (default: \code{FALSE})
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
