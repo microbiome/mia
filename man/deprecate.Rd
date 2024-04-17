@@ -14,6 +14,12 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{subsetSamples}
+\alias{subsetSamples,SummarizedExperiment-method}
+\alias{subsetFeatures}
+\alias{subsetFeatures,SummarizedExperiment-method}
+\alias{subsetTaxa}
+\alias{subsetTaxa,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +45,18 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+subsetSamples(x, ...)
+
+\S4method{subsetSamples}{SummarizedExperiment}(x, ...)
+
+subsetFeatures(x, ...)
+
+\S4method{subsetFeatures}{SummarizedExperiment}(x, ...)
+
+subsetTaxa(x, ...)
+
+\S4method{subsetTaxa}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

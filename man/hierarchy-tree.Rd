@@ -62,13 +62,4 @@ getHierarchyTree(tse)
 # Please note that any tree already stored in rowTree() will be overwritten.
 tse <- addHierarchyTree(tse)
 tse
-
-# For instance, the TreeSummarizedExperiment Tengeler2020 contains an
-# actual phylogenetic tree.
-
-data(Tengeler2020)
-tse2 <- Tengeler2020
-phylo_tree <- rowTree(tse2)
-phylo_tree
-
 }

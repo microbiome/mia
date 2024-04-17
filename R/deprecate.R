@@ -104,3 +104,54 @@ loadFromHumann <- function(...) {
                             " Use 'importHUMAnN' instead."))
     importHUMAnN(...)
 }
+
+#' @rdname deprecate
+#' @export
+setGeneric("subsetSamples", signature = "x",
+            function(x, ...)
+                standardGeneric("subsetSamples"))
+
+#' @rdname deprecate
+#' @export
+setMethod("subsetSamples", signature = "SummarizedExperiment",
+            function(x, ...){
+                .Deprecated(msg = paste0("subsetSamples is deprecated. Please ",
+                                        "use '[]' for subsetting instead."))
+                subset_args <- .get_subset_args(x, ...)
+                x[subset_args$columns,subset_args$rows]
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("subsetFeatures", signature = "x",
+            function(x, ...)
+                standardGeneric("subsetFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod("subsetFeatures", signature = "SummarizedExperiment",
+            function(x, ...){
+                .Deprecated(msg = paste0("subsetFeatures is deprecated. Please",
+                                        " use '[]' for subsetting instead."))
+                subset_args <- .get_subset_args(x, ...)
+                x[subset_args$rows, subset_args$columns]
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("subsetTaxa", signature = "x",
+            function(x, ...)
+                standardGeneric("subsetTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod("subsetTaxa", signature = "SummarizedExperiment",
+            function(x, ...){
+                .Deprecated(msg = paste0("subsetFeatures is deprecated. Please",
+                                        " use '[]' for subsetting instead."))
+                subset_args <- .get_subset_args(x, ...)
+                x[subset_args$rows, subset_args$columns]
+            }
+)
