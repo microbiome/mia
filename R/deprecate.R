@@ -104,3 +104,12 @@ loadFromHumann <- function(...) {
                             " Use 'importHUMAnN' instead."))
     importHUMAnN(...)
 }
+
+#' @rdname deprecate
+#' @export    
+plotNMDS <- function(x, ...){
+    .Deprecated(msg = paste0("'plotNMDS' is deprecated. ",
+                             "Use 'scater::plotReducedDim' with ",
+                             "dimred = 'NMDS' instead."))
+    plotReducedDim(x, ncomponents = 2, dimred = "NMDS",...)
+}
