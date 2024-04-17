@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.10</span>
       </span>
     </div>
 
@@ -436,7 +436,8 @@ running times are critical.</p>
 <span class="r-in"><span><span class="co"># It is also possible to choose variables from colData and calculate association</span></span></span>
 <span class="r-in"><span><span class="co"># between assay and sample metadata or between variables of sample metadata</span></span></span>
 <span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimateDiversity.html">estimateDiversity</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Faith diversity has been excluded from the results since it cannot be calculated without rowTree. This requires a rowTree in the input argument x. Make sure that 'rowTree(x)' is not empty, or make sure to specify 'tree_name' in the input arguments. Warning is also provided if the tree does not have any branches. You can consider adding rowTree to include this index.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Faith diversity will not be calculated because there's </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>                     no phylogenetic tree.</span>
 <span class="r-in"><span><span class="co"># colData_variable works similarly to assay.type. Instead of fetching an assay</span></span></span>
 <span class="r-in"><span><span class="co"># named assay.type from assay slot, it fetches a column named colData_variable</span></span></span>
 <span class="r-in"><span><span class="co"># from colData.</span></span></span>
