@@ -64,9 +64,7 @@ NULL
 importBIOM <- function(file, ...) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    convert(biom, removeTaxaPrefixes = removeTaxaPrefixes, 
-            rankFromPrefix = rankFromPrefix, 
-            remove.artifacts = remove.artifacts, ...)
+    convert(biom,...)
 }
 
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
@@ -184,14 +182,6 @@ importBIOM <- function(file, ...) {
         colData = sample_data,
         rowData = feature_data)
     return(tse)
-}
-
-####################### makeTreeSummarizedExperimentFromBiom ###################
-#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
-#' @rdname makeTreeSEFromBiom
-#' @export
-makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
-    makeTreeSEFromBiom(obj, ...)
 }
 
 ################################ HELP FUNCTIONS ################################
