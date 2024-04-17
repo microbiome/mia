@@ -108,3 +108,4 @@ Changes in version 1.11.x
 + Rename cluster to addCluster
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
 loadFromMetaphlan, loadFromHumann
++ deprecate plotNMDS after moving it to miaViz package
