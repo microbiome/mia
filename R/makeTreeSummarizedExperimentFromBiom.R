@@ -6,24 +6,22 @@
 #'
 #' @param file biom file location
 #' 
-#' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
-#' taxonomic prefixes be removed? The prefixes is removed only from detected
-#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
-#' (default \code{removeTaxaPrefixes = FALSE})
-#' 
-#' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
-#' taxonomic ranks on feature table, should they be scraped from prefixes?
-#' (default \code{rankFromPrefix = FALSE})
-#' 
-#' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
-#' some taxonomic character naming artifacts, should they be removed.
-#' (default \code{remove.artifacts = FALSE})
-#' 
 #' @param ... additional arguments 
 #'   \itemize{
-#'        \item{\code{patter}}{\code{character} value specifying artifacts
+#'        \item{\code{pattern}}{\code{character} value specifying artifacts
 #'        to be removed. If \code{patterns = "auto"}, special characters
 #'        are removed. (default: \code{pattern = "auto"})}
+#'        \item{\code{removeTaxaPrefixes}}{\code{TRUE} or \code{FALSE}: Should
+#'        taxonomic prefixes be removed? The prefixes is removed only from 
+#'        detected taxa columns meaning that \code{rankFromPrefix} should be 
+#'        enabled in the most cases. 
+#'        (default \code{removeTaxaPrefixes = FALSE})}
+#'        \item{\code{rankFromPrefix}}{\code{TRUE} or \code{FALSE}: If file does
+#'         not have taxonomic ranks on feature table, should they be scraped 
+#'         from prefixes? (default \code{rankFromPrefix = FALSE})}
+#'         \item{\code{remove.artifacts}}{\code{TRUE} or \code{FALSE}: If file 
+#'         have some taxonomic character naming artifacts, should they be 
+#'         removed. (default \code{remove.artifacts = FALSE})}
 #'    }
 #' 
 #' @return An object of class
