@@ -4,19 +4,11 @@
 \alias{calculateUnifrac}
 \alias{calculateUnifrac,ANY,phylo-method}
 \alias{calculateUnifrac,TreeSummarizedExperiment,missing-method}
-\alias{runUnifrac}
 \title{Calculate weighted or unweighted (Fast) Unifrac distance}
 \usage{
 calculateUnifrac(x, tree, ...)
 
-\S4method{calculateUnifrac}{ANY,phylo}(
-  x,
-  tree,
-  weighted = FALSE,
-  normalized = TRUE,
-  BPPARAM = SerialParam(),
-  ...
-)
+\S4method{calculateUnifrac}{ANY,phylo}(x, tree, weighted = FALSE)
 
 \S4method{calculateUnifrac}{TreeSummarizedExperiment,missing}(
   x,
@@ -24,17 +16,6 @@ calculateUnifrac(x, tree, ...)
   assay_name = exprs_values,
   exprs_values = "counts",
   tree_name = "phylo",
-  transposed = FALSE,
-  ...
-)
-
-runUnifrac(
-  x,
-  tree,
-  weighted = FALSE,
-  normalized = TRUE,
-  nodeLab = NULL,
-  BPPARAM = SerialParam(),
   ...
 )
 }
@@ -61,16 +42,6 @@ species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is \code{FALSE}, meaning the
 unweighted-Unifrac distance is calculated for all pairs of samples.}
 
-\item{normalized}{\code{TRUE} or \code{FALSE}: Should the output be
-normalized such that values range from 0 to 1 independent of branch length
-values? Default is \code{TRUE}. Note that (unweighted) \code{Unifrac} is
-always normalized by total branch-length, and so this value is ignored when
-\code{weighted == FALSE}.}
-
-\item{BPPARAM}{A
-\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether the Unifrac calculation should be parallelized.}
-
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
@@ -87,14 +58,24 @@ assay to use for calculation.
 tree will be used in calculation.
 (By default: \code{tree_name = "phylo"})}
 
-\item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
-is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
-(By default: \code{transposed = FALSE})}
-
 \item{nodeLab}{if \code{x} is a matrix,
 a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
 The length must equal the number of rows/columns of \code{x}. Furthermore, all the
 node labs must be present in \code{tree}.}
+
+\item{normalized}{\code{TRUE} or \code{FALSE}: Should the output be
+normalized such that values range from 0 to 1 independent of branch length
+values? Default is \code{TRUE}. Note that (unweighted) \code{Unifrac} is
+always normalized by total branch-length, and so this value is ignored when
+\code{weighted == FALSE}.}
+
+\item{BPPARAM}{A
+\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
+object specifying whether the Unifrac calculation should be parallelized.}
+
+\item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
+is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
+(By default: \code{transposed = FALSE})}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.
