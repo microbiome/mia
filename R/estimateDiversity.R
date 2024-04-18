@@ -254,7 +254,11 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         }
 
         # input check
-        index<- match.arg(index, several.ok = TRUE)
+        supported_index <- c("coverage", "fisher", "gini_simpson", 
+                             "inverse_simpson", "log_modulo_skewness", "shannon")
+        if( !all( index %in% supported_index ) ){
+            stop("'index' contains unsupported indices.", call. = FALSE)
+        }
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
