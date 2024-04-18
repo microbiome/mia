@@ -67,6 +67,7 @@ reference:
   - meltAssay
   - relabundance
   - subsampleCounts
+  - subsetSamples
 - subtitle: Datasets
 - contents:
   - mia-datasets
