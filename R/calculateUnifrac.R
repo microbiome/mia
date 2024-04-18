@@ -21,12 +21,7 @@
 #'   \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
 #'   matrix. This means that the phylo object and the columns should relate
 #'   to the same type of features (aka. microorganisms).
-#'   
-#' @param nodeLab if \code{x} is a matrix, 
-#'   a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
-#'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the 
-#'   node labs must be present in \code{tree}.
-#'
+#'  
 #' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   
@@ -48,20 +43,6 @@
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
 #'   unweighted-Unifrac distance is calculated for all pairs of samples.
-#'
-#' @param normalized \code{TRUE} or \code{FALSE}: Should the output be
-#'   normalized such that values range from 0 to 1 independent of branch length
-#'   values? Default is \code{TRUE}. Note that (unweighted) \code{Unifrac} is
-#'   always normalized by total branch-length, and so this value is ignored when
-#'   \code{weighted == FALSE}.
-#'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the Unifrac calculation should be parallelized.
-#'
-#' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
-#'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
-#'   (By default: \code{transposed = FALSE})
 #'   
 #' @param ... optional arguments not used.
 #'
@@ -105,7 +86,6 @@
 #' library(scater)
 #' calculateUnifrac(esophagus, weighted = FALSE)
 #' calculateUnifrac(esophagus, weighted = TRUE)
-#' calculateUnifrac(esophagus, weighted = TRUE, normalized = FALSE)
 #' # for using calculateUnifrac in conjunction with runMDS the tree argument
 #' # has to be given separately. In addition, subsetting using ntop must
 #' # be disabled
