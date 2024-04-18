@@ -26,9 +26,10 @@
 #' @param name A single character value specifying the name of transformed
 #'   abundance table.
 #' 
-#' @param pseudocount TRUE or FALSE, should the minimum value of \code{assay.type} 
-#'   be added to assay values. Alternatively, a numeric value specifying the value
-#'   to be added. (default: \code{pseudocount = FALSE})
+#' @param pseudocount TRUE, FALSE, or a numeric value. When TRUE,
+#'   automatically adds the minimum positive value of \code{assay.type}.
+#'   When FALSE, does not add any pseudocount (pseudocount = 0).
+#'   Alternatively, a user-specified numeric value can be added as pseudocount.
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
@@ -564,7 +565,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
         pseudocount <- ifelse(pseudocount, min(mat[mat>0]), 0)
         # Report pseudocount if positive value
         if ( pseudocount > 0 ){
-            message(paste("A pseudocount of", pseudocount, "was applied."))
+            message("A pseudocount of ", pseudocount, " was applied.")
         }
     }
     # Give warning if pseudocount should not be added

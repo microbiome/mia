@@ -27,11 +27,11 @@
 #' By default, clustering is done on the features.
 #'
 #' @return
-#' \code{cluster} returns an object of the same type as the \code{x} parameter 
+#' \code{addCluster} returns an object of the same type as the \code{x} parameter 
 #' with clustering information named \code{clusters} stored in \code{colData} 
 #' or \code{rowData}. 
 #'
-#' @name cluster
+#' @name addCluster
 #' @export
 #' 
 #' @author Basil Courbayre
@@ -42,10 +42,10 @@
 #' tse <- GlobalPatterns
 #'
 #' # Cluster on rows using Kmeans
-#' tse <- cluster(tse, KmeansParam(centers = 3))
+#' tse <- addCluster(tse, KmeansParam(centers = 3))
 #' 
 #' # Clustering done on the samples using Hclust
-#' tse <- cluster(tse, 
+#' tse <- addCluster(tse, 
 #'                MARGIN = "samples", 
 #'                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 #' 
@@ -54,110 +54,62 @@
 #' 
 NULL
 
-#' @rdname cluster
+#' @rdname addCluster
 #' @export
-setGeneric("cluster", signature = c("x"),
-           function(x, BLUSPARAM, assay.type = assay_name, 
-                    assay_name = "counts", MARGIN = "features", full = FALSE, 
-                    name = "clusters", clust.col = "clusters", ...)
-               standardGeneric("cluster"))
+setGeneric("addCluster", signature = c("x"),
+    function(
+            x, BLUSPARAM, assay.type = assay_name, 
+            assay_name = "counts", MARGIN = "features", full = FALSE, 
+            name = "clusters", clust.col = "clusters", ...)
+    standardGeneric("addCluster"))
 
-#' @rdname cluster
+
+#' @rdname addCluster
 #' @export
 #' @importFrom bluster clusterRows
-setMethod("cluster", signature = c(x = "SummarizedExperiment"),
-          function(x, BLUSPARAM, assay.type = assay_name, 
-                   assay_name = "counts", MARGIN = "features", full = FALSE, 
-                   name = "clusters", clust.col = "clusters", ...) {
+setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
+    function(
+            x, BLUSPARAM, assay.type = assay_name, 
+            assay_name = "counts", MARGIN = "features", full = FALSE, 
+            name = "clusters", clust.col = "clusters", ...) {
+        .require_package("bluster")
         # Checking parameters
-        MARGIN <- .check_margin(MARGIN)
-        se_altexp <- .get_altExp(x, ...)
-        se <- se_altexp$se
-        # If there wasn't an altExp in the SE (or if the name was wrong), altexp 
-        # is set to NULL, if it exists altexp contains the name of the altExp
-        altexp <- se_altexp$altexp
-        .check_data_name(se, clust.col, MARGIN)
+        MARGIN <- .check_MARGIN(MARGIN)
+        se <- .check_and_get_altExp(x, ...)
         .check_assay_present(assay.type, se)
-        
-        if (full) {
-            .check_name(se, name)
+        if( !.is_a_string(name) ){
+            stop("'name' must be a non-empty single character value.",
+                call. = FALSE)
         }
+        if( !.is_a_string(clust.col) ){
+            stop("'clust.col' must be a non-empty single character value.",
+                call. = FALSE)
+        }
+        if( !.is_a_bool(full) ){
+            stop("'full' must be TRUE or FALSE.", call. = FALSE)
+        }
+        #
+        # Get assay
         mat <- assay(se, assay.type)
-        
         # Transpose if clustering on the columns
         if(MARGIN == 2){
             mat <- t(mat)
         }
-        
+        # Get clusters
         result <- clusterRows(mat, BLUSPARAM, full)
-        # Getting the clusters and setting metadata
+        # If user has specified full=TRUE, result includes additional info
+        # that will be stored to metadata.
         if (full) {
             clusters <- result$clusters
-            metadata(se)[[name]] <- result$objects
+            x <- .add_values_to_metadata(x, name, result$objects, ...)
         } else {
             clusters <- result
         }
-        
-        # Setting clusters in the object
-        if (MARGIN == 1) {
-            rowData(se)[[clust.col]] <- clusters
-        } else {
-            colData(se)[[clust.col]] <- clusters
-        }
-        
-        # If there was an altexp, update it in the mainExp
-        if (!is.null(altexp)) {
-            altExp(x, altexp) <- se
-        } else {
-            x <- se
-        }
-        
-        x
+        # Setting clusters in the object. The adding function requires data as
+        # list
+        clusters <- list(clusters)
+        x <- .add_values_to_colData(
+            x, clusters, clust.col, MARGIN = MARGIN, colname = "clust.col", ...)
+        return(x)
     }
 )
-
-.get_altExp <- function(x, ...) {
-    altexppos <- which(...names() == "altexp")
-    if (length(altexppos) == 0) {
-        altexp <- NULL
-    } else {
-        altexp <- ...elt(altexppos)
-    }
-    se <- .check_and_get_altExp(x, altexp)
-    list(se = se, altexp = altexp)
-}
-
-.check_margin <- function(MARGIN) {
-    if (.is_non_empty_string(MARGIN)) {
-        MARGIN <- tolower(MARGIN)
-    }
-    if (length(MARGIN) != 1L 
-        || !(MARGIN %in% c(1, 2, "features", "samples", "columns", 
-                           "col", "row", "rows", "cols"))) {
-        stop("'MARGIN' must equal to either 1, 2, 'features', 'samples', 'columns', 'col', 'row', 'rows', or 'cols'.",
-             call. = FALSE)
-    }
-    MARGIN <- ifelse(MARGIN %in% c("samples", "columns", "col", 2, "cols"), 
-                     2, 1)
-    MARGIN
-}
-
-.check_name <- function(x, name) {
-    if (name %in% names(metadata(x))) {
-        stop("The 'name' must not exist in the metadata of the object.", call. = FALSE)
-    }
-}
-
-.check_data_name <- function(x, clust.col, MARGIN) {
-    if (MARGIN == 1) {
-        if (clust.col %in% names(rowData(x))) {
-            stop("The 'clust.col' parameter must not exist in the names of the rowData of the object.", 
-                 call. = FALSE)
-        }
-    } else {
-        if (clust.col %in% names(colData(x))) {
-            stop("The 'clust.col' parameter must not exist in the names of the colData of the object.", 
-                 call. = FALSE)
-        }
-    }
-}

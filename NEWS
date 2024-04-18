@@ -95,3 +95,16 @@ Changes in version 1.9.x
 + loadFromHumann: Improved speed
 
 Changes in version 1.11.x
++ loadFromMetaphlan: support strain rank
++ agglomerateByRank: agglomerate tree fix
++ Replace taxonomyTree and addTaxonomyTree with getHierarchyTree and addHierarchyTree
++ splitOn: update rowTree fix
++ perSampleDominantFeatures: add new arguments (n, other.name, complete)
++ loadFromMetaphlan: support "taxonomy" column for specifying taxonomy
++ cluster: Overwrite old results instead of failing
++ getPrevalence: bugfix, if assay contains NA values, it does not end up to NA anymore.
++ getExperimentCrossCorrelation fix: enable using of sampleMap in MAE.
++ Implemented the setTaxonomyRanks function to specify which ranks are recognized as taxonomy ranks.
++ Rename cluster to addCluster
++ rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
+loadFromMetaphlan, loadFromHumann

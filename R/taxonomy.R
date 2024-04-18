@@ -18,12 +18,6 @@
 #'   the lowest taxonomic information possible. If data from different levels,
 #'   is to be mixed, the taxonomic level is prepended by default.
 #'
-#' \code{taxonomyTree} generates a \code{phylo} tree object from the available
-#'   taxonomic information. Internally it uses
-#'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
-#'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
-#'   data if needed.
-#'
 #' \code{IdTaxaToDataFrame} extracts taxonomic results from results of
 #'   \code{\link[DECIPHER:IdTaxa]{IdTaxa}}.
 #'
@@ -40,11 +34,11 @@
 #'   object
 #'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomyRanks()} function.
+#'   \code{taxonomyRanks()} function
 #'
 #' @param empty.fields a \code{character} value defining, which values should be
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
-#'   removed if \code{na.rm = TRUE} before agglomeration.
+#'   removed if \code{na.rm = TRUE} before agglomeration
 #'
 #' @param with_rank \code{TRUE} or \code{FALSE}: Should the level be add as a
 #'   suffix? For example: "Phylum:Crenarchaeota" (default:
@@ -77,7 +71,8 @@
 #'   (default: \code{FALSE})
 #'
 #' @param ... optional arguments not used currently.
-#'
+#' 
+#' @param ranks Avector of ranks to be set
 #' @details
 #' Taxonomic information from the \code{IdTaxa} function of \code{DECIPHER}
 #' package are returned as a special class. With \code{as(taxa,"DataFrame")}
@@ -122,12 +117,16 @@
 #' mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 #' # returns information on a single output
 #' mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
-#'
-#' # adding a rowTree() based on the available taxonomic information. Please
-#' # note that any tree already stored in rowTree() will be overwritten.
-#' x <- GlobalPatterns
-#' x <- addTaxonomyTree(x)
-#' x
+#' 
+#' # setTaxonomyRanks
+#' tse <- GlobalPatterns
+#' colnames(rowData(tse))[1] <- "TAXA1"
+#' 
+#' setTaxonomyRanks(colnames(rowData(tse)))
+#' # Taxonomy ranks set to: taxa1 phylum class order family genus species 
+#' 
+#' # getTaxonomyRanks is to get/check if the taxonomic ranks is set to "TAXA1"
+#' getTaxonomyRanks()
 NULL
 
 #' @rdname taxonomy-methods
@@ -139,8 +138,8 @@ TAXONOMY_RANKS <- c("domain","kingdom","phylum","class","order","family",
 
 #' @rdname taxonomy-methods
 setGeneric("taxonomyRanks", signature = c("x"),
-           function(x)
-             standardGeneric("taxonomyRanks"))
+            function(x)
+            standardGeneric("taxonomyRanks"))
 
 #' @rdname taxonomy-methods
 #'
@@ -156,10 +155,10 @@ setMethod("taxonomyRanks", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname taxonomy-methods
 setGeneric("taxonomyRankEmpty",
-           signature = "x",
-           function(x, rank = taxonomyRanks(x)[1L],
+            signature = "x",
+            function(x, rank = taxonomyRanks(x)[1L],
                     empty.fields = c(NA, "", " ", "\t", "-", "_"))
-             standardGeneric("taxonomyRankEmpty"))
+            standardGeneric("taxonomyRankEmpty"))
 
 #' @rdname taxonomy-methods
 #' @aliases taxonomyRankEmpty
@@ -169,18 +168,18 @@ setGeneric("taxonomyRankEmpty",
 #' @export
 setMethod("taxonomyRankEmpty", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1],
-           empty.fields = c(NA, "", " ", "\t", "-", "_")){
+            empty.fields = c(NA, "", " ", "\t", "-", "_")){
     # input check
     if(ncol(rowData(x)) == 0L){
         stop("rowData needs to be populated.", call. = FALSE)
     }
     if(!.is_non_empty_string(rank)){
         stop("'rank' must be an non empty single character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(!is.character(empty.fields) || length(empty.fields) == 0L){
         stop("'empty.fields' must be a character vector with one or ",
-             "more value", call. = FALSE)
+            "more value", call. = FALSE)
     }
     .check_taxonomic_rank(rank, x)
     .check_for_taxonomic_data_order(x)
@@ -191,9 +190,9 @@ setMethod("taxonomyRankEmpty", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname taxonomy-methods
 setGeneric("checkTaxonomy",
-           signature = "x",
-           function(x, ...)
-             standardGeneric("checkTaxonomy"))
+            signature = "x",
+            function(x, ...)
+              standardGeneric("checkTaxonomy"))
 
 #' @rdname taxonomy-methods
 #' @aliases checkTaxonomy
@@ -208,6 +207,32 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
         ans
     }
 )
+
+#' @rdname taxonomy-methods
+#' @importFrom utils assignInMyNamespace
+#' @aliases checkTaxonomy
+#' @export
+# Function to set taxonomy ranks
+setTaxonomyRanks <- function(ranks) {
+    ranks <- tolower(ranks)
+    # Check if rank is a character vector with length >= 1
+    if (!is.character(ranks) || length(ranks) < 1 
+        || any(ranks == "" | ranks == " " | ranks == "\t" | ranks == "-" | ranks == "_")
+        || any(grepl("\\s{2,}", ranks))) {
+        stop("Input 'rank' should be a character vector with non-empty strings,
+             no spaces, tabs, hyphens, underscores, and non-continuous spaces."
+             , call. = FALSE)
+    }
+    #Replace default value of mia::TAXONOMY_RANKS
+    assignInMyNamespace("TAXONOMY_RANKS", ranks)
+}
+
+#' @rdname taxonomy-methods
+#' @export
+# Function to get taxonomy ranks
+getTaxonomyRanks <- function() {
+    return(TAXONOMY_RANKS)
+}
 
 .check_taxonomic_rank <- function(rank, x){
     if(length(rank) != 1L){
@@ -232,8 +257,8 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
     f <- tolower(ranks) %in% TAXONOMY_RANKS
     if(!any(f)){
         stop("no taxonomic ranks detected in rowData(). Columns with one of ",
-             "the following names can be used: '",
-             paste(TAXONOMY_RANKS, collapse = "', '"), "'", call. = FALSE)
+            "the following names can be used: '",
+            paste(TAXONOMY_RANKS, collapse = "', '"), "'", call. = FALSE)
     }
     m <- match(TAXONOMY_RANKS, tolower(ranks[f]))
     m <- m[!is.na(m)]
@@ -242,25 +267,25 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
     check <- unique(c(m[-1], m[length(m)]) - m )
     if(!all(check %in% c(1L,0L))){
         stop("Taxonomic ranks are not in order. Please reorder columns, which ",
-             "correspond to taxonomic ranks like this:\n'",
-             paste(TAXONOMY_RANKS, collapse = "', '"), "'.",
-             call. = FALSE)
+            "correspond to taxonomic ranks like this:\n'",
+            paste(TAXONOMY_RANKS, collapse = "', '"), "'.",
+            call. = FALSE)
     }
 }
 
 
 #' @rdname taxonomy-methods
 setGeneric("getTaxonomyLabels",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("getTaxonomyLabels"))
+            signature = "x",
+            function(x, ...)
+                standardGeneric("getTaxonomyLabels"))
 
 #' @rdname taxonomy-methods
 #' @aliases checkTaxonomy
 #' @export
 setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"),
-             with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE, ...){
+            with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE, ...){
         # input check
         if(nrow(x) == 0L){
             stop("No data available in `x` ('x' has nrow(x) == 0L.)",
@@ -316,14 +341,17 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 
     tax_ranks_non_empty <- t(as(tax_ranks_non_empty,"matrix"))
     tax_ranks_selected <- apply(tax_ranks_non_empty,1L,which)
-    if(any(lengths(tax_ranks_selected) == 0L)){
+    # Check if every row got at least some rank information from taxonomy table
+    # i.e. the info was not empty.
+    if( any(lengths(tax_ranks_selected) == 0L) || length(
+        tax_ranks_selected) == 0L){
         if(!anyDuplicated(rownames(x))){
             return(NULL)
         }
         stop("Only empty taxonomic information detected. Some rows contain ",
-             "only entries selected by 'empty.fields'. Cannot generated ",
-             "labels. Try option na.rm = TRUE in the function call.",
-             call. = FALSE)
+            "only entries selected by 'empty.fields'. Cannot generated ",
+            "labels. Try option na.rm = TRUE in the function call.",
+            call. = FALSE)
     }
     #
     if(is.matrix(tax_ranks_selected)){
@@ -349,9 +377,9 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 }
 
 .get_taxonomic_label <- function(x,
-                                 empty.fields = c(NA, "", " ", "\t", "-", "_"),
-                                 with_rank = FALSE,
-                                 resolve_loops = FALSE){
+                                empty.fields = c(NA, "", " ", "\t", "-", "_"),
+                                with_rank = FALSE,
+                                resolve_loops = FALSE){
     rd <- rowData(x)
     tax_cols <- .get_tax_cols_from_se(x)
     tax_ranks_selected <- .get_tax_ranks_selected(x, rd, tax_cols, empty.fields)
@@ -369,9 +397,9 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     #
     all_same_rank <- length(unique(tax_cols_selected)) == 1L
     ans <- mapply("[",
-                  as.data.frame(t(as.data.frame(rd))),
-                  tax_cols_selected,
-                  SIMPLIFY = FALSE)
+                    as.data.frame(t(as.data.frame(rd))),
+                    tax_cols_selected,
+                    SIMPLIFY = FALSE)
     ans <- unlist(ans, use.names = FALSE)
     if(with_rank || !all_same_rank){
         ans <- .add_taxonomic_type(rd, ans, tax_cols_selected)
@@ -379,21 +407,70 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-#' @rdname taxonomy-methods
-setGeneric("taxonomyTree",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("taxonomyTree"))
+#' Calculate hierarchy tree
+#' 
+#' These functions generate a hierarchy tree using taxonomic information from a
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{SummarizedExperiment}}
+#' object and add this hierarchy tree into the \code{rowTree}.
+#' 
+#' @inheritParams taxonomy-methods
+#' 
+#' @details
+#' 
+#' \code{addHierarchyTree} calculates a hierarchy tree from the available 
+#'   taxonomic information and add it to \code{rowTree}.
+#'   
+#' \code{getHierarchyTree} generates a hierarchy tree from the available
+#'   taxonomic information. Internally it uses
+#'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
+#'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
+#'   data if needed.
+#'   
+#' Please note that a hierarchy tree is not an actual phylogenetic tree.
+#' A phylogenetic tree represents evolutionary relationships among features.
+#' On the other hand, a hierarchy tree organizes species into a hierarchical 
+#' structure based on their taxonomic ranks. 
+#' 
+#' @return
+#' \itemize{
+#'   \item{\code{addHierarchyTree}:} {a \code{TreeSummarizedExperiment} whose
+#'   \code{phylo} tree represents the hierarchy among available taxonomy 
+#'   information}
+#'   \item{\code{getHierarchyTree}:} {a \code{phylo} tree representing the 
+#'   hierarchy among available taxonomy information.}
+#' }
+#' 
+#' @name hierarchy-tree
+#' 
+#' @examples
+#' # Generate a tree based on taxonomic rank hierarchy (a hierarchy tree).
+#' data(GlobalPatterns)
+#' tse <- GlobalPatterns
+#' getHierarchyTree(tse)
+#' 
+#' # Add a hierarchy tree to a TreeSummarizedExperiment.
+#' # Please note that any tree already stored in rowTree() will be overwritten.
+#' tse <- addHierarchyTree(tse)
+#' tse
+NULL
 
-#' @rdname taxonomy-methods
+#' @rdname hierarchy-tree
+setGeneric("getHierarchyTree",
+            signature = "x",
+            function(x, ...)
+                standardGeneric("getHierarchyTree"))
+
+#' @rdname hierarchy-tree
+#' @aliases getHierarchyTree
 #' @export
-setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
+#' @importFrom ape drop.tip
+setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
         # Input check
         # If there is no rowData it is not possible to create rowTree
         if( ncol(rowData(x)) == 0L ){
             stop("'x' does not have rowData. Tree cannot be created.", 
-                 call. = FALSE)
+                call. = FALSE)
         }
         #
         # Converted to data.frame so that drop = FALSE is enabled
@@ -411,32 +488,33 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
         for(i in rev(seq_len(ncol(td)))){
             if(any(td_NA[,i])){
                 to_drop <- paste0(colnames(td)[i],":",td[,i][td_NA[,i]])
-                tree <- ape::drop.tip(tree,
-                                      to_drop,
-                                      trim.internal = FALSE,
-                                      collapse.singles = FALSE)
+                tree <- drop.tip(
+                    tree,
+                    to_drop,
+                    trim.internal = FALSE,
+                    collapse.singles = FALSE)
             }
         }
         tree
     }
 )
 
-#' @rdname taxonomy-methods
-setGeneric("addTaxonomyTree",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("addTaxonomyTree"))
+#' @rdname hierarchy-tree
+setGeneric("addHierarchyTree",
+            signature = "x",
+            function(x, ...)
+                standardGeneric("addHierarchyTree"))
 
-#' @rdname taxonomy-methods
+#' @rdname hierarchy-tree
 #' @export
-setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
+setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
     function(x){
         #
-        tree <- taxonomyTree(x)
+        tree <- getHierarchyTree(x)
         x <- as(x,"TreeSummarizedExperiment")
         rownames(x) <- getTaxonomyLabels(x, with_rank = TRUE,
-                                         resolve_loops = TRUE,
-                                         make_unique = FALSE)
+                                        resolve_loops = TRUE,
+                                        make_unique = FALSE)
         x <- changeTree(x, tree, rownames(x))
         x
     }
@@ -444,9 +522,9 @@ setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname taxonomy-methods
 setGeneric("mapTaxonomy",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("mapTaxonomy"))
+            signature = "x",
+            function(x, ...)
+                standardGeneric("mapTaxonomy"))
 
 #' @importFrom BiocGenerics %in% grepl
 .get_taxa_row_match <- function(taxa, td, from, use_grepl = FALSE){
@@ -487,33 +565,33 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
         # input check
         if(!checkTaxonomy(x)){
             stop("Non compatible taxonomic information found. ",
-                 "checkTaxonomy(x) must be TRUE.",
-                 call. = FALSE)
+                "checkTaxonomy(x) must be TRUE.",
+                call. = FALSE)
         }
         if(!is.null(taxa)){
             if(!is.character(taxa)){
                 stop("'taxa' must be a character vector.",
-                     call. = FALSE)
+                    call. = FALSE)
             }
         }
         if(!is.null(from)){
             if(!.is_a_string(from)){
                 stop("'from' must be a single character value.",
-                     call. = FALSE)
+                    call. = FALSE)
             }
             if(!(from %in% taxonomyRanks(x))){
                 stop("'from' must be an element of taxonomyRanks(x).",
-                     call. = FALSE)
+                    call. = FALSE)
             }
         } 
         if(!is.null(to)){
             if(!.is_a_string(to)){
                 stop("'to' must be a single character value.",
-                     call. = FALSE)
+                    call. = FALSE)
             }
             if(!(to %in% taxonomyRanks(x))){
                 stop("'to' must be an element of taxonomyRanks(x).",
-                     call. = FALSE)
+                    call. = FALSE)
             }
         }
         if(!is.null(from) && !is.null(to)){
@@ -534,11 +612,11 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
         c_f <- rep(TRUE,ncol(td))
         if(!is.null(from)){
             r_fs <- lapply(taxa, .get_taxa_row_match, td = td, from = from,
-                           use_grepl = use_grepl)
+                            use_grepl = use_grepl)
             names(r_fs) <- taxa
         } else {
             r_fs <- lapply(taxa, .get_taxa_any_match, td = td,
-                           use_grepl = use_grepl)
+                            use_grepl = use_grepl)
             names(r_fs) <- taxa
         }
         if(!is.null(to)) {

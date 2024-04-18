@@ -10,10 +10,13 @@
 #' instances where it can be useful.
 #' Note that the output of \code{subsampleCounts} is not the equivalent as the 
 #' input and any result have to be verified with the original dataset.
-#' 
+#'
 #' Subsampling/Rarefying may undermine downstream analyses and have unintended
 #' consequences. Therefore, make sure this normalization is appropriate for
 #' your data.
+#'
+#' To maintain the reproducibility, please define the seed using set.seed() 
+#' before implement this function.
 #'
 #' @param x A \code{SummarizedExperiment} object.
 #'
@@ -31,8 +34,6 @@
 #'   simulated this can equal to lowest number of total counts 
 #'   found in a sample or a user specified number. 
 #'   
-#' @param seed A random number seed for reproducibility of sampling. 
-#' 
 #' @param replace Logical Default is \code{TRUE}. The default is with 
 #'   replacement (\code{replace=TRUE}). 
 #'   See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
@@ -182,7 +183,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
 # Modified Sub sampling function from phyloseq internals
 .subsample_assay <- function(x, min_size, replace){
     # Create replacement species vector
-    rarvec <- numeric(length(x))    
+    rarvec <- numeric(length(x))  
     # Perform the sub-sampling. Suppress warnings due to old R compat issue.
     # Also, make sure to avoid errors from x summing to zero, 
     # and there are no observations to sample.

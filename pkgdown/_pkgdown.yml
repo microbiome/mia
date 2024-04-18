@@ -15,11 +15,11 @@ reference:
 - contents:
   - makeTreeSummarizedExperimentFromPhyloseq
   - makeTreeSummarizedExperimentFromDADA2
-  - loadFromBiom
-  - loadFromQIIME2
-  - loadFromMothur
-  - loadFromMetaphlan
-  - loadFromHumann
+  - importBIOM
+  - importQIIME2
+  - importMothur
+  - importMetaPhlAn
+  - importHUMAnN
   - makePhyloseqFromTreeSummarizedExperiment
 - title: Taxonomic data
   contents:
@@ -47,6 +47,7 @@ reference:
   - getPrevalentAbundance
   - getTopTaxa
   - getExperimentCrossCorrelation
+  - hierarchy-tree
 - subtitle: Dominance
 - contents:
   - perSampleDominantTaxa
@@ -57,7 +58,7 @@ reference:
 - subtitle: Clustering
 - contents:
   - calculateDMN
-  - cluster
+  - addCluster
 - subtitle: decontam
 - contents:
   - isContaminant
@@ -80,3 +81,6 @@ reference:
 - subtitle: Package
 - contents:
   - mia-package
+- subtitle: Deprecated functions
+- contents:
+  - deprecate

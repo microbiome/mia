@@ -52,14 +52,14 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name loadFromMetaphlan
+#' @name importMetaPhlAn
 #' @seealso
-#' \code{\link[=loadFromHumann]{loadFromHumann}}
+#' \code{\link[=importHUMAnN]{importHUMAnN}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 #' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
-#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
-#' \code{\link[=loadFromMothur]{loadFromMothur}}
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
 #'
 #' @export
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -78,7 +78,7 @@
 #' # File path
 #' file_path <- system.file("extdata", "merged_abundance_table.txt", package = "mia")
 #' # Import data
-#' tse <- loadFromMetaphlan(file_path)
+#' tse <- importMetaPhlAn(file_path)
 #' # Data at the lowest rank
 #' tse
 #' # Data at higher rank is stored in altExp
@@ -88,34 +88,42 @@
 #' 
 NULL
 
-loadFromMetaphlan <- function(
+importMetaPhlAn <- function(
         file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL, ...){
+    
     ################################ Input check ################################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
     if(!is.null(colData) &&
-       !(.is_non_empty_string(colData) || is.data.frame(colData) ||
-         is.matrix(colData) || is(colData, "DataFrame")) ){
+        !(.is_non_empty_string(colData) || is.data.frame(colData) ||
+            is.matrix(colData) || is(colData, "DataFrame")) ){
         stop("'colData' must be a single character value, DataFrame or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(!is.null(phy_tree) && !.is_non_empty_string(phy_tree)){
         stop("'phy_tree' must be a single character value or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     ############################## Input check end #############################
+    # Get rowdata columns. metaphlan v2 has ID column. Metaphlan > v2 has
+    # clade_name for taxonomy names. Some has taxonomy.
+    rowdata_col <- c("clade_name", "ID", "_id", "taxonomy")
     # Read metaphlan data
-    data <- .read_metaphlan(file, ...)
+    data <- .read_metaphlan(file, rowdata_col, ...)
     # Parse data into separate tables, which include data at certain taxonomy rank
     tables <- .parse_metaphlan(data, ...)
 
     # Create multiple SE objects at different rank from the data
-    se_objects <- lapply(tables, .create_se_from_metaphlan, ...)
+    available_ranks <- names(tables)
+    se_objects <- lapply(tables, function(x){
+        .create_se_from_metaphlan(
+            x, rowdata_col, returned.ranks = available_ranks, ...)
+        })
     
     # Get the object with lowest rank
     tse <- se_objects[[ length(se_objects) ]]
@@ -130,6 +138,8 @@ loadFromMetaphlan <- function(
             altExp(tse, rank) <- se_objects[[rank]]
         }
     }
+    # Set taxonomy ranks using .set_taxonomy_ranks
+    .set_ranks_based_on_rowdata(tse,...)
     
     # Load sample meta data if it is provided
     if( !is.null(colData) ) {
@@ -149,7 +159,7 @@ loadFromMetaphlan <- function(
 ################################ HELP FUNCTIONS ################################
 
 # Read Metaphlan file, catch error if it occurs
-.read_metaphlan <- function(file, remove.suffix = FALSE, ...){
+.read_metaphlan <- function(file, rowdata_col, remove.suffix = FALSE, ...){
     ################################ Input check ###############################
     if(!.is_a_bool(remove.suffix)){
         stop("'remove.suffix' must be TRUE or FALSE.", call. = FALSE)
@@ -162,28 +172,26 @@ loadFromMetaphlan <- function(
         },
         error = function(condition){
             stop("Error while reading ", file,
-                 "\nPlease check that the file is in merged Metaphlan file format.",
-                 call. = FALSE)
+                "\nPlease check that the file is in merged Metaphlan file format.",
+                call. = FALSE)
         }
     )
     # Check that file is in right format
-    if( .check_metaphlan(table) ){
+    if( .check_metaphlan(table, rowdata_col) ){
         stop("Error while reading ", file,
-             "\nPlease check that the file is in merged Metaphlan file format.",
-             call. = FALSE)
+            "\nPlease check that the file is in merged Metaphlan file format.",
+            call. = FALSE)
     }
     # Remove possible suffix from the colnames if user has specified
     if( remove.suffix ){
-        table <- .remove_suffix(table, c("clade_name", "ID", "_id"))
+        table <- .remove_suffix(table, rowdata_col)
     }
     return(table)
 }
 
 # Check that metaphlan file contains correct information
-.check_metaphlan <- function(data){
-    # Get rowdata columns. metaphlan v2 has ID column. Metaphlan > v2 has
-    # clade_name for taxonomy names
-    rowdata_col <- c("clade_name", "ID", "_id")
+.check_metaphlan <- function(data, rowdata_col){
+    # Get rowData columns
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
     rowdata_columns <- data[ , rowdata_id, drop = FALSE]
     # Get columns that go to assay
@@ -194,8 +202,8 @@ loadFromMetaphlan <- function(
     # Check rowdata column names that they contain right information, and check that 
     # rest of the columns represents abundances in samples.
     # If these requirements are met, give FALSE. Otherwise, give TRUE.
-    if( any(colnames(rowdata_columns) %in% c("clade_name", "ID")) && 
-        is.numeric(unlist(assay_columns)) ){
+    if( length(rowdata_id) > 0 &&
+            all(unlist(lapply(assay_columns, is.numeric))) ){
         result <- FALSE
     }
     return(result)
@@ -207,7 +215,7 @@ loadFromMetaphlan <- function(
     # ID in Metaphlan v2, > 2 clade_name
     col <- colnames(table) %in% c("clade_name", "ID")
     if( sum(col) != 1 ){
-        stop("Error in parsin Metaphlan file.", call. = FALSE)
+        stop("Error in parsing Metaphlan file.", call. = FALSE)
     }
     # Get the lowest level of each row
     
@@ -218,7 +226,8 @@ loadFromMetaphlan <- function(
     # at specific rank
     tables <- split(table, levels)
     # Get the order
-    indices <- match(TAXONOMY_RANKS, tolower(names(tables)))
+    metaphlan_tax = c(TAXONOMY_RANKS, "strain")
+    indices <- match(metaphlan_tax, tolower(names(tables)))
     # Remove NAs which occurs if rank is not included
     indices <- indices[!is.na(indices)]
     # Order tables 
@@ -230,38 +239,40 @@ loadFromMetaphlan <- function(
 # Output is single character that specifies the rank, e.g, "s" == "Species"
 .get_lowest_taxonomic_level <- function(string){
     # Get indices that specify location of rank prefixes 
-    levels <- gregexpr("([kpcofgs]+)__", string)[[1]]
+    levels <- gregexpr("([kpcofgst]+)__", string)[[1]]
     # Get the location of lowest rank
     lowest_level_ind <- levels[length(levels)]
     # Get the lowest rank that was found
     lowest_level <- substr(string, start = lowest_level_ind, stop = lowest_level_ind)
     
     # List all ranks and what prefix they correspond
-    ranks <- c(Domain = "d", Kingdom = "k", Phylum = "p", Class = "c",
-               Order = "o", Family = "f", Genus = "g", Species = "s")
+    ranks <- c(
+        Domain = "d", Kingdom = "k", Phylum = "p", Class = "c", Order = "o",
+        Family = "f", Genus = "g", Species = "s", Strain = "t")
     # Convert prefix into full rank name
     lowest_level <- names(ranks[ match(lowest_level, ranks) ])
     return(lowest_level)
 }
 
 # Create SE object that include rowdata and assay, from the metaphlan table
-.create_se_from_metaphlan <- function(table,
-                                      assay.type = assay_name, assay_name = "counts",
-                                      ...){
+.create_se_from_metaphlan <- function(
+        table, rowdata_col, assay.type = assay_name, assay_name = "counts",
+        ...){
     # Check assay.type
     if( !.is_non_empty_character(assay.type) ){
         stop("'assay.type' must be a non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     # Get rowdata columns
-    rowdata_col <- c("clade_name", "ID", "_id")
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(table)))
     # Get those columns that belong to rowData
     rowdata <- table[, rowdata_id, drop = FALSE]
     # Get those columns that belong to assay
     assay <- table[, -rowdata_id, drop = FALSE]
     # Parse taxonomic levels
-    taxonomy <- .parse_taxonomy(rowdata[ , 1, drop = FALSE], sep = "\\|", column_name = colnames(rowdata)[[1]], ...)
+    taxonomy <- .parse_taxonomy(
+        rowdata[ , 1, drop = FALSE], sep = "\\|",
+        column_name = colnames(rowdata)[[1]], ...)
     # Add parsed taxonomy level information to rowdata
     rowdata <- cbind(taxonomy, rowdata)
     # Ensure that rowData is DataFrame
@@ -299,13 +310,13 @@ loadFromMetaphlan <- function(
         sample_names <- rownames(coldata)
         names(sample_names) <- sample_names
     } else{
-        sample_names <- sapply(rownames(coldata), function(x){
+        sample_names <- vapply(rownames(coldata), function(x){
             x <- colnames(tse)[grep(x, colnames(tse))]
             if( length(x) != 1 ){
                 x <- NULL
             }
             return(x)
-        })
+        },FUN.VALUE = character(1))
         sample_names <- unlist(sample_names)
     }
 
@@ -358,7 +369,8 @@ loadFromMetaphlan <- function(
 # from file names. This can cause problems when, e.g., taxonomy and pathway
 # information is combined. Because their suffixes differ, the sample names
 # differ. The purpose of the function is to remove those file names.
-.remove_suffix <- function( data, rowdata_col = c("clade_name", "ID", "_id") ){
+.remove_suffix <- function(
+        data, rowdata_col = c("clade_name", "ID", "_id", "taxonomy")){
     # Get rowdata columns
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(data)))
     # Get sample names
@@ -382,4 +394,23 @@ loadFromMetaphlan <- function(
         colnames(data)[-rowdata_id] <- sample_names
     }
     return(data)
+}
+.set_ranks_based_on_rowdata <- function(tse,...){
+    # Get ranks from rowData
+    ranks <- colnames(rowData(tse))
+    # Ranks must be character columns
+    is_char <- lapply(rowData(tse), function(x) is.character(x) || is.factor(x))
+    is_char <- unlist(is_char)
+    ranks <- ranks[ is_char ]
+    # rowData is empty, cannot set ranks
+    if( length(ranks) == 0 ){
+        warning(
+            "Ranks cannot be set. rowData(x) does not include columns ",
+            "specifying character values.", call. = FALSE)
+        return(NULL)
+    }
+    # Finally, set ranks and give message
+    tse <- setTaxonomyRanks(ranks)
+    message("TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
+    return(NULL)
 }

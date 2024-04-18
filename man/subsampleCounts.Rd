@@ -57,8 +57,6 @@ abundance table.}
 message about the random number used is printed.}
 
 \item{...}{additional arguments not used}
-
-\item{seed}{A random number seed for reproducibility of sampling.}
 }
 \value{
 \code{subsampleCounts} return \code{x} with subsampled data.
@@ -78,11 +76,14 @@ input and any result have to be verified with the original dataset.
 Subsampling/Rarefying may undermine downstream analyses and have unintended
 consequences. Therefore, make sure this normalization is appropriate for
 your data.
+
+To maintain the reproducibility, please define the seed using set.seed()
+before implement this function.
 }
 \examples{
-# When samples in TreeSE are less than specified min_size, they will be removed.
-# If after subsampling features are not present in any of the samples, 
-# they will be removed.
+# When samples in TreeSE are less than specified min_size, they will be
+# removed. If after subsampling features are not present in any of the
+# samples, they will be removed.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 set.seed(4759)

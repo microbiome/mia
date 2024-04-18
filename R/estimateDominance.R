@@ -186,7 +186,7 @@
 #'
 #' # Indices must be written correctly (e.g. dbp, not dbp), otherwise an error
 #' # gets thrown
-#' \dontrun{esophagus <- estimateDominance(esophagus, index="dbp")}
+#' \donttest{esophagus <- estimateDominance(esophagus, index="dbp")}
 #' # Calculates dbp and Core Abundance indices
 #' suppressWarnings(
 #'     esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))

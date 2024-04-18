@@ -97,9 +97,9 @@ NULL
 #' @rdname splitOn
 #' @export
 setGeneric("splitOn",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("splitOn"))
+            signature = "x",
+            function(x, ...)
+                standardGeneric("splitOn"))
 
 # This function collects f (grouping variable), MARGIN, and 
 # use_names and returns them as a list.
@@ -108,8 +108,8 @@ setGeneric("splitOn",
     # Check f
     if(is.null(f)){
         stop("'f' must either be a single non-empty character value or",
-             " vector coercible to factor alongside the one of the dimensions of 'x'",
-             call. = FALSE)
+            " vector coercible to factor alongside the one of the dimensions of 'x'",
+            call. = FALSE)
     }
     # Check MARGIN
     if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
@@ -122,18 +122,18 @@ setGeneric("splitOn",
         # Check if the length of f matches with one of the dimensions
         if(!length(f) %in% dim(x)){
             stop("'f' must either be a single non-empty character value or",
-                 " vector coercible to factor alongside the on of the ",
-                 "dimensions of 'x'.",
-                 call. = FALSE)
+                " vector coercible to factor alongside the on of the ",
+                "dimensions of 'x'.",
+                call. = FALSE)
         # If it matches with both dimensions, give error if MARGIN is not specified
         } else if( is.null(MARGIN) && all(length(f) == dim(x)) ){
             stop("The length of 'f' matches with nrow and ncol. ",
-                 "Please specify 'MARGIN'.", call. = FALSE)
+                "Please specify 'MARGIN'.", call. = FALSE)
         # If MARGIN is specified but it does not match with length of f
         } else if( !is.null(MARGIN) && (length(f) !=  dim(x)[[MARGIN]]) ){
             stop("'f' does not match with ", 
-                 ifelse(MARGIN==1, "nrow", "ncol"), ". Please check 'MARGIN'.",
-                 call. = FALSE)
+                ifelse(MARGIN==1, "nrow", "ncol"), ". Please check 'MARGIN'.",
+                call. = FALSE)
         # IF f matches with nrow
         } else if(length(f) == dim(x)[[1]] && is.null(MARGIN)  ){
             MARGIN <- 1L
@@ -147,20 +147,20 @@ setGeneric("splitOn",
         if( !is.null(MARGIN) ){
             # Search from rowData or colData based on MARGIN
             dim_name <- switch(MARGIN,
-                               "1" = "rowData",
-                               "2" = "colData")
+                                "1" = "rowData",
+                                "2" = "colData")
             # Specify right function
             dim_FUN <- switch(MARGIN,
-                              "1" = retrieveFeatureInfo,
-                              "2" = retrieveCellInfo)
+                                "1" = retrieveFeatureInfo,
+                                "2" = retrieveCellInfo)
             # Try to get information
             tmp <- try({dim_FUN(x, f, search = dim_name)},
-                       silent = TRUE)
+                        silent = TRUE)
             # Give error if it cannot be found
             if(is(tmp,"try-error")){
                 stop("'f' is not found. ",
-                     "Please check that 'f' specifies a column from ", dim_name, ".", 
-                     call. = FALSE)
+                    "Please check that 'f' specifies a column from ", dim_name, ".", 
+                    call. = FALSE)
             }
             # Get values
             f <- tmp$value
@@ -168,22 +168,22 @@ setGeneric("splitOn",
         } else{
             # Try to get information from rowData
             tmp_row <- try({retrieveFeatureInfo(x, f, search = "rowData")},
-                           silent = TRUE)
+                            silent = TRUE)
             # Try to get information from colData
             tmp_col <- try({retrieveCellInfo(x, f, search = "colData")}, 
-                           silent = TRUE)
+                            silent = TRUE)
             
             # If it was not found 
             if( is(tmp_row, "try-error") && is(tmp_col, "try-error") ){
                 stop("'f' is not found. ",
-                     "Please check that 'f' specifies a column from ",
-                     "rowData or colData.", 
-                     call. = FALSE)
+                    "Please check that 'f' specifies a column from ",
+                    "rowData or colData.", 
+                    call. = FALSE)
                 # If f was found from both
             } else if( !is(tmp_row, "try-error") && !is(tmp_col, "try-error") ){
                 stop("'f' can be found from both rowData and colData. ",
-                     "Please specify 'MARGIN'.",
-                     call. = FALSE)
+                    "Please specify 'MARGIN'.",
+                    call. = FALSE)
                 # If it was found from rowData
             } else if( !is(tmp_row, "try-error") ){
                 MARGIN <- 1L
@@ -207,12 +207,12 @@ setGeneric("splitOn",
     # Check use_names
     if( !.is_a_bool(use_names) ){
         stop("'use_names' must be TRUE or FALSE.",
-             call. = FALSE)
+            call. = FALSE)
     }
     # Create a list from arguments
     list(f = f,
-         MARGIN = MARGIN,
-         use_names = use_names)
+        MARGIN = MARGIN,
+        use_names = use_names)
 }
 
 # PErform the split
@@ -221,8 +221,8 @@ setGeneric("splitOn",
     f <- args[["f"]]
     # Choose nrow or ncol based on MARGIN
     dim_FUN <- switch(args[["MARGIN"]],
-                      "1" = nrow,
-                      "2" = ncol)
+                        "1" = nrow,
+                        "2" = ncol)
     # Get indices from 1 to nrow/ncol
     idx <- seq_len(dim_FUN(x))
     # Split indices into groups based on grouping variable
@@ -276,12 +276,12 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
 #' @export
 setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
     function(x, f = NULL, update_rowTree = FALSE,
-             ...){
+            ...){
         # Input check
         # Check update_rowTree
         if( !.is_a_bool(update_rowTree) ){
             stop("'update_rowTree' must be TRUE or FALSE.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         # Input check end
         # Split data
@@ -289,11 +289,12 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
         # Manipulate rowTree or not?
         if( update_rowTree ){
             # If the returned value is a list, go through all of them
-            if( class(x) == "SimpleList" ){
-                x <- SimpleList(lapply(x, addTaxonomyTree))
+            if( is(x, 'SimpleList') ){
+                x <- SimpleList(lapply(x, .agglomerate_trees))
+
             } else {
                 # Otherwise, the returned value is TreeSE
-                x <- addTaxonomyTree(x)
+                x <- .agglomerate_trees(x)
             }
         }
         x
@@ -306,9 +307,9 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
 #' @rdname splitOn
 #' @export
 setGeneric("unsplitOn",
-           signature = c("x"),
-           function(x, ...)
-               standardGeneric("unsplitOn"))
+            signature = c("x"),
+            function(x, ...)
+                standardGeneric("unsplitOn"))
 
 # Perform the unsplit
 .list_unsplit_on <- function(ses, update_rowTree = FALSE, MARGIN = NULL, ...){
@@ -316,13 +317,13 @@ setGeneric("unsplitOn",
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
         stop("Input must be a list of SummarizedExperiment or derived objects ",
-             "only.",
-             call. = FALSE)
+            "only.",
+            call. = FALSE)
     }
     # Check update_rowTree
     if( !.is_a_bool(update_rowTree) ){
         stop("'update_rowTree' must be TRUE or FALSE.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
         stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
@@ -339,15 +340,15 @@ setGeneric("unsplitOn",
     if( is.null(MARGIN) ){
         if( length(unique(dims[1L,])) == 1 && length(unique(dims[2L,])) == 1 ){
             stop("The dimensions match with row and column-wise. ",
-                 "Please specify 'MARGIN'.", call. = FALSE)
+                "Please specify 'MARGIN'.", call. = FALSE)
         } else if(length(unique(dims[1L,])) == 1L){
             MARGIN <- 2L
         } else if(length(unique(dims[2L,])) == 1L) {
             MARGIN <- 1L
         } else {
             stop("The dimensions are not equal across all elements. ", 
-                 "Please check that either number of rows or columns match.", 
-                 call. = FALSE)
+                "Please check that either number of rows or columns match.", 
+                call. = FALSE)
         }
     } else{
         # Get correct dimension, it is opposite of MARGIN
@@ -386,7 +387,7 @@ setGeneric("unsplitOn",
     if( class_x == "TreeSummarizedExperiment" ){
         # Update or add old tree from the first element of list
         if( update_rowTree ){
-            ans <- addTaxonomyTree(ans)
+            ans <- addHierarchyTree(ans)
         } else{
             rowTree(ans) <- rowTree(ses[[1L]])
         }
