@@ -14,6 +14,14 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{subsetByRareTaxa}
+\alias{subsetByRareTaxa,ANY-method}
+\alias{subsetByRareFeatures}
+\alias{subsetByRareFeatures,ANY-method}
+\alias{subsetByPrevalentTaxa}
+\alias{subsetByPrevalentTaxa,ANY-method}
+\alias{subsetByPrevalentFeatures}
+\alias{subsetByPrevalentFeatures,ANY-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +47,22 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+subsetByRareTaxa(x, ...)
+
+\S4method{subsetByRareTaxa}{ANY}(x, ...)
+
+subsetByRareFeatures(x, ...)
+
+\S4method{subsetByRareFeatures}{ANY}(x, ...)
+
+subsetByPrevalentTaxa(x, ...)
+
+\S4method{subsetByPrevalentTaxa}{ANY}(x, ...)
+
+subsetByPrevalentFeatures(x, ...)
+
+\S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{A
