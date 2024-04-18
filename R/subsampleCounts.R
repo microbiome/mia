@@ -66,15 +66,15 @@
 #' @name subsampleCounts
 #'  
 #' @examples
-#' # When samples in TreeSE are less than specified min_size, they will be removed.
-#' # If after subsampling features are not present in any of the samples, 
-#' # they will be removed.
+#' # When samples in TreeSE are less than specified min_size, they will be
+#' # removed. If after subsampling features are not present in any of the
+#' # samples, they will be removed.
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
+#' set.seed(4759)
 #' tse.subsampled <- subsampleCounts(tse, 
 #'                                   min_size = 60000, 
-#'                                   name = "subsampled", 
-#'                                   seed = 123)
+#'                                   name = "subsampled")
 #' tse.subsampled
 #' dim(tse)
 #' dim(tse.subsampled)
@@ -85,11 +85,11 @@ NULL
 #' @aliases rarifyCounts
 #' @export
 setGeneric("subsampleCounts", signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts", 
-                    min_size = min(colSums2(assay(x, assay.type))),
-                    seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
-                    name = "subsampled", verbose = TRUE, ...)
-               standardGeneric("subsampleCounts"))
+    function(x, assay.type = assay_name, assay_name = "counts", 
+        min_size = min(colSums2(assay(x, assay.type))),
+        replace = TRUE,
+        name = "subsampled", verbose = TRUE, ...)
+    standardGeneric("subsampleCounts"))
 
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom DelayedMatrixStats colSums2 rowSums2
@@ -98,9 +98,8 @@ setGeneric("subsampleCounts", signature = c("x"),
 #' @export
 setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-             min_size = min(colSums2(assay(x, assay.type))),
-       seed = runif(1, 0, .Machine$integer.max), replace = TRUE, 
-       name = "subsampled", verbose = TRUE, ...){
+            min_size = min(colSums2(assay(x, assay.type))), replace = TRUE, 
+            name = "subsampled", verbose = TRUE, ...){
         #
         .check_assay_present(assay.type, x)
         if(any(assay(x, assay.type) %% 1 != 0)){
@@ -123,21 +122,18 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
             stop("`replace` has to be logical i.e. TRUE or FALSE")
         } 
         # Check name
-        if(!.is_non_empty_string(name) ||
-           name == assay.type){
+        if(!.is_non_empty_string(name) || name == assay.type){
             stop("'name' must be a non-empty single character value and be ",
-                 "different from `assay.type`.",
-                 call. = FALSE)
+                "different from `assay.type`.", call. = FALSE)
         }
-        set.seed(seed)
         # Make sure min_size is of length 1.
         if(length(min_size) > 1){
-            stop("`min_size` had more than one value. ", 
-                 "Specifiy a single integer value.")
+            stop("`min_size` had more than one value. Specifiy a single ",
+                "integer value.")
             min_size <- min_size[1]    
         }
-        if(!is.numeric(min_size) || 
-           as.integer(min_size) != min_size && min_size <= 0){
+        if(!is.numeric(min_size) || as.integer(min_size) != min_size &&
+                min_size <= 0){
             stop("min_size needs to be a positive integer value.")
         }
         # get samples with less than min number of reads
@@ -145,8 +141,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
             rmsams <- colnames(x)[colSums2(assay(x, assay.type)) < min_size]
             # Return NULL, if no samples were found after subsampling
             if( !any(!colnames(x) %in% rmsams) ){
-                stop("No samples were found after subsampling.",
-                     call. = FALSE)
+                stop("No samples were found after subsampling.", call. = FALSE)
             }
             if(verbose){
                 message(length(rmsams), " samples removed ",
@@ -157,9 +152,8 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         } else {
             newtse <- x
         }
-        newassay <- apply(assay(newtse, assay.type), 2, 
-                          .subsample_assay,
-                          min_size=min_size, replace=replace)
+        newassay <- apply(assay(newtse, assay.type), 2, .subsample_assay,
+                        min_size=min_size, replace=replace)
         rownames(newassay) <- rownames(newtse)
         # remove features not present in any samples after subsampling
         if(verbose){
@@ -172,9 +166,10 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         newassay <- newassay[rowSums2(newassay)>0, ]
         newtse <- newtse[rownames(newassay),]
         assay(newtse, name, withDimnames = FALSE) <- newassay
-        newtse <- .add_values_to_metadata(newtse, 
-                                          "subsampleCounts_min_size",
-                                          min_size)
+        newtse <- .add_values_to_metadata(
+            newtse, 
+            "subsampleCounts_min_size",
+            min_size)
         return(newtse)
     }
 )
@@ -204,10 +199,11 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         # use `sample` for subsampling. Hope that obsvec doesn't overflow.
         prob <- NULL
     }
-    suppressWarnings(subsample <- sample(obsvec,
-                                         min_size,
-                                         replace = replace,
-                                         prob = prob))
+    suppressWarnings(subsample <- sample(
+        obsvec,
+        min_size,
+        replace = replace,
+        prob = prob))
     # Tabulate the results (these are already named by the order in `x`)
     sstab <- table(subsample)
     # Assign the tabulated random subsample values to the species vector

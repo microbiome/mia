@@ -11,7 +11,6 @@ subsampleCounts(
   assay.type = assay_name,
   assay_name = "counts",
   min_size = min(colSums2(assay(x, assay.type))),
-  seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
@@ -23,7 +22,6 @@ subsampleCounts(
   assay.type = assay_name,
   assay_name = "counts",
   min_size = min(colSums2(assay(x, assay.type))),
-  seed = runif(1, 0, .Machine$integer.max),
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
@@ -47,8 +45,6 @@ will be disabled.)}
 simulated this can equal to lowest number of total counts
 found in a sample or a user specified number.}
 
-\item{seed}{A random number seed for reproducibility of sampling.}
-
 \item{replace}{Logical Default is \code{TRUE}. The default is with
 replacement (\code{replace=TRUE}).
 See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
@@ -61,6 +57,8 @@ abundance table.}
 message about the random number used is printed.}
 
 \item{...}{additional arguments not used}
+
+\item{seed}{A random number seed for reproducibility of sampling.}
 }
 \value{
 \code{subsampleCounts} return \code{x} with subsampled data.
@@ -87,10 +85,10 @@ your data.
 # they will be removed.
 data(GlobalPatterns)
 tse <- GlobalPatterns
+set.seed(4759)
 tse.subsampled <- subsampleCounts(tse, 
                                   min_size = 60000, 
-                                  name = "subsampled", 
-                                  seed = 123)
+                                  name = "subsampled")
 tse.subsampled
 dim(tse)
 dim(tse.subsampled)
