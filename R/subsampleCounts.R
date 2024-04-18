@@ -100,77 +100,81 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
             min_size = min(colSums2(assay(x, assay.type))), replace = TRUE, 
             name = "subsampled", verbose = TRUE, ...){
-        #
+        # Input check
+        # CHeck that assay name is correct and that assay is counts table.
         .check_assay_present(assay.type, x)
-        if(any(assay(x, assay.type) %% 1 != 0)){
+        if( any(assay(x, assay.type) %% 1 != 0) ){
             warning("assay contains non-integer values. Only counts table ",
                     "is applicable...")
         }
-        if(!is.logical(verbose)){
-            stop("`verbose` has to be logical i.e. TRUE or FALSE")
+        # Check that verbose and replace are boolean values
+        if( !.is_a_bool(verbose) ){
+            stop("'verbose' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(verbose){
-            # Print to screen this value
-            message("`set.seed(", seed, ")` was used to initialize repeatable ",
-                    "random subsampling.","\nPlease record this for your ",
-                    "records so others can reproduce.")
-        }
-        if(!.is_numeric_string(seed)){
-            stop("`seed` has to be an numeric value See `?set.seed`")
+        if( !.is_a_bool(replace) ){
+            stop("`replace` must be TRUE or FALSE.", call. = FALSE)
         } 
-        if(!is.logical(replace)){
-            stop("`replace` has to be logical i.e. TRUE or FALSE")
-        } 
-        # Check name
-        if(!.is_non_empty_string(name) || name == assay.type){
+        # Check name of new assay
+        if( !.is_non_empty_string(name) || name == assay.type ){
             stop("'name' must be a non-empty single character value and be ",
-                "different from `assay.type`.", call. = FALSE)
+                "different from 'assay.type'.", call. = FALSE)
         }
-        # Make sure min_size is of length 1.
-        if(length(min_size) > 1){
-            stop("`min_size` had more than one value. Specifiy a single ",
-                "integer value.")
-            min_size <- min_size[1]    
-        }
-        if(!is.numeric(min_size) || as.integer(min_size) != min_size &&
-                min_size <= 0){
+        # Check min_size. It must be single positive integer value.
+        if(!is.numeric(min_size) || length(min_size) != 1 ||
+            as.integer(min_size) != min_size && min_size <= 0  ){
             stop("min_size needs to be a positive integer value.")
         }
-        # get samples with less than min number of reads
-        if(min(colSums2(assay(x, assay.type))) < min_size){
-            rmsams <- colnames(x)[colSums2(assay(x, assay.type)) < min_size]
-            # Return NULL, if no samples were found after subsampling
-            if( !any(!colnames(x) %in% rmsams) ){
-                stop("No samples were found after subsampling.", call. = FALSE)
-            }
-            if(verbose){
-                message(length(rmsams), " samples removed ",
-                        "because they contained fewer reads than `min_size`.")
-            }
-            # remove sample(s)
+        # Input check end
+        
+        # min_size determines the number of reads subsampled from samples.
+        # This means that every samples should have at least min_size of reads.
+        # If they do not have, drop those samples at this point.
+        min_reads <- colSums2(assay(x, assay.type)) < min_size
+        if( any(min_reads) ){
+            # Get those sample names that we are going to remove due to too
+            # small number of reads
+            rmsams <- colnames(x)[ min_reads ]
+            # Remove sample(s)
             newtse <- x[, !colnames(x) %in% rmsams]
-        } else {
-            newtse <- x
+            # Return NULL, if no samples were found after subsampling
+            if( ncol(x) == 0 ){
+                stop("No samples were found after subsampling. Consider ",
+                    "lower 'min_size'.", call. = FALSE)
+            }
+            # Give message which samples were removed
+            if( verbose ){
+                message(
+                    length(rmsams), " samples removed because they contained ",
+                    "fewer reads than `min_size`.")
+            }
+            
         }
-        newassay <- apply(assay(newtse, assay.type), 2, .subsample_assay,
+        # Subsample specified assay.
+        newassay <- apply(assay(x, assay.type), 2, .subsample_assay,
                         min_size=min_size, replace=replace)
-        rownames(newassay) <- rownames(newtse)
+        # Add rownames to new assay. The returned value from .subsample_assay
+        # is a vector that do not have feature names.
+        rownames(newassay) <- rownames(x)
         # remove features not present in any samples after subsampling
-        if(verbose){
+        feat_inc <- rowSums2(newassay) > 0
+        newassay <- newassay[feat_inc, ]
+        # Give message if some features were dropped
+        if( verbose && any(!feat_inc) ){
             message(
-                length(which(rowSums2(newassay) == 0)), " features removed ",
-                "because they are not present in all samples after subsampling."
+                sum(!feat_inc), " features removed because they are not ",
+                "present in all samples after subsampling."
                 )
         }
-        
-        newassay <- newassay[rowSums2(newassay)>0, ]
-        newtse <- newtse[rownames(newassay),]
-        assay(newtse, name, withDimnames = FALSE) <- newassay
-        newtse <- .add_values_to_metadata(
-            newtse, 
+        # Subset the TreeSE based on new feature-set
+        x <- x[rownames(newassay),]
+        # Add new assay to TreeSE
+        assay(x, name, withDimnames = FALSE) <- newassay
+        # Add info on min_size to metadata
+        x <- .add_values_to_metadata(
+            x, 
             "subsampleCounts_min_size",
             min_size)
-        return(newtse)
+        return(x)
     }
 )
 
@@ -199,6 +203,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         # use `sample` for subsampling. Hope that obsvec doesn't overflow.
         prob <- NULL
     }
+    # Do the sampling of features from the single sample
     suppressWarnings(subsample <- sample(
         obsvec,
         min_size,
