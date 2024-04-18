@@ -15,11 +15,11 @@ reference:
 - contents:
   - makeTreeSummarizedExperimentFromPhyloseq
   - makeTreeSummarizedExperimentFromDADA2
-  - loadFromBiom
-  - loadFromQIIME2
-  - loadFromMothur
-  - loadFromMetaphlan
-  - loadFromHumann
+  - importBIOM
+  - importQIIME2
+  - importMothur
+  - importMetaPhlAn
+  - importHUMAnN
   - makePhyloseqFromTreeSummarizedExperiment
 - title: Taxonomic data
   contents:
@@ -58,7 +58,7 @@ reference:
 - subtitle: Clustering
 - contents:
   - calculateDMN
-  - cluster
+  - addCluster
 - subtitle: decontam
 - contents:
   - isContaminant

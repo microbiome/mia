@@ -71,7 +71,8 @@
 #'   (default: \code{FALSE})
 #'
 #' @param ... optional arguments not used currently.
-#'
+#' 
+#' @param ranks Avector of ranks to be set
 #' @details
 #' Taxonomic information from the \code{IdTaxa} function of \code{DECIPHER}
 #' package are returned as a special class. With \code{as(taxa,"DataFrame")}
@@ -116,6 +117,16 @@
 #' mapTaxonomy(GlobalPatterns, taxa = "Escherichia")
 #' # returns information on a single output
 #' mapTaxonomy(GlobalPatterns, taxa = "Escherichia",to="Family")
+#' 
+#' # setTaxonomyRanks
+#' tse <- GlobalPatterns
+#' colnames(rowData(tse))[1] <- "TAXA1"
+#' 
+#' setTaxonomyRanks(colnames(rowData(tse)))
+#' # Taxonomy ranks set to: taxa1 phylum class order family genus species 
+#' 
+#' # getTaxonomyRanks is to get/check if the taxonomic ranks is set to "TAXA1"
+#' getTaxonomyRanks()
 NULL
 
 #' @rdname taxonomy-methods
@@ -196,6 +207,32 @@ setMethod("checkTaxonomy", signature = c(x = "SummarizedExperiment"),
         ans
     }
 )
+
+#' @rdname taxonomy-methods
+#' @importFrom utils assignInMyNamespace
+#' @aliases checkTaxonomy
+#' @export
+# Function to set taxonomy ranks
+setTaxonomyRanks <- function(ranks) {
+    ranks <- tolower(ranks)
+    # Check if rank is a character vector with length >= 1
+    if (!is.character(ranks) || length(ranks) < 1 
+        || any(ranks == "" | ranks == " " | ranks == "\t" | ranks == "-" | ranks == "_")
+        || any(grepl("\\s{2,}", ranks))) {
+        stop("Input 'rank' should be a character vector with non-empty strings,
+             no spaces, tabs, hyphens, underscores, and non-continuous spaces."
+             , call. = FALSE)
+    }
+    #Replace default value of mia::TAXONOMY_RANKS
+    assignInMyNamespace("TAXONOMY_RANKS", ranks)
+}
+
+#' @rdname taxonomy-methods
+#' @export
+# Function to get taxonomy ranks
+getTaxonomyRanks <- function() {
+    return(TAXONOMY_RANKS)
+}
 
 .check_taxonomic_rank <- function(rank, x){
     if(length(rank) != 1L){
@@ -376,16 +413,23 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{SummarizedExperiment}}
 #' object and add this hierarchy tree into the \code{rowTree}.
 #' 
-#' \code{addHierarchyTree} calculates hierarchy tree from the available taxonomic
-#'   information and add it to \code{rowTree}.
+#' @inheritParams taxonomy-methods
+#' 
+#' @details
+#' 
+#' \code{addHierarchyTree} calculates a hierarchy tree from the available 
+#'   taxonomic information and add it to \code{rowTree}.
 #'   
 #' \code{getHierarchyTree} generates a hierarchy tree from the available
 #'   taxonomic information. Internally it uses
 #'   \code{\link[TreeSummarizedExperiment:toTree]{toTree}} and
 #'   \code{\link[TreeSummarizedExperiment:resolveLoop]{resolveLoop}} to sanitize
 #'   data if needed.
-#' 
-#' @inheritParams taxonomy-methods
+#'   
+#' Please note that a hierarchy tree is not an actual phylogenetic tree.
+#' A phylogenetic tree represents evolutionary relationships among features.
+#' On the other hand, a hierarchy tree organizes species into a hierarchical 
+#' structure based on their taxonomic ranks. 
 #' 
 #' @return
 #' \itemize{
@@ -399,16 +443,15 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' @name hierarchy-tree
 #' 
 #' @examples
-#' # Generating a hierarchy tree based on available taxonomic information.
+#' # Generate a tree based on taxonomic rank hierarchy (a hierarchy tree).
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' getHierarchyTree(tse)
 #' 
-#' # Adding a hierarchy tree based on the available taxonomic information. 
+#' # Add a hierarchy tree to a TreeSummarizedExperiment.
 #' # Please note that any tree already stored in rowTree() will be overwritten.
 #' tse <- addHierarchyTree(tse)
 #' tse
-#' 
 NULL
 
 #' @rdname hierarchy-tree

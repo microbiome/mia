@@ -47,8 +47,6 @@ will be disabled.)}
 simulated this can equal to lowest number of total counts
 found in a sample or a user specified number.}
 
-\item{seed}{A random number seed for reproducibility of sampling.}
-
 \item{replace}{Logical Default is \code{TRUE}. The default is with
 replacement (\code{replace=TRUE}).
 See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
@@ -80,6 +78,9 @@ input and any result have to be verified with the original dataset.
 Subsampling/Rarefying may undermine downstream analyses and have unintended
 consequences. Therefore, make sure this normalization is appropriate for
 your data.
+
+To maintain the reproducibility, please define the seed using set.seed()
+before implement this function.
 }
 \examples{
 # When samples in TreeSE are less than specified min_size, they will be removed.
@@ -87,10 +88,11 @@ your data.
 # they will be removed.
 data(GlobalPatterns)
 tse <- GlobalPatterns
+set.seed(123)
 tse.subsampled <- subsampleCounts(tse, 
                                   min_size = 60000, 
-                                  name = "subsampled", 
-                                  seed = 123)
+                                  name = "subsampled" 
+                                  )
 tse.subsampled
 dim(tse)
 dim(tse.subsampled)

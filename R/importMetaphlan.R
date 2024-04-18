@@ -52,14 +52,14 @@
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object
 #'
-#' @name loadFromMetaphlan
+#' @name importMetaPhlAn
 #' @seealso
-#' \code{\link[=loadFromHumann]{loadFromHumann}}
+#' \code{\link[=importHUMAnN]{importHUMAnN}}
 #' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 #' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
 #' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
-#' \code{\link[=loadFromQIIME2]{loadFromQIIME2}}
-#' \code{\link[=loadFromMothur]{loadFromMothur}}
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
 #'
 #' @export
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -78,7 +78,7 @@
 #' # File path
 #' file_path <- system.file("extdata", "merged_abundance_table.txt", package = "mia")
 #' # Import data
-#' tse <- loadFromMetaphlan(file_path)
+#' tse <- importMetaPhlAn(file_path)
 #' # Data at the lowest rank
 #' tse
 #' # Data at higher rank is stored in altExp
@@ -88,25 +88,26 @@
 #' 
 NULL
 
-loadFromMetaphlan <- function(
+importMetaPhlAn <- function(
         file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL, ...){
+    
     ################################ Input check ################################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
     if(!is.null(colData) &&
-       !(.is_non_empty_string(colData) || is.data.frame(colData) ||
-         is.matrix(colData) || is(colData, "DataFrame")) ){
+        !(.is_non_empty_string(colData) || is.data.frame(colData) ||
+            is.matrix(colData) || is(colData, "DataFrame")) ){
         stop("'colData' must be a single character value, DataFrame or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if(!is.null(phy_tree) && !.is_non_empty_string(phy_tree)){
         stop("'phy_tree' must be a single character value or NULL.",
-             call. = FALSE)
+            call. = FALSE)
     }
     ############################## Input check end #############################
     # Get rowdata columns. metaphlan v2 has ID column. Metaphlan > v2 has
@@ -137,6 +138,8 @@ loadFromMetaphlan <- function(
             altExp(tse, rank) <- se_objects[[rank]]
         }
     }
+    # Set taxonomy ranks using .set_taxonomy_ranks
+    .set_ranks_based_on_rowdata(tse,...)
     
     # Load sample meta data if it is provided
     if( !is.null(colData) ) {
@@ -169,15 +172,15 @@ loadFromMetaphlan <- function(
         },
         error = function(condition){
             stop("Error while reading ", file,
-                 "\nPlease check that the file is in merged Metaphlan file format.",
-                 call. = FALSE)
+                "\nPlease check that the file is in merged Metaphlan file format.",
+                call. = FALSE)
         }
     )
     # Check that file is in right format
     if( .check_metaphlan(table, rowdata_col) ){
         stop("Error while reading ", file,
-             "\nPlease check that the file is in merged Metaphlan file format.",
-             call. = FALSE)
+            "\nPlease check that the file is in merged Metaphlan file format.",
+            call. = FALSE)
     }
     # Remove possible suffix from the colnames if user has specified
     if( remove.suffix ){
@@ -258,7 +261,7 @@ loadFromMetaphlan <- function(
     # Check assay.type
     if( !.is_non_empty_character(assay.type) ){
         stop("'assay.type' must be a non-empty character value.",
-             call. = FALSE)
+            call. = FALSE)
     }
     # Get rowdata columns
     rowdata_id <- unlist(lapply(rowdata_col, grep, colnames(table)))
@@ -307,13 +310,13 @@ loadFromMetaphlan <- function(
         sample_names <- rownames(coldata)
         names(sample_names) <- sample_names
     } else{
-        sample_names <- sapply(rownames(coldata), function(x){
+        sample_names <- vapply(rownames(coldata), function(x){
             x <- colnames(tse)[grep(x, colnames(tse))]
             if( length(x) != 1 ){
                 x <- NULL
             }
             return(x)
-        })
+        },FUN.VALUE = character(1))
         sample_names <- unlist(sample_names)
     }
 
@@ -391,4 +394,23 @@ loadFromMetaphlan <- function(
         colnames(data)[-rowdata_id] <- sample_names
     }
     return(data)
+}
+.set_ranks_based_on_rowdata <- function(tse,...){
+    # Get ranks from rowData
+    ranks <- colnames(rowData(tse))
+    # Ranks must be character columns
+    is_char <- lapply(rowData(tse), function(x) is.character(x) || is.factor(x))
+    is_char <- unlist(is_char)
+    ranks <- ranks[ is_char ]
+    # rowData is empty, cannot set ranks
+    if( length(ranks) == 0 ){
+        warning(
+            "Ranks cannot be set. rowData(x) does not include columns ",
+            "specifying character values.", call. = FALSE)
+        return(NULL)
+    }
+    # Finally, set ranks and give message
+    tse <- setTaxonomyRanks(ranks)
+    message("TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
+    return(NULL)
 }

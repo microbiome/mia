@@ -452,7 +452,7 @@ setMethod("runCCA", "SingleCellExperiment",
     # Get the dissimilarity matrix based on original dissimilarity index
     # provided by user. If the analysis is CCA, disable method; calculate
     # always euclidean distances because CCA is based on Euclidean distances.
-    if( length(class(rda)) == 1 && class(rda) == "cca" ){
+    if( length(class(rda)) == 1 && is(rda, 'cca') ){
         dist_mat <- vegdist(mat, method = "euclidean")
     } else{
         dist_mat <- vegdist(mat, method = method, ...)

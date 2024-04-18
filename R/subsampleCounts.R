@@ -10,10 +10,13 @@
 #' instances where it can be useful.
 #' Note that the output of \code{subsampleCounts} is not the equivalent as the 
 #' input and any result have to be verified with the original dataset.
-#' 
+#'
 #' Subsampling/Rarefying may undermine downstream analyses and have unintended
 #' consequences. Therefore, make sure this normalization is appropriate for
 #' your data.
+#'
+#' To maintain the reproducibility, please define the seed using set.seed() 
+#' before implement this function.
 #'
 #' @param x A \code{SummarizedExperiment} object.
 #'
@@ -31,7 +34,7 @@
 #'   simulated this can equal to lowest number of total counts 
 #'   found in a sample or a user specified number. 
 #'   
-#' @param seed A random number seed for reproducibility of sampling. 
+#'  
 #' 
 #' @param replace Logical Default is \code{TRUE}. The default is with 
 #'   replacement (\code{replace=TRUE}). 
@@ -71,10 +74,11 @@
 #' # they will be removed.
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
+#' set.seed(123)
 #' tse.subsampled <- subsampleCounts(tse, 
 #'                                   min_size = 60000, 
-#'                                   name = "subsampled", 
-#'                                   seed = 123)
+#'                                   name = "subsampled" 
+#'                                   )
 #' tse.subsampled
 #' dim(tse)
 #' dim(tse.subsampled)
@@ -85,9 +89,11 @@ NULL
 #' @aliases rarifyCounts
 #' @export
 setGeneric("subsampleCounts", signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts", 
+           function(x, assay.type = assay_name, assay_name = "counts",
                     min_size = min(colSums2(assay(x, assay.type))),
                     seed = runif(1, 0, .Machine$integer.max), replace = TRUE,
+                    min_size = min(colSums2(assay(x))),
+                    replace = TRUE,
                     name = "subsampled", verbose = TRUE, ...)
                standardGeneric("subsampleCounts"))
 

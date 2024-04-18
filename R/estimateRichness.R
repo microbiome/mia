@@ -181,7 +181,7 @@
 #'
 #' # Indices must be written correctly (all lowercase), otherwise an error
 #' # gets thrown
-#' \dontrun{esophagus <- estimateRichness(esophagus, index="ace")}
+#' \donttest{esophagus <- estimateRichness(esophagus, index="ace")}
 #'
 #' # Calculates Chao1 and ACE indices only
 #' suppressWarnings(
