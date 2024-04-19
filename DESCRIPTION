@@ -66,7 +66,8 @@ Imports:
     tibble,
     tidyr,
     bluster,
-    MatrixGenerics
+    MatrixGenerics,
+    rbiom
 Suggests:
     testthat,
     knitr,
