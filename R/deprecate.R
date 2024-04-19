@@ -104,3 +104,69 @@ loadFromHumann <- function(...) {
                             " Use 'importHUMAnN' instead."))
     importHUMAnN(...)
 }
+
+#' @rdname deprecate
+#' @export
+setGeneric("getUniqueFeatures",
+            signature = c("x"),
+            function(x, ...)
+                standardGeneric("getUniqueFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getUniqueFeatures' is deprecated. ",
+                                        "Use 'getUnique' instead."))
+                getUnique(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getUniqueTaxa",
+            signature = c("x"),
+            function(x, ...)
+                standardGeneric("getUniqueTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getUniqueTaxa' is deprecated. ",
+                                        "Use 'getUnique' instead."))
+                getUnique(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getTopFeatures", signature = "x",
+            function(x,...)
+                standardGeneric("getTopFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getTopFeatures' is deprecated. ",
+                                        "Use 'getTop' instead."))
+                getTop(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getTopTaxa", signature = "x",
+            function(x,...)
+                standardGeneric("getTopTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getTopTaxa' is deprecated. ",
+                                        "Use 'getTop' instead."))
+                getTop(x,...)
+            }
+)

@@ -20,7 +20,7 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param na.rm For \code{getTopFeatures} logical argument for calculation method 
+#' @param na.rm For \code{getTop} logical argument for calculation method 
 #'              specified to argument \code{method}. Default is TRUE. 
 #'
 #'
@@ -28,24 +28,24 @@
 #'    \itemize{
 #'        \item{\code{sort}}{A single boolean value for selecting 
 #'        whether to sort taxa in alphabetical order or not. Enabled in functions
-#'        \code{getUniqueFeatures}, and \code{getTopFeatures}.
+#'        \code{getUnique}, and \code{getTop}.
 #'        (By default: \code{sort = FALSE})}
 #'        \item{\code{na.rm}}{A single boolean value for selecting 
 #'        whether to remove missing values or not. Enabled in functions
-#'        \code{getUniqueFeatures}, and \code{getTopFeatures}.
+#'        \code{getUnique}, and \code{getTop}.
 #'        (By default: \code{na.rm = FALSE})}
 #'    }
 #'    
 #' @details
-#' The \code{getTopFeatures} extracts the most \code{top} abundant \dQuote{FeatureID}s
+#' The \code{getTop} extracts the most \code{top} abundant \dQuote{FeatureID}s
 #' in a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #'
-#' The \code{getUniqueFeatures} is a basic function to access different taxa at a
+#' The \code{getUnique} is a basic function to access different taxa at a
 #' particular taxonomic rank.
 #'
 #' @return
-#' The \code{getTopFeatures} returns a vector of the most \code{top} abundant
+#' The \code{getTop} returns a vector of the most \code{top} abundant
 #' \dQuote{FeatureID}s
 #'
 #' @seealso
@@ -58,14 +58,14 @@
 #'
 #' @examples
 #' data(GlobalPatterns)
-#' top_taxa <- getTopFeatures(GlobalPatterns,
+#' top_taxa <- getTop(GlobalPatterns,
 #'                        method = "mean",
 #'                        top = 5,
 #'                        assay.type = "counts")
 #' top_taxa
 #' 
 #' # Use 'detection' to select detection threshold when using prevalence method
-#' top_taxa <- getTopFeatures(GlobalPatterns,
+#' top_taxa <- getTop(GlobalPatterns,
 #'                        method = "prevalence",
 #'                        top = 5,
 #'                        assay_name = "counts",
@@ -73,7 +73,7 @@
 #' top_taxa
 #'                        
 #' # Top taxa os specific rank
-#' getTopFeatures(agglomerateByRank(GlobalPatterns,
+#' getTop(agglomerateByRank(GlobalPatterns,
 #'                              rank = "Genus",
 #'                              na.rm = TRUE))
 #'
@@ -97,19 +97,18 @@
 #' # Get unique taxa at a particular taxonomic rank
 #' # sort = TRUE means that output is sorted in alphabetical order
 #' # With na.rm = TRUE, it is possible to remove NAs
-#' # sort and na.rm can also be used in function getTopFeatures
-#' getUniqueFeatures(GlobalPatterns, "Phylum", sort = TRUE)
+#' # sort and na.rm can also be used in function getTop
+#' getUnique(GlobalPatterns, "Phylum", sort = TRUE)
 #'
 NULL
 
 #' @rdname summaries
-#' @aliases getTopTaxa
 #' @export
-setGeneric("getTopFeatures", signature = "x",
+setGeneric("getTop", signature = "x",
            function(x, top= 5L, method = c("mean","sum","median"),
                     assay.type = assay_name, assay_name = "counts", 
                     na.rm = TRUE, ...)
-               standardGeneric("getTopFeatures"))
+               standardGeneric("getTop"))
 
 .check_max_taxa <- function(x, top, assay.type){
     if(!is.numeric(top) || as.integer(top) != top){
@@ -124,11 +123,9 @@ setGeneric("getTopFeatures", signature = "x",
 #'
 #' @importFrom DelayedMatrixStats rowSums2 rowMeans2 rowMedians
 #' @importFrom utils head
-#' 
-#' @aliases getTopTaxa
 #'
 #' @export
-setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("getTop", signature = c(x = "SummarizedExperiment"),
     function(x, top = 5L, method = c("mean","sum","median","prevalence"),
              assay.type = assay_name, assay_name = "counts", 
              na.rm = TRUE, ...){
@@ -160,43 +157,23 @@ setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname summaries
-#' @aliases getTopFeatures
-#' @export
-setGeneric("getTopTaxa", signature = c("x"),
-           function(x, ...) 
-               standardGeneric("getTopTaxa"))
-
-#' @rdname summaries
-#' @aliases getTopFeatures
-#' @export
-setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        .Deprecated(old ="getTopTaxa", new = "getTopFeatures", msg = "The 'getTopTaxa' function is deprecated. Use 'getTopFeatures' instead.")
-        getTopFeatures(x, ...)
-    }
-)
-
-#' @rdname summaries
 #'
 #' @param rank A single character defining a taxonomic rank. Must be a value of
 #' the output of \code{taxonomyRanks()}.
 #'
 #' @return
-#' The \code{getUniqueFeatures} returns a vector of unique taxa present at a
+#' The \code{getUnique} returns a vector of unique taxa present at a
 #' particular rank
 #' 
-#' @aliases getUniqueTaxa
-#' 
 #' @export
-setGeneric("getUniqueFeatures",
+setGeneric("getUnique",
            signature = c("x"),
            function(x, ...)
-               standardGeneric("getUniqueFeatures"))
+               standardGeneric("getUnique"))
 
 #' @rdname summaries
-#' @aliases getUniqueTaxa
 #' @export
-setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("getUnique", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
         .check_taxonomic_rank(rank, x)
         names <- unique(rowData(x)[,rank])
@@ -205,23 +182,6 @@ setMethod("getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
         return(names)
     }
 )
-
-#' @rdname summaries
-#' @aliases getUniqueFeatures
-#' @export
-setGeneric("getUniqueTaxa", signature = c("x"),
-           function(x, ...) 
-               standardGeneric("getUniqueTaxa"))
-
-#' @rdname summaries
-#' @aliases getUniqueFeatures
-#' @export
-setMethod("getUniqueTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        getUniqueFeatures(x, ...)
-    }
-)
-
 
 #' @rdname summaries
 #'

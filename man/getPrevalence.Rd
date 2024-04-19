@@ -314,7 +314,7 @@ To cite the R package, see citation('mia')
 }
 \seealso{
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
-\code{\link[=getTopTaxa]{getTopTaxa}}
+\code{\link[=getTop]{getTop}}
 }
 \author{
 Leo Lahti

@@ -39,13 +39,13 @@ test_that("getPrevalence", {
     pr <- getPrevalence(GlobalPatterns, sort=TRUE, detection = 0.1/100)
     expect_equal(as.vector(which.max(pr)), 1)
     pr <- names(head(getPrevalence(GlobalPatterns, sort=TRUE,  include_lowest = TRUE), 5L))
-    actual <- getTopFeatures(GlobalPatterns,
+    actual <- getTop(GlobalPatterns,
                          method="prevalence",
                          top=5,
                          assay.type="counts")
     expect_equal(pr, actual)
     # Test alias
-    alias<- getTopFeatures(GlobalPatterns,
+    alias<- getTop(GlobalPatterns,
                        method="prevalence",
                        top=5,
                        assay.type="counts")

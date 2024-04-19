@@ -91,7 +91,7 @@
 #'
 #' @seealso
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
-#' \code{\link[=getTopTaxa]{getTopTaxa}}
+#' \code{\link[=getTop]{getTop}}
 #'
 #'
 #' @name getPrevalence

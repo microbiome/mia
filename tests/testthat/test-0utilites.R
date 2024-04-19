@@ -90,7 +90,7 @@ test_that("meltAssay", {
     expect_equal(melted, melted2)
 })
 
-context("getTopFeatures")
+context("getTop")
 test_that("", {
     #
     expect_error(mia:::.check_max_taxa(),
@@ -107,11 +107,11 @@ test_that("", {
     mean.taxa <- c("549656", "331820", "279599", "360229", "317182")
     sum.taxa <- c("549656", "331820", "279599", "360229", "317182")
     median.taxa <- c("549656", "331820", "317182", "94166",  "279599")
-    top_mean <- getTopFeatures(GlobalPatterns, method="mean", top=5,
+    top_mean <- getTop(GlobalPatterns, method="mean", top=5,
                            assay.type="counts")
-    top_sum <- getTopFeatures(GlobalPatterns, method="sum", top=5,
+    top_sum <- getTop(GlobalPatterns, method="sum", top=5,
                           assay.type="counts")
-    top_median <- getTopFeatures(GlobalPatterns, method="median", top=5,
+    top_median <- getTop(GlobalPatterns, method="median", top=5,
                              assay.type="counts")
     expect_equal(top_mean, mean.taxa)
     expect_equal(top_sum, sum.taxa)

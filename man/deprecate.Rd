@@ -14,6 +14,14 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{getUniqueFeatures}
+\alias{getUniqueFeatures,SummarizedExperiment-method}
+\alias{getUniqueTaxa}
+\alias{getUniqueTaxa,SummarizedExperiment-method}
+\alias{getTopFeatures}
+\alias{getTopFeatures,SummarizedExperiment-method}
+\alias{getTopTaxa}
+\alias{getTopTaxa,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +47,22 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+getUniqueFeatures(x, ...)
+
+\S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
+
+getUniqueTaxa(x, ...)
+
+\S4method{getUniqueTaxa}{SummarizedExperiment}(x, ...)
+
+getTopFeatures(x, ...)
+
+\S4method{getTopFeatures}{SummarizedExperiment}(x, ...)
+
+getTopTaxa(x, ...)
+
+\S4method{getTopTaxa}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
