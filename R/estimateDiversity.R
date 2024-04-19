@@ -256,6 +256,10 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         # input check
         supported_index <- c("coverage", "fisher", "gini_simpson", 
                              "inverse_simpson", "log_modulo_skewness", "shannon")
+        if(!length(index)>0){
+            stop("No 'index' specified.")
+        }
+        
         if( !all( index %in% supported_index ) ){
             stop("'index' contains unsupported indices.", call. = FALSE)
         }
@@ -287,6 +291,18 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             name = index, tree_name = "phylo", 
             ..., BPPARAM = SerialParam()){
         # input check
+        supported_index <- c("coverage", "fisher", "gini_simpson", 
+                             "inverse_simpson", "log_modulo_skewness",
+                             "shannon","faith")
+        
+        if(!length(index)>0){
+            stop("No 'index' specified.")
+        }
+        
+        if( !all( index %in% supported_index ) ){
+            stop("'index' contains unsupported indices.", call. = FALSE)
+        }
+        
         # Check tree_name
         if( !.is_non_empty_string(tree_name) ){
             stop("'tree_name' must be a character specifying a rowTree of 'x'.",
@@ -294,9 +310,9 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         }
         if (!is.null(assay_name)) {
             .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
-        }	
-        # Check indices
-        index <- match.arg(index, several.ok = TRUE)
+        }
+        
+        
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                 "same length than 'index'.",
