@@ -256,17 +256,14 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         # input check
         supported_index <- c("coverage", "fisher", "gini_simpson", 
                              "inverse_simpson", "log_modulo_skewness", "shannon")
-        if(!length(index)>0){
-            stop("No 'index' specified.")
-        }
         
-        if( !all( index %in% supported_index ) ){
-            stop("'index' contains unsupported indices.", call. = FALSE)
+        if ( !all(index %in% supported_index) || !(length(index) > 0)) {
+            stop("'", paste0(supported_types, collapse = "', '"), "'", call. = FALSE)
         }
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                "same length than 'index'.",
+                "same length as 'index'.",
                 call. = FALSE)
         }
         .check_assay_present(assay.type, x)
@@ -295,12 +292,8 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
                              "inverse_simpson", "log_modulo_skewness",
                              "shannon","faith")
         
-        if(!length(index)>0){
-            stop("No 'index' specified.")
-        }
-        
-        if( !all( index %in% supported_index ) ){
-            stop("'index' contains unsupported indices.", call. = FALSE)
+        if ( !all(index %in% supported_index) || !(length(index) > 0)) {
+            stop("'", paste0(supported_types, collapse = "', '"), "'", call. = FALSE)
         }
         
         # Check tree_name
@@ -315,7 +308,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                "same length than 'index'.",
+                "same length as 'index'.",
                 call. = FALSE)
         }
         
