@@ -45,15 +45,18 @@ getMediation(x, ...)
 \arguments{
 \item{x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
 
-\item{...}{additional parameters that can be passed to \code{\link[mediation:mediate]{mediate}}.}
+\item{...}{additional parameters that can be passed to
+\code{\link[mediation:mediate]{mediate}}.}
 
-\item{outcome}{A single character value indicating the colData variable used as outcome in the model.}
+\item{outcome}{A single character value indicating the colData variable used
+as outcome in the model.}
 
-\item{treatment}{A single character value indicating the colData variable used as treatment in the model.}
+\item{treatment}{A single character value indicating the colData variable
+used as treatment in the model.}
 
 \item{name}{A single character value to name the metadata element and avoid
-overwriting other metadata slots. It is supported only by \code{addMediation}.
-(default: \code{name = "mediation"})}
+overwriting other metadata slots. It is supported only by
+\code{addMediation}. (default: \code{name = "mediation"})}
 
 \item{mediator}{A single character value indicating the colData variable used
 as mediator in the model. (default: \code{mediator = NULL})}
@@ -61,18 +64,20 @@ as mediator in the model. (default: \code{mediator = NULL})}
 \item{assay.type}{A single character value indicating the assay used for
 feature-wise mediation analysis. (default: \code{assay.type = NULL})}
 
-\item{dimred}{A single character value indicating the reduced dimension result
-in \code{reducedDims(object)} for component-wise mediation analysis.
+\item{dimred}{A single character value indicating the reduced dimension
+result in \code{reducedDims(object)} for component-wise mediation analysis.
 (default: \code{dimred = NULL})}
 
 \item{family}{A specification for the outcome model link function.
 (default: \code{family = gaussian("identity")})}
 
-\item{covariates}{Single character value or list indicating the colData variables
-used as covariates in the model. (default: \code{covariates = NULL})}
+\item{covariates}{Single character value or list indicating the colData
+variables used as covariates in the model.
+(default: \code{covariates = NULL})}
 
 \item{p.adj.method}{A single character value for selecting adjustment method
-of p-values. Passed to \code{p.adjust} function. (default: \code{p.adj.method = "holm"})}
+of p-values. Passed to \code{p.adjust} function.
+(default: \code{p.adj.method = "holm"})}
 
 \item{add.metadata}{TRUE or FALSE, should the model metadata be returned.
 (default: \code{add.metadata = FALSE})}
@@ -81,11 +86,12 @@ of p-values. Passed to \code{p.adjust} function. (default: \code{p.adj.method = 
 (default: \code{verbose = TRUE})}
 }
 \value{
-\code{getMediation} returns a \code{data.frame} of adjusted p-values and effect
-sizes for the ACMEs and ADEs of every mediator given as input, whereas \code{addMediation}
-returns an updated \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-instance with the same \code{data.frame} stored in the metadata as "mediation".
-Its columns include:
+\code{getMediation} returns a \code{data.frame} of adjusted p-values and
+effect sizes for the ACMEs and ADEs of every mediator given as input, whereas
+\code{addMediation} returns an updated
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+instance with the same \code{data.frame} stored in the metadata as
+"mediation". Its columns include:
 
 \describe{
 \item{Mediator}{the mediator variable}
@@ -96,8 +102,9 @@ Its columns include:
 }
 }
 \description{
-\code{getMediation} and \code{addMediation} provide a wrapper of \code{\link[mediation:mediate]{mediate}}
-for \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
+\code{getMediation} and \code{addMediation} provide a wrapper of
+\code{\link[mediation:mediate]{mediate}} for
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 }
 \details{
 This wrapper of \code{\link[mediation:mediate]{mediate}} for
@@ -105,10 +112,11 @@ This wrapper of \code{\link[mediation:mediate]{mediate}} for
 provides a simple method to analyse the effect of a treatment variable on an
 outcome variable found in \code{colData(se)} through the mediation of either
 another variable in colData (argument \code{mediator}) or an assay
-(argument \code{assay.type}) or a reducedDim (argument \code{dimred}). Importantly,
-those three arguments are mutually exclusive.
+(argument \code{assay.type}) or a reducedDim (argument \code{dimred}).
+Importantly, those three arguments are mutually exclusive.
 }
 \examples{
+if( require("miaTime") ){
 # Import libraries
 library(mia)
 library(miaTime)
@@ -123,7 +131,7 @@ tse <- agglomerateByRank(tse, rank = "Phylum")
 # Convert BMI variable to numeric
 tse$bmi_group <- as.numeric(tse$bmi_group)
 
-# Analyse mediated effect of nationality on BMI through alpha diversity
+# Analyse mediated effect of nationality on BMI via alpha diversity
 # 100 permutations were done to speed up execution, but ~1000 are recommended 
 med_df <- getMediation(tse,
                        outcome = "bmi_group",
@@ -143,7 +151,7 @@ tse <- transformAssay(tse,
                       method = "clr",
                       pseudocount = 1)
 
-# Analyse mediated effect of nationality on BMI through clr-transformed features
+# Analyse mediated effect of nationality on BMI via clr-transformed features
 # 100 permutations were done to speed up execution, but ~1000 are recommended     
 tse <- addMediation(tse, name = "assay_mediation",
                     outcome = "bmi_group",
@@ -164,7 +172,7 @@ tse <- runMDS(tse, name = "MDS",
               assay.type = "clr",
               ncomponents = 3)
 
-# Analyse mediated effect of nationality on BMI through NMDS components 
+# Analyse mediated effect of nationality on BMI via NMDS components 
 # 100 permutations were done to speed up execution, but ~1000 are recommended       
 tse <- addMediation(tse, name = "reddim_mediation",
                     outcome = "bmi_group",
@@ -178,5 +186,6 @@ tse <- addMediation(tse, name = "reddim_mediation",
 
 # Show results for first 5 mediators
 head(metadata(tse)$reddim_mediation, 5)
+}
 
 }

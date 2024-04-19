@@ -82,9 +82,7 @@ Suggests:
     reldist,
     ade4,
     microbiomeDataSets,
-    miaTime,
     rmarkdown
-Remotes: microbiome/miaTime
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)

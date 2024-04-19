@@ -1,5 +1,6 @@
 test_that("getMediation", {
   
+  if( require("miaTime") ){
   data("hitchip1006", package = "miaTime")
   tse <- hitchip1006
   
@@ -81,5 +82,6 @@ test_that("getMediation", {
   expect_named(tse, med_df[["Mediator"]])
   
   expect_named(med_df, c("Mediator", "ACME_estimate", "ADE_estimate", "ACME_pval", "ADE_pval"))
+  }
   
 })

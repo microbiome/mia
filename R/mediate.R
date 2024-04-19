@@ -74,6 +74,7 @@
 #' @name getMediation
 #'
 #' @examples
+#' if( require("miaTime") ){
 #' # Import libraries
 #' library(mia)
 #' library(miaTime)
@@ -143,6 +144,7 @@
 #' 
 #' # Show results for first 5 mediators
 #' head(metadata(tse)$reddim_mediation, 5)
+#' }
 #' 
 NULL
 
