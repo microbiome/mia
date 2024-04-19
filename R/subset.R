@@ -62,27 +62,31 @@ setGeneric("subsetTaxa", signature = "x",
 #' @rdname subsetSamples
 #' @export
 setMethod("subsetSamples", signature = "SummarizedExperiment",
-    function(x, ...){
-        message("Please use '[]' for subsetting instead.", call. = FALSE)
-        subset_args <- .get_subset_args(x, ...)
-        x[subset_args$columns,subset_args$rows]
-    }
+          function(x, ...){
+              .Deprecated(msg = paste0("subsetSamples is deprecated. Please ",
+                                       "use '[]' for subsetting instead."))
+              subset_args <- .get_subset_args(x, ...)
+              x[subset_args$columns,subset_args$rows]
+          }
 )
 
 #' @rdname subsetSamples
 #' @export
 setMethod("subsetFeatures", signature = "SummarizedExperiment",
-    function(x, ...){
-        message("Please use '[]' for subsetting instead.", call. = FALSE)
-        subset_args <- .get_subset_args(x, ...)
-        x[subset_args$rows, subset_args$columns]
-    }
+          function(x, ...){
+              .Deprecated(msg = paste0("subsetFeatures is deprecated. Please",
+                                       " use '[]' for subsetting instead."))
+              subset_args <- .get_subset_args(x, ...)
+              x[subset_args$rows, subset_args$columns]
+          }
 )
 
 #' @rdname subsetSamples
 #' @export
 setMethod("subsetTaxa", signature = "SummarizedExperiment",
-    function(x, ...){
-        subsetFeatures(x, ...)
-    }
+          function(x, ...){
+              .Deprecated(msg = paste0("subsetFeatures is deprecated. Please",
+                                       " use '[]' for subsetting instead."))
+              subsetFeatures(x, ...)
+          }
 )
