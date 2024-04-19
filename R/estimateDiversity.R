@@ -266,7 +266,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                "same length than 'index'.",
+                "same length as 'index'.",
                 call. = FALSE)
         }
         .check_assay_present(assay.type, x)
@@ -315,7 +315,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                "same length than 'index'.",
+                "same length as 'index'.",
                 call. = FALSE)
         }
         
