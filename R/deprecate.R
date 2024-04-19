@@ -62,7 +62,7 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 loadFromBiom <- function(...) {
     .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
                             " Use 'importBIOM' instead."))
-    importBiom(...)
+    importBIOM(...)
 }
 
 #' @rdname deprecate
