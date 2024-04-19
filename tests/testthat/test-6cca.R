@@ -51,7 +51,7 @@ test_that("CCA", {
     expect_error( runCCA(sce, test.signif = "TRUE") )
     expect_error( runCCA(sce, test.signif = NULL) )
     expect_error( runCCA(sce, test.signif = c(TRUE, TRUE)) )
-    mat <- calculateRDA(sce, scores = "u", test.signif = FALSE)
+    mat <- getRDA(sce, scores = "u", test.signif = FALSE)
     expect_true(is.null(attributes(mat)$significance))
     # Check that significance calculations are correct
     set.seed(46)
@@ -121,10 +121,10 @@ test_that("CCA", {
     expect_equal(unname(test), unname(res))
     data(GlobalPatterns, package="mia")
     GlobalPatterns <- estimateDiversity(GlobalPatterns, index = "shannon")
-    expect_error(calculateRDA(GlobalPatterns, variables = c("Primer", "test")))
-    res1 <- calculateRDA(GlobalPatterns, variables = c("shannon", "SampleType"))
+    expect_error(getRDA(GlobalPatterns, variables = c("Primer", "test")))
+    res1 <- getRDA(GlobalPatterns, variables = c("shannon", "SampleType"))
     res1 <- attr(res1, "rda")$CCA
-    res2 <- calculateRDA(GlobalPatterns, formula = data ~ shannon + SampleType)
+    res2 <- getRDA(GlobalPatterns, formula = data ~ shannon + SampleType)
     res2 <- attr(res2, "rda")$CCA
     expect_equal(res1, res2)
 })

@@ -14,6 +14,19 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{calculateDPCoA}
+\alias{calculateDPCoA,ANY,ANY-method}
+\alias{calculateDPCoA,TreeSummarizedExperiment,missing-method}
+\alias{calculateNMDS}
+\alias{calculateNMDS,ANY-method}
+\alias{calculateNMDS,SummarizedExperiment-method}
+\alias{calculateNMDS,SingleCellExperiment-method}
+\alias{calculateRDA}
+\alias{calculateRDA,ANY-method}
+\alias{calculateRDA,SummarizedExperiment-method}
+\alias{calculateCCA}
+\alias{calculateCCA,ANY-method}
+\alias{calculateCCA,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +52,32 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+calculateDPCoA(x, y, ...)
+
+\S4method{calculateDPCoA}{ANY,ANY}(x, y, ...)
+
+\S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(x, y, ...)
+
+calculateNMDS(x, ...)
+
+\S4method{calculateNMDS}{ANY}(x, ...)
+
+\S4method{calculateNMDS}{SummarizedExperiment}(x, ...)
+
+\S4method{calculateNMDS}{SingleCellExperiment}(x, ...)
+
+calculateRDA(x, ...)
+
+\S4method{calculateRDA}{ANY}(x, ...)
+
+\S4method{calculateRDA}{SummarizedExperiment}(x, ...)
+
+calculateCCA(x, ...)
+
+\S4method{calculateCCA}{ANY}(x, ...)
+
+\S4method{calculateCCA}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
@@ -46,6 +85,10 @@ loadFromHumann(...)
 object.}
 
 \item{...}{Additional parameters. See dedicated function.}
+
+\item{y}{A
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.

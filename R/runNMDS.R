@@ -3,7 +3,7 @@
 #' Perform non-metric multi-dimensional scaling (nMDS) on samples, based on the
 #' data in a \code{SingleCellExperiment} object.
 #'
-#' @param x For \code{calculateNMDS}, a numeric matrix of expression values
+#' @param x For \code{getNMDS}, a numeric matrix of expression values
 #'   where rows are features and columns are cells.
 #'   Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 #'
@@ -23,7 +23,7 @@
 #'
 #' @param keep_dist Logical scalar indicating whether the \code{dist} object
 #'   calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
-#'   the matrix returned/stored by \code{calculateNMDS}/ \code{runNMDS}.
+#'   the matrix returned/stored by \code{getNMDS}/ \code{runNMDS}.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
@@ -62,7 +62,7 @@
 #' @param name String specifying the name to be used to store the result in the
 #'   reducedDims of the output.
 #'
-#' @return For \code{calculateNMDS}, a matrix is returned containing the MDS
+#' @return For \code{getNMDS}, a matrix is returned containing the MDS
 #'   coordinates for each sample (row) and dimension (column).
 #'
 #' @details
@@ -91,7 +91,7 @@
 #' tse <- TreeSummarizedExperiment(assays = list(counts = mat),
 #'                                 rowData = df)
 #' #
-#' calculateNMDS(tse)
+#' getNMDS(tse)
 #'
 #' #
 #' data(esophagus)
@@ -104,7 +104,7 @@ NULL
 
 #' @rdname runNMDS
 #' @export
-setGeneric("calculateNMDS", function(x, ...) standardGeneric("calculateNMDS"))
+setGeneric("getNMDS", function(x, ...) standardGeneric("getNMDS"))
 
 
 .format_nmds_isoMDS <- function(nmds){
@@ -180,12 +180,12 @@ setGeneric("calculateNMDS", function(x, ...) standardGeneric("calculateNMDS"))
 
 #' @rdname runNMDS
 #' @export
-setMethod("calculateNMDS", "ANY", .calculate_nmds)
+setMethod("getNMDS", "ANY", .calculate_nmds)
 
 #' @rdname runNMDS
 #' @importFrom SummarizedExperiment assay
 #' @export
-setMethod("calculateNMDS", "SummarizedExperiment",
+setMethod("getNMDS", "SummarizedExperiment",
     function(x, ..., assay.type = assay_name, assay_name = exprs_values, 
              exprs_values = "counts", FUN = vegdist) {
         .calculate_nmds(assay(x, assay.type), FUN = FUN, ...)
@@ -194,13 +194,13 @@ setMethod("calculateNMDS", "SummarizedExperiment",
 
 #' @rdname runNMDS
 #' @export
-setMethod("calculateNMDS", "SingleCellExperiment",
+setMethod("getNMDS", "SingleCellExperiment",
     function(x, ..., assay.type = assay_name, assay_name = exprs_values, 
              exprs_values = "counts", dimred = NULL, n_dimred = NULL,
              FUN = vegdist){
         mat <- .get_mat_from_sce(x, exprs_values = assay.type,
                                  dimred = dimred, n_dimred = n_dimred)
-        calculateNMDS(mat, transposed = !is.null(dimred), FUN = FUN,...)
+        getNMDS(mat, transposed = !is.null(dimred), FUN = FUN,...)
     }
 )
 
@@ -213,7 +213,7 @@ runNMDS <- function(x, ..., altexp = NULL, name = "NMDS") {
     } else {
         y <- x
     }
-    reducedDim(x, name) <- calculateNMDS(y, ...)
+    reducedDim(x, name) <- getNMDS(y, ...)
     x
 }
 

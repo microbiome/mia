@@ -2,28 +2,28 @@
 % Please edit documentation in R/runCCA.R
 \name{runCCA}
 \alias{runCCA}
-\alias{calculateCCA}
-\alias{calculateRDA}
+\alias{getCCA}
+\alias{getRDA}
 \alias{runRDA}
-\alias{calculateCCA,ANY-method}
-\alias{calculateCCA,SummarizedExperiment-method}
+\alias{getCCA,ANY-method}
+\alias{getCCA,SummarizedExperiment-method}
 \alias{runCCA,SingleCellExperiment-method}
-\alias{calculateRDA,ANY-method}
-\alias{calculateRDA,SummarizedExperiment-method}
+\alias{getRDA,ANY-method}
+\alias{getRDA,SummarizedExperiment-method}
 \alias{runRDA,SingleCellExperiment-method}
 \title{Canonical Correspondence Analysis and Redundancy Analysis}
 \usage{
-calculateCCA(x, ...)
+getCCA(x, ...)
 
 runCCA(x, ...)
 
-calculateRDA(x, ...)
+getRDA(x, ...)
 
 runRDA(x, ...)
 
-\S4method{calculateCCA}{ANY}(x, ...)
+\S4method{getCCA}{ANY}(x, ...)
 
-\S4method{calculateCCA}{SummarizedExperiment}(
+\S4method{getCCA}{SummarizedExperiment}(
   x,
   formula,
   variables,
@@ -37,9 +37,9 @@ runRDA(x, ...)
 
 \S4method{runCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
-\S4method{calculateRDA}{ANY}(x, ...)
+\S4method{getRDA}{ANY}(x, ...)
 
-\S4method{calculateRDA}{SummarizedExperiment}(
+\S4method{getRDA}{SummarizedExperiment}(
   x,
   formula,
   variables,
@@ -126,7 +126,7 @@ containing the input data.}
 reducedDims of the output.}
 }
 \value{
-For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
+For \code{getCCA} a matrix with samples as rows and CCA dimensions as
 columns. Attributes include calculated \code{cca}/\code{rda} object and
 significance analysis results.
 

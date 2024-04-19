@@ -4,6 +4,10 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'   
+#' @param y A
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#'   object.
+#'    
 #' @param ... Additional parameters. See dedicated function.
 #' 
 #' @name deprecate
@@ -104,3 +108,117 @@ loadFromHumann <- function(...) {
                             " Use 'importHUMAnN' instead."))
     importHUMAnN(...)
 }
+
+#' @rdname deprecate
+#' @export
+setGeneric("calculateDPCoA", signature = c("x", "y"),
+            function(x,y,...)
+                standardGeneric("calculateDPCoA"))
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateDPCoA", c("ANY","ANY"), 
+            function(x,y,...) {
+                .Deprecated(msg = paste0("'calculateDPCoA' is deprecated. ",
+                                        "Use 'getDPCoA' instead."))
+                getDPCoA(x,y,...)
+            }
+)
+
+#' @rdname deprecate
+#' @importFrom ape cophenetic.phylo
+#' @export
+setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
+            function(x,y,...) {
+                .Deprecated(msg = paste0("'calculateDPCoA' is deprecated. ",
+                                        "Use 'getDPCoA' instead."))
+                getDPCoA(x,y,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("calculateNMDS", function(x, ...) standardGeneric("calculateNMDS"))
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateNMDS", "ANY", 
+            function(x,...) {
+                .Deprecated(msg = paste0("'calculateNMDS' is deprecated. ",
+                                        "Use 'getNMDS' instead."))
+                getNMDS(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @importFrom SummarizedExperiment assay
+#' @export
+setMethod("calculateNMDS", "SummarizedExperiment",
+            function(x, ...) {
+                .Deprecated(msg = paste0("'calculateNMDS' is deprecated. ",
+                                        "Use 'getNMDS' instead."))
+                getNMDS(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateNMDS", "SingleCellExperiment",
+            function(x, ...){
+                .Deprecated(msg = paste0("'calculateNMDS' is deprecated. ",
+                                        "Use 'getNMDS' instead."))
+                getNMDS(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export 
+setGeneric("calculateRDA", signature = c("x"),
+            function(x, ...)
+                standardGeneric("calculateRDA"))
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateRDA", "ANY",
+            function(x, ...){
+                .Deprecated(msg = paste0("'calculateRDA' is deprecated. ",
+                                        "Use 'getRDA' instead."))
+                getRDA(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateRDA", "SummarizedExperiment",
+            function(x,...) {
+                .Deprecated(msg = paste0("'calculateRDA' is deprecated. ",
+                                        "Use 'getRDA' instead."))
+                getRDA(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("calculateCCA", signature = c("x"),
+            function(x,...)
+                standardGeneric("calculateCCA"))
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateCCA", "ANY",
+            function(x,...){
+                .Deprecated(msg = paste0("'calculateCCA' is deprecated. ",
+                                        "Use 'getCCA' instead."))
+                getCCA(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("calculateCCA", "SummarizedExperiment",
+            function(x,...){
+                .Deprecated(msg = paste0("'calculateCCA' is deprecated. ",
+                                        "Use 'getCCA' instead."))
+                getCCA(x,...)
+            }
+)

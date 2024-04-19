@@ -85,7 +85,7 @@
 #'   specified by \code{homogeneity.test} parameter.
 #'
 #' @return
-#' For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
+#' For \code{getCCA} a matrix with samples as rows and CCA dimensions as
 #' columns. Attributes include calculated \code{cca}/\code{rda} object and
 #' significance analysis results.
 #'
@@ -133,9 +133,9 @@
 NULL
 
 #' @rdname runCCA
-setGeneric("calculateCCA", signature = c("x"),
+setGeneric("getCCA", signature = c("x"),
            function(x, ...)
-               standardGeneric("calculateCCA"))
+               standardGeneric("getCCA"))
 
 #' @rdname runCCA
 setGeneric("runCCA", signature = c("x"),
@@ -143,9 +143,9 @@ setGeneric("runCCA", signature = c("x"),
                standardGeneric("runCCA"))
 
 #' @rdname runCCA
-setGeneric("calculateRDA", signature = c("x"),
+setGeneric("getRDA", signature = c("x"),
            function(x, ...)
-               standardGeneric("calculateRDA"))
+               standardGeneric("getRDA"))
 
 #' @rdname runCCA
 setGeneric("runRDA", signature = c("x"),
@@ -210,7 +210,7 @@ setGeneric("runRDA", signature = c("x"),
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateCCA", "ANY",
+setMethod("getCCA", "ANY",
       function(x, ...){
           .calculate_cca(x, ...)
       })
@@ -250,7 +250,7 @@ setMethod("calculateCCA", "ANY",
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateCCA", "SummarizedExperiment",
+setMethod("getCCA", "SummarizedExperiment",
     function(x, formula, variables, test.signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
              scores = "wa", ...)
@@ -301,7 +301,7 @@ setMethod("runCCA", "SingleCellExperiment",
           y <- x
         }
         # Calculate CCA
-        cca <- calculateCCA(y, formula, variables, ...)
+        cca <- getCCA(y, formula, variables, ...)
         # Add object to reducedDim
         x <- .add_object_to_reduceddim(x, cca, name = name, ...)
         return(x)
@@ -548,14 +548,14 @@ setMethod("runCCA", "SingleCellExperiment",
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateRDA", "ANY",
+setMethod("getRDA", "ANY",
       function(x, ...){
           .calculate_rda(x, ...)
       })
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateRDA", "SummarizedExperiment",
+setMethod("getRDA", "SummarizedExperiment",
     function(x, formula, variables, test.signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
              scores = "wa", ...)
@@ -607,7 +607,7 @@ setMethod("runRDA", "SingleCellExperiment",
           y <- x
         }
         # Calculate RDA
-        rda <- calculateRDA(y, formula, variables, ...)
+        rda <- getRDA(y, formula, variables, ...)
         # Add object to reducedDim
         x <- .add_object_to_reduceddim(x, rda, name = name, ...)
         return(x)

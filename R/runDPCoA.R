@@ -4,7 +4,7 @@
 #' \code{ade4} package in typical fashion. Results are stored in the
 #' \code{reducedDims} and are available for all the expected functions.
 #'
-#' @param x For \code{calculateDPCoA}, a numeric matrix of expression values
+#' @param x For \code{getDPCoA}, a numeric matrix of expression values
 #'   where rows are features and columns are cells.
 #'   Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 #'
@@ -61,7 +61,7 @@
 #' returned as attributes as well.
 #'
 #' @returns
-#' For \code{calculateDPCoA} a matrix with samples as rows and CCA dimensions as
+#' For \code{getDPCoA} a matrix with samples as rows and CCA dimensions as
 #' columns
 #'
 #' For \code{runDPCoA} a modified \code{x} with the results stored in
@@ -75,7 +75,7 @@
 #'
 #' @examples
 #' data(esophagus)
-#' dpcoa <- calculateDPCoA(esophagus)
+#' dpcoa <- getDPCoA(esophagus)
 #' head(dpcoa)
 #'
 #' esophagus <- runDPCoA(esophagus)
@@ -87,9 +87,9 @@ NULL
 
 #' @export
 #' @rdname runDPCoA
-setGeneric("calculateDPCoA", signature = c("x", "y"),
+setGeneric("getDPCoA", signature = c("x", "y"),
            function(x, y, ...)
-               standardGeneric("calculateDPCoA"))
+               standardGeneric("getDPCoA"))
 
 .calculate_dpcoa <- function(x, y, ncomponents = 2, ntop = NULL,
                              subset_row = NULL, scale = FALSE,
@@ -147,12 +147,12 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
 
 #' @export
 #' @rdname runDPCoA
-setMethod("calculateDPCoA", c("ANY","ANY"), .calculate_dpcoa)
+setMethod("getDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 
 #' @export
 #' @importFrom ape cophenetic.phylo
 #' @rdname runDPCoA
-setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
+setMethod("getDPCoA", signature = c("TreeSummarizedExperiment","missing"),
     function(x, ..., assay.type = assay_name, assay_name = exprs_values, 
              exprs_values = "counts", tree_name = "phylo")
     {
@@ -175,7 +175,7 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
         dist <- cophenetic.phylo(tree)
         # Get assay
         mat <- assay(x, assay.type)
-        calculateDPCoA(mat, dist, ...)
+        getDPCoA(mat, dist, ...)
     }
 )
 
@@ -198,6 +198,6 @@ runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
         stop("'name' must be a single character value specifying a name of ",
              "reducedDim where the result will be stored.", call. = FALSE)
     }
-    reducedDim(x, name) <- calculateDPCoA(y, ...)
+    reducedDim(x, name) <- getDPCoA(y, ...)
     x
 }

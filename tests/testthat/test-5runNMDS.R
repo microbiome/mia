@@ -5,10 +5,10 @@ test_that("runNMDS", {
     se <- SummarizedExperiment(assays = list(counts = mat),
                                rowData = df)
     #
-    actual <- calculateNMDS(se)
+    actual <- getNMDS(se)
     expect_true(is.matrix(actual))
     expect_equal(dim(actual),c(10,2))
-    actual2 <- calculateNMDS(se,nmds="monoMDS",pc=FALSE,scaling=FALSE)
+    actual2 <- getNMDS(se,nmds="monoMDS",pc=FALSE,scaling=FALSE)
     expect_true(is.matrix(actual))
     expect_equal(dim(actual),c(10,2))
     expect_true(sum(actual2 - actual) < 0.00001)
