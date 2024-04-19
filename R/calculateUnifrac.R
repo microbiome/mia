@@ -126,7 +126,6 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
           function(x, tree, weighted = FALSE, normalized = TRUE,
                    BPPARAM = SerialParam(), nodeLab, ...){
-              browser()
               if(is(x,"SummarizedExperiment")){
                   stop("When providing a 'tree', please provide a matrix-like as 'x'",
                        " and not a 'SummarizedExperiment' object. Please consider ",
@@ -200,7 +199,6 @@ setMethod("calculateUnifrac",
                         tree = "missing"),
           function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
                    tree_name = "phylo", transposed = FALSE, ...){
-              browser()
               # Check assay.type and get assay
               .check_assay_present(assay.type, x)
               mat <- assay(x, assay.type)
