@@ -116,13 +116,13 @@ another variable in colData (argument \code{mediator}) or an assay
 Importantly, those three arguments are mutually exclusive.
 }
 \examples{
-if( require("miaTime") ){
+if( requireNamespace("miaTime") ){
 # Import libraries
 library(mia)
 library(scater)
 
 # Load dataset
-data("hitchip1006", package = "miaTime")
+data(hitchip1006)
 tse <- hitchip1006
  
 # Agglomerate features by family (merely to speed up execution)
