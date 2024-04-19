@@ -119,7 +119,6 @@ Importantly, those three arguments are mutually exclusive.
 if( require("miaTime") ){
 # Import libraries
 library(mia)
-library(miaTime)
 library(scater)
 
 # Load dataset

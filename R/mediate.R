@@ -77,7 +77,6 @@
 #' if( require("miaTime") ){
 #' # Import libraries
 #' library(mia)
-#' library(miaTime)
 #' library(scater)
 #' 
 #' # Load dataset
