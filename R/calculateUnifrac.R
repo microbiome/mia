@@ -104,6 +104,7 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 
 #' @rdname calculateUnifrac
 #' @export
+#' @importFrom rbiom unifrac
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
           function(x, tree, weighted = FALSE){
               if(is(x,"SummarizedExperiment")){
