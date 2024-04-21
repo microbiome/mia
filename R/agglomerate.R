@@ -1,8 +1,7 @@
 #' Agglomerate data using taxonomic information
 #'
-#' \code{agglomerateByRank} can be used to sum up data based on associations
-#' with certain taxonomic ranks, as defined in \code{rowData}. Only available
-#' \code{\link{taxonomyRanks}} can be used.
+#' Agglomeration functions can be used to sum-up data based on specific criteria 
+#' such as taxonomic ranks, variables or prevalence.
 #'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
