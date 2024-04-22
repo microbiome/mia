@@ -239,44 +239,6 @@
 #' }
 NULL
 
-#' @rdname estimateDiversity
-#' @export
-setGeneric(
-    "estimateDiversity", signature = c("x"),
-    function(x, ...) standardGeneric("estimateDiversity"))
-
-#' @rdname estimateDiversity
-#' @export
-setMethod(
-    "estimateDiversity", signature = c(x="ANY"),
-    function(x, ...){
-        .Deprecated(
-            old = "estimateDiversity", new = "estimateAlpha",
-            msg = paste0(
-                "Now estimateDiversity is deprecated. Use estimateAlpha ",
-                "instead."))
-        .estimate_diversity(x, ...)
-        })
-
-#' @rdname estimateDiversity
-#' @export
-setGeneric(
-    "estimateFaith", signature = c("x"),
-    function(x, ...) standardGeneric("estimateFaith"))
-
-#' @rdname estimateDiversity
-#' @export
-setMethod(
-    "estimateFaith", signature = c(x="ANY"),
-    function(x, ...){
-        .Deprecated(
-            old="estimateFaith", new="estimateAlpha",
-            msg = paste0(
-                "Now estimateFaith is deprecated. Use estimateAlpha ",
-                "instead."))
-        .estimate_faith(x, ...)
-        })
-
 setGeneric(
     ".estimate_diversity", signature = c("x"),
     function(x, ...) standardGeneric(".estimate_diversity"))

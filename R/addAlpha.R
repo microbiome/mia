@@ -32,23 +32,23 @@
 #' tse <- GlobalPatterns
 #' 
 #' # Calculate the default Shannon index with no rarefaction
-#' tse <- estimateAlpha(tse, assay.type = "counts", index = "shannon")
+#' tse <- addAlpha(tse, assay.type = "counts", index = "shannon")
 #' 
 #' # Shows the estimated Shannon index
 #' tse$shannon
 #'
 #' # Calculate observed richness with 10 rarefaction rounds
-#' tse <- estimateAlpha(tse, assay.type = "counts", index = "observed_richness",
+#' tse <- addAlpha(tse, assay.type = "counts", index = "observed_richness",
 #' rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE), n.iter=10)
 #' 
 #' # Shows the estimated observed richness
 #' tse$observed_richness
 #' 
 
-#' @rdname estimateAlpha
+#' @rdname addAlpha
 #' @export
 setGeneric(
-    "estimateAlpha", signature = c("x"), function(
+    "addAlpha", signature = c("x"), function(
         x, assay.type = "counts", 
         index = c(
             "coverage_diversity", "fisher_diversity", "faith_diversity",
@@ -61,12 +61,12 @@ setGeneric(
             "ace_richness", "chao1_richness", "hill_richness",
             "observed_richness"),
         name = index, n.iter = 10, rarefaction.depth = NULL, ...)
-    standardGeneric("estimateAlpha"))
+    standardGeneric("addAlpha"))
 
-#' @rdname estimateAlpha
+#' @rdname addAlpha
 #' @export
 setMethod(
-    "estimateAlpha", signature = c(x = "SummarizedExperiment"), function(
+    "addAlpha", signature = c(x = "SummarizedExperiment"), function(
         x, assay.type = "counts", 
         index = c(
             "coverage_diversity", "fisher_diversity", "faith_diversity",

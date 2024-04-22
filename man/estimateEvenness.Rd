@@ -2,21 +2,9 @@
 % Please edit documentation in R/estimateEvenness.R
 \name{estimateEvenness}
 \alias{estimateEvenness}
-\alias{estimateEvenness,ANY-method}
 \title{Estimate Evenness measures}
-\usage{
-estimateEvenness(x, ...)
-
-\S4method{estimateEvenness}{ANY}(x, ...)
-}
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object}
-
-\item{...}{optional arguments:
-\itemize{
-\item{threshold}{ a numeric threshold. assay values below or equal
-to this threshold will be set to zero.}
-}}
 
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
@@ -36,6 +24,12 @@ stored in.}
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether calculation of estimates should be parallelized.}
+
+\item{...}{optional arguments:
+\itemize{
+\item{threshold}{ a numeric threshold. assay values below or equal
+to this threshold will be set to zero.}
+}}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}

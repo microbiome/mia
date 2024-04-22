@@ -237,9 +237,9 @@ setMethod(
     "estimateDominance", signature = c(x="ANY"),
     function(x, ...){
         .Deprecated(
-            old = "estimateDominance", new = "estimateAlpha",
+            old = "estimateDominance", new = "addAlpha",
             msg = paste0(
-                "Now estimateDominance is deprecated. Use estimateAlpha ",
+                "Now estimateDominance is deprecated. Use addAlpha ",
                 "instead."))
         .estimate_dominance(x, ...)
     })

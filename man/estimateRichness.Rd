@@ -2,17 +2,9 @@
 % Please edit documentation in R/estimateRichness.R
 \name{estimateRichness}
 \alias{estimateRichness}
-\alias{estimateRichness,ANY-method}
 \title{Estimate richness measures}
-\usage{
-estimateRichness(x, ...)
-
-\S4method{estimateRichness}{ANY}(x, ...)
-}
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
-
-\item{...}{additional parameters passed to \code{estimateRichness}}
 
 \item{assay.type}{the name of the assay used for calculation of the
 sample-wise estimates.}
@@ -34,6 +26,8 @@ for the abundances. The default detection threshold is 0.}
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether calculation of estimates should be parallelized.}
+
+\item{...}{additional parameters passed to \code{estimateRichness}}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named

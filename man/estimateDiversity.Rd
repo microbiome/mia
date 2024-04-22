@@ -2,40 +2,10 @@
 % Please edit documentation in R/estimateDiversity.R
 \name{estimateDiversity}
 \alias{estimateDiversity}
-\alias{estimateDiversity,ANY-method}
-\alias{estimateFaith}
-\alias{estimateFaith,ANY-method}
 \title{Estimate (alpha) diversity measures}
-\usage{
-estimateDiversity(x, ...)
-
-\S4method{estimateDiversity}{ANY}(x, ...)
-
-estimateFaith(x, ...)
-
-\S4method{estimateFaith}{ANY}(x, ...)
-}
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object or \code{\link{TreeSummarizedExperiment}}.
 The latter is recommended for microbiome data sets and tree-based alpha diversity indices.}
-
-\item{...}{optional arguments:
-\itemize{
-\item{threshold}{ A numeric value in the unit interval,
-determining the threshold for coverage index. By default,
-\code{threshold} is 0.9.}
-\item{quantile}{ Arithmetic abundance classes are evenly cut up to to
-this quantile of the data. The assumption is that abundances higher than
-this are not common, and they are classified in their own group.
-By default, \code{quantile} is 0.5.}
-\item{num_of_classes}{ The number of arithmetic abundance classes
-from zero to the quantile cutoff indicated by \code{quantile}.
-By default, \code{num_of_classes} is 50.}
-\item{only.tips}{ A boolean value specifying whether to remove internal
-nodes when Faith's inex is calculated. When \code{only.tips=TRUE}, those
-rows that are not tips of tree are removed.
-(By default: \code{only.tips=FALSE})}
-}}
 
 \item{tree}{A phylogenetic tree that is used to calculate 'faith' index.
 If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is
@@ -68,6 +38,24 @@ the tree. (By default: \code{node_lab = NULL})}
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether calculation of estimates should be parallelized.}
+
+\item{...}{optional arguments:
+\itemize{
+\item{threshold}{ A numeric value in the unit interval,
+determining the threshold for coverage index. By default,
+\code{threshold} is 0.9.}
+\item{quantile}{ Arithmetic abundance classes are evenly cut up to to
+this quantile of the data. The assumption is that abundances higher than
+this are not common, and they are classified in their own group.
+By default, \code{quantile} is 0.5.}
+\item{num_of_classes}{ The number of arithmetic abundance classes
+from zero to the quantile cutoff indicated by \code{quantile}.
+By default, \code{num_of_classes} is 50.}
+\item{only.tips}{ A boolean value specifying whether to remove internal
+nodes when Faith's inex is calculated. When \code{only.tips=TRUE}, those
+rows that are not tips of tree are removed.
+(By default: \code{only.tips=FALSE})}
+}}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}

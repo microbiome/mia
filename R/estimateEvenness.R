@@ -121,25 +121,6 @@
 #'
 NULL
 
-#' @rdname estimateEvenness
-#' @export
-setGeneric(
-    "estimateEvenness", signature = c("x"),
-    function(x, ...) standardGeneric("estimateEvenness"))
-
-#' @rdname estimateEvenness
-#' @export
-setMethod(
-    "estimateEvenness", signature = c(x="ANY"),
-    function(x, ...){
-        .Deprecated(
-            old = "estimateEvenness", new = "estimateAlpha",
-            msg = paste0(
-                "Now estimateEvenness is deprecated. Use estimateAlpha ",
-                "instead."))
-        .estimate_evenness(x, ...)
-    })
-
 setGeneric(
     ".estimate_evenness",signature = c("x"),
     function(

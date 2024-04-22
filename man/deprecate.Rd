@@ -14,6 +14,16 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{estimateEvenness}
+\alias{estimateEvenness,ANY-method}
+\alias{estimateRichness}
+\alias{estimateRichness,ANY-method}
+\alias{estimateDiversity}
+\alias{estimateDiversity,ANY-method}
+\alias{estimateFaith}
+\alias{estimateFaith,ANY-method}
+\alias{estimateDominance}
+\alias{estimateDominance,ANY-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +49,26 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+estimateEvenness(x, ...)
+
+\S4method{estimateEvenness}{ANY}(x, ...)
+
+estimateRichness(x, ...)
+
+\S4method{estimateRichness}{ANY}(x, ...)
+
+estimateDiversity(x, ...)
+
+\S4method{estimateDiversity}{ANY}(x, ...)
+
+estimateFaith(x, ...)
+
+\S4method{estimateFaith}{ANY}(x, ...)
+
+estimateDominance(x, ...)
+
+\S4method{estimateDominance}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{A

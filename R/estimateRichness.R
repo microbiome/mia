@@ -203,25 +203,6 @@
 #'
 NULL
 
-#' @rdname estimateRichness
-#' @export
-setGeneric(
-  "estimateRichness", signature = c("x"),
-  function(x, ...) standardGeneric("estimateRichness"))
-
-#' @rdname estimateRichness
-#' @export
-setMethod(
-  "estimateRichness", signature = c(x="ANY"),
-  function(x, ...){
-    .Deprecated(
-      old = "estimateRichness", new = "estimateAlpha",
-      msg = paste0(
-        "Now estimateRichness is deprecated. Use estimateAlpha ",
-        "instead."))
-    .estimate_richness(x, ...)
-  })
-
 setGeneric(
     ".estimate_richness", signature = c("x"), function(
     x, assay.type = assay_name, assay_name = "counts",
