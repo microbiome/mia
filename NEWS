@@ -108,4 +108,5 @@ Changes in version 1.11.x
 + Rename cluster to addCluster
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
 loadFromMetaphlan, loadFromHumann
++ deprecate subsetSamples, subsetFeatures and subsetTaxa
 + use rbiom unifrac implementation instead of runUnifrac in calculateUnifrac
