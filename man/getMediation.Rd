@@ -116,7 +116,8 @@ another variable in colData (argument \code{mediator}) or an assay
 Importantly, those three arguments are mutually exclusive.
 }
 \examples{
-if( requireNamespace("miaTime") ){
+\donttest{
+if( require("miaTime") ){
 # Import libraries
 library(mia)
 library(scater)
@@ -185,6 +186,7 @@ tse <- addMediation(tse, name = "reddim_mediation",
 
 # Show results for first 5 mediators
 head(metadata(tse)$reddim_mediation, 5)
+}
 }
 
 }
