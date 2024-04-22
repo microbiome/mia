@@ -108,5 +108,6 @@ Changes in version 1.11.x
 + Rename cluster to addCluster
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
 loadFromMetaphlan, loadFromHumann
++ deprecate subsetSamples, subsetFeatures and subsetTaxa
 + rename getRare* functions to getRare, getUnique* functions to getUnique, 
   getTop* functions to getTop and getPrevalent* functions to getPrevalent
