@@ -74,14 +74,13 @@
 #' @name getMediation
 #'
 #' @examples
-#' \donttest{
-#' if( require("miaTime") ){
+#' \dontrun{
 #' # Import libraries
 #' library(mia)
 #' library(scater)
 #' 
 #' # Load dataset
-#' data(hitchip1006)
+#' data(hitchip1006, package = "miaTime")
 #' tse <- hitchip1006
 #'  
 #' # Agglomerate features by family (merely to speed up execution)
@@ -144,7 +143,6 @@
 #' 
 #' # Show results for first 5 mediators
 #' head(metadata(tse)$reddim_mediation, 5)
-#' }
 #' }
 #' 
 NULL
