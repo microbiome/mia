@@ -49,7 +49,7 @@
 #' \dQuote{FeatureID}s
 #'
 #' @seealso
-#' \code{\link[=getPrevalence]{getPrevalentFeatures}}
+#' \code{\link[=getPrevalence]{getPrevalent}}
 #'
 #' @name summaries
 #'

@@ -170,3 +170,109 @@ setMethod("getTopTaxa", signature = c(x = "SummarizedExperiment"),
                 getTop(x,...)
             }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric("getRareFeatures", signature = "x",
+            function(x, ...)
+                standardGeneric("getRareFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getRareFeatures", signature = c(x = "ANY"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getRareFeatures' is deprecated. ",
+                                        "Use 'getRare' instead."))
+                getRare(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("getRareFeatures", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getRareFeatures' is deprecated. ",
+                                        "Use 'getRare' instead."))
+                getRare(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getRareTaxa", signature = "x",
+            function(x, ...)
+                standardGeneric("getRareTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getRareTaxa", signature = c(x = "ANY"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getRareTaxa' is deprecated. ",
+                                        "Use 'getRare' instead."))
+                getRare(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("getRareTaxa", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getRareTaxa' is deprecated. ",
+                                        "Use 'getRare' instead."))
+                getRare(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getPrevalentFeatures", signature = "x",
+            function(x, ...)
+                standardGeneric("getPrevalentFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getPrevalentFeatures", signature = c(x = "ANY"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getPrevalentFeatures' is deprecated. ",
+                                        "Use 'getPrevalent' instead."))
+                getPrevalent(x,...)
+            }
+          
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("getPrevalentFeatures", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getPrevalentFeatures' is deprecated. ",
+                                        "Use 'getPrevalent' instead."))
+                getPrevalent(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getPrevalentTaxa", signature = "x",
+            function(x, ...)
+                standardGeneric("getPrevalentTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getPrevalentTaxa", signature = c(x = "ANY"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getPrevalentTaxa' is deprecated. ",
+                                        "Use 'getPrevalent' instead."))
+                getPrevalent(x,...)
+            }
+           
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
+            function(x,...){
+                .Deprecated(msg = paste0("'getPrevalentTaxa' is deprecated. ",
+                                        "Use 'getPrevalent' instead."))
+                getPrevalent(x,...)
+            }
+)

@@ -162,7 +162,7 @@ getUnique(GlobalPatterns, "Phylum", sort = TRUE)
 
 }
 \seealso{
-\code{\link[=getPrevalence]{getPrevalentFeatures}}
+\code{\link[=getPrevalence]{getPrevalent}}
 
 \code{\link[scuttle:perCellQCMetrics]{perCellQCMetrics}},
 \code{\link[scuttle:perFeatureQCMetrics]{perFeatureQCMetrics}},

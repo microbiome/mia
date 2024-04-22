@@ -115,75 +115,75 @@ test_that("getPrevalence", {
 })
 
 
-test_that("getPrevalentFeatures", {
+test_that("getPrevalent", {
 
     data(GlobalPatterns, package="mia")
-    expect_error(getPrevalentFeatures(GlobalPatterns, prevalence="test"),
+    expect_error(getPrevalent(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
     # Results compatible with getPrevalence
-    pr1 <- getPrevalentFeatures(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE)
+    pr1 <- getPrevalent(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE)
     pr2 <- names(getPrevalence(GlobalPatterns, rank = "Kingdom", detection=0.1/100, as_relative=TRUE, sort=TRUE))
     expect_true(all(pr1 == pr2))
 
     # Same sorting for toptaxa obtained in different ways
-    pr1 <- getPrevalentFeatures(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE)
+    pr1 <- getPrevalent(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE)
     pr2 <- names(getPrevalence(GlobalPatterns, rank = "Kingdom", detection=0.1/100, as_relative=TRUE, sort=TRUE))
     expect_true(all(pr1 == pr2))
 
     # Retrieved taxa are the same for counts and relative abundances
-    pr1 <- getPrevalentFeatures(GlobalPatterns, prevalence=0.1/100, as_relative=TRUE)
-    pr2 <- getPrevalentFeatures(GlobalPatterns, prevalence=0.1/100, as_relative=FALSE)
+    pr1 <- getPrevalent(GlobalPatterns, prevalence=0.1/100, as_relative=TRUE)
+    pr2 <- getPrevalent(GlobalPatterns, prevalence=0.1/100, as_relative=FALSE)
     expect_true(all(pr1 == pr2))
 
     # Prevalence and detection threshold at 0 has the same impact on counts and relative abundances
-    pr1 <- getPrevalentFeatures(GlobalPatterns, detection=0, prevalence=0, as_relative=TRUE)
-    pr2 <- getPrevalentFeatures(GlobalPatterns, detection=0, prevalence=0, as_relative=FALSE)
+    pr1 <- getPrevalent(GlobalPatterns, detection=0, prevalence=0, as_relative=TRUE)
+    pr2 <- getPrevalent(GlobalPatterns, detection=0, prevalence=0, as_relative=FALSE)
     expect_true(all(pr1 == pr2))
     
     # Check that works also when rownames is NULL
     gp_null <- GlobalPatterns
     rownames(gp_null) <- NULL
     
-    pr1 <- getPrevalentFeatures(GlobalPatterns, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
+    pr1 <- getPrevalent(GlobalPatterns, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
     pr1 <- which(rownames(GlobalPatterns) %in% pr1)
-    pr2 <- getPrevalentFeatures(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
+    pr2 <- getPrevalent(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
     expect_equal(pr1, pr2)
     
     # Test alias
-    alias <- getPrevalentFeatures(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
+    alias <- getPrevalent(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
     expect_equal(pr1, alias)
     
-    pr1 <- getPrevalentFeatures(GlobalPatterns, detection=0.004, prevalence = 0.1, 
+    pr1 <- getPrevalent(GlobalPatterns, detection=0.004, prevalence = 0.1, 
                             as_relative=TRUE, rank = "Family")
-    pr2 <- getPrevalentFeatures(gp_null, detection=0.004, prevalence = 0.1, 
+    pr2 <- getPrevalent(gp_null, detection=0.004, prevalence = 0.1, 
                             as_relative=TRUE, rank = "Family") 
     expect_equal(pr1, pr2)
 
 })
 
-test_that("getRareFeatures", {
+test_that("getRare", {
 
     data(GlobalPatterns, package="mia")
-    expect_error(getRareFeatures(GlobalPatterns, prevalence="test"),
+    expect_error(getRare(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
 
     ############# Test that output type is correct #############
-    expect_type(taxa <- getRareFeatures(GlobalPatterns,
+    expect_type(taxa <- getRare(GlobalPatterns,
                                     detection = 130,
                                     prevalence = 90/100), "character")
 
-    ##### Test that getPrevalentFeatures and getRareFeatures has all the taxa ####
+    ##### Test that getPrevalent and getRare has all the taxa ####
 
     # Gets rownames for all the taxa
     all_taxa <- rownames(GlobalPatterns)
 
     # Gets prevalent taxa
-    prevalent_taxa <- getPrevalentFeatures(GlobalPatterns,
+    prevalent_taxa <- getPrevalent(GlobalPatterns,
                                        detection = 0,
                                        prevalence = 90/100,
                                        include_lowest = FALSE)
     # Gets rare taxa
-    rare_taxa <- getRareFeatures(GlobalPatterns,
+    rare_taxa <- getRare(GlobalPatterns,
                              detection = 0,
                              prevalence = 90/100,
                              include_lowest = FALSE)
@@ -197,7 +197,7 @@ test_that("getRareFeatures", {
     expect_true( !any( !(all_taxa %in% prevalent_and_rare_taxa) ) &&
                      !any( !( prevalent_and_rare_taxa %in% all_taxa) ) )
 
-    ##### Test that getPrevalentFeatures and getRareFeatures has all the taxa, ####
+    ##### Test that getPrevalent and getRare has all the taxa, ####
     ##### but now with detection limit and with rank #####
 
     # Check that it works with all the ranks
@@ -212,13 +212,13 @@ test_that("getRareFeatures", {
         all_taxa <- rownames(se)
 
         # Gets prevalent taxa
-        prevalent_taxa <- getPrevalentFeatures(GlobalPatterns,
+        prevalent_taxa <- getPrevalent(GlobalPatterns,
                                            prevalence = 0.05,
                                            detection = 0.1,
                                            rank = rank,
                                            include_lowest = TRUE, as_relative = TRUE)
         # Gets rare taxa
-        rare_taxa <- getRareFeatures(GlobalPatterns,
+        rare_taxa <- getRare(GlobalPatterns,
                                  prevalence = 0.05,
                                  detection = 0.1,
                                  rank = rank,
@@ -243,18 +243,18 @@ test_that("getRareFeatures", {
     gp_null <- GlobalPatterns
     rownames(gp_null) <- NULL
     
-    pr1 <- getRareFeatures(GlobalPatterns, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
+    pr1 <- getRare(GlobalPatterns, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
     pr1 <- which(rownames(GlobalPatterns) %in% pr1)
-    pr2 <- getRareFeatures(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
+    pr2 <- getRare(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE) 
     expect_equal(pr1, pr2)
     
     # Test lias
-    alias <- getRareFeatures(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
+    alias <- getRare(gp_null, detection=0.0045, prevalence = 0.25, as_relative=TRUE)
     expect_equal(pr1, alias)
     
-    pr1 <- getRareFeatures(GlobalPatterns, detection=0.004, prevalence = 0.1, 
+    pr1 <- getRare(GlobalPatterns, detection=0.004, prevalence = 0.1, 
                        as_relative=TRUE, rank = "Family")
-    pr2 <- getRareFeatures(gp_null, detection=0.004, prevalence = 0.1, 
+    pr2 <- getRare(gp_null, detection=0.004, prevalence = 0.1, 
                        as_relative=TRUE, rank = "Family") 
     expect_equal(pr1, pr2)
 
@@ -267,10 +267,10 @@ test_that("subsetByPrevalentFeatures", {
     # Expect TSE object
     expect_equal(class(subsetByPrevalentFeatures(GlobalPatterns)), class(GlobalPatterns))
     
-    # Results compatible with getPrevalentFeatures
+    # Results compatible with getPrevalent
     pr1 <- rownames(subsetByPrevalentFeatures(GlobalPatterns, rank = "Class", detection=0.1/100, 
                                           as_relative=TRUE, sort=TRUE))
-    pr2 <- getPrevalentFeatures(GlobalPatterns, rank = "Class", detection=0.1/100, 
+    pr2 <- getPrevalent(GlobalPatterns, rank = "Class", detection=0.1/100, 
                             as_relative=TRUE, sort=TRUE)
     expect_true(all(pr1 == pr2))
     
@@ -314,10 +314,10 @@ test_that("subsetByRareFeatures", {
     # Expect TSE object
     expect_equal(class(subsetByRareFeatures(GlobalPatterns)), class(GlobalPatterns))
     
-    # Results compatible with getRareFeatures
+    # Results compatible with getRare
     pr1 <- rownames(subsetByRareFeatures(GlobalPatterns, rank = "Phylum", detection=0.1/100, 
                                      as_relative=TRUE, sort=TRUE))
-    pr2 <- getRareFeatures(GlobalPatterns, rank = "Phylum", detection=0.1/100, 
+    pr2 <- getRare(GlobalPatterns, rank = "Phylum", detection=0.1/100, 
                        as_relative=TRUE, sort=TRUE)
     expect_true(all(pr1 == pr2))
     
