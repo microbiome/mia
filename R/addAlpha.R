@@ -220,7 +220,7 @@ setMethod(
     # It might be that certain samples were dropped off if they have lower
     # abundance than rarefaction  depth --> order so that data includes all the
     # samples
-    res <- res[match(colnames(tse), names(res))]
+    res <- res[match(colnames(x), names(res))]
     res <- unname(res)
     # Add to original data
     colData(x)[[name]] <- res
