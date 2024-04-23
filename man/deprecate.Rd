@@ -14,6 +14,9 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{getPrevalentAbundance}
+\alias{getPrevalentAbundance,ANY-method}
+\alias{getPrevalentAbundance,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +42,12 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+getPrevalentAbundance(x, ...)
+
+\S4method{getPrevalentAbundance}{ANY}(x, ...)
+
+\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

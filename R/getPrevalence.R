@@ -49,7 +49,7 @@
 #'   \item{for \code{getPrevalentFeatures}, \code{getRareFeatures}, 
 #'     \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional 
 #'     parameters passed to \code{getPrevalence}}
-#'   \item{for \code{getPrevalentAbundance} additional parameters passed to
+#'   \item{for \code{addPrevalentAbundance} additional parameters passed to
 #'     \code{getPrevalentFeatures}}
 #' }
 #'
@@ -62,7 +62,7 @@
 #' FALSE} the relative frequency (between 0 and 1) is used to check against the
 #' \code{detection} threshold.
 #'
-#' The core abundance index from \code{getPrevalentAbundance} gives the relative
+#' The core abundance index from \code{addPrevalentAbundance} gives the relative
 #' proportion of the core species (in between 0 and 1). The core taxa are
 #' defined as those that exceed the given population prevalence threshold at the
 #' given detection level as set for \code{getPrevalentFeatures}.
@@ -79,7 +79,7 @@
 #'   \item{\code{getPrevalence} returns a \code{numeric} vector with the 
 #'     names being set to either the row names of \code{x} or the names after 
 #'     agglomeration.}
-#'   \item{\code{getPrevalentAbundance} returns a \code{numeric} vector with
+#'   \item{\code{addPrevalentAbundance} returns a \code{numeric} vector with
 #'     the names corresponding to the column name of \code{x} and include the 
 #'     joint abundance of prevalent taxa.}
 #'   \item{\code{getPrevalentTaxa} and \code{getRareFeatures} return a 
@@ -105,7 +105,7 @@
 #'
 #' @author
 #' Leo Lahti
-#' For \code{getPrevalentAbundance}: Leo Lahti and Tuomas Borman.
+#' For \code{addPrevalentAbundance}: Leo Lahti and Tuomas Borman.
 #' Contact: \url{microbiome.github.io}
 #'
 #' @export
@@ -173,7 +173,7 @@
 #' tse
 #'                          
 #' data(esophagus)
-#' getPrevalentAbundance(esophagus, assay.type = "counts")
+#' addPrevalentAbundance(esophagus, assay.type = "counts")
 #'
 #' # data can be aggregated based on prevalent taxonomic results
 #' agglomerateByPrevalence(tse,
@@ -556,17 +556,17 @@ setMethod("subsetByRareTaxa", signature = c(x = "ANY"),
         }
 )
 
-############################# getPrevalentAbundance ############################
+############################# addPrevalentAbundance ############################
 
 #' @rdname getPrevalence
 #' @export
-setGeneric("getPrevalentAbundance", signature = "x",
+setGeneric("addPrevalentAbundance", signature = "x",
            function(x, assay.type = assay_name, assay_name = "relabundance", ...)
-               standardGeneric("getPrevalentAbundance"))
+               standardGeneric("addPrevalentAbundance"))
 
 #' @rdname getPrevalence
 #' @export
-setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
+setMethod("addPrevalentAbundance", signature = c(x = "ANY"),
     function(x, ...){
         x <- .calc_rel_abund(x)
         cm <- getPrevalentTaxa(x, ...)
@@ -582,15 +582,14 @@ setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
 
 #' @rdname getPrevalence
 #' @export
-setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
+setMethod("addPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", ...){
         # check assay
         .check_assay_present(assay.type, x)
         #
-        getPrevalentAbundance(assay(x,assay.type))
+        addPrevalentAbundance(assay(x,assay.type))
     }
 )
-
 
 ############################# agglomerateByPrevalence ##########################
 

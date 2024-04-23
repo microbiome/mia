@@ -294,7 +294,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 }
 
 .calc_core_dominance <- function(mat, ...){
-    getPrevalentAbundance(mat, detection = 0, as_relative = TRUE)
+    addPrevalentAbundance(mat, detection = 0, as_relative = TRUE)
 }
 
 .calc_dominance <- function(mat, ntaxa, aggregate, index){

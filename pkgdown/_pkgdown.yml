@@ -44,7 +44,6 @@ reference:
 - subtitle: Dataset description
 - contents:
   - getPrevalence
-  - getPrevalentAbundance
   - getTopTaxa
   - getExperimentCrossCorrelation
   - hierarchy-tree

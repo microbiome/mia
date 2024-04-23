@@ -104,3 +104,29 @@ loadFromHumann <- function(...) {
                             " Use 'importHUMAnN' instead."))
     importHUMAnN(...)
 }
+
+#' @rdname deprecate
+#' @export
+setGeneric("getPrevalentAbundance", signature = "x",
+           function(x, ...)
+               standardGeneric("getPrevalentAbundance"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getPrevalentAbundance", signature = c(x = "ANY"),
+        function(x, ...){
+            .Deprecated(msg = paste0("'getPrevalentAbundance' is deprecated. ",
+                                        "Use 'addPrevalentAbundance' instead."))
+            addPrevalentAbundance(x, ...)
+        }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
+        function(x, ...){
+            .Deprecated(msg = paste0("'getPrevalentAbundance' is deprecated. ",
+                                        "Use 'addPrevalentAbundance' instead."))
+            addPrevalentAbundance(x, ...)
+        }
+)

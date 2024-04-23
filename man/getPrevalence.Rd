@@ -23,9 +23,9 @@
 \alias{subsetByRareTaxa}
 \alias{subsetByRareFeatures,SummarizedExperiment-method}
 \alias{subsetByRareTaxa,ANY-method}
-\alias{getPrevalentAbundance}
-\alias{getPrevalentAbundance,ANY-method}
-\alias{getPrevalentAbundance,SummarizedExperiment-method}
+\alias{addPrevalentAbundance}
+\alias{addPrevalentAbundance,ANY-method}
+\alias{addPrevalentAbundance,SummarizedExperiment-method}
 \alias{agglomerateByPrevalence}
 \alias{mergeFeaturesByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
@@ -100,21 +100,21 @@ subsetByRareTaxa(x, ...)
 
 \S4method{subsetByRareTaxa}{ANY}(x, ...)
 
-getPrevalentAbundance(
+addPrevalentAbundance(
   x,
   assay.type = assay_name,
   assay_name = "relabundance",
   ...
 )
 
-\S4method{getPrevalentAbundance}{ANY}(
+\S4method{addPrevalentAbundance}{ANY}(
   x,
   assay.type = assay_name,
   assay_name = "relabundance",
   ...
 )
 
-\S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
+\S4method{addPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
 
 agglomerateByPrevalence(x, ...)
 
@@ -150,7 +150,7 @@ Note that you can specify whether to remove empty ranks with
 \item{for \code{getPrevalentFeatures}, \code{getRareFeatures},
 \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional
 parameters passed to \code{getPrevalence}}
-\item{for \code{getPrevalentAbundance} additional parameters passed to
+\item{for \code{addPrevalentAbundance} additional parameters passed to
 \code{getPrevalentFeatures}}
 }}
 
@@ -197,7 +197,7 @@ All other functions return a named vectors:
 \item{\code{getPrevalence} returns a \code{numeric} vector with the
 names being set to either the row names of \code{x} or the names after
 agglomeration.}
-\item{\code{getPrevalentAbundance} returns a \code{numeric} vector with
+\item{\code{addPrevalentAbundance} returns a \code{numeric} vector with
 the names corresponding to the column name of \code{x} and include the
 joint abundance of prevalent taxa.}
 \item{\code{getPrevalentTaxa} and \code{getRareFeatures} return a
@@ -220,7 +220,7 @@ prevalence by the number of samples (\code{ncol(x)}). If \code{as_relative =
 FALSE} the relative frequency (between 0 and 1) is used to check against the
 \code{detection} threshold.
 
-The core abundance index from \code{getPrevalentAbundance} gives the relative
+The core abundance index from \code{addPrevalentAbundance} gives the relative
 proportion of the core species (in between 0 and 1). The core taxa are
 defined as those that exceed the given population prevalence threshold at the
 given detection level as set for \code{getPrevalentFeatures}.
@@ -297,7 +297,7 @@ altExp(tse, "rare")
 tse
                          
 data(esophagus)
-getPrevalentAbundance(esophagus, assay.type = "counts")
+addPrevalentAbundance(esophagus, assay.type = "counts")
 
 # data can be aggregated based on prevalent taxonomic results
 agglomerateByPrevalence(tse,
@@ -318,6 +318,6 @@ To cite the R package, see citation('mia')
 }
 \author{
 Leo Lahti
-For \code{getPrevalentAbundance}: Leo Lahti and Tuomas Borman.
+For \code{addPrevalentAbundance}: Leo Lahti and Tuomas Borman.
 Contact: \url{microbiome.github.io}
 }
