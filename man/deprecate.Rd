@@ -14,6 +14,14 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{addPerSampleDominantFeatures}
+\alias{addPerSampleDominantFeatures,SummarizedExperiment-method}
+\alias{addPerSampleDominantTaxa}
+\alias{addPerSampleDominantTaxa,SummarizedExperiment-method}
+\alias{perSampleDominantFeatures}
+\alias{perSampleDominantFeatures,SummarizedExperiment-method}
+\alias{perSampleDominantTaxa}
+\alias{perSampleDominantTaxa,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +47,22 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+addPerSampleDominantFeatures(x, ...)
+
+\S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(x, ...)
+
+addPerSampleDominantTaxa(x, ...)
+
+\S4method{addPerSampleDominantTaxa}{SummarizedExperiment}(x, ...)
+
+perSampleDominantFeatures(x, ...)
+
+\S4method{perSampleDominantFeatures}{SummarizedExperiment}(x, ...)
+
+perSampleDominantTaxa(x, ...)
+
+\S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

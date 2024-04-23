@@ -109,3 +109,6 @@ Changes in version 1.11.x
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
 loadFromMetaphlan, loadFromHumann
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
++ Rename perSampleDominant* functions to getDominant and addPerSampleDominant* 
+  functions to addDominant
+

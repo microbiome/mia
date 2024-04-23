@@ -2,16 +2,13 @@
 % Please edit documentation in R/dominantTaxa.R
 \name{perSampleDominantTaxa}
 \alias{perSampleDominantTaxa}
-\alias{perSampleDominantFeatures}
-\alias{perSampleDominantFeatures,SummarizedExperiment-method}
-\alias{perSampleDominantTaxa,SummarizedExperiment-method}
-\alias{addPerSampleDominantFeatures}
-\alias{addPerSampleDominantTaxa}
-\alias{addPerSampleDominantFeatures,SummarizedExperiment-method}
-\alias{addPerSampleDominantTaxa,SummarizedExperiment-method}
+\alias{getDominant}
+\alias{getDominant,SummarizedExperiment-method}
+\alias{addDominant}
+\alias{addDominant,SummarizedExperiment-method}
 \title{Get dominant taxa}
 \usage{
-perSampleDominantFeatures(
+getDominant(
   x,
   assay.type = assay_name,
   assay_name = "counts",
@@ -22,7 +19,7 @@ perSampleDominantFeatures(
   ...
 )
 
-\S4method{perSampleDominantFeatures}{SummarizedExperiment}(
+\S4method{getDominant}{SummarizedExperiment}(
   x,
   assay.type = assay_name,
   assay_name = "counts",
@@ -33,19 +30,9 @@ perSampleDominantFeatures(
   ...
 )
 
-perSampleDominantTaxa(x, ...)
+addDominant(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
 
-\S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, ...)
-
-addPerSampleDominantFeatures(
-  x,
-  name = "dominant_taxa",
-  other.name = "Other",
-  n = NULL,
-  ...
-)
-
-\S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(
+\S4method{addDominant}{SummarizedExperiment}(
   x,
   name = "dominant_taxa",
   other.name = "Other",
@@ -53,10 +40,6 @@ addPerSampleDominantFeatures(
   complete = FALSE,
   ...
 )
-
-addPerSampleDominantTaxa(x, ...)
-
-\S4method{addPerSampleDominantTaxa}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
@@ -82,10 +65,10 @@ dominant features in the data. Default is "Other".}
 Default is NULL, which defaults that each sample is assigned a dominant taxon.}
 
 \item{complete}{A boolean value to manage multiple dominant taxa for a sample.
-Default for perSampleDominantTaxa is TRUE to include all equally dominant taxa
+Default for getDominant is TRUE to include all equally dominant taxa
 for each sample. complete = FALSE samples one taxa for the samples that have
 multiple.
-Default for addPerSampleDominantTaxa is FALSE to add a column with only one
+Default for addDominant is FALSE to add a column with only one
 dominant taxon assigned for each sample into colData. complete = TRUE adds a
 list that includes all dominant taxa for each sample into colData.}
 
@@ -93,11 +76,11 @@ list that includes all dominant taxa for each sample into colData.}
 \code{rank} is specified.}
 
 \item{name}{A name for the column of the \code{colData} where the dominant
-taxa will be stored in when using \code{addPerSampleDominantFeatures}.}
+taxa will be stored in when using \code{addDominant}.}
 }
 \value{
-\code{perSampleDominantFeatures} returns a named character vector \code{x}
-while \code{addPerSampleDominantFeatures} returns
+\code{getDominant} returns a named character vector \code{x}
+while \code{addDominant} returns
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 with additional column in \code{\link{colData}} named \code{*name*}.
 }
@@ -107,10 +90,10 @@ These functions return information about the most dominant taxa in a
 object.
 }
 \details{
-\code{addPerSampleDominantFeatures} extracts the most abundant taxa in a
+\code{addDominant} extracts the most abundant taxa in a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object, and stores the information in the \code{colData}. It is a wrapper for
-\code{perSampleDominantFeatures}.
+\code{getDominant}.
 
 With \code{rank} parameter, it is possible to agglomerate taxa based on taxonomic
 ranks. E.g. if 'Genus' rank is used, all abundances of same Genus are added
@@ -122,10 +105,10 @@ data(GlobalPatterns)
 x <- GlobalPatterns
 
 # Finds the dominant taxa.
-sim.dom <- perSampleDominantFeatures(x, rank="Genus")
+sim.dom <- getDominant(x, rank="Genus")
 
 # Add information to colData
-x <- addPerSampleDominantFeatures(x, rank = "Genus", name="dominant_genera")
+x <- addDominant(x, rank = "Genus", name="dominant_genera")
 colData(x)
 }
 \author{
