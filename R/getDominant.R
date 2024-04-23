@@ -56,7 +56,7 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' with additional column in \code{\link{colData}} named \code{*name*}.
 #'
-#' @name dominantTaxa
+#' @name getDominant
 #' @export
 #'
 #' @author Leo Lahti, Tuomas Borman and Sudarshan A. Shetty.
@@ -73,7 +73,7 @@
 #' colData(x)
 NULL
 
-#' @rdname dominantTaxa
+#' @rdname getDominant
 #' @export
 setGeneric("getDominant",signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
@@ -81,7 +81,7 @@ setGeneric("getDominant",signature = c("x"),
                     complete = TRUE, ...)
                standardGeneric("getDominant"))
 
-#' @rdname dominantTaxa
+#' @rdname getDominant
 #' @importFrom IRanges relist
 #' @export
 setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
@@ -164,13 +164,13 @@ setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-#' @rdname dominantTaxa
+#' @rdname getDominant
 #' @export
 setGeneric("addDominant", signature = c("x"),
            function(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
                standardGeneric("addDominant"))
 
-#' @rdname dominantTaxa
+#' @rdname getDominant
 #' @export
 setMethod("addDominant", signature = c(x = "SummarizedExperiment"),
     function(x, name = "dominant_taxa", other.name = "Other", n = NULL, 
