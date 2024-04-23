@@ -104,3 +104,35 @@ loadFromHumann <- function(...) {
                             " Use 'importHUMAnN' instead."))
     importHUMAnN(...)
 }
+
+#' @rdname deprecate
+#' @export
+setGeneric("countDominantFeatures", signature = c("x"),
+            function(x, ...)
+                standardGeneric("countDominantFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = "'countDominantFeatures' function is deprecated. ",
+                            "Use 'summarizeDominance' instead.")
+                summarizeDominance(x, ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("countDominantTaxa", signature = c("x"),
+            function(x, ...)
+                standardGeneric("countDominantTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = "'countDominantTaxa' function is deprecated. ",
+                                "Use 'summarizeDominance' instead.")
+                summarizeDominance(x, ...)
+            }
+)

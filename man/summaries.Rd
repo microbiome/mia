@@ -10,10 +10,8 @@
 \alias{getUniqueTaxa}
 \alias{getUniqueFeatures,SummarizedExperiment-method}
 \alias{getUniqueTaxa,SummarizedExperiment-method}
-\alias{countDominantFeatures}
-\alias{countDominantFeatures,SummarizedExperiment-method}
-\alias{countDominantTaxa}
-\alias{countDominantTaxa,SummarizedExperiment-method}
+\alias{summarizeDominance}
+\alias{summarizeDominance,SummarizedExperiment-method}
 \alias{summary,SummarizedExperiment-method}
 \title{Summarizing microbiome data}
 \usage{
@@ -49,13 +47,9 @@ getUniqueTaxa(x, ...)
 
 \S4method{getUniqueTaxa}{SummarizedExperiment}(x, ...)
 
-countDominantFeatures(x, group = NULL, name = "dominant_taxa", ...)
+summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 
-\S4method{countDominantFeatures}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
-
-countDominantTaxa(x, ...)
-
-\S4method{countDominantTaxa}{SummarizedExperiment}(x, ...)
+\S4method{summarizeDominance}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
 
 \S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
@@ -82,7 +76,7 @@ will be disabled.)}
 specified to argument \code{method}. Default is TRUE.}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
-\code{rank} is specified for \code{countDominantFeatures}.}
+\code{rank} is specified for \code{summarizeDominance}.}
 
 \item{rank}{A single character defining a taxonomic rank. Must be a value of
 the output of \code{taxonomyRanks()}.}
@@ -102,7 +96,7 @@ The \code{getTopFeatures} returns a vector of the most \code{top} abundant
 The \code{getUniqueFeatures} returns a vector of unique taxa present at a
 particular rank
 
-The \code{countDominantFeatures} returns an overview in a tibble. It contains dominant taxa
+The \code{summarizeDominance} returns an overview in a tibble. It contains dominant taxa
 in a column named \code{*name*} and its abundance in the data set.
 
 The \code{summary} returns a list with two \code{tibble}s
@@ -119,7 +113,7 @@ object.
 The \code{getUniqueFeatures} is a basic function to access different taxa at a
 particular taxonomic rank.
 
-\code{countDominantFeatures} returns information about most dominant
+\code{summarizeDominance} returns information about most dominant
 taxa in a tibble. Information includes their absolute and relative
 abundances in whole data set.
 
@@ -150,13 +144,13 @@ getTopFeatures(agglomerateByRank(GlobalPatterns,
                              na.rm = TRUE))
 
 # Gets the overview of dominant taxa
-dominant_taxa <- countDominantFeatures(GlobalPatterns,
+dominant_taxa <- summarizeDominance(GlobalPatterns,
                                    rank = "Genus")
 dominant_taxa
 
 # With group, it is possible to group observations based on specified groups
 # Gets the overview of dominant taxa
-dominant_taxa <- countDominantFeatures(GlobalPatterns,
+dominant_taxa <- summarizeDominance(GlobalPatterns,
                                    rank = "Genus",
                                    group = "SampleType",
                                    na.rm = TRUE)

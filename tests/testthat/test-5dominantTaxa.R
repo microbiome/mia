@@ -79,24 +79,24 @@ test_that("perSampleDominantFeatures", {
     test_perSampleDominantFeatures(GlobalPatterns)
 
 
-    test_that("countDominantFeatures", {
+    test_that("summarizeDominance", {
 
-        test_countDominantFeatures <- function(tse){
-            expect_equal(countDominantFeatures(tse, group = "SampleType")$dominant_taxa,
+        test_summarizeDominance <- function(tse){
+            expect_equal(summarizeDominance(tse, group = "SampleType")$dominant_taxa,
                          c("331820", "549656", "550960", "319044", "189047",
                            "279599", "329744", "12812",  "534609", "557211",
                            "87194", "484436", "64396", "98605", "256977",
                            "36155","71074",  "114821", "360229"))
 
-            expect_equal(countDominantFeatures(tse,
+            expect_equal(summarizeDominance(tse,
                                            rank = "Kingdom")$dominant_taxa[1],
                          c("Bacteria"))
 
-            expect_equal(countDominantFeatures(tse, rank = "Order", digits = 3)$rel_freq,
+            expect_equal(summarizeDominance(tse, rank = "Order", digits = 3)$rel_freq,
                          c(0.231, 0.115, 0.077, 0.077, 0.077, 0.077, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038, 0.038))
 
             # check sample type
-            sample.type <- countDominantFeatures(tse, rank = "Class",
+            sample.type <- summarizeDominance(tse, rank = "Class",
                                              group = "SampleType")$SampleType
 
             expect_equal(as.character(sample.type),
@@ -109,8 +109,8 @@ test_that("perSampleDominantFeatures", {
             assay(tse1)[1, 1] <- max(assay(tse1)[, 1])
             
             # Calculate info about dominant taxa
-            count_dominant <- countDominantFeatures(tse)
-            count_dominant1 <- countDominantFeatures(tse1)
+            count_dominant <- summarizeDominance(tse)
+            count_dominant1 <- summarizeDominance(tse1)
             
             # count_dominant1 should have one extra row, since there are more dominant taxa
             expect_equal( nrow(count_dominant1), nrow(count_dominant) + 1)
@@ -120,8 +120,8 @@ test_that("perSampleDominantFeatures", {
             expect_true(count_dominant$dominant_taxa[1] %in% count_dominant1$dominant_taxa)
             
             # Now the row lengths should be equal
-            count_dominant <- countDominantFeatures(tse, complete = F)
-            expect_warning(count_dominant1 <- countDominantFeatures(tse1, complete = F))
+            count_dominant <- summarizeDominance(tse, complete = F)
+            expect_warning(count_dominant1 <- summarizeDominance(tse1, complete = F))
             
             expect_equal(nrow(count_dominant1), nrow(count_dominant))
 
@@ -129,7 +129,7 @@ test_that("perSampleDominantFeatures", {
 
         # TSE object
         data(GlobalPatterns, package="mia")
-        test_countDominantFeatures(GlobalPatterns)
+        test_summarizeDominance(GlobalPatterns)
 
     })
 })
