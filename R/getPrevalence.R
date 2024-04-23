@@ -48,13 +48,13 @@
 #'   }
 #'   \item{for \code{getPrevalentFeatures}, \code{getRareFeatures}, 
 #'     \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional 
-#'     parameters passed to \code{getPrevalence}}
+#'     parameters passed to \code{addPrevalence}}
 #'   \item{for \code{addPrevalentAbundance} additional parameters passed to
 #'     \code{getPrevalentFeatures}}
 #' }
 #'
 #' @details
-#' \code{getPrevalence} calculates the relative frequency of samples that exceed
+#' \code{addPrevalence} calculates the relative frequency of samples that exceed
 #' the detection threshold. For \code{SummarizedExperiment} objects, the
 #' prevalence is calculated for the selected taxonomic rank, otherwise for the
 #' rows. The absolute population prevalence can be obtained by multiplying the
@@ -76,7 +76,7 @@
 #' 
 #' All other functions return a named vectors:
 #' \itemize{
-#'   \item{\code{getPrevalence} returns a \code{numeric} vector with the 
+#'   \item{\code{addPrevalence} returns a \code{numeric} vector with the 
 #'     names being set to either the row names of \code{x} or the names after 
 #'     agglomeration.}
 #'   \item{\code{addPrevalentAbundance} returns a \code{numeric} vector with
@@ -114,15 +114,15 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' # Get prevalence estimates for individual ASV/OTU
-#' prevalence.frequency <- getPrevalence(tse,
+#' prevalence.frequency <- addPrevalence(tse,
 #'                                       detection = 0,
 #'                                       sort = TRUE,
 #'                                       as_relative = TRUE)
 #' head(prevalence.frequency)
 #'
 #' # Get prevalence estimates for phylums
-#' # - the getPrevalence function itself always returns population frequencies
-#' prevalence.frequency <- getPrevalence(tse,
+#' # - the addPrevalence function itself always returns population frequencies
+#' prevalence.frequency <- addPrevalence(tse,
 #'                                       rank = "Phylum",
 #'                                       detection = 0,
 #'                                       sort = TRUE,
@@ -185,13 +185,13 @@ NULL
 
 #' @rdname getPrevalence
 #' @export
-setGeneric("getPrevalence", signature = "x",
+setGeneric("addPrevalence", signature = "x",
            function(x, ...)
-               standardGeneric("getPrevalence"))
+               standardGeneric("addPrevalence"))
 
 #' @rdname getPrevalence
 #' @export
-setMethod("getPrevalence", signature = c(x = "ANY"), function(
+setMethod("addPrevalence", signature = c(x = "ANY"), function(
     x, detection = 0, include_lowest = FALSE, sort = FALSE, na.rm = TRUE, ...){
         # input check
         if (!.is_numeric_string(detection)) {
@@ -241,7 +241,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
         x, rank, relabel = FALSE, make_unique = TRUE, na.rm = FALSE,
         agg.na.rm = FALSE, ...){
     # Check na.rm. It is not used in this function, it is only catched so that
-    # it can be passed to getPrevalence(matrix) and not use it here in
+    # it can be passed to addPrevalence(matrix) and not use it here in
     # agglomerateByRank function.
     if(!.is_a_bool(na.rm)){
         stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
@@ -268,7 +268,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 
 #' @rdname getPrevalence
 #' @export
-setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
+setMethod("addPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
              as_relative = FALSE, rank = NULL, ...){
         # input check
@@ -283,7 +283,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         if (as_relative) {
             mat <- .calc_rel_abund(mat)
         }
-        getPrevalence(mat, ...)
+        addPrevalence(mat, ...)
     }
 )
 ############################# getPrevalentFeatures #################################
@@ -329,7 +329,7 @@ setGeneric("getPrevalentFeatures", signature = "x",
     # rownames must bet set and unique, because if sort = TRUE, the order is 
     # not preserved
     x <- .norm_rownames(x)
-    pr <- getPrevalence(x, rank = NULL, ...)
+    pr <- addPrevalence(x, rank = NULL, ...)
     
     # get logical vector which row does exceed threshold
     if (include_lowest) {

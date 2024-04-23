@@ -17,6 +17,9 @@
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
+\alias{getPrevalence}
+\alias{getPrevalence,ANY-method}
+\alias{getPrevalence,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -48,6 +51,12 @@ getPrevalentAbundance(x, ...)
 \S4method{getPrevalentAbundance}{ANY}(x, ...)
 
 \S4method{getPrevalentAbundance}{SummarizedExperiment}(x, ...)
+
+getPrevalence(x, ...)
+
+\S4method{getPrevalence}{ANY}(x, ...)
+
+\S4method{getPrevalence}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

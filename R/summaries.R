@@ -24,7 +24,7 @@
 #'              specified to argument \code{method}. Default is TRUE. 
 #'
 #'
-#' @param ... Additional arguments passed, e.g., to getPrevalence:
+#' @param ... Additional arguments passed, e.g., to addPrevalence:
 #'    \itemize{
 #'        \item{\code{sort}}{A single boolean value for selecting 
 #'        whether to sort taxa in alphabetical order or not. Enabled in functions
@@ -140,7 +140,7 @@ setMethod("getTopFeatures", signature = c(x = "SummarizedExperiment"),
         .check_assay_present(assay.type, x)
         #
         if(method == "prevalence"){
-            taxs <- getPrevalence(assay(x, assay.type), sort = TRUE,
+            taxs <- addPrevalence(assay(x, assay.type), sort = TRUE,
                                   include_lowest = TRUE, ...)
             # If there are taxa with prevalence of 0, remove them
             taxs <- taxs[ taxs > 0 ]

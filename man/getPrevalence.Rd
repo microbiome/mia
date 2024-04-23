@@ -2,8 +2,9 @@
 % Please edit documentation in R/getPrevalence.R
 \name{getPrevalence}
 \alias{getPrevalence}
-\alias{getPrevalence,ANY-method}
-\alias{getPrevalence,SummarizedExperiment-method}
+\alias{addPrevalence}
+\alias{addPrevalence,ANY-method}
+\alias{addPrevalence,SummarizedExperiment-method}
 \alias{getPrevalentFeatures}
 \alias{getPrevalentTaxa}
 \alias{getPrevalentFeatures,ANY-method}
@@ -32,9 +33,9 @@
 \alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \title{Calculation prevalence information for features across samples}
 \usage{
-getPrevalence(x, ...)
+addPrevalence(x, ...)
 
-\S4method{getPrevalence}{ANY}(
+\S4method{addPrevalence}{ANY}(
   x,
   detection = 0,
   include_lowest = FALSE,
@@ -43,7 +44,7 @@ getPrevalence(x, ...)
   ...
 )
 
-\S4method{getPrevalence}{SummarizedExperiment}(
+\S4method{addPrevalence}{SummarizedExperiment}(
   x,
   assay.type = assay_name,
   assay_name = "counts",
@@ -149,7 +150,7 @@ Note that you can specify whether to remove empty ranks with
 }
 \item{for \code{getPrevalentFeatures}, \code{getRareFeatures},
 \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional
-parameters passed to \code{getPrevalence}}
+parameters passed to \code{addPrevalence}}
 \item{for \code{addPrevalentAbundance} additional parameters passed to
 \code{getPrevalentFeatures}}
 }}
@@ -194,7 +195,7 @@ summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 
 All other functions return a named vectors:
 \itemize{
-\item{\code{getPrevalence} returns a \code{numeric} vector with the
+\item{\code{addPrevalence} returns a \code{numeric} vector with the
 names being set to either the row names of \code{x} or the names after
 agglomeration.}
 \item{\code{addPrevalentAbundance} returns a \code{numeric} vector with
@@ -212,7 +213,7 @@ These functions calculate the population prevalence for taxonomic ranks in a
 \code{\link{SummarizedExperiment-class}} object.
 }
 \details{
-\code{getPrevalence} calculates the relative frequency of samples that exceed
+\code{addPrevalence} calculates the relative frequency of samples that exceed
 the detection threshold. For \code{SummarizedExperiment} objects, the
 prevalence is calculated for the selected taxonomic rank, otherwise for the
 rows. The absolute population prevalence can be obtained by multiplying the
@@ -238,15 +239,15 @@ given detection threshold for the selected taxonomic rank.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 # Get prevalence estimates for individual ASV/OTU
-prevalence.frequency <- getPrevalence(tse,
+prevalence.frequency <- addPrevalence(tse,
                                       detection = 0,
                                       sort = TRUE,
                                       as_relative = TRUE)
 head(prevalence.frequency)
 
 # Get prevalence estimates for phylums
-# - the getPrevalence function itself always returns population frequencies
-prevalence.frequency <- getPrevalence(tse,
+# - the addPrevalence function itself always returns population frequencies
+prevalence.frequency <- addPrevalence(tse,
                                       rank = "Phylum",
                                       detection = 0,
                                       sort = TRUE,

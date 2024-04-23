@@ -1,44 +1,44 @@
 context("prevalence")
 
-test_that("getPrevalence", {
+test_that("addPrevalence", {
 
     data(GlobalPatterns, package="mia")
-    expect_error(getPrevalence(GlobalPatterns, detection="test"),
+    expect_error(addPrevalence(GlobalPatterns, detection="test"),
                  "'detection' must be a single numeric value or coercible to one")
-    expect_error(getPrevalence(GlobalPatterns, include_lowest="test"),
+    expect_error(addPrevalence(GlobalPatterns, include_lowest="test"),
                  "'include_lowest' must be TRUE or FALSE")
-    expect_error(getPrevalence(GlobalPatterns, sort="test"),
+    expect_error(addPrevalence(GlobalPatterns, sort="test"),
                  "'sort' must be TRUE or FALSE")
-    expect_error(getPrevalence(GlobalPatterns, as_relative="test"),
+    expect_error(addPrevalence(GlobalPatterns, as_relative="test"),
                  "'as_relative' must be TRUE or FALSE")
-    expect_error(getPrevalence(GlobalPatterns, assay.type="test"),
+    expect_error(addPrevalence(GlobalPatterns, assay.type="test"),
                  "'assay.type' must be a valid name")
     # Output should be always a frequency between 0 to 1
-    pr <- getPrevalence(GlobalPatterns, detection=0.1/100, as_relative=TRUE)
+    pr <- addPrevalence(GlobalPatterns, detection=0.1/100, as_relative=TRUE)
     expect_true(min(pr) >= 0 && max(pr) <= 1)
-    pr <- getPrevalence(GlobalPatterns, detection=0.1/100, as_relative=FALSE)
+    pr <- addPrevalence(GlobalPatterns, detection=0.1/100, as_relative=FALSE)
     expect_true(min(pr) >= 0 && max(pr) <= 1)
 
     # Same prevalences should be returned for as_relative T/F in certain cases.
-    pr1 <- getPrevalence(GlobalPatterns, detection=1, include_lowest=TRUE, as_relative=FALSE)
-    pr2 <- getPrevalence(GlobalPatterns, detection=0/100, include_lowest=FALSE, as_relative=TRUE)
+    pr1 <- addPrevalence(GlobalPatterns, detection=1, include_lowest=TRUE, as_relative=FALSE)
+    pr2 <- addPrevalence(GlobalPatterns, detection=0/100, include_lowest=FALSE, as_relative=TRUE)
     expect_true(all(pr1 == pr2))
 
     # Same prevalences should be returned for as_relative T/F in certain cases.
-    pr1 <- getPrevalence(GlobalPatterns, detection=1, include_lowest=TRUE, as_relative=FALSE)
-    pr2 <- getPrevalence(GlobalPatterns, detection=0, include_lowest=FALSE, as_relative=FALSE)
+    pr1 <- addPrevalence(GlobalPatterns, detection=1, include_lowest=TRUE, as_relative=FALSE)
+    pr2 <- addPrevalence(GlobalPatterns, detection=0, include_lowest=FALSE, as_relative=FALSE)
     expect_true(all(pr1 == pr2))
 
     # Different ways to use relative abundance should yield the same output
-    pr2 <- getPrevalence(GlobalPatterns, as_relative=TRUE, assay.type = "counts")
+    pr2 <- addPrevalence(GlobalPatterns, as_relative=TRUE, assay.type = "counts")
     GlobalPatterns <- transformAssay(GlobalPatterns, method="relabundance")
-    pr1 <- getPrevalence(GlobalPatterns, as_relative=FALSE, assay.type = "relabundance")
+    pr1 <- addPrevalence(GlobalPatterns, as_relative=FALSE, assay.type = "relabundance")
     expect_true(all(pr1 == pr2))
 
     # Sorting should put the top values first
-    pr <- getPrevalence(GlobalPatterns, sort=TRUE, detection = 0.1/100)
+    pr <- addPrevalence(GlobalPatterns, sort=TRUE, detection = 0.1/100)
     expect_equal(as.vector(which.max(pr)), 1)
-    pr <- names(head(getPrevalence(GlobalPatterns, sort=TRUE,  include_lowest = TRUE), 5L))
+    pr <- names(head(addPrevalence(GlobalPatterns, sort=TRUE,  include_lowest = TRUE), 5L))
     actual <- getTopFeatures(GlobalPatterns,
                          method="prevalence",
                          top=5,
@@ -54,43 +54,43 @@ test_that("getPrevalence", {
     gp_null <- GlobalPatterns
     rownames(gp_null) <- NULL
     
-    pr1 <- unname(getPrevalence(GlobalPatterns, detection=0.004, as_relative=TRUE))
-    pr2 <- getPrevalence(gp_null, detection=0.004, as_relative=TRUE) 
+    pr1 <- unname(addPrevalence(GlobalPatterns, detection=0.004, as_relative=TRUE))
+    pr2 <- addPrevalence(gp_null, detection=0.004, as_relative=TRUE) 
     expect_equal(pr1, pr2)
     
-    pr1 <- getPrevalence(GlobalPatterns, detection=0.004, as_relative=TRUE, rank = "Family")
-    pr2 <- getPrevalence(gp_null, detection=0.004, as_relative=TRUE, rank = "Family") 
+    pr1 <- addPrevalence(GlobalPatterns, detection=0.004, as_relative=TRUE, rank = "Family")
+    pr2 <- addPrevalence(gp_null, detection=0.004, as_relative=TRUE, rank = "Family") 
     expect_equal(pr1, pr2)
     
     # Check that na.rm works correctly
     tse <- GlobalPatterns
     # Get reference value
-    ref <- getPrevalence(tse, assay.type = "counts")
+    ref <- addPrevalence(tse, assay.type = "counts")
     # Add NA values to matrix
     remove <- c(1, 3, 10)
     assay(tse, "counts")[remove, ] <- NA
     # There should be 3 NA values if na.rm = FALSE. Otherwise there should be 0
     expect_warning(
-        res <- getPrevalence(tse, assay.type = "counts", na.rm = FALSE) )
+        res <- addPrevalence(tse, assay.type = "counts", na.rm = FALSE) )
     expect_true( sum(is.na(res)) == 3)
     expect_warning(
-        res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE) )
+        res <- addPrevalence(tse, assay.type = "counts", na.rm = TRUE) )
     expect_true( sum(is.na(res)) == 0)
     # Expect that other than features with NA values are the same as in reference
     expect_warning(
-        res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE))
+        res <- addPrevalence(tse, assay.type = "counts", na.rm = TRUE))
     res <- res[ !names(res) %in% remove ]
     ref <- ref[ !names(ref) %in% remove ]
     expect_equal( res[ names(ref) ], res[ names(ref) ] )
     
     # Now test that the number of samples where feature was detected is correct
     tse <- GlobalPatterns
-    ref <- getPrevalence(tse, assay.type = "counts")
+    ref <- addPrevalence(tse, assay.type = "counts")
     # Add NA values to specific feature that has non-zero value
     feature <- rownames(tse)[[7]]
     assay(tse, "counts")[feature, 1] <- NA
     expect_warning(
-        res <- getPrevalence(tse, assay.type = "counts", na.rm = TRUE))
+        res <- addPrevalence(tse, assay.type = "counts", na.rm = TRUE))
     # Get the feature values and check that they have correct number of samples
     res <- res[ feature ]
     ref <- ref[ feature ]
@@ -105,12 +105,12 @@ test_that("getPrevalence", {
     assay(tse, "counts")[remove, ] <- NA
     # Check that agglomeration works
     tse_agg <- agglomerateByRank(tse, rank = rank)
-    expect_warning(ref <- getPrevalence(tse_agg, na.rm = FALSE))
-    expect_warning(res <- getPrevalence(tse, na.rm = FALSE, rank = "Genus"))
+    expect_warning(ref <- addPrevalence(tse_agg, na.rm = FALSE))
+    expect_warning(res <- addPrevalence(tse, na.rm = FALSE, rank = "Genus"))
     expect_true( all(res == ref, na.rm = TRUE) )
     #
-    expect_warning(ref <- getPrevalence(tse_agg, na.rm = TRUE))
-    expect_warning(res <- getPrevalence(tse, na.rm = TRUE, rank = "Genus"))
+    expect_warning(ref <- addPrevalence(tse_agg, na.rm = TRUE))
+    expect_warning(res <- addPrevalence(tse, na.rm = TRUE, rank = "Genus"))
     expect_true( all(res == ref, na.rm = TRUE) )
 })
 
@@ -120,14 +120,14 @@ test_that("getPrevalentFeatures", {
     data(GlobalPatterns, package="mia")
     expect_error(getPrevalentFeatures(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
-    # Results compatible with getPrevalence
+    # Results compatible with addPrevalence
     pr1 <- getPrevalentFeatures(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE)
-    pr2 <- names(getPrevalence(GlobalPatterns, rank = "Kingdom", detection=0.1/100, as_relative=TRUE, sort=TRUE))
+    pr2 <- names(addPrevalence(GlobalPatterns, rank = "Kingdom", detection=0.1/100, as_relative=TRUE, sort=TRUE))
     expect_true(all(pr1 == pr2))
 
     # Same sorting for toptaxa obtained in different ways
     pr1 <- getPrevalentFeatures(GlobalPatterns, detection=0.1/100, as_relative=TRUE, sort=TRUE)
-    pr2 <- names(getPrevalence(GlobalPatterns, rank = "Kingdom", detection=0.1/100, as_relative=TRUE, sort=TRUE))
+    pr2 <- names(addPrevalence(GlobalPatterns, rank = "Kingdom", detection=0.1/100, as_relative=TRUE, sort=TRUE))
     expect_true(all(pr1 == pr2))
 
     # Retrieved taxa are the same for counts and relative abundances

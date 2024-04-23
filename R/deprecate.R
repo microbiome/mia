@@ -130,3 +130,29 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             addPrevalentAbundance(x, ...)
         }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric("getPrevalence", signature = "x",
+            function(x, ...)
+                standardGeneric("getPrevalence"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getPrevalence", signature = c(x = "ANY"), 
+            function(x, ...){
+                .Deprecated(msg = paste0("'getPrevalence' is deprecated. ",
+                                        "Use 'addPrevalence' instead."))
+                addPrevalence(x, ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'getPrevalence' is deprecated. ",
+                                        "Use 'addPrevalence' instead."))
+                addPrevalence(x, ...)
+            }
+)
