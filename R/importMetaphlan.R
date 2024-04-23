@@ -326,7 +326,7 @@ importMetaPhlAn <- function(
     # colnames should be found if data sets are matching. (More samples in
     # metadata is allowed.)
     if( !(all(colnames(tse) %in% sample_names) &&
-            length(sample_names) && ncol(tse)) ){
+            length(sample_names) == ncol(tse)) ){
         warning(
             "The sample names in 'colData' do not match with the data. ",
             "The sample metadata is not added.", call. = FALSE
