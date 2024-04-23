@@ -102,8 +102,8 @@
 #'   \item{\code{\link[mia:estimateDiversity]{estimateDiversity}}}
 #' }
 #'
-#' @name estimateEvenness
-#'
+#' @name .estimateEvenness
+#' @noRd
 #' @examples
 #' data(esophagus)
 #' tse <- esophagus
@@ -113,9 +113,7 @@
 #' name  <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 #'
 #' # Estimate evenness and give polished names to be used in the output
-#' suppressWarnings(
-#'     tse <- estimateEvenness(tse, index = index, name = name)
-#' )
+#' tse <- estimateEvenness(tse, index = index, name = name)
 #' # Check the output
 #' head(colData(tse))
 #'

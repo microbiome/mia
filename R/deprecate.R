@@ -57,12 +57,13 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
             }
 )
 
+#' @importFrom bluster clusterRows
 #' @rdname deprecate
 #' @export
 loadFromBiom <- function(...) {
     .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
                             " Use 'importBIOM' instead."))
-    importBiom(...)
+    importBIOM(...)
 }
 
 #' @rdname deprecate

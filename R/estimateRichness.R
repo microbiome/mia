@@ -132,9 +132,8 @@
 #'   \item{\code{\link[vegan:specpool]{estimateR}}}
 #' }
 #'
-#' @name estimateRichness
-#'
-#' @export
+#' @name .estimateRichness
+#' @noRd
 #'
 #' @author Leo Lahti. Contact: \url{microbiome.github.io}
 #'
@@ -142,9 +141,7 @@
 #' data(esophagus)
 #'
 #' # Calculates all richness indices by default
-#' suppressWarnings(
-#'     esophagus <- estimateRichness(esophagus)
-#' )
+#' esophagus <- estimateRichness(esophagus)
 #' # Shows all indices
 #' colData(esophagus)
 #'
@@ -161,11 +158,9 @@
 #' colData(esophagus)[, c("observed", "chao1", "ace")] <- NULL
 #'
 #' # Calculates observed richness index and saves them with specific names
-#' suppressWarnings(
-#'     esophagus <- estimateRichness(esophagus,
+#' esophagus <- estimateRichness(esophagus,
 #'         index = c("observed", "chao1", "ace", "hill"),
 #'         name = c("Observed", "Chao1", "ACE", "Hill"))
-#' )
 #' # Show the new indices
 #' colData(esophagus)
 #'
@@ -173,9 +168,7 @@
 #' colData(esophagus) <- NULL
 #'
 #' # Calculate observed richness excluding singletons (detection limit 1)
-#' suppressWarnings(
-#'     esophagus <- estimateRichness(esophagus, index="observed", detection = 1)
-#' )
+#' esophagus <- estimateRichness(esophagus, index="observed", detection = 1)
 #' # Deletes all colData (including the indices)
 #' colData(esophagus) <- NULL
 #'
@@ -184,20 +177,16 @@
 #' \donttest{esophagus <- estimateRichness(esophagus, index="ace")}
 #'
 #' # Calculates Chao1 and ACE indices only
-#' suppressWarnings(
-#'     esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"),
+#' esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"),
 #'                                               name=c("Chao1", "ACE"))
-#' )
 #' # Deletes all colData (including the indices)
 #' colData(esophagus) <- NULL
 #'
 #' # Names of columns can be chosen arbitrarily, but the length of arguments
 #' # must match.
-#' suppressWarnings(
-#'     esophagus <- estimateRichness(esophagus,
+#' esophagus <- estimateRichness(esophagus,
 #'                                    index = c("ace", "chao1"),
 #'                                    name = c("index1", "index2"))
-#' )
 #' # Shows all indices
 #' colData(esophagus)
 #'

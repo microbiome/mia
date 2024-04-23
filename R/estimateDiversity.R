@@ -165,9 +165,8 @@
 #'   \item{\code{\link[vegan:specpool]{estimateR}}}
 #' }
 #'
-#' @name estimateDiversity
-#' @export
-#'
+#' @name .estimateDiversity
+#' @noRd
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #' 
 #' @examples
@@ -183,9 +182,7 @@
 #' "Faith",  "LogModSkewness")
 #'
 #' # Calculate diversities
-#' suppressWarnings(
-#'     tse <- estimateDiversity(tse, index = index)
-#' )
+#' tse <- estimateDiversity(tse, index = index)
 #'
 #' # The colData contains the indices with their code names by default
 #' colData(tse)[, index]
@@ -194,24 +191,18 @@
 #' colData(tse)[, index] <- NULL
 #' 
 #' # 'threshold' can be used to determine threshold for 'coverage' index
-#' suppressWarnings(
-#'     tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
-#' )
+#' tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
 #' # 'quantile' and 'num_of_classes' can be used when
 #' # 'log_modulo_skewness' is calculated
-#' suppressWarnings(
-#'     tse <- estimateDiversity(tse, index = "log_modulo_skewness",
+#' tse <- estimateDiversity(tse, index = "log_modulo_skewness",
 #'        quantile = 0.75, num_of_classes = 100)
-#')
 #'
 #' # It is recommended to specify also the final names used in the output.
-#' suppressWarnings(
-#'     tse <- estimateDiversity(tse,
+#' tse <- estimateDiversity(tse,
 #'         index = c("shannon", "gini_simpson", "inverse_simpson", "coverage",
 #'                    "fisher", "faith", "log_modulo_skewness"),
 #'         name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
 #'                    "Fisher", "Faith", "LogModSkewness"))
-#')
 #' # The colData contains the indices by their new names provided by the user
 #' colData(tse)[, name]
 #'

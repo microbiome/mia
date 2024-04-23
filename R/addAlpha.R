@@ -45,6 +45,7 @@
 #' tse$observed_richness
 #' 
 
+#' @name addAlpha
 #' @rdname addAlpha
 #' @export
 setGeneric(
@@ -195,7 +196,7 @@ setMethod(
 
 # This function rarifies the data n.iter of times and calculates index for the
 # rarified data. The result is a mean of the iterations.
-#' @importFrom DelayedMatrixStats colSums2
+#' @importFrom DelayedMatrixStats colMeans2
 .alpha_rarefaction <- function(
         x, assay.type, n.iter, rarefaction.depth, FUN, index, name, ...){
     # Calculating the mean of the subsampled alpha estimates ans storing them

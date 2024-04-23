@@ -168,8 +168,8 @@
 #'   \item{\code{\link[mia:estimateDiversity]{estimateDiversity}}}
 #' }
 #'
-#' @name estimateDominance
-#' @export
+#' @name .estimateDominance
+#' @noRd
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
@@ -177,9 +177,7 @@
 #' data(esophagus)
 #'
 #' # Calculates Simpson's lambda (can be used as a dominance index)
-#' suppressWarnings(
-#'     esophagus <- estimateDominance(esophagus, index="simpson_lambda")
-#' )
+#' esophagus <- estimateDominance(esophagus, index="simpson_lambda")
 #'
 #' # Shows all indices
 #' colData(esophagus)
@@ -188,9 +186,7 @@
 #' # gets thrown
 #' \donttest{esophagus <- estimateDominance(esophagus, index="dbp")}
 #' # Calculates dbp and Core Abundance indices
-#' suppressWarnings(
-#'     esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
-#' )
+#' esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
 #' # Shows all indices
 #' colData(esophagus)
 #' # Shows dbp index
@@ -203,46 +199,27 @@
 #' colData(esophagus) <- NULL
 #'
 #' # Calculates all indices
-#' suppressWarnings(
-#'     esophagus <- estimateDominance(esophagus)
-#' )
+#' esophagus <- estimateDominance(esophagus)
 #' # Shows all indices
 #' colData(esophagus)
 #' # Deletes all indices
 #' colData(esophagus) <- NULL
 #'
 #' # Calculates all indices with explicitly specified names
-#' suppressWarnings(
-#'     esophagus <- estimateDominance(esophagus,
+#' esophagus <- estimateDominance(esophagus,
 #'         index = c("dbp", "dmn", "absolute", "relative",
 #'                   "simpson_lambda", "core_abundance", "gini"),
 #'         name  = c("BergerParker", "McNaughton", "Absolute", "Relative",
 #'                   "SimpsonLambda", "CoreAbundance", "Gini")
 #'     )
-#' )
 #' # Shows all indices
 #' colData(esophagus)
 #'
 NULL
 
-#' @rdname estimateDominance
-#' @export
 setGeneric(
-    "estimateDominance", signature = c("x"),
-    function(x, ...) standardGeneric("estimateDominance"))
-
-#' @rdname estimateDominance
-#' @export
-setMethod(
-    "estimateDominance", signature = c(x="ANY"),
-    function(x, ...){
-        .Deprecated(
-            old = "estimateDominance", new = "addAlpha",
-            msg = paste0(
-                "Now estimateDominance is deprecated. Use addAlpha ",
-                "instead."))
-        .estimate_dominance(x, ...)
-    })
+    ".estimateDominance", signature = c("x"),
+    function(x, ...) standardGeneric(".estimateDominance"))
 
 setGeneric(
     ".estimate_dominance",signature = c("x"),
