@@ -15,7 +15,7 @@ calculateUnifrac(x, tree, ...)
   weighted = FALSE,
   normalized = TRUE,
   BPPARAM = SerialParam(),
-  nodeLab,
+  nodeLab = NULL,
   ...
 )
 

@@ -125,7 +125,7 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 #' @export
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
           function(x, tree, weighted = FALSE, normalized = TRUE,
-                   BPPARAM = SerialParam(), nodeLab, ...){
+                   BPPARAM = SerialParam(), nodeLab = NULL, ...){
               if(is(x,"SummarizedExperiment")){
                   stop("When providing a 'tree', please provide a matrix-like as 'x'",
                        " and not a 'SummarizedExperiment' object. Please consider ",
