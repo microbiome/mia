@@ -22,6 +22,7 @@
 \alias{left_join,ANY-method}
 \alias{right_join}
 \alias{right_join,ANY-method}
+\alias{plotNMDS}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -63,6 +64,8 @@ left_join(x, ...)
 right_join(x, ...)
 
 \S4method{right_join}{ANY}(x, ...)
+
+plotNMDS(x, ...)
 }
 \arguments{
 \item{x}{A

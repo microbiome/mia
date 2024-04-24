@@ -109,3 +109,4 @@ Changes in version 1.11.x
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, loadFromMetaphlan, loadFromHumann
 + fix typo in loadFromBiom definition (deprecate file)
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
++ deprecate plotNMDS after moving it to miaViz package

@@ -172,3 +172,12 @@ setMethod("right_join", signature = c(x = "ANY"),
                 mergeSEs(x, join = "right", ...)
             }
 )
+
+#' @rdname deprecate
+#' @export    
+plotNMDS <- function(x, ...){
+    .Deprecated(msg = paste0("'plotNMDS' is deprecated. ",
+                             "Use 'scater::plotReducedDim' with ",
+                             "dimred = 'NMDS' instead."))
+    plotReducedDim(x, ncomponents = 2, dimred = "NMDS",...)
+}
