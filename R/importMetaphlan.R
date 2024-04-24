@@ -33,6 +33,10 @@
 #'     to sample names. Suffixes are formed from file names. By selecting
 #'     \code{remove.suffix = TRUE}, you can remove pattern from end of sample
 #'     names that is shared by all. (default: \code{remove.suffix = FALSE})}
+#'   \item{\code{set.ranks}:} {\code{TRUE} or \code{FALSE}: Should the columns
+#'     in the rowData that are treated as taxonomy ranks be updated according to
+#'     the ranks found in the imported data?
+#'     (default: \code{set.ranks = FALSE})}
 #' }
 #'
 #' @details
