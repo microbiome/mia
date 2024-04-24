@@ -111,4 +111,3 @@ loadFromMetaphlan, loadFromHumann
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
 + Rename perSampleDominant* functions to getDominant and addPerSampleDominant* 
   functions to addDominant
-
