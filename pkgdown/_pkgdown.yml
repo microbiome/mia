@@ -43,7 +43,7 @@ reference:
 - title: Other functions
 - subtitle: Dataset description
 - contents:
-  - getPrevalence
+  - addPrevalence
   - getTopTaxa
   - getExperimentCrossCorrelation
   - hierarchy-tree
