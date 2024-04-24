@@ -62,7 +62,7 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 loadFromBiom <- function(...) {
     .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
                             " Use 'importBIOM' instead."))
-    importBiom(...)
+    importBIOM(...)
 }
 
 #' @rdname deprecate
@@ -104,6 +104,74 @@ loadFromHumann <- function(...) {
                             " Use 'importHUMAnN' instead."))
     importHUMAnN(...)
 }
+
+#' @rdname deprecate
+#' @export
+setGeneric("full_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("full_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("full_join", signature = c(x = "ANY"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'full_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = full' ",
+                                        "instead."))
+                mergeSEs(x, join = "full", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("inner_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("inner_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("inner_join", signature = c(x = "ANY"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'inner_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = inner' ",
+                                        "instead."))
+                mergeSEs(x, join = "inner", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("left_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("left_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("left_join", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'left_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = left' ",
+                                        "instead."))
+              mergeSEs(x, join = "left", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("right_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("right_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("right_join", signature = c(x = "ANY"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'right_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = right' ",
+                                        "instead."))
+                mergeSEs(x, join = "right", ...)
+            }
+)
 
 #' @rdname deprecate
 #' @export    
