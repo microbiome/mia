@@ -104,3 +104,19 @@ loadFromHumann <- function(...) {
                             " Use 'importHUMAnN' instead."))
     importHUMAnN(...)
 }
+
+#' @rdname deprecate
+#' @export
+setGeneric("estimateDivergence",signature = c("x"),
+            function(x, ...)
+                standardGeneric("estimateDivergence"))
+
+#' @rdname deprecate
+#' @export
+setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'estimateDivergence' is deprecated. ",
+                                        "Use 'addDivergence' instead."))
+                addDivergence(x, ...)
+            }
+)

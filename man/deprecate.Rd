@@ -14,6 +14,8 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{estimateDivergence}
+\alias{estimateDivergence,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +41,10 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+estimateDivergence(x, ...)
+
+\S4method{estimateDivergence}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
