@@ -33,6 +33,10 @@
 #'     to sample names. Suffixes are formed from file names. By selecting
 #'     \code{remove.suffix = TRUE}, you can remove pattern from end of sample
 #'     names that is shared by all. (default: \code{remove.suffix = FALSE})}
+#'   \item{\code{set.ranks}:} {\code{TRUE} or \code{FALSE}: Should the columns
+#'     in the rowData that are treated as taxonomy ranks be updated according to
+#'     the ranks found in the imported data?
+#'     (default: \code{set.ranks = FALSE})}
 #' }
 #'
 #' @details
@@ -310,13 +314,14 @@ importMetaPhlAn <- function(
         sample_names <- rownames(coldata)
         names(sample_names) <- sample_names
     } else{
-        sample_names <- vapply(rownames(coldata), function(x){
+        sample_names <- lapply(rownames(coldata), function(x){
             x <- colnames(tse)[grep(x, colnames(tse))]
             if( length(x) != 1 ){
                 x <- NULL
             }
             return(x)
-        },FUN.VALUE = character(1))
+        })
+        names(sample_names) <- rownames(coldata)
         sample_names <- unlist(sample_names)
     }
 
@@ -324,10 +329,12 @@ importMetaPhlAn <- function(
     # is missing if one matching name was not found.). In this part, all
     # colnames should be found if data sets are matching. (More samples in
     # metadata is allowed.)
-    if( !all(colnames(tse) %in% sample_names) ){
-        warning("The sample names in 'colData' do not match with the ",
-                "data. The sample metadata is not added.", call. = FALSE
-                )
+    if( !(all(colnames(tse) %in% sample_names) &&
+            length(sample_names) == ncol(tse)) ){
+        warning(
+            "The sample names in 'colData' do not match with the data. ",
+            "The sample metadata is not added.", call. = FALSE
+            )
         return(tse)
     }
 
@@ -395,7 +402,19 @@ importMetaPhlAn <- function(
     }
     return(data)
 }
-.set_ranks_based_on_rowdata <- function(tse,...){
+
+# This function sets taxonomy ranks based on rowData of TreeSE. With this,
+# user can automatically set ranks based on imported data.
+.set_ranks_based_on_rowdata <- function(tse, set.ranks = FALSE, ...){
+    #
+    if( !.is_a_bool(set.ranks) ){
+        stop("'set.ranks' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # If user do not want to set ranks
+    if( !set.ranks ){
+        return(NULL)
+    }
     # Get ranks from rowData
     ranks <- colnames(rowData(tse))
     # Ranks must be character columns
@@ -410,7 +429,7 @@ importMetaPhlAn <- function(
         return(NULL)
     }
     # Finally, set ranks and give message
-    tse <- setTaxonomyRanks(ranks)
+    temp <- setTaxonomyRanks(ranks)
     message("TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
     return(NULL)
 }

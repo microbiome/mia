@@ -51,7 +51,7 @@
 #'   \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
 #' }
 #' 
-#' @name estimateDivergence
+#' @name addDivergence
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -62,35 +62,35 @@
 #' 
 #' # By default, reference is median of all samples. The name of column where results
 #' # is "divergence" by default, but it can be specified. 
-#' tse <- estimateDivergence(tse)
+#' tse <- addDivergence(tse)
 #' 
 #' # The method that are used to calculate distance in divergence and 
 #' # reference can be specified. Here, euclidean distance and dist function from 
 #' # stats package are used. Reference is the first sample.
-#' tse <- estimateDivergence(tse, name = "divergence_first_sample", 
+#' tse <- addDivergence(tse, name = "divergence_first_sample", 
 #'                           reference = assays(tse)$counts[,1], 
 #'                           FUN = stats::dist, method = "euclidean")
 #' 
 #' # Reference can also be median or mean of all samples. 
 #' # By default, divergence is calculated by using median. Here, mean is used.
-#' tse <- estimateDivergence(tse, name = "divergence_average", reference = "mean")
+#' tse <- addDivergence(tse, name = "divergence_average", reference = "mean")
 #' 
 #' # All three divergence results are stored in colData.
 #' colData(tse)
 #' 
 NULL
 
-#' @rdname estimateDivergence
+#' @rdname addDivergence
 #' @export
-setGeneric("estimateDivergence",signature = c("x"),
+setGeneric("addDivergence",signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
                     name = "divergence", reference = "median", 
                     FUN = vegan::vegdist, method = "bray", ...)
-             standardGeneric("estimateDivergence"))
+             standardGeneric("addDivergence"))
 
-#' @rdname estimateDivergence
+#' @rdname addDivergence
 #' @export
-setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
+setMethod("addDivergence", signature = c(x="SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
              name = "divergence", reference = "median", 
              FUN = vegan::vegdist, method = "bray", ...){
