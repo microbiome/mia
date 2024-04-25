@@ -111,3 +111,4 @@ Changes in version 1.11.x
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
 + deprecate plotNMDS after moving it to miaViz package
 + rename estimateDivergence to addDivergence
++ replace getExperiment* and testExperiment* functions with getCrossAssociation
