@@ -561,79 +561,87 @@ setGeneric("mapTaxonomy",
 #' @importFrom BiocGenerics %in%
 #' @export
 setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
-    function(x, taxa = NULL, from = NULL, to = NULL, use_grepl = FALSE){
-        # input check
-        if(!checkTaxonomy(x)){
-            stop("Non compatible taxonomic information found. ",
-                "checkTaxonomy(x) must be TRUE.",
-                call. = FALSE)
-        }
-        if(!is.null(taxa)){
-            if(!is.character(taxa)){
-                stop("'taxa' must be a character vector.",
-                    call. = FALSE)
-            }
-        }
-        if(!is.null(from)){
-            if(!.is_a_string(from)){
-                stop("'from' must be a single character value.",
-                    call. = FALSE)
-            }
-            if(!(from %in% taxonomyRanks(x))){
-                stop("'from' must be an element of taxonomyRanks(x).",
-                    call. = FALSE)
-            }
-        } 
-        if(!is.null(to)){
-            if(!.is_a_string(to)){
-                stop("'to' must be a single character value.",
-                    call. = FALSE)
-            }
-            if(!(to %in% taxonomyRanks(x))){
-                stop("'to' must be an element of taxonomyRanks(x).",
-                    call. = FALSE)
-            }
-        }
-        if(!is.null(from) && !is.null(to)){
-            if(from  == to){
-                stop("'from' and 'to' must be different values.", call. = FALSE)    
-            }
-        }
-        if(!.is_a_bool(use_grepl)){
-            stop("'use_grepl' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
-        td <- rowData(x)[,taxonomyRanks(x)]
-        if(is.null(taxa)){
-            return(unique(td))
-        }
-        #
-        r_fs <- NULL
-        c_f <- rep(TRUE,ncol(td))
-        if(!is.null(from)){
-            r_fs <- lapply(taxa, .get_taxa_row_match, td = td, from = from,
-                            use_grepl = use_grepl)
-            names(r_fs) <- taxa
-        } else {
-            r_fs <- lapply(taxa, .get_taxa_any_match, td = td,
-                            use_grepl = use_grepl)
-            names(r_fs) <- taxa
-        }
-        if(!is.null(to)) {
-            c_f <- colnames(td) == to
-            c_f[is.na(c_f)] <- FALSE
-        }
-        # assemble the result
-        ans <- lapply(r_fs, .get_map_result, td = td, c_f = c_f)
-        names(ans) <- names(r_fs)
-        u_len <- unique(lengths(ans))
-        if(length(u_len) == 1L && u_len == 1L){
-            ans <- unlist(ans)
-        }
-        #
-        ans
-    }
+          function(x, taxa = NULL, from = NULL, to = NULL, use_grepl = FALSE){
+              # input check
+              if(!checkTaxonomy(x)){
+                  stop("Non compatible taxonomic information found. ",
+                       "checkTaxonomy(x) must be TRUE.",
+                       call. = FALSE)
+              }
+              if(!is.null(taxa)){
+                  if(!is.character(taxa)){
+                      stop("'taxa' must be a character vector.",
+                           call. = FALSE)
+                  }
+              }
+              if(!is.null(from)){
+                  if(!.is_a_string(from)){
+                      stop("'from' must be a single character value.",
+                           call. = FALSE)
+                  }
+                  if(!(from %in% taxonomyRanks(x))){
+                      stop("'from' must be an element of taxonomyRanks(x).",
+                           call. = FALSE)
+                  }
+              } 
+              if(!is.null(to)){
+                  if(!.is_a_string(to)){
+                      stop("'to' must be a single character value.",
+                           call. = FALSE)
+                  }
+                  if(!(to %in% taxonomyRanks(x))){
+                      stop("'to' must be an element of taxonomyRanks(x).",
+                           call. = FALSE)
+                  }
+              }
+              if(!is.null(from) && !is.null(to)){
+                  if(from  == to){
+                      stop("'from' and 'to' must be different values.", call. = FALSE)    
+                  }
+              }
+              if(!.is_a_bool(use_grepl)){
+                  stop("'use_grepl' must be TRUE or FALSE.", call. = FALSE)
+              }
+              #
+              td <- rowData(x)[,taxonomyRanks(x)]
+              # If no taxa are provided, return unique taxonomy identifiers
+              if(is.null(taxa)){
+                  return(unique(td)) 
+              }
+              r_fs <- NULL
+              c_f <- rep(TRUE,ncol(td))
+              unique_taxa <- unique(taxa)
+              if(!is.null(from)){
+                  # Map unique entries from the taxa vector to the taxonomy data
+                  r_fs <- lapply(unique_taxa, .get_taxa_row_match, 
+                                 td = td, from = from,
+                                 use_grepl = use_grepl)
+              } else {
+                  r_fs <- lapply(unique_taxa, .get_taxa_any_match, td = td,
+                                 use_grepl = use_grepl)
+              }
+              # Assign names to the resulting list
+              names(r_fs) <- unique_taxa 
+              
+              if(!is.null(to)) {
+                  c_f <- colnames(td) == to
+                  c_f[is.na(c_f)] <- FALSE
+              }
+              
+              # assemble the result
+              # Map back the results to original input
+              ans <- lapply(r_fs, .get_map_result, td = td, c_f = c_f)
+              names(ans) <- names(r_fs)
+              u_len <- unique(lengths(ans))
+              # If all results have the same length, unlist the result
+              if(length(u_len) == 1L && u_len == 1L){
+                  ans <- unlist(ans) 
+              }
+              #
+              ans
+          }
 )
+
 
 .get_map_result <- function(r_f, td, c_f){
     ans <- td[r_f,c_f]
