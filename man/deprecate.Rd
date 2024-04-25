@@ -23,6 +23,8 @@
 \alias{right_join}
 \alias{right_join,ANY-method}
 \alias{plotNMDS}
+\alias{estimateDivergence}
+\alias{estimateDivergence,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -66,6 +68,10 @@ right_join(x, ...)
 \S4method{right_join}{ANY}(x, ...)
 
 plotNMDS(x, ...)
+
+estimateDivergence(x, ...)
+
+\S4method{estimateDivergence}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
