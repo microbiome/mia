@@ -112,6 +112,8 @@ setMethod("makePhyloseqFromTreeSE",
           }
 )
 
+#' @rdname deprecate
+#' @export
 loadFromBiom <- function(...) {
     .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
                             " Use 'importBIOM' instead."))
