@@ -277,6 +277,8 @@ setMethod("getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
             }
 )
 
+#' @rdname deprecate
+#' @export
 setGeneric("full_join", signature = c("x"),
            function(x, ...)
                standardGeneric("full_join"))

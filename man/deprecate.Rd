@@ -34,6 +34,7 @@
 \alias{getPrevalentTaxa}
 \alias{getPrevalentTaxa,ANY-method}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{full_join}
 \alias{full_join,ANY-method}
 \alias{inner_join}
 \alias{inner_join,ANY-method}
@@ -109,6 +110,8 @@ getPrevalentTaxa(x, ...)
 \S4method{getPrevalentTaxa}{ANY}(x, ...)
 
 \S4method{getPrevalentTaxa}{SummarizedExperiment}(x, ...)
+
+full_join(x, ...)
 
 \S4method{full_join}{ANY}(x, ...)
 
