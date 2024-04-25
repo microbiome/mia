@@ -22,8 +22,11 @@
 \alias{subsetByPrevalentTaxa,ANY-method}
 \alias{subsetByPrevalentFeatures}
 \alias{subsetByPrevalentFeatures,ANY-method}
+\alias{full_join}
 \alias{full_join,ANY-method}
+\alias{inner_join}
 \alias{inner_join,ANY-method}
+\alias{left_join}
 \alias{left_join,ANY-method}
 \alias{right_join}
 \alias{right_join,ANY-method}
@@ -72,9 +75,15 @@ subsetByPrevalentFeatures(x, ...)
 
 \S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
 
+full_join(x, ...)
+
 \S4method{full_join}{ANY}(x, ...)
 
+inner_join(x, ...)
+
 \S4method{inner_join}{ANY}(x, ...)
+
+left_join(x, ...)
 
 \S4method{left_join}{ANY}(x, ...)
 
