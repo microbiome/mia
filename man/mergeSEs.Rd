@@ -5,14 +5,6 @@
 \alias{mergeSEs,SimpleList-method}
 \alias{mergeSEs,SummarizedExperiment-method}
 \alias{mergeSEs,list-method}
-\alias{full_join}
-\alias{full_join,ANY-method}
-\alias{inner_join}
-\alias{inner_join,ANY-method}
-\alias{left_join}
-\alias{left_join,ANY-method}
-\alias{right_join}
-\alias{right_join,ANY-method}
 \title{Merge SE objects into single SE object.}
 \usage{
 mergeSEs(x, ...)
@@ -32,22 +24,6 @@ mergeSEs(x, ...)
 \S4method{mergeSEs}{SummarizedExperiment}(x, y = NULL, ...)
 
 \S4method{mergeSEs}{list}(x, ...)
-
-full_join(x, ...)
-
-\S4method{full_join}{ANY}(x, ...)
-
-inner_join(x, ...)
-
-\S4method{inner_join}{ANY}(x, ...)
-
-left_join(x, ...)
-
-\S4method{left_join}{ANY}(x, ...)
-
-right_join(x, ...)
-
-\S4method{right_join}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object or a list of
@@ -128,9 +104,6 @@ to choose which rows are included.
 \item{\code{left} -- all the features of the first object}
 \item{\code{right} -- all the features of the second object}
 }
-
-You can also doe e.g., a full join by using a function \code{full_join} which is
-an alias for \code{mergeSEs}. Also other joining methods have dplyr-like aliases.
 
 The output depends on the input. If the input contains \code{SummarizedExperiment}
 object, then the output will be \code{SummarizedExperiment}. When all the input
