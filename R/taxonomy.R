@@ -642,7 +642,6 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
           }
 )
 
-
 .get_map_result <- function(r_f, td, c_f){
     ans <- td[r_f,c_f]
     ans <- unique(ans)
