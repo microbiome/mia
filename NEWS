@@ -106,8 +106,10 @@ Changes in version 1.11.x
 + getExperimentCrossCorrelation fix: enable using of sampleMap in MAE.
 + Implemented the setTaxonomyRanks function to specify which ranks are recognized as taxonomy ranks.
 + Rename cluster to addCluster
-+ rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
-loadFromMetaphlan, loadFromHumann
++ rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, loadFromMetaphlan, loadFromHumann
++ fix typo in loadFromBiom definition (deprecate file)
++ deprecate subsetSamples, subsetFeatures and subsetTaxa
++ deprecate plotNMDS after moving it to miaViz package
++ rename estimateDivergence to addDivergence
 + new generic function convert to replace converters makeTreeSEFromPhyloseq,
 makeTreeSEFromBiom, makeTreeSEFromDADA2, makePhyloseqFromTreeSE
-
