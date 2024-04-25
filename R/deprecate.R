@@ -137,6 +137,8 @@ setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
           }
 )
 
+#' @rdname deprecate
+#' @export
 setGeneric("full_join", signature = c("x"),
            function(x, ...)
                standardGeneric("full_join"))
@@ -152,6 +154,8 @@ setMethod("full_join", signature = c(x = "ANY"),
             }
 )
 
+#' @rdname deprecate
+#' @export
 setGeneric("inner_join", signature = c("x"),
            function(x, ...)
                standardGeneric("inner_join"))

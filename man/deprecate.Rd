@@ -18,7 +18,9 @@
 \alias{countDominantFeatures,SummarizedExperiment-method}
 \alias{countDominantTaxa}
 \alias{countDominantTaxa,SummarizedExperiment-method}
+\alias{full_join}
 \alias{full_join,ANY-method}
+\alias{inner_join}
 \alias{inner_join,ANY-method}
 \alias{left_join}
 \alias{left_join,ANY-method}
@@ -61,7 +63,11 @@ countDominantTaxa(x, ...)
 
 \S4method{countDominantTaxa}{SummarizedExperiment}(x, ...)
 
+full_join(x, ...)
+
 \S4method{full_join}{ANY}(x, ...)
+
+inner_join(x, ...)
 
 \S4method{inner_join}{ANY}(x, ...)
 
