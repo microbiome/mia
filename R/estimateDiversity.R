@@ -57,7 +57,7 @@
 #'   from zero to the quantile cutoff indicated by \code{quantile}. 
 #'   By default, \code{num_of_classes} is 50.}
 #'   \item{only.tips}{ A boolean value specifying whether to remove internal
-#'   nodes when Faith's inex is calculated. When \code{only.tips=TRUE}, those
+#'   nodes when Faith's index is calculated. When \code{only.tips=TRUE}, those
 #'   rows that are not tips of tree are removed.
 #'   (By default: \code{only.tips=FALSE})}
 #' }

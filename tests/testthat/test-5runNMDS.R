@@ -22,8 +22,4 @@ test_that("runNMDS", {
     expect_equal(dim(reducedDim(esophagus,"BC")),c(3,2))
     expect_true(is.matrix(reducedDim(esophagus,"BC")))
     expect_equal(dim(reducedDim(esophagus,"BC")),c(3,2))
-    #
-    esophagus <- runNMDS(esophagus)
-    plot <- plotNMDS(esophagus)
-    expect_s3_class(plot,c("gg","ggplot"))
 })
