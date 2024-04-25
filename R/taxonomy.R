@@ -612,14 +612,13 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
               c_f <- rep(TRUE,ncol(td))
               unique_taxa <- unique(taxa)
               if(!is.null(from)){
-                  # Map unique entries from the taxa vector to the taxonomy data
-                  r_fs <- lapply(unique_taxa, .get_taxa_row_match, 
-                                 td = td, from = from,
-                                 use_grepl = use_grepl)
+                  r_fs <- sapply(unique(taxa), .get_taxa_row_match, td = td, from = from,
+                                 use_grepl = use_grepl, simplify = FALSE)
               } else {
-                  r_fs <- lapply(unique_taxa, .get_taxa_any_match, td = td,
-                                 use_grepl = use_grepl)
+                  r_fs <- sapply(unique(taxa), .get_taxa_any_match, td = td,
+                                 use_grepl = use_grepl, simplify = FALSE)
               }
+              names(r_fs) <- unique(taxa)
               # Assign names to the resulting list
               names(r_fs) <- unique_taxa 
               
@@ -630,7 +629,8 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
               
               # assemble the result
               # Map back the results to original input
-              ans <- lapply(r_fs, .get_map_result, td = td, c_f = c_f)
+              ans <- sapply(r_fs, .get_map_result, td = td, c_f = c_f,
+                            simplify = FALSE)
               names(ans) <- names(r_fs)
               u_len <- unique(lengths(ans))
               # If all results have the same length, unlist the result
