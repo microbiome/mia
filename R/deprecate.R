@@ -20,7 +20,6 @@ setGeneric("cluster", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-#' @importFrom bluster clusterRows
 setMethod("cluster", signature = c(x = "SummarizedExperiment"),
             function(x,...){
                 .Deprecated(msg = paste0("'cluster' is deprecated. ",
@@ -66,7 +65,7 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 loadFromBiom <- function(...) {
     .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
                             " Use 'importBIOM' instead."))
-    importBiom(...)
+    importBIOM(...)
 }
 
 #' @rdname deprecate
@@ -126,7 +125,6 @@ setMethod("calculateDPCoA", c("ANY","ANY"),
 )
 
 #' @rdname deprecate
-#' @importFrom ape cophenetic.phylo
 #' @export
 setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
             function(x,y,...) {
@@ -151,7 +149,6 @@ setMethod("calculateNMDS", "ANY",
 )
 
 #' @rdname deprecate
-#' @importFrom SummarizedExperiment assay
 #' @export
 setMethod("calculateNMDS", "SummarizedExperiment",
             function(x, ...) {
@@ -220,5 +217,98 @@ setMethod("calculateCCA", "SummarizedExperiment",
                 .Deprecated(msg = paste0("'calculateCCA' is deprecated. ",
                                         "Use 'getCCA' instead."))
                 getCCA(x,...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("full_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("full_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("full_join", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'full_join' is deprecated. ",
+                                       "Use 'mergeSEs' with 'join = full' ",
+                                       "instead."))
+              mergeSEs(x, join = "full", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("inner_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("inner_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("inner_join", signature = c(x = "ANY"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'inner_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = inner' ",
+                                        "instead."))
+                mergeSEs(x, join = "inner", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("left_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("left_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("left_join", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'left_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = left' ",
+                                        "instead."))
+              mergeSEs(x, join = "left", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("right_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("right_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("right_join", signature = c(x = "ANY"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'right_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = right' ",
+                                        "instead."))
+                mergeSEs(x, join = "right", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export    
+plotNMDS <- function(x, ...){
+    .Deprecated(msg = paste0("'plotNMDS' is deprecated. ",
+                             "Use 'scater::plotReducedDim' with ",
+                             "dimred = 'NMDS' instead."))
+    plotReducedDim(x, ncomponents = 2, dimred = "NMDS",...)
+}
+
+#' @rdname deprecate
+#' @export
+setGeneric("estimateDivergence",signature = c("x"),
+            function(x, ...)
+                standardGeneric("estimateDivergence"))
+
+#' @rdname deprecate
+#' @export
+setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'estimateDivergence' is deprecated. ",
+                                        "Use 'addDivergence' instead."))
+                addDivergence(x, ...)
             }
 )

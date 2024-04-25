@@ -27,6 +27,17 @@
 \alias{calculateCCA}
 \alias{calculateCCA,ANY-method}
 \alias{calculateCCA,SummarizedExperiment-method}
+\alias{full_join}
+\alias{full_join,ANY-method}
+\alias{inner_join}
+\alias{inner_join,ANY-method}
+\alias{left_join}
+\alias{left_join,ANY-method}
+\alias{right_join}
+\alias{right_join,ANY-method}
+\alias{plotNMDS}
+\alias{estimateDivergence}
+\alias{estimateDivergence,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -78,6 +89,28 @@ calculateCCA(x, ...)
 \S4method{calculateCCA}{ANY}(x, ...)
 
 \S4method{calculateCCA}{SummarizedExperiment}(x, ...)
+
+full_join(x, ...)
+
+\S4method{full_join}{ANY}(x, ...)
+
+inner_join(x, ...)
+
+\S4method{inner_join}{ANY}(x, ...)
+
+left_join(x, ...)
+
+\S4method{left_join}{ANY}(x, ...)
+
+right_join(x, ...)
+
+\S4method{right_join}{ANY}(x, ...)
+
+plotNMDS(x, ...)
+
+estimateDivergence(x, ...)
+
+\S4method{estimateDivergence}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

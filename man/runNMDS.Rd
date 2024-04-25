@@ -6,7 +6,6 @@
 \alias{getNMDS,ANY-method}
 \alias{getNMDS,SummarizedExperiment-method}
 \alias{getNMDS,SingleCellExperiment-method}
-\alias{plotNMDS}
 \title{Perform non-metric MDS on sample-level data}
 \usage{
 getNMDS(x, ...)
@@ -45,8 +44,6 @@ getNMDS(x, ...)
 )
 
 runNMDS(x, ..., altexp = NULL, name = "NMDS")
-
-plotNMDS(x, ..., ncomponents = 2)
 }
 \arguments{
 \item{x}{For \code{getNMDS}, a numeric matrix of expression values
