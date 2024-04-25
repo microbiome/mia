@@ -3,7 +3,7 @@
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
-#'
+#'   
 #' @param ... Additional parameters. See dedicated function.
 #' 
 #' @name deprecate
@@ -57,7 +57,6 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
             }
 )
 
-#' @importFrom bluster clusterRows
 #' @rdname deprecate
 #' @export
 loadFromBiom <- function(...) {
@@ -108,6 +107,99 @@ loadFromHumann <- function(...) {
 
 #' @rdname deprecate
 #' @export
+setGeneric("full_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("full_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("full_join", signature = c(x = "ANY"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'full_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = full' ",
+                                        "instead."))
+                mergeSEs(x, join = "full", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("inner_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("inner_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("inner_join", signature = c(x = "ANY"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'inner_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = inner' ",
+                                        "instead."))
+                mergeSEs(x, join = "inner", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("left_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("left_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("left_join", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'left_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = left' ",
+                                        "instead."))
+              mergeSEs(x, join = "left", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("right_join", signature = c("x"),
+           function(x, ...)
+               standardGeneric("right_join"))
+
+#' @rdname deprecate
+#' @export
+setMethod("right_join", signature = c(x = "ANY"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'right_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = right' ",
+                                        "instead."))
+                mergeSEs(x, join = "right", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export    
+plotNMDS <- function(x, ...){
+    .Deprecated(msg = paste0("'plotNMDS' is deprecated. ",
+                             "Use 'scater::plotReducedDim' with ",
+                             "dimred = 'NMDS' instead."))
+    plotReducedDim(x, ncomponents = 2, dimred = "NMDS",...)
+}
+
+#' @rdname deprecate
+#' @export
+setGeneric("estimateDivergence",signature = c("x"),
+            function(x, ...)
+                standardGeneric("estimateDivergence"))
+
+#' @rdname deprecate
+#' @export
+setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'estimateDivergence' is deprecated. ",
+                                        "Use 'addDivergence' instead."))
+                addDivergence(x, ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
 setGeneric(
     "estimateEvenness", signature = c("x"),
     function(x, ...) standardGeneric("estimateEvenness"))
@@ -118,7 +210,7 @@ setMethod(
     "estimateEvenness", signature = c(x="ANY"),
     function(x, ...){
         .Deprecated(msg = paste0("'estimateEvenness' is deprecated. ",
-                                "Use 'addAlpha' instead."))
+                                 "Use 'addAlpha' instead."))
         .estimate_evenness(x, ...)
     }
 )
@@ -135,7 +227,7 @@ setMethod(
     "estimateRichness", signature = c(x="ANY"),
     function(x, ...){
         .Deprecated(msg = paste0("'estimateRichness' is deprecated. ",
-                                "Use 'addAlpha' instead."))
+                                 "Use 'addAlpha' instead."))
         .estimate_richness(x, ...)
     }
 )
@@ -152,7 +244,7 @@ setMethod(
     "estimateDiversity", signature = c(x="ANY"),
     function(x, ...){
         .Deprecated(msg = paste0("'estimateDiversity' is deprecated. ",
-                                "Use 'addAlpha' instead."))
+                                 "Use 'addAlpha' instead."))
         .estimate_diversity(x, ...)
     }
 )
@@ -169,7 +261,7 @@ setMethod(
     "estimateFaith", signature = c(x="ANY"),
     function(x, ...){
         .Deprecated(msg = paste0("'estimateFaith' is deprecated. ",
-                                "Use 'addAlpha' instead."))
+                                 "Use 'addAlpha' instead."))
         .estimate_faith(x, ...)
     }
 )
@@ -186,6 +278,6 @@ setMethod(
     "estimateDominance", signature = c(x="ANY"),
     function(x, ...){
         .Deprecated(msg = paste0("'estimateDominance' is deprecated. ",
-                                "Use 'addAlpha' instead."))
+                                 "Use 'addAlpha' instead."))
         .estimate_dominance(x, ...)
     })

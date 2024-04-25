@@ -28,8 +28,7 @@ reference:
 - subtitle: Alpha Diversity
 - contents:
   - estimateDiversity
-  - estimateDivergence
-  - addAlpha
+  - addDivergence
 - subtitle: Beta Diversity
 - contents:
   - calculateUnifrac

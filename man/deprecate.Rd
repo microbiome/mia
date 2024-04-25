@@ -14,6 +14,17 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{full_join}
+\alias{full_join,ANY-method}
+\alias{inner_join}
+\alias{inner_join,ANY-method}
+\alias{left_join}
+\alias{left_join,ANY-method}
+\alias{right_join}
+\alias{right_join,ANY-method}
+\alias{plotNMDS}
+\alias{estimateDivergence}
+\alias{estimateDivergence,SummarizedExperiment-method}
 \alias{estimateEvenness}
 \alias{estimateEvenness,ANY-method}
 \alias{estimateRichness}
@@ -49,6 +60,28 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+full_join(x, ...)
+
+\S4method{full_join}{ANY}(x, ...)
+
+inner_join(x, ...)
+
+\S4method{inner_join}{ANY}(x, ...)
+
+left_join(x, ...)
+
+\S4method{left_join}{ANY}(x, ...)
+
+right_join(x, ...)
+
+\S4method{right_join}{ANY}(x, ...)
+
+plotNMDS(x, ...)
+
+estimateDivergence(x, ...)
+
+\S4method{estimateDivergence}{SummarizedExperiment}(x, ...)
 
 estimateEvenness(x, ...)
 

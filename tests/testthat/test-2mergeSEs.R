@@ -303,32 +303,6 @@ test_that("mergeSEs", {
                        join = "left")
     expect_true(class(tse) == "TreeSummarizedExperiment")
     
-    # Test dplyr-like aliases
-    tse_test1 <- mergeSEs(x = tse[1:28, 1:3], 
-                         y = tse1[23, 1:5], 
-                         join = "full")
-    tse_test2 <- full_join(x = tse[1:28, 1:3], 
-                           y = tse1[23, 1:5])
-    expect_equal(tse_test1, tse_test2)
-    tse_test1 <- mergeSEs(x = tse[1:28, 1:3], 
-                         y = tse1[23, 1:5], 
-                         join = "left")
-    tse_test2 <- left_join(x = tse[1:28, 1:3], 
-                           y = tse1[23, 1:5])
-    expect_equal(tse_test1, tse_test2)
-    tse_test1 <- suppressWarnings( 
-        mergeSEs(x = list(tse1[1:28, 1:3], tse1[23, 1:5], tse1[2:4, ]), 
-                         join = "inner")
-    )
-    tse_test2 <- suppressWarnings( 
-        inner_join(x = list(tse1[1:28, 1:3], tse1[23, 1:5], tse1[2:4, ]) )
-    )
-    expect_equal(tse_test1, tse_test2)
-    tse_test1 <- mergeSEs(x = list(tse1[1:28, 1:3], tse1[23, 1:5]), 
-                         join = "right")
-    tse_test2 <- right_join(x = list(tse1[1:28, 1:3], tse1[23, 1:5]) )
-    expect_equal(tse_test1, tse_test2)
-    
     # Test collapse_samples
     tse_test <- mergeSEs(x = tse[1:28, 1:3], 
                          y = tse[23, 1:5], 
