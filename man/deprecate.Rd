@@ -20,8 +20,11 @@
 \alias{getPrevalence}
 \alias{getPrevalence,ANY-method}
 \alias{getPrevalence,SummarizedExperiment-method}
+\alias{full_join}
 \alias{full_join,ANY-method}
+\alias{inner_join}
 \alias{inner_join,ANY-method}
+\alias{left_join}
 \alias{left_join,ANY-method}
 \alias{right_join}
 \alias{right_join,ANY-method}
@@ -66,9 +69,15 @@ getPrevalence(x, ...)
 
 \S4method{getPrevalence}{SummarizedExperiment}(x, ...)
 
+full_join(x, ...)
+
 \S4method{full_join}{ANY}(x, ...)
 
+inner_join(x, ...)
+
 \S4method{inner_join}{ANY}(x, ...)
+
+left_join(x, ...)
 
 \S4method{left_join}{ANY}(x, ...)
 

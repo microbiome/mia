@@ -157,6 +157,8 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
           }
 )
 
+#' @rdname deprecate
+#' @export
 setGeneric("full_join", signature = c("x"),
            function(x, ...)
                standardGeneric("full_join"))
@@ -172,6 +174,8 @@ setMethod("full_join", signature = c(x = "ANY"),
           }
 )
 
+#' @rdname deprecate
+#' @export
 setGeneric("inner_join", signature = c("x"),
            function(x, ...)
                standardGeneric("inner_join"))
@@ -186,7 +190,9 @@ setMethod("inner_join", signature = c(x = "ANY"),
                 mergeSEs(x, join = "inner", ...)
             }
 )
-          
+
+#' @rdname deprecate
+#' @export        
 setGeneric("left_join", signature = c("x"),
            function(x, ...)
                standardGeneric("left_join"))
