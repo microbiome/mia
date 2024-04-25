@@ -75,9 +75,6 @@
 #'   \item{\code{right} -- all the features of the second object}
 #' }
 #' 
-#' You can also doe e.g., a full join by using a function \code{full_join} which is 
-#' an alias for \code{mergeSEs}. Also other joining methods have dplyr-like aliases.
-#' 
 #' The output depends on the input. If the input contains \code{SummarizedExperiment}
 #' object, then the output will be \code{SummarizedExperiment}. When all the input
 #' objects belong to \code{TreeSummarizedExperiment}, the output will be 
@@ -121,13 +118,11 @@
 #' tse_temp <- mergeSEs(tse[1:10, 1:10], tse[5:100, 11:20], join = "left")
 #' tse_temp
 #' 
-#' # You can also do a left_join by using alias "left_join"
-#' tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
-#' 
 #' # If your objects contain samples that describe one and same sample,
 #' # you can collapse equally named samples to one by specifying 'collapse_samples'
-#' tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
-#'                        collapse_samples = TRUE)
+#' tse_temp <- mergeSEs(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
+#'                        collapse_samples = TRUE,
+#'                        join = "inner")
 #' tse_temp
 #' 
 #' # Merge all available assays
@@ -258,70 +253,6 @@ setMethod("mergeSEs", signature = c(x = "list"),
               # Call the function for list
               mergeSEs(x, ...)
           }
-)
-
-################################# full_join ####################################
-
-#' @rdname mergeSEs
-#' @export
-setGeneric("full_join", signature = c("x"),
-    function(x, ...)
-        standardGeneric("full_join"))
-
-#' @rdname mergeSEs
-#' @export
-setMethod("full_join", signature = c(x = "ANY"),
-    function(x, ...){
-        mergeSEs(x, join = "full", ...)
-    }
-)
-
-################################# inner_join ###################################
-
-#' @rdname mergeSEs
-#' @export
-setGeneric("inner_join", signature = c("x"),
-    function(x, ...)
-        standardGeneric("inner_join"))
-
-#' @rdname mergeSEs
-#' @export
-setMethod("inner_join", signature = c(x = "ANY"),
-    function(x, ...){
-        mergeSEs(x, join = "inner", ...)
-    }
-)
-
-################################# left_join ####################################
-
-#' @rdname mergeSEs
-#' @export
-setGeneric("left_join", signature = c("x"),
-    function(x, ...)
-        standardGeneric("left_join"))
-
-#' @rdname mergeSEs
-#' @export
-setMethod("left_join", signature = c(x = "ANY"),
-    function(x, ...){
-        mergeSEs(x, join = "left", ...)
-    }
-)
-
-################################# right_join ###################################
-
-#' @rdname mergeSEs
-#' @export
-setGeneric("right_join", signature = c("x"),
-    function(x, ...)
-        standardGeneric("right_join"))
-
-#' @rdname mergeSEs
-#' @export
-setMethod("right_join", signature = c(x = "ANY"),
-    function(x, ...){
-        mergeSEs(x, join = "right", ...)
-    }
 )
 
 ################################ HELP FUNCTIONS ################################
