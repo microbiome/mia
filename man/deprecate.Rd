@@ -14,7 +14,6 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
-<<<<<<< HEAD
 \alias{subsetByRareTaxa}
 \alias{subsetByRareTaxa,ANY-method}
 \alias{subsetByRareFeatures}
@@ -23,19 +22,14 @@
 \alias{subsetByPrevalentTaxa,ANY-method}
 \alias{subsetByPrevalentFeatures}
 \alias{subsetByPrevalentFeatures,ANY-method}
-=======
-\alias{full_join}
 \alias{full_join,ANY-method}
-\alias{inner_join}
 \alias{inner_join,ANY-method}
-\alias{left_join}
 \alias{left_join,ANY-method}
 \alias{right_join}
 \alias{right_join,ANY-method}
 \alias{plotNMDS}
 \alias{estimateDivergence}
 \alias{estimateDivergence,SummarizedExperiment-method}
->>>>>>> a537731c8da142ed5a0864af5caec52a03288cb4
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -62,7 +56,6 @@ loadFromMetaphlan(...)
 
 loadFromHumann(...)
 
-<<<<<<< HEAD
 subsetByRareTaxa(x, ...)
 
 \S4method{subsetByRareTaxa}{ANY}(x, ...)
@@ -78,16 +71,10 @@ subsetByPrevalentTaxa(x, ...)
 subsetByPrevalentFeatures(x, ...)
 
 \S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
-=======
-full_join(x, ...)
 
 \S4method{full_join}{ANY}(x, ...)
 
-inner_join(x, ...)
-
 \S4method{inner_join}{ANY}(x, ...)
-
-left_join(x, ...)
 
 \S4method{left_join}{ANY}(x, ...)
 
@@ -100,7 +87,6 @@ plotNMDS(x, ...)
 estimateDivergence(x, ...)
 
 \S4method{estimateDivergence}{SummarizedExperiment}(x, ...)
->>>>>>> a537731c8da142ed5a0864af5caec52a03288cb4
 }
 \arguments{
 \item{x}{A
