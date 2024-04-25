@@ -10,6 +10,7 @@
 NULL
 
 #' @rdname deprecate
+#' @export
 setGeneric("cluster", signature = c("x"),
             function(x,...)
                 standardGeneric("cluster"))
@@ -26,6 +27,7 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname deprecate
+#' @export
 setGeneric("addTaxonomyTree",
             signature = "x",
             function(x, ...)
@@ -42,6 +44,7 @@ setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname deprecate
+#' @export
 setGeneric("taxonomyTree",
             signature = "x",
             function(x, ...)
@@ -59,7 +62,6 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
-
 setGeneric("mergeFeaturesByPrevalence", signature = "x",
            function(x, ...)
                standardGeneric("mergeFeaturesByPrevalence"))
@@ -76,6 +78,8 @@ setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment")
           }
 )
 
+#' @rdname deprecate
+#' @export
 loadFromBiom <- function(...) {
     .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
                             " Use 'importBIOM' instead."))

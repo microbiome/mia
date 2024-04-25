@@ -10,6 +10,7 @@
 \alias{taxonomyTree,SummarizedExperiment-method}
 \alias{mergeFeaturesByPrevalence}
 \alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
+\alias{loadFromBiom}
 \alias{loadFromQIIME2}
 \alias{readQZA}
 \alias{loadFromMothur}
@@ -32,6 +33,8 @@ taxonomyTree(x, ...)
 mergeFeaturesByPrevalence(x, ...)
 
 \S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
+
+loadFromBiom(...)
 
 loadFromQIIME2(...)
 
