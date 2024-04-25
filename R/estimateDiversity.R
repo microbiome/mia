@@ -9,8 +9,9 @@
 #' \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon} 
 #' indices. See details for more information and references.
 #'
-#' @param x a \code{\link{SummarizedExperiment}} object or \code{\link{TreeSummarizedExperiment}}.
-#' The latter is recommended for microbiome data sets and tree-based alpha diversity indices.
+#' @param x a \code{\link{SummarizedExperiment}} object or
+#'   \code{\link{TreeSummarizedExperiment}}. The latter is recommended for
+#'   microbiome data sets and tree-based alpha diversity indices.
 #' 
 #' @param tree A phylogenetic tree that is used to calculate 'faith' index.
 #'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
@@ -35,10 +36,10 @@
 #'   rowTree will be used to calculate faith index. 
 #'   (By default: \code{tree_name = "phylo"})
 #'   
-#' @param node_lab NULL or a character vector specifying the links between rows and 
-#'   node labels of \code{tree}. If a certain row is not linked with the tree, missing 
-#'   instance should be noted as NA. When NULL, all the rownames should be found from
-#'   the tree. (By default: \code{node_lab = NULL})
+#' @param node_lab NULL or a character vector specifying the links between rows
+#'   and node labels of \code{tree}. If a certain row is not linked with the
+#'   tree, missing instance should be noted as NA. When NULL, all the rownames
+#'   should be found from the tree. (By default: \code{node_lab = NULL})
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -66,9 +67,9 @@
 #'
 #' @details
 #'
-#' Alpha diversity is a joint quantity that combines elements or community richness
-#' and evenness. Diversity increases, in general, when species richness or
-#' evenness increase.
+#' Alpha diversity is a joint quantity that combines elements or community
+#' richness and evenness. Diversity increases, in general, when species richness
+#' or evenness increase.
 #'
 #' By default, this function returns all indices.
 #'
@@ -272,7 +273,7 @@ setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
         # Check tree_name
         if( !.is_non_empty_string(tree_name) ){
             stop("'tree_name' must be a character specifying a rowTree of 'x'.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         # Check indices
         index <- match.arg(index, several.ok = TRUE)
@@ -311,9 +312,10 @@ setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
         if( calc_faith ){
             # Get tree to check whether faith can be calculated
             tree <- rowTree(x, tree_name)
-            # Check if faith can be calculated. Give warning and do not run estimateFaith
-            # if there is no rowTree and other indices were also calculated. Otherwise, 
-            # run estimateFaith. (If there is no rowTree --> error)
+            # Check if faith can be calculated. Give warning and do not run
+            # estimateFaith if there is no rowTree and other indices were also
+            # calculated. Otherwise, run estimateFaith.
+            # (If there is no rowTree --> error)
             if( (is.null(tree) || is.null(tree$edge.length)) &&
                 length(index) >= 1 ){
                 warning("Faith diversity has been excluded from the results ",
@@ -326,10 +328,12 @@ setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
                         "rowTree to include this index.", 
                         call. = FALSE)
             } else {
-                x <- .estimate_faith(x, name = faith_name, tree_name = tree_name, ...)
+                x <- .estimate_faith(x, name = faith_name,
+                                    tree_name = tree_name, ...)
                 # Ensure that indices are in correct order
                 colnames <- colnames(colData(x))
-                colnames <- c(colnames[ !colnames %in% name_original ], name_original)
+                colnames <- c(colnames[ !colnames %in% name_original ],
+                            name_original)
                 colData(x) <- colData(x)[ , colnames]
             }
         }
@@ -353,35 +357,35 @@ setMethod(
         # IF there is no rowTree gives an error
         if( is.null(tree) || is.null(tree$edge.length) ){
             stop("'tree' is NULL or it does not have any branches.",
-                "The Faith's alpha diversity index is not possible to calculate.",
-                call. = FALSE)
+                "The Faith's alpha diversity index is not possible to 
+                calculate.", call. = FALSE)
         }
         # Check 'assay.type'
         .check_assay_present(assay.type, x)
         # Check that it is numeric
         if( !is.numeric(assay(x, assay.type)) ){
-            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
-                 call. = FALSE)
+            stop("The abundance matrix specificied by 'assay.type' must be 
+                numeric.", call. = FALSE)
         }
         # Check 'name'
         if(!.is_non_empty_character(name)){
             stop("'name' must be a non-empty character value.",
                 call. = FALSE)
         }
-        # Check that node_lab is NULL or it specifies links between rownames and 
-        # node labs
+        # Check that node_lab is NULL or it specifies links between rownames
+        # and node labs
         if( !( is.null(node_lab) || 
-               is.character(node_lab) && length(node_lab) == nrow(x) ) ){
-            stop("'node_lab' must be NULL or a vector specifying links between ",
-                 "rownames and node labs of 'tree'.",
-                 call. = FALSE)
+                is.character(node_lab) && length(node_lab) == nrow(x) ) ){
+            stop("'node_lab' must be NULL or a vector specifying links between",
+                " rownames and node labs of 'tree'.",
+                call. = FALSE)
         }
         # Get the abundance matrix
         mat <- assay(x, assay.type)
         # Check that it is numeric
         if( !is.numeric(mat) ){
-            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
-                 call. = FALSE)
+            stop("The abundance matrix specificied by 'assay.type' must be
+                numeric.", call. = FALSE)
         }
         # Subset and rename rows of the assay to correspond node_labs
         if( !is.null(node_lab) ){
@@ -407,14 +411,14 @@ setMethod(
         # Check tree_name
         if( !.is_non_empty_character(tree_name) ){
             stop("'tree_name' must be a character specifying a rowTree of 'x'.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         # Gets the tree
         tree <- rowTree(x, tree_name)
         if( is.null(tree) || is.null(tree$edge.length)){
-            stop("rowTree(x, tree_name) is NULL or the tree does not have any branches. ",
-            "The Faith's alpha diversity index cannot be calculated.",
-                call. = FALSE)
+            stop("rowTree(x, tree_name) is NULL or the tree does not have any 
+                branches. The Faith's alpha diversity index cannot be 
+                calculated.", call. = FALSE)
         }
         # Get node labs
         node_lab <- rowLinks(x)[ , "nodeLab" ]
@@ -422,8 +426,8 @@ setMethod(
         # Give a warning, data will be subsetted
         if( any(is.na(node_lab)) ){
             warning("The rowTree named 'tree_name' does not include all the ",
-                    "rows which is why 'x' is subsetted when the Faith's alpha ",
-                    "diversity index is calculated.",
+                    "rows which is why 'x' is subsetted when the Faith's alpha",
+                    " diversity index is calculated.",
                     call. = FALSE)
         }
         # Calculates the Faith index
@@ -557,7 +561,8 @@ setMethod(
     return(faiths)
 }
 
-# This function trims tips until all tips can be found from provided set of nodes
+# This function trims tips until all tips can be found from provided set of 
+# nodes
 #' @importFrom ape drop.tip
 .prune_tree <- function(tree, nodes){
     # Get those tips that can not be found from provided nodes
@@ -571,18 +576,21 @@ setMethod(
         # whose all tips can be found provided nodes i.e., rows of TreeSE. Some
         # taxa might be higher rank meaning that all rows might not be in tips
         # even after pruning; they have still child-nodes.
-        tree <- drop.tip(tree, remove_tips, trim.internal = FALSE, collapse.singles = FALSE)
+        tree <- drop.tip(tree, remove_tips, trim.internal = FALSE, 
+                        collapse.singles = FALSE)
         # If all tips were dropped, the result is NULL --> stop loop
         if( is.null(tree) ){
             break
         }
-        # Again, get those tips of updated tree that cannot be found from provided nodes
+        # Again, get those tips of updated tree that cannot be found from 
+        # provided nodes
         remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
     }
     return(tree)
 }
 
-.calc_log_modulo_skewness <- function(mat, quantile = 0.5, num_of_classes = 50, ...){
+.calc_log_modulo_skewness <- function(mat, quantile = 0.5, num_of_classes = 50,
+                                    ...){
     # quantile must be a numeric value between 0-1
     if( !( is.numeric(quantile) && (quantile >= 0 && quantile <= 1) ) ){
         stop("'quantile' must be a numeric value between 0-1.",
@@ -644,4 +652,3 @@ setMethod(
 
     FUN(x = x, mat = mat, tree = tree, ...)
 }
-

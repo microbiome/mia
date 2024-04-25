@@ -1,15 +1,15 @@
-#' Estimate alpha diversity indices.
+#' Estimate alpha diversity indices
 #' 
-#' The function estimates alpha diversity indices optionally using of rarefaction,
-#' then stores results at \code{\link{colData}}.
+#' The function estimates alpha diversity indices optionally using rarefaction,
+#' then stores results in \code{\link{colData}}.
 #' 
 #' @param x a \code{\link{SummarizedExperiment}} object.
 #' 
-#' @param assay.type the name of the assay used for
-#'   calculation of the sample-wise estimates (default: \code{assay.type = "counts"}).
+#' @param assay.type the name of the assay used for calculation of the
+#'   sample-wise estimates (default: \code{assay.type = "counts"}).
 #'   
-#' @param index a \code{character} vector, specifying the alpha diversity indices
-#'   to be calculated.
+#' @param index a \code{character} vector, specifying the alpha diversity 
+#'   indices to be calculated.
 #'   
 #' @param name a name for the column(s) of the colData the results should be
 #'   stored in. By default this will use the original names of the calculated
@@ -18,13 +18,13 @@
 #' @param ... optional arguments.
 #' 
 #' @param n.iter a single \code{integer} value for the number of rarefaction
-#' rounds (By default: \code{n.iter = 10}).
+#'    rounds (By default: \code{n.iter = 10}).
 #' 
 #' @param rarefaction.depth a \code{double} value as for the minimim size or 
-#' rarefaction.depth. (By default: \code{rarefaction.depth = NULL})
+#'    rarefaction.depth. (By default: \code{rarefaction.depth = NULL})
 #' 
 #' @return \code{x} with additional \code{\link{colData}} named after the index 
-#' used.
+#'    used.
 #' 
 #' @examples
 #' 
@@ -38,47 +38,52 @@
 #' tse$shannon
 #'
 #' # Calculate observed richness with 10 rarefaction rounds
-#' tse <- addAlpha(tse, assay.type = "counts", index = "observed_richness",
-#' rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE), n.iter=10)
+#' tse <- addAlpha(tse,
+#'  assay.type = "counts",
+#'  index = "observed_richness",
+#'  rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+#'  n.iter=10)
 #' 
 #' # Shows the estimated observed richness
 #' tse$observed_richness
 #' 
-
 #' @name addAlpha
 #' @rdname addAlpha
 #' @export
 setGeneric(
-    "addAlpha", signature = c("x"), function(
+    "addAlpha", signature = c("x"),
+    function(
         x, assay.type = "counts", 
         index = c(
             "coverage_diversity", "fisher_diversity", "faith_diversity",
             "gini_simpson_diversity", "inverse_simpson_diversity",
             "log_modulo_skewness_diversity", "shannon_diversity",
-            "absolute_dominance", "dbp_dominance", "core_abundance_dominance",
-            "gini_dominance", "dmn_dominance", "relative_dominance",
-            "simpson_lambda_dominance", "camargo_evenness", "pielou_evenness",
-            "simpson_evenness", "evar_evenness", "bulla_evenness",
-            "ace_richness", "chao1_richness", "hill_richness",
-            "observed_richness"),
+            "absolute_dominance", "dbp_dominance",
+            "core_abundance_dominance", "gini_dominance",
+            "dmn_dominance", "relative_dominance",
+            "simpson_lambda_dominance", "camargo_evenness",
+            "pielou_evenness", "simpson_evenness",
+            "evar_evenness", "bulla_evenness", "ace_richness",
+            "chao1_richness", "hill_richness", "observed_richness"),
         name = index, n.iter = 10, rarefaction.depth = NULL, ...)
     standardGeneric("addAlpha"))
 
 #' @rdname addAlpha
 #' @export
-setMethod(
-    "addAlpha", signature = c(x = "SummarizedExperiment"), function(
+setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
+    function(
         x, assay.type = "counts", 
         index = c(
             "coverage_diversity", "fisher_diversity", "faith_diversity",
             "gini_simpson_diversity", "inverse_simpson_diversity",
             "log_modulo_skewness_diversity", "shannon_diversity",
-            "absolute_dominance", "dbp_dominance", "core_abundance_dominance",
-            "gini_dominance", "dmn_dominance", "relative_dominance",
-            "simpson_lambda_dominance", "camargo_evenness", "pielou_evenness",
-            "simpson_evenness", "evar_evenness", "bulla_evenness",
-            "ace_richness", "chao1_richness", "hill_richness",
-            "observed_richness"),
+            "absolute_dominance", "dbp_dominance",
+            "core_abundance_dominance", "gini_dominance",
+            "dmn_dominance", "relative_dominance",
+            "simpson_lambda_dominance", "camargo_evenness",
+            "pielou_evenness", "simpson_evenness",
+            "evar_evenness", "bulla_evenness", "ace_richness",
+            "chao1_richness", "hill_richness", "observed_richness"),
         name = index, n.iter = 10, rarefaction.depth = NULL, ...){
         ############################## Input check #############################
         # Check that index is a character vector
@@ -91,7 +96,7 @@ setMethod(
             stop(
                 "'name' must be a non-empty character value and have the ",
                 "same length than 'index'.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         # Check n.tier
         if( !.is_an_integer(n.iter) ) {
@@ -101,7 +106,7 @@ setMethod(
         if( !is.null(rarefaction.depth) && 
             !(is.numeric(rarefaction.depth) && rarefaction.depth > 0)) {
             stop("'rarefaction.depth' must be a non-zero positive double.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         # Check if index exists
         index <- lapply(index, .get_indices)
@@ -130,8 +135,8 @@ setMethod(
                 x <- do.call(
                     index[i, "FUN"], args = c(
                         list(x, assay.type = assay.type,
-                             index = index[i, "index"],
-                             name = index[i, "name"]),
+                            index = index[i, "index"],
+                            name = index[i, "name"]),
                         list(...)))
             }
         }

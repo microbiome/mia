@@ -3,7 +3,7 @@
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
-#'   
+#'
 #' @param ... Additional parameters. See dedicated function.
 #' 
 #' @name deprecate

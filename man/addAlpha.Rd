@@ -3,7 +3,7 @@
 \name{addAlpha}
 \alias{addAlpha}
 \alias{addAlpha,SummarizedExperiment-method}
-\title{Estimate alpha diversity indices.}
+\title{Estimate alpha diversity indices}
 \usage{
 addAlpha(
   x,
@@ -40,11 +40,11 @@ addAlpha(
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
-\item{assay.type}{the name of the assay used for
-calculation of the sample-wise estimates (default: \code{assay.type = "counts"}).}
+\item{assay.type}{the name of the assay used for calculation of the
+sample-wise estimates (default: \code{assay.type = "counts"}).}
 
-\item{index}{a \code{character} vector, specifying the alpha diversity indices
-to be calculated.}
+\item{index}{a \code{character} vector, specifying the alpha diversity
+indices to be calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be
 stored in. By default this will use the original names of the calculated
@@ -63,8 +63,8 @@ rarefaction.depth. (By default: \code{rarefaction.depth = NULL})}
 used.
 }
 \description{
-The function estimates alpha diversity indices optionally using of rarefaction,
-then stores results at \code{\link{colData}}.
+The function estimates alpha diversity indices optionally using rarefaction,
+then stores results in \code{\link{colData}}.
 }
 \examples{
 
@@ -78,8 +78,11 @@ tse <- addAlpha(tse, assay.type = "counts", index = "shannon")
 tse$shannon
 
 # Calculate observed richness with 10 rarefaction rounds
-tse <- addAlpha(tse, assay.type = "counts", index = "observed_richness",
-rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE), n.iter=10)
+tse <- addAlpha(tse,
+ assay.type = "counts",
+ index = "observed_richness",
+ rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+ n.iter=10)
 
 # Shows the estimated observed richness
 tse$observed_richness
