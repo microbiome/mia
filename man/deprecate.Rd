@@ -14,6 +14,12 @@
 \alias{makePhyloseqFromTreeSummarizedExperiment,ANY-method}
 \alias{makePhyloseqFromTreeSE}
 \alias{makePhyloseqFromTreeSE,ANY-method}
+\alias{makeTreeSEFromBiom}
+\alias{makeTreeSummarizedExperimentFromBiom}
+\alias{makeTreeSEFromDADA2}
+\alias{makeTreeSummarizedExperimentFromDADA2}
+\alias{makeTreeSEFromPhyloseq}
+\alias{loadFromBiom}
 \alias{loadFromQIIME2}
 \alias{readQZA}
 \alias{loadFromMothur}
@@ -44,6 +50,18 @@ makePhyloseqFromTreeSummarizedExperiment(obj, ...)
 makePhyloseqFromTreeSE(obj, ...)
 
 \S4method{makePhyloseqFromTreeSE}{ANY}(obj, ...)
+
+makeTreeSEFromBiom(...)
+
+makeTreeSummarizedExperimentFromBiom(...)
+
+makeTreeSEFromDADA2(...)
+
+makeTreeSummarizedExperimentFromDADA2(...)
+
+makeTreeSEFromPhyloseq(obj)
+
+loadFromBiom(...)
 
 loadFromQIIME2(...)
 

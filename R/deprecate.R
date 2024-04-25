@@ -114,6 +114,51 @@ setMethod("makePhyloseqFromTreeSE",
 
 #' @rdname deprecate
 #' @export
+makeTreeSEFromBiom <- function(...){
+    .Deprecated(msg = paste0(
+        "'makeTreeSEFromBiom' is deprecated.",
+        " Use 'convert' instead."))
+    convert(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSummarizedExperimentFromBiom <- function(...){
+    .Deprecated(msg = paste0(
+        "'makeTreeSummarizedExperimentFromBiom' is deprecated.",
+        " Use 'convert' instead."))
+    convert(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSEFromDADA2 <- function(...) {
+    .Deprecated(msg = paste0(
+        "'makeTreeSEFromDADA2' is deprecated.",
+        " Use 'convert' instead."))
+    convert(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSummarizedExperimentFromDADA2 <- function(...) {
+    .Deprecated(msg = paste0(
+        "'makeTreeSummarizedExperimentFromDADA2' is deprecated.",
+        " Use 'convert' instead."))
+    convert(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSEFromPhyloseq <- function(obj) {
+    .Deprecated(msg = paste0(
+        "'makeTreeSEFromPhyloseq' is deprecated.",
+        " Use 'convert' instead."))
+    convert(...)
+}
+
+#' @rdname deprecate
+#' @export
 loadFromBiom <- function(...) {
     .Deprecated(msg = paste0("'loadFromBiom' is deprecated.",
                             " Use 'importBIOM' instead."))
