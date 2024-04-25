@@ -22,11 +22,13 @@
 \alias{perSampleDominantFeatures,SummarizedExperiment-method}
 \alias{perSampleDominantTaxa}
 \alias{perSampleDominantTaxa,SummarizedExperiment-method}
+\alias{full_join}
 \alias{full_join,ANY-method}
 \alias{inner_join}
 \alias{inner_join,ANY-method}
 \alias{left_join}
 \alias{left_join,ANY-method}
+\alias{right_join}
 \alias{right_join,ANY-method}
 \alias{plotNMDS}
 \alias{estimateDivergence}
@@ -73,6 +75,8 @@ perSampleDominantTaxa(x, ...)
 
 \S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, ...)
 
+full_join(x, ...)
+
 \S4method{full_join}{ANY}(x, ...)
 
 inner_join(x, ...)
@@ -82,6 +86,8 @@ inner_join(x, ...)
 left_join(x, ...)
 
 \S4method{left_join}{ANY}(x, ...)
+
+right_join(x, ...)
 
 \S4method{right_join}{ANY}(x, ...)
 
