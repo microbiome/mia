@@ -5,14 +5,6 @@
 \alias{mergeSEs,SimpleList-method}
 \alias{mergeSEs,SummarizedExperiment-method}
 \alias{mergeSEs,list-method}
-\alias{full_join}
-\alias{full_join,ANY-method}
-\alias{inner_join}
-\alias{inner_join,ANY-method}
-\alias{left_join}
-\alias{left_join,ANY-method}
-\alias{right_join}
-\alias{right_join,ANY-method}
 \title{Merge SE objects into single SE object.}
 \usage{
 mergeSEs(x, ...)
@@ -32,22 +24,6 @@ mergeSEs(x, ...)
 \S4method{mergeSEs}{SummarizedExperiment}(x, y = NULL, ...)
 
 \S4method{mergeSEs}{list}(x, ...)
-
-full_join(x, ...)
-
-\S4method{full_join}{ANY}(x, ...)
-
-inner_join(x, ...)
-
-\S4method{inner_join}{ANY}(x, ...)
-
-left_join(x, ...)
-
-\S4method{left_join}{ANY}(x, ...)
-
-right_join(x, ...)
-
-\S4method{right_join}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object or a list of
@@ -129,9 +105,6 @@ to choose which rows are included.
 \item{\code{right} -- all the features of the second object}
 }
 
-You can also doe e.g., a full join by using a function \code{full_join} which is
-an alias for \code{mergeSEs}. Also other joining methods have dplyr-like aliases.
-
 The output depends on the input. If the input contains \code{SummarizedExperiment}
 object, then the output will be \code{SummarizedExperiment}. When all the input
 objects belong to \code{TreeSummarizedExperiment}, the output will be
@@ -160,13 +133,11 @@ tse
 tse_temp <- mergeSEs(tse[1:10, 1:10], tse[5:100, 11:20], join = "left")
 tse_temp
 
-# You can also do a left_join by using alias "left_join"
-tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
-
 # If your objects contain samples that describe one and same sample,
 # you can collapse equally named samples to one by specifying 'collapse_samples'
-tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
-                       collapse_samples = TRUE)
+tse_temp <- mergeSEs(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
+                       collapse_samples = TRUE,
+                       join = "inner")
 tse_temp
 
 # Merge all available assays

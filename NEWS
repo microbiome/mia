@@ -108,4 +108,8 @@ Changes in version 1.11.x
 + Rename cluster to addCluster
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
 loadFromMetaphlan, loadFromHumann
++ fix typo in loadFromBiom definition (deprecate file)
++ deprecate subsetSamples, subsetFeatures and subsetTaxa
++ deprecate plotNMDS after moving it to miaViz package
++ rename estimateDivergence to addDivergence
 + Rename splitByRanks to agglomerateByRanks and add option as.list 
