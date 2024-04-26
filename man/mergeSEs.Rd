@@ -133,13 +133,11 @@ tse
 tse_temp <- mergeSEs(tse[1:10, 1:10], tse[5:100, 11:20], join = "left")
 tse_temp
 
-# You can also do a left_join by using alias "left_join"
-tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
-
 # If your objects contain samples that describe one and same sample,
 # you can collapse equally named samples to one by specifying 'collapse_samples'
-tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
-                       collapse_samples = TRUE)
+tse_temp <- mergeSEs(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
+                       collapse_samples = TRUE,
+                       join = "inner")
 tse_temp
 
 # Merge all available assays
