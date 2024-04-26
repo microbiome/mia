@@ -25,6 +25,8 @@
 \alias{plotNMDS}
 \alias{estimateDivergence}
 \alias{estimateDivergence,SummarizedExperiment-method}
+\alias{subsampleCounts}
+\alias{subsampleCounts,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -72,6 +74,10 @@ plotNMDS(x, ...)
 estimateDivergence(x, ...)
 
 \S4method{estimateDivergence}{SummarizedExperiment}(x, ...)
+
+subsampleCounts(x, ...)
+
+\S4method{subsampleCounts}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

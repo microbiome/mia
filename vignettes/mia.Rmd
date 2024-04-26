@@ -193,7 +193,7 @@ Sub-sampling to equal number of counts per sample. Also known as rarefying.
 ```{r}
 data(GlobalPatterns, package = "mia")
 
-tse.subsampled <- subsampleCounts(GlobalPatterns, 
+tse.subsampled <- rarefyAssay(GlobalPatterns, 
                                   min_size = 60000, 
                                   name = "subsampled",
                                   replace = TRUE,

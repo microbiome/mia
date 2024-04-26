@@ -1,14 +1,14 @@
 #' Subsample Counts
 #' 
-#' \code{subsampleCounts} will randomly subsample counts in 
+#' \code{rarefyAssay} will randomly subsample counts in 
 #' \code{SummarizedExperiment} and return the a modified object in which each 
 #' sample has same number of total observations/counts/reads. 
 #'
 #' @details
 #' Although the subsampling approach is highly debated in microbiome research, 
-#' we include the \code{subsampleCounts} function because there may be some 
+#' we include the \code{rarefyAssay} function because there may be some 
 #' instances where it can be useful.
-#' Note that the output of \code{subsampleCounts} is not the equivalent as the 
+#' Note that the output of \code{rarefyAssay} is not the equivalent as the 
 #' input and any result have to be verified with the original dataset.
 #' To maintain the reproducibility, please define the seed using set.seed() 
 #' before implement this function.
@@ -58,11 +58,11 @@
 #' microbial differential abundance strategies depend upon data characteristics. 
 #' Microbiome. 2017 Dec;5(1):1-8.
 #' 
-#' @return \code{subsampleCounts} return \code{x} with subsampled data.
+#' @return \code{rarefyAssay} return \code{x} with subsampled data.
 #' 
 #' @author Sudarshan A. Shetty and Felix G.M. Ernst
 #' 
-#' @name subsampleCounts
+#' @name rarefyAssay
 #'  
 #' @examples
 #' # When samples in TreeSE are less than specified min_size, they will be removed.
@@ -71,7 +71,7 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' set.seed(123)
-#' tse.subsampled <- subsampleCounts(tse, 
+#' tse.subsampled <- rarefyAssay(tse, 
 #'                                   min_size = 60000, 
 #'                                   name = "subsampled" 
 #'                                   )
@@ -81,22 +81,20 @@
 #' 
 NULL
 
-#' @rdname subsampleCounts
-#' @aliases rarifyCounts
+#' @rdname rarefyAssay
 #' @export
-setGeneric("subsampleCounts", signature = c("x"),
+setGeneric("rarefyAssay", signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
                     min_size = min(colSums2(assay(x))),
                     replace = TRUE,
                     name = "subsampled", verbose = TRUE, ...)
-               standardGeneric("subsampleCounts"))
+               standardGeneric("rarefyAssay"))
 
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom DelayedMatrixStats colSums2 rowSums2
-#' @rdname subsampleCounts
-#' @aliases rarifyCounts
+#' @rdname rarefyAssay
 #' @export
-setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
+setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
           function(x, assay.type = assay_name, assay_name = "counts", 
                    min_size = min(colSums2(assay(x))),
                     replace = TRUE, 

@@ -197,3 +197,19 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
                 addDivergence(x, ...)
             }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric("subsampleCounts", signature = c("x"),
+           function(x, ...)
+               standardGeneric("subsampleCounts"))
+
+#' @rdname deprecate
+#' @export
+setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
+        function(x, ...){
+            .Deprecated(msg = paste0("'subsampleCounts' is deprecated. ",
+                                       "Use 'rarefyAssay' instead."))
+            rarefyAssay(x, ...)
+        }
+)   
