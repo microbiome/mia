@@ -27,7 +27,7 @@
 #' @return An object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
-#' @name loadFromBiom
+#' @name importBIOM
 #' 
 #' @seealso
 #' \code{\link[=convert]{convert}}
@@ -57,7 +57,7 @@
 #'                     remove.artifacts = TRUE)
 NULL
 
-#' @rdname loadFromBiom
+#' @rdname importBIOM
 #' @export
 importBIOM <- function(file, ...) {
     .require_package("biomformat")
