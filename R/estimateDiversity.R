@@ -256,9 +256,9 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         # input check
         supported_index <- c("coverage", "fisher", "gini_simpson", 
                              "inverse_simpson", "log_modulo_skewness", "shannon")
-        
+        index_string <- paste0("'", paste0(supported_types), "'")
         if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-            stop("'", paste0(supported_types, collapse = "', '"), "'", call. = FALSE)
+            stop(index_string, call. = FALSE)
         }
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -291,9 +291,9 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         supported_index <- c("coverage", "fisher", "gini_simpson", 
                              "inverse_simpson", "log_modulo_skewness",
                              "shannon","faith")
-        
+        index_string <- paste0("'", paste0(supported_types), "'")
         if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-            stop("'", paste0(supported_types, collapse = "', '"), "'", call. = FALSE)
+            stop(index_string, call. = FALSE)
         }
         
         # Check tree_name
