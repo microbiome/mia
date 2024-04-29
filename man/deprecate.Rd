@@ -27,6 +27,15 @@
 \alias{plotNMDS}
 \alias{estimateDivergence}
 \alias{estimateDivergence,SummarizedExperiment-method}
+\alias{transformSamples}
+\alias{transformSamples,SummarizedExperiment-method}
+\alias{ZTransform}
+\alias{ZTransform,SummarizedExperiment-method}
+\alias{relAbundanceCounts}
+\alias{relAbundanceCounts,SummarizedExperiment-method}
+\alias{transformCounts}
+\alias{transformFeatures}
+\alias{transformFeatures,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -78,6 +87,24 @@ plotNMDS(x, ...)
 estimateDivergence(x, ...)
 
 \S4method{estimateDivergence}{SummarizedExperiment}(x, ...)
+
+transformSamples(x, ...)
+
+\S4method{transformSamples}{SummarizedExperiment}(x, ...)
+
+ZTransform(x, ...)
+
+\S4method{ZTransform}{SummarizedExperiment}(x, ...)
+
+relAbundanceCounts(x, ...)
+
+\S4method{relAbundanceCounts}{SummarizedExperiment}(x, ...)
+
+transformCounts(x, ...)
+
+transformFeatures(x, ...)
+
+\S4method{transformFeatures}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
