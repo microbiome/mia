@@ -125,67 +125,16 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 #' @export
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
           function(x, tree, weighted = FALSE, normalized = TRUE,
-                   BPPARAM = SerialParam(), nodeLab = NULL, ...){
+                   BPPARAM = SerialParam(), ...){
               if(is(x,"SummarizedExperiment")){
                   stop("When providing a 'tree', please provide a matrix-like as 'x'",
                        " and not a 'SummarizedExperiment' object. Please consider ",
                        "combining both into a 'TreeSummarizedExperiment' object.",
                        call. = FALSE) 
               }
-              # Check x
-              if( !is.matrix(as.matrix(x)) ){
-                  stop("'x' must be a matrix", call. = FALSE)
-              }
-              # x has samples as row. Therefore transpose. This benchmarks faster than
-              # converting the function to work with the input matrix as is
-              x <- try(t(x), silent = TRUE)
-              if(is(x,"try-error")){
-                  stop("The input to 'runUnifrac' must be a matrix-like object: ", 
-                       as.character(x), call. = FALSE)
-              }
-              # input check
-              if(!.is_a_bool(weighted)){
-                  stop("'weighted' must be TRUE or FALSE.", call. = FALSE)
-              }
-              if(!.is_a_bool(normalized)){
-                  stop("'normalized' must be TRUE or FALSE.", call. = FALSE)
-              }
-              if(is.null(colnames(x)) || is.null(rownames(x))){
-                  stop("colnames and rownames must not be NULL", call. = FALSE)
-              }
-              # nodeLab should be NULL or character vector specifying links between 
-              # rows and tree labels
-              if( !(is.null(nodeLab) ||
-                    (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
-                     all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label)))) ){
-                  stop("'nodeLab' must be NULL or character specifying links between ",
-                       "abundance table and tree labels.", call. = FALSE)
-              }
-              # check that matrix and tree are compatible
-              if( is.null(nodeLab) && 
-                  !all(rownames(x) %in% c(tree$tip.label)) ) {
-                  stop("Incompatible tree and abundance table! Please try to provide ",
-                       "'nodeLab'.", call. = FALSE)
-              }
-              # Merge rows, so that rows that are assigned to same tree node are agglomerated
-              # together. If nodeLabs were provided, merge based on those. Otherwise merge
-              # based on rownames
-              if( is.null(nodeLab) ){
-                  nodeLab <- rownames(x)
-              }
-              # Merge assay
-              x <- .merge_assay_by_rows(x, nodeLab, ...)
-              # Modify tree
-              tree <- .norm_tree_to_be_rooted(tree, rownames(x))
-              # Remove those tips that are not present in the data
-              if( any(!tree$tip.label %in% rownames(x)) ){
-                  tree <- ape::drop.tip(
-                      tree, tree$tip.label[!tree$tip.label %in% rownames(x)])
-                  warning("The tree is pruned so that tips that cannot be found from ", 
-                          "the abundance matrix are removed.", call. = FALSE)
-              }
-              .calculate_distance(x, FUN = rbiom::unifrac, tree = tree,
-                                  weighted = weighted)
+              .calculate_distance(x, FUN = runUnifrac, tree = tree,
+                                  weighted = weighted, normalized = normalized,
+                                  BPPARAM = BPPARAM, ...)
           }
 )
 
@@ -316,121 +265,8 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
         warning("The tree is pruned so that tips that cannot be found from ", 
                 "the abundance matrix are removed.", call. = FALSE)
     }
-    #
-    old <- getAutoBPPARAM()
-    setAutoBPPARAM(BPPARAM)
-    on.exit(setAutoBPPARAM(old))
-    if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
-        bpstart(BPPARAM)
-        on.exit(bpstop(BPPARAM), add = TRUE)
-    }
-    #
-    # create N x 2 matrix of all pairwise combinations of samples.
-    spn <- utils::combn(colnames(x), 2, simplify = FALSE)
-    
-    ########################################
-    # Build the requisite matrices as defined
-    # in the Fast Unifrac article.
-    ########################################
-    ## This only needs to happen once in a call to Unifrac.
-    ## Notice that A and B do not appear in this section.
-    # Begin by building the edge descendants matrix (edge-by-sample)
-    # `edge_array`
-    #
-    # Create a list of descendants, starting from the first internal node (root)
-    ntip <- length(tree$tip.label)
-    # Create a matrix that maps each internal node to its 2 descendants
-    # This matrix doesn't include the tips, so must use node#-ntip to index into
-    # it
-    ## to suppress the warning if the number of node edges is uneven, we add the
-    ## first node again
-    node.desc <- tree$edge[order(tree$edge[,1]),][,2]
-    if(length(node.desc) %% 2 == 1){
-        node.desc <- c(node.desc,node.desc[1])
-    }
-    node.desc <- matrix(node.desc, byrow = TRUE, ncol = 2)
-    # Define the edge_array object
-    # Right now this is a node_array object, each row is a node (including tips)
-    # It will be subset and ordered to match tree$edge later
-    edge_array <- matrix(0, nrow = ntip+tree$Nnode, ncol = ncol(x),
-                         dimnames = list(NULL, sample_names = colnames(x)))
-    # Load the tip counts in directly
-    x_tip <- x[ rownames(x) %in% tree$tip.label, ]
-    edge_array[seq_len(ntip),] <- x_tip
-    # Get a list of internal nodes ordered by increasing depth
-    ord.node <- order(node.depth(tree))[(ntip+1):(ntip+tree$Nnode)]
-    # Loop over internal nodes, summing their descendants to get that nodes
-    # count
-    for(i in ord.node){
-        edge_array[i,] <- colSums(edge_array[node.desc[i-ntip,], , drop=FALSE],
-                                  na.rm = TRUE)
-    }
-    # Keep only those with a parental edge (drops root) and order to match
-    # tree$edge
-    edge_array <- edge_array[tree$edge[,2],]
-    # calculate the sums per sample
-    samplesums <- colSums(x)
-    # Remove unneeded variables.
-    rm(node.desc)
-    ############################################################################
-    # calculate the distances
-    ############################################################################
-    if(weighted){
-        if(!normalized){
-            distlist <- BiocParallel::bplapply(spn,
-                                               unifrac_weighted_not_norm,
-                                               tree = tree,
-                                               samplesums = samplesums,
-                                               edge_array = edge_array,
-                                               BPPARAM = BPPARAM)
-        } else {
-            # This is only relevant to weighted-Unifrac.
-            # For denominator in the normalized distance, we need the age of each
-            # tip.
-            # 'z' is the tree in postorder order used in calls to .C
-            # Descending order of left-hand side of edge (the ancestor to the node)
-            z <- ape::reorder.phylo(tree, order="postorder")
-            # Call phyloseq-internal function that in-turn calls ape's internal
-            # horizontal position function, in C, using the re-ordered phylo object,
-            # `z`
-            tipAges = node.depth.edgelength(tree)
-            # Keep only the tips, and add the tip labels in case `z` order differs
-            # from `tree`
-            tipAges <- tipAges[seq.int(1L, length(tree$tip.label))]
-            names(tipAges) <- z$tip.label
-            # Explicitly re-order tipAges to match x
-            tipAges <- tipAges[rownames(x)]
-            distlist <- BiocParallel::bplapply(spn,
-                                               unifrac_weighted_norm,
-                                               mat = x,
-                                               tree = tree,
-                                               samplesums = samplesums,
-                                               edge_array = edge_array,
-                                               tipAges = tipAges,
-                                               BPPARAM = BPPARAM)
-        }
-    } else {
-        # For unweighted Unifrac, convert the edge_array to an occurrence
-        # (presence/absence binary) array
-        edge_occ <- (edge_array > 0) - 0
-        distlist <- BiocParallel::bplapply(spn,
-                                           unifrac_unweighted,
-                                           tree = tree,
-                                           samplesums = samplesums,
-                                           edge_occ = edge_occ,
-                                           BPPARAM = BPPARAM)
-    }
-    # Initialize UnifracMat with NAs
-    UnifracMat <- matrix(NA_real_, ncol(x), ncol(x))
-    rownames(UnifracMat) <- colnames(UnifracMat) <- colnames(x)
-    # Matrix-assign lower-triangle of UnifracMat. Then coerce to dist and
-    # return.
-    matIndices <- matIndices <- matrix(c(vapply(spn,"[",character(1),2L),
-                                         vapply(spn,"[",character(1),1L)),
-                                       ncol = 2)
-    UnifracMat[matIndices] <- unlist(distlist)
-    #
-    stats::as.dist(UnifracMat)
+    .calculate_distance(x, FUN = rbiom::unifrac, tree = tree, 
+                        weighted = weighted)
 }
 
 # Aggregate matrix based on nodeLabs. At the same time, rename rows based on nodeLab

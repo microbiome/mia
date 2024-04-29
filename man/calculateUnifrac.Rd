@@ -15,7 +15,6 @@ calculateUnifrac(x, tree, ...)
   weighted = FALSE,
   normalized = TRUE,
   BPPARAM = SerialParam(),
-  nodeLab = NULL,
   ...
 )
 
@@ -72,11 +71,6 @@ always normalized by total branch-length, and so this value is ignored when
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether the Unifrac calculation should be parallelized.}
 
-\item{nodeLab}{if \code{x} is a matrix,
-a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
-The length must equal the number of rows/columns of \code{x}. Furthermore, all the
-node labs must be present in \code{tree}.}
-
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
@@ -96,6 +90,11 @@ tree will be used in calculation.
 \item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
 is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: \code{transposed = FALSE})}
+
+\item{nodeLab}{if \code{x} is a matrix,
+a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
+The length must equal the number of rows/columns of \code{x}. Furthermore, all the
+node labs must be present in \code{tree}.}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.
