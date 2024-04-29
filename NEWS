@@ -111,4 +111,5 @@ Changes in version 1.11.x
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
 + deprecate plotNMDS after moving it to miaViz package
 + rename estimateDivergence to addDivergence
++ Add details to documentation of function agglomerateByPrevalence
 + use rbiom unifrac implementation instead of runUnifrac in calculateUnifrac file
