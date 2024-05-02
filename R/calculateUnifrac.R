@@ -118,8 +118,8 @@ NULL
 #' @rdname calculateUnifrac
 #' @export
 setGeneric("calculateUnifrac", signature = c("x", "tree"),
-           function(x, tree, ... )
-               standardGeneric("calculateUnifrac"))
+            function(x, tree, ... )
+                standardGeneric("calculateUnifrac"))
 
 #' @rdname calculateUnifrac
 #' @export
@@ -144,10 +144,10 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
 #'
 #' @export
 setMethod("calculateUnifrac",
-    signature = c(x = "TreeSummarizedExperiment",
-                  tree = "missing"),
+        signature = c(x = "TreeSummarizedExperiment",
+                    tree = "missing"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
-              tree_name = "phylo", transposed = FALSE, ...){
+            tree_name = "phylo", transposed = FALSE, ...){
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
         mat <- assay(x, assay.type)
@@ -237,8 +237,8 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # nodeLab should be NULL or character vector specifying links between 
     # rows and tree labels
     if( !(is.null(nodeLab) ||
-          (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
-           all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label)))) ){
+        (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
+        all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label)))) ){
         stop("'nodeLab' must be NULL or character specifying links between ",
              "abundance table and tree labels.", call. = FALSE)
     }
