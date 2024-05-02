@@ -124,18 +124,18 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 #' @rdname calculateUnifrac
 #' @export
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
-          function(x, tree, weighted = FALSE, normalized = TRUE,
-                   BPPARAM = SerialParam(), ...){
-              if(is(x,"SummarizedExperiment")){
-                  stop("When providing a 'tree', please provide a matrix-like as 'x'",
-                       " and not a 'SummarizedExperiment' object. Please consider ",
-                       "combining both into a 'TreeSummarizedExperiment' object.",
-                       call. = FALSE) 
-              }
-              .calculate_distance(x, FUN = runUnifrac, tree = tree,
-                                  weighted = weighted, normalized = normalized,
-                                  BPPARAM = BPPARAM, ...)
-          }
+    function(x, tree, weighted = FALSE, normalized = TRUE,
+            BPPARAM = SerialParam(), ...){
+        if(is(x,"SummarizedExperiment")){
+            stop("When providing a 'tree', please provide a matrix-like as 'x'",
+                " and not a 'SummarizedExperiment' object. Please consider ",
+                "combining both into a 'TreeSummarizedExperiment' object.",
+                call. = FALSE) 
+        }
+        .calculate_distance(x, FUN = runUnifrac, tree = tree,
+                            weighted = weighted, normalized = normalized,
+                            BPPARAM = BPPARAM, ...)
+    }
 )
 
 #' @rdname calculateUnifrac
@@ -144,55 +144,55 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
 #'
 #' @export
 setMethod("calculateUnifrac",
-          signature = c(x = "TreeSummarizedExperiment",
-                        tree = "missing"),
-          function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
-                   tree_name = "phylo", transposed = FALSE, ...){
-              # Check assay.type and get assay
-              .check_assay_present(assay.type, x)
-              mat <- assay(x, assay.type)
-              if(!transposed){
-                  # Check tree_name
-                  .check_rowTree_present(tree_name, x)
-                  # Get tree
-                  tree <- rowTree(x, tree_name)
-                  # Select only those features that are in the rowTree
-                  whichTree <- rowLinks(x)[, "whichTree"] == tree_name
-                  if( any(!whichTree) ){
-                      warning("Not all rows were present in the rowTree specified by 'tree_name'.",
-                              "'x' is subsetted.", call. = FALSE)
-                      # Subset the data
-                      x <- x[ whichTree, ]
-                      mat <- mat[ whichTree, ]
-                  }
-                  mat <- t(mat)
-                  tree <- .norm_tree_to_be_rooted(tree, rownames(x))
-                  # Get links
-                  links <- rowLinks(x)
-              } else {
-                  # Check tree_name
-                  .check_colTree_present(tree_name, x)
-                  # Get tree
-                  tree <- colTree(x, tree_name)
-                  # Select only those samples that are in the colTree
-                  whichTree <- colLinks(x)[, "whichTree"] == tree_name
-                  if( any(!whichTree) ){
-                      warning("Not all columns were present in the colTree specified by 'tree_name'.",
-                              "'x' is subsetted.", call. = FALSE)
-                      # Subset the data
-                      x <- x[ , whichTree ]
-                      mat <- mat[ , whichTree ]
-                  }
-                  tree <- .norm_tree_to_be_rooted(tree, colnames(x))
-                  # Get links
-                  links <- colLinks(x)
-              }
-              # Remove those links (make them NA) that are not included in this tree
-              links[ links$whichTree != tree_name, ] <- NA
-              # Take only nodeLabs
-              links <- links[ , "nodeLab" ]
-              calculateUnifrac(mat, tree = tree, nodeLab = links, ...)
-          }
+    signature = c(x = "TreeSummarizedExperiment",
+                  tree = "missing"),
+    function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
+              tree_name = "phylo", transposed = FALSE, ...){
+        # Check assay.type and get assay
+        .check_assay_present(assay.type, x)
+        mat <- assay(x, assay.type)
+        if(!transposed){
+            # Check tree_name
+            .check_rowTree_present(tree_name, x)
+            # Get tree
+            tree <- rowTree(x, tree_name)
+            # Select only those features that are in the rowTree
+            whichTree <- rowLinks(x)[, "whichTree"] == tree_name
+            if( any(!whichTree) ){
+                warning("Not all rows were present in the rowTree specified by 'tree_name'.",
+                        "'x' is subsetted.", call. = FALSE)
+                # Subset the data
+                x <- x[ whichTree, ]
+                mat <- mat[ whichTree, ]
+            }
+            mat <- t(mat)
+            tree <- .norm_tree_to_be_rooted(tree, rownames(x))
+            # Get links
+            links <- rowLinks(x)
+        } else {
+            # Check tree_name
+            .check_colTree_present(tree_name, x)
+            # Get tree
+            tree <- colTree(x, tree_name)
+            # Select only those samples that are in the colTree
+            whichTree <- colLinks(x)[, "whichTree"] == tree_name
+            if( any(!whichTree) ){
+                warning("Not all columns were present in the colTree specified by 'tree_name'.",
+                        "'x' is subsetted.", call. = FALSE)
+                # Subset the data
+                x <- x[ , whichTree ]
+                mat <- mat[ , whichTree ]
+            }
+            tree <- .norm_tree_to_be_rooted(tree, colnames(x))
+            # Get links
+            links <- colLinks(x)
+        }
+        # Remove those links (make them NA) that are not included in this tree
+        links[ links$whichTree != tree_name, ] <- NA
+        # Take only nodeLabs
+        links <- links[ , "nodeLab" ]
+        calculateUnifrac(mat, tree = tree, nodeLab = links, ...)
+    }
 )
 
 ################################################################################
