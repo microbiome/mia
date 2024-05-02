@@ -258,7 +258,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
                              "inverse_simpson", "log_modulo_skewness", "shannon")
         index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
         if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-            stop("'", paste0(supported_types, collapse = "', '"), "'", call. = FALSE)
+            stop("'", paste0("'index' must be from the following options: '",supported_types), "'", call. = FALSE)
         }
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -292,7 +292,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
                              "inverse_simpson", "log_modulo_skewness", "shannon")
         index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
         if ( !all(index %in% supported_index) || length(index) == 0) {
-            stop(paste("Unsupported index:", index_string), call. = FALSE)
+            stop(paste("'index' must be from the following options: '", index_string), call. = FALSE)
         }
         
         # Check tree_name
@@ -303,7 +303,6 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         if (!is.null(assay_name)) {
             .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
         }
-        
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
