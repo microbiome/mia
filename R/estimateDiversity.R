@@ -256,9 +256,9 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         # input check
         supported_index <- c("coverage", "fisher", "gini_simpson", 
                              "inverse_simpson", "log_modulo_skewness", "shannon")
-        index_string <- paste0("'", paste0(supported_types), "'")
+        index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
         if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-            stop(index_string, call. = FALSE)
+            stop("'", paste0(supported_types, collapse = "', '"), "'", call. = FALSE)
         }
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -288,12 +288,11 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             name = index, tree_name = "phylo", 
             ..., BPPARAM = SerialParam()){
         # input check
-        supported_index <- c("coverage", "fisher", "gini_simpson", 
-                             "inverse_simpson", "log_modulo_skewness",
-                             "shannon","faith")
-        index_string <- paste0("'", paste0(supported_types), "'")
-        if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-            stop(index_string, call. = FALSE)
+        supported_index <- c("coverage", "fisher", "gini_simpson", "faith",
+                             "inverse_simpson", "log_modulo_skewness", "shannon")
+        index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
+        if ( !all(index %in% supported_index) || length(index) == 0) {
+            stop(paste("Unsupported index:", index_string), call. = FALSE)
         }
         
         # Check tree_name
