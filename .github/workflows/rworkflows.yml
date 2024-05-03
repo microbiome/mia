@@ -24,17 +24,17 @@ jobs:
         config:
         - os: ubuntu-latest
           bioc: devel
-          r: auto
+          r: release
           cont: ghcr.io/bioconductor/bioconductor_docker:devel
           rspm: ~
         - os: macOS-latest
           bioc: devel
-          r: auto
+          r: release
           cont: ~
           rspm: ~
         - os: windows-latest
           bioc: devel
-          r: auto
+          r: release
           cont: ~
           rspm: ~
     steps:
