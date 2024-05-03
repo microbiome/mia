@@ -34,6 +34,9 @@
     <loc>/reference/addCluster.html</loc>
   </url>
   <url>
+    <loc>/reference/addDivergence.html</loc>
+  </url>
+  <url>
     <loc>/reference/agglomerate-methods.html</loc>
   </url>
   <url>
@@ -59,9 +62,6 @@
   </url>
   <url>
     <loc>/reference/esophagus.html</loc>
-  </url>
-  <url>
-    <loc>/reference/estimateDivergence.html</loc>
   </url>
   <url>
     <loc>/reference/estimateDiversity.html</loc>
