@@ -37,6 +37,7 @@ Other contributors:
   \item Domenick Braccia \email{dbraccia@umd.edu} [contributor]
   \item Basil Courbayre [contributor]
   \item Muluh Muluh [contributor]
+  \item Giulio Benedetti [contributor]
 }
 
 }
