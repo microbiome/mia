@@ -107,10 +107,12 @@ Changes in version 1.11.x
 + Implemented the setTaxonomyRanks function to specify which ranks are recognized as taxonomy ranks.
 + Rename cluster to addCluster
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, loadFromMetaphlan, loadFromHumann
-+ add new functions getMediation and addMediation
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
 + fix typo in loadFromBiom definition (deprecate file)
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
 + deprecate plotNMDS after moving it to miaViz package
 + rename estimateDivergence to addDivergence
 + Add details to documentation of function agglomerateByPrevalence
+
+Changes in version 1.13.x
++ Added new functions getMediation and addMediation
