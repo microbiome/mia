@@ -139,7 +139,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
               getCrossAssociation(x, ...)
           }
 )
-              
+
+#' @rdname deprecate
+#' @export              
 setGeneric("mergeFeaturesByPrevalence", signature = "x",
            function(x, ...)
                standardGeneric("mergeFeaturesByPrevalence"))
