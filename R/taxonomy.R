@@ -608,6 +608,7 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
               if(is.null(taxa)){
                   return(unique(td)) 
               }
+              r_fs <- NULL
               c_f <- rep(TRUE,ncol(td))
               unique_taxa <- unique(taxa)
               if(!is.null(from)){
@@ -617,6 +618,9 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
                   r_fs <- lapply(unique(taxa), .get_taxa_any_match, td = td,
                                  use_grepl = use_grepl)
               }
+              names(r_fs) <- unique(taxa)
+              # Assign names to the resulting list
+              names(r_fs) <- unique_taxa 
               
               if(!is.null(to)) {
                   c_f <- colnames(td) == to
@@ -633,7 +637,7 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
                   ans <- unlist(ans) 
               }
               #
-              return(ans)
+              ans
           }
 )
 
