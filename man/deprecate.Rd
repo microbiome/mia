@@ -24,6 +24,7 @@
 \alias{mergeFeaturesByRank,SummarizedExperiment-method}
 \alias{mergeFeaturesByRank,SingleCellExperiment-method}
 \alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
+\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \alias{loadFromBiom}
 \alias{loadFromQIIME2}
 \alias{readQZA}
@@ -86,6 +87,8 @@ mergeFeaturesByRank(x, ...)
 \S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ...)
 
 \S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ...)
+
+\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
 
 loadFromBiom(...)
 

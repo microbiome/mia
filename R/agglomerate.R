@@ -1,4 +1,7 @@
 #' Agglomerate or merge data using taxonomic information
+#' 
+#' Agglomeration functions can be used to sum-up data based on specific criteria 
+#' such as taxonomic ranks, variables or prevalence.
 #'
 #' \code{agglomerateByRank} can be used to sum up data based on associations
 #' with certain taxonomic ranks, as defined in \code{rowData}. Only available
@@ -41,16 +44,25 @@
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
-#'   \code{\link[=agglomerate-methods]{agglomerateByVariable}} and
-#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
-#'   with the exception of \code{subset_row}, \code{subset_col}.
+#'   to \code{\link[=agglomerate-methods]{agglomerateByVariable}} and
+#'   \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
+#'   to \code{getPrevalence} and \code{getPrevalentTaxa} and used in 
+#'   \code{agglomeratebyPrevalence}
 #'   \itemize{
 #'        \item{\code{remove_empty_ranks}}{A single boolean value for selecting 
 #'        whether to remove those columns of rowData that include only NAs after
 #'        agglomeration. (By default: \code{remove_empty_ranks = FALSE})}
 #'        \item{\code{make_unique}}{A single boolean value for selecting 
-#'        whether to make rownames unique. 
-#'        (By default: \code{make_unique = TRUE})}
+#'        whether to make rownames unique. (By default: \code{make_unique = TRUE})}
+#'        \item{\code{detection}}{Detection threshold for absence/presence. 
+#'        Either an absolute value compared directly to the values of \code{x} 
+#'        or a relative value between 0 and 1, if \code{as_relative = FALSE}.}
+#'        \item{\code{prevalence}}{Prevalence threshold (in 0 to 1). The 
+#'        required prevalence is strictly greater by default. To include the 
+#'        limit, set \code{include_lowest} to \code{TRUE}.}
+#'        \item{\code{as.relative}}{Logical scalar: Should the detection 
+#'        threshold be applied on compositional (relative) abundances? 
+#'        (default: \code{FALSE})}
 #'    }
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment

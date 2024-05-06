@@ -254,11 +254,16 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
         }
 
         # input check
-        index<- match.arg(index, several.ok = TRUE)
+        supported_index <- c("coverage", "fisher", "gini_simpson", 
+                             "inverse_simpson", "log_modulo_skewness", "shannon")
+        index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
+        if ( !all(index %in% supported_index) || !(length(index) > 0)) {
+            stop("'", paste0("'index' must be from the following options: '",supported_types), "'", call. = FALSE)
+        }
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                "same length than 'index'.",
+                "same length as 'index'.",
                 call. = FALSE)
         }
         .check_assay_present(assay.type, x)
@@ -283,6 +288,13 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             name = index, tree_name = "phylo", 
             ..., BPPARAM = SerialParam()){
         # input check
+        supported_index <- c("coverage", "fisher", "gini_simpson", "faith",
+                             "inverse_simpson", "log_modulo_skewness", "shannon")
+        index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
+        if ( !all(index %in% supported_index) || length(index) == 0) {
+            stop(paste("'index' must be from the following options: '", index_string), call. = FALSE)
+        }
+        
         # Check tree_name
         if( !.is_non_empty_string(tree_name) ){
             stop("'tree_name' must be a character specifying a rowTree of 'x'.",
@@ -290,12 +302,11 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         }
         if (!is.null(assay_name)) {
             .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
-        }	
-        # Check indices
-        index <- match.arg(index, several.ok = TRUE)
+        }
+        
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                "same length than 'index'.",
+                "same length as 'index'.",
                 call. = FALSE)
         }
         
