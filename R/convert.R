@@ -172,6 +172,7 @@ setMethod("convert", signature = c(x = "TreeSummarizedExperiment"),
 )
 
 #' @rdname convert
+#' @importFrom dada2 dada
 #' @export
 setMethod("convert", signature = c(x = "dada"),
             function(x,...){
@@ -180,6 +181,7 @@ setMethod("convert", signature = c(x = "dada"),
 )
 
 #' @rdname convert
+#' @importFrom phyloseq phyloseq
 #' @export
 setMethod("convert", signature = c(x = "phyloseq"),
             function(x){
