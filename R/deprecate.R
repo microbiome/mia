@@ -10,6 +10,7 @@
 NULL
 
 #' @rdname deprecate
+#' @export
 setGeneric("cluster", signature = c("x"),
             function(x,...)
                 standardGeneric("cluster"))
@@ -26,6 +27,7 @@ setMethod("cluster", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname deprecate
+#' @export
 setGeneric("addTaxonomyTree",
             signature = "x",
             function(x, ...)
@@ -42,6 +44,7 @@ setMethod("addTaxonomyTree", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname deprecate
+#' @export
 setGeneric("taxonomyTree",
             signature = "x",
             function(x, ...)
@@ -55,6 +58,24 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
                                         "Use 'getHierarchyTree' instead."))
                 getHierarchyTree(x,...)
             }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("mergeFeaturesByPrevalence", signature = "x",
+           function(x, ...)
+               standardGeneric("mergeFeaturesByPrevalence"))
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0(
+                  "'mergeFeaturesByPrevalence' is deprecated. ",
+                  "Use agglomerateByPrevalence instead."))
+              x <- agglomerateByPrevalence(x, ...)
+              x 
+          }
 )
 
 #' @rdname deprecate
