@@ -151,6 +151,7 @@ first, and then applying the transformation afterwards.
 }
 \examples{
 ## Data can be aggregated based on prevalent taxonomic results
+data("GlobalPatterns", package = "mia")
 tse <- GlobalPatterns
 tse <- agglomerateByPrevalence(tse,
                               rank = "Phylum",
