@@ -218,6 +218,8 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
           }
 )
 
+#' @rdname deprecate
+#' @export
 setGeneric("mergeFeaturesByPrevalence", signature = "x",
            function(x, ...)
                standardGeneric("mergeFeaturesByPrevalence"))
