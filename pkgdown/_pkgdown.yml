@@ -45,6 +45,7 @@ reference:
 - contents:
   - addPrevalence
   - getTopTaxa
+  - getMediation
   - getExperimentCrossCorrelation
   - hierarchy-tree
 - subtitle: Dominance
