@@ -274,6 +274,7 @@ Functions to load data from `biom` files, `QIIME2` output, `DADA2` objects
 [@dada2] or `phyloseq` objects are available. 
 
 ```{r, message=FALSE, warning=FALSE}
+library(phyloseq)
 data(esophagus, package = "phyloseq")
 ```
 

@@ -111,3 +111,8 @@ Changes in version 1.11.x
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
 + deprecate plotNMDS after moving it to miaViz package
 + rename estimateDivergence to addDivergence
++ Add details to documentation of function agglomerateByPrevalence
+
+Changes in version 1.13.x
++ Added new functions getMediation and addMediation
++ Rename subsampleCounts to rarefyAssay
