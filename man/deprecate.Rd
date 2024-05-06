@@ -17,6 +17,7 @@
 \alias{testExperimentCrossCorrelation,ANY-method}
 \alias{getExperimentCrossCorrelation}
 \alias{getExperimentCrossCorrelation,ANY-method}
+\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \alias{loadFromBiom}
 \alias{loadFromQIIME2}
 \alias{readQZA}
@@ -65,6 +66,8 @@ testExperimentCrossCorrelation(x, ...)
 getExperimentCrossCorrelation(x, ...)
 
 \S4method{getExperimentCrossCorrelation}{ANY}(x, ...)
+
+\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
 
 loadFromBiom(...)
 
