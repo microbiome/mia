@@ -68,11 +68,7 @@ Imports:
     tidyr,
     bluster,
     MatrixGenerics,
-<<<<<<< HEAD
     rbiom
-=======
-    mediation
->>>>>>> aaa55f21037f29041090257d3c8ce3f397edfb3e
 Suggests:
     testthat,
     knitr,
