@@ -21,10 +21,6 @@
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
-\alias{agglomerateByPrevalence}
-\alias{mergeFeaturesByPrevalence}
-\alias{agglomerateByPrevalence,SummarizedExperiment-method}
-\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \title{Calculation prevalence information for features across samples}
 \usage{
 getPrevalence(x, ...)
@@ -90,24 +86,6 @@ getPrevalentAbundance(
 )
 
 \S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
-
-agglomerateByPrevalence(x, ...)
-
-mergeFeaturesByPrevalence(x, ...)
-
-\S4method{agglomerateByPrevalence}{SummarizedExperiment}(
-  x,
-  rank = taxonomyRanks(x)[1L],
-  other_label = "Other",
-  ...
-)
-
-\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(
-  x,
-  rank = taxonomyRanks(x)[1L],
-  other_label = "Other",
-  ...
-)
 }
 \arguments{
 \item{x}{a
@@ -160,9 +138,6 @@ on compositional (relative) abundances? (default: \code{FALSE})}
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set \code{include_lowest} to \code{TRUE}.}
-
-\item{other_label}{A single \code{character} valued used as the label for the
-summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 }
 \value{
 \code{subsetPrevalentFeatures} and \code{subsetRareFeatures} return subset of \code{x}.
@@ -274,12 +249,6 @@ tse
 data(esophagus)
 getPrevalentAbundance(esophagus, assay.type = "counts")
 
-# data can be aggregated based on prevalent taxonomic results
-agglomerateByPrevalence(tse,
-                        rank = "Phylum",
-                        detection = 1/100,
-                        prevalence = 50/100,
-                        as_relative = TRUE)
 }
 \references{
 A Salonen et al. The adult intestinal core microbiota is determined by
