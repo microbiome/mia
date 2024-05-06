@@ -62,7 +62,6 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
-
 setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("obj"),
             function(obj)
                 standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
@@ -109,6 +108,22 @@ setMethod("makePhyloseqFromTreeSE",
                   "'makePhyloseqFromTreeSE' is deprecated.",
                   " Use 'convert' instead."))
               convert(obj, ...)
+          }
+)
+
+setGeneric("mergeFeaturesByPrevalence", signature = "x",
+           function(x, ...)
+               standardGeneric("mergeFeaturesByPrevalence"))
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0(
+                  "'mergeFeaturesByPrevalence' is deprecated. ",
+                  "Use agglomerateByPrevalence instead."))
+              x <- agglomerateByPrevalence(x, ...)
+              x 
           }
 )
 

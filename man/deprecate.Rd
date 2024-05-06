@@ -14,6 +14,7 @@
 \alias{makePhyloseqFromTreeSummarizedExperiment,ANY-method}
 \alias{makePhyloseqFromTreeSE}
 \alias{makePhyloseqFromTreeSE,ANY-method}
+\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \alias{makeTreeSEFromBiom}
 \alias{makeTreeSummarizedExperimentFromBiom}
 \alias{makeTreeSEFromDADA2}
@@ -61,6 +62,8 @@ makePhyloseqFromTreeSummarizedExperiment(obj, ...)
 makePhyloseqFromTreeSE(obj, ...)
 
 \S4method{makePhyloseqFromTreeSE}{ANY}(obj, ...)
+
+\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
 
 makeTreeSEFromBiom(...)
 
