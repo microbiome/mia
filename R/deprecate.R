@@ -207,6 +207,24 @@ setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
 
 #' @rdname deprecate
 #' @export
+setGeneric("mergeFeaturesByPrevalence", signature = "x",
+           function(x, ...)
+               standardGeneric("mergeFeaturesByPrevalence"))
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0(
+                  "'mergeFeaturesByPrevalence' is deprecated. ",
+                  "Use agglomerateByPrevalence instead."))
+              x <- agglomerateByPrevalence(x, ...)
+              x 
+          }
+)
+
+#' @rdname deprecate
+#' @export
 setGeneric("getExperimentCrossAssociation", signature = c("x"),
            function(x, ...)
                standardGeneric("getExperimentCrossAssociation"))
@@ -242,24 +260,6 @@ setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
                                         "Use 'agglomerateByRank' instead."))
               x <- agglomerateByRank(x, ...)
               x
-          }
-)
-
-#' @rdname deprecate
-#' @export
-setGeneric("mergeFeaturesByPrevalence", signature = "x",
-           function(x, ...)
-               standardGeneric("mergeFeaturesByPrevalence"))
-
-#' @rdname deprecate
-#' @export
-setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment"),
-          function(x, ...){
-              .Deprecated(msg = paste0(
-                  "'mergeFeaturesByPrevalence' is deprecated. ",
-                  "Use agglomerateByPrevalence instead."))
-              x <- agglomerateByPrevalence(x, ...)
-              x 
           }
 )
 
