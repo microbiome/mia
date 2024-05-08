@@ -184,7 +184,6 @@ setGeneric("mergeFeaturesByRank",
                standardGeneric("mergeFeaturesByRank"))
 
 #' @rdname deprecate
-#' @importFrom SummarizedExperiment rowData rowData<-
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
           function(x, ...){
@@ -196,7 +195,6 @@ setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname deprecate
-#' @importFrom SingleCellExperiment altExp altExp<- altExps<-
 #' @export
 setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
           function(x, ...){
@@ -204,6 +202,35 @@ setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
                                         "Use 'agglomerateByRank' instead."))
               x <- agglomerateByRank(x, ...)
               x
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getExperimentCrossAssociation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("getExperimentCrossAssociation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getExperimentCrossAssociation", 
+            signature = c(x = "MultiAssayExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
+                                        "deprecated. Use ", 
+                                        "'getCrossAssociation' instead."))
+                getCrossAssociation(x, ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
+          function(x, ...){
+              .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getCrossAssociation(x, ...)
           }
 )
 
@@ -233,6 +260,57 @@ setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment")
                   "Use agglomerateByPrevalence instead."))
               x <- agglomerateByPrevalence(x, ...)
               x 
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("testExperimentCrossAssociation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("testExperimentCrossAssociation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'testExperimentCrossAssociation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getCrossAssociation(x, test_significance = TRUE, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("testExperimentCrossCorrelation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("testExperimentCrossCorrelation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'testExperimentCrossCorrelation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getCrossAssociation(x, test_significance = TRUE, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getExperimentCrossCorrelation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("getExperimentCrossCorrelation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'getExperimentCrossCorrelation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getCrossAssociation(x, ...)
           }
 )
 
