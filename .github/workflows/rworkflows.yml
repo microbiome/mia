@@ -28,7 +28,8 @@ jobs:
           r: auto
           cont: bioconductor/bioconductor_docker:devel
           rspm: https://packagemanager.rstudio.com/cran/__linux__/latest/release
-        - os: macOS-latest
+        - os: macOS-14
+          arch: "arm64 universal2 x86_64"
           bioc: devel
           r: auto
           cont: ~
