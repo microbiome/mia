@@ -24,12 +24,12 @@ jobs:
         config:
         - os: ubuntu-latest
           bioc: devel
-          r: 4.4.0
-          cont: bioconductor/bioconductor_docker:devel
-          rspm: https://packagemanager.rstudio.com/cran/__linux__/latest/release
+          r: auto
+          cont: ghcr.io/bioconductor/bioconductor_docker:devel
+          rspm: ~
         - os: macOS-latest
           bioc: devel
-          r: 4.4.0
+          r: auto
           cont: ~
           rspm: ~
         - os: windows-latest
@@ -54,4 +54,4 @@ jobs:
         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         runner_os: ${{ runner.os }}
         cache_version: cache-v1
-        enable_act: ${{ false }}
+        docker_registry: ghcr.io
