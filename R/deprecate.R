@@ -79,6 +79,24 @@ setMethod("makeTreeSummarizedExperimentFromPhyloseq",
 
 #' @rdname deprecate
 #' @export
+setGeneric("mergeRows",
+            signature = "x",
+            function(x, ...)
+                standardGeneric("mergeRows"))
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'mergeRows' is deprecated. ",
+                                        "Use 'agglomerateByVariable' with ",
+                                        "parameter MARGIN = 'rows' instead."))
+                agglomerateByVariable(x, MARGIN = "rows", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
 setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("obj"),
             function(obj, ...)
                 standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
@@ -111,6 +129,135 @@ setMethod("makePhyloseqFromTreeSE",
           }
 )
 
+#' @rdname deprecate
+#' @export               
+setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'mergeRows' is deprecated. ",
+                                       "Use 'agglomerateByVariable' with ",
+                                        "parameter MARGIN = 'rows' instead."))
+              agglomerateByVariable(x, MARGIN = "rows", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("mergeCols",
+            signature = "x",
+            function(x, ...)
+                standardGeneric("mergeCols"))
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'mergeCols' is deprecated. ",
+                                        "Use 'agglomerateByVariable' with ", 
+                                        "parameter MARGIN = 'cols' instead."))
+                agglomerateByVariable(x, MARGIN = "cols", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'mergeCols' is deprecated. ",
+                                        "Use 'agglomerateByVariable' with ",
+                                        "parameter MARGIN = 'cols' instead."))
+              agglomerateByVariable(x, MARGIN = "cols", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("mergeFeatures",
+            signature = "x",
+            function(x, ...)
+                standardGeneric("mergeFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeFeatures", signature = c(x = "SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'mergeFeatures' is deprecated. ",
+                                        "Use 'agglomerateByVariable' with ", 
+                                        "parameter MARGIN = 'rows' instead."))
+                agglomerateByVariable(x, MARGIN = "rows", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'mergeFeatures' is deprecated. ",
+                                       "Use 'agglomerateByVariable' with ",
+                                        "parameter MARGIN = 'rows' instead."))
+              agglomerateByVariable(x, MARGIN = "rows", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("mergeSamples",
+            signature = "x",
+            function(x, ...)
+                standardGeneric("mergeSamples"))
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'mergeSamples' is deprecated. ",
+                                        "Use 'agglomerateByVariable' with ",
+                                        "parameter MARGIN = 'cols' instead."))
+                agglomerateByVariable(x, MARGIN = "cols", ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'mergeSamples' is deprecated. ",
+                                       "Use 'agglomerateByVariable' with ", 
+                                        "parameter MARGIN = 'cols' instead."))
+              agglomerateByVariable(x, MARGIN = "cols", ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("mergeFeaturesByRank",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("mergeFeaturesByRank"))
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeFeaturesByRank", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'mergeFeaturesByRank' is deprecated. ",
+                                        "Use 'agglomerateByRank' instead."))
+              x <- agglomerateByRank(x, ...)
+              x
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeFeaturesByRank", signature = c(x = "SingleCellExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'mergeFeaturesByRank' is deprecated. ",
+                                        "Use 'agglomerateByRank' instead."))
+              x <- agglomerateByRank(x, ...)
+              x
+          }
+)
+
+#' @rdname deprecate
+#' @export
 setGeneric("mergeFeaturesByPrevalence", signature = "x",
            function(x, ...)
                standardGeneric("mergeFeaturesByPrevalence"))
@@ -171,6 +318,97 @@ makeTreeSEFromPhyloseq <- function(obj) {
         " Use 'convert' instead."))
     convert(...)
 }
+
+#' @rdname deprecate
+#' @export
+setGeneric("getExperimentCrossAssociation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("getExperimentCrossAssociation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getExperimentCrossAssociation", 
+            signature = c(x = "MultiAssayExperiment"),
+            function(x, ...){
+                .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
+                                        "deprecated. Use ", 
+                                        "'getCrossAssociation' instead."))
+                getCrossAssociation(x, ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
+          function(x, ...){
+              .Deprecated(msg = paste0("'getExperimentCrossAssociation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getCrossAssociation(x, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("mergeFeaturesByRank", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'mergeFeaturesByRank' is deprecated. ",
+                                        "Use 'agglomerateByRank' instead."))
+              x <- agglomerateByRank(x, ...)
+              x
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("testExperimentCrossAssociation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("testExperimentCrossAssociation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'testExperimentCrossAssociation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getCrossAssociation(x, test_significance = TRUE, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("testExperimentCrossCorrelation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("testExperimentCrossCorrelation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'testExperimentCrossCorrelation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getCrossAssociation(x, test_significance = TRUE, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("getExperimentCrossCorrelation", signature = c("x"),
+           function(x, ...)
+               standardGeneric("getExperimentCrossCorrelation"))
+
+#' @rdname deprecate
+#' @export
+setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'getExperimentCrossCorrelation' is ",
+                                       "deprecated. Use ", 
+                                       "'getCrossAssociation' instead."))
+              getCrossAssociation(x, ...)
+          }
+)
 
 #' @rdname deprecate
 #' @export

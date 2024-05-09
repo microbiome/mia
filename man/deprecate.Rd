@@ -10,16 +10,42 @@
 \alias{taxonomyTree,SummarizedExperiment-method}
 \alias{makeTreeSummarizedExperimentFromPhyloseq}
 \alias{makeTreeSummarizedExperimentFromPhyloseq,ANY-method}
+\alias{mergeRows}
+\alias{mergeRows,SummarizedExperiment-method}
 \alias{makePhyloseqFromTreeSummarizedExperiment}
 \alias{makePhyloseqFromTreeSummarizedExperiment,ANY-method}
 \alias{makePhyloseqFromTreeSE}
 \alias{makePhyloseqFromTreeSE,ANY-method}
+\alias{mergeRows,TreeSummarizedExperiment-method}
+\alias{mergeCols}
+\alias{mergeCols,SummarizedExperiment-method}
+\alias{mergeCols,TreeSummarizedExperiment-method}
+\alias{mergeFeatures}
+\alias{mergeFeatures,SummarizedExperiment-method}
+\alias{mergeFeatures,TreeSummarizedExperiment-method}
+\alias{mergeSamples}
+\alias{mergeSamples,SummarizedExperiment-method}
+\alias{mergeSamples,TreeSummarizedExperiment-method}
+\alias{mergeFeaturesByRank}
+\alias{mergeFeaturesByRank,SummarizedExperiment-method}
+\alias{mergeFeaturesByRank,SingleCellExperiment-method}
+\alias{mergeFeaturesByPrevalence}
 \alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \alias{makeTreeSEFromBiom}
 \alias{makeTreeSummarizedExperimentFromBiom}
 \alias{makeTreeSEFromDADA2}
 \alias{makeTreeSummarizedExperimentFromDADA2}
 \alias{makeTreeSEFromPhyloseq}
+\alias{getExperimentCrossAssociation}
+\alias{getExperimentCrossAssociation,MultiAssayExperiment-method}
+\alias{getExperimentCrossAssociation,SummarizedExperiment-method}
+\alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
+\alias{testExperimentCrossAssociation}
+\alias{testExperimentCrossAssociation,ANY-method}
+\alias{testExperimentCrossCorrelation}
+\alias{testExperimentCrossCorrelation,ANY-method}
+\alias{getExperimentCrossCorrelation}
+\alias{getExperimentCrossCorrelation,ANY-method}
 \alias{loadFromBiom}
 \alias{loadFromQIIME2}
 \alias{readQZA}
@@ -55,6 +81,10 @@ makeTreeSummarizedExperimentFromPhyloseq(obj)
 
 \S4method{makeTreeSummarizedExperimentFromPhyloseq}{ANY}(obj)
 
+mergeRows(x, ...)
+
+\S4method{mergeRows}{SummarizedExperiment}(x, ...)
+
 makePhyloseqFromTreeSummarizedExperiment(obj, ...)
 
 \S4method{makePhyloseqFromTreeSummarizedExperiment}{ANY}(obj, ...)
@@ -62,6 +92,34 @@ makePhyloseqFromTreeSummarizedExperiment(obj, ...)
 makePhyloseqFromTreeSE(obj, ...)
 
 \S4method{makePhyloseqFromTreeSE}{ANY}(obj, ...)
+
+\S4method{mergeRows}{TreeSummarizedExperiment}(x, ...)
+
+mergeCols(x, ...)
+
+\S4method{mergeCols}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeCols}{TreeSummarizedExperiment}(x, ...)
+
+mergeFeatures(x, ...)
+
+\S4method{mergeFeatures}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeFeatures}{TreeSummarizedExperiment}(x, ...)
+
+mergeSamples(x, ...)
+
+\S4method{mergeSamples}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeSamples}{TreeSummarizedExperiment}(x, ...)
+
+mergeFeaturesByRank(x, ...)
+
+\S4method{mergeFeaturesByRank}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ...)
+
+mergeFeaturesByPrevalence(x, ...)
 
 \S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
 
@@ -74,6 +132,26 @@ makeTreeSEFromDADA2(...)
 makeTreeSummarizedExperimentFromDADA2(...)
 
 makeTreeSEFromPhyloseq(obj)
+
+getExperimentCrossAssociation(x, ...)
+
+\S4method{getExperimentCrossAssociation}{MultiAssayExperiment}(x, ...)
+
+\S4method{getExperimentCrossAssociation}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ...)
+
+testExperimentCrossAssociation(x, ...)
+
+\S4method{testExperimentCrossAssociation}{ANY}(x, ...)
+
+testExperimentCrossCorrelation(x, ...)
+
+\S4method{testExperimentCrossCorrelation}{ANY}(x, ...)
+
+getExperimentCrossCorrelation(x, ...)
+
+\S4method{getExperimentCrossCorrelation}{ANY}(x, ...)
 
 loadFromBiom(...)
 
