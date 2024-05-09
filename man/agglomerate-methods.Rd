@@ -3,20 +3,19 @@
 \name{agglomerate-methods}
 \alias{agglomerate-methods}
 \alias{agglomerateByRank}
-\alias{mergeFeaturesByRank}
+\alias{agglomerateByVariable}
 \alias{agglomerateByRank,SummarizedExperiment-method}
-\alias{mergeFeaturesByRank,SummarizedExperiment-method}
+\alias{agglomerateByVariable,SummarizedExperiment-method}
+\alias{agglomerateByVariable,TreeSummarizedExperiment-method}
 \alias{agglomerateByRank,SingleCellExperiment-method}
-\alias{mergeFeaturesByRank,SingleCellExperiment-method}
 \alias{agglomerateByRank,TreeSummarizedExperiment-method}
-\alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
 \alias{agglomerateByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
-\title{Agglomerate data using taxonomic information}
+\title{Agglomerate or merge data using taxonomic information}
 \usage{
 agglomerateByRank(x, ...)
 
-mergeFeaturesByRank(x, ...)
+agglomerateByVariable(x, ...)
 
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
@@ -27,18 +26,19 @@ mergeFeaturesByRank(x, ...)
   ...
 )
 
-\S4method{mergeFeaturesByRank}{SummarizedExperiment}(
+\S4method{agglomerateByVariable}{SummarizedExperiment}(x, MARGIN, f, archetype = 1L, ...)
+
+\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
   x,
-  rank = taxonomyRanks(x)[1],
-  onRankOnly = FALSE,
-  na.rm = FALSE,
-  empty.fields = c(NA, "", " ", "\\t", "-", "_"),
+  MARGIN,
+  f,
+  archetype = 1L,
+  mergeTree = FALSE,
+  mergeRefSeq = FALSE,
   ...
 )
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
-
-\S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
 \S4method{agglomerateByRank}{TreeSummarizedExperiment}(
   x,
@@ -46,8 +46,6 @@ mergeFeaturesByRank(x, ...)
   agglomerate.tree = agglomerateTree,
   agglomerateTree = FALSE
 )
-
-\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ..., agglomerate.tree = FALSE)
 
 agglomerateByPrevalence(x, ...)
 
@@ -59,16 +57,15 @@ agglomerateByPrevalence(x, ...)
 )
 }
 \arguments{
-\item{x}{a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object}
+\item{x}{a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
+a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects,
+to \code{\link[=agglomerate-methods]{agglomerateByVariable}} and
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 to \code{getPrevalence} and \code{getPrevalentTaxa} and used in
-\code{agglomeratebyPrevalence},
-to \code{\link[=merge-methods]{mergeRows}} and
-\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+\code{agglomeratebyPrevalence}
 \itemize{
 \item{\code{remove_empty_ranks}}{A single boolean value for selecting
 whether to remove those columns of rowData that include only NAs after
@@ -102,6 +99,30 @@ will be dropped. This setting can be tweaked by defining
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration.}
 
+\item{MARGIN}{A character value for selecting if data is merged
+row-wise / for features ('rows') or column-wise / for samples ('cols').
+Must be \code{'rows'} or \code{'cols'}.}
+
+\item{f}{A factor for merging. Must be the same length as
+\code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
+merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
+returned unchanged.}
+
+\item{archetype}{Of each level of \code{f}, which element should be regarded
+as the archetype and metadata in the columns or rows kept, while merging?
+This can be single integer value or an integer vector of the same length
+as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
+element encountered per factor level will be kept)}
+
+\item{mergeTree}{\code{TRUE} or \code{FALSE}: Should
+\code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})}
+
+\item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
+be calculated? If set to \code{FALSE}, the result from \code{archetype} is
+returned; If set to \code{TRUE} the result from
+\code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
+returned. (Default: \code{mergeRefSeq = FALSE})}
+
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
@@ -121,7 +142,9 @@ summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
 }
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,
-optionally-pruned object of the same class as \code{x}.
+optionally-pruned object of the same class as \code{x} while
+\code{agglomerateByVariable} returns an object of the same class as \code{x}
+with the specified entries merged into one entry in all relevant components.
 
 \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
 of the same class as x and based on prevalent taxonomic results.
@@ -131,16 +154,38 @@ Agglomeration functions can be used to sum-up data based on specific criteria
 such as taxonomic ranks, variables or prevalence.
 }
 \details{
+\code{agglomerateByRank} can be used to sum up data based on associations
+with certain taxonomic ranks, as defined in \code{rowData}. Only available
+\code{\link{taxonomyRanks}} can be used.
+
+\code{agglomerateByVariable} merges data on rows or columns of a
+\code{SummarizedExperiment} as defined by a \code{factor} alongside the
+chosen dimension. This function allows agglomeration of data based on other
+variables than taxonomy ranks.
+Metadata from the \code{rowData} or \code{colData} are
+retained as defined by \code{archetype}.
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are
+agglomerated, i.e. summed up. If the assay contains values other than counts
+or absolute values, this can lead to meaningless values being produced.
+
 Depending on the available taxonomic data and its structure, setting
 \code{onRankOnly = TRUE} has certain implications on the interpretability of
 your results. If no loops exist (loops meaning two higher ranks containing
 the same lower rank), the results should be comparable. You can check for
 loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
 
-Agglomeration sums up the values of assays at the specified taxonomic level. With
-certain assays, e.g. those that include binary or negative values, this summing
-can produce meaningless values. In those cases, consider performing agglomeration
-first, and then applying the transformation afterwards.
+Agglomeration sums up the values of assays at the specified taxonomic level.
+With certain assays, e.g. those that include binary or negative values, this
+summing can produce meaningless values. In those cases, consider performing
+agglomeration first, and then applying the transformation afterwards.
+
+\code{agglomerateByVariable} works similarly to
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
+However, additional support for \code{TreeSummarizedExperiment} was added and
+science field agnostic names were used. In addition the \code{archetype}
+argument lets the user select how to preserve row or column data.
+
+For merge data of assays the function from \code{scuttle} are used.
 
 \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
 level specified by \code{rank} (by default the highest taxonomic level
@@ -150,6 +195,9 @@ threshold) are agglomerated in an additional row taking the name indicated by
 \code{other_label} (by default "Other").
 }
 \examples{
+
+### Agglomerate data based on taxonomic information
+
 data(GlobalPatterns)
 # print the available taxonomic ranks
 colnames(rowData(GlobalPatterns))
@@ -168,12 +216,12 @@ nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
 
- # If assay contains binary or negative values, summing might lead to meaningless
- # values, and you will get a warning. In these cases, you might want to do 
- # agglomeration again at chosen taxonomic level.
- tse <- transformAssay(GlobalPatterns, method = "pa")
- tse <- agglomerateByRank(tse, rank = "Genus")
- tse <- transformAssay(tse, method = "pa")
+# If assay contains binary or negative values, summing might lead to 
+# meaningless values, and you will get a warning. In these cases, you might 
+# want to do agglomeration again at chosen taxonomic level.
+tse <- transformAssay(GlobalPatterns, method = "pa")
+tse <- agglomerateByRank(tse, rank = "Genus")
+tse <- transformAssay(tse, method = "pa")
 
 # removing empty labels by setting na.rm = TRUE
 sum(is.na(rowData(GlobalPatterns)$Family))
@@ -189,7 +237,8 @@ rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
 print(rownames(x3[1:3,]))
 
 # use 'remove_empty_ranks' to remove columns that include only NAs
-x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", remove_empty_ranks = TRUE)
+x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum", 
+                        remove_empty_ranks = TRUE)
 head(rowData(x4))
 
 # If the assay contains NAs, you might want to consider replacing them,
@@ -209,6 +258,24 @@ data(enterotype)
 ## Print the available taxonomic ranks. Shows only 1 available rank,
 ## not useful for agglomerateByRank
 taxonomyRanks(enterotype)
+
+### Merge TreeSummarizedExperiments on rows and columns
+
+data(esophagus)
+esophagus
+plot(rowTree(esophagus))
+# get a factor for merging
+f <- factor(regmatches(rownames(esophagus),
+                       regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
+merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f, 
+                                mergeTree = TRUE)
+plot(rowTree(merged))
+#
+data(GlobalPatterns)
+GlobalPatterns
+merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols", 
+                                colData(GlobalPatterns)$SampleType)
+merged
 ## Data can be aggregated based on prevalent taxonomic results
 tse <- GlobalPatterns
 tse <- agglomerateByPrevalence(tse,
@@ -229,6 +296,5 @@ assay(tse)[,1:5]
 
 }
 \seealso{
-\code{\link[=merge-methods]{mergeRows}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
 }
