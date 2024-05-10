@@ -25,7 +25,7 @@ jobs:
         config:
         - os: ubuntu-latest
           bioc: devel
-          r: auto
+          r: 4.4.0
           cont: bioconductor/bioconductor_docker:devel
           rspm: https://packagemanager.rstudio.com/cran/__linux__/latest/release
         - os: macOS-latest
