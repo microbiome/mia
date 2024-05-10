@@ -13,8 +13,11 @@
 \alias{agglomerateByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
 \alias{agglomerateByRanks}
+\alias{splitByRanks}
 \alias{agglomerateByRanks,SummarizedExperiment-method}
 \alias{agglomerateByRanks,SingleCellExperiment-method}
+\alias{agglomerateByRanks,TreeSummarizedExperiment-method}
+\alias{splitByRanks,SummarizedExperiment-method}
 \alias{unsplitByRanks}
 \alias{unsplitByRanks,SingleCellExperiment-method}
 \alias{unsplitByRanks,TreeSummarizedExperiment-method}
@@ -80,6 +83,18 @@ agglomerateByRanks(x, ...)
   as.list = FALSE,
   ...
 )
+
+\S4method{agglomerateByRanks}{TreeSummarizedExperiment}(
+  x,
+  ranks = taxonomyRanks(x),
+  na.rm = TRUE,
+  as.list = FALSE,
+  ...
+)
+
+splitByRanks(x, ...)
+
+\S4method{splitByRanks}{SummarizedExperiment}(x, ...)
 
 unsplitByRanks(x, ...)
 
@@ -364,14 +379,14 @@ taxonomyRanks(GlobalPatterns)
 
 # agglomerateByRanks
 # 
-x <- agglomerateByRanks(GlobalPatterns)
-altExps(x)
-altExp(x,"Kingdom")
-altExp(x,"Species")
+tse <- agglomerateByRanks(GlobalPatterns)
+altExps(tse)
+altExp(tse,"Kingdom")
+altExp(tse,"Species")
 
 # unsplitByRanks
-x <- unsplitByRanks(x)
-x
+tse <- unsplitByRanks(tse)
+tse
 
 }
 \seealso{

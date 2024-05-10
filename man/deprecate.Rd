@@ -41,9 +41,6 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
-\alias{splitByRanks}
-\alias{splitByRanks,SummarizedExperiment-method}
-\alias{splitByRanks,SingleCellExperiment-method}
 \alias{full_join}
 \alias{full_join,ANY-method}
 \alias{inner_join}
@@ -134,12 +131,6 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
-
-splitByRanks(x, ...)
-
-\S4method{splitByRanks}{SummarizedExperiment}(x, ...)
-
-\S4method{splitByRanks}{SingleCellExperiment}(x, ...)
 
 full_join(x, ...)
 

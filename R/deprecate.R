@@ -363,33 +363,6 @@ loadFromHumann <- function(...) {
 }
 
 #' @rdname deprecate
-#' @export 
-setGeneric("splitByRanks",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("splitByRanks"))
-
-#' @rdname deprecate
-#' @export 
-setMethod("splitByRanks", signature = c(x = "SummarizedExperiment"),
-            function(x,...){
-                .Deprecated(msg = paste0("'splitByRanks' is deprecated. ",
-                                        "Use 'agglomerateByRanks' instead."))
-                agglomerateByRanks(x, as.list = FALSE,...)
-            }
-)
-
-#' @rdname deprecate
-#' @export 
-setMethod("splitByRanks", signature = c(x = "SingleCellExperiment"),
-          function(x,...){
-              .Deprecated(msg = paste0("'splitByRanks' is deprecated. ",
-                                       "Use 'agglomerateByRanks' instead."))
-              agglomerateByRanks(x, as.list = FALSE,...)
-          }
-)
-
-#' @rdname deprecate
 #' @export
 setGeneric("full_join", signature = c("x"),
            function(x, ...)
@@ -406,7 +379,7 @@ setMethod("full_join", signature = c(x = "ANY"),
             }
 )
 
-#' @rdname deprecate               
+#' @rdname deprecate
 #' @export
 setGeneric("inner_join", signature = c("x"),
            function(x, ...)
