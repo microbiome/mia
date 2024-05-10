@@ -258,7 +258,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
                              "inverse_simpson", "log_modulo_skewness", "shannon")
         index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
         if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-            stop("'", paste0("'index' must be from the following options: '",supported_types), "'", call. = FALSE)
+            stop("'", paste0("'index' must be from the following options: '",index_string), "'", call. = FALSE)
         }
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
