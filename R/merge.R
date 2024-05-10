@@ -1,5 +1,8 @@
-.norm_f <- function(i, f, dim.type = c("rows","columns")){
+.norm_f <- function(i, f, dim.type = c("rows","columns"), na.rm = FALSE, ...){
     dim.type <- match.arg(dim.type)
+    if(!.is_a_bool(na.rm)){
+      stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
             "meaningful factor.",
@@ -8,6 +11,10 @@
     if(i != length(f)){
         stop("'f' must have the same number of ",dim.type," as 'x'",
             call. = FALSE)
+    }
+    # This is done otherwise we lose NA values
+    if ( na.rm ) {
+      f[is.na(f)] <- "NA"
     }
     if(is.character(f)){
         f <- factor(f)
@@ -53,36 +60,21 @@
 #' @importFrom S4Vectors SimpleList
 #' @importFrom scuttle sumCountsAcrossFeatures
 .merge_rows <- function(x, f, archetype = 1L,
-                        na.rm = FALSE,
                         average = FALSE,
                         BPPARAM = SerialParam(),
                         check.assays = TRUE,
                         ...){
     # input check
-    if(!.is_a_bool(na.rm)){
-        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
-    }
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
     if( !.is_a_bool(check.assays) ){
         stop("'check.assays' must be TRUE or FALSE.", call. = FALSE)
     }
-
-    # This is done otherwise we lose NA values
-    if ( na.rm ) {
-        f[is.na(f)] <- "NA"
+    if( .is_a_string(f) && f %in% colnames(rowData(x)) ){
+        f <- rowData(x)[[ f ]]
     }
-    if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
-        f <- factor(as.character(rowData(x)[, f]))
-    }
-    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
-        f[is.na(f)] <- "NA"
-        f <- factor(as.character(colData(x)[, f]))
-    } else
-    {
-        f <- .norm_f(nrow(x), f)
-    }
+    f <- .norm_f(nrow(x), f)
     if(length(levels(f)) == nrow(x)){
         return(x)
     }
@@ -130,25 +122,13 @@
 
 #' @importFrom S4Vectors SimpleList
 #' @importFrom scuttle summarizeAssayByGroup
-.merge_cols <- function(x, f, archetype = 1L, na.rm = FALSE, ...){
+.merge_cols <- function(x, f, archetype = 1L, ...){
     # input check
-    if(!.is_a_bool(na.rm)){
-        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    if( .is_a_string(f) && f %in% colnames(rowData(x)) ){
+      f <- rowData(x)[[ f ]]
     }
-    # This is done otherwise we lose NA values
-    if ( na.rm ) {
-        f[is.na(f)] <- "NA"
-    }
-    if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
-        f <- factor(as.character(rowData(x)[, f]))
-    }
-    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
-        f[is.na(f)] <- "NA"
-        f <- factor(as.character(colData(x)[, f]))
-    } else
-    {
-        f <- .norm_f(ncol(x), f, "columns")
-    }
+    f <- .norm_f(ncol(x), f, "columns")
+    
     if(length(levels(f)) == ncol(x)){
         return(x)
     }
