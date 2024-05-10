@@ -72,15 +72,16 @@
 #'
 #' # agglomerateByRanks
 #' # 
-#' x <- agglomerateByRanks(GlobalPatterns)
-#' altExps(x)
-#' altExp(x,"Kingdom")
-#' altExp(x,"Species")
+#' tse <- agglomerateByRanks(GlobalPatterns)
+#' altExps(tse)
+#' altExp(tse,"Kingdom")
+#' altExp(tse,"Species")
 #'
 #' # unsplitByRanks
-#' x <- unsplitByRanks(x)
-#' x
+#' tse <- unsplitByRanks(tse)
+#' tse
 #'
+#' @aliases splitByRanks
 #' @export
 setGeneric("agglomerateByRanks",
            signature = "x",
@@ -117,46 +118,70 @@ setGeneric("agglomerateByRanks",
 }
 
 #' @rdname agglomerate-methods
+#' @aliases splitByRanks
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
     function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
-        browser()
-        args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
+        if ( is(x, "SummarizedExperiment") ){
+            args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
+            x <- as(x, "TreeSummarizedExperiment")
+            warning("SummarizedExperiment does not have altExps slot. ",
+                    "Therefore, it has been converted to ",
+                    "TreeSummarizedExperiment.")
+        }
         if( !.is_a_bool(as.list) ){
             stop("'as.list' must be TRUE or FALSE.", call. = FALSE)
         }
-        if( as.list ){
-            .split_by_ranks(x, ranks, args)
+        if( !as.list ){
+            altExps(x) <- c(altExps(x),.split_by_ranks(x, ranks, args))
+            return(x)
         }
         else{
-            altExps(x) <- .split_by_ranks(x, ranks, args)
-            x
+            return(.split_by_ranks(x, ranks, args))
         }
     }
 )
 
 #' @rdname agglomerate-methods
+#' @aliases splitByRanks
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
             function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE,
                     ...){
                 args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
                 args[["strip_altexp"]] <- TRUE
-                if( !.is_a_bool(as.list) ){
-                    stop("'as.list' must be TRUE or FALSE.", call. = FALSE)
-                }
-                if( as.list ){
-                    .split_by_ranks(x, ranks, args)
-                }
-                else{
-                    x <- as(x, "TreeSummarizedExperiment")
-                    warning("SummarizedExperiment does not have altExps slot. ",
-                            "Therefore, it has been converted to ",
-                            "TreeSummarizedExperiment.")
-                    altExps(x) <- c(altExps(x),.split_by_ranks(x, ranks, args))
-                    x
-                }
+                callNextMethod()
             }
+)
+
+#' @rdname agglomerate-methods
+#' @aliases splitByRanks
+#' @export
+setMethod("agglomerateByRanks", signature = c(x = "TreeSummarizedExperiment"),
+          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE,
+                   ...){
+              callNextMethod()
+          }
+)
+
+################################################################################
+# splitByRanks
+
+#' @rdname agglomerate-methods
+#' @export 
+setGeneric("splitByRanks",
+           signature = "x",
+           function(x, ...)
+               standardGeneric("splitByRanks"))
+
+#' @rdname agglomerate-methods
+#' @export 
+setMethod("splitByRanks", signature = c(x = "SummarizedExperiment"),
+          function(x,...){
+              .Deprecated(msg = paste0("'splitByRanks' is deprecated. ",
+                                       "Use 'agglomerateByRanks' instead."))
+              agglomerateByRanks(x, as.list = FALSE,...)
+          }
 )
 
 ################################################################################
