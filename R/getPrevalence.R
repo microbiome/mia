@@ -643,7 +643,9 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         pr <- getPrevalentTaxa(x, rank = NULL, ...)
         f <- rownames(x) %in% pr
         if(any(!f)){
-            other_x <- mergeRows(x[!f,], factor(rep(1L,sum(!f))), check_assays = FALSE)
+            other_x <- agglomerateByVariable(x[!f,], MARGIN = "rows", 
+                                            factor(rep(1L,sum(!f))), 
+                                            check_assays = FALSE)
             rowData(other_x)[,colnames(rowData(other_x))] <- NA
             # set the other label
             rownames(other_x) <- other_label
