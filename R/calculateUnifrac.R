@@ -196,19 +196,10 @@ setMethod("calculateUnifrac",
 )
 
 ################################################################################
-# Fast Unifrac for R.
-# Adapted from The ISME Journal (2010) 4, 17-27; doi:10.1038/ismej.2009.97
-#
-# adopted from original implementation in phyloseq implemented by
-# Paul J. McMurdie (https://github.com/joey711/phyloseq)
-################################################################################
 #' @rdname calculateUnifrac
 #'
-#' @importFrom ape prop.part reorder.phylo node.depth node.depth.edgelength
-#' @importFrom utils combn
-#' @importFrom stats as.dist
-#' @importFrom BiocParallel SerialParam register bplapply bpisup bpstart bpstop
-#' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
+#' @importFrom rbiom unifrac
+#' @importFrom BiocParallel SerialParam 
 #'
 #' @export
 runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
@@ -265,7 +256,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
         warning("The tree is pruned so that tips that cannot be found from ", 
                 "the abundance matrix are removed.", call. = FALSE)
     }
-    .calculate_distance(x, FUN = rbiom::unifrac, tree = tree, 
+    .calculate_distance(x, FUN = unifrac, tree = tree, 
                         weighted = weighted)
 }
 
