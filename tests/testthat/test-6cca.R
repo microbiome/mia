@@ -30,32 +30,32 @@ test_that("CCA", {
     actual <- mia:::.get_dependent_var_name(form)
     expect_equal(actual, "dune")
     # Check that input check of scores is working
-    expect_error(runCCA(sce, form, scores = 1))
-    expect_error(runCCA(sce, form, scores = TRUE))
-    expect_error(runCCA(sce, form, scores = NULL))
-    expect_error(runCCA(sce, form, scores = c("wa", "u")))
+    expect_error(addCCA(sce, form, scores = 1))
+    expect_error(addCCA(sce, form, scores = TRUE))
+    expect_error(addCCA(sce, form, scores = NULL))
+    expect_error(addCCA(sce, form, scores = c("wa", "u")))
     # 
     mcca <- vegan::cca(form, dune.env)
-    sce <- runCCA(sce, form)
+    sce <- addCCA(sce, form)
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$wa))
     #
     mcca <- vegan::cca(form, dune.env, scale = TRUE)
     mrda <- vegan::rda(form, dune.env, scale = FALSE)
     
-    sce <- runCCA(sce, form, scores = "u")
+    sce <- addCCA(sce, form, scores = "u")
     actual <- reducedDim(sce,"CCA")
     expect_equal(as.vector(actual), as.vector(mcca$CCA$u))
     # Check that test.signif works
-    expect_error( runCCA(sce, test.signif = 1) )
-    expect_error( runCCA(sce, test.signif = "TRUE") )
-    expect_error( runCCA(sce, test.signif = NULL) )
-    expect_error( runCCA(sce, test.signif = c(TRUE, TRUE)) )
+    expect_error( addCCA(sce, test.signif = 1) )
+    expect_error( addCCA(sce, test.signif = "TRUE") )
+    expect_error( addCCA(sce, test.signif = NULL) )
+    expect_error( addCCA(sce, test.signif = c(TRUE, TRUE)) )
     mat <- getRDA(sce, scores = "u", test.signif = FALSE)
     expect_true(is.null(attributes(mat)$significance))
     # Check that significance calculations are correct
     set.seed(46)
-    sce <- runCCA(sce, variables = "Manure", full = TRUE)
+    sce <- addCCA(sce, variables = "Manure", full = TRUE)
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
     # Create a function that calculates significances
@@ -87,33 +87,33 @@ test_that("CCA", {
     # Significance of betadisper with different permanova, anova and tukeyhsd
     expect_equal(res$homogeneity$variables$Manure$permanova, test$betadisper_permanova)
     set.seed(46)
-    sce <- runCCA(sce, form, full = TRUE, homogeneity.test = "anova")
+    sce <- addCCA(sce, form, full = TRUE, homogeneity.test = "anova")
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
     expect_equal(res$homogeneity$variables$Manure$anova, test$betadisper_anova)
     set.seed(46)
-    sce <- runCCA(sce, form, full = TRUE, homogeneity.test = "tukeyhsd")
+    sce <- addCCA(sce, form, full = TRUE, homogeneity.test = "tukeyhsd")
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
     expect_equal(res$homogeneity$variables$Manure$tukeyhsd, test$betadisper_tukeyhsd)
     # Test that data is subsetted correctly
     data("enterotype", package = "mia")
     variable_names <- c("ClinicalStatus", "Gender", "Age")
-    res <- runRDA(enterotype, variables = variable_names, na.action = na.exclude)
+    res <- addRDA(enterotype, variables = variable_names, na.action = na.exclude)
     expect_equal(colnames(res), colnames(enterotype))
-    res <- runRDA(enterotype, variables = variable_names, na.action = na.exclude, subset_result = TRUE)
+    res <- addRDA(enterotype, variables = variable_names, na.action = na.exclude, subset_result = TRUE)
     enterotype <- enterotype[, complete.cases(colData(enterotype)[, variable_names])]
     expect_equal(colnames(res), colnames(enterotype))
     #
-    sce <- runRDA(sce, form, scores = "u")
+    sce <- addRDA(sce, form, scores = "u")
     actual <- reducedDim(sce,"RDA")
     expect_equal(abs( as.vector(actual) ), abs( as.vector(mrda$CCA$u) ))
-    sce <- runRDA(sce, form, distance = "bray", name = "rda_bray", scores = "u")
+    sce <- addRDA(sce, form, distance = "bray", name = "rda_bray", scores = "u")
     actual <- reducedDim(sce,"rda_bray")
     rda_bray <- vegan::dbrda(form, dune.env, distance = "bray")
     expect_equal(abs( as.vector(actual) ), abs( as.vector(rda_bray$CCA$u) ))
     #
-    sce <- runRDA(sce, scores = "u")
+    sce <- addRDA(sce, scores = "u")
     test <- reducedDim(sce,"RDA")
     # Test that eigenvalues match
     test <- attr(test, "rda")$CA$eig

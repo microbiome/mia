@@ -7,7 +7,7 @@
 #'   where rows are features and columns are cells.
 #'   Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 #'
-#'   For \code{runNMDS} a \linkS4class{SingleCellExperiment}
+#'   For \code{addNMDS} a \linkS4class{SingleCellExperiment}
 #'
 #' @param ncomponents Numeric scalar indicating the number of NMDS dimensions
 #'   to obtain.
@@ -23,7 +23,7 @@
 #'
 #' @param keep_dist Logical scalar indicating whether the \code{dist} object
 #'   calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
-#'   the matrix returned/stored by \code{getNMDS}/ \code{runNMDS}.
+#'   the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}.
 #'
 #' @param transposed Logical scalar, is x transposed with cells in rows?
 #'
@@ -95,8 +95,8 @@
 #'
 #' #
 #' data(esophagus)
-#' esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
-#' esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
+#' esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
+#' esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
 #'                      method = "euclidean")
 #' reducedDims(esophagus)
 NULL
@@ -204,10 +204,14 @@ setMethod("getNMDS", "SingleCellExperiment",
     }
 )
 
+calculateNMDS <- function(x,...){
+    getNMDS(x,...)
+}
+
 #' @rdname runNMDS
 #' @export
 #' @importFrom SingleCellExperiment reducedDim<- altExp
-runNMDS <- function(x, ..., altexp = NULL, name = "NMDS") {
+addNMDS <- function(x, ..., altexp = NULL, name = "NMDS") {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {
@@ -215,4 +219,8 @@ runNMDS <- function(x, ..., altexp = NULL, name = "NMDS") {
     }
     reducedDim(x, name) <- getNMDS(y, ...)
     x
+}
+
+runNMDS <- function(x,...){
+    addNMDS(x,...)
 }

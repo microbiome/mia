@@ -5,6 +5,7 @@
 \alias{getDPCoA}
 \alias{getDPCoA,ANY,ANY-method}
 \alias{getDPCoA,TreeSummarizedExperiment,missing-method}
+\alias{addDPCoA}
 \title{Calculation of Double Principal Correspondance analysis}
 \usage{
 getDPCoA(x, y, ...)
@@ -29,14 +30,14 @@ getDPCoA(x, y, ...)
   tree_name = "phylo"
 )
 
-runDPCoA(x, ..., altexp = NULL, name = "DPCoA")
+addDPCoA(x, ..., altexp = NULL, name = "DPCoA")
 }
 \arguments{
 \item{x}{For \code{getDPCoA}, a numeric matrix of expression values
 where rows are features and columns are cells.
 Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 
-For \code{runDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
+For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
 expression values as well as a \code{rowTree} to calculate \code{y} using
 \code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.}
 
@@ -86,7 +87,7 @@ reducedDims of the output.}
 For \code{getDPCoA} a matrix with samples as rows and CCA dimensions as
 columns
 
-For \code{runDPCoA} a modified \code{x} with the results stored in
+For \code{addDPCoA} a modified \code{x} with the results stored in
 \code{reducedDim} as the given \code{name}
 }
 \description{
@@ -105,7 +106,7 @@ data(esophagus)
 dpcoa <- getDPCoA(esophagus)
 head(dpcoa)
 
-esophagus <- runDPCoA(esophagus)
+esophagus <- addDPCoA(esophagus)
 reducedDims(esophagus)
 
 library(scater)

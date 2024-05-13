@@ -23,12 +23,12 @@
 \alias{mergeFeaturesByRank}
 \alias{mergeFeaturesByRank,SummarizedExperiment-method}
 \alias{mergeFeaturesByRank,SingleCellExperiment-method}
+\alias{mergeFeaturesByPrevalence}
+\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \alias{getExperimentCrossAssociation}
 \alias{getExperimentCrossAssociation,MultiAssayExperiment-method}
 \alias{getExperimentCrossAssociation,SummarizedExperiment-method}
 \alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
-\alias{mergeFeaturesByPrevalence}
-\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \alias{testExperimentCrossAssociation}
 \alias{testExperimentCrossAssociation,ANY-method}
 \alias{testExperimentCrossCorrelation}
@@ -41,19 +41,6 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
-\alias{calculateDPCoA}
-\alias{calculateDPCoA,ANY,ANY-method}
-\alias{calculateDPCoA,TreeSummarizedExperiment,missing-method}
-\alias{calculateNMDS}
-\alias{calculateNMDS,ANY-method}
-\alias{calculateNMDS,SummarizedExperiment-method}
-\alias{calculateNMDS,SingleCellExperiment-method}
-\alias{calculateRDA}
-\alias{calculateRDA,ANY-method}
-\alias{calculateRDA,SummarizedExperiment-method}
-\alias{calculateCCA}
-\alias{calculateCCA,ANY-method}
-\alias{calculateCCA,SummarizedExperiment-method}
 \alias{full_join}
 \alias{full_join,ANY-method}
 \alias{inner_join}
@@ -109,6 +96,10 @@ mergeFeaturesByRank(x, ...)
 
 \S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ...)
 
+mergeFeaturesByPrevalence(x, ...)
+
+\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
+
 getExperimentCrossAssociation(x, ...)
 
 \S4method{getExperimentCrossAssociation}{MultiAssayExperiment}(x, ...)
@@ -116,10 +107,6 @@ getExperimentCrossAssociation(x, ...)
 \S4method{getExperimentCrossAssociation}{SummarizedExperiment}(x, ...)
 
 \S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ...)
-
-mergeFeaturesByPrevalence(x, ...)
-
-\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
 
 testExperimentCrossAssociation(x, ...)
 
@@ -144,32 +131,6 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
-
-calculateDPCoA(x, y, ...)
-
-\S4method{calculateDPCoA}{ANY,ANY}(x, y, ...)
-
-\S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(x, y, ...)
-
-calculateNMDS(x, ...)
-
-\S4method{calculateNMDS}{ANY}(x, ...)
-
-\S4method{calculateNMDS}{SummarizedExperiment}(x, ...)
-
-\S4method{calculateNMDS}{SingleCellExperiment}(x, ...)
-
-calculateRDA(x, ...)
-
-\S4method{calculateRDA}{ANY}(x, ...)
-
-\S4method{calculateRDA}{SummarizedExperiment}(x, ...)
-
-calculateCCA(x, ...)
-
-\S4method{calculateCCA}{ANY}(x, ...)
-
-\S4method{calculateCCA}{SummarizedExperiment}(x, ...)
 
 full_join(x, ...)
 

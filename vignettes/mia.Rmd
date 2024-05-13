@@ -255,7 +255,7 @@ well) to calculate the JSD. For calculating the UniFrac distance via
 supplied via the `tree` argument. For more details see `?calculateJSD`,
 `?calculateUnifrac` or `?getDPCoA`.
 
-`runMDS` performs the decomposition. Alternatively `runNMDS` can also be used.
+`runMDS` performs the decomposition. Alternatively `addNMDS` can also be used.
 
 ## Other indices
 

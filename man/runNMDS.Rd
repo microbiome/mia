@@ -6,6 +6,7 @@
 \alias{getNMDS,ANY-method}
 \alias{getNMDS,SummarizedExperiment-method}
 \alias{getNMDS,SingleCellExperiment-method}
+\alias{addNMDS}
 \title{Perform non-metric MDS on sample-level data}
 \usage{
 getNMDS(x, ...)
@@ -43,14 +44,14 @@ getNMDS(x, ...)
   FUN = vegdist
 )
 
-runNMDS(x, ..., altexp = NULL, name = "NMDS")
+addNMDS(x, ..., altexp = NULL, name = "NMDS")
 }
 \arguments{
 \item{x}{For \code{getNMDS}, a numeric matrix of expression values
 where rows are features and columns are cells.
 Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 
-For \code{runNMDS} a \linkS4class{SingleCellExperiment}}
+For \code{addNMDS} a \linkS4class{SingleCellExperiment}}
 
 \item{...}{additional arguments to pass to \code{FUN} and
 \code{nmdsFUN}.}
@@ -79,7 +80,7 @@ integer vector of row indices or a logical vector.}
 
 \item{keep_dist}{Logical scalar indicating whether the \code{dist} object
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
-the matrix returned/stored by \code{getNMDS}/ \code{runNMDS}.}
+the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}.}
 
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -130,8 +131,8 @@ getNMDS(tse)
 
 #
 data(esophagus)
-esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
-esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
+esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
+esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
                      method = "euclidean")
 reducedDims(esophagus)
 }

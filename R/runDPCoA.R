@@ -8,7 +8,7 @@
 #'   where rows are features and columns are cells.
 #'   Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 #'
-#'   For \code{runDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
+#'   For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
 #'   expression values as well as a \code{rowTree} to calculate \code{y} using
 #'   \code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.
 #'
@@ -64,7 +64,7 @@
 #' For \code{getDPCoA} a matrix with samples as rows and CCA dimensions as
 #' columns
 #'
-#' For \code{runDPCoA} a modified \code{x} with the results stored in
+#' For \code{addDPCoA} a modified \code{x} with the results stored in
 #' \code{reducedDim} as the given \code{name}
 #'
 #'
@@ -78,7 +78,7 @@
 #' dpcoa <- getDPCoA(esophagus)
 #' head(dpcoa)
 #'
-#' esophagus <- runDPCoA(esophagus)
+#' esophagus <- addDPCoA(esophagus)
 #' reducedDims(esophagus)
 #'
 #' library(scater)
@@ -179,10 +179,14 @@ setMethod("getDPCoA", signature = c("TreeSummarizedExperiment","missing"),
     }
 )
 
+calculateDPCoA <- function(x,...){
+    getDPCoA(x,...)
+}
+
 #' @export
 #' @rdname runDPCoA
 #' @importFrom SingleCellExperiment reducedDim<-
-runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
+addDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
     # Input check
     # Check and get altExp if altexp is not NULL
     if( !is.null(altexp) ){
@@ -200,4 +204,8 @@ runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
     }
     reducedDim(x, name) <- getDPCoA(y, ...)
     x
+}
+
+runDPCoA <- function(x,...){
+    addDPCoA(x,...)
 }

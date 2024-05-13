@@ -89,7 +89,7 @@
 #' columns. Attributes include calculated \code{cca}/\code{rda} object and
 #' significance analysis results.
 #'
-#' For \code{runCCA} a modified \code{x} with the results stored in
+#' For \code{addCCA} a modified \code{x} with the results stored in
 #' \code{reducedDim} as the given \code{name}.
 #'
 #' @name runCCA
@@ -100,18 +100,18 @@
 #' @examples
 #' library(scater)
 #' data(GlobalPatterns)
-#' GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
+#' GlobalPatterns <- addCCA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 #' 
 #' # Fetch significance results
 #' attr(reducedDim(GlobalPatterns, "CCA"), "significance")
 #'
-#' GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
+#' GlobalPatterns <- addRDA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 #' 
 #' # Specify dissimilarity measure
 #' GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
-#' GlobalPatterns <- runRDA(
+#' GlobalPatterns <- addRDA(
 #'     GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
 #' 
 #' # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
@@ -121,14 +121,14 @@
 #' # their value is NA
 #' tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 #' # Calculate RDA
-#' tse <- runRDA(tse, formula = data ~ SampleType,
+#' tse <- addRDA(tse, formula = data ~ SampleType,
 #'               assay.type = "z", name = "rda_scaled", na.action = na.omit)
 #' # Plot
 #' plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 #' # A common choice along with PERMANOVA is ANOVA when statistical significance
 #' # of homogeneity of groups is analysed. Moreover, full signficance test results
 #' # can be returned.
-#'  tse <- runRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
+#'  tse <- addRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
 #' 
 NULL
 
@@ -138,9 +138,9 @@ setGeneric("getCCA", signature = c("x"),
                standardGeneric("getCCA"))
 
 #' @rdname runCCA
-setGeneric("runCCA", signature = c("x"),
+setGeneric("addCCA", signature = c("x"),
            function(x, ...)
-               standardGeneric("runCCA"))
+               standardGeneric("addCCA"))
 
 #' @rdname runCCA
 setGeneric("getRDA", signature = c("x"),
@@ -148,9 +148,9 @@ setGeneric("getRDA", signature = c("x"),
                standardGeneric("getRDA"))
 
 #' @rdname runCCA
-setGeneric("runRDA", signature = c("x"),
+setGeneric("addRDA", signature = c("x"),
            function(x, ...)
-               standardGeneric("runRDA"))
+               standardGeneric("addRDA"))
 
 .remove_special_functions_from_terms <- function(terms){
     names(terms) <- terms
@@ -289,10 +289,14 @@ setMethod("getCCA", "SummarizedExperiment",
     }
 )
 
+calculateCCA <- function(x,...){
+    getCCA(x,...)
+}
+
 #' @export
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
-setMethod("runCCA", "SingleCellExperiment",
+setMethod("addCCA", "SingleCellExperiment",
     function(x, formula, variables, altexp = NULL, name = "CCA", ...)
     {
         if (!is.null(altexp)) {
@@ -307,6 +311,10 @@ setMethod("runCCA", "SingleCellExperiment",
         return(x)
     }
 )
+
+runCCA <- function(x,...){
+    addCCA(x,...)
+}
 
 #' @importFrom vegan sppscores<-
 .calculate_rda <- function(
@@ -595,10 +603,14 @@ setMethod("getRDA", "SummarizedExperiment",
     }
 )
 
+calculateRDA <- function(x,...){
+    getRDA(x,...)
+}
+
 #' @export
 #' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
-setMethod("runRDA", "SingleCellExperiment",
+setMethod("addRDA", "SingleCellExperiment",
     function(x, formula, variables, altexp = NULL, name = "RDA", ...)
     {
         if (!is.null(altexp)) {
@@ -613,3 +625,7 @@ setMethod("runRDA", "SingleCellExperiment",
         return(x)
     }
 )
+
+runRDA <- function(x,...){
+    addRDA(x,...)
+}
