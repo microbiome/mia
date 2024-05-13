@@ -129,16 +129,13 @@ setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
                     "Therefore, it has been converted to ",
                     "TreeSummarizedExperiment.")
         }
-        if( !.is_a_bool(as.list) ){
-            stop("'as.list' must be TRUE or FALSE.", call. = FALSE)
-        }
+        res <- .split_by_ranks()
+        # Add to altExp if user has specified to do so
         if( !as.list ){
-            altExps(x) <- c(altExps(x),.split_by_ranks(x, ranks, args))
-            return(x)
+            # Create a general function that adds results to altExps (That could be used in other functions also in the future)
+            res <- .add_to_altExps(x, res)
         }
-        else{
-            return(.split_by_ranks(x, ranks, args))
-        }
+        return(res)
     }
 )
 
