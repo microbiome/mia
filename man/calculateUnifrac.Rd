@@ -126,15 +126,6 @@ reducedDim(esophagus)
 \references{
 \url{http://bmf.colorado.edu/unifrac/}
 
-The main implementation (Fast Unifrac) is adapted from the algorithm's
-description in:
-
-Hamady, Lozupone, and Knight,
-``\href{http://www.nature.com/ismej/journal/v4/n1/full/ismej200997a.html}{Fast
-UniFrac:} facilitating high-throughput phylogenetic analyses of microbial
-communities including analysis of pyrosequencing and PhyloChip data.'' The
-ISME Journal (2010) 4, 17--27.
-
 See also additional descriptions of Unifrac in the following articles:
 
 Lozupone, Hamady and Knight, ``Unifrac - An Online Tool for Comparing
