@@ -13,9 +13,9 @@
             call. = FALSE)
     }
     # This is done otherwise we lose NA values
-    if ( !na.rm && any(is.na(f)) ) {
-      f <- as.character(f)
-      f[is.na(f)] <- "NA"
+    if (!na.rm && any(is.na(f))) {
+        f <- as.character(f)
+        f[ is.na(f) ] <- "NA"
     }
     if(is.character(f)){
         f <- factor(f)
@@ -125,7 +125,7 @@
 #' @importFrom scuttle summarizeAssayByGroup
 .merge_cols <- function(x, f, archetype = 1L, ...){
     # input check
-    if( .is_a_string(f) && f %in% colnames(rowData(x)) ){
+    if( .is_a_string(f) && f %in% colnames(colData(x)) ){
       f <- colData(x)[[ f ]]
     }
     f <- .norm_f(ncol(x), f, "columns")
