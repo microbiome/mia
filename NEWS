@@ -106,8 +106,6 @@ Changes in version 1.11.x
 + getExperimentCrossCorrelation fix: enable using of sampleMap in MAE.
 + Implemented the setTaxonomyRanks function to specify which ranks are recognized as taxonomy ranks.
 + Rename cluster to addCluster
-+ rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
-loadFromMetaphlan, loadFromHumann
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, loadFromMetaphlan, loadFromHumann
 + fix typo in loadFromBiom definition (deprecate file)
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
@@ -119,5 +117,4 @@ Changes in version 1.13.x
 + Added new functions getMediation and addMediation
 + replace getExperiment* and testExperiment* functions with getCrossAssociation
 + Replace mergeRows and mergeCols with new function agglomerateByVariable
-+ rename calculateDPCoA to getDPCoA, calculateNMDS to getNMDS, calculateRDA to 
-  getRDA, calculateCCA to getCCA
++ rename calculateDPCoA to getDPCoA, calculateNMDS to getNMDS, calculateRDA to getRDA, calculateCCA to getCCA
