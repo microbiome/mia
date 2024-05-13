@@ -24,12 +24,12 @@ jobs:
         config:
         - os: ubuntu-latest
           bioc: devel
-          r: 4.4.0
+          r: auto
           cont: ghcr.io/bioconductor/bioconductor_docker:devel
           rspm: ~
         - os: macOS-latest
           bioc: devel
-          r: 4.4.0
+          r: auto
           cont: ~
           rspm: ~
         - os: windows-latest
