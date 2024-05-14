@@ -84,7 +84,7 @@ The following richness indices are provided.
 
 \itemize{
 
-\item 'ace': Abundance-based coverage estimator (ACE) is another
+\item{'ace' }{Abundance-based coverage estimator (ACE) is another
 nonparametric richness
 index that uses sample coverage, defined based on the sum of the
 probabilities
@@ -101,9 +101,9 @@ exact abundance. We use here the bias-corrected version
 \code{\link[vegan:specpool]{estimateR}}.
 For an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
 Note that this index comes with an additional column with standard
-error information.
+error information.}
 
-\item 'chao1': This is a nonparametric estimator of species richness. It
+\item{'chao1' }{This is a nonparametric estimator of species richness. It
 assumes that rare species carry information about the (unknown) number
 of unobserved species. We use here the bias-corrected version
 (O'Hara 2005, Chiu et al. 2014) implemented in
@@ -114,21 +114,21 @@ for an exact formulation, see \code{\link[vegan:specpool]{estimateR}}.
 This estimator uses only the singleton and doubleton counts, and
 hence it gives more weight to the low abundance species.
 Note that this index comes with an additional column with standard
-error information.
+error information.}
 
-\item 'hill': Effective species richness aka Hill index
+\item{'hill' }{Effective species richness aka Hill index
 (see e.g. Chao et al. 2016).
 Currently only the case 1D is implemented. This corresponds to the exponent
 of Shannon diversity. Intuitively, the effective richness indicates the
 number of
 species whose even distribution would lead to the same diversity than the
 observed
-community, where the species abundances are unevenly distributed.
+community, where the species abundances are unevenly distributed.}
 
-\item 'observed': The \emph{observed richness} gives the number of species that
+\item{'observed' }{The \emph{observed richness} gives the number of species that
 is detected above a given \code{detection} threshold in the observed sample
 (default 0). This is conceptually the simplest richness index. The
-corresponding index in the \pkg{vegan} package is "richness".
+corresponding index in the \pkg{vegan} package is "richness".}
 
 }
 }
@@ -214,7 +214,7 @@ Species richness estimators: how many species can dance on the head of a pin?
 \seealso{
 \code{\link[scater:plotColData]{plotColData}}
 \itemize{
-\item \code{\link[vegan:specpool]{estimateR}}
+\item{\code{\link[vegan:specpool]{estimateR}}}
 }
 }
 \author{
