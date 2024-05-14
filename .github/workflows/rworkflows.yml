@@ -14,8 +14,7 @@ name: rworkflows
     - RELEASE_**
 jobs:
   rworkflows:
-    permissions:
-      contents: write
+    permissions: write-all
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     container: ${{ matrix.config.cont }}
@@ -25,12 +24,12 @@ jobs:
         config:
         - os: ubuntu-latest
           bioc: devel
-          r: auto
+          r: 4.4.0
           cont: bioconductor/bioconductor_docker:devel
           rspm: https://packagemanager.rstudio.com/cran/__linux__/latest/release
         - os: macOS-latest
           bioc: devel
-          r: auto
+          r: 4.4.0
           cont: ~
           rspm: ~
         - os: windows-latest
