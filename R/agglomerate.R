@@ -371,10 +371,9 @@ setMethod(
                 }
                 # Agglomerate data
                 x <- callNextMethod(x, ...)
-                # Agglomerate also tree, if the data includes only one
-                # rowTree --> otherwise it is not possible to agglomerate
-                # since all rownames are not found from individual tree.
-                if(agglomerate.tree){
+                # Agglomerate also trees if user has specified and if there
+                # are trees available
+                if( agglomerate.tree && !is.null(x@rowTree) ){
                     x <- .agglomerate_trees(x)
                 }
                 x
