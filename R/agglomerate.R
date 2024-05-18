@@ -474,12 +474,13 @@ setMethod(
     # As long as there are tips to be dropped, run the loop
     while( length(remove_tips) > 0 ){
         # Drop tips that cannot be found. Drop only one layer at the time. Some
-        # dataset might have taxa that are not in tip layer but they are higher
-        # higher rank. IF we delete more than one layer at the time, we might
+        # dataset might have taxa that are not in tip layer but they are in
+        # higher rank. If we delete more than one layer at the time, we might
         # loose the node for those taxa. --> The result of pruning is a tree
         # whose all tips can be found provided nodes i.e., rows of TreeSE. Some
         # taxa might be higher rank meaning that all rows might not be in tips
-        # even after pruning; they have still child-nodes.
+        # even after pruning; these rows have still child-nodes that represent
+        # other rows.
         # Suppress warning: drop all tips of the tree: returning NULL
         suppressWarnings(
             tree <- drop.tip(
