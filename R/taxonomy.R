@@ -528,12 +528,15 @@ setGeneric("addHierarchyTree",
 setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
     function(x, ...){
         #
+        # Get the tree
         tree <- getHierarchyTree(x, ...)
+        # Ensure that the object has rowTree slot
         x <- as(x,"TreeSummarizedExperiment")
-        rownames(x) <- getTaxonomyLabels(x, with_rank = TRUE,
-                                        resolve_loops = TRUE,
-                                        make_unique = FALSE)
-        x <- changeTree(x, tree, rownames(x))
+        # Get node labs: which row represents which node in the tree?
+        node_labs <- getTaxonomyLabels(
+            x, with_rank = TRUE, resolve_loops = TRUE, make_unique = FALSE)
+        # Add tree
+        x <- changeTree(x, tree, node_labs)
         x
     }
 )
