@@ -465,20 +465,38 @@ setGeneric("getHierarchyTree",
 #' @export
 #' @importFrom ape drop.tip
 setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
-    function(x){
+    function(x, ...){
         # Input check
         # If there is no rowData it is not possible to create rowTree
         if( ncol(rowData(x)) == 0L ){
             stop("'x' does not have rowData. Tree cannot be created.", 
                 call. = FALSE)
         }
+        # If there are no taxonomy ranks
+        if( length(taxonomyRanks(x)) < 2L ){
+            stop(
+                "'x' does not contain adequate taxonomy information, and ",
+                "hiearchy tree cannot be created. Check rowData and consider ",
+                "using setTaxonomyRanks().", call. = FALSE)
+        }
         #
-        # Converted to data.frame so that drop = FALSE is enabled
-        td <- data.frame(rowData(x)[,taxonomyRanks(x)])
+        # Get rowData as data.frame
+        td <- as.data.frame( rowData(x)[, taxonomyRanks(x), drop = FALSE] )
         # Remove empty taxonomic levels
-        td <- td[,!vapply(td,function(tl){all(is.na(tl))},logical(1)), drop = FALSE]
+        td <- td[,!vapply(
+            td,function(tl){all(is.na(tl))},logical(1)), drop = FALSE]
+        # Check if there is no taxonomy information left after removing empty
+        # columns
+        if( ncol(td) < 2L ){
+            stop(
+                "'x' does not contain adequate taxonomy information, and ",
+                "hiearchy tree cannot be created. Check rowData and consider ",
+                "using setTaxonomyRanks().", call. = FALSE)
+        }
+        # Get information on empty nodes. It will be used later to polish the
+        # created tree.
+        td_NA <- .get_empty_nodes(td, ...)
         # Make information unique
-        td_NA <- DataFrame(lapply(td,is.na))
         td <- as.data.frame(td)
         td <- as(suppressWarnings(resolveLoop(td)),"DataFrame")
         # Build tree
@@ -508,9 +526,9 @@ setGeneric("addHierarchyTree",
 #' @rdname hierarchy-tree
 #' @export
 setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
-    function(x){
+    function(x, ...){
         #
-        tree <- getHierarchyTree(x)
+        tree <- getHierarchyTree(x, ...)
         x <- as(x,"TreeSummarizedExperiment")
         rownames(x) <- getTaxonomyLabels(x, with_rank = TRUE,
                                         resolve_loops = TRUE,
@@ -713,3 +731,24 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
 #' @rdname taxonomy-methods
 #' @export
 IdTaxaToDataFrame <- .idtaxa_to_DataFrame
+
+# This function gives information on if cell in taxonomy table is empty or not.
+.get_empty_nodes <- function(
+        td, empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+    # Check empty.fields
+    if(!is.character(empty.fields) || length(empty.fields) == 0L){
+        stop(
+            "'empty.fields' must be a character vector with one or ",
+            "more value", call. = FALSE)
+    }
+    #
+    
+    # Loop over columns. For each cell, get info if the cell is empty or not.
+    is_empty <- lapply(td, function(x){
+        temp <- x %in% empty.fields
+        return(temp)
+    })
+    # Convert to DataFrame
+    is_empty <- DataFrame(is_empty)
+    return(is_empty)
+}
