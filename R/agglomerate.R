@@ -454,7 +454,7 @@ setMethod(
         # If the tree represents the data, agglomerate it
         if( nrow(links_temp) > 0 ){
             # For each row, get corresponding node from the tree
-            links_temp <- links_temp[["node_lab"]]
+            links_temp <- links_temp[["nodeLab"]]
             # Agglomerate the tree
             tree <- .prune_tree(tree, links_temp)
             # Change the tree with agglomerated version
