@@ -537,7 +537,7 @@ setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
             x, with_rank = TRUE, resolve_loops = TRUE, make_unique = FALSE)
         # Add tree
         x <- changeTree(x, tree, node_labs)
-        x
+        return(x)
     }
 )
 
