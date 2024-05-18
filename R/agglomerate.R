@@ -446,51 +446,54 @@ setMethod(
     row_links <- rowLinks(x)
     tree_names <- names(trees)
     # Loop through tree names
-    trees <- lapply(tree_names, function(name){
+    for( name in tree_names ){
         # Get the tree that is being agglomerated
         tree <- trees[[name]]
-        # Get corresponding links; which node represent which row?
-        nodes <- row_links[ row_links[["whichTree"]] == name, "nodeLab"]
-        # Remove additional tips, keep only those that are in nodes variable
-        tree <- .agglomerate_tree(tree, nodes)
-        return(tree)
-    })
-    names(trees) <- tree_names
-    # Add trees back
-    x@rowTree <- trees
+        # Get row links that corresponds this specific tree
+        links_temp <- row_links[ row_links[["whichTree"]] == name, ]
+        # If the tree represents the data, agglomerate it
+        if( nrow(links_temp) > 0 ){
+            # For each row, get corresponding node from the tree
+            links_temp <- links_temp[["node_lab"]]
+            # Agglomerate the tree
+            tree <- .prune_tree(tree, links_temp)
+            # Change the tree with agglomerated version
+            tree <- changeTree(
+                x, rowTree = tree,
+                whichRowTree = name, rowNodeLab = links_temp)
+        }
+    }
     return(x)
 }
 
-# Agglomerate single tree. Get nodes to keep and drop those tips that are not
-# in the set of nodes.
-.agglomerate_tree <- function(tree, keep.nodes){
-    #
-    if( !is.character(keep.nodes) ){
-        stop(
-            "'keep.nodes' must be a single character value or a vector of ",
-            "character values.", call. = FALSE)
-    }
-    #
-    # Get indices of those tips that are not representing rows
-    remove_index <- which( !tree$tip.label %in% keep.nodes )
-    # Do not agglomerate if all tips are removed or if there is no tips to
-    # remove. Instead, give informative warning message.
-    remove_all <- length(remove_index) == length(tree$tip.label)
-    remove_none <- length(remove_index) == 0
-    if( remove_all ){
-        warning(
-            "'keep.nodes' does not specify any tips from 'tree'. After ",
-            "agglomeration, all tips would be removed resulting to ",
-            "NULL. The tree is not agglomerated.", call. = FALSE)
-    }
-    if( remove_none ){
-        warning(
-            "'keep.nodes' does specify all the tips from 'tree'. ",
-            "The tree is not agglomerated.", call. = FALSE)
-    }
-    # Agglomerate tree
-    if( !(remove_all || remove_none) ){
-        tree <- drop.tip(tree, remove_index)
+# This function trims tips until all tips can be found from provided set of nodes
+#' @importFrom ape drop.tip
+.prune_tree <- function(tree, nodes){
+    # Get those tips that can not be found from provided nodes
+    remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
+    # As long as there are tips to be dropped, run the loop
+    while( length(remove_tips) > 0 ){
+        # Drop tips that cannot be found. Drop only one layer at the time. Some
+        # dataset might have taxa that are not in tip layer but they are higher
+        # higher rank. IF we delete more than one layer at the time, we might
+        # loose the node for those taxa. --> The result of pruning is a tree
+        # whose all tips can be found provided nodes i.e., rows of TreeSE. Some
+        # taxa might be higher rank meaning that all rows might not be in tips
+        # even after pruning; they have still child-nodes.
+        # Suppress warning: drop all tips of the tree: returning NULL
+        suppressWarnings(
+            tree <- drop.tip(
+                tree, remove_tips,
+                trim.internal = FALSE,
+                collapse.singles = FALSE)
+        )
+        # If all tips were dropped, the result is NULL --> stop loop
+        if( is.null(tree) ){
+            warning("Pruning resulted to empty tree.", call. = FALSE)
+            break
+        }
+        # Again, get those tips of updated tree that cannot be found from provided nodes
+        remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
     }
     return(tree)
 }
