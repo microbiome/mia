@@ -23,12 +23,12 @@
 \alias{mergeFeaturesByRank}
 \alias{mergeFeaturesByRank,SummarizedExperiment-method}
 \alias{mergeFeaturesByRank,SingleCellExperiment-method}
+\alias{mergeFeaturesByPrevalence}
+\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \alias{getExperimentCrossAssociation}
 \alias{getExperimentCrossAssociation,MultiAssayExperiment-method}
 \alias{getExperimentCrossAssociation,SummarizedExperiment-method}
 \alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
-\alias{mergeFeaturesByPrevalence}
-\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
 \alias{testExperimentCrossAssociation}
 \alias{testExperimentCrossAssociation,ANY-method}
 \alias{testExperimentCrossCorrelation}
@@ -96,6 +96,10 @@ mergeFeaturesByRank(x, ...)
 
 \S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ...)
 
+mergeFeaturesByPrevalence(x, ...)
+
+\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
+
 getExperimentCrossAssociation(x, ...)
 
 \S4method{getExperimentCrossAssociation}{MultiAssayExperiment}(x, ...)
@@ -103,10 +107,6 @@ getExperimentCrossAssociation(x, ...)
 \S4method{getExperimentCrossAssociation}{SummarizedExperiment}(x, ...)
 
 \S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ...)
-
-mergeFeaturesByPrevalence(x, ...)
-
-\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
 
 testExperimentCrossAssociation(x, ...)
 
