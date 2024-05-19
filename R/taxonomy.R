@@ -476,8 +476,9 @@ setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
         if( length(taxonomyRanks(x)) < 2L ){
             stop(
                 "'x' does not contain adequate taxonomy information, and ",
-                "hiearchy tree cannot be created. Check rowData and consider ",
-                "using setTaxonomyRanks().", call. = FALSE)
+                "hierarchy tree cannot be created. Check rowData and consider ",
+                "using setTaxonomyRanks() if ranks differ from defaults..",
+                call. = FALSE)
         }
         #
         # Get rowData as data.frame
@@ -490,8 +491,9 @@ setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
         if( ncol(td) < 2L ){
             stop(
                 "'x' does not contain adequate taxonomy information, and ",
-                "hiearchy tree cannot be created. Check rowData and consider ",
-                "using setTaxonomyRanks().", call. = FALSE)
+                "hierarchy tree cannot be created. Check rowData and consider ",
+                "using setTaxonomyRanks() if ranks differ from defaults.",
+                call. = FALSE)
         }
         # Get information on empty nodes. It will be used later to polish the
         # created tree.
@@ -745,7 +747,6 @@ IdTaxaToDataFrame <- .idtaxa_to_DataFrame
             "more value", call. = FALSE)
     }
     #
-    
     # Loop over columns. For each cell, get info if the cell is empty or not.
     is_empty <- lapply(td, function(x){
         temp <- x %in% empty.fields
