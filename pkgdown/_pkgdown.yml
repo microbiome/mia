@@ -65,7 +65,7 @@ reference:
   - isContaminant
 - subtitle: Helper
 - contents:
-  - meltAssay
+  - meltSE
   - relabundance
   - subsampleCounts
   - subsetSamples

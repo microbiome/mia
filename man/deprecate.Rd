@@ -52,6 +52,8 @@
 \alias{plotNMDS}
 \alias{estimateDivergence}
 \alias{estimateDivergence,SummarizedExperiment-method}
+\alias{meltAssay}
+\alias{meltAssay,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -153,6 +155,10 @@ plotNMDS(x, ...)
 estimateDivergence(x, ...)
 
 \S4method{estimateDivergence}{SummarizedExperiment}(x, ...)
+
+meltAssay(x, ...)
+
+\S4method{meltAssay}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
