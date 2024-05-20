@@ -25,12 +25,12 @@ jobs:
         - os: ubuntu-latest
           bioc: devel
           r: auto
-          cont: ghcr.io/bioconductor/bioconductor_docker:devel
+          cont: ghcr.io/bioconductor/bioconductor_docker:devel-r.4.4.0
           rspm: ~
         - os: macOS-latest
           bioc: devel
           r: auto
-          cont: ~
+          cont: ghcr.io/bioconductor/bioconductor_docker:devel-arm64
           rspm: ~
         - os: windows-latest
           bioc: devel
