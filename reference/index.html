@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.5</span>
       </span>
     </div>
 
@@ -55,13 +55,13 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> <code><a href="agglomerate-methods.html">mergeFeaturesByRank()</a></code> <code><a href="agglomerate-methods.html">agglomerateByPrevalence()</a></code> </p>
+          <p><code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> <code><a href="agglomerate-methods.html">agglomerateByVariable()</a></code> <code><a href="agglomerate-methods.html">agglomerateByPrevalence()</a></code> </p>
         </td>
-        <td><p>Agglomerate data using taxonomic information</p></td>
+        <td><p>Agglomerate or merge data using taxonomic information</p></td>
       </tr><tr><td>
-          <p><code><a href="merge-methods.html">mergeRows()</a></code> <code><a href="merge-methods.html">mergeCols()</a></code> <code><a href="merge-methods.html">mergeFeatures()</a></code> <code><a href="merge-methods.html">mergeSamples()</a></code> </p>
+          <p><code><a href="deprecate.html">cluster()</a></code> <code><a href="deprecate.html">addTaxonomyTree()</a></code> <code><a href="deprecate.html">taxonomyTree()</a></code> <code><a href="deprecate.html">mergeRows()</a></code> <code><a href="deprecate.html">mergeCols()</a></code> <code><a href="deprecate.html">mergeFeatures()</a></code> <code><a href="deprecate.html">mergeSamples()</a></code> <code><a href="deprecate.html">mergeFeaturesByRank()</a></code> <code><a href="deprecate.html">mergeFeaturesByPrevalence()</a></code> <code><a href="deprecate.html">getExperimentCrossAssociation()</a></code> <code><a href="deprecate.html">testExperimentCrossAssociation()</a></code> <code><a href="deprecate.html">testExperimentCrossCorrelation()</a></code> <code><a href="deprecate.html">getExperimentCrossCorrelation()</a></code> <code><a href="deprecate.html">loadFromBiom()</a></code> <code><a href="deprecate.html">loadFromQIIME2()</a></code> <code><a href="deprecate.html">readQZA()</a></code> <code><a href="deprecate.html">loadFromMothur()</a></code> <code><a href="deprecate.html">loadFromMetaphlan()</a></code> <code><a href="deprecate.html">loadFromHumann()</a></code> <code><a href="deprecate.html">full_join()</a></code> <code><a href="deprecate.html">inner_join()</a></code> <code><a href="deprecate.html">left_join()</a></code> <code><a href="deprecate.html">right_join()</a></code> <code><a href="deprecate.html">plotNMDS()</a></code> <code><a href="deprecate.html">estimateDivergence()</a></code> </p>
         </td>
-        <td><p>Merge a subset of the rows or columns of a <code>SummarizedExperiment</code></p></td>
+        <td><p>These functions will be deprecated. Please use other functions instead.</p></td>
       </tr><tr><td>
           <p><code><a href="splitByRanks.html">splitByRanks()</a></code> <code><a href="splitByRanks.html">unsplitByRanks()</a></code> </p>
         </td>
@@ -195,9 +195,13 @@
         </td>
         <td><p>Summarizing microbiome data</p></td>
       </tr><tr><td>
-          <p><code><a href="getExperimentCrossAssociation.html">getExperimentCrossAssociation()</a></code> <code><a href="getExperimentCrossAssociation.html">testExperimentCrossAssociation()</a></code> <code><a href="getExperimentCrossAssociation.html">testExperimentCrossCorrelation()</a></code> <code><a href="getExperimentCrossAssociation.html">getExperimentCrossCorrelation()</a></code> </p>
+          <p><code><a href="getCrossAssociation.html">getCrossAssociation()</a></code> </p>
         </td>
         <td><p>Calculate correlations between features of two experiments.</p></td>
+      </tr><tr><td>
+          <p><code><a href="getMediation.html">addMediation()</a></code> <code><a href="getMediation.html">getMediation()</a></code> </p>
+        </td>
+        <td><p>Perform mediation analysis</p></td>
       </tr><tr><td>
           <p><code><a href="hierarchy-tree.html">getHierarchyTree()</a></code> <code><a href="hierarchy-tree.html">addHierarchyTree()</a></code> </p>
         </td>
@@ -311,7 +315,7 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="deprecate.html">cluster()</a></code> <code><a href="deprecate.html">addTaxonomyTree()</a></code> <code><a href="deprecate.html">taxonomyTree()</a></code> <code><a href="deprecate.html">mergeFeaturesByPrevalence()</a></code> <code><a href="deprecate.html">loadFromBiom()</a></code> <code><a href="deprecate.html">loadFromQIIME2()</a></code> <code><a href="deprecate.html">readQZA()</a></code> <code><a href="deprecate.html">loadFromMothur()</a></code> <code><a href="deprecate.html">loadFromMetaphlan()</a></code> <code><a href="deprecate.html">loadFromHumann()</a></code> <code><a href="deprecate.html">full_join()</a></code> <code><a href="deprecate.html">inner_join()</a></code> <code><a href="deprecate.html">left_join()</a></code> <code><a href="deprecate.html">right_join()</a></code> <code><a href="deprecate.html">plotNMDS()</a></code> <code><a href="deprecate.html">estimateDivergence()</a></code> </p>
+          <p><code><a href="deprecate.html">cluster()</a></code> <code><a href="deprecate.html">addTaxonomyTree()</a></code> <code><a href="deprecate.html">taxonomyTree()</a></code> <code><a href="deprecate.html">mergeRows()</a></code> <code><a href="deprecate.html">mergeCols()</a></code> <code><a href="deprecate.html">mergeFeatures()</a></code> <code><a href="deprecate.html">mergeSamples()</a></code> <code><a href="deprecate.html">mergeFeaturesByRank()</a></code> <code><a href="deprecate.html">mergeFeaturesByPrevalence()</a></code> <code><a href="deprecate.html">getExperimentCrossAssociation()</a></code> <code><a href="deprecate.html">testExperimentCrossAssociation()</a></code> <code><a href="deprecate.html">testExperimentCrossCorrelation()</a></code> <code><a href="deprecate.html">getExperimentCrossCorrelation()</a></code> <code><a href="deprecate.html">loadFromBiom()</a></code> <code><a href="deprecate.html">loadFromQIIME2()</a></code> <code><a href="deprecate.html">readQZA()</a></code> <code><a href="deprecate.html">loadFromMothur()</a></code> <code><a href="deprecate.html">loadFromMetaphlan()</a></code> <code><a href="deprecate.html">loadFromHumann()</a></code> <code><a href="deprecate.html">full_join()</a></code> <code><a href="deprecate.html">inner_join()</a></code> <code><a href="deprecate.html">left_join()</a></code> <code><a href="deprecate.html">right_join()</a></code> <code><a href="deprecate.html">plotNMDS()</a></code> <code><a href="deprecate.html">estimateDivergence()</a></code> </p>
         </td>
         <td><p>These functions will be deprecated. Please use other functions instead.</p></td>
       </tr></tbody></table></div>

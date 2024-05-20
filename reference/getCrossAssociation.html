@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.5</span>
       </span>
     </div>
 
@@ -309,7 +309,7 @@ running times are critical.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'rclr' includes negative values.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Agglomeration of it might lead to meaningless values.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Check the assay, and consider doing transformation again manually with agglomerated data.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Check the assay, and consider doing transformation againmanually with agglomerated data.</span>
 <span class="r-in"><span><span class="co"># Transform data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Phylum"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># When mode = "matrix", the return value is a matrix</span></span></span>
@@ -407,8 +407,7 @@ running times are critical.</p>
 <span class="r-in"><span><span class="co"># It is also possible to choose variables from colData and calculate association</span></span></span>
 <span class="r-in"><span><span class="co"># between assay and sample metadata or between variables of sample metadata</span></span></span>
 <span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimateDiversity.html">estimateDiversity</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Faith diversity will not be calculated because there's </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>                     no phylogenetic tree.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Faith diversity has been excluded from the results since it cannot be calculated without rowTree. This requires a rowTree in the input argument x. Make sure that 'rowTree(x)' is not empty, or make sure to specify 'tree_name' in the input arguments. Warning is also provided if the tree does not have any branches. You can consider adding rowTree to include this index.</span>
 <span class="r-in"><span><span class="co"># colData_variable works similarly to assay.type. Instead of fetching an assay</span></span></span>
 <span class="r-in"><span><span class="co"># named assay.type from assay slot, it fetches a column named colData_variable</span></span></span>
 <span class="r-in"><span><span class="co"># from colData.</span></span></span>
@@ -450,7 +449,7 @@ running times are critical.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer></div>

@@ -76,7 +76,10 @@
     <loc>/reference/estimateRichness.html</loc>
   </url>
   <url>
-    <loc>/reference/getExperimentCrossAssociation.html</loc>
+    <loc>/reference/getCrossAssociation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getMediation.html</loc>
   </url>
   <url>
     <loc>/reference/getPrevalence.html</loc>
@@ -116,9 +119,6 @@
   </url>
   <url>
     <loc>/reference/meltAssay.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge-methods.html</loc>
   </url>
   <url>
     <loc>/reference/mergeSEs.html</loc>
