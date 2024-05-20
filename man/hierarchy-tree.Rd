@@ -10,11 +10,11 @@
 \usage{
 getHierarchyTree(x, ...)
 
-\S4method{getHierarchyTree}{SummarizedExperiment}(x)
+\S4method{getHierarchyTree}{SummarizedExperiment}(x, ...)
 
 addHierarchyTree(x, ...)
 
-\S4method{addHierarchyTree}{SummarizedExperiment}(x)
+\S4method{addHierarchyTree}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a
