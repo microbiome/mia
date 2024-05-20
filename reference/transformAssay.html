@@ -18,7 +18,7 @@ See details for options."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.10</span>
       </span>
     </div>
 
@@ -55,7 +55,29 @@ See details for options.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">transformAssay</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">transformSamples</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>,</span>
+<span>    <span class="st">"log2"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>, <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>, <span class="st">"total"</span><span class="op">)</span>,</span>
+<span>  name <span class="op">=</span> <span class="va">method</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">transformSamples</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alr"</span>, <span class="st">"chi.square"</span>, <span class="st">"clr"</span>, <span class="st">"frequency"</span>, <span class="st">"hellinger"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>,</span>
+<span>    <span class="st">"log2"</span>, <span class="st">"normalize"</span>, <span class="st">"pa"</span>, <span class="st">"rank"</span>, <span class="st">"rclr"</span>, <span class="st">"relabundance"</span>, <span class="st">"rrank"</span>, <span class="st">"total"</span><span class="op">)</span>,</span>
+<span>  name <span class="op">=</span> <span class="va">method</span>,</span>
+<span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">transformAssay</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -67,6 +89,8 @@ See details for options.</p>
 <span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">transformAssay</span><span class="op">(</span></span>
@@ -80,7 +104,40 @@ See details for options.</p>
 <span>  name <span class="op">=</span> <span class="va">method</span>,</span>
 <span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">transformFeatures</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"frequency"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>, <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"standardize"</span>,</span>
+<span>    <span class="st">"z"</span><span class="op">)</span>,</span>
+<span>  name <span class="op">=</span> <span class="va">method</span>,</span>
+<span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">transformFeatures</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"frequency"</span>, <span class="st">"log"</span>, <span class="st">"log10"</span>, <span class="st">"log2"</span>, <span class="st">"max"</span>, <span class="st">"pa"</span>, <span class="st">"range"</span>, <span class="st">"standardize"</span>,</span>
+<span>    <span class="st">"z"</span><span class="op">)</span>,</span>
+<span>  name <span class="op">=</span> <span class="va">method</span>,</span>
+<span>  pseudocount <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ZTransform</span><span class="op">(</span><span class="va">x</span>, MARGIN <span class="op">=</span> <span class="st">"features"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">ZTransform</span><span class="op">(</span><span class="va">x</span>, MARGIN <span class="op">=</span> <span class="st">"features"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">relAbundanceCounts</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">relAbundanceCounts</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -109,15 +166,16 @@ will be disabled.)</p></dd>
 method.</p></dd>
 
 
-<dt>MARGIN</dt>
-<dd><p>A single character value for specifying whether the
-transformation is applied sample (column) or feature (row) wise.
-(By default: <code>MARGIN = "samples"</code>)</p></dd>
-
-
 <dt>name</dt>
 <dd><p>A single character value specifying the name of transformed
 abundance table.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments passed on to <code>vegan:decostand</code>:</p><ul><li><p><code>ref_vals</code>: A single value which will be used to fill
+reference sample's column in returned assay when calculating alr.
+(default: <code>ref_vals = NA</code>)</p></li>
+</ul></dd>
 
 
 <dt>pseudocount</dt>
@@ -127,11 +185,10 @@ When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.</p></dd>
 
 
-<dt>...</dt>
-<dd><p>additional arguments passed on to <code>vegan:decostand</code>:</p><ul><li><p><code>ref_vals</code>: A single value which will be used to fill
-reference sample's column in returned assay when calculating alr.
-(default: <code>ref_vals = NA</code>)</p></li>
-</ul></dd>
+<dt>MARGIN</dt>
+<dd><p>A single character value for specifying whether the
+transformation is applied sample (column) or feature (row) wise.
+(By default: <code>MARGIN = "samples"</code>)</p></dd>
 
 </dl></div>
     <div id="value">
