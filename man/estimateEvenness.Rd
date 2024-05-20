@@ -44,8 +44,8 @@ stored in.}
 
 \item{...}{optional arguments:
 \itemize{
-\item{threshold}{ a numeric threshold. assay values below or equal
-to this threshold will be set to zero.}
+\item threshold:  a numeric threshold. assay values below or equal
+to this threshold will be set to zero.
 }}
 
 \item{BPPARAM}{A
@@ -69,13 +69,13 @@ By default, this function returns all indices.
 
 The available evenness indices include the following (all in lowercase):
 \itemize{
-\item{'camargo' }{Camargo's evenness (Camargo 1992)}
-\item{'simpson_evenness' }{Simpson’s evenness is calculated as inverse Simpson diversity (1/lambda) divided by
-observed species richness S: (1/lambda)/S.}
-\item{'pielou' }{Pielou's evenness (Pielou, 1966), also known as Shannon or Shannon-Weaver/Wiener/Weiner
-evenness; H/ln(S). The Shannon-Weaver is the preferred term; see Spellerberg and Fedor (2003).}
-\item{'evar' }{Smith and Wilson’s Evar index (Smith & Wilson 1996).}
-\item{'bulla' }{Bulla’s index (O) (Bulla 1994).}
+\item 'camargo': Camargo's evenness (Camargo 1992)
+\item 'simpson_evenness': Simpson’s evenness is calculated as inverse Simpson diversity (1/lambda) divided by
+observed species richness S: (1/lambda)/S.
+\item 'pielou': Pielou's evenness (Pielou, 1966), also known as Shannon or Shannon-Weaver/Wiener/Weiner
+evenness; H/ln(S). The Shannon-Weaver is the preferred term; see Spellerberg and Fedor (2003).
+\item 'evar': Smith and Wilson’s Evar index (Smith & Wilson 1996).
+\item 'bulla': Bulla’s index (O) (Bulla 1994).
 }
 
 Desirable statistical evenness metrics avoid strong bias towards very

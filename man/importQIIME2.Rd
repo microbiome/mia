@@ -44,11 +44,11 @@ the phylogenetic tree. (default: \code{phyTreeFile = NULL}).}
 
 \item{...}{additional arguments:
 \itemize{
-\item{\code{temp}:} {the temporary directory used for decompressing the
-data. (default: \code{tempdir()})}
-\item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
+\item \code{temp}: the temporary directory used for decompressing the
+data. (default: \code{tempdir()})
+\item \code{removeTaxaPrefixes}: \code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
-\code{removeTaxaPrefixes = FALSE})}
+\code{removeTaxaPrefixes = FALSE})
 }}
 
 \item{file}{character, path of the input qza file. Only files in format of
