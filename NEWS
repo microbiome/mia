@@ -125,3 +125,5 @@ Changes in version 1.13.x
 + rename subsetByPrevalent* and subsetByRare* to subsetByPrevalent and subsetByRare
 + Deprecate transformFeatures, transformSamples, transformCounts, Ztransform,
   relAbundanceCounts
++ rename getRare* functions to getRare, getUnique* functions to getUnique, 
+  getTop* functions to getTop and getPrevalent* functions to getPrevalent

@@ -75,6 +75,26 @@
 \alias{transformCounts}
 \alias{transformFeatures}
 \alias{transformFeatures,SummarizedExperiment-method}
+\alias{getUniqueFeatures}
+\alias{getUniqueFeatures,SummarizedExperiment-method}
+\alias{getUniqueTaxa}
+\alias{getUniqueTaxa,SummarizedExperiment-method}
+\alias{getTopFeatures}
+\alias{getTopFeatures,SummarizedExperiment-method}
+\alias{getTopTaxa}
+\alias{getTopTaxa,SummarizedExperiment-method}
+\alias{getRareFeatures}
+\alias{getRareFeatures,ANY-method}
+\alias{getRareFeatures,SummarizedExperiment-method}
+\alias{getRareTaxa}
+\alias{getRareTaxa,ANY-method}
+\alias{getRareTaxa,SummarizedExperiment-method}
+\alias{getPrevalentFeatures}
+\alias{getPrevalentFeatures,ANY-method}
+\alias{getPrevalentFeatures,SummarizedExperiment-method}
+\alias{getPrevalentTaxa}
+\alias{getPrevalentTaxa,ANY-method}
+\alias{getPrevalentTaxa,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -222,6 +242,46 @@ transformCounts(x, ...)
 transformFeatures(x, ...)
 
 \S4method{transformFeatures}{SummarizedExperiment}(x, ...)
+
+getUniqueFeatures(x, ...)
+
+\S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
+
+getUniqueTaxa(x, ...)
+
+\S4method{getUniqueTaxa}{SummarizedExperiment}(x, ...)
+
+getTopFeatures(x, ...)
+
+\S4method{getTopFeatures}{SummarizedExperiment}(x, ...)
+
+getTopTaxa(x, ...)
+
+\S4method{getTopTaxa}{SummarizedExperiment}(x, ...)
+
+getRareFeatures(x, ...)
+
+\S4method{getRareFeatures}{ANY}(x, ...)
+
+\S4method{getRareFeatures}{SummarizedExperiment}(x, ...)
+
+getRareTaxa(x, ...)
+
+\S4method{getRareTaxa}{ANY}(x, ...)
+
+\S4method{getRareTaxa}{SummarizedExperiment}(x, ...)
+
+getPrevalentFeatures(x, ...)
+
+\S4method{getPrevalentFeatures}{ANY}(x, ...)
+
+\S4method{getPrevalentFeatures}{SummarizedExperiment}(x, ...)
+
+getPrevalentTaxa(x, ...)
+
+\S4method{getPrevalentTaxa}{ANY}(x, ...)
+
+\S4method{getPrevalentTaxa}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
