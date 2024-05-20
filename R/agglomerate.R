@@ -486,7 +486,7 @@ setMethod(
             tree <- drop.tip(
                 tree, remove_tips,
                 trim.internal = FALSE,
-                collapse.singles = FALSE)
+                collapse.singles = TRUE)
         )
         # If all tips were dropped, the result is NULL --> stop loop
         if( is.null(tree) ){
