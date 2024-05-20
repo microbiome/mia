@@ -41,15 +41,17 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{countDominantFeatures}
+\alias{countDominantFeatures,SummarizedExperiment-method}
 \alias{subsetByRareTaxa}
 \alias{subsetByRareTaxa,ANY-method}
-\alias{countDominantFeatures,SummarizedExperiment-method}
 \alias{subsetByRareFeatures}
 \alias{subsetByRareFeatures,ANY-method}
 \alias{subsetByPrevalentTaxa}
 \alias{subsetByPrevalentTaxa,ANY-method}
 \alias{subsetByPrevalentFeatures}
 \alias{subsetByPrevalentFeatures,ANY-method}
+\alias{countDominantTaxa}
 \alias{countDominantTaxa,SummarizedExperiment-method}
 \alias{full_join}
 \alias{full_join,ANY-method}
@@ -144,11 +146,13 @@ loadFromMetaphlan(...)
 
 loadFromHumann(...)
 
+countDominantFeatures(x, ...)
+
+\S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
+
 subsetByRareTaxa(x, ...)
 
 \S4method{subsetByRareTaxa}{ANY}(x, ...)
-
-\S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
 
 subsetByRareFeatures(x, ...)
 
@@ -161,6 +165,8 @@ subsetByPrevalentTaxa(x, ...)
 subsetByPrevalentFeatures(x, ...)
 
 \S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
+
+countDominantTaxa(x, ...)
 
 \S4method{countDominantTaxa}{SummarizedExperiment}(x, ...)
 

@@ -446,6 +446,8 @@ setMethod(
     }
 )
 
+#' @rdname deprecate
+#' @export
 setGeneric("countDominantTaxa", signature = c("x"),
            function(x, ...)
                standardGeneric("countDominantTaxa"))
