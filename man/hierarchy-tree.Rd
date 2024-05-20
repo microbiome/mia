@@ -25,11 +25,11 @@ object}
 }
 \value{
 \itemize{
-\item{\code{addHierarchyTree}:} {a \code{TreeSummarizedExperiment} whose
+\item \code{addHierarchyTree}: a \code{TreeSummarizedExperiment} whose
 \code{phylo} tree represents the hierarchy among available taxonomy
-information}
-\item{\code{getHierarchyTree}:} {a \code{phylo} tree representing the
-hierarchy among available taxonomy information.}
+information.
+\item \code{getHierarchyTree}: a \code{phylo} tree representing the
+hierarchy among available taxonomy information.
 }
 }
 \description{

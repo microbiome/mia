@@ -64,10 +64,10 @@ for the sample identifier. (default: \code{sample_name = "SampleID"})}
 
 \item{...}{optional arguments:
 \itemize{
-\item{check_names}{ A boolean value passed to data.frame function's check.name
+\item check_names: A boolean value passed to data.frame function's check.name
 argument. Determines if sample names are checked that they are syntactically
 valid variable names and are not duplicated. If they are not, sample names
-are modified. (default: \code{check_names = TRUE})}
+are modified. (default: \code{check_names = TRUE})
 }}
 }
 \value{
