@@ -41,6 +41,10 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{countDominantFeatures}
+\alias{countDominantFeatures,SummarizedExperiment-method}
+\alias{countDominantTaxa}
+\alias{countDominantTaxa,SummarizedExperiment-method}
 \alias{full_join}
 \alias{full_join,ANY-method}
 \alias{inner_join}
@@ -133,6 +137,14 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+countDominantFeatures(x, ...)
+
+\S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
+
+countDominantTaxa(x, ...)
+
+\S4method{countDominantTaxa}{SummarizedExperiment}(x, ...)
 
 full_join(x, ...)
 
