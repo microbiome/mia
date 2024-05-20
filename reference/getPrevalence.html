@@ -115,25 +115,15 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 <span><span class="co"># S4 method for ANY</span></span>
 <span><span class="fu">getRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">subsetByPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">subsetByPrevalent</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">subsetByPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">subsetByPrevalent</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">subsetByPrevalentTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">subsetByPrevalentTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">subsetByRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">subsetByRare</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">subsetByRareFeatures</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">subsetByRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">subsetByRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">subsetByRare</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getPrevalentAbundance</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
@@ -169,7 +159,7 @@ object</p></dd>
 Note that you can specify whether to remove empty ranks with
 <code>agg.na.rm</code> instead of <code>na.rm</code>. (default: <code>FALSE</code>)</p></li>
 <li><p>for <code>getPrevalentFeatures</code>, <code>getRareFeatures</code>,
-<code>subsetByPrevalentFeatures</code> and <code>subsetByRareFeatures</code> additional
+<code>subsetByPrevalent</code> and <code>subsetByRare</code> additional
 parameters passed to <code>getPrevalence</code></p></li>
 <li><p>for <code>getPrevalentAbundance</code> additional parameters passed to
 <code>getPrevalentFeatures</code></p></li>
@@ -333,11 +323,11 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4] "Phylum:Spirochaetes"   "Phylum:Proteobacteria" "Phylum:Fusobacteria"  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gets a subset of object that includes prevalent taxa</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByPrevalentFeatures</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                                       rank <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
-<span class="r-in"><span>                                       detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
-<span class="r-in"><span>                                       prevalence <span class="op">=</span> <span class="fl">0.55</span>,</span></span>
-<span class="r-in"><span>                                       as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByPrevalent</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>                                             rank <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
+<span class="r-in"><span>                                             detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
+<span class="r-in"><span>                                             prevalence <span class="op">=</span> <span class="fl">0.55</span>,</span></span>
+<span class="r-in"><span>                                             as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span>                                 </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 5 26 </span>
@@ -368,11 +358,11 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4] "Phylum:MVP-15"        "Phylum:SBR1093"       "Phylum:Fusobacteria" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gets a subset of object that includes rare taxa</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByRareFeatures</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                             rank <span class="op">=</span> <span class="st">"Class"</span>,</span></span>
-<span class="r-in"><span>                             detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
-<span class="r-in"><span>                             prevalence <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
-<span class="r-in"><span>                             as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByRare</span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span>                                    rank <span class="op">=</span> <span class="st">"Class"</span>,</span></span>
+<span class="r-in"><span>                                    detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
+<span class="r-in"><span>                                    prevalence <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
+<span class="r-in"><span>                                    as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span>      </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 105 26 </span>
