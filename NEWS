@@ -117,4 +117,8 @@ Changes in version 1.13.x
 + Added new functions getMediation and addMediation
 + replace getExperiment* and testExperiment* functions with getCrossAssociation
 + Replace mergeRows and mergeCols with new function agglomerateByVariable
++ agglomerateByRank: bugfix related to agglomeration of non-existing tree
++ getHierarchyTree: bugfix related to empty cells in rowData
++ agglomerateByRank: bugfix: trees was not pruned correctly
++ rename meltAssay to meltSE
 + Rename countDominantFeatures and countDominantTaxa to summarizeDominance

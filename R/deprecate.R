@@ -486,3 +486,19 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
                 addDivergence(x, ...)
             }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric("meltAssay",signature = "x",
+            function(x, ...)
+                standardGeneric("meltAssay"))
+
+#' @rdname deprecate
+#' @export
+setMethod("meltAssay", signature = c(x="SummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'meltAssay' is deprecated. ",
+                                       "Use 'meltSE' instead."))
+              meltSE(x, ...)
+          }
+)
