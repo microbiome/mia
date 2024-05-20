@@ -123,3 +123,5 @@ Changes in version 1.13.x
 + rename meltAssay to meltSE
 + Rename countDominantFeatures and countDominantTaxa to summarizeDominance
 + rename subsetByPrevalent* and subsetByRare* to subsetByPrevalent and subsetByRare
++ Deprecate transformFeatures, transformSamples, transformCounts, Ztransform,
+  relAbundanceCounts
