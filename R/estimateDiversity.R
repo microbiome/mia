@@ -586,31 +586,6 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     return(faiths)
 }
 
-# This function trims tips until all tips can be found from provided set of nodes
-#' @importFrom ape drop.tip
-.prune_tree <- function(tree, nodes){
-    # Get those tips that can not be found from provided nodes
-    remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
-    # As long as there are tips to be dropped, run the loop
-    while( length(remove_tips) > 0 ){
-        # Drop tips that cannot be found. Drop only one layer at the time. Some
-        # dataset might have taxa that are not in tip layer but they are higher
-        # higher rank. IF we delete more than one layer at the time, we might
-        # loose the node for those taxa. --> The result of pruning is a tree
-        # whose all tips can be found provided nodes i.e., rows of TreeSE. Some
-        # taxa might be higher rank meaning that all rows might not be in tips
-        # even after pruning; they have still child-nodes.
-        tree <- drop.tip(tree, remove_tips, trim.internal = FALSE, collapse.singles = FALSE)
-        # If all tips were dropped, the result is NULL --> stop loop
-        if( is.null(tree) ){
-            break
-        }
-        # Again, get those tips of updated tree that cannot be found from provided nodes
-        remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
-    }
-    return(tree)
-}
-
 .calc_log_modulo_skewness <- function(mat, quantile = 0.5, num_of_classes = 50, ...){
     # quantile must be a numeric value between 0-1
     if( !( is.numeric(quantile) && (quantile >= 0 && quantile <= 1) ) ){
