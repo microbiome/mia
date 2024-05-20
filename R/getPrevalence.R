@@ -44,7 +44,7 @@
 #'     \code{agg.na.rm} instead of \code{na.rm}. (default: \code{FALSE})
 #'   }
 #'   \item{for \code{getPrevalentFeatures}, \code{getRareFeatures}, 
-#'     \code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional 
+#'     \code{subsetByPrevalent} and \code{subsetByRare} additional 
 #'     parameters passed to \code{getPrevalence}}
 #'   \item{for \code{getPrevalentAbundance} additional parameters passed to
 #'     \code{getPrevalentFeatures}}
@@ -143,11 +143,11 @@
 #' head(prevalent)
 #' 
 #' # Gets a subset of object that includes prevalent taxa
-#' altExp(tse, "prevalent") <- subsetByPrevalentFeatures(tse,
-#'                                        rank = "Family",
-#'                                        detection = 0.001,
-#'                                        prevalence = 0.55,
-#'                                        as_relative = TRUE)
+#' altExp(tse, "prevalent") <- subsetByPrevalent(tse,
+#'                                              rank = "Family",
+#'                                              detection = 0.001,
+#'                                              prevalence = 0.55,
+#'                                              as_relative = TRUE)
 #' altExp(tse, "prevalent")                                 
 #'
 #' # getRareFeatures returns the inverse
@@ -159,11 +159,11 @@
 #' head(rare)
 #' 
 #' # Gets a subset of object that includes rare taxa
-#' altExp(tse, "rare") <- subsetByRareFeatures(tse,
-#'                              rank = "Class",
-#'                              detection = 0.001,
-#'                              prevalence = 0.001,
-#'                              as_relative = TRUE)
+#' altExp(tse, "rare") <- subsetByRare(tse,
+#'                                     rank = "Class",
+#'                                     detection = 0.001,
+#'                                     prevalence = 0.001,
+#'                                     as_relative = TRUE)
 #' altExp(tse, "rare")      
 #' 
 #' # Names of both experiments, prevalent and rare, can be found from slot altExpNames
@@ -473,19 +473,17 @@ setMethod("getRareTaxa", signature = c(x = "ANY"),
         }
 )
 
-############################# subsetByPrevalentFeatures ############################
+############################# subsetByPrevalent ############################
 
 #' @rdname getPrevalence
-#' @aliases subsetByPrevalentTaxa
 #' @export
-setGeneric("subsetByPrevalentFeatures", signature = "x",
+setGeneric("subsetByPrevalent", signature = "x",
            function(x, ...)
-               standardGeneric("subsetByPrevalentFeatures"))
+               standardGeneric("subsetByPrevalent"))
 
 #' @rdname getPrevalence
-#' @aliases subsetByPrevalentTaxa
 #' @export
-setMethod("subsetByPrevalentFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("subsetByPrevalent", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
         x <- .agg_for_prevalence(x, rank = rank, ...)
         prevalent_indices <- .get_prevalent_indices(x, ...)
@@ -493,58 +491,22 @@ setMethod("subsetByPrevalentFeatures", signature = c(x = "SummarizedExperiment")
     }
 )
 
-#' @rdname getPrevalence
-#' @aliases subsetByPrevalentFeatures
-#' @export
-setGeneric("subsetByPrevalentTaxa", signature = c("x"),
-        function(x, ...) 
-            standardGeneric("subsetByPrevalentTaxa"))
+############################# subsetByRare #################################
 
 #' @rdname getPrevalence
-#' @aliases subsetByPrevalentFeatures
 #' @export
-setMethod("subsetByPrevalentTaxa", signature = c(x = "ANY"),
-        function(x, ...){
-            .Deprecated(old ="subsetByPrevalentTaxa", new = "subsetByPrevalentFeatures", msg = "The 'subsetByPrevalentTaxa' function is deprecated. Use 'subsetByPrevalentFeatures' instead.")
-            subsetByPrevalentFeatures(x, ...)
-        }
-)
-
-############################# subsetByRareFeatures #################################
-
-#' @rdname getPrevalence
-#' @aliases subsetByRareTaxa
-#' @export
-setGeneric("subsetByRareFeatures", signature = "x",
+setGeneric("subsetByRare", signature = "x",
            function(x, ...)
-               standardGeneric("subsetByRareFeatures"))
+               standardGeneric("subsetByRare"))
 
 #' @rdname getPrevalence
-#' @aliases subsetByRareTaxa
 #' @export
-setMethod("subsetByRareFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("subsetByRare", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, ...){
         x <- .agg_for_prevalence(x, rank = rank, ...)
         rare_indices <- .get_rare_indices(x, ...)
         x[rare_indices, ]
     }
-)
-
-#' @rdname getPrevalence
-#' @aliases subsetByRareFeatures
-#' @export
-setGeneric("subsetByRareTaxa", signature = c("x"),
-        function(x, ...) 
-            standardGeneric("subsetByRareTaxa"))
-
-#' @rdname getPrevalence
-#' @aliases subsetByRareFeatures
-#' @export
-setMethod("subsetByRareTaxa", signature = c(x = "ANY"),
-        function(x, ...){
-            .Deprecated(old ="subsetByRareTaxa", new = "subsetByRareFeatures", msg = "The 'subsetByRareTaxa' function is deprecated. Use 'subsetByRareFeatures' instead.")
-            subsetByRareFeatures(x, ...)
-        }
 )
 
 ############################# getPrevalentAbundance ############################

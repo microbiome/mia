@@ -43,6 +43,14 @@
 \alias{loadFromHumann}
 \alias{countDominantFeatures}
 \alias{countDominantFeatures,SummarizedExperiment-method}
+\alias{subsetByRareTaxa}
+\alias{subsetByRareTaxa,ANY-method}
+\alias{subsetByRareFeatures}
+\alias{subsetByRareFeatures,ANY-method}
+\alias{subsetByPrevalentTaxa}
+\alias{subsetByPrevalentTaxa,ANY-method}
+\alias{subsetByPrevalentFeatures}
+\alias{subsetByPrevalentFeatures,ANY-method}
 \alias{countDominantTaxa}
 \alias{countDominantTaxa,SummarizedExperiment-method}
 \alias{full_join}
@@ -141,6 +149,22 @@ loadFromHumann(...)
 countDominantFeatures(x, ...)
 
 \S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
+
+subsetByRareTaxa(x, ...)
+
+\S4method{subsetByRareTaxa}{ANY}(x, ...)
+
+subsetByRareFeatures(x, ...)
+
+\S4method{subsetByRareFeatures}{ANY}(x, ...)
+
+subsetByPrevalentTaxa(x, ...)
+
+\S4method{subsetByPrevalentTaxa}{ANY}(x, ...)
+
+subsetByPrevalentFeatures(x, ...)
+
+\S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
 
 countDominantTaxa(x, ...)
 

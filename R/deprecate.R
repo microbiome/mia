@@ -380,6 +380,74 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
+setGeneric(
+    "subsetByRareTaxa", signature = c("x"), function(x, ...) 
+        standardGeneric("subsetByRareTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsetByRareTaxa", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(
+            msg = "'subsetByRareTaxa' is deprecated. ",
+            "Use 'subsetByRare' instead.")
+        subsetByRare(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "subsetByRareFeatures", signature = c("x"), function(x, ...) 
+        standardGeneric("subsetByRareFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsetByRareFeatures", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(
+            msg = "'subsetByRareFeatures' is deprecated. ",
+            "Use 'subsetByRare' instead.")
+        subsetByRare(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "subsetByPrevalentTaxa", signature = c("x"), function(x, ...) 
+        standardGeneric("subsetByPrevalentTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsetByPrevalentTaxa", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(
+            msg = "'subsetByPrevalentTaxa' is deprecated. Use ",
+            "'subsetByPrevalent' instead.")
+        subsetByPrevalent(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "subsetByPrevalentFeatures", signature = c("x"), function(x, ...) 
+        standardGeneric("subsetByPrevalentFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsetByPrevalentFeatures", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(
+            msg = "'subsetByPrevalentFeatures' is deprecated. Use ",
+            "'subsetByPrevalent' instead.")
+        subsetByPrevalent(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
 setGeneric("countDominantTaxa", signature = c("x"),
            function(x, ...)
                standardGeneric("countDominantTaxa"))
