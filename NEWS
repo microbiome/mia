@@ -127,3 +127,4 @@ Changes in version 1.13.x
   relAbundanceCounts
 + rename getRare* functions to getRare, getUnique* functions to getUnique, 
   getTop* functions to getTop and getPrevalent* functions to getPrevalent
++ Rename subsampleCounts to rarefyAssay

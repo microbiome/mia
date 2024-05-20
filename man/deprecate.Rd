@@ -95,6 +95,8 @@
 \alias{getPrevalentTaxa}
 \alias{getPrevalentTaxa,ANY-method}
 \alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{subsampleCounts}
+\alias{subsampleCounts,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -282,6 +284,10 @@ getPrevalentTaxa(x, ...)
 \S4method{getPrevalentTaxa}{ANY}(x, ...)
 
 \S4method{getPrevalentTaxa}{SummarizedExperiment}(x, ...)
+
+subsampleCounts(x, ...)
+
+\S4method{subsampleCounts}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

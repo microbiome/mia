@@ -821,3 +821,21 @@ setMethod(
         getPrevalent(x,...)
     }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "subsampleCounts", signature = c("x"), function(x, ...)
+        standardGeneric("subsampleCounts"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsampleCounts", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'subsampleCounts' is deprecated. ",
+            "Use 'rarefyAssay' instead.")
+        rarefyAssay(x, ...)
+    }
+)

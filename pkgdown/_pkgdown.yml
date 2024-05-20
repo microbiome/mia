@@ -67,7 +67,7 @@ reference:
 - contents:
   - meltSE
   - relabundance
-  - subsampleCounts
+  - rarefyAssay
   - subsetSamples
 - subtitle: Datasets
 - contents:
