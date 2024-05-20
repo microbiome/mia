@@ -1,7 +1,7 @@
 #' Converting a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object into a long data.frame
 #'
-#' \code{meltAssay} Converts a
+#' \code{meltSE} Converts a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object into a
 #' long data.frame which can be used for \code{tidyverse}-tools.
 #'
@@ -46,10 +46,10 @@
 #'
 #' @param ... optional arguments:
 #' \itemize{
-#'   \item{check_names}{ A boolean value passed to data.frame function's check.name
+#'   \item check_names: A boolean value passed to data.frame function's check.name
 #'   argument. Determines if sample names are checked that they are syntactically 
 #'   valid variable names and are not duplicated. If they are not, sample names 
-#'   are modified. (default: \code{check_names = TRUE})}
+#'   are modified. (default: \code{check_names = TRUE})
 #' }
 #'
 #' @return A \code{tibble} with the molten data. The assay values are given in a
@@ -57,14 +57,14 @@
 #' column \dQuote{FeatureID} will contain the rownames, if set, and analogously
 #' a column \dQuote{SampleID} with the colnames, if set
 #'
-#' @name meltAssay
+#' @name meltSE
 
 #' @author
 #' Sudarshan A. Shetty
 #'
 #' @examples
 #' data(GlobalPatterns)
-#' molten_tse <- meltAssay(GlobalPatterns,
+#' molten_tse <- meltSE(GlobalPatterns,
 #'                         assay.type = "counts",
 #'                         add_row_data = TRUE,
 #'                         add_col_data = TRUE
@@ -72,9 +72,9 @@
 #' molten_tse
 NULL
 
-#' @rdname meltAssay
+#' @rdname meltSE
 #' @export
-setGeneric("meltAssay",
+setGeneric("meltSE",
            signature = "x",
            function(x,
                     assay.type = assay_name, assay_name = "counts",
@@ -83,7 +83,7 @@ setGeneric("meltAssay",
                     feature_name = "FeatureID",
                     sample_name = "SampleID",
                     ...)
-               standardGeneric("meltAssay")
+               standardGeneric("meltSE")
 )
 
 .norm_add_row_data <- function(add_row_data, x, feature_name){
@@ -164,10 +164,10 @@ setGeneric("meltAssay",
 }
 
 
-#' @rdname meltAssay
+#' @rdname meltSE
 #'
 #' @export
-setMethod("meltAssay", signature = c(x = "SummarizedExperiment"),
+setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
     function(x,
              assay.type = assay_name, assay_name = "counts", 
              add_row_data = NULL,

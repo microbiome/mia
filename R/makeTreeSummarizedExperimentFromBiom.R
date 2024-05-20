@@ -21,9 +21,9 @@
 #' 
 #' @param ... additional arguments 
 #'   \itemize{
-#'        \item{\code{patter}}{\code{character} value specifying artifacts
+#'        \item \code{patter}: \code{character} value specifying artifacts
 #'        to be removed. If \code{patterns = "auto"}, special characters
-#'        are removed. (default: \code{pattern = "auto"})}
+#'        are removed. (default: \code{pattern = "auto"})
 #'    }
 #' 
 #' @return An object of class
