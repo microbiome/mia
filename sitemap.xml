@@ -136,6 +136,9 @@
     <loc>/reference/perSampleDominantTaxa.html</loc>
   </url>
   <url>
+    <loc>/reference/rarefyAssay.html</loc>
+  </url>
+  <url>
     <loc>/reference/relabundance.html</loc>
   </url>
   <url>
@@ -152,9 +155,6 @@
   </url>
   <url>
     <loc>/reference/splitOn.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subsampleCounts.html</loc>
   </url>
   <url>
     <loc>/reference/subsetSamples.html</loc>
