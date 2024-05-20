@@ -53,12 +53,11 @@ test_that("summaries", {
                                  method = "mean",
                                  top = 5,
                                  assay.type = "counts") )
-    expect_equal( getUnique(GlobalPatterns, "Phylum", sort = TRUE),
-                  getUnique(GlobalPatterns, "Phylum", sort = TRUE) )
-    expect_equal( countDominantTaxa(GlobalPatterns),
-                  countDominantFeatures(GlobalPatterns))
+
+    expect_equal( summarizeDominance(GlobalPatterns),
+                  summarizeDominance(GlobalPatterns))
     
     # Test with multiple equal dominant taxa in one sample
     assay(GlobalPatterns)[1, 1] <- max(assay(GlobalPatterns)[, 1])
-    expect_warning(countDominantFeatures(GlobalPatterns, complete = FALSE))
+    expect_warning(summarizeDominance(GlobalPatterns, complete = FALSE))
 })

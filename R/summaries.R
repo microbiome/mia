@@ -78,13 +78,13 @@
 #'                              na.rm = TRUE))
 #'
 #' # Gets the overview of dominant taxa
-#' dominant_taxa <- countDominantFeatures(GlobalPatterns,
+#' dominant_taxa <- summarizeDominance(GlobalPatterns,
 #'                                    rank = "Genus")
 #' dominant_taxa
 #'
 #' # With group, it is possible to group observations based on specified groups
 #' # Gets the overview of dominant taxa
-#' dominant_taxa <- countDominantFeatures(GlobalPatterns,
+#' dominant_taxa <- summarizeDominance(GlobalPatterns,
 #'                                    rank = "Genus",
 #'                                    group = "SampleType",
 #'                                    na.rm = TRUE)
@@ -191,29 +191,28 @@ setMethod("getUnique", signature = c(x = "SummarizedExperiment"),
 #' @param name The column name for the features. The default is 'dominant_taxa'.
 #'
 #' @param ... Additional arguments passed on to \code{agglomerateByRank()} when
-#'   \code{rank} is specified for \code{countDominantFeatures}.
+#'   \code{rank} is specified for \code{summarizeDominance}.
 #'
 #'
 #' @details
-#' \code{countDominantFeatures} returns information about most dominant
+#' \code{summarizeDominance} returns information about most dominant
 #' taxa in a tibble. Information includes their absolute and relative
 #' abundances in whole data set.
 #'
 #'
 #' @return
-#' The \code{countDominantFeatures} returns an overview in a tibble. It contains dominant taxa
+#' The \code{summarizeDominance} returns an overview in a tibble. It contains dominant taxa
 #' in a column named \code{*name*} and its abundance in the data set.
 #' 
 #' @export
-setGeneric("countDominantFeatures",signature = c("x"),
+setGeneric("summarizeDominance",signature = c("x"),
            function(x, group = NULL, name = "dominant_taxa", ...)
-               standardGeneric("countDominantFeatures"))
+               standardGeneric("summarizeDominance"))
 
 
 #' @rdname summaries
-#' @aliases countDominantTaxa
 #' @export
-setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
+setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
     function(x, group = NULL, name = "dominant_taxa", ...){
         # Input check
         # group check
@@ -253,25 +252,6 @@ setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
         return(tab)
     }
 )
-
-
-#' @rdname summaries
-#' @aliases countDominantFeatures
-#' @export
-setGeneric("countDominantTaxa", signature = c("x"),
-           function(x, ...)
-               standardGeneric("countDominantTaxa"))
-
-#' @rdname summaries
-#' @aliases countDominantFeatures
-#' @export
-setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-        .Deprecated(old ="countDominantTaxa", new = "countDominantFeatures", msg = "The 'countDominantTaxa' function is deprecated. Use 'countDominantFeatures' instead.")
-        countDominantFeatures(x, ...)
-    }
-)
-
 
 ################################ HELP FUNCTIONS ################################
 
