@@ -118,18 +118,18 @@ a <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarized
 to <code>agglomerateByVariable</code> and
 <code><a href="https://rdrr.io/pkg/scuttle/man/sumCountsAcrossFeatures.html" class="external-link">sumCountsAcrossFeatures</a></code>,
 to <code>getPrevalence</code> and <code>getPrevalentTaxa</code> and used in
-<code>agglomeratebyPrevalence</code></p><ul><li><p><code>remove_empty_ranks</code>A single boolean value for selecting
+<code>agglomeratebyPrevalence</code></p><ul><li><p><code>remove_empty_ranks</code>: A single boolean value for selecting
 whether to remove those columns of rowData that include only NAs after
 agglomeration. (By default: <code>remove_empty_ranks = FALSE</code>)</p></li>
-<li><p><code>make_unique</code>A single boolean value for selecting
+<li><p><code>make_unique</code>: A single boolean value for selecting
 whether to make rownames unique. (By default: <code>make_unique = TRUE</code>)</p></li>
-<li><p><code>detection</code>Detection threshold for absence/presence.
+<li><p><code>detection</code>: Detection threshold for absence/presence.
 Either an absolute value compared directly to the values of <code>x</code>
 or a relative value between 0 and 1, if <code>as_relative = FALSE</code>.</p></li>
-<li><p><code>prevalence</code>Prevalence threshold (in 0 to 1). The
+<li><p><code>prevalence</code>: Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set <code>include_lowest</code> to <code>TRUE</code>.</p></li>
-<li><p><code>as.relative</code>Logical scalar: Should the detection
+<li><p><code>as.relative</code>: Logical scalar: Should the detection
 threshold be applied on compositional (relative) abundances?
 (default: <code>FALSE</code>)</p></li>
 </ul></dd>

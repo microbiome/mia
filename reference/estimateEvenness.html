@@ -110,7 +110,7 @@ stored in.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>optional arguments:</p><ul><li><p>threshold a numeric threshold. assay values below or equal
+<dd><p>optional arguments:</p><ul><li><p>threshold:  a numeric threshold. assay values below or equal
 to this threshold will be set to zero.</p></li>
 </ul></dd>
 
@@ -134,13 +134,13 @@ object specifying whether calculation of estimates should be parallelized.</p></
     <p>Evenness is a standard index in community ecology, and it quantifies how evenly the abundances
 of different species are distributed. The following evenness indices are provided:</p>
 <p>By default, this function returns all indices.</p>
-<p>The available evenness indices include the following (all in lowercase):</p><ul><li><p>'camargo' Camargo's evenness (Camargo 1992)</p></li>
-<li><p>'simpson_evenness' Simpson’s evenness is calculated as inverse Simpson diversity (1/lambda) divided by
+<p>The available evenness indices include the following (all in lowercase):</p><ul><li><p>'camargo': Camargo's evenness (Camargo 1992)</p></li>
+<li><p>'simpson_evenness': Simpson’s evenness is calculated as inverse Simpson diversity (1/lambda) divided by
 observed species richness S: (1/lambda)/S.</p></li>
-<li><p>'pielou' Pielou's evenness (Pielou, 1966), also known as Shannon or Shannon-Weaver/Wiener/Weiner
+<li><p>'pielou': Pielou's evenness (Pielou, 1966), also known as Shannon or Shannon-Weaver/Wiener/Weiner
 evenness; H/ln(S). The Shannon-Weaver is the preferred term; see Spellerberg and Fedor (2003).</p></li>
-<li><p>'evar' Smith and Wilson’s Evar index (Smith &amp; Wilson 1996).</p></li>
-<li><p>'bulla' Bulla’s index (O) (Bulla 1994).</p></li>
+<li><p>'evar': Smith and Wilson’s Evar index (Smith &amp; Wilson 1996).</p></li>
+<li><p>'bulla': Bulla’s index (O) (Bulla 1994).</p></li>
 </ul><p>Desirable statistical evenness metrics avoid strong bias towards very
 large or very small abundances; are independent of richness; and range
 within the unit interval with increasing evenness (Smith &amp; Wilson 1996).

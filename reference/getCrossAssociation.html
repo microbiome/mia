@@ -97,12 +97,12 @@ object.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Additional arguments:</p><ul><li><p><code>symmetric</code> A single boolean value for specifying if
+<dd><p>Additional arguments:</p><ul><li><p><code>symmetric</code>:  A single boolean value for specifying if
 measure is symmetric or not. When <code>symmetric = TRUE</code>, associations
 are calculated only for unique variable-pairs, and they are assigned to
 corresponding variable-pair. This decreases the number of calculations in 2-fold
 meaning faster execution. (By default: <code>symmetric = FALSE</code>)</p></li>
-<li><p><code>association_FUN</code> A function that is used to calculate (dis-)similarity
+<li><p><code>association_FUN</code>:  A function that is used to calculate (dis-)similarity
 between features. Function must take matrix as an input and give numeric
 values as an output. Adjust <code>method</code> and other parameters correspondingly.
 Supported functions are, for example, <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">stats::dist</a></code> and <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegan::vegdist</a></code>.</p></li>

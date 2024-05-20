@@ -167,51 +167,61 @@ indices (species richness, evenness, diversity, rarity). More dominant
 communities are less diverse.</p>
 <p><code>estimateDominance</code> calculates the following community dominance
 indices:</p>
-<ul><li><p>'absolute' Absolute index equals to the absolute abundance of the
+<ul><li><p>'absolute': Absolute index equals to the absolute abundance of the
 most dominant n species of the sample (specify the number with the argument
 <code>ntaxa</code>). Index gives positive integer values.</p></li>
-<li><p>'dbp' Berger-Parker index (See Berger &amp; Parker 1970) calculation
+<li><p>'dbp': Berger-Parker index (See Berger &amp; Parker 1970) calculation
 is a special case of the 'relative' index. dbp is the relative abundance of
 the most
 abundant species of the sample. Index gives values in interval 0 to 1,
-where bigger value represent greater dominance.$$dbp = \frac{N_1}{N_{tot}}$$ where \(N_1\) is the absolute abundance of the most
+where bigger value represent greater dominance.</p>
+<p>$$dbp = \frac{N_1}{N_{tot}}$$ where \(N_1\) is the absolute abundance of the most
 dominant species and \(N_{tot}\) is the sum of absolute abundances of all
 species.</p></li>
-<li><p>'core_abundance'  Core abundance index is related to core species.
+<li><p>'core_abundance': Core abundance index is related to core species.
 Core species are species that are most abundant in all samples, i.e., in
 whole data set. Core species are defined as those species that have
 prevalence over 50\<!-- %. It means that in order to belong to core species, -->
 species must be prevalent in 50\<!-- % of samples. Core species are used to -->
 calculate the core abundance index. Core abundance index is sum of relative
 abundances of core species in the sample. Index gives values in interval
-0 to 1, where bigger value represent greater dominance.$$core_abundance = \frac{N_{core}}{N_{tot}}$$ where \(N_{core}\) is the sum of absolute
+0 to 1, where bigger value represent greater dominance.</p>
+<p>$$core_abundance = \frac{N_{core}}{N_{tot}}$$ where \(N_{core}\) is the sum of absolute
 abundance of the core species and \(N_{tot}\) is the sum of absolute
 abundances of all species.</p></li>
-<li><p>'gini'  Gini index is probably best-known from socio-economic
+<li><p>'gini':  Gini index is probably best-known from socio-economic
 contexts (Gini 1921). In economics, it is used to measure, for example, how
 unevenly income is distributed among population. Here, Gini index is used
-similarly, but income is replaced with abundance.If there is small group of species
+similarly, but income is replaced with abundance.</p>
+<p>If there is small group of species
 that represent large portion of total abundance of microbes, the inequality
 is large and Gini index closer to 1. If all species has equally large
 abundances, the equality is perfect and Gini index equals 0. This index
 should not be confused with Gini-Simpson index, which quantifies diversity.</p></li>
-<li><p>'dmn' McNaughton’s index is the sum of relative abundances of the two
+<li><p>'dmn': McNaughton’s index is the sum of relative abundances of the two
 most abundant species of the sample (McNaughton &amp; Wolf, 1970). Index gives
-values in the unit interval:$$dmn = (N_1 + N_2)/N_tot$$where \(N_1\) and \(N_2\) are the absolute
+values in the unit interval:</p>
+<p>$$dmn = (N_1 + N_2)/N_tot$$</p>
+<p>where \(N_1\) and \(N_2\) are the absolute
 abundances of the two most dominant species and \(N_{tot}\) is the sum of
 absolute abundances of all species.</p></li>
-<li><p>'relative'  Relative index equals to the relative abundance of the
+<li><p>'relative': Relative index equals to the relative abundance of the
 most dominant n species of the sample (specify the number with the
 argument <code>ntaxa</code>).
-This index gives values in interval 0 to 1.$$relative = N_1/N_tot$$where \(N_1\) is the absolute abundance of the most
+This index gives values in interval 0 to 1.</p>
+<p>$$relative = N_1/N_tot$$</p>
+<p>where \(N_1\) is the absolute abundance of the most
 dominant species and \(N_{tot}\) is the sum of absolute abundances of all
 species.</p></li>
-<li><p>'simpson_lambda'  Simpson's (dominance) index or Simpson's lambda is
+<li><p>'simpson_lambda': Simpson's (dominance) index or Simpson's lambda is
 the sum of squared relative abundances. This index gives values in the unit interval.
 This value equals the probability that two randomly chosen individuals
 belongs to the
 same species. The higher the probability, the greater the dominance (See
-e.g. Simpson 1949).$$lambda = \sum(p^2)$$where p refers to relative abundances.There is also a more advanced Simpson dominance index (Simpson 1949).
+e.g. Simpson 1949).</p>
+<p>$$lambda = \sum(p^2)$$</p>
+<p>where p refers to relative abundances.</p>
+<p>There is also a more advanced Simpson dominance index (Simpson 1949).
 However, this is not provided and the simpler squared sum of relative
 abundances is used instead as the alternative index is not in the unit
 interval and it is highly
