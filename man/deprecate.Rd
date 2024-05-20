@@ -41,36 +41,16 @@
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
-\alias{getUniqueFeatures}
-\alias{getUniqueFeatures,SummarizedExperiment-method}
 \alias{countDominantFeatures}
 \alias{countDominantFeatures,SummarizedExperiment-method}
-\alias{getUniqueTaxa}
-\alias{getUniqueTaxa,SummarizedExperiment-method}
 \alias{subsetByRareTaxa}
 \alias{subsetByRareTaxa,ANY-method}
-\alias{getTopFeatures}
-\alias{getTopFeatures,SummarizedExperiment-method}
 \alias{subsetByRareFeatures}
 \alias{subsetByRareFeatures,ANY-method}
-\alias{getTopTaxa}
-\alias{getTopTaxa,SummarizedExperiment-method}
 \alias{subsetByPrevalentTaxa}
 \alias{subsetByPrevalentTaxa,ANY-method}
-\alias{getRareFeatures}
-\alias{getRareFeatures,ANY-method}
 \alias{subsetByPrevalentFeatures}
 \alias{subsetByPrevalentFeatures,ANY-method}
-\alias{getRareFeatures,SummarizedExperiment-method}
-\alias{getRareTaxa}
-\alias{getRareTaxa,ANY-method}
-\alias{getRareTaxa,SummarizedExperiment-method}
-\alias{getPrevalentFeatures}
-\alias{getPrevalentFeatures,ANY-method}
-\alias{getPrevalentFeatures,SummarizedExperiment-method}
-\alias{getPrevalentTaxa}
-\alias{getPrevalentTaxa,ANY-method}
-\alias{getPrevalentTaxa,SummarizedExperiment-method}
 \alias{countDominantTaxa}
 \alias{countDominantTaxa,SummarizedExperiment-method}
 \alias{full_join}
@@ -95,6 +75,26 @@
 \alias{transformCounts}
 \alias{transformFeatures}
 \alias{transformFeatures,SummarizedExperiment-method}
+\alias{getUniqueFeatures}
+\alias{getUniqueFeatures,SummarizedExperiment-method}
+\alias{getUniqueTaxa}
+\alias{getUniqueTaxa,SummarizedExperiment-method}
+\alias{getTopFeatures}
+\alias{getTopFeatures,SummarizedExperiment-method}
+\alias{getTopTaxa}
+\alias{getTopTaxa,SummarizedExperiment-method}
+\alias{getRareFeatures}
+\alias{getRareFeatures,ANY-method}
+\alias{getRareFeatures,SummarizedExperiment-method}
+\alias{getRareTaxa}
+\alias{getRareTaxa,ANY-method}
+\alias{getRareTaxa,SummarizedExperiment-method}
+\alias{getPrevalentFeatures}
+\alias{getPrevalentFeatures,ANY-method}
+\alias{getPrevalentFeatures,SummarizedExperiment-method}
+\alias{getPrevalentTaxa}
+\alias{getPrevalentTaxa,ANY-method}
+\alias{getPrevalentTaxa,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -175,65 +175,25 @@ loadFromMetaphlan(...)
 
 loadFromHumann(...)
 
-getUniqueFeatures(x, ...)
-
-\S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
-
 countDominantFeatures(x, ...)
 
 \S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
-
-getUniqueTaxa(x, ...)
-
-\S4method{getUniqueTaxa}{SummarizedExperiment}(x, ...)
 
 subsetByRareTaxa(x, ...)
 
 \S4method{subsetByRareTaxa}{ANY}(x, ...)
 
-getTopFeatures(x, ...)
-
-\S4method{getTopFeatures}{SummarizedExperiment}(x, ...)
-
 subsetByRareFeatures(x, ...)
 
 \S4method{subsetByRareFeatures}{ANY}(x, ...)
-
-getTopTaxa(x, ...)
-
-\S4method{getTopTaxa}{SummarizedExperiment}(x, ...)
 
 subsetByPrevalentTaxa(x, ...)
 
 \S4method{subsetByPrevalentTaxa}{ANY}(x, ...)
 
-getRareFeatures(x, ...)
-
-\S4method{getRareFeatures}{ANY}(x, ...)
-
 subsetByPrevalentFeatures(x, ...)
 
 \S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
-
-\S4method{getRareFeatures}{SummarizedExperiment}(x, ...)
-
-getRareTaxa(x, ...)
-
-\S4method{getRareTaxa}{ANY}(x, ...)
-
-\S4method{getRareTaxa}{SummarizedExperiment}(x, ...)
-
-getPrevalentFeatures(x, ...)
-
-\S4method{getPrevalentFeatures}{ANY}(x, ...)
-
-\S4method{getPrevalentFeatures}{SummarizedExperiment}(x, ...)
-
-getPrevalentTaxa(x, ...)
-
-\S4method{getPrevalentTaxa}{ANY}(x, ...)
-
-\S4method{getPrevalentTaxa}{SummarizedExperiment}(x, ...)
 
 countDominantTaxa(x, ...)
 
@@ -282,6 +242,46 @@ transformCounts(x, ...)
 transformFeatures(x, ...)
 
 \S4method{transformFeatures}{SummarizedExperiment}(x, ...)
+
+getUniqueFeatures(x, ...)
+
+\S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
+
+getUniqueTaxa(x, ...)
+
+\S4method{getUniqueTaxa}{SummarizedExperiment}(x, ...)
+
+getTopFeatures(x, ...)
+
+\S4method{getTopFeatures}{SummarizedExperiment}(x, ...)
+
+getTopTaxa(x, ...)
+
+\S4method{getTopTaxa}{SummarizedExperiment}(x, ...)
+
+getRareFeatures(x, ...)
+
+\S4method{getRareFeatures}{ANY}(x, ...)
+
+\S4method{getRareFeatures}{SummarizedExperiment}(x, ...)
+
+getRareTaxa(x, ...)
+
+\S4method{getRareTaxa}{ANY}(x, ...)
+
+\S4method{getRareTaxa}{SummarizedExperiment}(x, ...)
+
+getPrevalentFeatures(x, ...)
+
+\S4method{getPrevalentFeatures}{ANY}(x, ...)
+
+\S4method{getPrevalentFeatures}{SummarizedExperiment}(x, ...)
+
+getPrevalentTaxa(x, ...)
+
+\S4method{getPrevalentTaxa}{ANY}(x, ...)
+
+\S4method{getPrevalentTaxa}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
