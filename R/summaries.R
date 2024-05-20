@@ -426,4 +426,3 @@ setMethod("summary", signature = c(object = "SummarizedExperiment"),
              call. = FALSE)
     }
 }
-

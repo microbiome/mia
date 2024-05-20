@@ -45,7 +45,7 @@ reference:
 - contents:
   - getPrevalence
   - getPrevalentAbundance
-  - getTopTaxa
+  - summaries
   - getCrossAssociation
   - getMediation
   - hierarchy-tree
