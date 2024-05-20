@@ -465,12 +465,12 @@ setGeneric("full_join", signature = c("x"),
 #' @rdname deprecate
 #' @export
 setMethod("full_join", signature = c(x = "ANY"),
-          function(x, ...){
-              .Deprecated(msg = paste0("'full_join' is deprecated. ",
-                                       "Use 'mergeSEs' with 'join = full' ",
-                                       "instead."))
-              mergeSEs(x, join = "full", ...)
-          }
+            function(x, ...){
+                .Deprecated(msg = paste0("'full_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = full' ",
+                                        "instead."))
+                mergeSEs(x, join = "full", ...)
+            }
 )
 
 #' @rdname deprecate
@@ -482,12 +482,12 @@ setGeneric("inner_join", signature = c("x"),
 #' @rdname deprecate
 #' @export
 setMethod("inner_join", signature = c(x = "ANY"),
-          function(x, ...){
-              .Deprecated(msg = paste0("'inner_join' is deprecated. ",
-                                       "Use 'mergeSEs' with 'join = inner' ",
-                                       "instead."))
-              mergeSEs(x, join = "inner", ...)
-          }
+            function(x, ...){
+                .Deprecated(msg = paste0("'inner_join' is deprecated. ",
+                                        "Use 'mergeSEs' with 'join = inner' ",
+                                        "instead."))
+                mergeSEs(x, join = "inner", ...)
+            }
 )
 
 #' @rdname deprecate
