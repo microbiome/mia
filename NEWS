@@ -122,3 +122,4 @@ Changes in version 1.13.x
 + agglomerateByRank: bugfix: trees was not pruned correctly
 + rename meltAssay to meltSE
 + Rename countDominantFeatures and countDominantTaxa to summarizeDominance
++ rename subsetByPrevalent* and subsetByRare* to subsetByPrevalent and subsetByRare

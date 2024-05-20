@@ -15,14 +15,10 @@
 \alias{getRareFeatures,ANY-method}
 \alias{getRareFeatures,SummarizedExperiment-method}
 \alias{getRareTaxa,ANY-method}
-\alias{subsetByPrevalentFeatures}
-\alias{subsetByPrevalentTaxa}
-\alias{subsetByPrevalentFeatures,SummarizedExperiment-method}
-\alias{subsetByPrevalentTaxa,ANY-method}
-\alias{subsetByRareFeatures}
-\alias{subsetByRareTaxa}
-\alias{subsetByRareFeatures,SummarizedExperiment-method}
-\alias{subsetByRareTaxa,ANY-method}
+\alias{subsetByPrevalent}
+\alias{subsetByPrevalent,SummarizedExperiment-method}
+\alias{subsetByRare}
+\alias{subsetByRare,SummarizedExperiment-method}
 \alias{getPrevalentAbundance}
 \alias{getPrevalentAbundance,ANY-method}
 \alias{getPrevalentAbundance,SummarizedExperiment-method}
@@ -80,21 +76,13 @@ getRareTaxa(x, ...)
 
 \S4method{getRareTaxa}{ANY}(x, ...)
 
-subsetByPrevalentFeatures(x, ...)
+subsetByPrevalent(x, ...)
 
-\S4method{subsetByPrevalentFeatures}{SummarizedExperiment}(x, rank = NULL, ...)
+\S4method{subsetByPrevalent}{SummarizedExperiment}(x, rank = NULL, ...)
 
-subsetByPrevalentTaxa(x, ...)
+subsetByRare(x, ...)
 
-\S4method{subsetByPrevalentTaxa}{ANY}(x, ...)
-
-subsetByRareFeatures(x, ...)
-
-\S4method{subsetByRareFeatures}{SummarizedExperiment}(x, rank = NULL, ...)
-
-subsetByRareTaxa(x, ...)
-
-\S4method{subsetByRareTaxa}{ANY}(x, ...)
+\S4method{subsetByRare}{SummarizedExperiment}(x, rank = NULL, ...)
 
 getPrevalentAbundance(
   x,
@@ -126,7 +114,7 @@ Note that you can specify whether to remove empty ranks with
 \code{agg.na.rm} instead of \code{na.rm}. (default: \code{FALSE})
 }
 \item{for \code{getPrevalentFeatures}, \code{getRareFeatures},
-\code{subsetByPrevalentFeatures} and \code{subsetByRareFeatures} additional
+\code{subsetByPrevalent} and \code{subsetByRare} additional
 parameters passed to \code{getPrevalence}}
 \item{for \code{getPrevalentAbundance} additional parameters passed to
 \code{getPrevalentFeatures}}
@@ -245,11 +233,11 @@ prevalent <- getPrevalentFeatures(tse,
 head(prevalent)
 
 # Gets a subset of object that includes prevalent taxa
-altExp(tse, "prevalent") <- subsetByPrevalentFeatures(tse,
-                                       rank = "Family",
-                                       detection = 0.001,
-                                       prevalence = 0.55,
-                                       as_relative = TRUE)
+altExp(tse, "prevalent") <- subsetByPrevalent(tse,
+                                             rank = "Family",
+                                             detection = 0.001,
+                                             prevalence = 0.55,
+                                             as_relative = TRUE)
 altExp(tse, "prevalent")                                 
 
 # getRareFeatures returns the inverse
@@ -261,11 +249,11 @@ rare <- getRareFeatures(tse,
 head(rare)
 
 # Gets a subset of object that includes rare taxa
-altExp(tse, "rare") <- subsetByRareFeatures(tse,
-                             rank = "Class",
-                             detection = 0.001,
-                             prevalence = 0.001,
-                             as_relative = TRUE)
+altExp(tse, "rare") <- subsetByRare(tse,
+                                    rank = "Class",
+                                    detection = 0.001,
+                                    prevalence = 0.001,
+                                    as_relative = TRUE)
 altExp(tse, "rare")      
 
 # Names of both experiments, prevalent and rare, can be found from slot altExpNames
