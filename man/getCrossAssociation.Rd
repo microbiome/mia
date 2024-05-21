@@ -45,15 +45,15 @@ object.}
 
 \item{...}{Additional arguments:
 \itemize{
-\item{\code{symmetric}}{ A single boolean value for specifying if
+\item \code{symmetric}:  A single boolean value for specifying if
 measure is symmetric or not. When \code{symmetric = TRUE}, associations
 are calculated only for unique variable-pairs, and they are assigned to
 corresponding variable-pair. This decreases the number of calculations in 2-fold
-meaning faster execution. (By default: \code{symmetric = FALSE}) }
-\item{\code{association_FUN}}{ A function that is used to calculate (dis-)similarity
+meaning faster execution. (By default: \code{symmetric = FALSE})
+\item \code{association_FUN}:  A function that is used to calculate (dis-)similarity
 between features. Function must take matrix as an input and give numeric
 values as an output. Adjust \code{method} and other parameters correspondingly.
-Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.}
+Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.
 }}
 
 \item{experiment1}{A single character or numeric value for selecting the experiment 1

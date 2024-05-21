@@ -108,8 +108,32 @@ unsplitByRanks(x, ...)
 object}
 
 \item{...}{arguments passed to \code{agglomerateByRank} function for
+<<<<<<< HEAD
 \code{SummarizedExperiment} objects and other functions.
 See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
+=======
+\code{SummarizedExperiment} objects,
+to \code{\link[=agglomerate-methods]{agglomerateByVariable}} and
+\code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
+to \code{getPrevalence} and \code{getPrevalentTaxa} and used in
+\code{agglomeratebyPrevalence}
+\itemize{
+\item \code{remove_empty_ranks}: A single boolean value for selecting
+whether to remove those columns of rowData that include only NAs after
+agglomeration. (By default: \code{remove_empty_ranks = FALSE})
+\item \code{make_unique}: A single boolean value for selecting
+whether to make rownames unique. (By default: \code{make_unique = TRUE})
+\item \code{detection}: Detection threshold for absence/presence.
+Either an absolute value compared directly to the values of \code{x}
+or a relative value between 0 and 1, if \code{as_relative = FALSE}.
+\item \code{prevalence}: Prevalence threshold (in 0 to 1). The
+required prevalence is strictly greater by default. To include the
+limit, set \code{include_lowest} to \code{TRUE}.
+\item \code{as.relative}: Logical scalar: Should the detection
+threshold be applied on compositional (relative) abundances?
+(default: \code{FALSE})
+}}
+>>>>>>> origin/devel
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}

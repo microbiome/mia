@@ -44,13 +44,13 @@ reference:
 - contents:
   - getPrevalence
   - getPrevalentAbundance
-  - getTopTaxa
+  - summaries
   - getCrossAssociation
   - getMediation
   - hierarchy-tree
 - subtitle: Dominance
 - contents:
-  - perSampleDominantTaxa
+  - getDominant
   - estimateDominance
 - subtitle: Evenness indeces
 - contents:
@@ -64,9 +64,9 @@ reference:
   - isContaminant
 - subtitle: Helper
 - contents:
-  - meltAssay
+  - meltSE
   - relabundance
-  - subsampleCounts
+  - rarefyAssay
   - subsetSamples
 - subtitle: Datasets
 - contents:

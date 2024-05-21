@@ -80,11 +80,11 @@ as batch information. (default: \code{batch = NULL})}
 \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
 
 \item{...}{\itemize{
-\item{for \code{isContaminant}/ \code{isNotContaminant}: }{arguments
+\item for \code{isContaminant}/ \code{isNotContaminant}: arguments
 passed on to \code{\link[decontam:isContaminant]{decontam:isContaminant}}
-or \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
-\item{for \code{addContaminantQC}/\code{addNotContaminantQC}: }{arguments
-passed on to \code{isContaminant}/ \code{isNotContaminant}}
+or \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}
+\item for \code{addContaminantQC}/\code{addNotContaminantQC}: arguments
+passed on to \code{isContaminant}/ \code{isNotContaminant}
 }}
 }
 \value{
