@@ -79,6 +79,9 @@
     <loc>/reference/getCrossAssociation.html</loc>
   </url>
   <url>
+    <loc>/reference/getDominant.html</loc>
+  </url>
+  <url>
     <loc>/reference/getMediation.html</loc>
   </url>
   <url>
@@ -131,9 +134,6 @@
   </url>
   <url>
     <loc>/reference/peerj13075.html</loc>
-  </url>
-  <url>
-    <loc>/reference/perSampleDominantTaxa.html</loc>
   </url>
   <url>
     <loc>/reference/rarefyAssay.html</loc>
