@@ -161,7 +161,11 @@ setMethod("agglomerateByRanks", signature = c(x = "TreeSummarizedExperiment"),
 #' @rdname agglomerate-methods
 #' @export 
 splitByRanks <- function(x, ...){
-    agglomerateByRanks(x, as.list = FALSE, ...)
+    # Hardcode as.list parameter
+    args <- list(...)[ !names(list(...)) %in% c("as.list") ]
+    args[["as.list"]] <- TRUE
+    args[["x"]] <- x
+    do.call(agglomerateByRanks, args)
 }
 
 ################################################################################

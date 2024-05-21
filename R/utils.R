@@ -309,7 +309,8 @@
 # This function can be used to add values to altExp
 .add_to_altExps <- function(x, values, name = names(values), ...){
     # Check values
-    if( !(is(values, "list") && length(values) > 0) ){
+    if( !((is(values, "list") || is(values, "SimpleList")) &&
+            length(values) > 0) ){
         stop("'values' must be non-empty list.", call. = FALSE)
     }
     # Check names
