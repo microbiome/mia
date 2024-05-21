@@ -182,7 +182,8 @@ setMethod("calculateUnifrac",
         links[ links$whichTree != tree_name, ] <- NA
         # Take only nodeLabs
         links <- links[ , "nodeLab" ]
-        calculateUnifrac(mat, tree = tree, nodeLab = links, ...)
+        res <- calculateUnifrac(mat, tree = tree, nodeLab = links, ...)
+        return(res)
     }
 )
 
