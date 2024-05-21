@@ -364,6 +364,106 @@ loadFromHumann <- function(...) {
 
 #' @rdname deprecate
 #' @export
+setGeneric("countDominantFeatures", signature = c("x"),
+            function(x, ...)
+                standardGeneric("countDominantFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod("countDominantFeatures", signature = c(x = "SummarizedExperiment"),
+            function(x, ...){
+                .Deprecated(msg = "'countDominantFeatures' function is deprecated. ",
+                            "Use 'summarizeDominance' instead.")
+                summarizeDominance(x, ...)
+            }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "subsetByRareTaxa", signature = c("x"), function(x, ...) 
+        standardGeneric("subsetByRareTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsetByRareTaxa", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(
+            msg = "'subsetByRareTaxa' is deprecated. ",
+            "Use 'subsetByRare' instead.")
+        subsetByRare(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "subsetByRareFeatures", signature = c("x"), function(x, ...) 
+        standardGeneric("subsetByRareFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsetByRareFeatures", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(
+            msg = "'subsetByRareFeatures' is deprecated. ",
+            "Use 'subsetByRare' instead.")
+        subsetByRare(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "subsetByPrevalentTaxa", signature = c("x"), function(x, ...) 
+        standardGeneric("subsetByPrevalentTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsetByPrevalentTaxa", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(
+            msg = "'subsetByPrevalentTaxa' is deprecated. Use ",
+            "'subsetByPrevalent' instead.")
+        subsetByPrevalent(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "subsetByPrevalentFeatures", signature = c("x"), function(x, ...) 
+        standardGeneric("subsetByPrevalentFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsetByPrevalentFeatures", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(
+            msg = "'subsetByPrevalentFeatures' is deprecated. Use ",
+            "'subsetByPrevalent' instead.")
+        subsetByPrevalent(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("countDominantTaxa", signature = c("x"),
+           function(x, ...)
+               standardGeneric("countDominantTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod("countDominantTaxa", signature = c(x = "SummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = "'countDominantTaxa' function is deprecated. ",
+                          "Use 'summarizeDominance' instead.")
+              summarizeDominance(x, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
 setGeneric("full_join", signature = c("x"),
            function(x, ...)
                standardGeneric("full_join"))
@@ -414,7 +514,7 @@ setMethod("left_join", signature = c(x = "ANY"),
 )
 
 #' @rdname deprecate
-#' @export
+#' @export            
 setGeneric("right_join", signature = c("x"),
            function(x, ...)
                standardGeneric("right_join"))
@@ -453,4 +553,361 @@ setMethod("estimateDivergence", signature = c(x="SummarizedExperiment"),
                                         "Use 'addDivergence' instead."))
                 addDivergence(x, ...)
             }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("meltAssay",signature = "x",
+            function(x, ...)
+                standardGeneric("meltAssay"))
+
+#' @rdname deprecate
+#' @export
+setMethod("meltAssay", signature = c(x="SummarizedExperiment"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'meltAssay' is deprecated. ",
+                                       "Use 'meltSE' instead."))
+              meltSE(x, ...)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "transformSamples", signature = c("x"), function(x,...)
+        standardGeneric("transformSamples"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "transformSamples", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            "'transformSamples' is deprecated. Use 'transformAssay' instead.")
+        transformAssay(x, MARGIN = "samples", ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "ZTransform", signature = c("x"), function(x, ...)
+        standardGeneric("ZTransform"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "ZTransform", signature = c(x = "SummarizedExperiment"), function(x, ...){
+        .Deprecated(
+            "'Ztransform' is deprecated. Use 'transformAssay' instead.")
+        transformAssay(x, method = "z", MARGIN = "features", ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "relAbundanceCounts", signature = c("x"), function(x, ...)
+        standardGeneric("relAbundanceCounts"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            "'relAbundanceCounts' is deprecated. ",
+            "Use 'transformAssay' instead.")
+        transformAssay(x, method = "relabundance", MARGIN = "samples", ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+transformCounts <- function(x, ...){
+    .Deprecated(
+        "'transformCounts' is deprecated. Use 'transformAssay' instead.")
+    return(transformAssay(x,...))
+}
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "transformFeatures", signature = c("x"), function(x, ...)
+        standardGeneric("transformFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "transformFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            "'transformFeatures' is deprecated. Use 'transformAssay' instead.")
+        transformAssay(x, MARGIN = "features", ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "getUniqueFeatures", signature = c("x"), function(x, ...)
+        standardGeneric("getUniqueFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getUniqueFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x,...){
+        .Deprecated(
+            msg = "'getUniqueFeatures' is deprecated. Use 'getUnique' instead.")
+        getUnique(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "getUniqueTaxa", signature = c("x"), function(x, ...)
+        standardGeneric("getUniqueTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getUniqueTaxa", signature = c(x = "SummarizedExperiment"), function(x,...){
+        .Deprecated(
+            msg = "'getUniqueTaxa' is deprecated. Use 'getUnique' instead.")
+        getUnique(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "getTopFeatures", signature = "x", function(x,...)
+        standardGeneric("getTopFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getTopFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x,...){
+        .Deprecated(
+            msg = "'getTopFeatures' is deprecated. Use 'getTop' instead.")
+        getTop(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "getTopTaxa", signature = "x", function(x,...)
+        standardGeneric("getTopTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getTopTaxa", signature = c(x = "SummarizedExperiment"), function(x,...){
+        .Deprecated(msg = "'getTopTaxa' is deprecated. Use 'getTop' instead.")
+        getTop(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "getRareFeatures", signature = "x", function(x, ...)
+        standardGeneric("getRareFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getRareFeatures", signature = c(x = "ANY"), function(x,...){
+        .Deprecated(
+            msg = "'getRareFeatures' is deprecated. Use 'getRare' instead.")
+        getRare(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getRareFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x,...){
+        .Deprecated(
+            msg = "'getRareFeatures' is deprecated. Use 'getRare' instead.")
+        getRare(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "getRareTaxa", signature = "x", function(x, ...)
+        standardGeneric("getRareTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getRareTaxa", signature = c(x = "ANY"), function(x,...){
+        .Deprecated(
+            msg = "'getRareTaxa' is deprecated. Use 'getRare' instead.")
+        getRare(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getRareTaxa", signature = c(x = "SummarizedExperiment"), function(x,...){
+        .Deprecated(msg = "'getRareTaxa' is deprecated. Use 'getRare' instead.")
+        getRare(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "getPrevalentFeatures", signature = "x", function(x, ...)
+        standardGeneric("getPrevalentFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getPrevalentFeatures", signature = c(x = "ANY"), function(x,...){
+        .Deprecated(
+            msg = "'getPrevalentFeatures' is deprecated. ",
+            "Use 'getPrevalent' instead.")
+        getPrevalent(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getPrevalentFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x,...){
+        .Deprecated(
+            msg = "'getPrevalentFeatures' is deprecated. ",
+            "Use 'getPrevalent' instead.")
+        getPrevalent(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "getPrevalentTaxa", signature = "x", function(x, ...)
+        standardGeneric("getPrevalentTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getPrevalentTaxa", signature = c(x = "ANY"), function(x,...){
+        .Deprecated(
+            msg = "'getPrevalentTaxa' is deprecated. ",
+            "Use 'getPrevalent' instead.")
+        getPrevalent(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "getPrevalentTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x,...){
+        .Deprecated(
+            msg = "'getPrevalentTaxa' is deprecated. ",
+            "Use 'getPrevalent' instead.")
+        getPrevalent(x,...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "subsampleCounts", signature = c("x"), function(x, ...)
+        standardGeneric("subsampleCounts"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "subsampleCounts", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'subsampleCounts' is deprecated. ",
+            "Use 'rarefyAssay' instead.")
+        rarefyAssay(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "addPerSampleDominantFeatures", signature = c("x"), function(x, ...) 
+        standardGeneric("addPerSampleDominantFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "addPerSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'addPerSampleDominantFeatures' is deprecated.",
+            " Use 'addDominant' instead.")
+        addDominant(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "addPerSampleDominantTaxa", signature = c("x"), function(x, ...) 
+        standardGeneric("addPerSampleDominantTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'addPerSampleDominantTaxa' is deprecated. ",
+            "Use 'addDominant' instead.")
+        addDominant(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "perSampleDominantFeatures", signature = c("x"), function(x, ...) 
+        standardGeneric("perSampleDominantFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "perSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'perSampleDominantFeatures' is deprecated. ",
+            "Use 'getDominant' instead.")
+        getDominant(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "perSampleDominantTaxa", signature = c("x"), function(x, ...) 
+        standardGeneric("perSampleDominantTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'perSampleDominantTaxa' is deprecated. ",
+            "Use 'getDominant' instead.")
+        getDominant(x, ...)
+    }
 )
