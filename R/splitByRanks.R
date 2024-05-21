@@ -109,8 +109,7 @@ setGeneric("agglomerateByRanks",
     .check_taxonomic_ranks(ranks,x)
     #
     FUN <- function(rank){
-        do.call(agglomerateByRank,
-                c(list(x = x, rank = rank), args))
+        do.call(agglomerateByRank, c(list(x = x, rank = rank), args))
     }
     ans <- lapply(ranks,FUN)
     names(ans) <- ranks
@@ -122,17 +121,16 @@ setGeneric("agglomerateByRanks",
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
     function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
-        if ( is(x, "SummarizedExperiment") ){
-            args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
-            x <- as(x, "TreeSummarizedExperiment")
-            warning("SummarizedExperiment does not have altExps slot. ",
-                    "Therefore, it has been converted to ",
-                    "TreeSummarizedExperiment.")
+        #
+        if( !.is_a_bool(as.list) ){
+            stop("'as.list' must be TRUE or FALSE.", call. = FALSE)
         }
-        res <- .split_by_ranks()
+        #
+        args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
+        res <- .split_by_ranks(x, ranks = ranks, args)
         # Add to altExp if user has specified to do so
         if( !as.list ){
-            # Create a general function that adds results to altExps (That could be used in other functions also in the future)
+            # Add results to alternative experiment
             res <- .add_to_altExps(x, res)
         }
         return(res)
@@ -140,25 +138,21 @@ setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
 )
 
 #' @rdname agglomerate-methods
-#' @aliases splitByRanks
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
-            function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE,
-                    ...){
-                args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
-                args[["strip_altexp"]] <- TRUE
-                callNextMethod()
-            }
+    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
+        args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
+        args[["strip_altexp"]] <- TRUE
+        callNextMethod()
+    }
 )
 
 #' @rdname agglomerate-methods
-#' @aliases splitByRanks
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE,
-                   ...){
-              callNextMethod()
-          }
+    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
+        callNextMethod()
+    }
 )
 
 ################################################################################
@@ -166,20 +160,9 @@ setMethod("agglomerateByRanks", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname agglomerate-methods
 #' @export 
-setGeneric("splitByRanks",
-           signature = "x",
-           function(x, ...)
-               standardGeneric("splitByRanks"))
-
-#' @rdname agglomerate-methods
-#' @export 
-setMethod("splitByRanks", signature = c(x = "SummarizedExperiment"),
-          function(x,...){
-              .Deprecated(msg = paste0("'splitByRanks' is deprecated. ",
-                                       "Use 'agglomerateByRanks' instead."))
-              agglomerateByRanks(x, as.list = FALSE,...)
-          }
-)
+splitByRanks <- function(x, ...){
+    agglomerateByRanks(x, as.list = FALSE, ...)
+}
 
 ################################################################################
 # unsplitByRanks
