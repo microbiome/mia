@@ -366,17 +366,12 @@ setMethod(
                 # dataset could be presented with one tree. 
                 # --> order the data so that the taxa are searched from one tree 
                 # first.
-                if( length(x@rowTree) > 1 ){
+                if( length(rowTreeNames(x)) > 1 ){
                     x <- .order_based_on_trees(x)
                 }
                 # Agglomerate data
-                x <- callNextMethod(x, ...)
-                # Agglomerate also trees if user has specified and if there
-                # are trees available
-                if( agglomerate.tree && !is.null(x@rowTree) ){
-                    x <- .agglomerate_trees(x)
-                }
-                x
+                x <- callNextMethod(x, mergeTree = agglomerate.tree, ...)
+                return(x)
             }
 )
 
@@ -440,26 +435,36 @@ setMethod(
 
 # Agglomerate all rowTrees found in TreeSE object. Get tips that represent
 # rows and remove all others.
-.agglomerate_trees <- function(x){
+.agglomerate_trees <- function(x, MARGIN = 1){
+    # Get right functions based on direction
+    tree_names_FUN <- switch(
+        MARGIN, "1" = rowTreeNames, "2" = colTreeNames, stop("."))
+    links_FUN <- switch(MARGIN, "1" = rowLinks, "2" = colLinks, stop("."))
+    tree_FUN <- switch(MARGIN, "1" = rowTree, "2" = colTree, stop("."))
+    # Get right argument names for changeTree call
+    args_names <- switch(
+        MARGIN, "1" = c("rowTree", "rowNodeLab"),
+        "2" = c("colTree", "colNodeLab"),
+        stop("."))
     # Get names of trees and links between trees and rows
-    tree_names <- rowTreeNames(x)
-    row_links <- rowLinks(x)
+    tree_names <- tree_names_FUN(x)
+    row_links <- links_FUN(x)
     # Loop through tree names
     for( name in tree_names ){
         # Get the tree that is being agglomerated
-        tree <- rowTree(x, name)
+        tree <- tree_FUN(x, name)
         # Get row links that corresponds this specific tree
         links_temp <- row_links[ row_links[["whichTree"]] == name, ]
         # If the tree represents the data, agglomerate it
         if( nrow(links_temp) > 0 ){
-            # For each row, get corresponding node from the tree
+            # Get names of nodes that are preserved
             links_temp <- links_temp[["nodeLab"]]
             # Agglomerate the tree
             tree <- .prune_tree(tree, links_temp)
             # Change the tree with agglomerated version
-            x <- changeTree(
-                x, rowTree = tree,
-                whichRowTree = name, rowNodeLab = links_temp)
+            args <- list(x, tree, links_temp)
+            names(args) <- c("x", args_names)
+            x <- do.call(changeTree, args)
         }
     }
     return(x)

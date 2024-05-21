@@ -173,62 +173,6 @@
     .merge_cols(x, f, archetype = archetype, ...)
 }
 
-.merge_tree <- function(tree, links){
-    tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
-    drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
-    oldTree <- tree
-    newTree <- ape::drop.tip(oldTree, tip = drop_tip)
-    track <- trackNode(oldTree)
-    track <- ape::drop.tip(track, tip = drop_tip)
-    #
-    oldAlias <- links$nodeLab_alias
-    newNode <- convertNode(tree = track, node = oldAlias)
-    newAlias <- convertNode(tree = newTree, node = newNode)
-    #
-    list(newTree = newTree, newAlias = newAlias)
-}
-
-# Merge trees, MARGIN specifies if trees are rowTrees or colTrees
-.merge_trees <- function(x, mergeTree, MARGIN){
-    # Get rowtrees or colTrees based on MARGIN
-    if( MARGIN == 1 ){
-        trees <- x@rowTree
-        links <- rowLinks(x)
-    } else{
-        trees <- x@colTree
-        links <- colLinks(x)
-    }
-    # If trees exist and mergeTree is TRUE
-    if(!is.null(trees) && mergeTree){
-        # Loop over trees and replace them one by one
-        for( i in seq_len(length(trees)) ){
-            # Get tree
-            tree <- trees[[i]]
-            # Get the name of the tree
-            tree_name <- names(trees)[[i]]
-            # Subset links by taking only those rows that are included in tree
-            links_sub <- links[ links$whichTree == tree_name, , drop = FALSE ]
-            # Merge tree
-            tmp <- .merge_tree(tree, links_sub)
-            # Based on MARGIN, replace ith rowTree or colTree
-            if( MARGIN == 1 ){
-                x <- changeTree(x = x,
-                                rowTree = tmp$newTree,
-                                rowNodeLab = tmp$newAlias,
-                                whichRowTree = i
-                )
-            } else{
-                x <- changeTree(x = x,
-                                colTree = tmp$newTree,
-                                colNodeLab = tmp$newAlias,
-                                whichColTree = i
-                )
-            }
-        }
-    }
-    return(x)
-}
-
 #' @importFrom Biostrings DNAStringSetList
 .merge_refseq_list <- function(sequences_list, f, names, ...){
     threshold <- list(...)[["threshold"]]
@@ -271,7 +215,9 @@
     #
     x <- .merge_rows_SE(x, f, archetype = 1L, ...)
     # optionally merge rowTree
-    x <- .merge_trees(x, mergeTree, 1)
+    if( mergeTree ){
+        x <- .agglomerate_trees(x, 1)
+    }
     # optionally merge referenceSeq
     if(!is.null(refSeq)){
         referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
@@ -289,6 +235,8 @@
     #
     x <- .merge_cols_SE(x, f, archetype = 1L, ...)
     # optionally merge colTree
-    x <- .merge_trees(x, mergeTree, 2)
+    if( mergeTree ){
+        x <- ..agglomerate_trees(x, 2)
+    }
     return(x)
 }
