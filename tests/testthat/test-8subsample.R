@@ -1,10 +1,10 @@
-context("subsampleCounts")
-test_that("subsampleCounts", {
+context("rarefyAssay")
+test_that("rarefyAssay", {
     seed = 1938
     set.seed(seed)
     data(GlobalPatterns, package="mia")
     
-    expect_warning(tse.subsampled <- subsampleCounts(GlobalPatterns, 
+    expect_warning(tse.subsampled <- rarefyAssay(GlobalPatterns, 
                                                      min_size = 60000, 
                                                      name = "subsampled",
                                                      replace = TRUE))
@@ -37,7 +37,7 @@ test_that("subsampleCounts", {
     # When replace = FALSE
     seed = 1938
     set.seed(seed)
-    expect_warning(tse.subsampled.rp <- subsampleCounts(GlobalPatterns, 
+    expect_warning(tse.subsampled.rp <- rarefyAssay(GlobalPatterns, 
                                                         min_size = 60000, 
                                                         name = "subsampled",
                                                         replace = FALSE))

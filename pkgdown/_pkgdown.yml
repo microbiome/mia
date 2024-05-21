@@ -45,7 +45,7 @@ reference:
 - contents:
   - getPrevalence
   - getPrevalentAbundance
-  - getTopTaxa
+  - summaries
   - getCrossAssociation
   - getMediation
   - hierarchy-tree
@@ -65,9 +65,9 @@ reference:
   - isContaminant
 - subtitle: Helper
 - contents:
-  - meltAssay
+  - meltSE
   - relabundance
-  - subsampleCounts
+  - rarefyAssay
   - subsetSamples
 - subtitle: Datasets
 - contents:
