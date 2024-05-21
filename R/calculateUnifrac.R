@@ -69,15 +69,6 @@
 #' @references
 #' \url{http://bmf.colorado.edu/unifrac/}
 #'
-#' The main implementation (Fast Unifrac) is adapted from the algorithm's
-#' description in:
-#'
-#' Hamady, Lozupone, and Knight,
-#' ``\href{http://www.nature.com/ismej/journal/v4/n1/full/ismej200997a.html}{Fast
-#' UniFrac:} facilitating high-throughput phylogenetic analyses of microbial
-#' communities including analysis of pyrosequencing and PhyloChip data.'' The
-#' ISME Journal (2010) 4, 17--27.
-#'
 #' See also additional descriptions of Unifrac in the following articles:
 #'
 #' Lozupone, Hamady and Knight, ``Unifrac - An Online Tool for Comparing
@@ -196,23 +187,13 @@ setMethod("calculateUnifrac",
 )
 
 ################################################################################
-# Fast Unifrac for R.
-# Adapted from The ISME Journal (2010) 4, 17-27; doi:10.1038/ismej.2009.97
-#
-# adopted from original implementation in phyloseq implemented by
-# Paul J. McMurdie (https://github.com/joey711/phyloseq)
-################################################################################
 #' @rdname calculateUnifrac
 #'
-#' @importFrom ape prop.part reorder.phylo node.depth node.depth.edgelength
-#' @importFrom utils combn
-#' @importFrom stats as.dist
-#' @importFrom BiocParallel SerialParam register bplapply bpisup bpstart bpstop
-#' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
-#'
+#' @importFrom ape drop.tip
+#' @importFrom rbiom unifrac
 #' @export
-runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
-                       nodeLab = NULL, BPPARAM = SerialParam(), ...){
+runUnifrac <- function(
+        x, tree, weighted = FALSE, normalized = TRUE, nodeLab = NULL, ...){
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)
@@ -237,16 +218,17 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # nodeLab should be NULL or character vector specifying links between 
     # rows and tree labels
     if( !(is.null(nodeLab) ||
-        (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
-        all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label)))) ){
-        stop("'nodeLab' must be NULL or character specifying links between ",
-             "abundance table and tree labels.", call. = FALSE)
+            (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
+            all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label)))) ){
+        stop(
+            "'nodeLab' must be NULL or character specifying links between ",
+            "abundance table and tree labels.", call. = FALSE)
     }
     # check that matrix and tree are compatible
-    if( is.null(nodeLab) && 
-        !all(rownames(x) %in% c(tree$tip.label)) ) {
-        stop("Incompatible tree and abundance table! Please try to provide ",
-             "'nodeLab'.", call. = FALSE)
+    if( is.null(nodeLab) && !all(rownames(x) %in% c(tree$tip.label)) ) {
+        stop(
+            "Incompatible tree and abundance table! Please try to provide ",
+            "'nodeLab'.", call. = FALSE)
     }
     # Merge rows, so that rows that are assigned to same tree node are agglomerated
     # together. If nodeLabs were provided, merge based on those. Otherwise merge
@@ -260,13 +242,15 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     # Remove those tips that are not present in the data
     if( any(!tree$tip.label %in% rownames(x)) ){
-        tree <- ape::drop.tip(
+        tree <- drop.tip(
             tree, tree$tip.label[!tree$tip.label %in% rownames(x)])
-        warning("The tree is pruned so that tips that cannot be found from ", 
-                "the abundance matrix are removed.", call. = FALSE)
+        warning(
+            "The tree is pruned so that tips that cannot be found from ", 
+            "the abundance matrix are removed.", call. = FALSE)
     }
-    .calculate_distance(x, FUN = rbiom::unifrac, tree = tree, 
-                        weighted = weighted)
+    # Calculate unifrac. Use implementation from rbiom package
+    res <- unifrac(x, tree = tree, weighted = weighted)
+    return(res)
 }
 
 # Aggregate matrix based on nodeLabs. At the same time, rename rows based on nodeLab
