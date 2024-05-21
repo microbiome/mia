@@ -68,6 +68,7 @@ Imports:
     tidyr,
     bluster,
     MatrixGenerics,
+    mediation,
     rbiom
 Suggests:
     testthat,
