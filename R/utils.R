@@ -323,7 +323,7 @@
     }
     #
     # If the object is SE, convert it to TreeSE
-    if( !is(tse, "SingleCellExperiment") ){
+    if( !is(x, "SingleCellExperiment") ){
         x <- as(x, "TreeSummarizedExperiment")
         warning(
             "SummarizedExperiment does not have altExps slot. ",
