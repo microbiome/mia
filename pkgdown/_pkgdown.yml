@@ -51,7 +51,7 @@ reference:
   - hierarchy-tree
 - subtitle: Dominance
 - contents:
-  - perSampleDominantTaxa
+  - getDominant
   - estimateDominance
 - subtitle: Evenness indeces
 - contents:

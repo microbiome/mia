@@ -228,7 +228,7 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         # Adds dominant taxa to colData
-        dominant_taxa <- perSampleDominantFeatures(x, ...)
+        dominant_taxa <- getDominant(x, ...)
         data <- colData(x)
         # If the length of dominant taxa is not equal to number of rows, then add rows
         # because there are multiple dominant taxa

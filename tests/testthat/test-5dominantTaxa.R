@@ -1,8 +1,8 @@
-context("perSampleDominantFeatures")
+context("getDominant")
 
-test_that("perSampleDominantFeatures", {
+test_that("getDominant", {
 
-    test_perSampleDominantFeatures <- function(tse){
+    test_getDominant <- function(tse){
 
         # names
         exp.names.one <- c("CL3", "CC1", "SV1", "M31Fcsw",
@@ -18,10 +18,10 @@ test_that("perSampleDominantFeatures", {
                           "549656","549656","549656")
         names(exp.vals.one) <- exp.names.one
 
-        expect_equal(perSampleDominantFeatures(tse)[1:15], exp.vals.one)
+        expect_equal(getDominant(tse)[1:15], exp.vals.one)
 
         # Test at taxonomic level for values are passed to agglomerateRanks
-        perSampleDominantFeatures(tse, rank = "Genus", na.rm = FALSE)
+        getDominant(tse, rank = "Genus", na.rm = FALSE)
 
         exp.vals.two <- c("Genus:CandidatusSolibacter", "Genus:MC18",
                           "Class:Chloracidobacteria", "Genus:Bacteroides",
@@ -31,19 +31,19 @@ test_that("perSampleDominantFeatures", {
                           "Genus:Dolichospermum", "Family:ACK-M1",
                           "Order:Stramenopiles","Order:Stramenopiles","Order:Stramenopiles")
         names(exp.vals.two) <- exp.names.one
-        expect_equal(perSampleDominantFeatures(tse,
+        expect_equal(getDominant(tse,
                                            rank = "Genus",
                                            na.rm = FALSE)[1:15],
                      exp.vals.two)
 
         # Check if DominantTaxa is added to coldata
-        expect_equal(colData(addPerSampleDominantFeatures(tse,
-                                                      name="dominant"))$dominant[1:15],
+        expect_equal(colData(addDominant(tse,
+                                            name="dominant"))$dominant[1:15],
                      exp.vals.one)
-        expect_equal(colData(addPerSampleDominantFeatures(tse,
-                                                      rank = "Genus",
-                                                      na.rm = FALSE,
-                                                      name="dominant"))$dominant[1:15],
+        expect_equal(colData(addDominant(tse,
+                                            rank = "Genus",
+                                            na.rm = FALSE,
+                                            name="dominant"))$dominant[1:15],
                      exp.vals.two)
         
         tse1 <- tse
@@ -51,32 +51,32 @@ test_that("perSampleDominantFeatures", {
         assay(tse1)[1, 1] <- max(assay(tse1)[, 1])
         
         # Get dominant taxa
-        dominant_taxa <- perSampleDominantFeatures(tse, complete = TRUE)
-        dominant_taxa1 <- perSampleDominantFeatures(tse1, complete = TRUE)
+        dominant_taxa <- getDominant(tse, complete = TRUE)
+        dominant_taxa1 <- getDominant(tse1, complete = TRUE)
         
         # dominant_taxa1 should have one additional element
         expect_equal( length(unlist(dominant_taxa1)), length(dominant_taxa)+1)
         
         # Add dominant taxa to colData and check that it equals to dominant taxa
-        # that is got by perSampleDominantFeatures
-        add_dom <- unlist(colData(addPerSampleDominantFeatures(tse, complete = FALSE))$dominant_taxa)
-        dominant_taxa <- perSampleDominantFeatures(tse, complete = FALSE)
+        # that is got by getDominant
+        add_dom <- unlist(colData(addDominant(tse, complete = FALSE))$dominant_taxa)
+        dominant_taxa <- getDominant(tse, complete = FALSE)
         expect_equal(unname(add_dom), unname(dominant_taxa))
         
         # Test alias
-        alias <- unlist(colData(addPerSampleDominantFeatures(tse))$dominant_taxa)
+        alias <- unlist(colData(addDominant(tse))$dominant_taxa)
         expect_equal(unname(add_dom), unname(alias))
-        alias <- perSampleDominantFeatures(tse)
+        alias <- getDominant(tse)
         expect_equal(alias, dominant_taxa)
         
         # Test that chosen dominant taxon is included in the list of dominant taxa for those samples with multiple dominant taxa
-        expect_warning(add_dom <- unlist(colData(addPerSampleDominantFeatures(tse1, complete = FALSE))$dominant_taxa))
+        expect_warning(add_dom <- unlist(colData(addDominant(tse1, complete = FALSE))$dominant_taxa))
         expect_true(add_dom[[1]] %in% dominant_taxa1)
     }
 
     # TSE object
     data(GlobalPatterns, package="mia")
-    test_perSampleDominantFeatures(GlobalPatterns)
+    test_getDominant(GlobalPatterns)
 
 
     test_that("summarizeDominance", {

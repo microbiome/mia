@@ -514,7 +514,7 @@ setMethod("left_join", signature = c(x = "ANY"),
 )
 
 #' @rdname deprecate
-#' @export
+#' @export            
 setGeneric("right_join", signature = c("x"),
            function(x, ...)
                standardGeneric("right_join"))
@@ -837,5 +837,77 @@ setMethod(
             msg = "'subsampleCounts' is deprecated. ",
             "Use 'rarefyAssay' instead.")
         rarefyAssay(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "addPerSampleDominantFeatures", signature = c("x"), function(x, ...) 
+        standardGeneric("addPerSampleDominantFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "addPerSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'addPerSampleDominantFeatures' is deprecated.",
+            " Use 'addDominant' instead.")
+        addDominant(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "addPerSampleDominantTaxa", signature = c("x"), function(x, ...) 
+        standardGeneric("addPerSampleDominantTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "addPerSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'addPerSampleDominantTaxa' is deprecated. ",
+            "Use 'addDominant' instead.")
+        addDominant(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "perSampleDominantFeatures", signature = c("x"), function(x, ...) 
+        standardGeneric("perSampleDominantFeatures"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "perSampleDominantFeatures", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'perSampleDominantFeatures' is deprecated. ",
+            "Use 'getDominant' instead.")
+        getDominant(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "perSampleDominantTaxa", signature = c("x"), function(x, ...) 
+        standardGeneric("perSampleDominantTaxa"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "perSampleDominantTaxa", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(
+            msg = "'perSampleDominantTaxa' is deprecated. ",
+            "Use 'getDominant' instead.")
+        getDominant(x, ...)
     }
 )
