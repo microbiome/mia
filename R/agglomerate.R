@@ -443,8 +443,8 @@ setMethod(
     tree_FUN <- switch(MARGIN, "1" = rowTree, "2" = colTree, stop("."))
     # Get right argument names for changeTree call
     args_names <- switch(
-        MARGIN, "1" = c("rowTree", "rowNodeLab"),
-        "2" = c("colTree", "colNodeLab"),
+        MARGIN, "1" = c("x", "rowTree", "rowNodeLab", "whichRowTree"),
+        "2" = c("x", "colTree", "colNodeLab", "whichColTree"),
         stop("."))
     # Get names of trees and links between trees and rows
     tree_names <- tree_names_FUN(x)
@@ -462,8 +462,8 @@ setMethod(
             # Agglomerate the tree
             tree <- .prune_tree(tree, links_temp)
             # Change the tree with agglomerated version
-            args <- list(x, tree, links_temp)
-            names(args) <- c("x", args_names)
+            args <- list(x, tree, links_temp, name)
+            names(args) <- args_names
             x <- do.call(changeTree, args)
         }
     }
