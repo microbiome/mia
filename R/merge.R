@@ -236,7 +236,7 @@
     x <- .merge_cols_SE(x, f, archetype = 1L, ...)
     # optionally merge colTree
     if( mergeTree ){
-        x <- ..agglomerate_trees(x, 2)
+        x <- .agglomerate_trees(x, 2)
     }
     return(x)
 }
