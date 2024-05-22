@@ -112,8 +112,7 @@ unsplitOn(se_list)
 
 }
 \seealso{
-\code{\link[=splitByRanks]{splitByRanks}}
-\code{\link[=unsplitByRanks]{unsplitByRanks}}
+\code{\link[=agglomerate-methods]{agglomerateByRanks}}
 \code{\link[=agglomerate-methods]{agglomerateByVariable}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 \code{\link[=agglomerate-methods]{agglomerateByRank}},

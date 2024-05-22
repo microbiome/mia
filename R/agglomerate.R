@@ -98,17 +98,18 @@
 #'   returned. (Default: \code{mergeRefSeq = FALSE})
 #'
 #' @details
-#' Depending on the available taxonomic data and its structure, setting
-#' \code{onRankOnly = TRUE} has certain implications on the interpretability of
-#' your results. If no loops exist (loops meaning two higher ranks containing
-#' the same lower rank), the results should be comparable. You can check for
-#' loops using \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
+#' When using \code{agglomerateByRank}, please note that depending on the 
+#' available taxonomic data and its structure, setting\code{onRankOnly = TRUE} 
+#' has certain implications on the interpretability of your results. If no loops
+#' exist (loops meaning two higher ranks containing the same lower rank), the 
+#' results should be comparable. You can check for loops using 
+#' \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
 #' 
-#' Agglomeration sums up the values of assays at the specified taxonomic level. 
-#' With certain assays, e.g. those that include binary or negative values, this 
-#' summing can produce meaningless values. In those cases, consider performing 
-#' agglomeration first, and then applying the transformation afterwards.
-#'
+#' Also, agglomeration sums up the values of assays at the specified taxonomic level. With
+#' certain assays, e.g. those that include binary or negative values, this summing
+#' can produce meaningless values. In those cases, consider performing agglomeration
+#' first, and then applying the transformation afterwards.
+#' 
 #' \code{agglomerateByVariable} works similarly to
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 #' However, additional support for \code{TreeSummarizedExperiment} was added and
@@ -117,15 +118,24 @@
 #'
 #' For merge data of assays the function from \code{scuttle} are used.
 #'
-#' @return \code{agglomerateByRank} returns a taxonomically-agglomerated, 
-#' optionally-pruned object of the same class as \code{x} while 
+#' @return 
+#' \code{agglomerateByRank} returns a taxonomically-agglomerated, 
+#' optionally-pruned object of the same class as \code{x}.
 #' \code{agglomerateByVariable} returns an object of the same class as \code{x} 
 #' with the specified entries merged into one entry in all relevant components.
+#' \code{agglomerateByRank} returns a taxonomically-agglomerated, 
+#' optionally-pruned object of the same class as \code{x}.
 #'
 #' @name agglomerate-methods
 #' 
 #' @seealso
-#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}
+#' \code{\link[=splitOn]{splitOn}}
+#' \code{\link[=unsplitOn]{unsplitOn}}
+#' \code{\link[=agglomerate-methods]{agglomerateByVariable}},
+#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
+#' \code{\link[=agglomerate-methods]{agglomerateByRank}},
+#' \code{\link[SingleCellExperiment:altExps]{altExps}},
+#' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
 #'
 #' @examples
 #' 
