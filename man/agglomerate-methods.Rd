@@ -58,12 +58,7 @@ agglomerateByVariable(x, ...)
 
 agglomerateByPrevalence(x, ...)
 
-\S4method{agglomerateByPrevalence}{SummarizedExperiment}(
-  x,
-  rank = taxonomyRanks(x)[1L],
-  other_label = "Other",
-  ...
-)
+\S4method{agglomerateByPrevalence}{SummarizedExperiment}(x, rank = NULL, other_label = "Other", ...)
 
 agglomerateByRanks(x, ...)
 
