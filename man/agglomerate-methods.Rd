@@ -13,10 +13,10 @@
 \alias{agglomerateByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
 \alias{agglomerateByRanks}
-\alias{splitByRanks}
 \alias{agglomerateByRanks,SummarizedExperiment-method}
 \alias{agglomerateByRanks,SingleCellExperiment-method}
 \alias{agglomerateByRanks,TreeSummarizedExperiment-method}
+\alias{splitByRanks}
 \alias{unsplitByRanks}
 \alias{unsplitByRanks,SingleCellExperiment-method}
 \alias{unsplitByRanks,TreeSummarizedExperiment-method}

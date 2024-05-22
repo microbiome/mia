@@ -327,7 +327,8 @@
         x <- as(x, "TreeSummarizedExperiment")
         warning(
             "SummarizedExperiment does not have altExps slot. ",
-            "Therefore, it is converted to TreeSummarizedExperiment.")
+            "Therefore, it is converted to TreeSummarizedExperiment.",
+            call. = FALSE)
     }
     #
     # Add names to values

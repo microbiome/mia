@@ -482,17 +482,10 @@ setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
         }
         #
         # Get rowData as data.frame
-        td <- rowData(x)[, taxonomyRanks(x), drop = FALSE]
-        td <- as.data.frame(td)
-        # Get information on empty nodes. It will be used later to polish the
-        # created tree.
-        td_NA <- .get_empty_nodes(td, ...)
-        # Replace empty cells with NA (also "" can be empty value)
-        for( i in seq_len(ncol(td_NA)) ){
-            td[td_NA[[i]], i] <- NA
-        }
+        td <- as.data.frame( rowData(x)[, taxonomyRanks(x), drop = FALSE] )
         # Remove empty taxonomic levels
-        td <- td[ , !vapply(td_NA, all, logical(1)), drop = FALSE]
+        td <- td[,!vapply(
+            td,function(tl){all(is.na(tl))},logical(1)), drop = FALSE]
         # Check if there is no taxonomy information left after removing empty
         # columns
         if( ncol(td) < 2L ){
@@ -502,9 +495,12 @@ setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
                 "using setTaxonomyRanks() if ranks differ from defaults.",
                 call. = FALSE)
         }
-        # Make cells unique. Add suffix, if duplicated values are found from
-        # certain rank.
-        td <- suppressWarnings(resolveLoop(td))
+        # Get information on empty nodes. It will be used later to polish the
+        # created tree.
+        td_NA <- .get_empty_nodes(td, ...)
+        # Make information unique
+        td <- as.data.frame(td)
+        td <- as(suppressWarnings(resolveLoop(td)),"DataFrame")
         # Build tree
         tree <- toTree(td)
         tree$tip.label <- paste0(colnames(td)[ncol(td)],":",tree$tip.label)
@@ -519,7 +515,7 @@ setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
                     collapse.singles = FALSE)
             }
         }
-        return(tree)
+        tree
     }
 )
 
@@ -756,7 +752,7 @@ IdTaxaToDataFrame <- .idtaxa_to_DataFrame
         temp <- x %in% empty.fields
         return(temp)
     })
-    # Convert to data.frame
-    is_empty <- as.data.frame(is_empty)
+    # Convert to DataFrame
+    is_empty <- DataFrame(is_empty)
     return(is_empty)
 }

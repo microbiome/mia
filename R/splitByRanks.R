@@ -63,7 +63,7 @@
 #' changes to \code{rowData} of the base object are not returned, whereas only 
 #' the \code{colData} of the base object is kept. 
 #'
-#' @rdname agglomerate-methods
+#' @name agglomerate-methods
 #'
 #' @examples
 #' data(GlobalPatterns)
@@ -81,7 +81,9 @@
 #' tse <- unsplitByRanks(tse)
 #' tse
 #'
-#' @aliases splitByRanks
+NULL
+
+#' @rdname agglomerate-methods
 #' @export
 setGeneric("agglomerateByRanks",
            signature = "x",
@@ -117,7 +119,6 @@ setGeneric("agglomerateByRanks",
 }
 
 #' @rdname agglomerate-methods
-#' @aliases splitByRanks
 #' @export
 setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
     function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
