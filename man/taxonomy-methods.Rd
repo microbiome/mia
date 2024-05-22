@@ -98,10 +98,10 @@ taxonomic information. If no information is found,\code{NULL} is returned
 for the individual element. (default: \code{NULL})}
 
 \item{from}{\itemize{
-\item{For \code{mapTaxonomy}: }{a scalar \code{character} value, which
-must be a valid taxonomic rank. (default: \code{NULL})}
-\item{otherwise a \code{Taxa} object as returned by
-\code{\link[DECIPHER:IdTaxa]{IdTaxa}}}
+\item For \code{mapTaxonomy}: a scalar \code{character} value, which
+must be a valid taxonomic rank. (default: \code{NULL})
+\item otherwise a \code{Taxa} object as returned by
+\code{\link[DECIPHER:IdTaxa]{IdTaxa}}
 }}
 
 \item{to}{a scalar \code{character} value, which must be a valid
@@ -113,13 +113,13 @@ taxonomic rank. (default: \code{NULL})}
 }
 \value{
 \itemize{
-\item{\code{taxonomyRanks}:} {a \code{character} vector with all the
-taxonomic ranks found in \code{colnames(rowData(x))}}
-\item{\code{taxonomyRankEmpty}:} {a \code{logical} value}
-\item{\code{mapTaxonomy}:} {a \code{list} per element of taxa. Each
+\item \code{taxonomyRanks}: a \code{character} vector with all the
+taxonomic ranks found in \code{colnames(rowData(x))}
+\item \code{taxonomyRankEmpty}: a \code{logical} value
+\item \code{mapTaxonomy}: a \code{list} per element of taxa. Each
 element is either a \code{DataFrame}, a \code{character} or \code{NULL}.
 If all \code{character} results have the length of one, a single
-\code{character} vector is returned.}
+\code{character} vector is returned.
 }
 }
 \description{
