@@ -131,3 +131,5 @@ Changes in version 1.13.x
 + Rename perSampleDominant* functions to getDominant and addPerSampleDominant* 
   functions to addDominant
 + Rename splitByRanks to agglomerateByRanks and add option as.list
++ Explain that rarefyAssay returns a new SummarizedExperiment object that 
+  includes the newly added subsampled assay.

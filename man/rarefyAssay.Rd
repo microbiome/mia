@@ -51,7 +51,7 @@ See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
 for details on implications of this parameter.}
 
 \item{name}{A single character value specifying the name of transformed
-abundance table.}
+abundance table that will be added to the new \code{SummarizedExperiment}.}
 
 \item{verbose}{Logical Default is \code{TRUE}. When \code{TRUE} an additional
 message about the random number used is printed.}
@@ -62,9 +62,10 @@ message about the random number used is printed.}
 \code{rarefyAssay} return \code{x} with subsampled data.
 }
 \description{
-\code{rarefyAssay} will randomly subsample counts in
-\code{SummarizedExperiment} and return the a modified object in which each
-sample has same number of total observations/counts/reads.
+\code{rarefyAssay} randomly subsamples counts within a
+\code{SummarizedExperiment} object and returns a new
+\code{SummarizedExperiment} containing the original assay and the new
+subsampled assay.
 }
 \details{
 Although the subsampling approach is highly debated in microbiome research,
@@ -88,7 +89,7 @@ tse.subsampled <- rarefyAssay(tse,
                                   )
 tse.subsampled
 dim(tse)
-dim(tse.subsampled)
+dim(assay(tse.subsampled, "subsampled"))
 
 }
 \references{
