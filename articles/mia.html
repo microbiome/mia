@@ -68,7 +68,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 data-toc-skip class="date">2024-05-21</h4>
+            <h4 data-toc-skip class="date">2024-05-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -283,12 +283,12 @@ settings different number of rows will be returned.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2307   26</span></span></code></pre>
-<p>For convenience the function <code>splitByRanks</code> is available,
-which agglomerates data on all <code>ranks</code> selected. By default
-all available ranks will be used. The output is compatible to be stored
-as alternative experiments.</p>
+<p>For convenience the function <code>agglomerateByRanks</code> is
+available, which agglomerates data on all <code>ranks</code> selected.
+By default all available ranks will be used. The output is compatible to
+be stored as alternative experiments.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/splitByRanks.html">splitByRanks</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/agglomerate-methods.html">agglomerateByRanks</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
 <span><span class="va">tse</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
 <span><span class="co">## dim: 19216 26 </span></span>
@@ -300,14 +300,15 @@ as alternative experiments.</p>
 <span><span class="co">## colData names(7): X.SampleID Primer ... SampleType Description</span></span>
 <span><span class="co">## reducedDimNames(0):</span></span>
 <span><span class="co">## mainExpName: NULL</span></span>
-<span><span class="co">## altExpNames(7): Kingdom Phylum ... Genus Species</span></span>
+<span><span class="co">## altExpNames(9): family species ... Genus Species</span></span>
 <span><span class="co">## rowLinks: a LinkDataFrame (19216 rows)</span></span>
 <span><span class="co">## rowTree: 1 phylo tree(s) (19216 leaves)</span></span>
 <span><span class="co">## colLinks: NULL</span></span>
 <span><span class="co">## colTree: NULL</span></span></code></pre>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExpNames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "family"  "species" "Kingdom" "Phylum"  "Class"   "Order"   "Family" </span></span>
+<span><span class="co">## [8] "Genus"   "Species"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="constructing-a-tree-from-taxonomic-data">Constructing a tree from taxonomic data<a class="anchor" aria-label="anchor" href="#constructing-a-tree-from-taxonomic-data"></a>
