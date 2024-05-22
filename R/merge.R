@@ -225,8 +225,6 @@
     x
 }
 
-
-
 .merge_cols_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE, ...){
     # input check
     if(!.is_a_bool(mergeTree)){

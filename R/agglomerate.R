@@ -480,7 +480,8 @@ setMethod(
     return(x)
 }
 
-# This function trims tips until all tips can be found from provided set of nodes
+# This function trims tips until all tips can be found from provided set of
+# nodes
 #' @importFrom ape drop.tip has.singles collapse.singles
 .prune_tree <- function(tree, nodes){
     # Get those tips that can not be found from provided nodes
@@ -507,7 +508,8 @@ setMethod(
             warning("Pruning resulted to empty tree.", call. = FALSE)
             break
         }
-        # Again, get those tips of updated tree that cannot be found from provided nodes
+        # Again, get those tips of updated tree that cannot be found from
+        # provided nodes
         remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
     }
     # Simplify the tree structure. Remove nodes that have only single
