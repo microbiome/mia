@@ -319,7 +319,8 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
             function(x, MARGIN, f, archetype = 1L, ...){
                 MARGIN <- .check_MARGIN(MARGIN)
                 FUN <- switch(MARGIN, .merge_rows, .merge_cols)
-                FUN(x, f, archetype = archetype, ...)
+                x <- FUN(x, f, archetype = archetype, ...)
+                return(x)
             }
 )
 
@@ -332,7 +333,7 @@ setMethod("agglomerateByVariable",
                      mergeRefSeq = FALSE, ...){
                 # Check MARGIN
                 MARGIN <- .check_MARGIN(MARGIN)
-                # Get function based on MAEGIN
+                # Get function based on MARGIN
                 FUN <- switch(MARGIN == 1L, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
                 x <- FUN(

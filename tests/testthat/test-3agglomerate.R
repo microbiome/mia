@@ -159,7 +159,3 @@ test_that("agglomerate", {
     expect_equal(nrow(actual), nrow(actual4))
     expect_equal(nrow(actual), nrow(actual5))
 })
-
-
-
-
