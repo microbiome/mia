@@ -24,7 +24,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.18</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@ experiments and flattens them again into a single
 <span><span class="fu">agglomerateByRank</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  rank <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
-<span>  onRankOnly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  onRankOnly <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  empty.fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">""</span>, <span class="st">" "</span>, <span class="st">"\t"</span>, <span class="st">"-"</span>, <span class="st">"_"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -109,12 +109,7 @@ experiments and flattens them again into a single
 <span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  rank <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,</span>
-<span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, other_label <span class="op">=</span> <span class="st">"Other"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">agglomerateByRanks</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -389,13 +384,13 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 19216</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 335</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># agglomerate the tree as well</span></span></span>
 <span class="r-in"><span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank<span class="op">=</span><span class="st">"Family"</span>,</span></span>
 <span class="r-in"><span>                       agglomerate.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># same number of rows, but</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 335</span>
 <span class="r-in"><span><span class="fu">rowTree</span><span class="op">(</span><span class="va">x1</span><span class="op">)</span> <span class="co"># ... different</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 19216 tips and 19215 internal nodes.</span>
@@ -408,17 +403,17 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rooted; includes branch lengths.</span>
 <span class="r-in"><span><span class="fu">rowTree</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># ... tree</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 603 tips and 602 internal nodes.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 335 tips and 334 internal nodes.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Tip labels:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   549322, 951, 244423, 143239, 215972, 138353, ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   549322, 951, 215972, 138353, 546313, 173903, ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Node labels:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 0.943.7, ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   , 0.858.4, 0.764.3, 0.995.2, 0.985.6, 1.000.112, ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rooted; includes branch lengths.</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># If assay contains binary or negative values, summing might lead to </span></span></span>
-<span class="r-in"><span><span class="co"># meaningless values, and you will get a warning. In these cases, you might </span></span></span>
+<span class="r-in"><span><span class="co"># If assay contains binary or negative values, summing might lead to</span></span></span>
+<span class="r-in"><span><span class="co"># meaningless values, and you will get a warning. In these cases, you might</span></span></span>
 <span class="r-in"><span><span class="co"># want to do agglomeration again at chosen taxonomic level.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="transformAssay.html">transformAssay</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, method <span class="op">=</span> <span class="st">"pa"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Genus"</span><span class="op">)</span></span></span>
@@ -432,31 +427,31 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5603</span>
 <span class="r-in"><span><span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank<span class="op">=</span><span class="st">"Family"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x3</span><span class="op">)</span> <span class="co"># different from x2</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 334</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Because all the rownames are from the same rank, rownames do not include </span></span></span>
-<span class="r-in"><span><span class="co"># prefixes, in this case "Family:". </span></span></span>
+<span class="r-in"><span><span class="co"># Because all the rownames are from the same rank, rownames do not include</span></span></span>
+<span class="r-in"><span><span class="co"># prefixes, in this case "Family:".</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x3</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Sulfolobaceae"  "SAGMA-X"        "Cenarchaeaceae"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "125ds10" "211ds20" "5B-12"  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># To add them, use getTaxonomyLabels function.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x3</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="va">x3</span>, with_rank <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x3</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Family:Sulfolobaceae"  "Family:SAGMA-X"        "Family:Cenarchaeaceae"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Family:125ds10" "Family:211ds20" "Family:5B-12"  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># use 'remove_empty_ranks' to remove columns that include only NAs</span></span></span>
-<span class="r-in"><span><span class="va">x4</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank<span class="op">=</span><span class="st">"Phylum"</span>, </span></span>
+<span class="r-in"><span><span class="va">x4</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank<span class="op">=</span><span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                        remove_empty_ranks <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">x4</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 6 rows and 2 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           Kingdom         Phylum</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       &lt;character&gt;    &lt;character&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Crenarchaeota      Archaea  Crenarchaeota</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Euryarchaeota      Archaea  Euryarchaeota</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Kingdom:Bacteria         Bacteria             NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:ABY1_OD1          Bacteria       ABY1_OD1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:AC1               Bacteria            AC1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:AD3               Bacteria            AD3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Acidobacteria     Bacteria  Acidobacteria</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Actinobacteria    Bacteria Actinobacteria</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Spirochaetes      Bacteria   Spirochaetes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:MVP-15            Bacteria         MVP-15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Proteobacteria    Bacteria Proteobacteria</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># If the assay contains NAs, you might want to consider replacing them,</span></span></span>
 <span class="r-in"><span><span class="co"># since summing-up NAs lead to NA</span></span></span>
@@ -519,7 +514,7 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span><span class="co"># get a factor for merging</span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/regmatches.html" class="external-link">regmatches</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                       <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">regexpr</a></span><span class="op">(</span><span class="st">"^[0-9]*_[0-9]*"</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">esophagus</span>, MARGIN <span class="op">=</span> <span class="st">"rows"</span>, <span class="va">f</span>, </span></span>
+<span class="r-in"><span><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">esophagus</span>, MARGIN <span class="op">=</span> <span class="st">"rows"</span>, <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                                mergeTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rowTree</span><span class="op">(</span><span class="va">merged</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="agglomerate-methods-2.png" alt="" width="700" height="433"></span>
@@ -541,7 +536,7 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
-<span class="r-in"><span><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">GlobalPatterns</span>, MARGIN <span class="op">=</span> <span class="st">"cols"</span>, </span></span>
+<span class="r-in"><span><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">GlobalPatterns</span>, MARGIN <span class="op">=</span> <span class="st">"cols"</span>,</span></span>
 <span class="r-in"><span>                                <span class="fu">colData</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">merged</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
@@ -572,8 +567,8 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 6 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(2): agglomerated_by_rank agglomerated_by_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(6): Phylum:Actinobacteria Phylum:Proteobacteria ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Phylum:Firmicutes Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(6): Phylum:Actinobacteria Phylum:Bacteroidetes ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Phylum:Proteobacteria Other</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
@@ -586,18 +581,18 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Here data is aggregated at the taxonomic level "Phylum". The five phyla</span></span></span>
-<span class="r-in"><span><span class="co"># that exceed the population prevalence threshold of 50/100 represent the </span></span></span>
+<span class="r-in"><span><span class="co"># that exceed the population prevalence threshold of 50/100 represent the</span></span></span>
 <span class="r-in"><span><span class="co"># five first rows of the assay in the aggregated data. The sixth and last row</span></span></span>
-<span class="r-in"><span><span class="co"># named by default "Other" takes the summed up values of all the other phyla </span></span></span>
+<span class="r-in"><span><span class="co"># named by default "Other" takes the summed up values of all the other phyla</span></span></span>
 <span class="r-in"><span><span class="co"># that are below the prevalence threshold.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          CL3    CC1    SV1 M31Fcsw M11Fcsw</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Actinobacteria  39601  90280 121703    2540     841</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Proteobacteria 294228 361327 224004   18798   86614</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Cyanobacteria    1955   3353  16676     423  212812</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Bacteroidetes   67395  96398  93436  804395 1424107</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Cyanobacteria    1955   3353  16676     423  212812</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Firmicutes       8584   4726   3524  700084  330423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylum:Proteobacteria 294228 361327 224004   18798   86614</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Other                 452314 579373 238166   17211   21679</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
@@ -632,8 +627,8 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 944 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): agglomerated_by_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(944): Sulfolobusacidocaldarius Cenarchaeumsymbiosum ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Thermanaerovibrioacidaminovorans Jonquetellaanthropi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(944): Abiotrophiadefectiva Achromatiumoxaliferum ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   proteobacteriumsymbiontofOsedaxsp.MB4 symbiontofNoeetapupillata</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
@@ -649,11 +644,12 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">unsplitByRanks</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 2692 26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 2672 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(2692): Kingdom:Archaea Kingdom:Bacteria ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Species:Thermanaerovibrioacidaminovorans Species:Jonquetellaanthropi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(2672): Kingdom:Archaea Kingdom:Bacteria ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Species:proteobacteriumsymbiontofOsedaxsp.MB4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Species:symbiontofNoeetapupillata</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(8): Kingdom Phylum ... Species taxonomicLevel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
