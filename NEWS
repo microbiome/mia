@@ -133,3 +133,4 @@ Changes in version 1.13.x
 + Rename splitByRanks to agglomerateByRanks and add option as.list
 + Explain that rarefyAssay returns a new SummarizedExperiment object that 
   includes the newly added subsampled assay.
++ Fix bug in mergeFeaturesByPrevalence
