@@ -334,7 +334,7 @@ setMethod("agglomerateByVariable",
                 # Check MARGIN
                 MARGIN <- .check_MARGIN(MARGIN)
                 # Get function based on MARGIN
-                FUN <- switch(MARGIN == 1L, .merge_rows_TSE, .merge_cols_TSE)
+                FUN <- switch(MARGIN, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
                 x <- FUN(
                     x, f, archetype = archetype, mergeTree = mergeTree,
