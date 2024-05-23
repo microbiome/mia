@@ -1,8 +1,5 @@
-.norm_f <- function(i, f, dim.type = c("rows","columns"), na.rm = FALSE, ...){
+.norm_f <- function(i, f, dim.type = c("rows","columns"), ...){
     dim.type <- match.arg(dim.type)
-    if(!.is_a_bool(na.rm)){
-      stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
-    }
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
             "meaningful factor.",
@@ -11,11 +8,6 @@
     if(i != length(f)){
         stop("'f' must have the same number of ",dim.type," as 'x'",
             call. = FALSE)
-    }
-    # This is done otherwise we lose NA values
-    if (!na.rm && any(is.na(f))) {
-        f <- as.character(f)
-        f[ is.na(f) ] <- "NA"
     }
     if(is.character(f)){
         f <- factor(f)
@@ -75,7 +67,7 @@
     if( .is_a_string(f) && f %in% colnames(rowData(x)) ){
         f <- rowData(x)[[ f ]]
     }
-    f <- .norm_f(nrow(x), f)
+    f <- .norm_f(nrow(x), f, ...)
     if(length(levels(f)) == nrow(x)){
         return(x)
     }
@@ -128,7 +120,7 @@
     if( .is_a_string(f) && f %in% colnames(colData(x)) ){
       f <- colData(x)[[ f ]]
     }
-    f <- .norm_f(ncol(x), f, "columns")
+    f <- .norm_f(ncol(x), f, "columns", ...)
     
     if(length(levels(f)) == ncol(x)){
         return(x)

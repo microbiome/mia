@@ -242,7 +242,7 @@ setGeneric("agglomerateByVariable",
 #'
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = taxonomyRanks(x)[1], onRankOnly = TRUE, na.rm = FALSE,
+    function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = TRUE,
         empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
         if(nrow(x) == 0L){
@@ -288,7 +288,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
 
         # merge taxa
-        x <- agglomerateByVariable(x, MARGIN = "rows", f = tax_factors, ...)
+        x <- agglomerateByVariable(x, MARGIN = 1, f = tax_factors, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
