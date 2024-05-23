@@ -163,14 +163,6 @@
     x
 }
 
-.merge_rows_SE <- function(x, f, archetype = 1L, ...){
-    .merge_rows(x, f, archetype = archetype, ...)
-}
-
-.merge_cols_SE <- function(x, f, archetype = 1L, ...){
-    .merge_cols(x, f, archetype = archetype, ...)
-}
-
 #' @importFrom Biostrings DNAStringSetList
 .merge_refseq_list <- function(sequences_list, f, names, ...){
     threshold <- list(...)[["threshold"]]
@@ -211,7 +203,7 @@
         refSeq <- referenceSeq(x)
     }
     #
-    x <- .merge_rows_SE(x, f, archetype = 1L, ...)
+    x <- .merge_rows(x, f, archetype = 1L, ...)
     # optionally merge rowTree
     if( mergeTree ){
         x <- .agglomerate_trees(x, 1)
@@ -229,7 +221,7 @@
         stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    x <- .merge_cols_SE(x, f, archetype = 1L, ...)
+    x <- .merge_cols(x, f, archetype = 1L, ...)
     # optionally merge colTree
     if( mergeTree ){
         x <- .agglomerate_trees(x, 2)
