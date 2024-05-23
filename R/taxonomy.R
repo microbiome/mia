@@ -69,6 +69,10 @@
 #' @param use_grepl \code{TRUE} or \code{FALSE}: should pattern matching via
 #'   \code{grepl} be used? Otherwise literal matching is used.
 #'   (default: \code{FALSE})
+#'   
+#'@param MARGIN A character value for selecting if data is merged
+#'   row-wise / for features ('rows') or column-wise / for samples ('cols').
+#'   Must be \code{'rows'} or \code{'cols'}.
 #'
 #' @param ... optional arguments not used currently.
 #' 
@@ -532,7 +536,7 @@ setGeneric("addHierarchyTree",
 #' @rdname hierarchy-tree
 #' @export
 setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
+    function(x, replace = FALSE, ...){
         #
         # Get the tree
         tree <- getHierarchyTree(x, ...)
@@ -541,8 +545,12 @@ setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
         # Get node labs: which row represents which node in the tree?
         node_labs <- getTaxonomyLabels(
             x, with_rank = TRUE, resolve_loops = TRUE, make_unique = FALSE)
-        # Add tree
-        x <- changeTree(x, tree, node_labs)
+        # Add or replace the tree
+        if (replace) {
+            x <- changeTree(x, tree, node_labs)
+        } else {
+            x <- .add_tree(x, tree, MARGIN = "row", name = "phylo")
+        }
         return(x)
     }
 )

@@ -351,6 +351,46 @@
     altExps(x) <- values
     return(x)
 }
+
+# This function can be used to add tree to existing tree
+.add_tree <- function(x, tree, MARGIN, name = "phylo", ...) {
+  
+  MARGIN <- .check_MARGIN(MARGIN)
+  
+  if (MARGIN == 1L) {
+    # Add row tree
+    if (is.null(x@rowTree)) {
+      x@rowTree <- list(phylo = tree)
+    } else {
+      # Check if a tree with the given name already exists
+      if (name %in% names(x@rowTree)) {
+        warning(paste("A tree named", name, "already exists in the row tree. The new tree will be added with a different name."))
+        x@rowTree <- c(x@rowTree, list(tree))
+      } else {
+        x@rowTree[[name]] <- tree
+      }
+    }
+    x@rowLinks <- c(x@rowLinks, NULL)
+  } else {
+    # Add column tree
+    if (is.null(x@colTree)) {
+      x@colTree <- list(phylo = tree)
+    } else {
+      # Check if a tree with the given name already exists
+      if (name %in% names(x@colTree)) {
+        warning(paste("A tree named", name, "already exists in the column tree. The new tree will be added with a different name."))
+        x@colTree <- c(x@colTree, list(tree))
+      } else {
+        x@colTree[[name]] <- tree
+      }
+    }
+    x@colLinks <- c(x@colLinks, NULL)
+  }
+  
+  return(x)
+}
+
+
 ################################################################################
 # Other common functions
 
@@ -484,3 +524,4 @@
     }
     return(x)
 }
+
