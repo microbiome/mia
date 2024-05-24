@@ -107,10 +107,6 @@ must be a valid taxonomic rank. (default: \code{NULL})
 \item{to}{a scalar \code{character} value, which must be a valid
 taxonomic rank. (default: \code{NULL})}
 
-\item{use_grepl}{\code{TRUE} or \code{FALSE}: should pattern matching via
-\code{grepl} be used? Otherwise literal matching is used.
-(default: \code{FALSE})}
-
 \item{MARGIN}{A character value for selecting if data is merged
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}

@@ -353,42 +353,73 @@
 }
 
 # This function can be used to add tree to existing tree
-.add_tree <- function(x, tree, MARGIN, name = "phylo", ...) {
+.add_tree <- function(x, MARGIN = 1, replace = FALSE, name = "phylo", ...) {
+  # Get the tree
+  tree <- getHierarchyTree(x, ...)
   
-  MARGIN <- .check_MARGIN(MARGIN)
+  # Ensure that the object has the appropriate Tree slot
+  x <- as(x, "TreeSummarizedExperiment")
   
-  if (MARGIN == 1L) {
-    # Add row tree
-    if (is.null(x@rowTree)) {
-      x@rowTree <- list(phylo = tree)
-    } else {
-      # Check if a tree with the given name already exists
-      if (name %in% names(x@rowTree)) {
-        warning(paste("A tree named", name, "already exists in the row tree. The new tree will be added with a different name."))
-        x@rowTree <- c(x@rowTree, list(tree))
-      } else {
-        x@rowTree[[name]] <- tree
-      }
-    }
-    x@rowLinks <- c(x@rowLinks, NULL)
+  # Get node labels: which row represents which node in the tree?
+  node_labs <- getTaxonomyLabels(x, with_rank = TRUE, resolve_loops = TRUE, make_unique = FALSE)
+  
+  # Get appropriate functions based on MARGIN
+  tree_names_FUN <- switch(MARGIN, "1" = rowTreeNames, "2" = colTreeNames, stop("Invalid MARGIN value"))
+  links_FUN <- switch(MARGIN, "1" = rowLinks, "2" = colLinks, stop("Invalid MARGIN value"))
+  tree_FUN <- switch(MARGIN, "1" = rowTree, "2" = colTree, stop("Invalid MARGIN value"))
+  set_tree_FUN <- switch(MARGIN, "1" = function(x, trees) { rowTree(x) <- trees; x }, 
+                         "2" = function(x, trees) { colTree(x) <- trees; x }, 
+                         stop("Invalid MARGIN value"))
+  # Get right argument names for changeTree call
+  args_names <- switch(
+    MARGIN, "1" = c("x", "rowTree", "rowNodeLab"),
+    "2" = c("x", "colTree", "colNodeLab"),
+    stop("."))
+  
+  # Get names of trees and links between trees and rows/columns
+  tree_names <- tree_names_FUN(x)
+  
+  # Determine action based on the existence of the tree name and the replace parameter
+  if (name %in% tree_names) {
+    replace_action <- switch(as.character(replace), 
+                             "TRUE" = {
+                               warning(paste0("A tree named '", name, "' already exists. It will be replaced."))
+                               "replace"
+                             },
+                             "FALSE" = {
+                               warning(paste0("A tree named '", name, "' already exists. The new tree will not be added."))
+                               return(x)
+                             },
+                             stop("Invalid value for replace"))
   } else {
-    # Add column tree
-    if (is.null(x@colTree)) {
-      x@colTree <- list(phylo = tree)
-    } else {
-      # Check if a tree with the given name already exists
-      if (name %in% names(x@colTree)) {
-        warning(paste("A tree named", name, "already exists in the column tree. The new tree will be added with a different name."))
-        x@colTree <- c(x@colTree, list(tree))
-      } else {
-        x@colTree[[name]] <- tree
-      }
-    }
-    x@colLinks <- c(x@colLinks, NULL)
+    replace_action <- "add"
+  }
+
+  # Perform add or replace action
+  if (replace_action == "replace") {
+    # Replace the tree
+    args <- list(x, tree, node_labs, name)
+    names(args) <- args_names
+    x <- do.call(changeTree, args)
+  } else {
+    # Add the tree
+    # Get current trees
+    current_trees <- tree_FUN(x)
+    
+    # Add the new tree
+    current_trees[[length(current_trees) + 1]] <- tree
+    x <- set_tree_FUN(x, current_trees)
+    
+    # Get current node labels and add the new node labels
+    current_node_labs <- links_FUN(x)$nodeLab
+    current_node_labs <- c(current_node_labs, list(node_labs))
+    x$nodeLab <- current_node_labs
   }
   
   return(x)
 }
+
+
 
 
 ################################################################################

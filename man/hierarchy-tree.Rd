@@ -14,7 +14,7 @@ getHierarchyTree(x, ...)
 
 addHierarchyTree(x, ...)
 
-\S4method{addHierarchyTree}{SummarizedExperiment}(x, replace = NULL, ...)
+\S4method{addHierarchyTree}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{a

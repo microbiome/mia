@@ -66,10 +66,6 @@
 #' @param to a scalar \code{character} value, which must be a valid 
 #'   taxonomic rank. (default: \code{NULL})
 #'   
-#' @param use_grepl \code{TRUE} or \code{FALSE}: should pattern matching via
-#'   \code{grepl} be used? Otherwise literal matching is used.
-#'   (default: \code{FALSE})
-#'   
 #'@param MARGIN A character value for selecting if data is merged
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
@@ -536,21 +532,9 @@ setGeneric("addHierarchyTree",
 #' @rdname hierarchy-tree
 #' @export
 setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
-    function(x, replace = FALSE, ...){
-        #
-        # Get the tree
-        tree <- getHierarchyTree(x, ...)
-        # Ensure that the object has rowTree slot
-        x <- as(x,"TreeSummarizedExperiment")
-        # Get node labs: which row represents which node in the tree?
-        node_labs <- getTaxonomyLabels(
-            x, with_rank = TRUE, resolve_loops = TRUE, make_unique = FALSE)
-        # Add or replace the tree
-        if (replace) {
-            x <- changeTree(x, tree, node_labs)
-        } else {
-            x <- .add_tree(x, tree, MARGIN = "row", name = "phylo")
-        }
+    function(x, ...){
+        # Add new tree or replace existing tree
+        x <- .add_tree(x, MARGIN = 1, replace = TRUE)
         return(x)
     }
 )
