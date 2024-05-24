@@ -398,7 +398,7 @@
   # Perform add or replace action
   if (replace_action == "replace") {
     # Replace the tree
-    args <- list(x, tree, node_labs, name)
+    args <- list(x, tree, node_labs)
     names(args) <- args_names
     x <- do.call(changeTree, args)
   } else {
