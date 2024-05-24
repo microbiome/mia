@@ -361,12 +361,16 @@
   x <- as(x, "TreeSummarizedExperiment")
   
   # Get node labels: which row represents which node in the tree?
-  node_labs <- getTaxonomyLabels(x, with_rank = TRUE, resolve_loops = TRUE, make_unique = FALSE)
+  node_labs <- getTaxonomyLabels(x, with_rank = TRUE, resolve_loops = TRUE, 
+                                 make_unique = FALSE)
   
   # Get appropriate functions based on MARGIN
-  tree_names_FUN <- switch(MARGIN, "1" = rowTreeNames, "2" = colTreeNames, stop("Invalid MARGIN value"))
-  links_FUN <- switch(MARGIN, "1" = rowLinks, "2" = colLinks, stop("Invalid MARGIN value"))
-  tree_FUN <- switch(MARGIN, "1" = rowTree, "2" = colTree, stop("Invalid MARGIN value"))
+  tree_names_FUN <- switch(MARGIN, "1" = rowTreeNames, "2" = colTreeNames, 
+                           stop("Invalid MARGIN value"))
+  links_FUN <- switch(MARGIN, "1" = rowLinks, "2" = colLinks, 
+                      stop("Invalid MARGIN value"))
+  tree_FUN <- switch(MARGIN, "1" = rowTree, "2" = colTree, 
+                     stop("Invalid MARGIN value"))
   set_tree_FUN <- switch(MARGIN, "1" = function(x, trees) { rowTree(x) <- trees; x }, 
                          "2" = function(x, trees) { colTree(x) <- trees; x }, 
                          stop("Invalid MARGIN value"))
@@ -379,15 +383,18 @@
   # Get names of trees and links between trees and rows/columns
   tree_names <- tree_names_FUN(x)
   
-  # Determine action based on the existence of the tree name and the replace parameter
+  # Determine action based on the existence of the tree name and the replace 
+  # parameter
   if (name %in% tree_names) {
     replace_action <- switch(as.character(replace), 
                              "TRUE" = {
-                               warning(paste0("A tree named '", name, "' already exists. It will be replaced."))
+                               warning(paste0("A tree named '", name, "' 
+                                              already exists. It will be replaced."))
                                "replace"
                              },
                              "FALSE" = {
-                               warning(paste0("A tree named '", name, "' already exists. The new tree will not be added."))
+                               warning(paste0("A tree named '", name, "' already 
+                                              exists. The new tree will not be added."))
                                return(x)
                              },
                              stop("Invalid value for replace"))
