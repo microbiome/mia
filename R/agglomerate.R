@@ -286,9 +286,13 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 
         # get groups of taxonomy entries
         tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
+        # Convert to factors. na.rm so that NA values are not preserved.
+        # NA values are handled earlier in this function.
+        tax_factors <- .norm_f(nrow(x), tax_factors, na.rm = TRUE, ...)
 
         # merge taxa
-        x <- agglomerateByVariable(x, MARGIN = 1, f = tax_factors, ...)
+        x <- agglomerateByVariable(
+            x, MARGIN = 1, f = tax_factors, na.rm = TRUE, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){

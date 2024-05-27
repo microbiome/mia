@@ -1,4 +1,7 @@
-.norm_f <- function(i, f, dim.type = c("rows","columns"), ...){
+.norm_f <- function(i, f, dim.type = c("rows","columns"), na.rm = FALSE, ...){
+    if(!.is_a_bool(na.rm)){
+        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
     dim.type <- match.arg(dim.type)
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
@@ -8,6 +11,11 @@
     if(i != length(f)){
         stop("'f' must have the same number of ",dim.type," as 'x'",
             call. = FALSE)
+    }
+    # This is done otherwise we lose NA values
+    if( !na.rm && any(is.na(f)) ){
+        f <- as.character(f)
+        f[ is.na(f) ] <- "NA"
     }
     if(is.character(f)){
         f <- factor(f)
