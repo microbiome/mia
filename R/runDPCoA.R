@@ -22,9 +22,11 @@
 #'   variances to use for dimensionality reduction. Alternatively \code{NULL},
 #'   if all features should be used. (default: \code{ntop = NULL})
 #'
-#' @param subset_row Vector specifying the subset of features to use for
+#' @param subset.row Vector specifying the subset of features to use for
 #'   dimensionality reduction. This can be a character vector of row names, an
 #'   integer vector of row indices or a logical vector.
+#'   
+#' @param subset_row Deprecated. Use \code{subset.row} instead.
 #'
 #' @param scale Logical scalar, should the expression values be standardized?
 #'
@@ -42,9 +44,11 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param tree_name a single \code{character} value for specifying which
+#' @param tree.name a single \code{character} value for specifying which
 #'   rowTree will be used in calculation. 
-#'   (By default: \code{tree_name = "phylo"})
+#'   (By default: \code{tree.name = "phylo"})
+#'   
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -91,7 +95,7 @@ setGeneric("getDPCoA", signature = c("x", "y"),
            function(x, y, ...)
                standardGeneric("getDPCoA"))
 
-.calculate_dpcoa <- function(x, y, ncomponents = 2, ntop = NULL,
+.calculate_dpcoa <- function(x, y, ncomponents = 2, ntop = NULL, subset.row = subset_row,
                              subset_row = NULL, scale = FALSE,
                              transposed = FALSE, ...)
 {
@@ -121,7 +125,7 @@ setGeneric("getDPCoA", signature = c("x", "y"),
         if(is.null(ntop)){
             ntop <- nrow(x)
         }
-        x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
+        x <- .get_mat_for_reddim(x, subset_row = subset.row, ntop = ntop,
                                  scale = scale)
     }
     y <- y[colnames(x), colnames(x), drop = FALSE]
@@ -154,20 +158,20 @@ setMethod("getDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 #' @rdname runDPCoA
 setMethod("getDPCoA", signature = c("TreeSummarizedExperiment","missing"),
     function(x, ..., assay.type = assay_name, assay_name = exprs_values, 
-             exprs_values = "counts", tree_name = "phylo")
+             exprs_values = "counts", tree.name = tree_name, tree_name = "phylo")
     {
         .require_package("ade4")
         # Check assay.type
         .check_assay_present(assay.type, x)
-        # Check tree_name
-        .check_rowTree_present(tree_name, x)
+        # Check tree.name
+        .check_rowTree_present(tree.name, x)
         #
         # Get tree
-        tree <- rowTree(x, tree_name)
+        tree <- rowTree(x, tree.name)
         # Select only those features that are in the rowTree
-        whichTree <- rowLinks(x)[ , "whichTree"] == tree_name
+        whichTree <- rowLinks(x)[ , "whichTree"] == tree.name
         if( any(!whichTree) ){
-            warning("Not all rows were present in the rowTree specified by 'tree_name'.",
+            warning("Not all rows were present in the rowTree specified by 'tree.name'.",
                     "'x' is subsetted.", call. = FALSE)
             # Subset the data
             x <- x[ whichTree, ]

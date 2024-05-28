@@ -188,24 +188,24 @@
     seq
 }
 
-.merge_rows_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE,
-                            mergeRefSeq = FALSE, ...){
+.merge_rows_TSE <- function(x, f, archetype = 1L, agglomerate.tree = FALSE,
+                            agglomerate.refseq = FALSE, ...){
     # input check
-    if(!.is_a_bool(mergeTree)){
-        stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(agglomerate.tree)){
+        stop("'agglomerate.tree' must be TRUE or FALSE.", call. = FALSE)
     }
-    if(!.is_a_bool(mergeRefSeq)){
-        stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(agglomerate.refseq)){
+        stop("'agglomerate.refseq' must be TRUE or FALSE.", call. = FALSE)
     }
     # for optionally merging referenceSeq
     refSeq <- NULL
-    if(mergeRefSeq){
+    if(agglomerate.refseq){
         refSeq <- referenceSeq(x)
     }
     #
     x <- .merge_rows(x, f, archetype = 1L, ...)
     # optionally merge rowTree
-    if( mergeTree ){
+    if( agglomerate.tree ){
         x <- .agglomerate_trees(x, 1)
     }
     # optionally merge referenceSeq
@@ -215,15 +215,15 @@
     x
 }
 
-.merge_cols_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE, ...){
+.merge_cols_TSE <- function(x, f, archetype = 1L, agglomerate.tree = FALSE, ...){
     # input check
-    if(!.is_a_bool(mergeTree)){
-        stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(agglomerate.tree)){
+        stop("'agglomerate.tree' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     x <- .merge_cols(x, f, archetype = 1L, ...)
     # optionally merge colTree
-    if( mergeTree ){
+    if( agglomerate.tree ){
         x <- .agglomerate_trees(x, 2)
     }
     return(x)

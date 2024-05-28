@@ -138,7 +138,7 @@ setMethod("getTop", signature = c(x = "SummarizedExperiment"),
         #
         if(method == "prevalence"){
             taxs <- getPrevalence(assay(x, assay.type), sort = TRUE,
-                                  include_lowest = TRUE, ...)
+                                  include.lowest = TRUE, ...)
             # If there are taxa with prevalence of 0, remove them
             taxs <- taxs[ taxs > 0 ]
         } else {
@@ -308,8 +308,10 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname summaries
 #'
-#' @param object A
+#' @param x A
 #'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
+#'  
+#'  @param object Deprecated. Use \code{x} instead.
 #'
 #' @param assay.type a \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
@@ -332,17 +334,23 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
 #' \code{\link[scuttle:quickPerCellQC]{quickPerCellQC}}
 #'
 #' @export
-setMethod("summary", signature = c(object = "SummarizedExperiment"),
-    function(object, assay.type = assay_name, assay_name = "counts"){
+setGeneric("summary",signature = c("x"),
+           function(x, assay.type = assay_name, assay_name = "counts")
+             standardGeneric("summary"))
+
+#' @rdname summaries
+#' @export
+setMethod("summary", signature = c(x = "SummarizedExperiment"),
+    function(x, assay.type = assay_name, assay_name = "counts"){
         # Input check
-        .check_assay_present(assay.type = assay.type, object)
+        .check_assay_present(assay.type = assay.type, x)
         #
         # check if NA in assay
-        .check_NAs_assay_counts(object, assay.type)
+        .check_NAs_assay_counts(x, assay.type)
         # check if counts
-        .check_fraction_or_negative_values(object, assay.type)
-        sample.summary <- .get_summary_col_data(object, assay.type)
-        feature.summary <- .get_summary_row_data(object, assay.type)
+        .check_fraction_or_negative_values(x, assay.type)
+        sample.summary <- .get_summary_col_data(x, assay.type)
+        feature.summary <- .get_summary_row_data(x, assay.type)
         return(list("samples" = sample.summary, "features" = feature.summary))
     }
 )

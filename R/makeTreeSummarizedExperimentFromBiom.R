@@ -6,14 +6,18 @@
 #'
 #' @param file biom file location
 #' 
-#' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
+#' @param remove.taxa.prefix \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
-#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
-#' (default \code{removeTaxaPrefixes = FALSE})
+#' taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
+#' (default \code{remove.taxa.prefix = FALSE})
 #' 
-#' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
+#' @param removeTaxaPrefixes Deprecated. Use \code{remove.taxa.prefix} instead.
+#' 
+#' @param rank.from.prefix \code{TRUE} or \code{FALSE}: If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
-#' (default \code{rankFromPrefix = FALSE})
+#' (default \code{rank.from.prefix = FALSE})
+#' 
+#' @param rankFromPrefix Deprecated.Use \code{rank.from.prefix} instead.
 #' 
 #' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
 #' some taxonomic character naming artifacts, should they be removed.
@@ -51,8 +55,8 @@
 #' 
 #' # Get taxonomyRanks from prefixes and remove prefixes
 #' tse <- importBIOM(biom_file,
-#'                     rankFromPrefix = TRUE,
-#'                     removeTaxaPrefixes = TRUE)
+#'                     rank.from.prefix = TRUE,
+#'                     remove.taxa.prefix = TRUE)
 #' 
 #' # Load another biom file
 #' biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
@@ -74,32 +78,32 @@ importBIOM <- function(file, ...) {
 
 #' @rdname makeTreeSEFromBiom
 #'
-#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
+#' @param x object of type \code{\link[biomformat:read_biom]{biom}}
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
-makeTreeSEFromBiom <- function(
-        obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
+makeTreeSEFromBiom <- function(x , remove.taxa.prefix = removeTaxaPrefixes, 
+        removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix, rankFromPrefix = FALSE,
         remove.artifacts = FALSE, ...){
     # input check
     .require_package("biomformat")
-    if(!is(obj,"biom")){
-        stop("'obj' must be a 'biom' object", call. = FALSE)
+    if(!is(x,"biom")){
+        stop("'x' must be a 'biom' object", call. = FALSE)
     }
-    if( !.is_a_bool(removeTaxaPrefixes) ){
-        stop("'removeTaxaPrefixes' must be TRUE or FALSE.", call. = FALSE)
+    if( !.is_a_bool(remove.taxa.prefix) ){
+        stop("'remove.taxa.prefix' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( !.is_a_bool(rankFromPrefix) ){
-        stop("'rankFromPrefix' must be TRUE or FALSE.", call. = FALSE)
+    if( !.is_a_bool(rank.from.prefix) ){
+        stop("'rank.from.prefix' must be TRUE or FALSE.", call. = FALSE)
     }
     if( !.is_a_bool(remove.artifacts) ){
         stop("'remove.artifacts' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    counts <- as(biomformat::biom_data(obj), "matrix")
-    sample_data <- biomformat::sample_metadata(obj)
-    feature_data <- biomformat::observation_metadata(obj)
+    counts <- as(biomformat::biom_data(x), "matrix")
+    sample_data <- biomformat::sample_metadata(x)
+    feature_data <- biomformat::observation_metadata(x)
     
     # colData is initialized with empty tables with rownames if it is NULL
     if( is.null(sample_data) ){
@@ -161,7 +165,7 @@ makeTreeSEFromBiom <- function(
     }
     
     # Replace taxonomy ranks with ranks found based on prefixes
-    if( rankFromPrefix && all(
+    if( rank.from.prefix && all(
         unlist(lapply(colnames(feature_data),
                         function(x) !x %in% TAXONOMY_RANKS)))){
         # Find ranks
@@ -172,13 +176,13 @@ makeTreeSEFromBiom <- function(
     }
     
     # Remove prefixes if specified and rowData includes info
-    if(removeTaxaPrefixes && ncol(feature_data) > 0){
+    if(remove.taxa.prefix && ncol(feature_data) > 0){
         feature_data <- .remove_prefixes_from_taxa(feature_data, ...)
     }
     
     # Adjust row and colnames
-    rownames(counts) <- rownames(feature_data) <- biomformat::rownames(obj)
-    colnames(counts) <- rownames(sample_data) <- biomformat::colnames(obj)
+    rownames(counts) <- rownames(feature_data) <- biomformat::rownames(x)
+    colnames(counts) <- rownames(sample_data) <- biomformat::colnames(x)
     
     # Convert into DataFrame
     sample_data <- DataFrame(sample_data)
@@ -195,11 +199,12 @@ makeTreeSEFromBiom <- function(
 }
 
 ####################### makeTreeSummarizedExperimentFromBiom ###################
-#' @param obj object of type \code{\link[biomformat:read_biom]{biom}}
+#' @param x object of type \code{\link[biomformat:read_biom]{biom}}
+#' 
 #' @rdname makeTreeSEFromBiom
 #' @export
-makeTreeSummarizedExperimentFromBiom <- function(obj, ...){
-    makeTreeSEFromBiom(obj, ...)
+makeTreeSummarizedExperimentFromBiom <- function(x, ...){
+    makeTreeSEFromBiom(x, ...)
 }
 
 ################################ HELP FUNCTIONS ################################

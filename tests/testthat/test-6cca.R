@@ -59,9 +59,9 @@ test_that("CCA", {
     actual <- reducedDim(sce,"CCA")
     res <- attributes(actual)$significance
     # Create a function that calculates significances
-    calc_signif <- function(obj, assay, betadisp_group){
-        permanova <- vegan::anova.cca(obj, permutations = 999)
-        permanova2 <- vegan::anova.cca(obj, permutations = 999, by = "margin")
+    calc_signif <- function(x, assay, betadisp_group){
+        permanova <- vegan::anova.cca(x, permutations = 999)
+        permanova2 <- vegan::anova.cca(x, permutations = 999, by = "margin")
         dist <- vegan::vegdist(t(assay), method = "euclidean")
         betadisp <- vegan::betadisper(dist, group = betadisp_group)
         betadisp_permanova <- vegan::permutest(betadisp, permutations = 999)
