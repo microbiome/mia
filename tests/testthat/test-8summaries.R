@@ -28,15 +28,15 @@ test_that("summary", {
 })
 
 
-context("getUniqueTaxa")
+context("getUnique")
 
-test_that("getUniqueTaxa", {
+test_that("getUnique", {
     
     data(GlobalPatterns, package="mia")
     exp.phy <- c("Crenarchaeota","Euryarchaeota",
                  "Actinobacteria","Spirochaetes","MVP-15")
     
-    expect_equal(getUniqueTaxa(GlobalPatterns, "Phylum")[1:5],
+    expect_equal(getUnique(GlobalPatterns, "Phylum")[1:5],
                  exp.phy)
 })
 
@@ -45,20 +45,19 @@ context("summaries")
 test_that("summaries", {
     
     data(GlobalPatterns, package="mia")
-    expect_equal( getTopTaxa(GlobalPatterns, 
+    expect_equal( getTop(GlobalPatterns, 
                              method = "mean",
                              top = 5,
                              assay.type = "counts"), 
-                  getTopFeatures(GlobalPatterns, 
+                  getTop(GlobalPatterns, 
                                  method = "mean",
                                  top = 5,
                                  assay.type = "counts") )
-    expect_equal( getUniqueTaxa(GlobalPatterns, "Phylum", sort = TRUE),
-                  getUniqueFeatures(GlobalPatterns, "Phylum", sort = TRUE) )
-    expect_equal( countDominantTaxa(GlobalPatterns),
-                  countDominantFeatures(GlobalPatterns))
+
+    expect_equal( summarizeDominance(GlobalPatterns),
+                  summarizeDominance(GlobalPatterns))
     
     # Test with multiple equal dominant taxa in one sample
     assay(GlobalPatterns)[1, 1] <- max(assay(GlobalPatterns)[, 1])
-    expect_warning(countDominantFeatures(GlobalPatterns, complete = FALSE))
+    expect_warning(summarizeDominance(GlobalPatterns, complete = FALSE))
 })

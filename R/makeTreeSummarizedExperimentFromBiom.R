@@ -21,8 +21,7 @@
 #'         from prefixes? (default \code{rankFromPrefix = FALSE})}
 #'         \item{\code{remove.artifacts}}{\code{TRUE} or \code{FALSE}: If file 
 #'         have some taxonomic character naming artifacts, should they be 
-#'         removed. (default \code{remove.artifacts = FALSE})}
-#'    }
+#'         removed. (default \code{remove.artifacts = FALSE})}}
 #' 
 #' @return An object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}

@@ -46,20 +46,20 @@
 #'
 #' @param ... optional arguments:
 #' \itemize{
-#'   \item{threshold}{ A numeric value in the unit interval,
+#'   \item threshold: A numeric value in the unit interval,
 #'   determining the threshold for coverage index. By default,
-#'   \code{threshold} is 0.9.}
-#'   \item{quantile}{ Arithmetic abundance classes are evenly cut up to to
+#'   \code{threshold} is 0.9.
+#'   \item quantile: Arithmetic abundance classes are evenly cut up to to
 #'   this quantile of the data. The assumption is that abundances higher than
 #'   this are not common, and they are classified in their own group.
-#'   By default, \code{quantile} is 0.5.}
-#'   \item{num_of_classes}{ The number of arithmetic abundance classes
+#'   By default, \code{quantile} is 0.5.
+#'   \item num_of_classes: The number of arithmetic abundance classes
 #'   from zero to the quantile cutoff indicated by \code{quantile}. 
-#'   By default, \code{num_of_classes} is 50.}
-#'   \item{only.tips}{ A boolean value specifying whether to remove internal
+#'   By default, \code{num_of_classes} is 50.
+#'   \item only.tips: A boolean value specifying whether to remove internal
 #'   nodes when Faith's index is calculated. When \code{only.tips=TRUE}, those
 #'   rows that are not tips of tree are removed.
-#'   (By default: \code{only.tips=FALSE})}
+#'   (By default: \code{only.tips=FALSE})
 #' }
 #'
 #' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
@@ -74,11 +74,11 @@
 #'
 #' \itemize{
 #' 
-#' \item{'coverage' }{Number of species needed to cover a given fraction of
+#' \item 'coverage': Number of species needed to cover a given fraction of
 #' the ecosystem (50 percent by default). Tune this with the threshold
-#' argument.}
+#' argument.
 #' 
-#' \item{'faith' }{Faith's phylogenetic alpha diversity index measures how
+#' \item 'faith': Faith's phylogenetic alpha diversity index measures how
 #' long the taxonomic distance is between taxa that are present in the sample.
 #' Larger values represent higher diversity. Using this index requires
 #' rowTree. (Faith 1992)
@@ -87,12 +87,12 @@
 #' internal nodes, there are two options. First, you can keep those features,
 #' and prune the tree to match features so that each tip can be found from
 #' the features. Other option is to remove all features that are not tips.
-#' (See \code{only.tips} parameter)}
+#' (See \code{only.tips} parameter)
 #' 
-#' \item{'fisher' }{Fisher's alpha; as implemented in
-#' \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)}
+#' \item 'fisher': Fisher's alpha; as implemented in
+#' \code{\link[vegan:diversity]{vegan::fisher.alpha}}. (Fisher et al. 1943)
 #' 
-#' \item{'gini_simpson' }{Gini-Simpson diversity i.e. \eqn{1 - lambda},
+#' \item 'gini_simpson': Gini-Simpson diversity i.e. \eqn{1 - lambda},
 #' where \eqn{lambda} is the
 #' Simpson index, calculated as the sum of squared relative abundances.
 #' This corresponds to the diversity index
@@ -101,25 +101,25 @@
 #' psychology and management studies. The Gini-Simpson index (1-lambda)
 #' should not be
 #' confused with Simpson's dominance (lambda), Gini index, or
-#' inverse Simpson index (1/lambda).}
+#' inverse Simpson index (1/lambda).
 #' 
-#' \item{'inverse_simpson' }{Inverse Simpson diversity:
+#' \item 'inverse_simpson': Inverse Simpson diversity:
 #' \eqn{1/lambda} where \eqn{lambda=sum(p^2)} and p refers to relative
 #' abundances.
 #' This corresponds to the diversity index
 #' 'invsimpson' in vegan::diversity. Don't confuse this with the
-#' closely related Gini-Simpson index}
+#' closely related Gini-Simpson index
 #'
-#' \item{'log_modulo_skewness' }{The rarity index characterizes the
+#' \item 'log_modulo_skewness': The rarity index characterizes the
 #' concentration of species at low abundance. Here, we use the skewness of
 #' the frequency 
 #' distribution of arithmetic abundance classes (see Magurran & McGill 2011).
 #' These are typically right-skewed; to avoid taking log of occasional
 #' negative skews, we follow Locey & Lennon (2016) and use the log-modulo
 #' transformation that adds a value of one to each measure of skewness to
-#' allow logarithmization.}
+#' allow logarithmization.
 #'
-#' \item{'shannon' }{Shannon diversity (entropy).}
+#' \item 'shannon': Shannon diversity (entropy).
 #' 
 #' }
 #'
@@ -158,11 +158,11 @@
 #' @seealso
 #' \code{\link[scater:plotColData]{plotColData}}
 #' \itemize{
-#'   \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
-#'   \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
-#'   \item{\code{\link[mia:estimateDominance]{estimateDominance}}}
-#'   \item{\code{\link[vegan:diversity]{diversity}}}
-#'   \item{\code{\link[vegan:specpool]{estimateR}}}
+#'   \item \code{\link[mia:estimateRichness]{estimateRichness}}
+#'   \item \code{\link[mia:estimateEvenness]{estimateEvenness}}
+#'   \item \code{\link[mia:estimateDominance]{estimateDominance}}
+#'   \item \code{\link[vegan:diversity]{diversity}}
+#'   \item \code{\link[vegan:specpool]{estimateR}}
 #' }
 #'
 #' @name estimateDiversity
@@ -258,7 +258,7 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
                              "inverse_simpson", "log_modulo_skewness", "shannon")
         index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
         if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-            stop("'", paste0("'index' must be from the following options: '",supported_types), "'", call. = FALSE)
+            stop("'", paste0("'index' must be from the following options: '",index_string), "'", call. = FALSE)
         }
         
         if(!.is_non_empty_character(name) || length(name) != length(index)){
@@ -584,31 +584,6 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     faiths_for_taxa_present <- unlist(faiths_for_taxa_present)
     faiths[ind] <- faiths_for_taxa_present
     return(faiths)
-}
-
-# This function trims tips until all tips can be found from provided set of nodes
-#' @importFrom ape drop.tip
-.prune_tree <- function(tree, nodes){
-    # Get those tips that can not be found from provided nodes
-    remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
-    # As long as there are tips to be dropped, run the loop
-    while( length(remove_tips) > 0 ){
-        # Drop tips that cannot be found. Drop only one layer at the time. Some
-        # dataset might have taxa that are not in tip layer but they are higher
-        # higher rank. IF we delete more than one layer at the time, we might
-        # loose the node for those taxa. --> The result of pruning is a tree
-        # whose all tips can be found provided nodes i.e., rows of TreeSE. Some
-        # taxa might be higher rank meaning that all rows might not be in tips
-        # even after pruning; they have still child-nodes.
-        tree <- drop.tip(tree, remove_tips, trim.internal = FALSE, collapse.singles = FALSE)
-        # If all tips were dropped, the result is NULL --> stop loop
-        if( is.null(tree) ){
-            break
-        }
-        # Again, get those tips of updated tree that cannot be found from provided nodes
-        remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
-    }
-    return(tree)
 }
 
 .calc_log_modulo_skewness <- function(mat, quantile = 0.5, num_of_classes = 50, ...){
