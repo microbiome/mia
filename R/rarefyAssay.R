@@ -1,8 +1,9 @@
 #' Subsample Counts
 #' 
-#' \code{rarefyAssay} will randomly subsample counts in 
-#' \code{SummarizedExperiment} and return the a modified object in which each 
-#' sample has same number of total observations/counts/reads. 
+#' \code{rarefyAssay} randomly subsamples counts within a 
+#' \code{SummarizedExperiment} object and returns a new 
+#' \code{SummarizedExperiment} containing the original assay and the new 
+#' subsampled assay.
 #'
 #' @details
 #' Although the subsampling approach is highly debated in microbiome research, 
@@ -30,15 +31,13 @@
 #'   simulated this can equal to lowest number of total counts 
 #'   found in a sample or a user specified number. 
 #'   
-#'  
-#' 
 #' @param replace Logical Default is \code{TRUE}. The default is with 
 #'   replacement (\code{replace=TRUE}). 
 #'   See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
 #'   for details on implications of this parameter.   
 #' 
 #' @param name A single character value specifying the name of transformed
-#'   abundance table.
+#'   abundance table that will be added to the new \code{SummarizedExperiment}.
 #' 
 #' @param verbose Logical Default is \code{TRUE}. When \code{TRUE} an additional 
 #'   message about the random number used is printed.
@@ -77,7 +76,7 @@
 #'                                   )
 #' tse.subsampled
 #' dim(tse)
-#' dim(tse.subsampled)
+#' dim(assay(tse.subsampled, "subsampled"))
 #' 
 NULL
 

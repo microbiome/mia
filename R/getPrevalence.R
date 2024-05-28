@@ -23,18 +23,18 @@
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for prevalence calculation.
-#'   
+#'
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
-#'   
+#'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomyRanks()} function.
-#'  
+#'
 #' @param na.rm logical scalar: Should NA values be omitted when calculating
 #' prevalence? (default: \code{na.rm = TRUE})
-#'   
+#'
 #' @param ... additional arguments
 #' \itemize{
 #'   \item If \code{!is.null(rank)} arguments are passed on to
@@ -86,7 +86,7 @@
 #'   
 #'   \item \code{getPrevalent} and \code{getRare} return a 
 #'     \code{character} vector with only the names exceeding the threshold set
-#'     by \code{prevalence}, if the \code{rownames} of \code{x} is set. 
+#'     by \code{prevalence}, if the \code{rownames} of \code{x} is set.
 #'     Otherwise an \code{integer} vector is returned matching the rows in
 #'     \code{x}.
 #' }
@@ -146,7 +146,7 @@
 #'                             prevalence = 50/100,
 #'                             as_relative = FALSE)
 #' head(prevalent)
-#' 
+#'
 #' # Gets a subset of object that includes prevalent taxa
 #' altExp(tse, "prevalent") <- subsetByPrevalent(tse,
 #'                                              rank = "Family",
@@ -162,7 +162,7 @@
 #'                     prevalence = 50/100,
 #'                     as_relative = TRUE)
 #' head(rare)
-#' 
+#'
 #' # Gets a subset of object that includes rare taxa
 #' altExp(tse, "rare") <- subsetByRare(tse,
 #'                                     rank = "Class",
@@ -174,7 +174,7 @@
 #' # Names of both experiments, prevalent and rare, can be found from slot
 #' # altExpNames
 #' tse
-#'                          
+#'
 #' data(esophagus)
 #' getPrevalentAbundance(esophagus, assay.type = "counts")
 #'
@@ -266,7 +266,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
+    function(x, assay.type = assay_name, assay_name = "counts",
              as_relative = FALSE, rank = NULL, ...){
         # input check
         if(!.is_a_bool(as_relative)){
@@ -318,16 +318,16 @@ setGeneric("getPrevalent", signature = "x",
              "one.",
              call. = FALSE)
     }
-    
+
     prevalence <- as.numeric(prevalence)
     if(!.is_a_bool(include_lowest)){
         stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
     }
-    # rownames must bet set and unique, because if sort = TRUE, the order is 
+    # rownames must bet set and unique, because if sort = TRUE, the order is
     # not preserved
     x <- .norm_rownames(x)
     pr <- getPrevalence(x, rank = NULL, ...)
-    
+
     # get logical vector which row does exceed threshold
     if (include_lowest) {
         f <- pr >= prevalence
@@ -343,7 +343,7 @@ setGeneric("getPrevalent", signature = "x",
     m <- match(names(f),names(indices))
     m <- m[!is.na(m)]
     indices <- indices[m]
-    # 
+    #
     indices
 }
 
@@ -403,7 +403,7 @@ setGeneric("getRare", signature = "x",
     indices_new <- indices_x[f]
     indices_new
 }
-    
+
 .get_rare_taxa <- function(x, rank = NULL, ...){
     if(is(x,"SummarizedExperiment")){
         x <- .agg_for_prevalence(x, rank = rank, ...)
@@ -514,22 +514,22 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 ############################# agglomerateByPrevalence ##########################
 
 #' @rdname agglomerate-methods
-#' 
+#'
 #' @param other_label A single \code{character} valued used as the label for the
 #'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
-#' 
+#'
 #' @details
-#' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic 
-#' level specified by \code{rank} (by default the highest taxonomic level 
-#' available) and selects the summed results that exceed the given population 
-#' prevalence at the given detection level. The other summed values (below the 
+#' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
+#' level specified by \code{rank} (by default the highest taxonomic level
+#' available) and selects the summed results that exceed the given population
+#' prevalence at the given detection level. The other summed values (below the
 #' threshold) are agglomerated in an additional row taking the name indicated by
 #' \code{other_label} (by default "Other").
-#' 
-#' @return 
+#'
+#' @return
 #' \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
 #' of the same class as x and based on prevalent taxonomic results.
-#' 
+#'
 #' @examples
 #' ## Data can be aggregated based on prevalent taxonomic results
 #' tse <- GlobalPatterns
@@ -538,17 +538,17 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #'                               detection = 1/100,
 #'                               prevalence = 50/100,
 #'                               as_relative = TRUE)
-#' 
+#'
 #' tse
-#' 
+#'
 #' # Here data is aggregated at the taxonomic level "Phylum". The five phyla
-#' # that exceed the population prevalence threshold of 50/100 represent the 
+#' # that exceed the population prevalence threshold of 50/100 represent the
 #' # five first rows of the assay in the aggregated data. The sixth and last row
-#' # named by default "Other" takes the summed up values of all the other phyla 
+#' # named by default "Other" takes the summed up values of all the other phyla
 #' # that are below the prevalence threshold.
-#' 
+#'
 #' assay(tse)[,1:5]
-#' 
+#'
 #' @export
 setGeneric("agglomerateByPrevalence", signature = "x",
            function(x, ...)
@@ -557,7 +557,7 @@ setGeneric("agglomerateByPrevalence", signature = "x",
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = taxonomyRanks(x)[1L], other_label = "Other", ...){
+    function(x, rank = NULL, other_label = "Other", ...){
         # input check
         if(!.is_a_string(other_label)){
             stop("'other_label' must be a single character value.",
