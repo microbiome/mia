@@ -2,7 +2,7 @@
 #'
 #' This function calculates the (Fast) Unifrac distance for all sample-pairs
 #' in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' object.
+#' object. The function utilizes \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 #'
 #' Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
 #' \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
@@ -48,16 +48,6 @@
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
 #'   unweighted-Unifrac distance is calculated for all pairs of samples.
 #'
-#' @param normalized \code{TRUE} or \code{FALSE}: Should the output be
-#'   normalized such that values range from 0 to 1 independent of branch length
-#'   values? Default is \code{TRUE}. Note that (unweighted) \code{Unifrac} is
-#'   always normalized by total branch-length, and so this value is ignored when
-#'   \code{weighted == FALSE}.
-#'
-#' @param BPPARAM A
-#'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-#'   object specifying whether the Unifrac calculation should be parallelized.
-#'
 #' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
 #'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 #'   (By default: \code{transposed = FALSE})
@@ -95,13 +85,12 @@
 #' library(scater)
 #' calculateUnifrac(esophagus, weighted = FALSE)
 #' calculateUnifrac(esophagus, weighted = TRUE)
-#' calculateUnifrac(esophagus, weighted = TRUE, normalized = FALSE)
 #' # for using calculateUnifrac in conjunction with runMDS the tree argument
 #' # has to be given separately. In addition, subsetting using ntop must
 #' # be disabled
 #' esophagus <- runMDS(esophagus, FUN = calculateUnifrac, name = "Unifrac",
 #'                     tree = rowTree(esophagus),
-#'                     exprs_values = "counts",
+#'                     assay.type = "counts",
 #'                     ntop = nrow(esophagus))
 #' reducedDim(esophagus)
 NULL
@@ -115,8 +104,7 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 #' @rdname calculateUnifrac
 #' @export
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
-    function(x, tree, weighted = FALSE, normalized = TRUE,
-            BPPARAM = SerialParam(), ...){
+    function(x, tree, weighted = FALSE, ...){
         if(is(x,"SummarizedExperiment")){
             stop("When providing a 'tree', please provide a matrix-like as 'x'",
                 " and not a 'SummarizedExperiment' object. Please consider ",
@@ -194,7 +182,7 @@ setMethod("calculateUnifrac",
 #' @importFrom rbiom unifrac
 #' @export
 runUnifrac <- function(
-        x, tree, weighted = FALSE, normalized = TRUE, nodeLab = NULL, ...){
+        x, tree, weighted = FALSE, nodeLab = NULL, ...){
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)
@@ -237,9 +225,27 @@ runUnifrac <- function(
     if( is.null(nodeLab) ){
         nodeLab <- rownames(x)
     }
-    # Merge assay
+    # Prune tree if there are nodes that cannot be found from tips or if there
+    # are tips that cannot be found from abundance matrix. It might be
+    # that certain row is linked to internal node or that the tree has extra
+    # tips that do not match with rows (e.g. after subsetting).
+    if( any( !nodeLab %in% tree$tip.label ) ||
+            any( !tree$tip.label %in% nodeLab) ){
+        tree <- .prune_tree(tree, nodeLab)
+        warning("Pruning tree...", call. = FALSE)
+    }
+    # If node labels cannot be found from tips even after pruning, give error.
+    # This kind of tree cannot be used in unifrac since it expects that every
+    # row is linked to tips.
+    if( any( !nodeLab %in% tree$tip.label ) ){
+        stop(
+            "Unifrac cannot be calculated since tree is not compatible. ",
+            "Each row must be linked to tip of the tree.", call. = FALSE)
+    }
+    # Merge assay so that each row represent single tip. It might be that
+    # multiple rows are linked to single tip.
     x <- .merge_assay_by_rows(x, nodeLab, ...)
-    # Modify tree
+    # Modify tree so that it will become rooted.
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     # Remove those tips that are not present in the data
     if( any(!tree$tip.label %in% rownames(x)) ){
@@ -256,71 +262,21 @@ runUnifrac <- function(
 
 # Aggregate matrix based on nodeLabs. At the same time, rename rows based on nodeLab
 # --> each row represent specific node of tree
+#' @importFrom scuttle sumCountsAcrossFeatures
 .merge_assay_by_rows <- function(x, nodeLab, average = FALSE, ...){
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
     # Merge assay based on nodeLabs
-    x <- scuttle::sumCountsAcrossFeatures(x, ids = nodeLab, 
-                                          subset.row = NULL, subset.col = NULL, 
-                                          average = average)
+    x <- sumCountsAcrossFeatures(
+        x, ids = nodeLab, subset.row = NULL, subset.col = NULL,
+        average = average)
     # Remove NAs from nodeLab
     nodeLab <- nodeLab[ !is.na(nodeLab) ]
     # Get the original order back
     x <- x[ nodeLab, ]
     return(x)
 }
-
-unifrac_unweighted <- function(i, tree, samplesums, edge_occ){
-    A  <- i[1]
-    B  <- i[2]
-    AT <- samplesums[A]
-    BT <- samplesums[B]
-    # Unweighted Unifrac
-    # Subset matrix to just columns A and B
-    edge_occ_AB <- edge_occ[, c(A, B)]
-    edge_occ_AB_rS <- rowSums(edge_occ_AB, na.rm = TRUE)
-    # Keep only the unique branches. Sum the lengths
-    edge_uni_AB_sum <- sum((tree$edge.length * edge_occ_AB)[edge_occ_AB_rS < 2,],
-                           na.rm=TRUE)
-    # Normalize this sum to the total branches among these two samples, A and
-    # B
-    uwUFpairdist <- edge_uni_AB_sum /
-        sum(tree$edge.length[edge_occ_AB_rS > 0])
-    uwUFpairdist
-}
-# if not-normalized weighted Unifrac, just return "numerator";
-# the u-value in the w-Unifrac description
-unifrac_weighted_not_norm <- function(i, tree, samplesums, edge_array){
-    A  <- i[1]
-    B  <- i[2]
-    AT <- samplesums[A]
-    BT <- samplesums[B]
-    # weighted Unifrac
-    wUF_branchweight <- abs(edge_array[, A]/AT - edge_array[, B]/BT)
-    # calculate the w-UF numerator
-    numerator <- sum((tree$edge.length * wUF_branchweight), na.rm = TRUE)
-    # if not-normalized weighted Unifrac, just return "numerator";
-    # the u-value in the w-Unifrac description
-    numerator
-}
-unifrac_weighted_norm <- function(i, mat, tree, samplesums, edge_array,
-                                  tipAges){
-    A  <- i[1]
-    B  <- i[2]
-    AT <- samplesums[A]
-    BT <- samplesums[B]
-    # weighted Unifrac
-    wUF_branchweight <- abs(edge_array[, A]/AT - edge_array[, B]/BT)
-    # calculate the w-UF numerator
-    numerator <- sum((tree$edge.length * wUF_branchweight), na.rm = TRUE)
-    # denominator (assumes tree-indices and matrix indices are same order)
-    denominator <- sum((tipAges * (mat[, A]/AT + mat[, B]/BT)), na.rm = TRUE)
-    # return the normalized weighted Unifrac values
-    numerator / denominator
-}
-
-################################################################################
 
 #' @importFrom ape is.rooted root
 .norm_tree_to_be_rooted <- function(tree, names){
