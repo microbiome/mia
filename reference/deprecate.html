@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.19</span>
       </span>
     </div>
 
@@ -68,10 +68,25 @@
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">taxonomyTree</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">makeTreeSummarizedExperimentFromPhyloseq</span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">makeTreeSummarizedExperimentFromPhyloseq</span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">obj</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">obj</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">obj</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">obj</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
 <span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -112,6 +127,16 @@
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
 <span><span class="fu">mergeFeaturesByPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">makeTreeSEFromBiom</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">makeTreeSummarizedExperimentFromBiom</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">makeTreeSEFromDADA2</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">makeTreeSummarizedExperimentFromDADA2</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">makeTreeSEFromPhyloseq</span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -316,13 +341,16 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>A
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-object.</p></dd>
+<dd><p>a <code>SummarizedExperiment</code> object -</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Additional parameters. See dedicated function.</p></dd>
+<dd><ul><li><p></p></li>
+</ul></dd>
+
+
+<dt>obj</dt>
+<dd><p>an object</p></dd>
 
 </dl></div>
 
