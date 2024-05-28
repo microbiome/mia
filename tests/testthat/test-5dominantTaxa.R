@@ -33,7 +33,7 @@ test_that("getDominant", {
         names(exp.vals.two) <- exp.names.one
         expect_equal(getDominant(tse,
                                            rank = "Genus",
-                                           onRankOnly = FALSE,
+                                           disable.taxonomy = FALSE,
                                            na.rm = FALSE)[1:15],
                      exp.vals.two)
 
@@ -43,6 +43,7 @@ test_that("getDominant", {
                      exp.vals.one)
         expect_equal(colData(addDominant(tse,
                                             rank = "Genus",
+                                            disable.taxonomy = FALSE,
                                             na.rm = FALSE,
                                             name="dominant"))$dominant[1:15],
                      exp.vals.two)

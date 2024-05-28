@@ -5,7 +5,7 @@
 #'
 #' All data stored in a \code{phyloseq} object is transferred.
 #'
-#' @param obj a \code{phyloseq} object
+#' @param x a \code{phyloseq} object
 #'
 #' @return An object of class \code{TreeSummarizedExperiment}
 #'
@@ -30,41 +30,41 @@
 #'     data(esophagus, package="phyloseq")
 #'     makeTreeSEFromPhyloseq(esophagus)
 #' }
-makeTreeSEFromPhyloseq <- function(obj) {
+makeTreeSEFromPhyloseq <- function(x) {
     # input check
     .require_package("phyloseq")
-    if(!is(obj,"phyloseq")){
-        stop("'obj' must be a 'phyloseq' object")
+    if(!is(x,"phyloseq")){
+        stop("'x' must be a 'phyloseq' object")
     }
     #
     # Get the assay
-    counts <- obj@otu_table@.Data
+    counts <- x@otu_table@.Data
     # Check the orientation, and transpose if necessary
-    if( !obj@otu_table@taxa_are_rows ){
+    if( !x@otu_table@taxa_are_rows ){
         counts <- t(counts)
     }
     # Create a list of assays
     assays <- SimpleList(counts = counts)
     
-    if(!is.null(obj@tax_table@.Data)){
-        rowData <- DataFrame(data.frame(obj@tax_table@.Data))
+    if(!is.null(x@tax_table@.Data)){
+        rowData <- DataFrame(data.frame(x@tax_table@.Data))
     } else{
         rowData <- S4Vectors::make_zero_col_DFrame(nrow(assays$counts))
         rownames(rowData) <- rownames(assays$counts)
     }
-    if(!is.null(obj@sam_data)){
-        colData <- DataFrame(data.frame(obj@sam_data))
+    if(!is.null(x@sam_data)){
+        colData <- DataFrame(data.frame(x@sam_data))
     } else{
         colData <- S4Vectors::make_zero_col_DFrame(ncol(assays$counts))
         rownames(colData) <- colnames(assays$counts)
     }
-    if(!is.null(obj@phy_tree)){
-        rowTree <- obj@phy_tree
+    if(!is.null(x@phy_tree)){
+        rowTree <- x@phy_tree
     } else {
         rowTree <- NULL
     }
-    if (!is.null(obj@refseq)) {
-        referenceSeq <- obj@refseq
+    if (!is.null(x@refseq)) {
+        referenceSeq <- x@refseq
     } else {
         referenceSeq <- NULL
     }
@@ -78,13 +78,13 @@ makeTreeSEFromPhyloseq <- function(obj) {
 ####################### makeTreeSummarizedExperimentFromPhyloseq #######################
 #' @rdname makeTreeSEFromPhyloseq
 #' @export
-setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("obj"),
-    function(obj)
+setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("x"),
+    function(x)
         standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
 
 #' @rdname makeTreeSEFromPhyloseq
 #' @export
-setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(obj = "ANY"),
-    function(obj){
-        makeTreeSEFromPhyloseq(obj)
+setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(x = "ANY"),
+    function(x){
+        makeTreeSEFromPhyloseq(x)
     })

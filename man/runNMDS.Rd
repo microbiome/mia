@@ -15,12 +15,14 @@ getNMDS(x, ...)
 \S4method{getNMDS}{ANY}(
   x,
   FUN = vegdist,
-  nmdsFUN = c("isoMDS", "monoMDS"),
+  nmds.FUN = c("isoMDS", "monoMDS"),
   ncomponents = 2,
   ntop = 500,
+  subset.row = subset_row,
   subset_row = NULL,
   scale = FALSE,
   transposed = FALSE,
+  keep.dist = keep_dist,
   keep_dist = FALSE,
   ...
 )
@@ -41,6 +43,7 @@ getNMDS(x, ...)
   assay_name = exprs_values,
   exprs_values = "counts",
   dimred = NULL,
+  ndimred = n_dimred,
   n_dimred = NULL,
   FUN = vegdist
 )
@@ -59,12 +62,12 @@ Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 For \code{addNMDS} a \linkS4class{SingleCellExperiment}}
 
 \item{...}{additional arguments to pass to \code{FUN} and
-\code{nmdsFUN}.}
+\code{nmds.FUN}.}
 
 \item{FUN}{a \code{function} or \code{character} value with a function
 name returning a \code{\link[stats:dist]{dist}} object}
 
-\item{nmdsFUN}{a \code{character} value to choose the scaling
+\item{nmds.FUN}{a \code{character} value to choose the scaling
 implementation, either \dQuote{isoMDS} for
 \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 \code{\link[vegan:monoMDS]{vegan::monoMDS}}}
@@ -75,17 +78,21 @@ to obtain.}
 \item{ntop}{Numeric scalar specifying the number of features with the highest
 variances to use for dimensionality reduction.}
 
-\item{subset_row}{Vector specifying the subset of features to use for
+\item{subset.row}{Vector specifying the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
 integer vector of row indices or a logical vector.}
+
+\item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
 \item{scale}{Logical scalar, should the expression values be standardized?}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows?}
 
-\item{keep_dist}{Logical scalar indicating whether the \code{dist} object
+\item{keep.dist}{Logical scalar indicating whether the \code{dist} object
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
 the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}.}
+
+\item{keep_dist}{Deprecated. Use \code{keep.dist} instead.}
 
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -102,8 +109,10 @@ assay to use for calculation.
 \item{dimred}{String or integer scalar specifying the existing dimensionality
 reduction results to use.}
 
-\item{n_dimred}{Integer scalar or vector specifying the dimensions to use if
+\item{ndimred}{Integer scalar or vector specifying the dimensions to use if
 dimred is specified.}
+
+\item{n_dimred}{Deprecated. Use \code{ndimred} instead.}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -123,7 +132,7 @@ data in a \code{SingleCellExperiment} object.
 Either \code{\link[MASS:isoMDS]{MASS::isoMDS}} or
 \code{\link[vegan:monoMDS]{vegan::monoMDS}} are used internally to compute
 the NMDS components. If you supply a custom \code{FUN}, make sure that
-the arguments of \code{FUN} and \code{nmdsFUN} do not collide.
+the arguments of \code{FUN} and \code{nmds.FUN} do not collide.
 }
 \examples{
 # generate some example data

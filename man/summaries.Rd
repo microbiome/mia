@@ -8,6 +8,7 @@
 \alias{getUnique,SummarizedExperiment-method}
 \alias{summarizeDominance}
 \alias{summarizeDominance,SummarizedExperiment-method}
+\alias{summary}
 \alias{summary,SummarizedExperiment-method}
 \title{Summarizing microbiome data}
 \usage{
@@ -39,11 +40,15 @@ summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 
 \S4method{summarizeDominance}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
 
-\S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
+summary(x, assay.type = assay_name, assay_name = "counts")
+
+\S4method{summary}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts")
 }
 \arguments{
 \item{x}{A
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
+
+@param object Deprecated. Use \code{x} instead.}
 
 \item{top}{Numeric value, how many top taxa to return. Default return top
 five taxa.}
@@ -73,9 +78,6 @@ the output of \code{taxonomyRanks()}.}
 overview. Must be one of the column names of \code{colData}.}
 
 \item{name}{The column name for the features. The default is 'dominant_taxa'.}
-
-\item{object}{A
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
 }
 \value{
 The \code{getTop} returns a vector of the most \code{top} abundant

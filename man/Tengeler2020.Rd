@@ -14,7 +14,7 @@ Family and Genus level. The colData includes:
 \item{cohort}{cohort to which the patient belongs (Cohort_1, Cohort_2 and
 Cohort_3)}
 \item{patient_status_vs_cohort}{combination of patient_status and cohort}
-\item{sample_name}{unique sample ID}
+\item{col.name}{unique sample ID}
 }
 }
 \usage{

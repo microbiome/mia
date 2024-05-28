@@ -3,19 +3,25 @@
 #' @param file a single \code{character} value defining the file
 #'   path of the Metaphlan file. The file must be in merged Metaphlan format.
 #'
-#' @param colData a DataFrame-like object that includes sample names in
+#' @param col.data a DataFrame-like object that includes sample names in
 #'   rownames, or a single \code{character} value defining the file
 #'   path of the sample metadata file. The file must be in \code{tsv} format
-#'   (default: \code{colData = NULL}).
+#'   (default: \code{col.data = NULL}).
+#'   
+#' @param colData Deprecated. use \code{col.data} instead.
 #' 
-#' @param sample_meta a DataFrame-like object that includes sample names in
+#' @param col.data a DataFrame-like object that includes sample names in
 #'   rownames, or a single \code{character} value defining the file
 #'   path of the sample metadata file. The file must be in \code{tsv} format
-#'   (default: \code{sample_meta = NULL}).
+#'   (default: \code{col.data = NULL}).
+#'   
+#' @param sample_meta Deprecated. Use \code{col.data} instead.
 #' 
-#' @param phy_tree a single \code{character} value defining the file
+#' @param phy.tree.file a single \code{character} value defining the file
 #'   path of the phylogenetic tree.
-#'   (default: \code{phy_tree = NULL}).
+#'   (default: \code{phy.tree.file = NULL}).
+#'   
+#' @param phy_tree Deprecated. Use \code{phy.tree.file} instead.
 #'   
 #' @param ... additional arguments:
 #' \itemize{
@@ -25,9 +31,9 @@
 #'   \item \code{assay_name}: A single \code{character} value for specifying which
 #'   assay to use for calculation. (Please use \code{assay.type} instead. 
 #'   At some point \code{assay_name} will be disabled.)
-#'   \item \code{removeTaxaPrefixes}: \code{TRUE} or \code{FALSE}: Should
+#'   \item \code{remove.taxa.prefix}: \code{TRUE} or \code{FALSE}: Should
 #'     taxonomic prefixes be removed? (default:
-#'     \code{removeTaxaPrefixes = FALSE})
+#'     \code{remove.taxa.prefix = FALSE})
 #'   \item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
 #'     suffixes of sample names be removed? Metaphlan pipeline adds suffixes
 #'     to sample names. Suffixes are formed from file names. By selecting
@@ -93,7 +99,8 @@
 NULL
 
 importMetaPhlAn <- function(
-        file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL, ...){
+        file, col.data = colData, colData = sample_meta,
+        sample_meta = NULL, phy.tree.file = phy_tree, phy_tree = NULL, ...){
     
     ################################ Input check ################################
     if(!.is_non_empty_string(file)){
@@ -103,14 +110,14 @@ importMetaPhlAn <- function(
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
-    if(!is.null(colData) &&
-        !(.is_non_empty_string(colData) || is.data.frame(colData) ||
-            is.matrix(colData) || is(colData, "DataFrame")) ){
-        stop("'colData' must be a single character value, DataFrame or NULL.",
+    if(!is.null(col.data) &&
+        !(.is_non_empty_string(col.data) || is.data.frame(col.data) ||
+            is.matrix(col.data) || is(col.data, "DataFrame")) ){
+        stop("'col.data' must be a single character value, DataFrame or NULL.",
             call. = FALSE)
     }
-    if(!is.null(phy_tree) && !.is_non_empty_string(phy_tree)){
-        stop("'phy_tree' must be a single character value or NULL.",
+    if(!is.null(phy.tree.file) && !.is_non_empty_string(phy.tree.file)){
+        stop("'phy.tree.file' must be a single character value or NULL.",
             call. = FALSE)
     }
     ############################## Input check end #############################
@@ -146,14 +153,14 @@ importMetaPhlAn <- function(
     .set_ranks_based_on_rowdata(tse,...)
     
     # Load sample meta data if it is provided
-    if( !is.null(colData) ) {
-        tse <- .add_coldata(tse, colData)
+    if( !is.null(col.data) ) {
+        tse <- .add_coldata(tse, col.data)
     }
     
     
     # Load tree if it is provided
-    if (!is.null(phy_tree)) {
-        tree <- ape::read.tree(phy_tree)
+    if (!is.null(phy.tree.file)) {
+        tree <- ape::read.tree(phy.tree.file)
         rowTree(tse) <- tree
     } 
     

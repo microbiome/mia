@@ -17,7 +17,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
                     package="mia")
     )
     tse <- makeTreeSEFromBiom(biom_object,
-                                removeTaxaPrefixes = FALSE,
+                                remove.taxa.prefix = FALSE,
                                 rankFromPrefix = FALSE,
                                 remove.artifacts = TRUE,
                                 pattern = "\"")
@@ -35,7 +35,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     
     # Testing prefixes removed
     tse <- makeTreeSEFromBiom(biom_object,
-                                removeTaxaPrefixes=TRUE,
+                                remove.taxa.prefix=TRUE,
                                 rankFromPrefix=TRUE,
                                 remove.artifacts = TRUE,
                                 pattern = "\"")
@@ -45,7 +45,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     
     # Testing parsing taxonomy ranks from prefixes
     tse <- makeTreeSEFromBiom(biom_object,
-                                removeTaxaPrefixes=FALSE,
+                                remove.taxa.prefix=FALSE,
                                 rankFromPrefix=TRUE,
                                 remove.artifacts = TRUE,
                                 pattern = "\"")
@@ -56,7 +56,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     # Testing the remove.artifacts, the original artifact in the biom file 
     # is '\"', as a test we rather try remove a non existing pattern.
     tse <- makeTreeSEFromBiom(biom_object,
-                                removeTaxaPrefixes=FALSE,
+                                remove.taxa.prefix=FALSE,
                                 rankFromPrefix=FALSE,
                                 remove.artifacts = TRUE,
                                 pattern = "\\*|\\?")
@@ -65,7 +65,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     # Testing the remove.artifacts, with the value 'auto' to automatically 
     # detect the artifact and remove it (in our case the artifact is '\"').
     tse <- makeTreeSEFromBiom(biom_object,
-                                removeTaxaPrefixes=FALSE,
+                                remove.taxa.prefix=FALSE,
                                 rankFromPrefix=FALSE,
                                 remove.artifacts = TRUE)
     # Checking if 'auto' has detected and cleaned the artifact
@@ -73,7 +73,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     # Testing the remove.artifacts, with the value NULL to not detect or clean 
     # anything.
     tse <- makeTreeSEFromBiom(biom_object,
-                                removeTaxaPrefixes=FALSE,
+                                remove.taxa.prefix=FALSE,
                                 rankFromPrefix=FALSE,
                                 remove.artifacts = FALSE)
     # Checking if the '\"' artifact still exists.
@@ -81,7 +81,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     
     # General final test
     tse <- makeTreeSEFromBiom(biom_object,
-                                removeTaxaPrefixes=TRUE,
+                                remove.taxa.prefix=TRUE,
                                 rankFromPrefix=TRUE,
                                 remove.artifacts = TRUE)
     # check if '\"' cleaned
@@ -101,7 +101,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
                     package = "biomformat")
     )
     tse <- makeTreeSEFromBiom(biom_object,
-                                removeTaxaPrefixes=TRUE,
+                                remove.taxa.prefix=TRUE,
                                 rankFromPrefix=TRUE,
                                 remove.artifacts = TRUE)
     # check if taxa prefixes removed
@@ -161,8 +161,8 @@ test_that("Importing Mothur files yield SummarizedExperiment objects", {
     expect_s4_class(se2, "SummarizedExperiment")
     expect_error(importMothur(counts, meta))
     expect_error(importMothur(counts, meta))
-    se <- importMothur(counts, designFile = meta)
-    se2 <- importMothur(counts, designFile = meta)
+    se <- importMothur(counts, col.file = meta)
+    se2 <- importMothur(counts, col.file = meta)
     expect_s4_class(se, "SummarizedExperiment")
     expect_s4_class(se2, "SummarizedExperiment")
     se <- importMothur(counts, taxa, meta)
@@ -218,15 +218,15 @@ test_that("Importing Mothur files yield SummarizedExperiment objects", {
                         c("group", "sex", "age", "drug", "label", "numOtus", "Group"))
 })
 
-featureTableFile <- system.file("extdata", "table.qza", package = "mia")
+row.file <- system.file("extdata", "table.qza", package = "mia")
 taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
-sampleMetaFile <- system.file("extdata", "sample-metadata.tsv", package = "mia")
-refSeqFile <- system.file("extdata", "refseq.qza", package = "mia")
+col.file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
+refseq.file <- system.file("extdata", "refseq.qza", package = "mia")
 
 test_that("make TSE worked properly while no sample or taxa data", {
     skip_if_not(require("biomformat", quietly = TRUE))
     ## no sample data or taxa data
-    expect_silent(tse <- importQIIME2(featureTableFile))
+    expect_silent(tse <- importQIIME2(row.file))
     expect_s4_class(tse, "TreeSummarizedExperiment")
     expect_equal(dim(tse), c(770,34))
 })
@@ -235,21 +235,21 @@ test_that("reference sequences of TSE", {
     skip_if_not(require("biomformat", quietly = TRUE))
     # 1. fasta file of refseq
     tse <- importQIIME2(
-        featureTableFile,
-        refSeqFile = refSeqFile
+        row.file,
+        refseq.file = refseq.file
     )
     tse2 <-  importQIIME2(
-        featureTableFile,
-        refSeqFile = refSeqFile,
+        row.file,
+        refseq.file = refseq.file,
         featureNamesAsRefseq = FALSE
     )
-    expect_identical(tse@referenceSeq, importQZA(refSeqFile))
-    expect_identical(tse2@referenceSeq, importQZA(refSeqFile))
+    expect_identical(tse@referenceSeq, importQZA(refseq.file))
+    expect_identical(tse2@referenceSeq, importQZA(refseq.file))
 
     # 2. row.names of feature table as refseq
     # 2.1 element of row.names of feature table is not DNA sequence
     tse <- importQIIME2(
-        featureTableFile,
+        row.file,
         featureNamesAsRefseq = TRUE
     )
     expect_null(tse@referenceSeq)
@@ -259,7 +259,7 @@ test_that("reference sequences of TSE", {
     # codes used for create sample data (donot run)
     if (FALSE) {
         .require_package("biomformat")
-        feature_tab <- importQZA(featureTableFile)
+        feature_tab <- importQZA(row.file)
         n_feature <- nrow(feature_tab)
         random_seq <- sapply(
             rep(20, n_feature),
@@ -271,8 +271,8 @@ test_that("reference sequences of TSE", {
             }
         )
         row.names(feature_tab) <- random_seq
-        obj <- biomformat::make_biom(feature_tab)
-        biomformat::write_biom(obj, "data/table-rownamesInSeq.biom")
+        x <- biomformat::make_biom(feature_tab)
+        biomformat::write_biom(x, "data/table-rownamesInSeq.biom")
         # create qza file using QIIME2
         # qiime tools import \
         #     --input-path data/table-rownamesInSeq.biom
@@ -287,7 +287,7 @@ test_that("reference sequences of TSE", {
         package = "mia"
     )
 
-    # featureNamesAsRefseq is TRUE, refSeqFile is NULL, set row.names of
+    # featureNamesAsRefseq is TRUE, refseq.file is NULL, set row.names of
     # feature table as reference sequences
     tse <- importQIIME2(
         featureTableFile2,
@@ -298,19 +298,19 @@ test_that("reference sequences of TSE", {
     names(names_seq) <- paste0("seq_", seq_along(names_seq))
     expect_identical(tse@referenceSeq, names_seq)
 
-    # refSeqFile is not NULL, featureNamesAsRefseq is TRUE,
-    # set the sequences from refSeqFile as reference sequences
+    # refseq.file is not NULL, featureNamesAsRefseq is TRUE,
+    # set the sequences from refseq.file as reference sequences
     tse <- importQIIME2(
         featureTableFile2,
         featureNamesAsRefseq = TRUE,
-        refSeqFile = refSeqFile
+        refseq.file = refseq.file
     )
-    expect_identical(tse@referenceSeq, importQZA(refSeqFile))
+    expect_identical(tse@referenceSeq, importQZA(refseq.file))
 
-    # 3. refSeqFile = NULL, featureNamesAsRefseq = FALSE
+    # 3. refseq.file = NULL, featureNamesAsRefseq = FALSE
     tse <- importQIIME2(
-        featureTableFile,
-        refSeqFile = NULL,
+        row.file,
+        refseq.file = NULL,
         featureNamesAsRefseq = FALSE
     )
     expect_null(tse@referenceSeq)
@@ -347,12 +347,12 @@ test_that("`.parse_taxonomy` work with any combination of taxonomic ranks", {
         dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
     )
     expect_equal(mia:::.parse_taxonomy(test_taxa)[,"Species"],c("s__test",NA))
-    expect_equal(mia:::.parse_taxonomy(test_taxa, removeTaxaPrefixes = TRUE)[,"Species"],
+    expect_equal(mia:::.parse_taxonomy(test_taxa, remove.prefix = TRUE)[,"Species"],
                 c("test",NA))
 })
 
 test_that("`.read_q2sample_meta` remove  the row contained `#q2:types`", {
-    expect_false(any(as(.read_q2sample_meta(sampleMetaFile), "matrix") == "#q2:types"))
+    expect_false(any(as(.read_q2sample_meta(col.file), "matrix") == "#q2:types"))
 })
 
 test_that('get file extension', {
@@ -362,13 +362,13 @@ test_that('get file extension', {
 
 test_that('read qza file', {
     expect_error(importQZA("abc"), "does not exist")
-    expect_error(importQZA(sampleMetaFile), "must be in `qza` format")
+    expect_error(importQZA(col.file), "must be in `qza` format")
 })
 
 test_that("Confidence of taxa is numberic", {
     skip_if_not(require("biomformat", quietly = TRUE))
     tse <- importQIIME2(
-        featureTableFile,
+        row.file,
         taxonomyTableFile = taxonomyTableFile
     )
     expect_true(is.numeric(S4Vectors::mcols(tse)$Confidence))
@@ -376,20 +376,20 @@ test_that("Confidence of taxa is numberic", {
 
 test_that("dimnames of feature table is identicle with meta data", {
     skip_if_not(require("biomformat", quietly = TRUE))
-    feature_tab <- importQZA(featureTableFile)
+    feature_tab <- importQZA(row.file)
    
-    sample_meta <- .read_q2sample_meta(sampleMetaFile)
+    col.data <- .read_q2sample_meta(col.file)
     taxa_meta <- importQZA(taxonomyTableFile)
     taxa_meta <- .subset_taxa_in_feature(taxa_meta, feature_tab)
     new_feature_tab <- .set_feature_tab_dimnames(
         feature_tab, 
-        sample_meta, 
+        col.data, 
         taxa_meta
    )
     expect_identical(rownames(new_feature_tab), rownames(taxa_meta))
-    expect_identical(colnames(new_feature_tab), rownames(sample_meta))
+    expect_identical(colnames(new_feature_tab), rownames(col.data))
    
-    # sample_meta or feature meta is NULL
+    # col.data or feature meta is NULL
     sample_meta2 <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
     rownames(sample_meta2) <- colnames(feature_tab)
     taxa_meta2 <- S4Vectors::make_zero_col_DFrame(nrow(feature_tab))
@@ -481,7 +481,7 @@ test_that("makePhyloseqFromTreeSE", {
     expect_identical(phyloseq::phy_tree(phy), rowTree(tse))
     
     # Test that merging objects lead to correct phyloseq
-    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
+    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing.values = 0)
     pseq <- makePhyloseqFromTreeSE(tse, assay.type="counts")
     
     tse_compare <- tse[ rownames(GlobalPatterns), ]

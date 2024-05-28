@@ -5,31 +5,31 @@ test_that("Unifrac beta diversity", {
     tse <- transformAssay(tse, assay.type="counts", method="relabundance")
     
     expect_error(
-        calculateUnifrac(tse, assay.type = "test", tree_name = "phylo",
+        calculateUnifrac(tse, assay.type = "test", tree.name = "phylo",
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = 2, tree_name = "phylo",
+        calculateUnifrac(tse, assay.type = 2, tree.name = "phylo",
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = TRUE, tree_name = "phylo",
+        calculateUnifrac(tse, assay.type = TRUE, tree.name = "phylo",
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = "test",
+        calculateUnifrac(tse, assay.type = "counts", tree.name = "test",
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = 1,
+        calculateUnifrac(tse, assay.type = "counts", tree.name = 1,
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = TRUE,
+        calculateUnifrac(tse, assay.type = "counts", tree.name = TRUE,
                          weighted = "FALSE")
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = "phylo",
+        calculateUnifrac(tse, assay.type = "counts", tree.name  = "phylo",
                          weighted = 1)
     )
     
@@ -50,7 +50,7 @@ test_that("Unifrac beta diversity", {
     
     # Test with merged object with multiple trees. runUnifrac takes subset of
     # data based on provided tree.
-    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
+    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing.values = 0)
     tse_ref <- tse
     tse_ref <- tse_ref[ rowLinks(tse_ref)[["whichTree"]] == "phylo", ]
     # Calculate unweighted unifrac

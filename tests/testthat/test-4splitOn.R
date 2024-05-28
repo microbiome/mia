@@ -18,15 +18,15 @@ test_that("splitOn", {
     expect_error(splitOn(x, rowData(x)$Phylum, MARGIN = 2))
     expect_error(splitOn(x))
     expect_error(splitOn(assay(x), x$SampleType))
-    expect_error(splitOn(x, "SampleType", use_names = 1))
-    expect_error(splitOn(x, "SampleType", use_names = "TRUE"))
-    expect_error(splitOn(x, "SampleType", update_rowTree = 1))
-    expect_error(splitOn(x, "SampleType", update_rowTree = "TRUE"))
+    expect_error(splitOn(x, "SampleType", use.names = 1))
+    expect_error(splitOn(x, "SampleType", use.names = "TRUE"))
+    expect_error(splitOn(x, "SampleType", update.rowtree = 1))
+    expect_error(splitOn(x, "SampleType", update.rowtree = "TRUE"))
     
     # Test that names of elemetns are correct
     list <- splitOn(x, "SampleType")
     expect_equal(names(list), as.character(unique(x$SampleType)) )
-    list <- splitOn(x, "SampleType", use_names = FALSE)
+    list <- splitOn(x, "SampleType", use.names = FALSE)
     expect_equal(names(list), NULL )
     
     # Test that col-wie split is done correctly
@@ -41,7 +41,7 @@ test_that("splitOn", {
     
     # Test that number of tips of updated rowTree equals number of rows for
     # each tse in the list returned
-    list <- splitOn(x, "SampleType", update_rowTree = TRUE)
+    list <- splitOn(x, "SampleType", update.rowtree = TRUE)
     for (k in length(list)){
         expect_equal( length(rowTree(list[[k]], "phylo")$tip.label), 
                       nrow(list[[k]]) )
@@ -53,8 +53,8 @@ test_that("splitOn", {
     mod_list <- list
     mod_list[[1]] <- mod_list[[1]][1:2, 1:2]
     expect_error( unsplitOn(mod_list) )
-    expect_error(unsplitOn(list, update_rowTree = 1))
-    expect_error(unsplitOn(list, update_rowTree = "TRUE"))
+    expect_error(unsplitOn(list, update.rowtree = 1))
+    expect_error(unsplitOn(list, update.rowtree = "TRUE"))
     
     # Test that works
     x_sub <- x[1:100, 1:10]

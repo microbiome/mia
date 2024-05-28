@@ -80,25 +80,25 @@
     }
 }
 
-.check_rowTree_present <- function(tree_name, x,
-                                   name = .get_name_in_parent(tree_name) ){
-    if( !.is_non_empty_string(tree_name) ){
+.check_rowTree_present <- function(tree.name, x,
+                                   name = .get_name_in_parent(tree.name) ){
+    if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
              call. = FALSE)
     }
-    if( !(tree_name %in% names(x@rowTree)) ){
+    if( !(tree.name %in% names(x@rowTree)) ){
         stop("'", name, "' must specify a tree from 'x@rowTree'.",
              call. = FALSE)
     }
 }
 
-.check_colTree_present <- function(tree_name, x,
-                                   name = .get_name_in_parent(tree_name) ){
-    if( !.is_non_empty_string(tree_name) ){
+.check_colTree_present <- function(tree.name, x,
+                                   name = .get_name_in_parent(tree.name) ){
+    if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
              call. = FALSE)
     }
-    if( !(tree_name %in% names(x@colTree)) ){
+    if( !(tree.name %in% names(x@colTree)) ){
         stop("'", name, "' must specify a tree from 'x@colTree'.",
              call. = FALSE)
     }
@@ -357,19 +357,19 @@
 # keep dimnames of feature table (assay) consistent with the meta data 
 # of sample (colData) and feature (rowData)
 .set_feature_tab_dimnames <- function(feature_tab, 
-                                      sample_meta, 
+                                      col.data, 
                                       feature_meta) {
-    if (nrow(sample_meta) > 0 || ncol(sample_meta) > 0) {
-        if (ncol(feature_tab) != nrow(sample_meta) 
-            || !setequal(colnames(feature_tab), rownames(sample_meta))) {
+    if (nrow(col.data) > 0 || ncol(col.data) > 0) {
+        if (ncol(feature_tab) != nrow(col.data) 
+            || !setequal(colnames(feature_tab), rownames(col.data))) {
             stop(
                 "The sample ids in feature table are not incompatible ",
                 "with those in sample meta",
                 call. = FALSE
             )
         }
-        if (!identical(colnames(feature_tab), rownames(sample_meta))) {
-            feature_tab <- feature_tab[, rownames(sample_meta), drop = FALSE]
+        if (!identical(colnames(feature_tab), rownames(col.data))) {
+            feature_tab <- feature_tab[, rownames(col.data), drop = FALSE]
         }
     }
     

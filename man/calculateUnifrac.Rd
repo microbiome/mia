@@ -16,12 +16,22 @@ calculateUnifrac(x, tree, ...)
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
+  tree.name = tree_name,
   tree_name = "phylo",
   transposed = FALSE,
   ...
 )
 
-runUnifrac(x, tree, weighted = FALSE, nodeLab = NULL, ...)
+runUnifrac(
+  x,
+  tree,
+  weighted = FALSE,
+  normalized = TRUE,
+  node.lab = nodeLab,
+  nodeLab = NULL,
+  BPPARAM = SerialParam(),
+  ...
+)
 }
 \arguments{
 \item{x}{a numeric matrix or a
@@ -58,18 +68,22 @@ will be disabled.)}
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
-\item{tree_name}{a single \code{character} value for specifying which
+\item{tree.name}{a single \code{character} value for specifying which
 tree will be used in calculation.
-(By default: \code{tree_name = "phylo"})}
+(By default: \code{tree.name = "phylo"})}
+
+\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
 \item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
 is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: \code{transposed = FALSE})}
 
-\item{nodeLab}{if \code{x} is a matrix,
+\item{node.lab}{if \code{x} is a matrix,
 a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
 The length must equal the number of rows/columns of \code{x}. Furthermore, all the
 node labs must be present in \code{tree}.}
+
+\item{nodeLab}{Deprecated. Use \code{node.lab} instead.}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.

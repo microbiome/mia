@@ -31,14 +31,18 @@
 #'   stored in. By default this will use the original names of the calculated
 #'   indices.
 #'   
-#' @param tree_name a single \code{character} value for specifying which
+#' @param tree.name a single \code{character} value for specifying which
 #'   rowTree will be used to calculate faith index. 
-#'   (By default: \code{tree_name = "phylo"})
+#'   (By default: \code{tree.name = "phylo"})
 #'   
-#' @param node_lab NULL or a character vector specifying the links between rows and 
+#' @param tree_name Deprecated. Use \code{tree.name} isntead.
+#'   
+#' @param node.lab NULL or a character vector specifying the links between rows and 
 #'   node labels of \code{tree}. If a certain row is not linked with the tree, missing 
 #'   instance should be noted as NA. When NULL, all the rownames should be found from
-#'   the tree. (By default: \code{node_lab = NULL})
+#'   the tree. (By default: \code{node.lab = NULL})
+#'   
+#' @param node_lab Deprecated. Use \code{node.lab} instead.
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -53,9 +57,10 @@
 #'   this quantile of the data. The assumption is that abundances higher than
 #'   this are not common, and they are classified in their own group.
 #'   By default, \code{quantile} is 0.5.
-#'   \item num_of_classes: The number of arithmetic abundance classes
+#'   \item nclasses: The number of arithmetic abundance classes
 #'   from zero to the quantile cutoff indicated by \code{quantile}. 
-#'   By default, \code{num_of_classes} is 50.
+#'   By default, \code{nclasses} is 50.
+#'   \item num_of_classes Deprecated. Use \code{nclasses} instead.
 #'   \item only.tips: A boolean value specifying whether to remove internal
 #'   nodes when Faith's index is calculated. When \code{only.tips=TRUE}, those
 #'   rows that are not tips of tree are removed.
@@ -193,10 +198,10 @@
 #' 
 #' # 'threshold' can be used to determine threshold for 'coverage' index
 #' tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
-#' # 'quantile' and 'num_of_classes' can be used when
+#' # 'quantile' and 'nclasses' can be used when
 #' # 'log_modulo_skewness' is calculated
 #' tse <- estimateDiversity(tse, index = "log_modulo_skewness",
-#'        quantile = 0.75, num_of_classes = 100)
+#'        quantile = 0.75, nclasses = 100)
 #'
 #' # It is recommended to specify also the final names used in the output.
 #' tse <- estimateDiversity(tse,
@@ -285,7 +290,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     function(x, assay.type = "counts", assay_name = NULL,
             index = c("coverage", "faith", "fisher", "gini_simpson", 
                     "inverse_simpson", "log_modulo_skewness", "shannon"),
-            name = index, tree_name = "phylo", 
+            name = index, tree.name = tree_name, tree_name = "phylo", 
             ..., BPPARAM = SerialParam()){
         # input check
         supported_index <- c("coverage", "fisher", "gini_simpson", "faith",
@@ -295,9 +300,9 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             stop(paste("'index' must be from the following options: '", index_string), call. = FALSE)
         }
         
-        # Check tree_name
-        if( !.is_non_empty_string(tree_name) ){
-            stop("'tree_name' must be a character specifying a rowTree of 'x'.",
+        # Check tree.name
+        if( !.is_non_empty_string(tree.name) ){
+            stop("'tree.name' must be a character specifying a rowTree of 'x'.",
                  call. = FALSE)
         }
         if (!is.null(assay_name)) {
@@ -338,7 +343,7 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
         # If 'faith' was one of the indices, 'calc_faith' is TRUE
         if( calc_faith ){
             # Get tree to check whether faith can be calculated
-            tree <- rowTree(x, tree_name)
+            tree <- rowTree(x, tree.name)
             # Check if faith can be calculated. Give warning and do not run estimateFaith
             # if there is no rowTree and other indices were also calculated. Otherwise, 
             # run estimateFaith. (If there is no rowTree --> error)
@@ -348,13 +353,13 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
                         "since it cannot be calculated without rowTree. ",
                         "This requires a rowTree in the input argument x. ",
                         "Make sure that 'rowTree(x)' is not empty, or ",
-                        "make sure to specify 'tree_name' in the input ",
+                        "make sure to specify 'tree.name' in the input ",
                         "arguments. Warning is also provided if the tree does ",
                         "not have any branches. You can consider adding ",
                         "rowTree to include this index.", 
                         call. = FALSE)
             } else {
-                x <- estimateFaith(x, name = faith_name, tree_name = tree_name, ...)
+                x <- estimateFaith(x, name = faith_name, tree.name = tree.name, ...)
                 # Ensure that indices are in correct order
                 colnames <- colnames(colData(x))
                 colnames <- c(colnames[ !colnames %in% name_original ], name_original)
@@ -377,7 +382,7 @@ setGeneric("estimateFaith",signature = c("x", "tree"),
 #' @export
 setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
     function(x, tree, assay.type = "counts", assay_name = NULL,
-            name = "faith", node_lab = NULL, ...){
+            name = "faith", node.lab = node_lab, node_lab = NULL, ...){
         # Input check
         # Check 'tree'
         # IF there is no rowTree gives an error
@@ -398,11 +403,11 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
             stop("'name' must be a non-empty character value.",
                 call. = FALSE)
         }
-        # Check that node_lab is NULL or it specifies links between rownames and 
+        # Check that node.lab is NULL or it specifies links between rownames and 
         # node labs
-        if( !( is.null(node_lab) || 
-               is.character(node_lab) && length(node_lab) == nrow(x) ) ){
-            stop("'node_lab' must be NULL or a vector specifying links between ",
+        if( !( is.null(node.lab) || 
+               is.character(node.lab) && length(node.lab) == nrow(x) ) ){
+            stop("'node.lab' must be NULL or a vector specifying links between ",
                  "rownames and node labs of 'tree'.",
                  call. = FALSE)
         }
@@ -414,12 +419,12 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                  call. = FALSE)
         }
         # Subset and rename rows of the assay to correspond node_labs
-        if( !is.null(node_lab) ){
+        if( !is.null(node.lab) ){
             # Subset 
-            mat <- mat[ !is.na(node_lab), ]
-            node_lab <- node_lab[ !is.na(node_lab) ]
+            mat <- mat[ !is.na(node.lab), ]
+            node.lab <- node.lab[ !is.na(node.lab) ]
             # Rename
-            rownames(mat) <- node_lab
+            rownames(mat) <- node.lab
         }
         # Calculates Faith index
         faith <- list(.calc_faith(mat, tree, ...))
@@ -432,31 +437,31 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
 #' @export
 setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
     function(x, assay.type = "counts", assay_name = NULL,
-            name = "faith", tree_name = "phylo", ...){
-        # Check tree_name
-        if( !.is_non_empty_character(tree_name) ){
-            stop("'tree_name' must be a character specifying a rowTree of 'x'.",
+            name = "faith", tree.name = tree_name, tree_name = "phylo", ...){
+        # Check tree.name
+        if( !.is_non_empty_character(tree.name) ){
+            stop("'tree.name' must be a character specifying a rowTree of 'x'.",
                  call. = FALSE)
         }
         # Gets the tree
-        tree <- rowTree(x, tree_name)
+        tree <- rowTree(x, tree.name)
         if( is.null(tree) || is.null(tree$edge.length)){
-            stop("rowTree(x, tree_name) is NULL or the tree does not have any branches. ",
+            stop("rowTree(x, tree.name) is NULL or the tree does not have any branches. ",
             "The Faith's alpha diversity index cannot be calculated.",
                 call. = FALSE)
         }
         # Get node labs
-        node_lab <- rowLinks(x)[ , "nodeLab" ]
-        node_lab[ rowLinks(x)[, "whichTree"] != tree_name ] <- NA
+        node.lab <- rowLinks(x)[ , "nodeLab" ]
+        node.lab[ rowLinks(x)[, "whichTree"] != tree.name ] <- NA
         # Give a warning, data will be subsetted
-        if( any(is.na(node_lab)) ){
-            warning("The rowTree named 'tree_name' does not include all the ",
+        if( any(is.na(node.lab)) ){
+            warning("The rowTree named 'tree.name' does not include all the ",
                     "rows which is why 'x' is subsetted when the Faith's alpha ",
                     "diversity index is calculated.",
                     call. = FALSE)
         }
         # Calculates the Faith index
-        estimateFaith(x, tree, name = name, node_lab = node_lab, ...)
+        estimateFaith(x, tree, name = name, node.lab = node.lab, ...)
     }
 )
 
@@ -586,22 +591,22 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     return(faiths)
 }
 
-.calc_log_modulo_skewness <- function(mat, quantile = 0.5, num_of_classes = 50, ...){
+.calc_log_modulo_skewness <- function(mat, quantile = 0.5, nclasses = 50, ...){
     # quantile must be a numeric value between 0-1
     if( !( is.numeric(quantile) && (quantile >= 0 && quantile <= 1) ) ){
         stop("'quantile' must be a numeric value between 0-1.",
             call. = FALSE)
     }
-    # num_of_classes must be a positive numeric value
-    if( !( is.numeric(num_of_classes) && num_of_classes > 0 ) ){
-        stop("'num_of_classes' must be a positive numeric value.",
+    # nclasses must be a positive numeric value
+    if( !( is.numeric(nclasses) && nclasses > 0 ) ){
+        stop("'nclasses' must be a positive numeric value.",
             call. = FALSE)
     }
     # Determine the quantile point.
     quantile_point <- quantile(max(mat), quantile)
     # Tabulate the arithmetic abundance classes. Use the same classes
     # for all samples for consistency
-    cutpoints <- c(seq(0, quantile_point, length=num_of_classes), Inf)
+    cutpoints <- c(seq(0, quantile_point, length=nclasses), Inf)
     # Calculates sample-wise frequencies. How many taxa in each interval?
     freq_table <- table(cut(mat, cutpoints), col(mat))
     # Calculates the skewness of frequency table. Returns skewness for each

@@ -54,15 +54,25 @@ getTaxonomyLabels(x, ...)
 \S4method{getTaxonomyLabels}{SummarizedExperiment}(
   x,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
+  with.rank = with_rank,
   with_rank = FALSE,
+  make.unique = make_unique,
   make_unique = TRUE,
+  resolve.loops = resolve_loops,
   resolve_loops = FALSE,
   ...
 )
 
 mapTaxonomy(x, ...)
 
-\S4method{mapTaxonomy}{SummarizedExperiment}(x, taxa = NULL, from = NULL, to = NULL, use_grepl = FALSE)
+\S4method{mapTaxonomy}{SummarizedExperiment}(
+  x,
+  taxa = NULL,
+  from = NULL,
+  to = NULL,
+  use.grepl = use_grepl,
+  use_grepl = FALSE
+)
 
 IdTaxaToDataFrame(from)
 }
@@ -82,16 +92,22 @@ removed if \code{na.rm = TRUE} before agglomeration}
 
 \item{ranks}{Avector of ranks to be set}
 
-\item{with_rank}{\code{TRUE} or \code{FALSE}: Should the level be add as a
+\item{with.rank}{\code{TRUE} or \code{FALSE}: Should the level be add as a
 suffix? For example: "Phylum:Crenarchaeota" (default:
-\code{with_rank = FALSE})}
+\code{with.rank = FALSE})}
 
-\item{make_unique}{\code{TRUE} or \code{FALSE}: Should the labels be made
-unique, if there are any duplicates? (default: \code{make_unique = TRUE})}
+\item{with_rank}{Deprecated. Use \code{with.rank} instead.}
 
-\item{resolve_loops}{\code{TRUE} or \code{FALSE}: Should \code{resolveLoops}
+\item{make.unique}{\code{TRUE} or \code{FALSE}: Should the labels be made
+unique, if there are any duplicates? (default: \code{make.unique = TRUE})}
+
+\item{make_unique}{Deprecated. Use \code{make.unique} instead.}
+
+\item{resolve.loops}{\code{TRUE} or \code{FALSE}: Should \code{resolveLoops}
 be applied to the taxonomic data? Please note that has only an effect,
-if the data is unique. (default: \code{resolve_loops = TRUE})}
+if the data is unique. (default: \code{resolve.loops = TRUE})}
+
+\item{resolve_loops}{Deprecated. Use \code{resolve.loops} instead.}
 
 \item{taxa}{a \code{character} vector, which is used for subsetting the
 taxonomic information. If no information is found,\code{NULL} is returned
@@ -107,9 +123,11 @@ must be a valid taxonomic rank. (default: \code{NULL})
 \item{to}{a scalar \code{character} value, which must be a valid
 taxonomic rank. (default: \code{NULL})}
 
-\item{use_grepl}{\code{TRUE} or \code{FALSE}: should pattern matching via
+\item{use.grepl}{\code{TRUE} or \code{FALSE}: should pattern matching via
 \code{grepl} be used? Otherwise literal matching is used.
 (default: \code{FALSE})}
+
+\item{use_grepl}{Deprecated. Use \code{use.grepl} instead.}
 }
 \value{
 \itemize{

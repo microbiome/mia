@@ -101,16 +101,16 @@ test_that("merge", {
     tse <- tse[c(rownames(esophagus), rownames(GlobalPatterns)), ]
     # Only esophagus has these groups --> the merge should contain only esophagus
     merged  <- agglomerateByVariable(tse, MARGIN = "rows",
-                                    f = rowData(tse)$group2, mergeTree=TRUE)
+                                    f = rowData(tse)$group2, agglomerate.tree=TRUE)
     merged2 <- agglomerateByVariable(tse, MARGIN = "rows",
-                                    f = rowData(tse)$group2, mergeTree = FALSE)
+                                    f = rowData(tse)$group2, agglomerate.tree = FALSE)
     merged3 <- agglomerateByVariable(esophagus, MARGIN = "rows",
                                     f = rowData(esophagus)$group2,
-                                    mergeTree = TRUE)
+                                    agglomerate.tree = TRUE)
     merged4 <- .merge_features(tse, merge.by = rowData(tse)$group2,
-                                    mergeTree = TRUE)
+                                    agglomerate.tree = TRUE)
     merged5 <- agglomerateByVariable(tse, MARGIN = "rows",
-                                    f = rowData(tse)$group2, mergeTree = TRUE)
+                                    f = rowData(tse)$group2, agglomerate.tree = TRUE)
     expect_equal( rowLinks(merged)$whichTree,
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
@@ -124,9 +124,9 @@ test_that("merge", {
 
     # Both datasets have group variable
     merged <- agglomerateByVariable(tse, MARGIN = "rows",
-                                    f = rowData(tse)$group, mergeTree = TRUE)
+                                    f = rowData(tse)$group, agglomerate.tree = TRUE)
     merged2 <- agglomerateByVariable(tse, MARGIN = "rows",
-                                    f = rowData(tse)$group, mergeTree = FALSE)
+                                    f = rowData(tse)$group, agglomerate.tree = FALSE)
     expect_equal( rowLinks(merged)$whichTree,
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )

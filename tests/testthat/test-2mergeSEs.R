@@ -14,14 +14,14 @@ test_that("mergeSEs", {
     expect_error( mergeSEs(tse1, tse2, join = 1) )
     expect_error( mergeSEs(tse1, tse2, join = TRUE) )
     expect_error( mergeSEs(tse1, tse2, join = NA) )
-    expect_error( mergeSEs(tse1, tse2, collapse_samples = NA) )
-    expect_error( mergeSEs(tse1, tse2, collapse_samples = 1) )
-    expect_error( mergeSEs(tse1, tse2, collapse_samples = "test") )
-    expect_error( mergeSEs(tse1, tse2, collapse_samples = NULL) )
+    expect_error( mergeSEs(tse1, tse2, collapse.cols = NA) )
+    expect_error( mergeSEs(tse1, tse2, collapse.cols = 1) )
+    expect_error( mergeSEs(tse1, tse2, collapse.cols = "test") )
+    expect_error( mergeSEs(tse1, tse2, collapse.cols = NULL) )
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "left") )
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "right") )
-    expect_error( mergeSEs(tse1, tse2, missing_values = TRUE ) )
-    expect_error( mergeSEs(tse1, tse2, missing_values = 36846 ) )
+    expect_error( mergeSEs(tse1, tse2, missing.values = TRUE ) )
+    expect_error( mergeSEs(tse1, tse2, missing.values = 36846 ) )
     expect_error( mergeSEs(tse1, tse2, assay.type = "test")  )
     # Calculate relative transform to test assay.type
     tse1 <- transformAssay(tse1, method = "relabundance")
@@ -54,26 +54,26 @@ test_that("mergeSEs", {
     # Expect that rowTree is preserved if rownames match
     tse <- mergeSEs(list(tse1, GlobalPatterns), 
                                          assay.type = "counts",
-                                         missing_values = NA)
+                                         missing.values = NA)
     expect_equal(rowTree(GlobalPatterns), rowTree(tse))
     # Expect some NAs
     tse <- mergeSEs(list(tse1, tse2), assay.type = "counts")
     expect_true( any(is.na(assay(tse))) )
     
     # Test that dimensions match
-    tse <- mergeSEs(tse1, tse2, missing_values = 0)
+    tse <- mergeSEs(tse1, tse2, missing.values = 0)
     expect_equal( dim(tse), dim(tse1)+dim(tse2) )
     # Expect no NAs in assay
     expect_true( all(!is.na(assay(tse))) )
     
     # Check that rows are merged correctly when all the rowData is used to
     # specify rows
-    test <- mergeSEs(tse1, tse2, missing_values = 0, only.taxonomy = FALSE)
+    test <- mergeSEs(tse1, tse2, missing.values = 0, only.taxonomy = FALSE)
     expect_equal(tse, test)
     
     # Test that dimensions match
     tse <- suppressWarnings( 
-        mergeSEs(list(tse1, tse2, tse3), missing_values = "MISSING")
+        mergeSEs(list(tse1, tse2, tse3), missing.values = "MISSING")
     )
     expect_equal( dim(tse), dim(tse1)+dim(tse2)+dim(tse3) )
     # Expect some "MISSING"s
@@ -92,7 +92,7 @@ test_that("mergeSEs", {
     # CHECK FULL JOIN ###################################################
     tse <- suppressWarnings( 
         mergeSEs(list(tse2, tse3, tse1, tse1[1:2, ], tse1[1, ]), 
-                    missing_values = NA)
+                    missing.values = NA)
     )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
@@ -153,7 +153,7 @@ test_that("mergeSEs", {
     expect_true( nrow(tse) == 0 )
     expect_equal( rowTree(tse), NULL )
     tse <- mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
-                       join = "inner", collapse_samples = TRUE)
+                       join = "inner", collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(20, 10)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
@@ -185,7 +185,7 @@ test_that("mergeSEs", {
     
     # CHECK LEFT JOIN ##############################################
     tse <- mergeSEs(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
-                       join = "left", collapse_samples = TRUE)
+                       join = "left", collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
@@ -217,8 +217,8 @@ test_that("mergeSEs", {
     
     # CHECK RIGHT JOIN ##############################################
     tse <- mergeSEs(list(tse1[10:50, 1:13], tse1[1:10, 7:20]), 
-                    join = "right", missing_values = NA, 
-                    collapse_samples = TRUE)
+                    join = "right", missing.values = NA, 
+                    collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
     expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
@@ -303,7 +303,7 @@ test_that("mergeSEs", {
                        join = "left")
     expect_true(class(tse) == "TreeSummarizedExperiment")
     
-    # Test collapse_samples
+    # Test collapse.cols
     tse_test <- mergeSEs(x = tse[1:28, 1:3], 
                          y = tse[23, 1:5], 
                          join = "full")

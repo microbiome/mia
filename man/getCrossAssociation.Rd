@@ -18,18 +18,26 @@ getCrossAssociation(x, ...)
   assay_name2 = "counts",
   altexp1 = NULL,
   altexp2 = NULL,
+  col.var1 = colData_variable1,
   colData_variable1 = NULL,
+  col.var2 = colData_variable2,
   colData_variable2 = NULL,
   MARGIN = 1,
   method = c("kendall", "spearman", "categorical", "pearson"),
   mode = "table",
+  p.adj.method = p_adj_method,
   p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", "holm", "hommel", "none"),
+  p.adj.threshold = p_adj_threshold,
   p_adj_threshold = NULL,
+  cor.threshold = cor_threshold,
   cor_threshold = NULL,
   sort = FALSE,
+  filter.self.corr = filter_self_correlations,
   filter_self_correlations = FALSE,
   verbose = TRUE,
+  test.signif = test_significance,
   test_significance = FALSE,
+  show.warnings = show_warnings,
   show_warnings = TRUE,
   paired = FALSE,
   ...
@@ -50,7 +58,7 @@ measure is symmetric or not. When \code{symmetric = TRUE}, associations
 are calculated only for unique variable-pairs, and they are assigned to
 corresponding variable-pair. This decreases the number of calculations in 2-fold
 meaning faster execution. (By default: \code{symmetric = FALSE})
-\item \code{association_FUN}:  A function that is used to calculate (dis-)similarity
+\item \code{association.FUN}:  A function that is used to calculate (dis-)similarity
 between features. Function must take matrix as an input and give numeric
 values as an output. Adjust \code{method} and other parameters correspondingly.
 Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.
@@ -71,19 +79,13 @@ from\code{experiments(x)} of \code{MultiAssayExperiment} object or
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
 experiment 1 to be transformed. (By default: \code{assay.type1 = "counts"})}
 
-\item{assay_name1}{a single \code{character} value for specifying which
-assay of experiment 1 to use for calculation.
-(Please use \code{assay.type1} instead. At some point \code{assay_name1}
-will be disabled.)}
+\item{assay_name1}{Deprecated. Use \code{assay.type1} instead.}
 
 \item{assay.type2}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of
 experiment 2 to be transformed. (By default: \code{assay.type2 = "counts"})}
 
-\item{assay_name2}{a single \code{character} value for specifying which
-assay of experiment 2 to use for calculation.
-(Please use \code{assay.type2} instead. At some point \code{assay_name2}
-will be disabled.)}
+\item{assay_name2}{Deprecated. Use \code{assay.type2} instead.}
 
 \item{altexp1}{A single numeric or character value specifying alternative experiment
 from the altExp of experiment 1. If NULL, then the experiment is itself
@@ -95,13 +97,17 @@ from the altExp of experiment 2. If NULL, then the experiment is itself
 and altExp option is disabled.
 (By default: \code{altexp2 = NULL})}
 
-\item{colData_variable1}{A character value specifying column(s) from colData
-of experiment 1. If colData_variable1 is used, assay.type1 is disabled.
-(By default: \code{colData_variable1 = NULL})}
+\item{col.var1}{A character value specifying column(s) from colData
+of experiment 1. If col.var1 is used, assay.type1 is disabled.
+(By default: \code{col.var1 = NULL})}
 
-\item{colData_variable2}{A character value specifying column(s) from colData
-of experiment 2. If colData_variable2 is used, assay.type2 is disabled.
-(By default: \code{colData_variable2 = NULL})}
+\item{colData_variable1}{Deprecated. Use \code{col.var1} instead.}
+
+\item{col.var2}{A character value specifying column(s) from colData
+of experiment 2. If col.var2 is used, assay.type2 is disabled.
+(By default: \code{col.var2 = NULL})}
+
+\item{colData_variable2}{Deprecated. Use \code{col.var2} instead.}
 
 \item{MARGIN}{A single numeric value for selecting if association are calculated
 row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
@@ -114,36 +120,48 @@ row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} o
 \item{mode}{A single character value for selecting output format
 Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})}
 
-\item{p_adj_method}{A single character value for selecting adjustment method of
+\item{p.adj.method}{A single character value for selecting adjustment method of
 p-values. Passed to \code{p.adjust} function.
-(By default: \code{p_adj_method = "fdr"})}
+(By default: \code{p.adj.method = "fdr"})}
 
-\item{p_adj_threshold}{A single numeric value (from 0 to  1) for selecting
+\item{p_adj_method}{Deprecated. Use \code{p.adj.method} isntead.}
+
+\item{p.adj.threshold}{A single numeric value (from 0 to  1) for selecting
 adjusted p-value threshold for filtering.
-(By default: \code{p_adj_threshold = NULL})}
+(By default: \code{p.adj.threshold = NULL})}
 
-\item{cor_threshold}{A single numeric absolute value (from 0 to 1) for selecting
+\item{p_adj_threshold}{Deprecated. Use \code{p.dj.threshold} instead.}
+
+\item{cor.threshold}{A single numeric absolute value (from 0 to 1) for selecting
 correlation threshold for filtering.
-(By default: \code{cor_threshold = NULL})}
+(By default: \code{cor.threshold = NULL})}
+
+\item{cor_threshold}{Deprecated. Use \code{cor.threshold} instead.}
 
 \item{sort}{A single boolean value for selecting whether to sort features or not
 in result matrices. Used method is hierarchical clustering.
 (By default: \code{sort = FALSE})}
 
-\item{filter_self_correlations}{A single boolean value for selecting whether to
+\item{filter.self.corr}{A single boolean value for selecting whether to
 filter out correlations between identical items. Applies only when correlation
 between experiment itself is tested, i.e., when assays are identical.
-(By default: \code{filter_self_correlations = FALSE})}
+(By default: \code{filter.self.corr = FALSE})}
+
+\item{filter_self_correlations}{Deprecated. Use \code{filter.self.corr} instead.}
 
 \item{verbose}{A single boolean value for selecting whether to get messages
 about progress of calculation.}
 
-\item{test_significance}{A single boolean value for selecting whether to test
+\item{test.signif}{A single boolean value for selecting whether to test
 statistical significance of associations.
-(By default: \code{test_significance = FALSE})}
+(By default: \code{test.signif = FALSE})}
 
-\item{show_warnings}{A single boolean value for selecting whether to show warnings
+\item{test_significance}{Deprecated. Use \code{test.signif} instead.}
+
+\item{show.warnings}{A single boolean value for selecting whether to show warnings
 that might occur when correlations and p-values are calculated.}
+
+\item{show_warnings}{Deprecated. use \code{show.warnings} instead.}
 
 \item{paired}{A single boolean value for specifying if samples are paired or not.
 \code{colnames} must match between twp experiments. \code{paired} is disabled
@@ -163,7 +181,7 @@ Calculate correlations between features of two experiments.
 The function \code{getCrossAssociation} calculates associations between
 features of two experiments. By default, it not only computes associations
 but also tests their significance. If desired, setting
-\code{test_significance} to FALSE disables significance calculation.
+\code{test.signif} to FALSE disables significance calculation.
 
 We recommend the non-parametric Kendall's tau as the default method for association
 analysis. Kendall's tau has desirable statistical properties and robustness at lower
@@ -200,15 +218,15 @@ result <- getCrossAssociation(mae, experiment2 = 2,
 # Show first 5 entries
 head(result, 5)
 
-# If test_significance = TRUE, then getCrossAssociation additionally returns 
+# If test.signif = TRUE, then getCrossAssociation additionally returns 
 # significances
-# filter_self_correlations = TRUE filters self correlations
-# p_adj_threshold can be used to filter those features that do not
+# filter.self.corr = TRUE filters self correlations
+# p.adj.threshold can be used to filter those features that do not
 # have any correlations whose p-value is lower than the threshold
 result <- getCrossAssociation(mae[[1]], experiment2 = mae[[1]], method = "pearson",
-                                         filter_self_correlations = TRUE,
-                                         p_adj_threshold = 0.05,
-                                         test_significance = TRUE)
+                                         filter.self.corr = TRUE,
+                                         p.adj.threshold = 0.05,
+                                         test.signif = TRUE)
 # Show first 5 entries
 head(result, 5)
                                         
@@ -218,7 +236,7 @@ names(result)
 # Calculate Bray-Curtis dissimilarity between samples. If dataset includes
 # paired samples, you can use paired = TRUE.
 result <- getCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
-                                        association_FUN = vegan::vegdist, 
+                                        association.FUN = vegan::vegdist, 
                                         method = "bray")
                                         
 
@@ -248,8 +266,8 @@ mae[[1]] <- estimateDiversity(mae[[1]])
 # named assay.type from assay slot, it fetches a column named colData_variable
 # from colData.
 result <- getCrossAssociation(mae[[1]], assay.type1 = "counts", 
-                                 colData_variable2 = c("shannon", "coverage"),
-                                 test_significance = TRUE)
+                                 col.var2 = c("shannon", "coverage"),
+                                 test.signif = TRUE)
                                         
 }
 \author{

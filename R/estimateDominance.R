@@ -294,7 +294,7 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
 }
 
 .calc_core_dominance <- function(mat, ...){
-    getPrevalentAbundance(mat, detection = 0, as_relative = TRUE)
+    getPrevalentAbundance(mat, detection = 0, as.relative = TRUE)
 }
 
 .calc_dominance <- function(mat, ntaxa, aggregate, index){
@@ -306,22 +306,22 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     #
     if (index == "absolute") {
         # ntaxa=1 by default but can be tuned
-        as_relative <- FALSE
+        as.relative <- FALSE
     } else if (index == "relative") {
         # ntaxa=1 by default but can be tuned
-        as_relative <- TRUE
+        as.relative <- TRUE
     } else if (index == "dbp") {
         # Berger-Parker: if selected fix the following values
         ntaxa <- 1
-        as_relative <- TRUE
+        as.relative <- TRUE
     } else if (index == "dmn") {
         # McNaughton's dominance: if selected fix the following values
         ntaxa <- 2
         aggregate <- TRUE
-        as_relative <- TRUE
+        as.relative <- TRUE
     }
 
-    if (as_relative) {
+    if (as.relative) {
         # Calculates the relative abundance per sample
         mat <- .calc_rel_abund(mat)
     }
