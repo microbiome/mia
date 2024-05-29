@@ -8,7 +8,6 @@
 \alias{getUnique,SummarizedExperiment-method}
 \alias{summarizeDominance}
 \alias{summarizeDominance,SummarizedExperiment-method}
-\alias{summary}
 \alias{summary,SummarizedExperiment-method}
 \title{Summarizing microbiome data}
 \usage{
@@ -40,9 +39,7 @@ summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 
 \S4method{summarizeDominance}{SummarizedExperiment}(x, group = NULL, name = "dominant_taxa", ...)
 
-summary(x, assay.type = assay_name, assay_name = "counts")
-
-\S4method{summary}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts")
+\S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
 \arguments{
 \item{x}{A

@@ -334,25 +334,19 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
 #' \code{\link[scuttle:quickPerCellQC]{quickPerCellQC}}
 #'
 #' @export
-setGeneric("summary",signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts")
-             standardGeneric("summary"))
-
-#' @rdname summaries
-#' @export
-setMethod("summary", signature = c(x = "SummarizedExperiment"),
-    function(x, assay.type = assay_name, assay_name = "counts"){
-        # Input check
-        .check_assay_present(assay.type = assay.type, x)
-        #
-        # check if NA in assay
-        .check_NAs_assay_counts(x, assay.type)
-        # check if counts
-        .check_fraction_or_negative_values(x, assay.type)
-        sample.summary <- .get_summary_col_data(x, assay.type)
-        feature.summary <- .get_summary_row_data(x, assay.type)
-        return(list("samples" = sample.summary, "features" = feature.summary))
-    }
+setMethod("summary", signature = c(object = "SummarizedExperiment"),
+          function(object, assay.type = assay_name, assay_name = "counts"){
+            # Input check
+            .check_assay_present(assay.type = assay.type, object)
+            #
+            # check if NA in assay
+            .check_NAs_assay_counts(object, assay.type)
+            # check if counts
+            .check_fraction_or_negative_values(object, assay.type)
+            sample.summary <- .get_summary_col_data(object, assay.type)
+            feature.summary <- .get_summary_row_data(object, assay.type)
+            return(list("samples" = sample.summary, "features" = feature.summary))
+          }
 )
 
 ################################ HELP FUNCTIONS summary ####################
