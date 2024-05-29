@@ -118,3 +118,21 @@ Changes in version 1.13.x
 + replace getExperiment* and testExperiment* functions with getCrossAssociation
 + Replace mergeRows and mergeCols with new function agglomerateByVariable
 + Use rbiom package in unifrac implementation
++ agglomerateByRank: bugfix related to agglomeration of non-existing tree
++ getHierarchyTree: bugfix related to empty cells in rowData
++ agglomerateByRank: bugfix: trees was not pruned correctly
++ rename meltAssay to meltSE
++ Rename countDominantFeatures and countDominantTaxa to summarizeDominance
++ rename subsetByPrevalent* and subsetByRare* to subsetByPrevalent and subsetByRare
++ Deprecate transformFeatures, transformSamples, transformCounts, Ztransform,
+  relAbundanceCounts
++ rename getRare* functions to getRare, getUnique* functions to getUnique, 
+  getTop* functions to getTop and getPrevalent* functions to getPrevalent
++ Rename subsampleCounts to rarefyAssay
++ Rename perSampleDominant* functions to getDominant and addPerSampleDominant* 
+  functions to addDominant
++ Rename splitByRanks to agglomerateByRanks and add option as.list
++ Explain that rarefyAssay returns a new SummarizedExperiment object that 
+  includes the newly added subsampled assay.
++ Fix bug in mergeFeaturesByPrevalence
++ Use rbiom package in unifrac implementation
