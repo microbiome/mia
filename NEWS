@@ -109,7 +109,7 @@ Changes in version 1.11.x
 + rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, loadFromMetaphlan, loadFromHumann
 + fix typo in loadFromBiom definition (deprecate file)
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
-+ deprecate plotNMDS after moving it to miaViz package
++ deprecate plotNMDS after moving it to miaViz 
 + rename estimateDivergence to addDivergence
 + Add details to documentation of function agglomerateByPrevalence
 
@@ -134,3 +134,5 @@ Changes in version 1.13.x
 + Explain that rarefyAssay returns a new SummarizedExperiment object that 
   includes the newly added subsampled assay.
 + Fix bug in mergeFeaturesByPrevalence
++ new aliases calculateDPCoA to getDPCoA, calculateNMDS to getNMDS, calculateRDA to getRDA, 
+calculateCCA to getCCA

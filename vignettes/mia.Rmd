@@ -253,9 +253,9 @@ as a drop-in replacement in the example above (omit the `method` argument as
 well) to calculate the JSD. For calculating the UniFrac distance via
 `calculateUniFrac` either a `TreeSummarizedExperiment` must be used or a tree
 supplied via the `tree` argument. For more details see `?calculateJSD`,
-`?calculateUnifrac` or `?calculateDPCoA`.
+`?calculateUnifrac` or `?getDPCoA`.
 
-`runMDS` performs the decomposition. Alternatively `runNMDS` can also be used.
+`runMDS` performs the decomposition. Alternatively `addNMDS` can also be used.
 
 ## Other indices
 
