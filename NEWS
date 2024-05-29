@@ -134,4 +134,5 @@ Changes in version 1.13.x
 + Explain that rarefyAssay returns a new SummarizedExperiment object that 
   includes the newly added subsampled assay.
 + Fix bug in mergeFeaturesByPrevalence
-+ rename calculateDPCoA to getDPCoA, calculateNMDS to getNMDS, calculateRDA to getRDA, calculateCCA to getCCA
++ new aliases calculateDPCoA to getDPCoA, calculateNMDS to getNMDS, calculateRDA to getRDA, 
+calculateCCA to getCCA
