@@ -8,10 +8,13 @@
 \alias{addRDA}
 \alias{getCCA,ANY-method}
 \alias{getCCA,SummarizedExperiment-method}
+\alias{calculateCCA}
 \alias{addCCA,SingleCellExperiment-method}
 \alias{getRDA,ANY-method}
 \alias{getRDA,SummarizedExperiment-method}
+\alias{calculateRDA}
 \alias{addRDA,SingleCellExperiment-method}
+\alias{runRDA}
 \title{Canonical Correspondence Analysis and Redundancy Analysis}
 \usage{
 getCCA(x, ...)
@@ -36,7 +39,11 @@ addRDA(x, ...)
   ...
 )
 
+calculateCCA(x, ...)
+
 \S4method{addCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
+
+runCCA(x, ...)
 
 \S4method{getRDA}{ANY}(x, ...)
 
@@ -52,7 +59,11 @@ addRDA(x, ...)
   ...
 )
 
+calculateRDA(x, ...)
+
 \S4method{addRDA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "RDA", ...)
+
+runRDA(x, ...)
 }
 \arguments{
 \item{x}{For \code{calculate*} a

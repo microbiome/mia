@@ -179,6 +179,9 @@ setMethod("getDPCoA", signature = c("TreeSummarizedExperiment","missing"),
     }
 )
 
+#' @export
+#' @rdname runDPCoA
+#' @aliases getDPCoA
 calculateDPCoA <- function(x,...){
     getDPCoA(x,...)
 }
@@ -206,6 +209,9 @@ addDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
     x
 }
 
+#' @export
+#' @rdname runDPCoA
+#' @aliases addDPCoA
 runDPCoA <- function(x,...){
     addDPCoA(x,...)
 }

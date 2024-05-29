@@ -204,6 +204,9 @@ setMethod("getNMDS", "SingleCellExperiment",
     }
 )
 
+#' @rdname runNMDS
+#' @export
+#' @aliases getNMDS
 calculateNMDS <- function(x,...){
     getNMDS(x,...)
 }
@@ -221,6 +224,9 @@ addNMDS <- function(x, ..., altexp = NULL, name = "NMDS") {
     x
 }
 
+#' @rdname runNMDS
+#' @export
+#' @aliases addNMDS
 runNMDS <- function(x,...){
     addNMDS(x,...)
 }

@@ -5,6 +5,7 @@
 \alias{getDPCoA}
 \alias{getDPCoA,ANY,ANY-method}
 \alias{getDPCoA,TreeSummarizedExperiment,missing-method}
+\alias{calculateDPCoA}
 \alias{addDPCoA}
 \title{Calculation of Double Principal Correspondance analysis}
 \usage{
@@ -30,7 +31,11 @@ getDPCoA(x, y, ...)
   tree_name = "phylo"
 )
 
+calculateDPCoA(x, ...)
+
 addDPCoA(x, ..., altexp = NULL, name = "DPCoA")
+
+runDPCoA(x, ...)
 }
 \arguments{
 \item{x}{For \code{getDPCoA}, a numeric matrix of expression values

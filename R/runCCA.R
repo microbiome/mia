@@ -289,6 +289,9 @@ setMethod("getCCA", "SummarizedExperiment",
     }
 )
 
+#' @export
+#' @rdname runCCA
+#' @aliases getCCA
 calculateCCA <- function(x,...){
     getCCA(x,...)
 }
@@ -312,6 +315,9 @@ setMethod("addCCA", "SingleCellExperiment",
     }
 )
 
+#' @export
+#' @rdname runCCA
+#' @aliases addCCA
 runCCA <- function(x,...){
     addCCA(x,...)
 }
@@ -603,6 +609,9 @@ setMethod("getRDA", "SummarizedExperiment",
     }
 )
 
+#' @export
+#' @rdname runCCA
+#' @aliases getRDA
 calculateRDA <- function(x,...){
     getRDA(x,...)
 }
@@ -626,6 +635,9 @@ setMethod("addRDA", "SingleCellExperiment",
     }
 )
 
+#' @export
+#' @rdname runCCA
+#' @aliases addRDA
 runRDA <- function(x,...){
     addRDA(x,...)
 }

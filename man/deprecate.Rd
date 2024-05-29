@@ -160,10 +160,6 @@ estimateDivergence(x, ...)
 object.}
 
 \item{...}{Additional parameters. See dedicated function.}
-
-\item{y}{A
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object.}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.
