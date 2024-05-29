@@ -85,11 +85,11 @@
 #'   specified by \code{homogeneity.test} parameter.
 #'
 #' @return
-#' For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
+#' For \code{getCCA} a matrix with samples as rows and CCA dimensions as
 #' columns. Attributes include calculated \code{cca}/\code{rda} object and
 #' significance analysis results.
 #'
-#' For \code{runCCA} a modified \code{x} with the results stored in
+#' For \code{addCCA} a modified \code{x} with the results stored in
 #' \code{reducedDim} as the given \code{name}.
 #'
 #' @name runCCA
@@ -100,18 +100,18 @@
 #' @examples
 #' library(scater)
 #' data(GlobalPatterns)
-#' GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
+#' GlobalPatterns <- addCCA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 #' 
 #' # Fetch significance results
 #' attr(reducedDim(GlobalPatterns, "CCA"), "significance")
 #'
-#' GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
+#' GlobalPatterns <- addRDA(GlobalPatterns, data ~ SampleType)
 #' plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 #' 
 #' # Specify dissimilarity measure
 #' GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
-#' GlobalPatterns <- runRDA(
+#' GlobalPatterns <- addRDA(
 #'     GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
 #' 
 #' # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
@@ -121,36 +121,36 @@
 #' # their value is NA
 #' tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 #' # Calculate RDA
-#' tse <- runRDA(tse, formula = data ~ SampleType,
+#' tse <- addRDA(tse, formula = data ~ SampleType,
 #'               assay.type = "z", name = "rda_scaled", na.action = na.omit)
 #' # Plot
 #' plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 #' # A common choice along with PERMANOVA is ANOVA when statistical significance
 #' # of homogeneity of groups is analysed. Moreover, full signficance test results
 #' # can be returned.
-#'  tse <- runRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
+#'  tse <- addRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
 #' 
 NULL
 
 #' @rdname runCCA
-setGeneric("calculateCCA", signature = c("x"),
+setGeneric("getCCA", signature = c("x"),
            function(x, ...)
-               standardGeneric("calculateCCA"))
+               standardGeneric("getCCA"))
 
 #' @rdname runCCA
-setGeneric("runCCA", signature = c("x"),
+setGeneric("addCCA", signature = c("x"),
            function(x, ...)
-               standardGeneric("runCCA"))
+               standardGeneric("addCCA"))
 
 #' @rdname runCCA
-setGeneric("calculateRDA", signature = c("x"),
+setGeneric("getRDA", signature = c("x"),
            function(x, ...)
-               standardGeneric("calculateRDA"))
+               standardGeneric("getRDA"))
 
 #' @rdname runCCA
-setGeneric("runRDA", signature = c("x"),
+setGeneric("addRDA", signature = c("x"),
            function(x, ...)
-               standardGeneric("runRDA"))
+               standardGeneric("addRDA"))
 
 .remove_special_functions_from_terms <- function(terms){
     names(terms) <- terms
@@ -210,7 +210,7 @@ setGeneric("runRDA", signature = c("x"),
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateCCA", "ANY",
+setMethod("getCCA", "ANY",
       function(x, ...){
           .calculate_cca(x, ...)
       })
@@ -250,7 +250,7 @@ setMethod("calculateCCA", "ANY",
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateCCA", "SummarizedExperiment",
+setMethod("getCCA", "SummarizedExperiment",
     function(x, formula, variables, test.signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
              scores = "wa", ...)
@@ -291,8 +291,15 @@ setMethod("calculateCCA", "SummarizedExperiment",
 
 #' @export
 #' @rdname runCCA
+#' @aliases getCCA
+calculateCCA <- function(x,...){
+    getCCA(x,...)
+}
+
+#' @export
+#' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
-setMethod("runCCA", "SingleCellExperiment",
+setMethod("addCCA", "SingleCellExperiment",
     function(x, formula, variables, altexp = NULL, name = "CCA", ...)
     {
         if (!is.null(altexp)) {
@@ -301,12 +308,19 @@ setMethod("runCCA", "SingleCellExperiment",
           y <- x
         }
         # Calculate CCA
-        cca <- calculateCCA(y, formula, variables, ...)
+        cca <- getCCA(y, formula, variables, ...)
         # Add object to reducedDim
         x <- .add_object_to_reduceddim(x, cca, name = name, ...)
         return(x)
     }
 )
+
+#' @export
+#' @rdname runCCA
+#' @aliases addCCA
+runCCA <- function(x,...){
+    addCCA(x,...)
+}
 
 #' @importFrom vegan sppscores<-
 .calculate_rda <- function(
@@ -548,14 +562,14 @@ setMethod("runCCA", "SingleCellExperiment",
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateRDA", "ANY",
+setMethod("getRDA", "ANY",
       function(x, ...){
           .calculate_rda(x, ...)
       })
 
 #' @export
 #' @rdname runCCA
-setMethod("calculateRDA", "SummarizedExperiment",
+setMethod("getRDA", "SummarizedExperiment",
     function(x, formula, variables, test.signif = TRUE,
              assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts",
              scores = "wa", ...)
@@ -597,8 +611,15 @@ setMethod("calculateRDA", "SummarizedExperiment",
 
 #' @export
 #' @rdname runCCA
+#' @aliases getRDA
+calculateRDA <- function(x,...){
+    getRDA(x,...)
+}
+
+#' @export
+#' @rdname runCCA
 #' @importFrom SingleCellExperiment reducedDim<-
-setMethod("runRDA", "SingleCellExperiment",
+setMethod("addRDA", "SingleCellExperiment",
     function(x, formula, variables, altexp = NULL, name = "RDA", ...)
     {
         if (!is.null(altexp)) {
@@ -607,9 +628,16 @@ setMethod("runRDA", "SingleCellExperiment",
           y <- x
         }
         # Calculate RDA
-        rda <- calculateRDA(y, formula, variables, ...)
+        rda <- getRDA(y, formula, variables, ...)
         # Add object to reducedDim
         x <- .add_object_to_reduceddim(x, rda, name = name, ...)
         return(x)
     }
 )
+
+#' @export
+#' @rdname runCCA
+#' @aliases addRDA
+runRDA <- function(x,...){
+    addRDA(x,...)
+}

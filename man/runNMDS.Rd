@@ -2,15 +2,17 @@
 % Please edit documentation in R/runNMDS.R
 \name{runNMDS}
 \alias{runNMDS}
+\alias{getNMDS}
+\alias{getNMDS,ANY-method}
+\alias{getNMDS,SummarizedExperiment-method}
+\alias{getNMDS,SingleCellExperiment-method}
 \alias{calculateNMDS}
-\alias{calculateNMDS,ANY-method}
-\alias{calculateNMDS,SummarizedExperiment-method}
-\alias{calculateNMDS,SingleCellExperiment-method}
+\alias{addNMDS}
 \title{Perform non-metric MDS on sample-level data}
 \usage{
-calculateNMDS(x, ...)
+getNMDS(x, ...)
 
-\S4method{calculateNMDS}{ANY}(
+\S4method{getNMDS}{ANY}(
   x,
   FUN = vegdist,
   nmdsFUN = c("isoMDS", "monoMDS"),
@@ -23,7 +25,7 @@ calculateNMDS(x, ...)
   ...
 )
 
-\S4method{calculateNMDS}{SummarizedExperiment}(
+\S4method{getNMDS}{SummarizedExperiment}(
   x,
   ...,
   assay.type = assay_name,
@@ -32,7 +34,7 @@ calculateNMDS(x, ...)
   FUN = vegdist
 )
 
-\S4method{calculateNMDS}{SingleCellExperiment}(
+\S4method{getNMDS}{SingleCellExperiment}(
   x,
   ...,
   assay.type = assay_name,
@@ -43,14 +45,18 @@ calculateNMDS(x, ...)
   FUN = vegdist
 )
 
-runNMDS(x, ..., altexp = NULL, name = "NMDS")
+calculateNMDS(x, ...)
+
+addNMDS(x, ..., altexp = NULL, name = "NMDS")
+
+runNMDS(x, ...)
 }
 \arguments{
-\item{x}{For \code{calculateNMDS}, a numeric matrix of expression values
+\item{x}{For \code{getNMDS}, a numeric matrix of expression values
 where rows are features and columns are cells.
 Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 
-For \code{runNMDS} a \linkS4class{SingleCellExperiment}}
+For \code{addNMDS} a \linkS4class{SingleCellExperiment}}
 
 \item{...}{additional arguments to pass to \code{FUN} and
 \code{nmdsFUN}.}
@@ -79,7 +85,7 @@ integer vector of row indices or a logical vector.}
 
 \item{keep_dist}{Logical scalar indicating whether the \code{dist} object
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
-the matrix returned/stored by \code{calculateNMDS}/ \code{runNMDS}.}
+the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}.}
 
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -106,7 +112,7 @@ containing the input data.}
 reducedDims of the output.}
 }
 \value{
-For \code{calculateNMDS}, a matrix is returned containing the MDS
+For \code{getNMDS}, a matrix is returned containing the MDS
 coordinates for each sample (row) and dimension (column).
 }
 \description{
@@ -126,12 +132,12 @@ df <- DataFrame(n = c(1:6))
 tse <- TreeSummarizedExperiment(assays = list(counts = mat),
                                 rowData = df)
 #
-calculateNMDS(tse)
+getNMDS(tse)
 
 #
 data(esophagus)
-esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
-esophagus <- runNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
+esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "BC")
+esophagus <- addNMDS(esophagus, FUN = vegan::vegdist, name = "euclidean",
                      method = "euclidean")
 reducedDims(esophagus)
 }
