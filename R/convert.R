@@ -182,15 +182,18 @@ setMethod("convert", signature = c(x = "dada"),
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "phyloseq"),
-            function(x, ...){
-                .make_TreeSE_from_phyloseq(x, ...)
+            function(x){
+                .make_TreeSE_from_phyloseq(x)
             }
 )
 
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "biom"),
-            function(x, ...){
-                .make_TreeSE_from_biom(x, ...)
+            function(x, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
+                     remove.artifacts = FALSE,...){
+                .make_TreeSE_from_biom(x, removeTaxaPrefixes = FALSE, 
+                                      rankFromPrefix = FALSE,
+                                      remove.artifacts = FALSE,...)
             }
 )

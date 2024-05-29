@@ -23,9 +23,15 @@ convert(x, ...)
 
 \S4method{convert}{dada}(x, ...)
 
-\S4method{convert}{phyloseq}(x, ...)
+\S4method{convert}{phyloseq}(x)
 
-\S4method{convert}{biom}(x, ...)
+\S4method{convert}{biom}(
+  x,
+  removeTaxaPrefixes = FALSE,
+  rankFromPrefix = FALSE,
+  remove.artifacts = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Input data to be converted. See details for more information on
