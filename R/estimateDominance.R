@@ -60,11 +60,11 @@
 #'
 #' \itemize{
 #' 
-#' \item{'absolute' }{Absolute index equals to the absolute abundance of the
+#' \item 'absolute': Absolute index equals to the absolute abundance of the
 #' most dominant n species of the sample (specify the number with the argument
-#' \code{ntaxa}). Index gives positive integer values.}
+#' \code{ntaxa}). Index gives positive integer values.
 #' 
-#' \item{'dbp' }{Berger-Parker index (See Berger & Parker 1970) calculation
+#' \item 'dbp': Berger-Parker index (See Berger & Parker 1970) calculation
 #' is a special case of the 'relative' index. dbp is the relative abundance of
 #' the most
 #' abundant species of the sample. Index gives values in interval 0 to 1,
@@ -73,9 +73,9 @@
 #' \deqn{dbp = \frac{N_1}{N_{tot}}}{%
 #' dbp = N_1/N_tot} where \eqn{N_1} is the absolute abundance of the most
 #' dominant species and \eqn{N_{tot}} is the sum of absolute abundances of all
-#' species.}
+#' species.
 #' 
-#' \item{'core_abundance' }{ Core abundance index is related to core species.
+#' \item 'core_abundance': Core abundance index is related to core species.
 #' Core species are species that are most abundant in all samples, i.e., in
 #' whole data set. Core species are defined as those species that have
 #' prevalence over 50\%. It means that in order to belong to core species,
@@ -87,9 +87,9 @@
 #' \deqn{core_abundance = \frac{N_{core}}{N_{tot}}}{%
 #' core_abundance = N_core/N_tot} where \eqn{N_{core}} is the sum of absolute
 #' abundance of the core species and \eqn{N_{tot}} is the sum of absolute
-#' abundances of all species.}
+#' abundances of all species.
 #' 
-#' \item{'gini' }{ Gini index is probably best-known from socio-economic
+#' \item 'gini':  Gini index is probably best-known from socio-economic
 #' contexts (Gini 1921). In economics, it is used to measure, for example, how
 #' unevenly income is distributed among population. Here, Gini index is used
 #' similarly, but income is replaced with abundance. 
@@ -98,9 +98,9 @@
 #' that represent large portion of total abundance of microbes, the inequality
 #' is large and Gini index closer to 1. If all species has equally large
 #' abundances, the equality is perfect and Gini index equals 0. This index
-#' should not be confused with Gini-Simpson index, which quantifies diversity.}
+#' should not be confused with Gini-Simpson index, which quantifies diversity.
 #'
-#' \item{'dmn' }{McNaughton’s index is the sum of relative abundances of the two
+#' \item 'dmn': McNaughton’s index is the sum of relative abundances of the two
 #' most abundant species of the sample (McNaughton & Wolf, 1970). Index gives
 #' values in the unit interval:
 #'
@@ -108,9 +108,9 @@
 #'
 #' where \eqn{N_1} and \eqn{N_2} are the absolute
 #' abundances of the two most dominant species and \eqn{N_{tot}} is the sum of
-#' absolute abundances of all species.}
+#' absolute abundances of all species.
 #'
-#' \item{'relative' }{ Relative index equals to the relative abundance of the
+#' \item 'relative': Relative index equals to the relative abundance of the
 #' most dominant n species of the sample (specify the number with the
 #' argument \code{ntaxa}).
 #' This index gives values in interval 0 to 1.
@@ -119,9 +119,9 @@
 #'
 #' where \eqn{N_1} is the absolute abundance of the most
 #' dominant species and \eqn{N_{tot}} is the sum of absolute abundances of all
-#' species.}
+#' species.
 #'
-#' \item{'simpson_lambda' }{ Simpson's (dominance) index or Simpson's lambda is
+#' \item 'simpson_lambda': Simpson's (dominance) index or Simpson's lambda is
 #' the sum of squared relative abundances. This index gives values in the unit interval.
 #' This value equals the probability that two randomly chosen individuals
 #' belongs to the
@@ -136,7 +136,7 @@
 #' However, this is not provided and the simpler squared sum of relative
 #' abundances is used instead as the alternative index is not in the unit
 #' interval and it is highly
-#' correlated with the simpler variant implemented here.}
+#' correlated with the simpler variant implemented here.
 #' 
 #' }
 #'
@@ -163,9 +163,9 @@
 #'
 #' @seealso
 #' \itemize{
-#'   \item{\code{\link[mia:estimateRichness]{estimateRichness}}}
-#'   \item{\code{\link[mia:estimateEvenness]{estimateEvenness}}}
-#'   \item{\code{\link[mia:estimateDiversity]{estimateDiversity}}}
+#'   \item \code{\link[mia:estimateRichness]{estimateRichness}}
+#'   \item \code{\link[mia:estimateEvenness]{estimateEvenness}}
+#'   \item \code{\link[mia:estimateDiversity]{estimateDiversity}}
 #' }
 #'
 #' @name estimateDominance
@@ -251,8 +251,8 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
         # Check indices
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
-            stop("'name' must be a non-empty character value and have the ",
-                 "same length than 'index'.",
+            stop("'name' must be a non-empty character value and have the 
+                 same length as 'index'",
                  call. = FALSE)
         }
 

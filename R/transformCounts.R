@@ -33,9 +33,9 @@
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
-#'   \item{\code{ref_vals}:} {A single value which will be used to fill 
+#'   \item \code{ref_vals}: A single value which will be used to fill 
 #'   reference sample's column in returned assay when calculating alr. 
-#'   (default: \code{ref_vals = NA})}
+#'   (default: \code{ref_vals = NA})
 #' }
 #' @details
 #'
@@ -52,63 +52,63 @@
 #'
 #' \itemize{
 #' 
-#' \item{'alr'}{ Additive log ratio (alr) transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'alr': Additive log ratio (alr) transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'chi.square'}{ Chi square transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'chi.square': Chi square transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'clr'}{ Centered log ratio (clr) transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'clr': Centered log ratio (clr) transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #'
-#' \item{'frequency'}{ Frequency transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'frequency': Frequency transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'hellinger'}{ Hellinger transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'hellinger':  Hellinger transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'log'}{ Logarithmic transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'log':  Logarithmic transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'log10'}{ log10 transformation can be used for reducing the skewness
+#' \item 'log10': log10 transformation can be used for reducing the skewness
 #' of the data.
 #' \deqn{log10 = \log_{10} x}{%
 #' log10 = log10(x)}
-#' where \eqn{x} is a single value of data.}
+#' where \eqn{x} is a single value of data.
 #' 
-#' \item{'log2'}{ log2 transformation can be used for reducing the skewness of
+#' \item 'log2': log2 transformation can be used for reducing the skewness of
 #' the data.
 #' \deqn{log2 = \log_{2} x}{%
 #' log2 = log2(x)}
-#' where \eqn{x} is a single value of data.}
+#' where \eqn{x} is a single value of data.
 #' 
-#' \item{'normalize'}{ Make margin sum of squares equal to one. Please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'normalize': Make margin sum of squares equal to one. Please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'pa'}{ Transforms table to presence/absence table. Please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'pa': Transforms table to presence/absence table. Please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #'
-#' \item{'rank'}{ Rank transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'rank': Rank transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'rclr'}{ Robust clr transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'rclr':  Robust clr transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'relabundance'}{ Relative transformation (alias for 'total'), please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'relabundance': Relative transformation (alias for 'total'), please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'rrank'}{ Relative rank transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'rrank': Relative rank transformation, please refer to 
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'standardize'}{ Scale 'x' to zero mean and unit variance (alias for
-#' 'z'), please refer to \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'standardize': Scale 'x' to zero mean and unit variance (alias for
+#' 'z'), please refer to \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'total'}{ Divide by margin total (alias for
+#' \item 'total': Divide by margin total (alias for
 #' 'relabundance'), please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.}
+#' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
-#' \item{'z'}{ Z transformation (alias for 'standardize'),
-#' please refer to \code{\link[vegan:decostand]{decostand}} for details.}
+#' \item 'z': Z transformation (alias for 'standardize'),
+#' please refer to \code{\link[vegan:decostand]{decostand}} for details.
 #'
 #' }
 #'
@@ -164,56 +164,6 @@
 NULL
 
 #' @rdname transformAssay
-#' @aliases transformAssay
-#' @export
-setGeneric("transformSamples", signature = c("x"),
-           function(x,
-                    assay.type = "counts", assay_name = NULL,
-                    method = c("alr", "chi.square", "clr", "frequency", "hellinger",
-                               "log", "log10", "log2", "normalize", "pa",
-                               "rank", "rclr", "relabundance", "rrank",
-                               "total"),
-                    name = method,
-                    ...
-                    )
-                    standardGeneric("transformSamples"))
-
-#' @rdname transformAssay
-#' @aliases transformAssay
-#' @export
-setMethod("transformSamples", signature = c(x = "SummarizedExperiment"),
-    function(x,
-            assay.type = "counts", assay_name = NULL,
-            method =  c("alr", "chi.square", "clr", "frequency", "hellinger",
-                        "log", "log10", "log2", "normalize", "pa",
-                        "rank", "rclr", "relabundance", "rrank",
-                        "total"),
-            name = method,
-            pseudocount = FALSE,
-            ...
-            ){
-        .Deprecated("transformAssay")
-        # Input check
-        # Check method
-        # If method is not single string, user has not specified transform method,
-        # or has given e.g. a vector
-        if(!.is_non_empty_string(method)){
-            stop("'method' must be a non-empty single character value.",
-                 call. = FALSE)
-        }
-        method <- match.arg(method, several.ok = FALSE)
-        # Input check end
-
-        # Call general transformation function with MARGIN specified
-        x <- transformAssay(x = x, assay.type = assay.type,
-                             method = method, MARGIN = "samples", name = name, ...)
-        
-        return(x)
-    }
-)
-
-#' @rdname transformAssay
-#' @aliases transformSamples
 #' @export
 setGeneric("transformAssay", signature = c("x"),
            function(x,
@@ -229,17 +179,7 @@ setGeneric("transformAssay", signature = c("x"),
                     ...)
                standardGeneric("transformAssay"))
 
-#transformCounts wrapper with a deprecation warning
 #' @rdname transformAssay
-#' @aliases transformSamples
-#' @export
-transformCounts <- function(x,...){
-    .Deprecated(old ="transformCounts" ,new = "transformAssay",msg = "The 'transformCounts' function is deprecated. Use 'transformAssay' instead.")
-    return(transformAssay(x,...))
-}
-
-#' @rdname transformAssay
-#' @aliases transformSamples
 #' @export
 setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     function(x,
@@ -319,90 +259,9 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     }
 )
 
-###############################transformFeatures################################
-
-#' @rdname transformAssay
-#' @export
-setGeneric("transformFeatures", signature = c("x"),
-           function(x,
-                    assay.type = "counts", assay_name = NULL,
-                    method = c("frequency", "log", "log10", "log2", "max",
-                               "pa", "range", "standardize", "z"),
-                    name = method,
-                    pseudocount = FALSE,
-                    ...)
-               standardGeneric("transformFeatures"))
-
-#' @rdname transformAssay
-#' @export
-setMethod("transformFeatures", signature = c(x = "SummarizedExperiment"),
-    function(x,
-             assay.type = "counts", assay_name = NULL,
-             method = c("frequency", "log", "log10", "log2", "max",
-                        "pa", "range", "standardize", "z"),
-             name = method,
-             pseudocount = FALSE,
-             ...){
-        
-        .Deprecated("transformAssay")
-
-        # Input check
-        # Check method
-        # If method is not single string, user has not specified transform method,
-        # or has given e.g. a vector
-        if(!.is_non_empty_string(method)){
-          stop("'method' must be a non-empty single character value.",
-               call. = FALSE)
-        }
-        
-        method <- match.arg(method, several.ok = FALSE)
-        # Input check end
-
-        # Call general transformation function with MARGIN specified
-        x <- transformAssay(x = x, assay.type = assay.type, method = method,
-                             MARGIN = "features", name = name, ...)
-        return(x)
-  }
-)
-##################################Z-TRANSFORM###################################
-
-#' @rdname transformAssay
-#' @export
-setGeneric("ZTransform", signature = c("x"),
-           function(x, MARGIN = "features", ...)
-             standardGeneric("ZTransform"))
-
-#' @rdname transformAssay
-#' @importFrom SummarizedExperiment assay assay<-
-#' @export
-setMethod("ZTransform", signature = c(x = "SummarizedExperiment"),
-          function(x, ...){
-	    .Deprecated("transformAssay")
-            transformAssay(x, method = "z", MARGIN = "features", ...)
-          }
-)
-
-###############################relAbundanceCounts###############################
-
-#' @rdname transformAssay
-#' @export
-setGeneric("relAbundanceCounts", signature = c("x"),
-            function(x, ...)
-            standardGeneric("relAbundanceCounts"))
-
-#' @rdname transformAssay
-#' @importFrom SummarizedExperiment assay assay<-
-#' @export
-setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
-	.Deprecated("transformAssay")    
-        transformAssay(x, method = "relabundance", MARGIN = "samples", ...)
-    }
-)
-
 ###########################HELP FUNCTIONS####################################
 ##############################.apply_transformation#############################
-# Help function for transformSamples and transformFeatures, takes abundance table
+# Help function for transformAssay, takes abundance table
 # as input and returns transformed table. This function utilizes mia's
 # transformation functions.
 .apply_transformation <- function(assay, method, MARGIN, ...){
@@ -434,7 +293,7 @@ setMethod("relAbundanceCounts", signature = c(x = "SummarizedExperiment"),
 }
 
 ########################.apply_transformation_from_vegan########################
-# Help function for transformSamples and transformFeatures, takes abundance
+# Help function for transformAssay, takes abundance
 # table as input and returns transformed table. This function utilizes vegan's
 # transformation functions.
 .apply_transformation_from_vegan <- function(mat, method, MARGIN, ref_vals = NA, ...){

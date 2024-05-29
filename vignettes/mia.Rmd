@@ -147,12 +147,12 @@ dim(x1)
 dim(altExp(tse,"species"))
 ```
 
-For convenience the function `splitByRanks` is available, which agglomerates
+For convenience the function `agglomerateByRanks` is available, which agglomerates
 data on all `ranks` selected. By default all available ranks will be used.
 The output is compatible to be stored as alternative experiments.
 
 ```{r}
-altExps(tse) <- splitByRanks(tse)
+tse <- agglomerateByRanks(tse)
 tse
 altExpNames(tse)
 ```
@@ -193,7 +193,7 @@ Sub-sampling to equal number of counts per sample. Also known as rarefying.
 ```{r}
 data(GlobalPatterns, package = "mia")
 
-tse.subsampled <- subsampleCounts(GlobalPatterns, 
+tse.subsampled <- rarefyAssay(GlobalPatterns, 
                                   min_size = 60000, 
                                   name = "subsampled",
                                   replace = TRUE,
@@ -301,14 +301,14 @@ assay(tse[,'CC1'], "counts") |> head()
 
 ## Selecting most interesting features 
 
-`getTopFeatures` returns a vector of the most `top` abundant feature IDs.
+`getTop` returns a vector of the most `top` abundant feature IDs.
 
 ```{r}
 data(esophagus, package = "mia")
-top_taxa <- getTopFeatures(esophagus,
-                       method = "mean",
-                       top = 5,
-                       assay.type = "counts")
+top_taxa <- getTop(esophagus,
+                    method = "mean",
+                    top = 5,
+                    assay.type = "counts")
 top_taxa
 ```
 

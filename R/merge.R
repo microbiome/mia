@@ -1,5 +1,8 @@
-.norm_f <- function(i, f, dim.type = c("rows","columns")){
+.norm_f <- function(i, f, dim.type = c("rows","columns"), na.rm = FALSE, ...){
     dim.type <- match.arg(dim.type)
+    if(!.is_a_bool(na.rm)){
+      stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+    }
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
             "meaningful factor.",
@@ -8,6 +11,11 @@
     if(i != length(f)){
         stop("'f' must have the same number of ",dim.type," as 'x'",
             call. = FALSE)
+    }
+    # This is done otherwise we lose NA values
+    if (!na.rm && any(is.na(f))) {
+        f <- as.character(f)
+        f[ is.na(f) ] <- "NA"
     }
     if(is.character(f)){
         f <- factor(f)
@@ -52,7 +60,7 @@
 
 #' @importFrom S4Vectors SimpleList
 #' @importFrom scuttle sumCountsAcrossFeatures
-.merge_rows <- function(x, f, archetype = 1L, 
+.merge_rows <- function(x, f, archetype = 1L,
                         average = FALSE,
                         BPPARAM = SerialParam(),
                         check.assays = TRUE,
@@ -64,20 +72,14 @@
     if( !.is_a_bool(check.assays) ){
         stop("'check.assays' must be TRUE or FALSE.", call. = FALSE)
     }
-    #
-    if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
-        f <- factor(as.character(rowData(x)[, f]))
+    if( .is_a_string(f) && f %in% colnames(rowData(x)) ){
+        f <- rowData(x)[[ f ]]
     }
-    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
-        f <- factor(as.character(colData(x)[, f]))
-    } else 
-    {
-        f <- .norm_f(nrow(x), f)  
-    }
+    f <- .norm_f(nrow(x), f)
     if(length(levels(f)) == nrow(x)){
         return(x)
     }
-    
+
     archetype <- .norm_archetype(f, archetype)
     # merge assays
     assays <- assays(x)
@@ -86,8 +88,8 @@
     }
     assays <- S4Vectors::SimpleList(lapply(assays,
                                             scuttle::sumCountsAcrossFeatures,
-                                            ids = f, 
-                                            subset.row = NULL, 
+                                            ids = f,
+                                            subset.row = NULL,
                                             subset.col = NULL,
                                             average = average,
                                             BPPARAM = BPPARAM))
@@ -95,7 +97,7 @@
     # merge to result
     x <- x[.get_element_pos(f, archetype = archetype),]
     assays(x, withDimnames = FALSE) <- assays
-    # Change rownames to group names 
+    # Change rownames to group names
     rownames(x) <- rownames(assays[[1]])
     x
 }
@@ -105,7 +107,7 @@
     # Check if assays include binary or negative values
     if( all(assay == 0 | assay == 1) ){
         warning("'",assay.type,"'", " includes binary values.",
-                "\nAgglomeration of it might lead to meaningless values.", 
+                "\nAgglomeration of it might lead to meaningless values.",
                 "\nCheck the assay, and consider doing transformation again",
                 "manually with agglomerated data.",
                 call. = FALSE)
@@ -123,15 +125,11 @@
 #' @importFrom scuttle summarizeAssayByGroup
 .merge_cols <- function(x, f, archetype = 1L, ...){
     # input check
-    if(is.character(f) && length(f)==1 && f %in% colnames(rowData(x))){
-        f <- factor(as.character(rowData(x)[, f]))
+    if( .is_a_string(f) && f %in% colnames(colData(x)) ){
+      f <- colData(x)[[ f ]]
     }
-    else if(is.character(f) && length(f)==1 && f %in% colnames(colData(x))){
-        f <- factor(as.character(colData(x)[, f]))
-    } else 
-    {
-        f <- .norm_f(ncol(x), f, "columns")  
-    }
+    f <- .norm_f(ncol(x), f, "columns")
+    
     if(length(levels(f)) == ncol(x)){
         return(x)
     }
@@ -152,15 +150,15 @@
     }
     assays <- S4Vectors::SimpleList(lapply(assays,
                                             FUN = FUN,
-                                            ids = f, 
-                                            subset.row = NULL, 
+                                            ids = f,
+                                            subset.row = NULL,
                                             subset.col = NULL,
                                             ...))
     names(assays) <- names(assays(x))
     # merge to result
     x <- x[,.get_element_pos(f, archetype = archetype)]
     assays(x, withDimnames = FALSE) <- assays
-    # Change colnames to group names 
+    # Change colnames to group names
     colnames(x) <- colnames(assays[[1]])
     x
 }
@@ -171,62 +169,6 @@
 
 .merge_cols_SE <- function(x, f, archetype = 1L, ...){
     .merge_cols(x, f, archetype = archetype, ...)
-}
-
-.merge_tree <- function(tree, links){
-    tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
-    drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
-    oldTree <- tree
-    newTree <- ape::drop.tip(oldTree, tip = drop_tip)
-    track <- trackNode(oldTree)
-    track <- ape::drop.tip(track, tip = drop_tip)
-    #
-    oldAlias <- links$nodeLab_alias
-    newNode <- convertNode(tree = track, node = oldAlias)
-    newAlias <- convertNode(tree = newTree, node = newNode)
-    #
-    list(newTree = newTree, newAlias = newAlias)
-}
-
-# Merge trees, MARGIN specifies if trees are rowTrees or colTrees
-.merge_trees <- function(x, mergeTree, MARGIN){
-    # Get rowtrees or colTrees based on MARGIN
-    if( MARGIN == 1 ){
-        trees <- x@rowTree
-        links <- rowLinks(x)
-    } else{
-        trees <- x@colTree
-        links <- colLinks(x)
-    }
-    # If trees exist and mergeTree is TRUE
-    if(!is.null(trees) && mergeTree){
-        # Loop over trees and replace them one by one
-        for( i in seq_len(length(trees)) ){
-            # Get tree
-            tree <- trees[[i]]
-            # Get the name of the tree
-            tree_name <- names(trees)[[i]]
-            # Subset links by taking only those rows that are included in tree
-            links_sub <- links[ links$whichTree == tree_name, , drop = FALSE ]
-            # Merge tree
-            tmp <- .merge_tree(tree, links_sub)
-            # Based on MARGIN, replace ith rowTree or colTree
-            if( MARGIN == 1 ){
-                x <- changeTree(x = x,
-                                rowTree = tmp$newTree,
-                                rowNodeLab = tmp$newAlias,
-                                whichRowTree = i
-                )
-            } else{
-                x <- changeTree(x = x,
-                                colTree = tmp$newTree,
-                                colNodeLab = tmp$newAlias,
-                                whichColTree = i
-                )
-            }
-        }
-    }
-    return(x)
 }
 
 #' @importFrom Biostrings DNAStringSetList
@@ -254,7 +196,7 @@
     seq
 }
 
-.merge_rows_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE, 
+.merge_rows_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE,
                             mergeRefSeq = FALSE, ...){
     # input check
     if(!.is_a_bool(mergeTree)){
@@ -271,15 +213,15 @@
     #
     x <- .merge_rows_SE(x, f, archetype = 1L, ...)
     # optionally merge rowTree
-    x <- .merge_trees(x, mergeTree, 1)
+    if( mergeTree ){
+        x <- .agglomerate_trees(x, 1)
+    }
     # optionally merge referenceSeq
     if(!is.null(refSeq)){
         referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
     }
     x
 }
-
-
 
 .merge_cols_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE, ...){
     # input check
@@ -289,6 +231,8 @@
     #
     x <- .merge_cols_SE(x, f, archetype = 1L, ...)
     # optionally merge colTree
-    x <- .merge_trees(x, mergeTree, 2)
+    if( mergeTree ){
+        x <- .agglomerate_trees(x, 2)
+    }
     return(x)
 }

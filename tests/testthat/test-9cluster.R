@@ -1,5 +1,5 @@
-context("subsampleCounts")
-test_that("subsampleCounts", {
+context("rarefyAssay")
+test_that("rarefyAssay", {
     library(bluster)
     data(GlobalPatterns, package="mia")
     
