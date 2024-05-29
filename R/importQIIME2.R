@@ -96,7 +96,8 @@
 #' tse
 
 #' @importFrom S4Vectors make_zero_col_DFrame
-importQIIME2 <- function(featureTableFile,
+importQIIME2 <- function(assay.file = featureTableFile,
+                            featureTableFile,
                             row.file = taxonomyTableFile,
                             taxonomyTableFile = NULL,
                             col.file = sampleMetaFile,
@@ -107,7 +108,6 @@ importQIIME2 <- function(featureTableFile,
                             refSeqFile = NULL,
                             phy.tree.file = phyTreeFile,
                             phyTreeFile = NULL,
-                            assay.file = featureTableFile,
                            ...) {
     .require_package("yaml")
     # input check
