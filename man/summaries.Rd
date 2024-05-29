@@ -43,9 +43,7 @@ summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 }
 \arguments{
 \item{x}{A
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
-
-@param object Deprecated. Use \code{x} instead.}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
 
 \item{top}{Numeric value, how many top taxa to return. Default return top
 five taxa.}
@@ -75,6 +73,8 @@ the output of \code{taxonomyRanks()}.}
 overview. Must be one of the column names of \code{colData}.}
 
 \item{name}{The column name for the features. The default is 'dominant_taxa'.}
+
+\item{object}{Deprecated. Use \code{x} instead.}
 }
 \value{
 The \code{getTop} returns a vector of the most \code{top} abundant

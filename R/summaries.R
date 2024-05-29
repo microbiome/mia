@@ -311,7 +311,7 @@ setMethod("summarizeDominance", signature = c(x = "SummarizedExperiment"),
 #' @param x A
 #'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.
 #'  
-#'  @param object Deprecated. Use \code{x} instead.
+#' @param object Deprecated. Use \code{x} instead.
 #'
 #' @param assay.type a \code{character} value to select an
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}

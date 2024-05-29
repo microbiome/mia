@@ -29,9 +29,10 @@ agglomerateByVariable(x, ...)
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  na.rm = TRUE,
-  empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   disable.taxonomy = onRankOnly,
+  onRankOnly = TRUE,
+  na.rm = FALSE,
+  empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
 )
 
@@ -133,6 +134,10 @@ See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
+\item{disable.taxonomy}{\code{TRUE} or \code{FALSE}: Should information only from
+the specified rank be used or from ranks equal and above? See details.
+(default: \code{disable.taxonomy = FALSE})}
+
 \item{onRankOnly}{Deprecated. Use \code{disable.taxonomy} instead.}
 
 \item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
@@ -143,10 +148,6 @@ will be dropped. This setting can be tweaked by defining
 \item{empty.fields}{a \code{character} value defining, which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration.}
-
-\item{disable.taxonomy}{\code{TRUE} or \code{FALSE}: Should information only from
-the specified rank be used or from ranks equal and above? See details.
-(default: \code{disable.taxonomy = FALSE})}
 
 \item{MARGIN}{A character value for selecting if data is merged
 row-wise / for features ('rows') or column-wise / for samples ('cols').

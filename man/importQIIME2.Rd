@@ -6,6 +6,7 @@
 \title{Import QIIME2 results to \code{TreeSummarizedExperiment}}
 \usage{
 importQIIME2(
+  assay.file = featureTableFile,
   featureTableFile,
   row.file = taxonomyTableFile,
   taxonomyTableFile = NULL,
@@ -17,13 +18,15 @@ importQIIME2(
   refSeqFile = NULL,
   phy.tree.file = phyTreeFile,
   phyTreeFile = NULL,
-  assay.file = featureTableFile,
   ...
 )
 
 importQZA(file, temp.dir = temp, temp = tempdir(), ...)
 }
 \arguments{
+\item{assay.file}{a single \code{character} value defining the file
+path of the feature table to be imported.}
+
 \item{featureTableFile}{Deprecated. use \code{assay.file} instead.}
 
 \item{row.file}{a single \code{character} value defining the file
@@ -56,9 +59,6 @@ the reference sequences for each feature. (default: \code{refseq.file =
 the phylogenetic tree. (default: \code{phy.tree.file = NULL}).}
 
 \item{phyTreeFile}{Deprecated. Use \code{phy.tree.file} isntead.}
-
-\item{assay.file}{a single \code{character} value defining the file
-path of the feature table to be imported.}
 
 \item{...}{additional arguments:
 \itemize{
