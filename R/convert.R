@@ -182,8 +182,8 @@ setMethod("convert", signature = c(x = "dada"),
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "phyloseq"),
-            function(x){
-                .make_TreeSE_from_phyloseq(x)
+            function(x, ...){
+                .make_TreeSE_from_phyloseq(x, ...)
             }
 )
 

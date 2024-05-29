@@ -23,7 +23,7 @@ convert(x, ...)
 
 \S4method{convert}{dada}(x, ...)
 
-\S4method{convert}{phyloseq}(x)
+\S4method{convert}{phyloseq}(x, ...)
 
 \S4method{convert}{biom}(x, ...)
 }
