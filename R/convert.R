@@ -190,9 +190,7 @@ setMethod("convert", signature = c(x = "phyloseq"),
 #' @rdname convert
 #' @export
 setMethod("convert", signature = c(x = "biom"),
-            function(x, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
-                    remove.artifacts = FALSE, ...){
-                .make_TreeSE_from_biom(x, removeTaxaPrefixes, rankFromPrefix,
-                                        remove.artifacts, ...)
+            function(x, ...){
+                .make_TreeSE_from_biom(x, ...)
             }
 )

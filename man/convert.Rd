@@ -25,13 +25,7 @@ convert(x, ...)
 
 \S4method{convert}{phyloseq}(x)
 
-\S4method{convert}{biom}(
-  x,
-  removeTaxaPrefixes = FALSE,
-  rankFromPrefix = FALSE,
-  remove.artifacts = FALSE,
-  ...
-)
+\S4method{convert}{biom}(x, ...)
 }
 \arguments{
 \item{x}{Input data to be converted. See details for more information on
