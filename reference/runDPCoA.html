@@ -57,10 +57,10 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculateDPCoA</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getDPCoA</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY,ANY</span></span>
-<span><span class="fu">calculateDPCoA</span><span class="op">(</span></span>
+<span><span class="fu">getDPCoA</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">y</span>,</span>
 <span>  ncomponents <span class="op">=</span> <span class="fl">2</span>,</span>
@@ -72,7 +72,7 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment,missing</span></span>
-<span><span class="fu">calculateDPCoA</span><span class="op">(</span></span>
+<span><span class="fu">getDPCoA</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
@@ -81,16 +81,20 @@ reducedDims and are available for all the expected functions."><!-- mathjax --><
 <span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">runDPCoA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"DPCoA"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">calculateDPCoA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">addDPCoA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"DPCoA"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">runDPCoA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>For <code>calculateDPCoA</code>, a numeric matrix of expression values
+<dd><p>For <code>getDPCoA</code>, a numeric matrix of expression values
 where rows are features and columns are cells.
 Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.</p>
-<p>For <code>runDPCoA</code> a <a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a> containing the
+<p>For <code>addDPCoA</code> a <a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a> containing the
 expression values as well as a <code>rowTree</code> to calculate <code>y</code> using
 <code><a href="https://rdrr.io/pkg/ape/man/cophenetic.phylo.html" class="external-link">cophenetic.phylo</a></code>.</p></dd>
 
@@ -167,11 +171,11 @@ reducedDims of the output.</p></dd>
     <h2>Value</h2>
     
 
-<p>For <code>calculateDPCoA</code> a matrix with samples as rows and CCA dimensions as
+<p>For <code>getDPCoA</code> a matrix with samples as rows and CCA dimensions as
 columns</p>
 
 
-<p>For <code>runDPCoA</code> a modified <code>x</code> with the results stored in
+<p>For <code>addDPCoA</code> a modified <code>x</code> with the results stored in
 <code>reducedDim</code> as the given <code>name</code></p>
 
 
@@ -192,14 +196,14 @@ returned as attributes as well.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">dpcoa</span> <span class="op">&lt;-</span> <span class="fu">calculateDPCoA</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dpcoa</span> <span class="op">&lt;-</span> <span class="fu">getDPCoA</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dpcoa</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]         [,2]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> B -0.05368615  0.046589779</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C -0.04324591 -0.039790060</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D  0.10011870  0.003144932</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">runDPCoA</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">addDPCoA</span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of length 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> names(1): DPCoA</span>

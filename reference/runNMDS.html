@@ -55,10 +55,10 @@ data in a <code>SingleCellExperiment</code> object.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculateNMDS</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getNMDS</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">calculateNMDS</span><span class="op">(</span></span>
+<span><span class="fu">getNMDS</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  FUN <span class="op">=</span> <span class="va">vegdist</span>,</span>
 <span>  nmdsFUN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"isoMDS"</span>, <span class="st">"monoMDS"</span><span class="op">)</span>,</span>
@@ -72,7 +72,7 @@ data in a <code>SingleCellExperiment</code> object.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">calculateNMDS</span><span class="op">(</span></span>
+<span><span class="fu">getNMDS</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
@@ -82,7 +82,7 @@ data in a <code>SingleCellExperiment</code> object.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SingleCellExperiment</span></span>
-<span><span class="fu">calculateNMDS</span><span class="op">(</span></span>
+<span><span class="fu">getNMDS</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
@@ -93,16 +93,20 @@ data in a <code>SingleCellExperiment</code> object.</p>
 <span>  FUN <span class="op">=</span> <span class="va">vegdist</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">runNMDS</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"NMDS"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">calculateNMDS</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">addNMDS</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, name <span class="op">=</span> <span class="st">"NMDS"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">runNMDS</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>For <code>calculateNMDS</code>, a numeric matrix of expression values
+<dd><p>For <code>getNMDS</code>, a numeric matrix of expression values
 where rows are features and columns are cells.
 Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.</p>
-<p>For <code>runNMDS</code> a <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></p></dd>
+<p>For <code>addNMDS</code> a <a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html" class="external-link">SingleCellExperiment</a></p></dd>
 
 
 <dt>...</dt>
@@ -149,7 +153,7 @@ integer vector of row indices or a logical vector.</p></dd>
 <dt>keep_dist</dt>
 <dd><p>Logical scalar indicating whether the <code>dist</code> object
 calculated by <code>FUN</code> should be stored as ‘dist’ attribute of
-the matrix returned/stored by <code>calculateNMDS</code>/ <code>runNMDS</code>.</p></dd>
+the matrix returned/stored by <code>getNMDS</code>/ <code>addNMDS</code>.</p></dd>
 
 
 <dt>assay.type</dt>
@@ -194,7 +198,7 @@ reducedDims of the output.</p></dd>
     <h2>Value</h2>
     
 
-<p>For <code>calculateNMDS</code>, a matrix is returned containing the MDS
+<p>For <code>getNMDS</code>, a matrix is returned containing the MDS
 coordinates for each sample (row) and dimension (column).</p>
     </div>
     <div id="details">
@@ -225,7 +229,7 @@ results.</p></div>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-constructor.html" class="external-link">TreeSummarizedExperiment</a></span><span class="op">(</span>assays <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">mat</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                                rowData <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">#</span></span></span>
-<span class="r-in"><span><span class="fu">calculateNMDS</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">getNMDS</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 0.383462 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iter   5 value 0.161655</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> iter  10 value 0.113278</span>
@@ -247,11 +251,11 @@ results.</p></div>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">runNMDS</span><span class="op">(</span><span class="va">esophagus</span>, FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, name <span class="op">=</span> <span class="st">"BC"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">addNMDS</span><span class="op">(</span><span class="va">esophagus</span>, FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, name <span class="op">=</span> <span class="st">"BC"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 0.000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> final  value 0.000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> converged</span>
-<span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">runNMDS</span><span class="op">(</span><span class="va">esophagus</span>, FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, name <span class="op">=</span> <span class="st">"euclidean"</span>,</span></span>
+<span class="r-in"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu">addNMDS</span><span class="op">(</span><span class="va">esophagus</span>, FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, name <span class="op">=</span> <span class="st">"euclidean"</span>,</span></span>
 <span class="r-in"><span>                     method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> initial  value 0.000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> final  value 0.000000 </span>
