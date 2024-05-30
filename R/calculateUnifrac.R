@@ -186,7 +186,7 @@ setMethod("calculateUnifrac",
 #' @importFrom rbiom unifrac
 #' @export
 runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
-                       node.lab = nodeLab, nodeLab = NULL, BPPARAM = SerialParam(), ...){
+    ode.lab = nodeLab, nodeLab = NULL, BPPARAM = SerialParam(), ...){
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)

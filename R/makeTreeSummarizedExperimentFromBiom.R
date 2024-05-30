@@ -83,7 +83,7 @@ importBIOM <- function(file, ...) {
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
-makeTreeSEFromBiom <- function(x , remove.taxa.prefix = removeTaxaPrefixes, 
+makeTreeSEFromBiom <- function(x, remove.taxa.prefix = removeTaxaPrefixes, 
         removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix, rankFromPrefix = FALSE,
         remove.artifacts = FALSE, ...){
     # input check

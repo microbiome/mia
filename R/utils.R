@@ -86,8 +86,8 @@
         stop("'", name, "' must be a single non-empty character value.",
              call. = FALSE)
     }
-    if( !(tree.name %in% names(x@rowTree)) ){
-        stop("'", name, "' must specify a tree from 'x@rowTree'.",
+    if( !(tree.name %in% rowTreeNames(x)) ){
+        stop("'", name, "' must specify a tree from 'rowTreeNames(x)'.",
              call. = FALSE)
     }
 }
@@ -98,8 +98,8 @@
         stop("'", name, "' must be a single non-empty character value.",
              call. = FALSE)
     }
-    if( !(tree.name %in% names(x@colTree)) ){
-        stop("'", name, "' must specify a tree from 'x@colTree'.",
+    if( !(tree.name %in% names(colTreeNames(x))) ){
+        stop("'", name, "' must specify a tree from 'colTreeNames(x)'.",
              call. = FALSE)
     }
 }

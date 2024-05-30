@@ -3,7 +3,7 @@
 #' Results exported from QIMME2 can be imported as a
 #' \code{TreeSummarizedExperiment} using \code{importQIIME2}. Except for the
 #' \code{assay.file}, the other data types, \code{row.file},
-#' \code{refseq.file} and \code{phy.tree.file}, are optional, but are highly
+#' \code{refseq.file} and \code{tree.file}, are optional, but are highly
 #' encouraged to be provided.
 #'
 #' @param assay.file a single \code{character} value defining the file
@@ -37,10 +37,10 @@
 #'
 #' @param refSeqFile Deprecated. Use \code{refseq.file} instead.
 #'
-#' @param phy.tree.file a single \code{character} value defining the file path of
-#'   the phylogenetic tree. (default: \code{phy.tree.file = NULL}).
+#' @param tree.file a single \code{character} value defining the file path of
+#'   the phylogenetic tree. (default: \code{tree.file = NULL}).
 #'   
-#' @param phyTreeFile Deprecated. Use \code{phy.tree.file} isntead.
+#' @param phyTreeFile Deprecated. Use \code{tree.file} isntead.
 #'
 #' @param ... additional arguments:
 #' \itemize{
@@ -83,14 +83,14 @@
 #' assay.file <- system.file("extdata", "table.qza", package = "mia")
 #' row.file <- system.file("extdata", "taxonomy.qza", package = "mia")
 #' col.file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
-#' phy.tree.file <- system.file("extdata", "tree.qza", package = "mia")
+#' tree.file <- system.file("extdata", "tree.qza", package = "mia")
 #' refseq.file <- system.file("extdata", "refseq.qza", package = "mia")
 #' tse <- importQIIME2(
 #'   assay.file = assay.file,
 #'   row.file = row.file,
 #'   col.file = col.file,
 #'   refseq.file = refseq.file,
-#'   phy.tree.file = phy.tree.file
+#'   tree.file = tree.file
 #' )
 #'
 #' tse
@@ -106,7 +106,7 @@ importQIIME2 <- function(assay.file = featureTableFile,
                             featureNamesAsRefSeq = TRUE,
                             refseq.file = refSeqFile,
                             refSeqFile = NULL,
-                            phy.tree.file = phyTreeFile,
+                            tree.file = phyTreeFile,
                             phyTreeFile = NULL,
                            ...) {
     .require_package("yaml")
@@ -130,8 +130,8 @@ importQIIME2 <- function(assay.file = featureTableFile,
         stop("'refseq.file' must be a single character value or NULL.",
             call. = FALSE)
     }
-    if(!is.null(phy.tree.file) && !.is_non_empty_string(phy.tree.file)){
-        stop("'phy.tree.file' must be a single character value or NULL.",
+    if(!is.null(tree.file) && !.is_non_empty_string(tree.file)){
+        stop("'tree.file' must be a single character value or NULL.",
             call. = FALSE)
     }
     #
@@ -153,8 +153,8 @@ importQIIME2 <- function(assay.file = featureTableFile,
         rownames(col.data) <- colnames(feature_tab)
     }
 
-    if (!is.null(phy.tree.file)) {
-        tree <- importQZA(phy.tree.file, ...)
+    if (!is.null(tree.file)) {
+        tree <- importQZA(tree.file, ...)
     } else {
         tree <- NULL
     }

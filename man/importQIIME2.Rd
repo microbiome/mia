@@ -16,7 +16,7 @@ importQIIME2(
   featureNamesAsRefSeq = TRUE,
   refseq.file = refSeqFile,
   refSeqFile = NULL,
-  phy.tree.file = phyTreeFile,
+  tree.file = phyTreeFile,
   phyTreeFile = NULL,
   ...
 )
@@ -55,10 +55,10 @@ the reference sequences for each feature. (default: \code{refseq.file =
 
 \item{refSeqFile}{Deprecated. Use \code{refseq.file} instead.}
 
-\item{phy.tree.file}{a single \code{character} value defining the file path of
-the phylogenetic tree. (default: \code{phy.tree.file = NULL}).}
+\item{tree.file}{a single \code{character} value defining the file path of
+the phylogenetic tree. (default: \code{tree.file = NULL}).}
 
-\item{phyTreeFile}{Deprecated. Use \code{phy.tree.file} isntead.}
+\item{phyTreeFile}{Deprecated. Use \code{tree.file} isntead.}
 
 \item{...}{additional arguments:
 \itemize{
@@ -93,7 +93,7 @@ object
 Results exported from QIMME2 can be imported as a
 \code{TreeSummarizedExperiment} using \code{importQIIME2}. Except for the
 \code{assay.file}, the other data types, \code{row.file},
-\code{refseq.file} and \code{phy.tree.file}, are optional, but are highly
+\code{refseq.file} and \code{tree.file}, are optional, but are highly
 encouraged to be provided.
 
 Import the QIIME2 artifacts to R.
@@ -109,14 +109,14 @@ sequences are tried to be created, if \code{featureNameAsRefSeq} is
 assay.file <- system.file("extdata", "table.qza", package = "mia")
 row.file <- system.file("extdata", "taxonomy.qza", package = "mia")
 col.file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
-phy.tree.file <- system.file("extdata", "tree.qza", package = "mia")
+tree.file <- system.file("extdata", "tree.qza", package = "mia")
 refseq.file <- system.file("extdata", "refseq.qza", package = "mia")
 tse <- importQIIME2(
   assay.file = assay.file,
   row.file = row.file,
   col.file = col.file,
   refseq.file = refseq.file,
-  phy.tree.file = phy.tree.file
+  tree.file = tree.file
 )
 
 tse

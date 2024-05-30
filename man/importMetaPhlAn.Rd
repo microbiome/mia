@@ -7,12 +7,12 @@
 \item{file}{a single \code{character} value defining the file
 path of the Metaphlan file. The file must be in merged Metaphlan format.}
 
-\item{colData}{Deprecated. use \code{col.data} instead.}
-
 \item{col.data}{a DataFrame-like object that includes sample names in
 rownames, or a single \code{character} value defining the file
 path of the sample metadata file. The file must be in \code{tsv} format
 (default: \code{col.data = NULL}).}
+
+\item{colData}{Deprecated. use \code{col.data} instead.}
 
 \item{sample_meta}{Deprecated. Use \code{col.data} instead.}
 

@@ -9,11 +9,6 @@
 #'   (default: \code{col.data = NULL}).
 #'   
 #' @param colData Deprecated. use \code{col.data} instead.
-#' 
-#' @param col.data a DataFrame-like object that includes sample names in
-#'   rownames, or a single \code{character} value defining the file
-#'   path of the sample metadata file. The file must be in \code{tsv} format
-#'   (default: \code{col.data = NULL}).
 #'   
 #' @param sample_meta Deprecated. Use \code{col.data} instead.
 #' 

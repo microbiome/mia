@@ -8,12 +8,12 @@
 #'   \code{shared file} format as defined in Mothur documentation.
 #'
 #' @param row.file a single \code{character} value defining the file path of
-#'   the taxonomy table to be imported. The File has to be in \code{taxonomy
+#'   the taxonomy table to be imported. The file has to be in \code{taxonomy
 #'   file} or \code{constaxonomy file} format  as defined in Mothur
 #'   documentation. (default: \code{row.file = NULL}).
 #'
 #' @param col.file a single \code{character} value defining the file path of
-#'   the sample metadata to be imported. The File has to be in \code{desing
+#'   the sample metadata to be imported. The file has to be in \code{desing
 #'   file} format as defined in Mothur documentation. (default: \code{col.file
 #'   = NULL}).
 #'
