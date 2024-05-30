@@ -12,7 +12,7 @@ test_that("agglomerate", {
                           Family = c("c",NA,"d","e","f","g","h",NA,"h","e","f"),
                           n = 7:17)
     rowData(xtse) <- tax_data
-    # mergeRows for mergeFeaturesByRank
+    # mergeRows for agglomerateByRank
     tax_factors <- mia:::.get_tax_groups(xtse, col = 2)
     actual_family <- actual <- agglomerateByVariable(xtse, MARGIN = "rows",
                                                     f = tax_factors)
@@ -29,69 +29,73 @@ test_that("agglomerate", {
     expect_equal(assays(actual)$mat[2,1],c(b = 36))
     expect_equal(assays(actual)$mat[3,1],c(c = 24))
     #
-    expect_error(mergeFeaturesByRank(xtse,"",na.rm=FALSE),
+    expect_error(agglomerateByRank(xtse,"",na.rm=FALSE),
                  "'rank' must be a non-empty single character value")
-    expect_error(mergeFeaturesByRank(xtse,"Family",na.rm=""),
+    expect_error(agglomerateByRank(xtse,"Family",na.rm=""),
                  "'na.rm' must be TRUE or FALSE")
     expect_error(
-        mergeFeaturesByRank(xtse,"Family",na.rm=FALSE,agglomerate.tree=""),
+        agglomerateByRank(xtse,"Family",na.rm=FALSE,agglomerate.tree=""),
         "'agglomerate.tree' must be TRUE or FALSE")
     xtse2 <- xtse
     rowData(xtse2) <- NULL
-    expect_error(mergeFeaturesByRank(xtse2,"Family",na.rm=FALSE),
+    expect_error(agglomerateByRank(xtse2,"Family",na.rm=FALSE),
                  "taxonomyData needs to be populated")
     #
-    actual <- mergeFeaturesByRank(xtse,"Family",na.rm=FALSE)
+    actual <- agglomerateByRank(xtse,"Family",na.rm=FALSE)
     expect_equivalent(rowData(actual),rowData(actual_family))
-    actual <- mergeFeaturesByRank(xtse,"Phylum",na.rm=FALSE)
+    actual <- agglomerateByRank(xtse,"Phylum",na.rm=FALSE)
     expect_equivalent(rowData(actual),rowData(actual_phylum))
     #
-    actual <- mergeFeaturesByRank(xtse,"Family", onRankOnly = FALSE, na.rm = TRUE)
+    actual <- agglomerateByRank(xtse,"Family", onRankOnly = FALSE, na.rm = TRUE)
     expect_equal(dim(actual),c(6,10))
     expect_equal(rowData(actual)$Family,c("c","d","e","f","g","h"))
-    actual <- mergeFeaturesByRank(xtse,"Family", onRankOnly = FALSE, na.rm = FALSE) # the default
+    actual <- agglomerateByRank(xtse,"Family", onRankOnly = FALSE, na.rm = FALSE) # the default
     expect_equal(dim(actual),c(8,10))
     expect_equal(rowData(actual)$Family,c("c","d","e","f","g","h",NA,NA))
-    actual <- mergeFeaturesByRank(xtse,"Phylum")
+    actual <- agglomerateByRank(xtse,"Phylum")
     expect_equivalent(rowData(actual),rowData(actual_phylum))
     #
-    actual1 <- mergeFeaturesByRank(xtse,"Family")
+    actual1 <- agglomerateByRank(xtse,"Family")
     actual2 <- .merge_features(xtse, merge.by = "Family")
     expect_equal(actual1, actual2)
-    expect_equal(mergeFeaturesByRank(xtse,"Family"), mergeFeaturesByRank(xtse,"Family"))
+    expect_equal(agglomerateByRank(xtse,"Family"), agglomerateByRank(xtse,"Family"))
 
     # Only one rank available in the object -
     # the same dimensionality is retained
     data(enterotype, package="mia")
     expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
-                 nrow(mergeFeaturesByRank(enterotype,"Genus", onRankOnly = FALSE)))
+                 nrow(agglomerateByRank(enterotype,"Genus", onRankOnly = FALSE, 
+                 na.rm = FALSE)))
 
     # agglomeration in all its forms
     data(GlobalPatterns, package="mia")
     se <- GlobalPatterns
-    actual <- mergeFeaturesByRank(se, rank = "Family", onRankOnly = FALSE)
+    actual <- agglomerateByRank(se, rank = "Family", 
+        onRankOnly = FALSE, na.rm = FALSE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
                  length(rowTree(se)$tip.label))
-    actual <- mergeFeaturesByRank(se, rank = "Family", onRankOnly = FALSE, agglomerate.tree = TRUE)
+    actual <- agglomerateByRank(se, rank = "Family", 
+        onRankOnly = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), 603)
-    actual <- mergeFeaturesByRank(se, rank = "Family", onRankOnly = FALSE, agglomerate.tree = TRUE)
+    actual <- agglomerateByRank(se, rank = "Family", 
+        onRankOnly = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), nrow(actual))
     # Test that warning occurs when assay contian binary or negative values
     se1 <- transformAssay(se, method = "pa")
     se2 <- se1
     assay(se2, "pa")[1, 1] <- -1
-    expect_warning(mergeFeaturesByRank(se1, rank = "Phylum"))
-    expect_warning(mergeFeaturesByRank(se1, rank = "Order"))
+    expect_warning(agglomerateByRank(se1, rank = "Phylum"))
+    expect_warning(agglomerateByRank(se1, rank = "Order"))
 
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
     data(SilvermanAGutData)
     se <- SilvermanAGutData
     # checking reference consensus sequence generation
-    actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE)
+    actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
     # There should be only one exact match for each sequence
     seqs_test <- as.character( referenceSeq(actual) )
     seqs_ref <- as.character( referenceSeq(se) )
@@ -100,7 +104,7 @@ test_that("agglomerate", {
         FUN.VALUE = logical(1) )) )
     # Merging creates concensus sequences.
     th <- runif(1, 0, 1)
-    actual <- mergeFeaturesByRank(
+    actual <- agglomerateByRank(
         se, "Genus", mergeRefSeq = TRUE, threshold = th)
     seqs_test <- referenceSeq(actual)
     # Get single taxon as reference. Merge those sequences and test that it
@@ -114,18 +118,18 @@ test_that("agglomerate", {
     seqs_test <- seqs_test[ names(seqs_test) %in% feature ]
     expect_equal(seqs_test, seqs_ref)
     # Test that remove_empty_ranks work
-    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = NULL))
-    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
-    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = 1))
-    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = c(TRUE, TRUE)))
-    x <- mergeFeaturesByRank(se, rank = "Class")
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = NULL))
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = 1))
+    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = c(TRUE, TRUE)))
+    x <- agglomerateByRank(se, rank = "Class")
     rd1 <- rowData(x)[, 1:3]
-    x <- mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = TRUE)
+    x <- agglomerateByRank(se, rank = "Class", remove_empty_ranks = TRUE)
     rd2 <- rowData(x)
     expect_equal(rd1, rd2)
     # Test that make_unique work
-    uniq <- mergeFeaturesByRank(se, rank = "Species")
-    not_uniq <- mergeFeaturesByRank(se, rank = "Species", make_unique = FALSE)
+    uniq <- agglomerateByRank(se, rank = "Species")
+    not_uniq <- agglomerateByRank(se, rank = "Species", make_unique = FALSE)
     expect_true( !any( duplicated(rownames(uniq)) ) )
     expect_true( any( duplicated(rownames(not_uniq)) ) )
     

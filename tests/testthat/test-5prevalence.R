@@ -104,13 +104,13 @@ test_that("getPrevalence", {
     remove <- c(15, 200)
     assay(tse, "counts")[remove, ] <- NA
     # Check that agglomeration works
-    tse_agg <- agglomerateByRank(tse, onRankOnly = FALSE, rank = rank)
+    tse_agg <- agglomerateByRank(tse, onRankOnly = FALSE, na.rm = FALSE, rank = rank)
     expect_warning(ref <- getPrevalence(tse_agg, na.rm = FALSE))
-    expect_warning(res <- getPrevalence(tse, onRankOnly = FALSE, na.rm = FALSE, rank = "Genus"))
+    expect_warning(res <- getPrevalence(tse, rank = "Genus"))
     expect_true( all(res == ref, na.rm = TRUE) )
     #
     expect_warning(ref <- getPrevalence(tse_agg, na.rm = TRUE))
-    expect_warning(res <- getPrevalence(tse, onRankOnly = FALSE, na.rm = TRUE, rank = "Genus"))
+    expect_warning(res <- getPrevalence(tse, na.rm = TRUE, rank = "Genus"))
     expect_true( all(res == ref, na.rm = TRUE) )
 })
 
@@ -206,7 +206,7 @@ test_that("getRare", {
     for( rank in ranks ){
 
         # Agglomerates data by rank
-        se <- mergeFeaturesByRank(GlobalPatterns, rank = rank)
+        se <- agglomerateByRank(GlobalPatterns, rank = rank)
 
         # Gets rownames for all the taxa
         all_taxa <- rownames(se)
@@ -369,16 +369,16 @@ test_that("subsetByRare", {
     
 })
 
-test_that("mergeFeaturesByPrevalence", {
+test_that("agglomerateByPrevalence", {
 
     data(GlobalPatterns, package="mia")
-    expect_error(mergeFeaturesByPrevalence(GlobalPatterns, other_label=TRUE),
+    expect_error(agglomerateByPrevalence(GlobalPatterns, other_label=TRUE),
                  "'other_label' must be a single character value")
-    actual <- mergeFeaturesByPrevalence(GlobalPatterns, rank = "Kingdom")
+    actual <- agglomerateByPrevalence(GlobalPatterns, rank = "Kingdom")
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(2,26))
 
-    actual <- mergeFeaturesByPrevalence(GlobalPatterns,
+    actual <- agglomerateByPrevalence(GlobalPatterns,
                                       rank = "Phylum",
                                       detection = 1/100,
                                       prevalence = 50/100,
@@ -388,19 +388,19 @@ test_that("mergeFeaturesByPrevalence", {
     expect_equal(dim(actual),c(6,26))
     expect_equal(rowData(actual)[6,"Phylum"],"test")
 
-    actual <- mergeFeaturesByPrevalence(GlobalPatterns,
+    actual <- agglomerateByPrevalence(GlobalPatterns,
                                       rank = NULL,
                                       detection = 0.0001,
                                       prevalence = 50/100,
                                       as_relative = TRUE,
                                       other_label = "test")
-    expect_equal(mergeFeaturesByPrevalence(GlobalPatterns,
+    expect_equal(agglomerateByPrevalence(GlobalPatterns,
                                            rank = NULL,
                                            detection = 0.0001,
                                            prevalence = 50/100,
                                            as_relative = TRUE,
                                            other_label = "test"),
-                 mergeFeaturesByPrevalence(GlobalPatterns,
+                 agglomerateByPrevalence(GlobalPatterns,
                                            rank = NULL,
                                            detection = 0.0001,
                                            prevalence = 50/100,

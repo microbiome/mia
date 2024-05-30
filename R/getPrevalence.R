@@ -275,7 +275,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
 
         # check assay
         .check_assay_present(assay.type, x)
-        x <- .agg_for_prevalence(x, rank = rank, ...)
+        x <- .agg_for_prevalence(x, agg.na.rm = FALSE, rank = rank, ...)
         mat <- assay(x, assay.type)
         if (as_relative) {
             mat <- .calc_rel_abund(mat)
