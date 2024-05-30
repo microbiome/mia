@@ -37,15 +37,7 @@ agglomerateByVariable(x, ...)
 
 \S4method{agglomerateByVariable}{SummarizedExperiment}(x, MARGIN, f, archetype = 1L, ...)
 
-\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
-  x,
-  MARGIN,
-  f,
-  archetype = 1L,
-  mergeTree = FALSE,
-  mergeRefSeq = FALSE,
-  ...
-)
+\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(x, MARGIN, f, archetype = 1L, mergeTree = FALSE, ...)
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
