@@ -37,7 +37,15 @@ agglomerateByVariable(x, ...)
 
 \S4method{agglomerateByVariable}{SummarizedExperiment}(x, MARGIN, f, archetype = 1L, ...)
 
-\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(x, MARGIN, f, archetype = 1L, mergeTree = FALSE, ...)
+\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
+  x,
+  MARGIN,
+  f,
+  archetype = 1L,
+  mergeTree = FALSE,
+  mergeRefSeq = FALSE,
+  ...
+)
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
@@ -129,6 +137,12 @@ element encountered per factor level will be kept)}
 \item{mergeTree}{\code{TRUE} or \code{FALSE}: Should
 \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})}
 
+\item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
+be calculated? If set to \code{FALSE}, the result from \code{archetype} is
+returned; If set to \code{TRUE} the result from
+\code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
+returned. (Default: \code{mergeRefSeq = FALSE})}
+
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
@@ -158,12 +172,6 @@ of \code{taxonomyRanks()} function.}
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (default: \code{keep_reducedDims = FALSE})}
-
-\item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
-be calculated? If set to \code{FALSE}, the result from \code{archetype} is
-returned; If set to \code{TRUE} the result from
-\code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
-returned. (Default: \code{mergeRefSeq = FALSE})}
 }
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,
