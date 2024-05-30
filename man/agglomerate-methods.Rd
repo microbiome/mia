@@ -31,13 +31,22 @@ agglomerateByVariable(x, ...)
   rank = taxonomyRanks(x)[1],
   onRankOnly = FALSE,
   na.rm = TRUE,
+  mergeRefSeq = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
 )
 
 \S4method{agglomerateByVariable}{SummarizedExperiment}(x, MARGIN, f, archetype = 1L, ...)
 
-\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(x, MARGIN, f, archetype = 1L, mergeTree = FALSE, ...)
+\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
+  x,
+  MARGIN,
+  f,
+  archetype = 1L,
+  mergeTree = FALSE,
+  mergeRefSeq = FALSE,
+  ...
+)
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
@@ -106,6 +115,12 @@ the specified rank be used or from ranks equal and above? See details.
 removed? Use it with caution, since results with NA on the selected rank
 will be dropped. This setting can be tweaked by defining
 \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})}
+
+\item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
+be calculated? If set to \code{FALSE}, the result from \code{archetype} is
+returned; If set to \code{TRUE} the result from
+\code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
+returned. (Default: \code{mergeRefSeq = FALSE})}
 
 \item{empty.fields}{a \code{character} value defining, which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
