@@ -9,7 +9,7 @@
 \usage{
 calculateUnifrac(x, tree, ...)
 
-\S4method{calculateUnifrac}{ANY,phylo}(x, tree, weighted = FALSE, normalized = TRUE, ...)
+\S4method{calculateUnifrac}{ANY,phylo}(x, tree, weighted = FALSE, ...)
 
 \S4method{calculateUnifrac}{TreeSummarizedExperiment,missing}(
   x,
@@ -18,7 +18,6 @@ calculateUnifrac(x, tree, ...)
   exprs_values = "counts",
   tree_name = "phylo",
   transposed = FALSE,
-  normalized = TRUE,
   ...
 )
 

@@ -104,7 +104,7 @@ setGeneric("calculateUnifrac", signature = c("x", "tree"),
 #' @rdname calculateUnifrac
 #' @export
 setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
-    function(x, tree, weighted = FALSE, normalized = TRUE, ...){
+    function(x, tree, weighted = FALSE, ...){
         if(is(x,"SummarizedExperiment")){
             stop("When providing a 'tree', please provide a matrix-like as 'x'",
                 " and not a 'SummarizedExperiment' object. Please consider ",
@@ -112,8 +112,7 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
                 call. = FALSE) 
         }
         .calculate_distance(x, FUN = runUnifrac, tree = tree,
-                            weighted = weighted, normalized = normalized,
-                            BPPARAM = BPPARAM, ...)
+                            weighted = weighted, ...)
     }
 )
 
@@ -126,7 +125,7 @@ setMethod("calculateUnifrac",
         signature = c(x = "TreeSummarizedExperiment",
                     tree = "missing"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
-            tree_name = "phylo", transposed = FALSE, normalized = TRUE, ...){
+            tree_name = "phylo", transposed = FALSE, ...){
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
         mat <- assay(x, assay.type)
@@ -197,9 +196,6 @@ runUnifrac <- function(
     # input check
     if(!.is_a_bool(weighted)){
         stop("'weighted' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if(!.is_a_bool(normalized)){
-        stop("'normalized' must be TRUE or FALSE.", call. = FALSE)
     }
     if(is.null(colnames(x)) || is.null(rownames(x))){
         stop("colnames and rownames must not be NULL", call. = FALSE)
