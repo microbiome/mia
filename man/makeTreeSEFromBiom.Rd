@@ -10,7 +10,7 @@ importBIOM(file, ...)
 
 makeTreeSEFromBiom(
   x,
-  remove.taxa.prefix = removeTaxaPrefixes,
+  prefix.rm = removeTaxaPrefixes,
   removeTaxaPrefixes = FALSE,
   rank.from.prefix = rankFromPrefix,
   rankFromPrefix = FALSE,
@@ -32,12 +32,12 @@ are removed. (default: \code{pattern = "auto"})
 
 \item{x}{object of type \code{\link[biomformat:read_biom]{biom}}}
 
-\item{remove.taxa.prefix}{\code{TRUE} or \code{FALSE}: Should
+\item{prefix.rm}{\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
 taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
-(default \code{remove.taxa.prefix = FALSE})}
+(default \code{prefix.rm = FALSE})}
 
-\item{removeTaxaPrefixes}{Deprecated. Use \code{remove.taxa.prefix} instead.}
+\item{removeTaxaPrefixes}{Deprecated. Use \code{prefix.rm} instead.}
 
 \item{rank.from.prefix}{\code{TRUE} or \code{FALSE}: If file does not have
 taxonomic ranks on feature table, should they be scraped from prefixes?
@@ -74,7 +74,7 @@ tse <- makeTreeSEFromBiom(biom_object)
 # Get taxonomyRanks from prefixes and remove prefixes
 tse <- importBIOM(biom_file,
                     rank.from.prefix = TRUE,
-                    remove.taxa.prefix = TRUE)
+                    prefix.rm = TRUE)
 
 # Load another biom file
 biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",

@@ -15,9 +15,9 @@
 #'   \item \code{assay.type}: A single character value for naming 
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{assay}} 
 #'   (default: \code{assay.type = "counts"})
-#'   \item \code{remove.taxa.prefix}: \code{TRUE} or \code{FALSE}: Should
+#'   \item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
 #'     taxonomic prefixes be removed? (default:
-#'     \code{remove.taxa.prefix = FALSE})
+#'     \code{prefix.rm = FALSE})
 #'   \item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
 #'     suffixes of sample names be removed? HUMAnN pipeline adds suffixes
 #'     to sample names. Suffixes are formed from file names. By selecting

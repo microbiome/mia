@@ -64,9 +64,9 @@ the phylogenetic tree. (default: \code{tree.file = NULL}).}
 \itemize{
 \item \code{temp.dir}: the temporary directory used for decompressing the
 data. (default: \code{tempdir()})
-\item \code{remove.taxa.prefix}: \code{TRUE} or \code{FALSE}: Should
+\item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
-\code{remove.taxa.prefix = FALSE})
+\code{prefix.rm = FALSE})
 }}
 
 \item{file}{character, path of the input qza file. Only files in format of
@@ -126,7 +126,7 @@ taxonomyTableFile <- system.file("extdata", "taxonomy.qza", package = "mia")
 col.file <- system.file("extdata", "sample-metadata.tsv", package = "mia")
 
 assay <- importQZA(assay.file)
-rowdata <- importQZA(taxonomyTableFile, remove.taxa.prefix = TRUE)
+rowdata <- importQZA(taxonomyTableFile, prefix.rm = TRUE)
 coldata <- read.table(col.file, header = TRUE, sep = "\t", comment.char = "")
 
 # Assign rownames 

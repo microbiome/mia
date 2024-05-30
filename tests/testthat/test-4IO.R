@@ -17,7 +17,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
                     package="mia")
     )
     tse <- makeTreeSEFromBiom(biom_object,
-                                remove.taxa.prefix = FALSE,
+                                prefix.rm = FALSE,
                                 rankFromPrefix = FALSE,
                                 remove.artifacts = TRUE,
                                 pattern = "\"")
@@ -35,7 +35,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     
     # Testing prefixes removed
     tse <- makeTreeSEFromBiom(biom_object,
-                                remove.taxa.prefix=TRUE,
+                                prefix.rm=TRUE,
                                 rankFromPrefix=TRUE,
                                 remove.artifacts = TRUE,
                                 pattern = "\"")
@@ -45,7 +45,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     
     # Testing parsing taxonomy ranks from prefixes
     tse <- makeTreeSEFromBiom(biom_object,
-                                remove.taxa.prefix=FALSE,
+                                prefix.rm=FALSE,
                                 rankFromPrefix=TRUE,
                                 remove.artifacts = TRUE,
                                 pattern = "\"")
@@ -56,7 +56,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     # Testing the remove.artifacts, the original artifact in the biom file 
     # is '\"', as a test we rather try remove a non existing pattern.
     tse <- makeTreeSEFromBiom(biom_object,
-                                remove.taxa.prefix=FALSE,
+                                prefix.rm=FALSE,
                                 rankFromPrefix=FALSE,
                                 remove.artifacts = TRUE,
                                 pattern = "\\*|\\?")
@@ -65,7 +65,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     # Testing the remove.artifacts, with the value 'auto' to automatically 
     # detect the artifact and remove it (in our case the artifact is '\"').
     tse <- makeTreeSEFromBiom(biom_object,
-                                remove.taxa.prefix=FALSE,
+                                prefix.rm=FALSE,
                                 rankFromPrefix=FALSE,
                                 remove.artifacts = TRUE)
     # Checking if 'auto' has detected and cleaned the artifact
@@ -73,7 +73,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     # Testing the remove.artifacts, with the value NULL to not detect or clean 
     # anything.
     tse <- makeTreeSEFromBiom(biom_object,
-                                remove.taxa.prefix=FALSE,
+                                prefix.rm=FALSE,
                                 rankFromPrefix=FALSE,
                                 remove.artifacts = FALSE)
     # Checking if the '\"' artifact still exists.
@@ -81,7 +81,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     
     # General final test
     tse <- makeTreeSEFromBiom(biom_object,
-                                remove.taxa.prefix=TRUE,
+                                prefix.rm=TRUE,
                                 rankFromPrefix=TRUE,
                                 remove.artifacts = TRUE)
     # check if '\"' cleaned
@@ -101,7 +101,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
                     package = "biomformat")
     )
     tse <- makeTreeSEFromBiom(biom_object,
-                                remove.taxa.prefix=TRUE,
+                                prefix.rm=TRUE,
                                 rankFromPrefix=TRUE,
                                 remove.artifacts = TRUE)
     # check if taxa prefixes removed

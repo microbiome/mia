@@ -6,12 +6,12 @@
 #'
 #' @param file biom file location
 #' 
-#' @param remove.taxa.prefix \code{TRUE} or \code{FALSE}: Should
+#' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
 #' taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
-#' (default \code{remove.taxa.prefix = FALSE})
+#' (default \code{prefix.rm = FALSE})
 #' 
-#' @param removeTaxaPrefixes Deprecated. Use \code{remove.taxa.prefix} instead.
+#' @param removeTaxaPrefixes Deprecated. Use \code{prefix.rm} instead.
 #' 
 #' @param rank.from.prefix \code{TRUE} or \code{FALSE}: If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
@@ -56,7 +56,7 @@
 #' # Get taxonomyRanks from prefixes and remove prefixes
 #' tse <- importBIOM(biom_file,
 #'                     rank.from.prefix = TRUE,
-#'                     remove.taxa.prefix = TRUE)
+#'                     prefix.rm = TRUE)
 #' 
 #' # Load another biom file
 #' biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
@@ -83,7 +83,7 @@ importBIOM <- function(file, ...) {
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
-makeTreeSEFromBiom <- function(x, remove.taxa.prefix = removeTaxaPrefixes, 
+makeTreeSEFromBiom <- function(x, prefix.rm = removeTaxaPrefixes, 
         removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix, rankFromPrefix = FALSE,
         remove.artifacts = FALSE, ...){
     # input check
@@ -91,8 +91,8 @@ makeTreeSEFromBiom <- function(x, remove.taxa.prefix = removeTaxaPrefixes,
     if(!is(x,"biom")){
         stop("'x' must be a 'biom' object", call. = FALSE)
     }
-    if( !.is_a_bool(remove.taxa.prefix) ){
-        stop("'remove.taxa.prefix' must be TRUE or FALSE.", call. = FALSE)
+    if( !.is_a_bool(prefix.rm) ){
+        stop("'prefix.rm' must be TRUE or FALSE.", call. = FALSE)
     }
     if( !.is_a_bool(rank.from.prefix) ){
         stop("'rank.from.prefix' must be TRUE or FALSE.", call. = FALSE)
@@ -176,7 +176,7 @@ makeTreeSEFromBiom <- function(x, remove.taxa.prefix = removeTaxaPrefixes,
     }
     
     # Remove prefixes if specified and rowData includes info
-    if(remove.taxa.prefix && ncol(feature_data) > 0){
+    if(prefix.rm && ncol(feature_data) > 0){
         feature_data <- .remove_prefixes_from_taxa(feature_data, ...)
     }
     
