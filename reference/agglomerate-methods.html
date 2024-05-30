@@ -77,16 +77,15 @@ experiments and flattens them again into a single
 <span>  rank <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
 <span>  onRankOnly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  mergeRefSeq <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  empty.fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">""</span>, <span class="st">" "</span>, <span class="st">"\t"</span>, <span class="st">"-"</span>, <span class="st">"_"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">MARGIN</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">MARGIN</span>, <span class="va">f</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">MARGIN</span>, <span class="va">f</span>, archetype <span class="op">=</span> <span class="fl">1L</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">MARGIN</span>, <span class="va">f</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SingleCellExperiment</span></span>
 <span><span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, strip_altexp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -176,14 +175,6 @@ will be dropped. This setting can be tweaked by defining
 <code>empty.fields</code> to your needs. (default: <code>na.rm = TRUE</code>)</p></dd>
 
 
-<dt>mergeRefSeq</dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should a consensus sequence
-be calculated? If set to <code>FALSE</code>, the result from <code>archetype</code> is
-returned; If set to <code>TRUE</code> the result from
-<code><a href="https://rdrr.io/pkg/DECIPHER/man/ConsensusSequence.html" class="external-link">DECIPHER::ConsensusSequence</a></code> is
-returned. (Default: <code>mergeRefSeq = FALSE</code>)</p></dd>
-
-
 <dt>empty.fields</dt>
 <dd><p>a <code>character</code> value defining, which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
@@ -201,14 +192,6 @@ Must be <code>'rows'</code> or <code>'cols'</code>.</p></dd>
 <code>nrow(x)/ncol(x)</code>. Rows/Cols corresponding to the same level will be
 merged. If <code>length(levels(f)) == nrow(x)/ncol(x)</code>, <code>x</code> will be
 returned unchanged.</p></dd>
-
-
-<dt>archetype</dt>
-<dd><p>Of each level of <code>f</code>, which element should be regarded
-as the archetype and metadata in the columns or rows kept, while merging?
-This can be single integer value or an integer vector of the same length
-as <code>levels(f)</code>. (Default: <code>archetype = 1L</code>, which means the first
-element encountered per factor level will be kept)</p></dd>
 
 
 <dt>mergeTree</dt>
