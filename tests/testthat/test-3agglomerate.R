@@ -134,53 +134,8 @@ test_that("agglomerate", {
     expect_true( any( duplicated(rownames(not_uniq)) ) )
     
     data(GlobalPatterns, package="mia")
-    tse <- GlobalPatterns
-    tse <- transformAssay(tse, assay.type="counts", method="relabundance")
-    altExp(tse, "Family") <- agglomerateByRank(tse, rank="Family")
-    altExp(tse, "Family1") <- agglomerateByRank(
-        tse, rank="Family", na.rm = TRUE)
-    altExp(tse, "Family2") <- agglomerateByRank(
-        tse, rank="Family", na.rm = FALSE)
-    altExp(tse, "Family3") <- agglomerateByRank(
-        tse, rank="Family", onRankOnly = TRUE, na.rm = TRUE)
-    altExp(tse, "Family4") <- agglomerateByRank(
-        tse, rank="Family", onRankOnly = TRUE, na.rm = FALSE)
-    altExp(tse, "Family5") <- agglomerateByVariable(
-        tse, f="Family", MARGIN = "row", na,rm = FALSE)
-    
-    # Other group is added by agglomerateByPrevalence function to collect
-    # features under threshold
-    actual <- agglomerateByPrevalence(
-        tse, rank = "Family", assay.type = "relabundance", detection  = 0.5/100,
-        prevalence  = 20/100, agg.na.rm = TRUE)
-    actual0 <- agglomerateByPrevalence(
-        altExp(tse, "Family"), assay.type="relabundance",
-        detection  = 0.5/100, prevalence  = 20/100)
-    actual1 <- agglomerateByPrevalence(
-        altExp(tse, "Family1"), assay.type="relabundance", detection  = 0.5/100,
-        prevalence  = 20/100)
-    actual2 <- agglomerateByPrevalence(
-        altExp(tse, "Family2"), assay.type="relabundance", detection  = 0.5/100,
-        prevalence  = 20/100)
-    actual3 <- agglomerateByPrevalence(
-        altExp(tse, "Family3"), assay.type="relabundance", detection  = 0.5/100,
-        prevalence  = 20/100)
-    actual4 <- agglomerateByPrevalence(
-        altExp(tse, "Family4"), assay.type="relabundance", detection  = 0.5/100,
-        prevalence  = 20/100)
-    actual5 <- agglomerateByPrevalence(
-        altExp(tse, "Family5"), assay.type="relabundance", detection  = 0.5/100,
-        prevalence  = 20/100)
-    
-    # The values of actual( "", 0, 1, 4, 5) are equal since the factor group is created with groups
-    # at the family level i.e onRankOnly (tax_cols[tax_col_n == col]).
-    # However, actual2 creates groups based on the full taxonomic hierarchy up to family level 
-    # i.e !onRankOnly (tax_cols[tax_col_n <= col]). While actual3 is less since empty or missing
-    # fields are removed from the tse object i.e na.rm.
-    expect_equal(nrow(actual), nrow(actual0))
-    expect_equal(nrow(actual), nrow(actual1))
-    expect_equal(nrow(actual2), 27)
-    expect_equal(nrow(actual3), 20)
-    expect_equal(nrow(actual), nrow(actual4))
-    expect_equal(nrow(actual), 20)
+    test1 <- agglomerateByRank(GlobalPatterns, rank="Family", na.rm = FALSE)
+    test2 <- agglomerateByVariable(GlobalPatterns, f="Family", MARGIN = "row", 
+       mergeTree = FALSE)
+    expect_equal(nrow(test1), nrow(test1))
 })

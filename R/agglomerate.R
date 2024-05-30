@@ -41,12 +41,6 @@
 #'   \code{agglomerate.tree = FALSE})
 #'
 #' @param agglomerateTree alias for \code{agglomerate.tree}.
-#' 
-#' @param mergeRefSeq \code{TRUE} or \code{FALSE}: Should a consensus sequence
-#'   be calculated? If set to \code{FALSE}, the result from \code{archetype} is
-#'   returned; If set to \code{TRUE} the result from
-#'   \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
-#'   returned. (Default: \code{mergeRefSeq = FALSE})
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
@@ -69,7 +63,17 @@
 #'        \item \code{as.relative}: Logical scalar: Should the detection 
 #'        threshold be applied on compositional (relative) abundances? 
 #'        (default: \code{FALSE})
-#'        \item \code{}
+#'        \item \code{mergeRefSeq} \code{TRUE} or \code{FALSE}: Should a 
+#'        onsensus sequence be calculated? If set to \code{FALSE}, the result 
+#'        from \code{archetype} is returned; If set to \code{TRUE} the result from
+#'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} 
+#'        is returned. (Default: \code{mergeRefSeq = FALSE})
+#'        \item \code{archetype} Of each level of \code{f}, which element should 
+#'        be regarded as the archetype and metadata in the columns or rows kept, 
+#'        while merging? This can be single integer value or an integer vector 
+#'        of the same length as \code{levels(f)}. (Default: 
+#'        \code{archetype = 1L}, which means the first element encountered per 
+#'        factor level will be kept)
 #'    }
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
@@ -88,12 +92,6 @@
 #'   \code{nrow(x)/ncol(x)}. Rows/Cols corresponding to the same level will be
 #'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 #'   returned unchanged.
-#'
-#' @param archetype Of each level of \code{f}, which element should be regarded
-#'   as the archetype and metadata in the columns or rows kept, while merging?
-#'   This can be single integer value or an integer vector of the same length
-#'   as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
-#'   element encountered per factor level will be kept)
 #'
 #' @param mergeTree \code{TRUE} or \code{FALSE}: Should
 #'   \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})
@@ -244,7 +242,7 @@ setGeneric("agglomerateByVariable",
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
     function(x, rank = taxonomyRanks(x)[1], onRankOnly = FALSE, na.rm = TRUE,
-            mergeRefSeq = FALSE, empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+            empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
         # input check
         if(nrow(x) == 0L){
             stop("No data available in `x` ('x' has nrow(x) == 0L.)",
@@ -259,9 +257,6 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         }
         if(!.is_a_bool(na.rm)){
             stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if(!.is_a_bool(mergeRefSeq)){
-            stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
         }
         if(ncol(rowData(x)) == 0L){
             stop("taxonomyData needs to be populated.", call. = FALSE)
@@ -296,7 +291,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 
         # merge taxa
         x <- agglomerateByVariable(
-            x, MARGIN = 1, f = tax_factors, na.rm = TRUE, mergeRefSeq = mergeRefSeq, ...)
+            x, MARGIN = 1, f = tax_factors, na.rm = TRUE, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
@@ -324,10 +319,10 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @aliases agglomerateByVariable
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
-            function(x, MARGIN, f, archetype = 1L, ...){
+            function(x, MARGIN, f, ...){
                 MARGIN <- .check_MARGIN(MARGIN)
                 FUN <- switch(MARGIN, .merge_rows, .merge_cols)
-                x <- FUN(x, f, archetype = archetype, ...)
+                x <- FUN(x, f, ...)
                 return(x)
             }
 )
@@ -337,13 +332,13 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, MARGIN, f, archetype = 1L, mergeTree = FALSE, ...){
+            function(x, MARGIN, f, mergeTree = FALSE, ...){
                 # Check MARGIN
                 MARGIN <- .check_MARGIN(MARGIN)
                 # Get function based on MARGIN
                 FUN <- switch(MARGIN, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
-                x <- FUN(x, f, archetype = archetype, mergeTree = mergeTree, ...)
+                x <- FUN(x, f, mergeTree = mergeTree, ...)
                 return(x)
             }
 )
