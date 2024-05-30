@@ -63,6 +63,11 @@
 #'        \item \code{as.relative}: Logical scalar: Should the detection 
 #'        threshold be applied on compositional (relative) abundances? 
 #'        (default: \code{FALSE})
+#'        \item \code{mergeRefSeq} \code{TRUE} or \code{FALSE}: Should a consensus 
+#'        sequence be calculated? If set to \code{FALSE}, the result from 
+#'        \code{archetype} is returned; If set to \code{TRUE} the result from
+#'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
+#'        returned. (Default: \code{mergeRefSeq = FALSE})
 #'    }
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
@@ -90,12 +95,6 @@
 #'
 #' @param mergeTree \code{TRUE} or \code{FALSE}: Should
 #'   \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})
-#'
-#' @param mergeRefSeq \code{TRUE} or \code{FALSE}: Should a consensus sequence
-#'   be calculated? If set to \code{FALSE}, the result from \code{archetype} is
-#'   returned; If set to \code{TRUE} the result from
-#'   \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
-#'   returned. (Default: \code{mergeRefSeq = FALSE})
 #'
 #' @details
 #' When using \code{agglomerateByRank}, please note that depending on the 
@@ -340,10 +339,7 @@ setMethod("agglomerateByVariable",
                 # Get function based on MARGIN
                 FUN <- switch(MARGIN, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
-                x <- switch(MARGIN, FUN(
-                    x, f, archetype = archetype, mergeTree = mergeTree,
-                    mergeRefSeq = mergeRefSeq, ...), FUN(
-                    x, f, archetype = archetype, mergeTree = mergeTree, ...))
+                x <- FUN(x, f, archetype = archetype, mergeTree = mergeTree, ...)
                 return(x)
             }
 )

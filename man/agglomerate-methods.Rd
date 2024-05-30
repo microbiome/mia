@@ -137,12 +137,6 @@ element encountered per factor level will be kept)}
 \item{mergeTree}{\code{TRUE} or \code{FALSE}: Should
 \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})}
 
-\item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
-be calculated? If set to \code{FALSE}, the result from \code{archetype} is
-returned; If set to \code{TRUE} the result from
-\code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
-returned. (Default: \code{mergeRefSeq = FALSE})}
-
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
