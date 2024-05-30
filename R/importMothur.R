@@ -6,16 +6,22 @@
 #' @param assay.file a single \code{character} value defining the file
 #'   path of the feature table to be imported. The File has to be in 
 #'   \code{shared file} format as defined in Mothur documentation.
+#'   
+#' @param sharedFile Deprecated. Use \code{assay.file} instead.
 #'
 #' @param row.file a single \code{character} value defining the file path of
 #'   the taxonomy table to be imported. The file has to be in \code{taxonomy
 #'   file} or \code{constaxonomy file} format  as defined in Mothur
 #'   documentation. (default: \code{row.file = NULL}).
+#'   
+#' @param taxonomyFile Deprecated. Use \code{row.file} instead.
 #'
 #' @param col.file a single \code{character} value defining the file path of
 #'   the sample metadata to be imported. The file has to be in \code{desing
 #'   file} format as defined in Mothur documentation. (default: \code{col.file
 #'   = NULL}).
+#'   
+#' @param designFile Deprecated. Use \code{col.file} instead.
 #'
 #' @details
 #' Results exported from Mothur can be imported as a
@@ -53,7 +59,7 @@
 #' meta <- system.file("extdata", "mothur_example.design", package = "mia")
 #' 
 #' # Creates se object from files
-#' se <- importMothur(counts, taxa, meta)
+#' se <- importMothur(assay.file = counts, row.file = taxa, col.file = meta)
 #' # Convert SE to TreeSE
 #' tse <- as(se, "TreeSummarizedExperiment")
 #' tse
@@ -63,9 +69,12 @@ NULL
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom S4Vectors make_zero_col_DFrame
 #' @export
-importMothur <- function(assay.file,
-                            row.file = NULL,
-                            col.file = NULL) {
+importMothur <- function(sharedFile, 
+                         assay.file = sharedFile,
+                         taxonomyFile = NULL,
+                         row.file = taxonomyFile,
+                         designFile = NULL,
+                         col.file = designFile) {
 
     # input check
     if(!.is_non_empty_string(assay.file)){
