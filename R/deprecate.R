@@ -3,7 +3,7 @@
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
-#'   
+#'    
 #' @param ... Additional parameters. See dedicated function.
 #' 
 #' @name deprecate
@@ -17,7 +17,6 @@ setGeneric("cluster", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-#' @importFrom bluster clusterRows
 setMethod("cluster", signature = c(x = "SummarizedExperiment"),
             function(x,...){
                 .Deprecated(msg = paste0("'cluster' is deprecated. ",
@@ -471,12 +470,12 @@ setGeneric("full_join", signature = c("x"),
 #' @rdname deprecate
 #' @export
 setMethod("full_join", signature = c(x = "ANY"),
-            function(x, ...){
-                .Deprecated(msg = paste0("'full_join' is deprecated. ",
-                                        "Use 'mergeSEs' with 'join = full' ",
-                                        "instead."))
-                mergeSEs(x, join = "full", ...)
-            }
+          function(x, ...){
+              .Deprecated(msg = paste0("'full_join' is deprecated. ",
+                                       "Use 'mergeSEs' with 'join = full' ",
+                                       "instead."))
+              mergeSEs(x, join = "full", ...)
+          }
 )
 
 #' @rdname deprecate

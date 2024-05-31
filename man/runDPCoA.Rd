@@ -2,14 +2,16 @@
 % Please edit documentation in R/runDPCoA.R
 \name{runDPCoA}
 \alias{runDPCoA}
+\alias{getDPCoA}
+\alias{getDPCoA,ANY,ANY-method}
+\alias{getDPCoA,TreeSummarizedExperiment,missing-method}
 \alias{calculateDPCoA}
-\alias{calculateDPCoA,ANY,ANY-method}
-\alias{calculateDPCoA,TreeSummarizedExperiment,missing-method}
+\alias{addDPCoA}
 \title{Calculation of Double Principal Correspondance analysis}
 \usage{
-calculateDPCoA(x, y, ...)
+getDPCoA(x, y, ...)
 
-\S4method{calculateDPCoA}{ANY,ANY}(
+\S4method{getDPCoA}{ANY,ANY}(
   x,
   y,
   ncomponents = 2,
@@ -20,7 +22,7 @@ calculateDPCoA(x, y, ...)
   ...
 )
 
-\S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(
+\S4method{getDPCoA}{TreeSummarizedExperiment,missing}(
   x,
   ...,
   assay.type = assay_name,
@@ -29,14 +31,18 @@ calculateDPCoA(x, y, ...)
   tree_name = "phylo"
 )
 
-runDPCoA(x, ..., altexp = NULL, name = "DPCoA")
+calculateDPCoA(x, ...)
+
+addDPCoA(x, ..., altexp = NULL, name = "DPCoA")
+
+runDPCoA(x, ...)
 }
 \arguments{
-\item{x}{For \code{calculateDPCoA}, a numeric matrix of expression values
+\item{x}{For \code{getDPCoA}, a numeric matrix of expression values
 where rows are features and columns are cells.
 Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 
-For \code{runDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
+For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
 expression values as well as a \code{rowTree} to calculate \code{y} using
 \code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.}
 
@@ -83,10 +89,10 @@ containing the input data.}
 reducedDims of the output.}
 }
 \value{
-For \code{calculateDPCoA} a matrix with samples as rows and CCA dimensions as
+For \code{getDPCoA} a matrix with samples as rows and CCA dimensions as
 columns
 
-For \code{runDPCoA} a modified \code{x} with the results stored in
+For \code{addDPCoA} a modified \code{x} with the results stored in
 \code{reducedDim} as the given \code{name}
 }
 \description{
@@ -102,10 +108,10 @@ returned as attributes as well.
 }
 \examples{
 data(esophagus)
-dpcoa <- calculateDPCoA(esophagus)
+dpcoa <- getDPCoA(esophagus)
 head(dpcoa)
 
-esophagus <- runDPCoA(esophagus)
+esophagus <- addDPCoA(esophagus)
 reducedDims(esophagus)
 
 library(scater)
