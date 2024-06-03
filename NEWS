@@ -136,3 +136,4 @@ Changes in version 1.13.x
 + Fix bug in mergeFeaturesByPrevalence
 + new aliases calculateDPCoA to getDPCoA, calculateNMDS to getNMDS, calculateRDA to getRDA, 
 calculateCCA to getCCA
++ add informative error message in rarefyAssay on assays with strictly-negative values 
