@@ -285,7 +285,8 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 
         # get groups of taxonomy entries
         tax_factors <- .get_tax_groups(x, col = col, onRankOnly = onRankOnly)
-        # Convert to factors. na.rm so that NA values are not preserved.
+        # Convert to factors. Use na.rm so that NA values are not preserved.
+        # i.e. they are not convrted into character values.
         # NA values are handled earlier in this function.
         tax_factors <- .norm_f(nrow(x), tax_factors, na.rm = TRUE, ...)
 
