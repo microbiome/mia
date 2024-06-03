@@ -1,6 +1,5 @@
 context("Unifrac beta diversity")
 test_that("Unifrac beta diversity", {
-    skip_if_not(require("phyloseq", quietly = TRUE))
     
     data(esophagus, package="mia")
     tse <- esophagus
