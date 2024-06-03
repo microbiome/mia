@@ -134,8 +134,18 @@ test_that("agglomerate", {
     expect_true( any( duplicated(rownames(not_uniq)) ) )
     
     data(GlobalPatterns, package="mia")
-    test1 <- agglomerateByRank(GlobalPatterns, rank="Family", na.rm = FALSE)
-    test2 <- agglomerateByVariable(GlobalPatterns, f="Family", MARGIN = "row", 
-       mergeTree = FALSE)
-    expect_equal(nrow(test1), nrow(test1))
+    tse <- GlobalPatterns
+    # Test that dimentionality is the same for merging object by agglomerateByRank
+    # and agglomerateByVariable.
+    expect_equal(length(unique(rowData(tse)[,"Family"])),
+                 nrow(agglomerateByRank(tse, rank="Family", na.rm = FALSE)))
+    expect_equal(length(unique(rowData(tse)[,"Family"])),
+                 nrow(agglomerateByVariable(tse, f="Family", MARGIN = 1, agg.na.rm = FALSE)))
+    
+    # Test that dimentionality is the same when NA values are removed.
+    expect_equal(length((unique(rowData(tse)[,"Family"]))[ !is.na(unique(rowData(tse)[,"Family"])) ]),
+                 nrow(agglomerateByRank(tse, rank="Family", na.rm = TRUE)))
+      expect_equal(length((unique(rowData(tse)[,"Family"]))[ !is.na(unique(rowData(tse)[,"Family"])) ]),
+                 nrow(agglomerateByVariable(tse, f="Family", MARGIN = 1, agg.na.rm = TRUE)))
+    
 })
