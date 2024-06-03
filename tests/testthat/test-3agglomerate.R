@@ -145,7 +145,7 @@ test_that("agglomerate", {
     # Test that dimentionality is the same when NA values are removed.
     expect_equal(length((unique(rowData(tse)[,"Family"]))[ !is.na(unique(rowData(tse)[,"Family"])) ]),
                  nrow(agglomerateByRank(tse, rank="Family", na.rm = TRUE)))
-      expect_equal(length((unique(rowData(tse)[,"Family"]))[ !is.na(unique(rowData(tse)[,"Family"])) ]),
+    expect_equal(length((unique(rowData(tse)[,"Family"]))[ !is.na(unique(rowData(tse)[,"Family"])) ]),
                  nrow(agglomerateByVariable(tse, f="Family", MARGIN = 1, agg.na.rm = TRUE)))
     
 })
