@@ -275,19 +275,19 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                                      sort <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                                      as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prevalence.frequency</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             Phylum:WS3           Phylum:WPS-2 Phylum:Verrucomicrobia </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      1                      1                      1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Phylum:Tenericutes    Phylum:Spirochaetes  Phylum:Proteobacteria </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      1                      1                      1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             WS3           WPS-2 Verrucomicrobia     Tenericutes    Spirochaetes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               1               1               1               1               1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Proteobacteria </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               1 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># - to obtain population counts, multiply frequencies with the sample size,</span></span></span>
 <span class="r-in"><span><span class="co"># which answers the question "In how many samples is this phylum detectable"</span></span></span>
 <span class="r-in"><span><span class="va">prevalence.count</span> <span class="op">&lt;-</span> <span class="va">prevalence.frequency</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prevalence.count</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             Phylum:WS3           Phylum:WPS-2 Phylum:Verrucomicrobia </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     26                     26                     26 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Phylum:Tenericutes    Phylum:Spirochaetes  Phylum:Proteobacteria </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     26                     26                     26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             WS3           WPS-2 Verrucomicrobia     Tenericutes    Spirochaetes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              26              26              26              26              26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Proteobacteria </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              26 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Detection threshold 1 (strictly greater by default);</span></span></span>
 <span class="r-in"><span><span class="co"># Note that the data (GlobalPatterns) is here in absolute counts</span></span></span>
@@ -308,7 +308,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                                             detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
 <span class="r-in"><span>                                             prevalence <span class="op">=</span> <span class="fl">0.55</span>,</span></span>
 <span class="r-in"><span>                                             as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span>                                 </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 7 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): agglomerated_by_rank</span>
@@ -342,7 +342,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                                    detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
 <span class="r-in"><span>                                    prevalence <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
 <span class="r-in"><span>                                    as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span>      </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 71 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): agglomerated_by_rank</span>
