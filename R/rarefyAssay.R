@@ -108,6 +108,10 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
                   warning("assay contains non-integer values. Only counts table ",
                           "is applicable...")
               }
+              if(any(assay(x, assay.type) < 0)){
+                  stop("assay contains strictly-negative values. Only counts ",
+                       "table is applicable...")
+              }
               if(!is.logical(verbose)){
                   stop("`verbose` has to be logical i.e. TRUE or FALSE")
               }
