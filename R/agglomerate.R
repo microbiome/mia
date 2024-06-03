@@ -49,30 +49,31 @@
 #'   to \code{getPrevalence} and \code{getPrevalentTaxa} and used in
 #'   \code{agglomeratebyPrevalence}
 #'   \itemize{
-#'        \item \code{remove_empty_ranks}: A single boolean value for selecting 
+#'        \item \code{remove_empty_ranks}: A single boolean value for selecting
 #'        whether to remove those columns of rowData that include only NAs after
 #'        agglomeration. (By default: \code{remove_empty_ranks = FALSE})
-#'        \item \code{make_unique}: A single boolean value for selecting 
+#'        \item \code{make_unique}: A single boolean value for selecting
 #'        whether to make rownames unique. (By default: \code{make_unique = TRUE})
-#'        \item \code{detection}: Detection threshold for absence/presence. 
-#'        Either an absolute value compared directly to the values of \code{x} 
+#'        \item \code{detection}: Detection threshold for absence/presence.
+#'        Either an absolute value compared directly to the values of \code{x}
 #'        or a relative value between 0 and 1, if \code{as_relative = FALSE}.
-#'        \item \code{prevalence}: Prevalence threshold (in 0 to 1). The 
-#'        required prevalence is strictly greater by default. To include the 
+#'        \item \code{prevalence}: Prevalence threshold (in 0 to 1). The
+#'        required prevalence is strictly greater by default. To include the
 #'        limit, set \code{include_lowest} to \code{TRUE}.
-#'        \item \code{as.relative}: Logical scalar: Should the detection 
-#'        threshold be applied on compositional (relative) abundances? 
+#'        \item \code{as.relative}: Logical scalar: Should the detection
+#'        threshold be applied on compositional (relative) abundances?
 #'        (default: \code{FALSE})
-#'        \item \code{mergeRefSeq} \code{TRUE} or \code{FALSE}: Should a 
-#'        onsensus sequence be calculated? If set to \code{FALSE}, the result 
-#'        from \code{archetype} is returned; If set to \code{TRUE} the result from
-#'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} 
+#'        \item \code{mergeRefSeq} \code{TRUE} or \code{FALSE}: Should a
+#'        onsensus sequence be calculated? If set to \code{FALSE}, the result
+#'        from \code{archetype} is returned; If set to \code{TRUE} the result
+#'        from
+#'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
 #'        is returned. (Default: \code{mergeRefSeq = FALSE})
-#'        \item \code{archetype} Of each level of \code{f}, which element should 
-#'        be regarded as the archetype and metadata in the columns or rows kept, 
-#'        while merging? This can be single integer value or an integer vector 
-#'        of the same length as \code{levels(f)}. (Default: 
-#'        \code{archetype = 1L}, which means the first element encountered per 
+#'        \item \code{archetype} Of each level of \code{f}, which element should
+#'        be regarded as the archetype and metadata in the columns or rows kept,
+#'        while merging? This can be single integer value or an integer vector
+#'        of the same length as \code{levels(f)}. (Default:
+#'        \code{archetype = 1L}, which means the first element encountered per
 #'        factor level will be kept)
 #'    }
 #'
@@ -97,18 +98,18 @@
 #'   \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})
 #'
 #' @details
-#' When using \code{agglomerateByRank}, please note that depending on the 
-#' available taxonomic data and its structure, setting\code{onRankOnly = TRUE} 
+#' When using \code{agglomerateByRank}, please note that depending on the
+#' available taxonomic data and its structure, setting\code{onRankOnly = TRUE}
 #' has certain implications on the interpretability of your results. If no loops
-#' exist (loops meaning two higher ranks containing the same lower rank), the 
-#' results should be comparable. You can check for loops using 
+#' exist (loops meaning two higher ranks containing the same lower rank), the
+#' results should be comparable. You can check for loops using
 #' \code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
-#' 
+#'
 #' Also, agglomeration sums up the values of assays at the specified taxonomic level. With
 #' certain assays, e.g. those that include binary or negative values, this summing
 #' can produce meaningless values. In those cases, consider performing agglomeration
 #' first, and then applying the transformation afterwards.
-#' 
+#'
 #' \code{agglomerateByVariable} works similarly to
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}}.
 #' However, additional support for \code{TreeSummarizedExperiment} was added and
@@ -117,12 +118,12 @@
 #'
 #' For merge data of assays the function from \code{scuttle} are used.
 #'
-#' @return 
-#' \code{agglomerateByRank} returns a taxonomically-agglomerated, 
+#' @return
+#' \code{agglomerateByRank} returns a taxonomically-agglomerated,
 #' optionally-pruned object of the same class as \code{x}.
-#' \code{agglomerateByVariable} returns an object of the same class as \code{x} 
+#' \code{agglomerateByVariable} returns an object of the same class as \code{x}
 #' with the specified entries merged into one entry in all relevant components.
-#' \code{agglomerateByRank} returns a taxonomically-agglomerated, 
+#' \code{agglomerateByRank} returns a taxonomically-agglomerated,
 #' optionally-pruned object of the same class as \code{x}.
 #'
 #' @name agglomerate-methods
@@ -292,7 +293,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 
         # merge taxa
         x <- agglomerateByVariable(
-            x, MARGIN = 1, f = tax_factors, na.rm = TRUE, ...)
+            x, MARGIN = "rows", f = tax_factors, na.rm = TRUE, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){

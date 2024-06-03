@@ -42,11 +42,11 @@
 #'   \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   Note that you can specify whether to remove empty ranks with
 #'   \code{agg.na.rm} instead of \code{na.rm}. (default: \code{FALSE})
-#'     
+#'
 #'   \item for \code{getPrevalent}, \code{getRare}, \code{subsetByPrevalent}
 #'   and \code{subsetByRare} additional parameters passed to
 #'   \code{getPrevalence}
-#'   
+#'
 #'   \item for \code{getPrevalentAbundance} additional parameters passed to
 #'   \code{getPrevalent}
 #' }
@@ -64,27 +64,27 @@
 #' proportion of the core species (in between 0 and 1). The core taxa are
 #' defined as those that exceed the given population prevalence threshold at the
 #' given detection level as set for \code{getPrevalent}.
-#' 
+#'
 #' \code{subsetPrevalent} and \code{subsetRareFeatures} return a subset of
-#' \code{x}. 
-#' The subset includes the most prevalent or rare taxa that are calculated with 
+#' \code{x}.
+#' The subset includes the most prevalent or rare taxa that are calculated with
 #' \code{getPrevalent} or \code{getRare} respectively.
 #'
 #' @return
 #' \code{subsetPrevalent} and \code{subsetRareFeatures} return subset of
 #' \code{x}.
-#' 
+#'
 #' All other functions return a named vectors:
 #' \itemize{
-#'   \item \code{getPrevalence} returns a \code{numeric} vector with the 
-#'     names being set to either the row names of \code{x} or the names after 
+#'   \item \code{getPrevalence} returns a \code{numeric} vector with the
+#'     names being set to either the row names of \code{x} or the names after
 #'     agglomeration.
-#'   
+#'
 #'   \item \code{getPrevalentAbundance} returns a \code{numeric} vector with
-#'     the names corresponding to the column name of \code{x} and include the 
+#'     the names corresponding to the column name of \code{x} and include the
 #'     joint abundance of prevalent taxa.
-#'   
-#'   \item \code{getPrevalent} and \code{getRare} return a 
+#'
+#'   \item \code{getPrevalent} and \code{getRare} return a
 #'     \code{character} vector with only the names exceeding the threshold set
 #'     by \code{prevalence}, if the \code{rownames} of \code{x} is set.
 #'     Otherwise an \code{integer} vector is returned matching the rows in
@@ -153,7 +153,7 @@
 #'                                              detection = 0.001,
 #'                                              prevalence = 0.55,
 #'                                              as_relative = TRUE)
-#' altExp(tse, "prevalent")                                 
+#' altExp(tse, "prevalent")
 #'
 #' # getRare returns the inverse
 #' rare <- getRare(tse,
@@ -169,8 +169,8 @@
 #'                                     detection = 0.001,
 #'                                     prevalence = 0.001,
 #'                                     as_relative = TRUE)
-#' altExp(tse, "rare")      
-#' 
+#' altExp(tse, "rare")
+#'
 #' # Names of both experiments, prevalent and rare, can be found from slot
 #' # altExpNames
 #' tse
@@ -275,7 +275,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
 
         # check assay
         .check_assay_present(assay.type, x)
-        x <- .agg_for_prevalence(x, agg.na.rm = FALSE, rank = rank, ...)
+        x <- .agg_for_prevalence(x, rank = rank, ...)
         mat <- assay(x, assay.type)
         if (as_relative) {
             mat <- .calc_rel_abund(mat)
@@ -295,7 +295,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
 #' given detection threshold for the selected taxonomic rank.
 #'
 #' @aliases getPrevalent
-#' 
+#'
 #' @export
 setGeneric("getPrevalent", signature = "x",
            function(x, ...)
@@ -376,7 +376,7 @@ setMethod("getPrevalent", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalent", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, prevalence = 50/100, 
+    function(x, rank = NULL, prevalence = 50/100,
              include_lowest = FALSE, ...){
         .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
                             include_lowest = include_lowest, ...)
@@ -389,7 +389,7 @@ setMethod("getPrevalent", signature = c(x = "SummarizedExperiment"),
 #'
 #' @details
 #' \code{getRare} returns complement of \code{getPrevalent}.
-#' 
+#'
 #' @export
 setGeneric("getRare", signature = "x",
            function(x, ...)
@@ -432,7 +432,7 @@ setMethod("getRare", signature = c(x = "ANY"),
 #' @rdname getPrevalence
 #' @export
 setMethod("getRare", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, prevalence = 50/100, 
+    function(x, rank = NULL, prevalence = 50/100,
              include_lowest = FALSE, ...){
         .get_rare_taxa(x, rank = rank, prevalence = prevalence,
                        include_lowest = include_lowest, ...)
@@ -571,8 +571,8 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         pr <- getPrevalent(x, rank = NULL, ...)
         f <- rownames(x) %in% pr
         if(any(!f)){
-            other_x <- agglomerateByVariable(x[!f,], MARGIN = "rows", 
-                                            factor(rep(1L,sum(!f))), 
+            other_x <- agglomerateByVariable(x[!f,], MARGIN = "rows",
+                                            factor(rep(1L,sum(!f))),
                                             check_assays = FALSE)
             rowData(other_x)[,colnames(rowData(other_x))] <- NA
             # set the other label
