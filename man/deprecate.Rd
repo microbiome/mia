@@ -130,21 +130,21 @@ taxonomyTree(x, ...)
 
 \S4method{taxonomyTree}{SummarizedExperiment}(x, ...)
 
-makeTreeSummarizedExperimentFromPhyloseq(obj)
+makeTreeSummarizedExperimentFromPhyloseq(x)
 
-\S4method{makeTreeSummarizedExperimentFromPhyloseq}{ANY}(obj)
+\S4method{makeTreeSummarizedExperimentFromPhyloseq}{ANY}(x)
 
 mergeRows(x, ...)
 
 \S4method{mergeRows}{SummarizedExperiment}(x, ...)
 
-makePhyloseqFromTreeSummarizedExperiment(obj, ...)
+makePhyloseqFromTreeSummarizedExperiment(x, ...)
 
-\S4method{makePhyloseqFromTreeSummarizedExperiment}{ANY}(obj, ...)
+\S4method{makePhyloseqFromTreeSummarizedExperiment}{ANY}(x, ...)
 
-makePhyloseqFromTreeSE(obj, ...)
+makePhyloseqFromTreeSE(x, ...)
 
-\S4method{makePhyloseqFromTreeSE}{ANY}(obj, ...)
+\S4method{makePhyloseqFromTreeSE}{ANY}(x, ...)
 
 \S4method{mergeRows}{TreeSummarizedExperiment}(x, ...)
 
@@ -184,7 +184,7 @@ makeTreeSEFromDADA2(...)
 
 makeTreeSummarizedExperimentFromDADA2(...)
 
-makeTreeSEFromPhyloseq(obj)
+makeTreeSEFromPhyloseq(x)
 
 getExperimentCrossAssociation(x, ...)
 
@@ -347,13 +347,9 @@ perSampleDominantTaxa(x, ...)
 \S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, ...)
 }
 \arguments{
-\item{x}{a \code{\link{SummarizedExperiment}} object -}
+\item{x}{an object}
 
-\item{...}{\itemize{
-\item 
-}}
-
-\item{obj}{an object}
+\item{...}{Additional parameters. See dedicated function.}
 }
 \description{
 These functions will be deprecated. Please use other functions instead.

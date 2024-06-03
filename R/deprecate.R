@@ -1,10 +1,8 @@
 #' These functions will be deprecated. Please use other functions instead.
 #' 
-#' @param x a \code{\link{SummarizedExperiment}} object -
-#' 
-#' @param obj an object
-#' 
-#' @param ... -
+#' @param x an object
+#'    
+#' @param ... Additional parameters. See dedicated function.
 #' 
 #' @name deprecate
 NULL
@@ -17,7 +15,6 @@ setGeneric("cluster", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-#' @importFrom bluster clusterRows
 setMethod("cluster", signature = c(x = "SummarizedExperiment"),
             function(x,...){
                 .Deprecated(msg = paste0("'cluster' is deprecated. ",
@@ -62,18 +59,18 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
-setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("obj"),
-            function(obj)
+setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("x"),
+            function(x)
                 standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
 
 #' @rdname deprecate
 #' @export
 setMethod("makeTreeSummarizedExperimentFromPhyloseq", 
-            signature = c(obj = "ANY"), function(obj){
+            signature = c(x = "ANY"), function(x){
                 .Deprecated(msg = paste0(
                     "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
                     " Use 'convert' instead."))
-                convert(obj)
+                convert(x)
             }
 )
 
@@ -97,35 +94,35 @@ setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname deprecate
 #' @export
-setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("obj"),
-            function(obj, ...)
+setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
+            function(x, ...)
                 standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
 
 #' @rdname deprecate
 #' @export
 setMethod("makePhyloseqFromTreeSummarizedExperiment", 
-            signature = c(obj = "ANY"), function(obj, ...){
+            signature = c(x = "ANY"), function(x, ...){
                 .Deprecated(msg = paste0(
                     "'makePhyloseqFromTreeSummarizedExperiment' is deprecated.",
                     " Use 'convert' instead."))
-                convert(obj, ...)
+                convert(x, ...)
             }
 )
 
 #' @rdname deprecate
 #' @export
-setGeneric("makePhyloseqFromTreeSE", signature = c("obj"),
-           function(obj, ...)
+setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
+           function(x, ...)
                standardGeneric("makePhyloseqFromTreeSE"))
 
 #' @rdname deprecate
 #' @export
 setMethod("makePhyloseqFromTreeSE", 
-          signature = c(obj = "ANY"), function(obj, ...){
+          signature = c(x = "ANY"), function(x, ...){
               .Deprecated(msg = paste0(
                   "'makePhyloseqFromTreeSE' is deprecated.",
                   " Use 'convert' instead."))
-              convert(obj, ...)
+              convert(x, ...)
           }
 )
 
@@ -312,7 +309,7 @@ makeTreeSummarizedExperimentFromDADA2 <- function(...) {
 
 #' @rdname deprecate
 #' @export
-makeTreeSEFromPhyloseq <- function(obj) {
+makeTreeSEFromPhyloseq <- function(x) {
     .Deprecated(msg = paste0(
         "'makeTreeSEFromPhyloseq' is deprecated.",
         " Use 'convert' instead."))
@@ -567,12 +564,12 @@ setGeneric("full_join", signature = c("x"),
 #' @rdname deprecate
 #' @export
 setMethod("full_join", signature = c(x = "ANY"),
-            function(x, ...){
-                .Deprecated(msg = paste0("'full_join' is deprecated. ",
-                                        "Use 'mergeSEs' with 'join = full' ",
-                                        "instead."))
-                mergeSEs(x, join = "full", ...)
-            }
+          function(x, ...){
+              .Deprecated(msg = paste0("'full_join' is deprecated. ",
+                                       "Use 'mergeSEs' with 'join = full' ",
+                                       "instead."))
+              mergeSEs(x, join = "full", ...)
+          }
 )
 
 #' @rdname deprecate
