@@ -8,48 +8,31 @@ test_that("Unifrac beta diversity", {
     
     expect_error(
         calculateUnifrac(tse, assay.type = "test", tree_name = "phylo",
-                         weighted = FALSE, normalized = TRUE,
-                         BPPARAM = SerialParam())
+                         weighted = FALSE)
     )
     expect_error(
         calculateUnifrac(tse, assay.type = 2, tree_name = "phylo",
-                         weighted = FALSE, normalized = TRUE,
-                         BPPARAM = SerialParam())
+                         weighted = FALSE)
     )
     expect_error(
         calculateUnifrac(tse, assay.type = TRUE, tree_name = "phylo",
-                         weighted = FALSE, normalized = TRUE,
-                         BPPARAM = SerialParam())
+                         weighted = FALSE)
     )
     expect_error(
         calculateUnifrac(tse, assay.type = "counts", tree_name = "test",
-                         weighted = FALSE, normalized = TRUE,
-                         BPPARAM = SerialParam())
+                         weighted = FALSE)
     )
     expect_error(
         calculateUnifrac(tse, assay.type = "counts", tree_name = 1,
-                         weighted = FALSE, normalized = TRUE,
-                         BPPARAM = SerialParam())
+                         weighted = FALSE)
     )
     expect_error(
         calculateUnifrac(tse, assay.type = "counts", tree_name = TRUE,
-                         weighted = "FALSE", normalized = TRUE,
-                         BPPARAM = SerialParam())
+                         weighted = "FALSE")
     )
     expect_error(
         calculateUnifrac(tse, assay.type = "counts", tree_name = "phylo",
-                         weighted = 1, normalized = TRUE,
-                         BPPARAM = SerialParam())
-    )
-    expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = "phylo",
-                         weighted = FALSE, normalized = "TRUE",
-                         BPPARAM = SerialParam())
-    )
-    expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = "phylo",
-                         weighted = FALSE, normalized = 1,
-                         BPPARAM = SerialParam())
+                         weighted = 1)
     )
     
     data(GlobalPatterns, package="mia")
@@ -63,8 +46,8 @@ test_that("Unifrac beta diversity", {
     unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq))
     expect_equal(unifrac_tse, unifrac_pseq)
     # Calculate unifrac
-    unifrac_tse <- as.matrix(calculateUnifrac(tse, weighted = TRUE, normalized = FALSE))
-    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, weighted = TRUE, normalized = FALSE))
+    unifrac_tse <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
+    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, weighted = TRUE))
     expect_equal(unifrac_tse, unifrac_pseq)
     
     # Test with merged object with multiple trees
@@ -79,9 +62,9 @@ test_that("Unifrac beta diversity", {
     unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq))
     expect_equal(unifrac_tse, unifrac_pseq)
     # Calculate unifrac
-    unifrac_tse <- as.matrix(calculateUnifrac(tse, weighted = TRUE, normalized = FALSE, 
+    unifrac_tse <- as.matrix(calculateUnifrac(tse, weighted = TRUE,
                                               tree_name = "phylo"))
-    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, weighted = TRUE, normalized = FALSE))
+    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, weighted = TRUE))
     expect_equal(unifrac_tse, unifrac_pseq)
     
     # Test the function with agglomerated data
@@ -91,8 +74,8 @@ test_that("Unifrac beta diversity", {
     # Convert back to TreeSE (pseq has pruned tree)
     tse <- makeTreeSEFromPhyloseq(pseq)
     # Calculate unifrac
-    unifrac_tse <- as.matrix(calculateUnifrac(tse, normalized = TRUE))
-    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, normalized = TRUE))
+    unifrac_tse <- as.matrix(calculateUnifrac(tse))
+    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq))
     expect_equal(unifrac_tse, unifrac_pseq)
     
     # Detach phyloseq package
