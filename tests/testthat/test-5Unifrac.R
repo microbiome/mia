@@ -37,47 +37,36 @@ test_that("Unifrac beta diversity", {
     
     data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
-    # Compare to phyloseq function
-    .require_package("phyloseq")
-    # Convert data into phyloseq
-    pseq <- makePhyloseqFromTreeSE(tse)
     # Calculate unifrac
-    unifrac_tse <- as.matrix(calculateUnifrac(tse))
-    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq))
-    expect_equal(unifrac_tse, unifrac_pseq)
+    unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
+    unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = FALSE,
+                                              rowTree(tse)))
+    expect_equal(unifrac_mia, unifrac_rbiom)
     # Calculate unifrac
-    unifrac_tse <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
-    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, weighted = TRUE))
-    expect_equal(unifrac_tse, unifrac_pseq)
+    unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
+    unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = TRUE,
+                                              rowTree(tse)))
+    expect_equal(unifrac_mia, unifrac_rbiom)
     
     # Test with merged object with multiple trees
     tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
     
-    # Convert data into phyloseq
-    pseq <- makePhyloseqFromTreeSE(tse, assay.type="counts")
-    # Convert back to TreeSE (pseq has pruned tree)
-    tse <- makeTreeSEFromPhyloseq(pseq)
     # Calculate unifrac
-    unifrac_tse <- as.matrix(calculateUnifrac(tse))
-    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq))
-    expect_equal(unifrac_tse, unifrac_pseq)
+    unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
+    unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = FALSE,
+                                              rowTree(tse)))
+    expect_equal(unifrac_mia, unifrac_rbiom)
     # Calculate unifrac
-    unifrac_tse <- as.matrix(calculateUnifrac(tse, weighted = TRUE,
-                                              tree_name = "phylo"))
-    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq, weighted = TRUE))
-    expect_equal(unifrac_tse, unifrac_pseq)
+    unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
+    unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = TRUE,
+                                              rowTree(tse)))
+    expect_equal(unifrac_mia, unifrac_rbiom)
     
     # Test the function with agglomerated data
     tse <- agglomerateByRank(tse, rank = "Phylum")
-    # Convert data into phyloseq
-    suppressWarnings( pseq <- makePhyloseqFromTreeSE(tse) )
-    # Convert back to TreeSE (pseq has pruned tree)
-    tse <- makeTreeSEFromPhyloseq(pseq)
     # Calculate unifrac
-    unifrac_tse <- as.matrix(calculateUnifrac(tse))
-    unifrac_pseq <- as.matrix(phyloseq::UniFrac(pseq))
-    expect_equal(unifrac_tse, unifrac_pseq)
-    
-    # Detach phyloseq package
-    unloadNamespace("phyloseq")
+    unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
+    unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = FALSE,
+                                              rowTree(tse)))
+    expect_equal(unifrac_mia, unifrac_rbiom)
 })
