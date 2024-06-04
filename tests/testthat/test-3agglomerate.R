@@ -147,8 +147,8 @@ test_that("agglomerate", {
     
     # Test that dimentionality is the same for merging object by agglomerateByRank
     # and agglomerateByVariable.
-    expect_equal(nrow(test0), length( all_phyla))
-    expect_equal(nrow(test1), length( all_phyla))
+    expect_equal(nrow(test0), length(all_phyla))
+    expect_equal(nrow(test1), length(all_phyla))
     
     # When na.rm = TRUE, there should be as many rows as there are non-NA phyla
     test0 <- agglomerateByVariable(tse, MARGIN = 1, f="Phylum", na.rm = TRUE)
