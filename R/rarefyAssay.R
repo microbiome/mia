@@ -106,18 +106,20 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
               .check_assay_present(assay.type, x)
               if(any(assay(x, assay.type) %% 1 != 0)){
                   warning("assay contains non-integer values. Only counts table ",
-                          "is applicable...")
+                          "is applicable...", call. = FALSE)
               }
               if(any(assay(x, assay.type) < 0)){
                   stop("assay contains strictly-negative values. Only counts ",
-                       "table is applicable...")
+                      "table is applicable...", call. = FALSE)
               }
               if(!is.logical(verbose)){
-                  stop("`verbose` has to be logical i.e. TRUE or FALSE")
+                  stop("`verbose` has to be logical i.e. TRUE or FALSE", 
+                      call. = FALSE)
               }
             
               if(!is.logical(replace)){
-                  stop("`replace` has to be logical i.e. TRUE or FALSE")
+                  stop("`replace` has to be logical i.e. TRUE or FALSE",
+                      call. = FALSE)
               } 
               # Check name
               if(!.is_non_empty_string(name) ||
@@ -130,12 +132,13 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
               # Make sure min_size is of length 1.
               if(length(min_size) > 1){
                   stop("`min_size` had more than one value. ", 
-                       "Specifiy a single integer value.")
+                       "Specifiy a single integer value.", call. = FALSE)
                   min_size <- min_size[1]    
               }
               if(!is.numeric(min_size) || 
                  as.integer(min_size) != min_size && min_size <= 0){
-                  stop("min_size needs to be a positive integer value.")
+                  stop("min_size needs to be a positive integer value.",
+                      call. = FALSE)
               }
               # get samples with less than min number of reads
               if(min(colSums2(assay(x, assay.type))) < min_size){
