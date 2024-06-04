@@ -18,7 +18,7 @@ functions are available."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.19</span>
       </span>
     </div>
 
@@ -220,21 +220,32 @@ object.</p>
 <span class="r-in"><span>                             rank <span class="op">=</span> <span class="st">"Genus"</span>,</span></span>
 <span class="r-in"><span>                             na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Bacteroides"      "Dolichospermum"   "Faecalibacterium" "Neisseria"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Clostridium"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Haemophilus"     </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gets the overview of dominant taxa</span></span></span>
 <span class="r-in"><span><span class="va">dominant_taxa</span> <span class="op">&lt;-</span> <span class="fu">summarizeDominance</span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span></span>
 <span class="r-in"><span>                                   rank <span class="op">=</span> <span class="st">"Genus"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dominant_taxa</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   dominant_taxa            n rel_freq</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Class:Thermoprotei      16   0.615 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Genus:Bacteroides        5   0.192 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Genus:Streptococcus      2   0.076<span style="text-decoration: underline;">9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Genus:Dolichospermum     1   0.038<span style="text-decoration: underline;">5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Genus:Neisseria          1   0.038<span style="text-decoration: underline;">5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Genus:Veillonella        1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    dominant_taxa                n rel_freq</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Bacteroides                  5   0.192 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Crenothrix                   3   0.115 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Faecalibacterium             2   0.076<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Prochlorococcus              2   0.076<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Streptococcus                2   0.076<span style="text-decoration: underline;">9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> CandidatusNitrososphaera     1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> CandidatusPortiera           1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> CandidatusSolibacter         1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Corynebacterium              1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Desulfuromonas               1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> Dolichospermum               1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> Luteolibacter                1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> MC18                         1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> Neisseria                    1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> Nitrosopumilus               1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> Polaribacter                 1   0.038<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> Veillonella                  1   0.038<span style="text-decoration: underline;">5</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With group, it is possible to group observations based on specified groups</span></span></span>
 <span class="r-in"><span><span class="co"># Gets the overview of dominant taxa</span></span></span>
