@@ -5,7 +5,6 @@ reference:
 - contents:
   - agglomerateByRank
   - mergeRows
-  - splitByRanks
   - splitOn
   - mergeSEs
 - subtitle: Transformation
@@ -45,12 +44,13 @@ reference:
 - contents:
   - getPrevalence
   - getPrevalentAbundance
-  - getTopTaxa
-  - getExperimentCrossCorrelation
+  - summaries
+  - getCrossAssociation
+  - getMediation
   - hierarchy-tree
 - subtitle: Dominance
 - contents:
-  - perSampleDominantTaxa
+  - getDominant
   - estimateDominance
 - subtitle: Evenness indeces
 - contents:
@@ -64,9 +64,9 @@ reference:
   - isContaminant
 - subtitle: Helper
 - contents:
-  - meltAssay
+  - meltSE
   - relabundance
-  - subsampleCounts
+  - rarefyAssay
   - subsetSamples
 - subtitle: Datasets
 - contents:

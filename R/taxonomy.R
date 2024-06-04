@@ -57,10 +57,10 @@
 #'
 #' @param from 
 #' \itemize{
-#'   \item{For \code{mapTaxonomy}: }{a scalar \code{character} value, which 
-#'     must be a valid taxonomic rank. (default: \code{NULL})}
-#'   \item{otherwise a \code{Taxa} object as returned by 
-#'     \code{\link[DECIPHER:IdTaxa]{IdTaxa}}}
+#'   \item For \code{mapTaxonomy}: a scalar \code{character} value, which 
+#'     must be a valid taxonomic rank. (default: \code{NULL})
+#'   \item otherwise a \code{Taxa} object as returned by 
+#'     \code{\link[DECIPHER:IdTaxa]{IdTaxa}}
 #' }
 #'
 #' @param to a scalar \code{character} value, which must be a valid 
@@ -83,13 +83,13 @@
 #'
 #' @return
 #' \itemize{
-#'   \item{\code{taxonomyRanks}:} {a \code{character} vector with all the
-#'     taxonomic ranks found in \code{colnames(rowData(x))}}
-#'   \item{\code{taxonomyRankEmpty}:} {a \code{logical} value}
-#'   \item{\code{mapTaxonomy}:} {a \code{list} per element of taxa. Each 
+#'   \item \code{taxonomyRanks}: a \code{character} vector with all the
+#'     taxonomic ranks found in \code{colnames(rowData(x))}
+#'   \item \code{taxonomyRankEmpty}: a \code{logical} value
+#'   \item \code{mapTaxonomy}: a \code{list} per element of taxa. Each 
 #'     element is either a \code{DataFrame}, a \code{character} or \code{NULL}.
 #'     If all \code{character} results have the length of one, a single 
-#'     \code{character} vector is returned.}
+#'     \code{character} vector is returned.
 #' }
 #'
 #' @name taxonomy-methods
@@ -433,11 +433,11 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 #' 
 #' @return
 #' \itemize{
-#'   \item{\code{addHierarchyTree}:} {a \code{TreeSummarizedExperiment} whose
+#'   \item \code{addHierarchyTree}: a \code{TreeSummarizedExperiment} whose
 #'   \code{phylo} tree represents the hierarchy among available taxonomy 
-#'   information}
-#'   \item{\code{getHierarchyTree}:} {a \code{phylo} tree representing the 
-#'   hierarchy among available taxonomy information.}
+#'   information.
+#'   \item \code{getHierarchyTree}: a \code{phylo} tree representing the 
+#'   hierarchy among available taxonomy information.
 #' }
 #' 
 #' @name hierarchy-tree
@@ -465,22 +465,46 @@ setGeneric("getHierarchyTree",
 #' @export
 #' @importFrom ape drop.tip
 setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
-    function(x){
+    function(x, ...){
         # Input check
         # If there is no rowData it is not possible to create rowTree
         if( ncol(rowData(x)) == 0L ){
             stop("'x' does not have rowData. Tree cannot be created.", 
                 call. = FALSE)
         }
+        # If there are no taxonomy ranks
+        if( length(taxonomyRanks(x)) < 2L ){
+            stop(
+                "'x' does not contain adequate taxonomy information, and ",
+                "hierarchy tree cannot be created. Check rowData and consider ",
+                "using setTaxonomyRanks() if ranks differ from defaults..",
+                call. = FALSE)
+        }
         #
-        # Converted to data.frame so that drop = FALSE is enabled
-        td <- data.frame(rowData(x)[,taxonomyRanks(x)])
-        # Remove empty taxonomic levels
-        td <- td[,!vapply(td,function(tl){all(is.na(tl))},logical(1)), drop = FALSE]
-        # Make information unique
-        td_NA <- DataFrame(lapply(td,is.na))
+        # Get rowData as data.frame
+        td <- rowData(x)[, taxonomyRanks(x), drop = FALSE]
         td <- as.data.frame(td)
-        td <- as(suppressWarnings(resolveLoop(td)),"DataFrame")
+        # Get information on empty nodes. It will be used later to polish the
+        # created tree.
+        td_NA <- .get_empty_nodes(td, ...)
+        # Replace empty cells with NA (also "" can be empty value)
+        for( i in seq_len(ncol(td_NA)) ){
+            td[td_NA[[i]], i] <- NA
+        }
+        # Remove empty taxonomic levels
+        td <- td[ , !vapply(td_NA, all, logical(1)), drop = FALSE]
+        # Check if there is no taxonomy information left after removing empty
+        # columns
+        if( ncol(td) < 2L ){
+            stop(
+                "'x' does not contain adequate taxonomy information, and ",
+                "hierarchy tree cannot be created. Check rowData and consider ",
+                "using setTaxonomyRanks() if ranks differ from defaults.",
+                call. = FALSE)
+        }
+        # Make cells unique. Add suffix, if duplicated values are found from
+        # certain rank.
+        td <- suppressWarnings(resolveLoop(td))
         # Build tree
         tree <- toTree(td)
         tree$tip.label <- paste0(colnames(td)[ncol(td)],":",tree$tip.label)
@@ -495,7 +519,7 @@ setMethod("getHierarchyTree", signature = c(x = "SummarizedExperiment"),
                     collapse.singles = FALSE)
             }
         }
-        tree
+        return(tree)
     }
 )
 
@@ -508,15 +532,18 @@ setGeneric("addHierarchyTree",
 #' @rdname hierarchy-tree
 #' @export
 setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
-    function(x){
+    function(x, ...){
         #
-        tree <- getHierarchyTree(x)
+        # Get the tree
+        tree <- getHierarchyTree(x, ...)
+        # Ensure that the object has rowTree slot
         x <- as(x,"TreeSummarizedExperiment")
-        rownames(x) <- getTaxonomyLabels(x, with_rank = TRUE,
-                                        resolve_loops = TRUE,
-                                        make_unique = FALSE)
-        x <- changeTree(x, tree, rownames(x))
-        x
+        # Get node labs: which row represents which node in the tree?
+        node_labs <- getTaxonomyLabels(
+            x, with_rank = TRUE, resolve_loops = TRUE, make_unique = FALSE)
+        # Add tree
+        x <- changeTree(x, tree, node_labs)
+        return(x)
     }
 )
 
@@ -715,3 +742,23 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
 #' @rdname taxonomy-methods
 #' @export
 IdTaxaToDataFrame <- .idtaxa_to_DataFrame
+
+# This function gives information on if cell in taxonomy table is empty or not.
+.get_empty_nodes <- function(
+        td, empty.fields = c(NA, "", " ", "\t", "-", "_"), ...){
+    # Check empty.fields
+    if(!is.character(empty.fields) || length(empty.fields) == 0L){
+        stop(
+            "'empty.fields' must be a character vector with one or ",
+            "more value", call. = FALSE)
+    }
+    #
+    # Loop over columns. For each cell, get info if the cell is empty or not.
+    is_empty <- lapply(td, function(x){
+        temp <- x %in% empty.fields
+        return(temp)
+    })
+    # Convert to data.frame
+    is_empty <- as.data.frame(is_empty)
+    return(is_empty)
+}

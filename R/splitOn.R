@@ -26,9 +26,10 @@
 #' @param altExpNames a \code{character} vector specifying the alternative experiments
 #'   to be unsplit. (By default: \code{altExpNames = names(altExps(x))})
 #'   
-#' @param ... Arguments passed to \code{mergeRows}/\code{mergeCols} function for
+#' @param ... Arguments passed to \code{agglomerateByVariable} function for
 #'   \code{SummarizedExperiment} objects and other functions.
-#'   See \code{\link[=agglomerate-methods]{mergeRows}} for more details.
+#'   See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more 
+#'   details.
 #'   \itemize{
 #'     \item{\code{use_names} A single boolean value to select whether to name elements of
 #'     list by their group names.}
@@ -51,9 +52,8 @@
 #' 
 #' @name splitOn
 #' @seealso
-#' \code{\link[=splitByRanks]{splitByRanks}}
-#' \code{\link[=unsplitByRanks]{unsplitByRanks}}
-#' \code{\link[=merge-methods]{mergeRows}},
+#' \code{\link[=agglomerate-methods]{agglomerateByRanks}}
+#' \code{\link[=agglomerate-methods]{agglomerateByVariable}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
 #' \code{\link[SingleCellExperiment:altExps]{altExps}},

@@ -2,56 +2,68 @@
 % Please edit documentation in R/runCCA.R
 \name{runCCA}
 \alias{runCCA}
+\alias{getCCA}
+\alias{addCCA}
+\alias{getRDA}
+\alias{addRDA}
+\alias{getCCA,ANY-method}
+\alias{getCCA,SummarizedExperiment-method}
 \alias{calculateCCA}
+\alias{addCCA,SingleCellExperiment-method}
+\alias{getRDA,ANY-method}
+\alias{getRDA,SummarizedExperiment-method}
 \alias{calculateRDA}
+\alias{addRDA,SingleCellExperiment-method}
 \alias{runRDA}
-\alias{calculateCCA,ANY-method}
-\alias{calculateCCA,SummarizedExperiment-method}
-\alias{runCCA,SingleCellExperiment-method}
-\alias{calculateRDA,ANY-method}
-\alias{calculateRDA,SummarizedExperiment-method}
-\alias{runRDA,SingleCellExperiment-method}
 \title{Canonical Correspondence Analysis and Redundancy Analysis}
 \usage{
+getCCA(x, ...)
+
+addCCA(x, ...)
+
+getRDA(x, ...)
+
+addRDA(x, ...)
+
+\S4method{getCCA}{ANY}(x, ...)
+
+\S4method{getCCA}{SummarizedExperiment}(
+  x,
+  formula,
+  variables,
+  test.signif = TRUE,
+  assay.type = assay_name,
+  assay_name = exprs_values,
+  exprs_values = "counts",
+  scores = "wa",
+  ...
+)
+
 calculateCCA(x, ...)
+
+\S4method{addCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
 
 runCCA(x, ...)
 
+\S4method{getRDA}{ANY}(x, ...)
+
+\S4method{getRDA}{SummarizedExperiment}(
+  x,
+  formula,
+  variables,
+  test.signif = TRUE,
+  assay.type = assay_name,
+  assay_name = exprs_values,
+  exprs_values = "counts",
+  scores = "wa",
+  ...
+)
+
 calculateRDA(x, ...)
 
+\S4method{addRDA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "RDA", ...)
+
 runRDA(x, ...)
-
-\S4method{calculateCCA}{ANY}(x, ...)
-
-\S4method{calculateCCA}{SummarizedExperiment}(
-  x,
-  formula,
-  variables,
-  test.signif = TRUE,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
-  scores = "wa",
-  ...
-)
-
-\S4method{runCCA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "CCA", ...)
-
-\S4method{calculateRDA}{ANY}(x, ...)
-
-\S4method{calculateRDA}{SummarizedExperiment}(
-  x,
-  formula,
-  variables,
-  test.signif = TRUE,
-  assay.type = assay_name,
-  assay_name = exprs_values,
-  exprs_values = "counts",
-  scores = "wa",
-  ...
-)
-
-\S4method{runRDA}{SingleCellExperiment}(x, formula, variables, altexp = NULL, name = "RDA", ...)
 }
 \arguments{
 \item{x}{For \code{calculate*} a
@@ -126,11 +138,11 @@ containing the input data.}
 reducedDims of the output.}
 }
 \value{
-For \code{calculateCCA} a matrix with samples as rows and CCA dimensions as
+For \code{getCCA} a matrix with samples as rows and CCA dimensions as
 columns. Attributes include calculated \code{cca}/\code{rda} object and
 significance analysis results.
 
-For \code{runCCA} a modified \code{x} with the results stored in
+For \code{addCCA} a modified \code{x} with the results stored in
 \code{reducedDim} as the given \code{name}.
 }
 \description{
@@ -150,18 +162,18 @@ specified by \code{homogeneity.test} parameter.
 \examples{
 library(scater)
 data(GlobalPatterns)
-GlobalPatterns <- runCCA(GlobalPatterns, data ~ SampleType)
+GlobalPatterns <- addCCA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
 # Fetch significance results
 attr(reducedDim(GlobalPatterns, "CCA"), "significance")
 
-GlobalPatterns <- runRDA(GlobalPatterns, data ~ SampleType)
+GlobalPatterns <- addRDA(GlobalPatterns, data ~ SampleType)
 plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 
 # Specify dissimilarity measure
 GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
-GlobalPatterns <- runRDA(
+GlobalPatterns <- addRDA(
     GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
 
 # To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
@@ -171,14 +183,14 @@ tse <- transformAssay(tse, MARGIN = "features", method = "z")
 # their value is NA
 tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
 # Calculate RDA
-tse <- runRDA(tse, formula = data ~ SampleType,
+tse <- addRDA(tse, formula = data ~ SampleType,
               assay.type = "z", name = "rda_scaled", na.action = na.omit)
 # Plot
 plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 # A common choice along with PERMANOVA is ANOVA when statistical significance
 # of homogeneity of groups is analysed. Moreover, full signficance test results
 # can be returned.
- tse <- runRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
+ tse <- addRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
 
 }
 \seealso{

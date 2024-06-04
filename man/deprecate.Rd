@@ -8,12 +8,51 @@
 \alias{addTaxonomyTree,SummarizedExperiment-method}
 \alias{taxonomyTree}
 \alias{taxonomyTree,SummarizedExperiment-method}
+\alias{mergeRows}
+\alias{mergeRows,SummarizedExperiment-method}
+\alias{mergeRows,TreeSummarizedExperiment-method}
+\alias{mergeCols}
+\alias{mergeCols,SummarizedExperiment-method}
+\alias{mergeCols,TreeSummarizedExperiment-method}
+\alias{mergeFeatures}
+\alias{mergeFeatures,SummarizedExperiment-method}
+\alias{mergeFeatures,TreeSummarizedExperiment-method}
+\alias{mergeSamples}
+\alias{mergeSamples,SummarizedExperiment-method}
+\alias{mergeSamples,TreeSummarizedExperiment-method}
+\alias{mergeFeaturesByRank}
+\alias{mergeFeaturesByRank,SummarizedExperiment-method}
+\alias{mergeFeaturesByRank,SingleCellExperiment-method}
+\alias{mergeFeaturesByPrevalence}
+\alias{mergeFeaturesByPrevalence,SummarizedExperiment-method}
+\alias{getExperimentCrossAssociation}
+\alias{getExperimentCrossAssociation,MultiAssayExperiment-method}
+\alias{getExperimentCrossAssociation,SummarizedExperiment-method}
+\alias{mergeFeaturesByRank,TreeSummarizedExperiment-method}
+\alias{testExperimentCrossAssociation}
+\alias{testExperimentCrossAssociation,ANY-method}
+\alias{testExperimentCrossCorrelation}
+\alias{testExperimentCrossCorrelation,ANY-method}
+\alias{getExperimentCrossCorrelation}
+\alias{getExperimentCrossCorrelation,ANY-method}
 \alias{loadFromBiom}
 \alias{loadFromQIIME2}
 \alias{readQZA}
 \alias{loadFromMothur}
 \alias{loadFromMetaphlan}
 \alias{loadFromHumann}
+\alias{countDominantFeatures}
+\alias{countDominantFeatures,SummarizedExperiment-method}
+\alias{subsetByRareTaxa}
+\alias{subsetByRareTaxa,ANY-method}
+\alias{subsetByRareFeatures}
+\alias{subsetByRareFeatures,ANY-method}
+\alias{subsetByPrevalentTaxa}
+\alias{subsetByPrevalentTaxa,ANY-method}
+\alias{subsetByPrevalentFeatures}
+\alias{subsetByPrevalentFeatures,ANY-method}
+\alias{countDominantTaxa}
+\alias{countDominantTaxa,SummarizedExperiment-method}
 \alias{full_join}
 \alias{full_join,ANY-method}
 \alias{inner_join}
@@ -25,6 +64,47 @@
 \alias{plotNMDS}
 \alias{estimateDivergence}
 \alias{estimateDivergence,SummarizedExperiment-method}
+\alias{meltAssay}
+\alias{meltAssay,SummarizedExperiment-method}
+\alias{transformSamples}
+\alias{transformSamples,SummarizedExperiment-method}
+\alias{ZTransform}
+\alias{ZTransform,SummarizedExperiment-method}
+\alias{relAbundanceCounts}
+\alias{relAbundanceCounts,SummarizedExperiment-method}
+\alias{transformCounts}
+\alias{transformFeatures}
+\alias{transformFeatures,SummarizedExperiment-method}
+\alias{getUniqueFeatures}
+\alias{getUniqueFeatures,SummarizedExperiment-method}
+\alias{getUniqueTaxa}
+\alias{getUniqueTaxa,SummarizedExperiment-method}
+\alias{getTopFeatures}
+\alias{getTopFeatures,SummarizedExperiment-method}
+\alias{getTopTaxa}
+\alias{getTopTaxa,SummarizedExperiment-method}
+\alias{getRareFeatures}
+\alias{getRareFeatures,ANY-method}
+\alias{getRareFeatures,SummarizedExperiment-method}
+\alias{getRareTaxa}
+\alias{getRareTaxa,ANY-method}
+\alias{getRareTaxa,SummarizedExperiment-method}
+\alias{getPrevalentFeatures}
+\alias{getPrevalentFeatures,ANY-method}
+\alias{getPrevalentFeatures,SummarizedExperiment-method}
+\alias{getPrevalentTaxa}
+\alias{getPrevalentTaxa,ANY-method}
+\alias{getPrevalentTaxa,SummarizedExperiment-method}
+\alias{subsampleCounts}
+\alias{subsampleCounts,SummarizedExperiment-method}
+\alias{addPerSampleDominantFeatures}
+\alias{addPerSampleDominantFeatures,SummarizedExperiment-method}
+\alias{addPerSampleDominantTaxa}
+\alias{addPerSampleDominantTaxa,SummarizedExperiment-method}
+\alias{perSampleDominantFeatures}
+\alias{perSampleDominantFeatures,SummarizedExperiment-method}
+\alias{perSampleDominantTaxa}
+\alias{perSampleDominantTaxa,SummarizedExperiment-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -39,6 +119,60 @@ taxonomyTree(x, ...)
 
 \S4method{taxonomyTree}{SummarizedExperiment}(x, ...)
 
+mergeRows(x, ...)
+
+\S4method{mergeRows}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeRows}{TreeSummarizedExperiment}(x, ...)
+
+mergeCols(x, ...)
+
+\S4method{mergeCols}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeCols}{TreeSummarizedExperiment}(x, ...)
+
+mergeFeatures(x, ...)
+
+\S4method{mergeFeatures}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeFeatures}{TreeSummarizedExperiment}(x, ...)
+
+mergeSamples(x, ...)
+
+\S4method{mergeSamples}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeSamples}{TreeSummarizedExperiment}(x, ...)
+
+mergeFeaturesByRank(x, ...)
+
+\S4method{mergeFeaturesByRank}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeFeaturesByRank}{SingleCellExperiment}(x, ...)
+
+mergeFeaturesByPrevalence(x, ...)
+
+\S4method{mergeFeaturesByPrevalence}{SummarizedExperiment}(x, ...)
+
+getExperimentCrossAssociation(x, ...)
+
+\S4method{getExperimentCrossAssociation}{MultiAssayExperiment}(x, ...)
+
+\S4method{getExperimentCrossAssociation}{SummarizedExperiment}(x, ...)
+
+\S4method{mergeFeaturesByRank}{TreeSummarizedExperiment}(x, ...)
+
+testExperimentCrossAssociation(x, ...)
+
+\S4method{testExperimentCrossAssociation}{ANY}(x, ...)
+
+testExperimentCrossCorrelation(x, ...)
+
+\S4method{testExperimentCrossCorrelation}{ANY}(x, ...)
+
+getExperimentCrossCorrelation(x, ...)
+
+\S4method{getExperimentCrossCorrelation}{ANY}(x, ...)
+
 loadFromBiom(...)
 
 loadFromQIIME2(...)
@@ -50,6 +184,30 @@ loadFromMothur(...)
 loadFromMetaphlan(...)
 
 loadFromHumann(...)
+
+countDominantFeatures(x, ...)
+
+\S4method{countDominantFeatures}{SummarizedExperiment}(x, ...)
+
+subsetByRareTaxa(x, ...)
+
+\S4method{subsetByRareTaxa}{ANY}(x, ...)
+
+subsetByRareFeatures(x, ...)
+
+\S4method{subsetByRareFeatures}{ANY}(x, ...)
+
+subsetByPrevalentTaxa(x, ...)
+
+\S4method{subsetByPrevalentTaxa}{ANY}(x, ...)
+
+subsetByPrevalentFeatures(x, ...)
+
+\S4method{subsetByPrevalentFeatures}{ANY}(x, ...)
+
+countDominantTaxa(x, ...)
+
+\S4method{countDominantTaxa}{SummarizedExperiment}(x, ...)
 
 full_join(x, ...)
 
@@ -72,6 +230,88 @@ plotNMDS(x, ...)
 estimateDivergence(x, ...)
 
 \S4method{estimateDivergence}{SummarizedExperiment}(x, ...)
+
+meltAssay(x, ...)
+
+\S4method{meltAssay}{SummarizedExperiment}(x, ...)
+
+transformSamples(x, ...)
+
+\S4method{transformSamples}{SummarizedExperiment}(x, ...)
+
+ZTransform(x, ...)
+
+\S4method{ZTransform}{SummarizedExperiment}(x, ...)
+
+relAbundanceCounts(x, ...)
+
+\S4method{relAbundanceCounts}{SummarizedExperiment}(x, ...)
+
+transformCounts(x, ...)
+
+transformFeatures(x, ...)
+
+\S4method{transformFeatures}{SummarizedExperiment}(x, ...)
+
+getUniqueFeatures(x, ...)
+
+\S4method{getUniqueFeatures}{SummarizedExperiment}(x, ...)
+
+getUniqueTaxa(x, ...)
+
+\S4method{getUniqueTaxa}{SummarizedExperiment}(x, ...)
+
+getTopFeatures(x, ...)
+
+\S4method{getTopFeatures}{SummarizedExperiment}(x, ...)
+
+getTopTaxa(x, ...)
+
+\S4method{getTopTaxa}{SummarizedExperiment}(x, ...)
+
+getRareFeatures(x, ...)
+
+\S4method{getRareFeatures}{ANY}(x, ...)
+
+\S4method{getRareFeatures}{SummarizedExperiment}(x, ...)
+
+getRareTaxa(x, ...)
+
+\S4method{getRareTaxa}{ANY}(x, ...)
+
+\S4method{getRareTaxa}{SummarizedExperiment}(x, ...)
+
+getPrevalentFeatures(x, ...)
+
+\S4method{getPrevalentFeatures}{ANY}(x, ...)
+
+\S4method{getPrevalentFeatures}{SummarizedExperiment}(x, ...)
+
+getPrevalentTaxa(x, ...)
+
+\S4method{getPrevalentTaxa}{ANY}(x, ...)
+
+\S4method{getPrevalentTaxa}{SummarizedExperiment}(x, ...)
+
+subsampleCounts(x, ...)
+
+\S4method{subsampleCounts}{SummarizedExperiment}(x, ...)
+
+addPerSampleDominantFeatures(x, ...)
+
+\S4method{addPerSampleDominantFeatures}{SummarizedExperiment}(x, ...)
+
+addPerSampleDominantTaxa(x, ...)
+
+\S4method{addPerSampleDominantTaxa}{SummarizedExperiment}(x, ...)
+
+perSampleDominantFeatures(x, ...)
+
+\S4method{perSampleDominantFeatures}{SummarizedExperiment}(x, ...)
+
+perSampleDominantTaxa(x, ...)
+
+\S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A

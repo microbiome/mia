@@ -306,6 +306,51 @@
     return(x)
 }
 
+# This function can be used to add values to altExp
+.add_to_altExps <- function(x, values, name = names(values), ...){
+    # Check values
+    if( !((is(values, "list") || is(values, "SimpleList")) &&
+            length(values) > 0) ){
+        stop("'values' must be non-empty list.", call. = FALSE)
+    }
+    # Check names
+    if( !is.character(name) && length(name) > 1L ){
+        stop("'name' must be a character value.", call. = FALSE)
+    }
+    # Names must match with list
+    if( length(values) != length(name) ){
+        stop("Lenght of 'name' must match with 'values'.", call. = FALSE)
+    }
+    #
+    # If the object is SE, convert it to TreeSE
+    if( !is(x, "SingleCellExperiment") ){
+        x <- as(x, "TreeSummarizedExperiment")
+        warning(
+            "SummarizedExperiment does not have altExps slot. ",
+            "Therefore, it is converted to TreeSummarizedExperiment.",
+            call. = FALSE)
+    }
+    #
+    # Add names to values
+    names(values) <- name
+    # Get altExps
+    old_altexp <- altExps(x)
+    # Check if names match with elements that are already present
+    f <- names(old_altexp) %in% names(values)
+    if( any(f) ){
+        warning(
+          "The following values are already present in `altExps` and will ",
+          "be overwritten: '",
+          paste(names(old_altexp)[f], collapse = "', '"),
+          "'. Consider using the 'name' argument to specify alternative ",
+          "names.", call. = FALSE)
+    }
+    # Keep only unique values
+    values <- c( old_altexp[!f], values )
+    # Add to altExps
+    altExps(x) <- values
+    return(x)
+}
 ################################################################################
 # Other common functions
 
@@ -427,15 +472,15 @@
 }
 
 ################################################################################
-# internal wrappers for agglomerateByRank/mergeRows
+# internal wrappers for agglomerateByRank/agglomerateByVariable
 .merge_features <- function(x, merge.by, ...) {
     # Check if merge.by parameter belongs to taxonomyRanks
     if (is.character(merge.by) && length(merge.by) == 1 && merge.by %in% taxonomyRanks(x)) {
          #Merge using agglomerateByRank
         x <- agglomerateByRank(x, rank = merge.by, ...)
     } else {
-        # Merge using mergeRows
-        x <- mergeRows(x, f = merge.by, ...)
+        # Merge using agglomerateByVariable
+        x <- agglomerateByVariable(x, MARGIN = "rows", f = merge.by, ...)
     }
     return(x)
 }
