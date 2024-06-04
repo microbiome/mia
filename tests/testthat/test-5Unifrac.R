@@ -50,10 +50,7 @@ test_that("Unifrac beta diversity", {
     # Test with merged object with multiple trees
     tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
     tse_replaced <- tse
-    links <- rowLinks(tse_replaced)
-    links[ links$whichTree != "phylo", ] <- NA
-    links <- links[ , "nodeLab" ]
-    rownames(tse_replaced) <- links
+    rownames(tse_replaced) <- rowLinks(tse)[,"nodeLab"]
     # Calculate unifrac
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_replaced), weighted = FALSE,
@@ -68,10 +65,7 @@ test_that("Unifrac beta diversity", {
     # Test the function with agglomerated data
     tse <- agglomerateByRank(tse, rank = "Phylum")
     tse_replaced <- tse
-    links <- rowLinks(tse_replaced)
-    links[ links$whichTree != "phylo", ] <- NA
-    links <- links[ , "nodeLab" ]
-    rownames(tse_replaced) <- links
+    rownames(tse_replaced) <- rowLinks(tse)[,"nodeLab"]
     # Calculate unifrac
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_replaced), weighted = FALSE,
