@@ -125,14 +125,14 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
               if(!.is_non_empty_string(name) ||
                  name == assay.type){
                   stop("'name' must be a non-empty single character value and be ",
-                       "different from `assay.type`.",
-                       call. = FALSE)
+                      "different from `assay.type`.",
+                      call. = FALSE)
               }
               #set.seed(seed)
               # Make sure min_size is of length 1.
               if(length(min_size) > 1){
                   stop("`min_size` had more than one value. ", 
-                       "Specifiy a single integer value.", call. = FALSE)
+                      "Specifiy a single integer value.", call. = FALSE)
                   min_size <- min_size[1]    
               }
               if(!is.numeric(min_size) || 
@@ -146,7 +146,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
                   # Return NULL, if no samples were found after subsampling
                   if( !any(!colnames(x) %in% rmsams) ){
                       stop("No samples were found after subsampling.",
-                           call. = FALSE)
+                          call. = FALSE)
                   }
                   if(verbose){
                       message(length(rmsams), " samples removed ",
@@ -174,7 +174,6 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
               return(newtse)
           }
 )
-
 
 ## Modified Sub sampling function from phyloseq internals
 .subsample_assay <- function(x, min_size, replace){
