@@ -253,6 +253,9 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
             stop("'rank' must be a non-empty single character value",
                 call. = FALSE)
         }
+        if(!onRankOnly){
+            stop("'Use 'agglomerateByVariable' instead.", call. = FALSE)
+        }
         if(!.is_a_bool(onRankOnly)){
             stop("'onRankOnly' must be TRUE or FALSE.", call. = FALSE)
         }
