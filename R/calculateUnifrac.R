@@ -223,7 +223,7 @@ runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
     # together. If nodeLabs were provided, merge based on those. Otherwise merge
     # based on rownames
     if( is.null(node.lab) ){
-      node.lab <- rownames(x)
+        node.lab <- rownames(x)
     }
     # Prune tree if there are nodes that cannot be found from tips or if there
     # are tips that cannot be found from abundance matrix. It might be

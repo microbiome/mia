@@ -357,19 +357,19 @@
 # keep dimnames of feature table (assay) consistent with the meta data 
 # of sample (colData) and feature (rowData)
 .set_feature_tab_dimnames <- function(feature_tab, 
-                                      col.data, 
+                                      sample_meta, 
                                       feature_meta) {
-    if (nrow(col.data) > 0 || ncol(col.data) > 0) {
-        if (ncol(feature_tab) != nrow(col.data) 
-            || !setequal(colnames(feature_tab), rownames(col.data))) {
+    if (nrow(sample_meta) > 0 || ncol(sample_meta) > 0) {
+        if (ncol(feature_tab) != nrow(sample_meta) 
+            || !setequal(colnames(feature_tab), rownames(sample_meta))) {
             stop(
                 "The sample ids in feature table are not incompatible ",
                 "with those in sample meta",
                 call. = FALSE
             )
         }
-        if (!identical(colnames(feature_tab), rownames(col.data))) {
-            feature_tab <- feature_tab[, rownames(col.data), drop = FALSE]
+        if (!identical(colnames(feature_tab), rownames(sample_meta))) {
+            feature_tab <- feature_tab[, rownames(sample_meta), drop = FALSE]
         }
     }
     

@@ -20,16 +20,16 @@ splitOn(x, ...)
 \S4method{splitOn}{TreeSummarizedExperiment}(
   x,
   f = NULL,
-  update.rowtree = update_rowTree,
+  agglomerate.tree = update_rowTree,
   update_rowTree = FALSE,
   ...
 )
 
 unsplitOn(x, ...)
 
-\S4method{unsplitOn}{list}(x, update.rowtree = update_rowTree, update_rowTree = FALSE, ...)
+\S4method{unsplitOn}{list}(x, agglomerate.tree = update_rowTree, update_rowTree = FALSE, ...)
 
-\S4method{unsplitOn}{SimpleList}(x, update.rowtree = update_rowTree, update_rowTree = FALSE, ...)
+\S4method{unsplitOn}{SimpleList}(x, agglomerate.tree = update_rowTree, update_rowTree = FALSE, ...)
 
 \S4method{unsplitOn}{SingleCellExperiment}(
   x,
@@ -64,12 +64,12 @@ dimensions, \code{MARGIN} must be specified.
 Split by cols is not encouraged, since this is not compatible with
 storing the results in \code{altExps}.}
 
-\item{update.rowtree}{\code{TRUE} or \code{FALSE}: Should the rowTree be updated
+\item{agglomerate.tree}{\code{TRUE} or \code{FALSE}: Should the rowTree be updated
 based on splitted data? Option is enabled when \code{x} is a
 \code{TreeSummarizedExperiment} object or a list of such objects.
-(By default: \code{update.rowtree = FALSE})}
+(By default: \code{agglomerate.tree  = FALSE})}
 
-\item{update_rowTree}{Deprecated. Use \code{update.rowtree} isntead.}
+\item{update_rowTree}{Deprecated. Use \code{agglomerate.tree } instead.}
 
 \item{altexp}{a \code{character} vector specifying the alternative experiments
 to be unsplit. (By default: \code{altexp = names(altExps(x))})}
@@ -125,7 +125,7 @@ altExps(tse) <- se_list
 altExps(tse)
 
 # If you want to split on columns and update rowTree, you can do
-se_list <- splitOn(tse, f = colData(tse)$group, update.rowtree = TRUE)
+se_list <- splitOn(tse, f = colData(tse)$group, agglomerate.tree  = TRUE)
 
 # If you want to combine groups back together, you can use unsplitBy
 unsplitOn(se_list)

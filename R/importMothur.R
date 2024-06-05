@@ -69,8 +69,8 @@ NULL
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom S4Vectors make_zero_col_DFrame
 #' @export
-importMothur <- function(sharedFile, 
-                         assay.file = sharedFile,
+importMothur <- function(assay.file = sharedFile,
+                         sharedFile, 
                          taxonomyFile = NULL,
                          row.file = taxonomyFile,
                          designFile = NULL,

@@ -20,8 +20,8 @@ test_that("splitOn", {
     expect_error(splitOn(assay(x), x$SampleType))
     expect_error(splitOn(x, "SampleType", use.names = 1))
     expect_error(splitOn(x, "SampleType", use.names = "TRUE"))
-    expect_error(splitOn(x, "SampleType", update.rowtree = 1))
-    expect_error(splitOn(x, "SampleType", update.rowtree = "TRUE"))
+    expect_error(splitOn(x, "SampleType", agglomerate.tree  = 1))
+    expect_error(splitOn(x, "SampleType", agglomerate.tree  = "TRUE"))
     
     # Test that names of elemetns are correct
     list <- splitOn(x, "SampleType")
@@ -41,7 +41,7 @@ test_that("splitOn", {
     
     # Test that number of tips of updated rowTree equals number of rows for
     # each tse in the list returned
-    list <- splitOn(x, "SampleType", update.rowtree = TRUE)
+    list <- splitOn(x, "SampleType", agglomerate.tree  = TRUE)
     for (k in length(list)){
         expect_equal( length(rowTree(list[[k]], "phylo")$tip.label), 
                       nrow(list[[k]]) )
@@ -53,8 +53,8 @@ test_that("splitOn", {
     mod_list <- list
     mod_list[[1]] <- mod_list[[1]][1:2, 1:2]
     expect_error( unsplitOn(mod_list) )
-    expect_error(unsplitOn(list, update.rowtree = 1))
-    expect_error(unsplitOn(list, update.rowtree = "TRUE"))
+    expect_error(unsplitOn(list, agglomerate.tree  = 1))
+    expect_error(unsplitOn(list, agglomerate.tree  = "TRUE"))
     
     # Test that works
     x_sub <- x[1:100, 1:10]

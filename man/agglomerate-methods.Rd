@@ -344,9 +344,9 @@ print(rownames(x3[1:3,]))
 rownames(x3) <- getTaxonomyLabels(x3, with.rank = TRUE)
 print(rownames(x3[1:3,]))
 
-# use 'remove.empty.ranks' to remove columns that include only NAs
+# use 'empty.ranks.rm' to remove columns that include only NAs
 x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum",
-                        remove.empty.ranks = TRUE)
+                        empty.ranks.rm = TRUE)
 head(rowData(x4))
 
 # If the assay contains NAs, you might want to consider replacing them,

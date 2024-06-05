@@ -45,10 +45,10 @@
 #'   to \code{getPrevalence} and \code{getPrevalentTaxa} and used in
 #'   \code{agglomeratebyPrevalence}
 #'   \itemize{
-#'        \item \code{remove.empty.ranks}: A single boolean value for selecting
+#'        \item \code{empty.ranks.rm}: A single boolean value for selecting
 #'        whether to remove those columns of rowData that include only NAs after
-#'        agglomeration. (By default: \code{remove.empty.ranks = FALSE})
-#'        \item \code{remove_empty_ranks} Deprecated. Use \code{remove.empty.ranks}
+#'        agglomeration. (By default: \code{empty.ranks.rm = FALSE})
+#'        \item \code{remove_empty_ranks} Deprecated. Use \code{empty.ranks.rm}
 #'        instead.
 #'        \item \code{make.unique}: A single boolean value for selecting
 #'        whether to make rownames unique. (By default: \code{make.unique = TRUE})
@@ -183,9 +183,9 @@
 #' rownames(x3) <- getTaxonomyLabels(x3, with.rank = TRUE)
 #' print(rownames(x3[1:3,]))
 #'
-#' # use 'remove.empty.ranks' to remove columns that include only NAs
+#' # use 'empty.ranks.rm' to remove columns that include only NAs
 #' x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum",
-#'                         remove.empty.ranks = TRUE)
+#'                         empty.ranks.rm = TRUE)
 #' head(rowData(x4))
 #'
 #' # If the assay contains NAs, you might want to consider replacing them,
@@ -406,14 +406,14 @@ setMethod(
 
 # This function removes empty rank columns from rowdata. (Those that include
 # only NA values)
-.remove_NA_cols_from_rowdata <- function(x, remove.empty.ranks = remove_empty_ranks, remove_empty_ranks = FALSE, ...){
-    # Check remove.empty.ranks
-    if( !.is_a_bool(remove.empty.ranks) ){
-        stop("'remove.empty.ranks' must be a boolean value.",
+.remove_NA_cols_from_rowdata <- function(x, empty.ranks.rm = remove_empty_ranks, remove_empty_ranks = FALSE, ...){
+    # Check empty.ranks.rm
+    if( !.is_a_bool(empty.ranks.rm) ){
+        stop("'empty.ranks.rm' must be a boolean value.",
             call. = FALSE)
     }
     # If user wants to remove those columns
-    if( remove.empty.ranks ){
+    if( empty.ranks.rm ){
         # Get columns that include taxonomy information
         rank_cols <- taxonomyRanks(x)
         # Get rowData with only taxonomy

@@ -5,8 +5,8 @@
 \title{Import Mothur results as a \code{TreeSummarizedExperiment}}
 \usage{
 importMothur(
-  sharedFile,
   assay.file = sharedFile,
+  sharedFile,
   taxonomyFile = NULL,
   row.file = taxonomyFile,
   designFile = NULL,
@@ -14,11 +14,11 @@ importMothur(
 )
 }
 \arguments{
-\item{sharedFile}{Deprecated. Use \code{assay.file} instead.}
-
 \item{assay.file}{a single \code{character} value defining the file
 path of the feature table to be imported. The File has to be in
 \code{shared file} format as defined in Mothur documentation.}
+
+\item{sharedFile}{Deprecated. Use \code{assay.file} instead.}
 
 \item{taxonomyFile}{Deprecated. Use \code{row.file} instead.}
 
