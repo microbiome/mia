@@ -422,7 +422,9 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         }
         # If pseudocount TRUE, set it to half of non-zero minimum value, else set 
         # it to zero
-        pseudocount <- ifelse(pseudocount, min(mat[mat>0] / 2), 0)
+        # get min value
+        value <- min(mat[mat>0] 
+        pseudocount <- ifelse(pseudocount, value / 2), 0)
         # Report pseudocount if positive value
         if ( pseudocount > 0 ){
             message("A pseudocount of ", pseudocount, " was applied.")
