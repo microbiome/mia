@@ -132,7 +132,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
               # Make sure min_size is of length 1.
               if(length(min_size) > 1){
                   stop("`min_size` had more than one value. ", 
-                      "Specifiy a single integer value.", call. = FALSE)
+                      "Specify a single integer value.", call. = FALSE)
                   min_size <- min_size[1]    
               }
               if(!is.numeric(min_size) || 
