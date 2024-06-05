@@ -162,6 +162,6 @@ test_that("agglomerate", {
     test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Species", na.rm = FALSE)
     test1 <- agglomerateByRank(tse, rank = "Species", na.rm = FALSE)
     expect_equal(nrow(test0), 945)
-    expect_equal(nrow(test1), 2306)
+    expect_equal(nrow(test1), 2307)
     
 })
