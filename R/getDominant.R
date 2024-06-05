@@ -77,8 +77,8 @@ NULL
 #' @export
 setGeneric("getDominant",signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
-                    rank = NULL, other.name = "Other", n = NULL, 
-                    complete = TRUE, ...)
+                    rank = NULL, other.name = "Other", n = NULL, complete = TRUE, 
+                    onRankOnly = TRUE,...)
                standardGeneric("getDominant"))
 
 #' @rdname getDominant
@@ -86,7 +86,8 @@ setGeneric("getDominant",signature = c("x"),
 #' @export
 setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-             rank = NULL, other.name = "Other", n = NULL, complete = TRUE, ...){
+             rank = NULL, other.name = "Other", n = NULL, complete = TRUE, 
+             onRankOnly = TRUE,...){
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
@@ -101,7 +102,7 @@ setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
         # If "rank" is not NULL, species are aggregated according to the
         # taxonomic rank that is specified by user.
         if(!is.null(rank)){
-            x <- agglomerateByRank(x, rank, ...)
+            x <- agglomerateByRank(x, rank, onRankOnly,...)
             mat <- assay(x, assay.type)
         } # Otherwise, if "rank" is NULL, abundances are stored without ranking
         else {
@@ -167,14 +168,15 @@ setMethod("getDominant", signature = c(x = "SummarizedExperiment"),
 #' @rdname getDominant
 #' @export
 setGeneric("addDominant", signature = c("x"),
-           function(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
+           function(x, rank = NULL, name = "dominant_taxa", other.name = "Other", 
+                    n = NULL, complete = TRUE, onRankOnly = TRUE, ...)
                standardGeneric("addDominant"))
 
 #' @rdname getDominant
 #' @export
 setMethod("addDominant", signature = c(x = "SummarizedExperiment"),
-    function(x, name = "dominant_taxa", other.name = "Other", n = NULL, 
-             complete = FALSE, ...) {
+    function(x, rank = NULL, name = "dominant_taxa", other.name = "Other", 
+             n = NULL, complete = TRUE, onRankOnly = TRUE, ...) {
         # name check
         if(!.is_non_empty_string(name)){
             stop("'name' must be a non-empty single character value.",
@@ -186,7 +188,8 @@ setMethod("addDominant", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         dom.taxa <- getDominant(x, other.name = other.name, n = n, 
-                                              complete = complete, ...)
+                                complete = complete, rank = rank,
+                                onRankOnly = onRankOnly, ...)
         # Add list into colData if there are multiple dominant taxa
         if(length(unique(names(dom.taxa))) < length(names(dom.taxa))) {
             # Store order

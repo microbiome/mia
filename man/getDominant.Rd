@@ -15,6 +15,7 @@ getDominant(
   other.name = "Other",
   n = NULL,
   complete = TRUE,
+  onRankOnly = TRUE,
   ...
 )
 
@@ -26,17 +27,29 @@ getDominant(
   other.name = "Other",
   n = NULL,
   complete = TRUE,
+  onRankOnly = TRUE,
   ...
 )
 
-addDominant(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
-
-\S4method{addDominant}{SummarizedExperiment}(
+addDominant(
   x,
+  rank = NULL,
   name = "dominant_taxa",
   other.name = "Other",
   n = NULL,
-  complete = FALSE,
+  complete = TRUE,
+  onRankOnly = TRUE,
+  ...
+)
+
+\S4method{addDominant}{SummarizedExperiment}(
+  x,
+  rank = NULL,
+  name = "dominant_taxa",
+  other.name = "Other",
+  n = NULL,
+  complete = TRUE,
+  onRankOnly = TRUE,
   ...
 )
 }
