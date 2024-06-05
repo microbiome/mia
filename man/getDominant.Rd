@@ -15,7 +15,6 @@ getDominant(
   other.name = "Other",
   n = NULL,
   complete = TRUE,
-  onRankOnly = TRUE,
   ...
 )
 
@@ -27,7 +26,6 @@ getDominant(
   other.name = "Other",
   n = NULL,
   complete = TRUE,
-  onRankOnly = TRUE,
   ...
 )
 
@@ -38,7 +36,6 @@ addDominant(
   other.name = "Other",
   n = NULL,
   complete = TRUE,
-  onRankOnly = TRUE,
   ...
 )
 
@@ -49,7 +46,6 @@ addDominant(
   other.name = "Other",
   n = NULL,
   complete = TRUE,
-  onRankOnly = TRUE,
   ...
 )
 }
