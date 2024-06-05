@@ -6,30 +6,33 @@
 #'
 #' @param file biom file location
 #' 
+#' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
+#' taxonomic prefixes be removed? The prefixes is removed only from detected
+#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
+#' (default \code{removeTaxaPrefixes = FALSE})
+#' 
+#' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
+#' taxonomic ranks on feature table, should they be scraped from prefixes?
+#' (default \code{rankFromPrefix = FALSE})
+#' 
+#' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
+#' some taxonomic character naming artifacts, should they be removed.
+#' (default \code{remove.artifacts = FALSE})
+#' 
 #' @param ... additional arguments 
 #'   \itemize{
-#'        \item{\code{pattern}}{\code{character} value specifying artifacts
+#'        \item \code{patter}: \code{character} value specifying artifacts
 #'        to be removed. If \code{patterns = "auto"}, special characters
-#'        are removed. (default: \code{pattern = "auto"})}
-#'        \item{\code{removeTaxaPrefixes}}{\code{TRUE} or \code{FALSE}: Should
-#'        taxonomic prefixes be removed? The prefixes is removed only from 
-#'        detected taxa columns meaning that \code{rankFromPrefix} should be 
-#'        enabled in the most cases. 
-#'        (default \code{removeTaxaPrefixes = FALSE})}
-#'        \item{\code{rankFromPrefix}}{\code{TRUE} or \code{FALSE}: If file does
-#'         not have taxonomic ranks on feature table, should they be scraped 
-#'         from prefixes? (default \code{rankFromPrefix = FALSE})}
-#'         \item{\code{remove.artifacts}}{\code{TRUE} or \code{FALSE}: If file 
-#'         have some taxonomic character naming artifacts, should they be 
-#'         removed. (default \code{remove.artifacts = FALSE})}}
+#'        are removed. (default: \code{pattern = "auto"})
+#'    }
 #' 
 #' @return An object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
-#' @name importBIOM
-#' 
+#' @name convert
 #' @seealso
-#' \code{\link[=convert]{convert}}
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #'
@@ -41,6 +44,10 @@
 #' 
 #' # Make TreeSE from biom file
 #' tse <- importBIOM(biom_file)
+#' 
+#' # Make TreeSE from biom object
+#' biom_object <- biomformat::read_biom(biom_file)
+#' tse <- makeTreeSEFromBiom(biom_object)
 #' 
 #' # Get taxonomyRanks from prefixes and remove prefixes
 #' tse <- importBIOM(biom_file,
@@ -56,7 +63,7 @@
 #'                     remove.artifacts = TRUE)
 NULL
 
-#' @rdname importBIOM
+#' @rdname convert
 #' @export
 importBIOM <- function(file, ...) {
     .require_package("biomformat")
@@ -66,9 +73,11 @@ importBIOM <- function(file, ...) {
 
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
-.make_TreeSE_from_biom <- function(
-        obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
-        remove.artifacts = FALSE, ...){
+#' @rdname convert
+#' @export
+convertFromBiom <- function(
+    obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
+    remove.artifacts = FALSE, ...){
     # input check
     .require_package("biomformat")
     if(!is(obj,"biom")){

@@ -69,8 +69,8 @@ setMethod("makeTreeSummarizedExperimentFromPhyloseq",
             signature = c(x = "ANY"), function(x){
                 .Deprecated(msg = paste0(
                     "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
-                    " Use 'convert' instead."))
-                convert(x)
+                    " Use 'convertFromPhyloseq' instead."))
+                convertFromPhyloseq(x)
             }
 )
 
@@ -104,8 +104,8 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment",
             signature = c(x = "ANY"), function(x, ...){
                 .Deprecated(msg = paste0(
                     "'makePhyloseqFromTreeSummarizedExperiment' is deprecated.",
-                    " Use 'convert' instead."))
-                convert(x, ...)
+                    " Use 'convertToPhyloseq' instead."))
+                convertToPhyloseq(x, ...)
             }
 )
 
@@ -121,8 +121,8 @@ setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "ANY"), function(x, ...){
               .Deprecated(msg = paste0(
                   "'makePhyloseqFromTreeSE' is deprecated.",
-                  " Use 'convert' instead."))
-              convert(x, ...)
+                  " Use 'convertToPhyloseq' instead."))
+              convertToPhyloseq(x, ...)
           }
 )
 
@@ -276,8 +276,8 @@ setMethod("mergeFeaturesByPrevalence", signature = c(x = "SummarizedExperiment")
 makeTreeSEFromBiom <- function(...){
     .Deprecated(msg = paste0(
         "'makeTreeSEFromBiom' is deprecated.",
-        " Use 'convert' instead."))
-    convert(...)
+        " Use 'convertFromBIOM' instead."))
+    convertFromBIOM(...)
 }
 
 #' @rdname deprecate
@@ -285,8 +285,8 @@ makeTreeSEFromBiom <- function(...){
 makeTreeSummarizedExperimentFromBiom <- function(...){
     .Deprecated(msg = paste0(
         "'makeTreeSummarizedExperimentFromBiom' is deprecated.",
-        " Use 'convert' instead."))
-    convert(...)
+        " Use 'convertFromBIOM' instead."))
+    convertFromBIOM(...)
 }
 
 #' @rdname deprecate
@@ -294,8 +294,8 @@ makeTreeSummarizedExperimentFromBiom <- function(...){
 makeTreeSEFromDADA2 <- function(...) {
     .Deprecated(msg = paste0(
         "'makeTreeSEFromDADA2' is deprecated.",
-        " Use 'convert' instead."))
-    convert(...)
+        " Use 'convertFromDADA2' instead."))
+    convertFromDADA2(...)
 }
 
 #' @rdname deprecate
@@ -303,8 +303,8 @@ makeTreeSEFromDADA2 <- function(...) {
 makeTreeSummarizedExperimentFromDADA2 <- function(...) {
     .Deprecated(msg = paste0(
         "'makeTreeSummarizedExperimentFromDADA2' is deprecated.",
-        " Use 'convert' instead."))
-    convert(...)
+        " Use 'convertFromDADA2' instead."))
+    convertFromDADA2(...)
 }
 
 #' @rdname deprecate
@@ -312,8 +312,8 @@ makeTreeSummarizedExperimentFromDADA2 <- function(...) {
 makeTreeSEFromPhyloseq <- function(x) {
     .Deprecated(msg = paste0(
         "'makeTreeSEFromPhyloseq' is deprecated.",
-        " Use 'convert' instead."))
-    convert(...)
+        " Use 'convertFromPhyloseq' instead."))
+    convertFromPhyloseq(...)
 }
 
 #' @rdname deprecate
