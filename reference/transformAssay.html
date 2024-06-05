@@ -212,16 +212,16 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"clr"</span>, </span></span>
 <span class="r-in"><span>                     pseudocount <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span>                     <span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> A pseudocount of 0.00196078431372549 was applied.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> A pseudocount of 0.00392156862745098 was applied.</span>
 <span class="r-in"><span>                      </span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"clr"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  B          C           D</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22  3.8466481  2.4264566  1.39281014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 -0.9945089  0.3723329 -1.14435965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12  0.8013473  2.0587318 -1.14435965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 -0.9945089  0.3723329  0.05824235</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  -0.9945089 -1.2371050  0.05824235</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 -0.9945089 -1.2371050  0.05824235</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_22  3.4161459  2.0677373  1.10139252</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59_5_13 -0.7397308  0.1706173 -0.81874812</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59_8_12  0.5165446  1.7110624 -0.81874812</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65_3_22 -0.7397308  0.1706173 -0.04661252</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65_5_1  -0.7397308 -0.9279950 -0.04661252</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65_1_10 -0.7397308 -0.9279950 -0.04661252</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With MARGIN, you can specify the if transformation is done for samples or</span></span></span>
 <span class="r-in"><span><span class="co"># for features. Here Z-transformation is done feature-wise.</span></span></span>
