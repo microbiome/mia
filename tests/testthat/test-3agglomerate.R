@@ -157,4 +157,11 @@ test_that("agglomerate", {
     # Test that dimentionality is the same when NA values are removed.
     expect_equal(nrow(test0), length( all_phyla[!is.na(all_phyla)] ))
     expect_equal(nrow(test1), length( all_phyla[!is.na(all_phyla)] ))
+    
+    # Check that there are more taxa when agglomeration is to "Species" level
+    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Species", na.rm = FALSE)
+    test1 <- agglomerateByRank(tse, rank = "Species", na.rm = FALSE)
+    expect_equal(nrow(test0), 945)
+    expect_equal(nrow(test1), 2306)
+    
 })
