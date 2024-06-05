@@ -1,6 +1,6 @@
 context("Unifrac beta diversity")
 test_that("Unifrac beta diversity", {
-    
+    browser()
     data(esophagus, package="mia")
     tse <- esophagus
     tse <- transformAssay(tse, assay.type="counts", method="relabundance")
@@ -49,10 +49,16 @@ test_that("Unifrac beta diversity", {
     
     # Test with merged object with multiple trees
     tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
-    tse_replaced <- tse
-    rownames(tse_replaced) <- rowLinks(tse)[,"nodeLab"]
     # Calculate unifrac
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
+    tse_replaced <- tse
+    nodeLab <- rowLinks(tse)[ , "nodeLab" ]
+    if( any( !nodeLab %in% rowTree(tse, "phylo")$tip.label ) ||
+        any( !rowTree(tse, "phylo")$tip.label %in% nodeLab) ){
+      rowTree(tse, "phylo") <- .prune_tree(rowTree(tse, "phylo"), nodeLab)
+      warning("Pruning tree...", call. = FALSE)
+    }
+    rownames(tse_replaced) <- rowLinks(tse)[,"nodeLab"]
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_replaced), weighted = FALSE,
                                               rowTree(tse_replaced)))
     expect_equal(unifrac_mia, unifrac_rbiom)
