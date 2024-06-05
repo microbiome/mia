@@ -688,7 +688,12 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment rowData
-.get_tax_groups <- function(x, col, onRankOnly = FALSE){
+.get_tax_groups <- function(x, col, onRankOnly = FALSE, ...){
+    # input check
+    if(!.is_a_bool(onRankOnly)){
+        stop("'onRankOnly' must be TRUE or FALSE.", call. = FALSE)
+    }
+    
     tax_cols <- .get_tax_cols_from_se(x)
     tax_col_n <- seq_along(tax_cols)
     if(length(tax_col_n) < col){

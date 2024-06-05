@@ -91,20 +91,20 @@ test_that("agglomerate", {
     data(SilvermanAGutData)
     se <- SilvermanAGutData
     # checking reference consensus sequence generation
-    actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE)
+    actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE, onRankOnly = TRUE)
     expect_equal(as.character(referenceSeq(actual)[[1]]),
-                 paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
-                        "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
-                        "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
-                        "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
-                        "TTGAGGCACGAAAGCGTGGGG"))
+                 paste0("GCAAGCGTTAATCGGAATTACTGGGCGTAAAGCGCACGCAGGCGGTCTGTCA",
+                        "AGTCGGATGTGAAATCCCCGGGCTCAACCTGGGAACTGCATTCGAAACTGGC",
+                        "AGGCTAGAGTCTTGTAGAGGGGGGTAGAATTCCAGGTGTAGCGGTGAAATGC",
+                        "GTAGAGATCTGGAGGAATACCGGTGGCGAAGGCGGCCCCCTGGACAAAGACT",
+                        "GACGCTCAGGTGCGAAAGCGTGGGG"))
     actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = TRUE)
     expect_equal(as.character(referenceSeq(actual)[[1]]),
-                 paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYMM",
-                        "KHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNND",
-                        "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
-                        "RWDWTNDBRVRRAMHHCMRDKKSSRARGSSVSYYHNYBRRVHNDNNHYKRMVV",
-                        "YKVRDNNNSRAARSBDKGGKK"))
+                 paste0("GCGAGCGTTATCCGGAATCATTGGGCGTAAAGGGTGCGTAGGCGGCGAGTTA",
+                        "AGTCTGAGGTAAAAGGTTGCAGCTCAACTGTAACAAGCCTTGGAAACTGACT",
+                        "AGCTAGAGTGCAGGAGAGGGCAGTGGAATTCCATGTGTAGCGGTAAAATGCG",
+                        "TAGATATATGGAGGAACACCAGTGGCGAAGGCGGCTGTCTGGCCTGTAACTG",
+                        "ACGCTGAGGCACGAAAGCGTGGGG"))
     # Test that remove_empty_ranks work
     expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = NULL))
     expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
@@ -124,7 +124,7 @@ test_that("agglomerate", {
     data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
     tse <- transformAssay(tse, assay.type="counts", method="relabundance")
-    altExp(tse, "Family") <- agglomerateByRank(tse, rank="Family")
+    altExp(tse, "Family") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE)
     altExp(tse, "Family1") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE)
     altExp(tse, "Family2") <- agglomerateByRank(tse, rank="Family", onRankOnly = FALSE)
     altExp(tse, "Family3") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE, na.rm = TRUE)
@@ -133,19 +133,19 @@ test_that("agglomerate", {
     
     # Other group is added by agglomerateByPrevalence function to collect features under threshold
     actual <- agglomerateByPrevalence(tse, rank="Family", assay.type="relabundance", 
-                                         detection  = 0.5/100, prevalence  = 20/100)
+        detection  = 0.5/100, prevalence  = 20/100, onRankOnly = TRUE)
     actual0 <- agglomerateByPrevalence(altExp(tse, "Family"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
+        detection  = 0.5/100, prevalence  = 20/100)
     actual1 <- agglomerateByPrevalence(altExp(tse, "Family1"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
+        detection  = 0.5/100, prevalence  = 20/100)
     actual2 <- agglomerateByPrevalence(altExp(tse, "Family2"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
+        detection  = 0.5/100, prevalence  = 20/100)
     actual3 <- agglomerateByPrevalence(altExp(tse, "Family3"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
+        detection  = 0.5/100, prevalence  = 20/100)
     actual4 <- agglomerateByPrevalence(altExp(tse, "Family4"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
+        detection  = 0.5/100, prevalence  = 20/100)
     actual5 <- agglomerateByPrevalence(altExp(tse, "Family5"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
+        detection  = 0.5/100, prevalence  = 20/100)
     
     # The values of actual( "", 0, 1, 4, 5) are equal since the factor group is created with groups
     # at the family level i.e onRankOnly (tax_cols[tax_col_n == col]).
