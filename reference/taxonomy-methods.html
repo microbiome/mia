@@ -304,7 +304,7 @@ be accessed using <code>metadata(df)$confidence</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 278222                     NA                NA                     NA</span>
 <span class="r-in"><span><span class="co"># returns specific unique taxonomic information</span></span></span>
 <span class="r-in"><span><span class="fu">mapTaxonomy</span><span class="op">(</span><span class="va">GlobalPatterns</span>, taxa <span class="op">=</span> <span class="st">"Escherichia"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $Escherichia</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 1 row and 7 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Kingdom         Phylum               Class             Order</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        &lt;character&gt;    &lt;character&gt;         &lt;character&gt;       &lt;character&gt;</span>
@@ -315,7 +315,8 @@ be accessed using <code>metadata(df)$confidence</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># returns information on a single output</span></span></span>
 <span class="r-in"><span><span class="fu">mapTaxonomy</span><span class="op">(</span><span class="va">GlobalPatterns</span>, taxa <span class="op">=</span> <span class="st">"Escherichia"</span>,to<span class="op">=</span><span class="st">"Family"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Enterobacteriaceae"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Escherichia </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Enterobacteriaceae" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># setTaxonomyRanks</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
