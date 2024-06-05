@@ -90,6 +90,38 @@ test_that("agglomerate", {
     expect_warning(agglomerateByRank(se1, rank = "Phylum"))
     expect_warning(agglomerateByRank(se1, rank = "Order"))
 
+    
+    # Load data
+    data(GlobalPatterns, package="mia")
+    tse <- GlobalPatterns
+
+    # Check that na.rm works
+    # Get all phyla
+    all_phyla <- unique( rowData(tse)$Phylum )
+    
+    # When na.rm = FALSE, then phyla should also include NA --> one extra row
+    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Phylum", na.rm = FALSE)
+    test1 <- agglomerateByRank(tse, rank = "Phylum", na.rm = FALSE)
+    
+    # Test that dimentionality is the same for merging object by agglomerateByRank
+    # and agglomerateByVariable.
+    expect_equal(nrow(test0), length(all_phyla))
+    expect_equal(nrow(test1), length(all_phyla))
+    
+    # When na.rm = TRUE, there should be as many rows as there are non-NA phyla
+    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Phylum", na.rm = TRUE)
+    test1 <- agglomerateByRank(tse, rank = "Phylum", na.rm = TRUE)
+    
+    # Test that dimentionality is the same when NA values are removed.
+    expect_equal(nrow(test0), length( all_phyla[!is.na(all_phyla)] ))
+    expect_equal(nrow(test1), length( all_phyla[!is.na(all_phyla)] ))
+    
+    # Check that there are more taxa when agglomeration is to "Species" level
+    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Species", na.rm = FALSE)
+    test1 <- agglomerateByRank(tse, rank = "Species", na.rm = FALSE)
+    expect_equal(nrow(test0), 945)
+    expect_equal(nrow(test1), 2307)
+    
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
     data(SilvermanAGutData)
@@ -132,36 +164,4 @@ test_that("agglomerate", {
     not_uniq <- agglomerateByRank(se, rank = "Species", make_unique = FALSE)
     expect_true( !any( duplicated(rownames(uniq)) ) )
     expect_true( any( duplicated(rownames(not_uniq)) ) )
-    
-    # Load data
-    data(GlobalPatterns, package="mia")
-    tse <- GlobalPatterns
-
-    # Check that na.rm works
-    # Get all phyla
-    all_phyla <- unique( rowData(tse)$Phylum )
-    
-    # When na.rm = FALSE, then phyla should also include NA --> one extra row
-    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Phylum", na.rm = FALSE)
-    test1 <- agglomerateByRank(tse, rank = "Phylum", na.rm = FALSE)
-    
-    # Test that dimentionality is the same for merging object by agglomerateByRank
-    # and agglomerateByVariable.
-    expect_equal(nrow(test0), length(all_phyla))
-    expect_equal(nrow(test1), length(all_phyla))
-    
-    # When na.rm = TRUE, there should be as many rows as there are non-NA phyla
-    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Phylum", na.rm = TRUE)
-    test1 <- agglomerateByRank(tse, rank = "Phylum", na.rm = TRUE)
-    
-    # Test that dimentionality is the same when NA values are removed.
-    expect_equal(nrow(test0), length( all_phyla[!is.na(all_phyla)] ))
-    expect_equal(nrow(test1), length( all_phyla[!is.na(all_phyla)] ))
-    
-    # Check that there are more taxa when agglomeration is to "Species" level
-    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Species", na.rm = FALSE)
-    test1 <- agglomerateByRank(tse, rank = "Species", na.rm = FALSE)
-    expect_equal(nrow(test0), 945)
-    expect_equal(nrow(test1), 2307)
-    
 })
