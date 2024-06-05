@@ -64,7 +64,7 @@
 #'        threshold be applied on compositional (relative) abundances?
 #'        (default: \code{FALSE})
 #'        \item \code{mergeRefSeq} \code{TRUE} or \code{FALSE}: Should a
-#'        onsensus sequence be calculated? If set to \code{FALSE}, the result
+#'        consensus sequence be calculated? If set to \code{FALSE}, the result
 #'        from \code{archetype} is returned; If set to \code{TRUE} the result
 #'        from
 #'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
