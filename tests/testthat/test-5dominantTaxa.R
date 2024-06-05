@@ -33,8 +33,7 @@ test_that("getDominant", {
         names(exp.vals.two) <- exp.names.one
         expect_equal(getDominant(tse,
                                            rank = "Genus",
-                                           onRankOnly = FALSE,
-                                           na.rm = FALSE)[1:15],
+                                           onRankOnly = FALSE)[1:15],
                      exp.vals.two)
 
         # Check if DominantTaxa is added to coldata
@@ -42,9 +41,10 @@ test_that("getDominant", {
                                             name="dominant"))$dominant[1:15],
                      exp.vals.one)
         expect_equal(colData(addDominant(tse,
-                                            rank = "Genus",
-                                            na.rm = FALSE,
-                                            name="dominant"))$dominant[1:15],
+                                         rank = "Genus",
+                                         onRankOnly = FALSE,
+                                         name="dominant",
+                                         complete = TRUE))$dominant[1:15],
                      exp.vals.two)
         
         tse1 <- tse
