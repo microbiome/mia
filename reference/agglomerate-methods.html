@@ -75,6 +75,7 @@ experiments and flattens them again into a single
 <span><span class="fu">agglomerateByRank</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  rank <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>  onRankOnly <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  empty.fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">""</span>, <span class="st">" "</span>, <span class="st">"\t"</span>, <span class="st">"-"</span>, <span class="st">"_"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -167,6 +168,12 @@ See <code>agglomerateByRank</code> for more details.</p></dd>
 <dt>rank</dt>
 <dd><p>a single character defining a taxonomic rank. Must be a value of
 <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p></dd>
+
+
+<dt>onRankOnly</dt>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should information only from
+the specified rank be used or from ranks equal and above? See details.
+(default: <code>onRankOnly = FALSE</code>)</p></dd>
 
 
 <dt>na.rm</dt>
@@ -311,7 +318,13 @@ retained as defined by <code>archetype</code>.
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> are
 agglomerated, i.e. summed up. If the assay contains values other than counts
 or absolute values, this can lead to meaningless values being produced.</p>
-<p>Agglomeration sums up the values of assays at the specified taxonomic level. With
+<p>When using <code>agglomerateByRank</code>, please note that depending on the
+available taxonomic data and its structure, setting<code>onRankOnly = TRUE</code>
+has certain implications on the interpretability of your results. If no loops
+exist (loops meaning two higher ranks containing the same lower rank), the
+results should be comparable. You can check for loops using
+<code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/detectLoop.html" class="external-link">detectLoop</a></code>.</p>
+<p>Also, agglomeration sums up the values of assays at the specified taxonomic level. With
 certain assays, e.g. those that include binary or negative values, this summing
 can produce meaningless values. In those cases, consider performing agglomeration
 first, and then applying the transformation afterwards.</p>
@@ -371,13 +384,13 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 19216</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 335</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># agglomerate the tree as well</span></span></span>
 <span class="r-in"><span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank<span class="op">=</span><span class="st">"Family"</span>,</span></span>
 <span class="r-in"><span>                       agglomerate.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># same number of rows, but</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 335</span>
 <span class="r-in"><span><span class="fu">rowTree</span><span class="op">(</span><span class="va">x1</span><span class="op">)</span> <span class="co"># ... different</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 19216 tips and 19215 internal nodes.</span>
@@ -390,12 +403,12 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rooted; includes branch lengths.</span>
 <span class="r-in"><span><span class="fu">rowTree</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># ... tree</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 603 tips and 602 internal nodes.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 335 tips and 334 internal nodes.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Tip labels:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   549322, 951, 244423, 143239, 215972, 138353, ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   549322, 951, 215972, 138353, 546313, 173903, ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Node labels:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 0.943.7, ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   , 0.858.4, 0.764.3, 0.995.2, 0.985.6, 1.000.112, ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rooted; includes branch lengths.</span>
 <span class="r-in"><span></span></span>
@@ -414,7 +427,7 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5603</span>
 <span class="r-in"><span><span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank<span class="op">=</span><span class="st">"Family"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x3</span><span class="op">)</span> <span class="co"># different from x2</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 334</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Because all the rownames are from the same rank, rownames do not include</span></span></span>
 <span class="r-in"><span><span class="co"># prefixes, in this case "Family:".</span></span></span>
@@ -631,10 +644,10 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">unsplitByRanks</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 2692 26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 2672 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(2692): Kingdom:Archaea Kingdom:Bacteria ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(2672): Kingdom:Archaea Kingdom:Bacteria ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Species:proteobacteriumsymbiontofOsedaxsp.MB4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Species:symbiontofNoeetapupillata</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(8): Kingdom Phylum ... Species taxonomicLevel</span>
