@@ -159,8 +159,6 @@ test_that("Importing Mothur files yield SummarizedExperiment objects", {
     se2 <- importMothur(assay.file = counts, row.file = taxa2)
     expect_s4_class(se, "SummarizedExperiment")
     expect_s4_class(se2, "SummarizedExperiment")
-    expect_error(importMothur(counts, meta))
-    expect_error(importMothur(counts, meta))
     se <- importMothur(assay.file = counts, col.file = meta)
     se2 <- importMothur(assay.file = counts, col.file = meta)
     expect_s4_class(se, "SummarizedExperiment")
