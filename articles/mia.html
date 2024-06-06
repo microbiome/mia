@@ -210,7 +210,7 @@ information on merging have a look at the man page via
 <pre><code><span><span class="co">## [1] 19216</span></span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 335</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 603</span></span></code></pre>
 <p>Tree data can also be shrunk alongside agglomeration, but this is
 turned of by default.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
@@ -218,7 +218,7 @@ turned of by default.</p>
 <span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deprecate.html">mergeFeaturesByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>                        agglomerateTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># same number of rows, but</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 335</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 603</span></span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-accessor.html" class="external-link">rowTree</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span> <span class="co"># ... different</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
@@ -233,12 +233,12 @@ turned of by default.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-accessor.html" class="external-link">rowTree</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># ... tree</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Phylogenetic tree with 335 tips and 334 internal nodes.</span></span>
+<span><span class="co">## Phylogenetic tree with 603 tips and 602 internal nodes.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Tip labels:</span></span>
-<span><span class="co">##   549322, 951, 215972, 138353, 546313, 173903, ...</span></span>
+<span><span class="co">##   549322, 951, 244423, 143239, 215972, 138353, ...</span></span>
 <span><span class="co">## Node labels:</span></span>
-<span><span class="co">##   , 0.858.4, 0.764.3, 0.995.2, 0.985.6, 1.000.112, ...</span></span>
+<span><span class="co">##   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 0.943.7, ...</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Rooted; includes branch lengths.</span></span></code></pre>
 <p>For <code>mergeFeaturesByRank</code> to work, taxonomic data must be
@@ -282,7 +282,7 @@ settings different number of rows will be returned.</p>
 <pre><code><span><span class="co">## [1] 944  26</span></span></code></pre>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"species"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 945  26</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 2307   26</span></span></code></pre>
 <p>For convenience the function <code>agglomerateByRanks</code> is
 available, which agglomerates data on all <code>ranks</code> selected.
 By default all available ranks will be used. The output is compatible to
