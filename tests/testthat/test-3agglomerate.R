@@ -86,41 +86,6 @@ test_that("agglomerate", {
     expect_warning(mergeFeaturesByRank(se1, rank = "Phylum"))
     expect_warning(mergeFeaturesByRank(se1, rank = "Order"))
 
-    # Load data from miaTime package
-    skip_if_not(require("miaTime", quietly = TRUE))
-    data(SilvermanAGutData)
-    se <- SilvermanAGutData
-    # checking reference consensus sequence generation
-    actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE, onRankOnly = TRUE)
-    expect_equal(as.character(referenceSeq(actual)[[1]]),
-                 paste0("GCAAGCGTTAATCGGAATTACTGGGCGTAAAGCGCACGCAGGCGGTCTGTCA",
-                        "AGTCGGATGTGAAATCCCCGGGCTCAACCTGGGAACTGCATTCGAAACTGGC",
-                        "AGGCTAGAGTCTTGTAGAGGGGGGTAGAATTCCAGGTGTAGCGGTGAAATGC",
-                        "GTAGAGATCTGGAGGAATACCGGTGGCGAAGGCGGCCCCCTGGACAAAGACT",
-                        "GACGCTCAGGTGCGAAAGCGTGGGG"))
-    actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = TRUE)
-    expect_equal(as.character(referenceSeq(actual)[[1]]),
-                 paste0("GCGAGCGTTATCCGGAATCATTGGGCGTAAAGGGTGCGTAGGCGGCGAGTTA",
-                        "AGTCTGAGGTAAAAGGTTGCAGCTCAACTGTAACAAGCCTTGGAAACTGACT",
-                        "AGCTAGAGTGCAGGAGAGGGCAGTGGAATTCCATGTGTAGCGGTAAAATGCG",
-                        "TAGATATATGGAGGAACACCAGTGGCGAAGGCGGCTGTCTGGCCTGTAACTG",
-                        "ACGCTGAGGCACGAAAGCGTGGGG"))
-    # Test that remove_empty_ranks work
-    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = NULL))
-    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
-    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = 1))
-    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = c(TRUE, TRUE)))
-    x <- mergeFeaturesByRank(se, rank = "Class")
-    rd1 <- rowData(x)[, 1:3]
-    x <- mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = TRUE)
-    rd2 <- rowData(x)
-    expect_equal(rd1, rd2)
-    # Test that make_unique work
-    uniq <- mergeFeaturesByRank(se, rank = "Species")
-    not_uniq <- mergeFeaturesByRank(se, rank = "Species", make_unique = FALSE)
-    expect_true( !any( duplicated(rownames(uniq)) ) )
-    expect_true( any( duplicated(rownames(not_uniq)) ) )
-    
     data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
     tse <- transformAssay(tse, assay.type="counts", method="relabundance")
@@ -158,6 +123,41 @@ test_that("agglomerate", {
     expect_equal(nrow(actual3), 20)
     expect_equal(nrow(actual), nrow(actual4))
     expect_equal(nrow(actual), nrow(actual5))
+    
+    # Load data from miaTime package
+    skip_if_not(require("miaTime", quietly = TRUE))
+    data(SilvermanAGutData)
+    se <- SilvermanAGutData
+    # checking reference consensus sequence generation
+    actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE, onRankOnly = TRUE)
+    expect_equal(as.character(referenceSeq(actual)[[1]]),
+                 paste0("GCAAGCGTTAATCGGAATTACTGGGCGTAAAGCGCACGCAGGCGGTCTGTCA",
+                        "AGTCGGATGTGAAATCCCCGGGCTCAACCTGGGAACTGCATTCGAAACTGGC",
+                        "AGGCTAGAGTCTTGTAGAGGGGGGTAGAATTCCAGGTGTAGCGGTGAAATGC",
+                        "GTAGAGATCTGGAGGAATACCGGTGGCGAAGGCGGCCCCCTGGACAAAGACT",
+                        "GACGCTCAGGTGCGAAAGCGTGGGG"))
+    actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = TRUE)
+    expect_equal(as.character(referenceSeq(actual)[[1]]),
+                 paste0("GCGAGCGTTATCCGGAATCATTGGGCGTAAAGGGTGCGTAGGCGGCGAGTTA",
+                        "AGTCTGAGGTAAAAGGTTGCAGCTCAACTGTAACAAGCCTTGGAAACTGACT",
+                        "AGCTAGAGTGCAGGAGAGGGCAGTGGAATTCCATGTGTAGCGGTAAAATGCG",
+                        "TAGATATATGGAGGAACACCAGTGGCGAAGGCGGCTGTCTGGCCTGTAACTG",
+                        "ACGCTGAGGCACGAAAGCGTGGGG"))
+    # Test that remove_empty_ranks work
+    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = NULL))
+    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
+    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = 1))
+    expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = c(TRUE, TRUE)))
+    x <- mergeFeaturesByRank(se, rank = "Class")
+    rd1 <- rowData(x)[, 1:3]
+    x <- mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = TRUE)
+    rd2 <- rowData(x)
+    expect_equal(rd1, rd2)
+    # Test that make_unique work
+    uniq <- mergeFeaturesByRank(se, rank = "Species")
+    not_uniq <- mergeFeaturesByRank(se, rank = "Species", make_unique = FALSE)
+    expect_true( !any( duplicated(rownames(uniq)) ) )
+    expect_true( any( duplicated(rownames(not_uniq)) ) )
 })
 
 
