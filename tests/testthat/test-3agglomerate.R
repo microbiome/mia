@@ -130,14 +130,14 @@ test_that("agglomerate", {
     se <- SilvermanAGutData
     # checking reference consensus sequence generation
     actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE)
-    expect_equal(as.character(referenceSeq(actual)[["Genus:Alistipes"]]),
+    expect_equal(as.character(referenceSeq(actual)[[19]]),
                  paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
                         "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
                         "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
                         "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
                         "TTGAGGCACGAAAGCGTGGGG"))
     actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = TRUE)
-    expect_equal(as.character(referenceSeq(actual)[["Genus:Alistipes"]]),
+    expect_equal(as.character(referenceSeq(actual)[[19]]),
                  paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYMM",
                         "KHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNND",
                         "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
