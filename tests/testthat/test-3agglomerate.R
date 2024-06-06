@@ -129,20 +129,20 @@ test_that("agglomerate", {
     data(SilvermanAGutData)
     se <- SilvermanAGutData
     # checking reference consensus sequence generation
-    actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE, onRankOnly = TRUE)
-    expect_equal(as.character(referenceSeq(actual)[[1]]),
-                 paste0("GCAAGCGTTAATCGGAATTACTGGGCGTAAAGCGCACGCAGGCGGTCTGTCA",
-                        "AGTCGGATGTGAAATCCCCGGGCTCAACCTGGGAACTGCATTCGAAACTGGC",
-                        "AGGCTAGAGTCTTGTAGAGGGGGGTAGAATTCCAGGTGTAGCGGTGAAATGC",
-                        "GTAGAGATCTGGAGGAATACCGGTGGCGAAGGCGGCCCCCTGGACAAAGACT",
-                        "GACGCTCAGGTGCGAAAGCGTGGGG"))
+    actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE)
+    expect_equal(as.character(referenceSeq(actual)[["Genus:Alistipes"]]),
+                 paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
+                        "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
+                        "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
+                        "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
+                        "TTGAGGCACGAAAGCGTGGGG"))
     actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = TRUE)
-    expect_equal(as.character(referenceSeq(actual)[[1]]),
-                 paste0("GCGAGCGTTATCCGGAATCATTGGGCGTAAAGGGTGCGTAGGCGGCGAGTTA",
-                        "AGTCTGAGGTAAAAGGTTGCAGCTCAACTGTAACAAGCCTTGGAAACTGACT",
-                        "AGCTAGAGTGCAGGAGAGGGCAGTGGAATTCCATGTGTAGCGGTAAAATGCG",
-                        "TAGATATATGGAGGAACACCAGTGGCGAAGGCGGCTGTCTGGCCTGTAACTG",
-                        "ACGCTGAGGCACGAAAGCGTGGGG"))
+    expect_equal(as.character(referenceSeq(actual)[["Genus:Alistipes"]]),
+                 paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYMM",
+                        "KHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNND",
+                        "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
+                        "RWDWTNDBRVRRAMHHCMRDKKSSRARGSSVSYYHNYBRRVHNDNNHYKRMVV",
+                        "YKVRDNNNSRAARSBDKGGKK"))
     # Test that remove_empty_ranks work
     expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = NULL))
     expect_error(mergeFeaturesByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
