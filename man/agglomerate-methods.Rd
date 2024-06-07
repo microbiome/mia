@@ -29,7 +29,6 @@ agglomerateByVariable(x, ...)
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  onRankOnly = TRUE,
   na.rm = FALSE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
@@ -105,10 +104,6 @@ See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
-
-\item{onRankOnly}{\code{TRUE} or \code{FALSE}: Should information only from
-the specified rank be used or from ranks equal and above? See details.
-(default: \code{onRankOnly = FALSE})}
 
 \item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
 removed? Use it with caution, since results with NA on the selected rank
@@ -222,14 +217,7 @@ retained as defined by \code{archetype}.
 agglomerated, i.e. summed up. If the assay contains values other than counts
 or absolute values, this can lead to meaningless values being produced.
 
-When using \code{agglomerateByRank}, please note that depending on the
-available taxonomic data and its structure, setting\code{onRankOnly = TRUE}
-has certain implications on the interpretability of your results. If no loops
-exist (loops meaning two higher ranks containing the same lower rank), the
-results should be comparable. You can check for loops using
-\code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
-
-Also, agglomeration sums up the values of assays at the specified taxonomic level. With
+Agglomeration sums up the values of assays at the specified taxonomic level. With
 certain assays, e.g. those that include binary or negative values, this summing
 can produce meaningless values. In those cases, consider performing agglomeration
 first, and then applying the transformation afterwards.
