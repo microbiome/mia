@@ -128,16 +128,16 @@ test_that("agglomerate", {
     skip_if_not(require("miaTime", quietly = TRUE))
     data(SilvermanAGutData)
     se <- SilvermanAGutData
-    # checking reference consensus sequence generation
+    # checking reference consensus sequence generation using 'Genus:Alistipes'
     actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE)
-    expect_equal(as.character(referenceSeq(actual)[[19]]),
+    expect_equal(as.character(referenceSeq(actual)[["Genus:Alistipes"]]),
                  paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
                         "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
                         "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
                         "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
                         "TTGAGGCACGAAAGCGTGGGG"))
     actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = TRUE)
-    expect_equal(as.character(referenceSeq(actual)[[19]]),
+    expect_equal(as.character(referenceSeq(actual)[["Genus:Alistipes"]]),
                  paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYMM",
                         "KHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNND",
                         "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
