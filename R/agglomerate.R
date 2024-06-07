@@ -400,10 +400,15 @@ setMethod(
         # Get rowData
         rd <- rowData(x)
         rank.cols <- taxonomyRanks(x)
+        # Get rowData with only taxonomy
+        rd <- rowData(x)[ , rank_cols, drop = FALSE]
+        # Remove taxonomy from rowData
+        rowData(x) <- rowData(x)[ , !colnames(x) %in% rank_cols, drop = FALSE]
         # Subset data so that it includes only rank columns that include data
-        rd <- rd[, !apply(rd[, rank.cols, drop = FALSE], 2, function(x) all(is.na(x)))]
-        # Assign it back to SE
-        rowData(x) <- rd
+        empty_ranks <-!apply(rd, 2, function(x) all(is.na(x)))
+        rd <- rd[ , empty_ranks, drop = FALSE]
+        # Adding taxonomy back to SE
+        rowData(x) <- cbind(rowData(x), rd)
     }
     return(x)
 }
