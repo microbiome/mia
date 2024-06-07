@@ -1,6 +1,5 @@
 context("Unifrac beta diversity")
 test_that("Unifrac beta diversity", {
-    browser()
     data(esophagus, package="mia")
     tse <- esophagus
     tse <- transformAssay(tse, assay.type="counts", method="relabundance")
