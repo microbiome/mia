@@ -86,20 +86,58 @@ test_that("agglomerate", {
     expect_warning(mergeFeaturesByRank(se1, rank = "Phylum"))
     expect_warning(mergeFeaturesByRank(se1, rank = "Order"))
 
+    data(GlobalPatterns, package="mia")
+    tse <- GlobalPatterns
+    tse <- transformAssay(tse, assay.type="counts", method="relabundance")
+    altExp(tse, "Family") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE)
+    altExp(tse, "Family1") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE)
+    altExp(tse, "Family2") <- agglomerateByRank(tse, rank="Family", onRankOnly = FALSE)
+    altExp(tse, "Family3") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE, na.rm = TRUE)
+    altExp(tse, "Family4") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE, na.rm = FALSE)
+    altExp(tse, "Family5") <- agglomerateByVariable(tse, f="Family", MARGIN = 'row')
+    
+    # Other group is added by agglomerateByPrevalence function to collect features under threshold
+    actual <- agglomerateByPrevalence(tse, rank="Family", assay.type="relabundance", 
+        detection  = 0.5/100, prevalence  = 20/100, onRankOnly = TRUE)
+    actual0 <- agglomerateByPrevalence(altExp(tse, "Family"), assay.type="relabundance", 
+        detection  = 0.5/100, prevalence  = 20/100)
+    actual1 <- agglomerateByPrevalence(altExp(tse, "Family1"), assay.type="relabundance", 
+        detection  = 0.5/100, prevalence  = 20/100)
+    actual2 <- agglomerateByPrevalence(altExp(tse, "Family2"), assay.type="relabundance", 
+        detection  = 0.5/100, prevalence  = 20/100)
+    actual3 <- agglomerateByPrevalence(altExp(tse, "Family3"), assay.type="relabundance", 
+        detection  = 0.5/100, prevalence  = 20/100)
+    actual4 <- agglomerateByPrevalence(altExp(tse, "Family4"), assay.type="relabundance", 
+        detection  = 0.5/100, prevalence  = 20/100)
+    actual5 <- agglomerateByPrevalence(altExp(tse, "Family5"), assay.type="relabundance", 
+        detection  = 0.5/100, prevalence  = 20/100)
+    
+    # The values of actual( "", 0, 1, 4, 5) are equal since the factor group is created with groups
+    # at the family level i.e onRankOnly (tax_cols[tax_col_n == col]).
+    # However, actual2 creates groups based on the full taxonomic hierarchy up to family level 
+    # i.e !onRankOnly (tax_cols[tax_col_n <= col]). While actual3 is less since empty or missing
+    # fields are removed from the tse object i.e na.rm.
+    expect_equal(nrow(actual), nrow(actual0))
+    expect_equal(nrow(actual), nrow(actual1))
+    expect_equal(nrow(actual2), 27)
+    expect_equal(nrow(actual3), 20)
+    expect_equal(nrow(actual), nrow(actual4))
+    expect_equal(nrow(actual), nrow(actual5))
+    
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
     data(SilvermanAGutData)
     se <- SilvermanAGutData
-    # checking reference consensus sequence generation
+    # checking reference consensus sequence generation using 'Genus:Alistipes'
     actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = FALSE)
-    expect_equal(as.character(referenceSeq(actual)[[1]]),
+    expect_equal(as.character(referenceSeq(actual)[["Genus:Alistipes"]]),
                  paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
                         "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
                         "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
                         "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
                         "TTGAGGCACGAAAGCGTGGGG"))
     actual <- mergeFeaturesByRank(se,"Genus", mergeRefSeq = TRUE)
-    expect_equal(as.character(referenceSeq(actual)[[1]]),
+    expect_equal(as.character(referenceSeq(actual)[["Genus:Alistipes"]]),
                  paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYMM",
                         "KHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNND",
                         "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
@@ -120,44 +158,6 @@ test_that("agglomerate", {
     not_uniq <- mergeFeaturesByRank(se, rank = "Species", make_unique = FALSE)
     expect_true( !any( duplicated(rownames(uniq)) ) )
     expect_true( any( duplicated(rownames(not_uniq)) ) )
-    
-    data(GlobalPatterns, package="mia")
-    tse <- GlobalPatterns
-    tse <- transformAssay(tse, assay.type="counts", method="relabundance")
-    altExp(tse, "Family") <- agglomerateByRank(tse, rank="Family")
-    altExp(tse, "Family1") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE)
-    altExp(tse, "Family2") <- agglomerateByRank(tse, rank="Family", onRankOnly = FALSE)
-    altExp(tse, "Family3") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE, na.rm = TRUE)
-    altExp(tse, "Family4") <- agglomerateByRank(tse, rank="Family", onRankOnly = TRUE, na.rm = FALSE)
-    altExp(tse, "Family5") <- agglomerateByVariable(tse, f="Family", MARGIN = 'row')
-    
-    # Other group is added by agglomerateByPrevalence function to collect features under threshold
-    actual <- agglomerateByPrevalence(tse, rank="Family", assay.type="relabundance", 
-                                         detection  = 0.5/100, prevalence  = 20/100)
-    actual0 <- agglomerateByPrevalence(altExp(tse, "Family"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
-    actual1 <- agglomerateByPrevalence(altExp(tse, "Family1"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
-    actual2 <- agglomerateByPrevalence(altExp(tse, "Family2"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
-    actual3 <- agglomerateByPrevalence(altExp(tse, "Family3"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
-    actual4 <- agglomerateByPrevalence(altExp(tse, "Family4"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
-    actual5 <- agglomerateByPrevalence(altExp(tse, "Family5"), assay.type="relabundance", 
-                                       detection  = 0.5/100, prevalence  = 20/100)
-    
-    # The values of actual( "", 0, 1, 4, 5) are equal since the factor group is created with groups
-    # at the family level i.e onRankOnly (tax_cols[tax_col_n == col]).
-    # However, actual2 creates groups based on the full taxonomic hierarchy up to family level 
-    # i.e !onRankOnly (tax_cols[tax_col_n <= col]). While actual3 is less since empty or missing
-    # fields are removed from the tse object i.e na.rm.
-    expect_equal(nrow(actual), nrow(actual0))
-    expect_equal(nrow(actual), nrow(actual1))
-    expect_equal(nrow(actual2), 27)
-    expect_equal(nrow(actual3), 20)
-    expect_equal(nrow(actual), nrow(actual4))
-    expect_equal(nrow(actual), nrow(actual5))
 })
 
 
