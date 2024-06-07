@@ -400,7 +400,7 @@ setMethod(
         x
     }
 
-# This function removes empty columns from rowdata. (Those that include only
+# This function removes empty rank columns from rowdata. (Those that include only
 # NA values)
 .remove_NA_cols_from_rowdata <- function(x, remove_empty_ranks = FALSE, ...){
     # Check remove_empty_ranks
@@ -412,10 +412,9 @@ setMethod(
     if( remove_empty_ranks ){
         # Get rowData
         rd <- rowData(x)
-        # Does teh column include data?
-        columns_including_data <- apply(rd, 2, function(x){!all(is.na(x))})
-        # Subset data so that it includes only columns that include data
-        rd <- rd[, columns_including_data]
+        rank.cols <- taxonomyRanks(x)
+        # Subset data so that it includes only rank columns that include data
+        rd <- rd[, !apply(rd[, rank.cols], 2, function(x) all(is.na(x)))]
         # Assign it back to SE
         rowData(x) <- rd
     }
