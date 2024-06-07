@@ -414,7 +414,7 @@ setMethod(
         rd <- rowData(x)
         rank.cols <- taxonomyRanks(x)
         # Subset data so that it includes only rank columns that include data
-        rd <- rd[, !apply(rd[, rank.cols], 2, function(x) all(is.na(x)))]
+        rd <- rd[, !apply(rd[, rank.cols, drop = FALSE], 2, function(x) all(is.na(x)))]
         # Assign it back to SE
         rowData(x) <- rd
     }
