@@ -25,7 +25,10 @@ Authors@R:
              email = "dbraccia@umd.edu", role=c("ctb")),
       person(given = "Basil", family = "Courbayre", role=c("ctb")),
       person(given = "Muluh", family = "Muluh", role=c("ctb")),
-      person(given = "Giulio", family = "Benedetti", role=c("ctb")))
+      person(given = "Giulio", family = "Benedetti", role=c("ctb")),
+      person(given = c("Moritz", "Emanuel"), family = "Beber",
+             email = "midnighter@posteo.net", role = c("ctb),
+             comment = c(ORCID = "0000-0003-2406-1978")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
