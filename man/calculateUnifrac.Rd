@@ -9,14 +9,7 @@
 \usage{
 calculateUnifrac(x, tree, ...)
 
-\S4method{calculateUnifrac}{ANY,phylo}(
-  x,
-  tree,
-  weighted = FALSE,
-  normalized = TRUE,
-  BPPARAM = SerialParam(),
-  ...
-)
+\S4method{calculateUnifrac}{ANY,phylo}(x, tree, weighted = FALSE, ...)
 
 \S4method{calculateUnifrac}{TreeSummarizedExperiment,missing}(
   x,
@@ -28,15 +21,7 @@ calculateUnifrac(x, tree, ...)
   ...
 )
 
-runUnifrac(
-  x,
-  tree,
-  weighted = FALSE,
-  normalized = TRUE,
-  nodeLab = NULL,
-  BPPARAM = SerialParam(),
-  ...
-)
+runUnifrac(x, tree, weighted = FALSE, nodeLab = NULL, ...)
 }
 \arguments{
 \item{x}{a numeric matrix or a
@@ -60,16 +45,6 @@ calculation? Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
 considers presence/absence. Default is \code{FALSE}, meaning the
 unweighted-Unifrac distance is calculated for all pairs of samples.}
-
-\item{normalized}{\code{TRUE} or \code{FALSE}: Should the output be
-normalized such that values range from 0 to 1 independent of branch length
-values? Default is \code{TRUE}. Note that (unweighted) \code{Unifrac} is
-always normalized by total branch-length, and so this value is ignored when
-\code{weighted == FALSE}.}
-
-\item{BPPARAM}{A
-\code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether the Unifrac calculation should be parallelized.}
 
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
@@ -100,9 +75,9 @@ node labs must be present in \code{tree}.}
 a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
-This function calculates the (Fast) Unifrac distance for all sample-pairs
+This function calculates the Unifrac distance for all sample-pairs
 in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object.
+object. The function utilizes \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 }
 \details{
 Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
@@ -113,27 +88,17 @@ data(esophagus)
 library(scater)
 calculateUnifrac(esophagus, weighted = FALSE)
 calculateUnifrac(esophagus, weighted = TRUE)
-calculateUnifrac(esophagus, weighted = TRUE, normalized = FALSE)
 # for using calculateUnifrac in conjunction with runMDS the tree argument
 # has to be given separately. In addition, subsetting using ntop must
 # be disabled
 esophagus <- runMDS(esophagus, FUN = calculateUnifrac, name = "Unifrac",
                     tree = rowTree(esophagus),
-                    exprs_values = "counts",
+                    assay.type = "counts",
                     ntop = nrow(esophagus))
 reducedDim(esophagus)
 }
 \references{
 \url{http://bmf.colorado.edu/unifrac/}
-
-The main implementation (Fast Unifrac) is adapted from the algorithm's
-description in:
-
-Hamady, Lozupone, and Knight,
-``\href{http://www.nature.com/ismej/journal/v4/n1/full/ismej200997a.html}{Fast
-UniFrac:} facilitating high-throughput phylogenetic analyses of microbial
-communities including analysis of pyrosequencing and PhyloChip data.'' The
-ISME Journal (2010) 4, 17--27.
 
 See also additional descriptions of Unifrac in the following articles:
 
@@ -147,8 +112,4 @@ microbial communities.'' Appl Environ Microbiol. 2007
 
 Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
 microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
-}
-\author{
-Paul J. McMurdie.
-Adapted for mia by Felix G.M. Ernst
 }
