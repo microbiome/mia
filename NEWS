@@ -137,5 +137,7 @@ Changes in version 1.13.x
 + new aliases calculateDPCoA to getDPCoA, calculateNMDS to getNMDS, calculateRDA to getRDA, 
   calculateCCA to getCCA
 + add informative error message in rarefyAssay on assays with strictly-negative values 
++ add informative error message in rarefyAssay on assays with strictly-negative values 
++ Use rbiom package in unifrac implementation
 + rename makeTreeSEFrom* and makePhyloseqFromTreeSE functions and combine their
   documentation under new manual page convert
