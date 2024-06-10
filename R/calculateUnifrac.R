@@ -1,6 +1,6 @@
 #' Calculate weighted or unweighted (Fast) Unifrac distance
 #'
-#' This function calculates the (Fast) Unifrac distance for all sample-pairs
+#' This function calculates the Unifrac distance for all sample-pairs
 #' in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object. The function utilizes \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 #'
@@ -75,10 +75,6 @@
 #' @name calculateUnifrac
 #'
 #' @export
-#'
-#' @author
-#' Paul J. McMurdie.
-#' Adapted for mia by Felix G.M. Ernst
 #'
 #' @examples
 #' data(esophagus)
