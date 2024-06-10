@@ -1,13 +1,14 @@
-#' Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}
-#'
+#' @param phy a \code{phyloseq} object
+#' 
+#' @details 
 #' \code{convertFromPhyloseq} converts \code{phyloseq}
-#' objects into \code{TreeSummarizedExperiment} objects.
-#'
+#' objects into 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} objects.
 #' All data stored in a \code{phyloseq} object is transferred.
 #'
-#' @param obj a \code{phyloseq} object
-#'
-#' @return An object of class \code{TreeSummarizedExperiment}
+#' @return 
+#' \code{convertFromPhyloseq} returns an object of class 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
 #' @importFrom SummarizedExperiment colData colData<-
@@ -16,12 +17,12 @@
 #'
 #' @rdname convert
 #' @seealso
-#' \code{\link[=convert]{convertFromBIOM}}
-#' \code{\link[=convert]{convertFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @examples
+#' 
+#' ### Coerce a phyloseq object to a TreeSE object
 #' if (requireNamespace("phyloseq")) {
 #'     data(GlobalPatterns, package="phyloseq")
 #'     convertFromPhyloseq(GlobalPatterns)
@@ -30,41 +31,41 @@
 #'     data(esophagus, package="phyloseq")
 #'     convertFromPhyloseq(esophagus)
 #' }
-convertFromPhyloseq <- function(obj) {
+convertFromPhyloseq <- function(phy) {
     # input check
     .require_package("phyloseq")
-    if(!is(obj,"phyloseq")){
-        stop("'obj' must be a 'phyloseq' object")
+    if(!is(phy,"phyloseq")){
+        stop("'phy' must be a 'phyloseq' object")
     }
     #
     # Get the assay
-    counts <- obj@otu_table@.Data
+    counts <- phy@otu_table@.Data
     # Check the orientation, and transpose if necessary
-    if( !obj@otu_table@taxa_are_rows ){
+    if( !phy@otu_table@taxa_are_rows ){
         counts <- t(counts)
     }
     # Create a list of assays
     assays <- SimpleList(counts = counts)
     
-    if(!is.null(obj@tax_table@.Data)){
-        rowData <- DataFrame(data.frame(obj@tax_table@.Data))
+    if(!is.null(phy@tax_table@.Data)){
+        rowData <- DataFrame(data.frame(phy@tax_table@.Data))
     } else{
         rowData <- S4Vectors::make_zero_col_DFrame(nrow(assays$counts))
         rownames(rowData) <- rownames(assays$counts)
     }
-    if(!is.null(obj@sam_data)){
-        colData <- DataFrame(data.frame(obj@sam_data))
+    if(!is.null(phy@sam_data)){
+        colData <- DataFrame(data.frame(phy@sam_data))
     } else{
         colData <- S4Vectors::make_zero_col_DFrame(ncol(assays$counts))
         rownames(colData) <- colnames(assays$counts)
     }
-    if(!is.null(obj@phy_tree)){
-        rowTree <- obj@phy_tree
+    if(!is.null(phy@phy_tree)){
+        rowTree <- phy@phy_tree
     } else {
         rowTree <- NULL
     }
-    if (!is.null(obj@refseq)) {
-        referenceSeq <- obj@refseq
+    if (!is.null(phy@refseq)) {
+        referenceSeq <- phy@refseq
     } else {
         referenceSeq <- NULL
     }

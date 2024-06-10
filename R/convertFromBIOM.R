@@ -1,42 +1,54 @@
-#' Loading a biom file
+#' Converters
 #'
-#' For convenience a few functions are available to convert data from a
-#' \sQuote{biom} file or object into a
+#' For convenience a few functions are available to convert BIOM, DADA2 and 
+#' phyloseq objects to TreeSE objects and TreeSE objects to phyloseq objects.
+#'
+#' @param file BIOM file location
+#' 
+#' @param obj BIOM object to be converted to a 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'
-#' @param file biom file location
 #' 
 #' @param removeTaxaPrefixes \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
-#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
-#' (default \code{removeTaxaPrefixes = FALSE})
+#' taxa columns meaning that \code{rankFromPrefix} should be enabled in the most
+#' cases. 
+#' (default \code{removeTaxaPrefixes = FALSE}) 
 #' 
 #' @param rankFromPrefix \code{TRUE} or \code{FALSE}: If file does not have
 #' taxonomic ranks on feature table, should they be scraped from prefixes?
-#' (default \code{rankFromPrefix = FALSE})
+#' (default \code{rankFromPrefix = FALSE}) 
 #' 
 #' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
 #' some taxonomic character naming artifacts, should they be removed.
-#' (default \code{remove.artifacts = FALSE})
+#' (default \code{remove.artifacts = FALSE}) 
 #' 
 #' @param ... additional arguments 
 #'   \itemize{
-#'        \item \code{patter}: \code{character} value specifying artifacts
+#'        \item{\code{pattern}}{\code{character} value specifying artifacts
 #'        to be removed. If \code{patterns = "auto"}, special characters
-#'        are removed. (default: \code{pattern = "auto"})
+#'        are removed. (default: \code{pattern = "auto"}) 
+#'        } 
 #'    }
 #' 
-#' @return An object of class
+#' @details 
+#' \code{convertFromBIOM} coerces a BIOM object to a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object.
+#' 
+#' \code{importBIOM} loads a BIOM file and creates a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} 
+#' object from the BIOM object contained in the loaded file
+#' @return 
+#' \code{importBIOM} returns an object of class
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   
+#' \code{convertFromBIOM} returns an object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @name convert
-#' @seealso
-#' \code{\link[=convert]{convertFromPhyloseq}}
-#' \code{\link[=convert]{convertFromDADA2}}
-#' \code{\link[=importQIIME2]{importQIIME2}}
-#' \code{\link[=importMothur]{importMothur}}
 #'
 #' @examples
+#' ### Load and convert BIOM results to a TreeSE
 #' # Load biom file
 #' library(biomformat)
 #' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
@@ -63,6 +75,8 @@
 #'                     remove.artifacts = TRUE)
 NULL
 
+#' \code{importBIOM} loads a BIOM file and creates a TreeSE from the BIOM object
+#' contained in the loaded file.
 #' @rdname convert
 #' @export
 importBIOM <- function(file, ...) {
@@ -71,6 +85,7 @@ importBIOM <- function(file, ...) {
     convertFromBIOM(biom,...)
 }
 
+#' \code{convertFromBIOM} creates a TreeSE object from a BIOM object.
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
 #' @rdname convert
