@@ -589,9 +589,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
             } else {
                 class <- class[class_x == class]
             }
-            x <- rbind(as(x[f,],class),
-                       as(other_x,class))
-            x <- as(x,class_x)
+            x <- rbind(x[f,], other_x)
         }
         x
     }
