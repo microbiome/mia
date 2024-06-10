@@ -35,12 +35,13 @@ test_that("Unifrac beta diversity", {
     
     data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
-    # Calculate unifrac
+    # Calculate unweighted unifrac
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = FALSE,
                                               rowTree(tse)))
     expect_equal(unifrac_mia, unifrac_rbiom)
-    # Calculate unifrac
+    # Calculate weighted unifrac. Allow tolerance since weighted unifrac
+    # calculation has some stochasticity.
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = TRUE,
                                               rowTree(tse)))
@@ -51,12 +52,12 @@ test_that("Unifrac beta diversity", {
     tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
     tse_ref <- tse
     tse_ref <- tse_ref[ rowLinks(tse_ref)[["whichTree"]] == "phylo", ]
-    # Calculate unifrac
+    # Calculate unweighted unifrac
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_ref), weighted = FALSE,
                                               rowTree(tse_ref)))
     expect_equal(unifrac_mia, unifrac_rbiom)
-    # Calculate unifrac
+    # Calculate weighted unifrac
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_ref), weighted = TRUE,
                                               rowTree(tse_ref)))
