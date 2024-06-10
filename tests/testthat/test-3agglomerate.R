@@ -89,7 +89,6 @@ test_that("agglomerate", {
     assay(se2, "pa")[1, 1] <- -1
     expect_warning(agglomerateByRank(se1, rank = "Phylum"))
     expect_warning(agglomerateByRank(se1, rank = "Order"))
-
     
     # Load data
     data(GlobalPatterns, package="mia")
@@ -126,6 +125,7 @@ test_that("agglomerate", {
     skip_if_not(require("miaTime", quietly = TRUE))
     data(SilvermanAGutData)
     se <- SilvermanAGutData
+    
     # checking reference consensus sequence generation
     actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
     # There should be only one exact match for each sequence
@@ -134,7 +134,7 @@ test_that("agglomerate", {
     expect_true(all(vapply(
         seqs_test, function(seq) sum(seqs_ref %in% seq) == 1,
         FUN.VALUE = logical(1) )) )
-    # Merging creates concensus sequences.
+    # Merging creates consensus sequences.
     th <- runif(1, 0, 1)
     actual <- agglomerateByRank(
         se, "Genus", mergeRefSeq = TRUE, threshold = th)
@@ -149,6 +149,22 @@ test_that("agglomerate", {
         threshold = th)
     seqs_test <- seqs_test[ names(seqs_test) %in% feature ]
     expect_equal(seqs_test, seqs_ref)
+    
+    # checking reference consensus sequence generation using 'Genus:Alistipes'
+    actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
+    expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
+                 paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
+                        "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
+                        "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
+                        "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
+                        "TTGAGGCACGAAAGCGTGGGG"))
+    actual <- agglomerateByRank(se,"Genus", mergeRefSeq = TRUE)
+    expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
+                 paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYMM",
+                        "KHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNND",
+                        "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
+                        "RWDWTNDBRVRRAMHHCMRDKKSSRARGSSVSYYHNYBRRVHNDNNHYKRMVV",
+                        "YKVRDNNNSRAARSBDKGGKK"))
     # Test that remove_empty_ranks work
     expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = NULL))
     expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
