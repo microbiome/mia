@@ -402,7 +402,7 @@ setMethod(
         # Get rowData with only taxonomy
         rd <- rowData(x)[ , rank_cols, drop = FALSE]
         # Remove taxonomy from rowData
-        rowData(x) <- rowData(x)[ , !colnames(x) %in% rank_cols, drop = FALSE]
+        rowData(x) <- rowData(x)[ , !colnames(rowData(x)) %in% rank_cols, drop = FALSE]
         # Subset data so that it includes only rank columns that include data
         empty_ranks <-!apply(rd, 2, function(x) all(is.na(x)))
         rd <- rd[ , empty_ranks, drop = FALSE]
