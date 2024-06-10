@@ -42,7 +42,7 @@ test_that("Unifrac beta diversity", {
     expect_equal(unifrac_mia, unifrac_rbiom)
     # Calculate weighted unifrac. Allow tolerance since weighted unifrac
     # calculation in rbiom has some stochasticity. That is most likely due
-    # multithreading.
+    # multithreading and complex structure of tree (loops).
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = TRUE,
                                               rowTree(tse)))
@@ -68,13 +68,18 @@ test_that("Unifrac beta diversity", {
     # based on tips and links to them. Then it also prunes the tree so that
     # rows are in tips.
     tse <- GlobalPatterns
-    tse <- agglomerateByRank(tse, rank = "Phylum")
+    tse <- agglomerateByRank(tse, rank = "Species")
     tse_ref <- tse
     rownames(tse_ref) <- rowLinks(tse_ref)[["nodeLab"]]
     rowTree(tse_ref) <- .prune_tree(rowTree(tse_ref), rowLinks(tse_ref)[["nodeLab"]])
-    # Calculate unifrac
+    # Calculate unweighted unifrac
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_ref), weighted = FALSE,
+                                              rowTree(tse_ref)))
+    # Calculate weighted unifrac. No tolerance needed since the tree has
+    # simpler structure after pruning.
+    unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
+    unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_ref), weighted = TRUE,
                                               rowTree(tse_ref)))
     expect_equal(unifrac_mia, unifrac_rbiom)
 })
