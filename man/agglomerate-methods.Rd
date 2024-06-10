@@ -29,7 +29,7 @@ agglomerateByVariable(x, ...)
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  na.rm = FALSE,
+  na.rm = TRUE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
 )
