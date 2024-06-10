@@ -75,7 +75,7 @@ node labs must be present in \code{tree}.}
 a sample-by-sample distance matrix, suitable for NMDS, etc.
 }
 \description{
-This function calculates the (Fast) Unifrac distance for all sample-pairs
+This function calculates the Unifrac distance for all sample-pairs
 in a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object. The function utilizes \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 }
@@ -112,8 +112,4 @@ microbial communities.'' Appl Environ Microbiol. 2007
 
 Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
 microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.
-}
-\author{
-Paul J. McMurdie.
-Adapted for mia by Felix G.M. Ernst
 }
