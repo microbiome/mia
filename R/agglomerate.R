@@ -397,9 +397,8 @@ setMethod(
     }
     # If user wants to remove those columns
     if( remove_empty_ranks ){
-        # Get rowData
-        rd <- rowData(x)
-        rank.cols <- taxonomyRanks(x)
+        # Get columns that include taxonomy information
+        rank_cols <- taxonomyRanks(x)
         # Get rowData with only taxonomy
         rd <- rowData(x)[ , rank_cols, drop = FALSE]
         # Remove taxonomy from rowData
