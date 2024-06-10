@@ -23,7 +23,7 @@
 #' @param ... additional arguments
 #'
 #' @details
-#' \code{makePhyloseqFromTreeSE} is used for creating a
+#' \code{convertToPhyloseq} is used for creating a
 #' phyloseq object from TreeSummarizedExperiment object.
 #'
 #' @return
@@ -37,7 +37,7 @@
 #' tse <- GlobalPatterns
 #'
 #' # Create a phyloseq object from it
-#' phy <- makePhyloseqFromTreeSE(tse)
+#' phy <- convertToPhyloseq(tse)
 #' phy
 #'
 #' # By default the chosen table is counts, but if there are other tables,
@@ -45,7 +45,7 @@
 #'
 #' # Counts relative abundances table
 #' tse <- transformAssay(tse, method = "relabundance")
-#' phy2 <- makePhyloseqFromTreeSE(tse, assay.type = "relabundance")
+#' phy2 <- convertToPhyloseq(tse, assay.type = "relabundance")
 #' phy2
 #' @rdname convert
 #' @export
@@ -53,7 +53,7 @@ setGeneric("convertToPhyloseq", signature = c("x"),
            function(x, ...)
              standardGeneric("convertToPhyloseq"))
 
-#' @rdname makePhyloseqFromTreeSE
+#' @rdname convert
 #' @export
 setMethod("convertToPhyloseq",
           signature = c(x = "SummarizedExperiment"),
@@ -116,7 +116,7 @@ setMethod("convertToPhyloseq",
 
 #' @rdname convert
 #' @export
-setMethod("makePhyloseqFromTreeSE",
+setMethod("convertToPhyloseq",
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, tree_name = "phylo", ...){
       # If rowTrees exist, check tree.name

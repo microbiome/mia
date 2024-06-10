@@ -1,4 +1,36 @@
-.make_TreeSE_from_phyloseq <- function(obj) {
+#' Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}
+#'
+#' \code{convertFromPhyloseq} converts \code{phyloseq}
+#' objects into \code{TreeSummarizedExperiment} objects.
+#'
+#' All data stored in a \code{phyloseq} object is transferred.
+#'
+#' @param obj a \code{phyloseq} object
+#'
+#' @return An object of class \code{TreeSummarizedExperiment}
+#'
+#' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
+#' @importFrom SummarizedExperiment colData colData<-
+#'
+#' @export
+#'
+#' @rdname convert
+#' @seealso
+#' \code{\link[=convert]{convertFromBIOM}}
+#' \code{\link[=convert]{convertFromDADA2}}
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
+#'
+#' @examples
+#' if (requireNamespace("phyloseq")) {
+#'     data(GlobalPatterns, package="phyloseq")
+#'     convertFromPhyloseq(GlobalPatterns)
+#'     data(enterotype, package="phyloseq")
+#'     convertFromPhyloseq(enterotype)
+#'     data(esophagus, package="phyloseq")
+#'     convertFromPhyloseq(esophagus)
+#' }
+convertFromPhyloseq <- function(obj) {
     # input check
     .require_package("phyloseq")
     if(!is(obj,"phyloseq")){

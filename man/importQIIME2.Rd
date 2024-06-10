@@ -129,7 +129,9 @@ microbiome data science using QIIME 2. Nature Biotechnology 37: 852–857.
 \url{https://qiime2.org}
 }
 \seealso{
-\code{\link[=convert]{convert}}
+\code{\link[=convert]{convertFromDADA2}}
+\code{\link[=convert]{convertFromPhyloseq}}
+\code{\link[=convert]{convertFromBIOM}}
 \code{\link[=importMothur]{importMothur}}
 }
 \author{

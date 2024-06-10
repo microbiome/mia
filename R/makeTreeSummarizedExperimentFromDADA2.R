@@ -1,4 +1,44 @@
-.make_TreeSE_from_DADA2 <- function(...) {
+#' Coerce \sQuote{DADA2} results to \code{TreeSummarizedExperiment}
+#'
+#' \code{convertFromDADA2} is a wrapper for the
+#' \code{mergePairs} function from the \code{dada2} package.
+#'
+#' @param ... See \code{mergePairs} function for
+#'   more details.
+#'
+#' @details
+#' A count matrix is constructed via \code{makeSequenceTable(mergePairs(...))}
+#' and rownames are dynamically created as \code{ASV(N)} with \code{N} from
+#' 1 to \code{nrow} of the count tables. The colnames and rownames from the
+#' output of \code{makeSequenceTable} are stored as \code{colnames} and in the
+#' \code{referenceSeq} slot of the \code{TreeSummarizedExperiment},
+#' respectively.
+#'
+#' @return An object of class \code{TreeSummarizedExperiment}
+#'
+#' @importFrom S4Vectors SimpleList
+#' @importFrom Biostrings DNAStringSet
+#'
+#' @rdname convert
+#' @seealso
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromBIOM}}
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
+#'
+#' @export
+#'
+#' @examples
+#' if(requireNamespace("dada2")) {
+#'   fnF <- system.file("extdata", "sam1F.fastq.gz", package="dada2")
+#'   fnR = system.file("extdata", "sam1R.fastq.gz", package="dada2")
+#'   dadaF <- dada2::dada(fnF, selfConsist=TRUE)
+#'   dadaR <- dada2::dada(fnR, selfConsist=TRUE)
+#'
+#'   tse <- convertFromDADA2(dadaF, fnF, dadaR, fnR)
+#'   tse
+#' }
+convertFromDADA2 <- function(...) {
     # input checks
     .require_package("dada2")
     .require_package("stringr")

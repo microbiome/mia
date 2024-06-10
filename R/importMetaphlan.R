@@ -59,9 +59,11 @@
 #' @name importMetaPhlAn
 #' @seealso
 #' \code{\link[=importHUMAnN]{importHUMAnN}}
-#' \code{\link[=convert]{convert}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
+#' \code{\link[=convert]{convertFromDADA2}}
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromBIOM}}
 #'
 #' @export
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

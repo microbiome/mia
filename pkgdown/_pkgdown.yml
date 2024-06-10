@@ -13,7 +13,6 @@ reference:
 - subtitle: Data loading
 - contents:
   - convert
-  - importBIOM
   - importQIIME2
   - importMothur
   - importMetaPhlAn

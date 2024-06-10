@@ -29,7 +29,9 @@
 #'
 #' @name importMothur
 #' @seealso
-#' \code{\link[=convert]{convert}}
+#' \code{\link[=convert]{convertFromDADA2}}
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromBIOM}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

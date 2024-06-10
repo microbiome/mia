@@ -68,7 +68,7 @@ NULL
 importBIOM <- function(file, ...) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    convert(biom,...)
+    convertFromBIOM(biom,...)
 }
 
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame

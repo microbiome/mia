@@ -280,7 +280,7 @@ data(esophagus, package = "phyloseq")
 
 ```{r}
 esophagus
-esophagus <- convert(esophagus)
+esophagus <- convertFromPhyloseq(esophagus)
 esophagus
 ```
 
