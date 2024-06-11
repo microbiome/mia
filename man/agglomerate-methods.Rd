@@ -29,22 +29,14 @@ agglomerateByVariable(x, ...)
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  na.rm = FALSE,
+  na.rm = TRUE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
 )
 
-\S4method{agglomerateByVariable}{SummarizedExperiment}(x, MARGIN, f, archetype = 1L, ...)
+\S4method{agglomerateByVariable}{SummarizedExperiment}(x, MARGIN, f, ...)
 
-\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
-  x,
-  MARGIN,
-  f,
-  archetype = 1L,
-  mergeTree = FALSE,
-  mergeRefSeq = FALSE,
-  ...
-)
+\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(x, MARGIN, f, mergeTree = FALSE, ...)
 
 \S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
 
@@ -123,20 +115,8 @@ Must be \code{'rows'} or \code{'cols'}.}
 merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged.}
 
-\item{archetype}{Of each level of \code{f}, which element should be regarded
-as the archetype and metadata in the columns or rows kept, while merging?
-This can be single integer value or an integer vector of the same length
-as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
-element encountered per factor level will be kept)}
-
 \item{mergeTree}{\code{TRUE} or \code{FALSE}: Should
 \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})}
-
-\item{mergeRefSeq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
-be calculated? If set to \code{FALSE}, the result from \code{archetype} is
-returned; If set to \code{TRUE} the result from
-\code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
-returned. (Default: \code{mergeRefSeq = FALSE})}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}

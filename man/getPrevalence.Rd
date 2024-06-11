@@ -218,7 +218,7 @@ altExp(tse, "prevalent") <- subsetByPrevalent(tse,
                                              detection = 0.001,
                                              prevalence = 0.55,
                                              as_relative = TRUE)
-altExp(tse, "prevalent")                                 
+altExp(tse, "prevalent")
 
 # getRare returns the inverse
 rare <- getRare(tse,
@@ -234,7 +234,7 @@ altExp(tse, "rare") <- subsetByRare(tse,
                                     detection = 0.001,
                                     prevalence = 0.001,
                                     as_relative = TRUE)
-altExp(tse, "rare")      
+altExp(tse, "rare")
 
 # Names of both experiments, prevalent and rare, can be found from slot
 # altExpNames
