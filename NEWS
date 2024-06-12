@@ -138,3 +138,4 @@ Changes in version 1.13.x
 calculateCCA to getCCA
 + add informative error message in rarefyAssay on assays with strictly-negative values 
 + Use rbiom package in unifrac implementation
++ add rowTree agglomeration by prevalence in agglomerateByPrevalence

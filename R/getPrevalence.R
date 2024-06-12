@@ -566,7 +566,11 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         # input check
         if(!.is_a_string(other_label)){
             stop("'other_label' must be a single character value.",
-                 call. = FALSE)
+                call. = FALSE)
+        }
+        if(!.is_a_bool(agglomerate.tree)){
+            stop("'agglomerate.tree' must be TRUE or FALSE.",
+                call. = FALSE)
         }
         #
         # Check assays that they can be merged safely
@@ -588,7 +592,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
             }
             x <- rbind(x[f,], other_x)
         }
-        if (agglomerate.tree == TRUE){
+        if ( agglomerate.tree == TRUE ){
             x <- .agglomerate_trees(x, 1)
             
         }
