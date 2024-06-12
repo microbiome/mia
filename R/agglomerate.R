@@ -390,8 +390,8 @@ setMethod(
         x
     }
 
-# This function removes empty rank columns from rowdata. (Those that include only
-# NA values)
+# This function removes empty rank columns from rowdata. (Those that include
+# only NA values)
 .remove_NA_cols_from_rowdata <- function(x, remove_empty_ranks = FALSE, ...){
     # Check remove_empty_ranks
     if( !.is_a_bool(remove_empty_ranks) ){
@@ -405,10 +405,11 @@ setMethod(
         # Get rowData with only taxonomy
         rd <- rowData(x)[ , rank_cols, drop = FALSE]
         # Remove taxonomy from rowData
-        rowData(x) <- rowData(x)[ , !colnames(rowData(x)) %in% rank_cols, drop = FALSE]
+        rowData(x) <- rowData(x)[
+            , !colnames(rowData(x)) %in% rank_cols, drop = FALSE]
         # Subset data so that it includes only rank columns that include data
-        empty_ranks <-!apply(rd, 2, function(x) all(is.na(x)))
-        rd <- rd[ , empty_ranks, drop = FALSE]
+        non_empty_ranks <- apply(rd, 2, function(x) !all(is.na(x)))
+        rd <- rd[ , non_empty_ranks, drop = FALSE]
         # Adding taxonomy back to SE
         rowData(x) <- cbind(rowData(x), rd)
     }
