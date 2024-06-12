@@ -90,7 +90,7 @@ importBIOM <- function(file, ...) {
 #' @importFrom dplyr %>% bind_rows
 #' @rdname convert
 #' @export
-convertFromBiom <- function(
+convertFromBIOM <- function(
     obj, removeTaxaPrefixes = FALSE, rankFromPrefix = FALSE,
     remove.artifacts = FALSE, ...){
     # input check

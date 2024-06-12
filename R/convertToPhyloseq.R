@@ -17,6 +17,11 @@
 #' @param tree.name a single \code{character} value for specifying which
 #'   tree will be included in the phyloseq object that is created, 
 #'   (By default: \code{tree.name = "phylo"})
+#'   
+#' @param tree_name a single \code{character} value for specifying which
+#'   tree will be included in the phyloseq object that is created, 
+#'   (By default: \code{tree_name = "phylo"})
+#'   \code{tree_name} will be deprecated. Use \code{tree.name} instead.
 #' 
 #' @details 
 #' \code{convertToPhyloseq} creates a phyloseq object from a 
@@ -119,7 +124,7 @@ setMethod("convertToPhyloseq",
 #' @export
 setMethod("convertToPhyloseq",
           signature = c(x = "TreeSummarizedExperiment"),
-    function(x, tree_name = "phylo", ...){
+    function(x, tree.name = tree_name, tree_name = "phylo", ...){
       # If rowTrees exist, check tree.name
       if( length(x@rowTree) > 0 ){
         .check_rowTree_present(tree.name, x)

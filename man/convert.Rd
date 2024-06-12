@@ -4,7 +4,7 @@
 \name{convert}
 \alias{convert}
 \alias{importBIOM}
-\alias{convertFromBiom}
+\alias{convertFromBIOM}
 \alias{convertFromDADA2}
 \alias{convertFromPhyloseq}
 \alias{convertToPhyloseq}
@@ -14,7 +14,7 @@
 \usage{
 importBIOM(file, ...)
 
-convertFromBiom(
+convertFromBIOM(
   obj,
   removeTaxaPrefixes = FALSE,
   rankFromPrefix = FALSE,
@@ -30,7 +30,7 @@ convertToPhyloseq(x, ...)
 
 \S4method{convertToPhyloseq}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
 
-\S4method{convertToPhyloseq}{TreeSummarizedExperiment}(x, tree_name = "phylo", ...)
+\S4method{convertToPhyloseq}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo", ...)
 }
 \arguments{
 \item{file}{BIOM file location}
@@ -74,6 +74,11 @@ will be disabled.)}
 \item{tree.name}{a single \code{character} value for specifying which
 tree will be included in the phyloseq object that is created,
 (By default: \code{tree.name = "phylo"})}
+
+\item{tree_name}{a single \code{character} value for specifying which
+tree will be included in the phyloseq object that is created,
+(By default: \code{tree_name = "phylo"})
+\code{tree_name} will be deprecated. Use \code{tree.name} instead.}
 }
 \value{
 \code{importBIOM} returns an object of class
