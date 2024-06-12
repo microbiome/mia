@@ -121,6 +121,36 @@ test_that("agglomerate", {
     expect_equal(nrow(test0), 945)
     expect_equal(nrow(test1), 2307)
     
+    # Test that remove_empty_ranks work
+    expect_error(
+        agglomerateByRank(tse, rank = "Class", remove_empty_ranks = NULL))
+    expect_error(
+        agglomerateByRank(tse, rank = "Class", remove_empty_ranks = "NULL"))
+    expect_error(
+        agglomerateByRank(tse, rank = "Class", remove_empty_ranks = 1))
+    expect_error(
+        agglomerateByRank(
+            tse, rank = "Class", remove_empty_ranks = c(TRUE, TRUE)))
+    
+    # Add a column to rowData(se) to test that only NA rank columns are removed
+    # when remove_empty_ranks = TRUE
+    rank <- "Class"
+    rowData(tse)[["test"]] <- rep(NA, nrow(rowData(tse)))
+    x <- agglomerateByRank(tse, rank = rank)
+    rd1 <- rowData(x)
+    x <- agglomerateByRank(tse, rank = rank, remove_empty_ranks = TRUE)
+    rd2 <- rowData(x)
+    cols <- taxonomyRanks(tse)[ seq_len(which(taxonomyRanks(tse) == "Class")) ]
+    cols <- c(cols, "test")
+    expect_equal(rd1[, cols], rd2[, cols])
+    expect_true( ncol(rd1) > ncol(rd2) )
+    # Test that make_unique work
+    uniq <- agglomerateByRank(tse, rank = "Species", na.rm = FALSE)
+    not_uniq <- agglomerateByRank(
+        tse, rank = "Species", make_unique = FALSE, na.rm = FALSE)
+    expect_true( !any( duplicated(rownames(uniq)) ) )
+    expect_true( any( duplicated(rownames(not_uniq)) ) )
+    
     # Load data from miaTime package
     skip_if_not(require("miaTime", quietly = TRUE))
     data(SilvermanAGutData)
@@ -165,19 +195,4 @@ test_that("agglomerate", {
                         "NYTDRRKDVHNKNDRVGRNDRSBRRAWTBYNHRKKKWRSSRKKRAAWKSSKWR",
                         "RWDWTNDBRVRRAMHHCMRDKKSSRARGSSVSYYHNYBRRVHNDNNHYKRMVV",
                         "YKVRDNNNSRAARSBDKGGKK"))
-    # Test that remove_empty_ranks work
-    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = NULL))
-    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = "NULL"))
-    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = 1))
-    expect_error(agglomerateByRank(se, rank = "Class", remove_empty_ranks = c(TRUE, TRUE)))
-    x <- agglomerateByRank(se, rank = "Class")
-    rd1 <- rowData(x)[, 1:3]
-    x <- agglomerateByRank(se, rank = "Class", remove_empty_ranks = TRUE)
-    rd2 <- rowData(x)
-    expect_equal(rd1, rd2)
-    # Test that make_unique work
-    uniq <- agglomerateByRank(se, rank = "Species")
-    not_uniq <- agglomerateByRank(se, rank = "Species", make_unique = FALSE)
-    expect_true( !any( duplicated(rownames(uniq)) ) )
-    expect_true( any( duplicated(rownames(not_uniq)) ) )
 })
