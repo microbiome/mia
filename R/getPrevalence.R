@@ -517,6 +517,10 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #'
 #' @param other_label A single \code{character} valued used as the label for the
 #'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
+#'   
+#' @param agglomerate.tree \code{TRUE} or \code{FALSE}: should
+#'   \code{rowTree()} also be agglomerated? (Default:
+#'   \code{agglomerate.tree = FALSE})
 #'
 #' @details
 #' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
@@ -557,7 +561,8 @@ setGeneric("agglomerateByPrevalence", signature = "x",
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, other_label = "Other", ...){
+    function(x, rank = NULL, other_label = "Other", agglomerate.tree = FALSE,
+            ...){
         # input check
         if(!.is_a_string(other_label)){
             stop("'other_label' must be a single character value.",
@@ -567,7 +572,8 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         # Check assays that they can be merged safely
         mapply(.check_assays_for_merge, assayNames(x), assays(x))
         #
-        x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
+        x <- .agg_for_prevalence(x, rank, agglomerate.tree,
+                                check.assays = FALSE, ...)
         pr <- getPrevalent(x, rank = NULL, ...)
         f <- rownames(x) %in% pr
         if(any(!f)){
@@ -580,16 +586,11 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
             if(!is.null(rank)){
                 rowData(other_x)[,rank] <- other_label
             }
-            # temporary fix until TSE supports rbind
-            class <- c("SingleCellExperiment","RangedSummarizedExperiment",
-                       "SummarizedExperiment")
-            class_x <- class(x)
-            if(!(class_x %in% class)){
-                class <- "SingleCellExperiment"
-            } else {
-                class <- class[class_x == class]
-            }
             x <- rbind(x[f,], other_x)
+        }
+        if (agglomerate.tree == TRUE){
+            x <- .agglomerate_trees(x, 1)
+            
         }
         x
     }

@@ -390,13 +390,15 @@ test_that("agglomerateByPrevalence", {
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(6,26))
     expect_equal(rowData(actual)[6,"Phylum"],"test")
+    expect_false(length(rowTree(actual)$tip.label) == length(rownames(actual)))
 
     actual <- agglomerateByPrevalence(GlobalPatterns,
                                       rank = NULL,
                                       detection = 0.0001,
                                       prevalence = 50/100,
                                       as_relative = TRUE,
-                                      other_label = "test")
+                                      other_label = "test",
+                                      agglomerate.tree = TRUE)
     expect_equal(agglomerateByPrevalence(GlobalPatterns,
                                            rank = NULL,
                                            detection = 0.0001,
@@ -412,4 +414,13 @@ test_that("agglomerateByPrevalence", {
     expect_s4_class(actual,class(GlobalPatterns))
     expect_equal(dim(actual),c(6,26))
     expect_true(all(is.na(rowData(actual)[6,])))
+    expect_equal(length(rowTree(actual)$tip.label), length(rownames(actual)))
+    actual <- agglomerateByPrevalence(GlobalPatterns,
+                                      rank = "Phylum",
+                                      detection = 1/100,
+                                      prevalence = 50/100,
+                                      as_relative = TRUE,
+                                      other_label = "test",
+                                      agglomerate.tree = TRUE)
+    expect_equal(length(rowTree(actual)$tip.label), length(rownames(actual)))
 })
