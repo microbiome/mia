@@ -31,7 +31,7 @@
 #'     data(esophagus, package="phyloseq")
 #'     convertFromPhyloseq(esophagus)
 #' }
-convertFromPhyloseq <- function(phy) {
+convertFromPhyloseq <- function(phy, ...) {
     # input check
     .require_package("phyloseq")
     if(!is(phy,"phyloseq")){

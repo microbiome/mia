@@ -24,7 +24,7 @@ convertFromBIOM(
 
 convertFromDADA2(...)
 
-convertFromPhyloseq(phy)
+convertFromPhyloseq(phy, ...)
 
 convertToPhyloseq(x, ...)
 
