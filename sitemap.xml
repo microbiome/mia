@@ -52,9 +52,6 @@
     <loc>/reference/calculateUnifrac.html</loc>
   </url>
   <url>
-    <loc>/reference/convert.html</loc>
-  </url>
-  <url>
     <loc>/reference/deprecate.html</loc>
   </url>
   <url>
@@ -110,6 +107,18 @@
   </url>
   <url>
     <loc>/reference/isContaminant.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makePhyloseqFromTreeSE.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makeTreeSEFromBiom.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makeTreeSEFromDADA2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/makeTreeSEFromPhyloseq.html</loc>
   </url>
   <url>
     <loc>/reference/meltSE.html</loc>
