@@ -12,6 +12,7 @@
 \alias{agglomerateByRank,TreeSummarizedExperiment-method}
 \alias{agglomerateByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
+\alias{agglomerateByPrevalence,TreeSummarizedExperiment-method}
 \alias{agglomerateByRanks}
 \alias{agglomerateByRanks,SummarizedExperiment-method}
 \alias{agglomerateByRanks,SingleCellExperiment-method}
@@ -49,11 +50,14 @@ agglomerateByVariable(x, ...)
 
 agglomerateByPrevalence(x, ...)
 
-\S4method{agglomerateByPrevalence}{SummarizedExperiment}(
+\S4method{agglomerateByPrevalence}{SummarizedExperiment}(x, rank = NULL, other_label = "Other", ...)
+
+\S4method{agglomerateByPrevalence}{TreeSummarizedExperiment}(
   x,
   rank = NULL,
   other_label = "Other",
   agglomerate.tree = FALSE,
+  mergeRefSeq = FALSE,
   ...
 )
 

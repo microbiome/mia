@@ -34,6 +34,12 @@
 #'
 #' @param na.rm logical scalar: Should NA values be omitted when calculating
 #' prevalence? (default: \code{na.rm = TRUE})
+#' 
+#' @param mergeRefSeq logical scalar: Should a consensus sequence be calculated?
+#' If set to \code{FALSE}, the result
+#' from \code{archetype} is returned; If set to \code{TRUE} the result
+#' from \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
+#' is returned. (Default: \code{mergeRefSeq = FALSE})
 #'
 #' @param ... additional arguments
 #' \itemize{
@@ -561,23 +567,18 @@ setGeneric("agglomerateByPrevalence", signature = "x",
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, other_label = "Other", agglomerate.tree = FALSE,
-            ...){
+    function(x, rank = NULL, other_label = "Other", ...){
+        browser()
         # input check
         if(!.is_a_string(other_label)){
             stop("'other_label' must be a single character value.",
-                call. = FALSE)
-        }
-        if(!.is_a_bool(agglomerate.tree)){
-            stop("'agglomerate.tree' must be TRUE or FALSE.",
                 call. = FALSE)
         }
         #
         # Check assays that they can be merged safely
         mapply(.check_assays_for_merge, assayNames(x), assays(x))
         #
-        x <- .agg_for_prevalence(x, rank, agglomerate.tree,
-                                check.assays = FALSE, ...)
+        x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
         pr <- getPrevalent(x, rank = NULL, ...)
         f <- rownames(x) %in% pr
         if(any(!f)){
@@ -592,10 +593,41 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
             }
             x <- rbind(x[f,], other_x)
         }
-        if ( agglomerate.tree ){
-            x <- .agglomerate_trees(x, 1)
-            
-        }
         x
+    }
+)
+
+#' @rdname agglomerate-methods
+#' @export
+setMethod("agglomerateByPrevalence", 
+          signature = c(x = "TreeSummarizedExperiment"),
+    function(x, rank = NULL, other_label = "Other", agglomerate.tree = FALSE, 
+            mergeRefSeq = FALSE, ...){
+      browser()
+      x <- callNextMethod()
+      # input check
+      if(!.is_a_bool(agglomerate.tree)){
+        stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+      }
+      if(!.is_a_bool(mergeRefSeq)){
+        stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
+      }
+      # for optionally merging referenceSeq
+      f <- rownames(x) 
+      refSeq <- NULL
+      if(mergeRefSeq){
+        refSeq <- referenceSeq(x)
+      }
+      #
+      x <- .merge_rows(x, f, archetype = 1L, ...)
+      # optionally merge rowTree
+      if( agglomerate.tree ){
+        x <- .agglomerate_trees(x, 1)
+      }
+      # optionally merge referenceSeq
+      if(!is.null(refSeq)){
+        referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
+      }
+      x
     }
 )
