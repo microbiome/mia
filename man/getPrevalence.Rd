@@ -127,12 +127,6 @@ on compositional (relative) abundances? (default: \code{FALSE})}
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set \code{include_lowest} to \code{TRUE}.}
-
-\item{mergeRefSeq}{logical scalar: Should a consensus sequence be calculated?
-If set to \code{FALSE}, the result
-from \code{archetype} is returned; If set to \code{TRUE} the result
-from \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
-is returned. (Default: \code{mergeRefSeq = FALSE})}
 }
 \value{
 \code{subsetPrevalent} and \code{subsetRareFeatures} return subset of

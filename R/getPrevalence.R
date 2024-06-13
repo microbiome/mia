@@ -34,12 +34,6 @@
 #'
 #' @param na.rm logical scalar: Should NA values be omitted when calculating
 #' prevalence? (default: \code{na.rm = TRUE})
-#' 
-#' @param mergeRefSeq logical scalar: Should a consensus sequence be calculated?
-#' If set to \code{FALSE}, the result
-#' from \code{archetype} is returned; If set to \code{TRUE} the result
-#' from \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
-#' is returned. (Default: \code{mergeRefSeq = FALSE})
 #'
 #' @param ... additional arguments
 #' \itemize{
@@ -528,6 +522,12 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #'   \code{rowTree()} also be agglomerated? (Default:
 #'   \code{agglomerate.tree = FALSE})
 #'
+#' @param mergeRefSeq logical scalar: Should a consensus sequence be calculated?
+#' If set to \code{FALSE}, the result
+#' from \code{archetype} is returned; If set to \code{TRUE} the result
+#' from \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
+#' is returned. (Default: \code{mergeRefSeq = FALSE})
+#' 
 #' @details
 #' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
 #' level specified by \code{rank} (by default the highest taxonomic level
@@ -568,7 +568,6 @@ setGeneric("agglomerateByPrevalence", signature = "x",
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, other_label = "Other", ...){
-        browser()
         # input check
         if(!.is_a_string(other_label)){
             stop("'other_label' must be a single character value.",
@@ -603,7 +602,6 @@ setMethod("agglomerateByPrevalence",
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, rank = NULL, other_label = "Other", agglomerate.tree = FALSE, 
             mergeRefSeq = FALSE, ...){
-      browser()
       x <- callNextMethod()
       # input check
       if(!.is_a_bool(agglomerate.tree)){
