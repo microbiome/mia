@@ -210,7 +210,7 @@ test_that("getRare", {
     for( rank in ranks ){
 
         # Agglomerates data by rank
-        se <- agglomerateByRank(GlobalPatterns, rank = rank)
+        se <- agglomerateByRank(GlobalPatterns, rank = rank, na.rm=FALSE)
 
         # Gets rownames for all the taxa
         all_taxa <- rownames(se)

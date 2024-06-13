@@ -29,25 +29,19 @@ agglomerateByVariable(x, ...)
 \S4method{agglomerateByRank}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  disable.taxonomy = onRankOnly,
-  onRankOnly = TRUE,
-  na.rm = FALSE,
+  na.rm = TRUE,
   empty.fields = c(NA, "", " ", "\\t", "-", "_"),
   ...
 )
 
 \S4method{agglomerateByVariable}{SummarizedExperiment}(x, MARGIN, f, ...)
 
-\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(x, MARGIN, f, mergeTree = FALSE, ...)
 \S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
   x,
   MARGIN,
   f,
-  archetype = 1L,
   agglomerate.tree = mergeTree,
   mergeTree = FALSE,
-  agglomerate.refseq = mergeRefSeq,
-  mergeRefSeq = FALSE,
   ...
 )
 
@@ -134,12 +128,6 @@ See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
-\item{disable.taxonomy}{\code{TRUE} or \code{FALSE}: Should information only from
-the specified rank be used or from ranks equal and above? See details.
-(default: \code{disable.taxonomy = FALSE})}
-
-\item{onRankOnly}{Deprecated. Use \code{disable.taxonomy} instead.}
-
 \item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
 removed? Use it with caution, since results with NA on the selected rank
 will be dropped. This setting can be tweaked by defining
@@ -158,24 +146,10 @@ Must be \code{'rows'} or \code{'cols'}.}
 merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged.}
 
-\item{archetype}{Of each level of \code{f}, which element should be regarded
-as the archetype and metadata in the columns or rows kept, while merging?
-This can be single integer value or an integer vector of the same length
-as \code{levels(f)}. (Default: \code{archetype = 1L}, which means the first
-element encountered per factor level will be kept)}
-
 \item{agglomerate.tree}{\code{TRUE} or \code{FALSE}: Should
 \code{rowTree()} also be merged? (Default: \code{agglomerate.tree = FALSE})}
 
 \item{mergeTree}{Deprecated. Use \code{agglomerate.tree} instead.}
-
-\item{agglomerate.refseq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
-be calculated? If set to \code{FALSE}, the result from \code{archetype} is
-returned; If set to \code{TRUE} the result from
-\code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
-returned. (Default: \code{agglomerate.refseq = FALSE})}
-
-\item{mergeRefSeq}{Deprecated. Use \code{agglomerate.refseq} instead.}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -208,6 +182,14 @@ breaks the link between the data used to calculate the reduced dims.
 (default: \code{keep.reduceddims = FALSE})}
 
 \item{keep_reducedDims}{Deprecated. Use \code{keep.reduceddims} instead.}
+
+\item{agglomerate.refseq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
+be calculated? If set to \code{FALSE}, the result from \code{archetype} is
+returned; If set to \code{TRUE} the result from
+\code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
+returned. (Default: \code{agglomerate.refseq = FALSE})}
+
+\item{mergeRefSeq}{Deprecated. Use \code{agglomerate.refseq} instead.}
 }
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,
@@ -259,14 +241,6 @@ agglomerated, i.e. summed up. If the assay contains values other than counts
 or absolute values, this can lead to meaningless values being produced.
 
 Agglomeration sums up the values of assays at the specified taxonomic level. With
-When using \code{agglomerateByRank}, please note that depending on the
-available taxonomic data and its structure, setting\code{disable.taxonomy = TRUE}
-has certain implications on the interpretability of your results. If no loops
-exist (loops meaning two higher ranks containing the same lower rank), the
-results should be comparable. You can check for loops using
-\code{\link[TreeSummarizedExperiment:detectLoop]{detectLoop}}.
-
-Also, agglomeration sums up the values of assays at the specified taxonomic level. With
 certain assays, e.g. those that include binary or negative values, this summing
 can produce meaningless values. In those cases, consider performing agglomeration
 first, and then applying the transformation afterwards.

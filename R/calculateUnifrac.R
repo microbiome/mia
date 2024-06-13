@@ -185,8 +185,8 @@ setMethod("calculateUnifrac",
 #' @importFrom ape drop.tip
 #' @importFrom rbiom unifrac
 #' @export
-runUnifrac <- function(x, tree, weighted = FALSE, normalized = TRUE,
-    node.lab = nodeLab, nodeLab = NULL, BPPARAM = SerialParam(), ...){
+runUnifrac <- function(x, tree, weighted = FALSE, node.lab = nodeLab, 
+    nodeLab = NULL, ...){
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)

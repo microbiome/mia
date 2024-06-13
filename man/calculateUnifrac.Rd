@@ -22,16 +22,7 @@ calculateUnifrac(x, tree, ...)
   ...
 )
 
-runUnifrac(
-  x,
-  tree,
-  weighted = FALSE,
-  normalized = TRUE,
-  node.lab = nodeLab,
-  nodeLab = NULL,
-  BPPARAM = SerialParam(),
-  ...
-)
+runUnifrac(x, tree, weighted = FALSE, node.lab = nodeLab, nodeLab = NULL, ...)
 }
 \arguments{
 \item{x}{a numeric matrix or a

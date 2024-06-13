@@ -335,13 +335,13 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, MARGIN, f, mergeTree = FALSE, ...){
+            function(x, MARGIN, f, agglomerate.tree = mergeTree, mergeTree = FALSE, ...){
                 # Check MARGIN
                 MARGIN <- .check_MARGIN(MARGIN)
                 # Get function based on MARGIN
                 FUN <- switch(MARGIN, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
-                x <- FUN(x, f, mergeTree = mergeTree, ...)
+                x <- FUN(x, f, agglomerate.tree = agglomerate.tree, ...)
                 return(x)
             }
 )
