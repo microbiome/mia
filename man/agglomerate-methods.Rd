@@ -182,14 +182,6 @@ breaks the link between the data used to calculate the reduced dims.
 (default: \code{keep.reduceddims = FALSE})}
 
 \item{keep_reducedDims}{Deprecated. Use \code{keep.reduceddims} instead.}
-
-\item{agglomerate.refseq}{\code{TRUE} or \code{FALSE}: Should a consensus sequence
-be calculated? If set to \code{FALSE}, the result from \code{archetype} is
-returned; If set to \code{TRUE} the result from
-\code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}} is
-returned. (Default: \code{agglomerate.refseq = FALSE})}
-
-\item{mergeRefSeq}{Deprecated. Use \code{agglomerate.refseq} instead.}
 }
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,

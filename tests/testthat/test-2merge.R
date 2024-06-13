@@ -77,8 +77,7 @@ test_that("merge", {
     xtse <- TreeSummarizedExperiment(assays = list(mat = mat),
                                      rowRanges = unname(grl))
     FUN_check_x <- function(x,archetype=1){
-        actual <- agglomerateByVariable(x, MARGIN = "rows", f, archetype, 
-            mergeTree = FALSE)
+        actual <- agglomerateByVariable(x, MARGIN = "rows", f, archetype, agglomerate.tree = FALSE)
         expect_s4_class(actual,class(x))
         expect_equal(dim(actual),c(2,10))
     }
