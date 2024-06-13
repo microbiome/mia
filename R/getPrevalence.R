@@ -592,7 +592,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
             }
             x <- rbind(x[f,], other_x)
         }
-        if ( agglomerate.tree == TRUE ){
+        if ( agglomerate.tree ){
             x <- .agglomerate_trees(x, 1)
             
         }
