@@ -166,16 +166,6 @@ that might occur when correlations and p-values are calculated.}
 \item{paired}{A single boolean value for specifying if samples are paired or not.
 \code{colnames} must match between twp experiments. \code{paired} is disabled
 when \code{MARGIN = 1}. (By default: \code{paired = FALSE})}
-
-\item{assay.name1}{a single \code{character} value for specifying which
-assay of experiment 1 to use for calculation.
-(Please use \code{assay.type1} instead. At some point \code{assay.name1}
-will be disabled.)}
-
-\item{assay.name2}{a single \code{character} value for specifying which
-assay of experiment 2 to use for calculation.
-(Please use \code{assay.type2} instead. At some point \code{assay.name2}
-will be disabled.)}
 }
 \value{
 This function returns associations in table or matrix format. In table format,

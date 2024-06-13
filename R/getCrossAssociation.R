@@ -23,18 +23,8 @@
 #' @param assay.type2 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
 #'   experiment 2 to be transformed. (By default: \code{assay.type2 = "counts"})
-#'   
-#' @param assay.name1 a single \code{character} value for specifying which
-#'   assay of experiment 1 to use for calculation.
-#'   (Please use \code{assay.type1} instead. At some point \code{assay.name1}
-#'   will be disabled.)
-#' 
+#'    
 #' @param assay_name1 Deprecated. Use \code{assay.type1} instead.
-#'   
-#' @param assay.name2 a single \code{character} value for specifying which
-#'   assay of experiment 2 to use for calculation.
-#'   (Please use \code{assay.type2} instead. At some point \code{assay.name2}
-#'   will be disabled.)
 #' 
 #' @param assay_name2 Deprecated. Use \code{assay.type2} instead.
 #' 
