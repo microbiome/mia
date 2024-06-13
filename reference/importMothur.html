@@ -55,28 +55,47 @@ files provided as input.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">importMothur</span><span class="op">(</span><span class="va">sharedFile</span>, taxonomyFile <span class="op">=</span> <span class="cn">NULL</span>, designFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">importMothur</span><span class="op">(</span></span>
+<span>  assay.file <span class="op">=</span> <span class="va">sharedFile</span>,</span>
+<span>  <span class="va">sharedFile</span>,</span>
+<span>  taxonomyFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row.file <span class="op">=</span> <span class="va">taxonomyFile</span>,</span>
+<span>  designFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  col.file <span class="op">=</span> <span class="va">designFile</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>sharedFile</dt>
+    <dl><dt>assay.file</dt>
 <dd><p>a single <code>character</code> value defining the file
 path of the feature table to be imported. The File has to be in
 <code>shared file</code> format as defined in Mothur documentation.</p></dd>
 
 
+<dt>sharedFile</dt>
+<dd><p>Deprecated. Use <code>assay.file</code> instead.</p></dd>
+
+
 <dt>taxonomyFile</dt>
+<dd><p>Deprecated. Use <code>row.file</code> instead.</p></dd>
+
+
+<dt>row.file</dt>
 <dd><p>a single <code>character</code> value defining the file path of
 the taxonomy table to be imported. The File has to be in <code>taxonomy
   file</code> or <code>constaxonomy file</code> format  as defined in Mothur
-documentation. (default: <code>taxonomyFile = NULL</code>).</p></dd>
+documentation. (default: <code>row.file = NULL</code>).</p></dd>
 
 
 <dt>designFile</dt>
+<dd><p>Deprecated. Use <code>col.file</code> instead.</p></dd>
+
+
+<dt>col.file</dt>
 <dd><p>a single <code>character</code> value defining the file path of
 the sample metadata to be imported. The File has to be in <code>desing
-  file</code> format as defined in Mothur documentation. (default: <code>designFile
+  file</code> format as defined in Mothur documentation. (default: <code>col.file
   = NULL</code>).</p></dd>
 
 </dl></div>
@@ -94,8 +113,8 @@ the sample metadata to be imported. The File has to be in <code>desing
     <h2>Details</h2>
     <p>Results exported from Mothur can be imported as a
 <code>SummarizedExperiment</code> using <code>importMothur</code>. Except for the
-<code>sharedFile</code>, the other data types, <code>taxonomyFile</code>, and
-<code>designFile</code>, are optional, but are highly encouraged to be provided.</p>
+<code>assay.file</code>, the other data types, <code>row.file</code>, and
+<code>col.file</code>, are optional, but are highly encouraged to be provided.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -128,7 +147,7 @@ the sample metadata to be imported. The File has to be in <code>desing
 <span class="r-in"><span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"mothur_example.design"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Creates se object from files</span></span></span>
-<span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">importMothur</span><span class="op">(</span><span class="va">counts</span>, <span class="va">taxa</span>, <span class="va">meta</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">importMothur</span><span class="op">(</span>assay.file <span class="op">=</span> <span class="va">counts</span>, row.file <span class="op">=</span> <span class="va">taxa</span>, col.file <span class="op">=</span> <span class="va">meta</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Convert SE to TreeSE</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">se</span>, <span class="st">"TreeSummarizedExperiment"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span></span></span>

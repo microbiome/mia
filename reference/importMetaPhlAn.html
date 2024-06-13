@@ -60,24 +60,29 @@
 path of the Metaphlan file. The file must be in merged Metaphlan format.</p></dd>
 
 
-<dt>colData</dt>
+<dt>col.data</dt>
 <dd><p>a DataFrame-like object that includes sample names in
 rownames, or a single <code>character</code> value defining the file
 path of the sample metadata file. The file must be in <code>tsv</code> format
-(default: <code>colData = NULL</code>).</p></dd>
+(default: <code>col.data = NULL</code>).</p></dd>
+
+
+<dt>colData</dt>
+<dd><p>Deprecated. use <code>col.data</code> instead.</p></dd>
 
 
 <dt>sample_meta</dt>
-<dd><p>a DataFrame-like object that includes sample names in
-rownames, or a single <code>character</code> value defining the file
-path of the sample metadata file. The file must be in <code>tsv</code> format
-(default: <code>sample_meta = NULL</code>).</p></dd>
+<dd><p>Deprecated. Use <code>col.data</code> instead.</p></dd>
+
+
+<dt>phy.tree.file</dt>
+<dd><p>a single <code>character</code> value defining the file
+path of the phylogenetic tree.
+(default: <code>phy.tree.file = NULL</code>).</p></dd>
 
 
 <dt>phy_tree</dt>
-<dd><p>a single <code>character</code> value defining the file
-path of the phylogenetic tree.
-(default: <code>phy_tree = NULL</code>).</p></dd>
+<dd><p>Deprecated. Use <code>phy.tree.file</code> instead.</p></dd>
 
 
 <dt>...</dt>
@@ -87,9 +92,9 @@ path of the phylogenetic tree.
 <li><p><code>assay_name</code>: A single <code>character</code> value for specifying which
 assay to use for calculation. (Please use <code>assay.type</code> instead.
 At some point <code>assay_name</code> will be disabled.)</p></li>
-<li><p><code>removeTaxaPrefixes</code>: <code>TRUE</code> or <code>FALSE</code>: Should
+<li><p><code>prefix.rm</code>: <code>TRUE</code> or <code>FALSE</code>: Should
 taxonomic prefixes be removed? (default:
-<code>removeTaxaPrefixes = FALSE</code>)</p></li>
+<code>prefix.rm = FALSE</code>)</p></li>
 <li><p><code>remove.suffix</code>: <code>TRUE</code> or <code>FALSE</code>: Should
 suffixes of sample names be removed? Metaphlan pipeline adds suffixes
 to sample names. Suffixes are formed from file names. By selecting
