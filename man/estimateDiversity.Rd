@@ -37,6 +37,7 @@ estimateDiversity(
   index = c("coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
+  tree.name = tree_name,
   tree_name = "phylo",
   ...,
   BPPARAM = SerialParam()
@@ -57,6 +58,7 @@ estimateFaith(
   assay.type = "counts",
   assay_name = NULL,
   name = "faith",
+  node.lab = node_lab,
   node_lab = NULL,
   ...
 )
@@ -66,6 +68,7 @@ estimateFaith(
   assay.type = "counts",
   assay_name = NULL,
   name = "faith",
+  tree.name = tree_name,
   tree_name = "phylo",
   ...
 )
@@ -98,9 +101,10 @@ determining the threshold for coverage index. By default,
 this quantile of the data. The assumption is that abundances higher than
 this are not common, and they are classified in their own group.
 By default, \code{quantile} is 0.5.
-\item num_of_classes: The number of arithmetic abundance classes
+\item nclasses: The number of arithmetic abundance classes
 from zero to the quantile cutoff indicated by \code{quantile}.
-By default, \code{num_of_classes} is 50.
+By default, \code{nclasses} is 50.
+\item num_of_classes Deprecated. Use \code{nclasses} instead.
 \item only.tips: A boolean value specifying whether to remove internal
 nodes when Faith's index is calculated. When \code{only.tips=TRUE}, those
 rows that are not tips of tree are removed.
@@ -111,18 +115,22 @@ rows that are not tips of tree are removed.
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether calculation of estimates should be parallelized.}
 
-\item{tree_name}{a single \code{character} value for specifying which
+\item{tree.name}{a single \code{character} value for specifying which
 rowTree will be used to calculate faith index.
-(By default: \code{tree_name = "phylo"})}
+(By default: \code{tree.name = "phylo"})}
+
+\item{tree_name}{Deprecated. Use \code{tree.name} isntead.}
 
 \item{tree}{A phylogenetic tree that is used to calculate 'faith' index.
 If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is
 used by default.}
 
-\item{node_lab}{NULL or a character vector specifying the links between rows and
+\item{node.lab}{NULL or a character vector specifying the links between rows and
 node labels of \code{tree}. If a certain row is not linked with the tree, missing
 instance should be noted as NA. When NULL, all the rownames should be found from
-the tree. (By default: \code{node_lab = NULL})}
+the tree. (By default: \code{node.lab = NULL})}
+
+\item{node_lab}{Deprecated. Use \code{node.lab} instead.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}
@@ -218,10 +226,10 @@ colData(tse)[, index] <- NULL
 
 # 'threshold' can be used to determine threshold for 'coverage' index
 tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
-# 'quantile' and 'num_of_classes' can be used when
+# 'quantile' and 'nclasses' can be used when
 # 'log_modulo_skewness' is calculated
 tse <- estimateDiversity(tse, index = "log_modulo_skewness",
-       quantile = 0.75, num_of_classes = 100)
+       quantile = 0.75, nclasses = 100)
 
 # It is recommended to specify also the final names used in the output.
 tse <- estimateDiversity(tse,

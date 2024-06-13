@@ -45,26 +45,26 @@
 #'   to \code{getPrevalence} and \code{getPrevalentTaxa} and used in
 #'   \code{agglomeratebyPrevalence}
 #'   \itemize{
-#'        \item \code{remove_empty_ranks}: A single boolean value for selecting
+#'        \item \code{empty.ranks.rm}: A single boolean value for selecting
 #'        whether to remove those columns of rowData that include only NAs after
-#'        agglomeration. (By default: \code{remove_empty_ranks = FALSE})
-#'        \item \code{make_unique}: A single boolean value for selecting
-#'        whether to make rownames unique. (By default: \code{make_unique = TRUE})
+#'        agglomeration. (By default: \code{empty.ranks.rm = FALSE})
+#'        \item \code{make.unique}: A single boolean value for selecting
+#'        whether to make rownames unique. (By default: \code{make.unique = TRUE})
 #'        \item \code{detection}: Detection threshold for absence/presence.
 #'        Either an absolute value compared directly to the values of \code{x}
-#'        or a relative value between 0 and 1, if \code{as_relative = FALSE}.
+#'        or a relative value between 0 and 1, if \code{as.relative = FALSE}.
 #'        \item \code{prevalence}: Prevalence threshold (in 0 to 1). The
 #'        required prevalence is strictly greater by default. To include the
-#'        limit, set \code{include_lowest} to \code{TRUE}.
+#'        limit, set \code{include.lowest} to \code{TRUE}.
 #'        \item \code{as.relative}: Logical scalar: Should the detection
 #'        threshold be applied on compositional (relative) abundances?
 #'        (default: \code{FALSE})
-#'        \item \code{mergeRefSeq} \code{TRUE} or \code{FALSE}: Should a
+#'        \item \code{agglomerate.refseq} \code{TRUE} or \code{FALSE}: Should a
 #'        consensus sequence be calculated? If set to \code{FALSE}, the result
 #'        from \code{archetype} is returned; If set to \code{TRUE} the result
 #'        from
 #'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
-#'        is returned. (Default: \code{mergeRefSeq = FALSE})
+#'        is returned. (Default: \code{agglomerate.refseq = FALSE})
 #'        \item \code{archetype} Of each level of \code{f}, which element should
 #'        be regarded as the archetype and metadata in the columns or rows kept,
 #'        while merging? This can be single integer value or an integer vector
@@ -76,10 +76,12 @@
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
 #'
-#' @param strip_altexp \code{TRUE} or \code{FALSE}: Should alternative
+#' @param strip.altexp \code{TRUE} or \code{FALSE}: Should alternative
 #'   experiments be removed prior to agglomeration? This prevents to many
 #'   nested alternative experiments by default (default:
-#'   \code{strip_altexp = TRUE})
+#'   \code{strip.altexp = TRUE})
+#' 
+#' @param strip_altexp Deprecated. Use \code{strip.altexp} instead.
 #'
 #' @param MARGIN A character value for selecting if data is merged
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
@@ -90,8 +92,10 @@
 #'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 #'   returned unchanged.
 #'
-#' @param mergeTree \code{TRUE} or \code{FALSE}: Should
-#'   \code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})
+#' @param agglomerate.tree \code{TRUE} or \code{FALSE}: Should
+#'   \code{rowTree()} also be merged? (Default: \code{agglomerate.tree = FALSE})
+#' 
+#' @param mergeTree Deprecated. Use \code{agglomerate.tree} instead.
 #'
 #' @details
 #' 
@@ -166,12 +170,12 @@
 #' print(rownames(x3[1:3,]))
 #'
 #' # To add them, use getTaxonomyLabels function.
-#' rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
+#' rownames(x3) <- getTaxonomyLabels(x3, with.rank = TRUE)
 #' print(rownames(x3[1:3,]))
 #'
-#' # use 'remove_empty_ranks' to remove columns that include only NAs
+#' # use 'empty.ranks.rm' to remove columns that include only NAs
 #' x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum",
-#'                         remove_empty_ranks = TRUE)
+#'                         empty.ranks.rm = TRUE)
 #' head(rowData(x4))
 #'
 #' # If the assay contains NAs, you might want to consider replacing them,
@@ -201,7 +205,7 @@
 #' f <- factor(regmatches(rownames(esophagus),
 #'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
 #' merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f,
-#'                                 mergeTree = TRUE)
+#'                                 agglomerate.tree = TRUE)
 #' plot(rowTree(merged))
 #' #
 #' data(GlobalPatterns)
@@ -293,8 +297,8 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         }
         # adjust rownames
         rownames(x) <- getTaxonomyLabels(x, empty.fields, ...,
-                                        with_rank = FALSE,
-                                        resolve_loops = FALSE)
+                                        with.rank = FALSE,
+                                        resolve.loops = FALSE)
         # Remove those columns from rowData that include only NAs
         x <- .remove_NA_cols_from_rowdata(x, ...)
         x <- .add_values_to_metadata(x, "agglomerated_by_rank", rank)
@@ -321,13 +325,13 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, MARGIN, f, mergeTree = FALSE, ...){
+            function(x, MARGIN, f, agglomerate.tree = mergeTree, mergeTree = FALSE, ...){
                 # Check MARGIN
                 MARGIN <- .check_MARGIN(MARGIN)
                 # Get function based on MARGIN
                 FUN <- switch(MARGIN, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
-                x <- FUN(x, f, mergeTree = mergeTree, ...)
+                x <- FUN(x, f, agglomerate.tree = agglomerate.tree, ...)
                 return(x)
             }
 )
@@ -336,16 +340,16 @@ setMethod("agglomerateByVariable",
 #' @importFrom SingleCellExperiment altExp altExp<- altExps<-
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
-    function(x, ..., altexp = NULL, strip_altexp = TRUE){
+    function(x, ..., altexp = NULL, strip.altexp = strip_altexp, strip_altexp = TRUE){
         # input check
-        if(!.is_a_bool(strip_altexp)){
-            stop("'strip_altexp' mus be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(strip.altexp)){
+            stop("'strip.altexp' mus be TRUE or FALSE.", call. = FALSE)
         }
         #
         if (!is.null(altexp)) {
             x <- altExp(x, altexp)
         }
-        if(strip_altexp && is(x, "SingleCellExperiment")){
+        if(strip.altexp && is(x, "SingleCellExperiment")){
             altExps(x) <- NULL
         }
         callNextMethod(x, ...)
@@ -372,7 +376,7 @@ setMethod(
                     x <- .order_based_on_trees(x)
                 }
                 # Agglomerate data
-                x <- callNextMethod(x, mergeTree = agglomerate.tree, ...)
+                x <- callNextMethod(x, agglomerate.tree = agglomerate.tree, ...)
                 return(x)
             }
 )
@@ -392,14 +396,14 @@ setMethod(
 
 # This function removes empty rank columns from rowdata. (Those that include
 # only NA values)
-.remove_NA_cols_from_rowdata <- function(x, remove_empty_ranks = FALSE, ...){
-    # Check remove_empty_ranks
-    if( !.is_a_bool(remove_empty_ranks) ){
-        stop("'remove_empty_ranks' must be a boolean value.",
+.remove_NA_cols_from_rowdata <- function(x, empty.ranks.rm = FALSE, ...){
+    # Check empty.ranks.rm
+    if( !.is_a_bool(empty.ranks.rm) ){
+        stop("'empty.ranks.rm' must be a boolean value.",
             call. = FALSE)
     }
     # If user wants to remove those columns
-    if( remove_empty_ranks ){
+    if( empty.ranks.rm ){
         # Get columns that include taxonomy information
         rank_cols <- taxonomyRanks(x)
         # Get rowData with only taxonomy

@@ -41,20 +41,20 @@ test_that("diversity estimates", {
     expect_equal(unname(round(cd$fisher, 4)), c(8.8037, 10.0989, 13.2783))
     expect_equal(unname(round(cd$log_modulo_skewness, 6)), c(2.013610, 1.827198, 2.013695))
     
-    # Tests that 'quantile' and 'num_of_classes' are working
+    # Tests that 'quantile' and 'nclasses' are working
     expect_equal(unname(round(colData(estimateDiversity(tse,index="log_modulo_skewness",
                                                         quantile=0.855,
-                                                        num_of_classes=32)
+                                                        nclasses=32)
                                       )$log_modulo_skewness, 
                               6)), c(1.814770, 1.756495, 1.842704))
     
     # Tests that .calc_skewness returns right value
     mat <- assay(tse, "counts")
-    num_of_classes <- 61
+    nclasses <- 61
     quantile <- 0.35
     
     quantile_point <- quantile(max(mat), quantile)
-    cutpoints <- c(seq(0, quantile_point, length=num_of_classes), Inf)
+    cutpoints <- c(seq(0, quantile_point, length=nclasses), Inf)
     
     freq_table <- table(cut(mat, cutpoints), col(mat))
     test1 <- mia:::.calc_skewness(freq_table)
@@ -115,24 +115,24 @@ test_that("diversity estimates", {
     expect_equal(colnames(colData(se_tree)), c(colnames(colData(se)), "faith"))
     
     # Expect error
-    expect_error(estimateDiversity(tse, index = "faith", tree_name = "test"))
-    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree_name = "test"))
+    expect_error(estimateDiversity(tse, index = "faith", tree.name = "test"))
+    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = "test"))
     
     data(GlobalPatterns, package="mia")
     data(esophagus, package="mia")
     tse <- mergeSEs(GlobalPatterns, esophagus,  join = "full", assay.type = "counts")
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), 
-                                     tree_name = "phylo.1", assay.type="counts"))
+                                     tree.name = "phylo.1", assay.type="counts"))
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith")))
     expect_error(estimateDiversity(tse, index = c("faith"), 
-                                   tree_name = "test"))
+                                   tree.name = "test"))
     expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
-                                   tree_name = TRUE))
+                                   tree.name = TRUE))
     expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
-                                   tree_name = 1))
+                                   tree.name = 1))
     
     expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
-                                   tree_name = c("phylo", "phylo.1")))
+                                   tree.name = c("phylo", "phylo.1")))
     
     # Test Faith with picante packages results (version 1.8.2)
     picante_res <- c(

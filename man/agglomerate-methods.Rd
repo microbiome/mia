@@ -36,9 +36,22 @@ agglomerateByVariable(x, ...)
 
 \S4method{agglomerateByVariable}{SummarizedExperiment}(x, MARGIN, f, ...)
 
-\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(x, MARGIN, f, mergeTree = FALSE, ...)
+\S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
+  x,
+  MARGIN,
+  f,
+  agglomerate.tree = mergeTree,
+  mergeTree = FALSE,
+  ...
+)
 
-\S4method{agglomerateByRank}{SingleCellExperiment}(x, ..., altexp = NULL, strip_altexp = TRUE)
+\S4method{agglomerateByRank}{SingleCellExperiment}(
+  x,
+  ...,
+  altexp = NULL,
+  strip.altexp = strip_altexp,
+  strip_altexp = TRUE
+)
 
 \S4method{agglomerateByRank}{TreeSummarizedExperiment}(
   x,
@@ -49,7 +62,13 @@ agglomerateByVariable(x, ...)
 
 agglomerateByPrevalence(x, ...)
 
-\S4method{agglomerateByPrevalence}{SummarizedExperiment}(x, rank = NULL, other_label = "Other", ...)
+\S4method{agglomerateByPrevalence}{SummarizedExperiment}(
+  x,
+  rank = NULL,
+  other.label = other_label,
+  other_label = "Other",
+  ...
+)
 
 agglomerateByRanks(x, ...)
 
@@ -81,9 +100,21 @@ splitByRanks(x, ...)
 
 unsplitByRanks(x, ...)
 
-\S4method{unsplitByRanks}{SingleCellExperiment}(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...)
+\S4method{unsplitByRanks}{SingleCellExperiment}(
+  x,
+  ranks = taxonomyRanks(x),
+  keep.reduceddims = keep_reducedDims,
+  keep_reducedDims = FALSE,
+  ...
+)
 
-\S4method{unsplitByRanks}{TreeSummarizedExperiment}(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...)
+\S4method{unsplitByRanks}{TreeSummarizedExperiment}(
+  x,
+  ranks = taxonomyRanks(x),
+  keep.reduceddims = keep_reducedDims,
+  keep_reducedDims = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{a
@@ -115,25 +146,27 @@ Must be \code{'rows'} or \code{'cols'}.}
 merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged.}
 
-\item{mergeTree}{\code{TRUE} or \code{FALSE}: Should
-\code{rowTree()} also be merged? (Default: \code{mergeTree = FALSE})}
+\item{agglomerate.tree}{\code{TRUE} or \code{FALSE}: Should
+\code{rowTree()} also be merged? (Default: \code{agglomerate.tree = FALSE})}
+
+\item{mergeTree}{Deprecated. Use \code{agglomerate.tree} instead.}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
-\item{strip_altexp}{\code{TRUE} or \code{FALSE}: Should alternative
+\item{strip.altexp}{\code{TRUE} or \code{FALSE}: Should alternative
 experiments be removed prior to agglomeration? This prevents to many
 nested alternative experiments by default (default:
-\code{strip_altexp = TRUE})}
+\code{strip.altexp = TRUE})}
 
-\item{agglomerate.tree}{\code{TRUE} or \code{FALSE}: should
-\code{rowTree()} also be agglomerated? (Default:
-\code{agglomerate.tree = FALSE})}
+\item{strip_altexp}{Deprecated. Use \code{strip.altexp} instead.}
 
 \item{agglomerateTree}{alias for \code{agglomerate.tree}.}
 
-\item{other_label}{A single \code{character} valued used as the label for the
-summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
+\item{other.label}{A single \code{character} valued used as the label for the
+summary of non-prevalent taxa. (default: \code{other.label = "Other"})}
+
+\item{other_label}{Deprecated. use \code{other.label} instead.}
 
 \item{ranks}{a character vector defining taxonomic ranks. Must all be values
 of \code{taxonomyRanks()} function.}
@@ -143,10 +176,12 @@ of \code{taxonomyRanks()} function.}
 \code{agglomerateByRanks} as a SimpleList or stored in altExps?
 (default: \code{as.list = FALSE})}
 
-\item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
+\item{keep.reduceddims}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(default: \code{keep_reducedDims = FALSE})}
+(default: \code{keep.reduceddims = FALSE})}
+
+\item{keep_reducedDims}{Deprecated. Use \code{keep.reduceddims} instead.}
 }
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,
@@ -215,7 +250,7 @@ level specified by \code{rank} (by default the highest taxonomic level
 available) and selects the summed results that exceed the given population
 prevalence at the given detection level. The other summed values (below the
 threshold) are agglomerated in an additional row taking the name indicated by
-\code{other_label} (by default "Other").
+\code{other.label} (by default "Other").
 
 \code{agglomerateByRanks} will use by default all available taxonomic ranks, but
 this can be controlled by setting \code{ranks} manually. \code{NA} values
@@ -272,12 +307,12 @@ nrow(x3) # different from x2
 print(rownames(x3[1:3,]))
 
 # To add them, use getTaxonomyLabels function.
-rownames(x3) <- getTaxonomyLabels(x3, with_rank = TRUE)
+rownames(x3) <- getTaxonomyLabels(x3, with.rank = TRUE)
 print(rownames(x3[1:3,]))
 
-# use 'remove_empty_ranks' to remove columns that include only NAs
+# use 'empty.ranks.rm' to remove columns that include only NAs
 x4 <- agglomerateByRank(GlobalPatterns, rank="Phylum",
-                        remove_empty_ranks = TRUE)
+                        empty.ranks.rm = TRUE)
 head(rowData(x4))
 
 # If the assay contains NAs, you might want to consider replacing them,
@@ -307,7 +342,7 @@ plot(rowTree(esophagus))
 f <- factor(regmatches(rownames(esophagus),
                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
 merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f,
-                                mergeTree = TRUE)
+                                agglomerate.tree = TRUE)
 plot(rowTree(merged))
 #
 data(GlobalPatterns)
@@ -321,7 +356,7 @@ tse <- agglomerateByPrevalence(tse,
                               rank = "Phylum",
                               detection = 1/100,
                               prevalence = 50/100,
-                              as_relative = TRUE)
+                              as.relative = TRUE)
 
 tse
 

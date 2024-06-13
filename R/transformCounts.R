@@ -33,9 +33,10 @@
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
-#'   \item \code{ref_vals}: A single value which will be used to fill 
+#'   \item \code{reference}: A single value which will be used to fill 
 #'   reference sample's column in returned assay when calculating alr. 
-#'   (default: \code{ref_vals = NA})
+#'   (default: \code{reference = NA})
+#'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
 #' }
 #' @details
 #'
@@ -296,11 +297,12 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 # Help function for transformAssay, takes abundance
 # table as input and returns transformed table. This function utilizes vegan's
 # transformation functions.
-.apply_transformation_from_vegan <- function(mat, method, MARGIN, ref_vals = NA, ...){
+.apply_transformation_from_vegan <- function(mat, method, MARGIN, reference = ref_vals,
+                                            ref_vals = NA, ...){
     # Input check
-    # Check ref_vals
-    if( length(ref_vals) != 1 ){
-        stop("'ref_vals' must be a single value specifying the ",
+    # Check reference
+    if( length(reference) != 1 ){
+        stop("'reference' must be a single value specifying the ",
              "values of the reference sample.",
              call. = FALSE)
     }
@@ -324,7 +326,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     if( method %in% c("alr") ){
         transformed_table <- .adjust_alr_table(
             mat = transformed_table, orig_dimnames = orig_dimnames,
-            ref_vals = ref_vals)
+            reference = reference)
     }
     # If table is transposed (like in chi.square), transpose back
     if(identical(rownames(transformed_table), colnames(mat)) &&
@@ -373,7 +375,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 # vegan::decostand returns ALR transformed abundance table without reference
 # sample. Because in TreeSE all assays must have same row and column names,
 # the reference sample is assigned back to transformed abundance table.
-.adjust_alr_table <- function(mat, orig_dimnames, ref_vals){
+.adjust_alr_table <- function(mat, orig_dimnames, reference){
     # Store attributes
     attributes <- attributes(mat)
     # Get original and current sample/feature names and dimensions of reference
@@ -392,7 +394,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         ref_dimnames <- list(var_names, reference_name)
         }
     # Reference sample as NAs or with symbols that are specified by user
-    reference_sample <- matrix(ref_vals, nrow = nrow, ncol = ncol,  
+    reference_sample <- matrix(reference, nrow = nrow, ncol = ncol,  
                                dimnames = ref_dimnames)
     # Add reference sample/feature
     if(MARGIN == 1){

@@ -7,19 +7,20 @@
 \item{file}{a single \code{character} value defining the file
 path of the Metaphlan file. The file must be in merged Metaphlan format.}
 
-\item{colData}{a DataFrame-like object that includes sample names in
+\item{col.data}{a DataFrame-like object that includes sample names in
 rownames, or a single \code{character} value defining the file
 path of the sample metadata file. The file must be in \code{tsv} format
-(default: \code{colData = NULL}).}
+(default: \code{col.data = NULL}).}
 
-\item{sample_meta}{a DataFrame-like object that includes sample names in
-rownames, or a single \code{character} value defining the file
-path of the sample metadata file. The file must be in \code{tsv} format
-(default: \code{sample_meta = NULL}).}
+\item{colData}{Deprecated. use \code{col.data} instead.}
 
-\item{phy_tree}{a single \code{character} value defining the file
+\item{sample_meta}{Deprecated. Use \code{col.data} instead.}
+
+\item{phy.tree.file}{a single \code{character} value defining the file
 path of the phylogenetic tree.
-(default: \code{phy_tree = NULL}).}
+(default: \code{phy.tree.file = NULL}).}
+
+\item{phy_tree}{Deprecated. Use \code{phy.tree.file} instead.}
 
 \item{...}{additional arguments:
 \itemize{
@@ -29,9 +30,9 @@ path of the phylogenetic tree.
 \item \code{assay_name}: A single \code{character} value for specifying which
 assay to use for calculation. (Please use \code{assay.type} instead.
 At some point \code{assay_name} will be disabled.)
-\item \code{removeTaxaPrefixes}: \code{TRUE} or \code{FALSE}: Should
+\item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
-\code{removeTaxaPrefixes = FALSE})
+\code{prefix.rm = FALSE})
 \item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
 suffixes of sample names be removed? Metaphlan pipeline adds suffixes
 to sample names. Suffixes are formed from file names. By selecting

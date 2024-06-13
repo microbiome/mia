@@ -168,7 +168,7 @@ taxa <- rowData(altExp(tse,"Species"))[,taxonomyRanks(tse)]
 taxa_res <- resolveLoop(as.data.frame(taxa))
 taxa_tree <- toTree(data = taxa_res)
 taxa_tree$tip.label <- getTaxonomyLabels(altExp(tse,"Species"))
-rowNodeLab <- getTaxonomyLabels(altExp(tse,"Species"), make_unique = FALSE)
+rowNodeLab <- getTaxonomyLabels(altExp(tse,"Species"), make.unique = FALSE)
 altExp(tse,"Species") <- changeTree(altExp(tse,"Species"),
                                    rowTree = taxa_tree,
                                    rowNodeLab = rowNodeLab)
@@ -194,7 +194,7 @@ Sub-sampling to equal number of counts per sample. Also known as rarefying.
 data(GlobalPatterns, package = "mia")
 
 tse.subsampled <- rarefyAssay(GlobalPatterns, 
-                                  min_size = 60000, 
+                                  sample = 60000, 
                                   name = "subsampled",
                                   replace = TRUE,
                                   seed = 1938)
@@ -245,7 +245,7 @@ altExp(tse,"Genus") <- runMDS(altExp(tse,"Genus"),
                               name = "BrayCurtis", 
                               ncomponents = 5, 
                               assay.type = "counts", 
-                              keep_dist = TRUE)
+                              keep.dist = TRUE)
 ```
 
 JSD and UniFrac are implemented in `mia` as well. `calculateJSD` can be used
@@ -320,8 +320,8 @@ To generate tidy data as used and required in most of the tidyverse,
 ```{r}
 molten_data <- meltAssay(tse,
                          assay.type = "counts",
-                         add_row_data = TRUE,
-                         add_col_data = TRUE
+                         add.row = TRUE,
+                         add.col = TRUE
 )
 molten_data
 ```
