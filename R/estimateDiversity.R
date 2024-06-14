@@ -37,12 +37,12 @@
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} isntead.
 #'   
-#' @param node.lab NULL or a character vector specifying the links between rows and 
+#' @param node.label NULL or a character vector specifying the links between rows and 
 #'   node labels of \code{tree}. If a certain row is not linked with the tree, missing 
 #'   instance should be noted as NA. When NULL, all the rownames should be found from
-#'   the tree. (By default: \code{node.lab = NULL})
+#'   the tree. (By default: \code{node.label = NULL})
 #' 
-#' @param node_lab Deprecated. Use \code{node.lab} instead.
+#' @param node_lab Deprecated. Use \code{node.label} instead.
 #'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -382,7 +382,7 @@ setGeneric("estimateFaith",signature = c("x", "tree"),
 #' @export
 setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
     function(x, tree, assay.type = "counts", assay_name = NULL,
-            name = "faith", node.lab = node_lab, node_lab = NULL, ...){
+            name = "faith", node.label = node_lab, node_lab = NULL, ...){
         # Input check
         # Check 'tree'
         # IF there is no rowTree gives an error
@@ -403,11 +403,11 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
             stop("'name' must be a non-empty character value.",
                 call. = FALSE)
         }
-        # Check that node.lab is NULL or it specifies links between rownames and 
+        # Check that node.label is NULL or it specifies links between rownames and 
         # node labs
-        if( !( is.null(node.lab) || 
-               is.character(node.lab) && length(node.lab) == nrow(x) ) ){
-            stop("'node.lab' must be NULL or a vector specifying links between ",
+        if( !( is.null(node.label) || 
+               is.character(node.label) && length(node.label) == nrow(x) ) ){
+            stop("'node.label' must be NULL or a vector specifying links between ",
                  "rownames and node labs of 'tree'.",
                  call. = FALSE)
         }
@@ -419,12 +419,12 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
                  call. = FALSE)
         }
         # Subset and rename rows of the assay to correspond node_labs
-        if( !is.null(node.lab) ){
+        if( !is.null(node.label) ){
             # Subset 
-            mat <- mat[ !is.na(node.lab), ]
-            node.lab <- node.lab[ !is.na(node.lab) ]
+            mat <- mat[ !is.na(node.label), ]
+            node.label <- node.label[ !is.na(node.label) ]
             # Rename
-            rownames(mat) <- node.lab
+            rownames(mat) <- node.label
         }
         # Calculates Faith index
         faith <- list(.calc_faith(mat, tree, ...))
@@ -451,17 +451,17 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                 call. = FALSE)
         }
         # Get node labs
-        node.lab <- rowLinks(x)[ , "nodeLab" ]
-        node.lab[ rowLinks(x)[, "whichTree"] != tree.name ] <- NA
+        node.label <- rowLinks(x)[ , "nodeLab" ]
+        node.label[ rowLinks(x)[, "whichTree"] != tree.name ] <- NA
         # Give a warning, data will be subsetted
-        if( any(is.na(node.lab)) ){
+        if( any(is.na(node.label)) ){
             warning("The rowTree named 'tree.name' does not include all the ",
                     "rows which is why 'x' is subsetted when the Faith's alpha ",
                     "diversity index is calculated.",
                     call. = FALSE)
         }
         # Calculates the Faith index
-        estimateFaith(x, tree, name = name, node.lab = node.lab, ...)
+        estimateFaith(x, tree, name = name, node.label = node.label, ...)
     }
 )
 

@@ -59,12 +59,12 @@
 #'        \item \code{as.relative}: Logical scalar: Should the detection
 #'        threshold be applied on compositional (relative) abundances?
 #'        (default: \code{FALSE})
-#'        \item \code{agglomerate.refseq} \code{TRUE} or \code{FALSE}: Should a
+#'        \item \code{update.refseq} \code{TRUE} or \code{FALSE}: Should a
 #'        consensus sequence be calculated? If set to \code{FALSE}, the result
 #'        from \code{archetype} is returned; If set to \code{TRUE} the result
 #'        from
 #'        \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
-#'        is returned. (Default: \code{agglomerate.refseq = FALSE})
+#'        is returned. (Default: \code{update.refseq = FALSE})
 #'        \item \code{archetype} Of each level of \code{f}, which element should
 #'        be regarded as the archetype and metadata in the columns or rows kept,
 #'        while merging? This can be single integer value or an integer vector
@@ -76,12 +76,12 @@
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
 #'
-#' @param strip.altexp \code{TRUE} or \code{FALSE}: Should alternative
+#' @param altexp.rm \code{TRUE} or \code{FALSE}: Should alternative
 #'   experiments be removed prior to agglomeration? This prevents to many
 #'   nested alternative experiments by default (default:
-#'   \code{strip.altexp = TRUE})
+#'   \code{altexp.rm = TRUE})
 #' 
-#' @param strip_altexp Deprecated. Use \code{strip.altexp} instead.
+#' @param strip_altexp Deprecated. Use \code{altexp.rm} instead.
 #'
 #' @param MARGIN A character value for selecting if data is merged
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
@@ -340,16 +340,16 @@ setMethod("agglomerateByVariable",
 #' @importFrom SingleCellExperiment altExp altExp<- altExps<-
 #' @export
 setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
-    function(x, ..., altexp = NULL, strip.altexp = strip_altexp, strip_altexp = TRUE){
+    function(x, ..., altexp = NULL, altexp.rm = strip_altexp, strip_altexp = TRUE){
         # input check
-        if(!.is_a_bool(strip.altexp)){
-            stop("'strip.altexp' mus be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(altexp.rm)){
+            stop("'altexp.rm' mus be TRUE or FALSE.", call. = FALSE)
         }
         #
         if (!is.null(altexp)) {
             x <- altExp(x, altexp)
         }
-        if(strip.altexp && is(x, "SingleCellExperiment")){
+        if(altexp.rm && is(x, "SingleCellExperiment")){
             altExps(x) <- NULL
         }
         callNextMethod(x, ...)

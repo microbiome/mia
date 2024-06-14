@@ -273,7 +273,7 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
         # Get arguments
         args <- .norm_args_for_split_by(x, f = f, ...)
         # Should alternative experiment be removed? --> yes
-        args[["strip.altexp"]] <- TRUE
+        args[["altexp.rm"]] <- TRUE
         # Split data
         .split_on(x, args, ...)
     }

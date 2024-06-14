@@ -46,10 +46,10 @@ test_that("agglomerate", {
     actual <- agglomerateByRank(xtse,"Phylum",na.rm=FALSE)
     expect_equivalent(rowData(actual),rowData(actual_phylum))
     #
-    actual <- agglomerateByRank(xtse,"Family", disable.taxonomy = FALSE, na.rm = TRUE)
+    actual <- agglomerateByRank(xtse,"Family", ignore.taxonomy = FALSE, na.rm = TRUE)
     expect_equal(dim(actual),c(6,10))
     expect_equal(rowData(actual)$Family,c("c","d","e","f","g","h"))
-    actual <- agglomerateByRank(xtse,"Family", disable.taxonomy = FALSE, na.rm = FALSE) # the default
+    actual <- agglomerateByRank(xtse,"Family", ignore.taxonomy = FALSE, na.rm = FALSE) # the default
     expect_equal(dim(actual),c(8,10))
     expect_equal(rowData(actual)$Family,c("c","d","e","f","g","h",NA,NA))
     actual <- agglomerateByRank(xtse,"Phylum")
@@ -64,23 +64,23 @@ test_that("agglomerate", {
     # the same dimensionality is retained
     data(enterotype, package="mia")
     expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
-                 nrow(agglomerateByRank(enterotype,"Genus", disable.taxonomy = FALSE, 
+                 nrow(agglomerateByRank(enterotype,"Genus", ignore.taxonomy = FALSE, 
                  na.rm = FALSE)))
 
     # agglomeration in all its forms
     data(GlobalPatterns, package="mia")
     se <- GlobalPatterns
     actual <- agglomerateByRank(se, rank = "Family", 
-        disable.taxonomy = FALSE, na.rm = FALSE)
+        ignore.taxonomy = FALSE, na.rm = FALSE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
                  length(rowTree(se)$tip.label))
     actual <- agglomerateByRank(se, rank = "Family", 
-        disable.taxonomy = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
+        ignore.taxonomy = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), 603)
     actual <- agglomerateByRank(se, rank = "Family", 
-        disable.taxonomy = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
+        ignore.taxonomy = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), nrow(actual))
     # Test that warning occurs when assay contian binary or negative values
@@ -157,7 +157,7 @@ test_that("agglomerate", {
     se <- SilvermanAGutData
     
     # checking reference consensus sequence generation
-    actual <- agglomerateByRank(se,"Genus", agglomerate.refseq = FALSE)
+    actual <- agglomerateByRank(se,"Genus", update.refseq = FALSE)
     # There should be only one exact match for each sequence
     seqs_test <- as.character( referenceSeq(actual) )
     seqs_ref <- as.character( referenceSeq(se) )
@@ -167,7 +167,7 @@ test_that("agglomerate", {
     # Merging creates consensus sequences.
     th <- runif(1, 0, 1)
     actual <- agglomerateByRank(
-        se, "Genus", agglomerate.refseq = TRUE, threshold = th)
+        se, "Genus", update.refseq = TRUE, threshold = th)
     seqs_test <- referenceSeq(actual)
     # Get single taxon as reference. Merge those sequences and test that it
     # equals to one that is output of agglomerateByRank
@@ -181,14 +181,14 @@ test_that("agglomerate", {
     expect_equal(seqs_test, seqs_ref)
     
     # checking reference consensus sequence generation using 'Genus:Alistipes'
-    actual <- agglomerateByRank(se,"Genus", agglomerate.refseq = FALSE)
+    actual <- agglomerateByRank(se,"Genus", update.refseq = FALSE)
     expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
                  paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
                         "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
                         "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
                         "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
                         "TTGAGGCACGAAAGCGTGGGG"))
-    actual <- agglomerateByRank(se,"Genus", agglomerate.refseq = TRUE)
+    actual <- agglomerateByRank(se,"Genus", update.refseq = TRUE)
     expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
                  paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYMM",
                         "KHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNND",

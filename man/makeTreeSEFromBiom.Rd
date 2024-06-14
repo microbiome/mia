@@ -14,7 +14,7 @@ makeTreeSEFromBiom(
   removeTaxaPrefixes = FALSE,
   rank.from.prefix = rankFromPrefix,
   rankFromPrefix = FALSE,
-  remove.artifacts = FALSE,
+  artifact.rm = FALSE,
   ...
 )
 
@@ -45,9 +45,9 @@ taxonomic ranks on feature table, should they be scraped from prefixes?
 
 \item{rankFromPrefix}{Deprecated.Use \code{rank.from.prefix} instead.}
 
-\item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
+\item{artifact.rm}{\code{TRUE} or \code{FALSE}: If file have
 some taxonomic character naming artifacts, should they be removed.
-(default \code{remove.artifacts = FALSE})}
+(default \code{artifact.rm = FALSE})}
 }
 \value{
 An object of class
@@ -82,7 +82,7 @@ biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
 
 # Clean artifacts from taxonomic data
 tse <- importBIOM(biom_file,
-                    remove.artifacts = TRUE)
+                    artifact.rm = TRUE)
 }
 \seealso{
 \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}

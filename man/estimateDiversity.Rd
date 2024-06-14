@@ -58,7 +58,7 @@ estimateFaith(
   assay.type = "counts",
   assay_name = NULL,
   name = "faith",
-  node.lab = node_lab,
+  node.label = node_lab,
   node_lab = NULL,
   ...
 )
@@ -125,12 +125,12 @@ rowTree will be used to calculate faith index.
 If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is
 used by default.}
 
-\item{node.lab}{NULL or a character vector specifying the links between rows and
+\item{node.label}{NULL or a character vector specifying the links between rows and
 node labels of \code{tree}. If a certain row is not linked with the tree, missing
 instance should be noted as NA. When NULL, all the rownames should be found from
-the tree. (By default: \code{node.lab = NULL})}
+the tree. (By default: \code{node.label = NULL})}
 
-\item{node_lab}{Deprecated. Use \code{node.lab} instead.}
+\item{node_lab}{Deprecated. Use \code{node.label} instead.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}

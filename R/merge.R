@@ -189,17 +189,17 @@
 }
 
 .merge_rows_TSE <- function(x, f, archetype = 1L, agglomerate.tree = FALSE,
-                            agglomerate.refseq = FALSE, ...){
+                            update.refseq = FALSE, ...){
     # input check
     if(!.is_a_bool(agglomerate.tree)){
         stop("'agglomerate.tree' must be TRUE or FALSE.", call. = FALSE)
     }
-    if(!.is_a_bool(agglomerate.refseq)){
-        stop("'agglomerate.refseq' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(update.refseq)){
+        stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
     }
     # for optionally merging referenceSeq
     refSeq <- NULL
-    if(agglomerate.refseq){
+    if(update.refseq){
         refSeq <- referenceSeq(x)
     }
     #

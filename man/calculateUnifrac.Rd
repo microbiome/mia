@@ -22,7 +22,14 @@ calculateUnifrac(x, tree, ...)
   ...
 )
 
-runUnifrac(x, tree, weighted = FALSE, node.lab = nodeLab, nodeLab = NULL, ...)
+runUnifrac(
+  x,
+  tree,
+  weighted = FALSE,
+  node.label = nodeLab,
+  nodeLab = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{a numeric matrix or a
@@ -69,12 +76,12 @@ tree will be used in calculation.
 is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: \code{transposed = FALSE})}
 
-\item{node.lab}{if \code{x} is a matrix,
+\item{node.label}{if \code{x} is a matrix,
 a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
 The length must equal the number of rows/columns of \code{x}. Furthermore, all the
 node labs must be present in \code{tree}.}
 
-\item{nodeLab}{Deprecated. Use \code{node.lab} instead.}
+\item{nodeLab}{Deprecated. Use \code{node.label} instead.}
 }
 \value{
 a sample-by-sample distance matrix, suitable for NMDS, etc.

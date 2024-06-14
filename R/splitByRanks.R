@@ -145,7 +145,7 @@ setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
 setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
     function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
         args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
-        args[["strip.altexp"]] <- TRUE
+        args[["altexp.rm"]] <- TRUE
         callNextMethod()
     }
 )

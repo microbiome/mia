@@ -19,9 +19,9 @@
 #' 
 #' @param rankFromPrefix Deprecated.Use \code{rank.from.prefix} instead.
 #' 
-#' @param remove.artifacts \code{TRUE} or \code{FALSE}: If file have
+#' @param artifact.rm \code{TRUE} or \code{FALSE}: If file have
 #' some taxonomic character naming artifacts, should they be removed.
-#' (default \code{remove.artifacts = FALSE})
+#' (default \code{artifact.rm = FALSE})
 #' 
 #' @param ... additional arguments 
 #'   \itemize{
@@ -64,7 +64,7 @@
 #' 
 #' # Clean artifacts from taxonomic data
 #' tse <- importBIOM(biom_file,
-#'                     remove.artifacts = TRUE)
+#'                     artifact.rm = TRUE)
 NULL
 
 #' @rdname makeTreeSEFromBiom
@@ -87,7 +87,7 @@ makeTreeSEFromBiom <- function(
         x, prefix.rm = removeTaxaPrefixes, 
         removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix, 
         rankFromPrefix = FALSE,
-        remove.artifacts = FALSE, ...){
+        artifact.rm = FALSE, ...){
     # input check
     .require_package("biomformat")
     if(!is(x,"biom")){
@@ -99,8 +99,8 @@ makeTreeSEFromBiom <- function(
     if( !.is_a_bool(rank.from.prefix) ){
         stop("'rank.from.prefix' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( !.is_a_bool(remove.artifacts) ){
-        stop("'remove.artifacts' must be TRUE or FALSE.", call. = FALSE)
+    if( !.is_a_bool(artifact.rm) ){
+        stop("'artifact.rm' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     counts <- as(biomformat::biom_data(x), "matrix")
@@ -162,7 +162,7 @@ makeTreeSEFromBiom <- function(
     }
     
     # Clean feature_data from possible character artifacts if specified
-    if( remove.artifacts ){
+    if( artifact.rm ){
         feature_data <- .detect_taxa_artifacts_and_clean(feature_data, ...)
     }
     

@@ -33,7 +33,7 @@ test_that("getDominant", {
         names(exp.vals.two) <- exp.names.one
         expect_equal(getDominant(tse,
                                            rank = "Genus",
-                                           disable.taxonomy = FALSE,
+                                           ignore.taxonomy = FALSE,
                                            na.rm = FALSE)[1:15],
                      exp.vals.two)
 

@@ -698,11 +698,11 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment rowData
-.get_tax_groups <- function(x, col, disable.taxonomy = onRankOnly, 
+.get_tax_groups <- function(x, col, ignore.taxonomy = onRankOnly, 
     onRankOnly = FALSE, ...){
     # input check
-    if(!.is_a_bool(disable.taxonomy)){
-        stop("'disable.taxonomy' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(ignore.taxonomy)){
+        stop("'ignore.taxonomy' must be TRUE or FALSE.", call. = FALSE)
     }
     
     tax_cols <- .get_tax_cols_from_se(x)
@@ -710,7 +710,7 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
     if(length(tax_col_n) < col){
         stop(".")
     }
-    if(disable.taxonomy){
+    if(ignore.taxonomy){
         groups <- rowData(x)[,tax_cols[tax_col_n == col],drop=TRUE]
     } else {
         groups <- rowData(x)[,tax_cols[tax_col_n <= col],drop=FALSE]

@@ -49,7 +49,7 @@ agglomerateByVariable(x, ...)
   x,
   ...,
   altexp = NULL,
-  strip.altexp = strip_altexp,
+  altexp.rm = strip_altexp,
   strip_altexp = TRUE
 )
 
@@ -154,12 +154,12 @@ returned unchanged.}
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
-\item{strip.altexp}{\code{TRUE} or \code{FALSE}: Should alternative
+\item{altexp.rm}{\code{TRUE} or \code{FALSE}: Should alternative
 experiments be removed prior to agglomeration? This prevents to many
 nested alternative experiments by default (default:
-\code{strip.altexp = TRUE})}
+\code{altexp.rm = TRUE})}
 
-\item{strip_altexp}{Deprecated. Use \code{strip.altexp} instead.}
+\item{strip_altexp}{Deprecated. Use \code{altexp.rm} instead.}
 
 \item{agglomerateTree}{alias for \code{agglomerate.tree}.}
 

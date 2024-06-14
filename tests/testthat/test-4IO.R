@@ -19,7 +19,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     tse <- makeTreeSEFromBiom(biom_object,
                                 prefix.rm = FALSE,
                                 rank.from.prefix = FALSE,
-                                remove.artifacts = TRUE,
+                                artifact.rm = TRUE,
                                 pattern = "\"")
     # Testing no prefixes removed
     expect_true(rowData(tse) %>%
@@ -29,7 +29,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_false(
         sapply(tolower(colnames(rowData(tse))),
                 function(x) x %in% TAXONOMY_RANKS) %>% all())
-    # Testing the remove.artifacts, since the original artifact in the biom file 
+    # Testing the artifact.rm, since the original artifact in the biom file 
     # is '\"'
     expect_false(apply(rowData(tse), 2, grepl, pattern="^\"") %>% all())
     
@@ -37,7 +37,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     tse <- makeTreeSEFromBiom(biom_object,
                                 prefix.rm=TRUE,
                                 rank.from.prefix=TRUE,
-                                remove.artifacts = TRUE,
+                                artifact.rm = TRUE,
                                 pattern = "\"")
     expect_false(rowData(tse) %>%
                     apply(2,grepl,pattern="sk__|([dkpcofgs]+)__") %>%
@@ -47,35 +47,35 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     tse <- makeTreeSEFromBiom(biom_object,
                                 prefix.rm=FALSE,
                                 rank.from.prefix=TRUE,
-                                remove.artifacts = TRUE,
+                                artifact.rm = TRUE,
                                 pattern = "\"")
     expect_true(
         sapply(tolower(colnames(rowData(tse))),
                 function(x) x %in% TAXONOMY_RANKS) %>% all())
     
-    # Testing the remove.artifacts, the original artifact in the biom file 
+    # Testing the artifact.rm, the original artifact in the biom file 
     # is '\"', as a test we rather try remove a non existing pattern.
     tse <- makeTreeSEFromBiom(biom_object,
                                 prefix.rm=FALSE,
                                 rank.from.prefix=FALSE,
-                                remove.artifacts = TRUE,
+                                artifact.rm = TRUE,
                                 pattern = "\\*|\\?")
     # with wrong pattern artifact not cleaned
     expect_true(apply(rowData(tse), 2, grepl, pattern="\"") %>% any())
-    # Testing the remove.artifacts, with the value 'auto' to automatically 
+    # Testing the artifact.rm, with the value 'auto' to automatically 
     # detect the artifact and remove it (in our case the artifact is '\"').
     tse <- makeTreeSEFromBiom(biom_object,
                                 prefix.rm=FALSE,
                                 rank.from.prefix=FALSE,
-                                remove.artifacts = TRUE)
+                                artifact.rm = TRUE)
     # Checking if 'auto' has detected and cleaned the artifact
     expect_false(apply(rowData(tse), 2, grepl, pattern="\"") %>% any())
-    # Testing the remove.artifacts, with the value NULL to not detect or clean 
+    # Testing the artifact.rm, with the value NULL to not detect or clean 
     # anything.
     tse <- makeTreeSEFromBiom(biom_object,
                                 prefix.rm=FALSE,
                                 rank.from.prefix=FALSE,
-                                remove.artifacts = FALSE)
+                                artifact.rm = FALSE)
     # Checking if the '\"' artifact still exists.
     expect_true(apply(rowData(tse), 2, grepl, pattern="\"") %>% any())
     
@@ -83,7 +83,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     tse <- makeTreeSEFromBiom(biom_object,
                                 prefix.rm=TRUE,
                                 rank.from.prefix=TRUE,
-                                remove.artifacts = TRUE)
+                                artifact.rm = TRUE)
     # check if '\"' cleaned
     expect_false(apply(rowData(tse), 2, grepl, pattern="\"") %>% any())
     # check if taxa prefixes removed
@@ -103,7 +103,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     tse <- makeTreeSEFromBiom(biom_object,
                                 prefix.rm=TRUE,
                                 rank.from.prefix=TRUE,
-                                remove.artifacts = TRUE)
+                                artifact.rm = TRUE)
     # check if taxa prefixes removed
     expect_false(rowData(tse) %>%
                     apply(2,grepl,pattern="sk__|([dkpcofgs]+)__") %>%

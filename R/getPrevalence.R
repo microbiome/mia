@@ -257,7 +257,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
     if(!is.null(rank)){
         .check_taxonomic_rank(rank, x)
         args <- c(list(x = x, rank = rank, na.rm = agg.na.rm), list(...))
-        argNames <- c("x","rank","disable.taxonomy","na.rm","empty.fields",
+        argNames <- c("x","rank","ignore.taxonomy","na.rm","empty.fields",
                       "archetype","agglomerate.tree","average","BPPARAM")
         args <- args[names(args) %in% argNames]
         x <- do.call(agglomerateByRank, args)
