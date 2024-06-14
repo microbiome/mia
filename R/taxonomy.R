@@ -698,7 +698,8 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment rowData
-.get_tax_groups <- function(x, col, disable.taxonomy = FALSE, ...){
+.get_tax_groups <- function(x, col, disable.taxonomy = onRankOnly, 
+    onRankOnly = FALSE, ...){
     # input check
     if(!.is_a_bool(disable.taxonomy)){
         stop("'disable.taxonomy' must be TRUE or FALSE.", call. = FALSE)

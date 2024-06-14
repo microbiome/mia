@@ -12,11 +12,11 @@
 #'   
 #' @param sample_meta Deprecated. Use \code{col.data} instead.
 #' 
-#' @param phy.tree.file a single \code{character} value defining the file
+#' @param tree.file a single \code{character} value defining the file
 #'   path of the phylogenetic tree.
-#'   (default: \code{phy.tree.file = NULL}).
+#'   (default: \code{tree.file = NULL}).
 #' 
-#' @param phy_tree Deprecated. Use \code{phy.tree.file} instead.
+#' @param phy_tree Deprecated. Use \code{tree.file} instead.
 #'   
 #' @param ... additional arguments:
 #' \itemize{
@@ -95,7 +95,7 @@ NULL
 
 importMetaPhlAn <- function(
         file, col.data = colData, colData = sample_meta,
-        sample_meta = NULL, phy.tree.file = phy_tree, phy_tree = NULL, ...){
+        sample_meta = NULL, tree.file = phy_tree, phy_tree = NULL, ...){
     
     ################################ Input check ################################
     if(!.is_non_empty_string(file)){
@@ -111,8 +111,8 @@ importMetaPhlAn <- function(
         stop("'col.data' must be a single character value, DataFrame or NULL.",
             call. = FALSE)
     }
-    if(!is.null(phy.tree.file) && !.is_non_empty_string(phy.tree.file)){
-        stop("'phy.tree.file' must be a single character value or NULL.",
+    if(!is.null(tree.file) && !.is_non_empty_string(tree.file)){
+        stop("'tree.file' must be a single character value or NULL.",
             call. = FALSE)
     }
     ############################## Input check end #############################
@@ -154,8 +154,8 @@ importMetaPhlAn <- function(
     
     
     # Load tree if it is provided
-    if (!is.null(phy.tree.file)) {
-        tree <- ape::read.tree(phy.tree.file)
+    if (!is.null(tree.file)) {
+        tree <- ape::read.tree(tree.file)
         rowTree(tse) <- tree
     } 
     

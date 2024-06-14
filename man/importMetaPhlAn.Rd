@@ -16,11 +16,11 @@ path of the sample metadata file. The file must be in \code{tsv} format
 
 \item{sample_meta}{Deprecated. Use \code{col.data} instead.}
 
-\item{phy.tree.file}{a single \code{character} value defining the file
+\item{tree.file}{a single \code{character} value defining the file
 path of the phylogenetic tree.
-(default: \code{phy.tree.file = NULL}).}
+(default: \code{tree.file = NULL}).}
 
-\item{phy_tree}{Deprecated. Use \code{phy.tree.file} instead.}
+\item{phy_tree}{Deprecated. Use \code{tree.file} instead.}
 
 \item{...}{additional arguments:
 \itemize{

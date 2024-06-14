@@ -117,7 +117,7 @@ setGeneric("meltSE",
                 "rowData(), which will ",
                 "be renamed to '",row.name,"_row'", call. = FALSE)
     }
-    add.row
+    return(add.row)
 }
 
 .norm_add_col_data <- function(add.col, x, col.name){
@@ -139,7 +139,7 @@ setGeneric("meltSE",
                 "colData(), which will ",
                 "be renamed to '",col.name,"_col'", call. = FALSE)
     }
-    add.col
+    return(add.col)
 }
 
 .col_switch_name <- function(name){
