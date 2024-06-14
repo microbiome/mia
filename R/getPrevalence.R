@@ -10,7 +10,7 @@
 #' @param detection Detection threshold for absence/presence. If \code{as_relative = FALSE},
 #'    it sets the counts threshold for a taxon to be considered present.
 #'    If \code{as_relative = TRUE}, it sets the relative abundance threshold
-#'    for a taxon to be considered present.
+#'    for a taxon to be considered present. (default: \code{detection = 0})
 #'
 #' @param include_lowest logical scalar: Should the lower boundary of the
 #'   detection and prevalence cutoffs be included? (default: \code{FALSE})
