@@ -322,7 +322,7 @@ implemented in <code>TreeSummarizedExperiment</code>.</p>
 <span><span class="va">taxa_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/resolveLoop.html" class="external-link">resolveLoop</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">taxa_tree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/toTree.html" class="external-link">toTree</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">taxa_res</span><span class="op">)</span></span>
 <span><span class="va">taxa_tree</span><span class="op">$</span><span class="va">tip.label</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"Species"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">rowNodeLab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"Species"</span><span class="op">)</span>, make.unique <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">rowNodeLab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"Species"</span><span class="op">)</span>, make_unique <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"Species"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/changeTree.html" class="external-link">changeTree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>,<span class="st">"Species"</span><span class="op">)</span>,</span>
 <span>                                   rowTree <span class="op">=</span> <span class="va">taxa_tree</span>,</span>
 <span>                                   rowNodeLab <span class="op">=</span> <span class="va">rowNodeLab</span><span class="op">)</span></span></code></pre></div>
@@ -350,7 +350,7 @@ rarefying.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tse.subsampled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rarefyAssay.html">rarefyAssay</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, </span>
-<span>                                  sample <span class="op">=</span> <span class="fl">60000</span>, </span>
+<span>                                  min_size <span class="op">=</span> <span class="fl">60000</span>, </span>
 <span>                                  name <span class="op">=</span> <span class="st">"subsampled"</span>,</span>
 <span>                                  replace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                                  seed <span class="op">=</span> <span class="fl">1938</span><span class="op">)</span></span>
@@ -441,7 +441,7 @@ any other package using comparable inputs.</p>
 <span>                              name <span class="op">=</span> <span class="st">"BrayCurtis"</span>, </span>
 <span>                              ncomponents <span class="op">=</span> <span class="fl">5</span>, </span>
 <span>                              assay.type <span class="op">=</span> <span class="st">"counts"</span>, </span>
-<span>                              keep.dist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>                              keep_dist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>JSD and UniFrac are implemented in <code>mia</code> as well.
 <code>calculateJSD</code> can be used as a drop-in replacement in the
 example above (omit the <code>method</code> argument as well) to
@@ -550,8 +550,8 @@ long format will be returned.</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">molten_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deprecate.html">meltAssay</a></span><span class="op">(</span><span class="va">tse</span>,</span>
 <span>                         assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>                         add.row <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                         add.col <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>                         add_row_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                         add_col_data <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">molten_data</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 499,616 × 24</span></span></span>
