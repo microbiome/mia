@@ -7,7 +7,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' tse <- importTaxpasta("profiles.biom")
+#' }
 #'
 #' @importFrom rhdf5 h5read
 #' @importFrom SummarizedExperiment rowData
