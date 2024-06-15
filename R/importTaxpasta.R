@@ -52,6 +52,8 @@ importTaxpasta <- function(filename) {
 #'
 #' @return A [biomformat::biom()] object.
 #'
+#' @keywords internal
+#' @noRd
 .createBiom <- function(h5array) {
     data <- biomformat:::generate_matrix(h5array)
     rows <- biomformat:::generate_metadata(h5array$observation)
@@ -84,6 +86,9 @@ importTaxpasta <- function(filename) {
 #' @param h5array A raw HDF5 array read from a BIOM file.
 #'
 #' @return A character vector of taxonomic ranks in order.
+#'
+#' @keywords internal
+#' @noRd
 .getRanks <- function(h5array) {
     ranks <- strsplit(h5array$observation$`group-metadata`$ranks, ";", fixed = TRUE)[[1]]
     return(ranks)
@@ -102,6 +107,9 @@ importTaxpasta <- function(filename) {
 #' @return A [data.frame()] with observation metadata.
 #'
 #' @importFrom biomformat observation_metadata
+#'
+#' @keywords internal
+#' @noRd
 .createRowData <- function(biom, ranks) {
     meta <- observation_metadata(biom)
     column.names <- colnames(meta)
