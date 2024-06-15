@@ -61,7 +61,7 @@ data in a <code>SingleCellExperiment</code> object.</p>
 <span><span class="fu">getNMDS</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  FUN <span class="op">=</span> <span class="va">vegdist</span>,</span>
-<span>  nmds.FUN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"isoMDS"</span>, <span class="st">"monoMDS"</span><span class="op">)</span>,</span>
+<span>  nmds.fun <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"isoMDS"</span>, <span class="st">"monoMDS"</span><span class="op">)</span>,</span>
 <span>  ncomponents <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  ntop <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  subset.row <span class="op">=</span> <span class="va">subset_row</span>,</span>
@@ -114,7 +114,7 @@ Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.
 
 <dt>...</dt>
 <dd><p>additional arguments to pass to <code>FUN</code> and
-<code>nmds.FUN</code>.</p></dd>
+<code>nmds.fun</code>.</p></dd>
 
 
 <dt>FUN</dt>
@@ -122,7 +122,7 @@ Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.
 name returning a <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> object</p></dd>
 
 
-<dt>nmds.FUN</dt>
+<dt>nmds.fun</dt>
 <dd><p>a <code>character</code> value to choose the scaling
 implementation, either “isoMDS” for
 <code><a href="https://rdrr.io/pkg/MASS/man/isoMDS.html" class="external-link">MASS::isoMDS</a></code> or “monoMDS” for
@@ -221,7 +221,7 @@ coordinates for each sample (row) and dimension (column).</p>
     <p>Either <code><a href="https://rdrr.io/pkg/MASS/man/isoMDS.html" class="external-link">MASS::isoMDS</a></code> or
 <code><a href="https://rdrr.io/pkg/vegan/man/monoMDS.html" class="external-link">vegan::monoMDS</a></code> are used internally to compute
 the NMDS components. If you supply a custom <code>FUN</code>, make sure that
-the arguments of <code>FUN</code> and <code>nmds.FUN</code> do not collide.</p>
+the arguments of <code>FUN</code> and <code>nmds.fun</code> do not collide.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
