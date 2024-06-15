@@ -34,8 +34,8 @@ test_that("agglomerate", {
     expect_error(agglomerateByRank(xtse,"Family",na.rm=""),
                  "'na.rm' must be TRUE or FALSE")
     expect_error(
-        agglomerateByRank(xtse,"Family",na.rm=FALSE,agglomerate.tree=""),
-        "'agglomerate.tree' must be TRUE or FALSE")
+        agglomerateByRank(xtse,"Family",na.rm=FALSE,update.tree=""),
+        "'update.tree' must be TRUE or FALSE")
     xtse2 <- xtse
     rowData(xtse2) <- NULL
     expect_error(agglomerateByRank(xtse2,"Family",na.rm=FALSE),
@@ -76,11 +76,11 @@ test_that("agglomerate", {
     expect_equal(length(rowTree(actual)$tip.label),
                  length(rowTree(se)$tip.label))
     actual <- agglomerateByRank(se, rank = "Family", 
-        ignore.taxonomy = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
+        ignore.taxonomy = FALSE, na.rm = FALSE, update.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), 603)
     actual <- agglomerateByRank(se, rank = "Family", 
-        ignore.taxonomy = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
+        ignore.taxonomy = FALSE, na.rm = FALSE, update.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), nrow(actual))
     # Test that warning occurs when assay contian binary or negative values

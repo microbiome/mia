@@ -32,11 +32,11 @@
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 #'   removed if \code{na.rm = TRUE} before agglomeration.
 #'
-#' @param agglomerate.tree \code{TRUE} or \code{FALSE}: should
+#' @param update.tree \code{TRUE} or \code{FALSE}: should
 #'   \code{rowTree()} also be agglomerated? (Default:
-#'   \code{agglomerate.tree = FALSE})
+#'   \code{update.tree = FALSE})
 #'
-#' @param agglomerateTree alias for \code{agglomerate.tree}.
+#' @param agglomerateTree alias for \code{update.tree}.
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
@@ -92,10 +92,10 @@
 #'   merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 #'   returned unchanged.
 #'
-#' @param agglomerate.tree \code{TRUE} or \code{FALSE}: Should
-#'   \code{rowTree()} also be merged? (Default: \code{agglomerate.tree = FALSE})
+#' @param update.tree \code{TRUE} or \code{FALSE}: Should
+#'   \code{rowTree()} also be merged? (Default: \code{update.tree = FALSE})
 #' 
-#' @param mergeTree Deprecated. Use \code{agglomerate.tree} instead.
+#' @param mergeTree Deprecated. Use \code{update.tree} instead.
 #'
 #' @details
 #' 
@@ -148,7 +148,7 @@
 #'
 #' # agglomerate the tree as well
 #' x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-#'                        agglomerate.tree = TRUE)
+#'                        update.tree = TRUE)
 #' nrow(x2) # same number of rows, but
 #' rowTree(x1) # ... different
 #' rowTree(x2) # ... tree
@@ -205,7 +205,7 @@
 #' f <- factor(regmatches(rownames(esophagus),
 #'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
 #' merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f,
-#'                                 agglomerate.tree = TRUE)
+#'                                 update.tree = TRUE)
 #' plot(rowTree(merged))
 #' #
 #' data(GlobalPatterns)
@@ -262,7 +262,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
         tax_cols <- .get_tax_cols_from_se(x)
 
         # if na.rm is TRUE, remove the empty, white-space, NA values from
-        # tree will be pruned later, if agglomerate.tree = TRUE
+        # tree will be pruned later, if update.tree = TRUE
         if( na.rm ){
             x <- .remove_with_empty_taxonomic_info(x, tax_cols[col],
                                                     empty.fields)
@@ -325,13 +325,13 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, MARGIN, f, agglomerate.tree = mergeTree, mergeTree = FALSE, ...){
+            function(x, MARGIN, f, update.tree = mergeTree, mergeTree = FALSE, ...){
                 # Check MARGIN
                 MARGIN <- .check_MARGIN(MARGIN)
                 # Get function based on MARGIN
                 FUN <- switch(MARGIN, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
-                x <- FUN(x, f, agglomerate.tree = agglomerate.tree, ...)
+                x <- FUN(x, f, update.tree = update.tree, ...)
                 return(x)
             }
 )
@@ -361,10 +361,10 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
 setMethod(
     "agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, ..., agglomerate.tree = agglomerateTree, agglomerateTree = FALSE){
+        x, ..., update.tree = agglomerateTree, agglomerateTree = FALSE){
                 # input check
-                if(!.is_a_bool(agglomerate.tree)){
-                    stop("'agglomerate.tree' must be TRUE or FALSE.",
+                if(!.is_a_bool(update.tree)){
+                    stop("'update.tree' must be TRUE or FALSE.",
                         call. = FALSE)
                 }
                 # If there are multipe rowTrees, it might be that multiple
@@ -376,7 +376,7 @@ setMethod(
                     x <- .order_based_on_trees(x)
                 }
                 # Agglomerate data
-                x <- callNextMethod(x, agglomerate.tree = agglomerate.tree, ...)
+                x <- callNextMethod(x, update.tree = update.tree, ...)
                 return(x)
             }
 )

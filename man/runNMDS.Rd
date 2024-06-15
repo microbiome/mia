@@ -15,7 +15,7 @@ getNMDS(x, ...)
 \S4method{getNMDS}{ANY}(
   x,
   FUN = vegdist,
-  nmds.FUN = c("isoMDS", "monoMDS"),
+  nmds.fun = c("isoMDS", "monoMDS"),
   ncomponents = 2,
   ntop = 500,
   subset.row = subset_row,
@@ -62,12 +62,12 @@ Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 For \code{addNMDS} a \linkS4class{SingleCellExperiment}}
 
 \item{...}{additional arguments to pass to \code{FUN} and
-\code{nmds.FUN}.}
+\code{nmds.fun}.}
 
 \item{FUN}{a \code{function} or \code{character} value with a function
 name returning a \code{\link[stats:dist]{dist}} object}
 
-\item{nmds.FUN}{a \code{character} value to choose the scaling
+\item{nmds.fun}{a \code{character} value to choose the scaling
 implementation, either \dQuote{isoMDS} for
 \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 \code{\link[vegan:monoMDS]{vegan::monoMDS}}}
@@ -132,7 +132,7 @@ data in a \code{SingleCellExperiment} object.
 Either \code{\link[MASS:isoMDS]{MASS::isoMDS}} or
 \code{\link[vegan:monoMDS]{vegan::monoMDS}} are used internally to compute
 the NMDS components. If you supply a custom \code{FUN}, make sure that
-the arguments of \code{FUN} and \code{nmds.FUN} do not collide.
+the arguments of \code{FUN} and \code{nmds.fun} do not collide.
 }
 \examples{
 # generate some example data

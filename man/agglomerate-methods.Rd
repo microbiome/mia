@@ -40,7 +40,7 @@ agglomerateByVariable(x, ...)
   x,
   MARGIN,
   f,
-  agglomerate.tree = mergeTree,
+  update.tree = mergeTree,
   mergeTree = FALSE,
   ...
 )
@@ -56,7 +56,7 @@ agglomerateByVariable(x, ...)
 \S4method{agglomerateByRank}{TreeSummarizedExperiment}(
   x,
   ...,
-  agglomerate.tree = agglomerateTree,
+  update.tree = agglomerateTree,
   agglomerateTree = FALSE
 )
 
@@ -103,7 +103,7 @@ unsplitByRanks(x, ...)
 \S4method{unsplitByRanks}{SingleCellExperiment}(
   x,
   ranks = taxonomyRanks(x),
-  keep.reduceddims = keep_reducedDims,
+  keep.dimred = keep_reducedDims,
   keep_reducedDims = FALSE,
   ...
 )
@@ -111,7 +111,7 @@ unsplitByRanks(x, ...)
 \S4method{unsplitByRanks}{TreeSummarizedExperiment}(
   x,
   ranks = taxonomyRanks(x),
-  keep.reduceddims = keep_reducedDims,
+  keep.dimred = keep_reducedDims,
   keep_reducedDims = FALSE,
   ...
 )
@@ -146,10 +146,10 @@ Must be \code{'rows'} or \code{'cols'}.}
 merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged.}
 
-\item{agglomerate.tree}{\code{TRUE} or \code{FALSE}: Should
-\code{rowTree()} also be merged? (Default: \code{agglomerate.tree = FALSE})}
+\item{update.tree}{\code{TRUE} or \code{FALSE}: Should
+\code{rowTree()} also be merged? (Default: \code{update.tree = FALSE})}
 
-\item{mergeTree}{Deprecated. Use \code{agglomerate.tree} instead.}
+\item{mergeTree}{Deprecated. Use \code{update.tree} instead.}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -161,7 +161,7 @@ nested alternative experiments by default (default:
 
 \item{strip_altexp}{Deprecated. Use \code{altexp.rm} instead.}
 
-\item{agglomerateTree}{alias for \code{agglomerate.tree}.}
+\item{agglomerateTree}{alias for \code{update.tree}.}
 
 \item{other.label}{A single \code{character} valued used as the label for the
 summary of non-prevalent taxa. (default: \code{other.label = "Other"})}
@@ -176,12 +176,12 @@ of \code{taxonomyRanks()} function.}
 \code{agglomerateByRanks} as a SimpleList or stored in altExps?
 (default: \code{as.list = FALSE})}
 
-\item{keep.reduceddims}{\code{TRUE} or \code{FALSE}: Should the
+\item{keep.dimred}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(default: \code{keep.reduceddims = FALSE})}
+(default: \code{keep.dimred = FALSE})}
 
-\item{keep_reducedDims}{Deprecated. Use \code{keep.reduceddims} instead.}
+\item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }
 \value{
 \code{agglomerateByRank} returns a taxonomically-agglomerated,
@@ -285,7 +285,7 @@ nrow(x1)
 
 # agglomerate the tree as well
 x2 <- agglomerateByRank(GlobalPatterns, rank="Family",
-                       agglomerate.tree = TRUE)
+                       update.tree = TRUE)
 nrow(x2) # same number of rows, but
 rowTree(x1) # ... different
 rowTree(x2) # ... tree
@@ -342,7 +342,7 @@ plot(rowTree(esophagus))
 f <- factor(regmatches(rownames(esophagus),
                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
 merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f,
-                                agglomerate.tree = TRUE)
+                                update.tree = TRUE)
 plot(rowTree(merged))
 #
 data(GlobalPatterns)

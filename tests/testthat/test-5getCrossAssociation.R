@@ -490,17 +490,17 @@ test_that("getCrossAssociation", {
     expect_true( is.data.frame(getCrossAssociation(tse, method = "canberra",
                                                         mode = "table", 
                                                         show.warnings = T,
-                                                        association.FUN = stats::dist) ) )
+                                                        association.fun = stats::dist) ) )
     
     expect_true( is.matrix( getCrossAssociation(tse, method = "bray",
                                                         show.warnings = FALSE,
                                                         mode = "matrix",
-                                                        association.FUN = vegan::vegdist,
+                                                        association.fun = vegan::vegdist,
                                                         test.signif = TRUE) ) )
     expect_error( getCrossAssociation(tse, method = "bray",
                                                 show.warnings = FALSE,
                                                 mode = "matrix",
-                                                association.FUN = DelayedMatrixStats::rowSums2,
+                                                association.fun = DelayedMatrixStats::rowSums2,
                                                 test.signif = TRUE) )
     
     # Test that output has right columns

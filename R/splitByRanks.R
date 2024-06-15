@@ -19,12 +19,12 @@
 #'   will be dropped. This setting can be tweaked by defining
 #'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
 #'
-#' @param keep.reduceddims \code{TRUE} or \code{FALSE}: Should the
+#' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
-#'   (default: \code{keep.reduceddims = FALSE})
+#'   (default: \code{keep.dimred = FALSE})
 #' 
-#' @param keep_reducedDims Deprecated. Use \code{keep.reduceddims} instead.
+#' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
 #'   
 #' @param as.list \code{TRUE} or \code{FALSE}: Should the list of 
 #'   \code{SummarizedExperiment} objects be returned by the function 
@@ -184,12 +184,12 @@ setGeneric("unsplitByRanks",
 
 #' @importFrom SingleCellExperiment reducedDims
 #' @importFrom SummarizedExperiment colData
-.unsplit_by <- function(x, ses, keep.reduceddims, ...){
+.unsplit_by <- function(x, ses, keep.dimred, ...){
     class_x <- class(x)
     #
     args <- list(assays = .unsplit_assays(ses),
                  colData = colData(x))
-    if(keep.reduceddims){
+    if(keep.dimred){
         args$reducedDims <- reducedDims(x)
     }
     rd <- .combine_rowData(ses)
@@ -201,7 +201,7 @@ setGeneric("unsplitByRanks",
 }
 
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
-.unsplit_by_ranks <- function(x, ranks, keep.reduceddims, ...){
+.unsplit_by_ranks <- function(x, ranks, keep.dimred, ...){
     ae_names <- altExpNames(x)
     ae_names <- ae_names[ae_names %in% ranks]
     if(length(ae_names) == 0L){
@@ -213,7 +213,7 @@ setGeneric("unsplitByRanks",
         ses[[i]] <-
             .remove_with_empty_taxonomic_info(ses[[i]], names(ses)[i], NA)
     }
-    ans <- .unsplit_by(x, ses, keep.reduceddims, ...)
+    ans <- .unsplit_by(x, ses, keep.dimred, ...)
     rownames(ans) <- getTaxonomyLabels(ans, make.unique = FALSE)
     ans
 }
@@ -221,14 +221,14 @@ setGeneric("unsplitByRanks",
 #' @rdname agglomerate-methods
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
-    function(x, ranks = taxonomyRanks(x), keep.reduceddims = keep_reducedDims, 
+    function(x, ranks = taxonomyRanks(x), keep.dimred = keep_reducedDims, 
             keep_reducedDims = FALSE, ...){
         # input check
-        if(!.is_a_bool(keep.reduceddims)){
-          stop("'keep.reduceddims' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(keep.dimred)){
+          stop("'keep.dimred' must be TRUE or FALSE.", call. = FALSE)
         }
         #
-        .unsplit_by_ranks(x, ranks = ranks, keep.reduceddims = keep.reduceddims,
+        .unsplit_by_ranks(x, ranks = ranks, keep.dimred = keep.dimred,
                           ...)
     }
 )
@@ -236,7 +236,7 @@ setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
 #' @rdname agglomerate-methods
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ranks = taxonomyRanks(x), keep.reduceddims = keep_reducedDims, 
+    function(x, ranks = taxonomyRanks(x), keep.dimred = keep_reducedDims, 
             keep_reducedDims = FALSE, ...){
         callNextMethod()
     }

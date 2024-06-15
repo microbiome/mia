@@ -46,13 +46,13 @@
 #' @param FUN a \code{function} or \code{character} value with a function
 #'   name returning a \code{\link[stats:dist]{dist}} object
 #'
-#' @param nmds.FUN a \code{character} value to choose the scaling
+#' @param nmds.fun a \code{character} value to choose the scaling
 #'   implementation, either \dQuote{isoMDS} for
 #'   \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 #'   \code{\link[vegan:monoMDS]{vegan::monoMDS}}
 #'
 #' @param ... additional arguments to pass to \code{FUN} and
-#'   \code{nmds.FUN}.
+#'   \code{nmds.fun}.
 #'
 #' @param dimred String or integer scalar specifying the existing dimensionality
 #'   reduction results to use.
@@ -75,7 +75,7 @@
 #' Either \code{\link[MASS:isoMDS]{MASS::isoMDS}} or
 #' \code{\link[vegan:monoMDS]{vegan::monoMDS}} are used internally to compute
 #' the NMDS components. If you supply a custom \code{FUN}, make sure that
-#' the arguments of \code{FUN} and \code{nmds.FUN} do not collide.
+#' the arguments of \code{FUN} and \code{nmds.fun} do not collide.
 #'
 #' @name runNMDS
 #'
@@ -127,8 +127,8 @@ setGeneric("getNMDS", function(x, ...) standardGeneric("getNMDS"))
     ans
 }
 
-.format_nmds <- function(nmds, nmds.FUN, sample_names){
-    ans <- switch(nmds.FUN,
+.format_nmds <- function(nmds, nmds.fun, sample_names){
+    ans <- switch(nmds.fun,
                   "isoMDS" = .format_nmds_isoMDS(nmds),
                   "monoMDS" = .format_nmds_monoMDS(nmds))
     rownames(ans) <- sample_names
@@ -144,9 +144,9 @@ setGeneric("getNMDS", function(x, ...) standardGeneric("getNMDS"))
            "smin","sfgrmin","sratmax")]
 }
 
-.get_nmds_args <- function(nmds.FUN, ...){
+.get_nmds_args <- function(nmds.fun, ...){
     args <- list(...)
-    args <- switch(nmds.FUN,
+    args <- switch(nmds.fun,
                    "isoMDS" = .get_nmds_args_isoMDS(args),
                    "monoMDS" = .get_nmds_args_monoMDS(args))
     args <- args[!vapply(args,is.null,logical(1))]
@@ -157,13 +157,13 @@ setGeneric("getNMDS", function(x, ...) standardGeneric("getNMDS"))
 #' @importFrom stats cmdscale
 #' @importFrom vegan vegdist monoMDS
 .calculate_nmds <- function(x, FUN = vegdist, 
-                            nmds.FUN = c("isoMDS","monoMDS"),
+                            nmds.fun = c("isoMDS","monoMDS"),
                             ncomponents = 2, ntop = 500, subset.row = subset_row, 
                             subset_row = NULL, scale = FALSE, transposed = FALSE,
                             keep.dist = keep_dist,
                             keep_dist = FALSE, ...){
-    nmds.FUN <- match.arg(nmds.FUN)
-    nmdsArgs <- .get_nmds_args(nmds.FUN, ...)
+    nmds.fun <- match.arg(nmds.fun)
+    nmdsArgs <- .get_nmds_args(nmds.fun, ...)
     if(!transposed) {
         x <- .get_mat_for_reddim(x, subset_row = subset.row, ntop = ntop,
                                  scale = scale)
@@ -175,10 +175,10 @@ setGeneric("getNMDS", function(x, ...) standardGeneric("getNMDS"))
                              list(...)))
     attributes(sample_dist) <- attributes(sample_dist)[c("class","Size")]
     y <- cmdscale(sample_dist, k = ncomponents)
-    ans <- do.call(nmds.FUN,
+    ans <- do.call(nmds.fun,
                    c(list(sample_dist, y = y, k = ncomponents),
                      nmdsArgs))
-    ans <- .format_nmds(ans, nmds.FUN, sample_names)
+    ans <- .format_nmds(ans, nmds.fun, sample_names)
     if (keep.dist) {
         attr(ans,"dist") <- sample_dist
     }

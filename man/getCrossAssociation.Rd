@@ -58,7 +58,7 @@ measure is symmetric or not. When \code{symmetric = TRUE}, associations
 are calculated only for unique variable-pairs, and they are assigned to
 corresponding variable-pair. This decreases the number of calculations in 2-fold
 meaning faster execution. (By default: \code{symmetric = FALSE})
-\item \code{association.FUN}:  A function that is used to calculate (dis-)similarity
+\item \code{association.fun}:  A function that is used to calculate (dis-)similarity
 between features. Function must take matrix as an input and give numeric
 values as an output. Adjust \code{method} and other parameters correspondingly.
 Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.
@@ -236,7 +236,7 @@ names(result)
 # Calculate Bray-Curtis dissimilarity between samples. If dataset includes
 # paired samples, you can use paired = TRUE.
 result <- getCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
-                                        association.FUN = vegan::vegdist, 
+                                        association.fun = vegan::vegdist, 
                                         method = "bray")
                                         
 

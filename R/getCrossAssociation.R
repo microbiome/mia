@@ -115,7 +115,7 @@
 #'        are calculated only for unique variable-pairs, and they are assigned to 
 #'        corresponding variable-pair. This decreases the number of calculations in 2-fold 
 #'        meaning faster execution. (By default: \code{symmetric = FALSE}) 
-#'        \item \code{association.FUN}:  A function that is used to calculate (dis-)similarity
+#'        \item \code{association.fun}:  A function that is used to calculate (dis-)similarity
 #'        between features. Function must take matrix as an input and give numeric
 #'        values as an output. Adjust \code{method} and other parameters correspondingly.
 #'        Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.
@@ -192,7 +192,7 @@
 #' # Calculate Bray-Curtis dissimilarity between samples. If dataset includes
 #' # paired samples, you can use paired = TRUE.
 #' result <- getCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
-#'                                         association.FUN = vegan::vegdist, 
+#'                                         association.fun = vegan::vegdist, 
 #'                                         method = "bray")
 #'                                         
 #' 
@@ -412,7 +412,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
       stop("'MARGIN' must be 1 or 2.", call. = FALSE)
     }
     # Check method
-    # method is checked in .calculate_association. Otherwise association.FUN would
+    # method is checked in .calculate_association. Otherwise association.fun would
     # not work. (It can be "anything", and it might also have method parameter.)
     # Check mode
     mode <- match.arg(mode, c("table", "matrix"))
@@ -767,10 +767,10 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                    assay.type1, assay.type2,
                                    altexp1, altexp2,
                                    col.var1, col.var2,
-                                   association.FUN = NULL,
+                                   association.fun = NULL,
                                    ...){
-    # Check method if association.FUN is not NULL
-    if( is.null(association.FUN) ){
+    # Check method if association.fun is not NULL
+    if( is.null(association.fun) ){
         method <- match.arg(method)
         # Get function name for message
         function_name <- ifelse(method == "categorical", "mia:::.calculate_gktau", 
@@ -783,7 +783,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                           col.var2)
     } else{
         # Get name of function
-        function_name <- deparse(substitute(association.FUN))
+        function_name <- deparse(substitute(association.fun))
         test.signif <- FALSE
         p.adj.method <- NULL
     }
@@ -813,9 +813,9 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
             ) 
     }
   
-    # If association.FUN is provided by user, use appropriate function.
+    # If association.fun is provided by user, use appropriate function.
     # Otherwise, choose correct method for numeric and categorical data
-    if( !is.null(association.FUN) ){
+    if( !is.null(association.fun) ){
         FUN_ <- .calculate_association_with_own_function
     } else if( method %in% c("kendall", "pearson","spearman") ) {
         FUN_ <- .calculate_association_for_numeric_values
@@ -847,7 +847,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                                                   assay2 = assay2,
                                                                   method = method,
                                                                   show.warnings = show.warnings, 
-                                                                  association.FUN = association.FUN, 
+                                                                  association.fun = association.fun, 
                                                                   ...)
     }
     
@@ -906,7 +906,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                          assay2,
                                          method,
                                          show.warnings, 
-                                         association.FUN, 
+                                         association.fun, 
                                          symmetric = FALSE,
                                          ...){
     # Check symmetric
@@ -943,7 +943,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                        assay2 = assay2,
                                        method = method,
                                        show.warnings = show.warnings, 
-                                       association.FUN = association.FUN, 
+                                       association.fun = association.fun, 
                                        ...)
   
     # Convert into data.frame if it is vector, 
@@ -1117,7 +1117,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
 # Output: Correlation value or list that includes correlation value and p-value.
 .calculate_association_with_own_function <- function(feature_pair,
                                          assay1, assay2, 
-                                         association.FUN, 
+                                         association.fun, 
                                          show.warnings,
                                          test.signif,
                                          ...){
@@ -1133,21 +1133,21 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     # Use try-catch to catch errors that might occur.
     if( show.warnings ){
         temp <- tryCatch({
-          do.call(association.FUN, args = c(list(feature_mat), list(...)))
+          do.call(association.fun, args = c(list(feature_mat), list(...)))
         },
         error = function(cond) {
             stop("Error occurred during calculation. Check, e.g., that ",
-                "'association.FUN' fulfills requirements. 'association.FUN' ",
+                "'association.fun' fulfills requirements. 'association.fun' ",
                 "threw a following error:\n",  cond,
                 call. = FALSE)
         })
     } else {
         temp <- tryCatch({
-            suppressWarnings( do.call(association.FUN, args = c(list(feature_mat), list(...))) )
+            suppressWarnings( do.call(association.fun, args = c(list(feature_mat), list(...))) )
         },
         error = function(cond) {
             stop("Error occurred during calculation. Check, e.g., that ",
-                    "'association.FUN' fulfills requirements. 'association.FUN' ",
+                    "'association.fun' fulfills requirements. 'association.fun' ",
                     "threw a following error:\n",  cond,
                  call. = FALSE)
         })
@@ -1156,7 +1156,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     # If temp's length is not 1, then function does not return single numeric value for each pair
     if( length(temp) != 1 ){
         stop("Error occurred during calculation. Check that ", 
-            "'association.FUN' fulfills requirements.", 
+            "'association.fun' fulfills requirements.", 
             call. = FALSE)
     } 
     return(temp)

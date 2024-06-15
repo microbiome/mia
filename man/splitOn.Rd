@@ -17,25 +17,19 @@ splitOn(x, ...)
 
 \S4method{splitOn}{SingleCellExperiment}(x, f = NULL, ...)
 
-\S4method{splitOn}{TreeSummarizedExperiment}(
-  x,
-  f = NULL,
-  agglomerate.tree = update_rowTree,
-  update_rowTree = FALSE,
-  ...
-)
+\S4method{splitOn}{TreeSummarizedExperiment}(x, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE, ...)
 
 unsplitOn(x, ...)
 
-\S4method{unsplitOn}{list}(x, agglomerate.tree = update_rowTree, update_rowTree = FALSE, ...)
+\S4method{unsplitOn}{list}(x, update.tree = update_rowTree, update_rowTree = FALSE, ...)
 
-\S4method{unsplitOn}{SimpleList}(x, agglomerate.tree = update_rowTree, update_rowTree = FALSE, ...)
+\S4method{unsplitOn}{SimpleList}(x, update.tree = update_rowTree, update_rowTree = FALSE, ...)
 
 \S4method{unsplitOn}{SingleCellExperiment}(
   x,
   altexp = altExpNames,
   altExpNames = names(altExps(x)),
-  keep.reduceddims = keep_reducedDims,
+  keep.dimred = keep_reducedDims,
   keep_reducedDims = FALSE,
   ...
 )
@@ -63,24 +57,24 @@ dimensions, \code{MARGIN} must be specified.
 Split by cols is not encouraged, since this is not compatible with
 storing the results in \code{altExps}.}
 
-\item{agglomerate.tree}{\code{TRUE} or \code{FALSE}: Should the rowTree be updated
+\item{update.tree}{\code{TRUE} or \code{FALSE}: Should the rowTree be updated
 based on splitted data? Option is enabled when \code{x} is a
 \code{TreeSummarizedExperiment} object or a list of such objects.
-(By default: \code{agglomerate.tree = FALSE})}
+(By default: \code{update.tree = FALSE})}
 
-\item{update_rowTree}{Deprecated. Use \code{agglomerate.tree } instead.}
+\item{update_rowTree}{Deprecated. Use \code{update.tree } instead.}
 
 \item{altexp}{a \code{character} vector specifying the alternative experiments
 to be unsplit. (By default: \code{altexp = names(altExps(x))})}
 
 \item{altExpNames}{Deprecated. Use \code{altexp} instead.}
 
-\item{keep.reduceddims}{\code{TRUE} or \code{FALSE}: Should the
+\item{keep.dimred}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(By default: \code{keep.reduceddims = FALSE})}
+(By default: \code{keep.dimred = FALSE})}
 
-\item{keep_reducedDims}{Deprecated. Use \code{keep.reduceddims} instead.}
+\item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }
 \value{
 For \code{splitOn}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
@@ -124,7 +118,7 @@ altExps(tse) <- se_list
 altExps(tse)
 
 # If you want to split on columns and update rowTree, you can do
-se_list <- splitOn(tse, f = colData(tse)$group, agglomerate.tree = TRUE)
+se_list <- splitOn(tse, f = colData(tse)$group, update.tree = TRUE)
 
 # If you want to combine groups back together, you can use unsplitBy
 unsplitOn(se_list)

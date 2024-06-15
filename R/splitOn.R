@@ -13,19 +13,19 @@
 #'   Split by cols is not encouraged, since this is not compatible with 
 #'   storing the results in \code{altExps}.
 #'
-#' @param keep.reduceddims \code{TRUE} or \code{FALSE}: Should the
+#' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
-#'   (By default: \code{keep.reduceddims = FALSE})
+#'   (By default: \code{keep.dimred = FALSE})
 #' 
-#' @param keep_reducedDims Deprecated. Use \code{keep.reduceddims} instead.
+#' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
 #'   
-#' @param agglomerate.tree \code{TRUE} or \code{FALSE}: Should the rowTree be updated
+#' @param update.tree \code{TRUE} or \code{FALSE}: Should the rowTree be updated
 #'   based on splitted data? Option is enabled when \code{x} is a 
 #'   \code{TreeSummarizedExperiment} object or a list of such objects. 
-#'   (By default: \code{agglomerate.tree = FALSE})
+#'   (By default: \code{update.tree = FALSE})
 #' 
-#' @param update_rowTree Deprecated. Use \code{agglomerate.tree } instead.
+#' @param update_rowTree Deprecated. Use \code{update.tree } instead.
 #'   
 #' @param altexp a \code{character} vector specifying the alternative experiments
 #'   to be unsplit. (By default: \code{altexp = names(altExps(x))})
@@ -93,7 +93,7 @@
 #' altExps(tse)
 #' 
 #' # If you want to split on columns and update rowTree, you can do
-#' se_list <- splitOn(tse, f = colData(tse)$group, agglomerate.tree = TRUE)
+#' se_list <- splitOn(tse, f = colData(tse)$group, update.tree = TRUE)
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitOn(se_list)
@@ -282,19 +282,19 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f = NULL, agglomerate.tree = update_rowTree, update_rowTree = FALSE,
+    function(x, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE,
             ...){
         # Input check
-        # Check agglomerate.tree
-        if( !.is_a_bool(agglomerate.tree) ){
-            stop("'agglomerate.tree' must be TRUE or FALSE.",
+        # Check update.tree
+        if( !.is_a_bool(update.tree) ){
+            stop("'update.tree' must be TRUE or FALSE.",
                 call. = FALSE)
         }
         # Input check end
         # Split data
         x <- callNextMethod()
         # Manipulate rowTree or not?
-        if( agglomerate.tree ){
+        if( update.tree ){
             # If the returned value is a list, go through all of them
             if( is(x, 'SimpleList') ){
                 x <- SimpleList(lapply(x, .agglomerate_trees))
@@ -319,7 +319,7 @@ setGeneric("unsplitOn",
                 standardGeneric("unsplitOn"))
 
 # Perform the unsplit
-.list_unsplit_on <- function(ses, agglomerate.tree = FALSE, MARGIN = NULL, ...){
+.list_unsplit_on <- function(ses, update.tree = FALSE, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
@@ -327,9 +327,9 @@ setGeneric("unsplitOn",
             "only.",
             call. = FALSE)
     }
-    # Check agglomerate.tree
-    if( !.is_a_bool(agglomerate.tree) ){
-        stop("'agglomerate.tree' must be TRUE or FALSE.",
+    # Check update.tree
+    if( !.is_a_bool(update.tree) ){
+        stop("'update.tree' must be TRUE or FALSE.",
             call. = FALSE)
     }
     if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
@@ -393,7 +393,7 @@ setGeneric("unsplitOn",
     # IF the object is TreeSE. add rowTree
     if( class_x == "TreeSummarizedExperiment" ){
         # Update or add old tree from the first element of list
-        if( agglomerate.tree ){
+        if( update.tree ){
             ans <- addHierarchyTree(ans)
         } else{
             rowTree(ans) <- rowTree(ses[[1L]])
@@ -419,17 +419,17 @@ setGeneric("unsplitOn",
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitOn", signature = c(x = "list"),
-    function(x, agglomerate.tree = update_rowTree, update_rowTree = FALSE, ...){
+    function(x, update.tree = update_rowTree, update_rowTree = FALSE, ...){
         # Unsplit list and create SCE, SE, or TreeSE from it
-        .list_unsplit_on(x, agglomerate.tree, ...)
+        .list_unsplit_on(x, update.tree, ...)
     }
 )
 #' @rdname splitOn
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitOn", signature = c(x = "SimpleList"),
-    function(x, agglomerate.tree = update_rowTree, update_rowTree = FALSE, ...){
-        unsplitOn(as.list(x), agglomerate.tree, ...)
+    function(x, update.tree = update_rowTree, update_rowTree = FALSE, ...){
+        unsplitOn(as.list(x), update.tree, ...)
     }
 )
 
@@ -438,11 +438,11 @@ setMethod("unsplitOn", signature = c(x = "SimpleList"),
 #' @export
 setMethod("unsplitOn", signature = c(x = "SingleCellExperiment"),
     function(x, altexp = altExpNames, altExpNames = names(altExps(x)),
-            keep.reduceddims = keep_reducedDims,
+            keep.dimred = keep_reducedDims,
             keep_reducedDims = FALSE, ...){
         # input check
-        if(!.is_a_bool(keep.reduceddims)){
-            stop("'keep.reduceddims' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(keep.dimred)){
+            stop("'keep.dimred' must be TRUE or FALSE.", call. = FALSE)
         }
         # Get alternative experiment names since data is located there
         ae_names <- names(altExps(x))
@@ -456,7 +456,7 @@ setMethod("unsplitOn", signature = c(x = "SingleCellExperiment"),
         # And unsplit the data
         se <- .list_unsplit_on(ses, ...)
         # Add reducedDims if specified
-        if( keep.reduceddims ){
+        if( keep.dimred ){
             reducedDims(se) <- reducedDims(x)
         }
         return(se)
