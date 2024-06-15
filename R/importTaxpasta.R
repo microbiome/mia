@@ -28,7 +28,10 @@ importTaxpasta <- function(filename) {
 
     # Without taxonomic information, we return a simple TreeSE.
     if (is.null(raw$observation$`group-metadata`$ranks)) {
-        warning("The BIOM file does not contain taxonomy information; unable to generate a taxonomic tree.")
+        warning(paste(
+            "The BIOM file does not contain taxonomy information;",
+            "unable to generate a taxonomic tree."
+        ), call. = FALSE)
         return(makeTreeSEFromBiom(biom))
     }
 
@@ -90,7 +93,10 @@ importTaxpasta <- function(filename) {
 #' @keywords internal
 #' @noRd
 .getRanks <- function(h5array) {
-    ranks <- strsplit(h5array$observation$`group-metadata`$ranks, ";", fixed = TRUE)[[1]]
+    ranks <- strsplit(h5array$observation$`group-metadata`$ranks,
+        ";",
+        fixed = TRUE
+    )[[1]]
     return(ranks)
 }
 
@@ -116,7 +122,9 @@ importTaxpasta <- function(filename) {
     indeces <- startsWith(column.names, "taxonomy")
 
     if (sum(indeces) != length(ranks)) {
-        stop("The number of generic taxonomy* columns differs from the number of ranks.")
+        stop(paste(
+            "The number of generic taxonomy* columns differs",
+            "from the number of ranks."))
     }
 
     colnames(meta) <- replace(column.names, indeces, ranks)
