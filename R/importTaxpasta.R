@@ -24,7 +24,7 @@ importTaxpasta <- function(filename) {
     # We read our own HDF5 array to later be able to read observation group
     # metadata, which [biomformat::read_biom()] currently doesn't do.
     raw <- h5read(filename, "/", read.attributes = TRUE)
-    biom <- .createBiom(raw)
+    biom <- .create_biom(raw)
 
     # Without taxonomic information, we return a simple TreeSE.
     if (is.null(raw$observation$`group-metadata`$ranks)) {
@@ -36,9 +36,9 @@ importTaxpasta <- function(filename) {
     }
 
     # With taxonomic information, we add a hierarchy to the TreeSE.
-    ranks <- .getRanks(raw)
+    ranks <- .get_ranks(raw)
     tse <- makeTreeSEFromBiom(biom)
-    rowData(tse) <- .createRowData(biom, ranks)
+    rowData(tse) <- .create_row_data(biom, ranks)
     setTaxonomyRanks(ranks)
     tse <- addHierarchyTree(tse)
     altExps(tse) <- splitByRanks(tse, agglomerate.tree = TRUE)
@@ -48,8 +48,8 @@ importTaxpasta <- function(filename) {
 
 #' Create BIOM object from raw HDF5 array
 #'
-#' `.createBiom()` is an internal function used by [importTaxpasta()], that more or
-#' less replicates [biomformat::read_hdf5_biom()].
+#' `.create_biom()` is an internal function used by [importTaxpasta()], that
+#' more or less replicates [biomformat::read_hdf5_biom()].
 #'
 #' @param h5array A raw HDF5 array read from a BIOM file.
 #'
@@ -57,7 +57,7 @@ importTaxpasta <- function(filename) {
 #'
 #' @keywords internal
 #' @noRd
-.createBiom <- function(h5array) {
+.create_biom <- function(h5array) {
     data <- biomformat:::generate_matrix(h5array)
     rows <- biomformat:::generate_metadata(h5array$observation)
     columns <- biomformat:::generate_metadata(h5array$sample)
@@ -83,8 +83,8 @@ importTaxpasta <- function(filename) {
 
 #' Get taxonomic ranks from observation group metadata
 #'
-#' `.getRanks()` is an internal function used by [importTaxpasta()], that reads the
-#' string of semi-colon separated ranks from the group observation metadata.
+#' `.get_ranks()` is an internal function used by [importTaxpasta()], that reads
+#' the string of semi-colon separated ranks from the group observation metadata.
 #'
 #' @param h5array A raw HDF5 array read from a BIOM file.
 #'
@@ -92,7 +92,7 @@ importTaxpasta <- function(filename) {
 #'
 #' @keywords internal
 #' @noRd
-.getRanks <- function(h5array) {
+.get_ranks <- function(h5array) {
     ranks <- strsplit(h5array$observation$`group-metadata`$ranks,
         ";",
         fixed = TRUE
@@ -102,7 +102,7 @@ importTaxpasta <- function(filename) {
 
 #' Recreate observation metadata
 #'
-#' `.createRowData()` is an internal function used by [importTaxpasta()], that
+#' `.create_row_data()` is an internal function used by [importTaxpasta()], that
 #' returns a copy of the BIOM object's observation metadata, where the headers
 #' of the taxonomy columns have been replaced with the correct taxonomic rank
 #' names.
@@ -116,7 +116,7 @@ importTaxpasta <- function(filename) {
 #'
 #' @keywords internal
 #' @noRd
-.createRowData <- function(biom, ranks) {
+.create_row_data <- function(biom, ranks) {
     meta <- observation_metadata(biom)
     column.names <- colnames(meta)
     indeces <- startsWith(column.names, "taxonomy")
@@ -124,7 +124,8 @@ importTaxpasta <- function(filename) {
     if (sum(indeces) != length(ranks)) {
         stop(paste(
             "The number of generic taxonomy* columns differs",
-            "from the number of ranks."))
+            "from the number of ranks."
+        ))
     }
 
     colnames(meta) <- replace(column.names, indeces, ranks)
