@@ -124,7 +124,7 @@ importTaxpasta <- function(filename) {
         stop(paste(
             "The number of generic taxonomy* columns differs",
             "from the number of ranks."
-        ))
+        ), call. = FALSE)
     }
 
     colnames(meta) <- replace(column.names, indeces, ranks)
