@@ -73,12 +73,11 @@ importTaxpasta <- function(filename) {
     matrix_type <- "dense"
     matrix_element_type <- "int"
 
-    return(
-        biomformat:::namedList(
-            id, format, format_url, type, generated_by, date, matrix_type,
-            matrix_element_type, rows, columns, shape, data
-        ) |> biomformat:::biom()
-    )
+    result <- biomformat:::biom(biomformat:::namedList(
+        id, format, format_url, type, generated_by, date, matrix_type,
+        matrix_element_type, rows, columns, shape, data
+    ))
+    return(result)
 }
 
 #' Get taxonomic ranks from observation group metadata
