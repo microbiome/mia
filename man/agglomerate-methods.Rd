@@ -57,7 +57,6 @@ agglomerateByPrevalence(x, ...)
   rank = NULL,
   other_label = "Other",
   agglomerate.tree = FALSE,
-  mergeRefSeq = FALSE,
   ...
 )
 
@@ -144,12 +143,6 @@ nested alternative experiments by default (default:
 
 \item{other_label}{A single \code{character} valued used as the label for the
 summary of non-prevalent taxa. (default: \code{other_label = "Other"})}
-
-\item{mergeRefSeq}{logical scalar: Should a consensus sequence be calculated?
-If set to \code{FALSE}, the result
-from \code{archetype} is returned; If set to \code{TRUE} the result
-from \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
-is returned. (Default: \code{mergeRefSeq = FALSE})}
 
 \item{ranks}{a character vector defining taxonomic ranks. Must all be values
 of \code{taxonomyRanks()} function.}

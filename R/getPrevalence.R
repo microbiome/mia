@@ -521,12 +521,6 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' @param agglomerate.tree \code{TRUE} or \code{FALSE}: should
 #'   \code{rowTree()} also be agglomerated? (Default:
 #'   \code{agglomerate.tree = FALSE})
-#'
-#' @param mergeRefSeq logical scalar: Should a consensus sequence be calculated?
-#' If set to \code{FALSE}, the result
-#' from \code{archetype} is returned; If set to \code{TRUE} the result
-#' from \code{\link[DECIPHER:ConsensusSequence]{DECIPHER::ConsensusSequence}}
-#' is returned. (Default: \code{mergeRefSeq = FALSE})
 #' 
 #' @details
 #' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
@@ -601,29 +595,33 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
 setMethod("agglomerateByPrevalence", 
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, rank = NULL, other_label = "Other", agglomerate.tree = FALSE, 
-            mergeRefSeq = FALSE, ...){
-      x <- callNextMethod()
+            ...){
       # input check
       if(!.is_a_bool(agglomerate.tree)){
         stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
       }
-      if(!.is_a_bool(mergeRefSeq)){
-        stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
-      }
       # for optionally merging referenceSeq
       f <- rownames(x) 
       refSeq <- NULL
-      if(mergeRefSeq){
-        refSeq <- referenceSeq(x)
+      # mergeRefSeq is a hidden parameter as for all other agglomeration methods
+      # from the agglomerate-methods man page.
+      # Here 'list(...)[["mergeRefSeq]]' is used to access it.
+      if( "mergeRefSeq" %in% names(list(...)) && 
+          !(is.null(list(...)[["mergeRefSeq"]]) || 
+            .is_a_bool(list(...)[["mergeRefSeq"]])) ){
+        stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
       }
-      #
-      # optionally merge rowTree
-      if( agglomerate.tree ){
-        x <- .agglomerate_trees(x, 1)
+      else if( "mergeRefSeq" %in% names(list(...)) ){
+        refSeq <- referenceSeq(x)
       }
       # optionally merge referenceSeq
       if(!is.null(refSeq)){
         referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
+      }
+      x <- callNextMethod()
+      # optionally merge rowTree
+      if( agglomerate.tree ){
+        x <- .agglomerate_trees(x, 1)
       }
       return(x)
     }
