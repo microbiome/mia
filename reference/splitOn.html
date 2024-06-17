@@ -62,18 +62,25 @@
 <span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, update.tree <span class="op">=</span> <span class="va">update_rowTree</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for list</span></span>
-<span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update.tree <span class="op">=</span> <span class="va">update_rowTree</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SimpleList</span></span>
-<span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update.tree <span class="op">=</span> <span class="va">update_rowTree</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SingleCellExperiment</span></span>
-<span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, altExpNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>, keep_reducedDims <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">unsplitOn</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  altexp <span class="op">=</span> <span class="va">altExpNames</span>,</span>
+<span>  altExpNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  keep.dimred <span class="op">=</span> <span class="va">keep_reducedDims</span>,</span>
+<span>  keep_reducedDims <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -90,7 +97,7 @@ objects.</p></dd>
 <dd><p>Arguments passed to <code>agglomerateByVariable</code> function for
 <code>SummarizedExperiment</code> objects and other functions.
 See <code><a href="agglomerate-methods.html">agglomerateByVariable</a></code> for more
-details.</p><ul><li><p><code>use_names</code> A single boolean value to select whether to name elements of
+details.</p><ul><li><p><code>use.names</code> A single boolean value to select whether to name elements of
 list by their group names.</p></li>
 </ul></dd>
 
@@ -104,23 +111,35 @@ Split by cols is not encouraged, since this is not compatible with
 storing the results in <code>altExps</code>.</p></dd>
 
 
-<dt>update_rowTree</dt>
+<dt>update.tree</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the rowTree be updated
 based on splitted data? Option is enabled when <code>x</code> is a
 <code>TreeSummarizedExperiment</code> object or a list of such objects.
-(By default: <code>update_rowTree = FALSE</code>)</p></dd>
+(By default: <code>update.tree = FALSE</code>)</p></dd>
+
+
+<dt>update_rowTree</dt>
+<dd><p>Deprecated. Use <code>update.tree </code> instead.</p></dd>
+
+
+<dt>altexp</dt>
+<dd><p>a <code>character</code> vector specifying the alternative experiments
+to be unsplit. (By default: <code>altexp = names(altExps(x))</code>)</p></dd>
 
 
 <dt>altExpNames</dt>
-<dd><p>a <code>character</code> vector specifying the alternative experiments
-to be unsplit. (By default: <code>altExpNames = names(altExps(x))</code>)</p></dd>
+<dd><p>Deprecated. Use <code>altexp</code> instead.</p></dd>
 
 
-<dt>keep_reducedDims</dt>
+<dt>keep.dimred</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(By default: <code>keep_reducedDims = FALSE</code>)</p></dd>
+(By default: <code>keep.dimred = FALSE</code>)</p></dd>
+
+
+<dt>keep_reducedDims</dt>
+<dd><p>Deprecated. Use <code>keep.dimred</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -178,7 +197,7 @@ group.</p>
 <span class="r-in"><span><span class="co"># Each element is named based on their group name. If you don't want to name</span></span></span>
 <span class="r-in"><span><span class="co"># elements, use use_name = FALSE. Since "group" can be found from rowdata and colData</span></span></span>
 <span class="r-in"><span><span class="co"># you must use MARGIN.</span></span></span>
-<span class="r-in"><span><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="st">"group"</span>, use_names <span class="op">=</span> <span class="cn">FALSE</span>, MARGIN <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="st">"group"</span>, use.names <span class="op">=</span> <span class="cn">FALSE</span>, MARGIN <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># When column names are shared between elements, you can store the list to altExps</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">se_list</span></span></span>
@@ -189,7 +208,7 @@ group.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> names(3): unnamed1 unnamed2 unnamed3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># If you want to split on columns and update rowTree, you can do</span></span></span>
-<span class="r-in"><span><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">group</span>, update_rowTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">se_list</span> <span class="op">&lt;-</span> <span class="fu">splitOn</span><span class="op">(</span><span class="va">tse</span>, f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">group</span>, update.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># If you want to combine groups back together, you can use unsplitBy</span></span></span>
 <span class="r-in"><span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">se_list</span><span class="op">)</span></span></span>
