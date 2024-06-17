@@ -87,7 +87,7 @@ makeTreeSEFromBiom <- function(
         x, prefix.rm = removeTaxaPrefixes, 
         removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix, 
         rankFromPrefix = FALSE,
-        artifact.rm = FALSE, ...){
+        artifact.rm = remove.artifacts, remove.artifacts = FALSE, ...){
     # input check
     .require_package("biomformat")
     if(!is(x,"biom")){
