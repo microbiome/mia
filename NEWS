@@ -138,4 +138,4 @@ Changes in version 1.13.x
 calculateCCA to getCCA
 + add informative error message in rarefyAssay on assays with strictly-negative values 
 + Use rbiom package in unifrac implementation
-+ Updated parameter names to followg naming convention "parameter.name"
++ Updated parameter names to follow naming convention "parameter.name"
