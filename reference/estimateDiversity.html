@@ -85,6 +85,7 @@ the <code>vegan</code> package options and some others.</p>
 <span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"coverage"</span>, <span class="st">"faith"</span>, <span class="st">"fisher"</span>, <span class="st">"gini_simpson"</span>, <span class="st">"inverse_simpson"</span>,</span>
 <span>    <span class="st">"log_modulo_skewness"</span>, <span class="st">"shannon"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="va">index</span>,</span>
+<span>  tree.name <span class="op">=</span> <span class="va">tree_name</span>,</span>
 <span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span></span>
@@ -106,6 +107,7 @@ the <code>vegan</code> package options and some others.</p>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"faith"</span>,</span>
+<span>  node.label <span class="op">=</span> <span class="va">node_lab</span>,</span>
 <span>  node_lab <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -116,6 +118,7 @@ the <code>vegan</code> package options and some others.</p>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"faith"</span>,</span>
+<span>  tree.name <span class="op">=</span> <span class="va">tree_name</span>,</span>
 <span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -159,9 +162,10 @@ determining the threshold for coverage index. By default,
 this quantile of the data. The assumption is that abundances higher than
 this are not common, and they are classified in their own group.
 By default, <code>quantile</code> is 0.5.</p></li>
-<li><p>num_of_classes: The number of arithmetic abundance classes
+<li><p>nclasses: The number of arithmetic abundance classes
 from zero to the quantile cutoff indicated by <code>quantile</code>.
-By default, <code>num_of_classes</code> is 50.</p></li>
+By default, <code>nclasses</code> is 50.</p></li>
+<li><p>num_of_classes Deprecated. Use <code>nclasses</code> instead.</p></li>
 <li><p>only.tips: A boolean value specifying whether to remove internal
 nodes when Faith's index is calculated. When <code>only.tips=TRUE</code>, those
 rows that are not tips of tree are removed.
@@ -175,10 +179,14 @@ rows that are not tips of tree are removed.
 object specifying whether calculation of estimates should be parallelized.</p></dd>
 
 
-<dt>tree_name</dt>
+<dt>tree.name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 rowTree will be used to calculate faith index.
-(By default: <code>tree_name = "phylo"</code>)</p></dd>
+(By default: <code>tree.name = "phylo"</code>)</p></dd>
+
+
+<dt>tree_name</dt>
+<dd><p>Deprecated. Use <code>tree.name</code> isntead.</p></dd>
 
 
 <dt>tree</dt>
@@ -187,11 +195,15 @@ If <code>x</code> is a <code>TreeSummarizedExperiment</code>, <code>rowTree(x)</
 used by default.</p></dd>
 
 
-<dt>node_lab</dt>
+<dt>node.label</dt>
 <dd><p>NULL or a character vector specifying the links between rows and
 node labels of <code>tree</code>. If a certain row is not linked with the tree, missing
 instance should be noted as NA. When NULL, all the rownames should be found from
-the tree. (By default: <code>node_lab = NULL</code>)</p></dd>
+the tree. (By default: <code>node.label = NULL</code>)</p></dd>
+
+
+<dt>node_lab</dt>
+<dd><p>Deprecated. Use <code>node.label</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -344,10 +356,10 @@ A Consumer's Guide to Diversity Indices.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 'threshold' can be used to determine threshold for 'coverage' index</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">estimateDiversity</span><span class="op">(</span><span class="va">tse</span>, index <span class="op">=</span> <span class="st">"coverage"</span>, threshold <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># 'quantile' and 'num_of_classes' can be used when</span></span></span>
+<span class="r-in"><span><span class="co"># 'quantile' and 'nclasses' can be used when</span></span></span>
 <span class="r-in"><span><span class="co"># 'log_modulo_skewness' is calculated</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">estimateDiversity</span><span class="op">(</span><span class="va">tse</span>, index <span class="op">=</span> <span class="st">"log_modulo_skewness"</span>,</span></span>
-<span class="r-in"><span>       quantile <span class="op">=</span> <span class="fl">0.75</span>, num_of_classes <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span>       quantile <span class="op">=</span> <span class="fl">0.75</span>, nclasses <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># It is recommended to specify also the final names used in the output.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">estimateDiversity</span><span class="op">(</span><span class="va">tse</span>,</span></span>

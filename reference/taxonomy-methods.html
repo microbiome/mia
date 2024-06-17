@@ -92,8 +92,11 @@ represent taxonomic data alongside the features of a
 <span><span class="fu">getTaxonomyLabels</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  empty.fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">""</span>, <span class="st">" "</span>, <span class="st">"\t"</span>, <span class="st">"-"</span>, <span class="st">"_"</span><span class="op">)</span>,</span>
+<span>  with.rank <span class="op">=</span> <span class="va">with_rank</span>,</span>
 <span>  with_rank <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  make.unique <span class="op">=</span> <span class="va">make_unique</span>,</span>
 <span>  make_unique <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  resolve.loops <span class="op">=</span> <span class="va">resolve_loops</span>,</span>
 <span>  resolve_loops <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -101,7 +104,14 @@ represent taxonomic data alongside the features of a
 <span><span class="fu">mapTaxonomy</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">mapTaxonomy</span><span class="op">(</span><span class="va">x</span>, taxa <span class="op">=</span> <span class="cn">NULL</span>, from <span class="op">=</span> <span class="cn">NULL</span>, to <span class="op">=</span> <span class="cn">NULL</span>, use_grepl <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">mapTaxonomy</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  taxa <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  from <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  to <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  use.grepl <span class="op">=</span> <span class="va">use_grepl</span>,</span>
+<span>  use_grepl <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">IdTaxaToDataFrame</span><span class="op">(</span><span class="va">from</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -138,21 +148,33 @@ removed if <code>na.rm = TRUE</code> before agglomeration</p></dd>
 <dd><p>Avector of ranks to be set</p></dd>
 
 
-<dt>with_rank</dt>
+<dt>with.rank</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the level be add as a
 suffix? For example: "Phylum:Crenarchaeota" (default:
-<code>with_rank = FALSE</code>)</p></dd>
+<code>with.rank = FALSE</code>)</p></dd>
+
+
+<dt>with_rank</dt>
+<dd><p>Deprecated. Use <code>with.rank</code> instead.</p></dd>
+
+
+<dt>make.unique</dt>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the labels be made
+unique, if there are any duplicates? (default: <code>make.unique = TRUE</code>)</p></dd>
 
 
 <dt>make_unique</dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the labels be made
-unique, if there are any duplicates? (default: <code>make_unique = TRUE</code>)</p></dd>
+<dd><p>Deprecated. Use <code>make.unique</code> instead.</p></dd>
+
+
+<dt>resolve.loops</dt>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should <code>resolveLoops</code>
+be applied to the taxonomic data? Please note that has only an effect,
+if the data is unique. (default: <code>resolve.loops = TRUE</code>)</p></dd>
 
 
 <dt>resolve_loops</dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should <code>resolveLoops</code>
-be applied to the taxonomic data? Please note that has only an effect,
-if the data is unique. (default: <code>resolve_loops = TRUE</code>)</p></dd>
+<dd><p>Deprecated. Use <code>resolve.loops</code> instead.</p></dd>
 
 
 <dt>taxa</dt>
@@ -174,10 +196,14 @@ must be a valid taxonomic rank. (default: <code>NULL</code>)</p></li>
 taxonomic rank. (default: <code>NULL</code>)</p></dd>
 
 
-<dt>use_grepl</dt>
+<dt>use.grepl</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: should pattern matching via
 <code>grepl</code> be used? Otherwise literal matching is used.
 (default: <code>FALSE</code>)</p></dd>
+
+
+<dt>use_grepl</dt>
+<dd><p>Deprecated. Use <code>use.grepl</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">
