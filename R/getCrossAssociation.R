@@ -767,7 +767,8 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                    assay.type1, assay.type2,
                                    altexp1, altexp2,
                                    col.var1, col.var2,
-                                   association.fun = NULL,
+                                   association.fun = association_FUN,
+                                   association_FUN = NULL,
                                    ...){
     # Check method if association.fun is not NULL
     if( is.null(association.fun) ){
