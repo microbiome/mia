@@ -49,6 +49,8 @@ taxonomic ranks on feature table, should they be scraped from prefixes?
 \item{artifact.rm}{\code{TRUE} or \code{FALSE}: If file have
 some taxonomic character naming artifacts, should they be removed.
 (default \code{artifact.rm = FALSE})}
+
+\item{remove.artifacts}{Deprecated. Use \code{artifact.rm} instead.}
 }
 \value{
 An object of class

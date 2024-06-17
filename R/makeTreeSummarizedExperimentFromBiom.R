@@ -23,6 +23,8 @@
 #' some taxonomic character naming artifacts, should they be removed.
 #' (default \code{artifact.rm = FALSE})
 #' 
+#' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
+#' 
 #' @param ... additional arguments 
 #'   \itemize{
 #'        \item \code{patter}: \code{character} value specifying artifacts
