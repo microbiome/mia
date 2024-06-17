@@ -89,8 +89,8 @@ The available transformation methods include:
 
 \itemize{
 
-\item \code{alr, chi.square, clr, frequency, hellinger, log, normalize, pa, rank, rclr
-relabundance, rrank, standardize, total}: please refer to
+\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log', 'normalize', 'pa', 'rank', 'rclr'
+'relabundance', 'rrank', 'standardize', 'total': please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
 \item 'log10': log10 transformation can be used for reducing the skewness
