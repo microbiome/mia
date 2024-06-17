@@ -61,15 +61,12 @@ data in a <code>SingleCellExperiment</code> object.</p>
 <span><span class="fu">getNMDS</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  FUN <span class="op">=</span> <span class="va">vegdist</span>,</span>
-<span>  nmds.fun <span class="op">=</span> <span class="va">nmdsFUN</span>,</span>
 <span>  nmdsFUN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"isoMDS"</span>, <span class="st">"monoMDS"</span><span class="op">)</span>,</span>
 <span>  ncomponents <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  ntop <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  subset.row <span class="op">=</span> <span class="va">subset_row</span>,</span>
 <span>  subset_row <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scale <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  keep.dist <span class="op">=</span> <span class="va">keep_dist</span>,</span>
 <span>  keep_dist <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -92,7 +89,6 @@ data in a <code>SingleCellExperiment</code> object.</p>
 <span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
 <span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  dimred <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ndimred <span class="op">=</span> <span class="va">n_dimred</span>,</span>
 <span>  n_dimred <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  FUN <span class="op">=</span> <span class="va">vegdist</span></span>
 <span><span class="op">)</span></span>
@@ -115,7 +111,7 @@ Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.
 
 <dt>...</dt>
 <dd><p>additional arguments to pass to <code>FUN</code> and
-<code>nmds.fun</code>.</p></dd>
+<code>nmdsFUN</code>.</p></dd>
 
 
 <dt>FUN</dt>
@@ -123,15 +119,11 @@ Alternatively, a <code>TreeSummarizedExperiment</code> containing such a matrix.
 name returning a <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></code> object</p></dd>
 
 
-<dt>nmds.fun</dt>
+<dt>nmdsFUN</dt>
 <dd><p>a <code>character</code> value to choose the scaling
 implementation, either “isoMDS” for
 <code><a href="https://rdrr.io/pkg/MASS/man/isoMDS.html" class="external-link">MASS::isoMDS</a></code> or “monoMDS” for
 <code><a href="https://rdrr.io/pkg/vegan/man/monoMDS.html" class="external-link">vegan::monoMDS</a></code></p></dd>
-
-
-<dt>nmdsFUN</dt>
-<dd><p>Deprecated. Use <code>nmds.fun</code> instead.</p></dd>
 
 
 <dt>ncomponents</dt>
@@ -144,14 +136,10 @@ to obtain.</p></dd>
 variances to use for dimensionality reduction.</p></dd>
 
 
-<dt>subset.row</dt>
+<dt>subset_row</dt>
 <dd><p>Vector specifying the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
 integer vector of row indices or a logical vector.</p></dd>
-
-
-<dt>subset_row</dt>
-<dd><p>Deprecated. Use <code>subset.row</code> instead.</p></dd>
 
 
 <dt>scale</dt>
@@ -162,14 +150,10 @@ integer vector of row indices or a logical vector.</p></dd>
 <dd><p>Logical scalar, is x transposed with cells in rows?</p></dd>
 
 
-<dt>keep.dist</dt>
+<dt>keep_dist</dt>
 <dd><p>Logical scalar indicating whether the <code>dist</code> object
 calculated by <code>FUN</code> should be stored as ‘dist’ attribute of
 the matrix returned/stored by <code>getNMDS</code>/ <code>addNMDS</code>.</p></dd>
-
-
-<dt>keep_dist</dt>
-<dd><p>Deprecated. Use <code>keep.dist</code> instead.</p></dd>
 
 
 <dt>assay.type</dt>
@@ -195,13 +179,9 @@ assay to use for calculation.
 reduction results to use.</p></dd>
 
 
-<dt>ndimred</dt>
+<dt>n_dimred</dt>
 <dd><p>Integer scalar or vector specifying the dimensions to use if
 dimred is specified.</p></dd>
-
-
-<dt>n_dimred</dt>
-<dd><p>Deprecated. Use <code>ndimred</code> instead.</p></dd>
 
 
 <dt>altexp</dt>
@@ -226,7 +206,7 @@ coordinates for each sample (row) and dimension (column).</p>
     <p>Either <code><a href="https://rdrr.io/pkg/MASS/man/isoMDS.html" class="external-link">MASS::isoMDS</a></code> or
 <code><a href="https://rdrr.io/pkg/vegan/man/monoMDS.html" class="external-link">vegan::monoMDS</a></code> are used internally to compute
 the NMDS components. If you supply a custom <code>FUN</code>, make sure that
-the arguments of <code>FUN</code> and <code>nmds.fun</code> do not collide.</p>
+the arguments of <code>FUN</code> and <code>nmdsFUN</code> do not collide.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>

@@ -66,26 +66,18 @@
 <span>  assay_name2 <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  altexp1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  altexp2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  col.var1 <span class="op">=</span> <span class="va">colData_variable1</span>,</span>
 <span>  colData_variable1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  col.var2 <span class="op">=</span> <span class="va">colData_variable2</span>,</span>
 <span>  colData_variable2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  MARGIN <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"kendall"</span>, <span class="st">"spearman"</span>, <span class="st">"categorical"</span>, <span class="st">"pearson"</span><span class="op">)</span>,</span>
 <span>  mode <span class="op">=</span> <span class="st">"table"</span>,</span>
-<span>  p.adj.method <span class="op">=</span> <span class="va">p_adj_method</span>,</span>
 <span>  p_adj_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fdr"</span>, <span class="st">"BH"</span>, <span class="st">"bonferroni"</span>, <span class="st">"BY"</span>, <span class="st">"hochberg"</span>, <span class="st">"holm"</span>, <span class="st">"hommel"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
-<span>  p.adj.threshold <span class="op">=</span> <span class="va">p_adj_threshold</span>,</span>
 <span>  p_adj_threshold <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cor.threshold <span class="op">=</span> <span class="va">cor_threshold</span>,</span>
 <span>  cor_threshold <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sort <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  filter.self.corr <span class="op">=</span> <span class="va">filter_self_correlations</span>,</span>
 <span>  filter_self_correlations <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  test.signif <span class="op">=</span> <span class="va">test_significance</span>,</span>
 <span>  test_significance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  show.warnings <span class="op">=</span> <span class="va">show_warnings</span>,</span>
 <span>  show_warnings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  paired <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -110,7 +102,7 @@ measure is symmetric or not. When <code>symmetric = TRUE</code>, associations
 are calculated only for unique variable-pairs, and they are assigned to
 corresponding variable-pair. This decreases the number of calculations in 2-fold
 meaning faster execution. (By default: <code>symmetric = FALSE</code>)</p></li>
-<li><p><code>association.fun</code>:  A function that is used to calculate (dis-)similarity
+<li><p><code>association_FUN</code>:  A function that is used to calculate (dis-)similarity
 between features. Function must take matrix as an input and give numeric
 values as an output. Adjust <code>method</code> and other parameters correspondingly.
 Supported functions are, for example, <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">stats::dist</a></code> and <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegan::vegdist</a></code>.</p></li>
@@ -139,7 +131,10 @@ experiment 1 to be transformed. (By default: <code>assay.type1 = "counts"</code>
 
 
 <dt>assay_name1</dt>
-<dd><p>Deprecated. Use <code>assay.type1</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay of experiment 1 to use for calculation.
+(Please use <code>assay.type1</code> instead. At some point <code>assay_name1</code>
+will be disabled.)</p></dd>
 
 
 <dt>assay.type2</dt>
@@ -149,7 +144,10 @@ experiment 2 to be transformed. (By default: <code>assay.type2 = "counts"</code>
 
 
 <dt>assay_name2</dt>
-<dd><p>Deprecated. Use <code>assay.type2</code> instead.</p></dd>
+<dd><p>a single <code>character</code> value for specifying which
+assay of experiment 2 to use for calculation.
+(Please use <code>assay.type2</code> instead. At some point <code>assay_name2</code>
+will be disabled.)</p></dd>
 
 
 <dt>altexp1</dt>
@@ -166,24 +164,16 @@ and altExp option is disabled.
 (By default: <code>altexp2 = NULL</code>)</p></dd>
 
 
-<dt>col.var1</dt>
-<dd><p>A character value specifying column(s) from colData
-of experiment 1. If col.var1 is used, assay.type1 is disabled.
-(By default: <code>col.var1 = NULL</code>)</p></dd>
-
-
 <dt>colData_variable1</dt>
-<dd><p>Deprecated. Use <code>col.var1</code> instead.</p></dd>
-
-
-<dt>col.var2</dt>
 <dd><p>A character value specifying column(s) from colData
-of experiment 2. If col.var2 is used, assay.type2 is disabled.
-(By default: <code>col.var2 = NULL</code>)</p></dd>
+of experiment 1. If colData_variable1 is used, assay.type1 is disabled.
+(By default: <code>colData_variable1 = NULL</code>)</p></dd>
 
 
 <dt>colData_variable2</dt>
-<dd><p>Deprecated. Use <code>col.var2</code> instead.</p></dd>
+<dd><p>A character value specifying column(s) from colData
+of experiment 2. If colData_variable2 is used, assay.type2 is disabled.
+(By default: <code>colData_variable2 = NULL</code>)</p></dd>
 
 
 <dt>MARGIN</dt>
@@ -203,34 +193,22 @@ row-wise / for features (1) or column-wise / for samples (2). Must be <code>1</c
 Available formats are  'table' and 'matrix'.  (By default: <code>mode = "table"</code>)</p></dd>
 
 
-<dt>p.adj.method</dt>
+<dt>p_adj_method</dt>
 <dd><p>A single character value for selecting adjustment method of
 p-values. Passed to <code>p.adjust</code> function.
-(By default: <code>p.adj.method = "fdr"</code>)</p></dd>
-
-
-<dt>p_adj_method</dt>
-<dd><p>Deprecated. Use <code>p.adj.method</code> isntead.</p></dd>
-
-
-<dt>p.adj.threshold</dt>
-<dd><p>A single numeric value (from 0 to  1) for selecting
-adjusted p-value threshold for filtering.
-(By default: <code>p.adj.threshold = NULL</code>)</p></dd>
+(By default: <code>p_adj_method = "fdr"</code>)</p></dd>
 
 
 <dt>p_adj_threshold</dt>
-<dd><p>Deprecated. Use <code>p.dj.threshold</code> instead.</p></dd>
-
-
-<dt>cor.threshold</dt>
-<dd><p>A single numeric absolute value (from 0 to 1) for selecting
-correlation threshold for filtering.
-(By default: <code>cor.threshold = NULL</code>)</p></dd>
+<dd><p>A single numeric value (from 0 to  1) for selecting
+adjusted p-value threshold for filtering.
+(By default: <code>p_adj_threshold = NULL</code>)</p></dd>
 
 
 <dt>cor_threshold</dt>
-<dd><p>Deprecated. Use <code>cor.threshold</code> instead.</p></dd>
+<dd><p>A single numeric absolute value (from 0 to 1) for selecting
+correlation threshold for filtering.
+(By default: <code>cor_threshold = NULL</code>)</p></dd>
 
 
 <dt>sort</dt>
@@ -239,15 +217,11 @@ in result matrices. Used method is hierarchical clustering.
 (By default: <code>sort = FALSE</code>)</p></dd>
 
 
-<dt>filter.self.corr</dt>
+<dt>filter_self_correlations</dt>
 <dd><p>A single boolean value for selecting whether to
 filter out correlations between identical items. Applies only when correlation
 between experiment itself is tested, i.e., when assays are identical.
-(By default: <code>filter.self.corr = FALSE</code>)</p></dd>
-
-
-<dt>filter_self_correlations</dt>
-<dd><p>Deprecated. Use <code>filter.self.corr</code> instead.</p></dd>
+(By default: <code>filter_self_correlations = FALSE</code>)</p></dd>
 
 
 <dt>verbose</dt>
@@ -255,23 +229,15 @@ between experiment itself is tested, i.e., when assays are identical.
 about progress of calculation.</p></dd>
 
 
-<dt>test.signif</dt>
+<dt>test_significance</dt>
 <dd><p>A single boolean value for selecting whether to test
 statistical significance of associations.
-(By default: <code>test.signif = FALSE</code>)</p></dd>
-
-
-<dt>test_significance</dt>
-<dd><p>Deprecated. Use <code>test.signif</code> instead.</p></dd>
-
-
-<dt>show.warnings</dt>
-<dd><p>A single boolean value for selecting whether to show warnings
-that might occur when correlations and p-values are calculated.</p></dd>
+(By default: <code>test_significance = FALSE</code>)</p></dd>
 
 
 <dt>show_warnings</dt>
-<dd><p>Deprecated. use <code>show.warnings</code> instead.</p></dd>
+<dd><p>A single boolean value for selecting whether to show warnings
+that might occur when correlations and p-values are calculated.</p></dd>
 
 
 <dt>paired</dt>
@@ -295,7 +261,7 @@ returned value is a list of matrices.</p>
     <p>The function <code>getCrossAssociation</code> calculates associations between
 features of two experiments. By default, it not only computes associations
 but also tests their significance. If desired, setting
-<code>test.signif</code> to FALSE disables significance calculation.</p>
+<code>test_significance</code> to FALSE disables significance calculation.</p>
 <p>We recommend the non-parametric Kendall's tau as the default method for association
 analysis. Kendall's tau has desirable statistical properties and robustness at lower
 sample sizes. Spearman rank correlation can provide faster solutions when
@@ -327,8 +293,8 @@ running times are critical.</p>
 <span class="r-in"><span><span class="co"># Calculate cross-correlations</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span><span class="va">mae</span>, method <span class="op">=</span> <span class="st">"pearson"</span>, assay.type2 <span class="op">=</span> <span class="st">"nmr"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: nmr, col.var2: -</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: pearson, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, colData_variable1: -, assay.type2: nmr, colData_variable2: -</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: pearson, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>the standard deviation is zero</span>
 <span class="r-in"><span><span class="co"># Show first 5 entries</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span></span>
@@ -352,8 +318,8 @@ running times are critical.</p>
 <span class="r-in"><span>                                        altexp1 <span class="op">=</span> <span class="st">"Phylum"</span>, </span></span>
 <span class="r-in"><span>                                        method <span class="op">=</span> <span class="st">"pearson"</span>, mode <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: Phylum, altexp2: -, assay.type1: relabundance, col.var1: -, assay.type2: nmr, col.var2: -</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: pearson, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: Phylum, altexp2: -, assay.type1: relabundance, colData_variable1: -, assay.type2: nmr, colData_variable2: -</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: pearson, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Converting table into matrices...</span>
 <span class="r-in"><span><span class="co"># Show first 5 entries</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span></span>
@@ -370,20 +336,20 @@ running times are critical.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D_1__Firmicutes     -0.03341937 -0.3118914 -0.005711173  0.09035227 -0.01673503</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D_1__Proteobacteria  0.03341937  0.3118914  0.005711173 -0.09035227  0.01673503</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># If test.signif = TRUE, then getCrossAssociation additionally returns </span></span></span>
+<span class="r-in"><span><span class="co"># If test_significance = TRUE, then getCrossAssociation additionally returns </span></span></span>
 <span class="r-in"><span><span class="co"># significances</span></span></span>
-<span class="r-in"><span><span class="co"># filter.self.corr = TRUE filters self correlations</span></span></span>
-<span class="r-in"><span><span class="co"># p.adj.threshold can be used to filter those features that do not</span></span></span>
+<span class="r-in"><span><span class="co"># filter_self_correlations = TRUE filters self correlations</span></span></span>
+<span class="r-in"><span><span class="co"># p_adj_threshold can be used to filter those features that do not</span></span></span>
 <span class="r-in"><span><span class="co"># have any correlations whose p-value is lower than the threshold</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, experiment2 <span class="op">=</span> <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span></span>
-<span class="r-in"><span>                                         filter.self.corr <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                                         p.adj.threshold <span class="op">=</span> <span class="fl">0.05</span>,</span></span>
-<span class="r-in"><span>                                         test.signif <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                         filter_self_correlations <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                                         p_adj_threshold <span class="op">=</span> <span class="fl">0.05</span>,</span></span>
+<span class="r-in"><span>                                         test_significance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: counts, col.var2: -</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor.test, method: pearson, test.signif: TRUE, p.adj.method: fdr, paired: FALSE, show.warnings: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, colData_variable1: -, assay.type2: counts, colData_variable2: -</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor.test, method: pearson, test_significance: TRUE, p_adj_method: fdr, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Filtering results...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> p_adj_threshold: 0.05, cor.threshold: -, filter.self.corr: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> p_adj_threshold: 0.05, cor_threshold: -, filter_self_correlations: TRUE</span>
 <span class="r-in"><span><span class="co"># Show first 5 entries</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Var1                   Var2       cor        pval</span>
@@ -406,11 +372,11 @@ running times are critical.</p>
 <span class="r-in"><span><span class="co"># Calculate Bray-Curtis dissimilarity between samples. If dataset includes</span></span></span>
 <span class="r-in"><span><span class="co"># paired samples, you can use paired = TRUE.</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, MARGIN <span class="op">=</span> <span class="fl">2</span>, paired <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>                                        association.fun <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, </span></span>
+<span class="r-in"><span>                                        association_FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, </span></span>
 <span class="r-in"><span>                                        method <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: counts, col.var2: -</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 2, function: vegan::vegdist, method: bray, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, colData_variable1: -, assay.type2: counts, colData_variable2: -</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 2, function: vegan::vegdist, method: bray, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-in"><span>                                        </span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># If experiments are equal and measure is symmetric (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),</span></span></span>
@@ -423,8 +389,8 @@ running times are critical.</p>
 <span class="r-in"><span>                                 assay.type2 <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
 <span class="r-in"><span>                                 symmetric <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: counts, col.var2: -</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: kendall, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, colData_variable1: -, assay.type2: counts, colData_variable2: -</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: kendall, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For big data sets, the calculations might take a long time.</span></span></span>
 <span class="r-in"><span><span class="co"># To speed them up, you can take a random sample from the data. </span></span></span>
@@ -435,22 +401,22 @@ running times are critical.</p>
 <span class="r-in"><span><span class="va">tse_sub</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">)</span>, <span class="va">sample_size</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">)</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span><span class="va">tse_sub</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: counts, col.var2: -</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: kendall, test.signif: FALSE, p.adj.method: -, paired: FALSE, show.warnings: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, colData_variable1: -, assay.type2: counts, colData_variable2: -</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor, method: kendall, test_significance: FALSE, p_adj_method: -, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># It is also possible to choose variables from colData and calculate association</span></span></span>
 <span class="r-in"><span><span class="co"># between assay and sample metadata or between variables of sample metadata</span></span></span>
 <span class="r-in"><span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimateDiversity.html">estimateDiversity</a></span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Faith diversity has been excluded from the results since it cannot be calculated without rowTree. This requires a rowTree in the input argument x. Make sure that 'rowTree(x)' is not empty, or make sure to specify 'tree.name' in the input arguments. Warning is also provided if the tree does not have any branches. You can consider adding rowTree to include this index.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Faith diversity has been excluded from the results since it cannot be calculated without rowTree. This requires a rowTree in the input argument x. Make sure that 'rowTree(x)' is not empty, or make sure to specify 'tree_name' in the input arguments. Warning is also provided if the tree does not have any branches. You can consider adding rowTree to include this index.</span>
 <span class="r-in"><span><span class="co"># colData_variable works similarly to assay.type. Instead of fetching an assay</span></span></span>
 <span class="r-in"><span><span class="co"># named assay.type from assay slot, it fetches a column named colData_variable</span></span></span>
 <span class="r-in"><span><span class="co"># from colData.</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">getCrossAssociation</span><span class="op">(</span><span class="va">mae</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, assay.type1 <span class="op">=</span> <span class="st">"counts"</span>, </span></span>
-<span class="r-in"><span>                                 col.var2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"shannon"</span>, <span class="st">"coverage"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                                 test.signif <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                 colData_variable2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"shannon"</span>, <span class="st">"coverage"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                 test_significance <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating correlations...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, col.var1: -, assay.type2: -, col.var2: shannon + coverage</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor.test, method: kendall, test.signif: TRUE, p.adj.method: fdr, paired: FALSE, show.warnings: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> altexp1: -, altexp2: -, assay.type1: counts, colData_variable1: -, assay.type2: -, colData_variable2: shannon + coverage</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MARGIN: 1, function: stats::cor.test, method: kendall, test_significance: TRUE, p_adj_method: fdr, paired: FALSE, show_warnings: TRUE</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot compute exact p-value with ties</span>

@@ -84,40 +84,30 @@ experiments and flattens them again into a single
 <span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">MARGIN</span>, <span class="va">f</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">agglomerateByVariable</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">MARGIN</span>,</span>
-<span>  <span class="va">f</span>,</span>
-<span>  update.tree <span class="op">=</span> <span class="va">mergeTree</span>,</span>
-<span>  mergeTree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">x</span>, <span class="va">MARGIN</span>, <span class="va">f</span>, mergeTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SingleCellExperiment</span></span>
-<span><span class="fu">agglomerateByRank</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">...</span>,</span>
-<span>  altexp <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  altexp.rm <span class="op">=</span> <span class="va">strip_altexp</span>,</span>
-<span>  strip_altexp <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, altexp <span class="op">=</span> <span class="cn">NULL</span>, strip_altexp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
 <span><span class="fu">agglomerateByRank</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  update.tree <span class="op">=</span> <span class="va">agglomerateTree</span>,</span>
+<span>  agglomerate.tree <span class="op">=</span> <span class="va">agglomerateTree</span>,</span>
 <span>  agglomerateTree <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, other_label <span class="op">=</span> <span class="st">"Other"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
 <span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  other.label <span class="op">=</span> <span class="va">other_label</span>,</span>
 <span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  agglomerate.tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -155,22 +145,10 @@ experiments and flattens them again into a single
 <span><span class="fu">unsplitByRanks</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SingleCellExperiment</span></span>
-<span><span class="fu">unsplitByRanks</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  ranks <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
-<span>  keep.dimred <span class="op">=</span> <span class="va">keep_reducedDims</span>,</span>
-<span>  keep_reducedDims <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">unsplitByRanks</span><span class="op">(</span><span class="va">x</span>, ranks <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, keep_reducedDims <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">unsplitByRanks</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  ranks <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
-<span>  keep.dimred <span class="op">=</span> <span class="va">keep_reducedDims</span>,</span>
-<span>  keep_reducedDims <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">unsplitByRanks</span><span class="op">(</span><span class="va">x</span>, ranks <span class="op">=</span> <span class="fu"><a href="taxonomy-methods.html">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, keep_reducedDims <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -218,13 +196,9 @@ merged. If <code>length(levels(f)) == nrow(x)/ncol(x)</code>, <code>x</code> wil
 returned unchanged.</p></dd>
 
 
-<dt>update.tree</dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should
-<code>rowTree()</code> also be merged? (Default: <code>update.tree = FALSE</code>)</p></dd>
-
-
 <dt>mergeTree</dt>
-<dd><p>Deprecated. Use <code>update.tree</code> instead.</p></dd>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: Should
+<code>rowTree()</code> also be merged? (Default: <code>mergeTree = FALSE</code>)</p></dd>
 
 
 <dt>altexp</dt>
@@ -232,28 +206,26 @@ returned unchanged.</p></dd>
 containing the input data.</p></dd>
 
 
-<dt>altexp.rm</dt>
+<dt>strip_altexp</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should alternative
 experiments be removed prior to agglomeration? This prevents to many
 nested alternative experiments by default (default:
-<code>altexp.rm = TRUE</code>)</p></dd>
+<code>strip_altexp = TRUE</code>)</p></dd>
 
 
-<dt>strip_altexp</dt>
-<dd><p>Deprecated. Use <code>altexp.rm</code> instead.</p></dd>
+<dt>agglomerate.tree</dt>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: should
+<code>rowTree()</code> also be agglomerated? (Default:
+<code>agglomerate.tree = FALSE</code>)</p></dd>
 
 
 <dt>agglomerateTree</dt>
-<dd><p>alias for <code>update.tree</code>.</p></dd>
-
-
-<dt>other.label</dt>
-<dd><p>A single <code>character</code> valued used as the label for the
-summary of non-prevalent taxa. (default: <code>other.label = "Other"</code>)</p></dd>
+<dd><p>alias for <code>agglomerate.tree</code>.</p></dd>
 
 
 <dt>other_label</dt>
-<dd><p>Deprecated. use <code>other.label</code> instead.</p></dd>
+<dd><p>A single <code>character</code> valued used as the label for the
+summary of non-prevalent taxa. (default: <code>other_label = "Other"</code>)</p></dd>
 
 
 <dt>ranks</dt>
@@ -268,15 +240,11 @@ of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code> function.</p
 (default: <code>as.list = FALSE</code>)</p></dd>
 
 
-<dt>keep.dimred</dt>
+<dt>keep_reducedDims</dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(default: <code>keep.dimred = FALSE</code>)</p></dd>
-
-
-<dt>keep_reducedDims</dt>
-<dd><p>Deprecated. Use <code>keep.dimred</code> instead.</p></dd>
+(default: <code>keep_reducedDims = FALSE</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -343,7 +311,7 @@ level specified by <code>rank</code> (by default the highest taxonomic level
 available) and selects the summed results that exceed the given population
 prevalence at the given detection level. The other summed values (below the
 threshold) are agglomerated in an additional row taking the name indicated by
-<code>other.label</code> (by default "Other").</p>
+<code>other_label</code> (by default "Other").</p>
 <p><code>agglomerateByRanks</code> will use by default all available taxonomic ranks, but
 this can be controlled by setting <code>ranks</code> manually. <code>NA</code> values
 are removed by default, since they would not make sense, if the result
@@ -392,7 +360,7 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># agglomerate the tree as well</span></span></span>
 <span class="r-in"><span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank<span class="op">=</span><span class="st">"Family"</span>,</span></span>
-<span class="r-in"><span>                       update.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                       agglomerate.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="co"># same number of rows, but</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 341</span>
 <span class="r-in"><span><span class="fu">rowTree</span><span class="op">(</span><span class="va">x1</span><span class="op">)</span> <span class="co"># ... different</span></span></span>
@@ -439,13 +407,13 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "125ds10" "211ds20" "5B-12"  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># To add them, use getTaxonomyLabels function.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x3</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="va">x3</span>, with.rank <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x3</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="taxonomy-methods.html">getTaxonomyLabels</a></span><span class="op">(</span><span class="va">x3</span>, with_rank <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x3</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Family:125ds10" "Family:211ds20" "Family:5B-12"  </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># use 'empty.ranks.rm' to remove columns that include only NAs</span></span></span>
+<span class="r-in"><span><span class="co"># use 'remove_empty_ranks' to remove columns that include only NAs</span></span></span>
 <span class="r-in"><span><span class="va">x4</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank<span class="op">=</span><span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>                        empty.ranks.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                        remove_empty_ranks <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">x4</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 6 rows and 2 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     Kingdom          Phylum</span>
@@ -519,7 +487,7 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/regmatches.html" class="external-link">regmatches</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                       <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">regexpr</a></span><span class="op">(</span><span class="st">"^[0-9]*_[0-9]*"</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">merged</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByVariable</span><span class="op">(</span><span class="va">esophagus</span>, MARGIN <span class="op">=</span> <span class="st">"rows"</span>, <span class="va">f</span>,</span></span>
-<span class="r-in"><span>                                update.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                mergeTree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rowTree</span><span class="op">(</span><span class="va">merged</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="agglomerate-methods-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co">#</span></span></span>
@@ -564,7 +532,7 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span>                              rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                              detection <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,</span></span>
 <span class="r-in"><span>                              prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                              as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                              as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tse</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
@@ -578,8 +546,8 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (6 rows)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
