@@ -50,6 +50,8 @@
 #'   implementation, either \dQuote{isoMDS} for
 #'   \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 #'   \code{\link[vegan:monoMDS]{vegan::monoMDS}}
+#'   
+#' @param nmdsFUN Deprecated. Use \code{nmds.fun} instead.
 #'
 #' @param ... additional arguments to pass to \code{FUN} and
 #'   \code{nmds.fun}.
@@ -157,7 +159,8 @@ setGeneric("getNMDS", function(x, ...) standardGeneric("getNMDS"))
 #' @importFrom stats cmdscale
 #' @importFrom vegan vegdist monoMDS
 .calculate_nmds <- function(x, FUN = vegdist, 
-                            nmds.fun = c("isoMDS","monoMDS"),
+                            nmds.fun = nmdsFUN,
+                            nmdsFUN = c("isoMDS","monoMDS"),
                             ncomponents = 2, ntop = 500, subset.row = subset_row, 
                             subset_row = NULL, scale = FALSE, transposed = FALSE,
                             keep.dist = keep_dist,

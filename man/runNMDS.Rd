@@ -15,7 +15,8 @@ getNMDS(x, ...)
 \S4method{getNMDS}{ANY}(
   x,
   FUN = vegdist,
-  nmds.fun = c("isoMDS", "monoMDS"),
+  nmds.fun = nmdsFUN,
+  nmdsFUN = c("isoMDS", "monoMDS"),
   ncomponents = 2,
   ntop = 500,
   subset.row = subset_row,
@@ -71,6 +72,8 @@ name returning a \code{\link[stats:dist]{dist}} object}
 implementation, either \dQuote{isoMDS} for
 \code{\link[MASS:isoMDS]{MASS::isoMDS}} or \dQuote{monoMDS} for
 \code{\link[vegan:monoMDS]{vegan::monoMDS}}}
+
+\item{nmdsFUN}{Deprecated. Use \code{nmds.fun} instead.}
 
 \item{ncomponents}{Numeric scalar indicating the number of NMDS dimensions
 to obtain.}

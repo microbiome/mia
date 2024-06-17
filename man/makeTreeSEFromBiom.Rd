@@ -14,7 +14,8 @@ makeTreeSEFromBiom(
   removeTaxaPrefixes = FALSE,
   rank.from.prefix = rankFromPrefix,
   rankFromPrefix = FALSE,
-  artifact.rm = FALSE,
+  artifact.rm = remove.artifacts,
+  remove.artifacts = FALSE,
   ...
 )
 

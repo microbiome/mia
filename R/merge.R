@@ -189,7 +189,7 @@
 }
 
 .merge_rows_TSE <- function(x, f, archetype = 1L, update.tree = FALSE,
-                            update.refseq = FALSE, ...){
+    update.refseq = mergeRefSeq, mergeRefSeq = FALSE, ...){
     # input check
     if(!.is_a_bool(update.tree)){
         stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
