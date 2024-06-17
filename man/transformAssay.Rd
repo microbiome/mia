@@ -89,22 +89,8 @@ The available transformation methods include:
 
 \itemize{
 
-\item 'alr': Additive log ratio (alr) transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'chi.square': Chi square transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'clr': Centered log ratio (clr) transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'frequency': Frequency transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'hellinger':  Hellinger transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'log':  Logarithmic transformation, please refer to
+\item \code{alr, chi.square, clr, frequency, hellinger, log, normalize, pa, rank, rclr
+relabundance, rrank, standardize, total}: please refer to
 \code{\link[vegan:decostand]{decostand}} for details.
 
 \item 'log10': log10 transformation can be used for reducing the skewness
@@ -118,34 +104,6 @@ the data.
 \deqn{log2 = \log_{2} x}{%
 log2 = log2(x)}
 where \eqn{x} is a single value of data.
-
-\item 'normalize': Make margin sum of squares equal to one. Please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'pa': Transforms table to presence/absence table. Please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'rank': Rank transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'rclr':  Robust clr transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'relabundance': Relative transformation (alias for 'total'), please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'rrank': Relative rank transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'standardize': Scale 'x' to zero mean and unit variance (alias for
-'z'), please refer to \code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'total': Divide by margin total (alias for
-'relabundance'), please refer to
-\code{\link[vegan:decostand]{decostand}} for details.
-
-\item 'z': Z transformation (alias for 'standardize'),
-please refer to \code{\link[vegan:decostand]{decostand}} for details.
 
 }
 }
