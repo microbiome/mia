@@ -68,20 +68,12 @@ object. The function utilizes <code><a href="https://rdrr.io/pkg/rbiom/man/unifr
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="va">exprs_values</span>,</span>
 <span>  exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  tree.name <span class="op">=</span> <span class="va">tree_name</span>,</span>
 <span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
 <span>  transposed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">runUnifrac</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">tree</span>,</span>
-<span>  weighted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  node.label <span class="op">=</span> <span class="va">nodeLab</span>,</span>
-<span>  nodeLab <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">runUnifrac</span><span class="op">(</span><span class="va">x</span>, <span class="va">tree</span>, weighted <span class="op">=</span> <span class="cn">FALSE</span>, nodeLab <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -133,14 +125,10 @@ assay to use for calculation.
 (Please use <code>assay.type</code> instead.)</p></dd>
 
 
-<dt>tree.name</dt>
+<dt>tree_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 tree will be used in calculation.
-(By default: <code>tree.name = "phylo"</code>)</p></dd>
-
-
-<dt>tree_name</dt>
-<dd><p>Deprecated. Use <code>tree.name</code> instead.</p></dd>
+(By default: <code>tree_name = "phylo"</code>)</p></dd>
 
 
 <dt>transposed</dt>
@@ -149,15 +137,11 @@ is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: <code>transposed = FALSE</code>)</p></dd>
 
 
-<dt>node.label</dt>
+<dt>nodeLab</dt>
 <dd><p>if <code>x</code> is a matrix,
 a <code>character</code> vector specifying links between rows/columns and tips of <code>tree</code>.
 The length must equal the number of rows/columns of <code>x</code>. Furthermore, all the
 node labs must be present in <code>tree</code>.</p></dd>
-
-
-<dt>nodeLab</dt>
-<dd><p>Deprecated. Use <code>node.label</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">

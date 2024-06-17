@@ -128,10 +128,9 @@ Alternatively, a user-specified numeric value can be added as pseudocount.</p></
 
 
 <dt>...</dt>
-<dd><p>additional arguments passed on to <code>vegan:decostand</code>:</p><ul><li><p><code>reference</code>: A single value which will be used to fill
+<dd><p>additional arguments passed on to <code>vegan:decostand</code>:</p><ul><li><p><code>ref_vals</code>: A single value which will be used to fill
 reference sample's column in returned assay when calculating alr.
-(default: <code>reference = NA</code>)</p></li>
-<li><p><code>ref_vals</code> Deprecated. Use <code>reference</code> instead.</p></li>
+(default: <code>ref_vals = NA</code>)</p></li>
 </ul></dd>
 
 </dl></div>
@@ -152,17 +151,8 @@ ZTransform, and relAbundanceCounts have been deprecated.</p>
 (row-wise) transformation to the abundance table
 (assay) based on specified <code>MARGIN</code>.</p>
 <p>The available transformation methods include:</p>
-<ul><li><p>'alr': Additive log ratio (alr) transformation, please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'chi.square': Chi square transformation, please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'clr': Centered log ratio (clr) transformation, please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'frequency': Frequency transformation, please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'hellinger':  Hellinger transformation, please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'log':  Logarithmic transformation, please refer to
+<ul><li><p><code>alr, chi.square, clr, frequency, hellinger, log, normalize, pa, rank, rclr
+relabundance, rrank, standardize, total</code>: please refer to
 <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
 <li><p>'log10': log10 transformation can be used for reducing the skewness
 of the data.
@@ -172,25 +162,6 @@ where \(x\) is a single value of data.</p></li>
 the data.
 $$log2 = \log_{2} x$$
 where \(x\) is a single value of data.</p></li>
-<li><p>'normalize': Make margin sum of squares equal to one. Please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'pa': Transforms table to presence/absence table. Please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'rank': Rank transformation, please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'rclr':  Robust clr transformation, please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'relabundance': Relative transformation (alias for 'total'), please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'rrank': Relative rank transformation, please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'standardize': Scale 'x' to zero mean and unit variance (alias for
-'z'), please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'total': Divide by margin total (alias for
-'relabundance'), please refer to
-<code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
-<li><p>'z': Z transformation (alias for 'standardize'),
-please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
 </ul></div>
     <div id="author">
     <h2>Author</h2>
@@ -227,6 +198,9 @@ please refer to <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" cla
 <span class="r-in"><span><span class="co"># With MARGIN, you can specify the if transformation is done for samples or</span></span></span>
 <span class="r-in"><span><span class="co"># for features. Here Z-transformation is done feature-wise.</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"z"</span>, MARGIN <span class="op">=</span> <span class="st">"features"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'z' is deprecated.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Use 'standardize' instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> See help("Deprecated") and help("Now 'z' is deprecated. Use 'standardize' instead.-deprecated").</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>result contains NaN, perhaps due to impossible mathematical</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                  operation</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"z"</span><span class="op">)</span><span class="op">)</span></span></span>
