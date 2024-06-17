@@ -151,8 +151,8 @@ ZTransform, and relAbundanceCounts have been deprecated.</p>
 (row-wise) transformation to the abundance table
 (assay) based on specified <code>MARGIN</code>.</p>
 <p>The available transformation methods include:</p>
-<ul><li><p><code>alr, chi.square, clr, frequency, hellinger, log, normalize, pa, rank, rclr
-relabundance, rrank, standardize, total</code>: please refer to
+<ul><li><p>'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log', 'normalize', 'pa', 'rank', 'rclr'
+'relabundance', 'rrank', 'standardize', 'total': please refer to
 <code><a href="https://rdrr.io/pkg/vegan/man/decostand.html" class="external-link">decostand</a></code> for details.</p></li>
 <li><p>'log10': log10 transformation can be used for reducing the skewness
 of the data.
@@ -200,7 +200,7 @@ where \(x\) is a single value of data.</p></li>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformAssay</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"z"</span>, MARGIN <span class="op">=</span> <span class="st">"features"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'z' is deprecated.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Use 'standardize' instead.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> See help("Deprecated") and help("Now 'z' is deprecated. Use 'standardize' instead.-deprecated").</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> See help("Deprecated")</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>result contains NaN, perhaps due to impossible mathematical</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                  operation</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"z"</span><span class="op">)</span><span class="op">)</span></span></span>
