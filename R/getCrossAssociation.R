@@ -67,7 +67,7 @@
 #' 
 #' @param p_adj_method Deprecated. Use \code{p.adj.method} isntead.
 #' 
-#' @param p.adj.threshold A single numeric value (from 0 to  1) for selecting 
+#' @param p.adj.threshold A single numeric value (from 0 to 1) for selecting 
 #'    adjusted p-value threshold for filtering. 
 #'    (By default: \code{p.adj.threshold = NULL})
 #' 
