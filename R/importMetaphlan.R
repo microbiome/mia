@@ -364,7 +364,7 @@ importMetaPhlAn <- function(
         altexps <- altExps(tse)
         altexps <- lapply(altexps, function(x){
             colnames(x) <- rownames(coldata)
-            col.data(x) <- coldata
+            colData(x) <- coldata
             return(x)
             })
         altexps <- SimpleList(altexps)
