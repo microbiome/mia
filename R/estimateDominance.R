@@ -306,22 +306,22 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     #
     if (index == "absolute") {
         # ntaxa=1 by default but can be tuned
-        as.relative <- FALSE
+        as_relative <- FALSE
     } else if (index == "relative") {
         # ntaxa=1 by default but can be tuned
-        as.relative <- TRUE
+        as_relative <- TRUE
     } else if (index == "dbp") {
         # Berger-Parker: if selected fix the following values
         ntaxa <- 1
-        as.relative <- TRUE
+        as_relative <- TRUE
     } else if (index == "dmn") {
         # McNaughton's dominance: if selected fix the following values
         ntaxa <- 2
         aggregate <- TRUE
-        as.relative <- TRUE
+        as_relative <- TRUE
     }
 
-    if (as.relative) {
+    if (as_relative) {
         # Calculates the relative abundance per sample
         mat <- .calc_rel_abund(mat)
     }
