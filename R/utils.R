@@ -412,7 +412,7 @@
 #' @noRd
 .parse_taxonomy <- function(
     taxa_tab, sep = "; |;", col.name = column_name, column_name = "Taxon",
-    remove.prefix = prefix.rm, prefix.rm = FALSE,
+    remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes, removeTaxaPrefixes = FALSE,
     returned.ranks = TAXONOMY_RANKS, ...) {
     ############################### Input check ################################
     # Check sep
