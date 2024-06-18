@@ -245,7 +245,7 @@ altExp(tse,"Genus") <- runMDS(altExp(tse,"Genus"),
                               name = "BrayCurtis", 
                               ncomponents = 5, 
                               assay.type = "counts", 
-                              keep.dist = TRUE)
+                              keep_dist = TRUE)
 ```
 
 JSD and UniFrac are implemented in `mia` as well. `calculateJSD` can be used

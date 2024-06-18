@@ -591,7 +591,8 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     return(faiths)
 }
 
-.calc_log_modulo_skewness <- function(mat, quantile = 0.5, nclasses = 50, ...){
+.calc_log_modulo_skewness <- function(mat, quantile = 0.5, 
+    nclasses = num_of_classes, num_of_classes = 50, ...){
     # quantile must be a numeric value between 0-1
     if( !( is.numeric(quantile) && (quantile >= 0 && quantile <= 1) ) ){
         stop("'quantile' must be a numeric value between 0-1.",

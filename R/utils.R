@@ -397,8 +397,10 @@
 #'  between different taxonomic levels, defaults to one compatible with both
 #'  GreenGenes and SILVA `; |;"`.
 #'  
-#' @param column_name a single \code{character} value defining the column of taxa_tab
+#' @param col.name a single \code{character} value defining the column of taxa_tab
 #'  that includes taxonomical information.
+#'  
+#' @param column_name Deprecated. Use \code{col.name} instead.
 #'  
 #' @param remove.prefix {\code{TRUE} or \code{FALSE}: Should 
 #'  taxonomic prefixes be removed? (default: \code{remove.prefix = FALSE})}
@@ -409,7 +411,7 @@
 #' @importFrom S4Vectors DataFrame
 #' @noRd
 .parse_taxonomy <- function(
-    taxa_tab, sep = "; |;", column_name = "Taxon",
+    taxa_tab, sep = "; |;", col.name = column_name, column_name = "Taxon",
     remove.prefix = prefix.rm, prefix.rm = FALSE,
     returned.ranks = TAXONOMY_RANKS, ...) {
     ############################### Input check ################################
@@ -418,9 +420,9 @@
       stop("'sep' must be a single character value.",
            call. = FALSE)
     }
-    # Check column_name
-    if( !(.is_non_empty_string(column_name) && column_name %in% colnames(taxa_tab)) ){
-      stop("'column_name' must be a single character value defining column that includes",
+    # Check col.name
+    if( !(.is_non_empty_string(col.name) && col.name %in% colnames(taxa_tab)) ){
+      stop("'col.name' must be a single character value defining column that includes",
            " information about taxonomic levels.",
            call. = FALSE)
     }
@@ -440,7 +442,7 @@
     all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__", "t__")
     
     # split the taxa strings
-    taxa_split <- CharacterList(strsplit(taxa_tab[, column_name],sep))
+    taxa_split <- CharacterList(strsplit(taxa_tab[, col.name],sep))
     # extract present prefixes
     taxa_prefixes <- lapply(taxa_split, substr, 1L, 3L)
     # match them to the order given by present_prefixes
