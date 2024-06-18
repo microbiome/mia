@@ -402,8 +402,12 @@
 #'  
 #' @param column_name Deprecated. Use \code{col.name} instead.
 #'  
-#' @param remove.prefix {\code{TRUE} or \code{FALSE}: Should 
-#'  taxonomic prefixes be removed? (default: \code{remove.prefix = FALSE})}
+#' @param prefix.rm {\code{TRUE} or \code{FALSE}: Should 
+#'  taxonomic prefixes be removed? (default: \code{prefix.rm = FALSE})}
+#'  
+#' @param remove.prefix Deprecated. Use \code{prefix.rm} instead.
+#' 
+#' @param removeTaxaPrefixes Deprecated. Use \code{prefix.rm} instead.
 #'  
 #' @return  a `data.frame`.
 #' @keywords internal
