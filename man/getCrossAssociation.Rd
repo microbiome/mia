@@ -32,7 +32,7 @@ getCrossAssociation(x, ...)
   cor.threshold = cor_threshold,
   cor_threshold = NULL,
   sort = FALSE,
-  filter.self.corr = filter_self_correlations,
+  filter.self.cor = filter_self_correlations,
   filter_self_correlations = FALSE,
   verbose = TRUE,
   test.signif = test_significance,
@@ -142,12 +142,12 @@ correlation threshold for filtering.
 in result matrices. Used method is hierarchical clustering.
 (By default: \code{sort = FALSE})}
 
-\item{filter.self.corr}{A single boolean value for selecting whether to
+\item{filter.self.cor}{A single boolean value for selecting whether to
 filter out correlations between identical items. Applies only when correlation
 between experiment itself is tested, i.e., when assays are identical.
-(By default: \code{filter.self.corr = FALSE})}
+(By default: \code{filter.self.cor = FALSE})}
 
-\item{filter_self_correlations}{Deprecated. Use \code{filter.self.corr} instead.}
+\item{filter_self_correlations}{Deprecated. Use \code{filter.self.cor} instead.}
 
 \item{verbose}{A single boolean value for selecting whether to get messages
 about progress of calculation.}
@@ -220,11 +220,11 @@ head(result, 5)
 
 # If test.signif = TRUE, then getCrossAssociation additionally returns 
 # significances
-# filter.self.corr = TRUE filters self correlations
+# filter.self.cor = TRUE filters self correlations
 # p.adj.threshold can be used to filter those features that do not
 # have any correlations whose p-value is lower than the threshold
 result <- getCrossAssociation(mae[[1]], experiment2 = mae[[1]], method = "pearson",
-                                         filter.self.corr = TRUE,
+                                         filter.self.cor = TRUE,
                                          p.adj.threshold = 0.05,
                                          test.signif = TRUE)
 # Show first 5 entries

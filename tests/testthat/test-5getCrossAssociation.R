@@ -34,7 +34,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
     expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
@@ -48,7 +48,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
     expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
@@ -63,7 +63,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
     expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
@@ -78,7 +78,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -91,7 +91,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -104,7 +104,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -117,7 +117,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -130,7 +130,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -143,7 +143,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -156,7 +156,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -169,7 +169,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 2,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -182,7 +182,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = TRUE,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -195,7 +195,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.1,
                                         cor.threshold = 2,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -208,7 +208,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.1,
                                         cor.threshold = TRUE,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -221,7 +221,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.1,
                                         cor.threshold = NULL,
                                         sort = 1,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -234,7 +234,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.1,
                                         cor.threshold = NULL,
                                         sort = TRUE,
-                                        filter.self.corr = 1,
+                                        filter.self.cor = 1,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 1,
@@ -247,7 +247,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.1,
                                         cor.threshold = NULL,
                                         sort = TRUE,
-                                        filter.self.corr = TRUE,
+                                        filter.self.cor = TRUE,
                                         verbose = 1))
      expect_error(getCrossAssociation(mae[[1]],
                                         assay(mae1[[2]]),
@@ -261,7 +261,7 @@ test_that("getCrossAssociation", {
                                                 p.adj.threshold = 0.1,
                                                 cor.threshold = NULL,
                                                 sort = TRUE,
-                                                filter.self.corr = TRUE,
+                                                filter.self.cor = TRUE,
                                                 verbose = 1))
      expect_error(getCrossAssociation(mae[[1]],
                                         NULL,
@@ -275,7 +275,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.1,
                                         cor.threshold = NULL,
                                         sort = TRUE,
-                                        filter.self.corr = TRUE,
+                                        filter.self.cor = TRUE,
                                         verbose = 1))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
@@ -290,7 +290,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
@@ -305,7 +305,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      expect_error(getCrossAssociation(mae,
                                         experiment1 = 3,
@@ -320,7 +320,7 @@ test_that("getCrossAssociation", {
                                         p.adj.threshold = 0.05,
                                         cor.threshold = NULL,
                                         sort = FALSE,
-                                        filter.self.corr = FALSE,
+                                        filter.self.cor = FALSE,
                                         verbose = TRUE))
      ############################# Test input end #############################
      # Test that association is calculated correctly with numeric data
@@ -482,7 +482,7 @@ test_that("getCrossAssociation", {
     expect_true(nrow(mat) == nrow(tse) && ncol(mat) == nrow(tse))
     mat <- getCrossAssociation(tse, mode = "matrix", show.warnings = FALSE,
                                         cor.threshold = 0.8, 
-                                        filter.self.corr = TRUE)
+                                        filter.self.cor = TRUE)
     expect_true(nrow(mat) < nrow(tse) && ncol(mat) < nrow(tse))
     
     

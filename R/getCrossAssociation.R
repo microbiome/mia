@@ -83,12 +83,12 @@
 #'    in result matrices. Used method is hierarchical clustering. 
 #'    (By default: \code{sort = FALSE})
 #' 
-#' @param filter.self.corr A single boolean value for selecting whether to 
+#' @param filter.self.cor A single boolean value for selecting whether to 
 #'    filter out correlations between identical items. Applies only when correlation
 #'    between experiment itself is tested, i.e., when assays are identical. 
-#'    (By default: \code{filter.self.corr = FALSE})
+#'    (By default: \code{filter.self.cor = FALSE})
 #' 
-#' @param filter_self_correlations Deprecated. Use \code{filter.self.corr} instead.
+#' @param filter_self_correlations Deprecated. Use \code{filter.self.cor} instead.
 #' 
 #' @param verbose A single boolean value for selecting whether to get messages
 #'    about progress of calculation.
@@ -176,11 +176,11 @@
 #' 
 #' # If test.signif = TRUE, then getCrossAssociation additionally returns 
 #' # significances
-#' # filter.self.corr = TRUE filters self correlations
+#' # filter.self.cor = TRUE filters self correlations
 #' # p.adj.threshold can be used to filter those features that do not
 #' # have any correlations whose p-value is lower than the threshold
 #' result <- getCrossAssociation(mae[[1]], experiment2 = mae[[1]], method = "pearson",
-#'                                          filter.self.corr = TRUE,
+#'                                          filter.self.cor = TRUE,
 #'                                          p.adj.threshold = 0.05,
 #'                                          test.signif = TRUE)
 #' # Show first 5 entries
@@ -258,7 +258,7 @@ setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
            cor.threshold = cor_threshold,
            cor_threshold = NULL,
            sort = FALSE,
-           filter.self.corr = filter_self_correlations,
+           filter.self.cor = filter_self_correlations,
            filter_self_correlations = FALSE,
            verbose = TRUE,
            test.signif = test_significance,
@@ -283,7 +283,7 @@ setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
                                           p.adj.threshold = p.adj.threshold,
                                           cor.threshold = cor.threshold,
                                           sort = sort,
-                                          filter.self.corr = filter.self.corr,
+                                          filter.self.cor = filter.self.cor,
                                           verbose = verbose,
                                           test.signif = test.signif,
                                           show.warnings = show.warnings,
@@ -375,7 +375,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                               p.adj.threshold = NULL,
                                               cor.threshold = NULL,
                                               sort = FALSE,
-                                              filter.self.corr = FALSE,
+                                              filter.self.cor = FALSE,
                                               verbose = TRUE,
                                               test.signif = FALSE,
                                               show.warnings = TRUE,
@@ -436,9 +436,9 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
         stop("'sort' must be a boolean value.", 
              call. = FALSE)
     }
-    # Check filter.self.corr
-    if( !.is_a_bool(filter.self.corr) ){
-        stop("'filter.self.corr' must be a boolean value.", 
+    # Check filter.self.cor
+    if( !.is_a_bool(filter.self.cor) ){
+        stop("'filter.self.cor' must be a boolean value.", 
              call. = FALSE)
     }
     # Check test.signif
@@ -514,19 +514,19 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     }
     # Disable filter_self_correlation if assays are not the same
     if( !identical(assay1, assay2) ){
-        filter.self.corr <- FALSE
+        filter.self.cor <- FALSE
     }
     # Do filtering
     if( !is.null(p.adj.threshold) || 
         !is.null(cor.threshold) || 
-        filter.self.corr ){
+        filter.self.cor ){
         # Filter associations
         result <- .association_filter(result,
                                       p.adj.threshold,
                                       cor.threshold,
                                       assay1, 
                                       assay2, 
-                                      filter.self.corr,
+                                      filter.self.cor,
                                       verbose)
     }
     # Matrix or table?
@@ -1173,7 +1173,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                 cor.threshold, 
                                 assay1,
                                 assay2,
-                                filter.self.corr, 
+                                filter.self.cor, 
                                 verbose){
     # Give message if verbose == TRUE
     if(verbose){
@@ -1181,9 +1181,9 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                       ifelse(!is.null(p.adj.threshold),  p.adj.threshold, "-"), 
                       ", cor.threshold: ", 
                       ifelse(!is.null(cor.threshold), cor.threshold, "-"), 
-                      ", filter.self.corr: ", 
-                      ifelse(filter.self.corr,
-                             filter.self.corr, "-"), "\n" )
+                      ", filter.self.cor: ", 
+                      ifelse(filter.self.cor,
+                             filter.self.cor, "-"), "\n" )
     }
     
     # Which features have significant correlations?
@@ -1204,7 +1204,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     }
     
     # Filter self correlations if it's specified
-    if ( filter.self.corr ) {
+    if ( filter.self.cor ) {
         # Take only those rows where features differ
         result <- result[result$Var1 != result$Var2, ]
     }
