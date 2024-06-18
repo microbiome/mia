@@ -236,7 +236,7 @@ setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
     rownames(mat) <- rownames(x)
     colnames(mat) <- colnames(x)
     mat %>%
-        data.frame(check.names = check_names) %>%
+        data.frame(check.names = check.names) %>%
         rownames_to_column(row.name) %>%
         # SampleID is unique sample id
         pivot_longer(!sym(row.name),
@@ -273,7 +273,7 @@ setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
     cd <- SummarizedExperiment::colData(x)[,add.col,drop=FALSE] %>%
         data.frame()
     # This makes sure that sample names match
-    if(check_names == TRUE){
+    if(check.names == TRUE){
         rownames(cd) <- make.names(rownames(cd))
     }
     if(col.name %in% add.col){
