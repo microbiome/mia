@@ -57,6 +57,7 @@ agglomerateByVariable(x, ...)
   x,
   ...,
   update.tree = agglomerateTree,
+  agglomerate.tree = agglomerateTree,
   agglomerateTree = FALSE
 )
 
@@ -161,7 +162,9 @@ nested alternative experiments by default (default:
 
 \item{strip_altexp}{Deprecated. Use \code{altexp.rm} instead.}
 
-\item{agglomerateTree}{alias for \code{update.tree}.}
+\item{agglomerate.tree}{Deprecated. Use \code{update.tree} instead.}
+
+\item{agglomerateTree}{Deprecated. Use \code{update.tree} instead.}
 
 \item{other.label}{A single \code{character} valued used as the label for the
 summary of non-prevalent taxa. (default: \code{other.label = "Other"})}

@@ -36,7 +36,9 @@
 #'   \code{rowTree()} also be agglomerated? (Default:
 #'   \code{update.tree = FALSE})
 #'
-#' @param agglomerateTree alias for \code{update.tree}.
+#' @param agglomerateTree Deprecated. Use \code{update.tree} instead.
+#' 
+#' @param agglomerate.tree Deprecated. Use \code{update.tree} instead.
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects,
@@ -361,7 +363,8 @@ setMethod("agglomerateByRank", signature = c(x = "SingleCellExperiment"),
 setMethod(
     "agglomerateByRank", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, ..., update.tree = agglomerateTree, agglomerateTree = FALSE){
+        x, ..., update.tree = agglomerateTree, agglomerate.tree = agglomerateTree, 
+        agglomerateTree = FALSE){
                 # input check
                 if(!.is_a_bool(update.tree)){
                     stop("'update.tree' must be TRUE or FALSE.",
