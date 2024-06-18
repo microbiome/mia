@@ -147,10 +147,10 @@ importQIIME2 <- function(assay.file = featureTableFile,
     }
 
     if (!is.null(col.file)) {
-        col.data <- .read_q2sample_meta(col.file)
+        sample_meta <- .read_q2sample_meta(col.file)
     } else {
-        col.data <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
-        rownames(col.data) <- colnames(feature_tab)
+        sample_meta <- S4Vectors::make_zero_col_DFrame(ncol(feature_tab))
+        rownames(sample_meta) <- colnames(feature_tab)
     }
 
     if (!is.null(tree.file)) {
@@ -168,11 +168,11 @@ importQIIME2 <- function(assay.file = featureTableFile,
         refseq <- NULL
     }
     
-    feature_tab <- .set_feature_tab_dimnames(feature_tab, col.data, taxa_tab)
+    feature_tab <- .set_feature_tab_dimnames(feature_tab, sample_meta, taxa_tab)
     TreeSummarizedExperiment(
         assays = S4Vectors::SimpleList(counts = feature_tab),
         rowData = taxa_tab,
-        colData = col.data,
+        colData = sample_meta,
         rowTree = tree,
         referenceSeq = refseq
     )
