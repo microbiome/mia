@@ -606,9 +606,10 @@ setMethod("agglomerateByPrevalence",
       # mergeRefSeq is a hidden parameter as for all other agglomeration methods
       # from the agglomerate-methods man page.
       # Here 'list(...)[["mergeRefSeq]]' is used to access it.
+      mergeRefSeq <- list(...)[["mergeRefSeq"]]
       if( "mergeRefSeq" %in% names(list(...)) && 
-          !(is.null(list(...)[["mergeRefSeq"]]) || 
-            .is_a_bool(list(...)[["mergeRefSeq"]])) ){
+          !(is.null(mergeRefSeq) || 
+            .is_a_bool(mergeRefSeq)) ){
         stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
       }
       else if( "mergeRefSeq" %in% names(list(...)) ){
