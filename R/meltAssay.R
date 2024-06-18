@@ -229,7 +229,8 @@ setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang sym
-.melt_assay <- function(x, assay.type, row.name, col.name, check.names = check_names, check_names = FALSE,...) {
+.melt_assay <- function(x, assay.type, row.name, col.name, 
+    check.names = check_names, check_names = FALSE,...) {
     mat <- assay(x, assay.type) %>%
         as.matrix() 
     rownames(mat) <- rownames(x)
