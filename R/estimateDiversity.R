@@ -451,17 +451,17 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                 call. = FALSE)
         }
         # Get node labs
-        node.label <- rowLinks(x)[ , "nodeLab" ]
-        node.label[ rowLinks(x)[, "whichTree"] != tree.name ] <- NA
+        node_label <- rowLinks(x)[ , "nodeLab" ]
+        node_label[ rowLinks(x)[, "whichTree"] != tree.name ] <- NA
         # Give a warning, data will be subsetted
-        if( any(is.na(node.label)) ){
+        if( any(is.na(node_label)) ){
             warning("The rowTree named 'tree.name' does not include all the ",
                     "rows which is why 'x' is subsetted when the Faith's alpha ",
                     "diversity index is calculated.",
                     call. = FALSE)
         }
         # Calculates the Faith index
-        estimateFaith(x, tree, name = name, node.label = node.label, ...)
+        estimateFaith(x, tree, name = name, node.label = node_label, ...)
     }
 )
 
