@@ -400,14 +400,8 @@
 #' @param col.name a single \code{character} value defining the column of taxa_tab
 #'  that includes taxonomical information.
 #'  
-#' @param column_name Deprecated. Use \code{col.name} instead.
-#'  
 #' @param prefix.rm {\code{TRUE} or \code{FALSE}: Should 
 #'  taxonomic prefixes be removed? (default: \code{prefix.rm = FALSE})}
-#'  
-#' @param remove.prefix Deprecated. Use \code{prefix.rm} instead.
-#' 
-#' @param removeTaxaPrefixes Deprecated. Use \code{prefix.rm} instead.
 #'  
 #' @return  a `data.frame`.
 #' @keywords internal
