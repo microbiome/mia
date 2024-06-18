@@ -399,7 +399,8 @@ setMethod(
 
 # This function removes empty rank columns from rowdata. (Those that include
 # only NA values)
-.remove_NA_cols_from_rowdata <- function(x, empty.ranks.rm = FALSE, ...){
+.remove_NA_cols_from_rowdata <- function(x, empty.ranks.rm = remove_empty_ranks, 
+    remove_empty_ranks = FALSE, ...){
     # Check empty.ranks.rm
     if( !.is_a_bool(empty.ranks.rm) ){
         stop("'empty.ranks.rm' must be a boolean value.",
