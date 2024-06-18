@@ -7,7 +7,7 @@ sample_meta_file_path <- "PATH_TO_SAMPLE_METADATA_FILE"
 tree_file_path <- "PATH_TO_PHYLOGENETIC_TREE_FILE"
 
 # Load data from the biom file into a TreeSummarizedExperiment container
-tse <- importBIOM(biom_file_path, removeTaxaPrefixes = TRUE, rankFromPrefix = TRUE)
+tse <- importBIOM(biom_file_path, prefix.rm = TRUE, rank.from.prefix = TRUE)
 
 # Read sample metadata from file and add column names if necessary
 sample_meta <-

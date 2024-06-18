@@ -34,8 +34,8 @@ test_that("agglomerate", {
     expect_error(agglomerateByRank(xtse,"Family",na.rm=""),
                  "'na.rm' must be TRUE or FALSE")
     expect_error(
-        agglomerateByRank(xtse,"Family",na.rm=FALSE,agglomerate.tree=""),
-        "'agglomerate.tree' must be TRUE or FALSE")
+        agglomerateByRank(xtse,"Family",na.rm=FALSE,update.tree=""),
+        "'update.tree' must be TRUE or FALSE")
     xtse2 <- xtse
     rowData(xtse2) <- NULL
     expect_error(agglomerateByRank(xtse2,"Family",na.rm=FALSE),
@@ -46,10 +46,10 @@ test_that("agglomerate", {
     actual <- agglomerateByRank(xtse,"Phylum",na.rm=FALSE)
     expect_equivalent(rowData(actual),rowData(actual_phylum))
     #
-    actual <- agglomerateByRank(xtse,"Family", onRankOnly = FALSE, na.rm = TRUE)
+    actual <- agglomerateByRank(xtse,"Family", ignore.taxonomy = FALSE, na.rm = TRUE)
     expect_equal(dim(actual),c(6,10))
     expect_equal(rowData(actual)$Family,c("c","d","e","f","g","h"))
-    actual <- agglomerateByRank(xtse,"Family", onRankOnly = FALSE, na.rm = FALSE) # the default
+    actual <- agglomerateByRank(xtse,"Family", ignore.taxonomy = FALSE, na.rm = FALSE) # the default
     expect_equal(dim(actual),c(8,10))
     expect_equal(rowData(actual)$Family,c("c","d","e","f","g","h",NA,NA))
     actual <- agglomerateByRank(xtse,"Phylum")
@@ -64,23 +64,23 @@ test_that("agglomerate", {
     # the same dimensionality is retained
     data(enterotype, package="mia")
     expect_equal(length(unique(rowData(enterotype)[,"Genus"])),
-                 nrow(agglomerateByRank(enterotype,"Genus", onRankOnly = FALSE, 
+                 nrow(agglomerateByRank(enterotype,"Genus", ignore.taxonomy = FALSE, 
                  na.rm = FALSE)))
 
     # agglomeration in all its forms
     data(GlobalPatterns, package="mia")
     se <- GlobalPatterns
     actual <- agglomerateByRank(se, rank = "Family", 
-        onRankOnly = FALSE, na.rm = FALSE)
+        ignore.taxonomy = FALSE, na.rm = FALSE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label),
                  length(rowTree(se)$tip.label))
     actual <- agglomerateByRank(se, rank = "Family", 
-        onRankOnly = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
+        ignore.taxonomy = FALSE, na.rm = FALSE, update.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), 603)
     actual <- agglomerateByRank(se, rank = "Family", 
-        onRankOnly = FALSE, na.rm = FALSE, agglomerate.tree = TRUE)
+        ignore.taxonomy = FALSE, na.rm = FALSE, update.tree = TRUE)
     expect_equal(dim(actual),c(603,26))
     expect_equal(length(rowTree(actual)$tip.label), nrow(actual))
     # Test that warning occurs when assay contian binary or negative values
@@ -121,33 +121,33 @@ test_that("agglomerate", {
     expect_equal(nrow(test0), 945)
     expect_equal(nrow(test1), 2307)
     
-    # Test that remove_empty_ranks work
+    # Test that empty.ranks.rm work
     expect_error(
-        agglomerateByRank(tse, rank = "Class", remove_empty_ranks = NULL))
+        agglomerateByRank(tse, rank = "Class", empty.ranks.rm = NULL))
     expect_error(
-        agglomerateByRank(tse, rank = "Class", remove_empty_ranks = "NULL"))
+        agglomerateByRank(tse, rank = "Class", empty.ranks.rm = "NULL"))
     expect_error(
-        agglomerateByRank(tse, rank = "Class", remove_empty_ranks = 1))
+        agglomerateByRank(tse, rank = "Class", empty.ranks.rm = 1))
     expect_error(
         agglomerateByRank(
-            tse, rank = "Class", remove_empty_ranks = c(TRUE, TRUE)))
+            tse, rank = "Class", empty.ranks.rm = c(TRUE, TRUE)))
     
     # Add a column to rowData(se) to test that only NA rank columns are removed
-    # when remove_empty_ranks = TRUE
+    # when empty.ranks.rm = TRUE
     rank <- "Class"
     rowData(tse)[["test"]] <- rep(NA, nrow(rowData(tse)))
     x <- agglomerateByRank(tse, rank = rank)
     rd1 <- rowData(x)
-    x <- agglomerateByRank(tse, rank = rank, remove_empty_ranks = TRUE)
+    x <- agglomerateByRank(tse, rank = rank, empty.ranks.rm = TRUE)
     rd2 <- rowData(x)
     cols <- taxonomyRanks(tse)[ seq_len(which(taxonomyRanks(tse) == "Class")) ]
     cols <- c(cols, "test")
     expect_equal(rd1[, cols], rd2[, cols])
     expect_true( ncol(rd1) > ncol(rd2) )
-    # Test that make_unique work
+    # Test that make.unique work
     uniq <- agglomerateByRank(tse, rank = "Species", na.rm = FALSE)
     not_uniq <- agglomerateByRank(
-        tse, rank = "Species", make_unique = FALSE, na.rm = FALSE)
+        tse, rank = "Species", make.unique = FALSE, na.rm = FALSE)
     expect_true( !any( duplicated(rownames(uniq)) ) )
     expect_true( any( duplicated(rownames(not_uniq)) ) )
     
@@ -157,7 +157,7 @@ test_that("agglomerate", {
     se <- SilvermanAGutData
     
     # checking reference consensus sequence generation
-    actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
+    actual <- agglomerateByRank(se,"Genus", update.refseq = FALSE)
     # There should be only one exact match for each sequence
     seqs_test <- as.character( referenceSeq(actual) )
     seqs_ref <- as.character( referenceSeq(se) )
@@ -167,7 +167,7 @@ test_that("agglomerate", {
     # Merging creates consensus sequences.
     th <- runif(1, 0, 1)
     actual <- agglomerateByRank(
-        se, "Genus", mergeRefSeq = TRUE, threshold = th)
+        se, "Genus", update.refseq = TRUE, threshold = th)
     seqs_test <- referenceSeq(actual)
     # Get single taxon as reference. Merge those sequences and test that it
     # equals to one that is output of agglomerateByRank
@@ -181,14 +181,14 @@ test_that("agglomerate", {
     expect_equal(seqs_test, seqs_ref)
     
     # checking reference consensus sequence generation using 'Genus:Alistipes'
-    actual <- agglomerateByRank(se,"Genus", mergeRefSeq = FALSE)
+    actual <- agglomerateByRank(se,"Genus", update.refseq = FALSE)
     expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
                  paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
                         "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
                         "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
                         "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
                         "TTGAGGCACGAAAGCGTGGGG"))
-    actual <- agglomerateByRank(se,"Genus", mergeRefSeq = TRUE)
+    actual <- agglomerateByRank(se,"Genus", update.refseq = TRUE)
     expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
                  paste0("BCNMKCKTTVWYCKKMHTTMYTKKKYKTMMMKNKHDYKYMKDYKKNHNNNYMM",
                         "KHHNDNNKTKMMMDNBHNBKKCTYMMCHNBNDDDNKSSHBNNRWDMYKKBNND",

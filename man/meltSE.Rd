@@ -10,9 +10,13 @@ meltSE(
   x,
   assay.type = assay_name,
   assay_name = "counts",
+  add.row = add_row_data,
   add_row_data = NULL,
+  add.col = add_col_data,
   add_col_data = NULL,
+  row.name = feature_name,
   feature_name = "FeatureID",
+  col.name = sample_name,
   sample_name = "SampleID",
   ...
 )
@@ -21,9 +25,13 @@ meltSE(
   x,
   assay.type = assay_name,
   assay_name = "counts",
+  add.row = add_row_data,
   add_row_data = NULL,
+  add.col = add_col_data,
   add_col_data = NULL,
+  row.name = feature_name,
   feature_name = "FeatureID",
+  col.name = sample_name,
   sample_name = "SampleID",
   ...
 )
@@ -40,27 +48,35 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{add_row_data}{\code{NULL}, \code{TRUE} or a \code{character} vector to
+\item{add.row}{\code{NULL}, \code{TRUE} or a \code{character} vector to
 select information from the \code{rowData} to add to the molten assay data.
-If \code{add_row_data = NULL} no data will be added, if
-\code{add_row_data = TRUE} all data will be added and if
-\code{add_row_data} is a \code{character} vector, it will be used to subset
+If \code{add.row = NULL} no data will be added, if
+\code{add.row = TRUE} all data will be added and if
+\code{add.row} is a \code{character} vector, it will be used to subset
 to given column names in \code{rowData}. (default:
-\code{add_row_data = NULL})}
+\code{add.row = NULL})}
 
-\item{add_col_data}{\code{NULL}, \code{TRUE} or a \code{character} vector to
+\item{add_row_data}{Deprecated. Use \code{add.row} instead.}
+
+\item{add.col}{\code{NULL}, \code{TRUE} or a \code{character} vector to
 select information from the \code{colData} to add to the molten assay data.
-If \code{add_col_data = NULL} no data will be added, if
-\code{add_col_data = TRUE} all data will be added and if
-\code{add_col_data} is a \code{character} vector, it will be used to subset
+If \code{add.col = NULL} no data will be added, if
+\code{add.col = TRUE} all data will be added and if
+\code{add.col} is a \code{character} vector, it will be used to subset
 to given column names in \code{colData}. (default:
-\code{add_col_data = NULL})}
+\code{add.col = NULL})}
 
-\item{feature_name}{a \code{character} scalar to use as the output's name
-for the feature identifier. (default: \code{feature_name = "FeatureID"})}
+\item{add_col_data}{Deprecated. Use \code{add.col} instead.}
 
-\item{sample_name}{a \code{character} scalar to use as the output's name
-for the sample identifier. (default: \code{sample_name = "SampleID"})}
+\item{row.name}{a \code{character} scalar to use as the output's name
+for the feature identifier. (default: \code{row.name = "FeatureID"})}
+
+\item{feature_name}{Deprecated. Use \code{row.name} instead.}
+
+\item{col.name}{a \code{character} scalar to use as the output's name
+for the sample identifier. (default: \code{col.name = "SampleID"})}
+
+\item{sample_name}{Deprecated. Use \code{col.name} instead.}
 
 \item{...}{optional arguments:
 \itemize{
@@ -91,8 +107,8 @@ names are set.
 data(GlobalPatterns)
 molten_tse <- meltSE(GlobalPatterns,
                         assay.type = "counts",
-                        add_row_data = TRUE,
-                        add_col_data = TRUE
+                        add.row = TRUE,
+                        add.col = TRUE
                         )
 molten_tse
 }
