@@ -19,7 +19,7 @@ from assay is added to the phyloseq object."><!-- mathjax --><script src="https:
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.23</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.22</span>
       </span>
     </div>
 
@@ -63,7 +63,7 @@ from <code>assay</code> is added to the phyloseq object.</p>
 <span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, assay_name <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, tree.name <span class="op">=</span> <span class="va">tree_name</span>, tree_name <span class="op">=</span> <span class="st">"phylo"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, tree_name <span class="op">=</span> <span class="st">"phylo"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -95,14 +95,10 @@ assay to use for calculation.
 will be disabled.)</p></dd>
 
 
-<dt>tree.name</dt>
+<dt>tree_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 tree will be included in the phyloseq object that is created,
-(By default: <code>tree.name = "phylo"</code>)</p></dd>
-
-
-<dt>tree_name</dt>
-<dd><p>Deprecated. Use <code>tree.name</code> instead.</p></dd>
+(By default: <code>tree_name = "phylo"</code>)</p></dd>
 
 </dl></div>
     <div id="value">

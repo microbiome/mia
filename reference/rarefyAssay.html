@@ -20,7 +20,7 @@ subsampled assay."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.23</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.22</span>
       </span>
     </div>
 
@@ -63,7 +63,6 @@ subsampled assay.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  sample <span class="op">=</span> <span class="va">min_size</span>,</span>
 <span>  min_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu">colSums2</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  replace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"subsampled"</span>,</span>
@@ -76,7 +75,6 @@ subsampled assay.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  sample <span class="op">=</span> <span class="va">min_size</span>,</span>
 <span>  min_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu">colSums2</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  replace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"subsampled"</span>,</span>
@@ -106,14 +104,10 @@ assay to use for calculation.
 will be disabled.)</p></dd>
 
 
-<dt>sample</dt>
+<dt>min_size</dt>
 <dd><p>A single integer value equal to the number of counts being
 simulated this can equal to lowest number of total counts
 found in a sample or a user specified number.</p></dd>
-
-
-<dt>min_size</dt>
-<dd><p>Deprecated. Use <code>sample</code> instead.</p></dd>
 
 
 <dt>replace</dt>
@@ -172,18 +166,18 @@ Microbiome. 2017 Dec;5(1):1-8.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># When samples in TreeSE are less than specified sample, they will be removed.</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># When samples in TreeSE are less than specified min_size, they will be removed.</span></span></span>
 <span class="r-in"><span><span class="co"># If after subsampling features are not present in any of the samples, </span></span></span>
 <span class="r-in"><span><span class="co"># they will be removed.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse.subsampled</span> <span class="op">&lt;-</span> <span class="fu">rarefyAssay</span><span class="op">(</span><span class="va">tse</span>, </span></span>
-<span class="r-in"><span>                                  sample <span class="op">=</span> <span class="fl">60000</span>, </span></span>
+<span class="r-in"><span>                                  min_size <span class="op">=</span> <span class="fl">60000</span>, </span></span>
 <span class="r-in"><span>                                  name <span class="op">=</span> <span class="st">"subsampled"</span> </span></span>
 <span class="r-in"><span>                                  <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Subsampling/Rarefying may undermine downstream analyses and have unintended consequences. Therefore, make sure this normalization is appropriate for your data.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 samples removed because they contained fewer reads than `sample`.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 samples removed because they contained fewer reads than `min_size`.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 6808 features removed because they are not present in all samples after subsampling.</span>
 <span class="r-in"><span><span class="va">tse.subsampled</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>

@@ -18,7 +18,7 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.23</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.22</span>
       </span>
     </div>
 
@@ -61,7 +61,6 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 <span><span class="fu">getPrevalence</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  detection <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  include.lowest <span class="op">=</span> <span class="va">include_lowest</span>,</span>
 <span>  include_lowest <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sort <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -73,7 +72,6 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  as.relative <span class="op">=</span> <span class="va">as_relative</span>,</span>
 <span>  as_relative <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -82,44 +80,18 @@ SummarizedExperiment-class object."><!-- mathjax --><script src="https://cdnjs.c
 <span><span class="fu">getPrevalent</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">getPrevalent</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span>
-<span>  include.lowest <span class="op">=</span> <span class="va">include_lowest</span>,</span>
-<span>  include_lowest <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">getPrevalent</span><span class="op">(</span><span class="va">x</span>, prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>, include_lowest <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">getPrevalent</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span>
-<span>  include.lowest <span class="op">=</span> <span class="va">include_lowest</span>,</span>
-<span>  include_lowest <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">getPrevalent</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>, include_lowest <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getRare</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for ANY</span></span>
-<span><span class="fu">getRare</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span>
-<span>  include.lowest <span class="op">=</span> <span class="va">include_lowest</span>,</span>
-<span>  include_lowest <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">getRare</span><span class="op">(</span><span class="va">x</span>, prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>, include_lowest <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
-<span><span class="fu">getRare</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span>
-<span>  include.lowest <span class="op">=</span> <span class="va">include_lowest</span>,</span>
-<span>  include_lowest <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">getRare</span><span class="op">(</span><span class="va">x</span>, rank <span class="op">=</span> <span class="cn">NULL</span>, prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>, include_lowest <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">subsetByPrevalent</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -175,16 +147,12 @@ and <code>subsetByRare</code> additional parameters passed to
 <dt>detection</dt>
 <dd><p>Detection threshold for absence/presence. Either an
 absolute value compared directly to the values of <code>x</code> or a relative
-value between 0 and 1, if <code>as.relative = FALSE</code>.</p></dd>
-
-
-<dt>include.lowest</dt>
-<dd><p>logical scalar: Should the lower boundary of the
-detection and prevalence cutoffs be included? (default: <code>FALSE</code>)</p></dd>
+value between 0 and 1, if <code>as_relative = FALSE</code>.</p></dd>
 
 
 <dt>include_lowest</dt>
-<dd><p>Deprecated. Use <code>include.lowest</code> instead.</p></dd>
+<dd><p>logical scalar: Should the lower boundary of the
+detection and prevalence cutoffs be included? (default: <code>FALSE</code>)</p></dd>
 
 
 <dt>sort</dt>
@@ -210,13 +178,9 @@ assay to use for calculation.
 will be disabled.)</p></dd>
 
 
-<dt>as.relative</dt>
+<dt>as_relative</dt>
 <dd><p>logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? (default: <code>FALSE</code>)</p></dd>
-
-
-<dt>as_relative</dt>
-<dd><p>Deprecated. Use <code>as.relative</code> instead.</p></dd>
 
 
 <dt>rank</dt>
@@ -227,7 +191,7 @@ on compositional (relative) abundances? (default: <code>FALSE</code>)</p></dd>
 <dt>prevalence</dt>
 <dd><p>Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
-limit, set <code>include.lowest</code> to <code>TRUE</code>.</p></dd>
+limit, set <code>include_lowest</code> to <code>TRUE</code>.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -256,7 +220,7 @@ Otherwise an <code>integer</code> vector is returned matching the rows in
 the detection threshold. For <code>SummarizedExperiment</code> objects, the
 prevalence is calculated for the selected taxonomic rank, otherwise for the
 rows. The absolute population prevalence can be obtained by multiplying the
-prevalence by the number of samples (<code>ncol(x)</code>). If <code>as.relative =
+prevalence by the number of samples (<code>ncol(x)</code>). If <code>as_relative =
 FALSE</code> the relative frequency (between 0 and 1) is used to check against the
 <code>detection</code> threshold.</p>
 <p>The core abundance index from <code>getPrevalentAbundance</code> gives the relative
@@ -298,7 +262,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span><span class="va">prevalence.frequency</span> <span class="op">&lt;-</span> <span class="fu">getPrevalence</span><span class="op">(</span><span class="va">tse</span>,</span></span>
 <span class="r-in"><span>                                      detection <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>                                      sort <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                                      as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                      as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prevalence.frequency</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 145149 114821 108747 526804 332405  98605 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      1      1      1      1      1      1 </span>
@@ -309,7 +273,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                                      rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                                      detection <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>                                      sort <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                                      as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                      as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prevalence.frequency</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             WS3           WPS-2 Verrucomicrobia     Tenericutes    Spirochaetes </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               1               1               1               1               1 </span>
@@ -333,7 +297,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                            rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                            detection <span class="op">=</span> <span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                            prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                            as.relative <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                            as_relative <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prevalent</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Acidobacteria"  "Actinobacteria" "Bacteroidetes"  "Chlorobi"      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Chloroflexi"    "Crenarchaeota" </span>
@@ -343,7 +307,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                                             rank <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
 <span class="r-in"><span>                                             detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
 <span class="r-in"><span>                                             prevalence <span class="op">=</span> <span class="fl">0.55</span>,</span></span>
-<span class="r-in"><span>                                             as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                             as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"prevalent"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 7 26 </span>
@@ -367,7 +331,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                    rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                    detection <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,</span></span>
 <span class="r-in"><span>                    prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                    as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                    as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rare</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ABY1_OD1"        "AC1"             "AD3"             "Acidobacteria"  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Armatimonadetes" "BRC1"           </span>
@@ -377,7 +341,7 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span>                                    rank <span class="op">=</span> <span class="st">"Class"</span>,</span></span>
 <span class="r-in"><span>                                    detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
 <span class="r-in"><span>                                    prevalence <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
-<span class="r-in"><span>                                    as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                    as_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 71 26 </span>
