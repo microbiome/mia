@@ -5,7 +5,7 @@ test_that("rarefyAssay", {
     data(GlobalPatterns, package="mia")
     
     expect_warning(tse.subsampled <- rarefyAssay(GlobalPatterns, 
-                                                     min_size = 60000, 
+                                                     sample = 60000, 
                                                      name = "subsampled",
                                                      replace = TRUE))
     # check class 
@@ -38,7 +38,7 @@ test_that("rarefyAssay", {
     seed = 1938
     set.seed(seed)
     expect_warning(tse.subsampled.rp <- rarefyAssay(GlobalPatterns, 
-                                                        min_size = 60000, 
+                                                        sample = 60000, 
                                                         name = "subsampled",
                                                         replace = FALSE))
     

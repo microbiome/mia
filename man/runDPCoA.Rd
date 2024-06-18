@@ -16,6 +16,7 @@ getDPCoA(x, y, ...)
   y,
   ncomponents = 2,
   ntop = NULL,
+  subset.row = subset_row,
   subset_row = NULL,
   scale = FALSE,
   transposed = FALSE,
@@ -28,6 +29,7 @@ getDPCoA(x, y, ...)
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
+  tree.name = tree_name,
   tree_name = "phylo"
 )
 
@@ -58,9 +60,11 @@ to obtain.}
 variances to use for dimensionality reduction. Alternatively \code{NULL},
 if all features should be used. (default: \code{ntop = NULL})}
 
-\item{subset_row}{Vector specifying the subset of features to use for
+\item{subset.row}{Vector specifying the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
 integer vector of row indices or a logical vector.}
+
+\item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
 \item{scale}{Logical scalar, should the expression values be standardized?}
 
@@ -78,9 +82,11 @@ will be disabled.)}
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
-\item{tree_name}{a single \code{character} value for specifying which
+\item{tree.name}{a single \code{character} value for specifying which
 rowTree will be used in calculation.
-(By default: \code{tree_name = "phylo"})}
+(By default: \code{tree.name = "phylo"})}
+
+\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}

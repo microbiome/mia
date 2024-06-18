@@ -9,14 +9,17 @@
 importBIOM(file, ...)
 
 makeTreeSEFromBiom(
-  obj,
+  x,
+  prefix.rm = removeTaxaPrefixes,
   removeTaxaPrefixes = FALSE,
+  rank.from.prefix = rankFromPrefix,
   rankFromPrefix = FALSE,
+  artifact.rm = remove.artifacts,
   remove.artifacts = FALSE,
   ...
 )
 
-makeTreeSummarizedExperimentFromBiom(obj, ...)
+makeTreeSummarizedExperimentFromBiom(x, ...)
 }
 \arguments{
 \item{file}{biom file location}
@@ -28,20 +31,26 @@ to be removed. If \code{patterns = "auto"}, special characters
 are removed. (default: \code{pattern = "auto"})
 }}
 
-\item{obj}{object of type \code{\link[biomformat:read_biom]{biom}}}
+\item{x}{object of type \code{\link[biomformat:read_biom]{biom}}}
 
-\item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
+\item{prefix.rm}{\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
-taxa columns meaning that \code{rankFromPrefix} should be enabled in the most cases.
-(default \code{removeTaxaPrefixes = FALSE})}
+taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
+(default \code{prefix.rm = FALSE})}
 
-\item{rankFromPrefix}{\code{TRUE} or \code{FALSE}: If file does not have
+\item{removeTaxaPrefixes}{Deprecated. Use \code{prefix.rm} instead.}
+
+\item{rank.from.prefix}{\code{TRUE} or \code{FALSE}: If file does not have
 taxonomic ranks on feature table, should they be scraped from prefixes?
-(default \code{rankFromPrefix = FALSE})}
+(default \code{rank.from.prefix = FALSE})}
 
-\item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
+\item{rankFromPrefix}{Deprecated.Use \code{rank.from.prefix} instead.}
+
+\item{artifact.rm}{\code{TRUE} or \code{FALSE}: If file have
 some taxonomic character naming artifacts, should they be removed.
-(default \code{remove.artifacts = FALSE})}
+(default \code{artifact.rm = FALSE})}
+
+\item{remove.artifacts}{Deprecated. Use \code{artifact.rm} instead.}
 }
 \value{
 An object of class
@@ -67,8 +76,8 @@ tse <- makeTreeSEFromBiom(biom_object)
 
 # Get taxonomyRanks from prefixes and remove prefixes
 tse <- importBIOM(biom_file,
-                    rankFromPrefix = TRUE,
-                    removeTaxaPrefixes = TRUE)
+                    rank.from.prefix = TRUE,
+                    prefix.rm = TRUE)
 
 # Load another biom file
 biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
@@ -76,7 +85,7 @@ biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
 
 # Clean artifacts from taxonomic data
 tse <- importBIOM(biom_file,
-                    remove.artifacts = TRUE)
+                    artifact.rm = TRUE)
 }
 \seealso{
 \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}

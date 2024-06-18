@@ -9,6 +9,7 @@ rarefyAssay(
   x,
   assay.type = assay_name,
   assay_name = "counts",
+  sample = min_size,
   min_size = min(colSums2(assay(x))),
   replace = TRUE,
   name = "subsampled",
@@ -20,6 +21,7 @@ rarefyAssay(
   x,
   assay.type = assay_name,
   assay_name = "counts",
+  sample = min_size,
   min_size = min(colSums2(assay(x))),
   replace = TRUE,
   name = "subsampled",
@@ -41,9 +43,11 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{min_size}{A single integer value equal to the number of counts being
+\item{sample}{A single integer value equal to the number of counts being
 simulated this can equal to lowest number of total counts
 found in a sample or a user specified number.}
+
+\item{min_size}{Deprecated. Use \code{sample} instead.}
 
 \item{replace}{Logical Default is \code{TRUE}. The default is with
 replacement (\code{replace=TRUE}).
@@ -77,14 +81,14 @@ To maintain the reproducibility, please define the seed using set.seed()
 before implement this function.
 }
 \examples{
-# When samples in TreeSE are less than specified min_size, they will be removed.
+# When samples in TreeSE are less than specified sample, they will be removed.
 # If after subsampling features are not present in any of the samples, 
 # they will be removed.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 set.seed(123)
 tse.subsampled <- rarefyAssay(tse, 
-                                  min_size = 60000, 
+                                  sample = 60000, 
                                   name = "subsampled" 
                                   )
 tse.subsampled

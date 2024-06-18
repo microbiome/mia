@@ -7,19 +7,21 @@
 \item{file}{a single \code{character} value defining the file
 path of the HUMAnN file. The file must be in merged HUMAnN format.}
 
-\item{colData}{a DataFrame-like object that includes sample names in
+\item{col.data}{a DataFrame-like object that includes sample names in
 rownames, or a single \code{character} value defining the file
 path of the sample metadata file. The file must be in \code{tsv} format
-(default: \code{colData = NULL}).}
+(default: \code{col.data = NULL}).}
+
+\item{colData}{Deprecated. Use \code{col.data} instead.}
 
 \item{...}{additional arguments:
 \itemize{
 \item \code{assay.type}: A single character value for naming
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{assay}}
 (default: \code{assay.type = "counts"})
-\item \code{removeTaxaPrefixes}: \code{TRUE} or \code{FALSE}: Should
+\item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
-\code{removeTaxaPrefixes = FALSE})
+\code{prefix.rm = FALSE})
 \item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
 suffixes of sample names be removed? HUMAnN pipeline adds suffixes
 to sample names. Suffixes are formed from file names. By selecting

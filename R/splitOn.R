@@ -13,25 +13,31 @@
 #'   Split by cols is not encouraged, since this is not compatible with 
 #'   storing the results in \code{altExps}.
 #'
-#' @param keep_reducedDims \code{TRUE} or \code{FALSE}: Should the
+#' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
-#'   (By default: \code{keep_reducedDims = FALSE})
+#'   (By default: \code{keep.dimred = FALSE})
+#' 
+#' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
 #'   
-#' @param update_rowTree \code{TRUE} or \code{FALSE}: Should the rowTree be updated
+#' @param update.tree \code{TRUE} or \code{FALSE}: Should the rowTree be updated
 #'   based on splitted data? Option is enabled when \code{x} is a 
 #'   \code{TreeSummarizedExperiment} object or a list of such objects. 
-#'   (By default: \code{update_rowTree = FALSE})
+#'   (By default: \code{update.tree = FALSE})
+#' 
+#' @param update_rowTree Deprecated. Use \code{update.tree } instead.
 #'   
-#' @param altExpNames a \code{character} vector specifying the alternative experiments
-#'   to be unsplit. (By default: \code{altExpNames = names(altExps(x))})
+#' @param altexp a \code{character} vector specifying the alternative experiments
+#'   to be unsplit. (By default: \code{altexp = names(altExps(x))})
+#' 
+#' @param altExpNames Deprecated. Use \code{altexp} instead.
 #'   
 #' @param ... Arguments passed to \code{agglomerateByVariable} function for
 #'   \code{SummarizedExperiment} objects and other functions.
 #'   See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more 
 #'   details.
 #'   \itemize{
-#'     \item{\code{use_names} A single boolean value to select whether to name elements of
+#'     \item{\code{use.names} A single boolean value to select whether to name elements of
 #'     list by their group names.}
 #'   }
 #'
@@ -79,7 +85,7 @@
 #' # Each element is named based on their group name. If you don't want to name
 #' # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
 #' # you must use MARGIN.
-#' se_list <- splitOn(tse, f = "group", use_names = FALSE, MARGIN = 1)
+#' se_list <- splitOn(tse, f = "group", use.names = FALSE, MARGIN = 1)
 #' 
 #' # When column names are shared between elements, you can store the list to altExps
 #' altExps(tse) <- se_list
@@ -87,7 +93,7 @@
 #' altExps(tse)
 #' 
 #' # If you want to split on columns and update rowTree, you can do
-#' se_list <- splitOn(tse, f = colData(tse)$group, update_rowTree = TRUE)
+#' se_list <- splitOn(tse, f = colData(tse)$group, update.tree = TRUE)
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitOn(se_list)
@@ -102,8 +108,9 @@ setGeneric("splitOn",
                 standardGeneric("splitOn"))
 
 # This function collects f (grouping variable), MARGIN, and 
-# use_names and returns them as a list.
-.norm_args_for_split_by <- function(x, f, MARGIN = NULL, use_names = TRUE, ...){
+# use.names and returns them as a list.
+.norm_args_for_split_by <- function(x, f, MARGIN = NULL, use.names = use_names,
+                                    use_names = TRUE, ...){
     # input check
     # Check f
     if(is.null(f)){
@@ -204,15 +211,15 @@ setGeneric("splitOn",
             f <- addNA(f)
         }
     }
-    # Check use_names
-    if( !.is_a_bool(use_names) ){
-        stop("'use_names' must be TRUE or FALSE.",
+    # Check use.names
+    if( !.is_a_bool(use.names) ){
+        stop("'use.names' must be TRUE or FALSE.",
             call. = FALSE)
     }
     # Create a list from arguments
     list(f = f,
         MARGIN = MARGIN,
-        use_names = use_names)
+        use.names = use.names)
 }
 
 # PErform the split
@@ -239,7 +246,7 @@ setGeneric("splitOn",
         ans <- SimpleList(lapply(idxs, subset_FUN, x = x, i = TRUE))
     }
     # If user do not want to use names, unname
-    if(!args[["use_names"]]){
+    if(!args[["use.names"]]){
         ans <- unname(ans)
     # Otherwise convert NAs to "NA", if there is a level that do not have name
     } else{
@@ -266,7 +273,7 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
         # Get arguments
         args <- .norm_args_for_split_by(x, f = f, ...)
         # Should alternative experiment be removed? --> yes
-        args[["strip_altexp"]] <- TRUE
+        args[["altexp.rm"]] <- TRUE
         # Split data
         .split_on(x, args, ...)
     }
@@ -275,19 +282,19 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f = NULL, update_rowTree = FALSE,
+    function(x, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE,
             ...){
         # Input check
-        # Check update_rowTree
-        if( !.is_a_bool(update_rowTree) ){
-            stop("'update_rowTree' must be TRUE or FALSE.",
+        # Check update.tree
+        if( !.is_a_bool(update.tree) ){
+            stop("'update.tree' must be TRUE or FALSE.",
                 call. = FALSE)
         }
         # Input check end
         # Split data
         x <- callNextMethod()
         # Manipulate rowTree or not?
-        if( update_rowTree ){
+        if( update.tree ){
             # If the returned value is a list, go through all of them
             if( is(x, 'SimpleList') ){
                 x <- SimpleList(lapply(x, .agglomerate_trees))
@@ -312,7 +319,7 @@ setGeneric("unsplitOn",
                 standardGeneric("unsplitOn"))
 
 # Perform the unsplit
-.list_unsplit_on <- function(ses, update_rowTree = FALSE, MARGIN = NULL, ...){
+.list_unsplit_on <- function(ses, update.tree = FALSE, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
@@ -320,9 +327,9 @@ setGeneric("unsplitOn",
             "only.",
             call. = FALSE)
     }
-    # Check update_rowTree
-    if( !.is_a_bool(update_rowTree) ){
-        stop("'update_rowTree' must be TRUE or FALSE.",
+    # Check update.tree
+    if( !.is_a_bool(update.tree) ){
+        stop("'update.tree' must be TRUE or FALSE.",
             call. = FALSE)
     }
     if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
@@ -386,7 +393,7 @@ setGeneric("unsplitOn",
     # IF the object is TreeSE. add rowTree
     if( class_x == "TreeSummarizedExperiment" ){
         # Update or add old tree from the first element of list
-        if( update_rowTree ){
+        if( update.tree ){
             ans <- addHierarchyTree(ans)
         } else{
             rowTree(ans) <- rowTree(ses[[1L]])
@@ -412,17 +419,17 @@ setGeneric("unsplitOn",
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitOn", signature = c(x = "list"),
-    function(x, update_rowTree = FALSE, ...){
+    function(x, update.tree = update_rowTree, update_rowTree = FALSE, ...){
         # Unsplit list and create SCE, SE, or TreeSE from it
-        .list_unsplit_on(x, update_rowTree, ...)
+        .list_unsplit_on(x, update.tree, ...)
     }
 )
 #' @rdname splitOn
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitOn", signature = c(x = "SimpleList"),
-    function(x, update_rowTree = FALSE, ...){
-        unsplitOn(as.list(x), update_rowTree, ...)
+    function(x, update.tree = update_rowTree, update_rowTree = FALSE, ...){
+        unsplitOn(as.list(x), update.tree, ...)
     }
 )
 
@@ -430,24 +437,26 @@ setMethod("unsplitOn", signature = c(x = "SimpleList"),
 #' @importFrom SingleCellExperiment altExpNames altExp altExps reducedDims<-
 #' @export
 setMethod("unsplitOn", signature = c(x = "SingleCellExperiment"),
-    function(x, altExpNames = names(altExps(x)), keep_reducedDims = FALSE, ...){
+    function(x, altexp = altExpNames, altExpNames = names(altExps(x)),
+            keep.dimred = keep_reducedDims,
+            keep_reducedDims = FALSE, ...){
         # input check
-        if(!.is_a_bool(keep_reducedDims)){
-            stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(keep.dimred)){
+            stop("'keep.dimred' must be TRUE or FALSE.", call. = FALSE)
         }
         # Get alternative experiment names since data is located there
         ae_names <- names(altExps(x))
         # Get only those experiments that user has specified
-        ae_names <- ae_names[ae_names %in% altExpNames]
+        ae_names <- ae_names[ae_names %in% altexp]
         if(length(ae_names) == 0L){
-            stop("No altExp matching 'altExpNames' in name.", call. = FALSE)
+            stop("No altExp matching 'altexp' in name.", call. = FALSE)
         }
         # Get alternative experiments as a list
         ses <- altExps(x)[ae_names]
         # And unsplit the data
         se <- .list_unsplit_on(ses, ...)
         # Add reducedDims if specified
-        if( keep_reducedDims ){
+        if( keep.dimred ){
             reducedDims(se) <- reducedDims(x)
         }
         return(se)
