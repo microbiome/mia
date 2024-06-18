@@ -173,9 +173,10 @@ and <code>subsetByRare</code> additional parameters passed to
 
 
 <dt>detection</dt>
-<dd><p>Detection threshold for absence/presence. Either an
-absolute value compared directly to the values of <code>x</code> or a relative
-value between 0 and 1, if <code>as.relative = FALSE</code>.</p></dd>
+<dd><p>Detection threshold for absence/presence. If <code>as_relative = FALSE</code>,
+it sets the counts threshold for a taxon to be considered present.
+If <code>as_relative = TRUE</code>, it sets the relative abundance threshold
+for a taxon to be considered present. (default: <code>detection = 0</code>)</p></dd>
 
 
 <dt>include.lowest</dt>
