@@ -273,7 +273,7 @@ setMethod("meltSE", signature = c(x = "SummarizedExperiment"),
     cd <- SummarizedExperiment::colData(x)[,add.col,drop=FALSE] %>%
         data.frame()
     # This makes sure that sample names match
-    if(check.names == TRUE){
+    if(check.names){
         rownames(cd) <- make.names(rownames(cd))
     }
     if(col.name %in% add.col){
