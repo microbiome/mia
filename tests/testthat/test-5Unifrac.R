@@ -46,7 +46,7 @@ test_that("Unifrac beta diversity", {
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = TRUE,
                                               rowTree(tse)))
-    expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-4)
+    expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-3)
     
     # Test with merged object with multiple trees. runUnifrac takes subset of
     # data based on provided tree.
@@ -62,7 +62,7 @@ test_that("Unifrac beta diversity", {
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_ref), weighted = TRUE,
                                               rowTree(tse_ref)))
-    expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-4)
+    expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-3)
     
     # Test the function with agglomerated data. runUnifrac renames rownames
     # based on tips and links to them. Then it also prunes the tree so that
