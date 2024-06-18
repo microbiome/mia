@@ -62,9 +62,10 @@ Alternatively, a user-specified numeric value can be added as pseudocount.}
 
 \item{...}{additional arguments passed on to \code{vegan:decostand}:
 \itemize{
-\item \code{ref_vals}: A single value which will be used to fill
+\item \code{reference}: A single value which will be used to fill
 reference sample's column in returned assay when calculating alr.
-(default: \code{ref_vals = NA})
+(default: \code{reference = NA})
+\item \code{ref_vals} Deprecated. Use \code{reference} instead.
 }}
 }
 \value{

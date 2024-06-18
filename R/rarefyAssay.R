@@ -27,9 +27,11 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param min_size A single integer value equal to the number of counts being 
+#' @param sample A single integer value equal to the number of counts being 
 #'   simulated this can equal to lowest number of total counts 
-#'   found in a sample or a user specified number. 
+#'   found in a sample or a user specified number.
+#' 
+#' @param min_size Deprecated. Use \code{sample} instead. 
 #'   
 #' @param replace Logical Default is \code{TRUE}. The default is with 
 #'   replacement (\code{replace=TRUE}). 
@@ -64,14 +66,14 @@
 #' @name rarefyAssay
 #'  
 #' @examples
-#' # When samples in TreeSE are less than specified min_size, they will be removed.
+#' # When samples in TreeSE are less than specified sample, they will be removed.
 #' # If after subsampling features are not present in any of the samples, 
 #' # they will be removed.
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #' set.seed(123)
 #' tse.subsampled <- rarefyAssay(tse, 
-#'                                   min_size = 60000, 
+#'                                   sample = 60000, 
 #'                                   name = "subsampled" 
 #'                                   )
 #' tse.subsampled
@@ -84,7 +86,7 @@ NULL
 #' @export
 setGeneric("rarefyAssay", signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
-                    min_size = min(colSums2(assay(x))),
+                    sample = min_size, min_size = min(colSums2(assay(x))),
                     replace = TRUE,
                     name = "subsampled", verbose = TRUE, ...)
                standardGeneric("rarefyAssay"))
@@ -95,9 +97,9 @@ setGeneric("rarefyAssay", signature = c("x"),
 #' @export
 setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
           function(x, assay.type = assay_name, assay_name = "counts", 
-                   min_size = min(colSums2(assay(x))),
+                    sample = min_size, min_size = min(colSums2(assay(x))),
                     replace = TRUE, 
-                   name = "subsampled", verbose = TRUE, ...){
+                    name = "subsampled", verbose = TRUE, ...){
               
               warning("Subsampling/Rarefying may undermine downstream analyses ",
                       "and have unintended consequences. Therefore, make sure ",
@@ -129,20 +131,20 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
                       call. = FALSE)
               }
               #set.seed(seed)
-              # Make sure min_size is of length 1.
-              if(length(min_size) > 1){
-                  stop("`min_size` had more than one value. ", 
+              # Make sure sample is of length 1.
+              if(length(sample) > 1){
+                  stop("`sample` had more than one value. ", 
                       "Specify a single integer value.", call. = FALSE)
-                  min_size <- min_size[1]    
+                  sample <- sample[1]    
               }
-              if(!is.numeric(min_size) || 
-                 as.integer(min_size) != min_size && min_size <= 0){
-                  stop("min_size needs to be a positive integer value.",
+              if(!is.numeric(sample) || 
+                 as.integer(sample) != sample && sample <= 0){
+                  stop("sample needs to be a positive integer value.",
                       call. = FALSE)
               }
               # get samples with less than min number of reads
-              if(min(colSums2(assay(x, assay.type))) < min_size){
-                  rmsams <- colnames(x)[colSums2(assay(x, assay.type)) < min_size]
+              if(min(colSums2(assay(x, assay.type))) < sample){
+                  rmsams <- colnames(x)[colSums2(assay(x, assay.type)) < sample]
                   # Return NULL, if no samples were found after subsampling
                   if( !any(!colnames(x) %in% rmsams) ){
                       stop("No samples were found after subsampling.",
@@ -150,7 +152,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
                   }
                   if(verbose){
                       message(length(rmsams), " samples removed ",
-                              "because they contained fewer reads than `min_size`.")
+                              "because they contained fewer reads than `sample`.")
                   }
                   # remove sample(s)
                   newtse <- x[, !colnames(x) %in% rmsams]
@@ -159,7 +161,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
               }
               newassay <- apply(assay(newtse, assay.type), 2, 
                                 .subsample_assay,
-                                min_size=min_size, replace=replace)
+                                sample=sample, replace=replace)
               rownames(newassay) <- rownames(newtse)
               # remove features not present in any samples after subsampling
               message(paste(length(which(rowSums2(newassay) == 0)), "features", 
@@ -170,13 +172,13 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
               assay(newtse, name, withDimnames=FALSE) <- newassay
               newtse <- .add_values_to_metadata(newtse, 
                                                 "subsampleCounts_min_size",
-                                                min_size)
+                                                sample)
               return(newtse)
           }
 )
 
 ## Modified Sub sampling function from phyloseq internals
-.subsample_assay <- function(x, min_size, replace){
+.subsample_assay <- function(x, sample, replace){
     # Create replacement species vector
     rarvec <- numeric(length(x))    
     # Perform the sub-sampling. Suppress warnings due to old R compat issue.
@@ -200,7 +202,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
         prob <- NULL
     }
     suppressWarnings(subsample <- sample(obsvec,
-                                         min_size,
+                                         sample,
                                          replace = replace,
                                          prob = prob))
     # Tabulate the results (these are already named by the order in `x`)
