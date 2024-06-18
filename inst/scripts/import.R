@@ -19,7 +19,7 @@ sample_meta <-
     )
 # Add headers for the columns (if they seem to be missing)
 colnames(sample_meta) <- c("patient_status", "cohort",
-                           "patient_status_vs_cohort", "col.name")
+                           "patient_status_vs_cohort", "sample_name")
 
 # Add sample metadata to colData slot of the TSE object
 # Note that the data must be given in a DataFrame format (required for our 
