@@ -16,9 +16,11 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param tree_name a single \code{character} value for specifying which
+#' @param tree.name a single \code{character} value for specifying which
 #'   tree will be included in the phyloseq object that is created, 
-#'   (By default: \code{tree_name = "phylo"})
+#'   (By default: \code{tree.name = "phylo"})
+#'   
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
 #' @param ... additional arguments
 #'
@@ -124,12 +126,12 @@ setMethod("makePhyloseqFromTreeSE",
 #' @export
 setMethod("makePhyloseqFromTreeSE",
           signature = c(x = "TreeSummarizedExperiment"),
-    function(x, tree_name = "phylo", ...){
-        # If rowTrees exist, check tree_name
+    function(x, tree.name = tree_name, tree_name = "phylo", ...){
+        # If rowTrees exist, check tree.name
         if( length(x@rowTree) > 0 ){
-            .check_rowTree_present(tree_name, x)
+            .check_rowTree_present(tree.name, x)
             # Subset the data based on the tree
-            x <- x[ rowLinks(x)$whichTree == tree_name, ]
+            x <- x[ rowLinks(x)$whichTree == tree.name, ]
             add_phy_tree <- TRUE
         } else{
             add_phy_tree <- FALSE
@@ -157,7 +159,7 @@ setMethod("makePhyloseqFromTreeSE",
         
         # Add phylogenetic tree
         if( add_phy_tree ){
-            phy_tree <- .get_rowTree_for_phyloseq(x, tree_name)
+            phy_tree <- .get_rowTree_for_phyloseq(x, tree.name)
             # If the object is a phyloseq object, adds phy_tree to it
             if(is(obj,"phyloseq")){
                 phyloseq::phy_tree(obj) <- phy_tree
@@ -213,7 +215,7 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
 
 ################################ HELP FUNCTIONS ################################
 # If tips do not match with rownames, prune the tree
-.get_x_with_pruned_tree <- function(x, tree_name){
+.get_x_with_pruned_tree <- function(x, tree.name){
     # Get rowLinks
     row_links <- rowLinks(x)
     # Gets node labels
@@ -229,15 +231,15 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
 }
 
 # In phyloseq, tips and rownames must match
-.get_rowTree_for_phyloseq <- function(x, tree_name){
+.get_rowTree_for_phyloseq <- function(x, tree.name){
     # Check if the rowTree's tips match with rownames:
     # tips labels are found from rownames
-    if( any(!( rowTree(x, tree_name)$tip.label) %in% rownames(x)) ){
+    if( any(!( rowTree(x, tree.name)$tip.label) %in% rownames(x)) ){
         # If rowtree do not match, tree is pruned
-        x <- .get_x_with_pruned_tree(x, tree_name)
+        x <- .get_x_with_pruned_tree(x, tree.name)
     }
     # Get rowTree
-    phy_tree <- rowTree(x, tree_name)
+    phy_tree <- rowTree(x, tree.name)
     # Convert rowTree to phyloseq object
     phy_tree <- phyloseq::phy_tree(phy_tree)
         

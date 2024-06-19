@@ -2,11 +2,11 @@ context("meltSE")
 test_that("meltSE", {
     # .norm_add_row_data .norm_add_col_data
     expect_error(mia:::.norm_add_row_data(),
-                 'argument "add_row_data" is missing')
+                 'argument "add.row" is missing')
     expect_error(mia:::.norm_add_row_data(TRUE),
                  'argument "x" is missing')
     expect_error(mia:::.norm_add_col_data(),
-                 'argument "add_col_data" is missing')
+                 'argument "add.col" is missing')
     expect_error(mia:::.norm_add_col_data(TRUE),
                  'argument "x" is missing')
     data(GlobalPatterns, package="mia")
@@ -27,15 +27,15 @@ test_that("meltSE", {
     expect_warning(mia:::.norm_add_col_data(TRUE, x2, "SampleID"),
                    "'x' contains a column")
     expect_error(mia:::.norm_add_row_data(NA, x, "FeatureID"),
-                 "'add_row_data' contains NA")
+                 "'add.row' contains NA")
     expect_error(mia:::.norm_add_col_data(NA, x, "SampleID"),
-                 "'add_col_data' contains NA")
+                 "'add.col' contains NA")
     #
 
     se <- GlobalPatterns
     molten_assay <- meltSE(se,
-                            add_row_data = TRUE,
-                            add_col_data = c("X.SampleID", "Primer"),
+                            add.row = TRUE,
+                            add.col = c("X.SampleID", "Primer"),
                             assay.type = "counts")
     expect_s3_class(molten_assay, c("tbl_df","tbl","data.frame"))
     expect_equal(colnames(molten_assay)[c(1:4,11)], c("FeatureID","SampleID","counts","Kingdom","X.SampleID"))
@@ -47,7 +47,7 @@ test_that("meltSE", {
 
     assay_taxa <- mia:::.add_row_data_to_molten_assay(only_assay,
                                                       se,
-                                                      add_row_data = taxonomyRanks(se),
+                                                      add.row = taxonomyRanks(se),
                                                       "FeatureID")
 
     expect_equal(colnames(assay_taxa)[1:4], c("FeatureID","SampleID","counts","Kingdom"))
@@ -55,14 +55,14 @@ test_that("meltSE", {
 
     assay_taxa_coldata <- mia:::.add_col_data_to_molten_assay(assay_taxa,
                                                               se,
-                                                              add_col_data=c("X.SampleID", "Primer"),
+                                                              add.col=c("X.SampleID", "Primer"),
                                                               "SampleID")
 
     expect_equal(colnames(molten_assay)[c(1:4,11)], c("FeatureID","SampleID","counts","Kingdom","X.SampleID"))
     expect_equal(is.numeric(assay_taxa_coldata$counts), TRUE)
     #
-    actual <- meltSE(x, add_row_data = TRUE, add_col_data = TRUE)
-    expect_warning(actual2 <- meltSE(x2, add_row_data = TRUE, add_col_data = TRUE))
+    actual <- meltSE(x, add.row = TRUE, add.col = TRUE)
+    expect_warning(actual2 <- meltSE(x2, add.row = TRUE, add.col = TRUE))
     expect_false("FeatureID_row" %in% colnames(actual))
     expect_true("FeatureID_row" %in% colnames(actual2))
     expect_false("SampleID_col" %in% colnames(actual))
@@ -70,15 +70,15 @@ test_that("meltSE", {
     x3 <- x2
     rownames(x3) <- NULL
     colnames(x3) <- NULL
-    actual3 <- meltSE(x3, add_row_data = TRUE, add_col_data = TRUE)
+    actual3 <- meltSE(x3, add.row = TRUE, add.col = TRUE)
     expect_false("FeatureID_row" %in% colnames(actual))
     expect_false("SampleID_col" %in% colnames(actual))
     #
     x4 <- se
     # Change names to 1, 2, 3... format
     colnames(x4) <- seq_along(colnames(x4))
-    melted <- meltSE(x4, assay.type = "counts", add_col_data = TRUE)
-    melted2 <- meltSE(x4, assay.type = "counts", add_col_data = TRUE, 
+    melted <- meltSE(x4, assay.type = "counts", add.col = TRUE)
+    melted2 <- meltSE(x4, assay.type = "counts", add.col = TRUE, 
                          check_names = TRUE)
     # There should not be any NAs
     expect_true(any(!(is.na(melted))))

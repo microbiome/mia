@@ -6,14 +6,14 @@
 \alias{makeTreeSummarizedExperimentFromPhyloseq,ANY-method}
 \title{Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}}
 \usage{
-makeTreeSEFromPhyloseq(obj)
+makeTreeSEFromPhyloseq(x)
 
-makeTreeSummarizedExperimentFromPhyloseq(obj)
+makeTreeSummarizedExperimentFromPhyloseq(x)
 
-\S4method{makeTreeSummarizedExperimentFromPhyloseq}{ANY}(obj)
+\S4method{makeTreeSummarizedExperimentFromPhyloseq}{ANY}(x)
 }
 \arguments{
-\item{obj}{a \code{phyloseq} object}
+\item{x}{a \code{phyloseq} object}
 }
 \value{
 An object of class \code{TreeSummarizedExperiment}

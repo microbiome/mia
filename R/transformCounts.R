@@ -33,9 +33,10 @@
 #'
 #' @param ... additional arguments passed on to \code{vegan:decostand}:
 #' \itemize{
-#'   \item \code{ref_vals}: A single value which will be used to fill 
+#'   \item \code{reference}: A single value which will be used to fill 
 #'   reference sample's column in returned assay when calculating alr. 
-#'   (default: \code{ref_vals = NA})
+#'   (default: \code{reference = NA})
+#'   \item \code{ref_vals} Deprecated. Use \code{reference} instead.
 #' }
 #' @details
 #'
@@ -52,22 +53,8 @@
 #'
 #' \itemize{
 #' 
-#' \item 'alr': Additive log ratio (alr) transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'chi.square': Chi square transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'clr': Centered log ratio (clr) transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#'
-#' \item 'frequency': Frequency transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'hellinger':  Hellinger transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'log':  Logarithmic transformation, please refer to 
+#' \item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log', 'normalize', 'pa', 'rank', 'rclr'
+#' 'relabundance', 'rrank', 'standardize', 'total': please refer to 
 #' \code{\link[vegan:decostand]{decostand}} for details.
 #' 
 #' \item 'log10': log10 transformation can be used for reducing the skewness
@@ -81,34 +68,6 @@
 #' \deqn{log2 = \log_{2} x}{%
 #' log2 = log2(x)}
 #' where \eqn{x} is a single value of data.
-#' 
-#' \item 'normalize': Make margin sum of squares equal to one. Please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'pa': Transforms table to presence/absence table. Please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#'
-#' \item 'rank': Rank transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'rclr':  Robust clr transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'relabundance': Relative transformation (alias for 'total'), please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'rrank': Relative rank transformation, please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'standardize': Scale 'x' to zero mean and unit variance (alias for
-#' 'z'), please refer to \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'total': Divide by margin total (alias for
-#' 'relabundance'), please refer to 
-#' \code{\link[vegan:decostand]{decostand}} for details.
-#' 
-#' \item 'z': Z transformation (alias for 'standardize'),
-#' please refer to \code{\link[vegan:decostand]{decostand}} for details.
 #'
 #' }
 #'
@@ -296,11 +255,12 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 # Help function for transformAssay, takes abundance
 # table as input and returns transformed table. This function utilizes vegan's
 # transformation functions.
-.apply_transformation_from_vegan <- function(mat, method, MARGIN, ref_vals = NA, ...){
+.apply_transformation_from_vegan <- function(mat, method, MARGIN, reference = ref_vals,
+                                            ref_vals = NA, ...){
     # Input check
-    # Check ref_vals
-    if( length(ref_vals) != 1 ){
-        stop("'ref_vals' must be a single value specifying the ",
+    # Check reference
+    if( length(reference) != 1 ){
+        stop("'reference' must be a single value specifying the ",
              "values of the reference sample.",
              call. = FALSE)
     }
@@ -310,6 +270,10 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     MARGIN <- ifelse(MARGIN %in% c("samples", "columns", "col", 2), 2, 1)
     # Adjust method if mia-specific alias was used
     method <- ifelse(method == "relabundance", "total", method)
+    
+    if (method == "z") {
+        .Deprecated(old="z", new="standardize")
+    }
     method <- ifelse(method == "z", "standardize", method)
     
     # If method is ALR, vegan drops one column/sample, because it is used
@@ -324,7 +288,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
     if( method %in% c("alr") ){
         transformed_table <- .adjust_alr_table(
             mat = transformed_table, orig_dimnames = orig_dimnames,
-            ref_vals = ref_vals)
+            reference = reference)
     }
     # If table is transposed (like in chi.square), transpose back
     if(identical(rownames(transformed_table), colnames(mat)) &&
@@ -373,7 +337,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 # vegan::decostand returns ALR transformed abundance table without reference
 # sample. Because in TreeSE all assays must have same row and column names,
 # the reference sample is assigned back to transformed abundance table.
-.adjust_alr_table <- function(mat, orig_dimnames, ref_vals){
+.adjust_alr_table <- function(mat, orig_dimnames, reference){
     # Store attributes
     attributes <- attributes(mat)
     # Get original and current sample/feature names and dimensions of reference
@@ -392,7 +356,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         ref_dimnames <- list(var_names, reference_name)
         }
     # Reference sample as NAs or with symbols that are specified by user
-    reference_sample <- matrix(ref_vals, nrow = nrow, ncol = ncol,  
+    reference_sample <- matrix(reference, nrow = nrow, ncol = ncol,  
                                dimnames = ref_dimnames)
     # Add reference sample/feature
     if(MARGIN == 1){
