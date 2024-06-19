@@ -1,8 +1,8 @@
 .norm_f <- function(i, f, dim.type = c("rows","columns"), na.rm = FALSE, ...){
-    dim.type <- match.arg(dim.type)
     if(!.is_a_bool(na.rm)){
-      stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
+        stop("'na.rm' must be TRUE or FALSE.", call. = FALSE)
     }
+    dim.type <- match.arg(dim.type)
     if(!is.character(f) && !is.factor(f)){
         stop("'f' must be a factor or character vector coercible to a ",
             "meaningful factor.",
@@ -13,7 +13,7 @@
             call. = FALSE)
     }
     # This is done otherwise we lose NA values
-    if (!na.rm && any(is.na(f))) {
+    if( !na.rm && any(is.na(f)) ){
         f <- as.character(f)
         f[ is.na(f) ] <- "NA"
     }
@@ -75,7 +75,7 @@
     if( .is_a_string(f) && f %in% colnames(rowData(x)) ){
         f <- rowData(x)[[ f ]]
     }
-    f <- .norm_f(nrow(x), f)
+    f <- .norm_f(nrow(x), f, ...)
     if(length(levels(f)) == nrow(x)){
         return(x)
     }
@@ -128,7 +128,7 @@
     if( .is_a_string(f) && f %in% colnames(colData(x)) ){
       f <- colData(x)[[ f ]]
     }
-    f <- .norm_f(ncol(x), f, "columns")
+    f <- .norm_f(ncol(x), f, "columns", ...)
     
     if(length(levels(f)) == ncol(x)){
         return(x)
@@ -163,14 +163,6 @@
     x
 }
 
-.merge_rows_SE <- function(x, f, archetype = 1L, ...){
-    .merge_rows(x, f, archetype = archetype, ...)
-}
-
-.merge_cols_SE <- function(x, f, archetype = 1L, ...){
-    .merge_cols(x, f, archetype = archetype, ...)
-}
-
 #' @importFrom Biostrings DNAStringSetList
 .merge_refseq_list <- function(sequences_list, f, names, ...){
     threshold <- list(...)[["threshold"]]
@@ -196,24 +188,24 @@
     seq
 }
 
-.merge_rows_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE,
-                            mergeRefSeq = FALSE, ...){
+.merge_rows_TSE <- function(x, f, archetype = 1L, update.tree = FALSE,
+    update.refseq = mergeRefSeq, mergeRefSeq = FALSE, ...){
     # input check
-    if(!.is_a_bool(mergeTree)){
-        stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(update.tree)){
+        stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
     }
-    if(!.is_a_bool(mergeRefSeq)){
-        stop("'mergeRefSeq' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(update.refseq)){
+        stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
     }
     # for optionally merging referenceSeq
     refSeq <- NULL
-    if(mergeRefSeq){
+    if(update.refseq){
         refSeq <- referenceSeq(x)
     }
     #
-    x <- .merge_rows_SE(x, f, archetype = 1L, ...)
+    x <- .merge_rows(x, f, archetype = 1L, ...)
     # optionally merge rowTree
-    if( mergeTree ){
+    if( update.tree ){
         x <- .agglomerate_trees(x, 1)
     }
     # optionally merge referenceSeq
@@ -223,15 +215,15 @@
     x
 }
 
-.merge_cols_TSE <- function(x, f, archetype = 1L, mergeTree = FALSE, ...){
+.merge_cols_TSE <- function(x, f, archetype = 1L, update.tree = FALSE, ...){
     # input check
-    if(!.is_a_bool(mergeTree)){
-        stop("'mergeTree' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(update.tree)){
+        stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    x <- .merge_cols_SE(x, f, archetype = 1L, ...)
+    x <- .merge_cols(x, f, archetype = 1L, ...)
     # optionally merge colTree
-    if( mergeTree ){
+    if( update.tree ){
         x <- .agglomerate_trees(x, 2)
     }
     return(x)

@@ -369,7 +369,7 @@ setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
               .Deprecated(msg = paste0("'testExperimentCrossAssociation' is ",
                                        "deprecated. Use ", 
                                        "'getCrossAssociation' instead."))
-              getCrossAssociation(x, test_significance = TRUE, ...)
+              getCrossAssociation(x, test.signif = TRUE, ...)
           }
 )
 
@@ -386,7 +386,7 @@ setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
               .Deprecated(msg = paste0("'testExperimentCrossCorrelation' is ",
                                        "deprecated. Use ", 
                                        "'getCrossAssociation' instead."))
-              getCrossAssociation(x, test_significance = TRUE, ...)
+              getCrossAssociation(x, test.signif = TRUE, ...)
           }
 )
 

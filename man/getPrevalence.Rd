@@ -24,6 +24,7 @@ getPrevalence(x, ...)
 \S4method{getPrevalence}{ANY}(
   x,
   detection = 0,
+  include.lowest = include_lowest,
   include_lowest = FALSE,
   sort = FALSE,
   na.rm = TRUE,
@@ -34,6 +35,7 @@ getPrevalence(x, ...)
   x,
   assay.type = assay_name,
   assay_name = "counts",
+  as.relative = as_relative,
   as_relative = FALSE,
   rank = NULL,
   ...
@@ -41,15 +43,41 @@ getPrevalence(x, ...)
 
 getPrevalent(x, ...)
 
-\S4method{getPrevalent}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
+\S4method{getPrevalent}{ANY}(
+  x,
+  prevalence = 50/100,
+  include.lowest = include_lowest,
+  include_lowest = FALSE,
+  ...
+)
 
-\S4method{getPrevalent}{SummarizedExperiment}(x, rank = NULL, prevalence = 50/100, include_lowest = FALSE, ...)
+\S4method{getPrevalent}{SummarizedExperiment}(
+  x,
+  rank = NULL,
+  prevalence = 50/100,
+  include.lowest = include_lowest,
+  include_lowest = FALSE,
+  ...
+)
 
 getRare(x, ...)
 
-\S4method{getRare}{ANY}(x, prevalence = 50/100, include_lowest = FALSE, ...)
+\S4method{getRare}{ANY}(
+  x,
+  prevalence = 50/100,
+  include.lowest = include_lowest,
+  include_lowest = FALSE,
+  ...
+)
 
-\S4method{getRare}{SummarizedExperiment}(x, rank = NULL, prevalence = 50/100, include_lowest = FALSE, ...)
+\S4method{getRare}{SummarizedExperiment}(
+  x,
+  rank = NULL,
+  prevalence = 50/100,
+  include.lowest = include_lowest,
+  include_lowest = FALSE,
+  ...
+)
 
 subsetByPrevalent(x, ...)
 
@@ -96,12 +124,15 @@ and \code{subsetByRare} additional parameters passed to
 \code{getPrevalent}
 }}
 
-\item{detection}{Detection threshold for absence/presence. Either an
-absolute value compared directly to the values of \code{x} or a relative
-value between 0 and 1, if \code{as_relative = FALSE}.}
+\item{detection}{Detection threshold for absence/presence. If \code{as_relative = FALSE},
+it sets the counts threshold for a taxon to be considered present.
+If \code{as_relative = TRUE}, it sets the relative abundance threshold
+for a taxon to be considered present. (default: \code{detection = 0})}
 
-\item{include_lowest}{logical scalar: Should the lower boundary of the
+\item{include.lowest}{logical scalar: Should the lower boundary of the
 detection and prevalence cutoffs be included? (default: \code{FALSE})}
+
+\item{include_lowest}{Deprecated. Use \code{include.lowest} instead.}
 
 \item{sort}{logical scalar: Should the result be sorted by prevalence?
 (default: \code{FALSE})}
@@ -118,15 +149,17 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{as_relative}{logical scalar: Should the detection threshold be applied
+\item{as.relative}{logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? (default: \code{FALSE})}
+
+\item{as_relative}{Deprecated. Use \code{as.relative} instead.}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
 \item{prevalence}{Prevalence threshold (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
-limit, set \code{include_lowest} to \code{TRUE}.}
+limit, set \code{include.lowest} to \code{TRUE}.}
 }
 \value{
 \code{subsetPrevalent} and \code{subsetRareFeatures} return subset of
@@ -158,7 +191,7 @@ These functions calculate the population prevalence for taxonomic ranks in a
 the detection threshold. For \code{SummarizedExperiment} objects, the
 prevalence is calculated for the selected taxonomic rank, otherwise for the
 rows. The absolute population prevalence can be obtained by multiplying the
-prevalence by the number of samples (\code{ncol(x)}). If \code{as_relative =
+prevalence by the number of samples (\code{ncol(x)}). If \code{as.relative =
 FALSE} the relative frequency (between 0 and 1) is used to check against the
 \code{detection} threshold.
 
@@ -184,7 +217,7 @@ tse <- GlobalPatterns
 prevalence.frequency <- getPrevalence(tse,
                                       detection = 0,
                                       sort = TRUE,
-                                      as_relative = TRUE)
+                                      as.relative = TRUE)
 head(prevalence.frequency)
 
 # Get prevalence estimates for phylums
@@ -193,7 +226,7 @@ prevalence.frequency <- getPrevalence(tse,
                                       rank = "Phylum",
                                       detection = 0,
                                       sort = TRUE,
-                                      as_relative = TRUE)
+                                      as.relative = TRUE)
 head(prevalence.frequency)
 
 # - to obtain population counts, multiply frequencies with the sample size,
@@ -209,7 +242,7 @@ prevalent <- getPrevalent(tse,
                             rank = "Phylum",
                             detection = 10,
                             prevalence = 50/100,
-                            as_relative = FALSE)
+                            as.relative = FALSE)
 head(prevalent)
 
 # Gets a subset of object that includes prevalent taxa
@@ -217,15 +250,15 @@ altExp(tse, "prevalent") <- subsetByPrevalent(tse,
                                              rank = "Family",
                                              detection = 0.001,
                                              prevalence = 0.55,
-                                             as_relative = TRUE)
-altExp(tse, "prevalent")                                 
+                                             as.relative = TRUE)
+altExp(tse, "prevalent")
 
 # getRare returns the inverse
 rare <- getRare(tse,
                     rank = "Phylum",
                     detection = 1/100,
                     prevalence = 50/100,
-                    as_relative = TRUE)
+                    as.relative = TRUE)
 head(rare)
 
 # Gets a subset of object that includes rare taxa
@@ -233,8 +266,8 @@ altExp(tse, "rare") <- subsetByRare(tse,
                                     rank = "Class",
                                     detection = 0.001,
                                     prevalence = 0.001,
-                                    as_relative = TRUE)
-altExp(tse, "rare")      
+                                    as.relative = TRUE)
+altExp(tse, "rare")
 
 # Names of both experiments, prevalent and rare, can be found from slot
 # altExpNames

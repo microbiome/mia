@@ -8,7 +8,7 @@ test_that("addNMDS", {
     actual <- getNMDS(se)
     expect_true(is.matrix(actual))
     expect_equal(dim(actual),c(10,2))
-    actual2 <- getNMDS(se,nmds="monoMDS",pc=FALSE,scaling=FALSE)
+    actual2 <- getNMDS(se,nmds.fun="monoMDS",pc=FALSE,scaling=FALSE)
     expect_true(is.matrix(actual))
     expect_equal(dim(actual),c(10,2))
     expect_true(sum(actual2 - actual) < 0.00001)

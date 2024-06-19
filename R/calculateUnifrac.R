@@ -21,10 +21,12 @@
 #'   matrix. This means that the phylo object and the columns should relate
 #'   to the same type of features (aka. microorganisms).
 #'   
-#' @param nodeLab if \code{x} is a matrix, 
+#' @param node.label if \code{x} is a matrix, 
 #'   a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
 #'   The length must equal the number of rows/columns of \code{x}. Furthermore, all the 
 #'   node labs must be present in \code{tree}.
+#' 
+#' @param nodeLab Deprecated. Use \code{node.label} instead.
 #'
 #' @param assay.type a single \code{character} value for specifying which
 #'   assay to use for calculation.
@@ -38,9 +40,11 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
-#' @param tree_name a single \code{character} value for specifying which
+#' @param tree.name a single \code{character} value for specifying which
 #'   tree will be used in calculation. 
-#'   (By default: \code{tree_name = "phylo"})
+#'   (By default: \code{tree.name = "phylo"})
+#' 
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'   
 #' @param weighted \code{TRUE} or \code{FALSE}: Should use weighted-Unifrac
 #'   calculation? Weighted-Unifrac takes into account the relative abundance of
@@ -121,19 +125,19 @@ setMethod("calculateUnifrac",
         signature = c(x = "TreeSummarizedExperiment",
                     tree = "missing"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
-            tree_name = "phylo", transposed = FALSE, ...){
+            tree.name = tree_name, tree_name = "phylo", transposed = FALSE, ...){
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
         mat <- assay(x, assay.type)
         if(!transposed){
-            # Check tree_name
-            .check_rowTree_present(tree_name, x)
+            # Check tree.name
+            .check_rowTree_present(tree.name, x)
             # Get tree
-            tree <- rowTree(x, tree_name)
+            tree <- rowTree(x, tree.name)
             # Select only those features that are in the rowTree
-            whichTree <- rowLinks(x)[, "whichTree"] == tree_name
+            whichTree <- rowLinks(x)[, "whichTree"] == tree.name
             if( any(!whichTree) ){
-                warning("Not all rows were present in the rowTree specified by 'tree_name'.",
+                warning("Not all rows were present in the rowTree specified by 'tree.name'.",
                         "'x' is subsetted.", call. = FALSE)
                 # Subset the data
                 x <- x[ whichTree, ]
@@ -144,14 +148,14 @@ setMethod("calculateUnifrac",
             # Get links
             links <- rowLinks(x)
         } else {
-            # Check tree_name
-            .check_colTree_present(tree_name, x)
+            # Check tree.name
+            .check_colTree_present(tree.name, x)
             # Get tree
-            tree <- colTree(x, tree_name)
+            tree <- colTree(x, tree.name)
             # Select only those samples that are in the colTree
-            whichTree <- colLinks(x)[, "whichTree"] == tree_name
+            whichTree <- colLinks(x)[, "whichTree"] == tree.name
             if( any(!whichTree) ){
-                warning("Not all columns were present in the colTree specified by 'tree_name'.",
+                warning("Not all columns were present in the colTree specified by 'tree.name'.",
                         "'x' is subsetted.", call. = FALSE)
                 # Subset the data
                 x <- x[ , whichTree ]
@@ -162,10 +166,10 @@ setMethod("calculateUnifrac",
             links <- colLinks(x)
         }
         # Remove those links (make them NA) that are not included in this tree
-        links[ links$whichTree != tree_name, ] <- NA
+        links[ links$whichTree != tree.name, ] <- NA
         # Take only nodeLabs
         links <- links[ , "nodeLab" ]
-        res <- calculateUnifrac(mat, tree = tree, nodeLab = links, ...)
+        res <- calculateUnifrac(mat, tree = tree, node.label = links, ...)
         return(res)
     }
 )
@@ -177,7 +181,7 @@ setMethod("calculateUnifrac",
 #' @importFrom rbiom unifrac
 #' @export
 runUnifrac <- function(
-        x, tree, weighted = FALSE, nodeLab = NULL, ...){
+        x, tree, weighted = FALSE, node.label = nodeLab, nodeLab = NULL, ...){
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)
@@ -196,47 +200,47 @@ runUnifrac <- function(
     if(is.null(colnames(x)) || is.null(rownames(x))){
         stop("colnames and rownames must not be NULL", call. = FALSE)
     }
-    # nodeLab should be NULL or character vector specifying links between 
+    # node.label should be NULL or character vector specifying links between 
     # rows and tree labels
-    if( !(is.null(nodeLab) ||
-            (is.character(nodeLab) && length(nodeLab) == nrow(x) &&
-            all(nodeLab[ !is.na(nodeLab) ] %in% c(tree$tip.label)))) ){
+    if( !(is.null(node.label) ||
+            (is.character(node.label) && length(node.label) == nrow(x) &&
+            all(node.label[ !is.na(node.label) ] %in% c(tree$tip.label)))) ){
         stop(
-            "'nodeLab' must be NULL or character specifying links between ",
+            "'node.label' must be NULL or character specifying links between ",
             "abundance table and tree labels.", call. = FALSE)
     }
     # check that matrix and tree are compatible
-    if( is.null(nodeLab) && !all(rownames(x) %in% c(tree$tip.label)) ) {
+    if( is.null(node.label) && !all(rownames(x) %in% c(tree$tip.label)) ) {
         stop(
             "Incompatible tree and abundance table! Please try to provide ",
-            "'nodeLab'.", call. = FALSE)
+            "'node.label'.", call. = FALSE)
     }
     # Merge rows, so that rows that are assigned to same tree node are agglomerated
     # together. If nodeLabs were provided, merge based on those. Otherwise merge
     # based on rownames
-    if( is.null(nodeLab) ){
-        nodeLab <- rownames(x)
+    if( is.null(node.label) ){
+        node.label <- rownames(x)
     }
     # Prune tree if there are nodes that cannot be found from tips or if there
     # are tips that cannot be found from abundance matrix. It might be
     # that certain row is linked to internal node or that the tree has extra
     # tips that do not match with rows (e.g. after subsetting).
-    if( any( !nodeLab %in% tree$tip.label ) ||
-            any( !tree$tip.label %in% nodeLab) ){
-        tree <- .prune_tree(tree, nodeLab)
+    if( any( !node.label %in% tree$tip.label ) ||
+            any( !tree$tip.label %in% node.label) ){
+        tree <- .prune_tree(tree, node.label)
         warning("Pruning tree...", call. = FALSE)
     }
     # If node labels cannot be found from tips even after pruning, give error.
     # This kind of tree cannot be used in unifrac since it expects that every
     # row is linked to tips.
-    if( any( !nodeLab %in% tree$tip.label ) ){
+    if( any( !node.label %in% tree$tip.label ) ){
         stop(
             "Unifrac cannot be calculated since tree is not compatible. ",
             "Each row must be linked to tip of the tree.", call. = FALSE)
     }
     # Merge assay so that each row represent single tip. It might be that
     # multiple rows are linked to single tip.
-    x <- .merge_assay_by_rows(x, nodeLab, ...)
+    x <- .merge_assay_by_rows(x, node.label, ...)
     # Modify tree so that it will become rooted.
     tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     # Remove those tips that are not present in the data
@@ -252,21 +256,21 @@ runUnifrac <- function(
     return(res)
 }
 
-# Aggregate matrix based on nodeLabs. At the same time, rename rows based on nodeLab
+# Aggregate matrix based on nodeLabs. At the same time, rename rows based on node.label
 # --> each row represent specific node of tree
 #' @importFrom scuttle sumCountsAcrossFeatures
-.merge_assay_by_rows <- function(x, nodeLab, average = FALSE, ...){
+.merge_assay_by_rows <- function(x, node.label, average = FALSE, ...){
     if( !.is_a_bool(average) ){
         stop("'average' must be TRUE or FALSE.", call. = FALSE)
     }
     # Merge assay based on nodeLabs
     x <- sumCountsAcrossFeatures(
-        x, ids = nodeLab, subset.row = NULL, subset.col = NULL,
+        x, ids = node.label, subset.row = NULL, subset.col = NULL,
         average = average)
-    # Remove NAs from nodeLab
-    nodeLab <- nodeLab[ !is.na(nodeLab) ]
+    # Remove NAs from node.label
+    node.label <- node.label[ !is.na(node.label) ]
     # Get the original order back
-    x <- x[ nodeLab, ]
+    x <- x[ node.label, ]
     return(x)
 }
 

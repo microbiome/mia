@@ -40,16 +40,22 @@
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 #'   removed if \code{na.rm = TRUE} before agglomeration
 #'
-#' @param with_rank \code{TRUE} or \code{FALSE}: Should the level be add as a
+#' @param with.rank \code{TRUE} or \code{FALSE}: Should the level be add as a
 #'   suffix? For example: "Phylum:Crenarchaeota" (default:
-#'   \code{with_rank = FALSE})
+#'   \code{with.rank = FALSE})
+#' 
+#' @param with_rank Deprecated. Use \code{with.rank} instead.
 #'
-#' @param make_unique \code{TRUE} or \code{FALSE}: Should the labels be made
-#'   unique, if there are any duplicates? (default: \code{make_unique = TRUE})
+#' @param make.unique \code{TRUE} or \code{FALSE}: Should the labels be made
+#'   unique, if there are any duplicates? (default: \code{make.unique = TRUE})
+#' 
+#' @param make_unique Deprecated. Use \code{make.unique} instead.
 #'
-#' @param resolve_loops \code{TRUE} or \code{FALSE}: Should \code{resolveLoops}
+#' @param resolve.loops \code{TRUE} or \code{FALSE}: Should \code{resolveLoops}
 #'   be applied to the taxonomic data? Please note that has only an effect,
-#'   if the data is unique. (default: \code{resolve_loops = TRUE})
+#'   if the data is unique. (default: \code{resolve.loops = TRUE})
+#' 
+#' @param resolve_loops Deprecated. Use \code{resolve.loops} instead.
 #'
 #' @param taxa a \code{character} vector, which is used for subsetting the 
 #'   taxonomic information. If no information is found,\code{NULL} is returned
@@ -66,9 +72,11 @@
 #' @param to a scalar \code{character} value, which must be a valid 
 #'   taxonomic rank. (default: \code{NULL})
 #'   
-#' @param use_grepl \code{TRUE} or \code{FALSE}: should pattern matching via
+#' @param use.grepl \code{TRUE} or \code{FALSE}: should pattern matching via
 #'   \code{grepl} be used? Otherwise literal matching is used.
 #'   (default: \code{FALSE})
+#' 
+#' @param use_grepl Deprecated. Use \code{use.grepl} instead.
 #'
 #' @param ... optional arguments not used currently.
 #' 
@@ -284,8 +292,9 @@ setGeneric("getTaxonomyLabels",
 #' @aliases checkTaxonomy
 #' @export
 setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
-    function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"),
-            with_rank = FALSE, make_unique = TRUE, resolve_loops = FALSE, ...){
+    function(x, empty.fields = c(NA, "", " ", "\t", "-", "_"), with.rank = with_rank,
+            with_rank = FALSE, make.unique = make_unique, make_unique = TRUE, 
+            resolve.loops = resolve_loops, resolve_loops = FALSE, ...){
         # input check
         if(nrow(x) == 0L){
             stop("No data available in `x` ('x' has nrow(x) == 0L.)",
@@ -299,14 +308,14 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
             stop("'empty.fields' must be a character vector with one or ",
                  "more values.", call. = FALSE)
         }
-        if(!.is_a_bool(with_rank)){
-            stop("'with_rank' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(with.rank)){
+            stop("'with.rank' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(!.is_a_bool(make_unique)){
-            stop("'make_unique' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(make.unique)){
+            stop("'make.unique' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(!.is_a_bool(resolve_loops)){
-            stop("'resolve_loops' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(resolve.loops)){
+            stop("'resolve.loops' must be TRUE or FALSE.", call. = FALSE)
         }
         #
         dup <- duplicated(rowData(x)[,taxonomyRanks(x)])
@@ -317,14 +326,14 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
         }
         ans <- .get_taxonomic_label(x[!dup,],
                                     empty.fields = empty.fields,
-                                    with_rank = with_rank,
-                                    resolve_loops = resolve_loops)
+                                    with.rank = with.rank,
+                                    resolve.loops = resolve.loops)
         if(any(dup)){
             ans <- ans[m]
         }
         # last resort - this happens, if annotation data contains ambiguous data
         # sometimes labeled as "circles"
-        if(make_unique && anyDuplicated(ans)){
+        if(make.unique && anyDuplicated(ans)){
             dup <- which(ans %in% ans[which(duplicated(ans))])
             ans[dup] <- make.unique(ans[dup], sep = "_")
         }
@@ -378,8 +387,8 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
 
 .get_taxonomic_label <- function(x,
                                 empty.fields = c(NA, "", " ", "\t", "-", "_"),
-                                with_rank = FALSE,
-                                resolve_loops = FALSE){
+                                with.rank = FALSE,
+                                resolve.loops = FALSE){
     rd <- rowData(x)
     tax_cols <- .get_tax_cols_from_se(x)
     tax_ranks_selected <- .get_tax_ranks_selected(x, rd, tax_cols, empty.fields)
@@ -388,7 +397,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
     }
     tax_cols_selected <- tax_cols[tax_ranks_selected]
     # resolve loops
-    if(resolve_loops){
+    if(resolve.loops){
         td <- as.data.frame(rd[,tax_cols])
         td <- suppressWarnings(resolveLoop(td))
         rd[,tax_cols] <- as(td,"DataFrame")
@@ -401,7 +410,7 @@ setMethod("getTaxonomyLabels", signature = c(x = "SummarizedExperiment"),
                     tax_cols_selected,
                     SIMPLIFY = FALSE)
     ans <- unlist(ans, use.names = FALSE)
-    if(with_rank || !all_same_rank){
+    if(with.rank || !all_same_rank){
         ans <- .add_taxonomic_type(rd, ans, tax_cols_selected)
     }
     ans
@@ -540,7 +549,7 @@ setMethod("addHierarchyTree", signature = c(x = "SummarizedExperiment"),
         x <- as(x,"TreeSummarizedExperiment")
         # Get node labs: which row represents which node in the tree?
         node_labs <- getTaxonomyLabels(
-            x, with_rank = TRUE, resolve_loops = TRUE, make_unique = FALSE)
+            x, with.rank = TRUE, resolve.loops = TRUE, make.unique = FALSE)
         # Add tree
         x <- changeTree(x, tree, node_labs)
         return(x)
@@ -554,11 +563,11 @@ setGeneric("mapTaxonomy",
                 standardGeneric("mapTaxonomy"))
 
 #' @importFrom BiocGenerics %in% grepl
-.get_taxa_row_match <- function(taxa, td, from, use_grepl = FALSE){
+.get_taxa_row_match <- function(taxa, td, from, use.grepl = FALSE){
     if(is.na(taxa)){
         r_f <- is.na(td[[from]])
     } else {
-        if(use_grepl){
+        if(use.grepl){
             r_f <- grepl(taxa, td[[from]])
         } else {
             r_f <- td[[from]] %in% taxa
@@ -569,11 +578,11 @@ setGeneric("mapTaxonomy",
 }
 
 #' @importFrom BiocGenerics %in% grepl
-.get_taxa_any_match <- function(taxa, td, use_grepl = FALSE){
+.get_taxa_any_match <- function(taxa, td, use.grepl = FALSE){
     if(is.na(taxa)){
         r_f <- is.na(td)
     } else {
-        if(use_grepl){
+        if(use.grepl){
             r_f <- vapply(td,grepl,logical(nrow(td)),pattern=taxa)
         } else {
             r_f <- t(as.matrix(td %in% taxa))
@@ -588,7 +597,8 @@ setGeneric("mapTaxonomy",
 #' @importFrom BiocGenerics %in%
 #' @export
 setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
-    function(x, taxa = NULL, from = NULL, to = NULL, use_grepl = FALSE){
+    function(x, taxa = NULL, from = NULL, to = NULL, use.grepl = use_grepl,
+            use_grepl = FALSE){
         # input check
         if(!checkTaxonomy(x)){
             stop("Non compatible taxonomic information found. ",
@@ -626,8 +636,8 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
                 stop("'from' and 'to' must be different values.", call. = FALSE)    
             }
         }
-        if(!.is_a_bool(use_grepl)){
-            stop("'use_grepl' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(use.grepl)){
+            stop("'use.grepl' must be TRUE or FALSE.", call. = FALSE)
         }
         #
         td <- rowData(x)[,taxonomyRanks(x)]
@@ -639,11 +649,11 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
         c_f <- rep(TRUE,ncol(td))
         if(!is.null(from)){
             r_fs <- lapply(taxa, .get_taxa_row_match, td = td, from = from,
-                            use_grepl = use_grepl)
+                            use.grepl = use.grepl)
             names(r_fs) <- taxa
         } else {
             r_fs <- lapply(taxa, .get_taxa_any_match, td = td,
-                            use_grepl = use_grepl)
+                            use.grepl = use.grepl)
             names(r_fs) <- taxa
         }
         if(!is.null(to)) {
@@ -688,10 +698,11 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment rowData
-.get_tax_groups <- function(x, col, onRankOnly = FALSE, ...){
+.get_tax_groups <- function(x, col, ignore.taxonomy = onRankOnly, 
+    onRankOnly = FALSE, ...){
     # input check
-    if(!.is_a_bool(onRankOnly)){
-        stop("'onRankOnly' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(ignore.taxonomy)){
+        stop("'ignore.taxonomy' must be TRUE or FALSE.", call. = FALSE)
     }
     
     tax_cols <- .get_tax_cols_from_se(x)
@@ -699,7 +710,7 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
     if(length(tax_col_n) < col){
         stop(".")
     }
-    if(onRankOnly){
+    if(ignore.taxonomy){
         groups <- rowData(x)[,tax_cols[tax_col_n == col],drop=TRUE]
     } else {
         groups <- rowData(x)[,tax_cols[tax_col_n <= col],drop=FALSE]

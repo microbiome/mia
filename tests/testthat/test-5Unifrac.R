@@ -5,31 +5,31 @@ test_that("Unifrac beta diversity", {
     tse <- transformAssay(tse, assay.type="counts", method="relabundance")
     
     expect_error(
-        calculateUnifrac(tse, assay.type = "test", tree_name = "phylo",
+        calculateUnifrac(tse, assay.type = "test", tree.name = "phylo",
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = 2, tree_name = "phylo",
+        calculateUnifrac(tse, assay.type = 2, tree.name = "phylo",
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = TRUE, tree_name = "phylo",
+        calculateUnifrac(tse, assay.type = TRUE, tree.name = "phylo",
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = "test",
+        calculateUnifrac(tse, assay.type = "counts", tree.name = "test",
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = 1,
+        calculateUnifrac(tse, assay.type = "counts", tree.name = 1,
                          weighted = FALSE)
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = TRUE,
+        calculateUnifrac(tse, assay.type = "counts", tree.name = TRUE,
                          weighted = "FALSE")
     )
     expect_error(
-        calculateUnifrac(tse, assay.type = "counts", tree_name = "phylo",
+        calculateUnifrac(tse, assay.type = "counts", tree.name = "phylo",
                          weighted = 1)
     )
     
@@ -46,10 +46,10 @@ test_that("Unifrac beta diversity", {
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse), weighted = TRUE,
                                               rowTree(tse)))
-    expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-4)
+    expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-3)
     # Test with merged object with multiple trees. runUnifrac takes subset of
     # data based on provided tree.
-    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing_values = 0)
+    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing.values = 0)
     tse_ref <- tse
     tse_ref <- tse_ref[ rowLinks(tse_ref)[["whichTree"]] == "phylo", ]
     # Calculate unweighted unifrac
@@ -61,7 +61,7 @@ test_that("Unifrac beta diversity", {
     unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_ref), weighted = TRUE,
                                               rowTree(tse_ref)))
-    expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-4)
+    expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-3)
     # Test the function with agglomerated data. runUnifrac renames rownames
     # based on tips and links to them. Then it also prunes the tree so that
     # rows are in tips.

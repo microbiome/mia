@@ -139,5 +139,6 @@ Changes in version 1.13.x
 + add informative error message in rarefyAssay on assays with strictly-negative values 
 + add informative error message in rarefyAssay on assays with strictly-negative values 
 + Use rbiom package in unifrac implementation
++ Updated parameter names to follow naming convention "parameter.name"
 + rename makeTreeSEFrom* and makePhyloseqFromTreeSE functions and combine their
   documentation under new manual page convert
