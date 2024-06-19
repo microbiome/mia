@@ -489,7 +489,7 @@ setMethod(
 #' @importFrom ape drop.tip has.singles collapse.singles
 .prune_tree <- function(tree, nodes){
     # Get those tips that can not be found from provided nodes
-    remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
+    remove_tips <- .get_tips_to_drop(tree, nodes)
     # As long as there are tips to be dropped, run the loop
     while( length(remove_tips) > 0 ){
         # Drop tips that cannot be found. Drop only one layer at the time. Some
@@ -514,7 +514,7 @@ setMethod(
         }
         # Again, get those tips of updated tree that cannot be found from
         # provided nodes
-        remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
+        remove_tips <- .get_tips_to_drop(tree, nodes)
     }
     # Simplify the tree structure. Remove nodes that have only single
     # descendant.
@@ -522,4 +522,17 @@ setMethod(
         tree <- collapse.singles(tree)
     }
     return(tree)
+}
+
+# This function gets tree and nodes as input. As output, it gives set of tips
+# that are not in the set of nodes provided as input.
+.get_tips_to_drop <- function(tree, nodes){
+    # Get those tips cannot be found from node set
+    cannot_be_found <- !tree$tip.label %in% nodes
+    # Get those tips that are duplicated. Single node should match with only
+    # one row.
+    dupl <- duplicated(tree$tip.label)
+    # Get indices of those tips that are going to be removed
+    tips <- which( cannot_be_found | dupl )
+    return(tips)
 }

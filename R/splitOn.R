@@ -394,7 +394,7 @@ setGeneric("unsplitOn",
     if( class_x == "TreeSummarizedExperiment" ){
         # Update or add old tree from the first element of list
         if( update.tree ){
-            ans <- addHierarchyTree(ans)
+            ans <- .agglomerate_trees(ans, MARGIN = MARGIN)
         } else{
             rowTree(ans) <- rowTree(ses[[1L]])
         }

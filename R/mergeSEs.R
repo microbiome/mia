@@ -476,6 +476,8 @@ setMethod("mergeSEs", signature = c(x = "list"),
 
 # Input: tree data and TreeSE
 # Output: TreeSE
+#' @importFrom ape bind.tree drop.tip
+#' @importFrom TreeSummarizedExperiment changeTree
 .check_and_add_trees <- function(tse, trees_and_links, MARGIN, verbose){
     # Give a message if verbose is specified
     if( verbose ){
@@ -503,6 +505,9 @@ setMethod("mergeSEs", signature = c(x = "list"),
     # If there are multiple trees, select non-duplicated trees; the largest
     # take the precedence, remove duplicated rowlinks --> each row is presented
     # in the set only once --> remove trees that do not have any values anymore.
+    # The aim is to subset the dataset so that it is easier to handle in tree
+    # binding step for instance. Otherwise, it would lead to huge tree that
+    # might exceed memory.
     if( length(trees) > 1 ){
         # Sort trees --> trees with highest number of taxa first
         max_trees <- table(links$whichTree)
@@ -517,27 +522,27 @@ setMethod("mergeSEs", signature = c(x = "list"),
         # Subset trees
         trees <- trees[unique(links$whichTree)]
     }
-    
-    # Order the data to match created TreeSE
-    links <- links[rownames(tse), ]
-    trees <- trees[unique(links$whichTree)]
-    
-    # Create a LinkDataFrame based on the link data
-    links <- LinkDataFrame(
-        nodeLab = links[["nodeLab"]],
-        nodeNum = links[["nodeNum"]],
-        nodeLab_alias = links[["nodeLab_alias"]],
-        isLeaf = links[["isLeaf"]],
-        whichTree = links[["whichTree"]]
-    )
-    # Add the data in correct slot based on MARGIN
-    if(MARGIN == "row" ){
-        tse@rowTree <- trees
-        tse@rowLinks <- links
-    } else{
-        tse@colTree <- trees
-        tse@colLinks <- links
+    # Combine trees into single tree.
+    tree <- trees[[1]]
+    trees[[1]] <- NULL
+    for( t in trees ){
+        tree <- bind.tree(tree, t)
     }
+    # Prune the tree so that it includes rows in tips. This step removes
+    # additional tips, i.e., only tips that are in rows are preserved. Also
+    # it simplifies the structure preserving the necessary information on the
+    # dataset. Moreover, it ensures that there are no duplicated tips which
+    # might be the case if the merged trees had shared taxa in addition to
+    # unique taxa.
+    tree <- .prune_tree(tree, links[["nodeLab"]])
+    # Add the data in correct slot based on MARGIN
+    args <- list(tse, tree, links[["nodeLab"]])
+    arg_names <- switch(
+        MARGIN,
+        "row" = c("x", "rowTree", "rowNodeLab"),
+        "col" = c("x", "colTree", "colNodeLab"))
+    names(args) <- arg_names
+    tse <- do.call(changeTree, args)
     return(tse)
 }
 
