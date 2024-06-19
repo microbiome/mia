@@ -478,7 +478,8 @@ setMethod("mergeSEs", signature = c(x = "list"),
 # Output: TreeSE
 #' @importFrom ape bind.tree drop.tip
 #' @importFrom TreeSummarizedExperiment changeTree
-.check_and_add_trees <- function(tse, trees_and_links, MARGIN, verbose){
+.check_and_add_trees <- function(
+        tse, trees_and_links, MARGIN = "row", verbose = FALSE, ...){
     # Give a message if verbose is specified
     if( verbose ){
         message("Adding ", MARGIN, "Tree(s)...")
@@ -501,7 +502,6 @@ setMethod("mergeSEs", signature = c(x = "list"),
                 "is discarded.", call. = FALSE)
         return(tse)
     }
-    
     # If there are multiple trees, select non-duplicated trees; the largest
     # take the precedence, remove duplicated rowlinks --> each row is presented
     # in the set only once --> remove trees that do not have any values anymore.
