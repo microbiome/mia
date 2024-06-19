@@ -15,9 +15,12 @@
 importBIOM(file, ...)
 
 convertFromBIOM(
-  obj,
+  x,
+  prefix.rm = removeTaxaPrefixes,
   removeTaxaPrefixes = FALSE,
+  rank.from.prefix = rankFromPrefix,
   rankFromPrefix = FALSE,
+  artifact.rm = remove.artifacts,
   remove.artifacts = FALSE,
   ...
 )
@@ -38,28 +41,30 @@ convertToPhyloseq(x, ...)
 \item{...}{Addional arguments. For \code{convertFromDADA2}, see
 \code{mergePairs} function for more details.}
 
-\item{obj}{BIOM object to be converted to a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
-
-\item{removeTaxaPrefixes}{\code{TRUE} or \code{FALSE}: Should
-taxonomic prefixes be removed? The prefixes is removed only from detected
-taxa columns meaning that \code{rankFromPrefix} should be enabled in the most
-cases.
-(default \code{removeTaxaPrefixes = FALSE})}
-
-\item{rankFromPrefix}{\code{TRUE} or \code{FALSE}: If file does not have
-taxonomic ranks on feature table, should they be scraped from prefixes?
-(default \code{rankFromPrefix = FALSE})}
-
-\item{remove.artifacts}{\code{TRUE} or \code{FALSE}: If file have
-some taxonomic character naming artifacts, should they be removed.
-(default \code{remove.artifacts = FALSE})}
-
-\item{phy}{a \code{phyloseq} object}
-
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object}
+
+\item{prefix.rm}{\code{TRUE} or \code{FALSE}: Should
+taxonomic prefixes be removed? The prefixes is removed only from detected
+taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
+(default \code{prefix.rm = FALSE})}
+
+\item{removeTaxaPrefixes}{Deprecated. Use \code{prefix.rm} instead.}
+
+\item{rank.from.prefix}{\code{TRUE} or \code{FALSE}: If file does not have
+taxonomic ranks on feature table, should they be scraped from prefixes?
+(default \code{rank.from.prefix = FALSE})}
+
+\item{rankFromPrefix}{Deprecated.Use \code{rank.from.prefix} instead.}
+
+\item{artifact.rm}{\code{TRUE} or \code{FALSE}: If file have
+some taxonomic character naming artifacts, should they be removed.
+(default \code{artifact.rm = FALSE})}
+
+\item{remove.artifacts}{Deprecated. Use \code{artifact.rm} instead.}
+
+\item{phy}{a \code{phyloseq} object}
 
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
@@ -79,6 +84,9 @@ tree will be included in the phyloseq object that is created,
 tree will be included in the phyloseq object that is created,
 (By default: \code{tree_name = "phylo"})
 \code{tree_name} will be deprecated. Use \code{tree.name} instead.}
+
+\item{obj}{BIOM object to be converted to a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 }
 \value{
 \code{importBIOM} returns an object of class
@@ -140,12 +148,12 @@ tse <- importBIOM(biom_file)
 
 # Make TreeSE from biom object
 biom_object <- biomformat::read_biom(biom_file)
-tse <- makeTreeSEFromBiom(biom_object)
+tse <- convertFromBIOM(biom_object)
 
 # Get taxonomyRanks from prefixes and remove prefixes
 tse <- importBIOM(biom_file,
-                    rankFromPrefix = TRUE,
-                    removeTaxaPrefixes = TRUE)
+                    rank.from.prefix = TRUE,
+                    prefix.rm = TRUE)
 
 # Load another biom file
 biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
@@ -153,7 +161,7 @@ biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
 
 # Clean artifacts from taxonomic data
 tse <- importBIOM(biom_file,
-                    remove.artifacts = TRUE)
+                    artifact.rm = TRUE)
 
 ### Coerce DADA2 results to a TreeSE object
 if(requireNamespace("dada2")) {

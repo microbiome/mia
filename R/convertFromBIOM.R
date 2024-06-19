@@ -64,7 +64,7 @@
 #' 
 #' # Make TreeSE from biom object
 #' biom_object <- biomformat::read_biom(biom_file)
-#' tse <- makeTreeSEFromBiom(biom_object)
+#' tse <- convertFromBIOM(biom_object)
 #' 
 #' # Get taxonomyRanks from prefixes and remove prefixes
 #' tse <- importBIOM(biom_file,
@@ -95,7 +95,7 @@ importBIOM <- function(file, ...) {
 #' @importFrom dplyr %>% bind_rows
 #' @rdname convert
 #' @export
-makeTreeSEFromBiom <- function(
+convertFromBIOM <- function(
         x, prefix.rm = removeTaxaPrefixes, 
         removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix, 
         rankFromPrefix = FALSE,
@@ -210,14 +210,6 @@ makeTreeSEFromBiom <- function(
         colData = sample_data,
         rowData = feature_data)
     return(tse)
-}
-
-####################### makeTreeSummarizedExperimentFromBiom ###################
-#' @param x object of type \code{\link[biomformat:read_biom]{biom}}
-#' @rdname makeTreeSEFromBiom
-#' @export
-makeTreeSummarizedExperimentFromBiom <- function(x, ...){
-    makeTreeSEFromBiom(x, ...)
 }
 
 ################################ HELP FUNCTIONS ################################
