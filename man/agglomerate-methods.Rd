@@ -358,8 +358,7 @@ tse <- GlobalPatterns
 tse <- agglomerateByPrevalence(tse,
                               rank = "Phylum",
                               detection = 1/100,
-                              prevalence = 50/100,
-                              as.relative = TRUE)
+                              prevalence = 50/100)
 
 tse
 

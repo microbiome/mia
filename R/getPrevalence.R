@@ -20,11 +20,6 @@
 #' @param sort logical scalar: Should the result be sorted by prevalence?
 #'   (default: \code{FALSE})
 #'
-#' @param as.relative logical scalar: Should the detection threshold be applied
-#'   on compositional (relative) abundances? (default: \code{FALSE})
-#' 
-#' @param as_relative Deprecated. Use \code{as.relative} instead.
-#'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for prevalence calculation.
@@ -57,13 +52,11 @@
 #' }
 #'
 #' @details
-#' \code{getPrevalence} calculates the relative frequency of samples that exceed
+#' \code{getPrevalence} calculates the frequency of samples that exceed
 #' the detection threshold. For \code{SummarizedExperiment} objects, the
 #' prevalence is calculated for the selected taxonomic rank, otherwise for the
 #' rows. The absolute population prevalence can be obtained by multiplying the
-#' prevalence by the number of samples (\code{ncol(x)}). If \code{as.relative =
-#' FALSE} the relative frequency (between 0 and 1) is used to check against the
-#' \code{detection} threshold.
+#' prevalence by the number of samples (\code{ncol(x)}). 
 #'
 #' The core abundance index from \code{getPrevalentAbundance} gives the relative
 #' proportion of the core species (in between 0 and 1). The core taxa are
@@ -123,8 +116,7 @@
 #' # Get prevalence estimates for individual ASV/OTU
 #' prevalence.frequency <- getPrevalence(tse,
 #'                                       detection = 0,
-#'                                       sort = TRUE,
-#'                                       as.relative = TRUE)
+#'                                       sort = TRUE)
 #' head(prevalence.frequency)
 #'
 #' # Get prevalence estimates for phylums
@@ -132,8 +124,7 @@
 #' prevalence.frequency <- getPrevalence(tse,
 #'                                       rank = "Phylum",
 #'                                       detection = 0,
-#'                                       sort = TRUE,
-#'                                       as.relative = TRUE)
+#'                                       sort = TRUE)
 #' head(prevalence.frequency)
 #'
 #' # - to obtain population counts, multiply frequencies with the sample size,
@@ -148,32 +139,28 @@
 #' prevalent <- getPrevalent(tse,
 #'                             rank = "Phylum",
 #'                             detection = 10,
-#'                             prevalence = 50/100,
-#'                             as.relative = FALSE)
+#'                             prevalence = 50/100)
 #' head(prevalent)
 #'
 #' # Gets a subset of object that includes prevalent taxa
 #' altExp(tse, "prevalent") <- subsetByPrevalent(tse,
 #'                                              rank = "Family",
 #'                                              detection = 0.001,
-#'                                              prevalence = 0.55,
-#'                                              as.relative = TRUE)
+#'                                              prevalence = 0.55)
 #' altExp(tse, "prevalent")
 #'
 #' # getRare returns the inverse
 #' rare <- getRare(tse,
 #'                     rank = "Phylum",
 #'                     detection = 1/100,
-#'                     prevalence = 50/100,
-#'                     as.relative = TRUE)
+#'                     prevalence = 50/100)
 #' head(rare)
 #'
 #' # Gets a subset of object that includes rare taxa
 #' altExp(tse, "rare") <- subsetByRare(tse,
 #'                                     rank = "Class",
 #'                                     detection = 0.001,
-#'                                     prevalence = 0.001,
-#'                                     as.relative = TRUE)
+#'                                     prevalence = 0.001)
 #' altExp(tse, "rare")
 #'
 #' # Names of both experiments, prevalent and rare, can be found from slot
@@ -273,19 +260,12 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts",
-            as.relative = as_relative, as_relative = FALSE, rank = NULL, ...){
-        # input check
-        if(!.is_a_bool(as.relative)){
-            stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
-        }
+            rank = NULL, ...){
 
         # check assay
         .check_assay_present(assay.type, x)
         x <- .agg_for_prevalence(x, rank = rank, ...)
         mat <- assay(x, assay.type)
-        if (as.relative) {
-            mat <- .calc_rel_abund(mat)
-        }
         getPrevalence(mat, ...)
     }
 )
@@ -546,8 +526,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' tse <- agglomerateByPrevalence(tse,
 #'                               rank = "Phylum",
 #'                               detection = 1/100,
-#'                               prevalence = 50/100,
-#'                               as.relative = TRUE)
+#'                               prevalence = 50/100)
 #'
 #' tse
 #'

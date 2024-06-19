@@ -9,30 +9,16 @@ test_that("getPrevalence", {
                  "'include.lowest' must be TRUE or FALSE")
     expect_error(getPrevalence(GlobalPatterns, sort="test"),
                  "'sort' must be TRUE or FALSE")
-    expect_error(getPrevalence(GlobalPatterns, as.relative="test"),
-                 "'as.relative' must be TRUE or FALSE")
     expect_error(getPrevalence(GlobalPatterns, assay.type="test"),
                  "'assay.type' must be a valid name")
     # Output should be always a frequency between 0 to 1
-    pr <- getPrevalence(GlobalPatterns, detection=0.1/100, as.relative=TRUE)
+    pr <- getPrevalence(GlobalPatterns, detection=0.1/100)
     expect_true(min(pr) >= 0 && max(pr) <= 1)
-    pr <- getPrevalence(GlobalPatterns, detection=0.1/100, as.relative=FALSE)
-    expect_true(min(pr) >= 0 && max(pr) <= 1)
-
-    # Same prevalences should be returned for as.relative T/F in certain cases.
-    pr1 <- getPrevalence(GlobalPatterns, detection=1, include.lowest=TRUE, as.relative=FALSE)
-    pr2 <- getPrevalence(GlobalPatterns, detection=0/100, include.lowest=FALSE, as.relative=TRUE)
-    expect_true(all(pr1 == pr2))
-
-    # Same prevalences should be returned for as.relative T/F in certain cases.
-    pr1 <- getPrevalence(GlobalPatterns, detection=1, include.lowest=TRUE, as.relative=FALSE)
-    pr2 <- getPrevalence(GlobalPatterns, detection=0, include.lowest=FALSE, as.relative=FALSE)
-    expect_true(all(pr1 == pr2))
 
     # Different ways to use relative abundance should yield the same output
-    pr2 <- getPrevalence(GlobalPatterns, as.relative=TRUE, assay.type = "counts")
+    pr2 <- getPrevalence(GlobalPatterns, assay.type = "counts")
     GlobalPatterns <- transformAssay(GlobalPatterns, method="relabundance")
-    pr1 <- getPrevalence(GlobalPatterns, as.relative=FALSE, assay.type = "relabundance")
+    pr1 <- getPrevalence(GlobalPatterns, assay.type = "relabundance")
     expect_true(all(pr1 == pr2))
 
     # Sorting should put the top values first
@@ -54,12 +40,12 @@ test_that("getPrevalence", {
     gp_null <- GlobalPatterns
     rownames(gp_null) <- NULL
 
-    pr1 <- unname(getPrevalence(GlobalPatterns, detection=0.004, as.relative=TRUE))
-    pr2 <- getPrevalence(gp_null, detection=0.004, as.relative=TRUE)
+    pr1 <- unname(getPrevalence(GlobalPatterns, detection=0.004))
+    pr2 <- getPrevalence(gp_null, detection=0.004)
     expect_equal(pr1, pr2)
 
-    pr1 <- getPrevalence(GlobalPatterns, detection=0.004, as.relative=TRUE, rank = "Family")
-    pr2 <- getPrevalence(gp_null, detection=0.004, as.relative=TRUE, rank = "Family")
+    pr1 <- getPrevalence(GlobalPatterns, detection=0.004, rank = "Family")
+    pr2 <- getPrevalence(gp_null, detection=0.004, rank = "Family")
     expect_equal(pr1, pr2)
 
     # Check that na.rm works correctly
@@ -123,43 +109,23 @@ test_that("getPrevalent", {
     data(GlobalPatterns, package="mia")
     expect_error(getPrevalent(GlobalPatterns, prevalence="test"),
                  "'prevalence' must be a single numeric value or coercible to one")
-    # Results compatible with getPrevalence
-    pr1 <- getPrevalent(GlobalPatterns, detection=0.1/100, as.relative=TRUE, sort=TRUE)
-    pr2 <- names(getPrevalence(GlobalPatterns, rank = "Kingdom", detection=0.1/100, as.relative=TRUE, sort=TRUE))
-    expect_true(all(pr1 == pr2))
-
-    # Same sorting for toptaxa obtained in different ways
-    pr1 <- getPrevalent(GlobalPatterns, detection=0.1/100, as.relative=TRUE, sort=TRUE)
-    pr2 <- names(getPrevalence(GlobalPatterns, rank = "Kingdom", detection=0.1/100, as.relative=TRUE, sort=TRUE))
-    expect_true(all(pr1 == pr2))
-
-    # Retrieved taxa are the same for counts and relative abundances
-    pr1 <- getPrevalent(GlobalPatterns, prevalence=0.1/100, as.relative=TRUE)
-    pr2 <- getPrevalent(GlobalPatterns, prevalence=0.1/100, as.relative=FALSE)
-    expect_true(all(pr1 == pr2))
-
-    # Prevalence and detection threshold at 0 has the same impact on counts and relative abundances
-    pr1 <- getPrevalent(GlobalPatterns, detection=0, prevalence=0, as.relative=TRUE)
-    pr2 <- getPrevalent(GlobalPatterns, detection=0, prevalence=0, as.relative=FALSE)
-    expect_true(all(pr1 == pr2))
-
     # Check that works also when rownames is NULL
     gp_null <- GlobalPatterns
     rownames(gp_null) <- NULL
 
-    pr1 <- getPrevalent(GlobalPatterns, detection=0.0045, prevalence = 0.25, as.relative=TRUE)
+    pr1 <- getPrevalent(GlobalPatterns, detection=0.0045, prevalence = 0.25)
     pr1 <- which(rownames(GlobalPatterns) %in% pr1)
-    pr2 <- getPrevalent(gp_null, detection=0.0045, prevalence = 0.25, as.relative=TRUE)
+    pr2 <- getPrevalent(gp_null, detection=0.0045, prevalence = 0.25)
     expect_equal(pr1, pr2)
 
     # Test alias
-    alias <- getPrevalent(gp_null, detection=0.0045, prevalence = 0.25, as.relative=TRUE)
+    alias <- getPrevalent(gp_null, detection=0.0045, prevalence = 0.25)
     expect_equal(pr1, alias)
 
     pr1 <- getPrevalent(GlobalPatterns, detection=0.004, prevalence = 0.1,
-                            as.relative=TRUE, rank = "Family")
+                rank = "Family")
     pr2 <- getPrevalent(gp_null, detection=0.004, prevalence = 0.1,
-                            as.relative=TRUE, rank = "Family")
+                rank = "Family")
     expect_equal(pr1, pr2)
 
 })
@@ -219,13 +185,13 @@ test_that("getRare", {
                                            prevalence = 0.05,
                                            detection = 0.1,
                                            rank = rank,
-                                           include.lowest = TRUE, as.relative = TRUE)
+                                           include.lowest = TRUE)
         # Gets rare taxa
         rare_taxa <- getRare(GlobalPatterns,
                                  prevalence = 0.05,
                                  detection = 0.1,
                                  rank = rank,
-                                 include.lowest = TRUE, as.relative = TRUE)
+                                 include.lowest = TRUE)
 
         # Concatenates prevalent and rare taxa
         prevalent_and_rare_taxa <- c(prevalent_taxa, rare_taxa)
@@ -246,19 +212,19 @@ test_that("getRare", {
     gp_null <- GlobalPatterns
     rownames(gp_null) <- NULL
 
-    pr1 <- getRare(GlobalPatterns, detection=0.0045, prevalence = 0.25, as.relative=TRUE)
+    pr1 <- getRare(GlobalPatterns, detection=0.0045, prevalence = 0.25)
     pr1 <- which(rownames(GlobalPatterns) %in% pr1)
-    pr2 <- getRare(gp_null, detection=0.0045, prevalence = 0.25, as.relative=TRUE)
+    pr2 <- getRare(gp_null, detection=0.0045, prevalence = 0.25)
     expect_equal(pr1, pr2)
 
     # Test lias
-    alias <- getRare(gp_null, detection=0.0045, prevalence = 0.25, as.relative=TRUE)
+    alias <- getRare(gp_null, detection=0.0045, prevalence = 0.25)
     expect_equal(pr1, alias)
 
     pr1 <- getRare(GlobalPatterns, detection=0.004, prevalence = 0.1,
-                       as.relative=TRUE, rank = "Family")
+               rank = "Family")
     pr2 <- getRare(gp_null, detection=0.004, prevalence = 0.1,
-                       as.relative=TRUE, rank = "Family")
+                rank = "Family")
     expect_equal(pr1, pr2)
 
 })
@@ -272,20 +238,8 @@ test_that("subsetByPrevalent", {
 
     # Results compatible with getPrevalent
     pr1 <- rownames(subsetByPrevalent(
-        GlobalPatterns, rank = "Class", detection=0.1/100,
-        as.relative=TRUE, sort=TRUE))
-    pr2 <- getPrevalent(GlobalPatterns, rank = "Class", detection=0.1/100,
-                            as.relative=TRUE, sort=TRUE)
-    expect_true(all(pr1 == pr2))
-
-    # Retrieved taxa are the same for counts and relative abundances
-    pr1 <- assay(subsetByPrevalent(GlobalPatterns, prevalence=0.1/100, as.relative=TRUE), "counts")
-    pr2 <- assay(subsetByPrevalent(GlobalPatterns, prevalence=0.1/100, as.relative=FALSE), "counts")
-    expect_true(all(pr1 == pr2))
-
-    # Prevalence and detection threshold at 0 has the same impact on counts and relative abundances
-    pr1 <- rownames(subsetByPrevalent(GlobalPatterns, detection=0, prevalence=0, as.relative=TRUE))
-    pr2 <- rownames(subsetByPrevalent(GlobalPatterns, detection=0, prevalence=0, as.relative=FALSE))
+        GlobalPatterns, rank = "Class", detection=0.1/100, sort=TRUE))
+    pr2 <- getPrevalent(GlobalPatterns, rank = "Class", detection=0.1/100, sort=TRUE)
     expect_true(all(pr1 == pr2))
 
     # Check that works also when rownames is NULL
@@ -320,30 +274,16 @@ test_that("subsetByRare", {
 
     # Results compatible with getRare
     pr1 <- rownames(subsetByRare(
-        GlobalPatterns, rank = "Phylum", detection=0.1/100,
-        as.relative=TRUE, sort=TRUE))
-    pr2 <- getRare(GlobalPatterns, rank = "Phylum", detection=0.1/100,
-                       as.relative=TRUE, sort=TRUE)
-    expect_true(all(pr1 == pr2))
-
-    # Retrieved taxa are the same for counts and relative abundances
-    pr1 <- assay(subsetByRare(GlobalPatterns, prevalence=0.1/100, as.relative=TRUE), "counts")
-    pr2 <- assay(subsetByRare(GlobalPatterns, prevalence=0.1/100, as.relative=FALSE), "counts")
-    expect_true(all(pr1 == pr2))
-
-    # Prevalence and detection threshold at 0 has the same impact on counts and relative abundances
-    pr1 <- rownames(subsetByRare(GlobalPatterns, detection=0, prevalence=0, as.relative=TRUE))
-    pr2 <- rownames(subsetByRare(GlobalPatterns, detection=0, prevalence=0, as.relative=FALSE))
+        GlobalPatterns, rank = "Phylum", detection=0.1/100, sort=TRUE))
+    pr2 <- getRare(GlobalPatterns, rank = "Phylum", detection=0.1/100, sort=TRUE)
     expect_true(all(pr1 == pr2))
 
     # subsetByRare + subsetByPrevalent should include all the taxa in OTU level
     d <- runif(1, 0.0001, 0.1)
     p <- runif(1, 0.0001, 0.5)
-    rare <- rownames(subsetByRare(GlobalPatterns, detection=d, prevalence=p,
-                                      as.relative=TRUE))
+    rare <- rownames(subsetByRare(GlobalPatterns, detection=d, prevalence=p))
 
-    prevalent <- rownames(subsetByPrevalent(GlobalPatterns, detection=d, prevalence=p,
-                                                as.relative=TRUE))
+    prevalent <- rownames(subsetByPrevalent(GlobalPatterns, detection=d, prevalence=p))
 
     all_taxa <- c(rare, prevalent)
 
@@ -385,31 +325,17 @@ test_that("agglomerateByPrevalence", {
                                       rank = "Phylum",
                                       detection = 1/100,
                                       prevalence = 50/100,
-                                      as.relative = TRUE,
                                       other.label = "test")
     expect_s4_class(actual,class(GlobalPatterns))
-    expect_equal(dim(actual),c(6,26))
-    expect_equal(rowData(actual)[6,"Phylum"],"test")
+    expect_equal(dim(actual),c(35,26))
+    expect_equal(rowData(actual)[35,"Phylum"],"test")
 
     actual <- agglomerateByPrevalence(GlobalPatterns,
                                       rank = NULL,
                                       detection = 0.0001,
                                       prevalence = 50/100,
-                                      as.relative = TRUE,
                                       other.label = "test")
-    expect_equal(agglomerateByPrevalence(GlobalPatterns,
-                                           rank = NULL,
-                                           detection = 0.0001,
-                                           prevalence = 50/100,
-                                           as.relative = TRUE,
-                                           other.label = "test"),
-                 agglomerateByPrevalence(GlobalPatterns,
-                                           rank = NULL,
-                                           detection = 0.0001,
-                                           prevalence = 50/100,
-                                           as.relative = TRUE,
-                                           other.label = "test"))
     expect_s4_class(actual,class(GlobalPatterns))
-    expect_equal(dim(actual),c(6,26))
-    expect_true(all(is.na(rowData(actual)[6,])))
+    expect_equal(dim(actual),c(1503,26))
+    expect_true(all(is.na(rowData(actual)["test",])))
 })

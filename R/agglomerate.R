@@ -53,14 +53,10 @@
 #'        \item \code{make.unique}: A single boolean value for selecting
 #'        whether to make rownames unique. (By default: \code{make.unique = TRUE})
 #'        \item \code{detection}: Detection threshold for absence/presence.
-#'        Either an absolute value compared directly to the values of \code{x}
-#'        or a relative value between 0 and 1, if \code{as.relative = FALSE}.
+#'        It is an absolute value compared directly to the values of \code{x}
 #'        \item \code{prevalence}: Prevalence threshold (in 0 to 1). The
 #'        required prevalence is strictly greater by default. To include the
 #'        limit, set \code{include.lowest} to \code{TRUE}.
-#'        \item \code{as.relative}: Logical scalar: Should the detection
-#'        threshold be applied on compositional (relative) abundances?
-#'        (default: \code{FALSE})
 #'        \item \code{update.refseq} \code{TRUE} or \code{FALSE}: Should a
 #'        consensus sequence be calculated? If set to \code{FALSE}, the result
 #'        from \code{archetype} is returned; If set to \code{TRUE} the result
