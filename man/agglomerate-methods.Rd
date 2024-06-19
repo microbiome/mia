@@ -75,6 +75,7 @@ agglomerateByPrevalence(x, ...)
 \S4method{agglomerateByPrevalence}{TreeSummarizedExperiment}(
   x,
   rank = NULL,
+  other.label = other_label,
   other_label = "Other",
   agglomerate.tree = FALSE,
   ...
@@ -171,7 +172,9 @@ nested alternative experiments by default (default:
 
 \item{strip_altexp}{Deprecated. Use \code{altexp.rm} instead.}
 
-\item{agglomerate.tree}{Deprecated. Use \code{update.tree} instead.}
+\item{agglomerate.tree}{\code{TRUE} or \code{FALSE}: should
+\code{rowTree()} also be agglomerated? (Default:
+\code{agglomerate.tree = FALSE})}
 
 \item{agglomerateTree}{Deprecated. Use \code{update.tree} instead.}
 
