@@ -84,7 +84,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
                               prefix.rm=TRUE,
                               rank.from.prefix=TRUE,
                               artifact.rm = TRUE)
-    tse <- makeTreeSEFromBiom(biom_object,
+    tse <- convertFromBIOM(biom_object,
                                 prefix.rm=TRUE,
                                 rank.from.prefix=TRUE,
                                 artifact.rm = TRUE)

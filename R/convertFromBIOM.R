@@ -1,7 +1,11 @@
 #' Converters
 #'
 #' For convenience a few functions are available to convert BIOM, DADA2 and 
-#' phyloseq objects to TreeSE objects and TreeSE objects to phyloseq objects.
+#' phyloseq objects to 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' objects and 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' objects to phyloseq objects.
 #'
 #' @param file BIOM file location
 #' 

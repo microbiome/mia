@@ -106,7 +106,11 @@ tree will be included in the phyloseq object that is created,
 }
 \description{
 For convenience a few functions are available to convert BIOM, DADA2 and
-phyloseq objects to TreeSE objects and TreeSE objects to phyloseq objects.
+phyloseq objects to
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+objects and
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+objects to phyloseq objects.
 }
 \details{
 \code{convertFromBIOM} coerces a BIOM object to a
