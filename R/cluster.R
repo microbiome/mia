@@ -6,6 +6,10 @@
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
+#' 
+#' @param by A character value for selecting if association are calculated
+#'   row-wise / for features ('rows') or column-wise / for samples ('cols').
+#'   Must be \code{'rows'} or \code{'cols'}.
 #'   
 #' @param clust.col A single character value indicating the name of the 
 #'   \code{rowData} (or \code{colData}) where the data will be stored.

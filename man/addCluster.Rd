@@ -46,6 +46,10 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
+\item{by}{A character value for selecting if association are calculated
+row-wise / for features ('rows') or column-wise / for samples ('cols').
+Must be \code{'rows'} or \code{'cols'}.}
+
 \item{MARGIN}{A single character value for specifying whether the
 transformation is applied sample (column) or feature (row) wise.
 (By default: \code{MARGIN = "samples"})}
