@@ -626,10 +626,10 @@ setMethod("agglomerateByPrevalence",
       if( merge_refseq ){
         refSeq <- referenceSeq(x)
       }
+      x <- callNextMethod()
       if( merge_refseq ){
         referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
       }
-      x <- callNextMethod()
       # optionally merge rowTree
       if( agglomerate.tree ){
         x <- .agglomerate_trees(x, 1)
