@@ -122,6 +122,16 @@ experiments and flattens them again into a single
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  other.label <span class="op">=</span> <span class="va">other_label</span>,</span>
+<span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  agglomerate.tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">agglomerateByRanks</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for SummarizedExperiment</span></span>
@@ -245,7 +255,9 @@ nested alternative experiments by default (default:
 
 
 <dt>agglomerate.tree</dt>
-<dd><p>Deprecated. Use <code>update.tree</code> instead.</p></dd>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: should
+<code>rowTree()</code> also be agglomerated? (Default:
+<code>agglomerate.tree = FALSE</code>)</p></dd>
 
 
 <dt>agglomerateTree</dt>
@@ -568,22 +580,23 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByPrevalence</span><span class="op">(</span><span class="va">tse</span>,</span></span>
 <span class="r-in"><span>                              rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                              detection <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                              prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                              prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span>,</span></span>
+<span class="r-in"><span>                              as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tse</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 35 26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 6 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(2): agglomerated_by_rank agglomerated_by_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(35): AD3 Acidobacteria ... WS3 Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(6): Actinobacteria Bacteroidetes ... Proteobacteria Other</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (6 rows)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
@@ -594,42 +607,13 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-in"><span><span class="co"># that are below the prevalence threshold.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">assay</span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     CL3    CC1    SV1 M31Fcsw M11Fcsw</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AD3                1299  15577     17       2       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Acidobacteria    269202 183132  92863     120     115</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria    39601  90280 121703    2540     841</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Armatimonadetes     782   1124   1972       0       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BRC1                570    304     24       1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes     67395  96398  93436  804395 1424107</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chlamydiae          265    702     22       0       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chlorobi            301    788     57       1       5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chloroflexi        5053  20886   5583      11      13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Crenarchaeota      1215   1240  28796       3       3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Cyanobacteria      1955   3353  16676     423  212812</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Elusimicrobia      2722   2122    700       1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Euryarchaeota        47      8     15      30      54</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Firmicutes         8584   4726   3524  700084  330423</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fusobacteria       4306    692   1234      34      56</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GN04                  1      0      0       2       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Gemmatimonadetes   5678  11003  13072       3       8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Lentisphaerae        14      5      2       3    6630</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Nitrospirae         239    482    837       0       2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> OP3                 227    104      4       0       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> OP8                   1      2      2       1       3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Planctomycetes    27633  53963  48683      43      36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Proteobacteria   294228 361327 224004   18798   86614</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SAR406                3      4      1       0       6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SBR1093               5      5      0       0       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SC4                  37    249   6851       1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SPAM               9791  11839    307       2       8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Spirochaetes        564    592    136       1       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TM6                  41    482      6       0       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tenericutes         469    166    215    6305    8680</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Thermi                2     26    527       0       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Verrucomicrobia  114977 269430  35754   10580    6023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> WPS-2              3472    398     22       3       2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> WS3                2642   2361      5       1       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Other               749   1635    393      63      30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   CL3    CC1    SV1 M31Fcsw M11Fcsw</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Actinobacteria  39601  90280 121703    2540     841</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bacteroidetes   67395  96398  93436  804395 1424107</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cyanobacteria    1955   3353  16676     423  212812</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Firmicutes       8584   4726   3524  700084  330423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Proteobacteria 294228 361327 224004   18798   86614</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Other          452307 579321 238100   17211   21679</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># print the available taxonomic ranks</span></span></span>
