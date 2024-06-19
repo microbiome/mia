@@ -124,9 +124,10 @@ and \code{subsetByRare} additional parameters passed to
 \code{getPrevalent}
 }}
 
-\item{detection}{Detection threshold for absence/presence. Either an
-absolute value compared directly to the values of \code{x} or a relative
-value between 0 and 1, if \code{as.relative = FALSE}.}
+\item{detection}{Detection threshold for absence/presence. If \code{as_relative = FALSE},
+it sets the counts threshold for a taxon to be considered present.
+If \code{as_relative = TRUE}, it sets the relative abundance threshold
+for a taxon to be considered present. (default: \code{detection = 0})}
 
 \item{include.lowest}{logical scalar: Should the lower boundary of the
 detection and prevalence cutoffs be included? (default: \code{FALSE})}
