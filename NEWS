@@ -139,3 +139,4 @@ calculateCCA to getCCA
 + add informative error message in rarefyAssay on assays with strictly-negative values 
 + Use rbiom package in unifrac implementation
 + Updated parameter names to follow naming convention "parameter.name"
++ Fix tree merging in unsplit and mergeSEs functions
