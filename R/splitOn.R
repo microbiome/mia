@@ -9,7 +9,7 @@
 #' @param f A single character value for selecting the grouping variable
 #'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
 #'   with the same length as one of the dimensions. If \code{f} matches with both
-#'   dimensions, \code{MARGIN} must be specified. 
+#'   dimensions, \code{by} must be specified. 
 #'   Split by cols is not encouraged, since this is not compatible with 
 #'   storing the results in \code{altExps}.
 #'
@@ -84,8 +84,8 @@
 #' # Split based on rows
 #' # Each element is named based on their group name. If you don't want to name
 #' # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
-#' # you must use MARGIN.
-#' se_list <- splitOn(tse, f = "group", use.names = FALSE, MARGIN = 1)
+#' # you must use `by`.
+#' se_list <- splitOn(tse, f = "group", use.names = FALSE, by = 1)
 #' 
 #' # When column names are shared between elements, you can store the list to altExps
 #' altExps(tse) <- se_list
@@ -107,9 +107,9 @@ setGeneric("splitOn",
             function(x, ...)
                 standardGeneric("splitOn"))
 
-# This function collects f (grouping variable), MARGIN, and 
+# This function collects f (grouping variable), by, and 
 # use.names and returns them as a list.
-.norm_args_for_split_by <- function(x, f, MARGIN = NULL, use.names = use_names,
+.norm_args_for_split_by <- function(x, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
                                     use_names = TRUE, ...){
     # input check
     # Check f
@@ -118,9 +118,9 @@ setGeneric("splitOn",
             " vector coercible to factor alongside the one of the dimensions of 'x'",
             call. = FALSE)
     }
-    # Check MARGIN
-    if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
-        stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
+    # Check by
+    if( !(is.null(by) || (is.numeric(by) && (by == 1 || by == 2 ))) ){
+        stop("'by' must be NULL, 1, or 2.", call. = FALSE )
     }
     # If f is a vector containing levels
     if( !.is_non_empty_string(f) ){
@@ -132,32 +132,32 @@ setGeneric("splitOn",
                 " vector coercible to factor alongside the on of the ",
                 "dimensions of 'x'.",
                 call. = FALSE)
-        # If it matches with both dimensions, give error if MARGIN is not specified
-        } else if( is.null(MARGIN) && all(length(f) == dim(x)) ){
+        # If it matches with both dimensions, give error if by is not specified
+        } else if( is.null(by) && all(length(f) == dim(x)) ){
             stop("The length of 'f' matches with nrow and ncol. ",
-                "Please specify 'MARGIN'.", call. = FALSE)
-        # If MARGIN is specified but it does not match with length of f
-        } else if( !is.null(MARGIN) && (length(f) !=  dim(x)[[MARGIN]]) ){
+                "Please specify 'by'.", call. = FALSE)
+        # If by is specified but it does not match with length of f
+        } else if( !is.null(by) && (length(f) !=  dim(x)[[by]]) ){
             stop("'f' does not match with ", 
-                ifelse(MARGIN==1, "nrow", "ncol"), ". Please check 'MARGIN'.",
+                ifelse(by==1, "nrow", "ncol"), ". Please check 'by'.",
                 call. = FALSE)
         # IF f matches with nrow
-        } else if(length(f) == dim(x)[[1]] && is.null(MARGIN)  ){
-            MARGIN <- 1L
+        } else if(length(f) == dim(x)[[1]] && is.null(by)  ){
+            by <- 1L
         # If f matches with ncol
-        } else if( is.null(MARGIN) ){
-            MARGIN <- 2L
+        } else if( is.null(by) ){
+            by <- 2L
         }
     # Else if f is a character specifying column from rowData or colData  
     } else {
-        # If MARGIN is specified
-        if( !is.null(MARGIN) ){
-            # Search from rowData or colData based on MARGIN
-            dim_name <- switch(MARGIN,
+        # If by is specified
+        if( !is.null(by) ){
+            # Search from rowData or colData based on by
+            dim_name <- switch(by,
                                 "1" = "rowData",
                                 "2" = "colData")
             # Specify right function
-            dim_FUN <- switch(MARGIN,
+            dim_FUN <- switch(by,
                                 "1" = retrieveFeatureInfo,
                                 "2" = retrieveCellInfo)
             # Try to get information
@@ -171,7 +171,7 @@ setGeneric("splitOn",
             }
             # Get values
             f <- tmp$value
-        # Else if MARGIN is not specified
+        # Else if by is not specified
         } else{
             # Try to get information from rowData
             tmp_row <- try({retrieveFeatureInfo(x, f, search = "rowData")},
@@ -189,16 +189,16 @@ setGeneric("splitOn",
                 # If f was found from both
             } else if( !is(tmp_row, "try-error") && !is(tmp_col, "try-error") ){
                 stop("'f' can be found from both rowData and colData. ",
-                    "Please specify 'MARGIN'.",
+                    "Please specify 'by'.",
                     call. = FALSE)
                 # If it was found from rowData
             } else if( !is(tmp_row, "try-error") ){
-                MARGIN <- 1L
+                by <- 1L
                 # Get values
                 f <- tmp_row$value
                 # Otherwise, it was found from colData
             } else{
-                MARGIN <- 2L
+                by <- 2L
                 # Get values
                 f <- tmp_col$value
             }
@@ -218,7 +218,7 @@ setGeneric("splitOn",
     }
     # Create a list from arguments
     list(f = f,
-        MARGIN = MARGIN,
+        by = by,
         use.names = use.names)
 }
 
@@ -226,8 +226,8 @@ setGeneric("splitOn",
 .split_on <- function(x, args, ...){
     # Get grouping variable and its values
     f <- args[["f"]]
-    # Choose nrow or ncol based on MARGIN
-    dim_FUN <- switch(args[["MARGIN"]],
+    # Choose nrow or ncol based on by
+    dim_FUN <- switch(args[["by"]],
                         "1" = nrow,
                         "2" = ncol)
     # Get indices from 1 to nrow/ncol
@@ -239,8 +239,8 @@ setGeneric("splitOn",
     subset_FUN <- function(x, i = TRUE, j = TRUE){
         x[i, j]
     }
-    # Based on MARGIN, divide data in row-wise or column-wise
-    if(args[["MARGIN"]] == 1){
+    # Based on by, divide data in row-wise or column-wise
+    if(args[["by"]] == 1){
         ans <- SimpleList(lapply(idxs, subset_FUN, x = x))
     } else {
         ans <- SimpleList(lapply(idxs, subset_FUN, x = x, i = TRUE))
@@ -319,7 +319,7 @@ setGeneric("unsplitOn",
                 standardGeneric("unsplitOn"))
 
 # Perform the unsplit
-.list_unsplit_on <- function(ses, update.tree = FALSE, MARGIN = NULL, ...){
+.list_unsplit_on <- function(ses, update.tree = FALSE, by = MARGIN, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
@@ -332,8 +332,8 @@ setGeneric("unsplitOn",
         stop("'update.tree' must be TRUE or FALSE.",
             call. = FALSE)
     }
-    if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
-        stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
+    if( !(is.null(by) || (is.numeric(by) && (by == 1 || by == 2 ))) ){
+        stop("'by' must be NULL, 1, or 2.", call. = FALSE )
     }
     # Input check end
     # If list contains only one element, return it
@@ -342,24 +342,24 @@ setGeneric("unsplitOn",
     }
     # Get dimensions of each SE in the list
     dims <- vapply(ses, dim, integer(2L))
-    # Based on which dimension SE objects share, select MARGIN.
-    # If they share rows, then MARGIN is col, and vice versa
-    if( is.null(MARGIN) ){
+    # Based on which dimension SE objects share, select `by`.
+    # If they share rows, then by is col, and vice versa
+    if( is.null(by) ){
         if( length(unique(dims[1L,])) == 1 && length(unique(dims[2L,])) == 1 ){
             stop("The dimensions match with row and column-wise. ",
-                "Please specify 'MARGIN'.", call. = FALSE)
+                "Please specify 'by'.", call. = FALSE)
         } else if(length(unique(dims[1L,])) == 1L){
-            MARGIN <- 2L
+            by <- 2L
         } else if(length(unique(dims[2L,])) == 1L) {
-            MARGIN <- 1L
+            by <- 1L
         } else {
             stop("The dimensions are not equal across all elements. ", 
                 "Please check that either number of rows or columns match.", 
                 call. = FALSE)
         }
     } else{
-        # Get correct dimension, it is opposite of MARGIN
-        dim <- ifelse(MARGIN == 1, 2, 1)
+        # Get correct dimension, it is opposite of by
+        dim <- ifelse(by == 1, 2, 1)
         if( length(unique(dims[dim,])) != 1L ){
             stop("The dimensions are not equal across all elements.", call. = FALSE)
         }
@@ -368,9 +368,9 @@ setGeneric("unsplitOn",
     # Get the class of objects SCE, SE or TreeSE
     class_x <- class(ses[[1L]])
     # Combine assays
-    args <- list(assays = .unsplit_assays(ses, MARGIN = MARGIN))
+    args <- list(assays = .unsplit_assays(ses, by = by))
     # Combine rowData if data share columns
-    if(MARGIN == 1L){
+    if(by == 1L){
         rd <- .combine_rowData(ses)
         # Add rownames since they are missing after using combining
         rownames(rd) <- unlist(unname(lapply(ses, rownames)))

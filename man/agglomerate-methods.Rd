@@ -34,11 +34,11 @@ agglomerateByVariable(x, ...)
   ...
 )
 
-\S4method{agglomerateByVariable}{SummarizedExperiment}(x, MARGIN, f, ...)
+\S4method{agglomerateByVariable}{SummarizedExperiment}(x, by, f, ...)
 
 \S4method{agglomerateByVariable}{TreeSummarizedExperiment}(
   x,
-  MARGIN,
+  by,
   f,
   update.tree = mergeTree,
   mergeTree = FALSE,
@@ -138,7 +138,7 @@ will be dropped. This setting can be tweaked by defining
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
 removed if \code{na.rm = TRUE} before agglomeration.}
 
-\item{MARGIN}{A character value for selecting if data is merged
+\item{by}{A character value for selecting if data is merged
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
@@ -344,13 +344,13 @@ plot(rowTree(esophagus))
 # get a factor for merging
 f <- factor(regmatches(rownames(esophagus),
                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f,
+merged <- agglomerateByVariable(esophagus, by = "rows", f,
                                 update.tree = TRUE)
 plot(rowTree(merged))
 #
 data(GlobalPatterns)
 GlobalPatterns
-merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols",
+merged <- agglomerateByVariable(GlobalPatterns, by = "cols",
                                 colData(GlobalPatterns)$SampleType)
 merged
 ## Data can be aggregated based on prevalent taxonomic results

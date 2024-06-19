@@ -256,8 +256,8 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 #' @importFrom BiocGenerics rbind cbind
-.combine_assays <- function(ses, assay.type, MARGIN = 1L){
-    bind_FUN <- switch(MARGIN, "1" = rbind, "2" = cbind)
+.combine_assays <- function(ses, assay.type, by = MARGIN, MARGIN = 1L){
+    bind_FUN <- switch(by, "1" = rbind, "2" = cbind)
     current <- lapply(ses, .get_assay, assay.type)
     combined <- do.call(bind_FUN, current)
     rownames(combined) <- NULL
@@ -266,12 +266,12 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 #' @importFrom SummarizedExperiment assayNames assay
-.unsplit_assays <- function(ses, MARGIN = 1L) {
+.unsplit_assays <- function(ses, by = MARGIN, MARGIN = 1L) {
     assay.types <- unique(unlist(lapply(ses, assayNames)))
     combined <- lapply(assay.types,
                        .combine_assays,
                        ses = ses,
-                       MARGIN = MARGIN)
+                       by = by)
     names(combined) <- assay.types
     combined
 }

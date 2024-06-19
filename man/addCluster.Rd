@@ -10,6 +10,7 @@ addCluster(
   BLUSPARAM,
   assay.type = assay_name,
   assay_name = "counts",
+  by = MARGIN,
   MARGIN = "features",
   full = FALSE,
   name = "clusters",
@@ -22,6 +23,7 @@ addCluster(
   BLUSPARAM,
   assay.type = assay_name,
   assay_name = "counts",
+  by = MARGIN,
   MARGIN = "features",
   full = FALSE,
   name = "clusters",
@@ -87,7 +89,7 @@ tse <- addCluster(tse, KmeansParam(centers = 3))
 
 # Clustering done on the samples using Hclust
 tse <- addCluster(tse, 
-               MARGIN = "samples", 
+               by = "samples", 
                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 
 # Getting the clusters

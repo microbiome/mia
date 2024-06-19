@@ -135,22 +135,22 @@
       }
 }
 
-# Check MARGIN parameters. Should be defining rows or columns.
-.check_MARGIN <- function(MARGIN) {
+# Check by parameters. Should be defining rows or columns.
+.check_MARGIN <- function(by) {
     # Convert to lowcase if it is a string
-    if( .is_non_empty_string(MARGIN) ) {
-        MARGIN <- tolower(MARGIN)
+    if( .is_non_empty_string(by) ) {
+        by <- tolower(by)
     }
-    # MARGIN must be one of the following options
-    if( !(length(MARGIN) == 1L && MARGIN %in% c(
+    # by must be one of the following options
+    if( !(length(by) == 1L && by %in% c(
             1, 2, "1", "2", "features", "samples", "columns", "col", "row",
             "rows", "cols")) ) {
-        stop("'MARGIN' must equal 1 or 2.", call. = FALSE)
+        stop("'by' must equal 1 or 2.", call. = FALSE)
     }
-    # Convert MARGIN to numeric if it is not.
-    MARGIN <- ifelse(MARGIN %in% c(
+    # Convert by to numeric if it is not.
+    by <- ifelse(by %in% c(
         "samples", "columns", "col", 2, "cols"), 2, 1)
-    return(MARGIN)
+    return(by)
 }
 
 ################################################################################
@@ -177,7 +177,7 @@
 #' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(
-        x, values, name, altexp = NULL, MARGIN = default.MARGIN,
+        x, values, name, altexp = NULL, by = MARGIN, MARGIN = default.MARGIN,
         default.MARGIN = 2, transpose.MARGIN = FALSE, colname = "name",
         ...){
     #
@@ -187,14 +187,14 @@
     #
     # Check if altExp can be found
     .check_altExp_present(altexp, x)
-    # Check that MARGIN is correct
-    MARGIN <- .check_MARGIN(MARGIN)
+    # Check that by is correct
+    by <- .check_MARGIN(by)
     #
-    # If trasnpose.MARGIN is TRUE, transpose MARGIN, i.e. 1 --> 2, and 2 --> 1.
-    # In certain functions, values calculated by rows (MARGIN=1) are stored to
-    # colData (MARGIN=2) and vice versa.
+    # If trasnpose.MARGIN is TRUE, transpose by, i.e. 1 --> 2, and 2 --> 1.
+    # In certain functions, values calculated by rows (by=1) are stored to
+    # colData (by=2) and vice versa.
     if( transpose.MARGIN ){
-        MARGIN <- ifelse(MARGIN == 1, 2, 1)
+        by <- ifelse(by == 1, 2, 1)
     }
     # converts each value:name pair into a DataFrame
     values <- mapply(
@@ -211,8 +211,8 @@
         name)
     values <- do.call(cbind, values)
     
-    # Based on MARGIN, get rowDatra or colData
-    FUN <- switch(MARGIN, rowData, colData)
+    # Based on by, get rowDatra or colData
+    FUN <- switch(by, rowData, colData)
     # If altexp.name was not NULL, then we know that it specifies correctly
     # altExp from the slot. Take the colData/rowData from experiment..
     if( !is.null(altexp) ){
@@ -223,7 +223,7 @@
     
     # check for duplicated values
     f <- colnames(cd) %in% colnames(values)
-    FUN_name <- switch(MARGIN, "rowData", "colData")
+    FUN_name <- switch(by, "rowData", "colData")
     if(any(f)) {
         warning(
             "The following values are already present in `", FUN_name,
@@ -237,14 +237,14 @@
     cd <- cbind( (cd)[!f], values )
     
     # Replace colData with new one
-    x <- .add_to_coldata(x, cd, altexp = altexp, MARGIN = MARGIN)
+    x <- .add_to_coldata(x, cd, altexp = altexp, by = by)
     return(x)
 }
 
-# Get feature or sample metadata. Allow hidden usage of MARGIN and altExp.
+# Get feature or sample metadata. Allow hidden usage of by and altExp.
 #' @importFrom SummarizedExperiment rowData colData
 .add_to_coldata <- function(
-        x, cd, altexp = NULL, .disable.altexp = FALSE,
+        x, cd, altexp = NULL, .disable.altexp = FALSE, by = MARGIN,
         MARGIN = default.MARGIN, default.MARGIN = 1, ...){
     #
     if( !.is_a_bool(.disable.altexp) ){
@@ -252,10 +252,10 @@
     }
     # Check if altExp can be found
     .check_altExp_present(altexp, x, ...)
-    # Check that MARGIN is correct
-    MARGIN <- .check_MARGIN(MARGIN)
-    # Based on MARGIN, add result to rowData or colData
-    FUN <- switch(MARGIN, `rowData<-`, `colData<-`)
+    # Check that by is correct
+    by <- .check_MARGIN(by)
+    # Based on by, add result to rowData or colData
+    FUN <- switch(by, `rowData<-`, `colData<-`)
     # If altexp was specified, add result to altExp. Otherwise add it directly
     # to x.
     if( !is.null(altexp) && !.disable.altexp ){
@@ -480,7 +480,7 @@
         x <- agglomerateByRank(x, rank = merge.by, ...)
     } else {
         # Merge using agglomerateByVariable
-        x <- agglomerateByVariable(x, MARGIN = "rows", f = merge.by, ...)
+        x <- agglomerateByVariable(x, by = "rows", f = merge.by, ...)
     }
     return(x)
 }

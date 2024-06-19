@@ -476,10 +476,10 @@ setMethod("mergeSEs", signature = c(x = "list"),
 
 # Input: tree data and TreeSE
 # Output: TreeSE
-.check_and_add_trees <- function(tse, trees_and_links, MARGIN, verbose){
+.check_and_add_trees <- function(tse, trees_and_links, by, verbose){
     # Give a message if verbose is specified
     if( verbose ){
-        message("Adding ", MARGIN, "Tree(s)...")
+        message("Adding ", by, "Tree(s)...")
     }
     # Get trees
     trees <- trees_and_links$trees
@@ -487,7 +487,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
     links <- trees_and_links$links
     # Based on margin, get rownames or colnames of the TreeSE object; to check
     # if the data matches with trees
-    if(MARGIN == "row"){
+    if(by == "row"){
         names <- rownames(tse)
     } else{
         names <- colnames(tse)
@@ -495,7 +495,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
     # All rownames/colnames should be included in trees/links
     if( !all(names %in% links[["names"]]) ||
         is.null(names) || length(names) == 0 ){
-        warning(MARGIN, "Tree(s) does not match with the data so it ", 
+        warning(by, "Tree(s) does not match with the data so it ", 
                 "is discarded.", call. = FALSE)
         return(tse)
     }
@@ -530,8 +530,8 @@ setMethod("mergeSEs", signature = c(x = "list"),
         isLeaf = links[["isLeaf"]],
         whichTree = links[["whichTree"]]
     )
-    # Add the data in correct slot based on MARGIN
-    if(MARGIN == "row" ){
+    # Add the data in correct slot based on by
+    if(by == "row" ){
         tse@rowTree <- trees
         tse@rowLinks <- links
     } else{
@@ -807,11 +807,11 @@ setMethod("mergeSEs", signature = c(x = "list"),
 ########################### ..get_unique_names ###########################
 # This function convert colnames unique
 
-# Input: TreeSEs and MARGIN
+# Input: TreeSEs and by
 # Output: One TreeSE with unique sample names compared to other TreeSE
-.get_unique_names <- function(tse1, tse2, MARGIN, suffix=2){
-    # Based on MARGIN, get right names
-    if( MARGIN == "row" ){
+.get_unique_names <- function(tse1, tse2, by, suffix=2){
+    # Based on by, get right names
+    if( by == "row" ){
         names1 <- rownames(tse1)
         names2 <- rownames(tse2)
     } else{
@@ -829,7 +829,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
         }
         temp_names2 <- paste0(temp_names2, ".", suffix)
         # Assign names back
-        if( MARGIN == "row" ){
+        if( by == "row" ){
             rownames(tse2)[ind] <- temp_names2
         } else{
             colnames(tse2)[ind] <- temp_names2
