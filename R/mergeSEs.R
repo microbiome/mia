@@ -526,7 +526,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
     tree <- trees[[1]]
     trees[[1]] <- NULL
     for( t in trees ){
-        tree <- ape::bind.tree(tree, t)
+        tree <- bind.tree(tree, t)
     }
     # Prune the tree so that it includes rows in tips. This step removes
     # additional tips, i.e., only tips that are in rows are preserved. Also
@@ -535,6 +535,8 @@ setMethod("mergeSEs", signature = c(x = "list"),
     # might be the case if the merged trees had shared taxa in addition to
     # unique taxa.
     tree <- .prune_tree(tree, links[["nodeLab"]])
+    # Order links so that the order matches with TreeSE
+    links <- links[rownames(tse), ]
     # Add the data in correct slot based on MARGIN
     args <- list(tse, tree, links[["nodeLab"]])
     arg_names <- switch(

@@ -322,7 +322,7 @@ test_that("mergeSEs", {
     # Check that rownames match with node labels (These datasets have node labs
     # that are named by rownames.)
     tse <- mergeSEs(GlobalPatterns, esophagus)
-    expect_equal( sort(rownames(tse)), sort(rowLinks(tse)$nodeLab ))
+    expect_equal( rownames(tse), rowLinks(tse)$nodeLab )
     
     # Check that rowData includes all the information
     data(esophagus, package="mia")
@@ -368,7 +368,7 @@ test_that("mergeSEs", {
     expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
     tse_temp <- expect_warning(mergeSEs(list(tse1, tse2),
                                         assay.type = c("counts", "relabundance", "test"),
-                                        join = "full"))
+                                        join = "left"))
     expect_equal(assayNames(tse_temp), c("counts", "relabundance"))
     
     # Test that reference sequences stay the same
