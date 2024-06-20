@@ -100,14 +100,14 @@ importBIOM <- function(file, ...) {
 #' @rdname convert
 #' @export
 convertFromBIOM <- function(
-        x, prefix.rm = removeTaxaPrefixes, 
+        obj, prefix.rm = removeTaxaPrefixes, 
         removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix, 
         rankFromPrefix = FALSE,
         artifact.rm = remove.artifacts, remove.artifacts = FALSE, ...){
     # input check
     .require_package("biomformat")
-    if(!is(x,"biom")){
-        stop("'x' must be a 'biom' object", call. = FALSE)
+    if(!is(obj,"biom")){
+        stop("'obj' must be a 'biom' object", call. = FALSE)
     }
     if( !.is_a_bool(prefix.rm) ){
         stop("'prefix.rm' must be TRUE or FALSE.", call. = FALSE)
@@ -119,9 +119,9 @@ convertFromBIOM <- function(
         stop("'artifact.rm' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    counts <- as(biomformat::biom_data(x), "matrix")
-    sample_data <- biomformat::sample_metadata(x)
-    feature_data <- biomformat::observation_metadata(x)
+    counts <- as(biomformat::biom_data(obj), "matrix")
+    sample_data <- biomformat::sample_metadata(obj)
+    feature_data <- biomformat::observation_metadata(obj)
     
     # colData is initialized with empty tables with rownames if it is NULL
     if( is.null(sample_data) ){
@@ -199,8 +199,8 @@ convertFromBIOM <- function(
     }
     
     # Adjust row and colnames
-    rownames(counts) <- rownames(feature_data) <- biomformat::rownames(x)
-    colnames(counts) <- rownames(sample_data) <- biomformat::colnames(x)
+    rownames(counts) <- rownames(feature_data) <- biomformat::rownames(obj)
+    colnames(counts) <- rownames(sample_data) <- biomformat::colnames(obj)
     
     # Convert into DataFrame
     sample_data <- DataFrame(sample_data)

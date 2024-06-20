@@ -15,7 +15,7 @@
 importBIOM(file, ...)
 
 convertFromBIOM(
-  x,
+  obj,
   prefix.rm = removeTaxaPrefixes,
   removeTaxaPrefixes = FALSE,
   rank.from.prefix = rankFromPrefix,
@@ -41,9 +41,8 @@ convertToPhyloseq(x, ...)
 \item{...}{Addional arguments. For \code{convertFromDADA2}, see
 \code{mergePairs} function for more details.}
 
-\item{x}{a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object}
+\item{obj}{BIOM object to be converted to a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 
 \item{prefix.rm}{\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
@@ -66,6 +65,10 @@ some taxonomic character naming artifacts, should they be removed.
 
 \item{phy}{a \code{phyloseq} object}
 
+\item{x}{a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object}
+
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 included in the phyloseq object that is created.
@@ -84,9 +87,6 @@ tree will be included in the phyloseq object that is created,
 tree will be included in the phyloseq object that is created,
 (By default: \code{tree_name = "phylo"})
 \code{tree_name} will be deprecated. Use \code{tree.name} instead.}
-
-\item{obj}{BIOM object to be converted to a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 }
 \value{
 \code{importBIOM} returns an object of class
