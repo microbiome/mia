@@ -244,17 +244,17 @@ importMetaPhlAn <- function(
 # Get the lowest level of the string that contains multiple taxonomic levels with prefixes
 # Output is single character that specifies the rank, e.g, "s" == "Species"
 .get_lowest_taxonomic_level <- function(string){
+    # List all ranks and what prefix they correspond
+    ranks <- .get_all_supported_ranks()
     # Get indices that specify location of rank prefixes 
-    levels <- gregexpr("([kpcofgst]+)__", string)[[1]]
+    ranks_pattern <- paste(ranks, collapse = "|")
+    ranks_pattern <- paste0("(", ranks_pattern, ")__")
+    levels <- gregexpr(ranks_pattern, string)[[1]]
     # Get the location of lowest rank
     lowest_level_ind <- levels[length(levels)]
     # Get the lowest rank that was found
     lowest_level <- substr(string, start = lowest_level_ind, stop = lowest_level_ind)
     
-    # List all ranks and what prefix they correspond
-    ranks <- c(
-        Domain = "d", Kingdom = "k", Phylum = "p", Class = "c", Order = "o",
-        Family = "f", Genus = "g", Species = "s", Strain = "t")
     # Convert prefix into full rank name
     lowest_level <- names(ranks[ match(lowest_level, ranks) ])
     return(lowest_level)
