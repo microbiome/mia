@@ -212,10 +212,10 @@ test_that("mergeSEs", {
     expect_equal( col_data1[rownames, colnames], col_data )
     
     # CHECK RIGHT JOIN ##############################################
-    tse <- mergeSEs(list(tse1[10:50, 1:13], tse1[10:50, 1:13]), 
+    tse <- mergeSEs(list(tse1[10:50, 1:13], tse1[1:10, 7:20]), 
                     join = "right", missing.values = NA, 
                     collapse.cols = TRUE)
-    expect_true( all(dim(tse) == c(41, 13)) )
+    expect_true( all(dim(tse) == c(10, 20)) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
