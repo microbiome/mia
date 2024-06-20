@@ -150,9 +150,9 @@ test_that("mergeSEs", {
     )
     expect_true( nrow(tse) == 0 )
     expect_equal( rowTree(tse), NULL )
-    tse <- mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse1[1:50, 6:10]), 
+    tse <- mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
                        join = "inner", collapse.cols = TRUE)
-    expect_true( all(dim(tse) == c(50, 10)) )
+    expect_true( all(dim(tse) == c(20, 10)) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
