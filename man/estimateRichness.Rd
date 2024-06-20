@@ -18,8 +18,8 @@ estimateRichness(
 
 \S4method{estimateRichness}{SummarizedExperiment}(
   x,
-  assay.type = assay_name,
-  assay_name = "counts",
+  assay.type = "counts",
+  assay_name = NULL,
   index = c("ace", "chao1", "hill", "observed"),
   name = index,
   detection = 0,

@@ -37,8 +37,7 @@ estimateDiversity(
   index = c("coverage", "faith", "fisher", "gini_simpson", "inverse_simpson",
     "log_modulo_skewness", "shannon"),
   name = index,
-  tree.name = tree_name,
-  tree_name = "phylo",
+  tree.name = "phylo",
   ...,
   BPPARAM = SerialParam()
 )
@@ -119,8 +118,6 @@ object specifying whether calculation of estimates should be parallelized.}
 rowTree will be used to calculate faith index.
 (By default: \code{tree.name = "phylo"})}
 
-\item{tree_name}{Deprecated. Use \code{tree.name} isntead.}
-
 \item{tree}{A phylogenetic tree that is used to calculate 'faith' index.
 If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is
 used by default.}
@@ -131,6 +128,8 @@ instance should be noted as NA. When NULL, all the rownames should be found from
 the tree. (By default: \code{node.label = NULL})}
 
 \item{node_lab}{Deprecated. Use \code{node.label} instead.}
+
+\item{tree_name}{Deprecated. Use \code{tree.name} isntead.}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named \code{*name*}
