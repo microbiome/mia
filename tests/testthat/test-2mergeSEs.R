@@ -181,9 +181,9 @@ test_that("mergeSEs", {
     expect_equal( col_data1[rownames, colnames], col_data )
     
     # CHECK LEFT JOIN ##############################################
-    tse <- mergeSEs(list(tse1[11:20, 1:10], tse1[11:20, 1:10]), 
+    tse <- mergeSEs(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
                        join = "left", collapse.cols = TRUE)
-    expect_true( all(dim(tse) == c(10, 10)) )
+    expect_true( all(dim(tse) == c(10, 20)) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
