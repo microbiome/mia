@@ -486,6 +486,46 @@
 }
 
 ################################################################################
+# This function sets taxonomy ranks based on rowData of TreeSE. With this,
+# user can automatically set ranks based on imported data.
+.set_ranks_based_on_rowdata <- function(
+        tse, set.ranks = FALSE, verbose = TRUE, ...){
+    #
+    if( !.is_a_bool(set.ranks) ){
+        stop("'set.ranks' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    if( !.is_a_bool(verbose) ){
+        stop("'verbose' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # If user do not want to set ranks
+    if( !set.ranks ){
+        return(NULL)
+    }
+    # Get ranks from rowData
+    ranks <- colnames(rowData(tse))
+    # Ranks must be character columns
+    is_char <- lapply(rowData(tse), function(x) is.character(x) || is.factor(x))
+    is_char <- unlist(is_char)
+    ranks <- ranks[ is_char ]
+    # rowData is empty, cannot set ranks
+    if( length(ranks) == 0 ){
+        warning(
+            "Ranks cannot be set. rowData(x) does not include columns ",
+            "specifying character values.", call. = FALSE)
+        return(NULL)
+    }
+    # Finally, set ranks and give message
+    temp <- setTaxonomyRanks(ranks)
+    if( verbose ){
+        message(
+            "TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
+    }
+    return(NULL)
+}
+
+################################################################################
 # This function returns all supported ranks and their prefixes. These ranks are
 # used to detect ranks in imported data.
 .get_all_supported_ranks <- function(){
