@@ -179,11 +179,6 @@ makeTreeSEFromBiom <- function(
         colnames(feature_data) <- unlist(ranks)
     }
     
-    # Remove prefixes if specified and rowData includes info
-    if(prefix.rm && ncol(feature_data) > 0){
-        feature_data <- .remove_prefixes_from_taxa(feature_data, ...)
-    }
-    
     # Adjust row and colnames
     rownames(counts) <- rownames(feature_data) <- biomformat::rownames(x)
     colnames(counts) <- rownames(sample_data) <- biomformat::colnames(x)
@@ -202,6 +197,11 @@ makeTreeSEFromBiom <- function(
     
     # Set ranks based on rowData columns if user has specified to do so
     temp <- .set_ranks_based_on_rowdata(tse, ...)
+    
+    # Remove prefixes if specified and rowData includes info
+    if(prefix.rm && ncol(rowData(tse)) > 0){
+        rowData(tse) <- .remove_prefixes_from_taxa(rowData(tse), ...)
+    }
     
     return(tse)
 }
@@ -251,6 +251,8 @@ makeTreeSummarizedExperimentFromBiom <- function(x, ...){
         # Combine table
         feature_tab[, ind] <- temp
     }
+    # Ensure that returned value is DF
+    feature_tab <- DataFrame(feature_tab)
     return(feature_tab)
 }
 
