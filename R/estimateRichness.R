@@ -223,7 +223,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
               # Input check
               # Check assay.type
               if (!is.null(assay_name)) {
-                  .Deprecated(old = "assay_name", new = "assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+                  .Deprecated(old = "assay_name", new = "assay.type", 
+                              "Now assay_name is deprecated. Use assay.type instead.")
                   assay.type <- assay_name
               }
               
@@ -232,7 +233,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
               # Check indices
               index <- match.arg(index, several.ok = TRUE)
               if (!.is_non_empty_character(name) || length(name) != length(index)) {
-                  stop("'name' must be a non-empty character value and have the same length as 'index'.", call. = FALSE)
+                  stop("'name' must be a non-empty character value 
+                       and have the same length as 'index'.", call. = FALSE)
               }
               
               # Ensure assay data does not contain values that invalidate certain indices
@@ -246,8 +248,10 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                       }
                   }
                   if (idx == "observed") {
-                      if (any(assay_data < 0, na.rm = TRUE) || !all(apply(assay_data, 1, is.integer))) {
-                          unsupported_indices[[idx]] <- "negative values or non-integer counts in assay data"
+                      if (any(assay_data < 0, na.rm = TRUE) || 
+                          !all(apply(assay_data, 1, is.integer))) {
+                          unsupported_indices[[idx]] <- 
+                              "negative values or non-integer counts in assay data"
                       }
                   }
               }
@@ -272,7 +276,8 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
                                              detection = detection,
                                              BPPARAM = BPPARAM)
                   }, error = function(e) {
-                      warning("An error occurred while calculating the richness indices: ", e$message)
+                      warning("An error occurred while calculating 
+                              the richness indices: ", e$message)
                       return(NULL)
                   })
                   

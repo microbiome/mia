@@ -255,7 +255,8 @@ setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
                    name = index, ..., BPPARAM = SerialParam()){
               
               if (!is.null(assay_name)) {
-                  .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+                  .Deprecated(old="assay_name", new="assay.type", 
+                              "Now assay_name is deprecated. Use assay.type instead.")
               }
               
               # input check
@@ -298,20 +299,24 @@ setMethod("estimateDiversity", signature = c(x = "TreeSummarizedExperiment"),
                                    "inverse_simpson", "log_modulo_skewness", "shannon")
               index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
               if (!all(index %in% supported_index) || length(index) == 0) {
-                  stop(paste("'index' must be from the following options: ", index_string), call. = FALSE)
+                  stop(paste("'index' must be from the following options: ", 
+                             index_string), call. = FALSE)
               }
               
               # Check tree.name
               if (!.is_non_empty_string(tree.name)) {
-                  stop("'tree.name' must be a character specifying a rowTree of 'x'.", call. = FALSE)
+                  stop("'tree.name' must be a character specifying a
+                       rowTree of 'x'.", call. = FALSE)
               }
               
               if (!is.null(assay_name)) {
-                  .Deprecated(old = "assay_name", new = "assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+                  .Deprecated(old = "assay_name", new = "assay.type", 
+                              "Now assay_name is deprecated. Use assay.type instead.")
               }
               
               if (!.is_non_empty_character(name) || length(name) != length(index)) {
-                  stop("'name' must be a non-empty character value and have the same length as 'index'.", call. = FALSE)
+                  stop("'name' must be a non-empty character value and have the 
+                       same length as 'index'.", call. = FALSE)
               }
               
               # Ensure assay data does not contain values that invalidate certain indices
@@ -325,8 +330,10 @@ setMethod("estimateDiversity", signature = c(x = "TreeSummarizedExperiment"),
                       }
                   }
                   if (idx == "fisher") {
-                      if (any(assay_data < 0, na.rm = TRUE) || !all(apply(assay_data, 1, is.integer))) {
-                          unsupported_indices[[idx]] <- "negative values or non-integer counts in assay data"
+                      if (any(assay_data < 0, na.rm = TRUE) ||
+                          !all(apply(assay_data, 1, is.integer))) {
+                          unsupported_indices[[idx]] <- "negative values or 
+                          non-integer counts in assay data"
                       }
                   }
                   if (idx == "log_modulo_skewness") {
@@ -382,8 +389,16 @@ setMethod("estimateDiversity", signature = c(x = "TreeSummarizedExperiment"),
                   # Check if faith can be calculated. Give warning and do not run estimateFaith
                   # if there is no rowTree and other indices were also calculated. Otherwise, 
                   # run estimateFaith. (If there is no rowTree --> error)
-                  if ((is.null(tree) || is.null(tree$edge.length)) && length(valid_indices) >= 1) {
-                      warning("Faith diversity has been excluded from the results since it cannot be calculated without rowTree. This requires a rowTree in the input argument x. Make sure that 'rowTree(x)' is not empty, or make sure to specify 'tree.name' in the input arguments. Warning is also provided if the tree does not have any branches. You can consider adding rowTree to include this index.", 
+                  if ((is.null(tree) || is.null(tree$edge.length)) 
+                      && length(valid_indices) >= 1) {
+                      warning("Faith diversity has been excluded from the results 
+                              since it cannot be calculated without rowTree. 
+                              This requires a rowTree in the input argument x. 
+                              Make sure that 'rowTree(x)' is not empty, 
+                              or make sure to specify 'tree.name' in the 
+                              input arguments. Warning is also provided if the
+                              tree does not have any branches. You can consider
+                              adding rowTree to include this index.", 
                               call. = FALSE)
                   } else {
                       x <- estimateFaith(x, name = faith_name, tree.name = tree.name, ...)
@@ -434,9 +449,10 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
               # Check that node.label is NULL or it specifies links between rownames and 
               # node labs
               if( !( is.null(node.label) || 
-                     is.character(node.label) && length(node.label) == nrow(x) ) ){
-                  stop("'node.label' must be NULL or a vector specifying links between ",
-                       "rownames and node labs of 'tree'.",
+                     is.character(node.label) && 
+                     length(node.label) == nrow(x) ) ){
+                  stop("'node.label' must be NULL or a vector 
+                       specifying links between ","rownames and node labs of 'tree'.",
                        call. = FALSE)
               }
               # Get the abundance matrix
