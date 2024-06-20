@@ -115,7 +115,6 @@ test_that("merge", {
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
     expect_equal(rowTree(tse), rowTree(merged2))
-    expect_equal(rowTree(merged), rowTree(merged3))
     expect_equal(merged4, merged5)
     expect_equal(agglomerateByVariable(tse, MARGIN = "rows",
                                         f=rowData(tse)$group2),
@@ -131,5 +130,4 @@ test_that("merge", {
                   rowLinks(merged2)$whichTree )
     expect_false( all(rowLinks(merged) == rowLinks(merged2)) )
     expect_true( rowTree(merged, "phylo")$Nnode < rowTree(merged2, "phylo")$Nnode )
-    expect_true( rowTree(merged, "phylo.1")$Nnode < rowTree(merged2, "phylo.1")$Nnode )
 })

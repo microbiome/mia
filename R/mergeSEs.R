@@ -526,7 +526,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
     tree <- trees[[1]]
     trees[[1]] <- NULL
     for( t in trees ){
-        tree <- bind.tree(tree, t)
+        tree <- ape::bind.tree(tree, t)
     }
     # Prune the tree so that it includes rows in tips. This step removes
     # additional tips, i.e., only tips that are in rows are preserved. Also
