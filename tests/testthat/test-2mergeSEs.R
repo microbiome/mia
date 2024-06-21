@@ -317,7 +317,7 @@ test_that("mergeSEs", {
                  )
     # Test that tree is added after agglomeration
     agg_tse1 <- suppressWarnings( aggTSE(tse1, rowLevel = c(6,4,2)) )
-    tse <- mergeSEs(tse1, agg_tse1)
+    expect_warning(tse <- mergeSEs(tse1, agg_tse1))
     
     # Check that rownames match with node labels (These datasets have node labs
     # that are named by rownames.)
@@ -331,7 +331,7 @@ test_that("mergeSEs", {
     expect_equal( rownames(tse), test )
     
     # Expect that each tip is found from rows when tree is pruned during merge.
-    test <- rowTree(tse)$tip.label
+    test <- sort(rowTree(tse)$tip.label)
     expect_equal( rownames(tse), test )
     
     # Check that rowData includes all the information
@@ -389,7 +389,7 @@ test_that("mergeSEs", {
     tse1 <- tse
     rownames(tse1) <- paste0("Taxon", 1:nrow(tse))
     # Merge
-    tse2 <- mergeSEs(tse1, tse)
+    expect_warning(tse2 <- mergeSEs(tse1, tse))
     # Test refseqs
     ref1 <- referenceSeq(tse)
     ref2 <- referenceSeq(tse2)[rownames(tse), ]
