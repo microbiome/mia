@@ -331,7 +331,7 @@ test_that("mergeSEs", {
     expect_equal( rownames(tse), test )
     
     # Expect that each tip is found from rows when tree is pruned during merge.
-    test <- sort(rowTree(tse)$tip.label)
+    test <- rowTree(tse)$tip.label
     expect_equal( rownames(tse), test )
     
     # Check that rowData includes all the information
