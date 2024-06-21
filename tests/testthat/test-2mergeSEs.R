@@ -324,6 +324,16 @@ test_that("mergeSEs", {
     tse <- mergeSEs(GlobalPatterns, esophagus)
     expect_equal( rownames(tse), rowLinks(tse)$nodeLab )
     
+    # Expect that tree includes nodes of input trees that correspond to rows.
+    # The nodes are sorted since input trees with highest number of taxa are put
+    # first before merge.
+    test <- sort(c(rowLinks(GlobalPatterns)$nodeLab, rowLinks(esophagus)$nodeLab))
+    expect_equal( rownames(tse), test )
+    
+    # Expect that each tip is found from rows when tree is pruned during merge.
+    test <- sort(rowTree(tse)$tip.label)
+    expect_equal( rownames(tse), test )
+    
     # Check that rowData includes all the information
     data(esophagus, package="mia")
     data(GlobalPatterns, package="mia")

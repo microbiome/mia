@@ -482,7 +482,8 @@ test_that("makePhyloseqFromTreeSE", {
     tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing.values = 0)
     pseq <- makePhyloseqFromTreeSE(tse, assay.type="counts")
     
-    tse_compare <- tse[ rownames(GlobalPatterns), ]
+    # Include rownames from both trees
+    tse_compare <- tse[ c(rownames(GlobalPatterns), rownames(esophagus)), ]
     pseq_compare <- makePhyloseqFromTreeSE(tse_compare, assay.type="counts")
     
     expect_equal(phyloseq::otu_table(pseq), phyloseq::otu_table(pseq_compare))
