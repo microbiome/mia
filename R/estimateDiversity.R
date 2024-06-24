@@ -189,12 +189,17 @@
 #'
 #' # Calculate diversities
 #' tse <- estimateDiversity(tse, index = index)
-#'
+#' 
+#' # Verify the columns in colData
+#' col_names <- colnames(colData(tse))
+#' valid_indices <- index[index %in% col_names]
+#' 
 #' # The colData contains the indices with their code names by default
-#' colData(tse)[, index]
+#' colData(tse)[, valid_indices]
 #'
 #' # Removing indices
-#' colData(tse)[, index] <- NULL
+#' colData(tse)[, valid_indices] <- NULL
+#' colData(tse)[, name] <- NULL
 #' 
 #' # 'threshold' can be used to determine threshold for 'coverage' index
 #' tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
@@ -209,12 +214,15 @@
 #'                "fisher", "faith", "log_modulo_skewness"),
 #'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
 #'                "Fisher", "Faith", "LogModSkewness"))
-#'
+#'                
+#'  col_names <- colnames(colData(tse))
+#'  valid_names <- name[name %in% col_names]
+#'  
 #' # The colData contains the indices by their new names provided by the user
-#' colData(tse)[, name]
+#' colData(tse)[, valid_names]
 #'
 #' # Compare the indices visually
-#' pairs(colData(tse)[, name])
+#' pairs(colData(tse)[, valid_names])
 #'
 #' # Plotting the diversities - use the selected names
 #' library(scater)
