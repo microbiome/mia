@@ -1,6 +1,6 @@
 #' Coerce \sQuote{DADA2} results to \code{TreeSummarizedExperiment}
 #'
-#' \code{makeTreeSEFromDADA2} is a wrapper for the
+#' \code{convertFromDADA2} is a wrapper for the
 #' \code{mergePairs} function from the \code{dada2} package.
 #'
 #' @param ... See \code{mergePairs} function for
@@ -19,10 +19,11 @@
 #' @importFrom S4Vectors SimpleList
 #' @importFrom Biostrings DNAStringSet
 #'
-#' @name makeTreeSEFromDADA2
+#' @rdname convert
+#' 
 #' @seealso
-#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromBIOM}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #'
@@ -35,10 +36,10 @@
 #'   dadaF <- dada2::dada(fnF, selfConsist=TRUE)
 #'   dadaR <- dada2::dada(fnR, selfConsist=TRUE)
 #'
-#'   tse <- makeTreeSEFromDADA2(dadaF, fnF, dadaR, fnR)
+#'   tse <- convertFromDADA2(dadaF, fnF, dadaR, fnR)
 #'   tse
 #' }
-makeTreeSEFromDADA2 <- function(...) {
+convertFromDADA2 <- function(...) {
     # input checks
     .require_package("dada2")
     .require_package("stringr")
@@ -61,13 +62,4 @@ makeTreeSEFromDADA2 <- function(...) {
     colnames(output) <- cName
     rownames(output) <- rName
     output
-}
-
-#################### makeTreeSummarizedExperimentFromDADA2 #####################
-#' @param ... See \code{mergePairs} function for
-#'   more details.
-#' @name makeTreeSEFromDADA2
-#' @export
-makeTreeSummarizedExperimentFromDADA2 <- function(...) {
-    makeTreeSEFromDADA2(...)
 }

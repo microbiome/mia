@@ -25,13 +25,13 @@
 #' @param ... additional arguments
 #'
 #' @details
-#' \code{makePhyloseqFromTreeSE} is used for creating a
+#' \code{convertToPhyloseq} is used for creating a
 #' phyloseq object from TreeSummarizedExperiment object.
 #'
 #' @return
 #' An object of class \code{Phyloseq} object.
 #'
-#' @name makePhyloseqFromTreeSE
+#' @name convert
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -42,7 +42,7 @@
 #' tse <- GlobalPatterns
 #'
 #' # Create a phyloseq object from it
-#' phy <- makePhyloseqFromTreeSE(tse)
+#' phy <- convertToPhyloseq(tse)
 #' phy
 #'
 #' # By default the chosen table is counts, but if there are other tables,
@@ -50,20 +50,20 @@
 #'
 #' # Counts relative abundances table
 #' tse <- transformAssay(tse, method = "relabundance")
-#' phy2 <- makePhyloseqFromTreeSE(tse, assay.type = "relabundance")
+#' phy2 <- convertToPhyloseq(tse, assay.type = "relabundance")
 #' phy2
 NULL
 
-#' @rdname makePhyloseqFromTreeSE
+#' @rdname convert
 #' @export
-setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
+setGeneric("convertToPhyloseq", signature = c("x"),
            function(x, ...)
-               standardGeneric("makePhyloseqFromTreeSE"))
+               standardGeneric("convertToPhyloseq"))
 
 
-#' @rdname makePhyloseqFromTreeSE
+#' @rdname convert
 #' @export
-setMethod("makePhyloseqFromTreeSE",
+setMethod("convertToPhyloseq",
           signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = "counts", assay_name = NULL, ...){
         # Input check
@@ -122,9 +122,9 @@ setMethod("makePhyloseqFromTreeSE",
     }
 )
 
-#' @rdname makePhyloseqFromTreeSE
+#' @rdname convert
 #' @export
-setMethod("makePhyloseqFromTreeSE",
+setMethod("convertToPhyloseq",
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, tree.name = tree_name, tree_name = "phylo", ...){
         # If rowTrees exist, check tree.name
@@ -198,20 +198,6 @@ setMethod("makePhyloseqFromTreeSE",
         phyloseq
     }
 )
-
-################### makePhyloseqFromTreeSummarizedExperiment ###################
-#' @rdname makePhyloseqFromTreeSE
-#' @export
-setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
-    function(x, ...)
-        standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
-
-#' @rdname makePhyloseqFromTreeSE
-#' @export
-setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
-        function(x, ...){
-            makePhyloseqFromTreeSE(x, ...)
-    })
 
 ################################ HELP FUNCTIONS ################################
 # If tips do not match with rownames, prune the tree

@@ -910,3 +910,65 @@ setMethod(
         getDominant(x, ...)
     }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("x"),
+           function(x)
+             standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
+
+#' @rdname deprecate
+#' @export
+setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(x = "ANY"), 
+    function(x){
+        .Deprecated(msg = paste0(
+            "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
+            " Use 'convertFromPhyloseq' instead."))
+            convertFromPhyloseq(x)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+makeTreeSEFromBiom <- function(...){
+  .Deprecated(msg = paste0(
+    "'makeTreeSEFromBiom' is deprecated.",
+    " Use 'convertFromBIOM' instead."))
+  convertFromBIOM(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSummarizedExperimentFromBiom <- function(...){
+  .Deprecated(msg = paste0(
+    "'makeTreeSummarizedExperimentFromBiom' is deprecated.",
+    " Use 'convertFromBIOM' instead."))
+  convertFromBIOM(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSEFromDADA2 <- function(...) {
+  .Deprecated(msg = paste0(
+    "'makeTreeSEFromDADA2' is deprecated.",
+    " Use 'convertFromDADA2' instead."))
+  convertFromDADA2(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSummarizedExperimentFromDADA2 <- function(...) {
+  .Deprecated(msg = paste0(
+    "'makeTreeSummarizedExperimentFromDADA2' is deprecated.",
+    " Use 'convertFromDADA2' instead."))
+  convertFromDADA2(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSEFromPhyloseq <- function(x) {
+  .Deprecated(msg = paste0(
+    "'makeTreeSEFromPhyloseq' is deprecated.",
+    " Use 'convertFromPhyloseq' instead."))
+  convertFromPhyloseq(...)
+}

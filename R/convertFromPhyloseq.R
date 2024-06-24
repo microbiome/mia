@@ -1,6 +1,6 @@
 #' Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}
 #'
-#' \code{makeTreeSEFromPhyloseq} converts \code{phyloseq}
+#' \code{convertFromPhyloseq} converts \code{phyloseq}
 #' objects into \code{TreeSummarizedExperiment} objects.
 #'
 #' All data stored in a \code{phyloseq} object is transferred.
@@ -14,23 +14,23 @@
 #'
 #' @export
 #'
-#' @name makeTreeSEFromPhyloseq
+#' @rdname convert
 #' @seealso
-#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+#' \code{\link[=convert]{convertFromBIOM}}
+#' \code{\link[=convert]{convertFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @examples
 #' if (requireNamespace("phyloseq")) {
 #'     data(GlobalPatterns, package="phyloseq")
-#'     makeTreeSEFromPhyloseq(GlobalPatterns)
+#'     convertFromPhyloseq(GlobalPatterns)
 #'     data(enterotype, package="phyloseq")
-#'     makeTreeSEFromPhyloseq(enterotype)
+#'     convertFromPhyloseq(enterotype)
 #'     data(esophagus, package="phyloseq")
-#'     makeTreeSEFromPhyloseq(esophagus)
+#'     convertFromPhyloseq(esophagus)
 #' }
-makeTreeSEFromPhyloseq <- function(x) {
+convertFromPhyloseq <- function(x) {
     # input check
     .require_package("phyloseq")
     if(!is(x,"phyloseq")){
@@ -74,17 +74,3 @@ makeTreeSEFromPhyloseq <- function(x) {
                             rowTree = rowTree,
                             referenceSeq = referenceSeq)
 }
-
-####################### makeTreeSummarizedExperimentFromPhyloseq #######################
-#' @rdname makeTreeSEFromPhyloseq
-#' @export
-setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("x"),
-    function(x)
-        standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
-
-#' @rdname makeTreeSEFromPhyloseq
-#' @export
-setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(x = "ANY"),
-    function(x){
-        makeTreeSEFromPhyloseq(x)
-    })

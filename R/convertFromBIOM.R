@@ -35,10 +35,10 @@
 #' @return An object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
-#' @name makeTreeSEFromBiom
+#' @name convert
 #' @seealso
-#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #'
@@ -53,7 +53,7 @@
 #' 
 #' # Make TreeSE from biom object
 #' biom_object <- biomformat::read_biom(biom_file)
-#' tse <- makeTreeSEFromBiom(biom_object)
+#' tse <- convertFromBIOM(biom_object)
 #' 
 #' # Get taxonomyRanks from prefixes and remove prefixes
 #' tse <- importBIOM(biom_file,
@@ -69,23 +69,23 @@
 #'                     artifact.rm = TRUE)
 NULL
 
-#' @rdname makeTreeSEFromBiom
+#' @rdname convert
 #'
 #' @export
 importBIOM <- function(file, ...) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    makeTreeSEFromBiom(biom, ...)
+    convertFromBIOM(biom, ...)
 }
 
-#' @rdname makeTreeSEFromBiom
+#' @rdname convert
 #'
 #' @param x object of type \code{\link[biomformat:read_biom]{biom}}
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
-makeTreeSEFromBiom <- function(
+convertFromBIOM <- function(
         x, prefix.rm = removeTaxaPrefixes, 
         removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix, 
         rankFromPrefix = FALSE,
@@ -200,14 +200,6 @@ makeTreeSEFromBiom <- function(
         colData = sample_data,
         rowData = feature_data)
     return(tse)
-}
-
-####################### makeTreeSummarizedExperimentFromBiom ###################
-#' @param x object of type \code{\link[biomformat:read_biom]{biom}}
-#' @rdname makeTreeSEFromBiom
-#' @export
-makeTreeSummarizedExperimentFromBiom <- function(x, ...){
-    makeTreeSEFromBiom(x, ...)
 }
 
 ################################ HELP FUNCTIONS ################################

@@ -105,6 +105,13 @@
 \alias{perSampleDominantFeatures,SummarizedExperiment-method}
 \alias{perSampleDominantTaxa}
 \alias{perSampleDominantTaxa,SummarizedExperiment-method}
+\alias{makeTreeSummarizedExperimentFromPhyloseq}
+\alias{makeTreeSummarizedExperimentFromPhyloseq,ANY-method}
+\alias{makeTreeSEFromBiom}
+\alias{makeTreeSummarizedExperimentFromBiom}
+\alias{makeTreeSEFromDADA2}
+\alias{makeTreeSummarizedExperimentFromDADA2}
+\alias{makeTreeSEFromPhyloseq}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 cluster(x, ...)
@@ -312,6 +319,20 @@ perSampleDominantFeatures(x, ...)
 perSampleDominantTaxa(x, ...)
 
 \S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, ...)
+
+makeTreeSummarizedExperimentFromPhyloseq(x)
+
+\S4method{makeTreeSummarizedExperimentFromPhyloseq}{ANY}(x)
+
+makeTreeSEFromBiom(...)
+
+makeTreeSummarizedExperimentFromBiom(...)
+
+makeTreeSEFromDADA2(...)
+
+makeTreeSummarizedExperimentFromDADA2(...)
+
+makeTreeSEFromPhyloseq(x)
 }
 \arguments{
 \item{x}{A
