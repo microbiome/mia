@@ -172,6 +172,7 @@ phy
 tse <- transformAssay(tse, method = "relabundance")
 phy2 <- convertToPhyloseq(tse, assay.type = "relabundance")
 phy2
+
 }
 \seealso{
 \code{\link[=convert]{convertFromPhyloseq}}

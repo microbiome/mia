@@ -36,6 +36,7 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @name convert
+#' 
 #' @seealso
 #' \code{\link[=convert]{convertFromPhyloseq}}
 #' \code{\link[=convert]{convertFromDADA2}}

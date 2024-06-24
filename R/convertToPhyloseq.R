@@ -31,7 +31,7 @@
 #' @return
 #' An object of class \code{Phyloseq} object.
 #'
-#' @name convert
+#' @rdname convert
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -52,9 +52,7 @@
 #' tse <- transformAssay(tse, method = "relabundance")
 #' phy2 <- convertToPhyloseq(tse, assay.type = "relabundance")
 #' phy2
-NULL
-
-#' @rdname convert
+#' 
 #' @export
 setGeneric("convertToPhyloseq", signature = c("x"),
            function(x, ...)

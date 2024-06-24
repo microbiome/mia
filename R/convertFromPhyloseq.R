@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @rdname convert
+#' 
 #' @seealso
 #' \code{\link[=convert]{convertFromBIOM}}
 #' \code{\link[=convert]{convertFromDADA2}}
