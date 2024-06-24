@@ -368,7 +368,7 @@ setGeneric("unsplitOn",
     # Get the class of objects SCE, SE or TreeSE
     class_x <- class(ses[[1L]])
     # Combine assays
-    args <- list(assays = .unsplit_assays(ses, by = by))
+    args <- list(assays = .unsplit_assays(ses, MARGIN = by))
     # Combine rowData if data share columns
     if(by == 1L){
         rd <- .combine_rowData(ses)
