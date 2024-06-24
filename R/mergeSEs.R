@@ -476,10 +476,10 @@ setMethod("mergeSEs", signature = c(x = "list"),
 
 # Input: tree data and TreeSE
 # Output: TreeSE
-.check_and_add_trees <- function(tse, trees_and_links, by, verbose){
+.check_and_add_trees <- function(tse, trees_and_links, MARGIN, verbose){
     # Give a message if verbose is specified
     if( verbose ){
-        message("Adding ", by, "Tree(s)...")
+        message("Adding ", MARGIN, "Tree(s)...")
     }
     # Get trees
     trees <- trees_and_links$trees
@@ -487,7 +487,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
     links <- trees_and_links$links
     # Based on margin, get rownames or colnames of the TreeSE object; to check
     # if the data matches with trees
-    if(by == "row"){
+    if(MARGIN == "row"){
         names <- rownames(tse)
     } else{
         names <- colnames(tse)
@@ -495,7 +495,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
     # All rownames/colnames should be included in trees/links
     if( !all(names %in% links[["names"]]) ||
         is.null(names) || length(names) == 0 ){
-        warning(by, "Tree(s) does not match with the data so it ", 
+        warning(MARGIN, "Tree(s) does not match with the data so it ", 
                 "is discarded.", call. = FALSE)
         return(tse)
     }
@@ -530,8 +530,8 @@ setMethod("mergeSEs", signature = c(x = "list"),
         isLeaf = links[["isLeaf"]],
         whichTree = links[["whichTree"]]
     )
-    # Add the data in correct slot based on by
-    if(by == "row" ){
+    # Add the data in correct slot based on MARGIN
+    if(MARGIN == "row" ){
         tse@rowTree <- trees
         tse@rowLinks <- links
     } else{

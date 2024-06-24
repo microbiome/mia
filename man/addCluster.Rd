@@ -50,9 +50,7 @@ will be disabled.)}
 row-wise / for features ('rows') or column-wise / for samples ('cols').
 Must be \code{'rows'} or \code{'cols'}.}
 
-\item{MARGIN}{A single character value for specifying whether the
-transformation is applied sample (column) or feature (row) wise.
-(By default: \code{MARGIN = "samples"})}
+\item{MARGIN}{Deprecated. Use \code{by} instead.}
 
 \item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
 
