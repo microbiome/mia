@@ -65,7 +65,7 @@ NULL
 setGeneric("addCluster", signature = c("x"),
     function(
             x, BLUSPARAM, assay.type = assay_name, 
-            assay_name = "counts", by = MARGIN, MARGIN = "features", full = FALSE, 
+            assay_name = "counts", by = MARGIN, MARGIN = "rows", full = FALSE, 
             name = "clusters", clust.col = "clusters", ...)
     standardGeneric("addCluster"))
 
@@ -76,7 +76,7 @@ setGeneric("addCluster", signature = c("x"),
 setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
     function(
             x, BLUSPARAM, assay.type = assay_name, 
-            assay_name = "counts", by = MARGIN, MARGIN = "features", full = FALSE, 
+            assay_name = "counts", by = MARGIN, MARGIN = "rows", full = FALSE, 
             name = "clusters", clust.col = "clusters", ...) {
         .require_package("bluster")
         # Checking parameters

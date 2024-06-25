@@ -734,8 +734,8 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
 
 ########################### .check_that_assays_match ###########################
 # If correlations between features are analyzed, samples should match, and vice versa
-.check_that_assays_match <- function(assay1, assay2, by = MARGIN, MARGIN){
-    names <- ifelse(by == 2, "Features", "Samples")
+.check_that_assays_match <- function(assay1, assay2, MARGIN){
+    names <- ifelse(MARGIN == 2, "Features", "Samples")
     if( any(rownames(assay1) != rownames(assay2)) ){
         stop(names, " must match between experiments.",
              call. = FALSE)
@@ -806,7 +806,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                 paste0(", assay.type2: -, col.var2: ", 
                        paste(col.var2, collapse = " + ")), 
                 paste0(", assay.type2: ", assay.type2, ", col.var2: -")),
-            "\nMARGIN: ", by, 
+            "\nby: ", by, 
             ", function: ", function_name, 
             ", method: ", method,
             ", test.signif: ", test.signif,
@@ -1411,15 +1411,15 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     # Next, convert this table into a joint probability estimate
     PIij <- Nij/sum(Nij)
     # Compute the marginal probability estimates
-    #PIiPlus <- apply(PIij, by=1, sum)
+    #PIiPlus <- apply(PIij, MARGIN=1, sum)
     PIiPlus <- rowSums2(PIij)
-    #PIPlusj <- apply(PIij, by=2, sum)
+    #PIPlusj <- apply(PIij, MARGIN=2, sum)
     PIPlusj <- colSums2(PIij)
     # Compute the marginal variation of y
     Vy <- 1 - sum(PIPlusj^2)
     # Compute the expected conditional variation of y given x
     # Because of the previous step, there should not be any NAs
-    #InnerSum <- apply(PIij^2, by=1, sum)
+    #InnerSum <- apply(PIij^2, MARGIN=1, sum)
     InnerSum <- rowSums2(PIij^2)
     VyBarx <- 1 - sum(InnerSum/PIiPlus)
     # Compute and return Goodman and Kruskal's tau measure

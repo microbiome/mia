@@ -807,11 +807,11 @@ setMethod("mergeSEs", signature = c(x = "list"),
 ########################### ..get_unique_names ###########################
 # This function convert colnames unique
 
-# Input: TreeSEs and by
+# Input: TreeSEs and MARGIN
 # Output: One TreeSE with unique sample names compared to other TreeSE
-.get_unique_names <- function(tse1, tse2, by, suffix=2){
-    # Based on by, get right names
-    if( by == "row" ){
+.get_unique_names <- function(tse1, tse2, MARGIN, suffix=2){
+    # Based on MARGIN, get right names
+    if( MARGIN == "row" ){
         names1 <- rownames(tse1)
         names2 <- rownames(tse2)
     } else{
@@ -829,7 +829,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
         }
         temp_names2 <- paste0(temp_names2, ".", suffix)
         # Assign names back
-        if( by == "row" ){
+        if( MARGIN == "row" ){
             rownames(tse2)[ind] <- temp_names2
         } else{
             colnames(tse2)[ind] <- temp_names2
@@ -1063,7 +1063,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
         c1$rownames <- colnames1
         c2$rownames <- colnames2
         # Merge class information into one df
-        classes <- merge(c1, c2, by="rownames", all=TRUE)
+        classes <- merge(c1, c2, MARGIN="rownames", all=TRUE)
         # Add info whether certain variable was found from df1/df2
         classes$found1 <- !is.na(classes$class.x)
         classes$found2 <- !is.na(classes$class.y)
