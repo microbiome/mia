@@ -423,4 +423,50 @@ test_that("agglomerateByPrevalence", {
                                       other_label = "test",
                                       agglomerate.tree = TRUE)
     expect_equal(length(rowTree(actual)$tip.label), length(rownames(actual)))
+    
+    # Load data from miaTime package
+    skip_if_not(require("miaTime", quietly = TRUE))
+    data(SilvermanAGutData)
+    se <- SilvermanAGutData
+    
+    # checking reference consensus sequence generation
+    actual <- agglomerateByPrevalence(se,"Genus", update.refseq = FALSE)
+    # There should be only one exact match for each sequence
+    seqs_test <- as.character( referenceSeq(actual) )
+    seqs_ref <- as.character( referenceSeq(se) )
+    expect_true(all(vapply(
+    seqs_test, function(seq) sum(seqs_ref %in% seq) == 1,
+    FUN.VALUE = logical(1) )) )
+    
+    # Merging creates consensus sequences.
+    th <- runif(1, 0, 1)
+    actual <- agglomerateByPrevalence(
+      se, "Genus", update.refseq = TRUE, threshold = th)
+    seqs_test <- referenceSeq(actual)
+    # Get single taxon as reference. Merge those sequences and test that it
+    # equals to one that is output of agglomerateByPrevalence
+    seqs_ref <- referenceSeq(se)
+    feature <- sample(na.omit(rowData(se)[["Genus"]]), 1)
+    seqs_ref <- seqs_ref[ rowData(se)[["Genus"]] %in% feature ]
+    seqs_ref <- .merge_refseq(
+      seqs_ref, factor(rep(feature, length(seqs_ref))), rownames(seqs_ref),
+      threshold = th)
+    seqs_test <- seqs_test[ names(seqs_test) %in% feature ]
+    expect_equal(seqs_test, seqs_ref)
+    
+    # checking reference consensus sequence generation using 'Genus:Alistipes'
+    actual <- agglomerateByPrevalence(se,"Genus", update.refseq = FALSE)
+    expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
+                 paste0("TCAAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGTAGGCGGTTTGATAA",
+                        "GTTAGAGGTGAAATCCCGGGGCTTAACTCCGGAACTGCCTCTAATACTGTTAG",
+                        "ACTAGAGAGTAGTTGCGGTAGGCGGAATGTATGGTGTAGCGGTGAAATGCTTA",
+                        "GAGATCATACAGAACACCGATTGCGAAGGCAGCTTACCAAACTATATCTGACG",
+                        "TTGAGGCACGAAAGCGTGGGG"))
+    actual <- agglomerateByPrevalence(se,"Genus", update.refseq = TRUE)
+    expect_equal(as.character(referenceSeq(actual)[["Alistipes"]]),
+                 paste0("SCRAGCGTTRTCCGGAWTTAYTGGGYKTAAAGSGMGCGYAGGYGGHBDNKYAA",
+                        "GTCWGWWGTGAAAKYYYGSGGCTCAACCSYRRRMBKSCWKTKGAAACTGBVHK",
+                        "RCTWGAKTKYVKDWGAGGWRRGYGGAATKCSWVGTGTAGCGGTGAAATGCKTA",
+                        "GAKATBWSGARGAACWCCRRTKGCGAAGGCRRCTYWCTRGWCKGWVAMTGACG",
+                        "CTGAKGCKCGAAAGYGTGGGK"))
 })
