@@ -167,7 +167,7 @@
     if (as.relative) {
         mat <- .calc_rel_abund(mat)
     }
-    getPrevalence(mat, ...)
+    return(mat)
 }
 
 ################################################################################

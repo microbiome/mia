@@ -263,7 +263,8 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
             rank = NULL, ...){
         
         # Calculate abundance
-        .get_abundance(x, assay.type, rank, ...)
+        mat <- .get_abundance(x, assay.type = assay.type, rank = rank, ...)
+        getPrevalence(mat, ...)
     }
 )
 ############################# getPrevalent #################################
