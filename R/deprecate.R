@@ -913,6 +913,52 @@ setMethod(
 
 #' @rdname deprecate
 #' @export
+setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
+           function(x, ...)
+             standardGeneric("makePhyloseqFromTreeSE"))
+
+#' @rdname deprecate
+#' @export
+setMethod("makePhyloseqFromTreeSE", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(msg = paste0(
+            "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
+            " Use 'convertFromPhyloseq' instead."))
+        convertFromPhyloseq(x)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("makePhyloseqFromTreeSE", 
+          signature = c(x = "TreeSummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(msg = paste0(
+            "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
+            " Use 'convertFromPhyloseq' instead."))
+        convertFromPhyloseq(x)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
+           function(x)
+             standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
+
+#' @rdname deprecate
+#' @export
+setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"), 
+          function(x){
+            .Deprecated(msg = paste0(
+              "'makePhyloseqFromTreeSummarizedExperiment' is deprecated.",
+              " Use 'convertToPhyloseq' instead."))
+            convertToPhyloseq(x)
+          }
+)
+
+#' @rdname deprecate
+#' @export
 setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("x"),
            function(x)
              standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
@@ -924,7 +970,7 @@ setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(x = "ANY"),
         .Deprecated(msg = paste0(
             "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
             " Use 'convertFromPhyloseq' instead."))
-            convertFromPhyloseq(x)
+        convertFromPhyloseq(x)
     }
 )
 

@@ -105,6 +105,11 @@
 \alias{perSampleDominantFeatures,SummarizedExperiment-method}
 \alias{perSampleDominantTaxa}
 \alias{perSampleDominantTaxa,SummarizedExperiment-method}
+\alias{makePhyloseqFromTreeSE}
+\alias{makePhyloseqFromTreeSE,SummarizedExperiment-method}
+\alias{makePhyloseqFromTreeSE,TreeSummarizedExperiment-method}
+\alias{makePhyloseqFromTreeSummarizedExperiment}
+\alias{makePhyloseqFromTreeSummarizedExperiment,ANY-method}
 \alias{makeTreeSummarizedExperimentFromPhyloseq}
 \alias{makeTreeSummarizedExperimentFromPhyloseq,ANY-method}
 \alias{makeTreeSEFromBiom}
@@ -319,6 +324,16 @@ perSampleDominantFeatures(x, ...)
 perSampleDominantTaxa(x, ...)
 
 \S4method{perSampleDominantTaxa}{SummarizedExperiment}(x, ...)
+
+makePhyloseqFromTreeSE(x, ...)
+
+\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x, ...)
+
+\S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, ...)
+
+makePhyloseqFromTreeSummarizedExperiment(x)
+
+\S4method{makePhyloseqFromTreeSummarizedExperiment}{ANY}(x)
 
 makeTreeSummarizedExperimentFromPhyloseq(x)
 

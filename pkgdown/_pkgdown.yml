@@ -17,6 +17,7 @@ reference:
   - importMothur
   - importMetaPhlAn
   - importHUMAnN
+  - convert
 - title: Taxonomic data
   contents:
   - taxonomyRanks
