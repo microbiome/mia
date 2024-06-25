@@ -258,8 +258,9 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
     if(!is.null(rank)){
         .check_taxonomic_rank(rank, x)
         args <- c(list(x = x, rank = rank, na.rm = agg.na.rm), list(...))
-        argNames <- c("x","rank","ignore.taxonomy","na.rm","empty.fields",
-                      "archetype","update.tree","average","BPPARAM")
+        argNames <- c(
+            "x","rank","ignore.taxonomy","na.rm","empty.fields", "archetype",
+            "update.tree","average","BPPARAM", "update.refseq")
         args <- args[names(args) %in% argNames]
         x <- do.call(agglomerateByRank, args)
         if(relabel){
@@ -523,9 +524,9 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname agglomerate-methods
 #'   
-#' @param agglomerate.tree \code{TRUE} or \code{FALSE}: should
+#' @param update.tree \code{TRUE} or \code{FALSE}: should
 #'   \code{rowTree()} also be agglomerated? (Default:
-#'   \code{agglomerate.tree = FALSE})
+#'   \code{update.tree = FALSE})
 #' 
 #' @param other.label A single \code{character} valued used as the label for the
 #'   summary of non-prevalent taxa. (default: \code{other.label = "Other"})
@@ -605,35 +606,40 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
 setMethod("agglomerateByPrevalence", 
           signature = c(x = "TreeSummarizedExperiment"),
     function(x, rank = NULL, other.label = other_label, other_label = "Other",
-            agglomerate.tree = FALSE, ...){
-      # input check
-      if(!.is_a_bool(agglomerate.tree)){
-        stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
+            update.tree = FALSE, ...){
+        # input check
+        if(!.is_a_bool(update.tree)){
+          stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
+        }
+        # update.refseq is a hidden parameter as for all other agglomeration
+        # methods from the agglomerate-methods man page.
+        # Here 'list(...)[["update.refseq"]]' is used to access it.
+        merge_refseq <- list(...)[["update.refseq"]]
+        if( is.null(merge_refseq) ){
+            merge_refseq <- FALSE
+        }
+        if( !.is_a_bool(merge_refseq) ){
+            stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
+        }
+        # Agglomerate based on prevalence with SE method
+        res <- callNextMethod()
+        # If user wants to agglomerate reference sequences. At this point,
+        # sequences are only subsetted without finding consensus sequences.
+        if( merge_refseq && !is.null(referenceSeq(x))  ){
+            # If user wants to agglomerate based on rank
+            x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
+            # Find groups that will be used to agglomerate the data
+            f <- rownames(x)[ match(rownames(x), rownames(res)) ]
+            f[ is.na(f) ] <- other.label
+            # Find consensus sequences, and add them to result
+            ref_seq <- referenceSeq(x)
+            ref_seq <- .merge_refseq_list(ref_seq, f, rownames(res), ...)
+            referenceSeq(res) <- ref_seq
+        }
+        # Update tree if user has specified to do so
+        if( update.tree ){
+            res <- .agglomerate_trees(res, 1)
+        }
+        return(res)
       }
-      # for optionally merging referenceSeq
-      f <- rownames(x) 
-      refSeq <- NULL
-      # update.refseq is a hidden parameter as for all other agglomeration methods
-      # from the agglomerate-methods man page.
-      # Here 'list(...)[["update.refseq"]]' is used to access it.
-      merge_refseq <- list(...)[["update.refseq"]]
-      if( is.null(merge_refseq) ){
-        merge_refseq <- FALSE
-      }
-      if( !.is_a_bool(merge_refseq) ){
-        stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
-      }
-      if( merge_refseq ){
-        refSeq <- referenceSeq(x)
-      }
-      x <- callNextMethod()
-      if( merge_refseq ){
-        referenceSeq(x) <- .merge_refseq_list(refSeq, f, rownames(x), ...)
-      }
-      # optionally merge rowTree
-      if( agglomerate.tree ){
-        x <- .agglomerate_trees(x, 1)
-      }
-      return(x)
-    }
 )
