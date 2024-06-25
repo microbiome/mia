@@ -1063,7 +1063,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
         c1$rownames <- colnames1
         c2$rownames <- colnames2
         # Merge class information into one df
-        classes <- merge(c1, c2, MARGIN="rownames", all=TRUE)
+        classes <- merge(c1, c2, by="rownames", all=TRUE)
         # Add info whether certain variable was found from df1/df2
         classes$found1 <- !is.na(classes$class.x)
         classes$found2 <- !is.na(classes$class.y)
