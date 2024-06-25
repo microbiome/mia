@@ -153,6 +153,23 @@
     return(MARGIN)
 }
 
+# Get abundance. Determines if relative abundance is calculated or not.
+.get_abundance <- function(x, assay.type = assay_name, assay_name = "counts",
+                           rank = NULL, as.relative = FALSE, ...) {
+    # input check
+    if(!.is_a_bool(as.relative)){
+        stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # check assay
+    .check_assay_present(assay.type, x)
+    x <- .agg_for_prevalence(x, rank = rank, ...)
+    mat <- assay(x, assay.type)
+    if (as.relative) {
+        mat <- .calc_rel_abund(mat)
+    }
+    getPrevalence(mat, ...)
+}
+
 ################################################################################
 # Internal wrappers for getters
 
