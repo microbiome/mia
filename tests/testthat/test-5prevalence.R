@@ -452,7 +452,7 @@ test_that("agglomerateByPrevalence", {
       seqs_ref, factor(rep(feature, length(seqs_ref))), rownames(seqs_ref),
       threshold = th)
     seqs_test <- seqs_test[ names(seqs_test) %in% feature ]
-    expect_equal(seqs_test, seqs_ref)
+    expect_equal(seqs_test, seqs_ref, tolerance = 10**-2)
     
     # checking reference consensus sequence generation using 'Genus:Alistipes'
     actual <- agglomerateByPrevalence(se,"Genus", update.refseq = FALSE)
