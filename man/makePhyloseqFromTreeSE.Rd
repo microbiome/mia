@@ -12,7 +12,7 @@ makePhyloseqFromTreeSE(x, ...)
 
 \S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x, assay.type = "counts", assay_name = NULL, ...)
 
-\S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, tree_name = "phylo", ...)
+\S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo", ...)
 
 makePhyloseqFromTreeSummarizedExperiment(x, ...)
 
@@ -33,9 +33,11 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{tree_name}{a single \code{character} value for specifying which
+\item{tree.name}{a single \code{character} value for specifying which
 tree will be included in the phyloseq object that is created,
-(By default: \code{tree_name = "phylo"})}
+(By default: \code{tree.name = "phylo"})}
+
+\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 }
 \value{
 An object of class \code{Phyloseq} object.

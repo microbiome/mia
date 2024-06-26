@@ -62,10 +62,10 @@ test_that("taxonomy", {
     expect_equal(getTaxonomyLabels(xtse),
                  c("Family:j","Phylum:a","Family:k","Family:l","Family:m",
                    "Family:n","Family:o","Phylum:c","Family:o_1"))
-    expect_equal(getTaxonomyLabels(xtse, make_unique = FALSE),
+    expect_equal(getTaxonomyLabels(xtse, make.unique = FALSE),
                  c("Family:j","Phylum:a","Family:k","Family:l","Family:m",
                    "Family:n","Family:o","Phylum:c","Family:o"))
-    expect_equal(getTaxonomyLabels(xtse, resolve_loops = TRUE),
+    expect_equal(getTaxonomyLabels(xtse, resolve.loops = TRUE),
                  c("Family:j","Phylum:a","Family:k","Family:l","Family:m",
                    "Family:n","Family:o_1","Phylum:c","Family:o_2"))
 
@@ -85,10 +85,10 @@ test_that("taxonomy", {
     actual <- mia:::.get_taxa_any_match("Escherichia", td)
     expect_type(actual,"logical")
     expect_length(actual,nrow(td))
-    actual <- mia:::.get_taxa_row_match("Escherichia", td, "Genus", use_grepl = TRUE)
+    actual <- mia:::.get_taxa_row_match("Escherichia", td, "Genus", use.grepl = TRUE)
     expect_type(actual,"logical")
     expect_length(actual,nrow(td))
-    actual <- mia:::.get_taxa_any_match("Escherichia", td, use_grepl = TRUE)
+    actual <- mia:::.get_taxa_any_match("Escherichia", td, use.grepl = TRUE)
     expect_type(actual,"logical")
     expect_length(actual,nrow(td))
     actual <- mia:::.get_taxa_row_match(NA_character_, td, "Genus")

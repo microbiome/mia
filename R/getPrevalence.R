@@ -7,18 +7,23 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object
 #'
-#' @param detection Detection threshold for absence/presence. Either an
-#'   absolute value compared directly to the values of \code{x} or a relative
-#'   value between 0 and 1, if \code{as_relative = FALSE}.
+#' @param detection Detection threshold for absence/presence. If \code{as_relative = FALSE},
+#'    it sets the counts threshold for a taxon to be considered present.
+#'    If \code{as_relative = TRUE}, it sets the relative abundance threshold
+#'    for a taxon to be considered present. (default: \code{detection = 0})
 #'
-#' @param include_lowest logical scalar: Should the lower boundary of the
+#' @param include.lowest logical scalar: Should the lower boundary of the
 #'   detection and prevalence cutoffs be included? (default: \code{FALSE})
+#' 
+#' @param include_lowest Deprecated. Use \code{include.lowest} instead.
 #'
 #' @param sort logical scalar: Should the result be sorted by prevalence?
 #'   (default: \code{FALSE})
 #'
-#' @param as_relative logical scalar: Should the detection threshold be applied
+#' @param as.relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? (default: \code{FALSE})
+#' 
+#' @param as_relative Deprecated. Use \code{as.relative} instead.
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -56,7 +61,7 @@
 #' the detection threshold. For \code{SummarizedExperiment} objects, the
 #' prevalence is calculated for the selected taxonomic rank, otherwise for the
 #' rows. The absolute population prevalence can be obtained by multiplying the
-#' prevalence by the number of samples (\code{ncol(x)}). If \code{as_relative =
+#' prevalence by the number of samples (\code{ncol(x)}). If \code{as.relative =
 #' FALSE} the relative frequency (between 0 and 1) is used to check against the
 #' \code{detection} threshold.
 #'
@@ -119,7 +124,7 @@
 #' prevalence.frequency <- getPrevalence(tse,
 #'                                       detection = 0,
 #'                                       sort = TRUE,
-#'                                       as_relative = TRUE)
+#'                                       as.relative = TRUE)
 #' head(prevalence.frequency)
 #'
 #' # Get prevalence estimates for phylums
@@ -128,7 +133,7 @@
 #'                                       rank = "Phylum",
 #'                                       detection = 0,
 #'                                       sort = TRUE,
-#'                                       as_relative = TRUE)
+#'                                       as.relative = TRUE)
 #' head(prevalence.frequency)
 #'
 #' # - to obtain population counts, multiply frequencies with the sample size,
@@ -144,7 +149,7 @@
 #'                             rank = "Phylum",
 #'                             detection = 10,
 #'                             prevalence = 50/100,
-#'                             as_relative = FALSE)
+#'                             as.relative = FALSE)
 #' head(prevalent)
 #'
 #' # Gets a subset of object that includes prevalent taxa
@@ -152,7 +157,7 @@
 #'                                              rank = "Family",
 #'                                              detection = 0.001,
 #'                                              prevalence = 0.55,
-#'                                              as_relative = TRUE)
+#'                                              as.relative = TRUE)
 #' altExp(tse, "prevalent")
 #'
 #' # getRare returns the inverse
@@ -160,7 +165,7 @@
 #'                     rank = "Phylum",
 #'                     detection = 1/100,
 #'                     prevalence = 50/100,
-#'                     as_relative = TRUE)
+#'                     as.relative = TRUE)
 #' head(rare)
 #'
 #' # Gets a subset of object that includes rare taxa
@@ -168,7 +173,7 @@
 #'                                     rank = "Class",
 #'                                     detection = 0.001,
 #'                                     prevalence = 0.001,
-#'                                     as_relative = TRUE)
+#'                                     as.relative = TRUE)
 #' altExp(tse, "rare")
 #'
 #' # Names of both experiments, prevalent and rare, can be found from slot
@@ -189,7 +194,8 @@ setGeneric("getPrevalence", signature = "x",
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalence", signature = c(x = "ANY"), function(
-    x, detection = 0, include_lowest = FALSE, sort = FALSE, na.rm = TRUE, ...){
+    x, detection = 0, include.lowest = include_lowest, include_lowest = FALSE, 
+    sort = FALSE, na.rm = TRUE, ...){
         # input check
         if (!.is_numeric_string(detection)) {
             stop("'detection' must be a single numeric value or coercible to ",
@@ -202,8 +208,8 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
         }
         #
         detection <- as.numeric(detection)
-        if(!.is_a_bool(include_lowest)){
-            stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(include.lowest)){
+            stop("'include.lowest' must be TRUE or FALSE.", call. = FALSE)
         }
         if(!.is_a_bool(sort)){
             stop("'sort' must be TRUE or FALSE.", call. = FALSE)
@@ -217,7 +223,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
             warning(msg, call. = FALSE)
         }
         #
-        if (include_lowest) {
+        if (include.lowest) {
             prev <- x >= detection
         } else {
             prev <- x > detection
@@ -235,7 +241,7 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 )
 
 .agg_for_prevalence <- function(
-        x, rank, relabel = FALSE, make_unique = TRUE, na.rm = FALSE,
+        x, rank, relabel = FALSE, make.unique = TRUE, na.rm = FALSE,
         agg.na.rm = TRUE, ...){
     # Check na.rm. It is not used in this function, it is only catched so that
     # it can be passed to getPrevalence(matrix) and not use it here in
@@ -252,12 +258,12 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
     if(!is.null(rank)){
         .check_taxonomic_rank(rank, x)
         args <- c(list(x = x, rank = rank, na.rm = agg.na.rm), list(...))
-        argNames <- c("x","rank","onRankOnly","na.rm","empty.fields",
-                      "archetype","mergeTree","average","BPPARAM")
+        argNames <- c("x","rank","ignore.taxonomy","na.rm","empty.fields",
+                      "archetype","update.tree","average","BPPARAM")
         args <- args[names(args) %in% argNames]
         x <- do.call(agglomerateByRank, args)
         if(relabel){
-            rownames(x) <- getTaxonomyLabels(x, make_unique = make_unique)
+            rownames(x) <- getTaxonomyLabels(x, make.unique = make.unique)
         }
     }
     x
@@ -267,17 +273,17 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts",
-             as_relative = FALSE, rank = NULL, ...){
+            as.relative = as_relative, as_relative = FALSE, rank = NULL, ...){
         # input check
-        if(!.is_a_bool(as_relative)){
-            stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(as.relative)){
+            stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
         }
 
         # check assay
         .check_assay_present(assay.type, x)
         x <- .agg_for_prevalence(x, rank = rank, ...)
         mat <- assay(x, assay.type)
-        if (as_relative) {
+        if (as.relative) {
             mat <- .calc_rel_abund(mat)
         }
         getPrevalence(mat, ...)
@@ -288,7 +294,7 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
 #'
 #' @param prevalence Prevalence threshold (in 0 to 1). The
 #'   required prevalence is strictly greater by default. To include the
-#'   limit, set \code{include_lowest} to \code{TRUE}.
+#'   limit, set \code{include.lowest} to \code{TRUE}.
 #'
 #' @details
 #' \code{getPrevalent} returns taxa that are more prevalent with the
@@ -311,7 +317,7 @@ setGeneric("getPrevalent", signature = "x",
 }
 
 .get_prevalent_indices <- function(x, prevalence = 50/100,
-                                include_lowest = FALSE, ...){
+                                include.lowest = FALSE, ...){
     # input check
     if (!.is_numeric_string(prevalence)) {
         stop("'prevalence' must be a single numeric value or coercible to ",
@@ -320,8 +326,8 @@ setGeneric("getPrevalent", signature = "x",
     }
 
     prevalence <- as.numeric(prevalence)
-    if(!.is_a_bool(include_lowest)){
-        stop("'include_lowest' must be TRUE or FALSE.", call. = FALSE)
+    if(!.is_a_bool(include.lowest)){
+        stop("'include.lowest' must be TRUE or FALSE.", call. = FALSE)
     }
     # rownames must bet set and unique, because if sort = TRUE, the order is
     # not preserved
@@ -329,7 +335,7 @@ setGeneric("getPrevalent", signature = "x",
     pr <- getPrevalence(x, rank = NULL, ...)
 
     # get logical vector which row does exceed threshold
-    if (include_lowest) {
+    if (include.lowest) {
         f <- pr >= prevalence
     } else {
         f <- pr > prevalence
@@ -367,9 +373,10 @@ setGeneric("getPrevalent", signature = "x",
 #' @rdname getPrevalence
 #' @export
 setMethod("getPrevalent", signature = c(x = "ANY"),
-    function(x, prevalence = 50/100, include_lowest = FALSE, ...){
-        .get_prevalent_taxa(x, rank = NULL, prevalence = prevalence,
-                            include_lowest = include_lowest, ...)
+    function(x, prevalence = 50/100, include.lowest = include_lowest, 
+        include_lowest = FALSE, ...){
+            .get_prevalent_taxa(x, rank = NULL, prevalence = prevalence,
+                include.lowest = include.lowest, ...)
     }
 )
 
@@ -377,9 +384,9 @@ setMethod("getPrevalent", signature = c(x = "ANY"),
 #' @export
 setMethod("getPrevalent", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, prevalence = 50/100,
-             include_lowest = FALSE, ...){
-        .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
-                            include_lowest = include_lowest, ...)
+        include.lowest = include_lowest, include_lowest = FALSE, ...){
+            .get_prevalent_taxa(x, rank = rank, prevalence = prevalence,
+                include.lowest = include.lowest, ...)
     }
 )
 
@@ -423,9 +430,10 @@ setGeneric("getRare", signature = "x",
 #' @rdname getPrevalence
 #' @export
 setMethod("getRare", signature = c(x = "ANY"),
-    function(x, prevalence = 50/100, include_lowest = FALSE, ...){
-        .get_rare_taxa(x, rank = NULL, prevalence = prevalence,
-                       include_lowest = include_lowest, ...)
+    function(x, prevalence = 50/100, include.lowest = include_lowest, 
+        include_lowest = FALSE, ...){
+            .get_rare_taxa(x, rank = NULL, prevalence = prevalence,
+                include.lowest = include.lowest, ...)
     }
 )
 
@@ -433,9 +441,9 @@ setMethod("getRare", signature = c(x = "ANY"),
 #' @export
 setMethod("getRare", signature = c(x = "SummarizedExperiment"),
     function(x, rank = NULL, prevalence = 50/100,
-             include_lowest = FALSE, ...){
-        .get_rare_taxa(x, rank = rank, prevalence = prevalence,
-                       include_lowest = include_lowest, ...)
+        include.lowest = include_lowest, include_lowest = FALSE, ...){
+            .get_rare_taxa(x, rank = rank, prevalence = prevalence,
+                include.lowest = include.lowest, ...)
     }
 )
 
@@ -515,8 +523,10 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname agglomerate-methods
 #'
-#' @param other_label A single \code{character} valued used as the label for the
-#'   summary of non-prevalent taxa. (default: \code{other_label = "Other"})
+#' @param other.label A single \code{character} valued used as the label for the
+#'   summary of non-prevalent taxa. (default: \code{other.label = "Other"})
+#' 
+#' @param other_label Deprecated. use \code{other.label} instead.
 #'
 #' @details
 #' \code{agglomerateByPrevalence} sums up the values of assays at the taxonomic
@@ -524,7 +534,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' available) and selects the summed results that exceed the given population
 #' prevalence at the given detection level. The other summed values (below the
 #' threshold) are agglomerated in an additional row taking the name indicated by
-#' \code{other_label} (by default "Other").
+#' \code{other.label} (by default "Other").
 #'
 #' @return
 #' \code{agglomerateByPrevalence} returns a taxonomically-agglomerated object
@@ -537,7 +547,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #'                               rank = "Phylum",
 #'                               detection = 1/100,
 #'                               prevalence = 50/100,
-#'                               as_relative = TRUE)
+#'                               as.relative = TRUE)
 #'
 #' tse
 #'
@@ -557,10 +567,10 @@ setGeneric("agglomerateByPrevalence", signature = "x",
 #' @rdname agglomerate-methods
 #' @export
 setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
-    function(x, rank = NULL, other_label = "Other", ...){
+    function(x, rank = NULL, other.label = other_label, other_label = "Other", ...){
         # input check
-        if(!.is_a_string(other_label)){
-            stop("'other_label' must be a single character value.",
+        if(!.is_a_string(other.label)){
+            stop("'other.label' must be a single character value.",
                  call. = FALSE)
         }
         #
@@ -576,9 +586,9 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
                                             check_assays = FALSE)
             rowData(other_x)[,colnames(rowData(other_x))] <- NA
             # set the other label
-            rownames(other_x) <- other_label
+            rownames(other_x) <- other.label
             if(!is.null(rank)){
-                rowData(other_x)[,rank] <- other_label
+                rowData(other_x)[,rank] <- other.label
             }
             # temporary fix until TSE supports rbind
             class <- c("SingleCellExperiment","RangedSummarizedExperiment",
