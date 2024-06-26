@@ -9,9 +9,6 @@
 #'
 #' @param file BIOM file location
 #' 
-#' @param obj BIOM object to be converted to a 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' 
 #' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
 #' taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.

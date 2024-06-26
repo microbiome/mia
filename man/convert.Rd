@@ -79,11 +79,6 @@ tree will be included in the phyloseq object that is created,
 (By default: \code{tree.name = "phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
-
-\item{obj}{BIOM object to be converted to a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
-
-\item{phy}{a \code{phyloseq} object}
 }
 \value{
 \code{importBIOM} returns an object of class

@@ -1,5 +1,3 @@
-#' @param phy a \code{phyloseq} object
-#'
 #' @details 
 #' \code{convertFromPhyloseq} converts \code{phyloseq}
 #' objects into 
