@@ -1,14 +1,13 @@
-#' @param phy a \code{phyloseq} object
-#' 
-#' @details 
+#' Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}
+#'
 #' \code{convertFromPhyloseq} converts \code{phyloseq}
-#' objects into 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} objects.
+#' objects into \code{TreeSummarizedExperiment} objects.
+#'
 #' All data stored in a \code{phyloseq} object is transferred.
 #'
-#' @return 
-#' \code{convertFromPhyloseq} returns an object of class 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' @param x a \code{phyloseq} object
+#'
+#' @return An object of class \code{TreeSummarizedExperiment}
 #'
 #' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
 #' @importFrom SummarizedExperiment colData colData<-
@@ -24,8 +23,6 @@
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @examples
-#' 
-#' ### Coerce a phyloseq object to a TreeSE object
 #' if (requireNamespace("phyloseq")) {
 #'     data(GlobalPatterns, package="phyloseq")
 #'     convertFromPhyloseq(GlobalPatterns)

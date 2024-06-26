@@ -1,16 +1,10 @@
-#' Converters
+#' Loading a biom file
 #'
-#' For convenience a few functions are available to convert BIOM, DADA2 and 
-#' phyloseq objects to 
+#' For convenience a few functions are available to convert data from a
+#' \sQuote{biom} file or object into a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' objects and 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' objects to phyloseq objects.
 #'
-#' @param file BIOM file location
-#' 
-#' @param obj BIOM object to be converted to a 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' @param file biom file location
 #' 
 #' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
@@ -31,22 +25,16 @@
 #' 
 #' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
 #' 
-#' @details 
-#' \code{convertFromBIOM} coerces a BIOM object to a 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' object.
+#' @param ... additional arguments 
+#'   \itemize{
+#'        \item \code{patter}: \code{character} value specifying artifacts
+#'        to be removed. If \code{patterns = "auto"}, special characters
+#'        are removed. (default: \code{pattern = "auto"})
+#'    }
 #' 
-#' \code{importBIOM} loads a BIOM file and creates a 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} 
-#' object from the BIOM object contained in the loaded file
-#' 
-#' @return 
-#' \code{importBIOM} returns an object of class
+#' @return An object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   
-#' \code{convertFromBIOM} returns an object of class
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   
+#'
 #' @name convert
 #' 
 #' @seealso
@@ -56,8 +44,6 @@
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @examples
-#' 
-#' ### Load and convert BIOM results to a TreeSE
 #' # Load biom file
 #' library(biomformat)
 #' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
@@ -84,9 +70,8 @@
 #'                     artifact.rm = TRUE)
 NULL
 
-#' \code{importBIOM} loads a BIOM file and creates a TreeSE from the BIOM object
-#' contained in the loaded file.
 #' @rdname convert
+#'
 #' @export
 importBIOM <- function(file, ...) {
     .require_package("biomformat")
@@ -96,7 +81,7 @@ importBIOM <- function(file, ...) {
 
 #' @rdname convert
 #'
-#' \code{convertFromBIOM} creates a TreeSE object from a BIOM object.
+#' @param x object of type \code{\link[biomformat:read_biom]{biom}}
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame

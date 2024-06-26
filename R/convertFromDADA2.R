@@ -1,19 +1,20 @@
 #' Coerce \sQuote{DADA2} results to \code{TreeSummarizedExperiment}
 #'
-#' @param ... Addional arguments. For \code{convertFromDADA2}, see 
-#' \code{mergePairs} function for more details.
+#' \code{convertFromDADA2} is a wrapper for the
+#' \code{mergePairs} function from the \code{dada2} package.
+#'
+#' @param ... See \code{mergePairs} function for
+#'   more details.
 #'
 #' @details
-#' \code{convertFromDADA2} is a wrapper for the \code{mergePairs} function from 
-#' the \code{dada2} package.
-#' A count matrix is constructed via \code{makeSequenceTable(mergePairs(...))} 
-#' and rownames are dynamically created as \code{ASV(N)} with \code{N} from 1 to
-#' \code{nrow} of the count tables. The colnames and rownames from the output of
-#' \code{makeSequenceTable} are stored as \code{colnames} and in the 
-#' \code{referenceSeq} slot of the \code{TreeSummarizedExperiment},respectively.
+#' A count matrix is constructed via \code{makeSequenceTable(mergePairs(...))}
+#' and rownames are dynamically created as \code{ASV(N)} with \code{N} from
+#' 1 to \code{nrow} of the count tables. The colnames and rownames from the
+#' output of \code{makeSequenceTable} are stored as \code{colnames} and in the
+#' \code{referenceSeq} slot of the \code{TreeSummarizedExperiment},
+#' respectively.
 #'
-#' @return \code{convertFromDADA2} returns an object of class 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' @return An object of class \code{TreeSummarizedExperiment}
 #'
 #' @importFrom S4Vectors SimpleList
 #' @importFrom Biostrings DNAStringSet
@@ -29,8 +30,6 @@
 #' @export
 #'
 #' @examples
-#' 
-#' ### Coerce DADA2 results to a TreeSE object
 #' if(requireNamespace("dada2")) {
 #'   fnF <- system.file("extdata", "sam1F.fastq.gz", package="dada2")
 #'   fnR = system.file("extdata", "sam1R.fastq.gz", package="dada2")

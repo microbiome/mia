@@ -1,8 +1,10 @@
 #' Create a phyloseq object from a TreeSummarizedExperiment object
 #'
-#' @param x a 
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   object
+#' This function creates a phyloseq object from a TreeSummarizedExperiment
+#' object. By using \code{assay.type}, it is possible to specify which table
+#' from \code{assay} is added to the phyloseq object.
+#'
+#' @param x a \code{TreeSummarizedExperiment} object
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
@@ -20,25 +22,21 @@
 #'   
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
-#' @details 
-#' \code{convertToPhyloseq} creates a phyloseq object from a 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' object. By using \code{assay.type}, it is possible to specify which table
-#' from \code{assay} is added to the phyloseq object.
+#' @param ... additional arguments
+#'
+#' @details
+#' \code{convertToPhyloseq} is used for creating a
+#' phyloseq object from TreeSummarizedExperiment object.
 #'
 #' @return
-#' \code{convertToPhyloseq} returns an object of class 
-#' \code{\link[phyloseq:phyloseq-class]{phyloseq}}
+#' An object of class \code{Phyloseq} object.
 #'
 #' @rdname convert
-#' 
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
-#' 
-#' #' ### Coerce a TreeSE object to a phyloseq object
 #' # Get tse object
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
