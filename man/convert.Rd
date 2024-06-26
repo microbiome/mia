@@ -10,7 +10,7 @@
 \alias{convertToPhyloseq}
 \alias{convertToPhyloseq,SummarizedExperiment-method}
 \alias{convertToPhyloseq,TreeSummarizedExperiment-method}
-\title{Loading a biom file}
+\title{Converters}
 \usage{
 importBIOM(file, ...)
 
@@ -36,11 +36,14 @@ convertToPhyloseq(x, ...)
 \S4method{convertToPhyloseq}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo", ...)
 }
 \arguments{
-\item{file}{biom file location}
+\item{file}{BIOM file location}
 
-\item{...}{additional arguments}
+\item{...}{Additional arguments. For \code{convertFromDADA2}, see
+\code{mergePairs} function for more details.}
 
-\item{x}{a \code{TreeSummarizedExperiment} object}
+\item{x}{a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object}
 
 \item{prefix.rm}{\code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? The prefixes is removed only from detected
@@ -76,46 +79,67 @@ tree will be included in the phyloseq object that is created,
 (By default: \code{tree.name = "phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
+
+\item{obj}{BIOM object to be converted to a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
+
+\item{phy}{a \code{phyloseq} object}
 }
 \value{
-An object of class
+\code{importBIOM} returns an object of class
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 
-An object of class \code{TreeSummarizedExperiment}
+\code{convertFromBIOM} returns an object of class
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 
-An object of class \code{TreeSummarizedExperiment}
+\code{convertFromDADA2} returns an object of class
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 
-An object of class \code{Phyloseq} object.
+\code{convertFromPhyloseq} returns an object of class
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+
+\code{convertToPhyloseq} returns an object of class
+\code{\link[phyloseq:phyloseq-class]{phyloseq}}
 }
 \description{
-For convenience a few functions are available to convert data from a
-\sQuote{biom} file or object into a
+For convenience, a few functions are available to convert BIOM, DADA2 and
+phyloseq objects to
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+objects, and
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+objects to phyloseq objects.
+}
+\details{
+\code{convertFromBIOM} coerces a BIOM object to a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.
+
+\code{importBIOM} loads a BIOM file and creates a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object from the BIOM object contained in the loaded file.
 
 \code{convertFromDADA2} is a wrapper for the
 \code{mergePairs} function from the \code{dada2} package.
+A count matrix is constructed via
+\code{makeSequenceTable(mergePairs(...))} and rownames are dynamically
+created as \code{ASV(N)} with \code{N} from 1 to \code{nrow} of the count
+tables. The colnames and rownames from the output of \code{makeSequenceTable}
+are stored as \code{colnames} and in the \code{referenceSeq} slot of the
+\code{TreeSummarizedExperiment}, respectively.
 
 \code{convertFromPhyloseq} converts \code{phyloseq}
-objects into \code{TreeSummarizedExperiment} objects.
+objects into
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} objects.
+All data stored in a \code{phyloseq} object is transferred.
 
-This function creates a phyloseq object from a TreeSummarizedExperiment
+\code{convertToPhyloseq} creates a phyloseq object from a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object. By using \code{assay.type}, it is possible to specify which table
 from \code{assay} is added to the phyloseq object.
 }
-\details{
-A count matrix is constructed via \code{makeSequenceTable(mergePairs(...))}
-and rownames are dynamically created as \code{ASV(N)} with \code{N} from
-1 to \code{nrow} of the count tables. The colnames and rownames from the
-output of \code{makeSequenceTable} are stored as \code{colnames} and in the
-\code{referenceSeq} slot of the \code{TreeSummarizedExperiment},
-respectively.
-
-All data stored in a \code{phyloseq} object is transferred.
-
-\code{convertToPhyloseq} is used for creating a
-phyloseq object from TreeSummarizedExperiment object.
-}
 \examples{
+
+### Load and convert BIOM results to a TreeSE
 # Load biom file
 library(biomformat)
 biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
@@ -140,6 +164,8 @@ biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
 # Clean artifacts from taxonomic data
 tse <- importBIOM(biom_file,
                     artifact.rm = TRUE)
+
+### Coerce DADA2 results to a TreeSE object
 if(requireNamespace("dada2")) {
   fnF <- system.file("extdata", "sam1F.fastq.gz", package="dada2")
   fnR = system.file("extdata", "sam1R.fastq.gz", package="dada2")
@@ -149,6 +175,8 @@ if(requireNamespace("dada2")) {
   tse <- convertFromDADA2(dadaF, fnF, dadaR, fnR)
   tse
 }
+
+### Coerce a phyloseq object to a TreeSE object
 if (requireNamespace("phyloseq")) {
     data(GlobalPatterns, package="phyloseq")
     convertFromPhyloseq(GlobalPatterns)
@@ -157,6 +185,8 @@ if (requireNamespace("phyloseq")) {
     data(esophagus, package="phyloseq")
     convertFromPhyloseq(esophagus)
 }
+
+### Coerce a TreeSE object to a phyloseq object
 # Get tse object
 data(GlobalPatterns)
 tse <- GlobalPatterns
@@ -175,18 +205,6 @@ phy2
 
 }
 \seealso{
-\code{\link[=convert]{convertFromPhyloseq}}
-\code{\link[=convert]{convertFromDADA2}}
-\code{\link[=importQIIME2]{importQIIME2}}
-\code{\link[=importMothur]{importMothur}}
-
-\code{\link[=convert]{convertFromPhyloseq}}
-\code{\link[=convert]{convertFromBIOM}}
-\code{\link[=importQIIME2]{importQIIME2}}
-\code{\link[=importMothur]{importMothur}}
-
-\code{\link[=convert]{convertFromBIOM}}
-\code{\link[=convert]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
 }

@@ -1,10 +1,16 @@
-#' Loading a biom file
+#' Converters
 #'
-#' For convenience a few functions are available to convert data from a
-#' \sQuote{biom} file or object into a
+#' For convenience, a few functions are available to convert BIOM, DADA2 and 
+#' phyloseq objects to 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' objects, and 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' objects to phyloseq objects.
 #'
-#' @param file biom file location
+#' @param file BIOM file location
+#' 
+#' @param obj BIOM object to be converted to a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' 
 #' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
@@ -25,25 +31,31 @@
 #' 
 #' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
 #' 
-#' @param ... additional arguments 
-#'   \itemize{
-#'        \item \code{patter}: \code{character} value specifying artifacts
-#'        to be removed. If \code{patterns = "auto"}, special characters
-#'        are removed. (default: \code{pattern = "auto"})
-#'    }
+#' @details 
+#' \code{convertFromBIOM} coerces a BIOM object to a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object.
 #' 
-#' @return An object of class
+#' \code{importBIOM} loads a BIOM file and creates a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} 
+#' object from the BIOM object contained in the loaded file.
+#' 
+#' @return 
+#' \code{importBIOM} returns an object of class
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   
+#' \code{convertFromBIOM} returns an object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @name convert
 #' 
 #' @seealso
-#' \code{\link[=convert]{convertFromPhyloseq}}
-#' \code{\link[=convert]{convertFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @examples
+#' 
+#' ### Load and convert BIOM results to a TreeSE
 #' # Load biom file
 #' library(biomformat)
 #' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
