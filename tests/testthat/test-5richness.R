@@ -1,161 +1,72 @@
-context("diversity estimates")
 
-test_that("diversity estimates", {
+context("estimateRichness")
+
+test_that("estimateRichness", {
+    
     skip_if_not(requireNamespace("vegan", quietly = TRUE))
-    data(esophagus, package = "mia")
+    data(esophagus, package="mia")
     
+    tse <- estimateRichness(esophagus, detection = 1)
+    cd <- colData(tse)    
+    expect_equal(unname(round(cd$observed, 0)), c(15, 24, 16))
+    # These are unaffected by detection parameter
+    expect_equal(unname(round(cd$chao1, 4)), c(39.1429, 37.5000, 71.0000))
+    expect_equal(unname(round(cd$ace, 4)), c(49.0970, 40.9465, 88.9768))
+    expect_equal(unname(round(cd$hill, 4)), c(9.4817, 15.8376, 7.6331))
+    
+    test_internal_estimateRichness <- function(tse){
+        
+        # Calculate all indices.
+        tse_idx <- estimateRichness(tse)
+        
+        # Check that the type of output is the same as the type of input.
+        expect_true(typeof(tse_idx) == typeof(tse))
+        
+        # Check that every index is calculated by checking the column names from
+        # colData.
+        # Check that the order of indices is right / the same as the order
+        # in the input vector.
+        expect_named(colData(tse_idx), c("ace", "ace_se", "chao1", "chao1_se", "hill", "observed"))
+        
+        # Delete colData
+        colData(tse_idx) <- NULL
+        
+        # Calculate all indices with specified names
+        tse_idx <- estimateRichness(tse,
+                                    index = c("observed", "chao1", "ace", "hill"),
+                                    name = c("Observed", "Chao1", "ACE", "Hill")
+        )
+        
+        # Check that the order of and naming indices is right
+        expect_named(colData(tse_idx), c("Observed", "Chao1", "Chao1_se", "ACE", "ACE_se", "Hill"))
+        
+        # .get_observed
+        mat <- assay(tse, "counts")
+        expect_equal(unname(mia:::.calc_observed(mat, detection = 0)), c(28, 33, 38))
+        expect_equal(unname(mia:::.calc_observed(mat, detection = 1)), c(15, 24, 16))	
+        
+        s <- mia:::.calc_chao1(mat)
+        expect_equal(ncol(s), 2)
+        expect_equal(unname(round(s[,1], 4)), c(39.1429, 37.5000, 71.0000))
+        
+        s <- mia:::.calc_ace(mat)
+        expect_equal(ncol(s), 2)
+        expect_equal(unname(round(s[,1], 4)), c(49.0970, 40.9465, 88.9768))
+        
+        s <- mia:::.calc_hill(mat)
+        expect_false(is.matrix(s))
+        expect_equal(unname(round(s, 4)), c(9.4817, 15.8376, 7.6331))
+        
+    }
+    
+    # TSE object
     tse <- esophagus
-    tse <- transformAssay(tse, method = "relabundance")
-    indices <- c("coverage", "fisher", "gini_simpson", "faith",
-                 "inverse_simpson", "log_modulo_skewness",
-                 "shannon")
-    tse_idx <- estimateDiversity(tse, index = indices, threshold = 0.473)
     
-    # Check that the type of output is the same as the type of input
-    expect_true(typeof(tse_idx) == typeof(tse))
+    # Standard tse
+    test_internal_estimateRichness(tse)
     
-    # Check that every index is calculated by checking the column names from colData.
-    calculated_indices <- colnames(colData(tse_idx))
-    missing_indices <- setdiff(indices, calculated_indices)
-    if (length(missing_indices) > 0) {
-        warning("Missing indices: ", paste(missing_indices, collapse = ", "))
-    }
+    # DelayedArray version of the assay
+    assay(tse,"counts") <- DelayedArray(assay(tse,"counts"))
+    test_internal_estimateRichness(tse)
     
-    # Check that the order of indices is the same as the input vector
-    expect_named(colData(tse_idx), calculated_indices, ignore.order = TRUE)
-    
-    lambda <- unname(colSums(assays(tse_idx)$relabundance^2))
-    ginisimpson <- 1 - lambda
-    invsimpson <- 1 / lambda
-    
-    expect_equal(lambda, unname(.simpson_lambda(assays(tse_idx)$relabundance)))
-    expect_equal(ginisimpson, unname(colData(tse_idx)$gini_simpson))
-    expect_equal(ginisimpson, unname(.calc_gini_simpson(assays(tse_idx)$relabundance)))
-    
-    expect_equal(invsimpson, unname(colData(tse_idx)$inverse_simpson))
-    expect_equal(invsimpson, unname(.calc_inverse_simpson(assays(tse_idx)$relabundance)))
-    
-    cd <- colData(tse_idx)
-    expect_equal(unname(round(cd$shannon, 5)), c(2.24937, 2.76239, 2.03249))
-    expect_equal(unname(round(cd$gini_simpson, 6)), c(0.831372, 0.903345, 0.665749))
-    expect_equal(unname(round(cd$inverse_simpson, 5)), c(5.93021, 10.34606, 2.99177))
-    expect_equal(unname(round(cd$coverage, 0)), c(2, 3, 1))
-    
-    # Check if 'fisher' index exists and is numeric
-    if ("fisher" %in% colnames(cd)) {
-        expect_true(is.numeric(cd$fisher))
-        expect_equal(unname(round(cd$fisher, 4)), c(8.8037, 10.0989, 13.2783))
-    } else {
-        warning("The 'fisher' index is missing from the colData.")
-    }
-    
-    # Check if 'log_modulo_skewness' index exists and is numeric
-    if ("log_modulo_skewness" %in% colnames(cd)) {
-        expect_true(is.numeric(cd$log_modulo_skewness))
-        expect_equal(unname(round(cd$log_modulo_skewness, 6)), c(2.013610, 1.827198, 2.013695))
-    } else {
-        warning("The 'log_modulo_skewness' index is missing from the colData.")
-    }
-    
-    # Tests that 'quantile' and 'nclasses' are working
-    quantile_test <- estimateDiversity(tse, index = "log_modulo_skewness", quantile = 0.855, nclasses = 32)
-    if ("log_modulo_skewness" %in% colnames(colData(quantile_test))) {
-        expect_equal(unname(round(colData(quantile_test)$log_modulo_skewness, 6)), c(1.814770, 1.756495, 1.842704))
-    } else {
-        warning("The 'log_modulo_skewness' index is missing from the colData for quantile test.")
-    }
-    
-    # Tests that .calc_skewness returns the right value
-    mat <- assay(tse, "counts")
-    nclasses <- 61
-    quantile <- 0.35
-    
-    quantile_point <- quantile(max(mat), quantile)
-    cutpoints <- c(seq(0, quantile_point, length = nclasses), Inf)
-    
-    freq_table <- table(cut(mat, cutpoints), col(mat))
-    test1 <- mia:::.calc_skewness(freq_table)
-    
-    test2 <- mia:::.calc_skewness(apply(mat, 2, function(x) {
-        table(cut(x, cutpoints))
-    }))
-    
-    expect_equal(unname(test1), unname(test2))
-    expect_equal(unname(round(test1, 6)), c(7.256706, 6.098354, 7.278894))
-    
-    # Tests faith index with esophagus data
-    for (i in 1:ncol(tse_idx)) {
-        # Gets those taxa that are present/absent in the sample
-        present <- rownames(tse)[assays(tse)$counts[, i] > 0]
-        absent <- rownames(tse)[assays(tse)$counts[, i] == 0]
-        
-        # Absent taxa are dropped from the tree
-        sub_tree <- ape::drop.tip(rowTree(tse_idx), absent)
-        # Faith is now calculated based on the sub tree
-        faith <- sum(sub_tree$edge.length)
-        
-        expect_equal(cd$faith[i], faith)
-    }
-    
-    ########## Check that estimateFaith works correctly ##########
-    ########## with different SE object types ##########
-    
-    # Creates SE from TSE by dropping, e.g., rowTree
-    se <- as(tse, "SummarizedExperiment")
-    
-    # Add rownames because they are not included when SE is created from TSE
-    rownames(se) <- rownames(tse)
-    
-    # Calculates "faith" TSE
-    tse_only <- estimateFaith(tse)
-    
-    # tse_only should be TSE object
-    expect_true(class(tse_only) == "TreeSummarizedExperiment")
-    # tse_only should include "faith"
-    expect_equal(colnames(colData(tse_only)), c(colnames(colData(tse)), "faith"))
-    
-    # Calculates "faith" TSE + TREE
-    tse_tree <- estimateFaith(tse, tree = rowTree(tse))
-    
-    # tse_tree should be TSE object
-    expect_true(class(tse_tree) == "TreeSummarizedExperiment")
-    # tse_tree should include "faith"
-    expect_equal(colnames(colData(tse_tree)), c(colnames(colData(tse)), "faith"))
-    
-    # Calculates "faith" SE + TREE
-    se_tree <- estimateFaith(se, tree = rowTree(tse))
-    
-    # se_tree should be SE object
-    expect_true(class(se_tree) == "SummarizedExperiment")
-    # se_tree should include "faith"
-    expect_equal(colnames(colData(se_tree)), c(colnames(colData(se)), "faith"))
-    
-    # Expect error
-    expect_error(estimateDiversity(tse, index = "faith", tree.name = "test"))
-    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = "test"))
-    
-    data(GlobalPatterns, package = "mia")
-    data(esophagus, package = "mia")
-    tse <- mergeSEs(GlobalPatterns, esophagus, join = "full", assay.type = "counts")
-    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = "phylo.1", assay.type = "counts"))
-    expect_warning(estimateDiversity(tse, index = c("shannon", "faith")))
-    expect_error(estimateDiversity(tse, index = c("faith"), tree.name = "test"))
-    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = TRUE))
-    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = 1))
-    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = c("phylo", "phylo.1")))
-    
-    # Test Faith with picante packages results (version 1.8.2)
-    picante_res <- c(
-        250.5354, 262.2629, 208.4578, 117.8762, 119.8247, 135.7673, 159.3715,
-        123.3516, 143.7972, 111.7095, 156.4513, 147.9323, 247.2830, 253.2101,
-        245.1008, 127.2336, 167.7246, 155.5872, 142.3473, 197.6823, 197.2321,
-        124.6510, 121.2056, 179.9377, 140.8096, 126.5695)
-    tse <- GlobalPatterns
-    res <- estimateFaith(tse)$faith
-    expect_equal(res, picante_res, tolerance = 1e-5)
-    # Check only tips parameter
-    expect_error(estimateFaith(tse, only.tips = 1))
-    expect_error(estimateFaith(tse, only.tips = "TRUE"))
-    expect_error(estimateFaith(tse, only.tips = c(TRUE, FALSE)))
 })
-                 

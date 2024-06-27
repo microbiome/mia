@@ -200,97 +200,45 @@ NULL
 #' @rdname estimateRichness
 #' @export
 setGeneric("estimateRichness",signature = c("x"),
-        function(x, assay.type = assay_name, assay_name = "counts",
-                  index = c("ace", "chao1", "hill", "observed"),
-                  name = index,
-                  detection = 0,
-                  ...,
-                  BPPARAM = SerialParam())
-                  standardGeneric("estimateRichness"))
+           function(x, assay.type = assay_name, assay_name = "counts",
+                    index = c("ace", "chao1", "hill", "observed"),
+                    name = index,
+                    detection = 0,
+                    ...,
+                    BPPARAM = SerialParam())
+               standardGeneric("estimateRichness"))
 
 #' @rdname estimateRichness
 #' @export
 setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
-          function(x, 
-                   assay.type = "counts", 
-                   assay_name = NULL,
+          function(x,
+                   assay.type = assay_name, assay_name = "counts",
                    index = c("ace", "chao1", "hill", "observed"),
-                   name = index, 
-                   detection = 0, 
-                   ..., 
-                   BPPARAM = SerialParam()) {
+                   name = index,
+                   detection = 0,
+                   ...,
+                   BPPARAM = SerialParam()){
               
               # Input check
               # Check assay.type
-              if (!is.null(assay_name)) {
-                  .Deprecated(old = "assay_name", new = "assay.type", 
-                              "Now assay_name is deprecated. Use assay.type instead.")
-                  assay.type <- assay_name
-              }
-              
               .check_assay_present(assay.type, x)
-              
               # Check indices
               index <- match.arg(index, several.ok = TRUE)
-              if (!.is_non_empty_character(name) || length(name) != length(index)) {
-                  stop("'name' must be a non-empty character value 
-                       and have the same length as 'index'.", call. = FALSE)
+              if(!.is_non_empty_character(name) || length(name) != length(index)){
+                  stop("'name' must be a non-empty character value and have the ",
+                       "same length than 'index'.",
+                       call. = FALSE)
               }
-              
-              # Ensure assay data does not contain values that invalidate certain indices
-              assay_data <- assay(x, assay.type)
-              unsupported_indices <- list()
-              
-              for (idx in index) {
-                  if (idx %in% c("ace", "chao1", "hill")) {
-                      if (any(assay_data < 0, na.rm = TRUE)) {
-                          unsupported_indices[[idx]] <- "negative values in assay data"
-                      }
-                  }
-                  if (idx == "observed") {
-                      if (any(assay_data < 0, na.rm = TRUE) || 
-                          !all(apply(assay_data, 1, is.integer))) {
-                          unsupported_indices[[idx]] <- 
-                              "negative values or non-integer counts in assay data"
-                      }
-                  }
-              }
-              
-              valid_indices <- index[!index %in% names(unsupported_indices)]
-              valid_names <- name[!index %in% names(unsupported_indices)]
-              
-              # Issue warnings for unsupported indices
-              if (length(unsupported_indices) > 0) {
-                  warning_messages <- sapply(names(unsupported_indices), function(idx) {
-                      paste0(idx, " not calculated due to ", unsupported_indices[[idx]])
-                  })
-                  warning(paste(warning_messages, collapse = "; "), call. = FALSE)
-              }
-              
-              # If there are valid indices, proceed with calculation
-              if (length(valid_indices) > 0) {
-                  richness <- tryCatch({
-                      BiocParallel::bplapply(valid_indices,
-                                             FUN = .get_richness_values,
-                                             mat = assay_data,
-                                             detection = detection,
-                                             BPPARAM = BPPARAM)
-                  }, error = function(e) {
-                      warning("An error occurred while calculating 
-                              the richness indices: ", e$message)
-                      return(NULL)
-                  })
-                  
-                  # Add richness indices to colData if successful
-                  if (!is.null(richness)) {
-                      .add_values_to_colData(x, richness, valid_names)
-                  }
-              }
-              
-              return(x)
+              # Calculates richness indices
+              richness <- BiocParallel::bplapply(index,
+                                                 FUN = .get_richness_values,
+                                                 mat = assay(x, assay.type),
+                                                 detection = detection,
+                                                 BPPARAM = BPPARAM)
+              # Add richness indices to colData
+              .add_values_to_colData(x, richness, name)
           }
 )
-
 
 .calc_observed <- function(mat, detection, ...){
     # vegan::estimateR(t(mat))["S.obs",]
@@ -300,9 +248,9 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 .calc_chao1 <- function(mat, ...){
     # Required to work with DelayedArray
     if(is(mat, "DelayedArray")) {
-      mat <- matrix(mat, nrow = nrow(mat))
+        mat <- matrix(mat, nrow = nrow(mat))
     }
-
+    
     ans <- t(vegan::estimateR(t(mat))[c("S.chao1","se.chao1"),])
     colnames(ans) <- c("","se")
     ans
@@ -311,9 +259,9 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 .calc_ace <- function(mat, ...){
     # Required to work with DelayedArray
     if(is(mat, "DelayedArray")) {
-      mat <- matrix(mat, nrow = nrow(mat))
+        mat <- matrix(mat, nrow = nrow(mat))
     }
-
+    
     ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
     colnames(ans) <- c("","se")
     ans
@@ -325,14 +273,17 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 }
 
 .get_richness_values <- function(index, mat, detection, ...) {
-
-    FUN <- switch(index,
-                observed = .calc_observed,
-                chao1 = .calc_chao1,
-                ace = .calc_ace,
-                hill = .calc_hill
+    tryCatch({
+        FUN <- switch(index,
+                      observed = .calc_observed,
+                      chao1 = .calc_chao1,
+                      ace = .calc_ace,
+                      hill = .calc_hill
         )
-
-    FUN(mat = mat, detection = detection, ...)
-
+        
+        FUN(mat = mat, detection = detection, ...)
+    }, error = function(e) {
+        warning(paste("Failed to calculate", index, "index:", e$message))
+        return(NA)
+    })
 }
