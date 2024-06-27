@@ -240,6 +240,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
           }
 )
 
+
 .calc_observed <- function(mat, detection, ...){
     # vegan::estimateR(t(mat))["S.obs",]
     colSums(mat > detection)
