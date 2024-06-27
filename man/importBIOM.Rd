@@ -9,31 +9,7 @@ importBIOM(file, ...)
 \arguments{
 \item{file}{BIOM file location}
 
-\item{...}{additional arguments
-\itemize{
-\item \code{patter}: \code{character} value specifying artifacts
-to be removed. If \code{patterns = "auto"}, special characters
-are removed. (default: \code{pattern = "auto"})
-}}
-
-\item{prefix.rm}{\code{TRUE} or \code{FALSE}: Should
-taxonomic prefixes be removed? The prefixes is removed only from detected
-taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
-(default \code{prefix.rm = FALSE})}
-
-\item{removeTaxaPrefixes}{Deprecated. Use \code{prefix.rm} instead.}
-
-\item{rank.from.prefix}{\code{TRUE} or \code{FALSE}: If file does not have
-taxonomic ranks on feature table, should they be scraped from prefixes?
-(default \code{rank.from.prefix = FALSE})}
-
-\item{rankFromPrefix}{Deprecated.Use \code{rank.from.prefix} instead.}
-
-\item{artifact.rm}{\code{TRUE} or \code{FALSE}: If file have
-some taxonomic character naming artifacts, should they be removed.
-(default \code{artifact.rm = FALSE})}
-
-\item{remove.artifacts}{Deprecated. Use \code{artifact.rm} instead.}
+\item{...}{additional arguments to be passed to \code{convertFromBIOM}}
 }
 \value{
 \code{importBIOM} returns an object of class

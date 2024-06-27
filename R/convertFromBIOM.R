@@ -58,31 +58,7 @@ NULL
 #' 
 #' @param file BIOM file location
 #' 
-#' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
-#' taxonomic prefixes be removed? The prefixes is removed only from detected
-#' taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
-#' (default \code{prefix.rm = FALSE})
-#' 
-#' @param removeTaxaPrefixes Deprecated. Use \code{prefix.rm} instead.
-#' 
-#' @param rank.from.prefix \code{TRUE} or \code{FALSE}: If file does not have
-#' taxonomic ranks on feature table, should they be scraped from prefixes?
-#' (default \code{rank.from.prefix = FALSE})
-#' 
-#' @param rankFromPrefix Deprecated.Use \code{rank.from.prefix} instead.
-#' 
-#' @param artifact.rm \code{TRUE} or \code{FALSE}: If file have
-#' some taxonomic character naming artifacts, should they be removed.
-#' (default \code{artifact.rm = FALSE})
-#' 
-#' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
-#' 
-#' @param ... additional arguments 
-#'   \itemize{
-#'        \item \code{patter}: \code{character} value specifying artifacts
-#'        to be removed. If \code{patterns = "auto"}, special characters
-#'        are removed. (default: \code{pattern = "auto"})
-#'    }
+#' @param ... additional arguments to be passed to \code{convertFromBIOM}
 #' 
 #' @details
 #' \code{importBIOM} loads a BIOM file and creates a 
