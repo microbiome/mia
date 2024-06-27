@@ -638,7 +638,7 @@ setMethod("agglomerateByPrevalence",
         }
         # Update tree if user has specified to do so
         if( update.tree ){
-          res <- .agglomerate_trees(res, 1)
+            res <- .agglomerate_trees(res, 1)
         }
         return(res)
       }
