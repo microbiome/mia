@@ -135,22 +135,22 @@
       }
 }
 
-# Check by parameters. Should be defining rows or columns.
-.check_MARGIN <- function(by) {
+# Check MARGIN parameters. Should be defining rows or columns.
+.check_MARGIN <- function(MARGIN) {
     # Convert to lowcase if it is a string
-    if( .is_non_empty_string(by) ) {
-        by <- tolower(by)
+    if( .is_non_empty_string(MARGIN) ) {
+      MARGIN <- tolower(MARGIN)
     }
-    # by must be one of the following options
-    if( !(length(by) == 1L && by %in% c(
+    # MARGIN must be one of the following options
+    if( !(length(MARGIN) == 1L && MARGIN %in% c(
             1, 2, "1", "2", "features", "samples", "columns", "col", "row",
             "rows", "cols")) ) {
-        stop("'by' must equal 1 or 2.", call. = FALSE)
+        stop("'MARGIN' must equal 1 or 2.", call. = FALSE)
     }
-    # Convert by to numeric if it is not.
-    by <- ifelse(by %in% c(
+    # Convert MARGIN to numeric if it is not.
+  MARGIN <- ifelse(MARGIN %in% c(
         "samples", "columns", "col", 2, "cols"), 2, 1)
-    return(by)
+    return(MARGIN)
 }
 
 ################################################################################

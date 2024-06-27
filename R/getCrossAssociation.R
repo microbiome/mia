@@ -411,9 +411,8 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
         .check_assay_present(assay.type2, tse2)
     }
     # Check by
-    if( !is.numeric(by) && !by %in% c(1, 2) ){
-      stop("'by' must be 1 or 2.", call. = FALSE)
-    }
+    by <- .check_MARGIN(by) 
+    
     # Check method
     # method is checked in .calculate_association. Otherwise association.fun would
     # not work. (It can be "anything", and it might also have method parameter.)
