@@ -6,8 +6,6 @@
 #' objects, and 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' objects to phyloseq objects.
-#'
-#' @param file BIOM file location
 #' 
 #' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
@@ -32,15 +30,8 @@
 #' \code{convertFromBIOM} coerces a BIOM object to a 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
-#' 
-#' \code{importBIOM} loads a BIOM file and creates a 
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} 
-#' object from the BIOM object contained in the loaded file.
-#' 
-#' @return 
-#' \code{importBIOM} returns an object of class
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   
+#' @return
 #' \code{convertFromBIOM} returns an object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
@@ -52,7 +43,68 @@
 #'
 #' @examples
 #' 
-#' ### Load and convert BIOM results to a TreeSE
+#' ### Convert BIOM results to a TreeSE
+#' # Load biom file
+#' library(biomformat)
+#' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
+#'                          package = "biomformat")
+#' 
+#' # Make TreeSE from biom object
+#' biom_object <- biomformat::read_biom(biom_file)
+#' tse <- convertFromBIOM(biom_object)
+NULL
+
+#' Loading a BIOM file
+#' 
+#' @param file BIOM file location
+#' 
+#' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
+#' taxonomic prefixes be removed? The prefixes is removed only from detected
+#' taxa columns meaning that \code{rank.from.prefix} should be enabled in the most cases.
+#' (default \code{prefix.rm = FALSE})
+#' 
+#' @param removeTaxaPrefixes Deprecated. Use \code{prefix.rm} instead.
+#' 
+#' @param rank.from.prefix \code{TRUE} or \code{FALSE}: If file does not have
+#' taxonomic ranks on feature table, should they be scraped from prefixes?
+#' (default \code{rank.from.prefix = FALSE})
+#' 
+#' @param rankFromPrefix Deprecated.Use \code{rank.from.prefix} instead.
+#' 
+#' @param artifact.rm \code{TRUE} or \code{FALSE}: If file have
+#' some taxonomic character naming artifacts, should they be removed.
+#' (default \code{artifact.rm = FALSE})
+#' 
+#' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
+#' 
+#' @param ... additional arguments 
+#'   \itemize{
+#'        \item \code{patter}: \code{character} value specifying artifacts
+#'        to be removed. If \code{patterns = "auto"}, special characters
+#'        are removed. (default: \code{pattern = "auto"})
+#'    }
+#' 
+#' @details
+#' \code{importBIOM} loads a BIOM file and creates a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} 
+#' object from the BIOM object contained in the loaded file.
+#' 
+#' @return 
+#' \code{importBIOM} returns an object of class
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' 
+#' @name importBIOM
+#' 
+#' @seealso
+#' \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromBIOM}}
+#' \code{\link[=convert]{convertFromDADA2}}
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
+#' \code{\link[=importHUMAnN]{importHUMAnN}}
+#'
+#' @example 
 #' # Load biom file
 #' library(biomformat)
 #' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
@@ -60,10 +112,6 @@
 #' 
 #' # Make TreeSE from biom file
 #' tse <- importBIOM(biom_file)
-#' 
-#' # Make TreeSE from biom object
-#' biom_object <- biomformat::read_biom(biom_file)
-#' tse <- convertFromBIOM(biom_object)
 #' 
 #' # Get taxonomyRanks from prefixes and remove prefixes
 #' tse <- importBIOM(biom_file,
@@ -77,10 +125,7 @@
 #' # Clean artifacts from taxonomic data
 #' tse <- importBIOM(biom_file,
 #'                     artifact.rm = TRUE)
-NULL
-
-#' @rdname convert
-#'
+#'                     
 #' @export
 importBIOM <- function(file, ...) {
     .require_package("biomformat")

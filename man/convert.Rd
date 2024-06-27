@@ -3,7 +3,6 @@
 %   R/convertFromPhyloseq.R, R/convertToPhyloseq.R
 \name{convert}
 \alias{convert}
-\alias{importBIOM}
 \alias{convertFromBIOM}
 \alias{convertFromDADA2}
 \alias{convertFromPhyloseq}
@@ -12,8 +11,6 @@
 \alias{convertToPhyloseq,TreeSummarizedExperiment-method}
 \title{Converters}
 \usage{
-importBIOM(file, ...)
-
 convertFromBIOM(
   x,
   prefix.rm = removeTaxaPrefixes,
@@ -36,11 +33,6 @@ convertToPhyloseq(x, ...)
 \S4method{convertToPhyloseq}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo", ...)
 }
 \arguments{
-\item{file}{BIOM file location}
-
-\item{...}{Additional arguments. For \code{convertFromDADA2}, see
-\code{mergePairs} function for more details.}
-
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object}
@@ -64,6 +56,9 @@ some taxonomic character naming artifacts, should they be removed.
 
 \item{remove.artifacts}{Deprecated. Use \code{artifact.rm} instead.}
 
+\item{...}{Additional arguments. For \code{convertFromDADA2}, see
+\code{mergePairs} function for more details.}
+
 \item{assay.type}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 included in the phyloseq object that is created.
@@ -81,9 +76,6 @@ tree will be included in the phyloseq object that is created,
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 }
 \value{
-\code{importBIOM} returns an object of class
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-
 \code{convertFromBIOM} returns an object of class
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 
@@ -109,10 +101,6 @@ objects to phyloseq objects.
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.
 
-\code{importBIOM} loads a BIOM file and creates a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object from the BIOM object contained in the loaded file.
-
 \code{convertFromDADA2} is a wrapper for the
 \code{mergePairs} function from the \code{dada2} package.
 A count matrix is constructed via
@@ -134,31 +122,15 @@ from \code{assay} is added to the phyloseq object.
 }
 \examples{
 
-### Load and convert BIOM results to a TreeSE
+### Convert BIOM results to a TreeSE
 # Load biom file
 library(biomformat)
 biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
                          package = "biomformat")
 
-# Make TreeSE from biom file
-tse <- importBIOM(biom_file)
-
 # Make TreeSE from biom object
 biom_object <- biomformat::read_biom(biom_file)
 tse <- convertFromBIOM(biom_object)
-
-# Get taxonomyRanks from prefixes and remove prefixes
-tse <- importBIOM(biom_file,
-                    rank.from.prefix = TRUE,
-                    prefix.rm = TRUE)
-
-# Load another biom file
-biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
-                         package = "mia")
-
-# Clean artifacts from taxonomic data
-tse <- importBIOM(biom_file,
-                    artifact.rm = TRUE)
 
 ### Coerce DADA2 results to a TreeSE object
 if(requireNamespace("dada2")) {
