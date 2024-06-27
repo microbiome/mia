@@ -261,9 +261,13 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts",
             rank = NULL, ...){
+        # check assay
+        .check_assay_present(assay.type, x)
+        x <- .agg_for_prevalence(x, rank = rank, ...)
+        mat <- assay(x, assay.type)
         
         # Calculate abundance
-        mat <- .get_abundance(x, assay.type = assay.type, rank = rank, ...)
+        mat <- .to_rel_abund(mat, ...)
         getPrevalence(mat, ...)
     }
 )
