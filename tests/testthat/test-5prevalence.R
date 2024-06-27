@@ -398,7 +398,7 @@ test_that("agglomerateByPrevalence", {
                                       prevalence = 50/100,
                                       as.relative = TRUE,
                                       other.label = "test",
-                                      agglomerate.tree = TRUE)
+                                      update.tree = TRUE)
     expect_equal(agglomerateByPrevalence(GlobalPatterns,
                                            rank = NULL,
                                            detection = 0.0001,
@@ -421,7 +421,7 @@ test_that("agglomerateByPrevalence", {
                                       prevalence = 50/100,
                                       as_relative = TRUE,
                                       other_label = "test",
-                                      agglomerate.tree = TRUE)
+                                      update.tree = TRUE)
     expect_equal(length(rowTree(actual)$tip.label), length(rownames(actual)))
     
     # Load data from miaTime package
