@@ -227,7 +227,7 @@ runUnifrac <- function(
     # tips that do not match with rows (e.g. after subsetting).
     if( any( !node.label %in% tree$tip.label ) ||
             any( !tree$tip.label %in% node.label) ){
-        tree <- .prune_tree(tree, node.label)
+        tree <- .prune_tree(tree, node.label, ...)
         warning("Pruning tree...", call. = FALSE)
     }
     # If node labels cannot be found from tips even after pruning, give error.

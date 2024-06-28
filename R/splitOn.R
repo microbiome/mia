@@ -295,13 +295,17 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
         x <- callNextMethod()
         # Manipulate rowTree or not?
         if( update.tree ){
-            # If the returned value is a list, go through all of them
-            if( is(x, 'SimpleList') ){
-                x <- SimpleList(lapply(x, .agglomerate_trees))
-
-            } else {
-                # Otherwise, the returned value is TreeSE
-                x <- .agglomerate_trees(x)
+            # Update both colTree and rowTree
+            for( direction in c(1, 2) ){
+                # If the returned value is a list, go through all of them
+                if( is(x, 'SimpleList') ){
+                    x <- lapply(x, function(y){
+                        .agglomerate_trees(y, MARGIN = direction, ...)})
+                    x <- SimpleList(x)
+                } else {
+                    # Otherwise, the returned value is TreeSE
+                    x <- .agglomerate_trees(x, MARGIN = direction, ...)
+                }
             }
         }
         x

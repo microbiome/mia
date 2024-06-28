@@ -449,7 +449,7 @@ setMethod(
 
 # Agglomerate all rowTrees found in TreeSE object. Get tips that represent
 # rows and remove all others.
-.agglomerate_trees <- function(x, MARGIN = 1){
+.agglomerate_trees <- function(x, MARGIN = 1, ...){
     # Get right functions based on direction
     tree_names_FUN <- switch(
         MARGIN, "1" = rowTreeNames, "2" = colTreeNames, stop("."))
@@ -474,7 +474,7 @@ setMethod(
             # Get names of nodes that are preserved
             links_temp <- links_temp[["nodeLab"]]
             # Agglomerate the tree
-            tree <- .prune_tree(tree, links_temp)
+            tree <- .prune_tree(tree, links_temp, ...)
             # Change the tree with agglomerated version
             args <- list(x, tree, links_temp, name)
             names(args) <- args_names

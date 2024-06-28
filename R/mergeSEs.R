@@ -224,7 +224,7 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
             # Merge objects
             tse <- .merge_SEs(
                 x, class, join, assay.type, missing.values, collapse.cols,
-                collapse.rows, verbose)
+                collapse.rows, verbose, ...)
             return(tse)
         }
 )
@@ -273,7 +273,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
 #' @importFrom SingleCellExperiment SingleCellExperiment
 .merge_SEs <- function(
         x, class, join, assay.type, missing.values, collapse.cols,
-        collapse.rows, verbose){
+        collapse.rows, verbose, ...){
 
     # Take first element and remove it from the list
     tse <- x[[1]]
@@ -352,11 +352,11 @@ setMethod("mergeSEs", signature = c(x = "list"),
     refSeqs <- tse_args$refSeqs
     # If data includes rowTrees, add them
     if( !is.null(rowTrees) ){
-        tse <- .check_and_add_trees(tse, rowTrees, "row", verbose)
+        tse <- .check_and_add_trees(tse, rowTrees, "row", verbose, ...)
     }
     # If data includes colTrees, add them
     if( !is.null(colTrees) ){
-        tse <- .check_and_add_trees(tse, colTrees, "col", verbose)
+        tse <- .check_and_add_trees(tse, colTrees, "col", verbose, ...)
     }
     # If data includes reference sequences, add them
     if( !is.null(refSeqs) ){
@@ -522,7 +522,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
         trees <- trees[unique(links$whichTree)]
     }
     # Combine trees into single tree.
-    tree <- .merge_trees(trees, links)
+    tree <- .merge_trees(trees, links, ...)
     # Order links so that the order matches with TreeSE
     links <- links[rownames(tse), ]
     # Add the data in correct slot based on MARGIN
@@ -543,7 +543,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
 # Output: single tree
 #' @importFrom ape bind.tree as.phylo
 #' @importFrom dplyr as_tibble
-.merge_trees <- function(trees, links){
+.merge_trees <- function(trees, links, ...){
     # Bind trees to combine one large tree
     # Take first tree
     tree <- trees[[1]]
@@ -559,7 +559,7 @@ setMethod("mergeSEs", signature = c(x = "list"),
     # dataset. Moreover, it ensures that there are no duplicated tips which
     # might be the case if the merged trees had shared taxa in addition to
     # unique taxa.
-    tree <- .prune_tree(tree, links[["nodeLab"]])
+    tree <- .prune_tree(tree, links[["nodeLab"]], ...)
     # At this point, we have one large tree that includes all trees. The trees
     # are bind without merging. This means that we can have duplicated nodes
     # and branches. For instance, there can be a node "family x" which is
