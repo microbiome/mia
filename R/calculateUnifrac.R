@@ -126,43 +126,41 @@ setMethod("calculateUnifrac",
                     tree = "missing"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
             tree.name = tree_name, tree_name = "phylo", transposed = FALSE, ...){
+        # Get functions and parameters based on direction
+        tree_present_FUN <- switch(as.character(transposed), "TRUE" = .check_colTree_present, 
+            "FALSE" = .check_rowTree_present, stop("."))
+        tree_FUN <- switch(as.character(transposed), "TRUE" = colTree, "FALSE" = rowTree, stop("."))
+        links_FUN <- switch(as.character(transposed), "TRUE" = colLinks, "FALSE" = rowLinks, stop("."))
+        subsetting_FUN <- switch(as.character(transposed), "TRUE" = function(x, idx) x[, idx], 
+            "FALSE" = function(x, idx) x[idx, ], stop("."))
+        transpose_MAT <- switch(as.character(transposed), "FALSE" = function(mat) t(mat), 
+            "TRUE" = function(mat) mat, stop("."))
+        
         # Check assay.type and get assay
         .check_assay_present(assay.type, x)
         mat <- assay(x, assay.type)
-        if(!transposed){
-            # Check tree.name
-            .check_rowTree_present(tree.name, x)
-            # Get tree
-            tree <- rowTree(x, tree.name)
-            # Select only those features that are in the rowTree
-            whichTree <- rowLinks(x)[, "whichTree"] == tree.name
-            if( any(!whichTree) ){
-                warning("Not all rows were present in the rowTree specified by 'tree.name'.",
-                        "'x' is subsetted.", call. = FALSE)
-                # Subset the data
-                x <- x[ whichTree, ]
-                mat <- mat[ whichTree, ]
-            }
-            mat <- t(mat)
-            # Get links
-            links <- rowLinks(x)
-        } else {
-            # Check tree.name
-            .check_colTree_present(tree.name, x)
-            # Get tree
-            tree <- colTree(x, tree.name)
-            # Select only those samples that are in the colTree
-            whichTree <- colLinks(x)[, "whichTree"] == tree.name
-            if( any(!whichTree) ){
-                warning("Not all columns were present in the colTree specified by 'tree.name'.",
-                        "'x' is subsetted.", call. = FALSE)
-                # Subset the data
-                x <- x[ , whichTree ]
-                mat <- mat[ , whichTree ]
-            }
-            # Get links
-            links <- colLinks(x)
+        
+        # Check tree.name
+        tree_present_FUN(tree.name, x)
+        
+        # Get tree
+        tree <- tree_FUN(x, tree.name)
+        
+        # Select only those features/samples that are in the tree
+        whichTree <- links_FUN(x)[, "whichTree"] == tree.name
+        if (any(!whichTree)) {
+            warning("Not all columns were present in the colTree specified by 'tree.name'.",
+                    "'x' is subsetted.", call. = FALSE)
+            # Subset the data
+            x <- subsetting_FUN(x, whichTree)
+            mat <- subsetting_FUN(mat, whichTree)
         }
+        # Transpose the matrix if not transposed
+        mat <- transpose_MAT(mat)
+        
+        # Get links
+        links <- links_FUN(x)
+        
         # Remove those links (make them NA) that are not included in this tree
         links[ links$whichTree != tree.name, ] <- NA
         # Take only nodeLabs
