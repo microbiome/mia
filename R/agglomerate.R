@@ -488,7 +488,7 @@ setMethod(
 # nodes
 #' @importFrom ape drop.tip has.singles collapse.singles
 .prune_tree <- function(tree, nodes, collapse.singles = TRUE, ...){
-    #
+    # Check collapse.singles
     if( !.is_a_bool(collapse.singles) ){
         stop("'collapse.singles' must be TRUE or FALSE.", call. = FALSE)
     }
