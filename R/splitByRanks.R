@@ -301,7 +301,7 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
                      names(ses),
                      vapply(ses,nrow,integer(1)))
         tl <- unlist(unname(tl))
-        rd$taxonomicLevel <- factor(tl, unique(tl))
+        rd[["taxonomicLevel"]] <- factor(tl, unique(tl))
     }
     return(rd)
 }
