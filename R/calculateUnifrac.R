@@ -144,7 +144,6 @@ setMethod("calculateUnifrac",
                 mat <- mat[ whichTree, ]
             }
             mat <- t(mat)
-            tree <- .norm_tree_to_be_rooted(tree, rownames(x))
             # Get links
             links <- rowLinks(x)
         } else {
@@ -161,7 +160,6 @@ setMethod("calculateUnifrac",
                 x <- x[ , whichTree ]
                 mat <- mat[ , whichTree ]
             }
-            tree <- .norm_tree_to_be_rooted(tree, colnames(x))
             # Get links
             links <- colLinks(x)
         }
@@ -241,8 +239,6 @@ runUnifrac <- function(
     # Merge assay so that each row represent single tip. It might be that
     # multiple rows are linked to single tip.
     x <- .merge_assay_by_rows(x, node.label, ...)
-    # Modify tree so that it will become rooted.
-    tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     # Remove those tips that are not present in the data
     if( any(!tree$tip.label %in% rownames(x)) ){
         tree <- drop.tip(
