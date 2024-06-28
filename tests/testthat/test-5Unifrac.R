@@ -50,7 +50,7 @@ test_that("Unifrac beta diversity", {
     
     # Test with merged object with multiple trees. runUnifrac takes subset of
     # data based on provided tree.
-    tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing.values = 0)
+    tse <- GlobalPatterns
     tse_ref <- tse
     tse_ref <- tse_ref[ rowLinks(tse_ref)[["whichTree"]] == "phylo", ]
     # Calculate unweighted unifrac
