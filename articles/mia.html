@@ -68,7 +68,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 data-toc-skip class="date">2024-06-27</h4>
+            <h4 data-toc-skip class="date">2024-06-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -483,7 +483,7 @@ objects are available.</p>
 <span><span class="co">## otu_table()   OTU Table:         [ 58 taxa and 3 samples ]</span></span>
 <span><span class="co">## phy_tree()    Phylogenetic Tree: [ 58 tips and 57 internal nodes ]</span></span></code></pre>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/convert.html">convertFromPhyloseq</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeTreeSEFromPhyloseq.html">makeTreeSEFromPhyloseq</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span>
 <span><span class="va">esophagus</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
 <span><span class="co">## dim: 58 3 </span></span>
@@ -501,7 +501,7 @@ objects are available.</p>
 <span><span class="co">## colLinks: NULL</span></span>
 <span><span class="co">## colTree: NULL</span></span></code></pre>
 <p>For more details have a look at the man page, for examples
-<code><a href="../reference/convert.html">?convert</a></code>.</p>
+<code><a href="../reference/makeTreeSEFromPhyloseq.html">?makeTreeSEFromPhyloseq</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="general-wrapper-functions">General wrapper functions<a class="anchor" aria-label="anchor" href="#general-wrapper-functions"></a>
