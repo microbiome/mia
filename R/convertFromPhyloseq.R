@@ -1,36 +1,32 @@
-#' Coerce a \code{phyloseq} object to a \code{TreeSummarizedExperiment}
-#'
-#' \code{makeTreeSEFromPhyloseq} converts \code{phyloseq}
-#' objects into \code{TreeSummarizedExperiment} objects.
-#'
+#' @details 
+#' \code{convertFromPhyloseq} converts \code{phyloseq}
+#' objects into 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} objects.
 #' All data stored in a \code{phyloseq} object is transferred.
 #'
-#' @param x a \code{phyloseq} object
-#'
-#' @return An object of class \code{TreeSummarizedExperiment}
+#' @return 
+#' \code{convertFromPhyloseq} returns an object of class 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @importFrom S4Vectors SimpleList DataFrame make_zero_col_DFrame
 #' @importFrom SummarizedExperiment colData colData<-
 #'
 #' @export
 #'
-#' @name makeTreeSEFromPhyloseq
-#' @seealso
-#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
-#' \code{\link[=importQIIME2]{importQIIME2}}
-#' \code{\link[=importMothur]{importMothur}}
+#' @rdname convert
 #'
 #' @examples
+#' 
+#' ### Coerce a phyloseq object to a TreeSE object
 #' if (requireNamespace("phyloseq")) {
 #'     data(GlobalPatterns, package="phyloseq")
-#'     makeTreeSEFromPhyloseq(GlobalPatterns)
+#'     convertFromPhyloseq(GlobalPatterns)
 #'     data(enterotype, package="phyloseq")
-#'     makeTreeSEFromPhyloseq(enterotype)
+#'     convertFromPhyloseq(enterotype)
 #'     data(esophagus, package="phyloseq")
-#'     makeTreeSEFromPhyloseq(esophagus)
+#'     convertFromPhyloseq(esophagus)
 #' }
-makeTreeSEFromPhyloseq <- function(x) {
+convertFromPhyloseq <- function(x) {
     # input check
     .require_package("phyloseq")
     if(!is(x,"phyloseq")){
@@ -74,17 +70,3 @@ makeTreeSEFromPhyloseq <- function(x) {
                             rowTree = rowTree,
                             referenceSeq = referenceSeq)
 }
-
-####################### makeTreeSummarizedExperimentFromPhyloseq #######################
-#' @rdname makeTreeSEFromPhyloseq
-#' @export
-setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("x"),
-    function(x)
-        standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
-
-#' @rdname makeTreeSEFromPhyloseq
-#' @export
-setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(x = "ANY"),
-    function(x){
-        makeTreeSEFromPhyloseq(x)
-    })
