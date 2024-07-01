@@ -248,49 +248,48 @@ NULL
 #' @rdname estimateDiversity
 #' @export
 setGeneric("estimateDiversity",signature = c("x"),
-           function(x, assay.type = "counts", assay_name = NULL,
-                    index = c("coverage", "fisher", "gini_simpson", 
-                              "inverse_simpson", "log_modulo_skewness", "shannon"),
+        function(x, assay.type = "counts", assay_name = NULL,
+                index = c("coverage", "fisher", "gini_simpson", 
+                        "inverse_simpson", "log_modulo_skewness", "shannon"),
                     name = index, ...)
-               standardGeneric("estimateDiversity"))
+                    standardGeneric("estimateDiversity"))
 
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
-          function(x, assay.type = "counts", assay_name = NULL,
-                   index = c("coverage", "fisher", "gini_simpson", 
-                             "inverse_simpson", "log_modulo_skewness", "shannon"),
-                   name = index, ..., BPPARAM = SerialParam()){
-              
-              if (!is.null(assay_name)) {
-                  .Deprecated(old="assay_name", new="assay.type", 
-                              "Now assay_name is deprecated. Use assay.type instead.")
-              }
-              
-              # input check
-              supported_index <- c("coverage", "fisher", "gini_simpson", 
-                                   "inverse_simpson", "log_modulo_skewness", "shannon")
-              index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
-              if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-                  stop("'", paste0("'index' must be from the following options: '",index_string), "'", call. = FALSE)
-              }
-              
-              if(!.is_non_empty_character(name) || length(name) != length(index)){
-                  stop("'name' must be a non-empty character value and have the ",
-                       "same length as 'index'.",
-                       call. = FALSE)
-              }
-              .check_assay_present(assay.type, x)
-              .require_package("vegan")
-              
-              dvrsts <- BiocParallel::bplapply(index,
-                                               .get_diversity_values,
-                                               x = x,
-                                               mat = assay(x, assay.type),
-                                               BPPARAM = BPPARAM,
-                                               ...)
-              .add_values_to_colData(x, dvrsts, name)
-          }
+    function(x, assay.type = "counts", assay_name = NULL,
+            index = c("coverage", "fisher", "gini_simpson", 
+                    "inverse_simpson", "log_modulo_skewness", "shannon"),
+                    name = index, ..., BPPARAM = SerialParam()){
+
+        if (!is.null(assay_name)) {
+            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
+        }
+
+        # input check
+        supported_index <- c("coverage", "fisher", "gini_simpson", 
+                             "inverse_simpson", "log_modulo_skewness", "shannon")
+        index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
+        if ( !all(index %in% supported_index) || !(length(index) > 0)) {
+            stop("'", paste0("'index' must be from the following options: '",index_string), "'", call. = FALSE)
+        }
+        
+        if(!.is_non_empty_character(name) || length(name) != length(index)){
+            stop("'name' must be a non-empty character value and have the ",
+                "same length as 'index'.",
+                call. = FALSE)
+        }
+        .check_assay_present(assay.type, x)
+        .require_package("vegan")
+
+        dvrsts <- BiocParallel::bplapply(index,
+                                        .get_diversity_values,
+                                        x = x,
+                                        mat = assay(x, assay.type),
+                                        BPPARAM = BPPARAM,
+                                        ...)
+        .add_values_to_colData(x, dvrsts, name)
+    }
 )
 
 #' @rdname estimateDiversity

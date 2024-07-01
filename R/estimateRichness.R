@@ -200,46 +200,45 @@ NULL
 #' @rdname estimateRichness
 #' @export
 setGeneric("estimateRichness",signature = c("x"),
-           function(x, assay.type = assay_name, assay_name = "counts",
-                    index = c("ace", "chao1", "hill", "observed"),
-                    name = index,
-                    detection = 0,
-                    ...,
-                    BPPARAM = SerialParam())
-               standardGeneric("estimateRichness"))
+        function(x, assay.type = assay_name, assay_name = "counts",
+                  index = c("ace", "chao1", "hill", "observed"),
+                  name = index,
+                  detection = 0,
+                  ...,
+                  BPPARAM = SerialParam())
+                  standardGeneric("estimateRichness"))
 
 #' @rdname estimateRichness
 #' @export
 setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   assay.type = assay_name, assay_name = "counts",
-                   index = c("ace", "chao1", "hill", "observed"),
-                   name = index,
-                   detection = 0,
-                   ...,
-                   BPPARAM = SerialParam()){
-              
-              # Input check
-              # Check assay.type
-              .check_assay_present(assay.type, x)
-              # Check indices
-              index <- match.arg(index, several.ok = TRUE)
-              if(!.is_non_empty_character(name) || length(name) != length(index)){
-                  stop("'name' must be a non-empty character value and have the ",
-                       "same length than 'index'.",
-                       call. = FALSE)
-              }
-              # Calculates richness indices
-              richness <- BiocParallel::bplapply(index,
-                                                 FUN = .get_richness_values,
-                                                 mat = assay(x, assay.type),
-                                                 detection = detection,
-                                                 BPPARAM = BPPARAM)
-              # Add richness indices to colData
-              .add_values_to_colData(x, richness, name)
-          }
-)
+    function(x,
+            assay.type = assay_name, assay_name = "counts",
+            index = c("ace", "chao1", "hill", "observed"),
+            name = index,
+            detection = 0,
+            ...,
+            BPPARAM = SerialParam()){
 
+        # Input check
+        # Check assay.type
+        .check_assay_present(assay.type, x)
+        # Check indices
+        index <- match.arg(index, several.ok = TRUE)
+        if(!.is_non_empty_character(name) || length(name) != length(index)){
+            stop("'name' must be a non-empty character value and have the ",
+                "same length than 'index'.",
+                call. = FALSE)
+        }
+        # Calculates richness indices
+        richness <- BiocParallel::bplapply(index,
+                                            FUN = .get_richness_values,
+                                            mat = assay(x, assay.type),
+                                            detection = detection,
+                                            BPPARAM = BPPARAM)
+        # Add richness indices to colData
+        .add_values_to_colData(x, richness, name)
+    }
+)
 
 .calc_observed <- function(mat, detection, ...){
     # vegan::estimateR(t(mat))["S.obs",]
@@ -249,7 +248,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 .calc_chao1 <- function(mat, ...){
     # Required to work with DelayedArray
     if(is(mat, "DelayedArray")) {
-        mat <- matrix(mat, nrow = nrow(mat))
+      mat <- matrix(mat, nrow = nrow(mat))
     }
     
     ans <- t(vegan::estimateR(t(mat))[c("S.chao1","se.chao1"),])
@@ -260,7 +259,7 @@ setMethod("estimateRichness", signature = c(x = "SummarizedExperiment"),
 .calc_ace <- function(mat, ...){
     # Required to work with DelayedArray
     if(is(mat, "DelayedArray")) {
-        mat <- matrix(mat, nrow = nrow(mat))
+      mat <- matrix(mat, nrow = nrow(mat))
     }
     
     ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
