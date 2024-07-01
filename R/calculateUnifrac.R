@@ -126,45 +126,47 @@ setMethod("calculateUnifrac",
                     tree = "missing"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
             tree.name = tree_name, tree_name = "phylo", transposed = FALSE, ...){
+        # Chcek transposed
+        if( !.is_a_bool(transposed) ){
+            stop("'transposed' must be TRUE or FALSE.", call. = FALSE)
+        }
         # Get functions and parameters based on direction
-        tree_present_FUN <- switch(as.character(transposed), "TRUE" = .check_colTree_present, 
-            "FALSE" = .check_rowTree_present, stop("."))
-        tree_FUN <- switch(as.character(transposed), "TRUE" = colTree, "FALSE" = rowTree, stop("."))
-        links_FUN <- switch(as.character(transposed), "TRUE" = colLinks, "FALSE" = rowLinks, stop("."))
-        subsetting_FUN <- switch(as.character(transposed), "TRUE" = function(x, idx) x[, idx], 
-            "FALSE" = function(x, idx) x[idx, ], stop("."))
-        transpose_MAT <- switch(as.character(transposed), "FALSE" = function(mat) t(mat), 
-            "TRUE" = function(mat) mat, stop("."))
-        
-        # Check assay.type and get assay
+        tree_present_FUN <- if (transposed) .check_colTree_present
+            else .check_rowTree_present
+        tree_FUN <- if (transposed) colTree else rowTree
+        links_FUN <- if (transposed) colLinks else rowLinks
+        margin_name <- if (transposed) "col" else "row"
+        # Check assay.type
         .check_assay_present(assay.type, x)
-        mat <- assay(x, assay.type)
-        
         # Check tree.name
         tree_present_FUN(tree.name, x)
-        
+        #
+        # Select only those features/samples that are in the tree
+        links <- links_FUN(x)
+        present_in_tree <- links[, "whichTree"] == tree.name
+        if( any(!present_in_tree) ){
+            warning(
+                "Not all ", margin_name, "s were present in the ", margin_name,
+                "Tree specified by 'tree.name'. 'x' is subsetted.",
+                call. = FALSE)
+            # Subset the data
+            if( transposed ){
+                x <- x[, present_in_tree]
+            } else{
+                x <- x[present_in_tree, ]
+            }
+        }
+        # Get assay and transpose it if specified
+        mat <- assay(x, assay.type)
+        if( transposed ){
+            mat <- t(mat)
+        }
         # Get tree
         tree <- tree_FUN(x, tree.name)
-        
-        # Select only those features/samples that are in the tree
-        whichTree <- links_FUN(x)[, "whichTree"] == tree.name
-        if (any(!whichTree)) {
-            warning("Not all columns were present in the colTree specified by 'tree.name'.",
-                    "'x' is subsetted.", call. = FALSE)
-            # Subset the data
-            x <- subsetting_FUN(x, whichTree)
-            mat <- subsetting_FUN(mat, whichTree)
-        }
-        # Transpose the matrix if not transposed
-        mat <- transpose_MAT(mat)
-        
-        # Get links
+        # Get links and take only nodeLabs
         links <- links_FUN(x)
-        
-        # Remove those links (make them NA) that are not included in this tree
-        links[ links$whichTree != tree.name, ] <- NA
-        # Take only nodeLabs
         links <- links[ , "nodeLab" ]
+        # Calculate unifrac
         res <- calculateUnifrac(mat, tree = tree, node.label = links, ...)
         return(res)
     }
