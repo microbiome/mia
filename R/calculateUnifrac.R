@@ -156,9 +156,10 @@ setMethod("calculateUnifrac",
                 x <- x[present_in_tree, ]
             }
         }
-        # Get assay and transpose it if specified
+        # Get assay and transpose it if specified. Features must be in columns
+        # and samples in rows.
         mat <- assay(x, assay.type)
-        if( transposed ){
+        if( !transposed ){
             mat <- t(mat)
         }
         # Get tree
