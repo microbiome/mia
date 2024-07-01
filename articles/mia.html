@@ -68,7 +68,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mia: Microbiome analysis tools</h1>
             
-            <h4 data-toc-skip class="date">2024-06-28</h4>
+            <h4 data-toc-skip class="date">2024-07-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/vignettes/mia.Rmd" class="external-link"><code>vignettes/mia.Rmd</code></a></small>
       <div class="hidden name"><code>mia.Rmd</code></div>
@@ -483,7 +483,7 @@ objects are available.</p>
 <span><span class="co">## otu_table()   OTU Table:         [ 58 taxa and 3 samples ]</span></span>
 <span><span class="co">## phy_tree()    Phylogenetic Tree: [ 58 tips and 57 internal nodes ]</span></span></code></pre>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeTreeSEFromPhyloseq.html">makeTreeSEFromPhyloseq</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">esophagus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/convert.html">convertFromPhyloseq</a></span><span class="op">(</span><span class="va">esophagus</span><span class="op">)</span></span>
 <span><span class="va">esophagus</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
 <span><span class="co">## dim: 58 3 </span></span>
@@ -501,7 +501,7 @@ objects are available.</p>
 <span><span class="co">## colLinks: NULL</span></span>
 <span><span class="co">## colTree: NULL</span></span></code></pre>
 <p>For more details have a look at the man page, for examples
-<code><a href="../reference/makeTreeSEFromPhyloseq.html">?makeTreeSEFromPhyloseq</a></code>.</p>
+<code><a href="../reference/convert.html">?convert</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="general-wrapper-functions">General wrapper functions<a class="anchor" aria-label="anchor" href="#general-wrapper-functions"></a>
@@ -609,7 +609,7 @@ long format will be returned.</p>
 <span><span class="co">##  [5] mia_1.13.24                     MultiAssayExperiment_1.31.3    </span></span>
 <span><span class="co">##  [7] TreeSummarizedExperiment_2.13.0 Biostrings_2.73.1              </span></span>
 <span><span class="co">##  [9] XVector_0.45.0                  SingleCellExperiment_1.27.2    </span></span>
-<span><span class="co">## [11] SummarizedExperiment_1.35.0     Biobase_2.65.0                 </span></span>
+<span><span class="co">## [11] SummarizedExperiment_1.35.1     Biobase_2.65.0                 </span></span>
 <span><span class="co">## [13] GenomicRanges_1.57.1            GenomeInfoDb_1.41.1            </span></span>
 <span><span class="co">## [15] IRanges_2.39.0                  S4Vectors_0.43.0               </span></span>
 <span><span class="co">## [17] BiocGenerics_0.51.0             MatrixGenerics_1.17.0          </span></span>
@@ -648,7 +648,7 @@ long format will be returned.</p>
 <span><span class="co">##  [59] MASS_7.3-61                 DelayedArray_0.31.3        </span></span>
 <span><span class="co">##  [61] biomformat_1.33.0           bluster_1.15.0             </span></span>
 <span><span class="co">##  [63] permute_0.9-7               tools_4.4.1                </span></span>
-<span><span class="co">##  [65] vipor_0.4.7                 foreign_0.8-86             </span></span>
+<span><span class="co">##  [65] vipor_0.4.7                 foreign_0.8-87             </span></span>
 <span><span class="co">##  [67] beeswarm_0.4.0              ape_5.8                    </span></span>
 <span><span class="co">##  [69] nnet_7.3-19                 glue_1.7.0                 </span></span>
 <span><span class="co">##  [71] rhdf5filters_1.17.0         nlme_3.1-165               </span></span>
