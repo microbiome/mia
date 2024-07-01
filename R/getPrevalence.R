@@ -142,9 +142,13 @@
 #'                             prevalence = 50/100)
 #' head(prevalent)
 #'
+#' # Add relative aundance data
+#' tse <- transformAssay(tse, assay.type = "counts", method = "relabundance")
+#'
 #' # Gets a subset of object that includes prevalent taxa
 #' altExp(tse, "prevalent") <- subsetByPrevalent(tse,
 #'                                              rank = "Family",
+#'                                              assay.type = "relabundance",
 #'                                              detection = 0.001,
 #'                                              prevalence = 0.55)
 #' altExp(tse, "prevalent")
@@ -265,7 +269,6 @@ setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
         .check_assay_present(assay.type, x)
         x <- .agg_for_prevalence(x, rank = rank, ...)
         mat <- assay(x, assay.type)
-        
         # Calculate abundance
         mat <- .to_rel_abund(mat, ...)
         getPrevalence(mat, ...)
