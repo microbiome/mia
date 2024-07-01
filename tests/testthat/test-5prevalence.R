@@ -441,13 +441,13 @@ test_that("agglomerateByPrevalence", {
     # Merging creates consensus sequences.
     th <- runif(1, 0, 1)
     actual <- agglomerateByPrevalence(
-      se, "Phylum", update.refseq = TRUE, threshold = th)
+      se, "Genus", update.refseq = TRUE, threshold = th)
     seqs_test <- referenceSeq(actual)
     # Get single taxon as reference. Merge those sequences and test that it
     # equals to one that is output of agglomerateByPrevalence
     seqs_ref <- referenceSeq(se)
-    feature <- sample(na.omit(rowData(se)[["Phylum"]]), 1)
-    seqs_ref <- seqs_ref[ rowData(se)[["Phylum"]] %in% feature ]
+    feature <- sample(na.omit(rowData(se)[["Genus"]]), 1)
+    seqs_ref <- seqs_ref[ rowData(se)[["Genus"]] %in% feature ]
     seqs_ref <- .merge_refseq(
       seqs_ref, factor(rep(feature, length(seqs_ref))), rownames(seqs_ref),
       threshold = th)
