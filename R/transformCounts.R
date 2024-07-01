@@ -177,11 +177,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         }
         method <- match.arg(method, several.ok = FALSE)
         # Check that MARGIN is 1 or 2
-        if( !(length(MARGIN) == 1L && MARGIN %in%
-              c("samples", "features", "columns", "col", "row")) ){
-            stop("'MARGIN' must be 'samples' or 'features'.",
-                 call. = FALSE)
-        }
+        .check_MARGIN(MARGIN)
         # Check pseudocount
         if( !.is_a_bool(pseudocount) && !(is.numeric(pseudocount) && length(pseudocount) == 1 && pseudocount >= 0) ){
             stop("'pseudocount' must be TRUE, FALSE or a number equal to or greater than 0.",

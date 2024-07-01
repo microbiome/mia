@@ -412,7 +412,6 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     }
     # Check by
     by <- .check_MARGIN(by) 
-    
     # Check method
     # method is checked in .calculate_association. Otherwise association.fun would
     # not work. (It can be "anything", and it might also have method parameter.)
