@@ -226,7 +226,6 @@ colData(tse)[, valid_indices]
 
 # Removing indices
 colData(tse)[, valid_indices] <- NULL
-colData(tse)[, name] <- NULL
 
 # 'threshold' can be used to determine threshold for 'coverage' index
 tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
