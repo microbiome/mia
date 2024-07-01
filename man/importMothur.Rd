@@ -72,9 +72,9 @@ tse
 \url{https://mothur.org/wiki/design_file/}
 }
 \seealso{
-\code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-\code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-\code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+\code{\link[=convert]{convertFromPhyloseq}}
+\code{\link[=convert]{convertFromBIOM}}
+\code{\link[=convert]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 }
 \author{
