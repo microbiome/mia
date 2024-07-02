@@ -191,8 +191,8 @@
     MARGIN <- .check_MARGIN(MARGIN)
     #
     # If trasnpose.MARGIN is TRUE, transpose MARGIN, i.e. 1 --> 2, and 2 --> 1.
-    # In certain functions, values calculated by rows (by=1) are stored to
-    # colData (by=2) and vice versa.
+    # In certain functions, values calculated by rows (MARGIN=1) are stored to
+    # colData (MARGIN=2) and vice versa.
     if( transpose.MARGIN ){
         MARGIN <- ifelse(MARGIN == 1, 2, 1)
     }
