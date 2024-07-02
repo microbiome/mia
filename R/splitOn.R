@@ -298,7 +298,7 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
             # Update both colTree and rowTree
             for( direction in c(1, 2) ){
                 # If the returned value is a list, go through all of them
-                if( is(x, 'SimpleList') ){
+                if( is(x, "SimpleList") ){
                     x <- lapply(x, function(y){
                         .agglomerate_trees(y, MARGIN = direction, ...)})
                     x <- SimpleList(x)
