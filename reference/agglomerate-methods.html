@@ -24,7 +24,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.25</span>
       </span>
     </div>
 
@@ -119,6 +119,16 @@ experiments and flattens them again into a single
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  other.label <span class="op">=</span> <span class="va">other_label</span>,</span>
 <span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">agglomerateByPrevalence</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  other.label <span class="op">=</span> <span class="va">other_label</span>,</span>
+<span>  other_label <span class="op">=</span> <span class="st">"Other"</span>,</span>
+<span>  update.tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -220,8 +230,9 @@ returned unchanged.</p></dd>
 
 
 <dt>update.tree</dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should
-<code>rowTree()</code> also be merged? (Default: <code>update.tree = FALSE</code>)</p></dd>
+<dd><p><code>TRUE</code> or <code>FALSE</code>: should
+<code>rowTree()</code> also be agglomerated? (Default:
+<code>update.tree = FALSE</code>)</p></dd>
 
 
 <dt>mergeTree</dt>
@@ -583,8 +594,8 @@ the <code>colData</code> of the base object is kept.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (6 rows)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
