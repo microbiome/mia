@@ -48,18 +48,29 @@ test_that("Unifrac beta diversity", {
                                               rowTree(tse)))
     expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-3)
     
-    # Test with merged object with multiple trees. runUnifrac takes subset of
-    # data based on provided tree.
+    # Test that the function works correctly when there are multiple trees.
+    # The function should subset the data based on tree.
     tse <- GlobalPatterns
+    trees <- list(phylo = rowTree(tse), tree2 = rowTree(tse))
+    links <- rowLinks(tse)
+    links[ 1:500 , "whichTree"] <- "tree2"
+    tse@rowTree <- trees
+    tse@rowLinks <- links
     tse_ref <- tse
-    tse_ref <- tse_ref[ rowLinks(tse_ref)[["whichTree"]] == "phylo", ]
+    tse_ref <- tse_ref[ rowLinks(tse_ref)[["whichTree"]] == "tree2", ]
     # Calculate unweighted unifrac
-    unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = FALSE))
+    expect_warning(
+    unifrac_mia <- calculateUnifrac(tse, weighted = FALSE, tree.name = "tree2")
+    )
+    unifrac_mia <- as.matrix(unifrac_mia)
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_ref), weighted = FALSE,
                                               rowTree(tse_ref)))
     expect_equal(unifrac_mia, unifrac_rbiom)
     # Calculate weighted unifrac
-    unifrac_mia <- as.matrix(calculateUnifrac(tse, weighted = TRUE))
+    expect_warning(
+    unifrac_mia <- calculateUnifrac(tse, weighted = TRUE, tree.name = "tree2")
+    )
+    unifrac_mia <- as.matrix(unifrac_mia)
     unifrac_rbiom <- as.matrix(rbiom::unifrac(assay(tse_ref), weighted = TRUE,
                                               rowTree(tse_ref)))
     expect_equal(unifrac_mia, unifrac_rbiom, tolerance = 1e-3)
