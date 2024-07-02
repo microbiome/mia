@@ -177,7 +177,7 @@
 #' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(
-        x, values, name, altexp = NULL, by = MARGIN, MARGIN = default.MARGIN,
+        x, values, name, altexp = NULL, MARGIN = default.MARGIN,
         default.MARGIN = 2, transpose.MARGIN = FALSE, colname = "name",
         ...){
     #
@@ -187,14 +187,14 @@
     #
     # Check if altExp can be found
     .check_altExp_present(altexp, x)
-    # Check that by is correct
-    by <- .check_MARGIN(by)
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
     #
-    # If trasnpose.MARGIN is TRUE, transpose by, i.e. 1 --> 2, and 2 --> 1.
+    # If trasnpose.MARGIN is TRUE, transpose MARGIN, i.e. 1 --> 2, and 2 --> 1.
     # In certain functions, values calculated by rows (by=1) are stored to
     # colData (by=2) and vice versa.
     if( transpose.MARGIN ){
-        by <- ifelse(by == 1, 2, 1)
+        MARGIN <- ifelse(MARGIN == 1, 2, 1)
     }
     # converts each value:name pair into a DataFrame
     values <- mapply(
@@ -211,8 +211,8 @@
         name)
     values <- do.call(cbind, values)
     
-    # Based on by, get rowDatra or colData
-    FUN <- switch(by, rowData, colData)
+    # Based on MARGIN, get rowDatra or colData
+    FUN <- switch(MARGIN, rowData, colData)
     # If altexp.name was not NULL, then we know that it specifies correctly
     # altExp from the slot. Take the colData/rowData from experiment..
     if( !is.null(altexp) ){
@@ -223,7 +223,7 @@
     
     # check for duplicated values
     f <- colnames(cd) %in% colnames(values)
-    FUN_name <- switch(by, "rowData", "colData")
+    FUN_name <- switch(MARGIN, "rowData", "colData")
     if(any(f)) {
         warning(
             "The following values are already present in `", FUN_name,
@@ -237,14 +237,14 @@
     cd <- cbind( (cd)[!f], values )
     
     # Replace colData with new one
-    x <- .add_to_coldata(x, cd, altexp = altexp, by = by)
+    x <- .add_to_coldata(x, cd, altexp = altexp, MARGIN = MARGIN)
     return(x)
 }
 
-# Get feature or sample metadata. Allow hidden usage of by and altExp.
+# Get feature or sample metadata. Allow hidden usage of MARGIN and altExp.
 #' @importFrom SummarizedExperiment rowData colData
 .add_to_coldata <- function(
-        x, cd, altexp = NULL, .disable.altexp = FALSE, by = MARGIN,
+        x, cd, altexp = NULL, .disable.altexp = FALSE,
         MARGIN = default.MARGIN, default.MARGIN = 1, ...){
     #
     if( !.is_a_bool(.disable.altexp) ){
@@ -252,10 +252,10 @@
     }
     # Check if altExp can be found
     .check_altExp_present(altexp, x, ...)
-    # Check that by is correct
-    by <- .check_MARGIN(by)
-    # Based on by, add result to rowData or colData
-    FUN <- switch(by, `rowData<-`, `colData<-`)
+    # Check that MARGIN is correct
+    MARGIN <- .check_MARGIN(MARGIN)
+    # Based on MARGIN, add result to rowData or colData
+    FUN <- switch(MARGIN, `rowData<-`, `colData<-`)
     # If altexp was specified, add result to altExp. Otherwise add it directly
     # to x.
     if( !is.null(altexp) && !.disable.altexp ){
