@@ -206,7 +206,7 @@
     x <- .merge_rows(x, f, archetype = 1L, ...)
     # optionally merge rowTree
     if( update.tree ){
-        x <- .agglomerate_trees(x, 1)
+        x <- .agglomerate_trees(x, 1, ...)
     }
     # optionally merge referenceSeq
     if(!is.null(refSeq)){
@@ -224,7 +224,7 @@
     x <- .merge_cols(x, f, archetype = 1L, ...)
     # optionally merge colTree
     if( update.tree ){
-        x <- .agglomerate_trees(x, 2)
+        x <- .agglomerate_trees(x, 2, ...)
     }
     return(x)
 }

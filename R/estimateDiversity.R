@@ -581,7 +581,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
     # Loop through taxa that were found from each sample
     faiths_for_taxa_present <- lapply(present[ind], function(x){
         # Trim the tree
-        temp <- .prune_tree(tree, x)
+        temp <- .prune_tree(tree, x, ...)
         # Sum up all the lengths of edges
         temp <- sum(temp$edge.length)
         return(temp)

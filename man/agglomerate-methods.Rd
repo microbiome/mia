@@ -12,6 +12,7 @@
 \alias{agglomerateByRank,TreeSummarizedExperiment-method}
 \alias{agglomerateByPrevalence}
 \alias{agglomerateByPrevalence,SummarizedExperiment-method}
+\alias{agglomerateByPrevalence,TreeSummarizedExperiment-method}
 \alias{agglomerateByRanks}
 \alias{agglomerateByRanks,SummarizedExperiment-method}
 \alias{agglomerateByRanks,SingleCellExperiment-method}
@@ -68,6 +69,15 @@ agglomerateByPrevalence(x, ...)
   rank = NULL,
   other.label = other_label,
   other_label = "Other",
+  ...
+)
+
+\S4method{agglomerateByPrevalence}{TreeSummarizedExperiment}(
+  x,
+  rank = NULL,
+  other.label = other_label,
+  other_label = "Other",
+  update.tree = FALSE,
   ...
 )
 
@@ -147,8 +157,9 @@ Must be \code{'rows'} or \code{'cols'}.}
 merged. If \code{length(levels(f)) == nrow(x)/ncol(x)}, \code{x} will be
 returned unchanged.}
 
-\item{update.tree}{\code{TRUE} or \code{FALSE}: Should
-\code{rowTree()} also be merged? (Default: \code{update.tree = FALSE})}
+\item{update.tree}{\code{TRUE} or \code{FALSE}: should
+\code{rowTree()} also be agglomerated? (Default:
+\code{update.tree = FALSE})}
 
 \item{mergeTree}{Deprecated. Use \code{update.tree} instead.}
 
