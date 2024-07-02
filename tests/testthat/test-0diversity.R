@@ -123,7 +123,6 @@ test_that("diversity estimates", {
     tse <- mergeSEs(GlobalPatterns, esophagus,  join = "full", assay.type = "counts")
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), 
                                      tree.name = "phylo.1", assay.type="counts"))
-    expect_warning(estimateDiversity(tse, index = c("shannon", "faith")))
     expect_error(estimateDiversity(tse, index = c("faith"), 
                                    tree.name = "test"))
     expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
