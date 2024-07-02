@@ -519,22 +519,3 @@
     }
     return(NULL)
 }
-
-################################################################################
-# This function returns all supported ranks and their prefixes. These ranks are
-# used to detect ranks in imported data.
-.get_all_supported_ranks <- function(){
-    ranks <- c(
-        Domain = "d",
-        Superkingdom = "sk",
-        Kingdom = "k",
-        Phylum = "p",
-        Class = "c",
-        Order = "o",
-        Family = "f",
-        Genus = "g",
-        Species = "s",
-        Strain = "t"
-    )
-    return(ranks)
-}

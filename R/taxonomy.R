@@ -137,12 +137,26 @@
 #' getTaxonomyRanks()
 NULL
 
-#' @rdname taxonomy-methods
-#' @format a \code{character} vector of length 8 containing the taxonomy ranks
+# This function returns all supported ranks and their prefixes. These ranks are
+# used to detect ranks in imported data.
+.get_all_supported_ranks <- function(){
+    ranks <- c(
+        domain = "d",
+        superkingdom = "sk",
+        kingdom = "k",
+        phylum = "p",
+        class = "c",
+        order = "o",
+        family = "f",
+        genus = "g",
+        species = "s",
+        strain = "t"
+    )
+    return(ranks)
+}
+#' @format a \code{character} vector of length containing all the taxonomy ranks
 #'   recognized. In functions this is used as case insensitive.
-#' @export
-TAXONOMY_RANKS <- c("domain","kingdom","phylum","class","order","family",
-                    "genus","species")
+TAXONOMY_RANKS <- names(.get_all_supported_ranks())
 
 #' @rdname taxonomy-methods
 setGeneric("taxonomyRanks", signature = c("x"),
