@@ -229,8 +229,8 @@ importMetaPhlAn <- function(
     # at specific rank
     tables <- split(table, levels)
     # Get the order
-    metaphlan_tax = c(TAXONOMY_RANKS, "strain")
-    indices <- match(metaphlan_tax, tolower(names(tables)))
+    metaphlan_tax = names(.get_all_supported_ranks())
+    indices <- match(tolower(metaphlan_tax), tolower(names(tables)))
     # Remove NAs which occurs if rank is not included
     indices <- indices[!is.na(indices)]
     # Order tables 
