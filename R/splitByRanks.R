@@ -295,10 +295,13 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
         warning("'taxonomicLevel' column in rowData overwritten.",
                 call. = FALSE)
     }
-    tl <- mapply(rep,
-                 names(ses),
-                 vapply(ses,nrow,integer(1)))
-    tl <- unlist(unname(tl))
-    rd$taxonomicLevel <- factor(tl, unique(tl))
-    rd
+    # If TreeSEs that were combined had names, add names to rowData
+    if( !is.null(names(ses)) ){
+        tl <- mapply(rep,
+                     names(ses),
+                     vapply(ses,nrow,integer(1)))
+        tl <- unlist(unname(tl))
+        rd[["taxonomicLevel"]] <- factor(tl, unique(tl))
+    }
+    return(rd)
 }

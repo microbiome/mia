@@ -295,13 +295,17 @@ setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
         x <- callNextMethod()
         # Manipulate rowTree or not?
         if( update.tree ){
-            # If the returned value is a list, go through all of them
-            if( is(x, 'SimpleList') ){
-                x <- SimpleList(lapply(x, .agglomerate_trees))
-
-            } else {
-                # Otherwise, the returned value is TreeSE
-                x <- .agglomerate_trees(x)
+            # Update both colTree and rowTree
+            for( direction in c(1, 2) ){
+                # If the returned value is a list, go through all of them
+                if( is(x, "SimpleList") ){
+                    x <- lapply(x, function(y){
+                        .agglomerate_trees(y, MARGIN = direction, ...)})
+                    x <- SimpleList(x)
+                } else {
+                    # Otherwise, the returned value is TreeSE
+                    x <- .agglomerate_trees(x, MARGIN = direction, ...)
+                }
             }
         }
         x
@@ -392,14 +396,54 @@ setGeneric("unsplitOn",
     
     # IF the object is TreeSE. add rowTree
     if( class_x == "TreeSummarizedExperiment" ){
-        # Update or add old tree from the first element of list
-        if( update.tree ){
-            ans <- addHierarchyTree(ans)
-        } else{
-            rowTree(ans) <- rowTree(ses[[1L]])
+        # Add both colTree and rowTree
+        for( direction in c("row", "col") ){
+            ans <- .add_trees(ans, ses, direction, update.tree = update.tree)
         }
     }
-    ans
+    return(ans)
+}
+
+# This function adds rowTrees and colTrees to result.
+.add_trees <- function(tse, tses, MARGIN, update.tree){
+    # Get functions based on MARGIN
+    tree_FUN <- switch(MARGIN, "row" = rowTree, "col" = colTree)
+    tree_name_FUN <- switch(MARGIN, "row" = rowTreeNames, "col" = colTreeNames)
+    tree_assign_FUN <- switch(MARGIN, "row" = `rowTree<-`, "col" = `colTree<-`)
+    link_FUN <- switch(MARGIN, "row" = rowLinks, "col" = colLinks)
+    name_FUN <- switch(MARGIN, "row" = rownames, "col" = colnames)
+    # Update or add old tree from the first element of list
+    if( update.tree ){
+        # Get trees as list.
+        trees <- list()
+        for( x in tses ){
+            temp <- tree_FUN(x, tree_name_FUN(x))
+            if( !is(temp, "list") ){
+                temp <- list(temp)
+                names(temp) <- tree_name_FUN(x)
+            }
+            trees <- c(trees, temp)
+        }
+        # If there are trees available
+        if( any(lengths(trees) > 0) ){
+            # Get links
+            links <- lapply(tses, link_FUN)
+            # Links must be single DF and it must have "name" column denoting
+            # row/colnames
+            links <- do.call(rbind, links)
+            links <- DataFrame(links)
+            nams <- lapply(tses, name_FUN)
+            nams <- unlist( nams[lengths(trees) > 0] )
+            links[["names"]] <- nams
+            # Combine trees into single tree
+            args <- list(trees = trees, links = links)
+            tse <- .check_and_add_trees(tse, args, MARGIN = MARGIN)
+        }
+    } else{
+        tree <- tree_FUN(tses[[1L]])
+        tse <- tree_assign_FUN(tse, value = tree)
+    }
+    return(tse)
 }
 
 #' @importFrom SummarizedExperiment colData

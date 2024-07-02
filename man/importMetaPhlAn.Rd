@@ -89,10 +89,9 @@ and strain-level profiling of diverse microbial communities with bioBakery 3.
 \emph{eLife}. 10:e65088. doi: 10.7554/eLife.65088
 }
 \seealso{
-\code{\link[=importHUMAnN]{importHUMAnN}}
-\code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-\code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-\code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+\code{\link[=convert]{convertFromPhyloseq}}
+\code{\link[=convert]{convertFromBIOM}}
+\code{\link[=convert]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
 }
