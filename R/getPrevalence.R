@@ -577,7 +577,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         pr <- getPrevalent(x, rank = NULL, ...)
         f <- rownames(x) %in% pr
         if(any(!f)){
-            other_x <- agglomerateByVariable(x[!f,], MARGIN = "rows",
+            other_x <- agglomerateByVariable(x[!f,], by = "rows",
                                             factor(rep(1L,sum(!f))),
                                             check_assays = FALSE)
             rowData(other_x)[,colnames(rowData(other_x))] <- NA

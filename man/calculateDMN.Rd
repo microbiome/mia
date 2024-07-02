@@ -164,8 +164,8 @@ tse <- TreeSummarizedExperiment(assays = list(counts = counts),
 library(bluster)
 
 # Compute DMM algorithm and store result in metadata
-tse <- cluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
-               MARGIN = "samples", full = TRUE)
+tse <- addCluster(tse, name = "DMM", DmmParam(k = 1:3, type = "laplace"),
+               by = "samples", full = TRUE)
 
 # Get the list of DMN objects
 metadata(tse)$DMM$dmm

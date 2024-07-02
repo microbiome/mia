@@ -84,7 +84,7 @@
 #' 
 #' @param strip_altexp Deprecated. Use \code{altexp.rm} instead.
 #'
-#' @param MARGIN A character value for selecting if data is merged
+#' @param by A character value for selecting if data is merged
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
 #'
@@ -205,13 +205,13 @@
 #' # get a factor for merging
 #' f <- factor(regmatches(rownames(esophagus),
 #'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-#' merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f,
+#' merged <- agglomerateByVariable(esophagus, by = "rows", f,
 #'                                 update.tree = TRUE)
 #' plot(rowTree(merged))
 #' #
 #' data(GlobalPatterns)
 #' GlobalPatterns
-#' merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols",
+#' merged <- agglomerateByVariable(GlobalPatterns, by = "cols",
 #'                                 colData(GlobalPatterns)$SampleType)
 #' merged
 NULL
@@ -285,7 +285,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 
         # merge taxa
         x <- agglomerateByVariable(
-            x, MARGIN = "rows", f = tax_factors, na.rm = TRUE, ...)
+            x, by = "rows", f = tax_factors, na.rm = TRUE, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
@@ -313,9 +313,9 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @aliases agglomerateByVariable
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
-            function(x, MARGIN, f, ...){
-                MARGIN <- .check_MARGIN(MARGIN)
-                FUN <- switch(MARGIN, .merge_rows, .merge_cols)
+            function(x, by, f, ...){
+                by <- .check_MARGIN(by)
+                FUN <- switch(by, .merge_rows, .merge_cols)
                 x <- FUN(x, f, ...)
                 return(x)
             }
@@ -326,11 +326,11 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, MARGIN, f, update.tree = mergeTree, mergeTree = FALSE, ...){
-                # Check MARGIN
-                MARGIN <- .check_MARGIN(MARGIN)
-                # Get function based on MARGIN
-                FUN <- switch(MARGIN, .merge_rows_TSE, .merge_cols_TSE)
+            function(x, by, f, update.tree = mergeTree, mergeTree = FALSE, ...){
+                # Check by
+                by <- .check_MARGIN(by)
+                # Get function based on by
+                FUN <- switch(by, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
                 x <- FUN(x, f, update.tree = update.tree, ...)
                 return(x)
@@ -448,15 +448,15 @@ setMethod(
 
 # Agglomerate all rowTrees found in TreeSE object. Get tips that represent
 # rows and remove all others.
-.agglomerate_trees <- function(x, MARGIN = 1, ...){
+.agglomerate_trees <- function(x, by = 1, ...){
     # Get right functions based on direction
     tree_names_FUN <- switch(
-        MARGIN, "1" = rowTreeNames, "2" = colTreeNames, stop("."))
-    links_FUN <- switch(MARGIN, "1" = rowLinks, "2" = colLinks, stop("."))
-    tree_FUN <- switch(MARGIN, "1" = rowTree, "2" = colTree, stop("."))
+        by, "1" = rowTreeNames, "2" = colTreeNames, stop("."))
+    links_FUN <- switch(by, "1" = rowLinks, "2" = colLinks, stop("."))
+    tree_FUN <- switch(by, "1" = rowTree, "2" = colTree, stop("."))
     # Get right argument names for changeTree call
     args_names <- switch(
-        MARGIN, "1" = c("x", "rowTree", "rowNodeLab", "whichRowTree"),
+        by, "1" = c("x", "rowTree", "rowNodeLab", "whichRowTree"),
         "2" = c("x", "colTree", "colNodeLab", "whichColTree"),
         stop("."))
     # Get names of trees and links between trees and rows
