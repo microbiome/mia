@@ -115,15 +115,18 @@ test_that("estimateDiversity works correctly", {
     expect_error(estimateDiversity(tse, index = "faith", tree.name = "test"))
     expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = "test"))
     
-    data(GlobalPatterns, package = "mia")
-    tse <- mergeSEs(GlobalPatterns, esophagus, join = "full", assay.type = "counts")
-    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = "phylo.1", assay.type = "counts"))
-    expect_warning(estimateDiversity(tse, index = c("shannon", "faith")))
-    expect_error(estimateDiversity(tse, index = c("faith"), tree.name = "test"))
-    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = TRUE))
-    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = 1))
-    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = c("phylo", "phylo.1")))
-    
+    data(GlobalPatterns, package="mia")
+    data(esophagus, package="mia")
+    tse <- mergeSEs(GlobalPatterns, esophagus,  join = "full", assay.type = "counts")
+    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                     tree.name = "phylo.1", assay.type="counts"))
+    expect_error(estimateDiversity(tse, index = c("faith"), 
+                                   tree.name = "test"))
+    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                   tree.name = TRUE))
+    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+                                   tree.name = 1))
+  
     # Test Faith with picante package's results (version 1.8.2)
     picante_res <- c(
         250.5354, 262.2629, 208.4578, 117.8762, 119.8247, 135.7673, 159.3715,
