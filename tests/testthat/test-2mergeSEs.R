@@ -37,7 +37,6 @@ test_that("mergeSEs", {
     expect_equal( rowData(tse), rowData(tse1))
     expect_equal( colData(tse), colData(tse1))
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))
-    expect_equal( rowTree(tse), rowTree(tse1))
     
     # Test that data match if there is only same elements
     tse <- mergeSEs(list(tse1, tse1, tse1), assay.type = "relabundance")
@@ -49,7 +48,6 @@ test_that("mergeSEs", {
     # calculation details to attributes)
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"),
                   check.attributes = FALSE)
-    expect_equal( rowTree(tse), rowTree(tse1))
     
     # Expect that rowTree is preserved if rownames match
     tse <- mergeSEs(list(tse1, GlobalPatterns), 
@@ -155,7 +153,6 @@ test_that("mergeSEs", {
     tse <- mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
                        join = "inner", collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(20, 10)) )
-    expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
@@ -187,7 +184,6 @@ test_that("mergeSEs", {
     tse <- mergeSEs(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
                        join = "left", collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
-    expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
@@ -220,7 +216,6 @@ test_that("mergeSEs", {
                     join = "right", missing.values = NA, 
                     collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
-    expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
@@ -322,13 +317,22 @@ test_that("mergeSEs", {
                  )
     # Test that tree is added after agglomeration
     agg_tse1 <- suppressWarnings( aggTSE(tse1, rowLevel = c(6,4,2)) )
-    tse <- mergeSEs(tse1, agg_tse1)
-    expect_equal(rowTree(tse), rowTree(tse1))
+    expect_warning(tse <- mergeSEs(tse1, agg_tse1))
     
     # Check that rownames match with node labels (These datasets have node labs
     # that are named by rownames.)
     tse <- mergeSEs(GlobalPatterns, esophagus)
     expect_equal( rownames(tse), rowLinks(tse)$nodeLab )
+    
+    # Expect that tree includes nodes of input trees that correspond to rows.
+    # The nodes are sorted since input trees with highest number of taxa are put
+    # first before merge.
+    test <- sort(c(rowLinks(GlobalPatterns)$nodeLab, rowLinks(esophagus)$nodeLab))
+    expect_equal( rownames(tse), test )
+    
+    # Expect that each tip is found from rows when tree is pruned during merge.
+    test <- sort(rowTree(tse)$tip.label)
+    expect_equal( rownames(tse), test )
     
     # Check that rowData includes all the information
     data(esophagus, package="mia")
@@ -385,7 +389,7 @@ test_that("mergeSEs", {
     tse1 <- tse
     rownames(tse1) <- paste0("Taxon", 1:nrow(tse))
     # Merge
-    tse2 <- mergeSEs(tse1, tse)
+    expect_warning(tse2 <- mergeSEs(tse1, tse))
     # Test refseqs
     ref1 <- referenceSeq(tse)
     ref2 <- referenceSeq(tse2)[rownames(tse), ]

@@ -1,10 +1,11 @@
-#' Loading a biom file
+#' Converters
 #'
-#' For convenience a few functions are available to convert data from a
-#' \sQuote{biom} file or object into a
+#' For convenience, a few functions are available to convert BIOM, DADA2 and 
+#' phyloseq objects to 
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'
-#' @param file biom file location
+#' objects, and 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' objects to phyloseq objects.
 #' 
 #' @param prefix.rm \code{TRUE} or \code{FALSE}: Should
 #' taxonomic prefixes be removed? The prefixes is removed only from detected
@@ -25,24 +26,61 @@
 #' 
 #' @param remove.artifacts Deprecated. Use \code{artifact.rm} instead.
 #' 
-#' @param ... additional arguments 
-#'   \itemize{
-#'        \item \code{patter}: \code{character} value specifying artifacts
-#'        to be removed. If \code{patterns = "auto"}, special characters
-#'        are removed. (default: \code{pattern = "auto"})
-#'    }
-#' 
-#' @return An object of class
+#' @details 
+#' \code{convertFromBIOM} coerces a BIOM object to a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object.
+#'   
+#' @return
+#' \code{convertFromBIOM} returns an object of class
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
-#' @name makeTreeSEFromBiom
+#' @name convert
+#' 
 #' @seealso
-#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #'
 #' @examples
+#' 
+#' ### Convert BIOM results to a TreeSE
+#' # Load biom file
+#' library(biomformat)
+#' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
+#'                          package = "biomformat")
+#' 
+#' # Make TreeSE from biom object
+#' biom_object <- biomformat::read_biom(biom_file)
+#' tse <- convertFromBIOM(biom_object)
+NULL
+
+#' Loading a BIOM file
+#' 
+#' @param file BIOM file location
+#' 
+#' @param ... additional arguments to be passed to \code{convertFromBIOM}
+#' 
+#' @details
+#' \code{importBIOM} loads a BIOM file and creates a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} 
+#' object from the BIOM object contained in the loaded file.
+#' 
+#' @return 
+#' \code{importBIOM} returns an object of class
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' 
+#' @name importBIOM
+#' 
+#' @seealso
+#' \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromBIOM}}
+#' \code{\link[=convert]{convertFromDADA2}}
+#' \code{\link[=importQIIME2]{importQIIME2}}
+#' \code{\link[=importMothur]{importMothur}}
+#' \code{\link[=importHUMAnN]{importHUMAnN}}
+#'
+#' @example 
 #' # Load biom file
 #' library(biomformat)
 #' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
@@ -50,10 +88,6 @@
 #' 
 #' # Make TreeSE from biom file
 #' tse <- importBIOM(biom_file)
-#' 
-#' # Make TreeSE from biom object
-#' biom_object <- biomformat::read_biom(biom_file)
-#' tse <- makeTreeSEFromBiom(biom_object)
 #' 
 #' # Get taxonomyRanks from prefixes and remove prefixes
 #' tse <- importBIOM(biom_file,
@@ -67,25 +101,22 @@
 #' # Clean artifacts from taxonomic data
 #' tse <- importBIOM(biom_file,
 #'                     artifact.rm = TRUE)
-NULL
-
-#' @rdname makeTreeSEFromBiom
-#'
+#'                     
 #' @export
 importBIOM <- function(file, ...) {
     .require_package("biomformat")
     biom <- biomformat::read_biom(file)
-    makeTreeSEFromBiom(biom, ...)
+    convertFromBIOM(biom, ...)
 }
 
-#' @rdname makeTreeSEFromBiom
+#' @rdname convert
 #'
 #' @param x object of type \code{\link[biomformat:read_biom]{biom}}
 #'
 #' @export
 #' @importFrom S4Vectors make_zero_col_DFrame DataFrame
 #' @importFrom dplyr %>% bind_rows
-makeTreeSEFromBiom <- function(
+convertFromBIOM <- function(
         x, prefix.rm = removeTaxaPrefixes, 
         removeTaxaPrefixes = FALSE, rank.from.prefix = rankFromPrefix, 
         rankFromPrefix = FALSE,
@@ -204,14 +235,6 @@ makeTreeSEFromBiom <- function(
     }
     
     return(tse)
-}
-
-####################### makeTreeSummarizedExperimentFromBiom ###################
-#' @param x object of type \code{\link[biomformat:read_biom]{biom}}
-#' @rdname makeTreeSEFromBiom
-#' @export
-makeTreeSummarizedExperimentFromBiom <- function(x, ...){
-    makeTreeSEFromBiom(x, ...)
 }
 
 ################################ HELP FUNCTIONS ################################

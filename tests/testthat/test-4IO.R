@@ -7,7 +7,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_s4_class(me, "SummarizedExperiment")
     # load from object
     x1 <- biomformat::read_biom(rich_dense_file)
-    me2 <- makeTreeSEFromBiom(x1)
+    me2 <- convertFromBIOM(x1)
     expect_s4_class(me2, "SummarizedExperiment")
     expect_equal(dim(me), dim(me2))
     expect_equal(rowData(me), rowData(me2))
@@ -16,7 +16,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
         system.file("extdata/testdata/Aggregated_humanization2.biom",
                     package="mia")
     )
-    tse <- makeTreeSEFromBiom(biom_object,
+    tse <- convertFromBIOM(biom_object,
                                 prefix.rm = FALSE,
                                 rank.from.prefix = FALSE,
                                 artifact.rm = TRUE,
@@ -34,7 +34,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_false(apply(rowData(tse), 2, grepl, pattern="^\"") %>% all())
     
     # Testing prefixes removed
-    tse <- makeTreeSEFromBiom(biom_object,
+    tse <- convertFromBIOM(biom_object,
                                 prefix.rm=TRUE,
                                 rank.from.prefix=TRUE,
                                 artifact.rm = TRUE,
@@ -44,7 +44,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
                     all())
     
     # Testing parsing taxonomy ranks from prefixes
-    tse <- makeTreeSEFromBiom(biom_object,
+    tse <- convertFromBIOM(biom_object,
                                 prefix.rm=FALSE,
                                 rank.from.prefix=TRUE,
                                 artifact.rm = TRUE,
@@ -55,7 +55,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     
     # Testing the artifact.rm, the original artifact in the biom file 
     # is '\"', as a test we rather try remove a non existing pattern.
-    tse <- makeTreeSEFromBiom(biom_object,
+    tse <- convertFromBIOM(biom_object,
                                 prefix.rm=FALSE,
                                 rank.from.prefix=FALSE,
                                 artifact.rm = TRUE,
@@ -64,7 +64,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_true(apply(rowData(tse), 2, grepl, pattern="\"") %>% any())
     # Testing the artifact.rm, with the value 'auto' to automatically 
     # detect the artifact and remove it (in our case the artifact is '\"').
-    tse <- makeTreeSEFromBiom(biom_object,
+    tse <- convertFromBIOM(biom_object,
                                 prefix.rm=FALSE,
                                 rank.from.prefix=FALSE,
                                 artifact.rm = TRUE)
@@ -72,7 +72,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_false(apply(rowData(tse), 2, grepl, pattern="\"") %>% any())
     # Testing the artifact.rm, with the value NULL to not detect or clean 
     # anything.
-    tse <- makeTreeSEFromBiom(biom_object,
+    tse <- convertFromBIOM(biom_object,
                                 prefix.rm=FALSE,
                                 rank.from.prefix=FALSE,
                                 artifact.rm = FALSE)
@@ -80,7 +80,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_true(apply(rowData(tse), 2, grepl, pattern="\"") %>% any())
     
     # General final test
-    tse <- makeTreeSEFromBiom(biom_object,
+    tse <- convertFromBIOM(biom_object,
                                 prefix.rm=TRUE,
                                 rank.from.prefix=TRUE,
                                 artifact.rm = TRUE)
@@ -100,7 +100,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
         system.file("extdata", "rich_dense_otu_table.biom",
                     package = "biomformat")
     )
-    tse <- makeTreeSEFromBiom(biom_object,
+    tse <- convertFromBIOM(biom_object,
                                 prefix.rm=TRUE,
                                 rank.from.prefix=TRUE,
                                 artifact.rm = TRUE)
@@ -117,20 +117,20 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
 test_that("Importing phyloseq objects yield TreeSummarizedExperiment objects", {
     skip_if_not_installed("phyloseq")
     data(GlobalPatterns, package="phyloseq")
-    me <- makeTreeSEFromPhyloseq(GlobalPatterns)
+    me <- convertFromPhyloseq(GlobalPatterns)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(19216,26))
     data(enterotype, package="phyloseq")
-    me <- makeTreeSEFromPhyloseq(enterotype)
+    me <- convertFromPhyloseq(enterotype)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(553,280))
     data(esophagus, package="phyloseq")
-    me <- makeTreeSEFromPhyloseq(esophagus)
+    me <- convertFromPhyloseq(esophagus)
     expect_s4_class(me, "TreeSummarizedExperiment")
     expect_equal(dim(me),c(58,3))
     esophagus2 <- esophagus
     phyloseq::otu_table(esophagus2) <- t(phyloseq::otu_table(esophagus))
-    me2 <- makeTreeSEFromPhyloseq(esophagus2)
+    me2 <- convertFromPhyloseq(esophagus2)
     expect_equal(me, me2)
 })
 
@@ -141,7 +141,7 @@ test_that("Importing dada2 objects yield TreeSummarizedExperiment objects", {
     dadaF <- dada2::dada(fnF, selfConsist=TRUE)
     dadaR <- dada2::dada(fnR, selfConsist=TRUE)
 
-    me <- makeTreeSEFromDADA2(dadaF, fnF, dadaR, fnR)
+    me <- convertFromDADA2(dadaF, fnF, dadaR, fnR)
     expect_s4_class(me, "TreeSummarizedExperiment")
 })
 
@@ -414,7 +414,7 @@ test_that("dimnames of feature table is identicle with meta data", {
 })
 
 
-test_that("makePhyloseqFromTreeSE", {
+test_that("convertToPhyloseq", {
 
     skip_if_not_installed("phyloseq")
 
@@ -422,7 +422,7 @@ test_that("makePhyloseqFromTreeSE", {
     data(GlobalPatterns, package="mia")
     tse <- GlobalPatterns
 
-    phy <- makePhyloseqFromTreeSE(GlobalPatterns)
+    phy <- convertToPhyloseq(GlobalPatterns)
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
@@ -444,8 +444,8 @@ test_that("makePhyloseqFromTreeSE", {
     # Test with agglomeration that that pruning is done internally
     test1 <- agglomerateByRank(tse, rank = "Phylum")
     test2 <- agglomerateByRank(tse, rank = "Phylum", update.tree = TRUE)
-    test1_phy <- expect_warning(makePhyloseqFromTreeSE(test1))
-    test2_phy <- makePhyloseqFromTreeSE(test2)
+    test1_phy <- expect_warning(convertToPhyloseq(test1))
+    test2_phy <- convertToPhyloseq(test2)
     
     expect_equal(length(phyloseq::phy_tree(test1_phy)$node), 
                 length(ape::keep.tip(rowTree(test1), rowLinks(test1)$nodeLab)$node))
@@ -456,21 +456,21 @@ test_that("makePhyloseqFromTreeSE", {
     # Check that everything works also with agglomerated data
     for (level in colnames(rowData(tse)) ){
         temp <- agglomerateByRank(tse, rank = level)
-        expect_warning(makePhyloseqFromTreeSE(temp))
+        expect_warning(convertToPhyloseq(temp))
     }
     
     tse2 <- tse
     # Concerts data frame to factors
     rowData(tse2) <- DataFrame(lapply(rowData(tse2), as.factor))
-    phy <- makePhyloseqFromTreeSE(tse)
-    phy2 <- makePhyloseqFromTreeSE(tse2)
+    phy <- convertToPhyloseq(tse)
+    phy2 <- convertToPhyloseq(tse2)
     expect_equal(phyloseq::tax_table(phy2), phyloseq::tax_table(phy))
     
     # TSE object
     data(esophagus, package="mia")
     tse <- esophagus
 
-    phy <- makePhyloseqFromTreeSE(tse, assay.type="counts")
+    phy <- convertToPhyloseq(tse, assay.type="counts")
 
     # Test that assay is in otu_table
     expect_equal(as.data.frame(phyloseq::otu_table(phy)@.Data), as.data.frame(assays(tse)$counts))
@@ -480,10 +480,11 @@ test_that("makePhyloseqFromTreeSE", {
     
     # Test that merging objects lead to correct phyloseq
     tse <- mergeSEs(GlobalPatterns, esophagus, assay.type="counts", missing.values = 0)
-    pseq <- makePhyloseqFromTreeSE(tse, assay.type="counts")
+    pseq <- convertToPhyloseq(tse, assay.type="counts")
     
-    tse_compare <- tse[ rownames(GlobalPatterns), ]
-    pseq_compare <- makePhyloseqFromTreeSE(tse_compare, assay.type="counts")
+    # Include rownames from both trees
+    tse_compare <- tse[ c(rownames(GlobalPatterns), rownames(esophagus)), ]
+    pseq_compare <- convertToPhyloseq(tse_compare, assay.type="counts")
     
     expect_equal(phyloseq::otu_table(pseq), phyloseq::otu_table(pseq_compare))
 })
