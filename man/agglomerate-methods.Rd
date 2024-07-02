@@ -364,23 +364,6 @@ GlobalPatterns
 merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols",
                                 colData(GlobalPatterns)$SampleType)
 merged
-## Data can be aggregated based on prevalent taxonomic results
-tse <- GlobalPatterns
-tse <- agglomerateByPrevalence(tse,
-                              rank = "Phylum",
-                              detection = 1/100,
-                              prevalence = 50/100)
-
-tse
-
-# Here data is aggregated at the taxonomic level "Phylum". The five phyla
-# that exceed the population prevalence threshold of 50/100 represent the
-# five first rows of the assay in the aggregated data. The sixth and last row
-# named by default "Other" takes the summed up values of all the other phyla
-# that are below the prevalence threshold.
-
-assay(tse)[,1:5]
-
 data(GlobalPatterns)
 # print the available taxonomic ranks
 taxonomyRanks(GlobalPatterns)

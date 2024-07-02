@@ -227,10 +227,11 @@ head(prevalence.count)
 # Note that the data (GlobalPatterns) is here in absolute counts
 # (and not compositional, relative abundances)
 # Prevalence threshold 50 percent (strictly greater by default)
-prevalent <- getPrevalent(tse,
-                            rank = "Phylum",
-                            detection = 10,
-                            prevalence = 50/100)
+prevalent <- getPrevalent(
+    tse,
+    rank = "Phylum",
+    detection = 10,
+    prevalence = 50/100)
 head(prevalent)
 
 # Add relative aundance data
@@ -246,16 +247,19 @@ altExp(tse, "prevalent")
 
 # getRare returns the inverse
 rare <- getRare(tse,
-                    rank = "Phylum",
-                    detection = 1/100,
-                    prevalence = 50/100)
+    rank = "Phylum",
+    assay.type = "relabundance",
+    detection = 1/100,
+    prevalence = 50/100)
 head(rare)
 
 # Gets a subset of object that includes rare taxa
-altExp(tse, "rare") <- subsetByRare(tse,
-                                    rank = "Class",
-                                    detection = 0.001,
-                                    prevalence = 0.001)
+altExp(tse, "rare") <- subsetByRare(
+    tse,
+    rank = "Class",
+    assay.type = "relabundance",
+    detection = 0.001,
+    prevalence = 0.001)
 altExp(tse, "rare")
 
 # Names of both experiments, prevalent and rare, can be found from slot

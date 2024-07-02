@@ -153,19 +153,6 @@
     return(MARGIN)
 }
 
-# Get abundance. Determines if relative abundance is calculated or not.
-.to_rel_abund <- function(mat, as.relative = FALSE, ...) {
-    # input check
-    if(!.is_a_bool(as.relative)){
-        stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
-    }
-    
-    if (as.relative) {
-        mat <- .calc_rel_abund(mat)
-    }
-    return(mat)
-}
-
 ################################################################################
 # Internal wrappers for getters
 

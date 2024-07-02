@@ -52,8 +52,11 @@
 #'        agglomeration. (By default: \code{empty.ranks.rm = FALSE})
 #'        \item \code{make.unique}: A single boolean value for selecting
 #'        whether to make rownames unique. (By default: \code{make.unique = TRUE})
-#'        \item \code{detection}: Detection threshold for absence/presence.
-#'        It is an absolute value compared directly to the values of \code{x}
+#'        \item \code{detection}: The threshold value for determining presence
+#'        or absence. A value in \code{x} must exceed this threshold to be
+#'        considered present.
+#'        \item \code{assay.type}: A single character value specifying assay to
+#'        calculate prevalence. (Default: \code{"counts"})
 #'        \item \code{prevalence}: Prevalence threshold (in 0 to 1). The
 #'        required prevalence is strictly greater by default. To include the
 #'        limit, set \code{include.lowest} to \code{TRUE}.
