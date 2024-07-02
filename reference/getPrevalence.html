@@ -315,10 +315,11 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span><span class="co"># Note that the data (GlobalPatterns) is here in absolute counts</span></span></span>
 <span class="r-in"><span><span class="co"># (and not compositional, relative abundances)</span></span></span>
 <span class="r-in"><span><span class="co"># Prevalence threshold 50 percent (strictly greater by default)</span></span></span>
-<span class="r-in"><span><span class="va">prevalent</span> <span class="op">&lt;-</span> <span class="fu">getPrevalent</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                            rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>                            detection <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>                            prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">prevalent</span> <span class="op">&lt;-</span> <span class="fu">getPrevalent</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>    detection <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>    prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prevalent</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Acidobacteria"  "Actinobacteria" "Bacteroidetes"  "Chlorobi"      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Chloroflexi"    "Crenarchaeota" </span>
@@ -351,32 +352,35 @@ Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># getRare returns the inverse</span></span></span>
 <span class="r-in"><span><span class="va">rare</span> <span class="op">&lt;-</span> <span class="fu">getRare</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                    rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>                    detection <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                    prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
+<span class="r-in"><span>    detection <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">100</span>,</span></span>
+<span class="r-in"><span>    prevalence <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rare</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ABY1_OD1"      "AC1"           "CCM11b"        "Caldiserica"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Caldithrix"    "Fibrobacteres"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ABY1_OD1"        "AC1"             "AD3"             "Acidobacteria"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "Armatimonadetes" "BRC1"           </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Gets a subset of object that includes rare taxa</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByRare</span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                                    rank <span class="op">=</span> <span class="st">"Class"</span>,</span></span>
-<span class="r-in"><span>                                    detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
-<span class="r-in"><span>                                    prevalence <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">subsetByRare</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    rank <span class="op">=</span> <span class="st">"Class"</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
+<span class="r-in"><span>    detection <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
+<span class="r-in"><span>    prevalence <span class="op">=</span> <span class="fl">0.001</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"rare"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: TreeSummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 0 26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 71 26 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(1): agglomerated_by_rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(2): counts relabundance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(71): 09D2Y74 12-24 ... koll11 vadinHA49</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(7): Kingdom Phylum ... Genus Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(26): CL3 CC1 ... Even2 Even3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(7): X.SampleID Primer ... SampleType Description</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> altExpNames(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowLinks: a LinkDataFrame (71 rows)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowTree: 1 phylo tree(s) (19216 leaves)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colLinks: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colTree: NULL</span>
 <span class="r-in"><span></span></span>
