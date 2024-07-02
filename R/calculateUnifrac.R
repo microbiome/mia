@@ -126,49 +126,48 @@ setMethod("calculateUnifrac",
                     tree = "missing"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
             tree.name = tree_name, tree_name = "phylo", transposed = FALSE, ...){
-        # Check assay.type and get assay
-        .check_assay_present(assay.type, x)
-        mat <- assay(x, assay.type)
-        if(!transposed){
-            # Check tree.name
-            .check_rowTree_present(tree.name, x)
-            # Get tree
-            tree <- rowTree(x, tree.name)
-            # Select only those features that are in the rowTree
-            whichTree <- rowLinks(x)[, "whichTree"] == tree.name
-            if( any(!whichTree) ){
-                warning("Not all rows were present in the rowTree specified by 'tree.name'.",
-                        "'x' is subsetted.", call. = FALSE)
-                # Subset the data
-                x <- x[ whichTree, ]
-                mat <- mat[ whichTree, ]
-            }
-            mat <- t(mat)
-            tree <- .norm_tree_to_be_rooted(tree, rownames(x))
-            # Get links
-            links <- rowLinks(x)
-        } else {
-            # Check tree.name
-            .check_colTree_present(tree.name, x)
-            # Get tree
-            tree <- colTree(x, tree.name)
-            # Select only those samples that are in the colTree
-            whichTree <- colLinks(x)[, "whichTree"] == tree.name
-            if( any(!whichTree) ){
-                warning("Not all columns were present in the colTree specified by 'tree.name'.",
-                        "'x' is subsetted.", call. = FALSE)
-                # Subset the data
-                x <- x[ , whichTree ]
-                mat <- mat[ , whichTree ]
-            }
-            tree <- .norm_tree_to_be_rooted(tree, colnames(x))
-            # Get links
-            links <- colLinks(x)
+        # Chcek transposed
+        if( !.is_a_bool(transposed) ){
+            stop("'transposed' must be TRUE or FALSE.", call. = FALSE)
         }
-        # Remove those links (make them NA) that are not included in this tree
-        links[ links$whichTree != tree.name, ] <- NA
-        # Take only nodeLabs
+        # Get functions and parameters based on direction
+        tree_present_FUN <- if (transposed) .check_colTree_present
+            else .check_rowTree_present
+        tree_FUN <- if (transposed) colTree else rowTree
+        links_FUN <- if (transposed) colLinks else rowLinks
+        margin_name <- if (transposed) "col" else "row"
+        # Check assay.type
+        .check_assay_present(assay.type, x)
+        # Check tree.name
+        tree_present_FUN(tree.name, x)
+        #
+        # Select only those features/samples that are in the tree
+        links <- links_FUN(x)
+        present_in_tree <- links[, "whichTree"] == tree.name
+        if( any(!present_in_tree) ){
+            warning(
+                "Not all ", margin_name, "s were present in the ", margin_name,
+                "Tree specified by 'tree.name'. 'x' is subsetted.",
+                call. = FALSE)
+            # Subset the data
+            if( transposed ){
+                x <- x[, present_in_tree]
+            } else{
+                x <- x[present_in_tree, ]
+            }
+        }
+        # Get assay and transpose it if specified. Features must be in columns
+        # and samples in rows.
+        mat <- assay(x, assay.type)
+        if( !transposed ){
+            mat <- t(mat)
+        }
+        # Get tree
+        tree <- tree_FUN(x, tree.name)
+        # Get links and take only nodeLabs
+        links <- links_FUN(x)
         links <- links[ , "nodeLab" ]
+        # Calculate unifrac
         res <- calculateUnifrac(mat, tree = tree, node.label = links, ...)
         return(res)
     }
@@ -241,8 +240,6 @@ runUnifrac <- function(
     # Merge assay so that each row represent single tip. It might be that
     # multiple rows are linked to single tip.
     x <- .merge_assay_by_rows(x, node.label, ...)
-    # Modify tree so that it will become rooted.
-    tree <- .norm_tree_to_be_rooted(tree, rownames(x))
     # Remove those tips that are not present in the data
     if( any(!tree$tip.label %in% rownames(x)) ){
         tree <- drop.tip(
