@@ -430,57 +430,56 @@ setGeneric("estimateFaith",signature = c("x", "tree"),
 #' @rdname estimateDiversity
 #' @export
 setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
-          function(x, tree, assay.type = "counts", assay_name = NULL,
-                   name = "faith", node.label = node_lab, node_lab = NULL, ...){
-              # Input check
-              # Check 'tree'
-              # IF there is no rowTree gives an error
-              if( is.null(tree) || is.null(tree$edge.length) ){
-                  stop("'tree' is NULL or it does not have any branches.",
-                       "The Faith's alpha diversity index is not possible to calculate.",
-                       call. = FALSE)
-              }
-              # Check 'assay.type'
-              .check_assay_present(assay.type, x)
-              # Check that it is numeric
-              if( !is.numeric(assay(x, assay.type)) ){
-                  stop("The abundance matrix specificied by 'assay.type' must be numeric.",
-                       call. = FALSE)
-              }
-              # Check 'name'
-              if(!.is_non_empty_character(name)){
-                  stop("'name' must be a non-empty character value.",
-                       call. = FALSE)
-              }
-              # Check that node.label is NULL or it specifies links between rownames and 
-              # node labs
-              if( !( is.null(node.label) || 
-                     is.character(node.label) && 
-                     length(node.label) == nrow(x) ) ){
-                  stop("'node.label' must be NULL or a vector 
-                       specifying links between ","rownames and node labs of 'tree'.",
-                       call. = FALSE)
-              }
-              # Get the abundance matrix
-              mat <- assay(x, assay.type)
-              # Check that it is numeric
-              if( !is.numeric(mat) ){
-                  stop("The abundance matrix specificied by 'assay.type' must be numeric.",
-                       call. = FALSE)
-              }
-              # Subset and rename rows of the assay to correspond node_labs
-              if( !is.null(node.label) ){
-                  # Subset 
-                  mat <- mat[ !is.na(node.label), ]
-                  node.label <- node.label[ !is.na(node.label) ]
-                  # Rename
-                  rownames(mat) <- node.label
-              }
-              # Calculates Faith index
-              faith <- list(.calc_faith(mat, tree, ...))
-              # Adds calculated Faith index to colData
-              .add_values_to_colData(x, faith, name)
-          }
+    function(x, tree, assay.type = "counts", assay_name = NULL,
+            name = "faith", node.label = node_lab, node_lab = NULL, ...){
+        # Input check
+        # Check 'tree'
+        # IF there is no rowTree gives an error
+        if( is.null(tree) || is.null(tree$edge.length) ){
+            stop("'tree' is NULL or it does not have any branches.",
+                "The Faith's alpha diversity index is not possible to calculate.",
+                call. = FALSE)
+        }
+        # Check 'assay.type'
+        .check_assay_present(assay.type, x)
+        # Check that it is numeric
+        if( !is.numeric(assay(x, assay.type)) ){
+            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
+                 call. = FALSE)
+        }
+        # Check 'name'
+        if(!.is_non_empty_character(name)){
+            stop("'name' must be a non-empty character value.",
+                call. = FALSE)
+        }
+        # Check that node.label is NULL or it specifies links between rownames and 
+        # node labs
+        if( !( is.null(node.label) || 
+               is.character(node.label) && length(node.label) == nrow(x) ) ){
+            stop("'node.label' must be NULL or a vector specifying links between ",
+                 "rownames and node labs of 'tree'.",
+                 call. = FALSE)
+        }
+        # Get the abundance matrix
+        mat <- assay(x, assay.type)
+        # Check that it is numeric
+        if( !is.numeric(mat) ){
+            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
+                 call. = FALSE)
+        }
+        # Subset and rename rows of the assay to correspond node_labs
+        if( !is.null(node.label) ){
+            # Subset 
+            mat <- mat[ !is.na(node.label), ]
+            node.label <- node.label[ !is.na(node.label) ]
+            # Rename
+            rownames(mat) <- node.label
+        }
+        # Calculates Faith index
+        faith <- list(.calc_faith(mat, tree, ...))
+        # Adds calculated Faith index to colData
+        .add_values_to_colData(x, faith, name)
+    }
 )
 
 #' @rdname estimateDiversity
