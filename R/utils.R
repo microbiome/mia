@@ -410,8 +410,8 @@
 #' @noRd
 .parse_taxonomy <- function(
     taxa_tab, sep = "; |;", col.name = column_name, column_name = "Taxon",
-    remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes, removeTaxaPrefixes = FALSE,
-    returned.ranks = TAXONOMY_RANKS, ...) {
+    remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes,
+    removeTaxaPrefixes = FALSE, ...) {
     ############################### Input check ################################
     # Check sep
     if(!.is_non_empty_string(sep)){
@@ -428,16 +428,12 @@
     if(!.is_a_bool(remove.prefix)){
         stop("'remove.prefix' must be TRUE or FALSE.", call. = FALSE)
     }
-    # Check returned.ranks
-    if( !is.character(returned.ranks) ){
-        stop("'returned.ranks' must be a character vector.", call. = FALSE)
-    }
     ############################## Input check end #############################
     
     #  work with any combination of taxonomic ranks available
-    all_ranks <- c(
-      "Kingdom","Phylum","Class","Order","Family","Genus","Species", "Strain")
-    all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__", "t__")
+    all_ranks <- .get_all_supported_ranks()
+    all_prefixes <- paste0(all_ranks, "__")
+    names(all_prefixes) <- names(all_ranks)
     
     # split the taxa strings
     taxa_split <- CharacterList(strsplit(taxa_tab[, col.name],sep))
@@ -446,11 +442,12 @@
     # match them to the order given by present_prefixes
     taxa_prefixes_match <- lapply(taxa_prefixes, match, x = all_prefixes)
     taxa_prefixes_match <- IntegerList(taxa_prefixes_match)
-    # get the taxa values
+    # get the taxa values without prefixes
     if(remove.prefix){
+        pattern <- paste0("(", paste0(all_ranks, collapse = "|"), ")__")
         taxa_split <- lapply(
-            taxa_split, gsub, pattern = "([kpcofgst]+)__", replacement = "")
-      taxa_split <- CharacterList(taxa_split)
+            taxa_split, gsub, pattern = pattern, replacement = "")
+        taxa_split <- CharacterList(taxa_split)
     }
     # extract by order matches
     taxa_split <- taxa_split[taxa_prefixes_match]
@@ -460,13 +457,11 @@
            "Please check that 'sep' is correct.", call. = FALSE)
     }
     taxa_tab <- DataFrame(as.matrix(taxa_split))
-    colnames(taxa_tab) <- all_ranks
+    colnames(taxa_tab) <- names(all_ranks)
     
-    # Subset columns so that it includes TAXONOMY_RANKS columns by default.
-    # If strain column has values, it it also returned.
-    ind <- !(!tolower(colnames(taxa_tab)) %in% tolower(returned.ranks) &
-        colSums(is.na(taxa_tab)) == nrow(taxa_tab))
-    taxa_tab <- taxa_tab[ , ind, drop = FALSE]
+    # Subset columns so that include only those columns that have some value
+    non_empty <- colSums(is.na(taxa_tab)) != nrow(taxa_tab)
+    taxa_tab <- taxa_tab[ , non_empty, drop = FALSE]
     
     return(taxa_tab)
 }

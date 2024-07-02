@@ -124,10 +124,8 @@ importMetaPhlAn <- function(
     tables <- .parse_metaphlan(data, ...)
 
     # Create multiple SE objects at different rank from the data
-    available_ranks <- names(tables)
     se_objects <- lapply(tables, function(x){
-        .create_se_from_metaphlan(
-            x, rowdata_col, returned.ranks = available_ranks, ...)
+        .create_se_from_metaphlan(x, rowdata_col, ...)
         })
     
     # Get the object with lowest rank

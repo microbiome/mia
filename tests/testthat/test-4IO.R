@@ -347,6 +347,8 @@ test_that("`.parse_taxonomy` work with any combination of taxonomic ranks", {
     expect_equal(mia:::.parse_taxonomy(test_taxa)[,"Species"],c("s__test",NA))
     expect_equal(mia:::.parse_taxonomy(test_taxa, prefix.rm = TRUE)[,"Species"],
                 c("test",NA))
+    # Expect that output have only taxonomy levels that have information
+    expect_equal(ncol(mia:::.parse_taxonomy(test_taxa)), 3L)
 })
 
 test_that("`.read_q2sample_meta` remove  the row contained `#q2:types`", {
