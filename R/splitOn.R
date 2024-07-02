@@ -109,8 +109,9 @@ setGeneric("splitOn",
 
 # This function collects f (grouping variable), by, and 
 # use.names and returns them as a list.
-.norm_args_for_split_by <- function(x, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
-                                    use_names = TRUE, ...){
+.norm_args_for_split_by <- function(
+        x, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
+        use_names = TRUE, ...){
     # input check
     # Check f
     if(is.null(f)){
@@ -119,8 +120,8 @@ setGeneric("splitOn",
             call. = FALSE)
     }
     # Check by
-    if( !(is.null(by) || (is.numeric(by) && (by == 1 || by == 2 ))) ){
-        stop("'by' must be NULL, 1, or 2.", call. = FALSE )
+    if( !is.null(by) ){
+        by <- .check_MARGIN(by)
     }
     # If f is a vector containing levels
     if( !.is_non_empty_string(f) ){
@@ -336,8 +337,9 @@ setGeneric("unsplitOn",
         stop("'update.tree' must be TRUE or FALSE.",
             call. = FALSE)
     }
-    if( !(is.null(by) || (is.numeric(by) && (by == 1 || by == 2 ))) ){
-        stop("'by' must be NULL, 1, or 2.", call. = FALSE )
+    # Check by
+    if( !is.null(by) ){
+        by <- .check_MARGIN(by)
     }
     # Input check end
     # If list contains only one element, return it
