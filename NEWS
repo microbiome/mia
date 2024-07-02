@@ -142,3 +142,4 @@ calculateCCA to getCCA
 + rename converters makeTreeSEFrom* to convertFrom* and makePhyloseqFromTreeSE to 
 convertToPhyloseq
 + add rowTree agglomeration and RefSeq agglomeration in agglomerateByPrevalence
++ Fix tree merging in unsplit and mergeSEs functions
