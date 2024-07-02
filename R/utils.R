@@ -137,18 +137,14 @@
 
 # Check MARGIN parameters. Should be defining rows or columns.
 .check_MARGIN <- function(MARGIN, name = .get_name_in_parent(MARGIN)) {
-    # Convert to lowcase if it is a string
-    if( .is_non_empty_string(MARGIN) ) {
-        MARGIN <- tolower(MARGIN)
-    }
     # MARGIN must be one of the following options
-    if( !(length(MARGIN) == 1L && MARGIN %in% c(
+    if( !(length(MARGIN) == 1L && tolower(MARGIN) %in% c(
             1, 2, "1", "2", "features", "samples", "columns", "col", "row",
             "rows", "cols")) ) {
-        stop("'", name,"' must equal 1 or 2.", call. = FALSE)
+        stop("'", name,"' must be 'rows' or 'cols'.", call. = FALSE)
     }
     # Convert MARGIN to numeric if it is not.
-    MARGIN <- ifelse(MARGIN %in% c(
+    MARGIN <- ifelse(tolower(MARGIN) %in% c(
         "samples", "columns", "col", 2, "cols"), 2, 1)
     return(MARGIN)
 }
