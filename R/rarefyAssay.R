@@ -129,7 +129,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
                 call. = FALSE)
         }
         # Input check end
-        browser()
+        
         # 'sample' determines the number of reads subsampled from samples.
         # This means that every samples should have at least 'sample' of reads.
         # If they do not have, drop those samples at this point.
