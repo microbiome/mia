@@ -54,7 +54,7 @@
 #' indices (species richness, evenness, diversity, rarity). More dominant
 #' communities are less diverse.
 #'
-#' \code{estimateDominance} calculates the following community dominance
+#' \code{.estimate_dominance} calculates the following community dominance
 #' indices:
 #'
 #' \itemize{
@@ -167,7 +167,7 @@
 #'   \item \code{\link[mia:estimateDiversity]{estimateDiversity}}
 #' }
 #'
-#' @name .estimateDominance
+#' @name .estimate_dominance
 #' @noRd
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -176,16 +176,16 @@
 #' data(esophagus)
 #'
 #' # Calculates Simpson's lambda (can be used as a dominance index)
-#' esophagus <- estimateDominance(esophagus, index="simpson_lambda")
+#' esophagus <- .estimate_dominance(esophagus, index="simpson_lambda")
 #'
 #' # Shows all indices
 #' colData(esophagus)
 #'
 #' # Indices must be written correctly (e.g. dbp, not dbp), otherwise an error
 #' # gets thrown
-#' \donttest{esophagus <- estimateDominance(esophagus, index="dbp")}
+#' \donttest{esophagus <- .estimate_dominance(esophagus, index="dbp")}
 #' # Calculates dbp and Core Abundance indices
-#' esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
+#' esophagus <- .estimate_dominance(esophagus, index=c("dbp", "core_abundance"))
 #' # Shows all indices
 #' colData(esophagus)
 #' # Shows dbp index
@@ -198,27 +198,27 @@
 #' colData(esophagus) <- NULL
 #'
 #' # Calculates all indices
-#' esophagus <- estimateDominance(esophagus)
+#' esophagus <- .estimate_dominance(esophagus)
 #' # Shows all indices
 #' colData(esophagus)
 #' # Deletes all indices
 #' colData(esophagus) <- NULL
 #'
 #' # Calculates all indices with explicitly specified names
-#' esophagus <- estimateDominance(esophagus,
-#'         index = c("dbp", "dmn", "absolute", "relative",
-#'                   "simpson_lambda", "core_abundance", "gini"),
-#'         name  = c("BergerParker", "McNaughton", "Absolute", "Relative",
-#'                   "SimpsonLambda", "CoreAbundance", "Gini")
-#'     )
+#' esophagus <- .estimate_dominance(esophagus,
+#'     index = c("dbp", "dmn", "absolute", "relative",
+#'               "simpson_lambda", "core_abundance", "gini"),
+#'     name  = c("BergerParker", "McNaughton", "Absolute", "Relative",
+#'               "SimpsonLambda", "CoreAbundance", "Gini")
+#' )
 #' # Shows all indices
 #' colData(esophagus)
 #'
 NULL
 
 setGeneric(
-    ".estimateDominance", signature = c("x"),
-    function(x, ...) standardGeneric(".estimateDominance"))
+    ".estimate_dominance", signature = c("x"),
+    function(x, ...) standardGeneric(".estimate_dominance"))
 
 setGeneric(
     ".estimate_dominance",signature = c("x"),
@@ -255,15 +255,17 @@ setMethod(".estimate_dominance", signature = c(x = "SummarizedExperiment"),
         }
 
         # Calculates dominance indices
-        dominances <- BiocParallel::bplapply(index,
-                                            FUN = .get_dominance_values,
-                                            mat = assay(x,assay.type),
-                                            ntaxa = ntaxa,
-                                            aggregate = aggregate,
-                                            BPPARAM = BPPARAM)
+        dominances <- BiocParallel::bplapply(
+            index,
+            FUN = .get_dominance_values,
+            mat = assay(x,assay.type),
+            ntaxa = ntaxa,
+            aggregate = aggregate,
+            BPPARAM = BPPARAM)
 
         # Add dominance indices to colData
-        .add_values_to_colData(x, dominances, name)
+        x <- .add_values_to_colData(x, dominances, name)
+        return(x)
     }
 )
 
@@ -347,8 +349,8 @@ setMethod(".estimate_dominance", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-.get_dominance_values <- function(index, mat, ntaxa = 1, aggregate = TRUE,
-                                    ...) {
+.get_dominance_values <- function(
+        index, mat, ntaxa = 1, aggregate = TRUE, ...) {
 
     FUN <- switch(index,
                     simpson_lambda = .simpson_lambda,

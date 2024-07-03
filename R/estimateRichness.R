@@ -30,7 +30,7 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether calculation of estimates should be parallelized.
 #'
-#' @param ... additional parameters passed to \code{estimateRichness}
+#' @param ... additional parameters passed to \code{.estimate_richness}
 #'
 #' @return \code{x} with additional \code{\link{colData}} named
 #'   \code{*name*}
@@ -132,7 +132,7 @@
 #'   \item \code{\link[vegan:specpool]{estimateR}}
 #' }
 #'
-#' @name .estimateRichness
+#' @name .estimate_richness
 #' @noRd
 #'
 #' @author Leo Lahti. Contact: \url{microbiome.github.io}
@@ -141,7 +141,7 @@
 #' data(esophagus)
 #'
 #' # Calculates all richness indices by default
-#' esophagus <- estimateRichness(esophagus)
+#' esophagus <- .estimate_richness(esophagus)
 #' # Shows all indices
 #' colData(esophagus)
 #'
@@ -158,9 +158,9 @@
 #' colData(esophagus)[, c("observed", "chao1", "ace")] <- NULL
 #'
 #' # Calculates observed richness index and saves them with specific names
-#' esophagus <- estimateRichness(esophagus,
-#'         index = c("observed", "chao1", "ace", "hill"),
-#'         name = c("Observed", "Chao1", "ACE", "Hill"))
+#' esophagus <- .estimate_richness(esophagus,
+#'     index = c("observed", "chao1", "ace", "hill"),
+#'     name = c("Observed", "Chao1", "ACE", "Hill"))
 #' # Show the new indices
 #' colData(esophagus)
 #'
@@ -168,43 +168,40 @@
 #' colData(esophagus) <- NULL
 #'
 #' # Calculate observed richness excluding singletons (detection limit 1)
-#' esophagus <- estimateRichness(esophagus, index="observed", detection = 1)
+#' esophagus <- .estimate_richness(esophagus, index="observed", detection = 1)
 #' # Deletes all colData (including the indices)
 #' colData(esophagus) <- NULL
 #'
 #' # Indices must be written correctly (all lowercase), otherwise an error
 #' # gets thrown
-#' \donttest{esophagus <- estimateRichness(esophagus, index="ace")}
+#' \donttest{esophagus <- .estimate_richness(esophagus, index="ace")}
 #'
 #' # Calculates Chao1 and ACE indices only
-#' esophagus <- estimateRichness(esophagus, index=c("chao1", "ace"),
-#'                                               name=c("Chao1", "ACE"))
+#' esophagus <- .estimate_richness(
+#'     esophagus, index=c("chao1", "ace"), name=c("Chao1", "ACE"))
 #' # Deletes all colData (including the indices)
 #' colData(esophagus) <- NULL
 #'
 #' # Names of columns can be chosen arbitrarily, but the length of arguments
 #' # must match.
-#' esophagus <- estimateRichness(esophagus,
-#'                                    index = c("ace", "chao1"),
-#'                                    name = c("index1", "index2"))
+#' esophagus <- .estimate_richness(
+#'     esophagus, index = c("ace", "chao1"), name = c("index1", "index2"))
 #' # Shows all indices
 #' colData(esophagus)
 #'
 NULL
 
-setGeneric(
-    ".estimate_richness", signature = c("x"), function(
+setGeneric(".estimate_richness", signature = c("x"), function(
     x, assay.type = assay_name, assay_name = "counts",
     index = c("ace", "chao1", "hill", "observed"), name = index,
     detection = 0, BPPARAM = SerialParam(), ...)
-    standardGeneric(".estimate_richness"))
+        standardGeneric(".estimate_richness"))
 
 setMethod(
-    ".estimate_richness", signature = c(x = "SummarizedExperiment"),
-    function(
-    x, assay.type = assay_name, assay_name = "counts",
-    index = c("ace", "chao1", "hill", "observed"), name = index, detection = 0,
-    BPPARAM = SerialParam(), ...){
+    ".estimate_richness", signature = c(x = "SummarizedExperiment"), function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c("ace", "chao1", "hill", "observed"), name = index,
+        detection = 0, BPPARAM = SerialParam(), ...){
     # Input check
     # Check assay.type
     .check_assay_present(assay.type, x)
@@ -216,13 +213,15 @@ setMethod(
             call. = FALSE)
     }
     # Calculates richness indices
-    richness <- BiocParallel::bplapply(index,
-                                        FUN = .get_richness_values,
-                                        mat = assay(x, assay.type),
-                                        detection = detection,
-                                        BPPARAM = BPPARAM)
+    richness <- BiocParallel::bplapply(
+        index,
+        FUN = .get_richness_values,
+        mat = assay(x, assay.type),
+        detection = detection,
+        BPPARAM = BPPARAM)
     # Add richness indices to colData
-    .add_values_to_colData(x, richness, name)
+    x <- .add_values_to_colData(x, richness, name)
+    return(x)
     }
 )
 

@@ -8,7 +8,7 @@
 #' summarization.
 #'
 #' @name mia-package
-#' @aliases mia-package
+#' @docType mia-package
 #' @seealso \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}
 NULL
 

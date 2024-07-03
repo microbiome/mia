@@ -171,7 +171,7 @@
 #'   \item \code{\link[vegan:specpool]{estimateR}}
 #' }
 #'
-#' @name .estimateDiversity
+#' @name .estimate_diversity
 #' @noRd
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #' 
@@ -188,7 +188,7 @@
 #' "Faith",  "LogModSkewness")
 #'
 #' # Calculate diversities
-#' tse <- estimateDiversity(tse, index = index)
+#' tse <- .estimate_diversity(tse, index = index)
 #'
 #' # The colData contains the indices with their code names by default
 #' colData(tse)[, index]
@@ -197,14 +197,14 @@
 #' colData(tse)[, index] <- NULL
 #' 
 #' # 'threshold' can be used to determine threshold for 'coverage' index
-#' tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
+#' tse <- .estimate_diversity(tse, index = "coverage", threshold = 0.75)
 #' # 'quantile' and 'nclasses' can be used when
 #' # 'log_modulo_skewness' is calculated
-#' tse <- estimateDiversity(tse, index = "log_modulo_skewness",
+#' tse <- .estimate_diversity(tse, index = "log_modulo_skewness",
 #'        quantile = 0.75, nclasses = 100)
 #'
 #' # It is recommended to specify also the final names used in the output.
-#' tse <- estimateDiversity(tse,
+#' tse <- .estimate_diversity(tse,
 #'         index = c("shannon", "gini_simpson", "inverse_simpson", "coverage",
 #'                    "fisher", "faith", "log_modulo_skewness"),
 #'         name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
@@ -270,12 +270,13 @@ setMethod(".estimate_diversity", signature = c(x="SummarizedExperiment"),
         .require_package("vegan")
         #
         # Calculate specified diversity indices
-        dvrsts <- BiocParallel::bplapply(index,
-                                        .get_diversity_values,
-                                        x = x,
-                                        mat = assay(x, assay.type),
-                                        BPPARAM = BPPARAM,
-                                        ...)
+        dvrsts <- BiocParallel::bplapply(
+            index,
+            .get_diversity_values,
+            x = x,
+            mat = assay(x, assay.type),
+            BPPARAM = BPPARAM,
+            ...)
         # Add them to colData
         x <- .add_values_to_colData(x, dvrsts, name)
         return(x)
@@ -300,9 +301,6 @@ setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
         if( !.is_non_empty_string(tree.name) ){
             stop("'tree.name' must be a character specifying a rowTree of 'x'.",
                  call. = FALSE)
-        }
-        if (!is.null(assay_name)) {
-            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
         }
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
@@ -358,8 +356,8 @@ setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
                     x, name = faith_name, tree_name = tree.name, ...)
                 # Ensure that indices are in correct order
                 colnames <- colnames(colData(x))
-                colnames <- c(colnames[ !colnames %in% name_original ],
-                            name_original)
+                colnames <- c(
+                    colnames[ !colnames %in% name_original ], name_original)
                 colData(x) <- colData(x)[ , colnames]
             }
         }

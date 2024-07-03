@@ -35,7 +35,7 @@
 #' tse <- GlobalPatterns
 #' 
 #' # Calculate the default Shannon index with no rarefaction
-#' tse <- addAlpha(tse, assay.type = "counts", index = "shannon")
+#' tse <- addAlpha(mae[[1]], index = c("shannon", "observed_richness"))
 #' 
 #' # Shows the estimated Shannon index
 #' tse$shannon

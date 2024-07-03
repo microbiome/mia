@@ -104,7 +104,7 @@
 #'   \item{\code{\link[mia:estimateDiversity]{estimateDiversity}}}
 #' }
 #'
-#' @name .estimateEvenness
+#' @name .estimate_evenness
 #' @noRd
 #' @examples
 #' data(esophagus)
@@ -115,19 +115,14 @@
 #' name  <- c("Pielou", "Camargo", "SimpsonEvenness",  "Evar", "Bulla")
 #'
 #' # Estimate evenness and give polished names to be used in the output
-#' tse <- estimateEvenness(tse, index = index, name = name)
+#' tse <- estimate_evenness(tse, index = index, name = name)
 #' # Check the output
 #' head(colData(tse))
 #'
 NULL
 
-setGeneric(
-    ".estimate_evenness",signature = c("x"),
-    function(
-        x, assay.type = assay_name, assay_name = "counts",
-        index = c("pielou", "camargo", "simpson_evenness", "evar", "bulla"),
-        name = index, ...)
-        standardGeneric(".estimate_evenness"))
+setGeneric(".estimate_evenness",signature = c("x"), function(x, ...)
+    standardGeneric(".estimate_evenness"))
 
 setMethod(
     ".estimate_evenness", signature = c(x = "SummarizedExperiment"),
@@ -148,7 +143,8 @@ setMethod(
                                         .get_evenness_values,
                                         mat = assay(x, assay.type),
                                         BPPARAM = BPPARAM, ...)
-        .add_values_to_colData(x, vnss, name)
+        x <- .add_values_to_colData(x, vnss, name)
+        return(x)
     }
 )
 

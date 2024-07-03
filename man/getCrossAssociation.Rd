@@ -214,10 +214,9 @@ altExp(mae[[1]], "Phylum") <- agglomerateByRank(mae[[1]], rank = "Phylum")
 # Transform data
 altExp(mae[[1]], "Phylum") <- transformAssay(altExp(mae[[1]], "Phylum"), method = "relabundance")
 # When mode = "matrix", the return value is a matrix
-result <- getCrossAssociation(mae, experiment2 = 2, 
-                                        assay.type1 = "relabundance", assay.type2 = "nmr",
-                                        altexp1 = "Phylum", 
-                                        method = "pearson", mode = "matrix")
+result <- getCrossAssociation(
+    mae, experiment2 = 2, assay.type1 = "relabundance", assay.type2 = "nmr",
+    altexp1 = "Phylum", method = "pearson", mode = "matrix")
 # Show first 5 entries
 head(result, 5)
 
@@ -264,7 +263,7 @@ result <- getCrossAssociation(tse_sub)
 
 # It is also possible to choose variables from colData and calculate association
 # between assay and sample metadata or between variables of sample metadata
-suppressWarnings(mae[[1]] <- estimateDiversity(mae[[1]]))
+mae[[1]] <- addAlpha(mae[[1]])
 # colData_variable works similarly to assay.type. Instead of fetching an assay
 # named assay.type from assay slot, it fetches a column named colData_variable
 # from colData.
