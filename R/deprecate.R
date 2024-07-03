@@ -469,12 +469,13 @@ setGeneric("full_join", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-setMethod("full_join", signature = c(x = "ANY"), function(x, ...){
-    .Deprecated(msg = paste0("'full_join' is deprecated. ",
-                            "Use 'mergeSEs' with 'join = full' ",
-                            "instead."))
-    mergeSEs(x, join = "full", ...)
-    }
+setMethod("full_join", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(msg = paste0("'full_join' is deprecated. ",
+                                       "Use 'mergeSEs' with 'join = full' ",
+                                       "instead."))
+              mergeSEs(x, join = "full", ...)
+          }
 )
 
 #' @rdname deprecate
