@@ -139,7 +139,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
             # small number of reads
             rmsams <- colnames(x)[ min_reads ]
             # Remove sample(s) from TreeSE
-            newtse <- x[, !colnames(x) %in% rmsams]
+            x <- x[, !colnames(x) %in% rmsams]
             # Return NULL, if no samples were found after subsampling
             if( ncol(x) == 0 ){
                 stop("No samples were found after subsampling. Consider ",
@@ -159,7 +159,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
         # is a vector that do not have feature names.
         rownames(newassay) <- rownames(x)
         # remove features not present in any samples after subsampling
-        feat_inc <- rowSums2(newassay) > 0
+        feat_inc <- rowSums2(newassay, na.rm = TRUE) > 0
         newassay <- newassay[feat_inc, ]
         # Give message if some features were dropped
         if( verbose && any(!feat_inc) ){
@@ -169,7 +169,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
                 )
         }
         # Subset the TreeSE based on new feature-set
-        x <- x[rownames(newassay),]
+        x <- x[rownames(newassay), ]
         # Add new assay to TreeSE
         assay(x, name, withDimnames = FALSE) <- newassay
         # Add info on sample to metadata
