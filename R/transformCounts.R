@@ -177,11 +177,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         }
         method <- match.arg(method, several.ok = FALSE)
         # Check that MARGIN is 1 or 2
-        if( !(length(MARGIN) == 1L && MARGIN %in%
-              c("samples", "features", "columns", "col", "row")) ){
-            stop("'MARGIN' must be 'samples' or 'features'.",
-                 call. = FALSE)
-        }
+        MARGIN <- .check_MARGIN(MARGIN)
         # Check pseudocount
         if( !.is_a_bool(pseudocount) && !(is.numeric(pseudocount) && length(pseudocount) == 1 && pseudocount >= 0) ){
             stop("'pseudocount' must be TRUE, FALSE or a number equal to or greater than 0.",
@@ -226,7 +222,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
 .apply_transformation <- function(assay, method, MARGIN, ...){
 
     # Transpose if MARGIN is row
-    if( MARGIN %in% c("features", "row") ){
+    if( MARGIN == 1L ){
         assay <- t(assay)
     }
 
@@ -241,7 +237,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
         FUN, list(mat = assay, method = method, ...) )
 
     # Transpose back to normal if MARGIN is row
-    if( MARGIN %in% c("features", "row") ){
+    if( MARGIN == 1L ){
         transformed_table <- t(transformed_table)
     }
 
@@ -265,9 +261,7 @@ setMethod("transformAssay", signature = c(x = "SummarizedExperiment"),
              call. = FALSE)
     }
     # Input check end
-
-    # Adjust MARGIN for vegan. It requires MARGIN in numeric format
-    MARGIN <- ifelse(MARGIN %in% c("samples", "columns", "col", 2), 2, 1)
+    
     # Adjust method if mia-specific alias was used
     method <- ifelse(method == "relabundance", "total", method)
     

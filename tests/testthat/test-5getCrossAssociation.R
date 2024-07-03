@@ -452,13 +452,13 @@ test_that("getCrossAssociation", {
     cor_paired <- getCrossAssociation(tse1,
                                         experiment2 = tse2,  
                                         paired = TRUE, 
-                                        MARGIN = 2, 
+                                        by = 2, 
                                         show.warnings = FALSE,
                                         test.signif = TRUE)
     # Calculate all pairs
     cor <- getCrossAssociation(tse1,
                                 experiment2 = tse2,  
-                                MARGIN = 2, 
+                                by = 2, 
                                 show.warnings = FALSE,
                                 test.signif = TRUE)
     # Take only pairs that are paired

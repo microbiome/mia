@@ -6,6 +6,12 @@
 #' @param x A
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
+#' 
+#' @param by A character value for selecting if association are calculated
+#'   row-wise / for features ('rows') or column-wise / for samples ('cols').
+#'   Must be \code{'rows'} or \code{'cols'}.
+#'   
+#' @param MARGIN Deprecated. Use \code{by} instead.
 #'   
 #' @param clust.col A single character value indicating the name of the 
 #'   \code{rowData} (or \code{colData}) where the data will be stored.
@@ -46,7 +52,7 @@
 #' 
 #' # Clustering done on the samples using Hclust
 #' tse <- addCluster(tse, 
-#'                MARGIN = "samples", 
+#'                by = "samples", 
 #'                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 #' 
 #' # Getting the clusters
@@ -59,7 +65,7 @@ NULL
 setGeneric("addCluster", signature = c("x"),
     function(
             x, BLUSPARAM, assay.type = assay_name, 
-            assay_name = "counts", MARGIN = "features", full = FALSE, 
+            assay_name = "counts", by = MARGIN, MARGIN = "rows", full = FALSE, 
             name = "clusters", clust.col = "clusters", ...)
     standardGeneric("addCluster"))
 
@@ -70,11 +76,11 @@ setGeneric("addCluster", signature = c("x"),
 setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
     function(
             x, BLUSPARAM, assay.type = assay_name, 
-            assay_name = "counts", MARGIN = "features", full = FALSE, 
+            assay_name = "counts", by = MARGIN, MARGIN = "rows", full = FALSE, 
             name = "clusters", clust.col = "clusters", ...) {
         .require_package("bluster")
         # Checking parameters
-        MARGIN <- .check_MARGIN(MARGIN)
+        by <- .check_MARGIN(by)
         se <- .check_and_get_altExp(x, ...)
         .check_assay_present(assay.type, se)
         if( !.is_a_string(name) ){
@@ -92,7 +98,7 @@ setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
         # Get assay
         mat <- assay(se, assay.type)
         # Transpose if clustering on the columns
-        if(MARGIN == 2){
+        if(by == 2){
             mat <- t(mat)
         }
         # Get clusters
@@ -109,7 +115,7 @@ setMethod("addCluster", signature = c(x = "SummarizedExperiment"),
         # list
         clusters <- list(clusters)
         x <- .add_values_to_colData(
-            x, clusters, clust.col, MARGIN = MARGIN, colname = "clust.col", ...)
+            x, clusters, clust.col, MARGIN = by, colname = "clust.col", ...)
         return(x)
     }
 )

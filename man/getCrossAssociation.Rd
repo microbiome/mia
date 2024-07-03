@@ -22,6 +22,7 @@ getCrossAssociation(x, ...)
   colData_variable1 = NULL,
   col.var2 = colData_variable2,
   colData_variable2 = NULL,
+  by = MARGIN,
   MARGIN = 1,
   method = c("kendall", "spearman", "categorical", "pearson"),
   mode = "table",
@@ -109,9 +110,11 @@ of experiment 2. If col.var2 is used, assay.type2 is disabled.
 
 \item{colData_variable2}{Deprecated. Use \code{col.var2} instead.}
 
-\item{MARGIN}{A single numeric value for selecting if association are calculated
-row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
-\code{2}. (By default: \code{MARGIN = 1})}
+\item{by}{A character value for selecting if association are calculated
+row-wise / for features ('rows') or column-wise / for samples ('cols').
+Must be \code{'rows'} or \code{'cols'}.}
+
+\item{MARGIN}{Deperecated. Use \code{by} instead.}
 
 \item{method}{A single character value for selecting association method
 ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
@@ -165,7 +168,7 @@ that might occur when correlations and p-values are calculated.}
 
 \item{paired}{A single boolean value for specifying if samples are paired or not.
 \code{colnames} must match between twp experiments. \code{paired} is disabled
-when \code{MARGIN = 1}. (By default: \code{paired = FALSE})}
+when \code{by = 1}. (By default: \code{paired = FALSE})}
 }
 \value{
 This function returns associations in table or matrix format. In table format,
@@ -235,7 +238,7 @@ names(result)
 
 # Calculate Bray-Curtis dissimilarity between samples. If dataset includes
 # paired samples, you can use paired = TRUE.
-result <- getCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
+result <- getCrossAssociation(mae[[1]], mae[[1]], by = 2, paired = FALSE,
                                         association.fun = vegan::vegdist, 
                                         method = "bray")
                                         

@@ -50,9 +50,11 @@
 #' 
 #' @param colData_variable2 Deprecated. Use \code{col.var2} instead.
 #' 
-#' @param MARGIN A single numeric value for selecting if association are calculated
-#'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
-#'   \code{2}. (By default: \code{MARGIN = 1}) 
+#' @param by A character value for selecting if association are calculated
+#'   row-wise / for features ('rows') or column-wise / for samples ('cols').
+#'   Must be \code{'rows'} or \code{'cols'}. 
+#' 
+#' @param MARGIN Deperecated. Use \code{by} instead.
 #'   
 #' @param method A single character value for selecting association method 
 #'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
@@ -106,7 +108,7 @@
 #'
 #' @param paired A single boolean value for specifying if samples are paired or not.
 #'    \code{colnames} must match between twp experiments. \code{paired} is disabled
-#'    when \code{MARGIN = 1}. (By default: \code{paired = FALSE})
+#'    when \code{by = 1}. (By default: \code{paired = FALSE})
 #'
 #' @param ... Additional arguments:
 #'    \itemize{
@@ -191,7 +193,7 @@
 #' 
 #' # Calculate Bray-Curtis dissimilarity between samples. If dataset includes
 #' # paired samples, you can use paired = TRUE.
-#' result <- getCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
+#' result <- getCrossAssociation(mae[[1]], mae[[1]], by = 2, paired = FALSE,
 #'                                         association.fun = vegan::vegdist, 
 #'                                         method = "bray")
 #'                                         
@@ -247,6 +249,7 @@ setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
            colData_variable1 = NULL,
            col.var2 = colData_variable2,
            colData_variable2 = NULL,
+           by = MARGIN,
            MARGIN = 1,
            method = c("kendall", "spearman", "categorical", "pearson"),
            mode = "table",
@@ -276,7 +279,7 @@ setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
                                           altexp2 = altexp2,
                                           col.var1 = col.var1,
                                           col.var2 = col.var2,
-                                          MARGIN = MARGIN,
+                                          by = by,
                                           method = method,
                                           mode = mode,
                                           p.adj.method = p.adj.method,
@@ -367,7 +370,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                               altexp2 = NULL,
                                               col.var1 = NULL,
                                               col.var2 = NULL,
-                                              MARGIN = 1,
+                                              by = 1,
                                               method = c("kendall", "spearman", "categorical", "pearson"),
                                               mode = c("table", "matrix"),
                                               p.adj.method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
@@ -407,10 +410,8 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     } else{
         .check_assay_present(assay.type2, tse2)
     }
-    # Check MARGIN
-    if( !is.numeric(MARGIN) && !MARGIN %in% c(1, 2) ){
-      stop("'MARGIN' must be 1 or 2.", call. = FALSE)
-    }
+    # Check by
+    by <- .check_MARGIN(by) 
     # Check method
     # method is checked in .calculate_association. Otherwise association.fun would
     # not work. (It can be "anything", and it might also have method parameter.)
@@ -480,7 +481,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     }
     
     # Transposes tables to right format, if row is specified
-    if( MARGIN == 1 ){
+    if( by == 1 ){
         assay1 <- t(assay1)
         assay2 <- t(assay2)
         # Disable paired
@@ -488,7 +489,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     }
     
     # Check that assays match
-    .check_that_assays_match(assay1, assay2, MARGIN)
+    .check_that_assays_match(assay1, assay2, by)
     
     # If significance is not calculated, p.adj.method is NULL
     if( !test.signif ){
@@ -499,7 +500,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                      p.adj.method, 
                                      test.signif, 
                                      show.warnings, paired, 
-                                     verbose, MARGIN,
+                                     verbose, by,
                                      assay.type1, assay.type2,
                                      altexp1, altexp2,
                                      col.var1, col.var2,
@@ -763,7 +764,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                                    show.warnings,
                                    paired,
                                    verbose,
-                                   MARGIN,
+                                   by,
                                    assay.type1, assay.type2,
                                    altexp1, altexp2,
                                    col.var1, col.var2,
@@ -803,7 +804,7 @@ setMethod("getCrossAssociation", signature = "SummarizedExperiment",
                 paste0(", assay.type2: -, col.var2: ", 
                        paste(col.var2, collapse = " + ")), 
                 paste0(", assay.type2: ", assay.type2, ", col.var2: -")),
-            "\nMARGIN: ", MARGIN, 
+            "\nby: ", by, 
             ", function: ", function_name, 
             ", method: ", method,
             ", test.signif: ", test.signif,
