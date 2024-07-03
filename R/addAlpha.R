@@ -53,6 +53,10 @@
 #' @name addAlpha
 #' @rdname addAlpha
 #' @export
+NULL
+
+#' @rdname addAlpha
+#' @export
 setGeneric(
     "addAlpha", signature = c("x"),
     function(
