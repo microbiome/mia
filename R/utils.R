@@ -459,7 +459,8 @@
     taxa_tab <- DataFrame(as.matrix(taxa_split))
     colnames(taxa_tab) <- names(all_ranks)
     
-    # Subset columns so that include only those columns that have some value
+    # Subset columns so that include only those columns that have some
+    # information
     non_empty <- colSums(is.na(taxa_tab)) != nrow(taxa_tab)
     taxa_tab <- taxa_tab[ , non_empty, drop = FALSE]
     
