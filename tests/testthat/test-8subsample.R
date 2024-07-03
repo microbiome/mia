@@ -56,9 +56,8 @@ test_that("rarefyAssay", {
     # check if same Features removed
     obsFeaturesRemovedRp <- rownames(GlobalPatterns)[!rownames(GlobalPatterns) %in% rownames(tse.subsampled.rp)]
     
-    expFeaturesRemovedRP <- c(
-        "522457", "951", "586076", "244960", "215972", "31759", "30678",
-        "138353", "406058", "1126")
+    expFeaturesRemovedRP <- c("522457","951","586076","244960","215972",
+                              "31759","30678","138353","406058","1126")
     
     expect_equal(obsFeaturesRemovedRp[1:10], expFeaturesRemovedRP)
 })

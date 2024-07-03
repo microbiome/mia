@@ -133,13 +133,12 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
         # 'sample' determines the number of reads subsampled from samples.
         # This means that every samples should have at least 'sample' of reads.
         # If they do not have, drop those samples at this point.
-        min_reads <- colSums2(assay(x, assay.type)) < sample
-        if( any(min_reads) ){
-            # Get those sample names that we are going to remove due to too
-            # small number of reads
-            rmsams <- colnames(x)[ min_reads ]
-            # Remove sample(s) from TreeSE
-            x <- x[, !colnames(x) %in% rmsams]
+        # Get those sample names that we are going to remove due to too
+        # small number of reads.
+        rm_samples <- colSums2(assay(x, assay.type)) < sample
+        if( any(rm_samples) ){
+            # Remove sample(s) from TreeSE (or keep rest of the samples)
+            x <- x[ , !rm_samples, drop = FALSE]
             # Return NULL, if no samples were found after subsampling
             if( ncol(x) == 0 ){
                 stop("No samples were found after subsampling. Consider ",
@@ -148,7 +147,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
             # Give message which samples were removed
             if( verbose ){
                 message(
-                    length(rmsams), " samples removed because they contained ",
+                    sum(rm_samples), " samples removed because they contained ",
                     "fewer reads than `sample`.")
             }
         }
