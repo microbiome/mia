@@ -16,8 +16,7 @@ addAlpha(
     "pielou_evenness", "simpson_evenness", "evar_evenness", "bulla_evenness",
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
-  n.iter = 10,
-  rarefaction.depth = NULL,
+  n.iter = NULL,
   ...
 )
 
@@ -32,8 +31,7 @@ addAlpha(
     "pielou_evenness", "simpson_evenness", "evar_evenness", "bulla_evenness",
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
-  n.iter = 10,
-  rarefaction.depth = NULL,
+  n.iter = NULL,
   ...
 )
 }
@@ -41,22 +39,25 @@ addAlpha(
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
 \item{assay.type}{the name of the assay used for calculation of the
-sample-wise estimates (default: \code{assay.type = "counts"}).}
+sample-wise estimates (Default: \code{"counts"}).}
 
 \item{index}{a \code{character} vector, specifying the alpha diversity
 indices to be calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be
 stored in. By default this will use the original names of the calculated
-indices(By default: \code{name = index}).}
+indices(Default: \code{index}).}
 
-\item{n.iter}{a single \code{integer} value for the number of rarefaction
-rounds (By default: \code{n.iter = 10}).}
+\item{n.iter}{\code{NULL} or a single \code{integer} value for the number of
+rarefaction rounds. Rarefaction is not applied when \code{n.iter=NULL}
+(see @details section). (Default: \code{NULL}).}
 
-\item{rarefaction.depth}{a \code{double} value as for the minimim size or
-rarefaction.depth. (By default: \code{rarefaction.depth = NULL})}
-
-\item{...}{optional arguments.}
+\item{...}{optional arguments passed to mia::rarefyAssay():
+\itemize{
+\item a \code{numeric} value specifying the rarefaction depth i.e. the
+sample size drawn from samples.
+(Default: \code{min(colSums2(assay(x, assay.type)))})
+}}
 }
 \value{
 \code{x} with additional \code{\link{colData}} named after the index
@@ -79,10 +80,10 @@ tse$shannon
 
 # Calculate observed richness with 10 rarefaction rounds
 tse <- addAlpha(tse,
- assay.type = "counts",
- index = "observed_richness",
- rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
- n.iter=10)
+   assay.type = "counts",
+   index = "observed_richness",
+   sample=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+   n.iter=10)
 
 # Shows the estimated observed richness
 tse$observed_richness

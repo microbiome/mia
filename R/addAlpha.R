@@ -6,22 +6,25 @@
 #' @param x a \code{\link{SummarizedExperiment}} object.
 #' 
 #' @param assay.type the name of the assay used for calculation of the
-#'   sample-wise estimates (default: \code{assay.type = "counts"}).
+#'   sample-wise estimates (Default: \code{"counts"}).
 #'   
 #' @param index a \code{character} vector, specifying the alpha diversity 
 #'   indices to be calculated.
 #'   
 #' @param name a name for the column(s) of the colData the results should be
 #'   stored in. By default this will use the original names of the calculated
-#'   indices(By default: \code{name = index}).
+#'   indices(Default: \code{index}).
+#' 
+#' @param n.iter \code{NULL} or a single \code{integer} value for the number of
+#'   rarefaction rounds. Rarefaction is not applied when \code{n.iter=NULL}
+#'   (see @details section). (Default: \code{NULL}).
 #'   
-#' @param ... optional arguments.
-#' 
-#' @param n.iter a single \code{integer} value for the number of rarefaction
-#'    rounds (By default: \code{n.iter = 10}).
-#' 
-#' @param rarefaction.depth a \code{double} value as for the minimim size or 
-#'    rarefaction.depth. (By default: \code{rarefaction.depth = NULL})
+#' @param ... optional arguments passed to mia::rarefyAssay():
+#' \itemize{
+#'   \item a \code{numeric} value specifying the rarefaction depth i.e. the
+#'   sample size drawn from samples.
+#'   (Default: \code{min(colSums2(assay(x, assay.type)))})
+#' }
 #' 
 #' @return \code{x} with additional \code{\link{colData}} named after the index 
 #'    used.
@@ -39,10 +42,10 @@
 #'
 #' # Calculate observed richness with 10 rarefaction rounds
 #' tse <- addAlpha(tse,
-#'  assay.type = "counts",
-#'  index = "observed_richness",
-#'  rarefaction.depth=min(colSums(assay(tse, "counts")), na.rm = TRUE),
-#'  n.iter=10)
+#'    assay.type = "counts",
+#'    index = "observed_richness",
+#'    sample=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+#'    n.iter=10)
 #' 
 #' # Shows the estimated observed richness
 #' tse$observed_richness
@@ -65,7 +68,7 @@ setGeneric(
             "pielou_evenness", "simpson_evenness",
             "evar_evenness", "bulla_evenness", "ace_richness",
             "chao1_richness", "hill_richness", "observed_richness"),
-        name = index, n.iter = 10, rarefaction.depth = NULL, ...)
+        name = index, n.iter = NULL, ...)
     standardGeneric("addAlpha"))
 
 #' @rdname addAlpha
@@ -84,7 +87,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
             "pielou_evenness", "simpson_evenness",
             "evar_evenness", "bulla_evenness", "ace_richness",
             "chao1_richness", "hill_richness", "observed_richness"),
-        name = index, n.iter = 10, rarefaction.depth = NULL, ...){
+        name = index, n.iter = NULL, ...){
         ############################## Input check #############################
         # Check that index is a character vector
         if( !.is_non_empty_character(index) ){
@@ -99,14 +102,8 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
                 call. = FALSE)
         }
         # Check n.tier
-        if( !.is_an_integer(n.iter) ) {
-            stop("'n.iter' must be an integer.", call. = FALSE)
-        }
-        # Check that rarefaction.depth is a numeric > 0
-        if( !is.null(rarefaction.depth) && 
-            !(is.numeric(rarefaction.depth) && rarefaction.depth > 0)) {
-            stop("'rarefaction.depth' must be a non-zero positive double.",
-                call. = FALSE)
+        if( !(is.null(n.iter) || (.is_an_integer(n.iter) && n.iter >= 0)) ){
+            stop("'n.iter' must be NULL or an integer.", call. = FALSE)
         }
         # Check if index exists
         index <- lapply(index, .get_indices)
@@ -123,21 +120,18 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
         ############################ Input check end ###########################
         # Looping over the vector of indices to be estimated
         for( i in seq_len(nrow(index)) ){
-            # Performing rarefaction if rarefaction.depth is specified
-            if( !is.null(rarefaction.depth) ){
+            # Performing rarefaction if sample is specified
+            if( !is.null(n.iter) && n.iter > 0 ){
                 x <- .alpha_rarefaction(
                     x, assay.type = assay.type, n.iter = n.iter,
-                    rarefaction.depth = rarefaction.depth,
                     FUN = index[i, "FUN"], index = index[i, "index"],
                     name = index[i, "name"], ...)
             } else {
                 # Estimate index without rarefaction
-                x <- do.call(
-                    index[i, "FUN"], args = c(
-                        list(x, assay.type = assay.type,
-                            index = index[i, "index"],
-                            name = index[i, "name"]),
-                        list(...)))
+                args <- c(
+                    list(x, assay.type = assay.type, index = index[i, "index"],
+                        name = index[i, "name"]), list(...))
+                x <- do.call(index[i, "FUN"], args = args)
             }
         }
         return(x)
@@ -146,8 +140,8 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
 
 ################################ HELP FUNCTIONS ################################
 
-# Search index that user wants to calculate.
-.get_indices <- function(index) {
+# Search alpha diversity index that user wants to calculate.
+.get_indices <- function(index){
     # Initialize list for supported indices
     supported <- list()
     # Supported diversity indices
@@ -203,13 +197,11 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
 # rarified data. The result is a mean of the iterations.
 #' @importFrom DelayedMatrixStats colMeans2
 .alpha_rarefaction <- function(
-        x, assay.type, n.iter, rarefaction.depth, FUN, index, name, ...){
+        x, assay.type, n.iter, FUN, index, name, ...){
     # Calculating the mean of the subsampled alpha estimates ans storing them
     res <- lapply(seq(n.iter), function(i){
-        # Subsampling the counts from the original tse object
-        x_sub <- subsampleCounts(
-            x, assay.type = assay.type, min_size = rarefaction.depth,
-            verbose = FALSE)
+        # Subsampling the counts from the original TreeSE object
+        x_sub <- rarefyAssay(x, assay.type = assay.type, ...)
         # Calculating the diversity indices on the subsampled object
         x_sub <- do.call(FUN, args = list(
             x_sub, assay.type = assay.type, index = index,
