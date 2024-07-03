@@ -431,7 +431,7 @@
     ############################## Input check end #############################
     
     #  work with any combination of taxonomic ranks available
-    all_ranks <- .get_all_supported_ranks()
+    all_ranks <- .all_supported_ranks
     all_prefixes <- paste0(all_ranks, "__")
     names(all_prefixes) <- names(all_ranks)
     

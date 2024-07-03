@@ -139,24 +139,41 @@ NULL
 
 # This function returns all supported ranks and their prefixes. These ranks are
 # used to detect ranks in imported data.
-.get_all_supported_ranks <- function(){
-    ranks <- c(
-        domain = "d",
-        superkingdom = "sk",
-        kingdom = "k",
-        phylum = "p",
-        class = "c",
-        order = "o",
-        family = "f",
-        genus = "g",
-        species = "s",
-        strain = "t"
-    )
-    return(ranks)
+.all_supported_ranks <- c(
+    domain = "d",
+    superkingdom = "sk",
+    kingdom = "k",
+    phylum = "p",
+    class = "c",
+    order = "o",
+    family = "f",
+    genus = "g",
+    species = "s",
+    strain = "t"
+)
+
+# Function to set taxonomy ranks prefixes (not exported)
+#' @importFrom utils assignInMyNamespace
+setTaxonomyRankPrefixes <- function(prefixes) {
+    # Check if prefixes is a character vector with length >= 1 and it has names
+    if( !(is.character(prefixes) && length(prefixes) > 0 &&
+            !is.null(names(prefixes))) ){
+        stop(
+            "'prefixes' must be a non-empty character vector and it must have ",
+            "names.", call. = FALSE)
+    }
+    # Replace default value of mia:::.all_supported_ranks
+    assignInMyNamespace(".all_supported_ranks", prefixes)
 }
+
+# Function to get taxonomy ranks prefixes (not exported)
+getTaxonomyRankPrefixes <- function() {
+    return(.all_supported_ranks)
+}
+
 #' @format a \code{character} vector of length containing all the taxonomy ranks
 #'   recognized. In functions this is used as case insensitive.
-TAXONOMY_RANKS <- names(.get_all_supported_ranks())
+TAXONOMY_RANKS <- names(.all_supported_ranks)
 
 #' @rdname taxonomy-methods
 setGeneric("taxonomyRanks", signature = c("x"),
