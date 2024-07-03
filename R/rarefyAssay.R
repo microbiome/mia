@@ -129,7 +129,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
                 call. = FALSE)
         }
         # Input check end
-        
+        browser()
         # 'sample' determines the number of reads subsampled from samples.
         # This means that every samples should have at least 'sample' of reads.
         # If they do not have, drop those samples at this point.
@@ -152,14 +152,15 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
             }
         }
         # Subsample specified assay.
-        newassay <- apply(assay(x, assay.type), 2, .subsample_assay,
-                        sample=sample, replace=replace)
+        mat <- apply(
+            assay(x, assay.type), 2,
+            .subsample_assay, sample = sample, replace = replace)
         # Add rownames to new assay. The returned value from .subsample_assay
         # is a vector that do not have feature names.
-        rownames(newassay) <- rownames(x)
+        rownames(mat) <- rownames(x)
         # remove features not present in any samples after subsampling
-        feat_inc <- rowSums2(newassay, na.rm = TRUE) > 0
-        newassay <- newassay[feat_inc, ]
+        feat_inc <- rowSums2(mat, na.rm = TRUE) > 0
+        mat <- mat[feat_inc, ]
         # Give message if some features were dropped
         if( verbose && any(!feat_inc) ){
             message(
@@ -168,9 +169,9 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
                 )
         }
         # Subset the TreeSE based on new feature-set
-        x <- x[rownames(newassay), ]
+        x <- x[rownames(mat), ]
         # Add new assay to TreeSE
-        assay(x, name, withDimnames = FALSE) <- newassay
+        assay(x, name, withDimnames = FALSE) <- mat
         # Add info on sample to metadata
         x <- .add_values_to_metadata(x, "rarefyAssay_sample", min_size)
         return(x)
