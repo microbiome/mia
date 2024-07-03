@@ -9,8 +9,9 @@
 #' \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon} 
 #' indices. See details for more information and references.
 #'
-#' @param x a \code{\link{SummarizedExperiment}} object or \code{\link{TreeSummarizedExperiment}}.
-#' The latter is recommended for microbiome data sets and tree-based alpha diversity indices.
+#' @param x a \code{\link{SummarizedExperiment}} object or
+#'   \code{\link{TreeSummarizedExperiment}}. The latter is recommended for
+#'   microbiome data sets and tree-based alpha diversity indices.
 #' 
 #' @param tree A phylogenetic tree that is used to calculate 'faith' index.
 #'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
@@ -71,9 +72,9 @@
 #'
 #' @details
 #'
-#' Alpha diversity is a joint quantity that combines elements or community richness
-#' and evenness. Diversity increases, in general, when species richness or
-#' evenness increase.
+#' Alpha diversity is a joint quantity that combines elements or community
+#' richness and evenness. Diversity increases, in general, when species richness
+#' or evenness increase.
 #'
 #' By default, this function returns all indices.
 #'
@@ -354,10 +355,11 @@ setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
                         call. = FALSE)
             } else {
                 x <- .estimate_faith(
-                    x, name = faith_name, tree_name = tree_name, ...)
+                    x, name = faith_name, tree_name = tree.name, ...)
                 # Ensure that indices are in correct order
                 colnames <- colnames(colData(x))
-                colnames <- c(colnames[ !colnames %in% name_original ], name_original)
+                colnames <- c(colnames[ !colnames %in% name_original ],
+                            name_original)
                 colData(x) <- colData(x)[ , colnames]
             }
         }
@@ -380,15 +382,15 @@ setMethod(
         # IF there is no rowTree gives an error
         if( is.null(tree) || is.null(tree$edge.length) ){
             stop("'tree' is NULL or it does not have any branches.",
-                "The Faith's alpha diversity index is not possible to calculate.",
-                call. = FALSE)
+                "The Faith's alpha diversity index is not possible to 
+                calculate.", call. = FALSE)
         }
         # Check 'assay.type'
         .check_assay_present(assay.type, x)
         # Check that it is numeric
         if( !is.numeric(assay(x, assay.type)) ){
-            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
-                 call. = FALSE)
+            stop("The abundance matrix specificied by 'assay.type' must be ",
+                "numeric.", call. = FALSE)
         }
         # Check 'name'
         if(!.is_non_empty_character(name)){
@@ -407,8 +409,8 @@ setMethod(
         mat <- assay(x, assay.type)
         # Check that it is numeric
         if( !is.numeric(mat) ){
-            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
-                 call. = FALSE)
+            stop("The abundance matrix specificied by 'assay.type' must be
+                numeric.", call. = FALSE)
         }
         # Subset and rename rows of the assay to correspond node_labs
         if( !is.null(node.label) ){

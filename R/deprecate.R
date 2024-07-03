@@ -59,7 +59,6 @@ setMethod("taxonomyTree", signature = c(x = "SummarizedExperiment"),
             }
 )
 
-#' @importFrom bluster clusterRows
 #' @rdname deprecate
 #' @export
 setGeneric("mergeRows",
@@ -470,13 +469,12 @@ setGeneric("full_join", signature = c("x"),
 
 #' @rdname deprecate
 #' @export
-setMethod("full_join", signature = c(x = "ANY"),
-          function(x, ...){
-              .Deprecated(msg = paste0("'full_join' is deprecated. ",
-                                       "Use 'mergeSEs' with 'join = full' ",
-                                       "instead."))
-              mergeSEs(x, join = "full", ...)
-          }
+setMethod("full_join", signature = c(x = "ANY"), function(x, ...){
+    .Deprecated(msg = paste0("'full_join' is deprecated. ",
+                            "Use 'mergeSEs' with 'join = full' ",
+                            "instead."))
+    mergeSEs(x, join = "full", ...)
+    }
 )
 
 #' @rdname deprecate
@@ -514,7 +512,7 @@ setMethod("left_join", signature = c(x = "ANY"),
 )
 
 #' @rdname deprecate
-#' @export            
+#' @export
 setGeneric("right_join", signature = c("x"),
            function(x, ...)
                standardGeneric("right_join"))
@@ -1020,8 +1018,6 @@ makeTreeSEFromPhyloseq <- function(x) {
   convertFromPhyloseq(...)
 }
 
-##############################################################################
-
 #' @rdname deprecate
 #' @export
 setGeneric(
@@ -1041,15 +1037,16 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "estimateRichness", signature = c("x"), function(x, ...)
-        standardGeneric("estimateRichness"))
+    "estimateRichness", signature = c("x"),
+    function(x, ...) standardGeneric("estimateRichness"))
 
 #' @rdname deprecate
 #' @export
 setMethod(
-    "estimateRichness", signature = c(x = "ANY"), function(x, ...){
+    "estimateRichness", signature = c(x="ANY"),
+    function(x, ...){
         .Deprecated(msg = paste0(
-            "'estimateRichness' is deprecated. Use 'addAlpha' instead."))
+          "'estimateRichness' is deprecated. Use 'addAlpha' instead."))
         .estimate_richness(x, ...)
     }
 )
@@ -1057,8 +1054,8 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "estimateDiversity", signature = c("x"), function(x, ...)
-        standardGeneric("estimateDiversity"))
+    "estimateDiversity", signature = c("x"),
+    function(x, ...) standardGeneric("estimateDiversity"))
 
 #' @rdname deprecate
 #' @export
@@ -1073,31 +1070,32 @@ setMethod(
 #' @rdname deprecate
 #' @export
 setGeneric(
-    "estimateDominance", signature = c("x"), function(x, ...)
-        standardGeneric("estimateDominance"))
-
-#' @rdname deprecate
-#' @export
-setMethod(
-    "estimateDominance", signature = c(x = "ANY"), function(x, ...){
-        .Deprecated(msg = paste0(
-            "'estimateDominance' is deprecated. Use 'addAlpha' instead."))
-        .estimate_dominance(x, ...)
-    }
-)
-
-#' @rdname deprecate
-#' @export
-setGeneric(
     "estimateFaith", signature = c("x"), function(x, ...)
         standardGeneric("estimateFaith"))
 
 #' @rdname deprecate
 #' @export
 setMethod(
-    "estimateFaith", signature = c(x = "ANY"), function(x, ...){
+    "estimateFaith", signature = c(x="ANY"),
+    function(x, ...){
         .Deprecated(msg = paste0(
-            "'estimateFaith' is deprecated. Use 'addAlpha' instead."))
+          "'estimateFaith' is deprecated. Use 'addAlpha' instead."))
         .estimate_faith(x, ...)
     }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "estimateDominance", signature = c("x"),
+    function(x, ...) standardGeneric("estimateDominance"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "estimateDominance", signature = c(x="ANY"),
+    function(x, ...){
+        .Deprecated(msg = paste0(
+          "'estimateDominance' is deprecated. Use 'addAlpha' instead."))
+        .estimate_dominance(x, ...)
+    })

@@ -211,63 +211,62 @@ setMethod(
     # Check indices
     index <- match.arg(index, several.ok = TRUE)
     if(!.is_non_empty_character(name) || length(name) != length(index)){
-      stop("'name' must be a non-empty character value and have the ",
-           "same length than 'index'.",
-           call. = FALSE)
+        stop("'name' must be a non-empty character value and have the ",
+            "same length than 'index'.",
+            call. = FALSE)
     }
     # Calculates richness indices
     richness <- BiocParallel::bplapply(index,
-                                       FUN = .get_richness_values,
-                                       mat = assay(x, assay.type),
-                                       detection = detection,
-                                       BPPARAM = BPPARAM)
+                                        FUN = .get_richness_values,
+                                        mat = assay(x, assay.type),
+                                        detection = detection,
+                                        BPPARAM = BPPARAM)
     # Add richness indices to colData
     .add_values_to_colData(x, richness, name)
-  }
+    }
 )
 
 .calc_observed <- function(mat, detection, ...){
-  # vegan::estimateR(t(mat))["S.obs",]
-  colSums(mat > detection)
+    # vegan::estimateR(t(mat))["S.obs",]
+    colSums(mat > detection)
 }
 
 .calc_chao1 <- function(mat, ...){
-  # Required to work with DelayedArray
-  if(is(mat, "DelayedArray")) {
-    mat <- matrix(mat, nrow = nrow(mat))
-  }
-  
-  ans <- t(vegan::estimateR(t(mat))[c("S.chao1","se.chao1"),])
-  colnames(ans) <- c("","se")
-  ans
+    # Required to work with DelayedArray
+    if(is(mat, "DelayedArray")) {
+        mat <- matrix(mat, nrow = nrow(mat))
+    }
+
+    ans <- t(vegan::estimateR(t(mat))[c("S.chao1","se.chao1"),])
+    colnames(ans) <- c("","se")
+    ans
 }
 
 .calc_ace <- function(mat, ...){
-  # Required to work with DelayedArray
-  if(is(mat, "DelayedArray")) {
-    mat <- matrix(mat, nrow = nrow(mat))
-  }
-  
-  ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
-  colnames(ans) <- c("","se")
-  ans
+    # Required to work with DelayedArray
+    if(is(mat, "DelayedArray")) {
+        mat <- matrix(mat, nrow = nrow(mat))
+    }
+
+    ans <- t(vegan::estimateR(t(mat))[c("S.ACE","se.ACE"),])
+    colnames(ans) <- c("","se")
+    ans
 }
 
 .calc_hill <- function(mat, ...){
-  # Exponent of Shannon diversity
-  exp(vegan::diversity(t(mat), index="shannon"))
+    # Exponent of Shannon diversity
+    exp(vegan::diversity(t(mat), index="shannon"))
 }
 
 .get_richness_values <- function(index, mat, detection, ...) {
-  
-  FUN <- switch(index,
+
+    FUN <- switch(index,
                 observed = .calc_observed,
                 chao1 = .calc_chao1,
                 ace = .calc_ace,
                 hill = .calc_hill
-  )
-  
-  FUN(mat = mat, detection = detection, ...)
-  
-}
+    )
 
+    FUN(mat = mat, detection = detection, ...)
+
+}

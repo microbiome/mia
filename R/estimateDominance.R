@@ -6,9 +6,8 @@
 #' \sQuote{Gini}, \sQuote{McNaughton’s}, \sQuote{Relative}, and
 #' \sQuote{Simpson's} indices.
 #'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
+#' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{
+#'   SummarizedExperiment}} object
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -257,11 +256,11 @@ setMethod(".estimate_dominance", signature = c(x = "SummarizedExperiment"),
 
         # Calculates dominance indices
         dominances <- BiocParallel::bplapply(index,
-                                             FUN = .get_dominance_values,
-                                             mat = assay(x,assay.type),
-                                             ntaxa = ntaxa,
-                                             aggregate = aggregate,
-                                             BPPARAM = BPPARAM)
+                                            FUN = .get_dominance_values,
+                                            mat = assay(x,assay.type),
+                                            ntaxa = ntaxa,
+                                            aggregate = aggregate,
+                                            BPPARAM = BPPARAM)
 
         # Add dominance indices to colData
         .add_values_to_colData(x, dominances, name)
@@ -323,24 +322,24 @@ setMethod(".estimate_dominance", signature = c(x = "SummarizedExperiment"),
     # Aggregate or not
     if (!aggregate) {
         idx <- apply(mat, 2L,
-                     function(mc) {
-                         order(as.vector(mc), decreasing = TRUE)[[ntaxa]]
-                     })
+                    function(mc) {
+                        order(as.vector(mc), decreasing = TRUE)[[ntaxa]]
+                    })
     } else {
         idx <- apply(mat, 2L,
-                     function(mc) {
-                         order(as.vector(mc), decreasing = TRUE)[seq_len(ntaxa)]
-                     })
+                    function(mc) {
+                        order(as.vector(mc), decreasing = TRUE)[seq_len(ntaxa)]
+                    })
         idx <- split(as.vector(idx),
-                     unlist(lapply(seq_len(length(idx) / ntaxa),rep.int,ntaxa)))
+                    unlist(lapply(seq_len(length(idx) / ntaxa),rep.int,ntaxa)))
     }
 
     ans <- lapply(mapply(function(i,j,x){x[i,j]},
-                         i = idx,
-                         j = seq_len(ncol(mat)),
-                         MoreArgs = list(x = mat),
-                         SIMPLIFY = FALSE),
-                  sum)
+                        i = idx,
+                        j = seq_len(ncol(mat)),
+                        MoreArgs = list(x = mat),
+                        SIMPLIFY = FALSE),
+                    sum)
     ans <- unlist(ans)
 
     # Adds sample names to the table
@@ -348,7 +347,8 @@ setMethod(".estimate_dominance", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-.get_dominance_values <- function(index, mat, ntaxa = 1, aggregate = TRUE, ...) {
+.get_dominance_values <- function(index, mat, ntaxa = 1, aggregate = TRUE,
+                                    ...) {
 
     FUN <- switch(index,
                     simpson_lambda = .simpson_lambda,
@@ -363,6 +363,3 @@ setMethod(".estimate_dominance", signature = c(x = "SummarizedExperiment"),
     FUN(index, mat = mat, ntaxa = ntaxa, aggregate = aggregate, ...)
 
 }
-
-
-

@@ -8,16 +8,16 @@
 #' @param x a \code{\link{SummarizedExperiment}} object
 #'
 #' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used for
-#'   calculation of the sample-wise estimates.
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} used
+#'   for calculation of the sample-wise estimates.
 #'   
 #' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
-#' @param index a \code{character} vector, specifying the evenness measures to be
-#'   calculated.
+#' @param index a \code{character} vector, specifying the evenness measures to
+#'   be calculated.
 #'
 #' @param name a name for the column(s) of the colData the results should be
 #'   stored in.
@@ -35,8 +35,9 @@
 #' @return \code{x} with additional \code{\link{colData}} named \code{*name*}
 #'
 #' @details
-#' Evenness is a standard index in community ecology, and it quantifies how evenly the abundances
-#' of different species are distributed. The following evenness indices are provided:
+#' Evenness is a standard index in community ecology, and it quantifies how
+#' evenly the abundances of different species are distributed. The following
+#' evenness indices are provided:
 #'
 #' By default, this function returns all indices.
 #'
@@ -70,7 +71,8 @@
 #' _Oikos_ 70:167--171.
 #'
 #' Camargo, JA. (1992)
-#' New diversity index for assessing structural alterations in aquatic communities.
+#' New diversity index for assessing structural alterations in aquatic
+#' communities.
 #' _Bull. Environ. Contam. Toxicol._ 48:428--434.
 #'
 #' Locey KJ and Lennon JT. (2016)
@@ -90,8 +92,8 @@
 #' _Oikos_ 76(1):70-82.
 #'
 #' Spellerberg and Fedor (2003).
-#' A tribute to Claude Shannon (1916 –2001) and a plea for more rigorous use of species richness,
-#' species diversity and the ‘Shannon–Wiener’ Index.
+#' A tribute to Claude Shannon (1916 –2001) and a plea for more rigorous use of
+#' species richness, species diversity and the ‘Shannon–Wiener’ Index.
 #' _Alpha Ecology & Biogeography_ 12, 177–197.
 #'
 #' @seealso
@@ -137,15 +139,15 @@ setMethod(
         index <- match.arg(index, several.ok = TRUE)
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
-                 "same length than 'index'.",
-                 call. = FALSE)
+                "same length as 'index'.",
+                call. = FALSE)
         }
         .check_assay_present(assay.type, x)
         #
         vnss <- BiocParallel::bplapply(index,
-                                       .get_evenness_values,
-                                       mat = assay(x, assay.type),
-                                       BPPARAM = BPPARAM, ...)
+                                        .get_evenness_values,
+                                        mat = assay(x, assay.type),
+                                        BPPARAM = BPPARAM, ...)
         .add_values_to_colData(x, vnss, name)
     }
 )
@@ -246,11 +248,11 @@ setMethod(
     }
     
     FUN <- switch(index,
-                       camargo = .calc_camargo_evenness,
-                       pielou = .calc_pielou_evenness,
-                       simpson_evenness = .calc_simpson_evenness,
-                       evar = .calc_evar_evenness,
-                       bulla = .calc_bulla_evenness)
+                    camargo = .calc_camargo_evenness,
+                    pielou = .calc_pielou_evenness,
+                    simpson_evenness = .calc_simpson_evenness,
+                    evar = .calc_evar_evenness,
+                    bulla = .calc_bulla_evenness)
 
     FUN(mat = mat, ...)
 }
