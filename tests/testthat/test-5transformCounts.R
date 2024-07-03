@@ -215,7 +215,7 @@ test_that("transformAssay", {
         tse <- transformAssay(tse, method = "relabundance", pseudocount = TRUE, name = "pseudo_true")
         tse <- transformAssay(
             tse, method = "relabundance", name = "pseudo_min",
-            pseudocount = min(assay(tse, "counts")[assay(tse, "counts") > 0]),
+            pseudocount = (min(assay(tse, "counts")[assay(tse, "counts") > 0])) / 2,
         )
         tse <- transformAssay(tse, method = "relabundance", pseudocount = FALSE, name = "pseudo_false")
         tse <- transformAssay(tse, method = "relabundance", pseudocount = 0, name = "pseudo_zero")
@@ -263,15 +263,12 @@ test_that("transformAssay", {
         ############################## Z TRANSFORMATION ########################
         # Calculates Z-transformation for features	
         xx <- t(scale(t(as.matrix(assay(tse, "counts")))))
-        expect_warning(z_assay <- assays(mia::ZTransform(tse, pseudocount = 1))$z)
+        expect_warning(z_assay <- assays(mia::transformAssay(tse,
+                                                             method = "z",
+                                                             MARGIN = "features",
+                                                             pseudocount = 1))$z)
         expect_equal(max(abs(z_assay - xx), na.rm=TRUE), 0,
                      tolerance = 1e-14, check.attributes = FALSE)
-        
-        # Tests that ZTransform and transformAssay(MARGIN = "features"),  gives the same result
-        expect_warning(
-        expect_equal(assays(mia::ZTransform(tse))$z,
-                     assays(mia::transformAssay(tse, MARGIN = "features", method = "z"))$z)
-        )
 
         # Test that transformations are equal to ones directly from vegan
         # clr

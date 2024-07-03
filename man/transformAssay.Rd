@@ -2,39 +2,9 @@
 % Please edit documentation in R/transformCounts.R
 \name{transformAssay}
 \alias{transformAssay}
-\alias{transformSamples}
-\alias{transformSamples,SummarizedExperiment-method}
-\alias{transformCounts}
 \alias{transformAssay,SummarizedExperiment-method}
-\alias{transformFeatures}
-\alias{transformFeatures,SummarizedExperiment-method}
-\alias{ZTransform}
-\alias{ZTransform,SummarizedExperiment-method}
-\alias{relAbundanceCounts}
-\alias{relAbundanceCounts,SummarizedExperiment-method}
 \title{Transform assay}
 \usage{
-transformSamples(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
-  name = method,
-  ...
-)
-
-\S4method{transformSamples}{SummarizedExperiment}(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  method = c("alr", "chi.square", "clr", "frequency", "hellinger", "log", "log10",
-    "log2", "normalize", "pa", "rank", "rclr", "relabundance", "rrank", "total"),
-  name = method,
-  pseudocount = FALSE,
-  ...
-)
-
 transformAssay(
   x,
   assay.type = "counts",
@@ -48,8 +18,6 @@ transformAssay(
   ...
 )
 
-transformCounts(x, ...)
-
 \S4method{transformAssay}{SummarizedExperiment}(
   x,
   assay.type = "counts",
@@ -62,36 +30,6 @@ transformCounts(x, ...)
   pseudocount = FALSE,
   ...
 )
-
-transformFeatures(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
-    "z"),
-  name = method,
-  pseudocount = FALSE,
-  ...
-)
-
-\S4method{transformFeatures}{SummarizedExperiment}(
-  x,
-  assay.type = "counts",
-  assay_name = NULL,
-  method = c("frequency", "log", "log10", "log2", "max", "pa", "range", "standardize",
-    "z"),
-  name = method,
-  pseudocount = FALSE,
-  ...
-)
-
-ZTransform(x, MARGIN = "features", ...)
-
-\S4method{ZTransform}{SummarizedExperiment}(x, MARGIN = "features", ...)
-
-relAbundanceCounts(x, ...)
-
-\S4method{relAbundanceCounts}{SummarizedExperiment}(x, ...)
 }
 \arguments{
 \item{x}{A
@@ -110,24 +48,25 @@ will be disabled.)}
 \item{method}{A single character value for selecting the transformation
 method.}
 
+\item{MARGIN}{A single character value for specifying whether the
+transformation is applied sample (column) or feature (row) wise.
+(By default: \code{MARGIN = "samples"})}
+
 \item{name}{A single character value specifying the name of transformed
 abundance table.}
-
-\item{...}{additional arguments passed on to \code{vegan:decostand}:
-\itemize{
-\item{\code{ref_vals}:} {A single value which will be used to fill
-reference sample's column in returned assay when calculating alr.
-(default: \code{ref_vals = NA})}
-}}
 
 \item{pseudocount}{TRUE, FALSE, or a numeric value. When TRUE,
 automatically adds the minimum positive value of \code{assay.type}.
 When FALSE, does not add any pseudocount (pseudocount = 0).
 Alternatively, a user-specified numeric value can be added as pseudocount.}
 
-\item{MARGIN}{A single character value for specifying whether the
-transformation is applied sample (column) or feature (row) wise.
-(By default: \code{MARGIN = "samples"})}
+\item{...}{additional arguments passed on to \code{vegan:decostand}:
+\itemize{
+\item \code{reference}: A single value which will be used to fill
+reference sample's column in returned assay when calculating alr.
+(default: \code{reference = NA})
+\item \code{ref_vals} Deprecated. Use \code{reference} instead.
+}}
 }
 \value{
 \code{transformAssay} returns the input object \code{x}, with a new
@@ -151,63 +90,21 @@ The available transformation methods include:
 
 \itemize{
 
-\item{'alr'}{ Additive log ratio (alr) transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
+\item 'alr', 'chi.square', 'clr', 'frequency', 'hellinger', 'log', 'normalize', 'pa', 'rank', 'rclr'
+'relabundance', 'rrank', 'standardize', 'total': please refer to
+\code{\link[vegan:decostand]{decostand}} for details.
 
-\item{'chi.square'}{ Chi square transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'clr'}{ Centered log ratio (clr) transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'frequency'}{ Frequency transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'hellinger'}{ Hellinger transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'log'}{ Logarithmic transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'log10'}{ log10 transformation can be used for reducing the skewness
+\item 'log10': log10 transformation can be used for reducing the skewness
 of the data.
 \deqn{log10 = \log_{10} x}{%
 log10 = log10(x)}
-where \eqn{x} is a single value of data.}
+where \eqn{x} is a single value of data.
 
-\item{'log2'}{ log2 transformation can be used for reducing the skewness of
+\item 'log2': log2 transformation can be used for reducing the skewness of
 the data.
 \deqn{log2 = \log_{2} x}{%
 log2 = log2(x)}
-where \eqn{x} is a single value of data.}
-
-\item{'normalize'}{ Make margin sum of squares equal to one. Please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'pa'}{ Transforms table to presence/absence table. Please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'rank'}{ Rank transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'rclr'}{ Robust clr transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'relabundance'}{ Relative transformation (alias for 'total'), please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'rrank'}{ Relative rank transformation, please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'standardize'}{ Scale 'x' to zero mean and unit variance (alias for
-'z'), please refer to \code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'total'}{ Divide by margin total (alias for
-'relabundance'), please refer to
-\code{\link[vegan:decostand]{decostand}} for details.}
-
-\item{'z'}{ Z transformation (alias for 'standardize'),
-please refer to \code{\link[vegan:decostand]{decostand}} for details.}
+where \eqn{x} is a single value of data.
 
 }
 }

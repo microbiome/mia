@@ -80,25 +80,25 @@
     }
 }
 
-.check_rowTree_present <- function(tree_name, x,
-                                   name = .get_name_in_parent(tree_name) ){
-    if( !.is_non_empty_string(tree_name) ){
+.check_rowTree_present <- function(tree.name, x,
+                                   name = .get_name_in_parent(tree.name) ){
+    if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
              call. = FALSE)
     }
-    if( !(tree_name %in% names(x@rowTree)) ){
+    if( !(tree.name %in% names(x@rowTree)) ){
         stop("'", name, "' must specify a tree from 'x@rowTree'.",
              call. = FALSE)
     }
 }
 
-.check_colTree_present <- function(tree_name, x,
-                                   name = .get_name_in_parent(tree_name) ){
-    if( !.is_non_empty_string(tree_name) ){
+.check_colTree_present <- function(tree.name, x,
+                                   name = .get_name_in_parent(tree.name) ){
+    if( !.is_non_empty_string(tree.name) ){
         stop("'", name, "' must be a single non-empty character value.",
              call. = FALSE)
     }
-    if( !(tree_name %in% names(x@colTree)) ){
+    if( !(tree.name %in% names(x@colTree)) ){
         stop("'", name, "' must specify a tree from 'x@colTree'.",
              call. = FALSE)
     }
@@ -136,19 +136,15 @@
 }
 
 # Check MARGIN parameters. Should be defining rows or columns.
-.check_MARGIN <- function(MARGIN) {
-    # Convert to lowcase if it is a string
-    if( .is_non_empty_string(MARGIN) ) {
-        MARGIN <- tolower(MARGIN)
-    }
+.check_MARGIN <- function(MARGIN, name = .get_name_in_parent(MARGIN)) {
     # MARGIN must be one of the following options
-    if( !(length(MARGIN) == 1L && MARGIN %in% c(
+    if( !(length(MARGIN) == 1L && tolower(MARGIN) %in% c(
             1, 2, "1", "2", "features", "samples", "columns", "col", "row",
             "rows", "cols")) ) {
-        stop("'MARGIN' must equal 1 or 2.", call. = FALSE)
+        stop("'", name,"' must be 'rows' or 'cols'.", call. = FALSE)
     }
     # Convert MARGIN to numeric if it is not.
-    MARGIN <- ifelse(MARGIN %in% c(
+    MARGIN <- ifelse(tolower(MARGIN) %in% c(
         "samples", "columns", "col", 2, "cols"), 2, 1)
     return(MARGIN)
 }
@@ -306,6 +302,51 @@
     return(x)
 }
 
+# This function can be used to add values to altExp
+.add_to_altExps <- function(x, values, name = names(values), ...){
+    # Check values
+    if( !((is(values, "list") || is(values, "SimpleList")) &&
+            length(values) > 0) ){
+        stop("'values' must be non-empty list.", call. = FALSE)
+    }
+    # Check names
+    if( !is.character(name) && length(name) > 1L ){
+        stop("'name' must be a character value.", call. = FALSE)
+    }
+    # Names must match with list
+    if( length(values) != length(name) ){
+        stop("Lenght of 'name' must match with 'values'.", call. = FALSE)
+    }
+    #
+    # If the object is SE, convert it to TreeSE
+    if( !is(x, "SingleCellExperiment") ){
+        x <- as(x, "TreeSummarizedExperiment")
+        warning(
+            "SummarizedExperiment does not have altExps slot. ",
+            "Therefore, it is converted to TreeSummarizedExperiment.",
+            call. = FALSE)
+    }
+    #
+    # Add names to values
+    names(values) <- name
+    # Get altExps
+    old_altexp <- altExps(x)
+    # Check if names match with elements that are already present
+    f <- names(old_altexp) %in% names(values)
+    if( any(f) ){
+        warning(
+          "The following values are already present in `altExps` and will ",
+          "be overwritten: '",
+          paste(names(old_altexp)[f], collapse = "', '"),
+          "'. Consider using the 'name' argument to specify alternative ",
+          "names.", call. = FALSE)
+    }
+    # Keep only unique values
+    values <- c( old_altexp[!f], values )
+    # Add to altExps
+    altExps(x) <- values
+    return(x)
+}
 ################################################################################
 # Other common functions
 
@@ -352,11 +393,11 @@
 #'  between different taxonomic levels, defaults to one compatible with both
 #'  GreenGenes and SILVA `; |;"`.
 #'  
-#' @param column_name a single \code{character} value defining the column of taxa_tab
+#' @param col.name a single \code{character} value defining the column of taxa_tab
 #'  that includes taxonomical information.
 #'  
-#' @param remove.prefix {\code{TRUE} or \code{FALSE}: Should 
-#'  taxonomic prefixes be removed? (default: \code{remove.prefix = FALSE})}
+#' @param prefix.rm {\code{TRUE} or \code{FALSE}: Should 
+#'  taxonomic prefixes be removed? (default: \code{prefix.rm = FALSE})}
 #'  
 #' @return  a `data.frame`.
 #' @keywords internal
@@ -364,8 +405,8 @@
 #' @importFrom S4Vectors DataFrame
 #' @noRd
 .parse_taxonomy <- function(
-    taxa_tab, sep = "; |;", column_name = "Taxon",
-    remove.prefix = removeTaxaPrefixes, removeTaxaPrefixes = FALSE,
+    taxa_tab, sep = "; |;", col.name = column_name, column_name = "Taxon",
+    remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes, removeTaxaPrefixes = FALSE,
     returned.ranks = TAXONOMY_RANKS, ...) {
     ############################### Input check ################################
     # Check sep
@@ -373,9 +414,9 @@
       stop("'sep' must be a single character value.",
            call. = FALSE)
     }
-    # Check column_name
-    if( !(.is_non_empty_string(column_name) && column_name %in% colnames(taxa_tab)) ){
-      stop("'column_name' must be a single character value defining column that includes",
+    # Check col.name
+    if( !(.is_non_empty_string(col.name) && col.name %in% colnames(taxa_tab)) ){
+      stop("'col.name' must be a single character value defining column that includes",
            " information about taxonomic levels.",
            call. = FALSE)
     }
@@ -395,7 +436,7 @@
     all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__", "t__")
     
     # split the taxa strings
-    taxa_split <- CharacterList(strsplit(taxa_tab[, column_name],sep))
+    taxa_split <- CharacterList(strsplit(taxa_tab[, col.name],sep))
     # extract present prefixes
     taxa_prefixes <- lapply(taxa_split, substr, 1L, 3L)
     # match them to the order given by present_prefixes
@@ -427,15 +468,15 @@
 }
 
 ################################################################################
-# internal wrappers for agglomerateByRank/mergeRows
+# internal wrappers for agglomerateByRank/agglomerateByVariable
 .merge_features <- function(x, merge.by, ...) {
     # Check if merge.by parameter belongs to taxonomyRanks
     if (is.character(merge.by) && length(merge.by) == 1 && merge.by %in% taxonomyRanks(x)) {
          #Merge using agglomerateByRank
         x <- agglomerateByRank(x, rank = merge.by, ...)
     } else {
-        # Merge using mergeRows
-        x <- mergeRows(x, f = merge.by, ...)
+        # Merge using agglomerateByVariable
+        x <- agglomerateByVariable(x, by = "rows", f = merge.by, ...)
     }
     return(x)
 }

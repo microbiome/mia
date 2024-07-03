@@ -147,12 +147,12 @@ dim(x1)
 dim(altExp(tse,"species"))
 ```
 
-For convenience the function `splitByRanks` is available, which agglomerates
+For convenience the function `agglomerateByRanks` is available, which agglomerates
 data on all `ranks` selected. By default all available ranks will be used.
 The output is compatible to be stored as alternative experiments.
 
 ```{r}
-altExps(tse) <- splitByRanks(tse)
+tse <- agglomerateByRanks(tse)
 tse
 altExpNames(tse)
 ```
@@ -168,7 +168,7 @@ taxa <- rowData(altExp(tse,"Species"))[,taxonomyRanks(tse)]
 taxa_res <- resolveLoop(as.data.frame(taxa))
 taxa_tree <- toTree(data = taxa_res)
 taxa_tree$tip.label <- getTaxonomyLabels(altExp(tse,"Species"))
-rowNodeLab <- getTaxonomyLabels(altExp(tse,"Species"), make_unique = FALSE)
+rowNodeLab <- getTaxonomyLabels(altExp(tse,"Species"), make.unique = FALSE)
 altExp(tse,"Species") <- changeTree(altExp(tse,"Species"),
                                    rowTree = taxa_tree,
                                    rowNodeLab = rowNodeLab)
@@ -193,8 +193,8 @@ Sub-sampling to equal number of counts per sample. Also known as rarefying.
 ```{r}
 data(GlobalPatterns, package = "mia")
 
-tse.subsampled <- subsampleCounts(GlobalPatterns, 
-                                  min_size = 60000, 
+tse.subsampled <- rarefyAssay(GlobalPatterns, 
+                                  sample = 60000, 
                                   name = "subsampled",
                                   replace = TRUE,
                                   seed = 1938)
@@ -253,9 +253,9 @@ as a drop-in replacement in the example above (omit the `method` argument as
 well) to calculate the JSD. For calculating the UniFrac distance via
 `calculateUniFrac` either a `TreeSummarizedExperiment` must be used or a tree
 supplied via the `tree` argument. For more details see `?calculateJSD`,
-`?calculateUnifrac` or `?calculateDPCoA`.
+`?calculateUnifrac` or `?getDPCoA`.
 
-`runMDS` performs the decomposition. Alternatively `runNMDS` can also be used.
+`runMDS` performs the decomposition. Alternatively `addNMDS` can also be used.
 
 ## Other indices
 
@@ -274,17 +274,18 @@ Functions to load data from `biom` files, `QIIME2` output, `DADA2` objects
 [@dada2] or `phyloseq` objects are available. 
 
 ```{r, message=FALSE, warning=FALSE}
+library(phyloseq)
 data(esophagus, package = "phyloseq")
 ```
 
 ```{r}
 esophagus
-esophagus <- makeTreeSEFromPhyloseq(esophagus)
+esophagus <- convertFromPhyloseq(esophagus)
 esophagus
 ```
 
 For more details have a look at the man page, for examples 
-`?makeTreeSEFromPhyloseq`.
+`?convert`.
 
 ## General wrapper functions 
 
@@ -300,14 +301,14 @@ assay(tse[,'CC1'], "counts") |> head()
 
 ## Selecting most interesting features 
 
-`getTopFeatures` returns a vector of the most `top` abundant feature IDs.
+`getTop` returns a vector of the most `top` abundant feature IDs.
 
 ```{r}
 data(esophagus, package = "mia")
-top_taxa <- getTopFeatures(esophagus,
-                       method = "mean",
-                       top = 5,
-                       assay.type = "counts")
+top_taxa <- getTop(esophagus,
+                    method = "mean",
+                    top = 5,
+                    assay.type = "counts")
 top_taxa
 ```
 
@@ -319,8 +320,8 @@ To generate tidy data as used and required in most of the tidyverse,
 ```{r}
 molten_data <- meltAssay(tse,
                          assay.type = "counts",
-                         add_row_data = TRUE,
-                         add_col_data = TRUE
+                         add.row = TRUE,
+                         add.col = TRUE
 )
 molten_data
 ```

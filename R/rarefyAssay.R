@@ -1,14 +1,15 @@
 #' Subsample Counts
 #' 
-#' \code{subsampleCounts} will randomly subsample counts in 
-#' \code{SummarizedExperiment} and return the a modified object in which each 
-#' sample has same number of total observations/counts/reads. 
+#' \code{rarefyAssay} randomly subsamples counts within a 
+#' \code{SummarizedExperiment} object and returns a new 
+#' \code{SummarizedExperiment} containing the original assay and the new 
+#' subsampled assay.
 #'
 #' @details
 #' Although the subsampling approach is highly debated in microbiome research, 
-#' we include the \code{subsampleCounts} function because there may be some 
+#' we include the \code{rarefyAssay} function because there may be some 
 #' instances where it can be useful.
-#' Note that the output of \code{subsampleCounts} is not the equivalent as the 
+#' Note that the output of \code{rarefyAssay} is not the equivalent as the 
 #' input and any result have to be verified with the original dataset.
 #'
 #' Subsampling/Rarefying may undermine downstream analyses and have unintended
@@ -30,9 +31,11 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param min_size A single integer value equal to the number of counts being 
-#'   simulated this can equal to lowest number of total counts 
-#'   found in a sample or a user specified number. 
+#' @param sample A single integer value equal to the number of counts being 
+#'   simulated this can equal to lowest number of total counts found in a sample
+#'   or a user specified number.
+#' 
+#' @param min_size Deprecated. Use \code{sample} instead. 
 #'   
 #' @param replace Logical Default is \code{TRUE}. The default is with 
 #'   replacement (\code{replace=TRUE}). 
@@ -40,7 +43,7 @@
 #'   for details on implications of this parameter.   
 #' 
 #' @param name A single character value specifying the name of transformed
-#'   abundance table.
+#'   abundance table that will be added to the new \code{SummarizedExperiment}.
 #' 
 #' @param verbose Logical Default is \code{TRUE}. When \code{TRUE} an additional 
 #'   message about the random number used is printed.
@@ -60,53 +63,52 @@
 #' microbial differential abundance strategies depend upon data characteristics. 
 #' Microbiome. 2017 Dec;5(1):1-8.
 #' 
-#' @return \code{subsampleCounts} return \code{x} with subsampled data.
+#' @return \code{rarefyAssay} return \code{x} with subsampled data.
 #' 
 #' @author Sudarshan A. Shetty and Felix G.M. Ernst
 #' 
-#' @name subsampleCounts
+#' @name rarefyAssay
 #'  
 #' @examples
-#' # When samples in TreeSE are less than specified min_size, they will be
-#' # removed. If after subsampling features are not present in any of the
-#' # samples, they will be removed.
+#' # When samples in TreeSE are less than specified sample, they will be removed.
+#' # If after subsampling features are not present in any of the samples, 
+#' # they will be removed.
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
-#' set.seed(4759)
-#' tse.subsampled <- subsampleCounts(tse, 
-#'                                   min_size = 60000, 
-#'                                   name = "subsampled")
-#' tse.subsampled
+#' set.seed(123)
+#' tse_subsampled <- rarefyAssay(tse, sample = 60000, name = "subsampled")
+#' tse_subsampled
 #' dim(tse)
-#' dim(tse.subsampled)
+#' dim(assay(tse_subsampled, "subsampled"))
 #' 
 NULL
 
-#' @rdname subsampleCounts
-#' @aliases rarifyCounts
+#' @rdname rarefyAssay
 #' @export
-setGeneric("subsampleCounts", signature = c("x"),
-    function(x, assay.type = assay_name, assay_name = "counts", 
-        min_size = min(colSums2(assay(x, assay.type))),
-        replace = TRUE,
-        name = "subsampled", verbose = TRUE, ...)
-    standardGeneric("subsampleCounts"))
+setGeneric("rarefyAssay", signature = c("x"), function(
+        x, assay.type = assay_name, assay_name = "counts", 
+        sample = min_size, min_size = min(colSums2(assay(x))),
+        replace = TRUE, name = "subsampled", verbose = TRUE, ...)
+            standardGeneric("rarefyAssay"))
 
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom DelayedMatrixStats colSums2 rowSums2
-#' @rdname subsampleCounts
-#' @aliases rarifyCounts
+#' @rdname rarefyAssay
 #' @export
-setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
+setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
-            min_size = min(colSums2(assay(x, assay.type))), replace = TRUE, 
-            name = "subsampled", verbose = TRUE, ...){
+            sample = min_size, min_size = min(colSums2(assay(x, assay.type))),
+            replace = TRUE, name = "subsampled", verbose = TRUE, ...){
         # Input check
-        # CHeck that assay name is correct and that assay is counts table.
+        # Check that assay name is correct and that assay is counts table.
         .check_assay_present(assay.type, x)
         if( any(assay(x, assay.type) %% 1 != 0) ){
             warning("assay contains non-integer values. Only counts table ",
-                    "is applicable...")
+                    "is applicable...", call. = FALSE)
+        }
+        if(any(assay(x, assay.type) < 0)){
+            stop("assay contains strictly-negative values. Only counts ",
+                "table is applicable...", call. = FALSE)
         }
         # Check that verbose and replace are boolean values
         if( !.is_a_bool(verbose) ){
@@ -120,39 +122,39 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
             stop("'name' must be a non-empty single character value and be ",
                 "different from 'assay.type'.", call. = FALSE)
         }
-        # Check min_size. It must be single positive integer value.
-        if(!is.numeric(min_size) || length(min_size) != 1 ||
-            as.integer(min_size) != min_size && min_size <= 0  ){
-            stop("min_size needs to be a positive integer value.")
+        # Check sample. It must be single positive integer value.
+        if(!is.numeric(sample) || length(sample) != 1 ||
+                as.integer(sample) != sample && sample <= 0  ){
+            stop("'sample' needs to be a positive integer value.",
+                call. = FALSE)
         }
         # Input check end
         
-        # min_size determines the number of reads subsampled from samples.
-        # This means that every samples should have at least min_size of reads.
+        # 'sample' determines the number of reads subsampled from samples.
+        # This means that every samples should have at least 'sample' of reads.
         # If they do not have, drop those samples at this point.
-        min_reads <- colSums2(assay(x, assay.type)) < min_size
+        min_reads <- colSums2(assay(x, assay.type)) < sample
         if( any(min_reads) ){
             # Get those sample names that we are going to remove due to too
             # small number of reads
             rmsams <- colnames(x)[ min_reads ]
-            # Remove sample(s)
+            # Remove sample(s) from TreeSE
             newtse <- x[, !colnames(x) %in% rmsams]
             # Return NULL, if no samples were found after subsampling
             if( ncol(x) == 0 ){
                 stop("No samples were found after subsampling. Consider ",
-                    "lower 'min_size'.", call. = FALSE)
+                    "lower 'sample'.", call. = FALSE)
             }
             # Give message which samples were removed
             if( verbose ){
                 message(
                     length(rmsams), " samples removed because they contained ",
-                    "fewer reads than `min_size`.")
+                    "fewer reads than `sample`.")
             }
-            
         }
         # Subsample specified assay.
         newassay <- apply(assay(x, assay.type), 2, .subsample_assay,
-                        min_size=min_size, replace=replace)
+                        sample=sample, replace=replace)
         # Add rownames to new assay. The returned value from .subsample_assay
         # is a vector that do not have feature names.
         rownames(newassay) <- rownames(x)
@@ -170,18 +172,14 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
         x <- x[rownames(newassay),]
         # Add new assay to TreeSE
         assay(x, name, withDimnames = FALSE) <- newassay
-        # Add info on min_size to metadata
-        x <- .add_values_to_metadata(
-            x, 
-            "subsampleCounts_min_size",
-            min_size)
+        # Add info on sample to metadata
+        x <- .add_values_to_metadata(x, "rarefyAssay_sample", min_size)
         return(x)
     }
 )
 
-
-# Modified Sub sampling function from phyloseq internals
-.subsample_assay <- function(x, min_size, replace){
+## Modified Sub sampling function from phyloseq internals
+.subsample_assay <- function(x, sample, replace){
     # Create replacement species vector
     rarvec <- numeric(length(x))  
     # Perform the sub-sampling. Suppress warnings due to old R compat issue.
@@ -207,7 +205,7 @@ setMethod("subsampleCounts", signature = c(x = "SummarizedExperiment"),
     # Do the sampling of features from the single sample
     suppressWarnings(subsample <- sample(
         obsvec,
-        min_size,
+        sample,
         replace = replace,
         prob = prob))
     # Tabulate the results (these are already named by the order in `x`)

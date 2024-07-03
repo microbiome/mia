@@ -3,36 +3,41 @@
 #' @param file a single \code{character} value defining the file
 #'   path of the Metaphlan file. The file must be in merged Metaphlan format.
 #'
-#' @param colData a DataFrame-like object that includes sample names in
+#' @param col.data a DataFrame-like object that includes sample names in
 #'   rownames, or a single \code{character} value defining the file
 #'   path of the sample metadata file. The file must be in \code{tsv} format
-#'   (default: \code{colData = NULL}).
+#'   (default: \code{col.data = NULL}).
 #' 
-#' @param sample_meta a DataFrame-like object that includes sample names in
-#'   rownames, or a single \code{character} value defining the file
-#'   path of the sample metadata file. The file must be in \code{tsv} format
-#'   (default: \code{sample_meta = NULL}).
+#' @param colData Deprecated. use \code{col.data} instead.
+#'   
+#' @param sample_meta Deprecated. Use \code{col.data} instead.
 #' 
-#' @param phy_tree a single \code{character} value defining the file
+#' @param tree.file a single \code{character} value defining the file
 #'   path of the phylogenetic tree.
-#'   (default: \code{phy_tree = NULL}).
+#'   (default: \code{tree.file = NULL}).
+#' 
+#' @param phy_tree Deprecated. Use \code{tree.file} instead.
 #'   
 #' @param ... additional arguments:
 #' \itemize{
-#'   \item{\code{assay.type}:} {A single character value for naming 
+#'   \item \code{assay.type}: A single character value for naming 
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} 
-#'   (default: \code{assay.type = "counts"})}
-#'   \item{\code{assay_name}:} {A single \code{character} value for specifying which
+#'   (default: \code{assay.type = "counts"})
+#'   \item \code{assay_name}: A single \code{character} value for specifying which
 #'   assay to use for calculation. (Please use \code{assay.type} instead. 
-#'   At some point \code{assay_name} will be disabled.)}
-#'   \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
+#'   At some point \code{assay_name} will be disabled.)
+#'   \item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
 #'     taxonomic prefixes be removed? (default:
-#'     \code{removeTaxaPrefixes = FALSE})}
-#'   \item{\code{remove.suffix}:} {\code{TRUE} or \code{FALSE}: Should
+#'     \code{prefix.rm = FALSE})
+#'   \item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
 #'     suffixes of sample names be removed? Metaphlan pipeline adds suffixes
 #'     to sample names. Suffixes are formed from file names. By selecting
 #'     \code{remove.suffix = TRUE}, you can remove pattern from end of sample
-#'     names that is shared by all. (default: \code{remove.suffix = FALSE})}
+#'     names that is shared by all. (default: \code{remove.suffix = FALSE})
+#'   \item \code{set.ranks}: \code{TRUE} or \code{FALSE}: Should the columns
+#'     in the rowData that are treated as taxonomy ranks be updated according to
+#'     the ranks found in the imported data?
+#'     (default: \code{set.ranks = FALSE})
 #' }
 #'
 #' @details
@@ -54,10 +59,9 @@
 #'
 #' @name importMetaPhlAn
 #' @seealso
-#' \code{\link[=importHUMAnN]{importHUMAnN}}
-#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromBIOM}}
+#' \code{\link[=convert]{convertFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #'
@@ -89,7 +93,8 @@
 NULL
 
 importMetaPhlAn <- function(
-        file, colData = sample_meta, sample_meta = NULL, phy_tree = NULL, ...){
+        file, col.data = colData, colData = sample_meta,
+        sample_meta = NULL, tree.file = phy_tree, phy_tree = NULL, ...){
     
     ################################ Input check ################################
     if(!.is_non_empty_string(file)){
@@ -99,14 +104,14 @@ importMetaPhlAn <- function(
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
-    if(!is.null(colData) &&
-        !(.is_non_empty_string(colData) || is.data.frame(colData) ||
-            is.matrix(colData) || is(colData, "DataFrame")) ){
-        stop("'colData' must be a single character value, DataFrame or NULL.",
+    if(!is.null(col.data) &&
+        !(.is_non_empty_string(col.data) || is.data.frame(col.data) ||
+            is.matrix(col.data) || is(col.data, "DataFrame")) ){
+        stop("'col.data' must be a single character value, DataFrame or NULL.",
             call. = FALSE)
     }
-    if(!is.null(phy_tree) && !.is_non_empty_string(phy_tree)){
-        stop("'phy_tree' must be a single character value or NULL.",
+    if(!is.null(tree.file) && !.is_non_empty_string(tree.file)){
+        stop("'tree.file' must be a single character value or NULL.",
             call. = FALSE)
     }
     ############################## Input check end #############################
@@ -142,14 +147,14 @@ importMetaPhlAn <- function(
     .set_ranks_based_on_rowdata(tse,...)
     
     # Load sample meta data if it is provided
-    if( !is.null(colData) ) {
-        tse <- .add_coldata(tse, colData)
+    if( !is.null(col.data) ) {
+        tse <- .add_coldata(tse, col.data)
     }
     
     
     # Load tree if it is provided
-    if (!is.null(phy_tree)) {
-        tree <- ape::read.tree(phy_tree)
+    if (!is.null(tree.file)) {
+        tree <- ape::read.tree(tree.file)
         rowTree(tse) <- tree
     } 
     
@@ -292,7 +297,7 @@ importMetaPhlAn <- function(
     return(se)
 }
 
-# This function can be used to add colData to TreeSE. It checks that sample
+# This function can be used to add col.data to TreeSE. It checks that sample
 # names match (full or partial) and adds the metadata to altExps also.
 .add_coldata <- function(tse, coldata){
     # If the coldata is character specifying the path
@@ -310,13 +315,14 @@ importMetaPhlAn <- function(
         sample_names <- rownames(coldata)
         names(sample_names) <- sample_names
     } else{
-        sample_names <- vapply(rownames(coldata), function(x){
+        sample_names <- lapply(rownames(coldata), function(x){
             x <- colnames(tse)[grep(x, colnames(tse))]
             if( length(x) != 1 ){
                 x <- NULL
             }
             return(x)
-        },FUN.VALUE = character(1))
+        })
+        names(sample_names) <- rownames(coldata)
         sample_names <- unlist(sample_names)
     }
 
@@ -324,10 +330,12 @@ importMetaPhlAn <- function(
     # is missing if one matching name was not found.). In this part, all
     # colnames should be found if data sets are matching. (More samples in
     # metadata is allowed.)
-    if( !all(colnames(tse) %in% sample_names) ){
-        warning("The sample names in 'colData' do not match with the ",
-                "data. The sample metadata is not added.", call. = FALSE
-                )
+    if( !(all(colnames(tse) %in% sample_names) &&
+            length(sample_names) == ncol(tse)) ){
+        warning(
+            "The sample names in 'col.data' do not match with the data. ",
+            "The sample metadata is not added.", call. = FALSE
+            )
         return(tse)
     }
 
@@ -338,7 +346,7 @@ importMetaPhlAn <- function(
     # Give warning if partial match was used
     if( !all(rownames(coldata) %in% colnames(tse)) ){
         warning("Partial match was used to match sample names between ",
-                "'colData' and the data. Please check that they are correct.",
+                "'col.data' and the data. Please check that they are correct.",
                 call. = FALSE
         )
         # Replace colnames with names from sample metadata. They are without
@@ -395,7 +403,19 @@ importMetaPhlAn <- function(
     }
     return(data)
 }
-.set_ranks_based_on_rowdata <- function(tse,...){
+
+# This function sets taxonomy ranks based on rowData of TreeSE. With this,
+# user can automatically set ranks based on imported data.
+.set_ranks_based_on_rowdata <- function(tse, set.ranks = FALSE, ...){
+    #
+    if( !.is_a_bool(set.ranks) ){
+        stop("'set.ranks' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # If user do not want to set ranks
+    if( !set.ranks ){
+        return(NULL)
+    }
     # Get ranks from rowData
     ranks <- colnames(rowData(tse))
     # Ranks must be character columns
@@ -410,7 +430,7 @@ importMetaPhlAn <- function(
         return(NULL)
     }
     # Finally, set ranks and give message
-    tse <- setTaxonomyRanks(ranks)
+    temp <- setTaxonomyRanks(ranks)
     message("TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
     return(NULL)
 }

@@ -9,28 +9,35 @@
 #' @param f A single character value for selecting the grouping variable
 #'   from \code{rowData} or \code{colData} or a \code{factor} or \code{vector} 
 #'   with the same length as one of the dimensions. If \code{f} matches with both
-#'   dimensions, \code{MARGIN} must be specified. 
+#'   dimensions, \code{by} must be specified. 
 #'   Split by cols is not encouraged, since this is not compatible with 
 #'   storing the results in \code{altExps}.
 #'
-#' @param keep_reducedDims \code{TRUE} or \code{FALSE}: Should the
+#' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
-#'   (By default: \code{keep_reducedDims = FALSE})
+#'   (By default: \code{keep.dimred = FALSE})
+#' 
+#' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
 #'   
-#' @param update_rowTree \code{TRUE} or \code{FALSE}: Should the rowTree be updated
+#' @param update.tree \code{TRUE} or \code{FALSE}: Should the rowTree be updated
 #'   based on splitted data? Option is enabled when \code{x} is a 
 #'   \code{TreeSummarizedExperiment} object or a list of such objects. 
-#'   (By default: \code{update_rowTree = FALSE})
+#'   (By default: \code{update.tree = FALSE})
+#' 
+#' @param update_rowTree Deprecated. Use \code{update.tree } instead.
 #'   
-#' @param altExpNames a \code{character} vector specifying the alternative experiments
-#'   to be unsplit. (By default: \code{altExpNames = names(altExps(x))})
+#' @param altexp a \code{character} vector specifying the alternative experiments
+#'   to be unsplit. (By default: \code{altexp = names(altExps(x))})
+#' 
+#' @param altExpNames Deprecated. Use \code{altexp} instead.
 #'   
-#' @param ... Arguments passed to \code{mergeRows}/\code{mergeCols} function for
+#' @param ... Arguments passed to \code{agglomerateByVariable} function for
 #'   \code{SummarizedExperiment} objects and other functions.
-#'   See \code{\link[=agglomerate-methods]{mergeRows}} for more details.
+#'   See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more 
+#'   details.
 #'   \itemize{
-#'     \item{\code{use_names} A single boolean value to select whether to name elements of
+#'     \item{\code{use.names} A single boolean value to select whether to name elements of
 #'     list by their group names.}
 #'   }
 #'
@@ -51,9 +58,8 @@
 #' 
 #' @name splitOn
 #' @seealso
-#' \code{\link[=splitByRanks]{splitByRanks}}
-#' \code{\link[=unsplitByRanks]{unsplitByRanks}}
-#' \code{\link[=merge-methods]{mergeRows}},
+#' \code{\link[=agglomerate-methods]{agglomerateByRanks}}
+#' \code{\link[=agglomerate-methods]{agglomerateByVariable}},
 #' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 #' \code{\link[=agglomerate-methods]{agglomerateByRank}},
 #' \code{\link[SingleCellExperiment:altExps]{altExps}},
@@ -78,8 +84,8 @@
 #' # Split based on rows
 #' # Each element is named based on their group name. If you don't want to name
 #' # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
-#' # you must use MARGIN.
-#' se_list <- splitOn(tse, f = "group", use_names = FALSE, MARGIN = 1)
+#' # you must use `by`.
+#' se_list <- splitOn(tse, f = "group", use.names = FALSE, by = 1)
 #' 
 #' # When column names are shared between elements, you can store the list to altExps
 #' altExps(tse) <- se_list
@@ -87,7 +93,7 @@
 #' altExps(tse)
 #' 
 #' # If you want to split on columns and update rowTree, you can do
-#' se_list <- splitOn(tse, f = colData(tse)$group, update_rowTree = TRUE)
+#' se_list <- splitOn(tse, f = colData(tse)$group, update.tree = TRUE)
 #' 
 #' # If you want to combine groups back together, you can use unsplitBy
 #' unsplitOn(se_list)
@@ -101,9 +107,11 @@ setGeneric("splitOn",
             function(x, ...)
                 standardGeneric("splitOn"))
 
-# This function collects f (grouping variable), MARGIN, and 
-# use_names and returns them as a list.
-.norm_args_for_split_by <- function(x, f, MARGIN = NULL, use_names = TRUE, ...){
+# This function collects f (grouping variable), by, and 
+# use.names and returns them as a list.
+.norm_args_for_split_by <- function(
+        x, f, by = MARGIN, MARGIN = NULL, use.names = use_names,
+        use_names = TRUE, ...){
     # input check
     # Check f
     if(is.null(f)){
@@ -111,9 +119,9 @@ setGeneric("splitOn",
             " vector coercible to factor alongside the one of the dimensions of 'x'",
             call. = FALSE)
     }
-    # Check MARGIN
-    if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
-        stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
+    # Check by
+    if( !is.null(by) ){
+        by <- .check_MARGIN(by)
     }
     # If f is a vector containing levels
     if( !.is_non_empty_string(f) ){
@@ -125,32 +133,32 @@ setGeneric("splitOn",
                 " vector coercible to factor alongside the on of the ",
                 "dimensions of 'x'.",
                 call. = FALSE)
-        # If it matches with both dimensions, give error if MARGIN is not specified
-        } else if( is.null(MARGIN) && all(length(f) == dim(x)) ){
+        # If it matches with both dimensions, give error if by is not specified
+        } else if( is.null(by) && all(length(f) == dim(x)) ){
             stop("The length of 'f' matches with nrow and ncol. ",
-                "Please specify 'MARGIN'.", call. = FALSE)
-        # If MARGIN is specified but it does not match with length of f
-        } else if( !is.null(MARGIN) && (length(f) !=  dim(x)[[MARGIN]]) ){
+                "Please specify 'by'.", call. = FALSE)
+        # If by is specified but it does not match with length of f
+        } else if( !is.null(by) && (length(f) !=  dim(x)[[by]]) ){
             stop("'f' does not match with ", 
-                ifelse(MARGIN==1, "nrow", "ncol"), ". Please check 'MARGIN'.",
+                ifelse(by==1, "nrow", "ncol"), ". Please check 'by'.",
                 call. = FALSE)
         # IF f matches with nrow
-        } else if(length(f) == dim(x)[[1]] && is.null(MARGIN)  ){
-            MARGIN <- 1L
+        } else if(length(f) == dim(x)[[1]] && is.null(by)  ){
+            by <- 1L
         # If f matches with ncol
-        } else if( is.null(MARGIN) ){
-            MARGIN <- 2L
+        } else if( is.null(by) ){
+            by <- 2L
         }
     # Else if f is a character specifying column from rowData or colData  
     } else {
-        # If MARGIN is specified
-        if( !is.null(MARGIN) ){
-            # Search from rowData or colData based on MARGIN
-            dim_name <- switch(MARGIN,
+        # If by is specified
+        if( !is.null(by) ){
+            # Search from rowData or colData based on by
+            dim_name <- switch(by,
                                 "1" = "rowData",
                                 "2" = "colData")
             # Specify right function
-            dim_FUN <- switch(MARGIN,
+            dim_FUN <- switch(by,
                                 "1" = retrieveFeatureInfo,
                                 "2" = retrieveCellInfo)
             # Try to get information
@@ -164,7 +172,7 @@ setGeneric("splitOn",
             }
             # Get values
             f <- tmp$value
-        # Else if MARGIN is not specified
+        # Else if by is not specified
         } else{
             # Try to get information from rowData
             tmp_row <- try({retrieveFeatureInfo(x, f, search = "rowData")},
@@ -182,16 +190,16 @@ setGeneric("splitOn",
                 # If f was found from both
             } else if( !is(tmp_row, "try-error") && !is(tmp_col, "try-error") ){
                 stop("'f' can be found from both rowData and colData. ",
-                    "Please specify 'MARGIN'.",
+                    "Please specify 'by'.",
                     call. = FALSE)
                 # If it was found from rowData
             } else if( !is(tmp_row, "try-error") ){
-                MARGIN <- 1L
+                by <- 1L
                 # Get values
                 f <- tmp_row$value
                 # Otherwise, it was found from colData
             } else{
-                MARGIN <- 2L
+                by <- 2L
                 # Get values
                 f <- tmp_col$value
             }
@@ -204,23 +212,23 @@ setGeneric("splitOn",
             f <- addNA(f)
         }
     }
-    # Check use_names
-    if( !.is_a_bool(use_names) ){
-        stop("'use_names' must be TRUE or FALSE.",
+    # Check use.names
+    if( !.is_a_bool(use.names) ){
+        stop("'use.names' must be TRUE or FALSE.",
             call. = FALSE)
     }
     # Create a list from arguments
     list(f = f,
-        MARGIN = MARGIN,
-        use_names = use_names)
+        by = by,
+        use.names = use.names)
 }
 
 # PErform the split
 .split_on <- function(x, args, ...){
     # Get grouping variable and its values
     f <- args[["f"]]
-    # Choose nrow or ncol based on MARGIN
-    dim_FUN <- switch(args[["MARGIN"]],
+    # Choose nrow or ncol based on by
+    dim_FUN <- switch(args[["by"]],
                         "1" = nrow,
                         "2" = ncol)
     # Get indices from 1 to nrow/ncol
@@ -232,14 +240,14 @@ setGeneric("splitOn",
     subset_FUN <- function(x, i = TRUE, j = TRUE){
         x[i, j]
     }
-    # Based on MARGIN, divide data in row-wise or column-wise
-    if(args[["MARGIN"]] == 1){
+    # Based on by, divide data in row-wise or column-wise
+    if(args[["by"]] == 1){
         ans <- SimpleList(lapply(idxs, subset_FUN, x = x))
     } else {
         ans <- SimpleList(lapply(idxs, subset_FUN, x = x, i = TRUE))
     }
     # If user do not want to use names, unname
-    if(!args[["use_names"]]){
+    if(!args[["use.names"]]){
         ans <- unname(ans)
     # Otherwise convert NAs to "NA", if there is a level that do not have name
     } else{
@@ -266,7 +274,7 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
         # Get arguments
         args <- .norm_args_for_split_by(x, f = f, ...)
         # Should alternative experiment be removed? --> yes
-        args[["strip_altexp"]] <- TRUE
+        args[["altexp.rm"]] <- TRUE
         # Split data
         .split_on(x, args, ...)
     }
@@ -275,26 +283,30 @@ setMethod("splitOn", signature = c(x = "SingleCellExperiment"),
 #' @rdname splitOn
 #' @export
 setMethod("splitOn", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, f = NULL, update_rowTree = FALSE,
+    function(x, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE,
             ...){
         # Input check
-        # Check update_rowTree
-        if( !.is_a_bool(update_rowTree) ){
-            stop("'update_rowTree' must be TRUE or FALSE.",
+        # Check update.tree
+        if( !.is_a_bool(update.tree) ){
+            stop("'update.tree' must be TRUE or FALSE.",
                 call. = FALSE)
         }
         # Input check end
         # Split data
         x <- callNextMethod()
         # Manipulate rowTree or not?
-        if( update_rowTree ){
-            # If the returned value is a list, go through all of them
-            if( is(x, 'SimpleList') ){
-                x <- SimpleList(lapply(x, .agglomerate_trees))
-
-            } else {
-                # Otherwise, the returned value is TreeSE
-                x <- .agglomerate_trees(x)
+        if( update.tree ){
+            # Update both colTree and rowTree
+            for( direction in c(1, 2) ){
+                # If the returned value is a list, go through all of them
+                if( is(x, "SimpleList") ){
+                    x <- lapply(x, function(y){
+                        .agglomerate_trees(y, MARGIN = direction, ...)})
+                    x <- SimpleList(x)
+                } else {
+                    # Otherwise, the returned value is TreeSE
+                    x <- .agglomerate_trees(x, MARGIN = direction, ...)
+                }
             }
         }
         x
@@ -312,7 +324,7 @@ setGeneric("unsplitOn",
                 standardGeneric("unsplitOn"))
 
 # Perform the unsplit
-.list_unsplit_on <- function(ses, update_rowTree = FALSE, MARGIN = NULL, ...){
+.list_unsplit_on <- function(ses, update.tree = FALSE, by = MARGIN, MARGIN = NULL, ...){
     # Input check
     is_check <- vapply(ses,is,logical(1L),"SummarizedExperiment")
     if(!all(is_check)){
@@ -320,13 +332,14 @@ setGeneric("unsplitOn",
             "only.",
             call. = FALSE)
     }
-    # Check update_rowTree
-    if( !.is_a_bool(update_rowTree) ){
-        stop("'update_rowTree' must be TRUE or FALSE.",
+    # Check update.tree
+    if( !.is_a_bool(update.tree) ){
+        stop("'update.tree' must be TRUE or FALSE.",
             call. = FALSE)
     }
-    if( !(is.null(MARGIN) || (is.numeric(MARGIN) && (MARGIN == 1 || MARGIN == 2 ))) ){
-        stop("'MARGIN' must be NULL, 1, or 2.", call. = FALSE )
+    # Check by
+    if( !is.null(by) ){
+        by <- .check_MARGIN(by)
     }
     # Input check end
     # If list contains only one element, return it
@@ -335,24 +348,24 @@ setGeneric("unsplitOn",
     }
     # Get dimensions of each SE in the list
     dims <- vapply(ses, dim, integer(2L))
-    # Based on which dimension SE objects share, select MARGIN.
-    # If they share rows, then MARGIN is col, and vice versa
-    if( is.null(MARGIN) ){
+    # Based on which dimension SE objects share, select `by`.
+    # If they share rows, then by is col, and vice versa
+    if( is.null(by) ){
         if( length(unique(dims[1L,])) == 1 && length(unique(dims[2L,])) == 1 ){
             stop("The dimensions match with row and column-wise. ",
-                "Please specify 'MARGIN'.", call. = FALSE)
+                "Please specify 'by'.", call. = FALSE)
         } else if(length(unique(dims[1L,])) == 1L){
-            MARGIN <- 2L
+            by <- 2L
         } else if(length(unique(dims[2L,])) == 1L) {
-            MARGIN <- 1L
+            by <- 1L
         } else {
             stop("The dimensions are not equal across all elements. ", 
                 "Please check that either number of rows or columns match.", 
                 call. = FALSE)
         }
     } else{
-        # Get correct dimension, it is opposite of MARGIN
-        dim <- ifelse(MARGIN == 1, 2, 1)
+        # Get correct dimension, it is opposite of by
+        dim <- ifelse(by == 1, 2, 1)
         if( length(unique(dims[dim,])) != 1L ){
             stop("The dimensions are not equal across all elements.", call. = FALSE)
         }
@@ -361,9 +374,9 @@ setGeneric("unsplitOn",
     # Get the class of objects SCE, SE or TreeSE
     class_x <- class(ses[[1L]])
     # Combine assays
-    args <- list(assays = .unsplit_assays(ses, MARGIN = MARGIN))
+    args <- list(assays = .unsplit_assays(ses, MARGIN = by))
     # Combine rowData if data share columns
-    if(MARGIN == 1L){
+    if(by == 1L){
         rd <- .combine_rowData(ses)
         # Add rownames since they are missing after using combining
         rownames(rd) <- unlist(unname(lapply(ses, rownames)))
@@ -385,14 +398,54 @@ setGeneric("unsplitOn",
     
     # IF the object is TreeSE. add rowTree
     if( class_x == "TreeSummarizedExperiment" ){
-        # Update or add old tree from the first element of list
-        if( update_rowTree ){
-            ans <- addHierarchyTree(ans)
-        } else{
-            rowTree(ans) <- rowTree(ses[[1L]])
+        # Add both colTree and rowTree
+        for( direction in c("row", "col") ){
+            ans <- .add_trees(ans, ses, direction, update.tree = update.tree)
         }
     }
-    ans
+    return(ans)
+}
+
+# This function adds rowTrees and colTrees to result.
+.add_trees <- function(tse, tses, MARGIN, update.tree){
+    # Get functions based on MARGIN
+    tree_FUN <- switch(MARGIN, "row" = rowTree, "col" = colTree)
+    tree_name_FUN <- switch(MARGIN, "row" = rowTreeNames, "col" = colTreeNames)
+    tree_assign_FUN <- switch(MARGIN, "row" = `rowTree<-`, "col" = `colTree<-`)
+    link_FUN <- switch(MARGIN, "row" = rowLinks, "col" = colLinks)
+    name_FUN <- switch(MARGIN, "row" = rownames, "col" = colnames)
+    # Update or add old tree from the first element of list
+    if( update.tree ){
+        # Get trees as list.
+        trees <- list()
+        for( x in tses ){
+            temp <- tree_FUN(x, tree_name_FUN(x))
+            if( !is(temp, "list") ){
+                temp <- list(temp)
+                names(temp) <- tree_name_FUN(x)
+            }
+            trees <- c(trees, temp)
+        }
+        # If there are trees available
+        if( any(lengths(trees) > 0) ){
+            # Get links
+            links <- lapply(tses, link_FUN)
+            # Links must be single DF and it must have "name" column denoting
+            # row/colnames
+            links <- do.call(rbind, links)
+            links <- DataFrame(links)
+            nams <- lapply(tses, name_FUN)
+            nams <- unlist( nams[lengths(trees) > 0] )
+            links[["names"]] <- nams
+            # Combine trees into single tree
+            args <- list(trees = trees, links = links)
+            tse <- .check_and_add_trees(tse, args, MARGIN = MARGIN)
+        }
+    } else{
+        tree <- tree_FUN(tses[[1L]])
+        tse <- tree_assign_FUN(tse, value = tree)
+    }
+    return(tse)
 }
 
 #' @importFrom SummarizedExperiment colData
@@ -412,17 +465,17 @@ setGeneric("unsplitOn",
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitOn", signature = c(x = "list"),
-    function(x, update_rowTree = FALSE, ...){
+    function(x, update.tree = update_rowTree, update_rowTree = FALSE, ...){
         # Unsplit list and create SCE, SE, or TreeSE from it
-        .list_unsplit_on(x, update_rowTree, ...)
+        .list_unsplit_on(x, update.tree, ...)
     }
 )
 #' @rdname splitOn
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
 #' @export
 setMethod("unsplitOn", signature = c(x = "SimpleList"),
-    function(x, update_rowTree = FALSE, ...){
-        unsplitOn(as.list(x), update_rowTree, ...)
+    function(x, update.tree = update_rowTree, update_rowTree = FALSE, ...){
+        unsplitOn(as.list(x), update.tree, ...)
     }
 )
 
@@ -430,24 +483,26 @@ setMethod("unsplitOn", signature = c(x = "SimpleList"),
 #' @importFrom SingleCellExperiment altExpNames altExp altExps reducedDims<-
 #' @export
 setMethod("unsplitOn", signature = c(x = "SingleCellExperiment"),
-    function(x, altExpNames = names(altExps(x)), keep_reducedDims = FALSE, ...){
+    function(x, altexp = altExpNames, altExpNames = names(altExps(x)),
+            keep.dimred = keep_reducedDims,
+            keep_reducedDims = FALSE, ...){
         # input check
-        if(!.is_a_bool(keep_reducedDims)){
-            stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(keep.dimred)){
+            stop("'keep.dimred' must be TRUE or FALSE.", call. = FALSE)
         }
         # Get alternative experiment names since data is located there
         ae_names <- names(altExps(x))
         # Get only those experiments that user has specified
-        ae_names <- ae_names[ae_names %in% altExpNames]
+        ae_names <- ae_names[ae_names %in% altexp]
         if(length(ae_names) == 0L){
-            stop("No altExp matching 'altExpNames' in name.", call. = FALSE)
+            stop("No altExp matching 'altexp' in name.", call. = FALSE)
         }
         # Get alternative experiments as a list
         ses <- altExps(x)[ae_names]
         # And unsplit the data
         se <- .list_unsplit_on(ses, ...)
         # Add reducedDims if specified
-        if( keep_reducedDims ){
+        if( keep.dimred ){
             reducedDims(se) <- reducedDims(x)
         }
         return(se)

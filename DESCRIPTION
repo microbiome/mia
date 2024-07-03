@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.11.12
+Version: 1.13.26
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut"),
              email = "felix.gm.ernst@outlook.com",
@@ -24,7 +24,8 @@ Authors@R:
       person(given = "Domenick", family = "Braccia",
              email = "dbraccia@umd.edu", role=c("ctb")),
       person(given = "Basil", family = "Courbayre", role=c("ctb")),
-      person(given = "Muluh", family = "Muluh", role=c("ctb")))
+      person(given = "Muluh", family = "Muluh", role=c("ctb")),
+      person(given = "Giulio", family = "Benedetti", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
@@ -66,7 +67,9 @@ Imports:
     tibble,
     tidyr,
     bluster,
-    MatrixGenerics
+    MatrixGenerics,
+    mediation,
+    rbiom
 Suggests:
     testthat,
     knitr,

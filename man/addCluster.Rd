@@ -10,7 +10,8 @@ addCluster(
   BLUSPARAM,
   assay.type = assay_name,
   assay_name = "counts",
-  MARGIN = "features",
+  by = MARGIN,
+  MARGIN = "rows",
   full = FALSE,
   name = "clusters",
   clust.col = "clusters",
@@ -22,7 +23,8 @@ addCluster(
   BLUSPARAM,
   assay.type = assay_name,
   assay_name = "counts",
-  MARGIN = "features",
+  by = MARGIN,
+  MARGIN = "rows",
   full = FALSE,
   name = "clusters",
   clust.col = "clusters",
@@ -44,9 +46,11 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{MARGIN}{A single character value for specifying whether the
-transformation is applied sample (column) or feature (row) wise.
-(By default: \code{MARGIN = "samples"})}
+\item{by}{A character value for selecting if association are calculated
+row-wise / for features ('rows') or column-wise / for samples ('cols').
+Must be \code{'rows'} or \code{'cols'}.}
+
+\item{MARGIN}{Deprecated. Use \code{by} instead.}
 
 \item{full}{Logical scalar indicating whether the full clustering statistics should be returned for each method.}
 
@@ -87,7 +91,7 @@ tse <- addCluster(tse, KmeansParam(centers = 3))
 
 # Clustering done on the samples using Hclust
 tse <- addCluster(tse, 
-               MARGIN = "samples", 
+               by = "samples", 
                HclustParam(metric = "bray", dist.fun = vegan::vegdist))
 
 # Getting the clusters

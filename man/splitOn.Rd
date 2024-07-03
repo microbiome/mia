@@ -17,15 +17,22 @@ splitOn(x, ...)
 
 \S4method{splitOn}{SingleCellExperiment}(x, f = NULL, ...)
 
-\S4method{splitOn}{TreeSummarizedExperiment}(x, f = NULL, update_rowTree = FALSE, ...)
+\S4method{splitOn}{TreeSummarizedExperiment}(x, f = NULL, update.tree = update_rowTree, update_rowTree = FALSE, ...)
 
 unsplitOn(x, ...)
 
-\S4method{unsplitOn}{list}(x, update_rowTree = FALSE, ...)
+\S4method{unsplitOn}{list}(x, update.tree = update_rowTree, update_rowTree = FALSE, ...)
 
-\S4method{unsplitOn}{SimpleList}(x, update_rowTree = FALSE, ...)
+\S4method{unsplitOn}{SimpleList}(x, update.tree = update_rowTree, update_rowTree = FALSE, ...)
 
-\S4method{unsplitOn}{SingleCellExperiment}(x, altExpNames = names(altExps(x)), keep_reducedDims = FALSE, ...)
+\S4method{unsplitOn}{SingleCellExperiment}(
+  x,
+  altexp = altExpNames,
+  altExpNames = names(altExps(x)),
+  keep.dimred = keep_reducedDims,
+  keep_reducedDims = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A
@@ -34,33 +41,40 @@ object or a list of
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 objects.}
 
-\item{...}{Arguments passed to \code{mergeRows}/\code{mergeCols} function for
+\item{...}{Arguments passed to \code{agglomerateByVariable} function for
 \code{SummarizedExperiment} objects and other functions.
-See \code{\link[=agglomerate-methods]{mergeRows}} for more details.
+See \code{\link[=agglomerate-methods]{agglomerateByVariable}} for more
+details.
 \itemize{
-\item{\code{use_names} A single boolean value to select whether to name elements of
+\item{\code{use.names} A single boolean value to select whether to name elements of
 list by their group names.}
 }}
 
 \item{f}{A single character value for selecting the grouping variable
 from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
 with the same length as one of the dimensions. If \code{f} matches with both
-dimensions, \code{MARGIN} must be specified.
+dimensions, \code{by} must be specified.
 Split by cols is not encouraged, since this is not compatible with
 storing the results in \code{altExps}.}
 
-\item{update_rowTree}{\code{TRUE} or \code{FALSE}: Should the rowTree be updated
+\item{update.tree}{\code{TRUE} or \code{FALSE}: Should the rowTree be updated
 based on splitted data? Option is enabled when \code{x} is a
 \code{TreeSummarizedExperiment} object or a list of such objects.
-(By default: \code{update_rowTree = FALSE})}
+(By default: \code{update.tree = FALSE})}
 
-\item{altExpNames}{a \code{character} vector specifying the alternative experiments
-to be unsplit. (By default: \code{altExpNames = names(altExps(x))})}
+\item{update_rowTree}{Deprecated. Use \code{update.tree } instead.}
 
-\item{keep_reducedDims}{\code{TRUE} or \code{FALSE}: Should the
+\item{altexp}{a \code{character} vector specifying the alternative experiments
+to be unsplit. (By default: \code{altexp = names(altExps(x))})}
+
+\item{altExpNames}{Deprecated. Use \code{altexp} instead.}
+
+\item{keep.dimred}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(By default: \code{keep_reducedDims = FALSE})}
+(By default: \code{keep.dimred = FALSE})}
+
+\item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }
 \value{
 For \code{splitOn}: \code{SummarizedExperiment} objects in a \code{SimpleList}.
@@ -95,8 +109,8 @@ colData(tse)$group <- sample(1:3, ncol(tse), replace = TRUE)
 # Split based on rows
 # Each element is named based on their group name. If you don't want to name
 # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
-# you must use MARGIN.
-se_list <- splitOn(tse, f = "group", use_names = FALSE, MARGIN = 1)
+# you must use `by`.
+se_list <- splitOn(tse, f = "group", use.names = FALSE, by = 1)
 
 # When column names are shared between elements, you can store the list to altExps
 altExps(tse) <- se_list
@@ -104,16 +118,15 @@ altExps(tse) <- se_list
 altExps(tse)
 
 # If you want to split on columns and update rowTree, you can do
-se_list <- splitOn(tse, f = colData(tse)$group, update_rowTree = TRUE)
+se_list <- splitOn(tse, f = colData(tse)$group, update.tree = TRUE)
 
 # If you want to combine groups back together, you can use unsplitBy
 unsplitOn(se_list)
 
 }
 \seealso{
-\code{\link[=splitByRanks]{splitByRanks}}
-\code{\link[=unsplitByRanks]{unsplitByRanks}}
-\code{\link[=merge-methods]{mergeRows}},
+\code{\link[=agglomerate-methods]{agglomerateByRanks}}
+\code{\link[=agglomerate-methods]{agglomerateByVariable}},
 \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
 \code{\link[=agglomerate-methods]{agglomerateByRank}},
 \code{\link[SingleCellExperiment:altExps]{altExps}},

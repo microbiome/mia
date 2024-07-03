@@ -5,7 +5,6 @@ reference:
 - contents:
   - agglomerateByRank
   - mergeRows
-  - splitByRanks
   - splitOn
   - mergeSEs
 - subtitle: Transformation
@@ -13,22 +12,19 @@ reference:
   - transformAssay
 - subtitle: Data loading
 - contents:
-  - makeTreeSummarizedExperimentFromPhyloseq
-  - makeTreeSummarizedExperimentFromDADA2
   - importBIOM
   - importQIIME2
   - importMothur
   - importMetaPhlAn
   - importHUMAnN
-  - makePhyloseqFromTreeSummarizedExperiment
+  - convert
 - title: Taxonomic data
   contents:
   - taxonomyRanks
 - title: Diversity indeces
 - subtitle: Alpha Diversity
 - contents:
-  - estimateDiversity
-  - estimateDivergence
+  - addDivergence
   - addAlpha
 - subtitle: Beta Diversity
 - contents:
@@ -46,12 +42,13 @@ reference:
 - contents:
   - getPrevalence
   - getPrevalentAbundance
-  - getTopTaxa
-  - getExperimentCrossCorrelation
+  - summaries
+  - getCrossAssociation
+  - getMediation
   - hierarchy-tree
 - subtitle: Dominance
 - contents:
-  - perSampleDominantTaxa
+  - getDominant
   - estimateDominance
 - subtitle: Evenness indeces
 - contents:
@@ -65,9 +62,9 @@ reference:
   - isContaminant
 - subtitle: Helper
 - contents:
-  - meltAssay
+  - meltSE
   - relabundance
-  - subsampleCounts
+  - rarefyAssay
   - subsetSamples
 - subtitle: Datasets
 - contents:

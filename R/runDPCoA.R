@@ -4,11 +4,11 @@
 #' \code{ade4} package in typical fashion. Results are stored in the
 #' \code{reducedDims} and are available for all the expected functions.
 #'
-#' @param x For \code{calculateDPCoA}, a numeric matrix of expression values
+#' @param x For \code{getDPCoA}, a numeric matrix of expression values
 #'   where rows are features and columns are cells.
 #'   Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 #'
-#'   For \code{runDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
+#'   For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
 #'   expression values as well as a \code{rowTree} to calculate \code{y} using
 #'   \code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.
 #'
@@ -22,9 +22,11 @@
 #'   variances to use for dimensionality reduction. Alternatively \code{NULL},
 #'   if all features should be used. (default: \code{ntop = NULL})
 #'
-#' @param subset_row Vector specifying the subset of features to use for
+#' @param subset.row Vector specifying the subset of features to use for
 #'   dimensionality reduction. This can be a character vector of row names, an
 #'   integer vector of row indices or a logical vector.
+#' 
+#' @param subset_row Deprecated. Use \code{subset.row} instead.
 #'
 #' @param scale Logical scalar, should the expression values be standardized?
 #'
@@ -42,9 +44,11 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param tree_name a single \code{character} value for specifying which
+#' @param tree.name a single \code{character} value for specifying which
 #'   rowTree will be used in calculation. 
-#'   (By default: \code{tree_name = "phylo"})
+#'   (By default: \code{tree.name = "phylo"})
+#' 
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
 #' @param altexp String or integer scalar specifying an alternative experiment
 #'   containing the input data.
@@ -61,10 +65,10 @@
 #' returned as attributes as well.
 #'
 #' @returns
-#' For \code{calculateDPCoA} a matrix with samples as rows and CCA dimensions as
+#' For \code{getDPCoA} a matrix with samples as rows and CCA dimensions as
 #' columns
 #'
-#' For \code{runDPCoA} a modified \code{x} with the results stored in
+#' For \code{addDPCoA} a modified \code{x} with the results stored in
 #' \code{reducedDim} as the given \code{name}
 #'
 #'
@@ -75,10 +79,10 @@
 #'
 #' @examples
 #' data(esophagus)
-#' dpcoa <- calculateDPCoA(esophagus)
+#' dpcoa <- getDPCoA(esophagus)
 #' head(dpcoa)
 #'
-#' esophagus <- runDPCoA(esophagus)
+#' esophagus <- addDPCoA(esophagus)
 #' reducedDims(esophagus)
 #'
 #' library(scater)
@@ -87,13 +91,13 @@ NULL
 
 #' @export
 #' @rdname runDPCoA
-setGeneric("calculateDPCoA", signature = c("x", "y"),
+setGeneric("getDPCoA", signature = c("x", "y"),
            function(x, y, ...)
-               standardGeneric("calculateDPCoA"))
+               standardGeneric("getDPCoA"))
 
 .calculate_dpcoa <- function(x, y, ncomponents = 2, ntop = NULL,
-                             subset_row = NULL, scale = FALSE,
-                             transposed = FALSE, ...)
+                            subset.row = subset_row, subset_row = NULL, scale = FALSE,
+                            transposed = FALSE, ...)
 {
     .require_package("ade4")
     # input check
@@ -121,7 +125,7 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
         if(is.null(ntop)){
             ntop <- nrow(x)
         }
-        x <- .get_mat_for_reddim(x, subset_row = subset_row, ntop = ntop,
+        x <- .get_mat_for_reddim(x, subset_row = subset.row, ntop = ntop,
                                  scale = scale)
     }
     y <- y[colnames(x), colnames(x), drop = FALSE]
@@ -147,27 +151,27 @@ setGeneric("calculateDPCoA", signature = c("x", "y"),
 
 #' @export
 #' @rdname runDPCoA
-setMethod("calculateDPCoA", c("ANY","ANY"), .calculate_dpcoa)
+setMethod("getDPCoA", c("ANY","ANY"), .calculate_dpcoa)
 
 #' @export
 #' @importFrom ape cophenetic.phylo
 #' @rdname runDPCoA
-setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
+setMethod("getDPCoA", signature = c("TreeSummarizedExperiment","missing"),
     function(x, ..., assay.type = assay_name, assay_name = exprs_values, 
-             exprs_values = "counts", tree_name = "phylo")
+        exprs_values = "counts", tree.name = tree_name, tree_name = "phylo")
     {
         .require_package("ade4")
         # Check assay.type
         .check_assay_present(assay.type, x)
-        # Check tree_name
-        .check_rowTree_present(tree_name, x)
+        # Check tree.name
+        .check_rowTree_present(tree.name, x)
         #
         # Get tree
-        tree <- rowTree(x, tree_name)
+        tree <- rowTree(x, tree.name)
         # Select only those features that are in the rowTree
-        whichTree <- rowLinks(x)[ , "whichTree"] == tree_name
+        whichTree <- rowLinks(x)[ , "whichTree"] == tree.name
         if( any(!whichTree) ){
-            warning("Not all rows were present in the rowTree specified by 'tree_name'.",
+            warning("Not all rows were present in the rowTree specified by 'tree.name'.",
                     "'x' is subsetted.", call. = FALSE)
             # Subset the data
             x <- x[ whichTree, ]
@@ -175,14 +179,21 @@ setMethod("calculateDPCoA", signature = c("TreeSummarizedExperiment","missing"),
         dist <- cophenetic.phylo(tree)
         # Get assay
         mat <- assay(x, assay.type)
-        calculateDPCoA(mat, dist, ...)
+        getDPCoA(mat, dist, ...)
     }
 )
 
 #' @export
 #' @rdname runDPCoA
+#' @aliases getDPCoA
+calculateDPCoA <- function(x,...){
+    getDPCoA(x,...)
+}
+
+#' @export
+#' @rdname runDPCoA
 #' @importFrom SingleCellExperiment reducedDim<-
-runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
+addDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
     # Input check
     # Check and get altExp if altexp is not NULL
     if( !is.null(altexp) ){
@@ -198,6 +209,13 @@ runDPCoA <- function(x, ..., altexp = NULL, name = "DPCoA"){
         stop("'name' must be a single character value specifying a name of ",
              "reducedDim where the result will be stored.", call. = FALSE)
     }
-    reducedDim(x, name) <- calculateDPCoA(y, ...)
+    reducedDim(x, name) <- getDPCoA(y, ...)
     x
+}
+
+#' @export
+#' @rdname runDPCoA
+#' @aliases addDPCoA
+runDPCoA <- function(x,...){
+    addDPCoA(x,...)
 }

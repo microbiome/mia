@@ -7,24 +7,26 @@
 \item{file}{a single \code{character} value defining the file
 path of the HUMAnN file. The file must be in merged HUMAnN format.}
 
-\item{colData}{a DataFrame-like object that includes sample names in
+\item{col.data}{a DataFrame-like object that includes sample names in
 rownames, or a single \code{character} value defining the file
 path of the sample metadata file. The file must be in \code{tsv} format
-(default: \code{colData = NULL}).}
+(default: \code{col.data = NULL}).}
+
+\item{colData}{Deprecated. Use \code{col.data} instead.}
 
 \item{...}{additional arguments:
 \itemize{
-\item{\code{assay.type}:} {A single character value for naming
+\item \code{assay.type}: A single character value for naming
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{assay}}
-(default: \code{assay.type = "counts"})}
-\item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
+(default: \code{assay.type = "counts"})
+\item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
-\code{removeTaxaPrefixes = FALSE})}
-\item{\code{remove.suffix}:} {\code{TRUE} or \code{FALSE}: Should
+\code{prefix.rm = FALSE})
+\item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
 suffixes of sample names be removed? HUMAnN pipeline adds suffixes
 to sample names. Suffixes are formed from file names. By selecting
 \code{remove.suffix = TRUE}, you can remove pattern from end of sample
-names that is shared by all. (default: \code{remove.suffix = FALSE})}
+names that is shared by all. (default: \code{remove.suffix = FALSE})
 }}
 }
 \value{
@@ -66,9 +68,9 @@ microbial communities with bioBakery 3. \emph{eLife}. 10:e65088.
 }
 \seealso{
 \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
-\code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-\code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-\code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+\code{\link[=convert]{convertFromPhyloseq}}
+\code{\link[=convert]{convertFromBIOM}}
+\code{\link[=convert]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
 }

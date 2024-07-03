@@ -1,10 +1,8 @@
 #' Create a phyloseq object from a TreeSummarizedExperiment object
 #'
-#' This function creates a phyloseq object from a TreeSummarizedExperiment
-#' object. By using \code{assay.type}, it is possible to specify which table
-#' from \code{assay} is added to the phyloseq object.
-#'
-#' @param x a \code{TreeSummarizedExperiment} object
+#' @param x a 
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   object
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
@@ -16,31 +14,36 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param tree_name a single \code{character} value for specifying which
+#' @param tree.name a single \code{character} value for specifying which
 #'   tree will be included in the phyloseq object that is created, 
-#'   (By default: \code{tree_name = "phylo"})
+#'   (By default: \code{tree.name = "phylo"})
+#'   
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
-#' @param ... additional arguments
-#'
-#' @details
-#' \code{makePhyloseqFromTreeSE} is used for creating a
-#' phyloseq object from TreeSummarizedExperiment object.
+#' @details 
+#' \code{convertToPhyloseq} creates a phyloseq object from a 
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object. By using \code{assay.type}, it is possible to specify which table
+#' from \code{assay} is added to the phyloseq object.
 #'
 #' @return
-#' An object of class \code{Phyloseq} object.
+#' \code{convertToPhyloseq} returns an object of class 
+#' \code{\link[phyloseq:phyloseq-class]{phyloseq}}
 #'
-#' @name makePhyloseqFromTreeSE
+#' @rdname convert
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
+#' 
+#' ### Coerce a TreeSE object to a phyloseq object
 #' # Get tse object
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #'
 #' # Create a phyloseq object from it
-#' phy <- makePhyloseqFromTreeSE(tse)
+#' phy <- convertToPhyloseq(tse)
 #' phy
 #'
 #' # By default the chosen table is counts, but if there are other tables,
@@ -48,20 +51,18 @@
 #'
 #' # Counts relative abundances table
 #' tse <- transformAssay(tse, method = "relabundance")
-#' phy2 <- makePhyloseqFromTreeSE(tse, assay.type = "relabundance")
+#' phy2 <- convertToPhyloseq(tse, assay.type = "relabundance")
 #' phy2
-NULL
-
-#' @rdname makePhyloseqFromTreeSE
+#' 
 #' @export
-setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
+setGeneric("convertToPhyloseq", signature = c("x"),
            function(x, ...)
-               standardGeneric("makePhyloseqFromTreeSE"))
+               standardGeneric("convertToPhyloseq"))
 
 
-#' @rdname makePhyloseqFromTreeSE
+#' @rdname convert
 #' @export
-setMethod("makePhyloseqFromTreeSE",
+setMethod("convertToPhyloseq",
           signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = "counts", assay_name = NULL, ...){
         # Input check
@@ -120,16 +121,16 @@ setMethod("makePhyloseqFromTreeSE",
     }
 )
 
-#' @rdname makePhyloseqFromTreeSE
+#' @rdname convert
 #' @export
-setMethod("makePhyloseqFromTreeSE",
+setMethod("convertToPhyloseq",
           signature = c(x = "TreeSummarizedExperiment"),
-    function(x, tree_name = "phylo", ...){
-        # If rowTrees exist, check tree_name
+    function(x, tree.name = tree_name, tree_name = "phylo", ...){
+        # If rowTrees exist, check tree.name
         if( length(x@rowTree) > 0 ){
-            .check_rowTree_present(tree_name, x)
+            .check_rowTree_present(tree.name, x)
             # Subset the data based on the tree
-            x <- x[ rowLinks(x)$whichTree == tree_name, ]
+            x <- x[ rowLinks(x)$whichTree == tree.name, ]
             add_phy_tree <- TRUE
         } else{
             add_phy_tree <- FALSE
@@ -157,7 +158,7 @@ setMethod("makePhyloseqFromTreeSE",
         
         # Add phylogenetic tree
         if( add_phy_tree ){
-            phy_tree <- .get_rowTree_for_phyloseq(x, tree_name)
+            phy_tree <- .get_rowTree_for_phyloseq(x, tree.name)
             # If the object is a phyloseq object, adds phy_tree to it
             if(is(obj,"phyloseq")){
                 phyloseq::phy_tree(obj) <- phy_tree
@@ -197,23 +198,9 @@ setMethod("makePhyloseqFromTreeSE",
     }
 )
 
-################### makePhyloseqFromTreeSummarizedExperiment ###################
-#' @rdname makePhyloseqFromTreeSE
-#' @export
-setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
-    function(x, ...)
-        standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
-
-#' @rdname makePhyloseqFromTreeSE
-#' @export
-setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
-        function(x, ...){
-            makePhyloseqFromTreeSE(x, ...)
-    })
-
 ################################ HELP FUNCTIONS ################################
 # If tips do not match with rownames, prune the tree
-.get_x_with_pruned_tree <- function(x, tree_name){
+.get_x_with_pruned_tree <- function(x, tree.name){
     # Get rowLinks
     row_links <- rowLinks(x)
     # Gets node labels
@@ -229,15 +216,15 @@ setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"),
 }
 
 # In phyloseq, tips and rownames must match
-.get_rowTree_for_phyloseq <- function(x, tree_name){
+.get_rowTree_for_phyloseq <- function(x, tree.name){
     # Check if the rowTree's tips match with rownames:
     # tips labels are found from rownames
-    if( any(!( rowTree(x, tree_name)$tip.label) %in% rownames(x)) ){
+    if( any(!( rowTree(x, tree.name)$tip.label) %in% rownames(x)) ){
         # If rowtree do not match, tree is pruned
-        x <- .get_x_with_pruned_tree(x, tree_name)
+        x <- .get_x_with_pruned_tree(x, tree.name)
     }
     # Get rowTree
-    phy_tree <- rowTree(x, tree_name)
+    phy_tree <- rowTree(x, tree.name)
     # Convert rowTree to phyloseq object
     phy_tree <- phyloseq::phy_tree(phy_tree)
         

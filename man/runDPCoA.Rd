@@ -2,41 +2,49 @@
 % Please edit documentation in R/runDPCoA.R
 \name{runDPCoA}
 \alias{runDPCoA}
+\alias{getDPCoA}
+\alias{getDPCoA,ANY,ANY-method}
+\alias{getDPCoA,TreeSummarizedExperiment,missing-method}
 \alias{calculateDPCoA}
-\alias{calculateDPCoA,ANY,ANY-method}
-\alias{calculateDPCoA,TreeSummarizedExperiment,missing-method}
+\alias{addDPCoA}
 \title{Calculation of Double Principal Correspondance analysis}
 \usage{
-calculateDPCoA(x, y, ...)
+getDPCoA(x, y, ...)
 
-\S4method{calculateDPCoA}{ANY,ANY}(
+\S4method{getDPCoA}{ANY,ANY}(
   x,
   y,
   ncomponents = 2,
   ntop = NULL,
+  subset.row = subset_row,
   subset_row = NULL,
   scale = FALSE,
   transposed = FALSE,
   ...
 )
 
-\S4method{calculateDPCoA}{TreeSummarizedExperiment,missing}(
+\S4method{getDPCoA}{TreeSummarizedExperiment,missing}(
   x,
   ...,
   assay.type = assay_name,
   assay_name = exprs_values,
   exprs_values = "counts",
+  tree.name = tree_name,
   tree_name = "phylo"
 )
 
-runDPCoA(x, ..., altexp = NULL, name = "DPCoA")
+calculateDPCoA(x, ...)
+
+addDPCoA(x, ..., altexp = NULL, name = "DPCoA")
+
+runDPCoA(x, ...)
 }
 \arguments{
-\item{x}{For \code{calculateDPCoA}, a numeric matrix of expression values
+\item{x}{For \code{getDPCoA}, a numeric matrix of expression values
 where rows are features and columns are cells.
 Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
 
-For \code{runDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
+For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
 expression values as well as a \code{rowTree} to calculate \code{y} using
 \code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.}
 
@@ -52,9 +60,11 @@ to obtain.}
 variances to use for dimensionality reduction. Alternatively \code{NULL},
 if all features should be used. (default: \code{ntop = NULL})}
 
-\item{subset_row}{Vector specifying the subset of features to use for
+\item{subset.row}{Vector specifying the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
 integer vector of row indices or a logical vector.}
+
+\item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
 \item{scale}{Logical scalar, should the expression values be standardized?}
 
@@ -72,9 +82,11 @@ will be disabled.)}
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
-\item{tree_name}{a single \code{character} value for specifying which
+\item{tree.name}{a single \code{character} value for specifying which
 rowTree will be used in calculation.
-(By default: \code{tree_name = "phylo"})}
+(By default: \code{tree.name = "phylo"})}
+
+\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
@@ -83,10 +95,10 @@ containing the input data.}
 reducedDims of the output.}
 }
 \value{
-For \code{calculateDPCoA} a matrix with samples as rows and CCA dimensions as
+For \code{getDPCoA} a matrix with samples as rows and CCA dimensions as
 columns
 
-For \code{runDPCoA} a modified \code{x} with the results stored in
+For \code{addDPCoA} a modified \code{x} with the results stored in
 \code{reducedDim} as the given \code{name}
 }
 \description{
@@ -102,10 +114,10 @@ returned as attributes as well.
 }
 \examples{
 data(esophagus)
-dpcoa <- calculateDPCoA(esophagus)
+dpcoa <- getDPCoA(esophagus)
 head(dpcoa)
 
-esophagus <- runDPCoA(esophagus)
+esophagus <- addDPCoA(esophagus)
 reducedDims(esophagus)
 
 library(scater)

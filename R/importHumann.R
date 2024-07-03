@@ -3,24 +3,26 @@
 #' @param file a single \code{character} value defining the file
 #' path of the HUMAnN file. The file must be in merged HUMAnN format.
 #'
-#' @param colData a DataFrame-like object that includes sample names in
+#' @param col.data a DataFrame-like object that includes sample names in
 #' rownames, or a single \code{character} value defining the file
 #' path of the sample metadata file. The file must be in \code{tsv} format
-#' (default: \code{colData = NULL}).
+#' (default: \code{col.data = NULL}).
+#' 
+#' @param colData Deprecated. Use \code{col.data} instead.
 #' 
 #' @param ... additional arguments:
 #' \itemize{
-#'   \item{\code{assay.type}:} {A single character value for naming 
+#'   \item \code{assay.type}: A single character value for naming 
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{assay}} 
-#'   (default: \code{assay.type = "counts"})}
-#'   \item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
+#'   (default: \code{assay.type = "counts"})
+#'   \item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
 #'     taxonomic prefixes be removed? (default:
-#'     \code{removeTaxaPrefixes = FALSE})}
-#'   \item{\code{remove.suffix}:} {\code{TRUE} or \code{FALSE}: Should
+#'     \code{prefix.rm = FALSE})
+#'   \item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
 #'     suffixes of sample names be removed? HUMAnN pipeline adds suffixes
 #'     to sample names. Suffixes are formed from file names. By selecting
 #'     \code{remove.suffix = TRUE}, you can remove pattern from end of sample
-#'     names that is shared by all. (default: \code{remove.suffix = FALSE})}
+#'     names that is shared by all. (default: \code{remove.suffix = FALSE})
 #' }
 #'
 #' @details
@@ -45,9 +47,9 @@
 #' 
 #' @seealso
 #' \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
-#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-#' \code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+#' \code{\link[=convert]{convertFromPhyloseq}}
+#' \code{\link[=convert]{convertFromBIOM}}
+#' \code{\link[=convert]{convertFromDADA2}}
 #' \code{\link[=importQIIME2]{importQIIME2}}
 #' \code{\link[=importMothur]{importMothur}}
 #'
@@ -70,7 +72,7 @@
 #' 
 NULL
 
-importHUMAnN <- function(file, colData = NULL, ...){
+importHUMAnN <- function(file, col.data = colData, colData = NULL, ...){
     ################################ Input check ###############################
     if(!.is_non_empty_string(file)){
         stop("'file' must be a single character value.",
@@ -79,10 +81,10 @@ importHUMAnN <- function(file, colData = NULL, ...){
     if (!file.exists(file)) {
         stop(file, " does not exist", call. = FALSE)
     }
-    if(!is.null(colData) &&
-        !(.is_non_empty_string(colData) || is.data.frame(colData) ||
-            is.matrix(colData) || is(colData, "DataFrame")) ){
-        stop("'colData' must be a single character value, DataFrame or NULL.",
+    if(!is.null(col.data) &&
+        !(.is_non_empty_string(col.data) || is.data.frame(col.data) ||
+            is.matrix(col.data) || is(col.data, "DataFrame")) ){
+        stop("'col.data' must be a single character value, DataFrame or NULL.",
             call. = FALSE)
     }
     ############################## Input check end #############################
@@ -92,9 +94,9 @@ importHUMAnN <- function(file, colData = NULL, ...){
     data <- .read_humann(file, rowdata_col, ...)
     # Create TreeSE from the data
     tse <- .create_tse_from_humann(data, rowdata_col, ...)
-    # Add colData if provided
-    if( !is.null(colData) ){
-        tse <- .add_coldata(tse, colData)
+    # Add col.data if provided
+    if( !is.null(col.data) ){
+        tse <- .add_coldata(tse, col.data)
     }
     return(tse)
 }

@@ -1,5 +1,5 @@
-context("subsampleCounts")
-test_that("subsampleCounts", {
+context("rarefyAssay")
+test_that("rarefyAssay", {
     library(bluster)
     data(GlobalPatterns, package="mia")
     
@@ -7,14 +7,14 @@ test_that("subsampleCounts", {
     expect_error(addCluster(GlobalPatterns, 
                         KmeansParam(centers = 3), 
                         assay.type = "error"))
-    # Checking wrong MARGIN (char)
+    # Checking wrong by (char)
     expect_error(addCluster(GlobalPatterns, 
                         KmeansParam(centers = 3), 
-                        MARGIN = "error"))
-    # Checking wrong MARGIN (number)
+                        by = "error"))
+    # Checking wrong by (number)
     expect_error(addCluster(GlobalPatterns, 
                          KmeansParam(centers = 3), 
-                         MARGIN = 3))
+                         by = 3))
     tse <- addCluster(GlobalPatterns, 
                    KmeansParam(centers = 3), 
                    name = "custommetadata",
@@ -69,16 +69,16 @@ test_that("subsampleCounts", {
                          full = TRUE,
                          clust.col = "customdataname",
                          altexp = "test"))
-    # Checking working MARGIN
+    # Checking working by
     tse <- GlobalPatterns
     altExp(tse, "test") <- tse[1:1000,]
     tse <- addCluster(tse, 
                     KmeansParam(centers = 3),
-                    MARGIN = "col")
+                    by = "col")
     tse <- addCluster(tse, 
                     KmeansParam(centers = 3),
                     altexp = "test",
-                    MARGIN = 2)
+                    by = 2)
     expect_true("clusters" %in% names(colData(tse)))
     expect_true("clusters" %in% names(colData(altExp(tse, "test"))))
     
@@ -87,10 +87,10 @@ test_that("subsampleCounts", {
     altExp(tse, "test") <- tse[1:2000,]
     tse <- addCluster(tse, 
                    HclustParam(),
-                   MARGIN = "col")
+                   by = "col")
     tse <- addCluster(tse, 
                    HclustParam(),
-                   MARGIN = "row",
+                   by = "row",
                    altexp = "test",
                    full = TRUE)
     expectedCol <- clusterRows(t(assay(tse, "counts")), HclustParam())

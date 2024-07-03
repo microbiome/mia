@@ -23,16 +23,10 @@
 #' @param assay.type2 A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} of 
 #'   experiment 2 to be transformed. (By default: \code{assay.type2 = "counts"})
-#'   
-#' @param assay_name1 a single \code{character} value for specifying which
-#'   assay of experiment 1 to use for calculation.
-#'   (Please use \code{assay.type1} instead. At some point \code{assay_name1}
-#'   will be disabled.)
-#'   
-#' @param assay_name2 a single \code{character} value for specifying which
-#'   assay of experiment 2 to use for calculation.
-#'   (Please use \code{assay.type2} instead. At some point \code{assay_name2}
-#'   will be disabled.)
+#'    
+#' @param assay_name1 Deprecated. Use \code{assay.type1} instead.
+#' 
+#' @param assay_name2 Deprecated. Use \code{assay.type2} instead.
 #' 
 #' @param altexp1 A single numeric or character value specifying alternative experiment
 #'   from the altExp of experiment 1. If NULL, then the experiment is itself 
@@ -44,17 +38,23 @@
 #'   and altExp option is disabled. 
 #'   (By default: \code{altexp2 = NULL})
 #'   
-#' @param colData_variable1 A character value specifying column(s) from colData
-#'   of experiment 1. If colData_variable1 is used, assay.type1 is disabled.
-#'   (By default: \code{colData_variable1 = NULL})
-#'   
-#' @param colData_variable2 A character value specifying column(s) from colData
-#'   of experiment 2. If colData_variable2 is used, assay.type2 is disabled.
-#'   (By default: \code{colData_variable2 = NULL})
+#' @param col.var1 A character value specifying column(s) from colData
+#'   of experiment 1. If col.var1 is used, assay.type1 is disabled.
+#'   (By default: \code{col.var1 = NULL})
 #' 
-#' @param MARGIN A single numeric value for selecting if association are calculated
-#'   row-wise / for features (1) or column-wise / for samples (2). Must be \code{1} or
-#'   \code{2}. (By default: \code{MARGIN = 1}) 
+#' @param colData_variable1 Deprecated. Use \code{col.var1} instead.
+#'   
+#' @param col.var2 A character value specifying column(s) from colData
+#'   of experiment 2. If col.var2 is used, assay.type2 is disabled.
+#'   (By default: \code{col.var2 = NULL})
+#' 
+#' @param colData_variable2 Deprecated. Use \code{col.var2} instead.
+#' 
+#' @param by A character value for selecting if association are calculated
+#'   row-wise / for features ('rows') or column-wise / for samples ('cols').
+#'   Must be \code{'rows'} or \code{'cols'}. 
+#' 
+#' @param MARGIN Deperecated. Use \code{by} instead.
 #'   
 #' @param method A single character value for selecting association method 
 #'    ('kendall', pearson', or 'spearman' for continuous/numeric; 'categorical' for discrete)
@@ -63,58 +63,71 @@
 #' @param mode A single character value for selecting output format 
 #'    Available formats are  'table' and 'matrix'.  (By default: \code{mode = "table"})
 #' 
-#' @param p_adj_method A single character value for selecting adjustment method of
+#' @param p.adj.method A single character value for selecting adjustment method of
 #'    p-values. Passed to \code{p.adjust} function. 
-#'    (By default: \code{p_adj_method = "fdr"})
+#'    (By default: \code{p.adj.method = "fdr"})
 #' 
-#' @param p_adj_threshold A single numeric value (from 0 to  1) for selecting 
+#' @param p_adj_method Deprecated. Use \code{p.adj.method} isntead.
+#' 
+#' @param p.adj.threshold A single numeric value (from 0 to 1) for selecting 
 #'    adjusted p-value threshold for filtering. 
-#'    (By default: \code{p_adj_threshold = NULL})
+#'    (By default: \code{p.adj.threshold = NULL})
 #' 
-#' @param cor_threshold A single numeric absolute value (from 0 to 1) for selecting 
+#' @param p_adj_threshold Deprecated. Use \code{p.dj.threshold} instead.
+#' 
+#' @param cor.threshold A single numeric absolute value (from 0 to 1) for selecting 
 #'    correlation threshold for filtering.
-#'    (By default: \code{cor_threshold = NULL})
+#'    (By default: \code{cor.threshold = NULL})
+#' 
+#' @param cor_threshold Deprecated. Use \code{cor.threshold} instead.
 #' 
 #' @param sort A single boolean value for selecting whether to sort features or not
 #'    in result matrices. Used method is hierarchical clustering. 
 #'    (By default: \code{sort = FALSE})
 #' 
-#' @param filter_self_correlations A single boolean value for selecting whether to 
+#' @param filter.self.cor A single boolean value for selecting whether to 
 #'    filter out correlations between identical items. Applies only when correlation
 #'    between experiment itself is tested, i.e., when assays are identical. 
-#'    (By default: \code{filter_self_correlations = FALSE})
+#'    (By default: \code{filter.self.cor = FALSE})
+#' 
+#' @param filter_self_correlations Deprecated. Use \code{filter.self.cor} instead.
 #' 
 #' @param verbose A single boolean value for selecting whether to get messages
 #'    about progress of calculation.
 #'    
-#' @param test_significance A single boolean value for selecting whether to test
+#' @param test.signif A single boolean value for selecting whether to test
 #'    statistical significance of associations.
+#'    (By default: \code{test.signif = FALSE})
+#' 
+#' @param test_significance Deprecated. Use \code{test.signif} instead.
 #'    
-#' @param show_warnings A single boolean value for selecting whether to show warnings
+#' @param show.warnings A single boolean value for selecting whether to show warnings
 #'    that might occur when correlations and p-values are calculated.
+#' 
+#' @param show_warnings Deprecated. use \code{show.warnings} instead.
 #'
 #' @param paired A single boolean value for specifying if samples are paired or not.
 #'    \code{colnames} must match between twp experiments. \code{paired} is disabled
-#'    when \code{MARGIN = 1}. (By default: \code{paired = FALSE})
+#'    when \code{by = 1}. (By default: \code{paired = FALSE})
 #'
 #' @param ... Additional arguments:
 #'    \itemize{
-#'        \item{\code{symmetric}}{ A single boolean value for specifying if 
+#'        \item \code{symmetric}:  A single boolean value for specifying if 
 #'        measure is symmetric or not. When \code{symmetric = TRUE}, associations
 #'        are calculated only for unique variable-pairs, and they are assigned to 
 #'        corresponding variable-pair. This decreases the number of calculations in 2-fold 
-#'        meaning faster execution. (By default: \code{symmetric = FALSE}) }
-#'        \item{\code{association_FUN}}{ A function that is used to calculate (dis-)similarity
+#'        meaning faster execution. (By default: \code{symmetric = FALSE}) 
+#'        \item \code{association.fun}:  A function that is used to calculate (dis-)similarity
 #'        between features. Function must take matrix as an input and give numeric
 #'        values as an output. Adjust \code{method} and other parameters correspondingly.
-#'        Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.}
+#'        Supported functions are, for example, \code{stats::dist} and \code{vegan::vegdist}.
 #'    }
 #'    
 #' @details
-#' These functions calculates associations between features of two experiments. 
-#' \code{getExperimentCrossAssociation} calculates only associations by default.
-#' \code{testExperimentCrossAssociation} calculates also significance of 
-#' associations.
+#' The function \code{getCrossAssociation} calculates associations between 
+#' features of two experiments. By default, it not only computes associations 
+#' but also tests their significance. If desired, setting 
+#' \code{test.signif} to FALSE disables significance calculation.
 #' 
 #' We recommend the non-parametric Kendall's tau as the default method for association 
 #' analysis. Kendall's tau has desirable statistical properties and robustness at lower 
@@ -122,13 +135,13 @@
 #' running times are critical.
 #'
 #' @return 
-#' These functions return associations in table or matrix format. In table format,
+#' This function returns associations in table or matrix format. In table format,
 #' returned value is a data frame that includes  features and associations 
 #' (and p-values) in columns. In matrix format, returned value is a one matrix
 #' when only associations are calculated. If also significances are tested, then
 #' returned value is a list of matrices.
 #'
-#' @name getExperimentCrossAssociation
+#' @name getCrossAssociation
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -147,7 +160,7 @@
 #' mae[[1]] <- transformAssay(mae[[1]], method = "rclr")
 #' 
 #' # Calculate cross-correlations
-#' result <- getExperimentCrossAssociation(mae, method = "pearson", assay.type2 = "nmr")
+#' result <- getCrossAssociation(mae, method = "pearson", assay.type2 = "nmr")
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
@@ -156,47 +169,44 @@
 #' # Transform data
 #' altExp(mae[[1]], "Phylum") <- transformAssay(altExp(mae[[1]], "Phylum"), method = "relabundance")
 #' # When mode = "matrix", the return value is a matrix
-#' result <- getExperimentCrossAssociation(mae, experiment2 = 2, 
+#' result <- getCrossAssociation(mae, experiment2 = 2, 
 #'                                         assay.type1 = "relabundance", assay.type2 = "nmr",
 #'                                         altexp1 = "Phylum", 
 #'                                         method = "pearson", mode = "matrix")
 #' # Show first 5 entries
 #' head(result, 5)
 #' 
-#' # testExperimentCorrelation additionally returns significances
-#' # filter_self_correlations = TRUE filters self correlations
-#' # p_adj_threshold can be used to filter those features that do not
+#' # If test.signif = TRUE, then getCrossAssociation additionally returns 
+#' # significances
+#' # filter.self.cor = TRUE filters self correlations
+#' # p.adj.threshold can be used to filter those features that do not
 #' # have any correlations whose p-value is lower than the threshold
-#' result <- testExperimentCrossAssociation(mae[[1]], experiment2 = mae[[1]], method = "pearson",
-#'                                          filter_self_correlations = TRUE,
-#'                                          p_adj_threshold = 0.05)
+#' result <- getCrossAssociation(mae[[1]], experiment2 = mae[[1]], method = "pearson",
+#'                                          filter.self.cor = TRUE,
+#'                                          p.adj.threshold = 0.05,
+#'                                          test.signif = TRUE)
 #' # Show first 5 entries
 #' head(result, 5)
-#' 
-#' # getExperimentCrossAssociation also returns significances when 
-#' # test_significance = TRUE
-#' # Warnings can be suppressed by using show_warnings = FALSE
-#' result <- getExperimentCrossAssociation(mae[[1]], experiment2 = mae[[2]], method = "pearson",
-#'                                         assay.type2 = "nmr",
-#'                                         mode = "matrix", test_significance = TRUE,
-#'                                         show_warnings = FALSE)
 #'                                         
 #' # Returned value is a list of matrices
 #' names(result)
 #' 
 #' # Calculate Bray-Curtis dissimilarity between samples. If dataset includes
 #' # paired samples, you can use paired = TRUE.
-#' result <- getExperimentCrossAssociation(mae[[1]], mae[[1]], MARGIN = 2, paired = FALSE,
-#'                                         association_FUN = vegan::vegdist, method = "bray")
+#' result <- getCrossAssociation(mae[[1]], mae[[1]], by = 2, paired = FALSE,
+#'                                         association.fun = vegan::vegdist, 
+#'                                         method = "bray")
 #'                                         
 #' 
 #' # If experiments are equal and measure is symmetric (e.g., taxa1 vs taxa2 == taxa2 vs taxa1),
 #' # it is possible to speed-up calculations by calculating association only for unique
 #' # variable-pairs. Use "symmetric" to choose whether to measure association for only
 #' # other half of of variable-pairs.
-#' result <- getExperimentCrossAssociation(mae, experiment1 = "microbiota", experiment2 = "microbiota", 
-#'                                         assay.type1 = "counts", assay.type2 = "counts",
-#'                                         symmetric = TRUE)
+#' result <- getCrossAssociation(mae, experiment1 = "microbiota", 
+#'                                  experiment2 = "microbiota", 
+#'                                  assay.type1 = "counts", 
+#'                                  assay.type2 = "counts",
+#'                                  symmetric = TRUE)
 #' 
 #' # For big data sets, the calculations might take a long time.
 #' # To speed them up, you can take a random sample from the data. 
@@ -205,7 +215,7 @@
 #' sample_size <- 0.3
 #' tse <- mae[[1]]
 #' tse_sub <- tse[ sample( seq_len( nrow(tse) ), sample_size * nrow(tse) ), ]
-#' result <- testExperimentCrossAssociation(tse_sub)
+#' result <- getCrossAssociation(tse_sub)
 #' 
 #' # It is also possible to choose variables from colData and calculate association
 #' # between assay and sample metadata or between variables of sample metadata
@@ -213,22 +223,21 @@
 #' # colData_variable works similarly to assay.type. Instead of fetching an assay
 #' # named assay.type from assay slot, it fetches a column named colData_variable
 #' # from colData.
-#' result <- getExperimentCrossAssociation(mae[[1]], assay.type1 = "counts", 
-#'                                         colData_variable2 = c("shannon", "coverage"))
+#' result <- getCrossAssociation(mae[[1]], assay.type1 = "counts", 
+#'                                  col.var2 = c("shannon", "coverage"),
+#'                                  test.signif = TRUE)
 #'                                         
 NULL
 
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossCorrelation
+#' @rdname getCrossAssociation
 #' @export
-setGeneric("getExperimentCrossAssociation", signature = c("x"),
+setGeneric("getCrossAssociation", signature = c("x"),
            function(x, ...)
-               standardGeneric("getExperimentCrossAssociation"))
+               standardGeneric("getCrossAssociation"))
 
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossCorrelation
+#' @rdname getCrossAssociation
 #' @export
-setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperiment"),
+setMethod("getCrossAssociation", signature = c(x = "MultiAssayExperiment"),
     function(x,
            experiment1 = 1,
            experiment2 = 2,
@@ -236,19 +245,28 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
            assay.type2 = assay_name2, assay_name2 = "counts",
            altexp1 = NULL,
            altexp2 = NULL,
+           col.var1 = colData_variable1,
            colData_variable1 = NULL,
+           col.var2 = colData_variable2,
            colData_variable2 = NULL,
+           by = MARGIN,
            MARGIN = 1,
            method = c("kendall", "spearman", "categorical", "pearson"),
            mode = "table",
+           p.adj.method = p_adj_method,
            p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                             "holm", "hommel", "none"),
+           p.adj.threshold = p_adj_threshold,
            p_adj_threshold = NULL,
+           cor.threshold = cor_threshold,
            cor_threshold = NULL,
            sort = FALSE,
+           filter.self.cor = filter_self_correlations,
            filter_self_correlations = FALSE,
            verbose = TRUE,
+           test.signif = test_significance,
            test_significance = FALSE,
+           show.warnings = show_warnings,
            show_warnings = TRUE,
            paired = FALSE,
            ...){
@@ -259,30 +277,29 @@ setMethod("getExperimentCrossAssociation", signature = c(x = "MultiAssayExperime
                                           assay.type2 = assay.type2,
                                           altexp1 = altexp1,
                                           altexp2 = altexp2,
-                                          colData_variable1 = colData_variable1,
-                                          colData_variable2 = colData_variable2,
-                                          MARGIN = MARGIN,
+                                          col.var1 = col.var1,
+                                          col.var2 = col.var2,
+                                          by = by,
                                           method = method,
                                           mode = mode,
-                                          p_adj_method = p_adj_method,
-                                          p_adj_threshold = p_adj_threshold,
-                                          cor_threshold = cor_threshold,
+                                          p.adj.method = p.adj.method,
+                                          p.adj.threshold = p.adj.threshold,
+                                          cor.threshold = cor.threshold,
                                           sort = sort,
-                                          filter_self_correlations = filter_self_correlations,
+                                          filter.self.cor = filter.self.cor,
                                           verbose = verbose,
-                                          test_significance = test_significance,
-                                          show_warnings = show_warnings,
+                                          test.signif = test.signif,
+                                          show.warnings = show.warnings,
                                           paired = paired,
                                           ...)
     }
 )
 
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossCorrelation
+#' @rdname getCrossAssociation
 #' @importFrom MultiAssayExperiment MultiAssayExperiment ExperimentList
 #' @importFrom SingleCellExperiment altExps
 #' @export
-setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
+setMethod("getCrossAssociation", signature = "SummarizedExperiment",
     function(x, experiment2 = x, ...){
         ############################## INPUT CHECK #############################
         # If y is  SE or TreeSE object
@@ -341,54 +358,6 @@ setMethod("getExperimentCrossAssociation", signature = "SummarizedExperiment",
     }
 )
 
-#' @rdname getExperimentCrossAssociation
-#' @aliases testExperimentCrossCorrelation
-#' @export
-setGeneric("testExperimentCrossAssociation", signature = c("x"),
-           function(x, ...)
-               standardGeneric("testExperimentCrossAssociation"))
-
-#' @rdname getExperimentCrossAssociation
-#' @aliases testExperimentCrossCorrelation
-#' @export
-setMethod("testExperimentCrossAssociation", signature = c(x = "ANY"),
-          function(x, ...){
-              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
-          }
-)
-
-############################# Methods for aliases ##############################
-#' @rdname getExperimentCrossAssociation
-#' @aliases testExperimentCrossAssociation
-#' @export
-setGeneric("testExperimentCrossCorrelation", signature = c("x"),
-           function(x, ...)
-               standardGeneric("testExperimentCrossCorrelation"))
-
-#' @rdname getExperimentCrossAssociation
-#' @aliases testExperimentCrossAssociation
-#' @export
-setMethod("testExperimentCrossCorrelation", signature = c(x = "ANY"),
-          function(x, ...){
-              getExperimentCrossAssociation(x, test_significance = TRUE, ...)
-          }
-)
-
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossAssociation
-#' @export
-setGeneric("getExperimentCrossCorrelation", signature = c("x"),
-           function(x, ...)
-               standardGeneric("getExperimentCrossCorrelation"))
-
-#' @rdname getExperimentCrossAssociation
-#' @aliases getExperimentCrossAssociation
-#' @export
-setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
-          function(x, ...){
-              getExperimentCrossAssociation(x, ...)
-          }
-)
 ############################## MAIN FUNCTIONALITY ##############################
 # This function includes all the main functionality.
 #' @importFrom S4Vectors unfactor
@@ -399,20 +368,20 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
                                               assay.type2 = "counts",
                                               altexp1 = NULL,
                                               altexp2 = NULL,
-                                              colData_variable1 = NULL,
-                                              colData_variable2 = NULL,
-                                              MARGIN = 1,
+                                              col.var1 = NULL,
+                                              col.var2 = NULL,
+                                              by = 1,
                                               method = c("kendall", "spearman", "categorical", "pearson"),
                                               mode = c("table", "matrix"),
-                                              p_adj_method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
+                                              p.adj.method = c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                                                                "holm", "hommel", "none"),
-                                              p_adj_threshold = NULL,
-                                              cor_threshold = NULL,
+                                              p.adj.threshold = NULL,
+                                              cor.threshold = NULL,
                                               sort = FALSE,
-                                              filter_self_correlations = FALSE,
+                                              filter.self.cor = FALSE,
                                               verbose = TRUE,
-                                              test_significance = FALSE,
-                                              show_warnings = TRUE,
+                                              test.signif = FALSE,
+                                              show.warnings = TRUE,
                                               paired = FALSE,
                                               ...){
     ############################# INPUT CHECK ##############################
@@ -431,53 +400,51 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     tse2 <- .check_and_get_altExp(tse2, altexp2)
     # If variables from coldata are specified check them. Otherwise,
     # check assay.type1
-    if( !is.null(colData_variable1) ){
-        tse1 <- .check_and_subset_colData_variables(tse1, colData_variable1)
+    if( !is.null(col.var1) ){
+        tse1 <- .check_and_subset_colData_variables(tse1, col.var1)
     } else{
         .check_assay_present(assay.type1, tse1)
     }
-    if( !is.null(colData_variable2) ){
-        tse2 <- .check_and_subset_colData_variables(tse2, colData_variable2)
+    if( !is.null(col.var2) ){
+        tse2 <- .check_and_subset_colData_variables(tse2, col.var2)
     } else{
         .check_assay_present(assay.type2, tse2)
     }
-    # Check MARGIN
-    if( !is.numeric(MARGIN) && !MARGIN %in% c(1, 2) ){
-      stop("'MARGIN' must be 1 or 2.", call. = FALSE)
-    }
+    # Check by
+    by <- .check_MARGIN(by) 
     # Check method
-    # method is checked in .calculate_association. Otherwise association_FUN would
+    # method is checked in .calculate_association. Otherwise association.fun would
     # not work. (It can be "anything", and it might also have method parameter.)
     # Check mode
     mode <- match.arg(mode, c("table", "matrix"))
-    p_adj_method <- match.arg(p_adj_method,
+    p.adj.method <- match.arg(p.adj.method,
                               c("fdr", "BH", "bonferroni", "BY", "hochberg", 
                                 "holm", "hommel", "none"))
-    # Check p_adj_threshold
-    if( !(is.numeric(p_adj_threshold) && 
-          (p_adj_threshold>=0 && p_adj_threshold<=1)  || 
-          is.null(p_adj_threshold) ) ){
-        stop("'p_adj_threshold' must be a numeric value [0,1].", call. = FALSE)
+    # Check p.adj.threshold
+    if( !(is.numeric(p.adj.threshold) && 
+          (p.adj.threshold>=0 && p.adj.threshold<=1)  || 
+          is.null(p.adj.threshold) ) ){
+        stop("'p.adj.threshold' must be a numeric value [0,1].", call. = FALSE)
     }
-    # Check cor_threshold
-    if( !(is.numeric(cor_threshold) && 
-          (cor_threshold>=0 && cor_threshold<=1)  || 
-          is.null(cor_threshold) ) ){
-      stop("'cor_threshold' must be a numeric value [0,1].", call. = FALSE)
+    # Check cor.threshold
+    if( !(is.numeric(cor.threshold) && 
+          (cor.threshold>=0 && cor.threshold<=1)  || 
+          is.null(cor.threshold) ) ){
+      stop("'cor.threshold' must be a numeric value [0,1].", call. = FALSE)
     }
     # Check sort
     if( !.is_a_bool(sort) ){
         stop("'sort' must be a boolean value.", 
              call. = FALSE)
     }
-    # Check filter_self_correlations
-    if( !.is_a_bool(filter_self_correlations) ){
-        stop("'filter_self_correlations' must be a boolean value.", 
+    # Check filter.self.cor
+    if( !.is_a_bool(filter.self.cor) ){
+        stop("'filter.self.cor' must be a boolean value.", 
              call. = FALSE)
     }
-    # Check test_significance
-    if( !.is_a_bool(test_significance) ){
-        stop("'test_significance' must be a boolean value.", 
+    # Check test.signif
+    if( !.is_a_bool(test.signif) ){
+        stop("'test.signif' must be a boolean value.", 
              call. = FALSE)
     }
     # Check verbose
@@ -485,9 +452,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
       stop("'verbose' must be a boolean value.", 
            call. = FALSE)
     }
-    # Check show_warnings
-    if( !.is_a_bool(show_warnings) ){
-      stop("'show_warnings' must be a boolean value.", 
+    # Check show.warnings
+    if( !.is_a_bool(show.warnings) ){
+      stop("'show.warnings' must be a boolean value.", 
            call. = FALSE)
     }
     # Check paired
@@ -498,14 +465,14 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     ############################ INPUT CHECK END ###########################
     # Fetch assays to correlate, if variables from coldata are specified, take 
     # coldata, otherwise take assay
-    if( !is.null(colData_variable1) ){
+    if( !is.null(col.var1) ){
         assay1 <- colData(tse1)
         assay1 <- as.matrix(assay1)
         assay1 <- t(assay1)
     } else{
         assay1 <- assay(tse1, assay.type1)
     }
-    if( !is.null(colData_variable2) ){
+    if( !is.null(col.var2) ){
         assay2 <- colData(tse2)
         assay2 <- as.matrix(assay2)
         assay2 <- t(assay2)
@@ -514,7 +481,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     
     # Transposes tables to right format, if row is specified
-    if( MARGIN == 1 ){
+    if( by == 1 ){
         assay1 <- t(assay1)
         assay2 <- t(assay2)
         # Disable paired
@@ -522,45 +489,45 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     
     # Check that assays match
-    .check_that_assays_match(assay1, assay2, MARGIN)
+    .check_that_assays_match(assay1, assay2, by)
     
-    # If significance is not calculated, p_adj_method is NULL
-    if( !test_significance ){
-        p_adj_method <- NULL
+    # If significance is not calculated, p.adj.method is NULL
+    if( !test.signif ){
+        p.adj.method <- NULL
     }
     # Calculate correlations
     result <- .calculate_association(assay1, assay2, method, 
-                                     p_adj_method, 
-                                     test_significance, 
-                                     show_warnings, paired, 
-                                     verbose, MARGIN,
+                                     p.adj.method, 
+                                     test.signif, 
+                                     show.warnings, paired, 
+                                     verbose, by,
                                      assay.type1, assay.type2,
                                      altexp1, altexp2,
-                                     colData_variable1, colData_variable2,
+                                     col.var1, col.var2,
                                      ...)
-    # Disable p_adj_threshold if there is no adjusted p-values
+    # Disable p.adj.threshold if there is no adjusted p-values
     if( is.null(result$p_adj) ){
-        p_adj_threshold <- NULL
+        p.adj.threshold <- NULL
     }
-    # Disable cor_threshold if there is no correlations
+    # Disable cor.threshold if there is no correlations
     if( is.null(result$cor) ){
-        cor_threshold <- NULL
+        cor.threshold <- NULL
     }
     # Disable filter_self_correlation if assays are not the same
     if( !identical(assay1, assay2) ){
-        filter_self_correlations <- FALSE
+        filter.self.cor <- FALSE
     }
     # Do filtering
-    if( !is.null(p_adj_threshold) || 
-        !is.null(cor_threshold) || 
-        filter_self_correlations ){
+    if( !is.null(p.adj.threshold) || 
+        !is.null(cor.threshold) || 
+        filter.self.cor ){
         # Filter associations
         result <- .association_filter(result,
-                                      p_adj_threshold,
-                                      cor_threshold,
+                                      p.adj.threshold,
+                                      cor.threshold,
                                       assay1, 
                                       assay2, 
-                                      filter_self_correlations,
+                                      filter.self.cor,
                                       verbose)
     }
     # Matrix or table?
@@ -792,34 +759,35 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 .calculate_association <- function(assay1,
                                    assay2,
                                    method = c("kendall", "spearman", "categorical", "pearson"),
-                                   p_adj_method,
-                                   test_significance,
-                                   show_warnings,
+                                   p.adj.method,
+                                   test.signif,
+                                   show.warnings,
                                    paired,
                                    verbose,
-                                   MARGIN,
+                                   by,
                                    assay.type1, assay.type2,
                                    altexp1, altexp2,
-                                   colData_variable1, colData_variable2,
+                                   col.var1, col.var2,
+                                   association.fun = association_FUN,
                                    association_FUN = NULL,
                                    ...){
-    # Check method if association_FUN is not NULL
-    if( is.null(association_FUN) ){
+    # Check method if association.fun is not NULL
+    if( is.null(association.fun) ){
         method <- match.arg(method)
         # Get function name for message
         function_name <- ifelse(method == "categorical", "mia:::.calculate_gktau", 
-                                ifelse(test_significance, "stats::cor.test", "stats::cor"))
+                                ifelse(test.signif, "stats::cor.test", "stats::cor"))
         
         # Test if data is in right format
         .cross_association_test_data_type(assay1, method, 
-                                          colData_variable1)
+                                          col.var1)
         .cross_association_test_data_type(assay2, method, 
-                                          colData_variable2)
+                                          col.var2)
     } else{
         # Get name of function
-        function_name <- deparse(substitute(association_FUN))
-        test_significance <- FALSE
-        p_adj_method <- NULL
+        function_name <- deparse(substitute(association.fun))
+        test.signif <- FALSE
+        p.adj.method <- NULL
     }
     
     # Message details of calculation
@@ -828,28 +796,28 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
             "Calculating correlations...\n",
             "altexp1: ", ifelse(!is.null(altexp1), altexp1, "-"), 
             ", altexp2: ", ifelse(!is.null(altexp2), altexp2, "-"),
-            ifelse(!is.null(colData_variable1), 
-                paste0(", assay.type1: -, colData_variable1: ", 
-                       paste(colData_variable1, collapse = " + ")), 
-                paste0(", assay.type1: ", assay.type1, ", colData_variable1: -")),
-            ifelse(!is.null(colData_variable2), 
-                paste0(", assay.type2: -, colData_variable2: ", 
-                       paste(colData_variable2, collapse = " + ")), 
-                paste0(", assay.type2: ", assay.type2, ", colData_variable2: -")),
-            "\nMARGIN: ", MARGIN, 
+            ifelse(!is.null(col.var1), 
+                paste0(", assay.type1: -, col.var1: ", 
+                       paste(col.var1, collapse = " + ")), 
+                paste0(", assay.type1: ", assay.type1, ", col.var1: -")),
+            ifelse(!is.null(col.var2), 
+                paste0(", assay.type2: -, col.var2: ", 
+                       paste(col.var2, collapse = " + ")), 
+                paste0(", assay.type2: ", assay.type2, ", col.var2: -")),
+            "\nby: ", by, 
             ", function: ", function_name, 
             ", method: ", method,
-            ", test_significance: ", test_significance,
-            ", p_adj_method: ",
-            ifelse(!is.null(p_adj_method), p_adj_method, "-"),
+            ", test.signif: ", test.signif,
+            ", p.adj.method: ",
+            ifelse(!is.null(p.adj.method), p.adj.method, "-"),
             ", paired: ", paired,
-            ", show_warnings: ", show_warnings, "\n" 
+            ", show.warnings: ", show.warnings, "\n" 
             ) 
     }
   
-    # If association_FUN is provided by user, use appropriate function.
+    # If association.fun is provided by user, use appropriate function.
     # Otherwise, choose correct method for numeric and categorical data
-    if( !is.null(association_FUN) ){
+    if( !is.null(association.fun) ){
         FUN_ <- .calculate_association_with_own_function
     } else if( method %in% c("kendall", "pearson","spearman") ) {
         FUN_ <- .calculate_association_for_numeric_values
@@ -872,16 +840,16 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
         correlations_and_p_values <- .calculate_stats_cor(assay1 = assay1,
                                                           assay2 = assay2,
                                                           method = method,
-                                                          show_warnings = show_warnings)
+                                                          show.warnings = show.warnings)
     } else{
         correlations_and_p_values <- .calculate_association_table(variable_pairs = variable_pairs,
                                                                   FUN_ = FUN_, 
-                                                                  test_significance = test_significance, 
+                                                                  test.signif = test.signif, 
                                                                   assay1 = assay1, 
                                                                   assay2 = assay2,
                                                                   method = method,
-                                                                  show_warnings = show_warnings, 
-                                                                  association_FUN = association_FUN, 
+                                                                  show.warnings = show.warnings, 
+                                                                  association.fun = association.fun, 
                                                                   ...)
     }
     
@@ -899,7 +867,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     if( !is.null(correlations_and_p_values$pval) ){
         correlations_and_p_values$p_adj <- 
             p.adjust(correlations_and_p_values$pval,
-                     method = p_adj_method)
+                     method = p.adj.method)
     }
     return(correlations_and_p_values)
 }
@@ -935,12 +903,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # values in cor. Additionally, table can also include pval for p-values.
 .calculate_association_table <- function(variable_pairs,
                                          FUN_, 
-                                         test_significance, 
+                                         test.signif, 
                                          assay1, 
                                          assay2,
                                          method,
-                                         show_warnings, 
-                                         association_FUN, 
+                                         show.warnings, 
+                                         association.fun, 
                                          symmetric = FALSE,
                                          ...){
     # Check symmetric
@@ -972,12 +940,12 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Calculate correlations
     correlations_and_p_values <- apply(variable_pairs, 1, 
                                        FUN = FUN_, 
-                                       test_significance = test_significance, 
+                                       test.signif = test.signif, 
                                        assay1 = assay1, 
                                        assay2 = assay2,
                                        method = method,
-                                       show_warnings = show_warnings, 
-                                       association_FUN = association_FUN, 
+                                       show.warnings = show.warnings, 
+                                       association.fun = association.fun, 
                                        ...)
   
     # Convert into data.frame if it is vector, 
@@ -1036,11 +1004,11 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Output: correlation table
 #' @importFrom stats cor 
 #' @importFrom tidyr pivot_longer
-.calculate_stats_cor <- function(assay1, assay2, method, show_warnings){
+.calculate_stats_cor <- function(assay1, assay2, method, show.warnings){
     # If user does not want warnings, 
     # suppress warnings that might occur when calculating correlations (NAs...)
     # or p-values (ties, and exact p-values cannot be calculated...)
-    if( show_warnings ){
+    if( show.warnings ){
       correlations <- stats::cor(assay1, assay2, 
                                               method = method,
                                               use = "pairwise.complete.obs")
@@ -1077,8 +1045,8 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: Vector of names that belong to feature pair, and assays.
 # Output: Correlation value or list that includes correlation value and p-value.
 #' @importFrom stats cor.test
-.calculate_association_for_numeric_values <- function(feature_pair, test_significance, 
-                                                      assay1, assay2, method, show_warnings,
+.calculate_association_for_numeric_values <- function(feature_pair, test.signif, 
+                                                      assay1, assay2, method, show.warnings,
                                                       ...){
     # Get features
     feature1 <- assay1[ , feature_pair[1]]
@@ -1088,7 +1056,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # If user does not want warnings, 
     # suppress warnings that might occur when calculating correlations (NAs...)
     # or p-values (ties, and exact p-values cannot be calculated...)
-    if( show_warnings ){
+    if( show.warnings ){
         temp <- cor.test(feature1,
                             feature2, 
                             method = method,
@@ -1115,10 +1083,10 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Output: Correlation value or list that includes correlation value and p-value.
 .calculate_association_for_categorical_values <- 
     function(feature_pair,
-             test_significance, 
+             test.signif, 
              assay1,
              assay2,
-             show_warnings,
+             show.warnings,
              ...){
     # Get features
     feature1 <- assay1[ , feature_pair[1]]
@@ -1130,10 +1098,10 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # Calculate cross-correlation using Goodman and Kruskal tau
     temp <- .calculate_gktau(feature1,
                              feature2,
-                             test_significance = test_significance,
-                             show_warnings)
+                             test.signif = test.signif,
+                             show.warnings)
     # Whether to test significance
-    if( test_significance ){
+    if( test.signif ){
         # Take correlation and p-value
         temp <- c(temp$estimate, temp$p.value)
     } else{
@@ -1151,9 +1119,9 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Output: Correlation value or list that includes correlation value and p-value.
 .calculate_association_with_own_function <- function(feature_pair,
                                          assay1, assay2, 
-                                         association_FUN, 
-                                         show_warnings,
-                                         test_significance,
+                                         association.fun, 
+                                         show.warnings,
+                                         test.signif,
                                          ...){
     # Get features
     feature1 <- assay1[ , feature_pair[1]]
@@ -1165,23 +1133,23 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # suppress warnings that might occur when calculating correlations (NAs...)
     # or p-values (ties, and exact p-values cannot be calculated...)
     # Use try-catch to catch errors that might occur.
-    if( show_warnings ){
+    if( show.warnings ){
         temp <- tryCatch({
-          do.call(association_FUN, args = c(list(feature_mat), list(...)))
+          do.call(association.fun, args = c(list(feature_mat), list(...)))
         },
         error = function(cond) {
             stop("Error occurred during calculation. Check, e.g., that ",
-                "'association_FUN' fulfills requirements. 'association_FUN' ",
+                "'association.fun' fulfills requirements. 'association.fun' ",
                 "threw a following error:\n",  cond,
                 call. = FALSE)
         })
     } else {
         temp <- tryCatch({
-            suppressWarnings( do.call(association_FUN, args = c(list(feature_mat), list(...))) )
+            suppressWarnings( do.call(association.fun, args = c(list(feature_mat), list(...))) )
         },
         error = function(cond) {
             stop("Error occurred during calculation. Check, e.g., that ",
-                    "'association_FUN' fulfills requirements. 'association_FUN' ",
+                    "'association.fun' fulfills requirements. 'association.fun' ",
                     "threw a following error:\n",  cond,
                  call. = FALSE)
         })
@@ -1190,7 +1158,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     # If temp's length is not 1, then function does not return single numeric value for each pair
     if( length(temp) != 1 ){
         stop("Error occurred during calculation. Check that ", 
-            "'association_FUN' fulfills requirements.", 
+            "'association.fun' fulfills requirements.", 
             call. = FALSE)
     } 
     return(temp)
@@ -1202,32 +1170,32 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Input: Correlation table and thresholds
 # Output: Filtered correlation table (or NULL if there are no observations after filtering)
 .association_filter <- function(result,
-                                p_adj_threshold,
-                                cor_threshold, 
+                                p.adj.threshold,
+                                cor.threshold, 
                                 assay1,
                                 assay2,
-                                filter_self_correlations, 
+                                filter.self.cor, 
                                 verbose){
     # Give message if verbose == TRUE
     if(verbose){
       message( "Filtering results...\np_adj_threshold: ",
-                      ifelse(!is.null(p_adj_threshold),  p_adj_threshold, "-"), 
-                      ", cor_threshold: ", 
-                      ifelse(!is.null(cor_threshold), cor_threshold, "-"), 
-                      ", filter_self_correlations: ", 
-                      ifelse(filter_self_correlations,
-                             filter_self_correlations, "-"), "\n" )
+                      ifelse(!is.null(p.adj.threshold),  p.adj.threshold, "-"), 
+                      ", cor.threshold: ", 
+                      ifelse(!is.null(cor.threshold), cor.threshold, "-"), 
+                      ", filter.self.cor: ", 
+                      ifelse(filter.self.cor,
+                             filter.self.cor, "-"), "\n" )
     }
     
     # Which features have significant correlations?
-    if ( !is.null(result$p_adj) && !is.null(p_adj_threshold) ) {
+    if ( !is.null(result$p_adj) && !is.null(p.adj.threshold) ) {
         # Get those feature-pairs that have significant correlations
-        result <- result[result$p_adj < p_adj_threshold & !is.na(result$p_adj), ]
+        result <- result[result$p_adj < p.adj.threshold & !is.na(result$p_adj), ]
     }
     # Which features have correlation over correlation threshold?
-    if ( !is.null(cor_threshold) ) {
+    if ( !is.null(cor.threshold) ) {
         # Get those feature-pairs that have correlations over threshold
-        result <- result[abs(result$cor) > cor_threshold & !is.na(result$cor), ]
+        result <- result[abs(result$cor) > cor.threshold & !is.na(result$cor), ]
     }
     
     # If there are no significant correlations
@@ -1237,7 +1205,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     }
     
     # Filter self correlations if it's specified
-    if ( filter_self_correlations ) {
+    if ( filter.self.cor ) {
         # Take only those rows where features differ
         result <- result[result$Var1 != result$Var2, ]
     }
@@ -1435,7 +1403,7 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
 # Output: list of tau and p-value or just tau
 #' @importFrom DelayedMatrixStats rowSums2 colSums2
 #' @importFrom stats chisq.test
-.calculate_gktau <- function(x, y, test_significance = FALSE, show_warnings){
+.calculate_gktau <- function(x, y, test.signif = FALSE, show.warnings){
     # First, compute the IxJ contingency table between x and y
     Nij <- table(x, y, useNA="ifany")
     # Next, convert this table into a joint probability estimate
@@ -1457,14 +1425,14 @@ setMethod("getExperimentCrossCorrelation", signature = c(x = "ANY"),
     
     # If test significance is specified, then calculate significance with chi-squared test.
     # Are these two features independent or not?
-    if ( !test_significance ){
+    if ( !test.signif ){
         return(list(estimate = tau))
     } 
     # Do the Pearson's chi-squared test.
     # If user does not want warnings,
     # suppress warnings that might occur when there are ties, and exact p-value
     # cant be calculated
-    if( show_warnings ){
+    if( show.warnings ){
       temp <- chisq.test(x, y)
     } else {
       temp <- suppressWarnings( chisq.test(x, y) )

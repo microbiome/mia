@@ -12,36 +12,36 @@ test_that("splitOn", {
     set.seed(374)
     colData(x)$group <- sample(1:10, ncol(x), replace = TRUE)
     expect_error(splitOn(x, "group"))
-    expect_error(splitOn(x, "SampleType", MARGIN = 1))
-    expect_error(splitOn(x, "Phylum", MARGIN = 2))
-    expect_error(splitOn(x, x$SampleType, MARGIN = 1))
-    expect_error(splitOn(x, rowData(x)$Phylum, MARGIN = 2))
+    expect_error(splitOn(x, "SampleType", by = 1))
+    expect_error(splitOn(x, "Phylum", by = 2))
+    expect_error(splitOn(x, x$SampleType, by = 1))
+    expect_error(splitOn(x, rowData(x)$Phylum, by = 2))
     expect_error(splitOn(x))
     expect_error(splitOn(assay(x), x$SampleType))
-    expect_error(splitOn(x, "SampleType", use_names = 1))
-    expect_error(splitOn(x, "SampleType", use_names = "TRUE"))
-    expect_error(splitOn(x, "SampleType", update_rowTree = 1))
-    expect_error(splitOn(x, "SampleType", update_rowTree = "TRUE"))
+    expect_error(splitOn(x, "SampleType", use.names = 1))
+    expect_error(splitOn(x, "SampleType", use.names = "TRUE"))
+    expect_error(splitOn(x, "SampleType", update.tree = 1))
+    expect_error(splitOn(x, "SampleType", update.tree = "TRUE"))
     
     # Test that names of elemetns are correct
     list <- splitOn(x, "SampleType")
     expect_equal(names(list), as.character(unique(x$SampleType)) )
-    list <- splitOn(x, "SampleType", use_names = FALSE)
+    list <- splitOn(x, "SampleType", use.names = FALSE)
     expect_equal(names(list), NULL )
     
     # Test that col-wie split is done correctly
-    list <- splitOn(x, "group", MARGIN = 1)
+    list <- splitOn(x, "group", by = 1)
     expect_equal( colnames(list[[1]]), colnames(x) )
     expect_true( length(list) == 10 )
     
     # Test that row-wise split is done correctly
-    list <- splitOn(x, "group", MARGIN = 2)
+    list <- splitOn(x, "group", by = 2)
     expect_equal( rownames(list[[1]]), rownames(x) )
     expect_true( length(list) == 10 )
     
     # Test that number of tips of updated rowTree equals number of rows for
     # each tse in the list returned
-    list <- splitOn(x, "SampleType", update_rowTree = TRUE)
+    list <- splitOn(x, "SampleType", update.tree = TRUE)
     for (k in length(list)){
         expect_equal( length(rowTree(list[[k]], "phylo")$tip.label), 
                       nrow(list[[k]]) )
@@ -53,13 +53,13 @@ test_that("splitOn", {
     mod_list <- list
     mod_list[[1]] <- mod_list[[1]][1:2, 1:2]
     expect_error( unsplitOn(mod_list) )
-    expect_error(unsplitOn(list, update_rowTree = 1))
-    expect_error(unsplitOn(list, update_rowTree = "TRUE"))
+    expect_error(unsplitOn(list, update.tree = 1))
+    expect_error(unsplitOn(list, update.tree = "TRUE"))
     
     # Test that works
     x_sub <- x[1:100, 1:10]
     # Split
-    list <- splitOn(x_sub, "group", MARGIN = 1)
+    list <- splitOn(x_sub, "group", by = 1)
     # Unsplit
     unsplitted <- unsplitOn(list)
     # Order the data
@@ -70,7 +70,7 @@ test_that("splitOn", {
     
     x_sub <- x[1:100, 1:10]
     # Split
-    list <- splitOn(x_sub, "group", MARGIN = 2)
+    list <- splitOn(x_sub, "group", by = 2)
     # Unsplit
     unsplitted <- unsplitOn(list)
     # Order the data

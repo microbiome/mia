@@ -106,6 +106,40 @@ Changes in version 1.11.x
 + getExperimentCrossCorrelation fix: enable using of sampleMap in MAE.
 + Implemented the setTaxonomyRanks function to specify which ranks are recognized as taxonomy ranks.
 + Rename cluster to addCluster
-+ rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, 
-loadFromMetaphlan, loadFromHumann
++ rename importers loadFromBiom, loadFromQIIME2, readQZA, loadFromMothur, loadFromMetaphlan, loadFromHumann
++ fix typo in loadFromBiom definition (deprecate file)
 + deprecate subsetSamples, subsetFeatures and subsetTaxa
++ deprecate plotNMDS after moving it to miaViz 
++ rename estimateDivergence to addDivergence
++ Add details to documentation of function agglomerateByPrevalence
+
+Changes in version 1.13.x
++ Added new functions getMediation and addMediation
++ replace getExperiment* and testExperiment* functions with getCrossAssociation
++ Replace mergeRows and mergeCols with new function agglomerateByVariable
++ agglomerateByRank: bugfix related to agglomeration of non-existing tree
++ getHierarchyTree: bugfix related to empty cells in rowData
++ agglomerateByRank: bugfix: trees was not pruned correctly
++ rename meltAssay to meltSE
++ Rename countDominantFeatures and countDominantTaxa to summarizeDominance
++ rename subsetByPrevalent* and subsetByRare* to subsetByPrevalent and subsetByRare
++ Deprecate transformFeatures, transformSamples, transformCounts, Ztransform,
+  relAbundanceCounts
++ rename getRare* functions to getRare, getUnique* functions to getUnique, 
+  getTop* functions to getTop and getPrevalent* functions to getPrevalent
++ Rename subsampleCounts to rarefyAssay
++ Rename perSampleDominant* functions to getDominant and addPerSampleDominant* 
+  functions to addDominant
++ Rename splitByRanks to agglomerateByRanks and add option as.list
++ Explain that rarefyAssay returns a new SummarizedExperiment object that 
+  includes the newly added subsampled assay.
++ Fix bug in mergeFeaturesByPrevalence
++ new aliases calculateDPCoA to getDPCoA, calculateNMDS to getNMDS, calculateRDA to getRDA, 
+calculateCCA to getCCA
++ add informative error message in rarefyAssay on assays with strictly-negative values 
++ Use rbiom package in unifrac implementation
++ Updated parameter names to follow naming convention "parameter.name"
++ rename converters makeTreeSEFrom* to convertFrom* and makePhyloseqFromTreeSE to 
+convertToPhyloseq
++ add rowTree agglomeration and RefSeq agglomeration in agglomerateByPrevalence
++ Fix tree merging in unsplit and mergeSEs functions

@@ -5,14 +5,6 @@
 \alias{mergeSEs,SimpleList-method}
 \alias{mergeSEs,SummarizedExperiment-method}
 \alias{mergeSEs,list-method}
-\alias{full_join}
-\alias{full_join,ANY-method}
-\alias{inner_join}
-\alias{inner_join,ANY-method}
-\alias{left_join}
-\alias{left_join,ANY-method}
-\alias{right_join}
-\alias{right_join,ANY-method}
 \title{Merge SE objects into single SE object.}
 \usage{
 mergeSEs(x, ...)
@@ -22,8 +14,11 @@ mergeSEs(x, ...)
   assay.type = "counts",
   assay_name = NULL,
   join = "full",
+  missing.values = missing_values,
   missing_values = NA,
+  collapse.cols = collapse_samples,
   collapse_samples = FALSE,
+  collapse.rows = collapse_features,
   collapse_features = TRUE,
   verbose = TRUE,
   ...
@@ -32,22 +27,6 @@ mergeSEs(x, ...)
 \S4method{mergeSEs}{SummarizedExperiment}(x, y = NULL, ...)
 
 \S4method{mergeSEs}{list}(x, ...)
-
-full_join(x, ...)
-
-\S4method{full_join}{ANY}(x, ...)
-
-inner_join(x, ...)
-
-\S4method{inner_join}{ANY}(x, ...)
-
-left_join(x, ...)
-
-\S4method{left_join}{ANY}(x, ...)
-
-right_join(x, ...)
-
-\S4method{right_join}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link{SummarizedExperiment}} object or a list of
@@ -65,20 +44,26 @@ to be merged. (By default: \code{assay.type = "counts"})}
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
 when more than two objects are being merged.  (By default: \code{join = "full"})}
 
-\item{missing_values}{NA, 0, or a single character values specifying the notation
-of missing values. (By default: \code{missing_values = NA})}
+\item{missing.values}{NA, 0, or a single character values specifying the notation
+of missing values. (By default: \code{missing.values = NA})}
 
-\item{collapse_samples}{A boolean value for selecting whether to collapse identically
-named samples to one. (By default: \code{collapse_samples = FALSE})}
+\item{missing_values}{Deprecated. Use \code{missing.values} instead.}
 
-\item{collapse_features}{A boolean value for selecting whether to collapse identically
+\item{collapse.cols}{A boolean value for selecting whether to collapse identically
+named samples to one. (By default: \code{collapse.cols = FALSE})}
+
+\item{collapse_samples}{Deprecated. Use \code{collapse.cols} instead.}
+
+\item{collapse.rows}{A boolean value for selecting whether to collapse identically
 named features to one. Since all taxonomy information is taken into account,
 this concerns rownames-level (usually strain level) comparison. Often
 OTU or ASV level is just an arbitrary number series from sequencing machine
 meaning that the OTU information is not comparable between studies. With this
 option, it is possible to specify whether these strains are combined if their
 taxonomy information along with OTU number matches.
-(By default: \code{collapse_features = TRUE})}
+(By default: \code{collapse.rows = TRUE})}
+
+\item{collapse_features}{Deprecated. Use \code{collapse.rows} instead.}
 
 \item{verbose}{A single boolean value to choose whether to show messages.
 (By default: \code{verbose = TRUE})}
@@ -103,12 +88,12 @@ Equally named rows are interpreted as equal. Further
 matching based on \code{rowData} is not done. For samples, collapsing
 is disabled by default meaning that equally named samples that are stored
 in different objects are interpreted as unique. Collapsing can be enabled
-with \code{collapse_samples = TRUE} when equally named samples describe the same
+with \code{collapse.cols = TRUE} when equally named samples describe the same
 sample.
 
 If, for example, all rows are not shared with
 individual objects, there are missing values in \code{assays}. The notation of missing
-can be specified with the \code{missing_values} argument. If input consists of
+can be specified with the \code{missing.values} argument. If input consists of
 \code{TreeSummarizedExperiment} objects, also \code{rowTree}, \code{colTree}, and
 \code{referenceSeq} are preserved if possible. The data is preserved if
 all the rows or columns can be found from it.
@@ -128,9 +113,6 @@ to choose which rows are included.
 \item{\code{left} -- all the features of the first object}
 \item{\code{right} -- all the features of the second object}
 }
-
-You can also doe e.g., a full join by using a function \code{full_join} which is
-an alias for \code{mergeSEs}. Also other joining methods have dplyr-like aliases.
 
 The output depends on the input. If the input contains \code{SummarizedExperiment}
 object, then the output will be \code{SummarizedExperiment}. When all the input
@@ -152,7 +134,7 @@ tse <- mergeSEs(tse1, tse2)
 
 # Merge a list of TreeSEs
 list <- SimpleList(tse1, tse2, tse3)
-tse <- mergeSEs(list, assay.type = "counts", missing_values = 0)
+tse <- mergeSEs(list, assay.type = "counts", missing.values = 0)
 tse
 
 # With 'join', it is possible to specify the merging method. Subsets are used
@@ -160,13 +142,11 @@ tse
 tse_temp <- mergeSEs(tse[1:10, 1:10], tse[5:100, 11:20], join = "left")
 tse_temp
 
-# You can also do a left_join by using alias "left_join"
-tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
-
 # If your objects contain samples that describe one and same sample,
-# you can collapse equally named samples to one by specifying 'collapse_samples'
-tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
-                       collapse_samples = TRUE)
+# you can collapse equally named samples to one by specifying 'collapse.cols'
+tse_temp <- mergeSEs(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
+                       collapse.cols = TRUE,
+                       join = "inner")
 tse_temp
 
 # Merge all available assays

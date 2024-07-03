@@ -1,12 +1,11 @@
-#' Split/Unsplit a \code{SingleCellExperiment} by taxonomic ranks
+#' Agglomerate a \code{SummarizedExperiment} based on several taxonomic ranks
 #'
-#' \code{splitByRanks} takes a \code{SummarizedExperiment}, splits it along the
+#' \code{agglomerateByRanks} takes a \code{SummarizedExperiment}, splits it along the
 #' taxonomic ranks, aggregates the data per rank, converts the input to a 
 #' \code{SingleCellExperiment} objects and stores the aggregated data as 
-#' alternative experiments.
-#' 
-#' \code{unsplitByRanks} takes these alternative experiments and flattens them 
-#' again into a single \code{SummarizedExperiment}.
+#' alternative experiments. \code{unsplitByRanks} takes these alternative 
+#' experiments and flattens them again into a single 
+#' \code{SummarizedExperiment}.
 #'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -20,18 +19,29 @@
 #'   will be dropped. This setting can be tweaked by defining
 #'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
 #'
-#' @param keep_reducedDims \code{TRUE} or \code{FALSE}: Should the
+#' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this
 #'   breaks the link between the data used to calculate the reduced dims.
-#'   (default: \code{keep_reducedDims = FALSE})
+#'   (default: \code{keep.dimred = FALSE})
+#' 
+#' @param keep_reducedDims Deprecated. Use \code{keep.dimred} instead.
+#'   
+#' @param as.list \code{TRUE} or \code{FALSE}: Should the list of 
+#'   \code{SummarizedExperiment} objects be returned by the function 
+#'   \code{agglomerateByRanks} as a SimpleList or stored in altExps?
+#'   (default: \code{as.list = FALSE})
 #'
 #' @param ... arguments passed to \code{agglomerateByRank} function for
 #'   \code{SummarizedExperiment} objects and other functions.
 #'   See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.
 #'
 #' @return
-#' For \code{splitByRanks}: \code{SummarizedExperiment} objects in a 
-#' \code{SimpleList}.
+#' For \code{agglomerateByRanks}: 
+#' If \code{as.list = TRUE} : \code{SummarizedExperiment} objects in a 
+#' \code{SimpleList} 
+#' If \code{as.list = FALSE} : The \code{SummarizedExperiment} passed as a 
+#' parameter and now containing the \code{SummarizedExperiment} objects in its
+#' altExps
 #'
 #' For \code{unsplitByRanks}: \code{x}, with \code{rowData} and \code{assay}
 #' data replaced by the unsplit data. \code{colData} of x is kept as well
@@ -39,7 +49,7 @@
 #' \code{rowLinks} are not valid anymore.
 #'
 #' @details
-#' \code{splitByRanks} will use by default all available taxonomic ranks, but
+#' \code{agglomerateByRanks} will use by default all available taxonomic ranks, but
 #' this can be controlled by setting \code{ranks} manually. \code{NA} values
 #' are removed by default, since they would not make sense, if the result
 #' should be used for \code{unsplitByRanks} at some point. The input data 
@@ -55,42 +65,32 @@
 #' changes to \code{rowData} of the base object are not returned, whereas only 
 #' the \code{colData} of the base object is kept. 
 #'
-#' @seealso
-#' \code{\link[=splitOn]{splitOn}}
-#' \code{\link[=unsplitOn]{unsplitOn}}
-#' \code{\link[=merge-methods]{mergeRows}},
-#' \code{\link[scuttle:sumCountsAcrossFeatures]{sumCountsAcrossFeatures}},
-#' \code{\link[=agglomerate-methods]{agglomerateByRank}},
-#' \code{\link[SingleCellExperiment:altExps]{altExps}},
-#' \code{\link[SingleCellExperiment:splitAltExps]{splitAltExps}}
-#'
-#' @name splitByRanks
+#' @name agglomerate-methods
 #'
 #' @examples
 #' data(GlobalPatterns)
 #' # print the available taxonomic ranks
 #' taxonomyRanks(GlobalPatterns)
 #'
-#' # splitByRanks
-#' altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
-#' altExps(GlobalPatterns)
-#' altExp(GlobalPatterns,"Kingdom")
-#' altExp(GlobalPatterns,"Species")
+#' # agglomerateByRanks
+#' # 
+#' tse <- agglomerateByRanks(GlobalPatterns)
+#' altExps(tse)
+#' altExp(tse,"Kingdom")
+#' altExp(tse,"Species")
 #'
 #' # unsplitByRanks
-#' x <- unsplitByRanks(GlobalPatterns)
-#' x
+#' tse <- unsplitByRanks(tse)
+#' tse
+#'
 NULL
 
-################################################################################
-# splitByRanks
-
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
-setGeneric("splitByRanks",
+setGeneric("agglomerateByRanks",
            signature = "x",
            function(x, ...)
-               standardGeneric("splitByRanks"))
+               standardGeneric("agglomerateByRanks"))
 
 .norm_args_for_split_by_ranks <- function(na.rm, ...){
     args <- list(...)
@@ -113,45 +113,68 @@ setGeneric("splitByRanks",
     .check_taxonomic_ranks(ranks,x)
     #
     FUN <- function(rank){
-        do.call(agglomerateByRank,
-                c(list(x = x, rank = rank), args))
+        do.call(agglomerateByRank, c(list(x = x, rank = rank), args))
     }
     ans <- lapply(ranks,FUN)
     names(ans) <- ranks
     SimpleList(ans)
 }
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
-setMethod("splitByRanks", signature = c(x = "SummarizedExperiment"),
-    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
+setMethod("agglomerateByRanks", signature = c(x = "SummarizedExperiment"),
+    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
+        #
+        if( !.is_a_bool(as.list) ){
+            stop("'as.list' must be TRUE or FALSE.", call. = FALSE)
+        }
+        #
         args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
-        .split_by_ranks(x, ranks, args)
+        res <- .split_by_ranks(x, ranks = ranks, args)
+        # Add to altExp if user has specified to do so
+        if( !as.list ){
+            # Add results to alternative experiment
+            res <- .add_to_altExps(x, res)
+        }
+        return(res)
     }
 )
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
-setMethod("splitByRanks", signature = c(x = "SingleCellExperiment"),
-          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
-              args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
-              args[["strip_altexp"]] <- TRUE
-              .split_by_ranks(x, ranks, args)
-          }
+setMethod("agglomerateByRanks", signature = c(x = "SingleCellExperiment"),
+    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
+        args <- .norm_args_for_split_by_ranks(na.rm = na.rm, ...)
+        args[["altexp.rm"]] <- TRUE
+        callNextMethod()
+    }
 )
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
-setMethod("splitByRanks", signature = c(x = "TreeSummarizedExperiment"),
-          function(x, ranks = taxonomyRanks(x), na.rm = TRUE, ...){
-              callNextMethod()
-          }
+setMethod("agglomerateByRanks", signature = c(x = "TreeSummarizedExperiment"),
+    function(x, ranks = taxonomyRanks(x), na.rm = TRUE, as.list = FALSE, ...){
+        callNextMethod()
+    }
 )
+
+################################################################################
+# splitByRanks
+
+#' @rdname agglomerate-methods
+#' @export 
+splitByRanks <- function(x, ...){
+    # Hardcode as.list parameter
+    args <- list(...)[ !names(list(...)) %in% c("as.list") ]
+    args[["as.list"]] <- TRUE
+    args[["x"]] <- x
+    do.call(agglomerateByRanks, args)
+}
 
 ################################################################################
 # unsplitByRanks
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
 setGeneric("unsplitByRanks",
            signature = "x",
@@ -161,12 +184,12 @@ setGeneric("unsplitByRanks",
 
 #' @importFrom SingleCellExperiment reducedDims
 #' @importFrom SummarizedExperiment colData
-.unsplit_by <- function(x, ses, keep_reducedDims, ...){
+.unsplit_by <- function(x, ses, keep.dimred, ...){
     class_x <- class(x)
     #
     args <- list(assays = .unsplit_assays(ses),
                  colData = colData(x))
-    if(keep_reducedDims){
+    if(keep.dimred){
         args$reducedDims <- reducedDims(x)
     }
     rd <- .combine_rowData(ses)
@@ -178,7 +201,7 @@ setGeneric("unsplitByRanks",
 }
 
 #' @importFrom SingleCellExperiment altExpNames altExp altExps
-.unsplit_by_ranks <- function(x, ranks, keep_reducedDims, ...){
+.unsplit_by_ranks <- function(x, ranks, keep.dimred, ...){
     ae_names <- altExpNames(x)
     ae_names <- ae_names[ae_names %in% ranks]
     if(length(ae_names) == 0L){
@@ -190,29 +213,31 @@ setGeneric("unsplitByRanks",
         ses[[i]] <-
             .remove_with_empty_taxonomic_info(ses[[i]], names(ses)[i], NA)
     }
-    ans <- .unsplit_by(x, ses, keep_reducedDims, ...)
-    rownames(ans) <- getTaxonomyLabels(ans, make_unique = FALSE)
+    ans <- .unsplit_by(x, ses, keep.dimred, ...)
+    rownames(ans) <- getTaxonomyLabels(ans, make.unique = FALSE)
     ans
 }
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "SingleCellExperiment"),
-    function(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...){
+    function(x, ranks = taxonomyRanks(x), keep.dimred = keep_reducedDims, 
+            keep_reducedDims = FALSE, ...){
         # input check
-        if(!.is_a_bool(keep_reducedDims)){
-          stop("'keep_reducedDims' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(keep.dimred)){
+          stop("'keep.dimred' must be TRUE or FALSE.", call. = FALSE)
         }
         #
-        .unsplit_by_ranks(x, ranks = ranks, keep_reducedDims = keep_reducedDims,
+        .unsplit_by_ranks(x, ranks = ranks, keep.dimred = keep.dimred,
                           ...)
     }
 )
 
-#' @rdname splitByRanks
+#' @rdname agglomerate-methods
 #' @export
 setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ranks = taxonomyRanks(x), keep_reducedDims = FALSE, ...){
+    function(x, ranks = taxonomyRanks(x), keep.dimred = keep_reducedDims, 
+            keep_reducedDims = FALSE, ...){
         callNextMethod()
     }
 )
@@ -270,10 +295,13 @@ setMethod("unsplitByRanks", signature = c(x = "TreeSummarizedExperiment"),
         warning("'taxonomicLevel' column in rowData overwritten.",
                 call. = FALSE)
     }
-    tl <- mapply(rep,
-                 names(ses),
-                 vapply(ses,nrow,integer(1)))
-    tl <- unlist(unname(tl))
-    rd$taxonomicLevel <- factor(tl, unique(tl))
-    rd
+    # If TreeSEs that were combined had names, add names to rowData
+    if( !is.null(names(ses)) ){
+        tl <- mapply(rep,
+                     names(ses),
+                     vapply(ses,nrow,integer(1)))
+        tl <- unlist(unname(tl))
+        rd[["taxonomicLevel"]] <- factor(tl, unique(tl))
+    }
+    return(rd)
 }

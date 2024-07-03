@@ -7,36 +7,41 @@
 \item{file}{a single \code{character} value defining the file
 path of the Metaphlan file. The file must be in merged Metaphlan format.}
 
-\item{colData}{a DataFrame-like object that includes sample names in
+\item{col.data}{a DataFrame-like object that includes sample names in
 rownames, or a single \code{character} value defining the file
 path of the sample metadata file. The file must be in \code{tsv} format
-(default: \code{colData = NULL}).}
+(default: \code{col.data = NULL}).}
 
-\item{sample_meta}{a DataFrame-like object that includes sample names in
-rownames, or a single \code{character} value defining the file
-path of the sample metadata file. The file must be in \code{tsv} format
-(default: \code{sample_meta = NULL}).}
+\item{colData}{Deprecated. use \code{col.data} instead.}
 
-\item{phy_tree}{a single \code{character} value defining the file
+\item{sample_meta}{Deprecated. Use \code{col.data} instead.}
+
+\item{tree.file}{a single \code{character} value defining the file
 path of the phylogenetic tree.
-(default: \code{phy_tree = NULL}).}
+(default: \code{tree.file = NULL}).}
+
+\item{phy_tree}{Deprecated. Use \code{tree.file} instead.}
 
 \item{...}{additional arguments:
 \itemize{
-\item{\code{assay.type}:} {A single character value for naming
+\item \code{assay.type}: A single character value for naming
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-(default: \code{assay.type = "counts"})}
-\item{\code{assay_name}:} {A single \code{character} value for specifying which
+(default: \code{assay.type = "counts"})
+\item \code{assay_name}: A single \code{character} value for specifying which
 assay to use for calculation. (Please use \code{assay.type} instead.
-At some point \code{assay_name} will be disabled.)}
-\item{\code{removeTaxaPrefixes}:} {\code{TRUE} or \code{FALSE}: Should
+At some point \code{assay_name} will be disabled.)
+\item \code{prefix.rm}: \code{TRUE} or \code{FALSE}: Should
 taxonomic prefixes be removed? (default:
-\code{removeTaxaPrefixes = FALSE})}
-\item{\code{remove.suffix}:} {\code{TRUE} or \code{FALSE}: Should
+\code{prefix.rm = FALSE})
+\item \code{remove.suffix}: \code{TRUE} or \code{FALSE}: Should
 suffixes of sample names be removed? Metaphlan pipeline adds suffixes
 to sample names. Suffixes are formed from file names. By selecting
 \code{remove.suffix = TRUE}, you can remove pattern from end of sample
-names that is shared by all. (default: \code{remove.suffix = FALSE})}
+names that is shared by all. (default: \code{remove.suffix = FALSE})
+\item \code{set.ranks}: \code{TRUE} or \code{FALSE}: Should the columns
+in the rowData that are treated as taxonomy ranks be updated according to
+the ranks found in the imported data?
+(default: \code{set.ranks = FALSE})
 }}
 }
 \value{
@@ -84,10 +89,9 @@ and strain-level profiling of diverse microbial communities with bioBakery 3.
 \emph{eLife}. 10:e65088. doi: 10.7554/eLife.65088
 }
 \seealso{
-\code{\link[=importHUMAnN]{importHUMAnN}}
-\code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-\code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-\code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+\code{\link[=convert]{convertFromPhyloseq}}
+\code{\link[=convert]{convertFromBIOM}}
+\code{\link[=convert]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
 }

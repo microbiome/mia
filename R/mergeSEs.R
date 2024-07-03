@@ -16,20 +16,26 @@
 #' Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
 #' when more than two objects are being merged.  (By default: \code{join = "full"})
 #' 
-#' @param missing_values NA, 0, or a single character values specifying the notation
-#' of missing values. (By default: \code{missing_values = NA})
+#' @param missing.values NA, 0, or a single character values specifying the notation
+#' of missing values. (By default: \code{missing.values = NA})
 #' 
-#' @param collapse_samples A boolean value for selecting whether to collapse identically
-#' named samples to one. (By default: \code{collapse_samples = FALSE})
+#' @param missing_values Deprecated. Use \code{missing.values} instead.
 #' 
-#' @param collapse_features A boolean value for selecting whether to collapse identically
+#' @param collapse.cols A boolean value for selecting whether to collapse identically
+#' named samples to one. (By default: \code{collapse.cols = FALSE})
+#' 
+#' @param collapse_samples Deprecated. Use \code{collapse.cols} instead.
+#' 
+#' @param collapse.rows A boolean value for selecting whether to collapse identically
 #' named features to one. Since all taxonomy information is taken into account,
 #' this concerns rownames-level (usually strain level) comparison. Often
 #' OTU or ASV level is just an arbitrary number series from sequencing machine
 #' meaning that the OTU information is not comparable between studies. With this
 #' option, it is possible to specify whether these strains are combined if their
 #' taxonomy information along with OTU number matches.
-#' (By default: \code{collapse_features = TRUE})
+#' (By default: \code{collapse.rows = TRUE})
+#' 
+#' @param collapse_features Deprecated. Use \code{collapse.rows} instead.
 #' 
 #' @param verbose A single boolean value to choose whether to show messages. 
 #' (By default: \code{verbose = TRUE})
@@ -49,12 +55,12 @@
 #' matching based on \code{rowData} is not done. For samples, collapsing 
 #' is disabled by default meaning that equally named samples that are stored 
 #' in different objects are interpreted as unique. Collapsing can be enabled 
-#' with \code{collapse_samples = TRUE} when equally named samples describe the same
+#' with \code{collapse.cols = TRUE} when equally named samples describe the same
 #' sample. 
 #' 
 #' If, for example, all rows are not shared with
 #' individual objects, there are missing values in \code{assays}. The notation of missing
-#' can be specified with the \code{missing_values} argument. If input consists of
+#' can be specified with the \code{missing.values} argument. If input consists of
 #' \code{TreeSummarizedExperiment} objects, also \code{rowTree}, \code{colTree}, and
 #' \code{referenceSeq} are preserved if possible. The data is preserved if 
 #' all the rows or columns can be found from it.
@@ -74,9 +80,6 @@
 #'   \item{\code{left} -- all the features of the first object}
 #'   \item{\code{right} -- all the features of the second object}
 #' }
-#' 
-#' You can also doe e.g., a full join by using a function \code{full_join} which is 
-#' an alias for \code{mergeSEs}. Also other joining methods have dplyr-like aliases.
 #' 
 #' The output depends on the input. If the input contains \code{SummarizedExperiment}
 #' object, then the output will be \code{SummarizedExperiment}. When all the input
@@ -113,7 +116,7 @@
 #' 
 #' # Merge a list of TreeSEs
 #' list <- SimpleList(tse1, tse2, tse3)
-#' tse <- mergeSEs(list, assay.type = "counts", missing_values = 0)
+#' tse <- mergeSEs(list, assay.type = "counts", missing.values = 0)
 #' tse
 #' 
 #' # With 'join', it is possible to specify the merging method. Subsets are used
@@ -121,13 +124,11 @@
 #' tse_temp <- mergeSEs(tse[1:10, 1:10], tse[5:100, 11:20], join = "left")
 #' tse_temp
 #' 
-#' # You can also do a left_join by using alias "left_join"
-#' tse_temp <- left_join(tse[1:10, 1:10], tse[5:100, 11:20])
-#' 
 #' # If your objects contain samples that describe one and same sample,
-#' # you can collapse equally named samples to one by specifying 'collapse_samples'
-#' tse_temp <- inner_join(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
-#'                        collapse_samples = TRUE)
+#' # you can collapse equally named samples to one by specifying 'collapse.cols'
+#' tse_temp <- mergeSEs(list(tse[1:10, 1], tse[1:20, 1], tse[1:5, 1]), 
+#'                        collapse.cols = TRUE,
+#'                        join = "inner")
 #' tse_temp
 #' 
 #' # Merge all available assays
@@ -152,9 +153,10 @@ setGeneric("mergeSEs", signature = c("x"),
 #' @rdname mergeSEs
 #' @export
 setMethod("mergeSEs", signature = c(x = "SimpleList"),
-        function(x, assay.type="counts", assay_name = NULL, join = "full", 
-                 missing_values = NA, collapse_samples = FALSE,
-                 collapse_features = TRUE, verbose = TRUE, 
+        function(x, assay.type="counts", assay_name = NULL, join = "full",
+                missing.values = missing_values, missing_values = NA, 
+                collapse.cols = collapse_samples, collapse_samples = FALSE, 
+                collapse.rows = collapse_features, collapse_features = TRUE, verbose = TRUE, 
                  ... ){
             ################## Input check ##################
             # Check the objects 
@@ -188,23 +190,23 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
                      "when more than two objects are being merged.",
                      call. = FALSE)
             }
-            # Is missing_values one of the allowed ones
-            missing_values_bool <- length(missing_values) == 1L &&
-                (is.numeric(missing_values) && missing_values == 0) ||
-                .is_a_string(missing_values) || is.na(missing_values)
+            # Is missing.values one of the allowed ones
+            missing_values_bool <- length(missing.values) == 1L &&
+                (is.numeric(missing.values) && missing.values == 0) ||
+                .is_a_string(missing.values) || is.na(missing.values)
             # If not then give error
             if(  !missing_values_bool ){
-                stop("'missing_values' must be 0, NA, or a single character value.",
+                stop("'missing.values' must be 0, NA, or a single character value.",
                      call. = FALSE)
             }
-            # Check collapse_samples
-            if( !.is_a_bool(collapse_samples) ){
-                stop("'collapse_samples' must be TRUE or FALSE.",
+            # Check collapse.cols
+            if( !.is_a_bool(collapse.cols) ){
+                stop("'collapse.cols' must be TRUE or FALSE.",
                      call. = FALSE)
             }
-            # Check collapse_samples
-            if( !.is_a_bool(collapse_features) ){
-                stop("'collapse_features' must be TRUE or FALSE.",
+            # Check collapse.cols
+            if( !.is_a_bool(collapse.rows) ){
+                stop("'collapse.rows' must be TRUE or FALSE.",
                      call. = FALSE)
             }
             # Check verbose
@@ -221,8 +223,8 @@ setMethod("mergeSEs", signature = c(x = "SimpleList"),
             }
             # Merge objects
             tse <- .merge_SEs(
-                x, class, join, assay.type, missing_values, collapse_samples,
-                collapse_features, verbose)
+                x, class, join, assay.type, missing.values, collapse.cols,
+                collapse.rows, verbose, ...)
             return(tse)
         }
 )
@@ -260,70 +262,6 @@ setMethod("mergeSEs", signature = c(x = "list"),
           }
 )
 
-################################# full_join ####################################
-
-#' @rdname mergeSEs
-#' @export
-setGeneric("full_join", signature = c("x"),
-    function(x, ...)
-        standardGeneric("full_join"))
-
-#' @rdname mergeSEs
-#' @export
-setMethod("full_join", signature = c(x = "ANY"),
-    function(x, ...){
-        mergeSEs(x, join = "full", ...)
-    }
-)
-
-################################# inner_join ###################################
-
-#' @rdname mergeSEs
-#' @export
-setGeneric("inner_join", signature = c("x"),
-    function(x, ...)
-        standardGeneric("inner_join"))
-
-#' @rdname mergeSEs
-#' @export
-setMethod("inner_join", signature = c(x = "ANY"),
-    function(x, ...){
-        mergeSEs(x, join = "inner", ...)
-    }
-)
-
-################################# left_join ####################################
-
-#' @rdname mergeSEs
-#' @export
-setGeneric("left_join", signature = c("x"),
-    function(x, ...)
-        standardGeneric("left_join"))
-
-#' @rdname mergeSEs
-#' @export
-setMethod("left_join", signature = c(x = "ANY"),
-    function(x, ...){
-        mergeSEs(x, join = "left", ...)
-    }
-)
-
-################################# right_join ###################################
-
-#' @rdname mergeSEs
-#' @export
-setGeneric("right_join", signature = c("x"),
-    function(x, ...)
-        standardGeneric("right_join"))
-
-#' @rdname mergeSEs
-#' @export
-setMethod("right_join", signature = c(x = "ANY"),
-    function(x, ...){
-        mergeSEs(x, join = "right", ...)
-    }
-)
-
 ################################ HELP FUNCTIONS ################################
 
 ################################## .merge_SEs ##################################
@@ -334,8 +272,8 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 #' @importFrom SingleCellExperiment SingleCellExperiment
 .merge_SEs <- function(
-        x, class, join, assay.type, missing_values, collapse_samples,
-        collapse_features, verbose){
+        x, class, join, assay.type, missing.values, collapse.cols,
+        collapse.rows, verbose, ...){
 
     # Take first element and remove it from the list
     tse <- x[[1]]
@@ -381,10 +319,10 @@ setMethod("right_join", signature = c(x = "ANY"),
             temp <- .add_rowdata_to_rownames(temp, rownames_name = rownames_name)
 
             # Modify names if specified
-            if( !collapse_samples ){
+            if( !collapse.cols ){
                 temp <- .get_unique_names(tse, temp, "col")
             }
-            if( !collapse_features ){
+            if( !collapse.rows ){
                 temp <- .get_unique_names(tse, temp, "row")
             }
             # Merge data
@@ -393,7 +331,7 @@ setMethod("right_join", signature = c(x = "ANY"),
                 tse2 = temp,
                 join = join,
                 assay.type = assay.type,
-                missing_values = missing_values
+                missing.values = missing.values
                 )
             # If class is TreeSE, get trees and links, and reference sequences
             if( class == "TreeSummarizedExperiment" ){
@@ -414,11 +352,11 @@ setMethod("right_join", signature = c(x = "ANY"),
     refSeqs <- tse_args$refSeqs
     # If data includes rowTrees, add them
     if( !is.null(rowTrees) ){
-        tse <- .check_and_add_trees(tse, rowTrees, "row", verbose)
+        tse <- .check_and_add_trees(tse, rowTrees, "row", verbose, ...)
     }
     # If data includes colTrees, add them
     if( !is.null(colTrees) ){
-        tse <- .check_and_add_trees(tse, colTrees, "col", verbose)
+        tse <- .check_and_add_trees(tse, colTrees, "col", verbose, ...)
     }
     # If data includes reference sequences, add them
     if( !is.null(refSeqs) ){
@@ -538,10 +476,12 @@ setMethod("right_join", signature = c(x = "ANY"),
 
 # Input: tree data and TreeSE
 # Output: TreeSE
-.check_and_add_trees <- function(tse, trees_and_links, MARGIN, verbose){
+#' @importFrom TreeSummarizedExperiment changeTree
+.check_and_add_trees <- function(
+        tse, trees_and_links, MARGIN = "row", verbose = FALSE, ...){
     # Give a message if verbose is specified
     if( verbose ){
-        message("Adding ", MARGIN, "Tree(s)...")
+        message("Merging ", MARGIN, "Tree...")
     }
     # Get trees
     trees <- trees_and_links$trees
@@ -561,10 +501,12 @@ setMethod("right_join", signature = c(x = "ANY"),
                 "is discarded.", call. = FALSE)
         return(tse)
     }
-    
     # If there are multiple trees, select non-duplicated trees; the largest
     # take the precedence, remove duplicated rowlinks --> each row is presented
     # in the set only once --> remove trees that do not have any values anymore.
+    # The aim is to subset the dataset so that it is easier to handle in tree
+    # binding step for instance. Otherwise, it would lead to huge tree that
+    # might exceed memory.
     if( length(trees) > 1 ){
         # Sort trees --> trees with highest number of taxa first
         max_trees <- table(links$whichTree)
@@ -579,28 +521,70 @@ setMethod("right_join", signature = c(x = "ANY"),
         # Subset trees
         trees <- trees[unique(links$whichTree)]
     }
-    
-    # Order the data to match created TreeSE
+    # Combine trees into single tree.
+    tree <- .merge_trees(trees, links, ...)
+    # Order links so that the order matches with TreeSE
     links <- links[rownames(tse), ]
-    trees <- trees[unique(links$whichTree)]
-    
-    # Create a LinkDataFrame based on the link data
-    links <- LinkDataFrame(
-        nodeLab = links[["nodeLab"]],
-        nodeNum = links[["nodeNum"]],
-        nodeLab_alias = links[["nodeLab_alias"]],
-        isLeaf = links[["isLeaf"]],
-        whichTree = links[["whichTree"]]
-    )
     # Add the data in correct slot based on MARGIN
-    if(MARGIN == "row" ){
-        tse@rowTree <- trees
-        tse@rowLinks <- links
-    } else{
-        tse@colTree <- trees
-        tse@colLinks <- links
-    }
+    args <- list(tse, tree, links[["nodeLab"]])
+    arg_names <- switch(
+        MARGIN,
+        "row" = c("x", "rowTree", "rowNodeLab"),
+        "col" = c("x", "colTree", "colNodeLab"))
+    names(args) <- arg_names
+    tse <- do.call(changeTree, args)
     return(tse)
+}
+
+################################# .merge_trees #################################
+# This function merges list of trees into single tree.
+
+# Input: list of trees and link DataFrame
+# Output: single tree
+#' @importFrom ape bind.tree as.phylo
+#' @importFrom dplyr as_tibble
+.merge_trees <- function(trees, links, ...){
+    # Bind trees to combine one large tree
+    # Take first tree
+    tree <- trees[[1]]
+    trees[[1]] <- NULL
+    # Loop through trees and bind them
+    for( t in trees ){
+        # Bind from root node if available. If not, then bind from node 0.
+        tree <- bind.tree(tree, t)
+    }
+    # Prune the tree so that it includes rows in tips. This step removes
+    # additional tips, i.e., only tips that are in rows are preserved. Also
+    # it simplifies the structure preserving the necessary information on the
+    # dataset. Moreover, it ensures that there are no duplicated tips which
+    # might be the case if the merged trees had shared taxa in addition to
+    # unique taxa.
+    tree <- .prune_tree(tree, links[["nodeLab"]], ...)
+    # At this point, we have one large tree that includes all trees. The trees
+    # are bind without merging. This means that we can have duplicated nodes
+    # and branches. For instance, there can be a node "family x" which is
+    # present in two trees that were merged. This means that "family x" is now
+    # present 2 times in result tree. Moreover, descendant nodes of these
+    # "family x" nodes can differ, which means that we cannot just remove
+    # duplicated nodes. Instead, we have to relink nodes so that each node
+    # label is present only one time and all its child nodes are preserved.
+    if( any(duplicated( c(tree$tip.label, tree$node.label) )) ){
+        # Convert to table so that we can modify the data
+        old_tree <- tree <- as_tibble(tree)
+        # Remove duplicated nodes
+        tree <- tree[ !duplicated(tree[["label"]]), ]
+        # Reindex nodes
+        tree[["node"]] <- seq_len(nrow(tree))
+        # Reorder the old tree to match new trees parent node order
+        old_tree <- old_tree[ match(tree[["parent"]], old_tree[["node"]]), ]
+        # Reindex parent nodes of new tree
+        parent <- tree[ match(old_tree[["label"]], tree[["label"]]), ]
+        parent <- parent[["node"]]
+        tree[["parent"]] <- parent
+        # Convert back to phylo object
+        tree <- as.phylo(tree)
+    }
+    return(tree)
 }
 
 ############################### .get_TreeSE_args ###############################
@@ -910,7 +894,7 @@ setMethod("right_join", signature = c(x = "ANY"),
 # Input: Two SEs
 # Output: A list of arguments
 .merge_SummarizedExperiments <- function(tse1, tse2, join,  
-                                         assay.type, missing_values){
+                                         assay.type, missing.values){
     # Merge rowData
     rowdata <- .merge_rowdata(tse1, tse2, join)
     # Merge colData
@@ -918,7 +902,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     # Merge assays
     assays <- lapply(assay.type, .merge_assay,
                     tse1 = tse1, tse2 = tse2,
-                    join = join, missing_values = missing_values,
+                    join = join, missing.values = missing.values,
                     rd = rowdata, cd = coldata)
     assays <- SimpleList(assays)
     names(assays) <- assay.type
@@ -940,7 +924,7 @@ setMethod("right_join", signature = c(x = "ANY"),
 # missing values, merged rowData, and merged colData
 # Output: Merged assay
 .merge_assay <- function(tse1, tse2, assay.type, join,
-                         missing_values, rd, cd){
+                         missing.values, rd, cd){
     # Take assays
     assay1 <- assay(tse1, assay.type)
     assay2 <- assay(tse2, assay.type)
@@ -952,7 +936,7 @@ setMethod("right_join", signature = c(x = "ANY"),
     assay <- as.matrix(assay)
     
     # Fill missing values
-    assay[ is.na(assay) ] <- missing_values
+    assay[ is.na(assay) ] <- missing.values
     
     # Order the assay based on rowData and colData
     assay <- assay[ match(rownames(rd), rownames(assay)), , drop = FALSE ]

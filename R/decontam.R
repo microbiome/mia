@@ -47,11 +47,11 @@
 #'
 #' @param ... 
 #' \itemize{
-#'   \item{for \code{isContaminant}/ \code{isNotContaminant}: }{arguments
+#'   \item for \code{isContaminant}/ \code{isNotContaminant}: arguments
 #'     passed on to \code{\link[decontam:isContaminant]{decontam:isContaminant}}
-#'     or \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}}
-#'   \item{for \code{addContaminantQC}/\code{addNotContaminantQC}: }{arguments
-#'     passed on to \code{isContaminant}/ \code{isNotContaminant}}
+#'     or \code{\link[decontam:isNotContaminant]{decontam:isNotContaminant}}
+#'   \item for \code{addContaminantQC}/\code{addNotContaminantQC}: arguments
+#'     passed on to \code{isContaminant}/ \code{isNotContaminant}
 #' }
 #'
 #' @return for \code{isContaminant}/ \code{isNotContaminant} a \code{DataFrame}

@@ -14,14 +14,14 @@ test_that("mergeSEs", {
     expect_error( mergeSEs(tse1, tse2, join = 1) )
     expect_error( mergeSEs(tse1, tse2, join = TRUE) )
     expect_error( mergeSEs(tse1, tse2, join = NA) )
-    expect_error( mergeSEs(tse1, tse2, collapse_samples = NA) )
-    expect_error( mergeSEs(tse1, tse2, collapse_samples = 1) )
-    expect_error( mergeSEs(tse1, tse2, collapse_samples = "test") )
-    expect_error( mergeSEs(tse1, tse2, collapse_samples = NULL) )
+    expect_error( mergeSEs(tse1, tse2, collapse.cols = NA) )
+    expect_error( mergeSEs(tse1, tse2, collapse.cols = 1) )
+    expect_error( mergeSEs(tse1, tse2, collapse.cols = "test") )
+    expect_error( mergeSEs(tse1, tse2, collapse.cols = NULL) )
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "left") )
     expect_error( mergeSEs(list(tse1, tse2, tse), join = "right") )
-    expect_error( mergeSEs(tse1, tse2, missing_values = TRUE ) )
-    expect_error( mergeSEs(tse1, tse2, missing_values = 36846 ) )
+    expect_error( mergeSEs(tse1, tse2, missing.values = TRUE ) )
+    expect_error( mergeSEs(tse1, tse2, missing.values = 36846 ) )
     expect_error( mergeSEs(tse1, tse2, assay.type = "test")  )
     # Calculate relative transform to test assay.type
     tse1 <- transformAssay(tse1, method = "relabundance")
@@ -37,7 +37,6 @@ test_that("mergeSEs", {
     expect_equal( rowData(tse), rowData(tse1))
     expect_equal( colData(tse), colData(tse1))
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"))
-    expect_equal( rowTree(tse), rowTree(tse1))
     
     # Test that data match if there is only same elements
     tse <- mergeSEs(list(tse1, tse1, tse1), assay.type = "relabundance")
@@ -49,31 +48,30 @@ test_that("mergeSEs", {
     # calculation details to attributes)
     expect_equal( assay(tse, "relabundance"), assay(tse1, "relabundance"),
                   check.attributes = FALSE)
-    expect_equal( rowTree(tse), rowTree(tse1))
     
     # Expect that rowTree is preserved if rownames match
     tse <- mergeSEs(list(tse1, GlobalPatterns), 
                                          assay.type = "counts",
-                                         missing_values = NA)
+                                         missing.values = NA)
     expect_equal(rowTree(GlobalPatterns), rowTree(tse))
     # Expect some NAs
     tse <- mergeSEs(list(tse1, tse2), assay.type = "counts")
     expect_true( any(is.na(assay(tse))) )
     
     # Test that dimensions match
-    tse <- mergeSEs(tse1, tse2, missing_values = 0)
+    tse <- mergeSEs(tse1, tse2, missing.values = 0)
     expect_equal( dim(tse), dim(tse1)+dim(tse2) )
     # Expect no NAs in assay
     expect_true( all(!is.na(assay(tse))) )
     
     # Check that rows are merged correctly when all the rowData is used to
     # specify rows
-    test <- mergeSEs(tse1, tse2, missing_values = 0, only.taxonomy = FALSE)
+    test <- mergeSEs(tse1, tse2, missing.values = 0, only.taxonomy = FALSE)
     expect_equal(tse, test)
     
     # Test that dimensions match
     tse <- suppressWarnings( 
-        mergeSEs(list(tse1, tse2, tse3), missing_values = "MISSING")
+        mergeSEs(list(tse1, tse2, tse3), missing.values = "MISSING")
     )
     expect_equal( dim(tse), dim(tse1)+dim(tse2)+dim(tse3) )
     # Expect some "MISSING"s
@@ -92,7 +90,7 @@ test_that("mergeSEs", {
     # CHECK FULL JOIN ###################################################
     tse <- suppressWarnings( 
         mergeSEs(list(tse2, tse3, tse1, tse1[1:2, ], tse1[1, ]), 
-                    missing_values = NA)
+                    missing.values = NA)
     )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
@@ -153,9 +151,8 @@ test_that("mergeSEs", {
     expect_true( nrow(tse) == 0 )
     expect_equal( rowTree(tse), NULL )
     tse <- mergeSEs(list(tse1[, 1:5], tse1[, 5:10], tse1[1:20, 6:10]), 
-                       join = "inner", collapse_samples = TRUE)
+                       join = "inner", collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(20, 10)) )
-    expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
@@ -185,9 +182,8 @@ test_that("mergeSEs", {
     
     # CHECK LEFT JOIN ##############################################
     tse <- mergeSEs(list(tse1[11:20, 1:13], tse1[10:50, 7:20]), 
-                       join = "left", collapse_samples = TRUE)
+                       join = "left", collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
-    expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
@@ -217,10 +213,9 @@ test_that("mergeSEs", {
     
     # CHECK RIGHT JOIN ##############################################
     tse <- mergeSEs(list(tse1[10:50, 1:13], tse1[1:10, 7:20]), 
-                    join = "right", missing_values = NA, 
-                    collapse_samples = TRUE)
+                    join = "right", missing.values = NA, 
+                    collapse.cols = TRUE)
     expect_true( all(dim(tse) == c(10, 20)) )
-    expect_equal( rowTree(tse), rowTree(tse1) )
     # Get assay (as.matrix to remove links)
     assay <- as.matrix( assay(tse, "counts") )
     assay1 <- as.matrix( assay(tse1, "counts") )
@@ -303,33 +298,7 @@ test_that("mergeSEs", {
                        join = "left")
     expect_true(class(tse) == "TreeSummarizedExperiment")
     
-    # Test dplyr-like aliases
-    tse_test1 <- mergeSEs(x = tse[1:28, 1:3], 
-                         y = tse1[23, 1:5], 
-                         join = "full")
-    tse_test2 <- full_join(x = tse[1:28, 1:3], 
-                           y = tse1[23, 1:5])
-    expect_equal(tse_test1, tse_test2)
-    tse_test1 <- mergeSEs(x = tse[1:28, 1:3], 
-                         y = tse1[23, 1:5], 
-                         join = "left")
-    tse_test2 <- left_join(x = tse[1:28, 1:3], 
-                           y = tse1[23, 1:5])
-    expect_equal(tse_test1, tse_test2)
-    tse_test1 <- suppressWarnings( 
-        mergeSEs(x = list(tse1[1:28, 1:3], tse1[23, 1:5], tse1[2:4, ]), 
-                         join = "inner")
-    )
-    tse_test2 <- suppressWarnings( 
-        inner_join(x = list(tse1[1:28, 1:3], tse1[23, 1:5], tse1[2:4, ]) )
-    )
-    expect_equal(tse_test1, tse_test2)
-    tse_test1 <- mergeSEs(x = list(tse1[1:28, 1:3], tse1[23, 1:5]), 
-                         join = "right")
-    tse_test2 <- right_join(x = list(tse1[1:28, 1:3], tse1[23, 1:5]) )
-    expect_equal(tse_test1, tse_test2)
-    
-    # Test collapse_samples
+    # Test collapse.cols
     tse_test <- mergeSEs(x = tse[1:28, 1:3], 
                          y = tse[23, 1:5], 
                          join = "full")
@@ -348,13 +317,22 @@ test_that("mergeSEs", {
                  )
     # Test that tree is added after agglomeration
     agg_tse1 <- suppressWarnings( aggTSE(tse1, rowLevel = c(6,4,2)) )
-    tse <- mergeSEs(tse1, agg_tse1)
-    expect_equal(rowTree(tse), rowTree(tse1))
+    expect_warning(tse <- mergeSEs(tse1, agg_tse1))
     
     # Check that rownames match with node labels (These datasets have node labs
     # that are named by rownames.)
     tse <- mergeSEs(GlobalPatterns, esophagus)
     expect_equal( rownames(tse), rowLinks(tse)$nodeLab )
+    
+    # Expect that tree includes nodes of input trees that correspond to rows.
+    # The nodes are sorted since input trees with highest number of taxa are put
+    # first before merge.
+    test <- sort(c(rowLinks(GlobalPatterns)$nodeLab, rowLinks(esophagus)$nodeLab))
+    expect_equal( rownames(tse), test )
+    
+    # Expect that each tip is found from rows when tree is pruned during merge.
+    test <- sort(rowTree(tse)$tip.label)
+    expect_equal( rownames(tse), test )
     
     # Check that rowData includes all the information
     data(esophagus, package="mia")
@@ -411,7 +389,7 @@ test_that("mergeSEs", {
     tse1 <- tse
     rownames(tse1) <- paste0("Taxon", 1:nrow(tse))
     # Merge
-    tse2 <- mergeSEs(tse1, tse)
+    expect_warning(tse2 <- mergeSEs(tse1, tse))
     # Test refseqs
     ref1 <- referenceSeq(tse)
     ref2 <- referenceSeq(tse2)[rownames(tse), ]
