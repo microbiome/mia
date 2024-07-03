@@ -409,8 +409,8 @@ setMethod(
         mat <- assay(x, assay.type)
         # Check that it is numeric
         if( !is.numeric(mat) ){
-            stop("The abundance matrix specificied by 'assay.type' must be
-                numeric.", call. = FALSE)
+            stop("The abundance matrix specificied by 'assay.type' must be ",
+                "numeric.", call. = FALSE)
         }
         # Subset and rename rows of the assay to correspond node_labs
         if( !is.null(node.label) ){
