@@ -256,4 +256,5 @@ def main(data_dir: Path) -> None:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
-    main(Path(__file__).parent)
+    main(Path(__file__).parents[1] / "extdata" / "testdata")
+
