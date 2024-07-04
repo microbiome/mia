@@ -27,7 +27,7 @@ Authors@R:
       person(given = "Muluh", family = "Muluh", role=c("ctb")),
       person(given = "Giulio", family = "Benedetti", role=c("ctb")),
       person(given = c("Moritz", "Emanuel"), family = "Beber",
-             email = "midnighter@posteo.net", role = c("ctb),
+             email = "moritz.beber@igdore.org", role = c("ctb"),
              comment = c(ORCID = "0000-0003-2406-1978")))
 Title: Microbiome analysis
 Description:
