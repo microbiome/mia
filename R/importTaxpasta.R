@@ -1,18 +1,31 @@
-#' Import taxpasta-specific BIOM results to `TreeSummarizedExperiment`
+#' Import taxpasta-specific BIOM results to \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'
 #' @param filename A character vector with one element that denotes the file
 #'   path to a BIOM file.
 #'
-#' @return A [TreeSummarizedExperiment::TreeSummarizedExperiment()] object.
-#' @export
+#' @return A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 #'
 #' @examples
 #' tse <- importTaxpasta(system.file("extdata/testdata/complete.biom", package = "mia", mustWork = TRUE))
 #'
-#' @importFrom rhdf5 h5read
+#' @seealso
+#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
+#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
+#'
+#' @name importTaxpasta
+NULL
+
+#'
+#' @rdname importTaxpasta
+#' @export
+#'
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom SingleCellExperiment altExps
 importTaxpasta <- function(file) {
+    # Check dependencies.
+    .require_package("rhdf5")
+    .require_package("biomformat")
+
     # Validate the input.
     if (!.is_non_empty_string(file)) {
         stop("'filename' must be a single character value.", call. = FALSE)
@@ -23,7 +36,7 @@ importTaxpasta <- function(file) {
 
     # We read our own HDF5 array to later be able to read observation group
     # metadata, which [biomformat::read_biom()] currently doesn't do.
-    raw <- h5read(file, "/", read.attributes = TRUE)
+    raw <- rhdf5::h5read(file, "/", read.attributes = TRUE)
     biom <- .create_biom(raw)
 
     # Without taxonomic information, we return a simple TreeSE.
@@ -48,12 +61,13 @@ importTaxpasta <- function(file) {
 
 #' Create BIOM object from raw HDF5 array
 #'
-#' `.create_biom()` is an internal function used by [importTaxpasta()], that
-#' more or less replicates [biomformat::read_hdf5_biom()].
+#' \code{.create_biom} is an internal function used by
+#' \code{\link[=importTaxpasta]{importTaxpasta}}, that more or less replicates
+#' \code{\link[biomformat:read_hdf5_biom]{read_hdf5_biom}}.
 #'
 #' @param h5array A raw HDF5 array read from a BIOM file.
 #'
-#' @return A [biomformat::biom()] object.
+#' @return A \code{\link[biomformat:biom]{biom}} object.
 #'
 #' @keywords internal
 #' @noRd
@@ -82,8 +96,9 @@ importTaxpasta <- function(file) {
 
 #' Get taxonomic ranks from observation group metadata
 #'
-#' `.get_ranks()` is an internal function used by [importTaxpasta()], that reads
-#' the string of semi-colon separated ranks from the group observation metadata.
+#' \code{.get_ranks} is an internal function used by
+#' \code{\link[=importTaxpasta]{importTaxpasta}}, that reads the string of
+#' semi-colon separated ranks from the group observation metadata.
 #'
 #' @param h5array A raw HDF5 array read from a BIOM file.
 #'
@@ -101,22 +116,20 @@ importTaxpasta <- function(file) {
 
 #' Recreate observation metadata
 #'
-#' `.create_row_data()` is an internal function used by [importTaxpasta()], that
-#' returns a copy of the BIOM object's observation metadata, where the headers
-#' of the taxonomy columns have been replaced with the correct taxonomic rank
-#' names.
+#' \code{.create_row_data} is an internal function used by
+#' \code{\link[=importTaxpasta]{importTaxpasta}}, that returns a copy of the BIOM
+#' object's observation metadata, where the headers of the taxonomy columns have
+#' been replaced with the correct taxonomic rank names.
 #'
 #' @param biom A BIOM object.
 #' @param ranks A character vector of taxonomic ranks in order.
 #'
-#' @return A [data.frame()] with observation metadata.
-#'
-#' @importFrom biomformat observation_metadata
+#' @return A \code{\link[base:data.frame]{data.frame}} with observation metadata.
 #'
 #' @keywords internal
 #' @noRd
 .create_row_data <- function(biom, ranks) {
-    meta <- observation_metadata(biom)
+    meta <- biomformat::observation_metadata(biom)
     column.names <- colnames(meta)
     indeces <- startsWith(column.names, "taxonomy")
 
