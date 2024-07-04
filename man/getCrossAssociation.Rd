@@ -267,9 +267,10 @@ mae[[1]] <- addAlpha(mae[[1]])
 # colData_variable works similarly to assay.type. Instead of fetching an assay
 # named assay.type from assay slot, it fetches a column named colData_variable
 # from colData.
-result <- getCrossAssociation(mae[[1]], assay.type1 = "counts", 
-                                 col.var2 = c("shannon", "coverage"),
-                                 test.signif = TRUE)
+result <- getCrossAssociation(
+    mae[[1]], assay.type1 = "counts", 
+    col.var2 = c("shannon_diversity", "coverage_diversity"),
+    test.signif = TRUE)
                                         
 }
 \author{
