@@ -28,9 +28,6 @@ test_that("loading a taxpasta BIOM file returns a TreeSummarizedExperiment", {
   expect_s4_class(result, "TreeSummarizedExperiment")
 })
 
-requireNamespace("ape", quietly = TRUE)
-requireNamespace("TreeSummarizedExperiment", quietly = TRUE)
-
 test_that("the TreeSummarizedExperiment has expected dimensions", {
   expect_identical(dim(result), c(6L, 2L))
 })
