@@ -12,18 +12,18 @@
 #' @importFrom rhdf5 h5read
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom SingleCellExperiment altExps
-importTaxpasta <- function(filename) {
+importTaxpasta <- function(file) {
     # Validate the input.
-    if (!.is_non_empty_string(filename)) {
+    if (!.is_non_empty_string(file)) {
         stop("'filename' must be a single character value.", call. = FALSE)
     }
-    if (!file.exists(filename)) {
-        stop(filename, " not found.", call. = FALSE)
+    if (!file.exists(file)) {
+        stop(file, " not found.", call. = FALSE)
     }
 
     # We read our own HDF5 array to later be able to read observation group
     # metadata, which [biomformat::read_biom()] currently doesn't do.
-    raw <- h5read(filename, "/", read.attributes = TRUE)
+    raw <- h5read(file, "/", read.attributes = TRUE)
     biom <- .create_biom(raw)
 
     # Without taxonomic information, we return a simple TreeSE.
