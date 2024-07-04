@@ -38,6 +38,7 @@ Other contributors:
   \item Basil Courbayre [contributor]
   \item Muluh Muluh [contributor]
   \item Giulio Benedetti [contributor]
+  \item Moritz Emanuel Beber \email{moritz.beber@igdore.org} (\href{https://orcid.org/0000-0003-2406-1978}{ORCID}) [contributor]
 }
 
 }

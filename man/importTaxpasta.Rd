@@ -2,21 +2,25 @@
 % Please edit documentation in R/importTaxpasta.R
 \name{importTaxpasta}
 \alias{importTaxpasta}
-\title{Import taxpasta-specific BIOM results to \code{TreeSummarizedExperiment}}
+\title{Import taxpasta-specific BIOM results to \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 \usage{
-importTaxpasta(filename)
+importTaxpasta(file)
 }
 \arguments{
 \item{filename}{A character vector with one element that denotes the file
 path to a BIOM file.}
 }
 \value{
-A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment::TreeSummarizedExperiment()}} object.
+A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 }
 \description{
-Import taxpasta-specific BIOM results to \code{TreeSummarizedExperiment}
+Import taxpasta-specific BIOM results to \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 }
 \examples{
-tse <- importTaxpasta("profiles.biom")
+tse <- importTaxpasta(system.file("extdata/testdata/complete.biom", package = "mia", mustWork = TRUE))
 
+}
+\seealso{
+\code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
+\code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
 }
