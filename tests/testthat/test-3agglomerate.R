@@ -14,14 +14,14 @@ test_that("agglomerate", {
     rowData(xtse) <- tax_data
     # mergeRows for agglomerateByRank
     tax_factors <- mia:::.get_tax_groups(xtse, col = 2)
-    actual_family <- actual <- agglomerateByVariable(xtse, MARGIN = "rows",
+    actual_family <- actual <- agglomerateByVariable(xtse, by = "rows",
                                                     f = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(8,10))
     expect_equal(assays(actual)$mat[8,1],c(c_NA = 8))
     expect_equal(assays(actual)$mat[7,1],c(c_h = 16))
     tax_factors <- mia:::.get_tax_groups(xtse, col = 1)
-    actual_phylum <- actual <- agglomerateByVariable(xtse, MARGIN = "rows", 
+    actual_phylum <- actual <- agglomerateByVariable(xtse, by = "rows", 
                                                     f = tax_factors)
     expect_s4_class(actual,class(xtse))
     expect_equal(dim(actual),c(3,10))
@@ -99,7 +99,7 @@ test_that("agglomerate", {
     all_phyla <- unique( rowData(tse)$Phylum )
     
     # When na.rm = FALSE, then phyla should also include NA --> one extra row
-    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Phylum", na.rm = FALSE)
+    test0 <- agglomerateByVariable(tse, by = 1, f = "Phylum", na.rm = FALSE)
     test1 <- agglomerateByRank(tse, rank = "Phylum", na.rm = FALSE)
     
     # Test that dimentionality is the same for merging object by agglomerateByRank
@@ -108,7 +108,7 @@ test_that("agglomerate", {
     expect_equal(nrow(test1), length(all_phyla))
     
     # When na.rm = TRUE, there should be as many rows as there are non-NA phyla
-    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Phylum", na.rm = TRUE)
+    test0 <- agglomerateByVariable(tse, by = 1, f = "Phylum", na.rm = TRUE)
     test1 <- agglomerateByRank(tse, rank = "Phylum", na.rm = TRUE)
     
     # Test that dimentionality is the same when NA values are removed.
@@ -116,7 +116,7 @@ test_that("agglomerate", {
     expect_equal(nrow(test1), length( all_phyla[!is.na(all_phyla)] ))
     
     # Check that there are more taxa when agglomeration is to "Species" level
-    test0 <- agglomerateByVariable(tse, MARGIN = 1, f = "Species", na.rm = FALSE)
+    test0 <- agglomerateByVariable(tse, by = 1, f = "Species", na.rm = FALSE)
     test1 <- agglomerateByRank(tse, rank = "Species", na.rm = FALSE)
     expect_equal(nrow(test0), 945)
     expect_equal(nrow(test1), 2307)

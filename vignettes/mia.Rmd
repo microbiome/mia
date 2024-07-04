@@ -280,12 +280,12 @@ data(esophagus, package = "phyloseq")
 
 ```{r}
 esophagus
-esophagus <- makeTreeSEFromPhyloseq(esophagus)
+esophagus <- convertFromPhyloseq(esophagus)
 esophagus
 ```
 
 For more details have a look at the man page, for examples 
-`?makeTreeSEFromPhyloseq`.
+`?convert`.
 
 ## General wrapper functions 
 

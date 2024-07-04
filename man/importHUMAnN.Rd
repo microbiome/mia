@@ -68,9 +68,9 @@ microbial communities with bioBakery 3. \emph{eLife}. 10:e65088.
 }
 \seealso{
 \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
-\code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
-\code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-\code{\link[=makeTreeSEFromDADA2]{makeTreeSEFromDADA2}}
+\code{\link[=convert]{convertFromPhyloseq}}
+\code{\link[=convert]{convertFromBIOM}}
+\code{\link[=convert]{convertFromDADA2}}
 \code{\link[=importQIIME2]{importQIIME2}}
 \code{\link[=importMothur]{importMothur}}
 }

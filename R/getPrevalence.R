@@ -20,11 +20,6 @@
 #' @param sort logical scalar: Should the result be sorted by prevalence?
 #'   (default: \code{FALSE})
 #'
-#' @param as.relative logical scalar: Should the detection threshold be applied
-#'   on compositional (relative) abundances? (default: \code{FALSE})
-#' 
-#' @param as_relative Deprecated. Use \code{as.relative} instead.
-#'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to use for prevalence calculation.
@@ -57,13 +52,11 @@
 #' }
 #'
 #' @details
-#' \code{getPrevalence} calculates the relative frequency of samples that exceed
+#' \code{getPrevalence} calculates the frequency of samples that exceed
 #' the detection threshold. For \code{SummarizedExperiment} objects, the
 #' prevalence is calculated for the selected taxonomic rank, otherwise for the
 #' rows. The absolute population prevalence can be obtained by multiplying the
-#' prevalence by the number of samples (\code{ncol(x)}). If \code{as.relative =
-#' FALSE} the relative frequency (between 0 and 1) is used to check against the
-#' \code{detection} threshold.
+#' prevalence by the number of samples (\code{ncol(x)}). 
 #'
 #' The core abundance index from \code{getPrevalentAbundance} gives the relative
 #' proportion of the core species (in between 0 and 1). The core taxa are
@@ -123,8 +116,7 @@
 #' # Get prevalence estimates for individual ASV/OTU
 #' prevalence.frequency <- getPrevalence(tse,
 #'                                       detection = 0,
-#'                                       sort = TRUE,
-#'                                       as.relative = TRUE)
+#'                                       sort = TRUE)
 #' head(prevalence.frequency)
 #'
 #' # Get prevalence estimates for phylums
@@ -132,8 +124,7 @@
 #' prevalence.frequency <- getPrevalence(tse,
 #'                                       rank = "Phylum",
 #'                                       detection = 0,
-#'                                       sort = TRUE,
-#'                                       as.relative = TRUE)
+#'                                       sort = TRUE)
 #' head(prevalence.frequency)
 #'
 #' # - to obtain population counts, multiply frequencies with the sample size,
@@ -145,35 +136,39 @@
 #' # Note that the data (GlobalPatterns) is here in absolute counts
 #' # (and not compositional, relative abundances)
 #' # Prevalence threshold 50 percent (strictly greater by default)
-#' prevalent <- getPrevalent(tse,
-#'                             rank = "Phylum",
-#'                             detection = 10,
-#'                             prevalence = 50/100,
-#'                             as.relative = FALSE)
+#' prevalent <- getPrevalent(
+#'     tse,
+#'     rank = "Phylum",
+#'     detection = 10,
+#'     prevalence = 50/100)
 #' head(prevalent)
+#'
+#' # Add relative aundance data
+#' tse <- transformAssay(tse, assay.type = "counts", method = "relabundance")
 #'
 #' # Gets a subset of object that includes prevalent taxa
 #' altExp(tse, "prevalent") <- subsetByPrevalent(tse,
 #'                                              rank = "Family",
+#'                                              assay.type = "relabundance",
 #'                                              detection = 0.001,
-#'                                              prevalence = 0.55,
-#'                                              as.relative = TRUE)
+#'                                              prevalence = 0.55)
 #' altExp(tse, "prevalent")
 #'
 #' # getRare returns the inverse
 #' rare <- getRare(tse,
-#'                     rank = "Phylum",
-#'                     detection = 1/100,
-#'                     prevalence = 50/100,
-#'                     as.relative = TRUE)
+#'     rank = "Phylum",
+#'     assay.type = "relabundance",
+#'     detection = 1/100,
+#'     prevalence = 50/100)
 #' head(rare)
 #'
 #' # Gets a subset of object that includes rare taxa
-#' altExp(tse, "rare") <- subsetByRare(tse,
-#'                                     rank = "Class",
-#'                                     detection = 0.001,
-#'                                     prevalence = 0.001,
-#'                                     as.relative = TRUE)
+#' altExp(tse, "rare") <- subsetByRare(
+#'     tse,
+#'     rank = "Class",
+#'     assay.type = "relabundance",
+#'     detection = 0.001,
+#'     prevalence = 0.001)
 #' altExp(tse, "rare")
 #'
 #' # Names of both experiments, prevalent and rare, can be found from slot
@@ -258,8 +253,9 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
     if(!is.null(rank)){
         .check_taxonomic_rank(rank, x)
         args <- c(list(x = x, rank = rank, na.rm = agg.na.rm), list(...))
-        argNames <- c("x","rank","ignore.taxonomy","na.rm","empty.fields",
-                      "archetype","update.tree","average","BPPARAM")
+        argNames <- c(
+            "x","rank","ignore.taxonomy","na.rm","empty.fields", "archetype",
+            "update.tree","average","BPPARAM", "update.refseq")
         args <- args[names(args) %in% argNames]
         x <- do.call(agglomerateByRank, args)
         if(relabel){
@@ -273,19 +269,13 @@ setMethod("getPrevalence", signature = c(x = "ANY"), function(
 #' @export
 setMethod("getPrevalence", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts",
-            as.relative = as_relative, as_relative = FALSE, rank = NULL, ...){
-        # input check
-        if(!.is_a_bool(as.relative)){
-            stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
-        }
-
+            rank = NULL, ...){
         # check assay
         .check_assay_present(assay.type, x)
         x <- .agg_for_prevalence(x, rank = rank, ...)
         mat <- assay(x, assay.type)
-        if (as.relative) {
-            mat <- .calc_rel_abund(mat)
-        }
+        # Calculate abundance
+        mat <- .to_rel_abund(mat, ...)
         getPrevalence(mat, ...)
     }
 )
@@ -522,7 +512,11 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 ############################# agglomerateByPrevalence ##########################
 
 #' @rdname agglomerate-methods
-#'
+#'   
+#' @param update.tree \code{TRUE} or \code{FALSE}: should
+#'   \code{rowTree()} also be agglomerated? (Default:
+#'   \code{update.tree = FALSE})
+#' 
 #' @param other.label A single \code{character} valued used as the label for the
 #'   summary of non-prevalent taxa. (default: \code{other.label = "Other"})
 #' 
@@ -543,11 +537,13 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' @examples
 #' ## Data can be aggregated based on prevalent taxonomic results
 #' tse <- GlobalPatterns
-#' tse <- agglomerateByPrevalence(tse,
-#'                               rank = "Phylum",
-#'                               detection = 1/100,
-#'                               prevalence = 50/100,
-#'                               as.relative = TRUE)
+#' tse <- transformAssay(tse, method = "relabundance)
+#' tse <- agglomerateByPrevalence(
+#'     tse,
+#'     rank = "Phylum",
+#'     assay.type = "relabundance",
+#'     detection = 1/100,
+#'     prevalence = 50/100)
 #'
 #' tse
 #'
@@ -581,7 +577,7 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
         pr <- getPrevalent(x, rank = NULL, ...)
         f <- rownames(x) %in% pr
         if(any(!f)){
-            other_x <- agglomerateByVariable(x[!f,], MARGIN = "rows",
+            other_x <- agglomerateByVariable(x[!f,], by = "rows",
                                             factor(rep(1L,sum(!f))),
                                             check_assays = FALSE)
             rowData(other_x)[,colnames(rowData(other_x))] <- NA
@@ -590,19 +586,65 @@ setMethod("agglomerateByPrevalence", signature = c(x = "SummarizedExperiment"),
             if(!is.null(rank)){
                 rowData(other_x)[,rank] <- other.label
             }
-            # temporary fix until TSE supports rbind
-            class <- c("SingleCellExperiment","RangedSummarizedExperiment",
-                       "SummarizedExperiment")
-            class_x <- class(x)
-            if(!(class_x %in% class)){
-                class <- "SingleCellExperiment"
-            } else {
-                class <- class[class_x == class]
-            }
-            x <- rbind(as(x[f,],class),
-                       as(other_x,class))
-            x <- as(x,class_x)
+            x <- rbind(x[f,], other_x)
         }
         x
     }
 )
+
+#' @rdname agglomerate-methods
+#' @export
+setMethod("agglomerateByPrevalence", 
+          signature = c(x = "TreeSummarizedExperiment"),
+    function(x, rank = NULL, other.label = other_label, other_label = "Other",
+            update.tree = FALSE, ...){
+        # input check
+        if(!.is_a_bool(update.tree)){
+          stop("'update.tree' must be TRUE or FALSE.", call. = FALSE)
+        }
+        # update.refseq is a hidden parameter as for all other agglomeration
+        # methods from the agglomerate-methods man page.
+        # Here 'list(...)[["update.refseq"]]' is used to access it.
+        merge_refseq <- list(...)[["update.refseq"]]
+        if( is.null(merge_refseq) ){
+            merge_refseq <- FALSE
+        }
+        if( !.is_a_bool(merge_refseq) ){
+            stop("'update.refseq' must be TRUE or FALSE.", call. = FALSE)
+        }
+        # Agglomerate based on prevalence with SE method
+        res <- callNextMethod()
+        # If user wants to agglomerate reference sequences. At this point,
+        # sequences are only subsetted without finding consensus sequences.
+        if( merge_refseq && !is.null(referenceSeq(x))  ){
+            # If user wants to agglomerate based on rank
+            x <- .agg_for_prevalence(x, rank, check.assays = FALSE, ...)
+            # Find groups that will be used to agglomerate the data
+            f <- rownames(x)[ match(rownames(x), rownames(res)) ]
+            f[ is.na(f) ] <- other.label
+            # Find consensus sequences, and add them to result
+            ref_seq <- referenceSeq(x)
+            ref_seq <- .merge_refseq_list(ref_seq, f, rownames(res), ...)
+            referenceSeq(res) <- ref_seq
+        }
+        # Update tree if user has specified to do so
+        if( update.tree ){
+            res <- .agglomerate_trees(res, 1)
+        }
+        return(res)
+      }
+)
+
+# Get abundance. Determines if relative abundance is calculated or not.
+.to_rel_abund <- function(
+        mat, as.relative = as_relative, as_relative = FALSE, ...) {
+    # input check
+    if( !.is_a_bool(as.relative) ){
+        stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    if( as.relative ){
+        mat <- .calc_rel_abund(mat)
+    }
+    return(mat)
+}

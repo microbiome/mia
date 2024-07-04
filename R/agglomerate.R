@@ -52,15 +52,14 @@
 #'        agglomeration. (By default: \code{empty.ranks.rm = FALSE})
 #'        \item \code{make.unique}: A single boolean value for selecting
 #'        whether to make rownames unique. (By default: \code{make.unique = TRUE})
-#'        \item \code{detection}: Detection threshold for absence/presence.
-#'        Either an absolute value compared directly to the values of \code{x}
-#'        or a relative value between 0 and 1, if \code{as.relative = FALSE}.
+#'        \item \code{detection}: The threshold value for determining presence
+#'        or absence. A value in \code{x} must exceed this threshold to be
+#'        considered present.
+#'        \item \code{assay.type}: A single character value specifying assay to
+#'        calculate prevalence. (Default: \code{"counts"})
 #'        \item \code{prevalence}: Prevalence threshold (in 0 to 1). The
 #'        required prevalence is strictly greater by default. To include the
 #'        limit, set \code{include.lowest} to \code{TRUE}.
-#'        \item \code{as.relative}: Logical scalar: Should the detection
-#'        threshold be applied on compositional (relative) abundances?
-#'        (default: \code{FALSE})
 #'        \item \code{update.refseq} \code{TRUE} or \code{FALSE}: Should a
 #'        consensus sequence be calculated? If set to \code{FALSE}, the result
 #'        from \code{archetype} is returned; If set to \code{TRUE} the result
@@ -85,7 +84,7 @@
 #' 
 #' @param strip_altexp Deprecated. Use \code{altexp.rm} instead.
 #'
-#' @param MARGIN A character value for selecting if data is merged
+#' @param by A character value for selecting if data is merged
 #'   row-wise / for features ('rows') or column-wise / for samples ('cols').
 #'   Must be \code{'rows'} or \code{'cols'}.
 #'
@@ -206,13 +205,13 @@
 #' # get a factor for merging
 #' f <- factor(regmatches(rownames(esophagus),
 #'                        regexpr("^[0-9]*_[0-9]*",rownames(esophagus))))
-#' merged <- agglomerateByVariable(esophagus, MARGIN = "rows", f,
+#' merged <- agglomerateByVariable(esophagus, by = "rows", f,
 #'                                 update.tree = TRUE)
 #' plot(rowTree(merged))
 #' #
 #' data(GlobalPatterns)
 #' GlobalPatterns
-#' merged <- agglomerateByVariable(GlobalPatterns, MARGIN = "cols",
+#' merged <- agglomerateByVariable(GlobalPatterns, by = "cols",
 #'                                 colData(GlobalPatterns)$SampleType)
 #' merged
 NULL
@@ -286,7 +285,7 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 
         # merge taxa
         x <- agglomerateByVariable(
-            x, MARGIN = "rows", f = tax_factors, na.rm = TRUE, ...)
+            x, by = "rows", f = tax_factors, na.rm = TRUE, ...)
 
         # "Empty" the values to the right of the rank, using NA_character_.
         if( col < length(taxonomyRanks(x)) ){
@@ -314,9 +313,9 @@ setMethod("agglomerateByRank", signature = c(x = "SummarizedExperiment"),
 #' @aliases agglomerateByVariable
 #' @export
 setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
-            function(x, MARGIN, f, ...){
-                MARGIN <- .check_MARGIN(MARGIN)
-                FUN <- switch(MARGIN, .merge_rows, .merge_cols)
+            function(x, by, f, ...){
+                by <- .check_MARGIN(by)
+                FUN <- switch(by, .merge_rows, .merge_cols)
                 x <- FUN(x, f, ...)
                 return(x)
             }
@@ -327,11 +326,11 @@ setMethod("agglomerateByVariable", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("agglomerateByVariable",
             signature = c(x = "TreeSummarizedExperiment"),
-            function(x, MARGIN, f, update.tree = mergeTree, mergeTree = FALSE, ...){
-                # Check MARGIN
-                MARGIN <- .check_MARGIN(MARGIN)
-                # Get function based on MARGIN
-                FUN <- switch(MARGIN, .merge_rows_TSE, .merge_cols_TSE)
+            function(x, by, f, update.tree = mergeTree, mergeTree = FALSE, ...){
+                # Check by
+                by <- .check_MARGIN(by)
+                # Get function based on by
+                FUN <- switch(by, .merge_rows_TSE, .merge_cols_TSE)
                 # Agglomerate
                 x <- FUN(x, f, update.tree = update.tree, ...)
                 return(x)
@@ -449,15 +448,15 @@ setMethod(
 
 # Agglomerate all rowTrees found in TreeSE object. Get tips that represent
 # rows and remove all others.
-.agglomerate_trees <- function(x, MARGIN = 1){
+.agglomerate_trees <- function(x, by = 1, ...){
     # Get right functions based on direction
     tree_names_FUN <- switch(
-        MARGIN, "1" = rowTreeNames, "2" = colTreeNames, stop("."))
-    links_FUN <- switch(MARGIN, "1" = rowLinks, "2" = colLinks, stop("."))
-    tree_FUN <- switch(MARGIN, "1" = rowTree, "2" = colTree, stop("."))
+        by, "1" = rowTreeNames, "2" = colTreeNames, stop("."))
+    links_FUN <- switch(by, "1" = rowLinks, "2" = colLinks, stop("."))
+    tree_FUN <- switch(by, "1" = rowTree, "2" = colTree, stop("."))
     # Get right argument names for changeTree call
     args_names <- switch(
-        MARGIN, "1" = c("x", "rowTree", "rowNodeLab", "whichRowTree"),
+        by, "1" = c("x", "rowTree", "rowNodeLab", "whichRowTree"),
         "2" = c("x", "colTree", "colNodeLab", "whichColTree"),
         stop("."))
     # Get names of trees and links between trees and rows
@@ -474,7 +473,7 @@ setMethod(
             # Get names of nodes that are preserved
             links_temp <- links_temp[["nodeLab"]]
             # Agglomerate the tree
-            tree <- .prune_tree(tree, links_temp)
+            tree <- .prune_tree(tree, links_temp, ...)
             # Change the tree with agglomerated version
             args <- list(x, tree, links_temp, name)
             names(args) <- args_names
@@ -487,9 +486,14 @@ setMethod(
 # This function trims tips until all tips can be found from provided set of
 # nodes
 #' @importFrom ape drop.tip has.singles collapse.singles
-.prune_tree <- function(tree, nodes){
+.prune_tree <- function(tree, nodes, collapse.singles = TRUE, ...){
+    # Check collapse.singles
+    if( !.is_a_bool(collapse.singles) ){
+        stop("'collapse.singles' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
     # Get those tips that can not be found from provided nodes
-    remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
+    remove_tips <- .get_tips_to_drop(tree, nodes)
     # As long as there are tips to be dropped, run the loop
     while( length(remove_tips) > 0 ){
         # Drop tips that cannot be found. Drop only one layer at the time. Some
@@ -514,12 +518,26 @@ setMethod(
         }
         # Again, get those tips of updated tree that cannot be found from
         # provided nodes
-        remove_tips <- tree$tip.label[!tree$tip.label %in% nodes]
+        remove_tips <- .get_tips_to_drop(tree, nodes)
     }
     # Simplify the tree structure. Remove nodes that have only single
     # descendant.
-    if( !is.null(tree) && length(tree$tip.label) > 1 && has.singles(tree) ){
+    if( !is.null(tree) && length(tree$tip.label) > 1 && has.singles(tree) &&
+            collapse.singles ){
         tree <- collapse.singles(tree)
     }
     return(tree)
+}
+
+# This function gets tree and nodes as input. As output, it gives set of tips
+# that are not in the set of nodes provided as input.
+.get_tips_to_drop <- function(tree, nodes){
+    # Get those tips cannot be found from node set
+    cannot_be_found <- !tree$tip.label %in% nodes
+    # Get those tips that are duplicated. Single node should match with only
+    # one row.
+    dupl <- duplicated(tree$tip.label)
+    # Get indices of those tips that are going to be removed
+    tips <- which( cannot_be_found | dupl )
+    return(tips)
 }

@@ -53,7 +53,7 @@ list by their group names.}
 \item{f}{A single character value for selecting the grouping variable
 from \code{rowData} or \code{colData} or a \code{factor} or \code{vector}
 with the same length as one of the dimensions. If \code{f} matches with both
-dimensions, \code{MARGIN} must be specified.
+dimensions, \code{by} must be specified.
 Split by cols is not encouraged, since this is not compatible with
 storing the results in \code{altExps}.}
 
@@ -109,8 +109,8 @@ colData(tse)$group <- sample(1:3, ncol(tse), replace = TRUE)
 # Split based on rows
 # Each element is named based on their group name. If you don't want to name
 # elements, use use_name = FALSE. Since "group" can be found from rowdata and colData
-# you must use MARGIN.
-se_list <- splitOn(tse, f = "group", use.names = FALSE, MARGIN = 1)
+# you must use `by`.
+se_list <- splitOn(tse, f = "group", use.names = FALSE, by = 1)
 
 # When column names are shared between elements, you can store the list to altExps
 altExps(tse) <- se_list

@@ -72,8 +72,8 @@ setMethod("mergeRows", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeRows' is deprecated. ",
                                         "Use 'agglomerateByVariable' with ",
-                                        "parameter MARGIN = 'rows' instead."))
-                agglomerateByVariable(x, MARGIN = "rows", ...)
+                                        "parameter by = 'rows' instead."))
+                agglomerateByVariable(x, by = "rows", ...)
             }
 )
 
@@ -83,8 +83,8 @@ setMethod("mergeRows", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
               .Deprecated(msg = paste0("'mergeRows' is deprecated. ",
                                        "Use 'agglomerateByVariable' with ",
-                                        "parameter MARGIN = 'rows' instead."))
-              agglomerateByVariable(x, MARGIN = "rows", ...)
+                                        "parameter by = 'rows' instead."))
+              agglomerateByVariable(x, by = "rows", ...)
           }
 )
 
@@ -101,8 +101,8 @@ setMethod("mergeCols", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeCols' is deprecated. ",
                                         "Use 'agglomerateByVariable' with ", 
-                                        "parameter MARGIN = 'cols' instead."))
-                agglomerateByVariable(x, MARGIN = "cols", ...)
+                                        "parameter by = 'cols' instead."))
+                agglomerateByVariable(x, by = "cols", ...)
             }
 )
 
@@ -112,8 +112,8 @@ setMethod("mergeCols", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
               .Deprecated(msg = paste0("'mergeCols' is deprecated. ",
                                         "Use 'agglomerateByVariable' with ",
-                                        "parameter MARGIN = 'cols' instead."))
-              agglomerateByVariable(x, MARGIN = "cols", ...)
+                                        "parameter by = 'cols' instead."))
+              agglomerateByVariable(x, by = "cols", ...)
           }
 )
 
@@ -130,8 +130,8 @@ setMethod("mergeFeatures", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeFeatures' is deprecated. ",
                                         "Use 'agglomerateByVariable' with ", 
-                                        "parameter MARGIN = 'rows' instead."))
-                agglomerateByVariable(x, MARGIN = "rows", ...)
+                                        "parameter by = 'rows' instead."))
+                agglomerateByVariable(x, by = "rows", ...)
             }
 )
 
@@ -141,8 +141,8 @@ setMethod("mergeFeatures", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
               .Deprecated(msg = paste0("'mergeFeatures' is deprecated. ",
                                        "Use 'agglomerateByVariable' with ",
-                                        "parameter MARGIN = 'rows' instead."))
-              agglomerateByVariable(x, MARGIN = "rows", ...)
+                                        "parameter by = 'rows' instead."))
+              agglomerateByVariable(x, by = "rows", ...)
           }
 )
 
@@ -159,8 +159,8 @@ setMethod("mergeSamples", signature = c(x = "SummarizedExperiment"),
             function(x, ...){
                 .Deprecated(msg = paste0("'mergeSamples' is deprecated. ",
                                         "Use 'agglomerateByVariable' with ",
-                                        "parameter MARGIN = 'cols' instead."))
-                agglomerateByVariable(x, MARGIN = "cols", ...)
+                                        "parameter by = 'cols' instead."))
+                agglomerateByVariable(x, by = "cols", ...)
             }
 )
 
@@ -170,8 +170,8 @@ setMethod("mergeSamples", signature = c(x = "TreeSummarizedExperiment"),
           function(x, ...){
               .Deprecated(msg = paste0("'mergeSamples' is deprecated. ",
                                        "Use 'agglomerateByVariable' with ", 
-                                        "parameter MARGIN = 'cols' instead."))
-              agglomerateByVariable(x, MARGIN = "cols", ...)
+                                        "parameter by = 'cols' instead."))
+              agglomerateByVariable(x, by = "cols", ...)
           }
 )
 
@@ -910,3 +910,111 @@ setMethod(
         getDominant(x, ...)
     }
 )
+
+#' @rdname deprecate
+#' @export
+setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
+           function(x, ...)
+             standardGeneric("makePhyloseqFromTreeSE"))
+
+#' @rdname deprecate
+#' @export
+setMethod("makePhyloseqFromTreeSE", signature = c(x = "SummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(msg = paste0(
+            "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
+            " Use 'convertFromPhyloseq' instead."))
+        convertFromPhyloseq(x)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setMethod("makePhyloseqFromTreeSE", 
+          signature = c(x = "TreeSummarizedExperiment"),
+    function(x, ...){
+        .Deprecated(msg = paste0(
+            "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
+            " Use 'convertFromPhyloseq' instead."))
+        convertFromPhyloseq(x)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("makePhyloseqFromTreeSummarizedExperiment", signature = c("x"),
+           function(x)
+             standardGeneric("makePhyloseqFromTreeSummarizedExperiment"))
+
+#' @rdname deprecate
+#' @export
+setMethod("makePhyloseqFromTreeSummarizedExperiment", signature = c(x = "ANY"), 
+          function(x){
+            .Deprecated(msg = paste0(
+              "'makePhyloseqFromTreeSummarizedExperiment' is deprecated.",
+              " Use 'convertToPhyloseq' instead."))
+            convertToPhyloseq(x)
+          }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric("makeTreeSummarizedExperimentFromPhyloseq", signature = c("x"),
+           function(x)
+             standardGeneric("makeTreeSummarizedExperimentFromPhyloseq"))
+
+#' @rdname deprecate
+#' @export
+setMethod("makeTreeSummarizedExperimentFromPhyloseq", signature = c(x = "ANY"), 
+    function(x){
+        .Deprecated(msg = paste0(
+            "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
+            " Use 'convertFromPhyloseq' instead."))
+        convertFromPhyloseq(x)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+makeTreeSEFromBiom <- function(...){
+  .Deprecated(msg = paste0(
+    "'makeTreeSEFromBiom' is deprecated.",
+    " Use 'convertFromBIOM' instead."))
+  convertFromBIOM(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSummarizedExperimentFromBiom <- function(...){
+  .Deprecated(msg = paste0(
+    "'makeTreeSummarizedExperimentFromBiom' is deprecated.",
+    " Use 'convertFromBIOM' instead."))
+  convertFromBIOM(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSEFromDADA2 <- function(...) {
+  .Deprecated(msg = paste0(
+    "'makeTreeSEFromDADA2' is deprecated.",
+    " Use 'convertFromDADA2' instead."))
+  convertFromDADA2(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSummarizedExperimentFromDADA2 <- function(...) {
+  .Deprecated(msg = paste0(
+    "'makeTreeSummarizedExperimentFromDADA2' is deprecated.",
+    " Use 'convertFromDADA2' instead."))
+  convertFromDADA2(...)
+}
+
+#' @rdname deprecate
+#' @export
+makeTreeSEFromPhyloseq <- function(x) {
+  .Deprecated(msg = paste0(
+    "'makeTreeSEFromPhyloseq' is deprecated.",
+    " Use 'convertFromPhyloseq' instead."))
+  convertFromPhyloseq(...)
+}

@@ -12,10 +12,10 @@ test_that("splitOn", {
     set.seed(374)
     colData(x)$group <- sample(1:10, ncol(x), replace = TRUE)
     expect_error(splitOn(x, "group"))
-    expect_error(splitOn(x, "SampleType", MARGIN = 1))
-    expect_error(splitOn(x, "Phylum", MARGIN = 2))
-    expect_error(splitOn(x, x$SampleType, MARGIN = 1))
-    expect_error(splitOn(x, rowData(x)$Phylum, MARGIN = 2))
+    expect_error(splitOn(x, "SampleType", by = 1))
+    expect_error(splitOn(x, "Phylum", by = 2))
+    expect_error(splitOn(x, x$SampleType, by = 1))
+    expect_error(splitOn(x, rowData(x)$Phylum, by = 2))
     expect_error(splitOn(x))
     expect_error(splitOn(assay(x), x$SampleType))
     expect_error(splitOn(x, "SampleType", use.names = 1))
@@ -30,12 +30,12 @@ test_that("splitOn", {
     expect_equal(names(list), NULL )
     
     # Test that col-wie split is done correctly
-    list <- splitOn(x, "group", MARGIN = 1)
+    list <- splitOn(x, "group", by = 1)
     expect_equal( colnames(list[[1]]), colnames(x) )
     expect_true( length(list) == 10 )
     
     # Test that row-wise split is done correctly
-    list <- splitOn(x, "group", MARGIN = 2)
+    list <- splitOn(x, "group", by = 2)
     expect_equal( rownames(list[[1]]), rownames(x) )
     expect_true( length(list) == 10 )
     
@@ -59,7 +59,7 @@ test_that("splitOn", {
     # Test that works
     x_sub <- x[1:100, 1:10]
     # Split
-    list <- splitOn(x_sub, "group", MARGIN = 1)
+    list <- splitOn(x_sub, "group", by = 1)
     # Unsplit
     unsplitted <- unsplitOn(list)
     # Order the data
@@ -70,7 +70,7 @@ test_that("splitOn", {
     
     x_sub <- x[1:100, 1:10]
     # Split
-    list <- splitOn(x_sub, "group", MARGIN = 2)
+    list <- splitOn(x_sub, "group", by = 2)
     # Unsplit
     unsplitted <- unsplitOn(list)
     # Order the data
