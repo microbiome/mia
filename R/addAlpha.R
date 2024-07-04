@@ -109,18 +109,9 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
         if( !(is.null(n.iter) || (.is_an_integer(n.iter) && n.iter >= 0)) ){
             stop("'n.iter' must be NULL or an integer.", call. = FALSE)
         }
-        # Check if index exists
-        index <- lapply(index, .get_indices)
-        index <- do.call(rbind, index)
-        index[["name"]] <- name
-        if( any(is.na(index[["index"]])) ){
-            stop(
-                "'index' is corresponding to none of the alpha diversity ",
-                "indices. The following 'index' was not detected: ",
-                paste0(
-                    index[is.na(index[["index"]]), "search"], collapse = ", "),
-                call. = FALSE)
-        }
+        # Check if index exists. For each index input, detect it and get
+        # information (e.g. internal function) to calculate the index.
+        index <- .get_indices(index, name, x)
         ############################ Input check end ###########################
         # Looping over the vector of indices to be estimated
         for( i in seq_len(nrow(index)) ){
@@ -145,7 +136,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
 ################################ HELP FUNCTIONS ################################
 
 # Search alpha diversity index that user wants to calculate.
-.get_indices <- function(index){
+.get_indices <- function(index, name, x){
     # Initialize list for supported indices
     supported <- list()
     # Supported diversity indices
@@ -184,16 +175,38 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
     supported[["richness"]] <- temp
     # Combine
     supported <- do.call(rbind, supported)
-    # Find the index that user wanst to calculate
-    ind <- index == supported[["index"]] | index == supported[["index_long"]]
+    # Find the index that user wants to calculate
+    ind <- match(tolower(index), supported[["index_long"]])
+    ind_short <- match(tolower(index), supported[["index"]])
+    ind[ is.na(ind) ] <- ind_short[ is.na(ind) ]
     detected <- supported[ind, ]
-    # If not found, create an empty vector
-    if( nrow(detected) == 0 ){
-        detected <- rep(NA, ncol(supported))
-        names(detected) <- c("index", "measure", "index_long", "FUN")
-    }
     # Add the index that was searched
     detected[["search"]] <- index
+    # Add names that user wants to use when storing results to colData
+    detected[["name"]] <- name
+    # Check if there are indices that were not detected
+    if( any(is.na(detected[["index"]])) ){
+        not_detected <- paste0(
+            detected[is.na(detected[["index"]]), "search"], collapse = "', '")
+        not_detected <- paste0("'", not_detected, "'")
+        stop(
+            "'index' is corresponding to none of the alpha diversity ",
+            "indices. The following 'index' was not detected: ", not_detected,
+            call. = FALSE)
+    }
+    # Faith index is available only for TreeSE with rowTree
+    if( "faith" %in% detected[["index"]] &&
+            !(is(x, "TreeSummarizedExperiment") && !is.null(rowTree(x))) ){
+        # Drop faith index from indices being calculated
+        detected <- detected[!detected[["index"]] %in% c("faith"), ]
+        # If there are still other indices being calculated, give warning.
+        # Otherwise, give error if faith was the only index that user wants to
+        # calculate.
+        FUN <- if( nrow(detected) == 0 ) stop else warning
+        FUN("'faith' index can be calculated only for TreeSE with rowTree(x) ",
+            "populated.", call. = FALSE)
+    }
+    # Check if there are indices left
     return(detected)
 }
 
@@ -204,21 +217,27 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
         x, assay.type, n.iter, FUN, index, name, ...){
     # Calculating the mean of the subsampled alpha estimates ans storing them
     res <- lapply(seq(n.iter), function(i){
-        # Subsampling the counts from the original TreeSE object
-        x_sub <- rarefyAssay(x, assay.type = assay.type, ...)
+        # Subsampling the counts from the original TreeSE object.
+        x_sub <- rarefyAssay(x, assay.type = assay.type, verbose = FALSE, ...)
         # Calculating the diversity indices on the subsampled object
         x_sub <- do.call(FUN, args = list(
             x_sub, assay.type = assay.type, index = index,
             name = "rarefaction_temp_result", list(...)))
-        # Get results
-        res <- x_sub[["rarefaction_temp_result"]]
-        names(res) <- colnames(x_sub)
-        return(res)
+        # Get results as a vector from colData
+        temp <- colData(x_sub)[["rarefaction_temp_result"]]
+        return(temp)
     })
-    # Combine results from multiple iterations
+    # Combine list of vectors from multiple iterations
     res <- do.call(rbind, res)
     # Calculate mean of iterations
     res <- colMeans2(res)
+    # Give warning about missing samples. Same might have been dropped during
+    # rarefaction.
+    if( !all(colnames(x) %in% names(res)) ){
+        warning(
+            "Some samples were dropped during rarefaction leading to missing ",
+            "diversity values. Consider lower 'sample'.", call. = FALSE)
+    }
     # It might be that certain samples were dropped off if they have lower
     # abundance than rarefaction  depth --> order so that data includes all the
     # samples

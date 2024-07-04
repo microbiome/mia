@@ -42,7 +42,7 @@ test_that("rarefyAssay", {
         GlobalPatterns, 
         sample = 60000, 
         name = "subsampled",
-        replace = TRUE)
+        replace = FALSE)
     
     # check number of features removed is correct
     expnFeaturesRemovedRp <- 6731
