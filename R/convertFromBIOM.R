@@ -299,8 +299,7 @@ convertFromBIOM <- function(
     if( sum(found_rank) == 1 ){
         colname <- names(prefixes)[found_rank]
         # Make it capitalized
-        colname <- paste0(toupper(substr(colname, 1, 1)),
-                            substr(colname, 2, nchar(colname)))
+        colname <- .capitalize(colname)
     }
     return(colname)    
 }

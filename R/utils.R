@@ -449,8 +449,8 @@
     taxa_split <- taxa_split[taxa_prefixes_match]
     #
     if(length(unique(lengths(taxa_split))) != 1L){
-      stop("Internal error. Something went wrong while splitting taxonomic levels.",
-           "Please check that 'sep' is correct.", call. = FALSE)
+        stop("Internal error. Something went wrong while splitting taxonomic ",
+            "levels. Please check that 'sep' is correct.", call. = FALSE)
     }
     taxa_tab <- DataFrame(as.matrix(taxa_split))
     colnames(taxa_tab) <- names(all_ranks)
@@ -459,6 +459,9 @@
     # information
     non_empty <- colSums(is.na(taxa_tab)) != nrow(taxa_tab)
     taxa_tab <- taxa_tab[ , non_empty, drop = FALSE]
+    
+    # Capitalize taxonmy ranks
+    colnames(taxa_tab) <- .capitalize(colnames(taxa_tab))
     
     return(taxa_tab)
 }
@@ -515,4 +518,10 @@
             "TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
     }
     return(NULL)
+}
+
+################################################################################
+# This function converts vector of character values to capitalized.
+.capitalize <- function(x){
+    paste0(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)))
 }

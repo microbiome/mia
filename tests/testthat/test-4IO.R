@@ -495,8 +495,8 @@ test_that("Import HUMAnN file", {
     file_path <- system.file("extdata", "humann_output.tsv", package = "mia")
     tse <- importHUMAnN(file_path)
     #
-    expect_true( length(taxonomyRanks(tse)) == 7 )
-    expect_true( ncol(rowData(tse)) == 9 )
+    expect_true( length(taxonomyRanks(tse)) == 2 )
+    expect_true( ncol(rowData(tse)) == 4 )
     expect_true( ncol(tse) == 3 )
     expect_true( nrow(tse) == 12 )
     expect_true( all(!is.na(assay(tse))) )
