@@ -258,14 +258,13 @@ setMethod(
 }
 
 .get_richness_values <- function(index, mat, detection, ...) {
-
     FUN <- switch(index,
-                observed = .calc_observed,
-                chao1 = .calc_chao1,
-                ace = .calc_ace,
-                hill = .calc_hill
+        observed = .calc_observed,
+        chao1 = .calc_chao1,
+        ace = .calc_ace,
+        hill = .calc_hill
     )
-
-    FUN(mat = mat, detection = detection, ...)
-
+    res <- FUN(mat = mat, detection = detection, ...)
+    res <- unname(res)
+    return(res)
 }

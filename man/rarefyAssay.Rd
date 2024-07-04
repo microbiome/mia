@@ -43,8 +43,8 @@ assay to use for calculation.
 will be disabled.)}
 
 \item{sample}{A single integer value equal to the number of counts being
-simulated this can equal to lowest number of total counts found in a sample
-or a user specified number.}
+simulated i.e. rarefying depth. This can equal to lowest number of total
+counts found in a sample or a user specified number.}
 
 \item{min_size}{Deprecated. Use \code{sample} instead.}
 

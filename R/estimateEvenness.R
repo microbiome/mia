@@ -235,21 +235,21 @@ setMethod(
 }
 
 .get_evenness_values <- function(index, mat, threshold = 0, ...){
-
     if(!is.numeric(threshold) || length(threshold) != 1L){
         stop("'threshold' must be a single numeric value.", call. = FALSE)
     }
     if(threshold > 0){
         mat[mat <= threshold] <- 0
     }
-    
     FUN <- switch(index,
-                    camargo = .calc_camargo_evenness,
-                    pielou = .calc_pielou_evenness,
-                    simpson_evenness = .calc_simpson_evenness,
-                    evar = .calc_evar_evenness,
-                    bulla = .calc_bulla_evenness)
-
-    FUN(mat = mat, ...)
+        camargo = .calc_camargo_evenness,
+        pielou = .calc_pielou_evenness,
+        simpson_evenness = .calc_simpson_evenness,
+        evar = .calc_evar_evenness,
+        bulla = .calc_bulla_evenness
+        )
+    res <- FUN(mat = mat, ...)
+    res <- unname(res)
+    return(res)
 }
 

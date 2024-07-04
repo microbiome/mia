@@ -39,18 +39,18 @@ addAlpha(
 \item{x}{a \code{\link{SummarizedExperiment}} object.}
 
 \item{assay.type}{the name of the assay used for calculation of the
-sample-wise estimates (Default: \code{"counts"}).}
+sample-wise estimates. (Default: \code{"counts"})}
 
 \item{index}{a \code{character} vector, specifying the alpha diversity
 indices to be calculated.}
 
 \item{name}{a name for the column(s) of the colData the results should be
 stored in. By default this will use the original names of the calculated
-indices(Default: \code{index}).}
+indices. (Default: \code{index})}
 
 \item{n.iter}{\code{NULL} or a single \code{integer} value for the number of
 rarefaction rounds. Rarefaction is not applied when \code{n.iter=NULL}
-(see @details section). (Default: \code{NULL}).}
+(see @details section). (Default: \code{NULL})}
 
 \item{...}{optional arguments passed to mia::rarefyAssay():
 \itemize{
@@ -60,8 +60,7 @@ sample size drawn from samples.
 }}
 }
 \value{
-\code{x} with additional \code{\link{colData}} named after the index
-used.
+\code{x} with additional \code{colData} column(s) named \code{code}
 }
 \description{
 The function estimates alpha diversity indices optionally using rarefaction,
@@ -82,7 +81,7 @@ tse$shannon
 tse <- addAlpha(tse,
    assay.type = "counts",
    index = "observed_richness",
-   sample=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+   sample = min(colSums(assay(tse, "counts")), na.rm = TRUE),
    n.iter=10)
 
 # Shows the estimated observed richness

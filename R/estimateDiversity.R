@@ -634,14 +634,15 @@ setMethod(
 #' @importFrom SummarizedExperiment assay assays
 .get_diversity_values <- function(index, x, mat, tree, ...){
     FUN <- switch(index,
-                        shannon = .calc_shannon,
-                        gini_simpson = .calc_gini_simpson,
-                        inverse_simpson = .calc_inverse_simpson,
-                        coverage = .calc_coverage,
-                        fisher = .calc_fisher,
-                        faith = .calc_faith,
-                        log_modulo_skewness = .calc_log_modulo_skewness
-                        )
-
-    FUN(x = x, mat = mat, tree = tree, ...)
+        shannon = .calc_shannon,
+        gini_simpson = .calc_gini_simpson,
+        inverse_simpson = .calc_inverse_simpson,
+        coverage = .calc_coverage,
+        fisher = .calc_fisher,
+        faith = .calc_faith,
+        log_modulo_skewness = .calc_log_modulo_skewness
+        )
+    res <- FUN(x = x, mat = mat, tree = tree, ...)
+    res <- unname(res)
+    return(res)
 }

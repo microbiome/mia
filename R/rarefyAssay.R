@@ -124,7 +124,7 @@ setMethod("rarefyAssay", signature = c(x = "SummarizedExperiment"),
         }
         # Check sample. It must be single positive integer value.
         if(!is.numeric(sample) || length(sample) != 1 ||
-                as.integer(sample) != sample && sample <= 0  ){
+                sample %% 1 != 0 && sample <= 0  ){
             stop("'sample' needs to be a positive integer value.",
                 call. = FALSE)
         }

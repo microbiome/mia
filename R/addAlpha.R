@@ -6,18 +6,18 @@
 #' @param x a \code{\link{SummarizedExperiment}} object.
 #' 
 #' @param assay.type the name of the assay used for calculation of the
-#'   sample-wise estimates (Default: \code{"counts"}).
+#'   sample-wise estimates. (Default: \code{"counts"})
 #'   
 #' @param index a \code{character} vector, specifying the alpha diversity 
 #'   indices to be calculated.
 #'   
 #' @param name a name for the column(s) of the colData the results should be
 #'   stored in. By default this will use the original names of the calculated
-#'   indices(Default: \code{index}).
+#'   indices. (Default: \code{index})
 #' 
 #' @param n.iter \code{NULL} or a single \code{integer} value for the number of
 #'   rarefaction rounds. Rarefaction is not applied when \code{n.iter=NULL}
-#'   (see @details section). (Default: \code{NULL}).
+#'   (see @details section). (Default: \code{NULL})
 #'   
 #' @param ... optional arguments passed to mia::rarefyAssay():
 #' \itemize{
@@ -26,8 +26,7 @@
 #'   (Default: \code{min(colSums2(assay(x, assay.type)))})
 #' }
 #' 
-#' @return \code{x} with additional \code{\link{colData}} named after the index 
-#'    used.
+#' @return \code{x} with additional \code{colData} column(s) named \code{code}
 #' 
 #' @examples
 #' 
@@ -44,14 +43,13 @@
 #' tse <- addAlpha(tse,
 #'    assay.type = "counts",
 #'    index = "observed_richness",
-#'    sample=min(colSums(assay(tse, "counts")), na.rm = TRUE),
+#'    sample = min(colSums(assay(tse, "counts")), na.rm = TRUE),
 #'    n.iter=10)
 #' 
 #' # Shows the estimated observed richness
 #' tse$observed_richness
 #' 
 #' @name addAlpha
-#' @rdname addAlpha
 #' @export
 NULL
 
@@ -225,6 +223,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
             name = "rarefaction_temp_result", list(...)))
         # Get results as a vector from colData
         temp <- colData(x_sub)[["rarefaction_temp_result"]]
+        names(temp) <- colnames(x_sub)
         return(temp)
     })
     # Combine list of vectors from multiple iterations
@@ -232,7 +231,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
     # Calculate mean of iterations
     res <- colMeans2(res)
     # Give warning about missing samples. Same might have been dropped during
-    # rarefaction.
+    # rarefaction leading to missing values for dropped samples.
     if( !all(colnames(x) %in% names(res)) ){
         warning(
             "Some samples were dropped during rarefaction leading to missing ",
@@ -243,7 +242,8 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
     # samples
     res <- res[match(colnames(x), names(res))]
     res <- unname(res)
-    # Add to original data
-    colData(x)[[name]] <- res
+    # Add to original data. The data must be in a list.
+    res <- list(res)
+    x <- .add_values_to_colData(x, res, name)
     return(x)
 }
