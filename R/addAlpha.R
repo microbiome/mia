@@ -19,56 +19,54 @@
 #'   rarefaction rounds. Rarefaction is not applied when \code{n.iter=NULL}
 #'   (see @details section). (Default: \code{NULL})
 #'   
-#' @param ... optional arguments passed to mia::rarefyAssay():
+#' @param ... optional arguments:
 #' \itemize{
 #'   \item \code{sample}: A \code{numeric} value specifying the rarefaction
-#'   depth i.e. the sample size drawn from samples.
+#'   depth i.e. the number of counts drawn from each sample.
 #'   (Default: \code{min(colSums2(assay(x, assay.type)))})
 #'   
-#'   \item \code{tree.name}: A single \code{character} value for specifying
-#'   which rowTree will be used to calculate faith index. 
+#'   \item \code{tree.name}: (Faith's index) A single \code{character}
+#'   value for specifying which rowTree will be used. 
 #'   (Default: \code{"phylo"})
 #'   
-#'   \item \code{node.label}: \code{NULL} or a \code{character} vector
-#'   specifying the links between rows and node labels of \code{tree}. If a
-#'   certain row is not linked with the tree, missing instance should be noted
-#'   as NA. When \code{NULL}, all the rownames should be found from the tree.
+#'   \item \code{node.label}: (Faith's index) \code{NULL} or a
+#'   \code{character} vector specifying the links between rows and node labels
+#'   of phylogeny tree specified by \code{tree.name}. If a certain row is not
+#'   linked with the tree, missing instance should be noted as NA. When
+#'   \code{NULL}, all the rownames should be found from the tree.
 #'   (Default: \code{NULL})
 #'   
-#'   \item \code{only.tips}: A boolean value specifying whether to remove
-#'   internal nodes when Faith's index is calculated. When
-#'   \code{only.tips=TRUE}, those rows that are not tips of tree are removed.
-#'   (Default: \code{FALSE})
+#'   \item \code{only.tips}: (Faith's index) A \code{boolean} value
+#'   specifying whether to remove internal nodes when Faith's index is
+#'   calculated. When \code{only.tips=TRUE}, those rows that are not tips of
+#'   tree are removed. (Default: \code{FALSE})
 #'   
-#'   \item \code{threshold}: A numeric value in the unit interval,
-#'   determining the threshold for coverage and eveness indices.
-#'   (Default: \code{0.5})
+#'   \item \code{threshold}: (coverage and all evenness indices) A numeric value
+#'   in the unit interval determining the threshold for coverage and evenness
+#'   indices. When evenness indices are calculated values under or equal to
+#'   this threshold are denoted as zeroes. For coverage index, see details.
+#'   (Default: \code{0.5} for coverage, \code{0} for evenness indices)
 #'   
-#'   \item \code{quantile}: Arithmetic abundance classes are evenly cut up to to
-#'   this quantile of the data. The assumption is that abundances higher than
-#'   this are not common, and they are classified in their own group. This is
-#'   used for diversity indices.
-#'   (Default: \code{0.5})
+#'   \item \code{quantile}: (log modulo skewness index) Arithmetic abundance
+#'   classes are evenly cut up to to this quantile of the data. The assumption
+#'   is that abundances higher than this are not common, and they are classified
+#'   in their own group. (Default: \code{0.5})
 #'   
-#'   \item \code{nclasses}: The number of arithmetic abundance classes
-#'   from zero to the quantile cutoff indicated by \code{quantile}. This is used
-#'   for diversity indices. (Default: \code{50})
+#'   \item \code{nclasses}: (log modulo skewness index) The number of arithmetic
+#'   abundance classes from zero to the quantile cutoff indicated by
+#'   \code{quantile}. (Default: \code{50})
 #'   
-#'   \item \code{ntaxa}: Optional and only used for the \code{Absolute} and
-#'   \code{Relative} dominance indices: The n-th position of the dominant taxa
-#'   to consider. Disregarded for the indices \dQuote{dbp},
-#'   \dQuote{core_abundance}, \dQuote{Gini}, \dQuote{dmn}, and \dQuote{Simpson}.
-#'   (Default: \code{1})
+#'   \item \code{ntaxa}: (absolute and relative indices) The n-th position of
+#'   the dominant taxa to consider. (Default: \code{1})
 #'   
-#'   \item \code{aggregate}: Optional and only used for the \code{Absolute},
-#'   \code{dbp}, \code{Relative}, and \code{dmn} dominance indices.
+#'   \item \code{aggregate}: (absolute, dbp, dmn, and relative indices)
 #'   Aggregate the values for top members selected by \code{ntaxa} or not. If
 #'   \code{TRUE}, then the sum of relative abundances is returned. Otherwise the
 #'   relative abundance is returned for the single taxa with the indicated rank
 #'   (default: \code{aggregate = TRUE}).
 #'   
-#'   \item \code{detection}: A \code{numeric} value for selecting detection
-#'   threshold for the abundances for richness indices. (Default: \code{0})
+#'   \item \code{detection}: (observed index) A \code{numeric} value for
+#'   selecting detection threshold for the abundances. (Default: \code{0})
 #' }
 #' 
 #' @return \code{x} with additional \code{colData} column(s) named \code{code}
@@ -323,7 +321,7 @@
 #'
 #' @references
 #' 
-#' #' Beisel J-N. et al. (2003)
+#' Beisel J-N. et al. (2003)
 #' A Comparative Analysis of Diversity Index Sensitivity.
 #' _Internal Rev. Hydrobiol._ 88(1):3-15.
 #' \url{https://portais.ufg.br/up/202/o/2003-comparative_evennes_index.pdf}
@@ -417,7 +415,7 @@
 #' tse <- GlobalPatterns
 #' 
 #' # Calculate the default Shannon index with no rarefaction
-#' tse <- addAlpha(mae[[1]], index = c("shannon", "observed_richness"))
+#' tse <- addAlpha(tse, index = "shannon")
 #' 
 #' # Shows the estimated Shannon index
 #' tse$shannon
