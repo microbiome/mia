@@ -265,6 +265,10 @@ setMethod(
         hill = .calc_hill
     )
     res <- FUN(mat = mat, detection = detection, ...)
-    res <- unname(res)
+    if( is.matrix(res) ){
+        rownames(res) <- NULL
+    } else{
+        res <- unname(res)
+    }
     return(res)
 }
