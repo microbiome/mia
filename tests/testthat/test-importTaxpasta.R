@@ -37,21 +37,21 @@ test_that("the TreeSummarizedExperiment has expected taxonomic ranks", {
 })
 
 test_that("the TreeSummarizedExperiment has one alternative experiment per taxonomic rank", {
-  expect_identical(SingleCellExperiment::altExpNames(result), c("Superkingdom", "Clade", "Class", "Order", "Family"))
+  expect_identical(altExpNames(result), c("Superkingdom", "Clade", "Class", "Order", "Family"))
 })
 
 test_that("the TreeSummarizedExperiment has one tree with two leaves", {
-  tree <- TreeSummarizedExperiment::rowTree(result)
+  tree <- rowTree(result)
   expect_identical(ape::Ntip(tree), 2L)
   expect_setequal(tree$tip.label, c("Family:Lachnospiraceae", "Family:Vallitaleaceae"))
 })
 
 test_that("the TreeSummarizedExperiment has one tree with four inner nodes", {
-  tree <- TreeSummarizedExperiment::rowTree(result)
+  tree <- rowTree(result)
   expect_identical(ape::Nnode(tree), 4L)
 })
 
 test_that("the TreeSummarizedExperiment has one tree with five edges", {
-  tree <- TreeSummarizedExperiment::rowTree(result)
+  tree <- rowTree(result)
   expect_identical(ape::Nedge(tree), 5L)
 })
