@@ -357,7 +357,7 @@ rarefying.</p>
 <span><span class="va">tse.subsampled</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
 <span><span class="co">## dim: 12474 25 </span></span>
-<span><span class="co">## metadata(1): subsampleCounts_min_size</span></span>
+<span><span class="co">## metadata(1): rarefyAssay_sample</span></span>
 <span><span class="co">## assays(2): counts subsampled</span></span>
 <span><span class="co">## rownames(12474): 549322 244423 ... 200359 271582</span></span>
 <span><span class="co">## rowData names(7): Kingdom Phylum ... Genus Species</span></span>
@@ -395,7 +395,7 @@ TreeSE within a MultiAssayExperiment object.</p>
 <span><span class="fu"><a href="http://waldronlab.io/MultiAssayExperiment/reference/MultiAssayExperiment-methods.html" class="external-link">experiments</a></span><span class="op">(</span><span class="va">mae</span><span class="op">)</span><span class="op">$</span><span class="va">subsampledTreeSE</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: TreeSummarizedExperiment </span></span>
 <span><span class="co">## dim: 12474 25 </span></span>
-<span><span class="co">## metadata(1): subsampleCounts_min_size</span></span>
+<span><span class="co">## metadata(1): rarefyAssay_sample</span></span>
 <span><span class="co">## assays(2): counts subsampled</span></span>
 <span><span class="co">## rownames(12474): 549322 244423 ... 200359 271582</span></span>
 <span><span class="co">## rowData names(7): Kingdom Phylum ... Genus Species</span></span>
@@ -416,16 +416,14 @@ TreeSE within a MultiAssayExperiment object.</p>
 samples and community of samples are available. In this vignette we just
 want to give a very brief introduction.</p>
 <p>Functions for calculating alpha and beta diversity indices are
-available. Using <code>estimateDiversity</code> multiple diversity
-indices are calculated by default and results are stored automatically
-in <code>colData</code>. Selected indices can be calculated individually
-by setting <code>index = "shannon"</code> for example.</p>
+available. Using <code>addAlpha</code> multiple diversity indices are
+calculated by default and results are stored automatically in
+<code>colData</code>. Selected indices can be calculated individually by
+setting <code>index = "shannon"</code> for example.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimateDiversity.html">estimateDiversity</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addAlpha.html">addAlpha</a></span><span class="op">(</span><span class="va">tse</span>, index <span class="op">=</span> <span class="st">"shannon"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">8</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "coverage"            "faith"               "fisher"             </span></span>
-<span><span class="co">## [4] "gini_simpson"        "inverse_simpson"     "log_modulo_skewness"</span></span>
-<span><span class="co">## [7] "shannon"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "shannon"</span></span></code></pre>
 <p>Beta diversity indices are used to describe inter-sample connections.
 Technically they are calculated as <code>dist</code> object and reduced
 dimensions can be extracted using <code>cmdscale</code>. This is wrapped
@@ -554,7 +552,7 @@ long format will be returned.</p>
 <span>                         add.col <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">molten_data</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 499,616 × 24</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 499,616 × 18</span></span></span>
 <span><span class="co">##    FeatureID SampleID counts Kingdom Phylum     Class Order Family Genus Species</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 549322    CL3           0 Archaea Crenarcha… Ther… <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>     </span></span>
@@ -568,11 +566,9 @@ long format will be returned.</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 549322    M31Tong       0 Archaea Crenarcha… Ther… <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>     </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> 549322    M11Tong       0 Archaea Crenarcha… Ther… <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>     </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 499,606 more rows</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 14 more variables: X.SampleID &lt;fct&gt;, Primer &lt;fct&gt;, Final_Barcode &lt;fct&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 8 more variables: X.SampleID &lt;fct&gt;, Primer &lt;fct&gt;, Final_Barcode &lt;fct&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   Barcode_truncated_plus_T &lt;fct&gt;, Barcode_full_length &lt;fct&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   SampleType &lt;fct&gt;, Description &lt;fct&gt;, coverage &lt;int&gt;, faith &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   fisher &lt;dbl&gt;, gini_simpson &lt;dbl&gt;, inverse_simpson &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   log_modulo_skewness &lt;dbl&gt;, shannon &lt;dbl&gt;</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;">#   SampleType &lt;fct&gt;, Description &lt;fct&gt;, shannon &lt;dbl&gt;</span></span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
