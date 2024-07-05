@@ -1,6 +1,8 @@
 #' Import taxpasta-specific BIOM results to
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' 
+#' @name importTaxpasta
+#' 
 #' @details
 #' \code{importTaxpasta} imports data that is returned from TAXonomic Profile
 #' Aggregation and STAndardisation (taxpasta) pipeline. See more information on
@@ -23,7 +25,6 @@
 #' \code{\link[=importBIOM]{importBIOM}}
 #' \code{\link[=convertFromBIOM]{convertFromBIOM}}
 #'
-#' @name importTaxpasta
 NULL
 
 #'
@@ -31,7 +32,6 @@ NULL
 #' @export
 #'
 #' @importFrom SummarizedExperiment rowData
-#' @importFrom SingleCellExperiment altExps
 importTaxpasta <- function(file) {
     # Check dependencies.
     .require_package("rhdf5")
