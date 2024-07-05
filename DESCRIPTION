@@ -69,7 +69,8 @@ Imports:
     bluster,
     MatrixGenerics,
     mediation,
-    rbiom
+    rbiom,
+    topicmodels
 Suggests:
     testthat,
     knitr,
