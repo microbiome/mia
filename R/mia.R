@@ -8,8 +8,8 @@
 #' summarization.
 #'
 #' @name mia-package
-#' @docType package
 #' @seealso \link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}
+"_PACKAGE"
 NULL
 
 #' @import methods

@@ -170,6 +170,8 @@
 ################################################################################
 # Internal wrappers for setters
 
+# This function adds values to colData (or rowData). The data must be in a list.
+# Each element of list represent a column to be added to col/rowData.
 #' @importFrom SummarizedExperiment colData colData<- rowData rowData<-
 #' @importFrom S4Vectors DataFrame
 .add_values_to_colData <- function(

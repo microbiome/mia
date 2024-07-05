@@ -9,7 +9,7 @@ test_that("diversity estimates", {
     indices <- c("coverage", "fisher", "gini_simpson", "faith",
                  "inverse_simpson", "log_modulo_skewness",
                  "shannon")
-    tse_idx <- estimateDiversity(tse, index = indices, threshold = 0.473)
+    tse_idx <- .estimate_diversity(tse, index = indices, threshold = 0.473)
 
     # Checks that the type of output is the same as the type of input.
     expect_true(typeof(tse_idx) == typeof(tse))
@@ -42,11 +42,10 @@ test_that("diversity estimates", {
     expect_equal(unname(round(cd$log_modulo_skewness, 6)), c(2.013610, 1.827198, 2.013695))
     
     # Tests that 'quantile' and 'nclasses' are working
-    expect_equal(unname(round(colData(estimateDiversity(tse,index="log_modulo_skewness",
-                                                        quantile=0.855,
-                                                        nclasses=32)
-                                      )$log_modulo_skewness, 
-                              6)), c(1.814770, 1.756495, 1.842704))
+    expect_equal(unname(round(colData(
+        .estimate_diversity(
+            tse, index="log_modulo_skewness", quantile=0.855,nclasses=32)
+        )$log_modulo_skewness, 6)), c(1.814770, 1.756495, 1.842704))
     
     # Tests that .calc_skewness returns right value
     mat <- assay(tse, "counts")
@@ -80,7 +79,7 @@ test_that("diversity estimates", {
         expect_equal(cd$faith[i], faith)
     }
     
-    ########## Check that estimateFaith works correctly ##########
+    ########## Check that .estimate_faith works correctly ##########
     ########## with different SE object types ##########
     
     # Creates SE from TSE by dropping, e.g., rowTree
@@ -90,7 +89,7 @@ test_that("diversity estimates", {
     rownames(se) <- rownames(tse)
     
     # Calculates "faith" TSE
-    tse_only <- estimateFaith(tse)
+    tse_only <- .estimate_faith(tse)
     
     # tse_only should be TSE object
     expect_true(class(tse_only)== "TreeSummarizedExperiment")
@@ -98,16 +97,17 @@ test_that("diversity estimates", {
     expect_equal(colnames(colData(tse_only)), c(colnames(colData(tse)), "faith"))
     
     # Calculates "faith" TSE + TREE
-    tse_tree <- estimateFaith(tse, tree = rowTree(tse))
+    tse_tree <- .estimate_faith(tse, tree = rowTree(tse))
     
     # tse_tree should be TSE object
     expect_true(class(tse_tree)== "TreeSummarizedExperiment")
     # tse_tree should include "faith"
-    expect_equal(colnames(colData(tse_tree)), c(colnames(colData(tse)), "faith"))
+    expect_equal(
+        colnames(colData(tse_tree)), c(colnames(colData(tse)), "faith"))
     
     
     # Calculates "faith" SE + TREE
-    se_tree <- estimateFaith(se, tree = rowTree(tse))
+    se_tree <- .estimate_faith(se, tree = rowTree(tse))
     
     # se_tree should be SE object
     expect_true(class(se_tree)== "SummarizedExperiment")
@@ -115,22 +115,22 @@ test_that("diversity estimates", {
     expect_equal(colnames(colData(se_tree)), c(colnames(colData(se)), "faith"))
     
     # Expect error
-    expect_error(estimateDiversity(tse, index = "faith", tree.name = "test"))
-    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), tree.name = "test"))
+    expect_error(.estimate_diversity(tse, index = "faith", tree.name = "test"))
+    expect_warning(.estimate_diversity(tse, index = c("shannon", "faith"), tree.name = "test"))
     
     data(GlobalPatterns, package="mia")
     data(esophagus, package="mia")
     tse <- mergeSEs(GlobalPatterns, esophagus,  join = "full", assay.type = "counts")
-    expect_warning(estimateDiversity(tse, index = c("shannon", "faith"), 
+    expect_warning(.estimate_diversity(tse, index = c("shannon", "faith"), 
                                      tree.name = "phylo.1", assay.type="counts"))
-    expect_error(estimateDiversity(tse, index = c("faith"), 
+    expect_error(.estimate_diversity(tse, index = c("faith"), 
                                    tree.name = "test"))
-    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+    expect_error(.estimate_diversity(tse, index = c("shannon", "faith"), 
                                    tree.name = TRUE))
-    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+    expect_error(.estimate_diversity(tse, index = c("shannon", "faith"), 
                                    tree.name = 1))
     
-    expect_error(estimateDiversity(tse, index = c("shannon", "faith"), 
+    expect_error(.estimate_diversity(tse, index = c("shannon", "faith"), 
                                    tree.name = c("phylo", "phylo.1")))
     
     # Test Faith with picante packages results (version 1.8.2)
@@ -140,10 +140,10 @@ test_that("diversity estimates", {
         245.1008, 127.2336, 167.7246, 155.5872, 142.3473, 197.6823, 197.2321,
         124.6510, 121.2056, 179.9377, 140.8096, 126.5695)
     tse <- GlobalPatterns
-    res <- estimateFaith(tse)$faith
+    res <- .estimate_faith(tse)$faith
     expect_equal(res, picante_res, tolerance=1e-5)
     # Check only tips paramater
-    expect_error(estimateFaith(tse, only.tips = 1))
-    expect_error(estimateFaith(tse, only.tips = "TRUE"))
-    expect_error(estimateFaith(tse, only.tips = c(TRUE, FALSE)))
+    expect_error(.estimate_faith(tse, only.tips = 1))
+    expect_error(.estimate_faith(tse, only.tips = "TRUE"))
+    expect_error(.estimate_faith(tse, only.tips = c(TRUE, FALSE)))
     })
