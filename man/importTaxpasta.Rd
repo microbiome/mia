@@ -2,25 +2,37 @@
 % Please edit documentation in R/importTaxpasta.R
 \name{importTaxpasta}
 \alias{importTaxpasta}
-\title{Import taxpasta-specific BIOM results to \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
+\title{Import taxpasta-specific BIOM results to
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}}
 \usage{
 importTaxpasta(file)
 }
 \arguments{
-\item{filename}{A character vector with one element that denotes the file
-path to a BIOM file.}
+\item{file}{A single \code{character} value specifying the file path to a
+BIOM file.}
 }
 \value{
 A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 }
 \description{
-Import taxpasta-specific BIOM results to \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+Import taxpasta-specific BIOM results to
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+}
+\details{
+\code{importTaxpasta} imports data that is returned from TAXonomic Profile
+Aggregation and STAndardisation (taxpasta) pipeline. See more information on
+taxpasta from
+\href{https://taxpasta.readthedocs.io/en/latest/}{taxpasta documentation}.
 }
 \examples{
-tse <- importTaxpasta(system.file("extdata/testdata/complete.biom", package = "mia", mustWork = TRUE))
+
+# File path to BIOM file
+file_path <- system.file("extdata/testdata/complete.biom", package = "mia")
+# Import BIOM as TreeSE
+tse <- importTaxpasta(file_path)
 
 }
 \seealso{
-\code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-\code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
+\code{\link[=importBIOM]{importBIOM}}
+\code{\link[=convertFromBIOM]{convertFromBIOM}}
 }

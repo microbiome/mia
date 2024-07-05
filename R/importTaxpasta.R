@@ -1,16 +1,27 @@
-#' Import taxpasta-specific BIOM results to \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' Import taxpasta-specific BIOM results to
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' 
+#' @details
+#' \code{importTaxpasta} imports data that is returned from TAXonomic Profile
+#' Aggregation and STAndardisation (taxpasta) pipeline. See more information on
+#' taxpasta from
+#' \href{https://taxpasta.readthedocs.io/en/latest/}{taxpasta documentation}.
 #'
-#' @param filename A character vector with one element that denotes the file
-#'   path to a BIOM file.
+#' @param file A single \code{character} value specifying the file path to a
+#' BIOM file.
 #'
 #' @return A \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object.
 #'
 #' @examples
-#' tse <- importTaxpasta(system.file("extdata/testdata/complete.biom", package = "mia", mustWork = TRUE))
+#' 
+#' # File path to BIOM file
+#' file_path <- system.file("extdata/testdata/complete.biom", package = "mia")
+#' # Import BIOM as TreeSE
+#' tse <- importTaxpasta(file_path)
 #'
 #' @seealso
-#' \code{\link[=makeTreeSEFromBiom]{makeTreeSEFromBiom}}
-#' \code{\link[=makeTreeSEFromPhyloseq]{makeTreeSEFromPhyloseq}}
+#' \code{\link[=importBIOM]{importBIOM}}
+#' \code{\link[=convertFromBIOM]{convertFromBIOM}}
 #'
 #' @name importTaxpasta
 NULL
@@ -25,37 +36,38 @@ importTaxpasta <- function(file) {
     # Check dependencies.
     .require_package("rhdf5")
     .require_package("biomformat")
-
+    
     # Validate the input.
-    if (!.is_non_empty_string(file)) {
+    if(!.is_non_empty_string(file) ){
         stop("'filename' must be a single character value.", call. = FALSE)
     }
-    if (!file.exists(file)) {
-        stop(file, " not found.", call. = FALSE)
+    if( !file.exists(file) ){
+        stop("'", file, "' not found.", call. = FALSE)
     }
-
+    
     # We read our own HDF5 array to later be able to read observation group
     # metadata, which [biomformat::read_biom()] currently doesn't do.
     raw <- rhdf5::h5read(file, "/", read.attributes = TRUE)
     biom <- .create_biom(raw)
-
-    # Without taxonomic information, we return a simple TreeSE.
-    if (is.null(raw$observation$`group-metadata`$ranks)) {
-        warning(paste(
+    # Convert BIOM to TreeSE
+    tse <- convertFromBIOM(biom)
+    
+    # IF we have taxonomic information, we add a hierarchy to the TreeSE.
+    if( !is.null(raw$observation$`group-metadata`$ranks) ){
+        # Set ranks of mia based on found ranks
+        ranks <- .get_ranks(raw)
+        setTaxonomyRanks(ranks)
+        # Create rowData and rowTree
+        rowData(tse) <- .create_row_data(biom, ranks)
+        tse <- addHierarchyTree(tse)
+        # Agglomerate to all existing ranks
+        tse <- agglomerateByRanks(tse, agglomerate.tree = TRUE)
+    } else{
+        # Without taxonomic information, we return a simple TreeSE.
+        warning(
             "The BIOM file does not contain taxonomy information;",
-            "unable to generate a taxonomic tree."
-        ), call. = FALSE)
-        return(makeTreeSEFromBiom(biom))
+            "unable to generate a taxonomic tree.", call. = FALSE)
     }
-
-    # With taxonomic information, we add a hierarchy to the TreeSE.
-    ranks <- .get_ranks(raw)
-    tse <- makeTreeSEFromBiom(biom)
-    rowData(tse) <- .create_row_data(biom, ranks)
-    setTaxonomyRanks(ranks)
-    tse <- addHierarchyTree(tse)
-    altExps(tse) <- splitByRanks(tse, agglomerate.tree = TRUE)
-
     return(tse)
 }
 
@@ -72,11 +84,12 @@ importTaxpasta <- function(file) {
 #' @keywords internal
 #' @noRd
 .create_biom <- function(h5array) {
+    # Get abundance data, row data and column data along with shape
     data <- biomformat:::generate_matrix(h5array)
     rows <- biomformat:::generate_metadata(h5array$observation)
     columns <- biomformat:::generate_metadata(h5array$sample)
     shape <- c(length(data), length(data[[1]]))
-
+    # Get metadata on the data
     id <- attr(h5array, "id")
     vs <- attr(h5array, "format-version")
     format <- sprintf("Biological Observation Matrix %s.%s", vs[1], vs[2])
@@ -86,7 +99,7 @@ importTaxpasta <- function(file) {
     date <- attr(h5array, "creation-date")
     matrix_type <- "dense"
     matrix_element_type <- "int"
-
+    # Create BIOM object
     result <- biomformat:::biom(biomformat:::namedList(
         id, format, format_url, type, generated_by, date, matrix_type,
         matrix_element_type, rows, columns, shape, data
@@ -117,29 +130,32 @@ importTaxpasta <- function(file) {
 #' Recreate observation metadata
 #'
 #' \code{.create_row_data} is an internal function used by
-#' \code{\link[=importTaxpasta]{importTaxpasta}}, that returns a copy of the BIOM
-#' object's observation metadata, where the headers of the taxonomy columns have
-#' been replaced with the correct taxonomic rank names.
+#' \code{\link[=importTaxpasta]{importTaxpasta}}, that returns a copy of the
+#' BIOM object's observation metadata, where the headers of the taxonomy
+#' columns have been replaced with the correct taxonomic rank names.
 #'
 #' @param biom A BIOM object.
 #' @param ranks A character vector of taxonomic ranks in order.
 #'
-#' @return A \code{\link[base:data.frame]{data.frame}} with observation metadata.
+#' @return A \code{\link[base:data.frame]{data.frame}} with observation
+#' metadata.
 #'
 #' @keywords internal
 #' @noRd
 .create_row_data <- function(biom, ranks) {
+    # Get taxonomy table
     meta <- biomformat::observation_metadata(biom)
+    # Get column names of taxonomy table
     column.names <- colnames(meta)
+    # Taxonomy ranks should start with "taxonomy", take all of them
     indeces <- startsWith(column.names, "taxonomy")
-
-    if (sum(indeces) != length(ranks)) {
-        stop(paste(
+    # Check that they match with ranks got from the data
+    if( sum(indeces) != length(ranks) ){
+        stop(
             "The number of generic taxonomy* columns differs",
-            "from the number of ranks."
-        ), call. = FALSE)
+            "from the number of ranks.", call. = FALSE)
     }
-
+    # And replace column names with the set of ranks
     colnames(meta) <- replace(column.names, indeces, ranks)
     return(meta)
 }
