@@ -13,7 +13,7 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_equal(rowData(me), rowData(me2))
     
     biom_object <- biomformat::read_biom(
-        system.file("extdata/testdata/Aggregated_humanization2.biom",
+        system.file("extdata/Aggregated_humanization2.biom",
                     package="mia")
     )
     tse <- convertFromBIOM(biom_object,
