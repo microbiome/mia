@@ -55,3 +55,7 @@ test_that("the TreeSummarizedExperiment has one tree with five edges", {
   tree <- rowTree(result)
   expect_identical(ape::Nedge(tree), 5L)
 })
+
+# Set taxonomy ranks to default (importTaxpasta sets ranks based on data)
+ranks <- c("kingdom","phylum", "class", "order", "family", "genus", "species")
+setTaxonomyRanks(ranks)
