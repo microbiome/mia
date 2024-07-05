@@ -31,6 +31,9 @@
     <loc>/reference/Tengeler2020.html</loc>
   </url>
   <url>
+    <loc>/reference/addAlpha.html</loc>
+  </url>
+  <url>
     <loc>/reference/addCluster.html</loc>
   </url>
   <url>
@@ -65,18 +68,6 @@
   </url>
   <url>
     <loc>/reference/esophagus.html</loc>
-  </url>
-  <url>
-    <loc>/reference/estimateDiversity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/estimateDominance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/estimateEvenness.html</loc>
-  </url>
-  <url>
-    <loc>/reference/estimateRichness.html</loc>
   </url>
   <url>
     <loc>/reference/getCrossAssociation.html</loc>
