@@ -16,7 +16,7 @@ addAlpha(
     "pielou_evenness", "simpson_evenness", "evar_evenness", "bulla_evenness",
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
-  n.iter = NULL,
+  niter = NULL,
   ...
 )
 
@@ -31,7 +31,7 @@ addAlpha(
     "pielou_evenness", "simpson_evenness", "evar_evenness", "bulla_evenness",
     "ace_richness", "chao1_richness", "hill_richness", "observed_richness"),
   name = index,
-  n.iter = NULL,
+  niter = NULL,
   ...
 )
 }
@@ -48,9 +48,9 @@ indices to be calculated.}
 stored in. By default this will use the original names of the calculated
 indices. (Default: \code{index})}
 
-\item{n.iter}{\code{NULL} or a single \code{integer} value for the number of
-rarefaction rounds. Rarefaction is not applied when \code{n.iter=NULL}
-(see @details section). (Default: \code{NULL})}
+\item{niter}{\code{NULL} or a single \code{integer} value for the number of
+rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
+(see Details section). (Default: \code{NULL})}
 
 \item{...}{optional arguments:
 \itemize{
@@ -376,7 +376,7 @@ tse <- addAlpha(tse,
    assay.type = "counts",
    index = "observed_richness",
    sample = min(colSums(assay(tse, "counts")), na.rm = TRUE),
-   n.iter=10)
+   niter=10)
 
 # Shows the estimated observed richness
 tse$observed_richness

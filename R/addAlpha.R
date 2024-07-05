@@ -15,9 +15,9 @@
 #'   stored in. By default this will use the original names of the calculated
 #'   indices. (Default: \code{index})
 #' 
-#' @param n.iter \code{NULL} or a single \code{integer} value for the number of
-#'   rarefaction rounds. Rarefaction is not applied when \code{n.iter=NULL}
-#'   (see @details section). (Default: \code{NULL})
+#' @param niter \code{NULL} or a single \code{integer} value for the number of
+#'   rarefaction rounds. Rarefaction is not applied when \code{niter=NULL}
+#'   (see Details section). (Default: \code{NULL})
 #'   
 #' @param ... optional arguments:
 #' \itemize{
@@ -425,7 +425,7 @@
 #'    assay.type = "counts",
 #'    index = "observed_richness",
 #'    sample = min(colSums(assay(tse, "counts")), na.rm = TRUE),
-#'    n.iter=10)
+#'    niter=10)
 #' 
 #' # Shows the estimated observed richness
 #' tse$observed_richness
@@ -451,7 +451,7 @@ setGeneric(
             "pielou_evenness", "simpson_evenness",
             "evar_evenness", "bulla_evenness", "ace_richness",
             "chao1_richness", "hill_richness", "observed_richness"),
-        name = index, n.iter = NULL, ...)
+        name = index, niter = NULL, ...)
     standardGeneric("addAlpha"))
 
 #' @rdname addAlpha
@@ -470,7 +470,7 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
             "pielou_evenness", "simpson_evenness",
             "evar_evenness", "bulla_evenness", "ace_richness",
             "chao1_richness", "hill_richness", "observed_richness"),
-        name = index, n.iter = NULL, ...){
+        name = index, niter = NULL, ...){
         ############################## Input check #############################
         # Check that index is a character vector
         if( !.is_non_empty_character(index) ){
@@ -485,8 +485,8 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
                 call. = FALSE)
         }
         # Check n.tier
-        if( !(is.null(n.iter) || (.is_an_integer(n.iter) && n.iter >= 0)) ){
-            stop("'n.iter' must be NULL or an integer.", call. = FALSE)
+        if( !(is.null(niter) || (.is_an_integer(niter) && niter >= 0)) ){
+            stop("'niter' must be NULL or an integer.", call. = FALSE)
         }
         # Check if index exists. For each index input, detect it and get
         # information (e.g. internal function) to calculate the index.
@@ -495,9 +495,9 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
         # Looping over the vector of indices to be estimated
         for( i in seq_len(nrow(index)) ){
             # Performing rarefaction if sample is specified
-            if( !is.null(n.iter) && n.iter > 0 ){
+            if( !is.null(niter) && niter > 0 ){
                 x <- .alpha_rarefaction(
-                    x, assay.type = assay.type, n.iter = n.iter,
+                    x, assay.type = assay.type, niter = niter,
                     FUN = index[i, "FUN"], index = index[i, "index"],
                     name = index[i, "name"], ...)
             } else {
@@ -589,13 +589,13 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
     return(detected)
 }
 
-# This function rarifies the data n.iter of times and calculates index for the
+# This function rarifies the data niter of times and calculates index for the
 # rarified data. The result is a mean of the iterations.
 #' @importFrom DelayedMatrixStats colMeans2
 .alpha_rarefaction <- function(
-        x, assay.type, n.iter, FUN, index, name, ...){
+        x, assay.type, niter, FUN, index, name, ...){
     # Calculating the mean of the subsampled alpha estimates ans storing them
-    res <- lapply(seq(n.iter), function(i){
+    res <- lapply(seq(niter), function(i){
         # Subsampling the counts from the original TreeSE object.
         x_sub <- rarefyAssay(x, assay.type = assay.type, verbose = FALSE, ...)
         # Calculating the diversity indices on the subsampled object

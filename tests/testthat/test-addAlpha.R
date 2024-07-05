@@ -3,13 +3,13 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     tse <- GlobalPatterns
     ## Testing diversity
     # Calculate the default Shannon index with no rarefaction with 3 different
-    # ways: default, n.iter=NULL, n.iter=0
+    # ways: default, niter=NULL, niter=0
     tse <- addAlpha(tse, assay.type = "counts", index = "shannon")
     tse <- addAlpha(
-        tse, assay.type = "counts", index = "shannon_diversity", n.iter = NULL)
+        tse, assay.type = "counts", index = "shannon_diversity", niter = NULL)
     tse <- addAlpha(
         tse, assay.type = "counts", index = "shannon", name = "shannon2",
-        n.iter = 0)
+        niter = 0)
     # Check that index was calculated
     expect_true(any(grepl("shannon", colnames(colData(tse)))))
     expect_true(any(grepl("shannon_diversity", colnames(colData(tse)))))
@@ -22,7 +22,7 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     tse <- addAlpha(
         tse, assay.type = "counts", index = "shannon",
         sample = min(colSums(assay(tse, "counts")), na.rm = TRUE),
-        n.iter = 10, name = "shannon_10")
+        niter = 10, name = "shannon_10")
     # Check that index was calculated
     expect_true(any(grepl("shannon_10", colnames(colData(tse)))))
     # They should differ little bit
@@ -37,7 +37,7 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     tse <- addAlpha(
         tse, assay.type = "counts", index = "gini_dominance",
         sample = min(colSums(assay(tse, "counts")), na.rm = TRUE),
-        n.iter = 10, name = "gini_dominance_10")
+        niter = 10, name = "gini_dominance_10")
     # Check that index was calculated
     expect_true( any(grepl("gini_dominance", colnames(colData(tse)))) )
     expect_true(any(grepl("gini_dominance_10", colnames(colData(tse)))))
@@ -53,7 +53,7 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     tse <- addAlpha(
         tse, assay.type = "counts", index = "pielou",
         sample = min(colSums(assay(tse, "counts")), na.rm = TRUE),
-        n.iter = 10, name = "pielou_10")
+        niter = 10, name = "pielou_10")
     # Check that index was calculated
     expect_true(any(grepl("pielou", colnames(colData(tse)))))
     expect_true(any(grepl("pielou_10", colnames(colData(tse)))))
@@ -68,7 +68,7 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     # Calculate same index with 10 rarefaction rounds
     tse <- addAlpha(
         tse, assay.type = "counts", index = "chao1",
-        n.iter = 10, name = "chao1_10")
+        niter = 10, name = "chao1_10")
     # Check that index was calculated
     expect_true(any(grepl("chao1", colnames(colData(tse)))))
     expect_true(any(grepl("pielou_10", colnames(colData(tse)))))
@@ -83,7 +83,7 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     tse <- addAlpha(
         tse, assay.type = "counts", index = "shannon",
         sample = min(colSums(assay(tse, "counts")), na.rm = TRUE),
-        n.iter=20, name="shannon_20")
+        niter=20, name="shannon_20")
     # They should differ little bit
     expect_false(all(tse$shannon_20 == tse$shannon_10))
     # However, they should be the same with some tolerance
@@ -103,7 +103,7 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     tse <- addAlpha(
         tse, assay.type = "counts", 
         sample = min(colSums(assay(tse, "counts")), na.rm = TRUE),
-        n.iter = 10, 
+        niter = 10, 
         index = c("coverage","absolute", "camargo", "ace"),
         name = c("coverage_10","absolute_10", "camargo_10", "ace_10"))
     # Check that indices were calculated
@@ -128,7 +128,7 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     expect_error(
     tse <- addAlpha(
         tse, assay.type = "counts", 
-        sample = 1e10, n.iter = 1,
+        sample = 1e10, niter = 1,
         index = "absolute", name = "absolute_fail")
     )
     
@@ -140,7 +140,7 @@ test_that("Estimate Alpha Diversity Indices with Rarefaction", {
     expect_warning(
     tse <- addAlpha(
         tse, assay.type = "counts", 
-        sample = sample, n.iter = 1,
+        sample = sample, niter = 1,
         index = "absolute", name = "absolute_missing")
     )
     res <- tse$absolute_missing
