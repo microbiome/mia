@@ -143,4 +143,4 @@ calculateCCA to getCCA
 convertToPhyloseq
 + add rowTree agglomeration and RefSeq agglomeration in agglomerateByPrevalence
 + Fix tree merging in unsplit and mergeSEs functions
-+ Added addTaxpasta
++ Added importTaxpasta
