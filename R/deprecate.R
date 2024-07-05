@@ -513,7 +513,7 @@ setMethod("left_join", signature = c(x = "ANY"),
 )
 
 #' @rdname deprecate
-#' @export            
+#' @export
 setGeneric("right_join", signature = c("x"),
            function(x, ...)
                standardGeneric("right_join"))
@@ -1018,3 +1018,85 @@ makeTreeSEFromPhyloseq <- function(x) {
     " Use 'convertFromPhyloseq' instead."))
   convertFromPhyloseq(...)
 }
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "estimateEvenness", signature = c("x"), function(x, ...)
+        standardGeneric("estimateEvenness"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "estimateEvenness", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(msg = paste0(
+            "'estimateEvenness' is deprecated. Use 'addAlpha' instead."))
+        .estimate_evenness(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "estimateRichness", signature = c("x"),
+    function(x, ...) standardGeneric("estimateRichness"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "estimateRichness", signature = c(x="ANY"),
+    function(x, ...){
+        .Deprecated(msg = paste0(
+          "'estimateRichness' is deprecated. Use 'addAlpha' instead."))
+        .estimate_richness(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "estimateDiversity", signature = c("x"),
+    function(x, ...) standardGeneric("estimateDiversity"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "estimateDiversity", signature = c(x = "ANY"), function(x, ...){
+        .Deprecated(msg = paste0(
+            "'estimateDiversity' is deprecated. Use 'addAlpha' instead."))
+        .estimate_diversity(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "estimateFaith", signature = c("x"), function(x, ...)
+        standardGeneric("estimateFaith"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "estimateFaith", signature = c(x="ANY"),
+    function(x, ...){
+        .Deprecated(msg = paste0(
+          "'estimateFaith' is deprecated. Use 'addAlpha' instead."))
+        .estimate_faith(x, ...)
+    }
+)
+
+#' @rdname deprecate
+#' @export
+setGeneric(
+    "estimateDominance", signature = c("x"),
+    function(x, ...) standardGeneric("estimateDominance"))
+
+#' @rdname deprecate
+#' @export
+setMethod(
+    "estimateDominance", signature = c(x="ANY"),
+    function(x, ...){
+        .Deprecated(msg = paste0(
+          "'estimateDominance' is deprecated. Use 'addAlpha' instead."))
+        .estimate_dominance(x, ...)
+    })

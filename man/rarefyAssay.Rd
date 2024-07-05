@@ -22,7 +22,7 @@ rarefyAssay(
   assay.type = assay_name,
   assay_name = "counts",
   sample = min_size,
-  min_size = min(colSums2(assay(x))),
+  min_size = min(colSums2(assay(x, assay.type))),
   replace = TRUE,
   name = "subsampled",
   verbose = TRUE,
@@ -30,8 +30,7 @@ rarefyAssay(
 )
 }
 \arguments{
-\item{x}{A
-\code{SummarizedExperiment} object.}
+\item{x}{A \code{SummarizedExperiment} object.}
 
 \item{assay.type}{A single character value for selecting the
 \code{SummarizedExperiment} \code{assay} used for random subsampling.
@@ -44,8 +43,8 @@ assay to use for calculation.
 will be disabled.)}
 
 \item{sample}{A single integer value equal to the number of counts being
-simulated this can equal to lowest number of total counts
-found in a sample or a user specified number.}
+simulated i.e. rarefying depth. This can equal to lowest number of total
+counts found in a sample or a user specified number.}
 
 \item{min_size}{Deprecated. Use \code{sample} instead.}
 
@@ -77,6 +76,11 @@ we include the \code{rarefyAssay} function because there may be some
 instances where it can be useful.
 Note that the output of \code{rarefyAssay} is not the equivalent as the
 input and any result have to be verified with the original dataset.
+
+Subsampling/Rarefying may undermine downstream analyses and have unintended
+consequences. Therefore, make sure this normalization is appropriate for
+your data.
+
 To maintain the reproducibility, please define the seed using set.seed()
 before implement this function.
 }
@@ -87,13 +91,10 @@ before implement this function.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 set.seed(123)
-tse.subsampled <- rarefyAssay(tse, 
-                                  sample = 60000, 
-                                  name = "subsampled" 
-                                  )
-tse.subsampled
+tse_subsampled <- rarefyAssay(tse, sample = 60000, name = "subsampled")
+tse_subsampled
 dim(tse)
-dim(assay(tse.subsampled, "subsampled"))
+dim(assay(tse_subsampled, "subsampled"))
 
 }
 \references{
