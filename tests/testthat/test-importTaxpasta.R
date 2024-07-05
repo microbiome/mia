@@ -1,5 +1,8 @@
 skip_if_not_installed("biomformat")
 
+# Get default taxonomy ranks (importTaxpasta sets ranks based on data)
+default_ranks <- getTaxonomyRanks()
+
 test_that("a complete BIOM file can be loaded without error", {
   expect_no_error(
     suppressWarnings({
@@ -57,5 +60,4 @@ test_that("the TreeSummarizedExperiment has one tree with five edges", {
 })
 
 # Set taxonomy ranks to default (importTaxpasta sets ranks based on data)
-ranks <- c("kingdom","phylum", "class", "order", "family", "genus", "species")
-setTaxonomyRanks(ranks)
+setTaxonomyRanks(default_ranks)
