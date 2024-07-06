@@ -84,7 +84,7 @@ NULL
 #' # Load biom file
 #' library(biomformat)
 #' biom_file <- system.file(
-#'     extdata", "rich_dense_otu_table.biom", package = "biomformat")
+#'     "extdata", "rich_dense_otu_table.biom", package = "biomformat")
 #' 
 #' # Make TreeSE from biom file
 #' tse <- importBIOM(biom_file)
