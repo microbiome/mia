@@ -144,3 +144,4 @@ convertToPhyloseq
 + add rowTree agglomeration and RefSeq agglomeration in agglomerateByPrevalence
 + Fix tree merging in unsplit and mergeSEs functions
 + Added addAlpha; a wrapper for calculating all alpha diversity indices
++ Added importTaxpasta

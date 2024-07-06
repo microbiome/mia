@@ -95,7 +95,7 @@ NULL
 #'                     prefix.rm = TRUE)
 #' 
 #' # Load another biom file
-#' biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
+#' biom_file <- system.file("extdata", "testdata", "Aggregated_humanization2.biom",
 #'                          package = "mia")
 #' 
 #' # Clean artifacts from taxonomic data
