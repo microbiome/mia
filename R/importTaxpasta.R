@@ -54,7 +54,7 @@ importTaxpasta <- function(file) {
     # Convert BIOM to TreeSE
     tse <- convertFromBIOM(biom)
     
-    # IF we have taxonomic information, we add a hierarchy to the TreeSE.
+    # If we have taxonomic information, we add a hierarchy to the TreeSE.
     if( !is.null(raw$observation$`group-metadata`$ranks) ){
         # Get ranks from data
         ranks <- .get_ranks(raw)
