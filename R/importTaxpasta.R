@@ -56,11 +56,11 @@ importTaxpasta <- function(file) {
     
     # IF we have taxonomic information, we add a hierarchy to the TreeSE.
     if( !is.null(raw$observation$`group-metadata`$ranks) ){
-        # Set ranks of mia based on found ranks
+        # Get ranks from data
         ranks <- .get_ranks(raw)
-        setTaxonomyRanks(ranks)
         # Create rowData and rowTree
         rowData(tse) <- .create_row_data(biom, ranks)
+        .set_ranks_based_on_rowdata(tse, set.ranks = TRUE)
         tse <- addHierarchyTree(tse)
         # Agglomerate to all existing ranks
         tse <- agglomerateByRanks(tse, agglomerate.tree = TRUE)
@@ -85,11 +85,18 @@ importTaxpasta <- function(file) {
 #'
 #' @keywords internal
 #' @noRd
+#' @importFrom utils getFromNamespace
 .create_biom <- function(h5array) {
+    # Get relevant functions from namespace. Using pkg:::function gives warnings
+    # in R CMD check. By doing like this, we can avoid them.
+    generate_matrix <- getFromNamespace("generate_matrix", "biomformat")
+    generate_metadata <- getFromNamespace("generate_metadata", "biomformat")
+    namedList <- getFromNamespace("namedList", "biomformat")
+    
     # Get abundance data, row data and column data along with shape
-    data <- biomformat:::generate_matrix(h5array)
-    rows <- biomformat:::generate_metadata(h5array$observation)
-    columns <- biomformat:::generate_metadata(h5array$sample)
+    data <- generate_matrix(h5array)
+    rows <- generate_metadata(h5array$observation)
+    columns <- generate_metadata(h5array$sample)
     shape <- c(length(data), length(data[[1]]))
     # Get metadata on the data
     id <- attr(h5array, "id")
@@ -102,10 +109,11 @@ importTaxpasta <- function(file) {
     matrix_type <- "dense"
     matrix_element_type <- "int"
     # Create BIOM object
-    result <- biomformat:::biom(biomformat:::namedList(
+    result <- namedList(
         id, format, format_url, type, generated_by, date, matrix_type,
         matrix_element_type, rows, columns, shape, data
-    ))
+    )
+    result <- biomformat::biom(result)
     return(result)
 }
 

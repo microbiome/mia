@@ -86,7 +86,8 @@ Suggests:
     reldist,
     ade4,
     microbiomeDataSets,
-    rmarkdown
+    rmarkdown,
+    rhdf5
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
