@@ -337,9 +337,9 @@ perSampleDominantTaxa(x, ...)
 
 makePhyloseqFromTreeSE(x, ...)
 
-\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x, ...)
+\S4method{makePhyloseqFromTreeSE}{SummarizedExperiment}(x)
 
-\S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x, ...)
+\S4method{makePhyloseqFromTreeSE}{TreeSummarizedExperiment}(x)
 
 makePhyloseqFromTreeSummarizedExperiment(x)
 

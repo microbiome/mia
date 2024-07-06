@@ -263,10 +263,11 @@ test_that("transformAssay", {
         ############################## Z TRANSFORMATION ########################
         # Calculates Z-transformation for features	
         xx <- t(scale(t(as.matrix(assay(tse, "counts")))))
-        expect_warning(z_assay <- assays(mia::transformAssay(tse,
-                                                             method = "z",
-                                                             MARGIN = "features",
-                                                             pseudocount = 1))$z)
+        expect_warning(z_assay <- assay(
+            mia::transformAssay(
+                tse, method = "standardize", MARGIN = "features",
+                pseudocount = 1)),
+            "standardize")
         expect_equal(max(abs(z_assay - xx), na.rm=TRUE), 0,
                      tolerance = 1e-14, check.attributes = FALSE)
 

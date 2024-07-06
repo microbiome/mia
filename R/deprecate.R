@@ -599,7 +599,7 @@ setMethod(
     "ZTransform", signature = c(x = "SummarizedExperiment"), function(x, ...){
         .Deprecated(
             "'Ztransform' is deprecated. Use 'transformAssay' instead.")
-        transformAssay(x, method = "z", MARGIN = "features", ...)
+        transformAssay(x, method = "standardize", MARGIN = "features", ...)
     }
 )
 
