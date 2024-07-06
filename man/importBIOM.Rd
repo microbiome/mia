@@ -38,7 +38,7 @@ tse <- importBIOM(
 
 # Load another biom file
 biom_file <- system.file(
-   "extdata/testdata", "Aggregated_humanization2.biom", package = "mia")
+   "extdata", "Aggregated_humanization2.biom", package = "mia")
 
 # Clean artifacts from taxonomic data
 tse <- importBIOM(biom_file, artifact.rm = TRUE)
