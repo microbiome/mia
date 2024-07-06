@@ -17,6 +17,7 @@ reference:
   - importMothur
   - importMetaPhlAn
   - importHUMAnN
+  - importTaxpasta
   - convert
 - title: Taxonomic data
   contents:
