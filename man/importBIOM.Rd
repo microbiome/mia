@@ -23,6 +23,27 @@ Loading a BIOM file
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object from the BIOM object contained in the loaded file.
 }
+\examples{
+# Load biom file
+library(biomformat)
+biom_file <- system.file(
+    "extdata", "rich_dense_otu_table.biom", package = "biomformat")
+
+# Make TreeSE from biom file
+tse <- importBIOM(biom_file)
+
+# Get taxonomyRanks from prefixes and remove prefixes
+tse <- importBIOM(
+    biom_file, rank.from.prefix = TRUE, prefix.rm = TRUE)
+
+# Load another biom file
+biom_file <- system.file(
+   "extdata/testdata", "Aggregated_humanization2.biom", package = "mia")
+
+# Clean artifacts from taxonomic data
+tse <- importBIOM(biom_file, artifact.rm = TRUE)
+                    
+}
 \seealso{
 \code{\link[=importMetaPhlAn]{importMetaPhlAn}}
 \code{\link[=convert]{convertFromPhyloseq}}
