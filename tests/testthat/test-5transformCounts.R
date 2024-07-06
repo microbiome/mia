@@ -44,7 +44,7 @@ test_that("transformAssay", {
 
         ########################### LOG10 ######################################
         # Calculates log10 transformation with pseudocount. Should be equal.
-	tmp <- mia::transformAssay(tse, method = "log10", pseudocount = 1)
+	    tmp <- mia::transformAssay(tse, method = "log10", pseudocount = 1)
 
         ass <- assays(tmp)$log10
         expect_equal(as.matrix(ass),
@@ -266,8 +266,8 @@ test_that("transformAssay", {
         expect_warning(z_assay <- assay(
             mia::transformAssay(
                 tse, method = "standardize", MARGIN = "features",
-                pseudocount = 1)),
-            "standardize")
+                pseudocount = 1),
+            "standardize"))
         expect_equal(max(abs(z_assay - xx), na.rm=TRUE), 0,
                      tolerance = 1e-14, check.attributes = FALSE)
 
