@@ -6,25 +6,25 @@ default_ranks <- getTaxonomyRanks()
 test_that("a complete BIOM file can be loaded without error", {
   expect_no_error(
     suppressWarnings({
-      importTaxpasta(system.file("extdata/complete.biom", package = "mia", mustWork = TRUE))
+      importTaxpasta(system.file("extdata", "complete.biom", package = "mia", mustWork = TRUE))
     })
   )
 })
 
 test_that("loading a simple BIOM file without taxonomy information generates a warning", {
-  expect_warning(importTaxpasta(system.file("extdata/simple.biom", package = "mia", mustWork = TRUE)))
+  expect_warning(importTaxpasta(system.file("extdata", "simple.biom", package = "mia", mustWork = TRUE)))
 })
 
 test_that("loading a BIOM file with less ranks than taxonomy columns generates an error", {
-  expect_error(importTaxpasta(system.file("extdata/less_ranks.biom", package = "mia", mustWork = TRUE)))
+  expect_error(importTaxpasta(system.file("extdata", "less_ranks.biom", package = "mia", mustWork = TRUE)))
 })
 
 test_that("loading a BIOM file with more ranks than taxonomy columns generates an error", {
-  expect_error(importTaxpasta(system.file("extdata/more_ranks.biom", package = "mia", mustWork = TRUE)))
+  expect_error(importTaxpasta(system.file("extdata", "more_ranks.biom", package = "mia", mustWork = TRUE)))
 })
 
 result <- suppressWarnings({
-  importTaxpasta(system.file("extdata/complete.biom", package = "mia", mustWork = TRUE))
+  importTaxpasta(system.file("extdata", "complete.biom", package = "mia", mustWork = TRUE))
 })
 
 test_that("loading a taxpasta BIOM file returns a TreeSummarizedExperiment", {

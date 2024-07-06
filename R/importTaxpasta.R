@@ -18,7 +18,7 @@
 #' 
 #' \dontrun{
 #' # File path to BIOM file
-#' file_path <- system.file("extdata/complete.biom", package = "mia")
+#' file_path <- system.file("extdata", "complete.biom", package = "mia")
 #' # Import BIOM as TreeSE
 #' tse <- importTaxpasta(file_path)
 #' }
