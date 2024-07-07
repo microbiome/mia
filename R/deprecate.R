@@ -599,7 +599,7 @@ setMethod(
     "ZTransform", signature = c(x = "SummarizedExperiment"), function(x, ...){
         .Deprecated(
             "'Ztransform' is deprecated. Use 'transformAssay' instead.")
-        transformAssay(x, method = "z", MARGIN = "features", ...)
+        transformAssay(x, method = "standardize", MARGIN = "features", ...)
     }
 )
 
@@ -920,7 +920,7 @@ setGeneric("makePhyloseqFromTreeSE", signature = c("x"),
 #' @rdname deprecate
 #' @export
 setMethod("makePhyloseqFromTreeSE", signature = c(x = "SummarizedExperiment"),
-    function(x, ...){
+    function(x){
         .Deprecated(msg = paste0(
             "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
             " Use 'convertFromPhyloseq' instead."))
@@ -932,7 +932,7 @@ setMethod("makePhyloseqFromTreeSE", signature = c(x = "SummarizedExperiment"),
 #' @export
 setMethod("makePhyloseqFromTreeSE", 
           signature = c(x = "TreeSummarizedExperiment"),
-    function(x, ...){
+    function(x){
         .Deprecated(msg = paste0(
             "'makeTreeSummarizedExperimentFromPhyloseq' is deprecated.",
             " Use 'convertFromPhyloseq' instead."))
@@ -1016,7 +1016,7 @@ makeTreeSEFromPhyloseq <- function(x) {
   .Deprecated(msg = paste0(
     "'makeTreeSEFromPhyloseq' is deprecated.",
     " Use 'convertFromPhyloseq' instead."))
-  convertFromPhyloseq(...)
+  convertFromPhyloseq(x)
 }
 
 #' @rdname deprecate

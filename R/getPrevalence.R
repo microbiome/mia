@@ -537,7 +537,7 @@ setMethod("getPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' @examples
 #' ## Data can be aggregated based on prevalent taxonomic results
 #' tse <- GlobalPatterns
-#' tse <- transformAssay(tse, method = "relabundance)
+#' tse <- transformAssay(tse, method = "relabundance")
 #' tse <- agglomerateByPrevalence(
 #'     tse,
 #'     rank = "Phylum",
