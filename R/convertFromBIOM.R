@@ -80,27 +80,25 @@ NULL
 #' \code{\link[=importMothur]{importMothur}}
 #' \code{\link[=importHUMAnN]{importHUMAnN}}
 #'
-#' @example 
+#' @examples
 #' # Load biom file
 #' library(biomformat)
-#' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
-#'                          package = "biomformat")
+#' biom_file <- system.file(
+#'     "extdata", "rich_dense_otu_table.biom", package = "biomformat")
 #' 
 #' # Make TreeSE from biom file
 #' tse <- importBIOM(biom_file)
 #' 
 #' # Get taxonomyRanks from prefixes and remove prefixes
-#' tse <- importBIOM(biom_file,
-#'                     rank.from.prefix = TRUE,
-#'                     prefix.rm = TRUE)
+#' tse <- importBIOM(
+#'     biom_file, rank.from.prefix = TRUE, prefix.rm = TRUE)
 #' 
 #' # Load another biom file
-#' biom_file <- system.file("extdata", "testdata", "Aggregated_humanization2.biom",
-#'                          package = "mia")
+#' biom_file <- system.file(
+#'    "extdata", "Aggregated_humanization2.biom", package = "mia")
 #' 
 #' # Clean artifacts from taxonomic data
-#' tse <- importBIOM(biom_file,
-#'                     artifact.rm = TRUE)
+#' tse <- importBIOM(biom_file, artifact.rm = TRUE)
 #'                     
 #' @export
 importBIOM <- function(file, ...) {
