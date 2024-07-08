@@ -229,7 +229,7 @@ importMetaPhlAn <- function(
     # at specific rank
     tables <- split(table, levels)
     # Get the order
-    metaphlan_tax = names(.all_supported_ranks)
+    metaphlan_tax = names(.taxonomy_rank_prefixes)
     indices <- match(tolower(metaphlan_tax), tolower(names(tables)))
     # Remove NAs which occurs if rank is not included
     indices <- indices[!is.na(indices)]
@@ -242,7 +242,7 @@ importMetaPhlAn <- function(
 # Output is single character that specifies the rank, e.g, "s" == "Species"
 .get_lowest_taxonomic_level <- function(string){
     # List all ranks and what prefix they correspond
-    ranks <- .all_supported_ranks
+    ranks <- .taxonomy_rank_prefixes
     # Get indices that specify location of rank prefixes 
     ranks_pattern <- paste(ranks, collapse = "|")
     ranks_pattern <- paste0("(", ranks_pattern, ")__")

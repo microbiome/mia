@@ -240,7 +240,7 @@ convertFromBIOM <- function(
 .remove_prefixes_from_taxa <- function(
         feature_tab,
         prefixes = paste0(
-            "(", paste0(.all_supported_ranks, collapse = "|"), ")__"),
+            "(", paste0(.taxonomy_rank_prefixes, collapse = "|"), ")__"),
         only.taxa.col = TRUE, ...){
     #
     if( !.is_a_bool(only.taxa.col) ){
@@ -284,7 +284,7 @@ convertFromBIOM <- function(
     # Get column
     col = x[ , colname]
     # List prefixes
-    all_ranks <- .all_supported_ranks
+    all_ranks <- .taxonomy_rank_prefixes
     prefixes <- paste0("^", all_ranks, "__")
     names(prefixes) <- names(all_ranks)
     # Find which prefix is found from each column value, if none.
