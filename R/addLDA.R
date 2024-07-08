@@ -8,7 +8,7 @@
 #'  object.
 #'   
 #' @param k Integer, number of latent vectors/topics 
-#'   (By default: \code{k = 2}).
+#'   (By default: \code{2}).
 #' 
 #' @param name The name to be used to store the result in the reducedDims of the
 #'  output (By default: \code{name = "LDA"}).
@@ -17,11 +17,11 @@
 #' 
 #' @return 
 #' For \code{getLDA}, the ordination matrix with feature loadings matrix
-#'  as attribute \code{'feature_loadings'}.
+#'  as attribute \code{"loadings"}.
 #'  
 #' For \code{addLDA}, a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'  object is returned containing the ordination matrix in reducedDims(..., name)
-#'  with feature loadings matrix as attribute \code{'feature_loadings'}.
+#'  with feature loadings matrix as attribute \code{"loadings"}.
 #'  
 #' @name addLDA
 #' 
@@ -35,8 +35,8 @@
 #' tse <- addLDA(tse)
 #' 
 #' # Extract feature loadings
-#' feature_loadings <- attr(reducedDim(tse, "LDA"), "feature_loadings")
-#' head(feature_loadings)
+#' loadings <- attr(reducedDim(tse, "LDA"), "loadings")
+#' head(loadings)
 NULL
 
 #' @rdname addLDA
@@ -59,8 +59,8 @@ setMethod("getLDA", "SummarizedExperiment",
         df <- as.data.frame(t(assay(x, "counts")))
         posteriors <- topicmodels::posterior(lda_model, df)
         scores <- t(as.data.frame(posteriors$topics))
-        feature_loadings <- t(as.data.frame(posteriors$terms)) 
-        attr(scores, "feature_loadings") <- feature_loadings
+        loadings <- t(as.data.frame(posteriors$terms)) 
+        attr(scores, "loadings") <- loadings
         return(scores)
     }
 )
@@ -68,7 +68,7 @@ setMethod("getLDA", "SummarizedExperiment",
 #' @export
 #' @rdname addLDA
 setMethod("addLDA", "SummarizedExperiment",
-    function(x, k=2, name = "LDA", ...){
+    function(x, k = 2, name = "LDA", ...){
         reducedDim(x, name) <- t(getLDA(x, k, ...))
         return(x)
     }
