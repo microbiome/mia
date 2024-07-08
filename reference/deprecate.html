@@ -3,7 +3,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -31,20 +31,20 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/microbiome/mia/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>These functions will be deprecated. Please use other functions instead.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/R/deprecate.R" class="external-link"><code>R/deprecate.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/import_fixes/R/deprecate.R" class="external-link"><code>R/deprecate.R</code></a></small>
     <div class="hidden name"><code>deprecate.Rd</code></div>
     </div>
 
@@ -55,88 +55,88 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cluster</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">cluster</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">addTaxonomyTree</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">addTaxonomyTree</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">taxonomyTree</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">taxonomyTree</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">mergeRows</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">mergeCols</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">mergeFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">mergeFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">mergeFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">mergeSamples</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">mergeSamples</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">mergeSamples</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SingleCellExperiment</span></span>
+<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
 <span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">mergeFeaturesByPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">mergeFeaturesByPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for MultiAssayExperiment</span></span>
+<span><span class="co"># S4 method for class 'MultiAssayExperiment'</span></span>
 <span><span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">mergeFeaturesByRank</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">testExperimentCrossAssociation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">testExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">testExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">getExperimentCrossCorrelation</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">loadFromBiom</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
@@ -153,181 +153,181 @@
 <span></span>
 <span><span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">countDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">subsetByRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">subsetByRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">subsetByRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">subsetByRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">subsetByPrevalentTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">subsetByPrevalentTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">subsetByPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">subsetByPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">countDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">full_join</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">full_join</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">inner_join</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">inner_join</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">left_join</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">left_join</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">right_join</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">right_join</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">plotNMDS</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">estimateDivergence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">estimateDivergence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">meltAssay</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">meltAssay</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">transformSamples</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">ZTransform</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">ZTransform</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">relAbundanceCounts</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">relAbundanceCounts</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">transformCounts</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">transformFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">transformFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getUniqueFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getUniqueTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getTopFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">getRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getRareFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">getRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getRareTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">getPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getPrevalentFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">getPrevalentTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">getPrevalentTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getPrevalentTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">subsampleCounts</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">subsampleCounts</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">addPerSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">addPerSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">addPerSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">perSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">perSampleDominantFeatures</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">perSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">perSampleDominantTaxa</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">makePhyloseqFromTreeSE</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">makePhyloseqFromTreeSummarizedExperiment</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">makeTreeSummarizedExperimentFromPhyloseq</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">makeTreeSummarizedExperimentFromPhyloseq</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">makeTreeSEFromBiom</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
@@ -342,39 +342,41 @@
 <span></span>
 <span><span class="fu">estimateEvenness</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">estimateEvenness</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">estimateRichness</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">estimateRichness</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">estimateDiversity</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">estimateDiversity</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">estimateFaith</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">estimateFaith</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">estimateDominance</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY</span></span>
+<span><span class="co"># S4 method for class 'ANY'</span></span>
 <span><span class="fu">estimateDominance</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional parameters. See dedicated function.</p></dd>
 
 </dl></div>
@@ -391,15 +393,15 @@ object.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

@@ -5,7 +5,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -33,20 +33,20 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/microbiome/mia/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get dominant taxa</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/import_fixes/R/getDominant.R" class="external-link"><code>R/getDominant.R</code></a></small>
     <div class="hidden name"><code>getDominant.Rd</code></div>
     </div>
 
@@ -68,7 +68,7 @@ object.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getDominant</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
@@ -82,7 +82,7 @@ object.</p>
 <span></span>
 <span><span class="fu">addDominant</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"dominant_taxa"</span>, other.name <span class="op">=</span> <span class="st">"Other"</span>, n <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">addDominant</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"dominant_taxa"</span>,</span>
@@ -95,41 +95,43 @@ object.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
 
 
-<dt>assay.type</dt>
+<dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p>A single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
 to use for identifying dominant taxa.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
-<dt>rank</dt>
+<dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
 <dd><p>A single character defining a taxonomic rank. Must be a value of
 the output of <code><a href="taxonomy-methods.html">taxonomyRanks()</a></code>.</p></dd>
 
 
-<dt>other.name</dt>
+<dt id="arg-other-name">other.name<a class="anchor" aria-label="anchor" href="#arg-other-name"></a></dt>
 <dd><p>A name for features that are not included in n the most frequent
 dominant features in the data. Default is "Other".</p></dd>
 
 
-<dt>n</dt>
+<dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>The number of features that are the most frequent dominant features.
 Default is NULL, which defaults that each sample is assigned a dominant taxon.</p></dd>
 
 
-<dt>complete</dt>
+<dt id="arg-complete">complete<a class="anchor" aria-label="anchor" href="#arg-complete"></a></dt>
 <dd><p>A boolean value to manage multiple dominant taxa for a sample.
 Default for getDominant is TRUE to include all equally dominant taxa
 for each sample. complete = FALSE samples one taxa for the samples that have
@@ -139,28 +141,22 @@ dominant taxon assigned for each sample into colData. complete = TRUE adds a
 list that includes all dominant taxa for each sample into colData.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed on to <code><a href="agglomerate-methods.html">agglomerateByRank()</a></code> when
 <code>rank</code> is specified.</p></dd>
 
 
-<dt>name</dt>
+<dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p>A name for the column of the <code>colData</code> where the dominant
 taxa will be stored in when using <code>addDominant</code>.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p><code>getDominant</code> returns a named character vector <code>x</code></p>
-
-
-<p>while <code>addDominant</code> returns
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code></p>
-
-
-<p>with additional column in <code>colData</code> named <code>*name*</code>.</p>
+    <p><code>getDominant</code> returns a named character vector <code>x</code>
+while <code>addDominant</code> returns
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
+with additional column in <code>colData</code> named <code>*name*</code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -243,15 +239,15 @@ additional arguments to deal with missing values or special characters.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

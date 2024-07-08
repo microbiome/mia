@@ -5,7 +5,7 @@ object. The function utilizes rbiom:unifrac()."><!-- mathjax --><script src="htt
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -33,20 +33,20 @@ object. The function utilizes rbiom:unifrac()."><!-- mathjax --><script src="htt
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/microbiome/mia/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate weighted or unweighted (Fast) Unifrac distance</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/R/calculateUnifrac.R" class="external-link"><code>R/calculateUnifrac.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/import_fixes/R/calculateUnifrac.R" class="external-link"><code>R/calculateUnifrac.R</code></a></small>
     <div class="hidden name"><code>calculateUnifrac.Rd</code></div>
     </div>
 
@@ -59,10 +59,10 @@ object. The function utilizes <code><a href="https://rdrr.io/pkg/rbiom/man/unifr
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculateUnifrac</span><span class="op">(</span><span class="va">x</span>, <span class="va">tree</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY,phylo</span></span>
+<span><span class="co"># S4 method for class 'ANY,phylo'</span></span>
 <span><span class="fu">calculateUnifrac</span><span class="op">(</span><span class="va">x</span>, <span class="va">tree</span>, weighted <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment,missing</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment,missing'</span></span>
 <span><span class="fu">calculateUnifrac</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
@@ -86,7 +86,9 @@ object. The function utilizes <code><a href="https://rdrr.io/pkg/rbiom/man/unifr
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a numeric matrix or a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
 object containing a tree.</p>
@@ -96,18 +98,18 @@ distance calculations such as <code><a href="https://rdrr.io/r/stats/dist.html" 
 possible.</p></dd>
 
 
-<dt>tree</dt>
+<dt id="arg-tree">tree<a class="anchor" aria-label="anchor" href="#arg-tree"></a></dt>
 <dd><p>if <code>x</code> is a matrix, a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/phylo.html" class="external-link">phylo</a></code> object matching the
 matrix. This means that the phylo object and the columns should relate
 to the same type of features (aka. microorganisms).</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional arguments not used.</p></dd>
 
 
-<dt>weighted</dt>
+<dt id="arg-weighted">weighted<a class="anchor" aria-label="anchor" href="#arg-weighted"></a></dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should use weighted-Unifrac
 calculation? Weighted-Unifrac takes into account the relative abundance of
 species/taxa shared between samples, whereas unweighted-Unifrac only
@@ -115,56 +117,54 @@ considers presence/absence. Default is <code>FALSE</code>, meaning the
 unweighted-Unifrac distance is calculated for all pairs of samples.</p></dd>
 
 
-<dt>assay.type</dt>
+<dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
-<dt>exprs_values</dt>
+<dt id="arg-exprs-values">exprs_values<a class="anchor" aria-label="anchor" href="#arg-exprs-values"></a></dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead.)</p></dd>
 
 
-<dt>tree.name</dt>
+<dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
 <dd><p>a single <code>character</code> value for specifying which
 tree will be used in calculation.
 (By default: <code>tree.name = "phylo"</code>)</p></dd>
 
 
-<dt>tree_name</dt>
+<dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
 <dd><p>Deprecated. Use <code>tree.name</code> instead.</p></dd>
 
 
-<dt>transposed</dt>
+<dt id="arg-transposed">transposed<a class="anchor" aria-label="anchor" href="#arg-transposed"></a></dt>
 <dd><p>Logical scalar, is x transposed with cells in rows, i.e.,
 is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
 (By default: <code>transposed = FALSE</code>)</p></dd>
 
 
-<dt>node.label</dt>
+<dt id="arg-node-label">node.label<a class="anchor" aria-label="anchor" href="#arg-node-label"></a></dt>
 <dd><p>if <code>x</code> is a matrix,
 a <code>character</code> vector specifying links between rows/columns and tips of <code>tree</code>.
 The length must equal the number of rows/columns of <code>x</code>. Furthermore, all the
 node labs must be present in <code>tree</code>.</p></dd>
 
 
-<dt>nodeLab</dt>
+<dt id="arg-nodelab">nodeLab<a class="anchor" aria-label="anchor" href="#arg-nodelab"></a></dt>
 <dd><p>Deprecated. Use <code>node.label</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>a sample-by-sample distance matrix, suitable for NMDS, etc.</p>
+    <p>a sample-by-sample distance matrix, suitable for NMDS, etc.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -175,14 +175,14 @@ node labs must be present in <code>tree</code>.</p></dd>
     <h2>References</h2>
     <p><a href="http://bmf.colorado.edu/unifrac/" class="external-link">http://bmf.colorado.edu/unifrac/</a></p>
 <p>See also additional descriptions of Unifrac in the following articles:</p>
-<p>Lozupone, Hamady and Knight, ``Unifrac - An Online Tool for Comparing
-Microbial Community Diversity in a Phylogenetic Context.'', BMC
+<p>Lozupone, Hamady and Knight, “Unifrac - An Online Tool for Comparing
+Microbial Community Diversity in a Phylogenetic Context.”, BMC
 Bioinformatics 2006, 7:371</p>
-<p>Lozupone, Hamady, Kelley and Knight, ``Quantitative and qualitative (beta)
+<p>Lozupone, Hamady, Kelley and Knight, “Quantitative and qualitative (beta)
 diversity measures lead to different insights into factors that structure
-microbial communities.'' Appl Environ Microbiol. 2007</p>
-<p>Lozupone C, Knight R. ``Unifrac: a new phylogenetic method for comparing
-microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.</p>
+microbial communities.” Appl Environ Microbiol. 2007</p>
+<p>Lozupone C, Knight R. “Unifrac: a new phylogenetic method for comparing
+microbial communities.” Appl Environ Microbiol. 2005 71 (12):8228-35.</p>
     </div>
 
     <div id="ref-examples">
@@ -227,15 +227,15 @@ microbial communities.'' Appl Environ Microbiol. 2005 71 (12):8228-35.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

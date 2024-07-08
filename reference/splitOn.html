@@ -3,7 +3,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -31,20 +31,20 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/microbiome/mia/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Split <code>TreeSummarizedExperiment</code> column-wise or row-wise based on grouping variable</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/R/splitOn.R" class="external-link"><code>R/splitOn.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/import_fixes/R/splitOn.R" class="external-link"><code>R/splitOn.R</code></a></small>
     <div class="hidden name"><code>splitOn.Rd</code></div>
     </div>
 
@@ -55,24 +55,24 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SingleCellExperiment</span></span>
+<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
 <span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">splitOn</span><span class="op">(</span><span class="va">x</span>, f <span class="op">=</span> <span class="cn">NULL</span>, update.tree <span class="op">=</span> <span class="va">update_rowTree</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for list</span></span>
+<span><span class="co"># S4 method for class 'list'</span></span>
 <span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update.tree <span class="op">=</span> <span class="va">update_rowTree</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SimpleList</span></span>
+<span><span class="co"># S4 method for class 'SimpleList'</span></span>
 <span><span class="fu">unsplitOn</span><span class="op">(</span><span class="va">x</span>, update.tree <span class="op">=</span> <span class="va">update_rowTree</span>, update_rowTree <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SingleCellExperiment</span></span>
+<span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
 <span><span class="fu">unsplitOn</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  altexp <span class="op">=</span> <span class="va">altExpNames</span>,</span>
@@ -85,7 +85,9 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object or a list of
@@ -93,7 +95,7 @@ object or a list of
 objects.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Arguments passed to <code>agglomerateByVariable</code> function for
 <code>SummarizedExperiment</code> objects and other functions.
 See <code><a href="agglomerate-methods.html">agglomerateByVariable</a></code> for more
@@ -102,7 +104,7 @@ list by their group names.</p></li>
 </ul></dd>
 
 
-<dt>f</dt>
+<dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
 <dd><p>A single character value for selecting the grouping variable
 from <code>rowData</code> or <code>colData</code> or a <code>factor</code> or <code>vector</code>
 with the same length as one of the dimensions. If <code>f</code> matches with both
@@ -111,48 +113,42 @@ Split by cols is not encouraged, since this is not compatible with
 storing the results in <code>altExps</code>.</p></dd>
 
 
-<dt>update.tree</dt>
+<dt id="arg-update-tree">update.tree<a class="anchor" aria-label="anchor" href="#arg-update-tree"></a></dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the rowTree be updated
 based on splitted data? Option is enabled when <code>x</code> is a
 <code>TreeSummarizedExperiment</code> object or a list of such objects.
 (By default: <code>update.tree = FALSE</code>)</p></dd>
 
 
-<dt>update_rowTree</dt>
+<dt id="arg-update-rowtree">update_rowTree<a class="anchor" aria-label="anchor" href="#arg-update-rowtree"></a></dt>
 <dd><p>Deprecated. Use <code>update.tree </code> instead.</p></dd>
 
 
-<dt>altexp</dt>
+<dt id="arg-altexp">altexp<a class="anchor" aria-label="anchor" href="#arg-altexp"></a></dt>
 <dd><p>a <code>character</code> vector specifying the alternative experiments
 to be unsplit. (By default: <code>altexp = names(altExps(x))</code>)</p></dd>
 
 
-<dt>altExpNames</dt>
+<dt id="arg-altexpnames">altExpNames<a class="anchor" aria-label="anchor" href="#arg-altexpnames"></a></dt>
 <dd><p>Deprecated. Use <code>altexp</code> instead.</p></dd>
 
 
-<dt>keep.dimred</dt>
+<dt id="arg-keep-dimred">keep.dimred<a class="anchor" aria-label="anchor" href="#arg-keep-dimred"></a></dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the
 <code>reducedDims(x)</code> be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
 (By default: <code>keep.dimred = FALSE</code>)</p></dd>
 
 
-<dt>keep_reducedDims</dt>
+<dt id="arg-keep-reduceddims">keep_reducedDims<a class="anchor" aria-label="anchor" href="#arg-keep-reduceddims"></a></dt>
 <dd><p>Deprecated. Use <code>keep.dimred</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>For <code>splitOn</code>: <code>SummarizedExperiment</code> objects in a <code>SimpleList</code>.</p>
-
-
-<p>For <code>unsplitOn</code>: <code>x</code>, with <code>rowData</code> and <code>assay</code></p>
-
-
-<p>data replaced by the unsplit data. <code>colData</code> of x is kept as well
+    <p>For <code>splitOn</code>: <code>SummarizedExperiment</code> objects in a <code>SimpleList</code>.</p>
+<p>For <code>unsplitOn</code>: <code>x</code>, with <code>rowData</code> and <code>assay</code>
+data replaced by the unsplit data. <code>colData</code> of x is kept as well
 and any existing <code>rowTree</code> is dropped as well, since existing
 <code>rowLinks</code> are not valid anymore.</p>
     </div>
@@ -242,15 +238,15 @@ group.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

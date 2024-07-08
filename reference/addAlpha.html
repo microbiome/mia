@@ -4,7 +4,7 @@ then stores results in colData."><!-- mathjax --><script src="https://cdnjs.clou
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -32,20 +32,20 @@ then stores results in colData."><!-- mathjax --><script src="https://cdnjs.clou
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/microbiome/mia/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Estimate alpha diversity indices</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/import_fixes/R/addAlpha.R" class="external-link"><code>R/addAlpha.R</code></a></small>
     <div class="hidden name"><code>addAlpha.Rd</code></div>
     </div>
 
@@ -70,7 +70,7 @@ then stores results in <code>colData</code>.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">addAlpha</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
@@ -89,33 +89,35 @@ then stores results in <code>colData</code>.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a <code>SummarizedExperiment</code> object.</p></dd>
 
 
-<dt>assay.type</dt>
+<dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p>the name of the assay used for calculation of the
 sample-wise estimates. (Default: <code>"counts"</code>)</p></dd>
 
 
-<dt>index</dt>
+<dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
 <dd><p>a <code>character</code> vector, specifying the alpha diversity
 indices to be calculated.</p></dd>
 
 
-<dt>name</dt>
+<dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p>a name for the column(s) of the colData the results should be
 stored in. By default this will use the original names of the calculated
 indices. (Default: <code>index</code>)</p></dd>
 
 
-<dt>niter</dt>
+<dt id="arg-niter">niter<a class="anchor" aria-label="anchor" href="#arg-niter"></a></dt>
 <dd><p><code>NULL</code> or a single <code>integer</code> value for the number of
 rarefaction rounds. Rarefaction is not applied when <code>niter=NULL</code>
 (see Details section). (Default: <code>NULL</code>)</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional arguments:</p><ul><li><p><code>sample</code>: A <code>numeric</code> value specifying the rarefaction
 depth i.e. the number of counts drawn from each sample.
 (Default: <code>min(colSums2(assay(x, assay.type)))</code>)</p></li>
@@ -158,15 +160,11 @@ selecting detection threshold for the abundances. (Default: <code>0</code>)</p><
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p><code>x</code> with additional <code>colData</code> column(s) named <code>code</code></p>
-
-
+    <p><code>x</code> with additional <code>colData</code> column(s) named <code>code</code></p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    
+
 <div class="section">
 <h3 id="diversity">Diversity<a class="anchor" aria-label="anchor" href="#diversity"></a></h3>
 
@@ -382,11 +380,11 @@ Diversity of Planktonic Foraminifera in Deep-Sea Sediments.
 <em>Science</em> 168(3937):1345-1347. doi: 10.1126/science.168.3937.1345</p>
 <p>Bulla L. (1994)
 An  index of diversity and its associated diversity measure.
-<em>Oikos</em> 70:167--171</p>
+<em>Oikos</em> 70:167–171</p>
 <p>Camargo, JA. (1992)
 New diversity index for assessing structural alterations in aquatic
 communities.
-<em>Bull. Environ. Contam. Toxicol.</em> 48:428--434.</p>
+<em>Bull. Environ. Contam. Toxicol.</em> 48:428–434.</p>
 <p>Chao A. (1984)
 Non-parametric estimation of the number of classes in a population.
 <em>Scand J Stat.</em> 11:265–270.</p>
@@ -418,13 +416,13 @@ Biological Diversity: Frontiers in Measurement and Assessment
 (Oxford Univ Press, Oxford), Vol 12.</p>
 <p>McNaughton, SJ and Wolf LL. (1970).
 Dominance and the niche in ecological systems.
-<em>Science</em> 167:13, 1--139</p>
+<em>Science</em> 167:13, 1–139</p>
 <p>O'Hara, R.B. (2005).
 Species richness estimators: how many species can dance on the head of a pin?
 <em>J. Anim. Ecol.</em> 74, 375-386.</p>
 <p>Pielou, EC. (1966)
 The measurement of diversity in different types of
-biological collections. <em>J Theoretical Biology</em> 13:131--144.</p>
+biological collections. <em>J Theoretical Biology</em> 13:131–144.</p>
 <p>Simpson EH (1949)
 Measurement of Diversity.
 <em>Nature</em> 163(688). doi: 10.1038/163688a0</p>
@@ -488,15 +486,15 @@ species richness, species diversity and the ‘Shannon–Wiener’ Index.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

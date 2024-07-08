@@ -3,7 +3,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -31,20 +31,20 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/microbiome/mia/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Merge SE objects into single SE object.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/R/mergeSEs.R" class="external-link"><code>R/mergeSEs.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/import_fixes/R/mergeSEs.R" class="external-link"><code>R/mergeSEs.R</code></a></small>
     <div class="hidden name"><code>mergeSEs.Rd</code></div>
     </div>
 
@@ -55,7 +55,7 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mergeSEs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SimpleList</span></span>
+<span><span class="co"># S4 method for class 'SimpleList'</span></span>
 <span><span class="fu">mergeSEs</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span>
@@ -71,59 +71,61 @@
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">mergeSEs</span><span class="op">(</span><span class="va">x</span>, y <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for list</span></span>
+<span><span class="co"># S4 method for class 'list'</span></span>
 <span><span class="fu">mergeSEs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code> object or a list of
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code> objects.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional arguments (not used).</p></dd>
 
 
-<dt>assay.type</dt>
+<dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p>A character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code>
 to be merged. (By default: <code>assay.type = "counts"</code>)</p></dd>
 
 
-<dt>assay_name</dt>
+<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>(Deprecated) alias for <code>assay.type</code>.</p></dd>
 
 
-<dt>join</dt>
+<dt id="arg-join">join<a class="anchor" aria-label="anchor" href="#arg-join"></a></dt>
 <dd><p>A single character value for selecting the joining method.
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled
 when more than two objects are being merged.  (By default: <code>join = "full"</code>)</p></dd>
 
 
-<dt>missing.values</dt>
+<dt id="arg-missing-values">missing.values<a class="anchor" aria-label="anchor" href="#arg-missing-values"></a></dt>
 <dd><p>NA, 0, or a single character values specifying the notation
 of missing values. (By default: <code>missing.values = NA</code>)</p></dd>
 
 
-<dt>missing_values</dt>
+<dt id="arg-missing-values">missing_values<a class="anchor" aria-label="anchor" href="#arg-missing-values"></a></dt>
 <dd><p>Deprecated. Use <code>missing.values</code> instead.</p></dd>
 
 
-<dt>collapse.cols</dt>
+<dt id="arg-collapse-cols">collapse.cols<a class="anchor" aria-label="anchor" href="#arg-collapse-cols"></a></dt>
 <dd><p>A boolean value for selecting whether to collapse identically
 named samples to one. (By default: <code>collapse.cols = FALSE</code>)</p></dd>
 
 
-<dt>collapse_samples</dt>
+<dt id="arg-collapse-samples">collapse_samples<a class="anchor" aria-label="anchor" href="#arg-collapse-samples"></a></dt>
 <dd><p>Deprecated. Use <code>collapse.cols</code> instead.</p></dd>
 
 
-<dt>collapse.rows</dt>
+<dt id="arg-collapse-rows">collapse.rows<a class="anchor" aria-label="anchor" href="#arg-collapse-rows"></a></dt>
 <dd><p>A boolean value for selecting whether to collapse identically
 named features to one. Since all taxonomy information is taken into account,
 this concerns rownames-level (usually strain level) comparison. Often
@@ -134,25 +136,23 @@ taxonomy information along with OTU number matches.
 (By default: <code>collapse.rows = TRUE</code>)</p></dd>
 
 
-<dt>collapse_features</dt>
+<dt id="arg-collapse-features">collapse_features<a class="anchor" aria-label="anchor" href="#arg-collapse-features"></a></dt>
 <dd><p>Deprecated. Use <code>collapse.rows</code> instead.</p></dd>
 
 
-<dt>verbose</dt>
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>A single boolean value to choose whether to show messages.
 (By default: <code>verbose = TRUE</code>)</p></dd>
 
 
-<dt>y</dt>
+<dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p>a <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code> object when <code>x</code> is a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code> object. Disabled when <code>x</code> is a list.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A single <code>SummarizedExperiment</code> object.</p>
+    <p>A single <code>SummarizedExperiment</code> object.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -180,10 +180,10 @@ that rows and columns are matching, respectively.</p>
 <code>'left'</code>, and  <code>'right'</code>. In all the methods, all the samples are
 included in the result object. However, with different methods, it is possible
 to choose which rows are included.</p>
-<ul><li><p><code>full</code> -- all unique features</p></li>
-<li><p><code>inner</code> -- all shared features</p></li>
-<li><p><code>left</code> -- all the features of the first object</p></li>
-<li><p><code>right</code> -- all the features of the second object</p></li>
+<ul><li><p><code>full</code> – all unique features</p></li>
+<li><p><code>inner</code> – all shared features</p></li>
+<li><p><code>left</code> – all the features of the first object</p></li>
+<li><p><code>right</code> – all the features of the second object</p></li>
 </ul><p>The output depends on the input. If the input contains <code>SummarizedExperiment</code>
 object, then the output will be <code>SummarizedExperiment</code>. When all the input
 objects belong to <code>TreeSummarizedExperiment</code>, the output will be
@@ -329,15 +329,15 @@ objects belong to <code>TreeSummarizedExperiment</code>, the output will be
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

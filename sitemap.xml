@@ -1,156 +1,54 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/mia.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/GlobalPatterns.html</loc>
-  </url>
-  <url>
-    <loc>/reference/HintikkaXOData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Tengeler2020.html</loc>
-  </url>
-  <url>
-    <loc>/reference/addAlpha.html</loc>
-  </url>
-  <url>
-    <loc>/reference/addCluster.html</loc>
-  </url>
-  <url>
-    <loc>/reference/addDivergence.html</loc>
-  </url>
-  <url>
-    <loc>/reference/agglomerate-methods.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateDMN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateJSD.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateOverlap.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calculateUnifrac.html</loc>
-  </url>
-  <url>
-    <loc>/reference/convert.html</loc>
-  </url>
-  <url>
-    <loc>/reference/deprecate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dmn_se.html</loc>
-  </url>
-  <url>
-    <loc>/reference/enterotype.html</loc>
-  </url>
-  <url>
-    <loc>/reference/esophagus.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getCrossAssociation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getDominant.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getMediation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getPrevalence.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hierarchy-tree.html</loc>
-  </url>
-  <url>
-    <loc>/reference/importBIOM.html</loc>
-  </url>
-  <url>
-    <loc>/reference/importHUMAnN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/importMetaPhlAn.html</loc>
-  </url>
-  <url>
-    <loc>/reference/importMothur.html</loc>
-  </url>
-  <url>
-    <loc>/reference/importQIIME2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/importTaxpasta.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/isContaminant.html</loc>
-  </url>
-  <url>
-    <loc>/reference/meltSE.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mergeSEs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mia-datasets.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mia-package.html</loc>
-  </url>
-  <url>
-    <loc>/reference/peerj13075.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rarefyAssay.html</loc>
-  </url>
-  <url>
-    <loc>/reference/relabundance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/runCCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/runDPCoA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/runNMDS.html</loc>
-  </url>
-  <url>
-    <loc>/reference/splitOn.html</loc>
-  </url>
-  <url>
-    <loc>/reference/subsetSamples.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summaries.html</loc>
-  </url>
-  <url>
-    <loc>/reference/taxonomy-methods.html</loc>
-  </url>
-  <url>
-    <loc>/reference/transformAssay.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/CONTRIBUTING.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/mia.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/GlobalPatterns.html</loc></url>
+<url><loc>/reference/HintikkaXOData.html</loc></url>
+<url><loc>/reference/Tengeler2020.html</loc></url>
+<url><loc>/reference/addAlpha.html</loc></url>
+<url><loc>/reference/addCluster.html</loc></url>
+<url><loc>/reference/addDivergence.html</loc></url>
+<url><loc>/reference/agglomerate-methods.html</loc></url>
+<url><loc>/reference/calculateDMN.html</loc></url>
+<url><loc>/reference/calculateJSD.html</loc></url>
+<url><loc>/reference/calculateOverlap.html</loc></url>
+<url><loc>/reference/calculateUnifrac.html</loc></url>
+<url><loc>/reference/convert.html</loc></url>
+<url><loc>/reference/deprecate.html</loc></url>
+<url><loc>/reference/dmn_se.html</loc></url>
+<url><loc>/reference/enterotype.html</loc></url>
+<url><loc>/reference/esophagus.html</loc></url>
+<url><loc>/reference/getCrossAssociation.html</loc></url>
+<url><loc>/reference/getDominant.html</loc></url>
+<url><loc>/reference/getMediation.html</loc></url>
+<url><loc>/reference/getPrevalence.html</loc></url>
+<url><loc>/reference/hierarchy-tree.html</loc></url>
+<url><loc>/reference/importBIOM.html</loc></url>
+<url><loc>/reference/importHUMAnN.html</loc></url>
+<url><loc>/reference/importMetaPhlAn.html</loc></url>
+<url><loc>/reference/importMothur.html</loc></url>
+<url><loc>/reference/importQIIME2.html</loc></url>
+<url><loc>/reference/importTaxpasta.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/isContaminant.html</loc></url>
+<url><loc>/reference/meltSE.html</loc></url>
+<url><loc>/reference/mergeSEs.html</loc></url>
+<url><loc>/reference/mia-datasets.html</loc></url>
+<url><loc>/reference/mia-package.html</loc></url>
+<url><loc>/reference/peerj13075.html</loc></url>
+<url><loc>/reference/rarefyAssay.html</loc></url>
+<url><loc>/reference/relabundance.html</loc></url>
+<url><loc>/reference/runCCA.html</loc></url>
+<url><loc>/reference/runDPCoA.html</loc></url>
+<url><loc>/reference/runNMDS.html</loc></url>
+<url><loc>/reference/splitOn.html</loc></url>
+<url><loc>/reference/subsetSamples.html</loc></url>
+<url><loc>/reference/summaries.html</loc></url>
+<url><loc>/reference/taxonomy-methods.html</loc></url>
+<url><loc>/reference/transformAssay.html</loc></url>
 </urlset>
+

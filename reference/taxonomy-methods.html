@@ -5,7 +5,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -33,20 +33,20 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/microbiome/mia/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Functions for accessing taxonomic data stored in <code>rowData</code>.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/HEAD/R/taxonomy.R" class="external-link"><code>R/taxonomy.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/import_fixes/R/taxonomy.R" class="external-link"><code>R/taxonomy.R</code></a></small>
     <div class="hidden name"><code>taxonomy-methods.Rd</code></div>
     </div>
 
@@ -59,7 +59,7 @@ represent taxonomic data alongside the features of a
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">taxonomyRanks</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">taxonomyRanks</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">taxonomyRankEmpty</span><span class="op">(</span></span>
@@ -68,7 +68,7 @@ represent taxonomic data alongside the features of a
 <span>  empty.fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">""</span>, <span class="st">" "</span>, <span class="st">"\t"</span>, <span class="st">"-"</span>, <span class="st">"_"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">taxonomyRankEmpty</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  rank <span class="op">=</span> <span class="fu">taxonomyRanks</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
@@ -77,7 +77,7 @@ represent taxonomic data alongside the features of a
 <span></span>
 <span><span class="fu">checkTaxonomy</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">checkTaxonomy</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">setTaxonomyRanks</span><span class="op">(</span><span class="va">ranks</span><span class="op">)</span></span>
@@ -86,7 +86,7 @@ represent taxonomic data alongside the features of a
 <span></span>
 <span><span class="fu">getTaxonomyLabels</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">getTaxonomyLabels</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  empty.fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">""</span>, <span class="st">" "</span>, <span class="st">"\t"</span>, <span class="st">"-"</span>, <span class="st">"_"</span><span class="op">)</span>,</span>
@@ -101,7 +101,7 @@ represent taxonomic data alongside the features of a
 <span></span>
 <span><span class="fu">mapTaxonomy</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">mapTaxonomy</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  taxa <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -116,67 +116,69 @@ represent taxonomic data alongside the features of a
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object</p></dd>
 
 
-<dt>rank</dt>
+<dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
 <dd><p>a single character defining a taxonomic rank. Must be a value of
 <code>taxonomyRanks()</code> function</p></dd>
 
 
-<dt>empty.fields</dt>
+<dt id="arg-empty-fields">empty.fields<a class="anchor" aria-label="anchor" href="#arg-empty-fields"></a></dt>
 <dd><p>a <code>character</code> value defining, which values should be
 regarded as empty. (Default: <code>c(NA, "", " ", "\t")</code>). They will be
 removed if <code>na.rm = TRUE</code> before agglomeration</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional arguments not used currently.</p></dd>
 
 
-<dt>ranks</dt>
+<dt id="arg-ranks">ranks<a class="anchor" aria-label="anchor" href="#arg-ranks"></a></dt>
 <dd><p>Avector of ranks to be set</p></dd>
 
 
-<dt>with.rank</dt>
+<dt id="arg-with-rank">with.rank<a class="anchor" aria-label="anchor" href="#arg-with-rank"></a></dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the level be add as a
 suffix? For example: "Phylum:Crenarchaeota" (default:
 <code>with.rank = FALSE</code>)</p></dd>
 
 
-<dt>with_rank</dt>
+<dt id="arg-with-rank">with_rank<a class="anchor" aria-label="anchor" href="#arg-with-rank"></a></dt>
 <dd><p>Deprecated. Use <code>with.rank</code> instead.</p></dd>
 
 
-<dt>make.unique</dt>
+<dt id="arg-make-unique">make.unique<a class="anchor" aria-label="anchor" href="#arg-make-unique"></a></dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should the labels be made
 unique, if there are any duplicates? (default: <code>make.unique = TRUE</code>)</p></dd>
 
 
-<dt>make_unique</dt>
+<dt id="arg-make-unique">make_unique<a class="anchor" aria-label="anchor" href="#arg-make-unique"></a></dt>
 <dd><p>Deprecated. Use <code>make.unique</code> instead.</p></dd>
 
 
-<dt>resolve.loops</dt>
+<dt id="arg-resolve-loops">resolve.loops<a class="anchor" aria-label="anchor" href="#arg-resolve-loops"></a></dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: Should <code>resolveLoops</code>
 be applied to the taxonomic data? Please note that has only an effect,
 if the data is unique. (default: <code>resolve.loops = TRUE</code>)</p></dd>
 
 
-<dt>resolve_loops</dt>
+<dt id="arg-resolve-loops">resolve_loops<a class="anchor" aria-label="anchor" href="#arg-resolve-loops"></a></dt>
 <dd><p>Deprecated. Use <code>resolve.loops</code> instead.</p></dd>
 
 
-<dt>taxa</dt>
+<dt id="arg-taxa">taxa<a class="anchor" aria-label="anchor" href="#arg-taxa"></a></dt>
 <dd><p>a <code>character</code> vector, which is used for subsetting the
 taxonomic information. If no information is found,<code>NULL</code> is returned
 for the individual element. (default: <code>NULL</code>)</p></dd>
 
 
-<dt>from</dt>
+<dt id="arg-from">from<a class="anchor" aria-label="anchor" href="#arg-from"></a></dt>
 <dd><ul><li><p>For <code>mapTaxonomy</code>: a scalar <code>character</code> value, which
 must be a valid taxonomic rank. (default: <code>NULL</code>)</p></li>
 <li><p>otherwise a <code>Taxa</code> object as returned by
@@ -184,24 +186,23 @@ must be a valid taxonomic rank. (default: <code>NULL</code>)</p></li>
 </ul></dd>
 
 
-<dt>to</dt>
+<dt id="arg-to">to<a class="anchor" aria-label="anchor" href="#arg-to"></a></dt>
 <dd><p>a scalar <code>character</code> value, which must be a valid
 taxonomic rank. (default: <code>NULL</code>)</p></dd>
 
 
-<dt>use.grepl</dt>
+<dt id="arg-use-grepl">use.grepl<a class="anchor" aria-label="anchor" href="#arg-use-grepl"></a></dt>
 <dd><p><code>TRUE</code> or <code>FALSE</code>: should pattern matching via
 <code>grepl</code> be used? Otherwise literal matching is used.
 (default: <code>FALSE</code>)</p></dd>
 
 
-<dt>use_grepl</dt>
+<dt id="arg-use-grepl">use_grepl<a class="anchor" aria-label="anchor" href="#arg-use-grepl"></a></dt>
 <dd><p>Deprecated. Use <code>use.grepl</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
 
 <ul><li><p><code>taxonomyRanks</code>: a <code>character</code> vector with all the
 taxonomic ranks found in <code>colnames(rowData(x))</code></p></li>
@@ -361,15 +362,15 @@ be accessed using <code>metadata(df)$confidence</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
