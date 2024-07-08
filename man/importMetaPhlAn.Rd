@@ -78,7 +78,7 @@ tse
 # Data at higher rank is stored in altExp
 altExps(tse)
 # Higher rank data is in SE format, for example, Phylum rank
-altExp(tse, "phylum")
+altExp(tse, "Phylum")
 
 }
 \references{

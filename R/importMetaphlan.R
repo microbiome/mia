@@ -88,7 +88,7 @@
 #' # Data at higher rank is stored in altExp
 #' altExps(tse)
 #' # Higher rank data is in SE format, for example, Phylum rank
-#' altExp(tse, "phylum")
+#' altExp(tse, "Phylum")
 #' 
 NULL
 
@@ -122,6 +122,8 @@ importMetaPhlAn <- function(
     data <- .read_metaphlan(file, rowdata_col, ...)
     # Parse data into separate tables, which include data at certain taxonomy rank
     tables <- .parse_metaphlan(data, ...)
+    # Capitalize names
+    names(tables) <- .capitalize(tables)
 
     # Create multiple SE objects at different rank from the data
     se_objects <- lapply(tables, function(x){
