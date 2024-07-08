@@ -80,27 +80,25 @@ NULL
 #' \code{\link[=importMothur]{importMothur}}
 #' \code{\link[=importHUMAnN]{importHUMAnN}}
 #'
-#' @example 
+#' @examples
 #' # Load biom file
 #' library(biomformat)
-#' biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
-#'                          package = "biomformat")
+#' biom_file <- system.file(
+#'     "extdata", "rich_dense_otu_table.biom", package = "biomformat")
 #' 
 #' # Make TreeSE from biom file
 #' tse <- importBIOM(biom_file)
 #' 
 #' # Get taxonomyRanks from prefixes and remove prefixes
-#' tse <- importBIOM(biom_file,
-#'                     rank.from.prefix = TRUE,
-#'                     prefix.rm = TRUE)
+#' tse <- importBIOM(
+#'     biom_file, rank.from.prefix = TRUE, prefix.rm = TRUE)
 #' 
 #' # Load another biom file
-#' biom_file <- system.file("extdata/testdata", "Aggregated_humanization2.biom",
-#'                          package = "mia")
+#' biom_file <- system.file(
+#'    "extdata", "Aggregated_humanization2.biom", package = "mia")
 #' 
 #' # Clean artifacts from taxonomic data
-#' tse <- importBIOM(biom_file,
-#'                     artifact.rm = TRUE)
+#' tse <- importBIOM(biom_file, artifact.rm = TRUE)
 #'                     
 #' @export
 importBIOM <- function(file, ...) {
@@ -210,11 +208,6 @@ convertFromBIOM <- function(
         colnames(feature_data) <- unlist(ranks)
     }
     
-    # Remove prefixes if specified and rowData includes info
-    if(prefix.rm && ncol(feature_data) > 0){
-        feature_data <- .remove_prefixes_from_taxa(feature_data, ...)
-    }
-    
     # Adjust row and colnames
     rownames(counts) <- rownames(feature_data) <- biomformat::rownames(x)
     colnames(counts) <- rownames(sample_data) <- biomformat::colnames(x)
@@ -230,18 +223,33 @@ convertFromBIOM <- function(
         assays = assays,
         colData = sample_data,
         rowData = feature_data)
+    
+    # Set ranks based on rowData columns if user has specified to do so
+    temp <- .set_ranks_based_on_rowdata(tse, ...)
+    
+    # Remove prefixes if specified and rowData includes info
+    if(prefix.rm && ncol(rowData(tse)) > 0){
+        rowData(tse) <- .remove_prefixes_from_taxa(rowData(tse), ...)
+    }
+    
     return(tse)
 }
 
 ################################ HELP FUNCTIONS ################################
 # This function removes prefixes from taxonomy names
 .remove_prefixes_from_taxa <- function(
-        feature_tab, prefixes = "sk__|([dkpcofgs]+)__",
+        feature_tab,
+        prefixes = paste0(
+            "(", paste0(.taxonomy_rank_prefixes, collapse = "|"), ")__"),
         only.taxa.col = TRUE, ...){
+    #
     if( !.is_a_bool(only.taxa.col) ){
         stop("'only.taxa.col' must be TRUE or FALSE.", call. = FALSE)
     }
     #
+    if( !.is_a_string(prefixes) ){
+        stop("'prefixes' must be a single character value.", call. = FALSE)
+    }
     # Subset by taking only taxonomy info if user want to remove the pattern 
     # only from those. (Might be too restricting, e.g., if taxonomy columns are 
     # not detected in previous steps. That is way the default is FALSE)
@@ -264,6 +272,8 @@ convertFromBIOM <- function(
         # Combine table
         feature_tab[, ind] <- temp
     }
+    # Ensure that returned value is DF
+    feature_tab <- DataFrame(feature_tab)
     return(feature_tab)
 }
 
@@ -274,16 +284,9 @@ convertFromBIOM <- function(
     # Get column
     col = x[ , colname]
     # List prefixes
-    prefixes <- c(
-        "^d__",
-        "^k__",
-        "^p__",
-        "^c__",
-        "^o__",
-        "^f__",
-        "^g__",
-        "^s__"
-    )
+    all_ranks <- .taxonomy_rank_prefixes
+    prefixes <- paste0("^", all_ranks, "__")
+    names(prefixes) <- names(all_ranks)
     # Find which prefix is found from each column value, if none.
     found_rank <- lapply(prefixes, FUN = function(pref){
         all(grepl(pattern = pref, col) | is.na(col)) && !all(is.na(col))
@@ -292,10 +295,7 @@ convertFromBIOM <- function(
     # If only one prefix was found (like it should be), get the corresponding
     # rank name.
     if( sum(found_rank) == 1 ){
-        colname <- TAXONOMY_RANKS[found_rank]
-        # Make it capitalized
-        colname <- paste0(toupper(substr(colname, 1, 1)),
-                            substr(colname, 2, nchar(colname)))
+        colname <- names(prefixes)[found_rank]
     }
     return(colname)    
 }

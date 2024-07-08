@@ -174,23 +174,27 @@ plotReducedDim(GlobalPatterns,"CCA", colour_by = "SampleType")
 # Specify dissimilarity measure
 GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
 GlobalPatterns <- addRDA(
-    GlobalPatterns, data ~ SampleType, assay.type = "relabundance",  method = "bray")
+    GlobalPatterns, data ~ SampleType, assay.type = "relabundance",
+    method = "bray")
 
-# To scale values when using *RDA functions, use transformAssay(MARGIN = "features", ...) 
+# To scale values when using *RDA functions, use
+# transformAssay(MARGIN = "features", ...) 
 tse <- GlobalPatterns
-tse <- transformAssay(tse, MARGIN = "features", method = "z")
-# Data might include taxa that do not vary. Remove those because after z-transform
-# their value is NA
-tse <- tse[ rowSums( is.na( assay(tse, "z") ) ) == 0, ]
+tse <- transformAssay(tse, MARGIN = "features", method = "standardize")
+# Data might include taxa that do not vary. Remove those because after
+# z-transform their value is NA
+tse <- tse[ rowSums( is.na( assay(tse, "standardize") ) ) == 0, ]
 # Calculate RDA
-tse <- addRDA(tse, formula = data ~ SampleType,
-              assay.type = "z", name = "rda_scaled", na.action = na.omit)
+tse <- addRDA(
+    tse, formula = data ~ SampleType, assay.type = "standardize",
+    name = "rda_scaled", na.action = na.omit)
 # Plot
 plotReducedDim(tse,"rda_scaled", colour_by = "SampleType")
 # A common choice along with PERMANOVA is ANOVA when statistical significance
 # of homogeneity of groups is analysed. Moreover, full signficance test results
 # can be returned.
- tse <- addRDA(tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
+ tse <- addRDA(
+     tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
 
 }
 \seealso{

@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Version: 1.13.25
+Version: 1.13.28
 Authors@R:
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut"),
              email = "felix.gm.ernst@outlook.com",
@@ -25,7 +25,10 @@ Authors@R:
              email = "dbraccia@umd.edu", role=c("ctb")),
       person(given = "Basil", family = "Courbayre", role=c("ctb")),
       person(given = "Muluh", family = "Muluh", role=c("ctb")),
-      person(given = "Giulio", family = "Benedetti", role=c("ctb")))
+      person(given = "Giulio", family = "Benedetti", role=c("ctb")),
+      person(given = c("Moritz", "Emanuel"), family = "Beber",
+             email = "moritz.beber@igdore.org", role = c("ctb"),
+             comment = c(ORCID = "0000-0003-2406-1978")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
@@ -83,7 +86,8 @@ Suggests:
     reldist,
     ade4,
     microbiomeDataSets,
-    rmarkdown
+    rmarkdown,
+    rhdf5
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)

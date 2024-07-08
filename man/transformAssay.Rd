@@ -128,8 +128,8 @@ head(assay(tse, "clr"))
 
 # With MARGIN, you can specify the if transformation is done for samples or
 # for features. Here Z-transformation is done feature-wise.
-tse <- transformAssay(tse, method = "z", MARGIN = "features")
-head(assay(tse, "z"))
+tse <- transformAssay(tse, method = "standardize", MARGIN = "features")
+head(assay(tse, "standardize"))
 
 # Name of the stored table can be specified.
 tse <- transformAssay(tse, method="hellinger", name="test")
@@ -144,9 +144,8 @@ tse <- transformAssay(tse, method = "rank")
 head(assay(tse, "rank"))
 
 # In order to use other ranking variants, modify the chosen assay directly:
-assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(assay(tse, "counts"), 
-                                                           ties.method="average", 
-                                                           preserveShape = TRUE)  
+assay(tse, "rank_average", withDimnames = FALSE) <- colRanks(
+    assay(tse, "counts"), ties.method = "average", preserveShape = TRUE)  
 
 }
 \author{
