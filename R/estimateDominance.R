@@ -6,9 +6,8 @@
 #' \sQuote{Gini}, \sQuote{McNaughton’s}, \sQuote{Relative}, and
 #' \sQuote{Simpson's} indices.
 #'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
+#' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{
+#'   SummarizedExperiment}} object
 #'
 #' @param assay.type A single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
@@ -55,7 +54,7 @@
 #' indices (species richness, evenness, diversity, rarity). More dominant
 #' communities are less diverse.
 #'
-#' \code{estimateDominance} calculates the following community dominance
+#' \code{.estimate_dominance} calculates the following community dominance
 #' indices:
 #'
 #' \itemize{
@@ -168,8 +167,8 @@
 #'   \item \code{\link[mia:estimateDiversity]{estimateDiversity}}
 #' }
 #'
-#' @name estimateDominance
-#' @export
+#' @name .estimate_dominance
+#' @noRd
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
@@ -177,16 +176,16 @@
 #' data(esophagus)
 #'
 #' # Calculates Simpson's lambda (can be used as a dominance index)
-#' esophagus <- estimateDominance(esophagus, index="simpson_lambda")
+#' esophagus <- .estimate_dominance(esophagus, index="simpson_lambda")
 #'
 #' # Shows all indices
 #' colData(esophagus)
 #'
 #' # Indices must be written correctly (e.g. dbp, not dbp), otherwise an error
 #' # gets thrown
-#' \donttest{esophagus <- estimateDominance(esophagus, index="dbp")}
+#' \donttest{esophagus <- .estimate_dominance(esophagus, index="dbp")}
 #' # Calculates dbp and Core Abundance indices
-#' esophagus <- estimateDominance(esophagus, index=c("dbp", "core_abundance"))
+#' esophagus <- .estimate_dominance(esophagus, index=c("dbp", "core_abundance"))
 #' # Shows all indices
 #' colData(esophagus)
 #' # Shows dbp index
@@ -199,14 +198,14 @@
 #' colData(esophagus) <- NULL
 #'
 #' # Calculates all indices
-#' esophagus <- estimateDominance(esophagus)
+#' esophagus <- .estimate_dominance(esophagus)
 #' # Shows all indices
 #' colData(esophagus)
 #' # Deletes all indices
 #' colData(esophagus) <- NULL
 #'
 #' # Calculates all indices with explicitly specified names
-#' esophagus <- estimateDominance(esophagus,
+#' esophagus <- .estimate_dominance(esophagus,
 #'     index = c("dbp", "dmn", "absolute", "relative",
 #'               "simpson_lambda", "core_abundance", "gini"),
 #'     name  = c("BergerParker", "McNaughton", "Absolute", "Relative",
@@ -217,34 +216,28 @@
 #'
 NULL
 
-#' @rdname estimateDominance
-#' @export
-setGeneric("estimateDominance",signature = c("x"),
-           function(x,
-                    assay.type = assay_name, assay_name = "counts",
-                    index = c("absolute", "dbp", "core_abundance", "gini",
-                              "dmn", "relative", "simpson_lambda"),
-                    ntaxa = 1,
-                    aggregate = TRUE,
-                    name = index,
-                    ...,
-                    BPPARAM = SerialParam())
-               standardGeneric("estimateDominance"))
+setGeneric(
+    ".estimate_dominance", signature = c("x"),
+    function(x, ...) standardGeneric(".estimate_dominance"))
 
+setGeneric(
+    ".estimate_dominance",signature = c("x"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c(
+            "absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
+            "simpson_lambda"),
+        ntaxa = 1, aggregate = TRUE, name = index, BPPARAM = SerialParam(), ...)
+    standardGeneric(".estimate_dominance"))
 
-#' @rdname estimateDominance
-#' @export
-setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
-    function(x,
-             assay.type = assay_name, assay_name = "counts",
-             index = c("absolute", "dbp", "core_abundance", "gini", "dmn", 
-                       "relative", "simpson_lambda"),
-             ntaxa = 1,
-             aggregate = TRUE,
-             name = index,
-             ...,
-             BPPARAM = SerialParam()){
-
+setMethod(".estimate_dominance", signature = c(x = "SummarizedExperiment"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c(
+            "absolute", "dbp", "core_abundance", "gini", "dmn", "relative",
+            "simpson_lambda"),
+        ntaxa = 1, aggregate = TRUE, name = index, BPPARAM = SerialParam(),
+        ...){
         # Input check
         # Check assay.type
         .check_assay_present(assay.type, x)
@@ -262,15 +255,17 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
         }
 
         # Calculates dominance indices
-        dominances <- BiocParallel::bplapply(index,
-                                             FUN = .get_dominance_values,
-                                             mat = assay(x,assay.type),
-                                             ntaxa = ntaxa,
-                                             aggregate = aggregate,
-                                             BPPARAM = BPPARAM)
+        dominances <- BiocParallel::bplapply(
+            index,
+            FUN = .get_dominance_values,
+            mat = assay(x,assay.type),
+            ntaxa = ntaxa,
+            aggregate = aggregate,
+            BPPARAM = BPPARAM)
 
         # Add dominance indices to colData
-        .add_values_to_colData(x, dominances, name)
+        x <- .add_values_to_colData(x, dominances, name)
+        return(x)
     }
 )
 
@@ -329,24 +324,24 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     # Aggregate or not
     if (!aggregate) {
         idx <- apply(mat, 2L,
-                     function(mc) {
-                         order(as.vector(mc), decreasing = TRUE)[[ntaxa]]
-                     })
+                    function(mc) {
+                        order(as.vector(mc), decreasing = TRUE)[[ntaxa]]
+                    })
     } else {
         idx <- apply(mat, 2L,
-                     function(mc) {
-                         order(as.vector(mc), decreasing = TRUE)[seq_len(ntaxa)]
-                     })
+                    function(mc) {
+                        order(as.vector(mc), decreasing = TRUE)[seq_len(ntaxa)]
+                    })
         idx <- split(as.vector(idx),
-                     unlist(lapply(seq_len(length(idx) / ntaxa),rep.int,ntaxa)))
+                    unlist(lapply(seq_len(length(idx) / ntaxa),rep.int,ntaxa)))
     }
 
     ans <- lapply(mapply(function(i,j,x){x[i,j]},
-                         i = idx,
-                         j = seq_len(ncol(mat)),
-                         MoreArgs = list(x = mat),
-                         SIMPLIFY = FALSE),
-                  sum)
+                        i = idx,
+                        j = seq_len(ncol(mat)),
+                        MoreArgs = list(x = mat),
+                        SIMPLIFY = FALSE),
+                    sum)
     ans <- unlist(ans)
 
     # Adds sample names to the table
@@ -354,20 +349,18 @@ setMethod("estimateDominance", signature = c(x = "SummarizedExperiment"),
     ans
 }
 
-.get_dominance_values <- function(index, mat, ntaxa = 1, aggregate = TRUE, ...) {
-
+.get_dominance_values <- function(
+        index, mat, ntaxa = 1, aggregate = TRUE, ...) {
     FUN <- switch(index,
-                    simpson_lambda = .simpson_lambda,
-                    core_abundance = .calc_core_dominance,
-                    gini = .calc_gini_dominance,
-                    absolute = .calc_dominance,
-                    relative = .calc_dominance,
-                    dbp = .calc_dominance,
-                    dmn = .calc_dominance
+        simpson_lambda = .simpson_lambda,
+        core_abundance = .calc_core_dominance,
+        gini = .calc_gini_dominance,
+        absolute = .calc_dominance,
+        relative = .calc_dominance,
+        dbp = .calc_dominance,
+        dmn = .calc_dominance
         )
-
-    FUN(index, mat = mat, ntaxa = ntaxa, aggregate = aggregate, ...)
-
+    res <- FUN(index, mat = mat, ntaxa = ntaxa, aggregate = aggregate, ...)
+    res <- unname(res)
+    return(res)
 }
-
-

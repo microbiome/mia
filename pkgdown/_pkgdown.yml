@@ -17,6 +17,7 @@ reference:
   - importMothur
   - importMetaPhlAn
   - importHUMAnN
+  - importTaxpasta
   - convert
 - title: Taxonomic data
   contents:
@@ -24,8 +25,8 @@ reference:
 - title: Diversity indeces
 - subtitle: Alpha Diversity
 - contents:
-  - estimateDiversity
   - addDivergence
+  - addAlpha
 - subtitle: Beta Diversity
 - contents:
   - calculateUnifrac

@@ -9,8 +9,9 @@
 #' \sQuote{Inverse Simpson}, \sQuote{log-modulo skewness}, and \sQuote{Shannon} 
 #' indices. See details for more information and references.
 #'
-#' @param x a \code{\link{SummarizedExperiment}} object or \code{\link{TreeSummarizedExperiment}}.
-#' The latter is recommended for microbiome data sets and tree-based alpha diversity indices.
+#' @param x a \code{\link{SummarizedExperiment}} object or
+#'   \code{\link{TreeSummarizedExperiment}}. The latter is recommended for
+#'   microbiome data sets and tree-based alpha diversity indices.
 #' 
 #' @param tree A phylogenetic tree that is used to calculate 'faith' index.
 #'   If \code{x} is a \code{TreeSummarizedExperiment}, \code{rowTree(x)} is 
@@ -71,9 +72,9 @@
 #'
 #' @details
 #'
-#' Alpha diversity is a joint quantity that combines elements or community richness
-#' and evenness. Diversity increases, in general, when species richness or
-#' evenness increase.
+#' Alpha diversity is a joint quantity that combines elements or community
+#' richness and evenness. Diversity increases, in general, when species richness
+#' or evenness increase.
 #'
 #' By default, this function returns all indices.
 #'
@@ -170,9 +171,8 @@
 #'   \item \code{\link[vegan:specpool]{estimateR}}
 #' }
 #'
-#' @name estimateDiversity
-#' @export
-#'
+#' @name .estimate_diversity
+#' @noRd
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #' 
 #' @examples
@@ -188,7 +188,7 @@
 #' "Faith",  "LogModSkewness")
 #'
 #' # Calculate diversities
-#' tse <- estimateDiversity(tse, index = index)
+#' tse <- .estimate_diversity(tse, index = index)
 #'
 #' # The colData contains the indices with their code names by default
 #' colData(tse)[, index]
@@ -197,19 +197,18 @@
 #' colData(tse)[, index] <- NULL
 #' 
 #' # 'threshold' can be used to determine threshold for 'coverage' index
-#' tse <- estimateDiversity(tse, index = "coverage", threshold = 0.75)
+#' tse <- .estimate_diversity(tse, index = "coverage", threshold = 0.75)
 #' # 'quantile' and 'nclasses' can be used when
 #' # 'log_modulo_skewness' is calculated
-#' tse <- estimateDiversity(tse, index = "log_modulo_skewness",
+#' tse <- .estimate_diversity(tse, index = "log_modulo_skewness",
 #'        quantile = 0.75, nclasses = 100)
 #'
 #' # It is recommended to specify also the final names used in the output.
-#' tse <- estimateDiversity(tse,
-#'   index = c("shannon", "gini_simpson", "inverse_simpson", "coverage",
-#'                "fisher", "faith", "log_modulo_skewness"),
-#'    name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
-#'                "Fisher", "Faith", "LogModSkewness"))
-#'
+#' tse <- .estimate_diversity(tse,
+#'         index = c("shannon", "gini_simpson", "inverse_simpson", "coverage",
+#'                    "fisher", "faith", "log_modulo_skewness"),
+#'         name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
+#'                    "Fisher", "Faith", "LogModSkewness"))
 #' # The colData contains the indices by their new names provided by the user
 #' colData(tse)[, name]
 #'
@@ -237,57 +236,55 @@
 #' }
 NULL
 
-#' @rdname estimateDiversity
-#' @export
-setGeneric("estimateDiversity",signature = c("x"),
-        function(x, assay.type = "counts", assay_name = NULL,
-                index = c("coverage", "fisher", "gini_simpson", 
-                        "inverse_simpson", "log_modulo_skewness", "shannon"),
-                    name = index, ...)
-                    standardGeneric("estimateDiversity"))
+setGeneric(
+    ".estimate_diversity", signature = c("x"),
+    function(x, ...) standardGeneric(".estimate_diversity"))
 
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateDiversity", signature = c(x="SummarizedExperiment"),
-    function(x, assay.type = "counts", assay_name = NULL,
-            index = c("coverage", "fisher", "gini_simpson", 
-                    "inverse_simpson", "log_modulo_skewness", "shannon"),
-                    name = index, ..., BPPARAM = SerialParam()){
-
-        if (!is.null(assay_name)) {
-            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
-        }
-
-        # input check
-        supported_index <- c("coverage", "fisher", "gini_simpson", 
-                             "inverse_simpson", "log_modulo_skewness", "shannon")
-        index_string <- paste0("'", paste0(supported_index, collapse = "', '"), "'")
+setMethod(".estimate_diversity", signature = c(x="SummarizedExperiment"),
+    function(
+        x, assay.type = assay_name, assay_name = "counts",
+        index = c(
+            "coverage", "fisher", "gini_simpson", "inverse_simpson",
+            "log_modulo_skewness", "shannon"),
+        name = index, BPPARAM = SerialParam(), ...){
+        # Check index
+        supported_index <- c(
+            "coverage", "fisher", "gini_simpson", "inverse_simpson",
+            "log_modulo_skewness", "shannon")
+        index_string <- paste0(
+            "'", paste0(supported_index, collapse = "', '"), "'")
         if ( !all(index %in% supported_index) || !(length(index) > 0)) {
-            stop("'", paste0("'index' must be from the following options: '",index_string), "'", call. = FALSE)
+            stop("'", paste0(
+                "'index' must be from the following options: '", index_string),
+                "'", call. = FALSE)
         }
-        
+        # Check name
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                 "same length as 'index'.",
                 call. = FALSE)
         }
+        # Check assay and check that vegan package is available since it is
+        # required in some of the diversity calculations.
         .check_assay_present(assay.type, x)
         .require_package("vegan")
-
-        dvrsts <- BiocParallel::bplapply(index,
-                                        .get_diversity_values,
-                                        x = x,
-                                        mat = assay(x, assay.type),
-                                        BPPARAM = BPPARAM,
-                                        ...)
-        .add_values_to_colData(x, dvrsts, name)
+        #
+        # Calculate specified diversity indices
+        dvrsts <- BiocParallel::bplapply(
+            index,
+            .get_diversity_values,
+            x = x,
+            mat = assay(x, assay.type),
+            BPPARAM = BPPARAM,
+            ...)
+        # Add them to colData
+        x <- .add_values_to_colData(x, dvrsts, name)
+        return(x)
     }
 )
 
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
-    function(x, assay.type = "counts", assay_name = NULL,
+setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
+    function(x, assay.type = assay_name, assay_name = "counts",
             index = c("coverage", "faith", "fisher", "gini_simpson", 
                     "inverse_simpson", "log_modulo_skewness", "shannon"),
             name = index, tree.name = tree_name, tree_name = "phylo", 
@@ -305,10 +302,6 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
             stop("'tree.name' must be a character specifying a rowTree of 'x'.",
                  call. = FALSE)
         }
-        if (!is.null(assay_name)) {
-            .Deprecated(old="assay_name", new="assay.type", "Now assay_name is deprecated. Use assay.type instead.")
-        }
-        
         if(!.is_non_empty_character(name) || length(name) != length(index)){
             stop("'name' must be a non-empty character value and have the ",
                 "same length as 'index'.",
@@ -359,10 +352,12 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
                         "rowTree to include this index.", 
                         call. = FALSE)
             } else {
-                x <- estimateFaith(x, name = faith_name, tree.name = tree.name, ...)
+                x <- .estimate_faith(
+                    x, name = faith_name, tree_name = tree.name, ...)
                 # Ensure that indices are in correct order
                 colnames <- colnames(colData(x))
-                colnames <- c(colnames[ !colnames %in% name_original ], name_original)
+                colnames <- c(
+                    colnames[ !colnames %in% name_original ], name_original)
                 colData(x) <- colData(x)[ , colnames]
             }
         }
@@ -370,17 +365,14 @@ setMethod("estimateDiversity", signature = c(x="TreeSummarizedExperiment"),
     }
 )
 
-#' @rdname estimateDiversity
-#' @export
-setGeneric("estimateFaith",signature = c("x", "tree"),
-            function(x, tree = "missing", 
-                    assay.type = "counts", assay_name = NULL,
-                    name = "faith", ...)
-            standardGeneric("estimateFaith"))
+setGeneric(
+    ".estimate_faith", signature = c("x", "tree"),
+    function(
+        x, tree = "missing", assay.type = assay_name, assay_name = "counts",
+        name = "faith", ...) standardGeneric(".estimate_faith"))
 
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo"),
+setMethod(
+    ".estimate_faith", signature = c(x="SummarizedExperiment", tree="phylo"),
     function(x, tree, assay.type = "counts", assay_name = NULL,
             name = "faith", node.label = node_lab, node_lab = NULL, ...){
         # Input check
@@ -388,15 +380,15 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         # IF there is no rowTree gives an error
         if( is.null(tree) || is.null(tree$edge.length) ){
             stop("'tree' is NULL or it does not have any branches.",
-                "The Faith's alpha diversity index is not possible to calculate.",
-                call. = FALSE)
+                "The Faith's alpha diversity index is not possible to 
+                calculate.", call. = FALSE)
         }
         # Check 'assay.type'
         .check_assay_present(assay.type, x)
         # Check that it is numeric
         if( !is.numeric(assay(x, assay.type)) ){
-            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
-                 call. = FALSE)
+            stop("The abundance matrix specificied by 'assay.type' must be ",
+                "numeric.", call. = FALSE)
         }
         # Check 'name'
         if(!.is_non_empty_character(name)){
@@ -415,8 +407,8 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
         mat <- assay(x, assay.type)
         # Check that it is numeric
         if( !is.numeric(mat) ){
-            stop("The abundance matrix specificied by 'assay.type' must be numeric.",
-                 call. = FALSE)
+            stop("The abundance matrix specificied by 'assay.type' must be ",
+                "numeric.", call. = FALSE)
         }
         # Subset and rename rows of the assay to correspond node_labs
         if( !is.null(node.label) ){
@@ -433,9 +425,8 @@ setMethod("estimateFaith", signature = c(x="SummarizedExperiment", tree="phylo")
     }
 )
 
-#' @rdname estimateDiversity
-#' @export
-setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
+setMethod(
+    ".estimate_faith", signature = c(x="TreeSummarizedExperiment", tree="missing"),
     function(x, assay.type = "counts", assay_name = NULL,
             name = "faith", tree.name = tree_name, tree_name = "phylo", ...){
         # Check tree.name
@@ -461,7 +452,7 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
                     call. = FALSE)
         }
         # Calculates the Faith index
-        estimateFaith(x, tree, name = name, node.label = node_lab, ...)
+        .estimate_faith(x, tree, name = name, node.lab = node_lab, ...)
     }
 )
 
@@ -643,14 +634,15 @@ setMethod("estimateFaith", signature = c(x="TreeSummarizedExperiment", tree="mis
 #' @importFrom SummarizedExperiment assay assays
 .get_diversity_values <- function(index, x, mat, tree, ...){
     FUN <- switch(index,
-                        shannon = .calc_shannon,
-                        gini_simpson = .calc_gini_simpson,
-                        inverse_simpson = .calc_inverse_simpson,
-                        coverage = .calc_coverage,
-                        fisher = .calc_fisher,
-                        faith = .calc_faith,
-                        log_modulo_skewness = .calc_log_modulo_skewness
-                        )
-
-    FUN(x = x, mat = mat, tree = tree, ...)
+        shannon = .calc_shannon,
+        gini_simpson = .calc_gini_simpson,
+        inverse_simpson = .calc_inverse_simpson,
+        coverage = .calc_coverage,
+        fisher = .calc_fisher,
+        faith = .calc_faith,
+        log_modulo_skewness = .calc_log_modulo_skewness
+        )
+    res <- FUN(x = x, mat = mat, tree = tree, ...)
+    res <- unname(res)
+    return(res)
 }
