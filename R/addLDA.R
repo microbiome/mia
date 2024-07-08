@@ -55,6 +55,7 @@ setGeneric("addLDA", signature = c("x"),
 #' @rdname addLDA
 setMethod("getLDA", "TreeSummarizedExperiment",
     function(x, k=2, ...){
+        .require_package("topicmodels")
         lda_model <- topicmodels::LDA(t(assay(x, "counts")), k)
         df <- as.data.frame(t(assay(x, "counts")))
         posteriors <- topicmodels::posterior(lda_model, df)

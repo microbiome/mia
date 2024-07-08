@@ -72,8 +72,7 @@ Imports:
     bluster,
     MatrixGenerics,
     mediation,
-    rbiom,
-    topicmodels
+    rbiom
 Suggests:
     testthat,
     knitr,
@@ -88,7 +87,8 @@ Suggests:
     ade4,
     microbiomeDataSets,
     rmarkdown,
-    rhdf5
+    rhdf5,
+    topicmodels
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
