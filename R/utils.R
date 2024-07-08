@@ -462,9 +462,6 @@
     non_empty <- colSums(is.na(taxa_tab)) != nrow(taxa_tab)
     taxa_tab <- taxa_tab[ , non_empty, drop = FALSE]
     
-    # Capitalize taxonmy ranks
-    colnames(taxa_tab) <- .capitalize(colnames(taxa_tab))
-    
     return(taxa_tab)
 }
 
