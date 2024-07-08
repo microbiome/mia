@@ -5,7 +5,7 @@
 \alias{Tito2024QMP}
 \title{Tito2024QMP}
 \format{
-A Large TreeSummarizedExperiment with 676 features and 589 samples.
+A TreeSummarizedExperiment with 676 features and 589 samples.
 The rowData contains species. The colData includes:
 
 \describe{

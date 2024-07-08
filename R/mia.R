@@ -333,7 +333,7 @@ NULL
 #' and colorectal cancer development that were driven by other factors like intestinal 
 #' inflammation, rather than the cancer diagnosis itself.
 #'
-#' @format A Large TreeSummarizedExperiment with 676 features and 589 samples. 
+#' @format A TreeSummarizedExperiment with 676 features and 589 samples. 
 #' The rowData contains species. The colData includes:
 #' 
 #' \describe{
