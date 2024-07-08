@@ -53,7 +53,7 @@ setGeneric("addLDA", signature = c("x"),
 
 #' @export
 #' @rdname addLDA
-setMethod("getLDA", "SummarizedExperiment",
+setMethod("getLDA", "TreeSummarizedExperiment",
     function(x, k=2, ...){
         lda_model <- topicmodels::LDA(t(assay(x, "counts")), k)
         df <- as.data.frame(t(assay(x, "counts")))
@@ -67,9 +67,10 @@ setMethod("getLDA", "SummarizedExperiment",
 
 #' @export
 #' @rdname addLDA
-setMethod("addLDA", "SummarizedExperiment",
+setMethod("addLDA", "TreeSummarizedExperiment",
     function(x, k = 2, name = "LDA", ...){
-        reducedDim(x, name) <- t(getLDA(x, k, ...))
+        scores <- t(getLDA(x, k, ...))
+        x <- .add_values_to_reducedDims(x, name, values = scores)
         return(x)
     }
 )
