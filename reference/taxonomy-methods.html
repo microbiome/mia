@@ -19,7 +19,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mia</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.27</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.28</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ SummarizedExperiment."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Functions for accessing taxonomic data stored in <code>rowData</code>.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/import_fixes/R/taxonomy.R" class="external-link"><code>R/taxonomy.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/mia/blob/feature_loadings_methods/R/taxonomy.R" class="external-link"><code>R/taxonomy.R</code></a></small>
     <div class="hidden name"><code>taxonomy-methods.Rd</code></div>
     </div>
 
@@ -57,7 +57,9 @@ represent taxonomic data alongside the features of a
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">taxonomyRanks</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">TAXONOMY_RANKS</span></span>
+<span></span>
+<span><span class="fu">taxonomyRanks</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">taxonomyRanks</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
@@ -114,6 +116,11 @@ represent taxonomic data alongside the features of a
 <span><span class="fu">IdTaxaToDataFrame</span><span class="op">(</span><span class="va">from</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div id="format">
+    <h2>Format</h2>
+    <p>a <code>character</code> vector of length 8 containing the taxonomy ranks
+recognized. In functions this is used as case insensitive.</p>
+    </div>
     <div id="arguments">
     <h2>Arguments</h2>
 
