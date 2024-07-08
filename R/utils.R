@@ -408,8 +408,8 @@
 #' @noRd
 .parse_taxonomy <- function(
     taxa_tab, sep = "; |;", col.name = column_name, column_name = "Taxon",
-    remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes, removeTaxaPrefixes = FALSE,
-    returned.ranks = TAXONOMY_RANKS, ...) {
+    remove.prefix = prefix.rm, prefix.rm = removeTaxaPrefixes,
+    removeTaxaPrefixes = FALSE, ...) {
     ############################### Input check ################################
     # Check sep
     if(!.is_non_empty_string(sep)){
@@ -426,16 +426,12 @@
     if(!.is_a_bool(remove.prefix)){
         stop("'remove.prefix' must be TRUE or FALSE.", call. = FALSE)
     }
-    # Check returned.ranks
-    if( !is.character(returned.ranks) ){
-        stop("'returned.ranks' must be a character vector.", call. = FALSE)
-    }
     ############################## Input check end #############################
     
     #  work with any combination of taxonomic ranks available
-    all_ranks <- c(
-      "Kingdom","Phylum","Class","Order","Family","Genus","Species", "Strain")
-    all_prefixes <- c("k__", "p__", "c__", "o__", "f__", "g__", "s__", "t__")
+    all_ranks <- .taxonomy_rank_prefixes
+    all_prefixes <- paste0(all_ranks, "__")
+    names(all_prefixes) <- names(all_ranks)
     
     # split the taxa strings
     taxa_split <- CharacterList(strsplit(taxa_tab[, col.name],sep))
@@ -444,27 +440,27 @@
     # match them to the order given by present_prefixes
     taxa_prefixes_match <- lapply(taxa_prefixes, match, x = all_prefixes)
     taxa_prefixes_match <- IntegerList(taxa_prefixes_match)
-    # get the taxa values
+    # get the taxa values without prefixes
     if(remove.prefix){
+        pattern <- paste0("(", paste0(all_ranks, collapse = "|"), ")__")
         taxa_split <- lapply(
-            taxa_split, gsub, pattern = "([kpcofgst]+)__", replacement = "")
-      taxa_split <- CharacterList(taxa_split)
+            taxa_split, gsub, pattern = pattern, replacement = "")
+        taxa_split <- CharacterList(taxa_split)
     }
     # extract by order matches
     taxa_split <- taxa_split[taxa_prefixes_match]
     #
     if(length(unique(lengths(taxa_split))) != 1L){
-      stop("Internal error. Something went wrong while splitting taxonomic levels.",
-           "Please check that 'sep' is correct.", call. = FALSE)
+        stop("Internal error. Something went wrong while splitting taxonomic ",
+            "levels. Please check that 'sep' is correct.", call. = FALSE)
     }
     taxa_tab <- DataFrame(as.matrix(taxa_split))
-    colnames(taxa_tab) <- all_ranks
+    colnames(taxa_tab) <- names(all_ranks)
     
-    # Subset columns so that it includes TAXONOMY_RANKS columns by default.
-    # If strain column has values, it it also returned.
-    ind <- !(!tolower(colnames(taxa_tab)) %in% tolower(returned.ranks) &
-        colSums(is.na(taxa_tab)) == nrow(taxa_tab))
-    taxa_tab <- taxa_tab[ , ind, drop = FALSE]
+    # Subset columns so that include only those columns that have some
+    # information
+    non_empty <- colSums(is.na(taxa_tab)) != nrow(taxa_tab)
+    taxa_tab <- taxa_tab[ , non_empty, drop = FALSE]
     
     return(taxa_tab)
 }
@@ -481,4 +477,50 @@
         x <- agglomerateByVariable(x, by = "rows", f = merge.by, ...)
     }
     return(x)
+}
+
+################################################################################
+# This function sets taxonomy ranks based on rowData of TreeSE. With this,
+# user can automatically set ranks based on imported data.
+.set_ranks_based_on_rowdata <- function(
+        tse, set.ranks = FALSE, verbose = TRUE, ...){
+    #
+    if( !.is_a_bool(set.ranks) ){
+        stop("'set.ranks' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    if( !.is_a_bool(verbose) ){
+        stop("'verbose' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # If user do not want to set ranks
+    if( !set.ranks ){
+        return(NULL)
+    }
+    # Get ranks from rowData
+    ranks <- colnames(rowData(tse))
+    # Ranks must be character columns
+    is_char <- lapply(rowData(tse), function(x) is.character(x) || is.factor(x))
+    is_char <- unlist(is_char)
+    ranks <- ranks[ is_char ]
+    # rowData is empty, cannot set ranks
+    if( length(ranks) == 0 ){
+        warning(
+            "Ranks cannot be set. rowData(x) does not include columns ",
+            "specifying character values.", call. = FALSE)
+        return(NULL)
+    }
+    # Finally, set ranks and give message
+    temp <- setTaxonomyRanks(ranks)
+    if( verbose ){
+        message(
+            "TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
+    }
+    return(NULL)
+}
+
+################################################################################
+# This function converts vector of character values to capitalized.
+.capitalize <- function(x){
+    paste0(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)))
 }

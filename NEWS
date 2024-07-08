@@ -145,3 +145,4 @@ convertToPhyloseq
 + Fix tree merging in unsplit and mergeSEs functions
 + Added addAlpha; a wrapper for calculating all alpha diversity indices
 + Added importTaxpasta
++ Changes in default taxonomy ranks; more ranks supported
