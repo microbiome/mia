@@ -53,11 +53,11 @@ setGeneric("addLDA", signature = c("x"),
 
 #' @export
 #' @rdname addLDA
-setMethod("getLDA", "TreeSummarizedExperiment",
-    function(x, k=2, ...){
+setMethod("getLDA", "SummarizedExperiment",
+    function(x, k=2, assay.type = "counts", ...){
         .require_package("topicmodels")
-        lda_model <- topicmodels::LDA(t(assay(x, "counts")), k)
-        df <- as.data.frame(t(assay(x, "counts")))
+        df <- as.data.frame(t(assay(x, assay.type)))
+        lda_model <- topicmodels::LDA(df, k)
         posteriors <- topicmodels::posterior(lda_model, df)
         scores <- t(as.data.frame(posteriors$topics))
         loadings <- t(as.data.frame(posteriors$terms)) 
@@ -68,9 +68,9 @@ setMethod("getLDA", "TreeSummarizedExperiment",
 
 #' @export
 #' @rdname addLDA
-setMethod("addLDA", "TreeSummarizedExperiment",
-    function(x, k = 2, name = "LDA", ...){
-        scores <- t(getLDA(x, k, ...))
+setMethod("addLDA", "SummarizedExperiment",
+    function(x, k = 2, assay.type = "counts", name = "LDA", ...){
+        scores <- t(getLDA(x, k, assay.type, ...))
         x <- .add_values_to_reducedDims(x, name, values = scores)
         return(x)
     }

@@ -3,17 +3,17 @@
 \name{addLDA}
 \alias{addLDA}
 \alias{getLDA}
-\alias{getLDA,TreeSummarizedExperiment-method}
-\alias{addLDA,TreeSummarizedExperiment-method}
+\alias{getLDA,SummarizedExperiment-method}
+\alias{addLDA,SummarizedExperiment-method}
 \title{Latent Dirichlet Allocation}
 \usage{
 getLDA(x, ...)
 
 addLDA(x, ...)
 
-\S4method{getLDA}{TreeSummarizedExperiment}(x, k = 2, ...)
+\S4method{getLDA}{SummarizedExperiment}(x, k = 2, ...)
 
-\S4method{addLDA}{TreeSummarizedExperiment}(x, k = 2, name = "LDA", ...)
+\S4method{addLDA}{SummarizedExperiment}(x, k = 2, name = "LDA", ...)
 }
 \arguments{
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
