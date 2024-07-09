@@ -121,8 +121,7 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
 #'
 #' @export
 setMethod("calculateUnifrac",
-        signature = c(x = "TreeSummarizedExperiment",
-                    tree = "missing"),
+        signature = c(x = "TreeSummarizedExperiment", tree = "missing"),
     function(x, assay.type = assay_name, assay_name = exprs_values, exprs_values = "counts", 
             tree.name = tree_name, tree_name = "phylo", transposed = FALSE, ...){
         # Chcek transposed
@@ -155,20 +154,44 @@ setMethod("calculateUnifrac",
                 x <- x[present_in_tree, ]
             }
         }
-        # Get assay and transpose it if specified. Features must be in columns
-        # and samples in rows.
-        mat <- assay(x, assay.type)
-        if( !transposed ){
-            mat <- t(mat)
-        }
         # Get tree
         tree <- tree_FUN(x, tree.name)
         # Get links and take only nodeLabs
         links <- links_FUN(x)
         links <- links[ , "nodeLab" ]
         # Calculate unifrac
-        res <- calculateUnifrac(mat, tree = tree, node.label = links, ...)
+        res <- calculateUnifrac(x, tree = tree, node.label = links, ...)
         return(res)
+    }
+)
+
+#' @rdname calculateUnifrac
+#' @export
+setMethod("calculateUnifrac",
+        signature = c(x = "SummarizedExperiment", tree = "phylo"),
+    function(
+        x, tree, assay.type = "counts", transposed = FALSE, ...){
+    if(is(x,"SummarizedExperiment")){
+        stop("When providing a 'tree', please provide a matrix-like as 'x'",
+            " and not a 'SummarizedExperiment' object. Please consider ",
+            "combining both into a 'TreeSummarizedExperiment' object.",
+            call. = FALSE) 
+    }
+    # Chcek transposed
+    if( !.is_a_bool(transposed) ){
+        stop("'transposed' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # Check assay.type
+    .check_assay_present(assay.type, x)
+    # Get assay and transpose it if specified. Features must be in columns
+    # and samples in rows.
+    mat <- assay(x, assay.type)
+    if( transposed ){
+        mat <- t(mat)
+    }
+    # Calculate unifrac
+    res <- calculateUnifrac(mat, ...)
+    return(res)   
     }
 )
 
@@ -183,13 +206,6 @@ runUnifrac <- function(
     # Check x
     if( !is.matrix(as.matrix(x)) ){
         stop("'x' must be a matrix", call. = FALSE)
-    }
-    # x has samples as row. Therefore transpose. This benchmarks faster than
-    # converting the function to work with the input matrix as is
-    x <- try(t(x), silent = TRUE)
-    if(is(x,"try-error")){
-        stop("The input to 'runUnifrac' must be a matrix-like object: ", 
-             as.character(x), call. = FALSE)
     }
     # input check
     if(!.is_a_bool(weighted)){
