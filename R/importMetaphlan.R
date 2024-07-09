@@ -80,7 +80,8 @@
 #' # https://github.com/biobakery/biobakery/wiki/metaphlan3#merge-outputs)
 #' 
 #' # File path
-#' file_path <- system.file("extdata", "merged_abundance_table.txt", package = "mia")
+#' file_path <- system.file(
+#'     "extdata", "merged_abundance_table.txt", package = "mia")
 #' # Import data
 #' tse <- importMetaPhlAn(file_path)
 #' # Data at the lowest rank
@@ -88,7 +89,7 @@
 #' # Data at higher rank is stored in altExp
 #' altExps(tse)
 #' # Higher rank data is in SE format, for example, Phylum rank
-#' altExp(tse, "Phylum")
+#' altExp(tse, "phylum")
 #' 
 NULL
 
@@ -124,10 +125,8 @@ importMetaPhlAn <- function(
     tables <- .parse_metaphlan(data, ...)
 
     # Create multiple SE objects at different rank from the data
-    available_ranks <- names(tables)
     se_objects <- lapply(tables, function(x){
-        .create_se_from_metaphlan(
-            x, rowdata_col, returned.ranks = available_ranks, ...)
+        .create_se_from_metaphlan(x, rowdata_col, ...)
         })
     
     # Get the object with lowest rank
@@ -231,8 +230,8 @@ importMetaPhlAn <- function(
     # at specific rank
     tables <- split(table, levels)
     # Get the order
-    metaphlan_tax = c(TAXONOMY_RANKS, "strain")
-    indices <- match(metaphlan_tax, tolower(names(tables)))
+    metaphlan_tax = names(.taxonomy_rank_prefixes)
+    indices <- match(tolower(metaphlan_tax), tolower(names(tables)))
     # Remove NAs which occurs if rank is not included
     indices <- indices[!is.na(indices)]
     # Order tables 
@@ -243,17 +242,17 @@ importMetaPhlAn <- function(
 # Get the lowest level of the string that contains multiple taxonomic levels with prefixes
 # Output is single character that specifies the rank, e.g, "s" == "Species"
 .get_lowest_taxonomic_level <- function(string){
+    # List all ranks and what prefix they correspond
+    ranks <- .taxonomy_rank_prefixes
     # Get indices that specify location of rank prefixes 
-    levels <- gregexpr("([kpcofgst]+)__", string)[[1]]
+    ranks_pattern <- paste(ranks, collapse = "|")
+    ranks_pattern <- paste0("(", ranks_pattern, ")__")
+    levels <- gregexpr(ranks_pattern, string)[[1]]
     # Get the location of lowest rank
     lowest_level_ind <- levels[length(levels)]
     # Get the lowest rank that was found
     lowest_level <- substr(string, start = lowest_level_ind, stop = lowest_level_ind)
     
-    # List all ranks and what prefix they correspond
-    ranks <- c(
-        Domain = "d", Kingdom = "k", Phylum = "p", Class = "c", Order = "o",
-        Family = "f", Genus = "g", Species = "s", Strain = "t")
     # Convert prefix into full rank name
     lowest_level <- names(ranks[ match(lowest_level, ranks) ])
     return(lowest_level)
@@ -402,35 +401,4 @@ importMetaPhlAn <- function(
         colnames(data)[-rowdata_id] <- sample_names
     }
     return(data)
-}
-
-# This function sets taxonomy ranks based on rowData of TreeSE. With this,
-# user can automatically set ranks based on imported data.
-.set_ranks_based_on_rowdata <- function(tse, set.ranks = FALSE, ...){
-    #
-    if( !.is_a_bool(set.ranks) ){
-        stop("'set.ranks' must be TRUE or FALSE.", call. = FALSE)
-    }
-    #
-    # If user do not want to set ranks
-    if( !set.ranks ){
-        return(NULL)
-    }
-    # Get ranks from rowData
-    ranks <- colnames(rowData(tse))
-    # Ranks must be character columns
-    is_char <- lapply(rowData(tse), function(x) is.character(x) || is.factor(x))
-    is_char <- unlist(is_char)
-    ranks <- ranks[ is_char ]
-    # rowData is empty, cannot set ranks
-    if( length(ranks) == 0 ){
-        warning(
-            "Ranks cannot be set. rowData(x) does not include columns ",
-            "specifying character values.", call. = FALSE)
-        return(NULL)
-    }
-    # Finally, set ranks and give message
-    temp <- setTaxonomyRanks(ranks)
-    message("TAXONOMY_RANKS set to: '", paste0(ranks, collapse = "', '"), "'")
-    return(NULL)
 }
