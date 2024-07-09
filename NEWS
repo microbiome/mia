@@ -145,4 +145,5 @@ convertToPhyloseq
 + Fix tree merging in unsplit and mergeSEs functions
 + Added addAlpha; a wrapper for calculating all alpha diversity indices
 + Added importTaxpasta
-+ new methods getLDA and addLDA for LDA with feature loadings computation
++ Changes in default taxonomy ranks; more ranks supported
++ new methods getLDA and addLDA for LDA ordination with feature loadings computation

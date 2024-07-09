@@ -334,7 +334,7 @@ test_that("`.parse_taxonomy` work with any combination of taxonomic ranks", {
         byrow = TRUE,
         dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
     )
-    expect_true(is.na(mia:::.parse_taxonomy(test_taxa)[2,"Species"]))
+    expect_true(is.na(mia:::.parse_taxonomy(test_taxa)[2,"species"]))
 
     # if the expexted order is not present it will return a correct result
     test_taxa <- matrix(
@@ -344,9 +344,11 @@ test_that("`.parse_taxonomy` work with any combination of taxonomic ranks", {
         byrow = TRUE,
         dimnames = list(c("a", "b"), c("Feature.ID", "Taxon", "Confidence"))
     )
-    expect_equal(mia:::.parse_taxonomy(test_taxa)[,"Species"],c("s__test",NA))
-    expect_equal(mia:::.parse_taxonomy(test_taxa, prefix.rm = TRUE)[,"Species"],
+    expect_equal(mia:::.parse_taxonomy(test_taxa)[,"species"],c("s__test",NA))
+    expect_equal(mia:::.parse_taxonomy(test_taxa, prefix.rm = TRUE)[,"species"],
                 c("test",NA))
+    # Expect that output have only taxonomy levels that have information
+    expect_equal(ncol(mia:::.parse_taxonomy(test_taxa)), 3L)
 })
 
 test_that("`.read_q2sample_meta` remove  the row contained `#q2:types`", {
@@ -493,8 +495,8 @@ test_that("Import HUMAnN file", {
     file_path <- system.file("extdata", "humann_output.tsv", package = "mia")
     tse <- importHUMAnN(file_path)
     #
-    expect_true( length(taxonomyRanks(tse)) == 7 )
-    expect_true( ncol(rowData(tse)) == 9 )
+    expect_true( length(taxonomyRanks(tse)) == 2 )
+    expect_true( ncol(rowData(tse)) == 4 )
     expect_true( ncol(tse) == 3 )
     expect_true( nrow(tse) == 12 )
     expect_true( all(!is.na(assay(tse))) )
