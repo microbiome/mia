@@ -111,8 +111,7 @@ setMethod("calculateUnifrac", signature = c(x = "ANY", tree = "phylo"),
                 "combining both into a 'TreeSummarizedExperiment' object.",
                 call. = FALSE) 
         }
-        .calculate_distance(x, FUN = runUnifrac, tree = tree,
-                            weighted = weighted, ...)
+        runUnifrac(x, tree = tree, weighted = weighted, ...)
     }
 )
 

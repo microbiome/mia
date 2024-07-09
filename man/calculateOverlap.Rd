@@ -3,6 +3,7 @@
 \name{calculateOverlap}
 \alias{calculateOverlap}
 \alias{calculateOverlap,SummarizedExperiment-method}
+\alias{calculateOverlap,ANY-method}
 \alias{runOverlap}
 \alias{runOverlap,SummarizedExperiment-method}
 \title{Estimate overlap}
@@ -16,6 +17,14 @@ calculateOverlap(
 )
 
 \S4method{calculateOverlap}{SummarizedExperiment}(
+  x,
+  assay.type = assay_name,
+  assay_name = "counts",
+  detection = 0,
+  ...
+)
+
+\S4method{calculateOverlap}{ANY}(
   x,
   assay.type = assay_name,
   assay_name = "counts",

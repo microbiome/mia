@@ -75,7 +75,7 @@ setGeneric("calculateJSD", signature = c("x"),
 #' @export
 setMethod("calculateJSD", signature = c(x = "ANY"),
     function(x, ...){
-        .calculate_distance(x, FUN = runJSD, ...)
+        runJSD(x, ...)
     }
 )
 
@@ -124,7 +124,7 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runJSD <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x)){
+runJSD <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x), ...){
     # input check
     if(is.null(rownames(x))){
         rownames(x) <- seq_len(nrow(x))
