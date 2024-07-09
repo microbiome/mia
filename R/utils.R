@@ -370,7 +370,7 @@
             call. = FALSE)
     }
     # Throw warning if values of reducedDim are overwritten
-    if ( c(name) %in% names(reducedDims(tse)) ){
+    if ( c(name) %in% names(reducedDims(x)) ){
         warning(
           "The following values are already present in `reducedDims` and will ",
           "be overwritten: '",

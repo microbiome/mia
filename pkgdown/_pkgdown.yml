@@ -38,7 +38,6 @@ reference:
 - contents:
   - runDPCoA
   - estimateRichness
-  - addLDA
 - title: Other functions
 - subtitle: Dataset description
 - contents:
@@ -59,6 +58,7 @@ reference:
 - contents:
   - calculateDMN
   - addCluster
+  - addLDA
 - subtitle: decontam
 - contents:
   - isContaminant
