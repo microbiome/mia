@@ -59,6 +59,14 @@ setGeneric("addLDA", signature = c("x"),
 setMethod("getLDA", "SummarizedExperiment",
     function(x, k=2, assay.type = "counts", ...){
         .require_package("topicmodels")
+        # Input checks
+        if( !.is_an_integer(k) ){
+            stop("'k' must be an integer.", call. = FALSE)
+        }
+        if( !.is_a_string(assay.type) ){
+            stop("'assay.type' must be a non-empty single character value.",
+              call. = FALSE)
+        }
         df <- as.data.frame(t(assay(x, assay.type)))
         # Estimate LDA model using VEM algorithm
         lda_model <- topicmodels::LDA(df, k)
@@ -77,6 +85,18 @@ setMethod("getLDA", "SummarizedExperiment",
 #' @rdname addLDA
 setMethod("addLDA", "SummarizedExperiment",
     function(x, k = 2, assay.type = "counts", name = "LDA", ...){
+        # Input checks
+        if( !.is_an_integer(k) ){
+            stop("'k' must be an integer.", call. = FALSE)
+        }
+        if( !.is_a_string(assay.type) ){
+            stop("'assay.type' must be a non-empty single character value.",
+                call. = FALSE)
+        }
+        if( !.is_a_string(name) ){
+            stop("'name' must be a non-empty single character value.",
+                call. = FALSE)
+        }
         scores <- t(getLDA(x, k, assay.type, ...))
         # Add scores matrix with loadings as attribute to reducedDims
         x <- .add_values_to_reducedDims(x, name, values = scores)
