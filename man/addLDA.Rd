@@ -11,9 +11,9 @@ getLDA(x, ...)
 
 addLDA(x, ...)
 
-\S4method{getLDA}{SummarizedExperiment}(x, k = 2, ...)
+\S4method{getLDA}{SummarizedExperiment}(x, k = 2, assay.type = "counts", ...)
 
-\S4method{addLDA}{SummarizedExperiment}(x, k = 2, name = "LDA", ...)
+\S4method{addLDA}{SummarizedExperiment}(x, k = 2, assay.type = "counts", name = "LDA", ...)
 }
 \arguments{
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
@@ -23,6 +23,9 @@ object.}
 
 \item{k}{Integer, number of latent vectors/topics
 (By default: \code{2}).}
+
+\item{assay.type}{a single \code{character} value for specifying which
+assay to use for LDA ordination.}
 
 \item{name}{The name to be used to store the result in the reducedDims of the
 output (By default: \code{name = "LDA"}).}

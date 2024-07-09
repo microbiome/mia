@@ -12,6 +12,9 @@
 #' 
 #' @param name The name to be used to store the result in the reducedDims of the
 #'  output (By default: \code{name = "LDA"}).
+#'  
+#' @param assay.type a single \code{character} value for specifying which
+#'   assay to use for LDA ordination.
 #' 
 #' @param ... optional arguments.
 #' 
@@ -57,11 +60,15 @@ setMethod("getLDA", "SummarizedExperiment",
     function(x, k=2, assay.type = "counts", ...){
         .require_package("topicmodels")
         df <- as.data.frame(t(assay(x, assay.type)))
+        # Estimate LDA model using VEM algorithm
         lda_model <- topicmodels::LDA(df, k)
+        # Calculate scores and loadings
         posteriors <- topicmodels::posterior(lda_model, df)
         scores <- t(as.data.frame(posteriors$topics))
         loadings <- t(as.data.frame(posteriors$terms)) 
+        # Add loadings as attribute of the scores matrix
         attr(scores, "loadings") <- loadings
+        # Return scores with loadings as attribute
         return(scores)
     }
 )
@@ -71,6 +78,7 @@ setMethod("getLDA", "SummarizedExperiment",
 setMethod("addLDA", "SummarizedExperiment",
     function(x, k = 2, assay.type = "counts", name = "LDA", ...){
         scores <- t(getLDA(x, k, assay.type, ...))
+        # Add scores matrix with loadings as attribute to reducedDims
         x <- .add_values_to_reducedDims(x, name, values = scores)
         return(x)
     }
