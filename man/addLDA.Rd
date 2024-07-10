@@ -21,14 +21,14 @@ object.}
 
 \item{...}{optional arguments.}
 
-\item{k}{Integer, number of latent vectors/topics
-(By default: \code{2}).}
+\item{k}{Integer scalar. A number of latent vectors/topics.
+(Default: \code{2})}
 
-\item{assay.type}{a single \code{character} value for specifying which
-assay to use for LDA ordination.}
+\item{assay.type}{Character scalar. Specifies which assay to use for LDA
+ordination. (Default: \code{"counts"})}
 
-\item{name}{The name to be used to store the result in the reducedDims of the
-output (By default: \code{name = "LDA"}).}
+\item{name}{Character scalar. The name to be used to store the result in the
+reducedDims of the output. (Default: \code{"LDA"})}
 }
 \value{
 For \code{getLDA}, the ordination matrix with feature loadings matrix

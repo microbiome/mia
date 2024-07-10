@@ -7,14 +7,14 @@
 #' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'  object.
 #'   
-#' @param k Integer, number of latent vectors/topics 
-#'   (By default: \code{2}).
+#' @param k Integer scalar. A number of latent vectors/topics. 
+#'  (Default: \code{2})
 #' 
-#' @param name The name to be used to store the result in the reducedDims of the
-#'  output (By default: \code{name = "LDA"}).
+#' @param name Character scalar. The name to be used to store the result in the
+#'  reducedDims of the output. (Default: \code{"LDA"})
 #'  
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for LDA ordination.
+#' @param assay.type Character scalar. Specifies which assay to use for LDA 
+#'  ordination. (Default: \code{"counts"})
 #' 
 #' @param ... optional arguments.
 #' 
@@ -57,7 +57,7 @@ setGeneric("addLDA", signature = c("x"),
 #' @export
 #' @rdname addLDA
 setMethod("getLDA", "SummarizedExperiment",
-    function(x, k=2, assay.type = "counts", ...){
+    function(x, k = 2, assay.type = "counts", ...){
         .require_package("topicmodels")
         # Input checks
         if( !.is_an_integer(k) ){

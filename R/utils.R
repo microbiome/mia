@@ -370,11 +370,11 @@
             call. = FALSE)
     }
     # Throw warning if values of reducedDim are overwritten
-    if ( c(name) %in% names(reducedDims(x)) ){
+    if ( name %in% names(reducedDims(x)) ){
         warning(
           "The following values are already present in `reducedDims` and will ",
           "be overwritten: '",
-          paste(name),
+          name,
           "'. Consider using the 'name' argument to specify alternative ",
           "names.", call. = FALSE)
     }
