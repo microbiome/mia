@@ -599,7 +599,7 @@ setGeneric("mapTaxonomy",
         r_f <- is.na(td[[from]])
     } else {
         if(use.grepl){
-            r_f <- grepl(taxa, td[[from]])
+            r_f <- grepl(taxa, td[[from]], ignore.case = TRUE)
         } else {
             r_f <- td[[from]] %in% taxa
         }
@@ -614,7 +614,8 @@ setGeneric("mapTaxonomy",
         r_f <- is.na(td)
     } else {
         if(use.grepl){
-            r_f <- vapply(td,grepl,logical(nrow(td)),pattern=taxa)
+            r_f <- vapply(
+                td, grepl, logical(nrow(td)), pattern=taxa, ignore.case = TRUE)
         } else {
             r_f <- t(as.matrix(td %in% taxa))
         }
@@ -678,13 +679,17 @@ setMethod("mapTaxonomy", signature = c(x = "SummarizedExperiment"),
         #
         r_fs <- NULL
         c_f <- rep(TRUE,ncol(td))
+        # Get unique taxa to search
+        taxa <- unique(taxa)
         if(!is.null(from)){
-            r_fs <- lapply(taxa, .get_taxa_row_match, td = td, from = from,
-                            use.grepl = use.grepl)
+            r_fs <- lapply(
+                taxa, .get_taxa_row_match, td = td, from = from,
+                use.grepl = use.grepl)
             names(r_fs) <- taxa
         } else {
-            r_fs <- lapply(taxa, .get_taxa_any_match, td = td,
-                            use.grepl = use.grepl)
+            r_fs <- lapply(
+                taxa, .get_taxa_any_match, td = td,
+                use.grepl = use.grepl)
             names(r_fs) <- taxa
         }
         if(!is.null(to)) {
