@@ -370,31 +370,31 @@ setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
         }
         # If 'faith' was one of the indices, 'calc_faith' is TRUE
         if( calc_faith ){
-          # Get tree to check whether faith can be calculated
-          tree <- rowTree(x, tree.name)
-          # Check if faith can be calculated. Give warning and do not run estimateFaith
-          # if there is no rowTree and other indices were also calculated. Otherwise, 
-          # run estimateFaith. (If there is no rowTree --> error)
-          if( (is.null(tree) || is.null(tree$edge.length)) &&
-              length(valid_indices) >= 1 ){
-            warning("Faith diversity has been excluded from the results ",
-                    "since it cannot be calculated without rowTree. ",
-                    "This requires a rowTree in the input argument x. ",
-                    "Make sure that 'rowTree(x)' is not empty, or ",
-                    "make sure to specify 'tree.name' in the input ",
-                    "arguments. Warning is also provided if the tree does ",
-                    "not have any branches. You can consider adding ",
-                    "rowTree to include this index.", 
-                    call. = FALSE)
-          } else {
-            x <- .estimate_faith(
-              x, name = faith_name, tree_name = tree.name, ...)
-            # Ensure that indices are in correct order
-            colnames <- colnames(colData(x))
-            colnames <- c(
-              colnames[ !colnames %in% name_original ], name_original)
-            colData(x) <- colData(x)[ , colnames]
-          }
+            # Get tree to check whether faith can be calculated
+            tree <- rowTree(x, tree.name)
+            # Check if faith can be calculated. Give warning and do not run estimateFaith
+            # if there is no rowTree and other indices were also calculated. Otherwise, 
+            # run estimateFaith. (If there is no rowTree --> error)
+            if( (is.null(tree) || is.null(tree$edge.length)) &&
+                length(index) >= 1 ){
+                warning("Faith diversity has been excluded from the results ",
+                        "since it cannot be calculated without rowTree. ",
+                        "This requires a rowTree in the input argument x. ",
+                        "Make sure that 'rowTree(x)' is not empty, or ",
+                        "make sure to specify 'tree.name' in the input ",
+                        "arguments. Warning is also provided if the tree does ",
+                        "not have any branches. You can consider adding ",
+                        "rowTree to include this index.", 
+                        call. = FALSE)
+            } else {
+                x <- .estimate_faith(
+                    x, name = faith_name, tree_name = tree.name, ...)
+                # Ensure that indices are in correct order
+                colnames <- colnames(colData(x))
+                colnames <- c(
+                    colnames[ !colnames %in% name_original ], name_original)
+                colData(x) <- colData(x)[ , colnames]
+            }
         }
         return(x)
     }
