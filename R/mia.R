@@ -322,3 +322,40 @@ NULL
 #' \url{https://static-content.springer.com/esm/art%3A10.1186%2Fs40168-020-00816-x/MediaObjects/40168_2020_816_MOESM3_ESM.docx}
 #' 
 NULL
+
+#' Tito2024QMP
+#'
+#' The study combined Quantitative Microbiome Profiling (QMP) with 
+#' extensive patient phenotyping from a group of 589 colorectal cancer (CRC) 
+#' patients, advanced adenoma (AA) patients, and healthy controls. 
+#' By implementing confounder control and quantitative profiling methods, the study 
+#' was able to reveal potential misleading associations between microbial markers 
+#' and colorectal cancer development that were driven by other factors like intestinal 
+#' inflammation, rather than the cancer diagnosis itself.
+#'
+#' @format A TreeSummarizedExperiment with 676 features and 589 samples. 
+#' The rowData contains species. The colData includes:
+#' 
+#' \describe{
+#'   \item{sampleID}{(character) Sample ID from the corresponding study}
+#'   \item{diagnosis}{(factor) Diagnosis type, with possible values: "ADE" (advanced adenoma), 
+#'   "CRC" (colorectal cancer), "CTL" (control)}
+#'   \item{colonoscopy}{(factor) Colonoscopy result, with possible values: "FIT_Positive", 
+#'   "familial_risk_familial_CRC_FCC", "familial_risk_no", "abdomil_complaints"}
+#' }
+#'
+#' @name Tito2024QMP
+#' @docType data
+#' @keywords datasets
+#' @usage data(Tito2024QMP)
+#' @seealso \code{\link{mia-datasets}}
+#' @author 
+#' Shadman Ishraq
+#' @references
+#' Raúl Y. Tito, Sara Verbandt, Marta Aguirre Vazquez, Leo Lahti, Chloe Verspecht, Verónica Lloréns-Rico, Sara Vieira-Silva,
+#' Janine Arts, Gwen Falony, Evelien Dekker, Joke Reumers, Sabine Tejpar & Jeroen Raes (2024). 
+#' Microbiome confounders and quantitative profiling challenge predicted microbial targets in colorectal cancer development. 
+#' Nature Medicine,30, 1339-1348. 
+#' \url{https://doi.org/10.1038/s41591-024-02963-2}
+#' 
+NULL
