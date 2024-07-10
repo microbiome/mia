@@ -258,6 +258,7 @@ setMethod(
 }
 
 .get_richness_values <- function(index, mat, detection, ...) {
+  tryCatch({
     FUN <- switch(index,
         observed = .calc_observed,
         chao1 = .calc_chao1,
@@ -271,4 +272,8 @@ setMethod(
         res <- unname(res)
     }
     return(res)
+  }, error = function(e){
+    warning(paste("Failed to calculate", index, "index:", e$message))
+    return(NA)
+  })
 }

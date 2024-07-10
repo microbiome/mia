@@ -28,7 +28,20 @@ Authors@R:
       person(given = "Giulio", family = "Benedetti", role=c("ctb")),
       person(given = c("Moritz", "Emanuel"), family = "Beber",
              email = "moritz.beber@igdore.org", role = c("ctb"),
-             comment = c(ORCID = "0000-0003-2406-1978")))
+             comment = c(ORCID = "0000-0003-2406-1978")),
+      person(given = "Nitesh", family = "Turaga", role=c("ctb")),
+      person(given = "Chouaib", family = "Benchraka", role=c("ctb")),
+      person(given = "Akewak", family = "Jeba", role=c("ctb")),
+      person(given = "Himmi", family = "Lindgren", role=c("ctb")),
+      person(given = "Noah", family = "De Gunst", role=c("ctb")),
+      person(given = "Théotime", family = "Pralas", role=c("ctb")),
+      person(given = "Shadman", family = "Ishraq", role=c("ctb")),
+      person(given = "Eineje", family = "Ameh", role=c("ctb")),
+      person(given = "Artur", family = "Sannikov", role=c("ctb")),
+      person(given = "Hervé", family = "Pagès", role=c("ctb")),
+      person(given = "Rajesh", family = "Shigdel", role=c("ctb")),
+      person(given = "Katariina", family = "Pärnänen", role=c("ctb")),
+      person(given = "Pande", family = "Erawijantari", role=c("ctb")))
 Title: Microbiome analysis
 Description:
     mia implements tools for microbiome analysis based on the 
@@ -91,5 +104,5 @@ Suggests:
 URL: https://github.com/microbiome/mia
 BugReports: https://github.com/microbiome/mia/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr

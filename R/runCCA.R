@@ -72,6 +72,8 @@
 #'   Options include 'permanova' (\code{vegan::permutest}), 'anova'
 #'   (\code{stats::anova}) and 'tukeyhsd' (\code{stats::TukeyHSD}).
 #'   (By default: \code{homogeneity.test="permanova"})}
+#'   \item{\code{permutations} a numeric value specifying the number of permutations 
+#'   for significance testing in \code{vegan::anova.cca}. (By default: \code{permutations=999})}
 #' }
 #' 
 #' @details
@@ -133,6 +135,8 @@
 #' # can be returned.
 #'  tse <- addRDA(
 #'      tse, data ~ SampleType, homogeneity.test = "anova", full = TRUE)
+#' # Example showing how to pass extra parameters, such as 'permutations', to anova.cca
+#' tse <- addRDA(tse, data ~ SampleType, permutations = 500)
 #' 
 NULL
 

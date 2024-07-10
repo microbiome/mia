@@ -191,10 +191,10 @@
 #' tse <- .estimate_diversity(tse, index = index)
 #'
 #' # The colData contains the indices with their code names by default
-#' colData(tse)[, index]
+#' colData(tse)[, valid_indices]
 #'
 #' # Removing indices
-#' colData(tse)[, index] <- NULL
+#' colData(tse)[, valid_indices] <- NULL
 #' 
 #' # 'threshold' can be used to determine threshold for 'coverage' index
 #' tse <- .estimate_diversity(tse, index = "coverage", threshold = 0.75)
@@ -210,10 +210,10 @@
 #'         name = c("Shannon", "GiniSimpson",  "InverseSimpson",  "Coverage",
 #'                    "Fisher", "Faith", "LogModSkewness"))
 #' # The colData contains the indices by their new names provided by the user
-#' colData(tse)[, name]
+#' colData(tse)[, valid_names]
 #'
 #' # Compare the indices visually
-#' pairs(colData(tse)[, name])
+#' pairs(colData(tse)[, valid_names])
 #'
 #' # Plotting the diversities - use the selected names
 #' library(scater)
@@ -308,58 +308,93 @@ setMethod(".estimate_diversity", signature = c(x="TreeSummarizedExperiment"),
                 call. = FALSE)
         }
         
+        assay_data <- assay(x, assay.type)
+        unsupported_indices <- list()
+        
+        for (idx in index) {
+          if (idx %in% c("shannon", "inverse_simpson", "gini_simpson")) {
+            if (any(assay_data < 0, na.rm = TRUE)) {
+              unsupported_indices[[idx]] <- "negative values in assay data"
+            }
+          }
+          if (idx == "fisher") {
+            if (any(assay_data < 0, na.rm = TRUE) ||
+                !all(apply(assay_data, 1, is.integer))) {
+              unsupported_indices[[idx]] <- "negative values or 
+                          non-integer counts in assay data"
+            }
+          }
+          if (idx == "log_modulo_skewness") {
+            if (any(assay_data <= 0, na.rm = TRUE)) {
+              unsupported_indices[[idx]] <- "non-positive values in assay data"
+            }
+          }
+        }
+        valid_indices <- index[!index %in% names(unsupported_indices)]
+        valid_names <- name[!index %in% names(unsupported_indices)]
+        
+        # Issue warnings for unsupported indices
+        if (length(unsupported_indices) > 0) {
+          warning_messages <- sapply(names(unsupported_indices), function(idx) {
+            paste0(idx, " not calculated due to ", unsupported_indices[[idx]])
+          })
+          warning(paste(warning_messages, collapse = "; "), call. = FALSE)
+        }
+        
         # If 'faith' is one of the indices
-        if( "faith" %in% index ){
-            # Get the name of "faith" index
-            faith_name <- name[index %in% "faith"]
-            # Store original names
-            name_original <- name
-            # And delete it from name
-            name <- name[!index %in% "faith"]
-
-            # Delete "faith" from indices
-            index <- index[!index %in% "faith"]
-            
-            # Faith will be calculated
-            calc_faith <- TRUE
+        if( "faith" %in% valid_indices ){
+          # Get the name of "faith" index
+          faith_name <- valid_names[valid_indices %in% "faith"]
+          # Store original names
+          name_original <- valid_names
+          # And delete it from name
+          valid_names <- valid_names[!valid_indices %in% "faith"]
+          
+          # Delete "faith" from indices
+          valid_indices <- valid_indices[!valid_indices %in% "faith"]
+          
+          # Faith will be calculated
+          calc_faith <- TRUE
         } else{
-            # Faith will not be calculated
-            calc_faith <- FALSE
+          # Faith will not be calculated
+          calc_faith <- FALSE
         }
         
         # If index list contained other than 'faith' index, the length of the
         # list is over 0
-        if( length(index)>0){
-            # Calculates all indices but not 'faith'
-            x <- callNextMethod()
+        if( length(valid_indices)>0){
+          # Calculates all indices but not 'faith'
+          x <- callNextMethod(x, assay.type = assay.type, 
+                              index = valid_indices, name = valid_names, 
+                              tree.name = tree.name, ..., BPPARAM = BPPARAM)
         }
         # If 'faith' was one of the indices, 'calc_faith' is TRUE
         if( calc_faith ){
-            # Get tree to check whether faith can be calculated
-            tree <- rowTree(x, tree.name)
-            # Check if faith can be calculated. Give warning and do not run estimateFaith
-            # if there is no rowTree and other indices were also calculated. Otherwise, 
-            # run estimateFaith. (If there is no rowTree --> error)
-            if( (is.null(tree) || is.null(tree$edge.length)) &&
-                length(index) >= 1 ){
-                warning("Faith diversity has been excluded from the results ",
-                        "since it cannot be calculated without rowTree. ",
-                        "This requires a rowTree in the input argument x. ",
-                        "Make sure that 'rowTree(x)' is not empty, or ",
-                        "make sure to specify 'tree.name' in the input ",
-                        "arguments. Warning is also provided if the tree does ",
-                        "not have any branches. You can consider adding ",
-                        "rowTree to include this index.", 
-                        call. = FALSE)
-            } else {
-                x <- .estimate_faith(
-                    x, name = faith_name, tree_name = tree.name, ...)
-                # Ensure that indices are in correct order
-                colnames <- colnames(colData(x))
-                colnames <- c(
-                    colnames[ !colnames %in% name_original ], name_original)
-                colData(x) <- colData(x)[ , colnames]
-            }
+          # Get tree to check whether faith can be calculated
+          tree <- rowTree(x, tree.name)
+          # Check if faith can be calculated. Give warning and do not run estimateFaith
+          # if there is no rowTree and other indices were also calculated. Otherwise, 
+          # run estimateFaith. (If there is no rowTree --> error)
+          if( (is.null(tree) || is.null(tree$edge.length)) &&
+              length(valid_indices) >= 1 ){
+            warning("Faith diversity has been excluded from the results ",
+                    "since it cannot be calculated without rowTree. ",
+                    "This requires a rowTree in the input argument x. ",
+                    "Make sure that 'rowTree(x)' is not empty, or ",
+                    "make sure to specify 'tree.name' in the input ",
+                    "arguments. Warning is also provided if the tree does ",
+                    "not have any branches. You can consider adding ",
+                    "rowTree to include this index.", 
+                    call. = FALSE)
+          } else {
+            x <- .estimate_faith(
+              x, name = faith_name, tree_name = tree.name, ...)
+            # Ensure that indices are in correct order
+            colnames <- colnames(colData(x))
+            colnames <- c(
+              colnames[ !colnames %in% name_original ], name_original)
+            colData(x) <- colData(x)[ , colnames]
+          }
         }
         return(x)
     }

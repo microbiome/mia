@@ -70,7 +70,8 @@ Currently Metaphlan versions 2, 3, and 4 are supported.
 # https://github.com/biobakery/biobakery/wiki/metaphlan3#merge-outputs)
 
 # File path
-file_path <- system.file("extdata", "merged_abundance_table.txt", package = "mia")
+file_path <- system.file(
+    "extdata", "merged_abundance_table.txt", package = "mia")
 # Import data
 tse <- importMetaPhlAn(file_path)
 # Data at the lowest rank
