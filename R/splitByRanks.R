@@ -8,6 +8,9 @@
 #' \code{SummarizedExperiment}.
 #'
 #' @inheritParams getPrevalence
+#' 
+#' @param ranks a character vector defining taxonomic ranks. Must all be values
+#'   of \code{taxonomyRanks()} function.
 #'
 #' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this

@@ -64,6 +64,8 @@ integer vector of row indices or a logical vector.}
 
 \item{scale}{Logical scalar, should the expression values be standardized?}
 
+\item{transposed}{Logical scalar, is x transposed with samples in rows?}
+
 \item{assay.type}{a single \code{character} value for specifying which
 assay to use for calculation.}
 
@@ -81,9 +83,6 @@ rowTree will be used in calculation.
 (By default: \code{tree.name = "phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
-
-\item{altexp}{String or integer scalar specifying an alternative experiment
-containing the input data.}
 
 \item{name}{the name to store the result in
 \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}

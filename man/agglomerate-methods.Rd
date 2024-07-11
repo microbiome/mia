@@ -180,6 +180,9 @@ summary of non-prevalent taxa. (default: \code{other.label = "Other"})}
 
 \item{other_label}{Deprecated. use \code{other.label} instead.}
 
+\item{ranks}{a character vector defining taxonomic ranks. Must all be values
+of \code{taxonomyRanks()} function.}
+
 \item{as.list}{\code{TRUE} or \code{FALSE}: Should the list of
 \code{SummarizedExperiment} objects be returned by the function
 \code{agglomerateByRanks} as a SimpleList or stored in altExps?

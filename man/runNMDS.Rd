@@ -88,6 +88,8 @@ integer vector of row indices or a logical vector.}
 
 \item{scale}{Logical scalar, should the expression values be standardized?}
 
+\item{transposed}{Logical scalar, is x transposed with samples in rows?}
+
 \item{keep.dist}{Logical scalar indicating whether the \code{dist} object
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
 the matrix returned/stored by \code{getNMDS}/ \code{addNMDS}.}
