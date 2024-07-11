@@ -4,10 +4,9 @@
 #' \code{ade4} package in typical fashion. Results are stored in the
 #' \code{reducedDims} and are available for all the expected functions.
 #'
-#' @param x For \code{getDPCoA}, a numeric matrix of expression values
-#'   where rows are features and columns are cells.
-#'   Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
+#' @inheritParams runCCA
 #'
+#' @details
 #'   For \code{addDPCoA} a \linkS4class{TreeSummarizedExperiment} containing the
 #'   expression values as well as a \code{rowTree} to calculate \code{y} using
 #'   \code{\link[ape:cophenetic.phylo]{cophenetic.phylo}}.
@@ -29,32 +28,12 @@
 #' @param subset_row Deprecated. Use \code{subset.row} instead.
 #'
 #' @param scale Logical scalar, should the expression values be standardized?
-#'
-#' @param transposed Logical scalar, is x transposed with cells in rows?
-#'
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
 #'   
 #' @param tree.name a single \code{character} value for specifying which
 #'   rowTree will be used in calculation. 
 #'   (By default: \code{tree.name = "phylo"})
 #' 
 #' @param tree_name Deprecated. Use \code{tree.name} instead.
-#'
-#' @param altexp String or integer scalar specifying an alternative experiment
-#'   containing the input data.
-#'
-#' @param name String specifying the name to be used to store the result in the
-#'   reducedDims of the output.
 #'
 #' @param ... Currently not used.
 #'

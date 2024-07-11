@@ -37,11 +37,12 @@ meltSE(
 )
 }
 \arguments{
-\item{x}{A numeric matrix or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
-\item{assay.type}{a \code{character} value to select an
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}}
+\item{assay.type}{a single \code{character} value for specifying which
+assay to use for calculation.}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.

@@ -41,21 +41,20 @@ addDominant(x, name = "dominant_taxa", other.name = "Other", n = NULL, ...)
 )
 }
 \arguments{
-\item{x}{A
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to use for identifying dominant taxa.}
+\item{assay.type}{a single \code{character} value for specifying which
+assay to use for calculation.}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{rank}{A single character defining a taxonomic rank. Must be a value of
-the output of \code{taxonomyRanks()}.}
+\item{rank}{a single character defining a taxonomic rank. Must be a value of
+\code{taxonomyRanks()} function.}
 
 \item{other.name}{A name for features that are not included in n the most frequent
 dominant features in the data. Default is "Other".}

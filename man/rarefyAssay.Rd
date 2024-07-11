@@ -30,12 +30,12 @@ rarefyAssay(
 )
 }
 \arguments{
-\item{x}{A \code{SummarizedExperiment} object.}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
-\item{assay.type}{A single character value for selecting the
-\code{SummarizedExperiment} \code{assay} used for random subsampling.
-Only counts are useful and other transformed data as input will give
-meaningless output.}
+\item{assay.type}{a single \code{character} value for specifying which
+assay to use for calculation.}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
@@ -53,8 +53,8 @@ replacement (\code{replace=TRUE}).
 See \code{\link[phyloseq:rarefy_even_depth]{phyloseq::rarefy_even_depth}}
 for details on implications of this parameter.}
 
-\item{name}{A single character value specifying the name of transformed
-abundance table that will be added to the new \code{SummarizedExperiment}.}
+\item{name}{the name to store the result in
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
 \item{verbose}{Logical Default is \code{TRUE}. When \code{TRUE} an additional
 message about the random number used is printed.}

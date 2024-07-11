@@ -56,11 +56,9 @@ addNMDS(x, ..., altexp = NULL, name = "NMDS")
 runNMDS(x, ...)
 }
 \arguments{
-\item{x}{For \code{getNMDS}, a numeric matrix of expression values
-where rows are features and columns are cells.
-Alternatively, a \code{TreeSummarizedExperiment} containing such a matrix.
-
-For \code{addNMDS} a \linkS4class{SingleCellExperiment}}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
 \item{...}{additional arguments to pass to \code{FUN} and
 \code{nmds.fun}.}
@@ -75,11 +73,12 @@ implementation, either \dQuote{isoMDS} for
 
 \item{nmdsFUN}{Deprecated. Use \code{nmds.fun} instead.}
 
-\item{ncomponents}{Numeric scalar indicating the number of NMDS dimensions
+\item{ncomponents}{Numeric scalar indicating the number of DPCoA dimensions
 to obtain.}
 
 \item{ntop}{Numeric scalar specifying the number of features with the highest
-variances to use for dimensionality reduction.}
+variances to use for dimensionality reduction. Alternatively \code{NULL},
+if all features should be used. (default: \code{ntop = NULL})}
 
 \item{subset.row}{Vector specifying the subset of features to use for
 dimensionality reduction. This can be a character vector of row names, an
@@ -88,8 +87,6 @@ integer vector of row indices or a logical vector.}
 \item{subset_row}{Deprecated. Use \code{subset.row} instead.}
 
 \item{scale}{Logical scalar, should the expression values be standardized?}
-
-\item{transposed}{Logical scalar, is x transposed with cells in rows?}
 
 \item{keep.dist}{Logical scalar indicating whether the \code{dist} object
 calculated by \code{FUN} should be stored as \sQuote{dist} attribute of
@@ -120,8 +117,8 @@ dimred is specified.}
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
-\item{name}{String specifying the name to be used to store the result in the
-reducedDims of the output.}
+\item{name}{the name to store the result in
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }
 \value{
 For \code{getNMDS}, a matrix is returned containing the MDS
@@ -132,6 +129,8 @@ Perform non-metric multi-dimensional scaling (nMDS) on samples, based on the
 data in a \code{SingleCellExperiment} object.
 }
 \details{
+For \code{addNMDS} a \linkS4class{SingleCellExperiment}
+
 Either \code{\link[MASS:isoMDS]{MASS::isoMDS}} or
 \code{\link[vegan:monoMDS]{vegan::monoMDS}} are used internally to compute
 the NMDS components. If you supply a custom \code{FUN}, make sure that

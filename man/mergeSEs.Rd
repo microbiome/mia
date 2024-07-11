@@ -29,16 +29,19 @@ mergeSEs(x, ...)
 \S4method{mergeSEs}{list}(x, ...)
 }
 \arguments{
-\item{x}{a \code{\link{SummarizedExperiment}} object or a list of
-\code{\link{SummarizedExperiment}} objects.}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
 \item{...}{optional arguments (not used).}
 
-\item{assay.type}{A character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to be merged. (By default: \code{assay.type = "counts"})}
+\item{assay.type}{a single \code{character} value for specifying which
+assay to use for calculation.}
 
-\item{assay_name}{(Deprecated) alias for \code{assay.type}.}
+\item{assay_name}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay.type} instead. At some point \code{assay_name}
+will be disabled.)}
 
 \item{join}{A single character value for selecting the joining method.
 Must be 'full', 'inner', 'left', or 'right'. 'left' and 'right' are disabled

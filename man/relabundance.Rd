@@ -16,7 +16,9 @@ relabundance(x) <- value
 \S4method{relabundance}{SummarizedExperiment}(x) <- value
 }
 \arguments{
-\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}} object}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
 \item{...}{optional arguments not used currently.}
 

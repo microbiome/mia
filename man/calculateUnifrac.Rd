@@ -32,14 +32,9 @@ runUnifrac(
 )
 }
 \arguments{
-\item{x}{a numeric matrix or a
-\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object containing a tree.
-
-Please  note that \code{runUnifrac} expects a matrix with samples per row
-and not per column. This is implemented to be compatible with other
-distance calculations such as \code{\link[stats:dist]{dist}} as much as
-possible.}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
 \item{tree}{if \code{x} is a matrix, a
 \code{\link[TreeSummarizedExperiment:phylo]{phylo}} object matching the
@@ -72,9 +67,7 @@ tree will be used in calculation.
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
-\item{transposed}{Logical scalar, is x transposed with cells in rows, i.e.,
-is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
-(By default: \code{transposed = FALSE})}
+\item{transposed}{Logical scalar, is x transposed with samples in rows?}
 
 \item{node.label}{if \code{x} is a matrix,
 a \code{character} vector specifying links between rows/columns and tips of \code{tree}.
@@ -94,6 +87,11 @@ object. The function utilizes \code{\link[rbiom:unifrac]{rbiom:unifrac()}}.
 \details{
 Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
 \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
+
+Please  note that \code{runUnifrac} expects a matrix with samples per row
+and not per column. This is implemented to be compatible with other
+distance calculations such as \code{\link[stats:dist]{dist}} as much as
+possible.
 }
 \examples{
 data(esophagus)

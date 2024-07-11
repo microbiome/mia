@@ -42,8 +42,9 @@ summarizeDominance(x, group = NULL, name = "dominant_taxa", ...)
 \S4method{summary}{SummarizedExperiment}(object, assay.type = assay_name, assay_name = "counts")
 }
 \arguments{
-\item{x}{A
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} object.}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
 \item{top}{Numeric value, how many top taxa to return. Default return top
 five taxa.}
@@ -60,8 +61,8 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{na.rm}{For \code{getTop} logical argument for calculation method
-specified to argument \code{method}. Default is TRUE.}
+\item{na.rm}{logical scalar: Should NA values be omitted when calculating
+prevalence? (default: \code{na.rm = TRUE})}
 
 \item{...}{Additional arguments passed on to \code{agglomerateByRank()} when
 \code{rank} is specified for \code{summarizeDominance}.}

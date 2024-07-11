@@ -7,17 +7,7 @@
 #' experiments and flattens them again into a single 
 #' \code{SummarizedExperiment}.
 #'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
-#'
-#' @param ranks a character vector defining taxonomic ranks. Must all be values
-#'   of \code{taxonomyRanks()} function.
-#'
-#' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-#'   removed? Use it with caution, since results with NA on the selected rank
-#'   will be dropped. This setting can be tweaked by defining
-#'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
+#' @inheritParams getPrevalence
 #'
 #' @param keep.dimred \code{TRUE} or \code{FALSE}: Should the
 #'   \code{reducedDims(x)} be transferred to the result? Please note, that this

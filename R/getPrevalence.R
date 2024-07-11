@@ -3,9 +3,7 @@
 #' These functions calculate the population prevalence for taxonomic ranks in a
 #' \code{\link{SummarizedExperiment-class}} object.
 #'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object
+#' @inheritParams calculateDMN
 #'
 #' @param detection Detection threshold for absence/presence. If \code{as_relative = FALSE},
 #'    it sets the counts threshold for a taxon to be considered present.
@@ -19,15 +17,6 @@
 #'
 #' @param sort logical scalar: Should the result be sorted by prevalence?
 #'   (default: \code{FALSE})
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to use for prevalence calculation.
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
 #'
 #' @param rank a single character defining a taxonomic rank. Must be a value of
 #'   \code{taxonomyRanks()} function.

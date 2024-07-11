@@ -69,16 +69,16 @@ mapTaxonomy(x, ...)
 IdTaxaToDataFrame(from)
 }
 \arguments{
-\item{x}{a
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object}
+object.}
 
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
-\code{taxonomyRanks()} function}
+\code{taxonomyRanks()} function.}
 
 \item{empty.fields}{a \code{character} value defining, which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
-removed if \code{na.rm = TRUE} before agglomeration}
+removed if \code{na.rm = TRUE} before agglomeration.}
 
 \item{...}{optional arguments not used currently.}
 

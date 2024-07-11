@@ -16,17 +16,8 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} are
 #' agglomerated, i.e. summed up. If the assay contains values other than counts
 #' or absolute values, this can lead to meaningless values being produced.
-#'
-#' @param x a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or
-#'   a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'
-#' @param rank a single character defining a taxonomic rank. Must be a value of
-#'   \code{taxonomyRanks()} function.
-#'
-#' @param na.rm \code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-#'   removed? Use it with caution, since empty entries on the selected rank
-#'   will be dropped. This setting can be tweaked by defining
-#'   \code{empty.fields} to your needs. (default: \code{na.rm = TRUE})
+#'  
+#' @inheritParams getPrevalence
 #'
 #' @param empty.fields a \code{character} value defining, which values should be
 #'   regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be

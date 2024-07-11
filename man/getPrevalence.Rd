@@ -102,9 +102,9 @@ getPrevalentAbundance(
 \S4method{getPrevalentAbundance}{SummarizedExperiment}(x, assay.type = assay_name, assay_name = "counts", ...)
 }
 \arguments{
-\item{x}{a
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object}
+object.}
 
 \item{...}{additional arguments
 \itemize{
@@ -138,9 +138,8 @@ detection and prevalence cutoffs be included? (default: \code{FALSE})}
 \item{na.rm}{logical scalar: Should NA values be omitted when calculating
 prevalence? (default: \code{na.rm = TRUE})}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to use for prevalence calculation.}
+\item{assay.type}{a single \code{character} value for specifying which
+assay to use for calculation.}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.

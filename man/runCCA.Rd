@@ -66,13 +66,9 @@ calculateRDA(x, ...)
 runRDA(x, ...)
 }
 \arguments{
-\item{x}{For \code{calculate*} a
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-or a numeric matrix with columns as samples
-
-For \code{run*} a
-\code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
-or a derived object.}
+object.}
 
 \item{...}{additional arguments passed to vegan::cca or vegan::dbrda and
 other internal functions.
@@ -134,8 +130,8 @@ v with weights Xbar, but the multiplying effect of eigenvalues removed) or
 \item{altexp}{String or integer scalar specifying an alternative experiment
 containing the input data.}
 
-\item{name}{String specifying the name to be used to store the result in the
-reducedDims of the output.}
+\item{name}{the name to store the result in
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 }
 \value{
 For \code{getCCA} a matrix with samples as rows and CCA dimensions as
@@ -150,6 +146,10 @@ These functions perform Canonical Correspondence Analysis on data stored
 in a \code{SummarizedExperiment}.
 }
 \details{
+For \code{run*} a
+\code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
+or a derived object.
+
 *CCA functions utilize \code{vegan:cca} and *RDA functions \code{vegan:dbRDA}.
 By default dbRDA is done with euclidean distances which equals to RDA.
 

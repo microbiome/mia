@@ -3,22 +3,8 @@
 #' These functions return information about the most dominant taxa in a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
-#'
-#' @param x A
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object.
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to use for identifying dominant taxa.
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'   
-#' @param rank A single character defining a taxonomic rank. Must be a value of
-#'   the output of \code{taxonomyRanks()}.
+#' 
+#' @inheritParams getPrevalence
 #'
 #' @param name A name for the column of the \code{colData} where the dominant
 #'   taxa will be stored in when using \code{addDominant}.

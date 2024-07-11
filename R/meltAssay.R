@@ -10,17 +10,8 @@
 #' \code{rowData} contains a column \dQuote{FeatureID}, they will be renamed to
 #' \dQuote{SampleID_col} and \dQuote{FeatureID_row}, if row names or column
 #' names are set.
-#'
-#' @param x A numeric matrix or a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   
-#' @param assay.type a \code{character} value to select an
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assayNames}}
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' 
+#' @inheritParams calculateDMN
 #'
 #' @param add.col \code{NULL}, \code{TRUE} or a \code{character} vector to
 #'   select information from the \code{colData} to add to the molten assay data.

@@ -128,9 +128,9 @@ unsplitByRanks(x, ...)
 )
 }
 \arguments{
-\item{x}{a
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object}
+object.}
 
 \item{...}{arguments passed to \code{agglomerateByRank} function for
 \code{SummarizedExperiment} objects and other functions.
@@ -139,10 +139,8 @@ See \code{\link[=agglomerate-methods]{agglomerateByRank}} for more details.}
 \item{rank}{a single character defining a taxonomic rank. Must be a value of
 \code{taxonomyRanks()} function.}
 
-\item{na.rm}{\code{TRUE} or \code{FALSE}: Should taxa with an empty rank be
-removed? Use it with caution, since results with NA on the selected rank
-will be dropped. This setting can be tweaked by defining
-\code{empty.fields} to your needs. (default: \code{na.rm = TRUE})}
+\item{na.rm}{logical scalar: Should NA values be omitted when calculating
+prevalence? (default: \code{na.rm = TRUE})}
 
 \item{empty.fields}{a \code{character} value defining, which values should be
 regarded as empty. (Default: \code{c(NA, "", " ", "\t")}). They will be
@@ -181,9 +179,6 @@ nested alternative experiments by default (default:
 summary of non-prevalent taxa. (default: \code{other.label = "Other"})}
 
 \item{other_label}{Deprecated. use \code{other.label} instead.}
-
-\item{ranks}{a character vector defining taxonomic ranks. Must all be values
-of \code{taxonomyRanks()} function.}
 
 \item{as.list}{\code{TRUE} or \code{FALSE}: Should the list of
 \code{SummarizedExperiment} objects be returned by the function

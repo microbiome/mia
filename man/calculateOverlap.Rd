@@ -28,13 +28,12 @@ runOverlap(x, ...)
 \S4method{runOverlap}{SummarizedExperiment}(x, name = "overlap", ...)
 }
 \arguments{
-\item{x}{a
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object containing a tree.}
+object.}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-to calculate the overlap.}
+\item{assay.type}{a single \code{character} value for specifying which
+assay to use for calculation.}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.

@@ -3,18 +3,7 @@
 #' Variety of transformations for abundance data, stored in \code{assay}.
 #' See details for options.
 #'
-#' @param x A
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'    object.
-#'
-#' @param assay.type A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   transformed.
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @inheritParams calculateDMN
 #'   
 #' @param method A single character value for selecting the transformation
 #'   method.
@@ -22,9 +11,6 @@
 #' @param MARGIN A single character value for specifying whether the
 #'   transformation is applied sample (column) or feature (row) wise.
 #'   (By default: \code{MARGIN = "samples"})
-#'
-#' @param name A single character value specifying the name of transformed
-#'   abundance table.
 #' 
 #' @param pseudocount TRUE, FALSE, or a numeric value. When TRUE,
 #'   automatically adds the minimum positive value of \code{assay.type}.

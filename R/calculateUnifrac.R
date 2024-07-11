@@ -7,10 +7,9 @@
 #' Please note that if \code{calculateUnifrac} is used as a \code{FUN} for
 #' \code{runMDS}, the argument \code{ntop} has to be set to \code{nrow(x)}.
 #'
-#' @param x a numeric matrix or a
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   object containing a tree.
+#' @inheritParams calculateDMN
 #'
+#' @details
 #'   Please  note that \code{runUnifrac} expects a matrix with samples per row
 #'   and not per column. This is implemented to be compatible with other
 #'   distance calculations such as \code{\link[stats:dist]{dist}} as much as
@@ -28,18 +27,6 @@
 #' 
 #' @param nodeLab Deprecated. Use \code{node.label} instead.
 #'
-#' @param assay.type a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead.)
-#'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
-#'
 #' @param tree.name a single \code{character} value for specifying which
 #'   tree will be used in calculation. 
 #'   (By default: \code{tree.name = "phylo"})
@@ -51,10 +38,6 @@
 #'   species/taxa shared between samples, whereas unweighted-Unifrac only
 #'   considers presence/absence. Default is \code{FALSE}, meaning the
 #'   unweighted-Unifrac distance is calculated for all pairs of samples.
-#'
-#' @param transposed Logical scalar, is x transposed with cells in rows, i.e., 
-#'   is Unifrac distance calculated based on rows (FALSE) or columns (TRUE).
-#'   (By default: \code{transposed = FALSE})
 #'   
 #' @param ... optional arguments not used.
 #'

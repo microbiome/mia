@@ -35,11 +35,9 @@ unsplitOn(x, ...)
 )
 }
 \arguments{
-\item{x}{A
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object or a list of
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-objects.}
+object.}
 
 \item{...}{Arguments passed to \code{agglomerateByVariable} function for
 \code{SummarizedExperiment} objects and other functions.
@@ -57,10 +55,9 @@ dimensions, \code{by} must be specified.
 Split by cols is not encouraged, since this is not compatible with
 storing the results in \code{altExps}.}
 
-\item{update.tree}{\code{TRUE} or \code{FALSE}: Should the rowTree be updated
-based on splitted data? Option is enabled when \code{x} is a
-\code{TreeSummarizedExperiment} object or a list of such objects.
-(By default: \code{update.tree = FALSE})}
+\item{update.tree}{\code{TRUE} or \code{FALSE}: should
+\code{rowTree()} also be agglomerated? (Default:
+\code{update.tree = FALSE})}
 
 \item{update_rowTree}{Deprecated. Use \code{update.tree } instead.}
 
@@ -72,7 +69,7 @@ to be unsplit. (By default: \code{altexp = names(altExps(x))})}
 \item{keep.dimred}{\code{TRUE} or \code{FALSE}: Should the
 \code{reducedDims(x)} be transferred to the result? Please note, that this
 breaks the link between the data used to calculate the reduced dims.
-(By default: \code{keep.dimred = FALSE})}
+(default: \code{keep.dimred = FALSE})}
 
 \item{keep_reducedDims}{Deprecated. Use \code{keep.dimred} instead.}
 }

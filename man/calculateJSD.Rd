@@ -21,8 +21,9 @@
 runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x))
 }
 \arguments{
-\item{x}{a numeric matrix or a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.}
+\item{x}{a numeric matrix with samples as rows or a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
 
 \item{...}{optional arguments not used.}
 
@@ -38,11 +39,11 @@ will be disabled.)}
 assay to use for calculation.
 (Please use \code{assay.type} instead.)}
 
-\item{transposed}{Logical scalar, is x transposed with cells in rows?}
+\item{transposed}{Logical scalar, is x transposed with samples in rows?}
 
 \item{BPPARAM}{A
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
-object specifying whether the JSD calculation should be parallelized.}
+object specifying whether the UniFrac calculation should be parallelized.}
 
 \item{chunkSize}{an integer scalar, defining the size of data send
 to the individual worker. Only has an effect, if \code{BPPARAM} defines

@@ -32,13 +32,12 @@ transformAssay(
 )
 }
 \arguments{
-\item{x}{A
+\item{x}{a numeric matrix with samples as rows or a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{assay.type}{A single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-transformed.}
+\item{assay.type}{a single \code{character} value for specifying which
+assay to use for calculation.}
 
 \item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
@@ -52,8 +51,8 @@ method.}
 transformation is applied sample (column) or feature (row) wise.
 (By default: \code{MARGIN = "samples"})}
 
-\item{name}{A single character value specifying the name of transformed
-abundance table.}
+\item{name}{the name to store the result in
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}}
 
 \item{pseudocount}{TRUE, FALSE, or a numeric value. When TRUE,
 automatically adds the minimum positive value of \code{assay.type}.
