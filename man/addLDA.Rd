@@ -53,7 +53,7 @@ data(GlobalPatterns)
 tse <- GlobalPatterns
 
 # Reduce the number of features 
-tse <- agglomerateByPrevalence(tse, rank="Phylum", prevalence=0.99, update.tree = TRUE)
+tse <- agglomerateByPrevalence(tse, rank="Phylum")
 
 # Run LDA and add the result to reducedDim(tse, "LDA")
 tse <- addLDA(tse)
