@@ -19,7 +19,7 @@ addLDA(x, ...)
 \item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{...}{optional arguments.}
+\item{...}{optional arguments passed to \code{\link[topicmodels:LDA]{LDA}}}
 
 \item{k}{Integer scalar. A number of latent vectors/topics.
 (Default: \code{2})}
@@ -43,11 +43,17 @@ These functions perform Latent Dirichlet Allocation on data stored in a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.
 }
+\details{
+The functions \code{getLDA} and \code{addLDA} internally use
+\code{\link[topicmodels:LDA]{LDA}} to compute the ordination matrix and
+feature loadings.
+}
 \examples{
 data(GlobalPatterns)
+tse <- GlobalPatterns
 
 # Reduce the number of features 
-tse <- agglomerateByPrevalence(GlobalPatterns, rank="Phylum", prevalence=0.99, update.tree = TRUE)
+tse <- agglomerateByPrevalence(tse, rank="Phylum", prevalence=0.99, update.tree = TRUE)
 
 # Run LDA and add the result to reducedDim(tse, "LDA")
 tse <- addLDA(tse)

@@ -3,15 +3,27 @@ test_that("addLDA", {
   skip_if_not(require("topicmodels", quietly = TRUE))
   data(GlobalPatterns, package="mia")
   #
-  tse <- addLDA(GlobalPatterns)
+  tse <- GlobalPatterns
+  tse <- addLDA(tse)
   expect_named(reducedDims(tse),"LDA")
   expect_true(is.matrix(reducedDim(tse,"LDA")))
   expect_equal(dim(reducedDim(tse,"LDA")),c(26,2))
   red <- reducedDim(tse,"LDA")
   expect_equal(names(attributes(red)),
-               c("dim","dimnames","loadings"))
+               c("dim","dimnames","loadings", "model"))
   expect_equal(dim(attr(red,"loadings")),c(19216,2))
-  
+  # Check if ordination matrix returned by topicmodels::LDA is the same as
+  # getLDA and addLDA ones
+  df <- as.data.frame(t(assay(tse, "counts")))
+  lda_model <- topicmodels::LDA(df, 2)
+  posteriors <- topicmodels::posterior(lda_model, df)
+  scores1 <- t(as.data.frame(posteriors$topics))
+  loadings <- t(as.data.frame(posteriors$terms)) 
+  # Compare topicmodels::LDA and addLDA
+  expect_equal(loadings, attr(red, "loadings"), tolerance = 10**-4)
+  scores2 <- getLDA(tse)
+  # Compare topicmodels::LDA and getLDA
+  expect_equal(loadings, attr(scores2, "loadings"), tolerance = 10**-4)
   # ERRORs
   expect_error(
     addLDA(GlobalPatterns, k = "test", assay.type = "counts", name = "LDA")

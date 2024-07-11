@@ -16,7 +16,7 @@
 #' @param assay.type Character scalar. Specifies which assay to use for LDA 
 #'  ordination. (Default: \code{"counts"})
 #' 
-#' @param ... optional arguments.
+#' @param ... optional arguments passed to \code{\link[topicmodels:LDA]{LDA}}
 #' 
 #' @return 
 #' For \code{getLDA}, the ordination matrix with feature loadings matrix
@@ -26,13 +26,19 @@
 #'  object is returned containing the ordination matrix in reducedDims(..., name)
 #'  with feature loadings matrix as attribute \code{"loadings"}.
 #'  
+#' @details 
+#' The functions \code{getLDA} and \code{addLDA} internally use 
+#'  \code{\link[topicmodels:LDA]{LDA}} to compute the ordination matrix and 
+#'  feature loadings.
+#'  
 #' @name addLDA
 #' 
 #' @examples
 #' data(GlobalPatterns)
+#' tse <- GlobalPatterns
 #' 
 #' # Reduce the number of features 
-#' tse <- agglomerateByPrevalence(GlobalPatterns, rank="Phylum", prevalence=0.99, update.tree = TRUE)
+#' tse <- agglomerateByPrevalence(tse, rank="Phylum", prevalence=0.99, update.tree = TRUE)
 #' 
 #' # Run LDA and add the result to reducedDim(tse, "LDA")
 #' tse <- addLDA(tse)
@@ -69,14 +75,16 @@ setMethod("getLDA", "SummarizedExperiment",
         }
         df <- as.data.frame(t(assay(x, assay.type)))
         # Estimate LDA model using VEM algorithm
-        lda_model <- topicmodels::LDA(df, k)
+        lda_model <- topicmodels::LDA(df, k, ...)
         # Calculate scores and loadings
         posteriors <- topicmodels::posterior(lda_model, df)
         scores <- t(as.data.frame(posteriors$topics))
         loadings <- t(as.data.frame(posteriors$terms)) 
         # Add loadings as attribute of the scores matrix
         attr(scores, "loadings") <- loadings
-        # Return scores with loadings as attribute
+        # Add LDA model as attribute of the scores matrix
+        attr(scores, "model") <- lda_model
+        # Return scores with loadings and model as attribute
         return(scores)
     }
 )
