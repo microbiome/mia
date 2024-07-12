@@ -384,26 +384,20 @@ setMethod(
     # DF.
     rd <- as.data.frame(rd)
     cd <- as.data.frame(cd)
-    # If row/colData are empty, convert the to NULL. That is the default value
-    # in biom constructor. Otherwise, the constructor creates a biom object
-    # with sample/observation metadata that cannot be opened (error occurs
-    # because the number of columns is 0). When NULL, the constructor creates an
-    # a column that do not have any information.
-    if( ncol(rd) == 0 ){
-        rd <- NULL
-    }
-    if( ncol(cd) == 0 ){
-        cd <- NULL
-    }
     # Check if assay contains integers or floats. biom constructor
     # requires that information since the default value is "int".
     mat_type <- ifelse(all(assay %% 1 == 0), "int", "float")
+    
+    # Create argument list
+    args <- list(data = assay, matrix_element_type = mat_type)
+    # Add rowData and colData only if they contain information
+    if( ncol(rd) != 0 ){
+        args[["observation_metadata"]] <- rd
+    }
+    if( ncol(cd) != 0 ){
+        args[["sample_metadata"]] <- cd
+    }
     # Create biom
-    biom <- biomformat::make_biom(
-        data = assay,
-        sample_metadata = cd,
-        observation_metadata = rd,
-        matrix_element_type = mat_type
-    )
+    biom <- do.call(biomformat::make_biom, args)
     return(biom)
 }
