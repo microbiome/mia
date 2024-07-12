@@ -30,10 +30,10 @@ reference:
 - subtitle: Beta Diversity
 - contents:
   - calculateUnifrac
-  - calculateJSD
+  - getJSD
   - runNMDS
   - runCCA
-  - calculateOverlap
+  - getOverlap
 - subtitle: Other diversity measurements
 - contents:
   - runDPCoA

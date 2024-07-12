@@ -23,8 +23,8 @@
 #'   
 #' @param ... Optional arguments not used.
 #'   
-#' @return calculateOverlap returns sample-by-sample distance matrix. 
-#'   runOverlap returns \code{x} that includes overlap matrix in its 
+#' @return getOverlap returns sample-by-sample distance matrix. 
+#'   addOverlap returns \code{x} that includes overlap matrix in its 
 #'   reducedDim. 
 #' 
 #' @details These function calculates overlap between all the sample-pairs. Overlap
@@ -40,7 +40,7 @@
 #'   \code{\link[mia:calculateUnifrac]{calculateUnifrac}}
 #' 
 #' 
-#' @name calculateOverlap
+#' @name getOverlap
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -49,26 +49,26 @@
 #' data(esophagus)
 #' tse <- esophagus
 #' tse <- transformAssay(tse, method = "relabundance")
-#' overlap <- calculateOverlap(tse, assay_name = "relabundance")
+#' overlap <- getOverlap(tse, assay_name = "relabundance")
 #' overlap
 #' 
 #' # Store result to reducedDim
-#' tse <- runOverlap(tse, assay.type = "relabundance", name = "overlap_between_samples")
+#' tse <- addOverlap(tse, assay.type = "relabundance", name = "overlap_between_samples")
 #' head(reducedDims(tse)$overlap_between_samples)
 #' 
 NULL
 
 
-#' @rdname calculateOverlap
+#' @rdname getOverlap
 #' @export
-setGeneric("calculateOverlap", signature = c("x"),
+setGeneric("getOverlap", signature = c("x"),
            function(x, assay.type = assay_name, assay_name = "counts", 
                     detection = 0, ...)
-             standardGeneric("calculateOverlap"))
+             standardGeneric("getOverlap"))
 
-#' @rdname calculateOverlap
+#' @rdname getOverlap
 #' @export
-setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
+setMethod("getOverlap", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = "counts", 
              detection = 0, ...){
         ############################# INPUT CHECK ##############################
@@ -83,14 +83,14 @@ setMethod("calculateOverlap", signature = c(x = "SummarizedExperiment"),
         detection <- as.numeric(detection)
         ########################### INPUT CHECK END ############################
         # Get assay
-        res <- calculateOverlap()
+        res <- getOverlap()
         return(res)
     }
 )
 
-#' @rdname calculateOverlap
+#' @rdname getOverlap
 #' @export
-setMethod("calculateOverlap", signature = c(x = "ANY"),
+setMethod("getOverlap", signature = c(x = "ANY"),
     function(x,detection = 0, ...){
         ############################# INPUT CHECK ##############################
         # Check detection
@@ -126,20 +126,20 @@ setMethod("calculateOverlap", signature = c(x = "ANY"),
     }
 )
 
-#' @rdname calculateOverlap
+#' @rdname getOverlap
 #' @export
-setGeneric("runOverlap", signature = c("x"),
+setGeneric("addOverlap", signature = c("x"),
            function(x, ...)
-               standardGeneric("runOverlap"))
+               standardGeneric("addOverlap"))
 
-#' @rdname calculateOverlap
+#' @rdname getOverlap
 #' 
 #' @param name A single character value specifying the name of overlap matrix that
 #' is stored in reducedDim(x).
 #'   
 #' @export
 #' @importFrom SingleCellExperiment reducedDim<-
-setMethod("runOverlap", signature = c(x = "SummarizedExperiment"),
+setMethod("addOverlap", signature = c(x = "SummarizedExperiment"),
     function(x, name = "overlap", ...){
         # Check name
         if(!.is_non_empty_string(name)){
@@ -147,7 +147,7 @@ setMethod("runOverlap", signature = c(x = "SummarizedExperiment"),
                 call. = FALSE)
         }
         # Calculate overlap
-        mat <- calculateOverlap(x, ...)
+        mat <- getOverlap(x, ...)
         # Convert it into matrix so that nrow equals number of samples
         mat <- as.matrix(mat)
         # Store it to reducedDim

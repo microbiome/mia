@@ -42,7 +42,7 @@
 #' Department of Mathematics
 #' \url{http://www.math.ku.dk/~topsoe/ISIT2004JSD.pdf}
 #'
-#' @name calculateJSD
+#' @name getJSD
 #'
 #' @author
 #' Susan Holmes \email{susan@@stat.stanford.edu}.
@@ -56,42 +56,42 @@
 #' library(scater)
 #'
 #'
-#' jsd <- calculateJSD(enterotype)
+#' jsd <- getJSD(enterotype)
 #' class(jsd)
 #' head(jsd)
 #'
-#' enterotype <- runMDS(enterotype, FUN = calculateJSD, name = "JSD",
+#' enterotype <- runMDS(enterotype, FUN = getJSD, name = "JSD",
 #'                      exprs_values = "counts")
 #' head(reducedDim(enterotype))
 #' head(attr(reducedDim(enterotype),"eig"))
 #' attr(reducedDim(enterotype),"GOF")
 NULL
 
-setGeneric("calculateJSD", signature = c("x"),
+setGeneric("getJSD", signature = c("x"),
            function(x, ...)
-             standardGeneric("calculateJSD"))
+             standardGeneric("getJSD"))
 
-#' @rdname calculateJSD
+#' @rdname getJSD
 #' @export
-setMethod("calculateJSD", signature = c(x = "ANY"),
+setMethod("getJSD", signature = c(x = "ANY"),
     function(x, ...){
-        runJSD(x, ...)
+        .getJSD(x, ...)
     }
 )
 
-#' @rdname calculateJSD
+#' @rdname getJSD
 #'
 #' @importFrom SummarizedExperiment assay
 #'
 #' @export
-setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
+setMethod("getJSD", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = assay_name, assay_name = exprs_values, 
              exprs_values = "counts", transposed = FALSE, ...){
         mat <- assay(x, assay.type)
         if(!transposed){
             mat <- t(mat)
         }
-        calculateJSD(mat, ...)
+        getJSD(mat, ...)
     }
 )
 
@@ -116,7 +116,7 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
     return(rowSums(d, na.rm = TRUE))
 }
 
-#' @rdname calculateJSD
+#' @rdname getJSD
 #'
 #' @importFrom utils combn
 #' @importFrom stats as.dist
@@ -124,7 +124,7 @@ setMethod("calculateJSD", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedArray getAutoBPPARAM setAutoBPPARAM
 #'
 #' @export
-runJSD <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x), ...){
+.getJSD <- function(x, BPPARAM = SerialParam(), chunkSize = nrow(x), ...){
     # input check
     if(is.null(rownames(x))){
         rownames(x) <- seq_len(nrow(x))
