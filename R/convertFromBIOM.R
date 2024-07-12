@@ -32,7 +32,7 @@
 #' object.
 #' 
 #' \code{convertFromBIOM} coerces a
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object to a \code{\link[biomformat:biom-class]{biom}} object.
 #'   
 #' @return
@@ -243,7 +243,16 @@ convertFromBIOM <- function(
     return(tse)
 }
 
-#' @rdname importBIOM
+#' @rdname convert
+#'
+#' @param x \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' 
+#' @param assay.type \code{Character scaler}. The name of assay.
+#' (Default: \code{"counts"})
+#' 
+#' @param ... Additional arguments. Not used currently.
+#' 
+#'
 #' @export
 setGeneric(
     "convertToBIOM", signature = c("x"),
@@ -251,7 +260,7 @@ setGeneric(
         x, assay.type = "counts", ...)
     standardGeneric("convertToBIOM"))
 
-#' @rdname importBIOM
+#' @rdname convert
 #' @export
 setMethod(
     "convertToBIOM", signature = c(x = "SummarizedExperiment"),

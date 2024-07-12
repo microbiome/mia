@@ -4,6 +4,8 @@
 \name{convert}
 \alias{convert}
 \alias{convertFromBIOM}
+\alias{convertToBIOM}
+\alias{convertToBIOM,SummarizedExperiment-method}
 \alias{convertFromDADA2}
 \alias{convertFromPhyloseq}
 \alias{convertToPhyloseq}
@@ -21,6 +23,10 @@ convertFromBIOM(
   remove.artifacts = FALSE,
   ...
 )
+
+convertToBIOM(x, assay.type = "counts", ...)
+
+\S4method{convertToBIOM}{SummarizedExperiment}(x, assay.type = "counts", ...)
 
 convertFromDADA2(...)
 
@@ -102,7 +108,7 @@ objects to phyloseq objects.
 object.
 
 \code{convertFromBIOM} coerces a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object to a \code{\link[biomformat:biom-class]{biom}} object.
 
 \code{convertFromDADA2} is a wrapper for the
