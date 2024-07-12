@@ -102,6 +102,31 @@ setMethod(
     }
 )
 
+#' @rdname getDissimilarity
+#' @export
+setGeneric(
+  "addDissimilarity", signature = c("x"), function(x, method, ...)
+    standardGeneric("addDissimilarity"))
+
+#' @rdname getDissimilarity
+#' @export
+setMethod(
+  "addDissimilarity", signature = c(x = "SummarizedExperiment"),
+  function(
+    x, method, assay.type = "counts", transposed = FALSE, name = method, ...){
+    res <- getDissimilarity(x, method = method, assay.type = assay.type, 
+                            transposed = transposed, ...)
+    if ( !identical(rownames(res), colnames(x)) ){
+      stop("Samples of the dissimilarity matrix should be the same as the
+           samples in columns of the assay specified with 'assay.type'.")
+    }
+    else{
+      .add_values_to_reducedDims(x, res, name = name)
+    }
+      
+  }
+)
+
 .calculate_dissimilarity <- function(
         mat, method, diss.fun = NULL, tree = NULL, ...){
     # inout check

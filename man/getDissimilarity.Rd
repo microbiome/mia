@@ -5,6 +5,8 @@
 \alias{getDissimilarity,TreeSummarizedExperiment-method}
 \alias{getDissimilarity,SummarizedExperiment-method}
 \alias{getDissimilarity,ANY-method}
+\alias{addDissimilarity}
+\alias{addDissimilarity,SummarizedExperiment-method}
 \title{Calculate sample distances with \code{vegan}}
 \usage{
 getDissimilarity(x, method, ...)
@@ -21,6 +23,17 @@ getDissimilarity(x, method, ...)
 \S4method{getDissimilarity}{SummarizedExperiment}(x, method, assay.type = "counts", transposed = FALSE, ...)
 
 \S4method{getDissimilarity}{ANY}(x, method, ...)
+
+addDissimilarity(x, method, ...)
+
+\S4method{addDissimilarity}{SummarizedExperiment}(
+  x,
+  method,
+  assay.type = "counts",
+  transposed = FALSE,
+  name = method,
+  ...
+)
 }
 \arguments{
 \item{x}{a
