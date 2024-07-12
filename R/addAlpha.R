@@ -585,6 +585,19 @@ setMethod("addAlpha", signature = c(x = "SummarizedExperiment"),
         FUN("'faith' index can be calculated only for TreeSE with rowTree(x) ",
             "populated.", call. = FALSE)
     }
+    # Check for unsupported values (relative or negative)
+    if(any(assay(x) < 0)){
+        unsupported_indices <- detected[["index"]]
+        detected <- detected[!detected[["index"]] %in% unsupported_indices, ]
+        if(length(unsupported_indices) > 0){
+            warning_indices <- paste0(unsupported_indices, collapse = "', '")
+            warning_indices <- paste0("'", warning_indices, "'")
+            warning(
+                "The following indices cannot be calculated due to unsupported 
+                values (negative values): ",
+                warning_indices, call. = FALSE)
+        }
+    }
     # Check if there are indices left
     return(detected)
 }
