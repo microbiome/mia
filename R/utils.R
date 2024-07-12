@@ -1,3 +1,21 @@
+################################################################################
+# This function gives user a message when the package is loaded into the session
+.onAttach <- function(libname, pkgname) {
+    pkg_version <- utils::packageDescription(pkgname, fields = "Version")
+    msg <- paste0(
+        "This is ", pkgname, " version ", pkg_version, "\n",
+        "- Online documentation and vignettes: https://microbiome.github.io/", pkgname, "/",
+        "\n",
+        "- Online book 'Orchestrating Microbiome Analysis (OMA)': https://microbiome.github.io/OMA/docs/devel/",
+        "\n",
+        "- Project website: https://microbiome.github.io/",
+        "\n",
+        "- Bug reports: https://github.com/microbiome/", pkgname, "/issues",
+        "\n",
+        "- For online support, see OMA's 'Support and resources' section"
+    )
+    packageStartupMessage(msg)
+}
 
 ################################################################################
 # internal methods loaded from other packages
