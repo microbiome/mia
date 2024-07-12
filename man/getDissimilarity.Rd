@@ -7,7 +7,7 @@
 \alias{getDissimilarity,ANY-method}
 \alias{addDissimilarity}
 \alias{addDissimilarity,SummarizedExperiment-method}
-\title{Calculate sample distances with \code{vegan}}
+\title{Calculate dissimilarities}
 \usage{
 getDissimilarity(x, method, ...)
 
@@ -36,40 +36,37 @@ addDissimilarity(x, method, ...)
 )
 }
 \arguments{
-\item{x}{a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object containing a tree.}
+\item{x}{a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.}
 
-\item{...}{other arguments passed onto \code{FUN}}
+\item{method}{Character scalar. Specifies which distance to calculate.}
 
-\item{transposed}{Logical scalar, is x transposed with cells in rows?}
+\item{...}{other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}}
 
-\item{FUN}{a \code{function} for distance calculation. The function must
-expect the input matrix as its first argument. With rows as samples
-and columns as features.}
+\item{assay.type}{Character scalar. Specifies which assay to use for
+calculation. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.}
+\item{tree.name}{Character scalar. Specifies which tree will be used in
+calculation. (Default: \code{"phylo"})}
 
-\item{exprs_values}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay_name} instead.)}
+\item{transposed}{Logical scalar. Specifies if x is transposed with cells in
+rows. (Default: \code{FALSE})}
 
-\item{abund_values}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
-will be disabled.)}
+\item{assay_name}{Character scalar. Specifies which assay to use for
+calculation. (Please use \code{assay.type} instead. At
+some point \code{assay_name} will be disabled.)}
 }
 \value{
-a sample-by-sample distance matrix, suitable for NMDS, etc.
+\code{getDissimilarity} returns a distance matrix.
+
+\code{addDissimilarity} returns a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+with distance matrix added to reducedDim slot.
 }
 \description{
-Will be removed by Bioc 3.15
-}
-\details{
-\code{getDissimilarity} calculates a distance matrix between samples. The
-type of distance calculated can be modified by setting \code{FUN}, which
-expects a function with a matrix input as its first argument.
+These functions calculate dissimilarities on data stored in a
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+object.
 }
 \examples{
 # generate some example data

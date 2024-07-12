@@ -1,36 +1,35 @@
-#' Calculate sample distances with \code{vegan}
+#' Calculate dissimilarities
+#'
+#' These functions calculate dissimilarities on data stored in a 
+#'  \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'  object.
+#'
+#' @param x a \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   object.
+#'
+#' @param method Character scalar. Specifies which distance to calculate.
+#'
+#' @param assay.type Character scalar. Specifies which assay to use for 
+#'   calculation. (Default: \code{"counts"})
+#'
+#' @param assay_name Character scalar. Specifies which assay to use for 
+#'   calculation. (Please use \code{assay.type} instead. At 
+#'   some point \code{assay_name} will be disabled.)
+#'
+#' @param tree.name Character scalar. Specifies which tree will be used in 
+#'   calculation. (Default: \code{"phylo"})
+#'   
+#' @param transposed Logical scalar. Specifies if x is transposed with cells in
+#'   rows. (Default: \code{FALSE})
+#'
+#' @param ... other arguments passed onto \code{\link[vegan:vegdist]{vegdist}}
+#'
+#' @return 
+#' \code{getDissimilarity} returns a distance matrix.
 #' 
-#' Will be removed by Bioc 3.15
-#'
-#' \code{getDissimilarity} calculates a distance matrix between samples. The
-#' type of distance calculated can be modified by setting \code{FUN}, which
-#' expects a function with a matrix input as its first argument.
-#'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object containing a tree.
-#'
-#' @param FUN a \code{function} for distance calculation. The function must
-#'   expect the input matrix as its first argument. With rows as samples 
-#'   and columns as features.
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'
-#' @param exprs_values a single \code{character} value for specifying which
-#'   assay to use for calculation. 
-#'   (Please use \code{assay_name} instead.)
-#'   
-#' @param abund_values a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
-#'   will be disabled.)
-#'   
-#' @param transposed Logical scalar, is x transposed with cells in rows?
-#'
-#' @param ... other arguments passed onto \code{FUN}
-#'
-#' @return a sample-by-sample distance matrix, suitable for NMDS, etc.
+#' \code{addDissimilarity} returns a
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   with distance matrix added to reducedDim slot.
 #'
 #' @name getDissimilarity
 #'
@@ -116,10 +115,10 @@ setMethod(
     x, method, assay.type = "counts", transposed = FALSE, name = method, ...){
     res <- getDissimilarity(x, method = method, assay.type = assay.type, 
                             transposed = transposed, ...)
-    res <- as.matrix(res)
-    if ( !identical(rownames(res), colnames(assay(x, assay.type))) ){
+    if ( !identical(rownames(as.matrix(res)), colnames(assay(x, assay.type))) ){
       warning("Samples of the dissimilarity matrix should be the same as the
-           samples in columns of the assay specified with 'assay.type'.")
+            samples in columns of the assay specified with 'assay.type'. The 
+            result is not added to reducedDim.")
       return(res)
     }
     else{
@@ -140,8 +139,8 @@ setMethod(
     # If the dissimilarity functon is not specified, get default choice
     if( is.null(diss.fun) ){
         if( method %in% c("overlap") ){
-            diss.fun <- calculateOverlap
-            message("'diss.fun' defaults to calculateOverlap.")
+            diss.fun <- getOverlap
+            message("'diss.fun' defaults to getOverlap.")
         } else if( method %in% c("unifrac")  ){
             args[["tree"]] <- tree
             diss.fun <- calculateUnifrac
