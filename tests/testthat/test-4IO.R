@@ -112,6 +112,46 @@ test_that("Importing biom files yield SummarizedExperiment objects", {
     expect_true(
         sapply(tolower(colnames(rowData(tse))),
                 function(x) x %in% TAXONOMY_RANKS) %>% all())
+    
+    # Check that convertToBIOM works
+    # Get errors if input is incorrect
+    expect_error( convertToBIOM() )
+    expect_error( convertToBIOM(c(1, 2, 3)) )
+    expect_error( convertToBIOM(tse, assay.type = "test") )
+    # Check that the output is correct
+    biom <- convertToBIOM(tse)
+    # Test type
+    expect_equal(biomformat::matrix_element_type(biom), "int")
+    # Assay
+    test <- as.matrix( biomformat::biom_data(biom) )
+    ref <- assay(tse)
+    expect_equal(test, ref)
+    # rowData
+    test <- as.data.frame( biomformat::observation_metadata(biom) )
+    ref <- as.data.frame( rowData(tse) )
+    expect_equal(test, ref)
+    # colData
+    test <- as.data.frame( biomformat::sample_metadata(biom) )
+    ref <- as.data.frame( colData(tse) )
+    expect_equal(test, ref)
+    # Test with empty rowData and colData and relative abundance (float) assay
+    rowData(tse) <- NULL
+    colData(tse) <- NULL
+    tse <- transformAssay(tse, method = "relabundance")
+    biom <- convertToBIOM(tse, assay.type = "relabundance")
+    # Test type
+    expect_equal(biomformat::matrix_element_type(biom), "float")
+    # Assay
+    test <- as.matrix( biomformat::biom_data(biom) )
+    ref <- assay(tse, "relabundance")
+    expect_equivalent(test, ref)
+    # rowData has one empty column (only NA values)
+    test <- as.data.frame( biomformat::observation_metadata(biom) )
+    expect_true( all(is.na(test)) && colnames(test) == "V1" )
+    # colData has one empty column (only NA values)
+    test <- as.data.frame( biomformat::sample_metadata(biom) )
+    expect_true( all(is.na(test)) && colnames(test) == "V1" )
+    
 })
 
 test_that("Importing phyloseq objects yield TreeSummarizedExperiment objects", {

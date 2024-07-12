@@ -147,3 +147,4 @@ convertToPhyloseq
 + Added importTaxpasta
 + Changes in default taxonomy ranks; more ranks supported
 + Added Tito2024QMP dataset
++ Added convertToBIOM

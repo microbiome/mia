@@ -2,9 +2,15 @@
 % Please edit documentation in R/convertFromBIOM.R
 \name{importBIOM}
 \alias{importBIOM}
+\alias{convertToBIOM}
+\alias{convertToBIOM,SummarizedExperiment-method}
 \title{Loading a BIOM file}
 \usage{
 importBIOM(file, ...)
+
+convertToBIOM(x, assay.type = "counts", ...)
+
+\S4method{convertToBIOM}{SummarizedExperiment}(x, assay.type = "counts", ...)
 }
 \arguments{
 \item{file}{BIOM file location}

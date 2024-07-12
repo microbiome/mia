@@ -101,6 +101,10 @@ objects to phyloseq objects.
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.
 
+\code{convertFromBIOM} coerces a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object to a \code{\link[biomformat:biom-class]{biom}} object.
+
 \code{convertFromDADA2} is a wrapper for the
 \code{mergePairs} function from the \code{dada2} package.
 A count matrix is constructed via
@@ -122,15 +126,19 @@ from \code{assay} is added to the phyloseq object.
 }
 \examples{
 
-### Convert BIOM results to a TreeSE
+# Convert BIOM results to a TreeSE
 # Load biom file
 library(biomformat)
 biom_file <- system.file("extdata", "rich_dense_otu_table.biom",
                          package = "biomformat")
 
-# Make TreeSE from biom object
+# Make TreeSE from BIOM object
 biom_object <- biomformat::read_biom(biom_file)
 tse <- convertFromBIOM(biom_object)
+
+# Convert TreeSE object to BIOM
+biom <- convertToBIOM(tse)
+
 
 ### Coerce DADA2 results to a TreeSE object
 if(requireNamespace("dada2")) {
