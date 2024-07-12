@@ -4,6 +4,7 @@
 \alias{calculateUnifrac}
 \alias{calculateUnifrac,ANY,phylo-method}
 \alias{calculateUnifrac,TreeSummarizedExperiment,missing-method}
+\alias{calculateUnifrac,SummarizedExperiment,phylo-method}
 \alias{runUnifrac}
 \title{Calculate weighted or unweighted (Fast) Unifrac distance}
 \usage{
@@ -21,6 +22,8 @@ calculateUnifrac(x, tree, ...)
   transposed = FALSE,
   ...
 )
+
+\S4method{calculateUnifrac}{SummarizedExperiment,phylo}(x, tree, assay.type = "counts", transposed = FALSE, ...)
 
 runUnifrac(
   x,

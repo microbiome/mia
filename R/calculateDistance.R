@@ -64,7 +64,7 @@ setMethod(
     if(!transposed){
         mat <- t(mat)
     }
-    tree <- rowTree(tse, tree.name)
+    tree <- rowTree(x, tree.name)
     res <- getDissimilarity(mat, method = method, tree = tree, ...)
     return(res)
     }

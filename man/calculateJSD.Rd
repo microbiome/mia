@@ -18,7 +18,7 @@
   ...
 )
 
-runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x))
+runJSD(x, BPPARAM = SerialParam(), chunkSize = nrow(x), ...)
 }
 \arguments{
 \item{x}{a numeric matrix or a
